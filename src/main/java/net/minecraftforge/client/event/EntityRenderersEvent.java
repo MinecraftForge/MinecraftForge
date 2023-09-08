@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -141,11 +142,11 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
     public static class AddLayers extends EntityRenderersEvent
     {
         private final Map<EntityType<?>, EntityRenderer<?>> renderers;
-        private final Map<String, EntityRenderer<? extends Player>> skinMap;
+        private final Map<PlayerSkin.Model, EntityRenderer<? extends Player>> skinMap;
         private final EntityRendererProvider.Context context;
 
         @ApiStatus.Internal
-        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<String, EntityRenderer<? extends Player>> playerRenderers, EntityRendererProvider.Context context)
+        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<PlayerSkin.Model, EntityRenderer<? extends Player>> playerRenderers, EntityRendererProvider.Context context)
         {
             this.renderers = renderers;
             this.skinMap = playerRenderers;
@@ -159,7 +160,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * {@linkplain ModelLayers#PLAYER regular player model} and {@code slim} for the
          * {@linkplain ModelLayers#PLAYER_SLIM slim player model}.
          */
-        public Set<String> getSkins()
+        public Set<PlayerSkin.Model> getSkins()
         {
             return skinMap.keySet();
         }
@@ -174,7 +175,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          */
         @Nullable
         @SuppressWarnings("unchecked")
-        public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(String skinName)
+        public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(PlayerSkin.Model skinName)
         {
             return (R) skinMap.get(skinName);
         }

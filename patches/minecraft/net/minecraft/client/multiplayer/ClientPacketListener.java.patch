@@ -1,91 +1,73 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -412,6 +_,7 @@
+@@ -386,6 +_,7 @@
  
-       this.f_104888_.f_91064_.m_113434_();
-       this.f_104888_.f_91074_.m_172530_();
-+      net.minecraftforge.client.ForgeHooksClient.firePlayerLogin(this.f_104888_.f_91072_, this.f_104888_.f_91074_, this.f_104888_.m_91403_().f_104885_);
+       this.f_291812_.f_91064_.m_113434_();
+       this.f_291812_.f_91074_.m_172530_();
++      net.minecraftforge.client.ForgeHooksClient.firePlayerLogin(this.f_291812_.f_91072_, this.f_291812_.f_91074_, this.f_291812_.m_91403_().f_290549_);
        int i = p_105030_.f_132360_();
-       this.f_104888_.f_91074_.m_20234_(i);
-       this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
-@@ -425,6 +_,7 @@
-       this.f_104888_.f_91074_.m_287199_(p_105030_.f_286971_());
-       this.f_104888_.f_91072_.m_171805_(p_105030_.f_132363_(), p_105030_.f_132364_());
-       this.f_104888_.f_91066_.m_193770_(p_105030_.f_132370_());
-+      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(f_104885_, "PLAY_TO_SERVER");
-       this.f_104888_.f_91066_.m_92172_();
-       this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.getClientModName())));
+       this.f_291812_.f_91074_.m_20234_(i);
+       this.f_104889_.m_104630_(i, this.f_291812_.f_91074_);
+@@ -400,6 +_,7 @@
+       this.f_291812_.f_91074_.m_287199_(commonplayerspawninfo.f_291470_());
+       this.f_291812_.f_91072_.m_171805_(commonplayerspawninfo.f_291098_(), commonplayerspawninfo.f_290730_());
+       this.f_291812_.f_91066_.m_193770_(p_105030_.f_132370_());
++      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(f_290549_, "PLAY_TO_SERVER");
        this.f_252517_ = null;
-@@ -1069,8 +_,10 @@
+       this.f_244346_ = new LastSeenMessagesTracker(20);
+       this.f_244113_ = MessageSignatureCache.m_246587_();
+@@ -1026,7 +_,9 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }
  
 +      localplayer1.updateSyncFields(localplayer); // Forge: fix MC-10657
        localplayer1.m_172530_();
-       localplayer1.m_108748_(s);
-+      net.minecraftforge.client.ForgeHooksClient.firePlayerRespawn(this.f_104888_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.f_104885_);
++      net.minecraftforge.client.ForgeHooksClient.firePlayerRespawn(this.f_291812_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.f_290549_);
        this.f_104889_.m_104630_(i, localplayer1);
        localplayer1.m_146922_(-180.0F);
-       localplayer1.f_108618_ = new KeyboardInput(this.f_104888_.f_91066_);
-@@ -1180,10 +_,7 @@
-       PacketUtils.m_131363_(p_104976_, this, this.f_104888_);
+       localplayer1.f_108618_ = new KeyboardInput(this.f_291812_.f_91066_);
+@@ -1135,10 +_,7 @@
+       PacketUtils.m_131363_(p_104976_, this, this.f_291812_);
        BlockPos blockpos = p_104976_.m_131704_();
-       this.f_104888_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_205557_) -> {
+       this.f_291812_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_205557_) -> {
 -         CompoundTag compoundtag = p_104976_.m_131708_();
 -         if (compoundtag != null) {
 -            p_205557_.m_142466_(compoundtag);
 -         }
-+         p_205557_.onDataPacket(f_104885_, p_104976_);
++         p_205557_.onDataPacket(f_290549_, p_104976_);
  
-          if (p_205557_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
-             ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
-@@ -1329,7 +_,9 @@
+          if (p_205557_ instanceof CommandBlockEntity && this.f_291812_.f_91080_ instanceof CommandBlockEditScreen) {
+             ((CommandBlockEditScreen)this.f_291812_.f_91080_).m_98398_();
+@@ -1286,7 +_,9 @@
  
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
-       PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
--      this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(CommandBuildContext.m_255418_(this.f_104903_.m_247579_(), this.f_244039_)));
-+      var context = CommandBuildContext.m_255418_(this.f_104903_.m_247579_(), this.f_244039_);
+       PacketUtils.m_131363_(p_104990_, this, this.f_291812_);
+-      this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(CommandBuildContext.m_255418_(this.f_104903_, this.f_244039_)));
++      var context = CommandBuildContext.m_255418_(this.f_104903_, this.f_244039_);
 +      this.f_104899_ = new CommandDispatcher<>(p_104990_.m_237624_(context));
 +      this.f_104899_ = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.f_104899_, context);
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {
-@@ -1348,6 +_,7 @@
-       ClientRecipeBook clientrecipebook = this.f_104888_.f_91074_.m_108631_();
-       clientrecipebook.m_266394_(this.f_104900_.m_44051_(), this.f_104888_.f_91073_.m_9598_());
-       this.f_104888_.m_231374_(SearchRegistry.f_119943_, clientrecipebook.m_90639_());
+@@ -1304,6 +_,7 @@
+       this.f_104900_.m_44024_(p_105132_.m_133644_());
+       ClientRecipeBook clientrecipebook = this.f_291812_.f_91074_.m_108631_();
+       clientrecipebook.m_266394_(this.f_104900_.m_44051_(), this.f_291812_.f_91073_.m_9598_());
 +      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.f_104900_);
     }
  
     public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1443,7 +_,8 @@
+@@ -1402,7 +_,8 @@
           Blocks.m_50758_();
        }
  
 -      CreativeModeTabs.m_258007_().m_257466_();
 +      CreativeModeTabs.m_257478_().stream().filter(net.minecraft.world.item.CreativeModeTab::hasSearchBar).forEach(net.minecraft.world.item.CreativeModeTab::m_257466_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.f_104903_.m_247579_(), true, f_104885_.m_129531_()));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this.f_104903_, true, f_290549_.m_129531_()));
     }
  
-    public void m_241155_(ClientboundUpdateEnabledFeaturesPacket p_251591_) {
-@@ -1855,6 +_,7 @@
-    }
- 
-    public void m_7413_(ClientboundCustomPayloadPacket p_105004_) {
-+      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_)) return;
-       PacketUtils.m_131363_(p_105004_, this, this.f_104888_);
-       ResourceLocation resourcelocation = p_105004_.m_132042_();
-       FriendlyByteBuf friendlybytebuf = null;
-@@ -2052,7 +_,7 @@
-             int j5 = friendlybytebuf.m_130242_();
-             this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, j5);
-          } else {
--            f_104883_.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
-+            f_104883_.warn("Unknown custom packet identifier: {}", (Object)resourcelocation);
-          }
-       } finally {
-          if (friendlybytebuf != null) {
-@@ -2399,6 +_,8 @@
+    public void m_142234_(ClientboundPlayerCombatEndPacket p_171771_) {
+@@ -2095,6 +_,8 @@
     }
  
     public void m_246175_(String p_249888_) {
@@ -94,7 +76,7 @@
        Instant instant = Instant.now();
        long i = Crypt.SaltSupplier.m_216113_();
        LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.f_244346_.m_246442_();
-@@ -2407,6 +_,7 @@
+@@ -2103,6 +_,7 @@
     }
  
     public void m_246623_(String p_250092_) {

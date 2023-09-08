@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -115,6 +_,9 @@
+@@ -117,6 +_,9 @@
     private CompoundTag f_21359_;
     private BlockPos f_21360_ = BlockPos.f_121853_;
     private float f_21341_ = -1.0F;
@@ -10,7 +10,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -229,7 +_,10 @@
+@@ -231,7 +_,10 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_21544_) {
@@ -22,7 +22,7 @@
     }
  
     public boolean m_6549_(EntityType<?> p_21399_) {
-@@ -427,6 +_,9 @@
+@@ -429,6 +_,9 @@
           p_21484_.m_128379_("NoAI", this.m_21525_());
        }
  
@@ -32,7 +32,7 @@
     }
  
     public void m_7378_(CompoundTag p_21450_) {
-@@ -479,6 +_,14 @@
+@@ -481,6 +_,14 @@
        }
  
        this.m_21557_(p_21450_.m_128471_("NoAI"));
@@ -47,7 +47,7 @@
     }
  
     protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
-@@ -518,9 +_,9 @@
+@@ -520,9 +_,9 @@
     public void m_8107_() {
        super.m_8107_();
        this.m_9236_().m_46473_().m_6180_("looting");
@@ -58,7 +58,7 @@
           for(ItemEntity itementity : this.m_9236_().m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
              if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
                 this.m_7581_(itementity);
-@@ -692,6 +_,14 @@
+@@ -698,6 +_,14 @@
           this.m_146870_();
        } else if (!this.m_21532_() && !this.m_8023_()) {
           Entity entity = this.m_9236_().m_45930_(this, -1.0D);
@@ -73,7 +73,7 @@
           if (entity != null) {
              double d0 = entity.m_20280_(this);
              int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1025,6 +_,16 @@
+@@ -1031,6 +_,16 @@
  
     }
  
@@ -90,7 +90,7 @@
     @Nullable
     public SpawnGroupData m_6518_(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.m_213780_();
-@@ -1035,6 +_,7 @@
+@@ -1041,6 +_,7 @@
           this.m_21559_(false);
        }
  
@@ -98,7 +98,7 @@
        return p_21437_;
     }
  
-@@ -1414,15 +_,25 @@
+@@ -1425,15 +_,25 @@
        return false;
     }
  
@@ -125,7 +125,7 @@
     public void m_147272_() {
        this.m_262441_((p_262562_) -> {
           return true;
-@@ -1449,5 +_,40 @@
+@@ -1460,5 +_,40 @@
     public ItemStack m_142340_() {
        SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);

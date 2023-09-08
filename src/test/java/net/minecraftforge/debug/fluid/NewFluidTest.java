@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.debug.fluid;
-
+/*
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.FluidState;
@@ -46,8 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 @Mod(NewFluidTest.MODID)
-public class NewFluidTest
-{
+public class NewFluidTest {
     public static final boolean ENABLE = false; // TODO fix
     public static final String MODID = "new_fluid_test";
 
@@ -200,15 +199,14 @@ public class NewFluidTest
             if (state.getValue(FLUIDLOGGED)) {
                 worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, false), 3);
                 return new ItemStack(TEST_FLUID_BUCKET.get());
-            } else {
+            } else
                 return ItemStack.EMPTY;
-            }
         }
 
         @Override
-        public FluidState getFluidState(BlockState state)
-        {
+        public FluidState getFluidState(BlockState state) {
             return state.getValue(FLUIDLOGGED) ? test_fluid.get().defaultFluidState() : Fluids.EMPTY.defaultFluidState();
         }
     }
 }
+*/

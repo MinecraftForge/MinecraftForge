@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -63,6 +_,7 @@
+@@ -64,6 +_,7 @@
     @Nullable
     private TitleScreen.WarningLabel f_232768_;
     private final LogoRenderer f_263781_;
@@ -8,7 +8,7 @@
  
     public TitleScreen() {
        this(false);
-@@ -113,11 +_,15 @@
+@@ -114,11 +_,15 @@
        int j = this.f_96543_ - i - 2;
        int k = 24;
        int l = this.f_96544_ / 4 + 48;
@@ -22,9 +22,9 @@
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_280830_) -> {
+       SpriteIconButton spriteiconbutton = this.m_142416_(CommonButtons.m_292713_(20, (p_280830_) -> {
           this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));
-@@ -162,7 +_,7 @@
+@@ -164,7 +_,7 @@
        }).m_252987_(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).m_257505_(tooltip).m_253136_())).f_93623_ = flag;
        (this.m_142416_(Button.m_253074_(Component.m_237115_("menu.online"), (p_210872_) -> {
           this.m_96793_();
@@ -33,7 +33,7 @@
     }
  
     @Nullable
-@@ -244,6 +_,7 @@
+@@ -248,6 +_,7 @@
              this.f_232768_.m_280409_(p_282860_, i);
           }
  
@@ -41,7 +41,7 @@
           if (this.f_96721_ != null) {
              this.f_96721_.m_280672_(p_282860_, this.f_96543_, this.f_96547_, i);
           }
-@@ -259,7 +_,14 @@
+@@ -263,7 +_,14 @@
              s = s + I18n.m_118938_("menu.modded");
           }
  
@@ -57,7 +57,7 @@
  
           for(GuiEventListener guieventlistener : this.m_6702_()) {
              if (guieventlistener instanceof AbstractWidget) {
-@@ -272,6 +_,7 @@
+@@ -276,6 +_,7 @@
              RenderSystem.enableDepthTest();
              this.f_96726_.m_88315_(p_282860_, p_281753_, p_283539_, p_282628_);
           }

@@ -15,8 +15,7 @@ import net.minecraft.world.inventory.CraftingContainer;
  * For GUIs with recipe books, this allows their containers to have
  * recipe completion and ghost recipes in their craft matrices.
  */
-public interface IRecipeContainer
-{
+public interface IRecipeContainer {
     /**
      * The crafting result slot of your container, where you take out the crafted item.
      * The equivalent for {@link CraftingMenu} is {@code CraftingMenu#resultSlots}.

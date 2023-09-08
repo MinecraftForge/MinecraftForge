@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/parameters/LootContextParamSets.java
 +++ b/net/minecraft/world/level/storage/loot/parameters/LootContextParamSets.java
-@@ -12,6 +_,7 @@
+@@ -21,6 +_,7 @@
     });
     public static final LootContextParamSet f_81411_ = m_81428_("chest", (p_81452_) -> {
        p_81452_.m_81406_(LootContextParams.f_81460_).m_81408_(LootContextParams.f_81455_);
@@ -8,7 +8,7 @@
     });
     public static final LootContextParamSet f_81412_ = m_81428_("command", (p_81450_) -> {
        p_81450_.m_81406_(LootContextParams.f_81460_).m_81408_(LootContextParams.f_81455_);
-@@ -21,6 +_,7 @@
+@@ -30,6 +_,7 @@
     });
     public static final LootContextParamSet f_81414_ = m_81428_("fishing", (p_81446_) -> {
        p_81446_.m_81406_(LootContextParams.f_81460_).m_81406_(LootContextParams.f_81463_).m_81408_(LootContextParams.f_81455_);

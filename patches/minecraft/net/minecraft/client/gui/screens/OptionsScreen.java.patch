@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/screens/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screens/OptionsScreen.java
-@@ -151,6 +_,14 @@
-       super.m_88315_(p_283520_, p_281826_, p_283378_, p_281975_);
+@@ -150,6 +_,14 @@
+       p_283520_.m_280653_(this.f_96547_, this.f_96539_, this.f_96543_ / 2, 15, 16777215);
     }
  
 +    @Override

@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.loot;
-
+/*
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -77,3 +77,4 @@ public class LootTableIdCondition implements LootItemCondition
         }
     }
 }
+*/

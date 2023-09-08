@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -314,7 +_,7 @@
+@@ -322,7 +_,7 @@
     }
  
     public static RenderType m_110497_(ResourceLocation p_110498_) {
@@ -9,7 +9,7 @@
     }
  
     public static RenderType m_269058_() {
-@@ -322,19 +_,19 @@
+@@ -330,19 +_,19 @@
     }
  
     public static RenderType m_173237_(ResourceLocation p_173238_) {
@@ -33,7 +33,7 @@
     }
  
     public static RenderType m_269508_() {
-@@ -342,7 +_,7 @@
+@@ -350,7 +_,7 @@
     }
  
     public static RenderType m_173240_(ResourceLocation p_173241_) {
@@ -42,7 +42,7 @@
     }
  
     public static RenderType m_110502_() {
-@@ -669,4 +_,17 @@
+@@ -677,4 +_,17 @@
           return this.f_110696_;
        }
     }

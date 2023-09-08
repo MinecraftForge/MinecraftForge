@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/sniffer/Sniffer.java
 +++ b/net/minecraft/world/entity/animal/sniffer/Sniffer.java
-@@ -277,7 +_,7 @@
+@@ -275,7 +_,7 @@
              }
  
              if (this.f_19797_ % 10 == 0) {

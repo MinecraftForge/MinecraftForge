@@ -1,36 +1,36 @@
 --- a/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -57,7 +_,7 @@
-       int i = 0;
+@@ -51,7 +_,7 @@
  
-       for(int j = f_43494_.size(); i < j; ++i) {
--         if ((f_43494_.get(i)).f_43534_ == p_43512_) {
-+         if ((f_43494_.get(i)).f_43534_.get() == p_43512_) {
+    public static boolean m_43511_(Potion p_43512_) {
+       for(PotionBrewing.Mix<Potion> mix : f_43494_) {
+-         if (mix.f_43534_ == p_43512_) {
++         if (mix.f_43534_.get() == p_43512_) {
              return true;
           }
        }
-@@ -79,7 +_,7 @@
+@@ -71,7 +_,7 @@
+       Item item = p_43520_.m_41720_();
  
-       for(int j = f_43495_.size(); i < j; ++i) {
-          PotionBrewing.Mix<Item> mix = f_43495_.get(i);
+       for(PotionBrewing.Mix<Item> mix : f_43495_) {
 -         if (mix.f_43532_ == item && mix.f_43533_.test(p_43521_)) {
 +         if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43521_)) {
              return true;
           }
        }
-@@ -93,7 +_,7 @@
+@@ -83,7 +_,7 @@
+       Potion potion = PotionUtils.m_43579_(p_43525_);
  
-       for(int j = f_43494_.size(); i < j; ++i) {
-          PotionBrewing.Mix<Potion> mix = f_43494_.get(i);
+       for(PotionBrewing.Mix<Potion> mix : f_43494_) {
 -         if (mix.f_43532_ == potion && mix.f_43533_.test(p_43526_)) {
 +         if (mix.f_43532_.get() == potion && mix.f_43533_.test(p_43526_)) {
              return true;
           }
        }
-@@ -109,8 +_,8 @@
+@@ -97,14 +_,14 @@
+          Item item = p_43531_.m_41720_();
  
-          for(int j = f_43495_.size(); i < j; ++i) {
-             PotionBrewing.Mix<Item> mix = f_43495_.get(i);
+          for(PotionBrewing.Mix<Item> mix : f_43495_) {
 -            if (mix.f_43532_ == item && mix.f_43533_.test(p_43530_)) {
 -               return PotionUtils.m_43549_(new ItemStack(mix.f_43534_), potion);
 +            if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43530_)) {
@@ -38,10 +38,7 @@
              }
           }
  
-@@ -118,8 +_,8 @@
- 
-          for(int k = f_43494_.size(); i < k; ++i) {
-             PotionBrewing.Mix<Potion> mix1 = f_43494_.get(i);
+          for(PotionBrewing.Mix<Potion> mix1 : f_43494_) {
 -            if (mix1.f_43532_ == potion && mix1.f_43533_.test(p_43530_)) {
 -               return PotionUtils.m_43549_(new ItemStack(item), mix1.f_43534_);
 +            if (mix1.f_43532_.get() == potion && mix1.f_43533_.test(p_43530_)) {
@@ -49,7 +46,7 @@
              }
           }
        }
-@@ -196,7 +_,7 @@
+@@ -181,7 +_,7 @@
        } else if (!(p_43505_ instanceof PotionItem)) {
           throw new IllegalArgumentException("Expected a potion, got: " + BuiltInRegistries.f_257033_.m_7981_(p_43505_));
        } else {
@@ -58,7 +55,7 @@
        }
     }
  
-@@ -209,18 +_,18 @@
+@@ -194,18 +_,18 @@
     }
  
     private static void m_43513_(Potion p_43514_, Item p_43515_, Potion p_43516_) {

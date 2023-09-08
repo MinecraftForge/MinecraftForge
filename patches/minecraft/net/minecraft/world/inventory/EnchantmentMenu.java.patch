@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -55,7 +_,7 @@
+@@ -54,7 +_,7 @@
        });
        this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
           public boolean m_5857_(ItemStack p_39517_) {
 -            return p_39517_.m_150930_(Items.f_42534_);
 +            return p_39517_.m_204117_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
           }
-       });
  
-@@ -86,23 +_,24 @@
+          public Pair<ResourceLocation, ResourceLocation> m_7543_() {
+@@ -89,23 +_,24 @@
           ItemStack itemstack = p_39461_.m_8020_(0);
           if (!itemstack.m_41619_() && itemstack.m_41792_()) {
              this.f_39450_.m_39292_((p_39485_, p_39486_) -> {
@@ -37,7 +37,7 @@
                 }
  
                 for(int l = 0; l < 3; ++l) {
-@@ -235,7 +_,7 @@
+@@ -237,7 +_,7 @@
              if (!this.m_38903_(itemstack1, 2, 38, true)) {
                 return ItemStack.f_41583_;
              }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
 +++ b/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
-@@ -59,7 +_,9 @@
+@@ -60,7 +_,9 @@
  
     public void m_7392_(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_) {
        this.m_117818_(p_117788_);
@@ -10,7 +10,7 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
-@@ -132,10 +_,13 @@
+@@ -133,10 +_,13 @@
              if (useanim == UseAnim.BRUSH) {
                 return HumanoidModel.ArmPose.BRUSH;
              }
@@ -25,7 +25,7 @@
           return HumanoidModel.ArmPose.ITEM;
        }
     }
-@@ -167,10 +_,12 @@
+@@ -168,10 +_,12 @@
     }
  
     public void m_117770_(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_) {
@@ -38,12 +38,12 @@
        this.m_117775_(p_117814_, p_117815_, p_117816_, p_117817_, (this.f_115290_).f_102812_, (this.f_115290_).f_103374_);
     }
  
-@@ -208,7 +_,7 @@
+@@ -211,7 +_,7 @@
           }
        } else if (f > 0.0F) {
           super.m_7523_(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
--         float f3 = p_117802_.m_20069_() ? -90.0F - p_117802_.m_146909_() : -90.0F;
-+         float f3 = p_117802_.m_20069_() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - p_117802_.m_146909_() : -90.0F;
-          float f4 = Mth.m_14179_(f, 0.0F, f3);
-          p_117803_.m_252781_(Axis.f_252529_.m_252977_(f4));
+-         float f4 = p_117802_.m_20069_() ? -90.0F - f1 : -90.0F;
++         float f4 = p_117802_.m_20069_() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - p_117802_.m_146909_() : -90.0F;
+          float f5 = Mth.m_14179_(f, 0.0F, f4);
+          p_117803_.m_252781_(Axis.f_252529_.m_252977_(f5));
           if (p_117802_.m_6067_()) {

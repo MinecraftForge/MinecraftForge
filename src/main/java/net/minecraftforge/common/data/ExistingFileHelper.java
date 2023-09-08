@@ -20,6 +20,7 @@ import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.FilePackResources.FileResourcesSupplier;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
@@ -103,7 +104,7 @@ public class ExistingFileHelper {
         candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
         for (Path existing : existingPacks) {
             File file = existing.toFile();
-            PackResources pack = file.isDirectory() ? new PathPackResources(file.getName(), file.toPath(), false) : new FilePackResources(file.getName(), file, false);
+            PackResources pack = file.isDirectory() ? new PathPackResources(file.getName(), file.toPath(), false) : new FileResourcesSupplier(file, false).openPrimary(file.getName()); // FilePackResources(file.getName(), file, false, "");
             candidateClientResources.add(pack);
             candidateServerResources.add(pack);
         }

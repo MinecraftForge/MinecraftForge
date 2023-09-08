@@ -26,9 +26,9 @@
              if (this.f_25543_ != null) {
                 return true;
 @@ -98,6 +_,18 @@
-             this.f_25545_ = livingentity.m_20186_();
              this.f_25546_ = livingentity.m_20189_();
              this.f_25547_ = 4 + this.f_25540_.m_217043_().m_188503_(7);
+             double d0 = this.f_25540_.m_20280_(livingentity);
 +         if (this.canPenalize) {
 +            this.f_25547_ += failedPathFindingPenalty;
 +            if (this.f_25540_.m_21573_().m_26570_() != null) {

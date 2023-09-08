@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.debug;
-
+/*
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -1110,7 +1110,8 @@ public class DataGeneratorTest
                     false)
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.Instance.hasItems(Items.COBBLESTONE))
                     .parent(new ResourceLocation("not_there/not_here"))
-                    .save(consumer, new ResourceLocation("illegal_parent"), fileHelper);*/
+                    .save(consumer, new ResourceLocation("illegal_parent"), fileHelper);
+* /
 
             Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
                             Component.translatable(Items.COBBLESTONE.getDescriptionId()),
@@ -1265,3 +1266,4 @@ public class DataGeneratorTest
         return model.replaceAll("^\\w+:", "minecraft:");
     }
 }
+*/

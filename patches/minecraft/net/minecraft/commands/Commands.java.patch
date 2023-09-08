@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -193,7 +_,7 @@
+@@ -196,7 +_,7 @@
           JfrCommand.m_183645_(this.f_82090_);
        }
  
@@ -8,8 +8,8 @@
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           TestCommand.m_127946_(this.f_82090_);
           SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
-       }
-@@ -218,9 +_,11 @@
+          if (p_230943_.f_82145_) {
+@@ -224,9 +_,11 @@
        if (p_230943_.f_82144_) {
           PublishCommand.m_138184_(this.f_82090_);
        }
@@ -21,7 +21,7 @@
        });
     }
  
-@@ -243,7 +_,16 @@
+@@ -249,7 +_,16 @@
  
        try {
           try {
@@ -39,13 +39,13 @@
           } catch (CommandRuntimeException commandruntimeexception) {
              commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
              return 0;
-@@ -299,7 +_,8 @@
+@@ -305,7 +_,8 @@
        Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
        map.put(this.f_82090_.getRoot(), rootcommandnode);
 -      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
 +      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
-       p_82096_.f_8906_.m_9829_(new ClientboundCommandsPacket(rootcommandnode));
+       p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
     }
  

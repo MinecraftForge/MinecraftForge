@@ -97,12 +97,12 @@ public class CreativeModeTabTest
                 );
             }
 
-            final ResourceLocation custom_tabs_image = new ResourceLocation(MOD_ID, "textures/gui/container/creative_inventory/custom_tabs.png");
+            //final ResourceLocation custom_tabs_image = new ResourceLocation(MOD_ID, "textures/gui/container/creative_inventory/custom_tabs.png");
             helper.register(new ResourceLocation(MOD_ID, "with_tabs_image"), CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.with_tabs_image"))
                     .icon(() -> new ItemStack(Blocks.BRICKS))
                     .displayItems((params, output) -> output.accept(Blocks.BRICKS))
-                    .withTabsImage(custom_tabs_image)
+                    //.withTabsImage(custom_tabs_image)
                     .build());
         });
     }

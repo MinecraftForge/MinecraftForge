@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.data;
-
+/*
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
@@ -35,7 +35,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 
 /**
  * Currently used only for replacing shears item to shears_dig tool action
- */
+ * /
 public final class ForgeLootTableProvider extends LootTableProvider {
     public ForgeLootTableProvider(PackOutput packOutput) {
         super(packOutput, Set.of(), VanillaLootTableProvider.create(packOutput).getTables());
@@ -184,3 +184,4 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return items != null && items.contains(expected);
     }
 }
+*/

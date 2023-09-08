@@ -573,7 +573,7 @@ public class FluidUtil
         BlockState destBlockState = level.getBlockState(pos);
         boolean isDestNonSolid = !destBlockState.isSolid();
         boolean isDestReplaceable = destBlockState.canBeReplaced(context);
-        boolean canDestContainFluid = destBlockState.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) destBlockState.getBlock()).canPlaceLiquid(level, pos, destBlockState, fluid);
+        boolean canDestContainFluid = destBlockState.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) destBlockState.getBlock()).canPlaceLiquid(player, level, pos, destBlockState, fluid);
         if (!level.isEmptyBlock(pos) && !isDestNonSolid && !isDestReplaceable && !canDestContainFluid)
         {
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.

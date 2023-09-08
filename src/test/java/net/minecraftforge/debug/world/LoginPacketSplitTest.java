@@ -19,7 +19,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.CompressionDecoder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -29,6 +28,7 @@ import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.Pack.Info;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.util.GsonHelper;
@@ -87,12 +87,23 @@ public class LoginPacketSplitTest
                 if (event.getPackType() == PackType.SERVER_DATA)
                 {
                     final InMemoryResourcePack pack = new InMemoryResourcePack("virtual_bigdata");
+                    final var supplier = new Pack.ResourcesSupplier() {
+                        @Override
+                        public PackResources openPrimary(String p_298664_) {
+                            return pack;
+                        }
+
+                        @Override
+                        public PackResources openFull(String p_251717_, Info p_298253_) {
+                            return pack;
+                        }
+                    };
                     generateEntries(pack);
                     event.addRepositorySource(packs -> packs.accept(Pack.readMetaAndCreate(
                             pack.id,
                             Component.literal("Pack containing big datapack registries"),
                             true,
-                            s -> pack,
+                            supplier,
                             PackType.SERVER_DATA,
                             Pack.Position.TOP,
                             PackSource.BUILT_IN

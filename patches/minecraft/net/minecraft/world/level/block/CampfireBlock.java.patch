@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CampfireBlock.java
 +++ b/net/minecraft/world/level/block/CampfireBlock.java
-@@ -203,7 +_,7 @@
+@@ -204,7 +_,7 @@
              return true;
           }
  

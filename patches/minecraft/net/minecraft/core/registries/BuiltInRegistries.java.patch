@@ -20,7 +20,7 @@
 +   public static final DefaultedRegistry<Fluid> f_257020_ = forge(Registries.f_256808_, "empty", (p_259453_) -> {
        return Fluids.f_76191_;
     });
--   public static final Registry<MobEffect> f_256974_ = m_258002_(Registries.f_256929_, (p_259689_) -> {
+-   public static final Registry<MobEffect> f_256974_ = m_293167_(Registries.f_256929_, (p_259689_) -> {
 +   /**
 +    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#MOB_EFFECTS} instead.
 +    */
@@ -36,7 +36,7 @@
 +   public static final DefaultedRegistry<Block> f_256975_ = forge(Registries.f_256747_, "air", (p_259909_) -> {
        return Blocks.f_50016_;
     });
--   public static final Registry<Enchantment> f_256876_ = m_258002_(Registries.f_256762_, (p_259104_) -> {
+-   public static final Registry<Enchantment> f_256876_ = m_293167_(Registries.f_256762_, (p_259104_) -> {
 +   /**
 +    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#ENCHANTMENTS} instead.
 +    */
@@ -60,7 +60,7 @@
 +   public static final DefaultedRegistry<Item> f_257033_ = forge(Registries.f_256913_, "air", (p_260227_) -> {
        return Items.f_41852_;
     });
--   public static final DefaultedRegistry<Potion> f_256980_ = m_257988_(Registries.f_256973_, "empty", (p_259869_) -> {
+-   public static final DefaultedRegistry<Potion> f_256980_ = m_257834_(Registries.f_256973_, "empty", (p_259869_) -> {
 +   /**
 +    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#POTIONS} instead.
 +    */
@@ -76,7 +76,7 @@
 +   public static final Registry<ParticleType<?>> f_257034_ = forge(Registries.f_256890_, (p_260266_) -> {
        return ParticleTypes.f_123794_;
     });
--   public static final Registry<BlockEntityType<?>> f_257049_ = m_258002_(Registries.f_256922_, (p_259434_) -> {
+-   public static final Registry<BlockEntityType<?>> f_257049_ = m_293167_(Registries.f_256922_, (p_259434_) -> {
 +   /**
 +    * @deprecated Forge: Use {@link net.minecraftforge.registries.ForgeRegistries#BLOCK_ENTITY_TYPES} instead.
 +    */
@@ -260,8 +260,8 @@
        return TreeDecoratorType.f_70043_;
     });
     public static final Registry<FeatureSizeType<?>> f_256958_ = m_258002_(Registries.f_256720_, (p_259370_) -> {
-@@ -289,10 +_,18 @@
-       return m_258073_(p_260095_, Lifecycle.stable(), p_259057_);
+@@ -293,10 +_,18 @@
+       return m_257895_(p_297531_, new MappedRegistry<>(p_297531_, Lifecycle.stable(), true), p_298446_, Lifecycle.stable());
     }
  
 +   private static <T> Registry<T> forge(ResourceKey<? extends Registry<T>> key, BuiltInRegistries.RegistryBootstrap<T> def) {
@@ -279,7 +279,7 @@
     private static <T> DefaultedRegistry<T> m_257834_(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
        return m_257762_(p_259296_, p_259101_, Lifecycle.stable(), p_259485_);
     }
-@@ -301,10 +_,19 @@
+@@ -305,10 +_,19 @@
        return m_257895_(p_259121_, new MappedRegistry<>(p_259121_, p_259977_, false), p_259874_, p_259977_);
     }
  
@@ -299,7 +299,7 @@
     private static <T> DefaultedRegistry<T> m_257762_(ResourceKey<? extends Registry<T>> p_260010_, String p_260220_, Lifecycle p_260139_, BuiltInRegistries.RegistryBootstrap<T> p_260185_) {
        return m_257895_(p_260010_, new DefaultedMappedRegistry<>(p_260220_, p_260010_, p_260139_, true), p_260185_, p_260139_);
     }
-@@ -350,7 +_,7 @@
+@@ -354,7 +_,7 @@
  
           if (p_259410_ instanceof DefaultedRegistry) {
              ResourceLocation resourcelocation = ((DefaultedRegistry)p_259410_).m_122315_();

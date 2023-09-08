@@ -1,9 +1,9 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -84,6 +_,15 @@
-       OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
-       OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
-       OptionSpec<String> optionspec15 = optionparser.nonOptions();
+@@ -80,6 +_,15 @@
+       OptionSpec<Void> optionspec12 = optionparser.accepts("jfrProfile");
+       OptionSpec<Path> optionspec13 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
+       OptionSpec<String> optionspec14 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
 +      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
@@ -16,7 +16,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -91,6 +_,13 @@
+@@ -87,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -28,9 +28,9 @@
 +            return;
 +         }
  
-          Path path = optionset.valueOf(optionspec14);
+          Path path = optionset.valueOf(optionspec13);
           if (path != null) {
-@@ -106,25 +_,24 @@
+@@ -102,25 +_,24 @@
           Bootstrap.m_135889_();
           Util.m_137584_();
           Path path1 = Paths.get("server.properties");
@@ -49,9 +49,9 @@
 -            return;
 -         }
 -
-          File file1 = new File(optionset.valueOf(optionspec9));
+          File file1 = new File(optionset.valueOf(optionspec8));
           Services services = Services.m_214344_(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
-          String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.m_139777_().f_139741_);
+          String s = Optional.ofNullable(optionset.valueOf(optionspec9)).orElse(dedicatedserversettings.m_139777_().f_139741_);
 +         if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
 +            f_129670_.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
 +            return;
@@ -62,7 +62,7 @@
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
           if (levelsummary != null) {
              if (levelsummary.m_193020_()) {
-@@ -170,6 +_,8 @@
+@@ -166,6 +_,8 @@
                          worlddimensions = dedicatedserverproperties.m_246483_(p_248079_.f_244104_());
                       }
  
@@ -71,12 +71,12 @@
                       WorldDimensions.Complete worlddimensions$complete = worlddimensions.m_245300_(registry);
                       Lifecycle lifecycle = worlddimensions$complete.m_245945_().add(p_248079_.f_244104_().m_211816_());
                       return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.f_244634_(), lifecycle), worlddimensions$complete.m_245593_());
-@@ -190,22 +_,33 @@
+@@ -186,21 +_,32 @@
  
           WorldData worlddata = worldstem.f_206895_();
           levelstoragesource$levelstorageaccess.m_78287_(registryaccess$frozen, worlddata);
--         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_236710_) -> {
--            DedicatedServer dedicatedserver1 = new DedicatedServer(p_236710_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
+-         final DedicatedServer dedicatedserver = MinecraftServer.m_129872_((p_296433_) -> {
+-            DedicatedServer dedicatedserver1 = new DedicatedServer(p_296433_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +         final MinecraftServer dedicatedserver = MinecraftServer.m_129872_((p_129697_) -> {
 +            MinecraftServer dedicatedserver1;
 +            if (gametestEnabled) {
@@ -87,11 +87,10 @@
 +            } else {
 +               dedicatedserver1 = new DedicatedServer(p_129697_, levelstoragesource$levelstorageaccess, packrepository, worldstem, dedicatedserversettings, DataFixers.m_14512_(), services, LoggerChunkProgressListener::new);
 +            }
-             dedicatedserver1.m_236740_(optionset.has(optionspec8) ? new GameProfile((UUID)null, optionset.valueOf(optionspec8)) : null);
-             dedicatedserver1.m_129801_(optionset.valueOf(optionspec11));
+             dedicatedserver1.m_129801_(optionset.valueOf(optionspec10));
              dedicatedserver1.m_129975_(optionset.has(optionspec2));
-             dedicatedserver1.m_129948_(optionset.valueOf(optionspec12));
-             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
+             dedicatedserver1.m_129948_(optionset.valueOf(optionspec11));
+             boolean flag1 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec14).contains("nogui");
 -            if (flag1 && !GraphicsEnvironment.isHeadless()) {
 -               dedicatedserver1.m_139667_();
 +            if (dedicatedserver1 instanceof DedicatedServer dedicatedServer && flag1 && !GraphicsEnvironment.isHeadless()) {

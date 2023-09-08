@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Spider.java
 +++ b/net/minecraft/world/entity/monster/Spider.java
-@@ -119,7 +_,12 @@
+@@ -121,7 +_,12 @@
     }
  
     public boolean m_7301_(MobEffectInstance p_33809_) {

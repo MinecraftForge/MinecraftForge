@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
-@@ -41,6 +_,7 @@
+@@ -42,6 +_,7 @@
     @Nullable
     private AdvancementTab f_97336_;
     private boolean f_97337_;
@@ -8,9 +8,9 @@
  
     public AdvancementsScreen(ClientAdvancements p_97340_) {
        super(GameNarrator.f_93310_);
-@@ -56,7 +_,15 @@
+@@ -58,7 +_,15 @@
        } else {
-          this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_97182_(), true);
+          this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_293004_().m_295246_(), true);
        }
 -
 +      if (this.f_97335_.size() > AdvancementTabType.MAX_TABS) {
@@ -25,19 +25,19 @@
     }
  
     public void m_7861_() {
-@@ -74,7 +_,7 @@
+@@ -76,7 +_,7 @@
           int j = (this.f_96544_ - 140) / 2;
  
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
 -            if (advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
 +            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
-                this.f_97334_.m_104401_(advancementtab.m_97182_(), true);
+                this.f_97334_.m_104401_(advancementtab.m_293004_().m_295246_(), true);
                 break;
              }
-@@ -98,9 +_,15 @@
+@@ -100,9 +_,15 @@
        int i = (this.f_96543_ - 252) / 2;
        int j = (this.f_96544_ - 140) / 2;
-       this.m_280273_(p_282589_);
+       this.m_280273_(p_282589_, p_282255_, p_283354_, p_283123_);
 +      if (maxPages != 0) {
 +         net.minecraft.network.chat.Component page = Component.m_237113_(String.format("%d / %d", tabPage + 1, maxPages + 1));
 +         int width = this.f_96547_.m_92852_(page);
@@ -50,7 +50,7 @@
     }
  
     public boolean m_7979_(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
-@@ -135,10 +_,12 @@
+@@ -146,10 +_,12 @@
        p_283395_.m_280218_(f_97329_, p_281890_, p_282532_, 0, 0, 252, 140);
        if (this.f_97335_.size() > 1) {
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
@@ -63,7 +63,7 @@
              advancementtab1.m_280485_(p_283395_, p_281890_, p_282532_);
           }
        }
-@@ -158,7 +_,7 @@
+@@ -169,7 +_,7 @@
  
        if (this.f_97335_.size() > 1) {
           for(AdvancementTab advancementtab : this.f_97335_.values()) {

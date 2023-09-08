@@ -1,18 +1,19 @@
 --- a/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java
 +++ b/net/minecraft/server/advancements/AdvancementVisibilityEvaluator.java
-@@ -62,6 +_,15 @@
-       m_264402_(advancement, stack, p_265359_, p_265303_);
+@@ -64,6 +_,16 @@
+       m_264099_(advancementnode, stack, p_265561_, p_265381_);
     }
  
-+   public static boolean isVisible(Advancement advancement, Predicate<Advancement> test) {
++   public static boolean isVisible(AdvancementNode advancement, Predicate<AdvancementNode> test) {
 +      Stack<AdvancementVisibilityEvaluator.VisibilityRule> stack = new ObjectArrayList<>();
 +
 +      for(int i = 0; i <= 2; ++i) {
 +         stack.push(AdvancementVisibilityEvaluator.VisibilityRule.NO_CHANGE);
 +      }
-+      return m_264402_(advancement.m_264348_(), stack, test, (p_265639_, p_265580_) -> {});
++
++      return m_264099_(advancement.m_295389_(), stack, test, (node, currentVis) -> {});
 +   }
 +
     @FunctionalInterface
     public interface Output {
-       void m_264135_(Advancement p_265639_, boolean p_265580_);
+       void m_264135_(AdvancementNode p_298555_, boolean p_265580_);

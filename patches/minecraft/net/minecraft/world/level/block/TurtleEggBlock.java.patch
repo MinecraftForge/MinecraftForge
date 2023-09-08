@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/net/minecraft/world/level/block/TurtleEggBlock.java
-@@ -158,7 +_,7 @@
+@@ -160,7 +_,7 @@
           if (!(p_57769_ instanceof LivingEntity)) {
              return false;
           } else {

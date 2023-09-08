@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -129,6 +_,7 @@
+@@ -133,6 +_,7 @@
        this.f_104521_.accept(Component.m_237115_("connect.joining"));
-       this.f_104523_ = p_104547_.m_134774_();
-       this.f_104522_.m_129498_(ConnectionProtocol.PLAY);
+       GameProfile gameprofile = p_104547_.m_134774_();
+       this.f_104522_.m_129512_(new ServerboundLoginAcknowledgedPacket());
 +      net.minecraftforge.network.NetworkHooks.handleClientLoginSuccess(this.f_104522_);
-       this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_243717_, this.f_104523_, this.f_104519_.m_261007_().m_285995_(this.f_260722_, this.f_260612_, this.f_285614_)));
-    }
- 
-@@ -136,7 +_,7 @@
-       if (this.f_104520_ != null && this.f_104520_ instanceof RealmsScreen) {
+       this.f_104522_.m_129505_(new ClientConfigurationPacketListenerImpl(this.f_104519_, this.f_104522_, new CommonListenerCookie(gameprofile, this.f_104519_.m_261007_().m_285995_(this.f_260722_, this.f_260612_, this.f_285614_), ClientRegistryLayer.m_245874_().m_247579_(), FeatureFlags.f_244332_, (String)null, this.f_243717_, this.f_104520_)));
+       this.f_104522_.m_129512_(new ServerboundCustomPayloadPacket(new BrandPayload(ClientBrandRetriever.getClientModName())));
+       this.f_104522_.m_129512_(new ServerboundClientInformationPacket(this.f_104519_.f_91066_.m_294596_()));
+@@ -142,7 +_,7 @@
+       if (this.f_243717_ != null && this.f_243717_.m_295074_()) {
           this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
        } else {
 -         this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
@@ -17,11 +17,11 @@
        }
  
     }
-@@ -157,6 +_,7 @@
+@@ -163,6 +_,7 @@
     }
  
     public void m_7254_(ClientboundCustomQueryPacket p_104545_) {
 +      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
        this.f_104521_.accept(Component.m_237115_("connect.negotiating"));
-       this.f_104522_.m_129512_(new ServerboundCustomQueryPacket(p_104545_.m_134755_(), (FriendlyByteBuf)null));
+       this.f_104522_.m_129512_(new ServerboundCustomQueryAnswerPacket(p_104545_.f_134745_(), (CustomQueryAnswerPayload)null));
     }

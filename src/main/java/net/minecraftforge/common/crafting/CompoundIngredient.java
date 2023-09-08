@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,7 +27,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Ingredient that matches if any of the child ingredients match */
+/** Ingredient that matches if any of the child ingredients match * /
 public class CompoundIngredient extends AbstractIngredient
 {
     private List<Ingredient> children;
@@ -41,7 +41,7 @@ public class CompoundIngredient extends AbstractIngredient
         this.isSimple = children.stream().allMatch(Ingredient::isSimple);
     }
 
-    /** Creates a compound ingredient from the given list of ingredients */
+    /** Creates a compound ingredient from the given list of ingredients * /
     public static Ingredient of(Ingredient... children)
     {
         // if 0 or 1 ingredient, can save effort
@@ -182,3 +182,4 @@ public class CompoundIngredient extends AbstractIngredient
 
     }
 }
+*/

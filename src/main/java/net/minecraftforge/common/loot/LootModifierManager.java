@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.loot;
-
+/*
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +16,6 @@ import java.util.*;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,9 +86,10 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
     /**
      * An immutable collection of the registered loot modifiers in layered order.
-     */
+     * /
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();
     }
 
 }
+*/

@@ -105,6 +105,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.FilteredText;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
@@ -127,9 +128,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifierManager;
-import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -400,27 +398,11 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new VanillaGameEvent(level, vanillaEvent, pos, context));
     }
 
-    private static String getRawText(Component message)
-    {
-        return message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
-    }
-
     @Nullable
-    public static Component onServerChatSubmittedEvent(ServerPlayer player, String plain, Component decorated)
-    {
-        ServerChatEvent event = new ServerChatEvent(player, plain, decorated);
+    public static Component onServerChatSubmittedEvent(ServerPlayer player, Component message) {
+        var plain = message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
+        ServerChatEvent event = new ServerChatEvent(player, plain, message);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
-    }
-
-    @NotNull
-    public static ChatDecorator getServerChatSubmittedDecorator()
-    {
-        return (sender, message) -> CompletableFuture.supplyAsync(() -> {
-            if (sender == null)
-                return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
-
-            return onServerChatSubmittedEvent(sender, getRawText(message), message);
-        });
     }
 
     static final Pattern URL_PATTERN = Pattern.compile(
@@ -738,13 +720,6 @@ public class ForgeHooks
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
     }
 
-    public static boolean onTravelToDimension(Entity entity, ResourceKey<Level> dimension)
-    {
-        EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
-        MinecraftForge.EVENT_BUS.post(event);
-        return !event.isCanceled();
-    }
-
     public static InteractionResult onInteractEntityAt(Player player, Entity entity, HitResult ray, InteractionHand hand)
     {
         Vec3 vec3d = ray.getLocation().subtract(entity.position());
@@ -812,21 +787,18 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
-    /**
-     * @return null if game type should not be changed, desired new GameType otherwise
-     */
-    @Nullable
-    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType)
-    {
-        if (currentGameType != newGameType)
-        {
-            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
-            MinecraftForge.EVENT_BUS.post(evt);
-            return evt.isCanceled() ? null : evt.getNewGameMode();
-        }
-        return newGameType;
+    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType) {
+        if (currentGameType == newGameType)
+            return currentGameType;
+
+        var evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
+        if (MinecraftForge.EVENT_BUS.post(evt))
+            return currentGameType;
+
+        return evt.getNewGameMode();
     }
 
+    /* TODO: GLM
     private static final ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<>();
     private static LootTableContext getLootTableContext()
     {
@@ -918,6 +890,7 @@ public class ForgeHooks
 
         return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
     }
+    */
 
     /**
      * Returns a vanilla fluid type for the given fluid.
@@ -1147,6 +1120,7 @@ public class ForgeHooks
         FurnaceBlockEntity.getFuel().entrySet().forEach(e -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(e.getKey()), e.getValue()));
     }
 
+    // TODO: GLM
     /**
      * All loot table drops should be passed to this function so that mod added effects
      * (e.g. smelting enchantments) can be processed.
@@ -1159,7 +1133,7 @@ public class ForgeHooks
      *
      * @implNote This method will use the {@linkplain LootTableIdCondition#UNKNOWN_LOOT_TABLE
      *           unknown loot table marker} when redirecting.
-     */
+     * /
     @Deprecated
     public static List<ItemStack> modifyLoot(List<ItemStack> list, LootContext context) {
         return modifyLoot(LootTableIdCondition.UNKNOWN_LOOT_TABLE, ObjectArrayList.wrap((ItemStack[]) list.toArray()), context);
@@ -1178,7 +1152,7 @@ public class ForgeHooks
      *
      * @apiNote The given context will be modified by this method to also store the ID of the
      *          loot table being queried.
-     */
+     * /
     public static ObjectArrayList<ItemStack> modifyLoot(ResourceLocation lootTableId, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         context.setQueriedLootTableId(lootTableId); // In case the ID was set via copy constructor, this will be ignored: intended
         LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
@@ -1187,6 +1161,7 @@ public class ForgeHooks
         }
         return generatedLoot;
     }
+    */
 
     public static List<String> getModPacks()
     {
@@ -1417,33 +1392,6 @@ public class ForgeHooks
         throw new IllegalArgumentException("Unknown lifecycle.");
     }
 
-    public static void saveMobEffect(CompoundTag nbt, String key, MobEffect effect)
-    {
-        var registryName = ForgeRegistries.MOB_EFFECTS.getKey(effect);
-        if (registryName != null)
-        {
-            nbt.putString(key, registryName.toString());
-        }
-    }
-
-    @Nullable
-    public static MobEffect loadMobEffect(CompoundTag nbt, String key, @Nullable MobEffect fallback)
-    {
-        var registryName = nbt.getString(key);
-        if (Strings.isNullOrEmpty(registryName))
-        {
-            return fallback;
-        }
-        try
-        {
-            return ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(registryName));
-        }
-        catch (ResourceLocationException e)
-        {
-            return fallback;
-        }
-    }
-
     public static boolean shouldSuppressEnderManAnger(EnderMan enderMan, Player player, ItemStack mask)
     {
         return mask.isEnderMask(player, enderMan) || MinecraftForge.EVENT_BUS.post(new EnderManAngerEvent(enderMan, player));
@@ -1472,40 +1420,6 @@ public class ForgeHooks
     {
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
-    }
-
-    public static Map<PackType, Integer> readTypedPackFormats(JsonObject json)
-    {
-        ImmutableMap.Builder<PackType, Integer> map = ImmutableMap.builder();
-
-        for (PackType packType : PackType.values())
-        {
-            String key = makePackFormatKey(packType);
-            if (json.has(key))
-            {
-                map.put(packType, GsonHelper.getAsInt(json, key));
-            }
-        }
-
-        return map.buildOrThrow();
-    }
-
-    public static void writeTypedPackFormats(JsonObject json, PackMetadataSection section)
-    {
-        int packFormat = section.getPackFormat();
-        for (PackType packType : PackType.values())
-        {
-            int format = section.getPackFormat(packType);
-            if (format != packFormat)
-            {
-                json.addProperty(makePackFormatKey(packType), format);
-            }
-        }
-    }
-
-    private static String makePackFormatKey(PackType packType)
-    {
-        return "forge:" + packType.name().toLowerCase(Locale.ROOT) + "_pack_format";
     }
 
     /**
@@ -1569,7 +1483,7 @@ public class ForgeHooks
      */
     public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
     {
-    	// Check things that vanilla considers to be air - these will cause the air supply to be increased.
+        // Check things that vanilla considers to be air - these will cause the air supply to be increased.
         boolean isAir = entity.getEyeInFluidType().isAir() || entity.level().getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
         // The following effects cause the entity to not drown, but do not cause the air supply to be increased.
         boolean canBreathe = !entity.canDrownInFluidType(entity.getEyeInFluidType()) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player && ((Player) entity).getAbilities().invulnerable);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -293,7 +_,7 @@
+@@ -289,7 +_,7 @@
        } else if (this.m_34773_()) {
           return PiglinArmPose.CROSSBOW_CHARGE;
        } else {
@@ -9,7 +9,7 @@
        }
     }
  
-@@ -335,7 +_,7 @@
+@@ -331,7 +_,7 @@
     }
  
     protected void m_34785_(ItemStack p_34786_) {
@@ -18,7 +18,7 @@
           this.m_8061_(EquipmentSlot.OFFHAND, p_34786_);
           this.m_21508_(EquipmentSlot.OFFHAND);
        } else {
-@@ -345,7 +_,7 @@
+@@ -341,7 +_,7 @@
     }
  
     public boolean m_7243_(ItemStack p_34777_) {

@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
-@@ -68,6 +_,7 @@
+@@ -74,6 +_,7 @@
+    static final Logger f_101645_ = LogUtils.getLogger();
     static final DateFormat f_101646_ = new SimpleDateFormat();
     private static final ResourceLocation f_101647_ = new ResourceLocation("textures/misc/unknown_server.png");
-    static final ResourceLocation f_101648_ = new ResourceLocation("textures/gui/world_selection.png");
 +   private static final ResourceLocation FORGE_EXPERIMENTAL_WARNING_ICON = new ResourceLocation("forge","textures/gui/experimental_warning.png");
     static final Component f_101649_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion1").m_130940_(ChatFormatting.RED);
     static final Component f_101650_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion2").m_130940_(ChatFormatting.RED);
     static final Component f_101651_ = Component.m_237115_("selectWorld.tooltip.snapshot1").m_130940_(ChatFormatting.GOLD);
-@@ -361,6 +_,7 @@
+@@ -362,6 +_,7 @@
           RenderSystem.enableBlend();
           p_281612_.m_280163_(this.f_101698_.m_289196_(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
           RenderSystem.disableBlend();
@@ -16,7 +16,7 @@
           if (this.f_101693_.f_91066_.m_231828_().m_231551_() || p_283396_) {
              p_281612_.m_280509_(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
              int j = p_283204_ - p_282820_;
-@@ -604,6 +_,19 @@
+@@ -608,6 +_,19 @@
  
        public boolean m_214209_() {
           return !this.f_101695_.m_164916_();

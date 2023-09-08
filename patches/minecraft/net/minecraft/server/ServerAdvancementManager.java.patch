@@ -1,8 +1,8 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -26,10 +_,18 @@
-    private static final Gson f_136022_ = (new GsonBuilder()).create();
-    private AdvancementList f_136023_ = new AdvancementList();
+@@ -29,10 +_,18 @@
+    private Map<ResourceLocation, AdvancementHolder> f_136023_ = Map.of();
+    private AdvancementTree f_290842_ = new AdvancementTree();
     private final LootDataManager f_278379_;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
@@ -19,16 +19,16 @@
     }
  
     protected void m_5787_(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
-@@ -37,7 +_,11 @@
-       p_136034_.forEach((p_278903_, p_278904_) -> {
+@@ -40,7 +_,11 @@
+       p_136034_.forEach((p_296449_, p_296450_) -> {
           try {
-             JsonObject jsonobject = GsonHelper.m_13918_(p_278904_, "advancement");
--            Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_278903_, this.f_278379_));
-+            Advancement.Builder advancement$builder = Advancement.Builder.fromJson(jsonobject, new DeserializationContext(p_278903_, this.f_278379_), this.context);
-+            if (advancement$builder == null) {
-+                f_136021_.debug("Skipping loading advancement {} as its conditions were not met", p_278903_);
+             JsonObject jsonobject = GsonHelper.m_13918_(p_296450_, "advancement");
+-            Advancement advancement = Advancement.m_294730_(jsonobject, new DeserializationContext(p_296449_, this.f_278379_));
++            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.f_278379_), this.context);
++            if (advancement == null) {
++                f_136021_.debug("Skipping loading advancement {} as its conditions were not met", p_296449_);
 +                return;
 +            }
-             map.put(p_278903_, advancement$builder);
+             builder.put(p_296449_, new AdvancementHolder(p_296449_, advancement));
           } catch (Exception exception) {
-             f_136021_.error("Parsing error loading custom advancement {}: {}", p_278903_, exception.getMessage());
+             f_136021_.error("Parsing error loading custom advancement {}: {}", p_296449_, exception.getMessage());

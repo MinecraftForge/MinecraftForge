@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import java.util.stream.Stream;
 
 import com.google.gson.JsonElement;
@@ -16,7 +16,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-/** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
+/** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. * /
 public class StrictNBTIngredient extends AbstractIngredient
 {
     private final ItemStack stack;
@@ -26,7 +26,7 @@ public class StrictNBTIngredient extends AbstractIngredient
         this.stack = stack;
     }
 
-    /** Creates a new ingredient matching the given stack and tag */
+    /** Creates a new ingredient matching the given stack and tag * /
     public static StrictNBTIngredient of(ItemStack stack)
     {
         return new StrictNBTIngredient(stack);
@@ -85,3 +85,4 @@ public class StrictNBTIngredient extends AbstractIngredient
         }
     }
 }
+*/

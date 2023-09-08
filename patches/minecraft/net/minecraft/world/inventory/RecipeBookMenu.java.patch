@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/RecipeBookMenu.java
 +++ b/net/minecraft/world/inventory/RecipeBookMenu.java
-@@ -29,6 +_,10 @@
+@@ -30,6 +_,10 @@
  
     public abstract int m_6653_();
  

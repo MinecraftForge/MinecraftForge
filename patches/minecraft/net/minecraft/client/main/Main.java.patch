@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -147,8 +_,8 @@
+@@ -150,8 +_,8 @@
        }
  
        CrashReport.m_127529_();
@@ -9,4 +9,4 @@
 +      net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(()->Bootstrap.m_135870_(), net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
        Bootstrap.m_135889_();
        Util.m_137584_();
-       String s13 = optionspec25.value(optionset);
+       String s12 = optionspec25.value(optionset);

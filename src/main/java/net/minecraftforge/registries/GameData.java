@@ -30,6 +30,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -38,7 +39,10 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
@@ -46,7 +50,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.StructureModifier;
@@ -103,12 +106,12 @@ public class GameData
         makeRegistry(Keys.BLOCKS, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").intrusiveHolderCallback(Block::builtInRegistryHolder).create();
         makeRegistry(Keys.FLUIDS, "empty").intrusiveHolderCallback(Fluid::builtInRegistryHolder).create();
         makeRegistry(Keys.ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").intrusiveHolderCallback(Item::builtInRegistryHolder).create();
-        makeRegistry(Keys.MOB_EFFECTS).legacyName("potions").create();
+        makeRegistry(Keys.MOB_EFFECTS).legacyName("potions").intrusiveHolderCallback(MobEffect::builtInRegistryHolder).create();
         makeRegistry(Keys.SOUND_EVENTS).legacyName("soundevents").create();
-        makeRegistry(Keys.POTIONS, "empty").legacyName("potiontypes").create();
-        makeRegistry(Keys.ENCHANTMENTS).legacyName("enchantments").create();
+        makeRegistry(Keys.POTIONS, "empty").legacyName("potiontypes").intrusiveHolderCallback(Potion::builtInRegistryHolder).create();
+        makeRegistry(Keys.ENCHANTMENTS).legacyName("enchantments").intrusiveHolderCallback(Enchantment::builtInRegistryHolder).create();
         makeRegistry(Keys.ENTITY_TYPES, "pig").legacyName("entities").intrusiveHolderCallback(EntityType::builtInRegistryHolder).create();
-        makeRegistry(Keys.BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").create();
+        makeRegistry(Keys.BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").intrusiveHolderCallback(BlockEntityType::builtInRegistryHolder).create();
         makeRegistry(Keys.PARTICLE_TYPES).disableSaving().create();
         makeRegistry(Keys.MENU_TYPES).disableSaving().create();
         makeRegistry(Keys.PAINTING_VARIANTS, "kebab").create();
@@ -143,10 +146,12 @@ public class GameData
         return makeRegistry(Keys.ENTITY_DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
+    /*
     static RegistryBuilder<Codec<? extends IGlobalLootModifier>> getGLMSerializersRegistryBuilder()
     {
         return makeRegistry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
+    */
 
     static RegistryBuilder<Codec<? extends BiomeModifier>> getBiomeModifierSerializersRegistryBuilder()
     {

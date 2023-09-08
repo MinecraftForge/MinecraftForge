@@ -1,11 +1,3 @@
-net.minecraftforge.fml.loading.targets.FMLClientLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLClientDevLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLClientUserdevLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLServerLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLServerDevLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLServerUserdevLaunchHandler
-net.minecraftforge.fml.loading.targets.FMLDataUserdevLaunchHandler
-
 net.minecraftforge.fml.loading.targets.ForgeClientLaunchHandler
 net.minecraftforge.fml.loading.targets.ForgeClientDevLaunchHandler
 net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler

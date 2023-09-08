@@ -13,7 +13,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
-import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
@@ -341,7 +340,7 @@ public class HandshakeHandler
     public boolean tickServer()
     {
         if (!negotiationStarted) {
-            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).gameProfile;
+            GameProfile profile = ((ServerLoginPacketListenerImpl) manager.getPacketListener()).getAuthenticatedProfile();
             PlayerNegotiationEvent event = new PlayerNegotiationEvent(manager, profile, pendingFutures);
             MinecraftForge.EVENT_BUS.post(event);
             negotiationStarted = true;

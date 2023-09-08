@@ -75,7 +75,7 @@
        }
     }
  
-@@ -907,12 +_,12 @@
+@@ -908,12 +_,12 @@
  
           Window window = this.f_109059_.m_91268_();
           RenderSystem.clear(256, Minecraft.f_91002_);
@@ -90,16 +90,16 @@
           RenderSystem.applyModelViewMatrix();
           Lighting.m_84931_();
           GuiGraphics guigraphics = new GuiGraphics(this.f_109059_, this.f_109064_.m_110104_());
-@@ -948,7 +_,7 @@
+@@ -949,7 +_,7 @@
              }
-          } else if (this.f_109059_.f_91080_ != null) {
+          } else if (flag && this.f_109059_.f_91080_ != null) {
              try {
 -               this.f_109059_.f_91080_.m_280264_(guigraphics, i, j, this.f_109059_.m_91297_());
 +               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.f_109059_.f_91080_, guigraphics, i, j, this.f_109059_.m_91297_());
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.m_127521_(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.m_127514_("Screen render details");
-@@ -1099,12 +_,19 @@
+@@ -1103,12 +_,19 @@
        Matrix4f matrix4f = posestack.m_85850_().m_252922_();
        this.m_252879_(matrix4f);
        camera.m_90575_(this.f_109059_.f_91073_, (Entity)(this.f_109059_.m_91288_() == null ? this.f_109059_.f_91074_ : this.f_109059_.m_91288_()), !this.f_109059_.f_91066_.m_92176_().m_90612_(), this.f_109059_.f_91066_.m_92176_().m_90613_(), p_109090_);
@@ -115,7 +115,7 @@
        this.f_109059_.f_91060_.m_253210_(p_109092_, camera.m_90583_(), this.m_253088_(Math.max(d0, (double)this.f_109059_.f_91066_.m_231837_().m_231551_().intValue())));
        this.f_109059_.f_91060_.m_109599_(p_109092_, p_109090_, p_109091_, flag, camera, this, this.f_109074_, matrix4f);
 +      this.f_109059_.m_91307_().m_6182_("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderStage(net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL, this.f_109059_.f_91060_, posestack, matrix4f, this.f_109059_.f_91060_.getTicks(), camera, this.f_109059_.f_91060_.getFrustum());
++      net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL.dispatch(this.f_109059_.f_91060_, posestack, matrix4f, this.f_109059_.f_91060_.getTicks(), camera, this.f_109059_.f_91060_.getFrustum());
        this.f_109059_.m_91307_().m_6182_("hand");
        if (this.f_109070_) {
           RenderSystem.clear(256, Minecraft.f_91002_);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -205,7 +_,7 @@
+@@ -207,7 +_,7 @@
     }
  
     public void m_7379_() {
@@ -9,7 +9,7 @@
     }
  
     protected <T extends GuiEventListener & Renderable & NarratableEntry> T m_142416_(T p_169406_) {
-@@ -317,7 +_,10 @@
+@@ -319,7 +_,10 @@
        this.f_96543_ = p_96608_;
        this.f_96544_ = p_96609_;
        if (!this.f_267454_) {
@@ -20,7 +20,7 @@
        } else {
           this.m_267719_();
        }
-@@ -330,7 +_,10 @@
+@@ -332,7 +_,10 @@
     protected void m_232761_() {
        this.m_169413_();
        this.m_264131_();
@@ -31,15 +31,15 @@
     }
  
     public List<? extends GuiEventListener> m_6702_() {
-@@ -352,6 +_,7 @@
-    public void m_280273_(GuiGraphics p_283688_) {
+@@ -354,6 +_,7 @@
+    public void m_280273_(GuiGraphics p_283688_, int p_299421_, int p_298679_, float p_297268_) {
        if (this.f_96541_.f_91073_ != null) {
-          p_283688_.m_280024_(0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
+          this.m_293900_(p_283688_);
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundRendered(this, p_283688_));
        } else {
           this.m_280039_(p_283688_);
        }
-@@ -363,6 +_,7 @@
+@@ -369,6 +_,7 @@
        int i = 32;
        p_282281_.m_280398_(f_279548_, 0, 0, 0, 0.0F, 0.0F, this.f_96543_, this.f_96544_, 32, 32);
        p_282281_.m_280246_(1.0F, 1.0F, 1.0F, 1.0F);
@@ -47,7 +47,7 @@
     }
  
     public boolean m_7043_() {
-@@ -456,6 +_,10 @@
+@@ -462,6 +_,10 @@
     public void m_7400_(List<Path> p_96591_) {
     }
  
@@ -58,7 +58,7 @@
     private void m_169380_(long p_169381_, boolean p_169382_) {
        this.f_169377_ = Util.m_137550_() + p_169381_;
        if (p_169382_) {
-@@ -622,5 +_,13 @@
+@@ -628,5 +_,13 @@
           this.f_169421_ = p_169425_;
           this.f_169422_ = p_169426_;
        }

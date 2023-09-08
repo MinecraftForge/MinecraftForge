@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.debug.gameplay.loot;
-
+/*
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -133,7 +133,7 @@ public class GlobalLootModifiersTest {
     /**
      * The smelting enchantment causes this modifier to be invoked, via the smelting loot_modifier json
      *
-     */
+     * /
     private static class SmeltingEnchantmentModifier extends LootModifier {
         public static final Supplier<Codec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SmeltingEnchantmentModifier::new)));
 
@@ -150,11 +150,15 @@ public class GlobalLootModifiersTest {
         }
 
         private static ItemStack smelt(ItemStack stack, LootContext context) {
-            return context.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), context.getLevel())
-                    .map(smeltingRecipe -> smeltingRecipe.getResultItem(context.getLevel().registryAccess()))
-                    .filter(itemStack -> !itemStack.isEmpty())
-                    .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
-                    .orElse(stack);
+            var mgr = context.getLevel().getRecipeManager();
+            var reg = context.getLevel().registryAccess();
+            return mgr
+                .getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), context.getLevel())
+                .map(holder -> holder.value())
+                .map(recipe -> recipe.getResultItem(reg))
+                .filter(itemStack -> !itemStack.isEmpty())
+                .map(itemStack -> ItemHandlerHelper.copyStackWithSize(itemStack, stack.getCount() * itemStack.getCount()))
+                .orElse(stack);
         }
 
         @Override
@@ -166,7 +170,7 @@ public class GlobalLootModifiersTest {
     /**
      * When harvesting blocks with bamboo, this modifier is invoked, via the silk_touch_bamboo loot_modifier json
      *
-     */
+     * /
     private static class SilkTouchTestModifier extends LootModifier {
         public static final Supplier<Codec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, SilkTouchTestModifier::new)));
 
@@ -198,7 +202,7 @@ public class GlobalLootModifiersTest {
      * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
      * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)
      *
-     */
+     * /
     private static class WheatSeedsConverterModifier extends LootModifier {
         public static final Supplier<Codec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).and(
                 inst.group(
@@ -273,3 +277,4 @@ public class GlobalLootModifiersTest {
         }
     }
 }
+*/

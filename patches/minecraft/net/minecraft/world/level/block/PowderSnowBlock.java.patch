@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/PowderSnowBlock.java
 +++ b/net/minecraft/world/level/block/PowderSnowBlock.java
-@@ -107,7 +_,7 @@
+@@ -108,7 +_,7 @@
        if (p_154256_.m_6095_().m_204039_(EntityTypeTags.f_144291_)) {
           return true;
        } else {

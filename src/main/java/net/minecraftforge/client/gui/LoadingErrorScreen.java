@@ -80,7 +80,7 @@ public class LoadingErrorScreen extends ErrorScreen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
     {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         this.entryList.render(guiGraphics, mouseX, mouseY, partialTick);
         drawMultiLineCenteredString(guiGraphics, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
         this.renderables.forEach(button -> button.render(guiGraphics, mouseX, mouseY, partialTick));

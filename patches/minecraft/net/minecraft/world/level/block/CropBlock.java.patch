@@ -28,7 +28,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -136,7 +_,7 @@
+@@ -140,7 +_,7 @@
     }
  
     public void m_7892_(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {

@@ -114,7 +114,7 @@ public class GravityAttributeTest
                     else if (!inPlains && grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Removed low gravity from Entity: {}", liv);
-                        grav.removeModifier(REDUCED_GRAVITY);
+                        grav.removeModifier(REDUCED_GRAVITY.getId());
                     }
                 }
             }

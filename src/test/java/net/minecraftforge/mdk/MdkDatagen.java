@@ -14,9 +14,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Mod(MdkDatagen.MOD_ID)
 public class MdkDatagen
@@ -33,11 +31,11 @@ public class MdkDatagen
         var gen = event.getGenerator();
         var packOutput = gen.getPackOutput();
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
-                .add(PackMetadataSection.TYPE, new PackMetadataSection(
-                        Component.literal("${mod_id} resources"),
-                        DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
-                        Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
-                ))
+            .add(PackMetadataSection.TYPE, new PackMetadataSection(
+                Component.literal("${mod_id} resources"),
+                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                Optional.empty()
+            ))
         );
     }
 }

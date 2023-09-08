@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
-@@ -87,9 +_,10 @@
+@@ -93,9 +_,10 @@
           ++this.f_34649_;
        } else {
           this.f_34649_ = 0;
@@ -12,7 +12,7 @@
           this.m_7580_();
           this.m_8063_((ServerLevel)this.m_9236_());
        }
-@@ -104,6 +_,7 @@
+@@ -110,6 +_,7 @@
        ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);
        if (zombifiedpiglin != null) {
           zombifiedpiglin.m_7292_(new MobEffectInstance(MobEffects.f_19604_, 200, 0));

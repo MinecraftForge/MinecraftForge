@@ -91,7 +91,7 @@
     }
  
     public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
--      if (!p_107357_.m_60795_() && p_107357_.m_245147_()) {
+-      if (!p_107357_.m_60795_() && p_107357_.m_295777_()) {
 +      if (!p_107357_.m_60795_() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.f_107287_, p_107356_, this)) {
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;

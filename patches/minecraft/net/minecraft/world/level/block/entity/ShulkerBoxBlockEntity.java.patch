@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -211,7 +_,7 @@
+@@ -217,7 +_,7 @@
     }
  
     public boolean m_7155_(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
@@ -9,7 +9,7 @@
     }
  
     public boolean m_7157_(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
-@@ -233,6 +_,11 @@
+@@ -239,6 +_,11 @@
  
     public boolean m_59702_() {
        return this.f_59647_ == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;

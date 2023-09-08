@@ -16,14 +16,3 @@
     }
  
     public static BlockFaceUV m_111581_(BlockFaceUV p_111582_, Direction p_111583_, Transformation p_111584_, ResourceLocation p_111585_) {
-@@ -129,8 +_,8 @@
-       p_111615_[i + 1] = Float.floatToRawIntBits(p_254291_.y());
-       p_111615_[i + 2] = Float.floatToRawIntBits(p_254291_.z());
-       p_111615_[i + 3] = -1;
--      p_111615_[i + 4] = Float.floatToRawIntBits(p_111618_.m_118367_((double)p_111619_.m_111392_(p_111616_)));
--      p_111615_[i + 4 + 1] = Float.floatToRawIntBits(p_111618_.m_118393_((double)p_111619_.m_111396_(p_111616_)));
-+      p_111615_[i + 4] = Float.floatToRawIntBits(p_111618_.m_118367_((double)p_111619_.m_111392_(p_111616_) * .999 + p_111619_.m_111392_((p_111616_ + 2) % 4) * .001));
-+      p_111615_[i + 4 + 1] = Float.floatToRawIntBits(p_111618_.m_118393_((double)p_111619_.m_111396_(p_111616_) * .999 + p_111619_.m_111396_((p_111616_ + 2) % 4) * .001));
-    }
- 
-    private void m_252985_(Vector3f p_254412_, @Nullable BlockElementRotation p_254150_) {

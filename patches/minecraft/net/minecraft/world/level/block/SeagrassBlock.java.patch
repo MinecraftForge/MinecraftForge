@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SeagrassBlock.java
 +++ b/net/minecraft/world/level/block/SeagrassBlock.java
-@@ -20,7 +_,7 @@
+@@ -21,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  

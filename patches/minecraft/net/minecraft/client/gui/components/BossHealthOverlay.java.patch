@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/BossHealthOverlay.java
 +++ b/net/minecraft/client/gui/components/BossHealthOverlay.java
-@@ -33,13 +_,16 @@
+@@ -36,13 +_,16 @@
  
           for(LerpingBossEvent lerpingbossevent : this.f_93699_.values()) {
              int k = i / 2 - 91;

@@ -22,6 +22,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
@@ -52,6 +53,7 @@ import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.Pack.Info;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -159,9 +161,10 @@ public class ServerLifecycleHooks
             return false;
         }
 
-        if (packet.getIntention() == ConnectionProtocol.LOGIN) {
-            final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
-            final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
+        if (packet.nextProtocol() == ConnectionProtocol.LOGIN) {
+            var fmlVersion = NetworkHooks.getFMLVersion(packet.hostName());
+            final ConnectionType connectionType = ConnectionType.forVersionFlag(fmlVersion);
+            final int versionNumber = connectionType.getFMLVersionNumber(fmlVersion);
 
             if (connectionType == ConnectionType.MODDED && versionNumber != NetworkConstants.FMLNETVERSION) {
                 rejectConnection(manager, connectionType, "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version " + versionNumber + " this server is net version " + NetworkConstants.FMLNETVERSION);
@@ -174,7 +177,7 @@ public class ServerLifecycleHooks
             }
         }
 
-        if (packet.getIntention() == ConnectionProtocol.STATUS) return true;
+        if (packet.nextProtocol() == ConnectionProtocol.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;
@@ -182,11 +185,8 @@ public class ServerLifecycleHooks
     }
 
     private static void rejectConnection(final Connection manager, ConnectionType type, String message) {
-        manager.setProtocol(ConnectionProtocol.LOGIN);
-        String ip = "local";
-        if (manager.getRemoteAddress() != null)
-           ip = manager.getRemoteAddress().toString();
-        LOGGER.info(SERVERHOOKS, "[{}] Disconnecting {} connection attempt: {}", ip, type, message);
+        //manager.setProtocol(ConnectionProtocol.LOGIN); Pretty sure things auto swap in ProtocolSwapHandler
+        LOGGER.info(SERVERHOOKS, "[{}] Disconnecting {} connection attempt: {}", manager.getLoggableAddress(true), type, message); // TODO: Respect logIP setting
         MutableComponent text = Component.literal(message);
         manager.send(new ClientboundLoginDisconnectPacket(text));
         manager.disconnect(text);
@@ -208,7 +208,21 @@ public class ServerLifecycleHooks
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, id -> e.getValue(), PackType.SERVER_DATA, Pack.Position.BOTTOM, PackSource.DEFAULT);
+
+            var supplier = new Pack.ResourcesSupplier() {
+                @Override
+                public PackResources openPrimary(String path) {
+                    return e.getValue();
+                }
+
+                @Override
+                public PackResources openFull(String path, Info info) {
+                    return e.getValue(); // TODO: composite
+                }
+
+            };
+
+            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, supplier, PackType.SERVER_DATA, Pack.Position.BOTTOM, PackSource.DEFAULT);
             if (modPack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));

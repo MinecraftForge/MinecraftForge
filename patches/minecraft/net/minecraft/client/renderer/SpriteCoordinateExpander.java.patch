@@ -16,8 +16,8 @@
     }
  
     public VertexConsumer m_7421_(float p_110805_, float p_110806_) {
--      return this.f_110795_.m_7421_(this.f_110796_.m_118367_((double)(p_110805_ * 16.0F)), this.f_110796_.m_118393_((double)(p_110806_ * 16.0F)));
-+      this.f_110795_.m_7421_(this.f_110796_.m_118367_((double)(p_110805_ * 16.0F)), this.f_110796_.m_118393_((double)(p_110806_ * 16.0F)));
+-      return this.f_110795_.m_7421_(this.f_110796_.m_118367_(p_110805_), this.f_110796_.m_118393_(p_110806_));
++      this.f_110795_.m_7421_(this.f_110796_.m_118367_(p_110805_), this.f_110796_.m_118393_(p_110806_));
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  

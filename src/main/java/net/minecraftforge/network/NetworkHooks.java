@@ -41,35 +41,41 @@ import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class NetworkHooks
-{
+@ApiStatus.Internal
+public class NetworkHooks {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static String getFMLVersion(final String ip)
-    {
-        return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NetworkConstants.NETVERSION) ? NetworkConstants.NETVERSION : ip.split("\0")[1] : NetworkConstants.NOVERSION;
+    public static String getFMLVersion(final String ip) {
+        int idx = ip.indexOf('\0');
+        if (idx == -1)
+            return NetworkConstants.NOVERSION;
+
+        for (var pt : ip.split("\0")) {
+            if (pt.startsWith("FML"))
+                return pt;
+        }
+
+        return NetworkConstants.NOVERSION;
     }
 
-    public static ConnectionType getConnectionType(final Supplier<Connection> connection)
-    {
+    public static ConnectionType getConnectionType(final Supplier<Connection> connection) {
         return getConnectionType(connection.get().channel());
     }
 
-    public static ConnectionType getConnectionType(ChannelHandlerContext context)
-    {
+    public static ConnectionType getConnectionType(ChannelHandlerContext context) {
         return getConnectionType(context.channel());
     }
 
-    private static ConnectionType getConnectionType(Channel channel)
-    {
+    private static ConnectionType getConnectionType(Channel channel) {
         return ConnectionType.forVersionFlag(channel.attr(NetworkConstants.FML_NETVERSION).get());
     }
 
     @SuppressWarnings("unchecked")
-    public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity)
-    {
+    public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity entity) {
         // ClientboundCustomPayloadPacket is an instance of Packet<ClientGamePacketListener>
         return (Packet<ClientGamePacketListener>) NetworkConstants.playChannel.toVanillaPacket(new PlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
     }
@@ -94,14 +100,13 @@ public class NetworkHooks
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }
-    public static void registerServerLoginChannel(Connection manager, ClientIntentionPacket packet)
-    {
-        manager.channel().attr(NetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());
+
+    public static void registerServerLoginChannel(Connection manager, ClientIntentionPacket packet) {
+        manager.channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkHooks.getFMLVersion(packet.hostName()));
         HandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
-    public synchronized static void registerClientLoginChannel(Connection manager)
-    {
+    public synchronized static void registerClientLoginChannel(Connection manager) {
         manager.channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NOVERSION);
         HandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }
@@ -115,17 +120,7 @@ public class NetworkHooks
         MCRegisterPacketHandler.INSTANCE.sendRegistry(manager, NetworkDirection.valueOf(direction));
     }
 
-    //TODO Dimensions..
-/*    public synchronized static void sendDimensionDataPacket(NetworkManager manager, ServerPlayerEntity player) {
-        // don't send vanilla dims
-        if (player.dimension.isVanilla()) return;
-        // don't sent to local - we already have a valid dim registry locally
-        if (manager.isLocalChannel()) return;
-        FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
-    }*/
-
-    public static boolean isVanillaConnection(Connection manager)
-    {
+    public static boolean isVanillaConnection(Connection manager) {
         if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
         return getConnectionType(() -> manager) == ConnectionType.VANILLA;
     }
@@ -139,9 +134,8 @@ public class NetworkHooks
         }
     }
 
-    public static boolean tickNegotiation(ServerLoginPacketListenerImpl netHandlerLoginServer, Connection networkManager, ServerPlayer player)
-    {
-        return HandshakeHandler.tickLogin(networkManager);
+    public static boolean tickNegotiation(Connection manager) {
+        return HandshakeHandler.tickLogin(manager);
     }
 
     /**
@@ -153,8 +147,7 @@ public class NetworkHooks
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      */
-    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier)
-    {
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier) {
         openScreen(player, containerSupplier, buf -> {});
     }
 
@@ -168,10 +161,10 @@ public class NetworkHooks
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param pos A block pos, which will be encoded into the auxillary data for this request
      */
-    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, BlockPos pos)
-    {
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, BlockPos pos) {
         openScreen(player, containerSupplier, buf -> buf.writeBlockPos(pos));
     }
+
     /**
      * Request to open a GUI on the client, from the server
      *
@@ -184,8 +177,7 @@ public class NetworkHooks
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
-    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter)
-    {
+    public static void openScreen(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter) {
         if (player.level().isClientSide) return;
         player.doCloseContainer();
         player.nextContainerCounter();
@@ -206,7 +198,7 @@ public class NetworkHooks
             return;
         MenuType<?> type = c.getType();
         PlayMessages.OpenContainer msg = new PlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
-        NetworkConstants.playChannel.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+        NetworkConstants.playChannel.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
@@ -217,8 +209,7 @@ public class NetworkHooks
      * Updates the current ConnectionData instance with new mod or channel data if the old instance did not have either of these yet,
      * or creates a new ConnectionData instance with the new data if the current ConnectionData instance doesn't exist yet.
      */
-    static void appendConnectionData(Connection mgr, Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
-    {
+    static void appendConnectionData(Connection mgr, Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels) {
         ConnectionData oldData = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
 
         oldData = oldData != null ? new ConnectionData(oldData.getModData().isEmpty() ? modData : oldData.getModData(), oldData.getChannels().isEmpty() ? channels : oldData.getChannels()) : new ConnectionData(modData, channels);
@@ -226,20 +217,17 @@ public class NetworkHooks
     }
 
     @Nullable
-    public static ConnectionData getConnectionData(Connection mgr)
-    {
+    public static ConnectionData getConnectionData(Connection mgr) {
         return mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
     }
 
     @Nullable
-    public static ModMismatchData getModMismatchData(Connection mgr)
-    {
+    public static ModMismatchData getModMismatchData(Connection mgr) {
         return mgr.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).get();
     }
 
     @Nullable
-    public static MCRegisterPacketHandler.ChannelList getChannelList(Connection mgr)
-    {
+    public static MCRegisterPacketHandler.ChannelList getChannelList(Connection mgr) {
         return mgr.channel().attr(NetworkConstants.FML_MC_REGISTRY).get();
     }
 }

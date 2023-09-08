@@ -85,7 +85,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
             {
                 if (action.execute())
                 {
-                    ItemStack itemStack = bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos));
+                    ItemStack itemStack = bucketPickupHandler.pickupBlock(null, world, blockPos, world.getBlockState(blockPos));
                     if (itemStack != ItemStack.EMPTY && itemStack.getItem() instanceof BucketItem bucket)
                     {
                         FluidStack extracted = new FluidStack(bucket.getFluid(), FluidType.BUCKET_VOLUME);
@@ -126,7 +126,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                 {
                     return new FluidStack(fluidState.getType(), FluidType.BUCKET_VOLUME);
                 }
-                ItemStack itemStack = bucketPickupHandler.pickupBlock(world, blockPos, world.getBlockState(blockPos));
+                ItemStack itemStack = bucketPickupHandler.pickupBlock(null, world, blockPos, world.getBlockState(blockPos));
                 if (itemStack != ItemStack.EMPTY && itemStack.getItem() instanceof BucketItem bucket)
                 {
                     return new FluidStack(bucket.getFluid(), FluidType.BUCKET_VOLUME);

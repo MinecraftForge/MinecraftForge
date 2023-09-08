@@ -23,8 +23,8 @@
 +      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.f_46012_, this, list, f2);
        Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
  
-       for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -245,7 +_,7 @@
+       for(Entity entity : list) {
+@@ -244,7 +_,7 @@
              if (!blockstate.m_60795_()) {
                 BlockPos blockpos1 = blockpos.m_7949_();
                 this.f_46012_.m_46473_().m_6180_("explosion_blocks");
@@ -33,7 +33,7 @@
                    Level $$9 = this.f_46012_;
                    if ($$9 instanceof ServerLevel) {
                       ServerLevel serverlevel = (ServerLevel)$$9;
-@@ -262,8 +_,7 @@
+@@ -261,8 +_,7 @@
                    }
                 }
  
@@ -43,7 +43,7 @@
                 this.f_46012_.m_46473_().m_7238_();
              }
           }
-@@ -354,6 +_,15 @@
+@@ -353,6 +_,15 @@
  
     public List<BlockPos> m_46081_() {
        return this.f_46020_;

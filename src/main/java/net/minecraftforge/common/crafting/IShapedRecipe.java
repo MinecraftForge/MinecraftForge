@@ -13,8 +13,7 @@ import net.minecraft.world.item.crafting.Recipe;
  * book and auto crafting picks the correct shape.
  * Note: These methods can't be named 'getHeight' or 'getWidth' due to obfusication issues.
  */
-public interface IShapedRecipe<T extends Container> extends Recipe<T>
-{
+public interface IShapedRecipe<T extends Container> extends Recipe<T> {
     int getRecipeWidth();
     int getRecipeHeight();
 }

@@ -16,13 +16,11 @@ import java.util.function.Consumer;
 /**
  * Fired on {@link PackRepository} creation to allow mods to add new pack finders.
  */
-public class AddPackFindersEvent extends Event implements IModBusEvent
-{
+public class AddPackFindersEvent extends Event implements IModBusEvent {
     private final PackType packType;
     private final Consumer<RepositorySource> sources;
 
-    public AddPackFindersEvent(PackType packType, Consumer<RepositorySource> sources)
-    {
+    public AddPackFindersEvent(PackType packType, Consumer<RepositorySource> sources) {
         this.packType = packType;
         this.sources = sources;
     }
@@ -31,16 +29,14 @@ public class AddPackFindersEvent extends Event implements IModBusEvent
      * Adds a new source to the list of pack finders.
      * @param source the pack finder
      */
-    public void addRepositorySource(RepositorySource source)
-    {
+    public void addRepositorySource(RepositorySource source) {
         sources.accept(source);
     }
 
     /**
      * @return the {@link PackType} of the pack repository being constructed.
      */
-    public PackType getPackType()
-    {
+    public PackType getPackType() {
         return packType;
     }
 }

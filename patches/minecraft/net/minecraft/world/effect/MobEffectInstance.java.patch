@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/effect/MobEffectInstance.java
 +++ b/net/minecraft/world/effect/MobEffectInstance.java
-@@ -15,7 +_,7 @@
+@@ -17,7 +_,7 @@
  import net.minecraft.world.entity.LivingEntity;
  import org.slf4j.Logger;
  
@@ -8,8 +8,8 @@
 +public class MobEffectInstance implements Comparable<MobEffectInstance>, net.minecraftforge.common.extensions.IForgeMobEffectInstance {
     private static final Logger f_19501_ = LogUtils.getLogger();
     public static final int f_267388_ = -1;
-    private final MobEffect f_19502_;
-@@ -75,6 +_,7 @@
+    private static final String f_290519_ = "id";
+@@ -85,6 +_,7 @@
        this.f_19506_ = p_19549_.f_19506_;
        this.f_19508_ = p_19549_.f_19508_;
        this.f_19509_ = p_19549_.f_19509_;
@@ -17,7 +17,7 @@
     }
  
     public boolean m_19558_(MobEffectInstance p_19559_) {
-@@ -140,7 +_,7 @@
+@@ -149,7 +_,7 @@
     }
  
     public MobEffect m_19544_() {
@@ -26,34 +26,15 @@
     }
  
     public int m_19557_() {
-@@ -252,6 +_,7 @@
- 
-    public CompoundTag m_19555_(CompoundTag p_19556_) {
-       p_19556_.m_128405_("Id", MobEffect.m_19459_(this.m_19544_()));
-+      net.minecraftforge.common.ForgeHooks.saveMobEffect(p_19556_, "forge:id", this.m_19544_());
-       this.m_19567_(p_19556_);
-       return p_19556_;
-    }
-@@ -267,6 +_,7 @@
+@@ -274,6 +_,7 @@
           this.f_19510_.m_19555_(compoundtag);
-          p_19568_.m_128365_("HiddenEffect", compoundtag);
+          p_19568_.m_128365_("hidden_effect", compoundtag);
        }
 +      writeCurativeItems(p_19568_);
  
        this.f_216885_.ifPresent((p_216903_) -> {
           MobEffectInstance.FactorData.f_216907_.encodeStart(NbtOps.f_128958_, p_216903_).resultOrPartial(f_19501_::error).ifPresent((p_216906_) -> {
-@@ -277,8 +_,9 @@
- 
-    @Nullable
-    public static MobEffectInstance m_19560_(CompoundTag p_19561_) {
--      int i = p_19561_.m_128451_("Id");
-+      int i = p_19561_.m_128445_("Id") & 0xFF;
-       MobEffect mobeffect = MobEffect.m_19453_(i);
-+      mobeffect = net.minecraftforge.common.ForgeHooks.loadMobEffect(p_19561_, "forge:id", mobeffect);
-       return mobeffect == null ? null : m_19545_(mobeffect, p_19561_);
-    }
- 
-@@ -308,12 +_,38 @@
+@@ -315,12 +_,38 @@
           optional = Optional.empty();
        }
  
@@ -64,7 +45,7 @@
     public int compareTo(MobEffectInstance p_19566_) {
        int i = 32147;
 -      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compareFalseFirst(this.m_19571_(), p_19566_.m_19571_()).compareFalseFirst(this.m_267577_(), p_19566_.m_267577_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().m_19484_(), p_19566_.m_19544_().m_19484_()).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().m_19484_(), p_19566_.m_19544_().m_19484_()).result();
-+      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result();
++      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compareFalseFirst(this.m_19571_(), p_19566_.m_19571_()).compareFalseFirst(this.m_267577_(), p_19566_.m_267577_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result();
 +   }
 +
 +   //======================= FORGE START ===========================

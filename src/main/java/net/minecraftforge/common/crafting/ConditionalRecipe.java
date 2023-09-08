@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/* TODO: Conditional Recipes
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,6 +14,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -153,6 +154,7 @@ public class ConditionalRecipe
         }
     }
 
+
     private static class Finished implements FinishedRecipe
     {
         private final ResourceLocation id;
@@ -189,19 +191,21 @@ public class ConditionalRecipe
         }
 
         @Override
-        public ResourceLocation getId() {
+        public ResourceLocation id() {
             return id;
         }
 
         @Override
-        public RecipeSerializer<?> getType()
+        public RecipeSerializer<?> type()
         {
             return SERIALZIER;
         }
-
+        @Nullable
         @Override
-        public JsonObject serializeAdvancement() {
-            return adv == null ? null : adv.write();
+        public AdvancementHolder advancement() {
+            if (adv == null)
+                return null;
+            return new AdvancementHolder(advId, adv.)
         }
 
         @Override
@@ -210,3 +214,4 @@ public class ConditionalRecipe
         }
     }
 }
+*/

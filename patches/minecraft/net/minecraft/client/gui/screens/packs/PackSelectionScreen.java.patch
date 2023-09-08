@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
-@@ -130,10 +_,10 @@
+@@ -138,10 +_,10 @@
        TransferableSelectionList.PackEntry transferableselectionlist$packentry = p_100014_.m_93511_();
        String s = transferableselectionlist$packentry == null ? "" : transferableselectionlist$packentry.m_264411_();
        p_100014_.m_6987_((TransferableSelectionList.PackEntry)null);

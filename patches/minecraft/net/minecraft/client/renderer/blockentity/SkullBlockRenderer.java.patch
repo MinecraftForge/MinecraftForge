@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
 +++ b/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
-@@ -55,6 +_,7 @@
+@@ -53,6 +_,7 @@
        builder.put(SkullBlock.Types.CREEPER, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171130_)));
        builder.put(SkullBlock.Types.DRAGON, new DragonHeadModel(p_173662_.m_171103_(ModelLayers.f_171135_)));
        builder.put(SkullBlock.Types.PIGLIN, new PiglinHeadModel(p_173662_.m_171103_(ModelLayers.f_260668_)));

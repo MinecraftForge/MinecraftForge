@@ -73,7 +73,7 @@ public class ClientCommandTest
                         .then(Commands.literal("get_advancement")
                                 .then(Commands.argument("advancement", ResourceLocationArgument.id())
                                         .executes((context) -> {
-                                            final Component msg = ResourceLocationArgument.getAdvancement(context, "advancement").getChatComponent();
+                                            final Component msg = ResourceLocationArgument.getAdvancement(context, "advancement").value().name().get();
                                             context.getSource().sendSuccess(() -> msg, false);
                                             return 1;
                                         })))
@@ -81,7 +81,7 @@ public class ClientCommandTest
                         .then(Commands.literal("get_recipe")
                                 .then(Commands.argument("recipe", ResourceLocationArgument.id())
                                         .executes((context) -> {
-                                            final Component msg = ResourceLocationArgument.getRecipe(context, "recipe").getResultItem(context.getSource().registryAccess()).getDisplayName();
+                                            final Component msg = ResourceLocationArgument.getRecipe(context, "recipe").value().getResultItem(context.getSource().registryAccess()).getDisplayName();
                                             context.getSource()
                                                     .sendSuccess(() -> msg, false);
                                             return 1;

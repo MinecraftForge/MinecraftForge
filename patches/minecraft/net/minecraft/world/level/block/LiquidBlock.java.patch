@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -30,11 +_,13 @@
+@@ -32,11 +_,13 @@
  
  public class LiquidBlock extends Block implements BucketPickup {
     public static final IntegerProperty f_54688_ = BlockStateProperties.f_61422_;
@@ -15,7 +15,7 @@
     public LiquidBlock(FlowingFluid p_54694_, BlockBehaviour.Properties p_54695_) {
        super(p_54695_);
        this.f_54689_ = p_54694_;
-@@ -47,6 +_,19 @@
+@@ -49,6 +_,19 @@
  
        this.f_54691_.add(p_54694_.m_75953_(8, true));
        this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_54688_, Integer.valueOf(0)));
@@ -35,7 +35,7 @@
     }
  
     public VoxelShape m_5939_(BlockState p_54760_, BlockGetter p_54761_, BlockPos p_54762_, CollisionContext p_54763_) {
-@@ -71,6 +_,7 @@
+@@ -73,6 +_,7 @@
  
     public FluidState m_5888_(BlockState p_54765_) {
        int i = p_54765_.m_61143_(f_54688_);
@@ -43,7 +43,7 @@
        return this.f_54691_.get(Math.min(i, 8));
     }
  
-@@ -91,7 +_,7 @@
+@@ -93,7 +_,7 @@
     }
  
     public void m_6807_(BlockState p_54754_, Level p_54755_, BlockPos p_54756_, BlockState p_54757_, boolean p_54758_) {
@@ -52,7 +52,7 @@
           p_54755_.m_186469_(p_54756_, p_54754_.m_60819_().m_76152_(), this.f_54689_.m_6718_(p_54755_));
        }
  
-@@ -106,12 +_,13 @@
+@@ -108,12 +_,13 @@
     }
  
     public void m_6861_(BlockState p_54709_, Level p_54710_, BlockPos p_54711_, Block p_54712_, BlockPos p_54713_, boolean p_54714_) {
@@ -67,7 +67,7 @@
     private boolean m_54696_(Level p_54697_, BlockPos p_54698_, BlockState p_54699_) {
        if (this.f_54689_.m_205067_(FluidTags.f_13132_)) {
           boolean flag = p_54697_.m_8055_(p_54698_.m_7495_()).m_60713_(Blocks.f_50136_);
-@@ -150,6 +_,25 @@
+@@ -152,6 +_,25 @@
           return new ItemStack(this.f_54689_.m_6859_());
        } else {
           return ItemStack.f_41583_;

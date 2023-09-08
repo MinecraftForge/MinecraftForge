@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -49,14 +_,17 @@
+@@ -50,14 +_,17 @@
     }
  
     public void m_7392_(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
@@ -15,21 +15,21 @@
        float f = Mth.m_14189_(p_115310_, p_115308_.f_20884_, p_115308_.f_20883_);
        float f1 = Mth.m_14189_(p_115310_, p_115308_.f_20886_, p_115308_.f_20885_);
        float f2 = f1 - f;
--      if (p_115308_.m_20159_() && p_115308_.m_20202_() instanceof LivingEntity) {
+-      if (p_115308_.m_20159_()) {
 +      if (shouldSit && p_115308_.m_20202_() instanceof LivingEntity) {
-          LivingEntity livingentity = (LivingEntity)p_115308_.m_20202_();
-          f = Mth.m_14189_(p_115310_, livingentity.f_20884_, livingentity.f_20883_);
-          f2 = f1 - f;
-@@ -98,7 +_,7 @@
+          Entity $$14 = p_115308_.m_20202_();
+          if ($$14 instanceof LivingEntity) {
+             LivingEntity livingentity = (LivingEntity)$$14;
+@@ -102,7 +_,7 @@
        p_115311_.m_252880_(0.0F, -1.501F, 0.0F);
        float f8 = 0.0F;
-       float f5 = 0.0F;
+       float f4 = 0.0F;
 -      if (!p_115308_.m_20159_() && p_115308_.m_6084_()) {
 +      if (!shouldSit && p_115308_.m_6084_()) {
           f8 = p_115308_.f_267362_.m_267711_(p_115310_);
-          f5 = p_115308_.f_267362_.m_267590_(p_115310_);
+          f4 = p_115308_.f_267362_.m_267590_(p_115310_);
           if (p_115308_.m_6162_()) {
-@@ -131,6 +_,7 @@
+@@ -135,6 +_,7 @@
  
        p_115311_.m_85849_();
        super.m_7392_(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);

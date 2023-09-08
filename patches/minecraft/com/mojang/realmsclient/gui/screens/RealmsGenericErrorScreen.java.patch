@@ -1,6 +1,6 @@
 --- a/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
 +++ b/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
-@@ -68,6 +_,15 @@
+@@ -61,6 +_,15 @@
        return Component.m_237119_().m_7220_(this.f_200947_.f_287789_).m_130946_(": ").m_7220_(this.f_200947_.f_287787_);
     }
  
@@ -14,5 +14,5 @@
 +    }
 +
     public void m_88315_(GuiGraphics p_283497_, int p_88680_, int p_88681_, float p_88682_) {
-       this.m_280273_(p_283497_);
-       p_283497_.m_280653_(this.f_96547_, this.f_200947_.f_287789_, this.f_96543_ / 2, 80, 16777215);
+       super.m_88315_(p_283497_, p_88680_, p_88681_, p_88682_);
+       p_283497_.m_280653_(this.f_96547_, this.f_200947_.f_287789_, this.f_96543_ / 2, 80, -1);

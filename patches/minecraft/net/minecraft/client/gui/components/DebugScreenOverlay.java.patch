@@ -1,6 +1,19 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -403,6 +_,7 @@
+@@ -93,9 +_,9 @@
+    @Nullable
+    private CompletableFuture<LevelChunk> f_94036_;
+    private boolean f_291101_;
+-   private boolean f_291871_;
+-   private boolean f_290551_;
+-   private boolean f_291005_;
++   protected boolean f_291871_;
++   protected boolean f_290551_;
++   protected boolean f_291005_;
+    private final SampleLogger f_291039_ = new SampleLogger();
+    private final SampleLogger f_291524_ = new SampleLogger();
+    private final SampleLogger f_290653_ = new SampleLogger();
+@@ -430,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
              list.add(String.valueOf((Object)BuiltInRegistries.f_256780_.m_7981_(entity.m_6095_())));

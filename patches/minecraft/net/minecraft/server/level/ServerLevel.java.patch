@@ -14,15 +14,15 @@
  
     public ServerLevel(MinecraftServer p_214999_, Executor p_215000_, LevelStorageSource.LevelStorageAccess p_215001_, ServerLevelData p_215002_, ResourceKey<Level> p_215003_, LevelStem p_215004_, ChunkProgressListener p_215005_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, @Nullable RandomSequences p_288977_) {
        super(p_215002_, p_215003_, p_214999_.m_206579_(), p_215004_.f_63975_(), p_214999_::m_129905_, false, p_215006_, p_215007_, p_214999_.m_213994_());
-@@ -240,6 +_,7 @@
-             return new RandomSequences(i);
-          }, "random_sequences");
+@@ -232,6 +_,7 @@
+       this.f_286969_ = Objects.requireNonNullElseGet(p_288977_, () -> {
+          return this.m_8895_().m_164861_(RandomSequences.m_295760_(i), "random_sequences");
        });
 +      this.initCapabilities();
     }
  
     /** @deprecated */
-@@ -275,8 +_,8 @@
+@@ -267,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
@@ -33,7 +33,7 @@
           }
  
           this.m_8804_();
-@@ -305,7 +_,7 @@
+@@ -297,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -42,7 +42,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -337,7 +_,9 @@
+@@ -329,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -53,14 +53,14 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -430,6 +_,7 @@
-          BlockPos blockpos1 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
-          BlockPos blockpos2 = blockpos1.m_7495_();
-          Biome biome = this.m_204166_(blockpos1).m_203334_();
-+         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-          if (biome.m_47477_(this, blockpos2)) {
-             this.m_46597_(blockpos2, Blocks.f_50126_.m_49966_());
-          }
+@@ -461,6 +_,7 @@
+       BlockPos blockpos = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, p_300602_);
+       BlockPos blockpos1 = blockpos.m_7495_();
+       Biome biome = this.m_204166_(blockpos).m_203334_();
++      if (this.isAreaLoaded(blockpos1, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+       if (biome.m_47477_(this, blockpos1)) {
+          this.m_46597_(blockpos1, Blocks.f_50126_.m_49966_());
+       }
 @@ -633,15 +_,19 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
@@ -108,7 +108,7 @@
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_8854_, this))) return;
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_20148_());
        if (entity != null) {
-          f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_().toString());
+          f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_20148_());
 @@ -835,7 +_,8 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
@@ -180,14 +180,13 @@
        this.f_220350_.m_214152_(p_215052_, p_215053_, p_215054_);
     }
  
-@@ -1380,6 +_,12 @@
+@@ -1380,6 +_,11 @@
        });
     }
  
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
-+      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.LevelCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.LevelCapabilityData(getCapabilities()), net.minecraftforge.common.util.LevelCapabilityData.ID);
-+      capabilityData.setCapabilities(getCapabilities());
++      capabilityData = net.minecraftforge.common.util.LevelCapabilityData.compute(this.m_8895_(), getCapabilities());
 +   }
 +
     public LevelEntityGetter<Entity> m_142646_() {

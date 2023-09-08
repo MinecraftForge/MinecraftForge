@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
-@@ -88,15 +_,43 @@
+@@ -86,15 +_,45 @@
        return new LootContext.VisitedEntry<>(LootDataType.f_278496_, p_279163_);
     }
  
@@ -16,6 +16,7 @@
 +      this.queriedLootTableId = queriedLootTableId;
 +   }
 +
++   /*
 +   public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
 +      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
 +   }
@@ -23,6 +24,7 @@
 +   public ResourceLocation getQueriedLootTableId() {
 +      return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 +   }
++   */
 +   // =============================== FORGE END ===============================
 +
     public static class Builder {
@@ -44,7 +46,7 @@
        public LootContext.Builder m_78965_(long p_78966_) {
           if (p_78966_ != 0L) {
              this.f_78958_ = RandomSource.m_216335_(p_78966_);
-@@ -105,6 +_,11 @@
+@@ -103,6 +_,11 @@
           return this;
        }
  
@@ -56,16 +58,16 @@
        public ServerLevel m_78962_() {
           return this.f_78956_.m_287182_();
        }
-@@ -121,7 +_,7 @@
-             randomsource = serverlevel.m_213780_();
-          }
- 
+@@ -113,7 +_,7 @@
+          RandomSource randomsource = Optional.ofNullable(this.f_78958_).or(() -> {
+             return p_299315_.map(serverlevel::m_287143_);
+          }).orElseGet(serverlevel::m_213780_);
 -         return new LootContext(this.f_78956_, randomsource, minecraftserver.m_278653_());
 +         return new LootContext(this.f_78956_, randomsource, minecraftserver.m_278653_(), queriedLootTableId);
        }
     }
  
-@@ -141,6 +_,11 @@
+@@ -134,6 +_,11 @@
  
        public LootContextParam<? extends Entity> m_79003_() {
           return this.f_78995_;

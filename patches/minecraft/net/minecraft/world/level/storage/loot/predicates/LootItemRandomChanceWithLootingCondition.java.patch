@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
 +++ b/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
-@@ -31,12 +_,7 @@
+@@ -25,12 +_,7 @@
     }
  
     public boolean test(LootContext p_81967_) {

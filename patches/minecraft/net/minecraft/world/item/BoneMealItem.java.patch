@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -33,7 +_,7 @@
+@@ -35,7 +_,7 @@
        Level level = p_40637_.m_43725_();
        BlockPos blockpos = p_40637_.m_8083_();
        BlockPos blockpos1 = blockpos.m_121945_(p_40637_.m_43719_());
 -      if (m_40627_(p_40637_.m_43722_(), level, blockpos)) {
 +      if (applyBonemeal(p_40637_.m_43722_(), level, blockpos, p_40637_.m_43723_())) {
           if (!level.f_46443_) {
+             p_40637_.m_43723_().m_146850_(GameEvent.f_223697_);
              level.m_46796_(1505, blockpos, 0);
-          }
-@@ -54,8 +_,17 @@
+@@ -58,8 +_,17 @@
        }
     }
  
@@ -24,6 +24,6 @@
        BlockState blockstate = p_40629_.m_8055_(p_40630_);
 +      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_40629_, p_40630_, blockstate, p_40628_);
 +      if (hook != 0) return hook > 0;
-       if (blockstate.m_60734_() instanceof BonemealableBlock) {
-          BonemealableBlock bonemealableblock = (BonemealableBlock)blockstate.m_60734_();
-          if (bonemealableblock.m_7370_(p_40629_, p_40630_, blockstate, p_40629_.f_46443_)) {
+       Block block = blockstate.m_60734_();
+       if (block instanceof BonemealableBlock bonemealableblock) {
+          if (bonemealableblock.m_7370_(p_40629_, p_40630_, blockstate)) {

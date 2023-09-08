@@ -12,7 +12,7 @@
 +      KNOWN.add(m_123023_().m_135782_());
 +   }
 +
-    public Holder.Reference<T> m_203704_(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
+    public Holder.Reference<T> m_255320_(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
 +      markKnown();
        this.m_205921_(p_256594_);
        Validate.notNull(p_256594_);

@@ -5,29 +5,24 @@
 
 package net.minecraftforge.debug.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.Command;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public class TestScreen extends Screen
-{
-    public static int open()
-    {
+public class TestScreen extends Screen {
+    public static int open() {
         Minecraft.getInstance().setScreen(new TestScreen());
         return Command.SINGLE_SUCCESS;
     }
 
-    public TestScreen()
-    {
+    public TestScreen() {
         super(Component.literal("testscreen"));
     }
 
     @Override
-    public void render(GuiGraphics graphics, int MouseX, int MouseY, float PartialTick)
-    {
-        renderBackground(graphics);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+        renderBackground(graphics, mouseX, mouseY, partialTicks);
     }
 }

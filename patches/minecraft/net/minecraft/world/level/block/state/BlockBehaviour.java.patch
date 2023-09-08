@@ -108,8 +108,8 @@
           return this.f_278134_;
        }
  
-@@ -972,8 +_,9 @@
-       boolean f_243850_ = true;
+@@ -976,8 +_,9 @@
+       boolean f_290592_ = true;
        NoteBlockInstrument f_279538_ = NoteBlockInstrument.HARP;
        boolean f_279630_;
 +      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
@@ -119,7 +119,7 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_284888_, p_284889_, p_284890_) -> {
           return p_284888_.m_60838_(p_284889_, p_284890_);
-@@ -1111,9 +_,15 @@
+@@ -1115,9 +_,15 @@
           return this;
        }
  

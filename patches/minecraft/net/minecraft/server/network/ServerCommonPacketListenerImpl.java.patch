@@ -1,0 +1,20 @@
+--- a/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerCommonPacketListenerImpl.java
+@@ -66,6 +_,7 @@
+    }
+ 
+    public void m_293234_(ServerboundCustomPayloadPacket p_300164_) {
++      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_300164_, this.f_291338_);
+    }
+ 
+    public void m_293248_(ServerboundResourcePackPacket p_300656_) {
+@@ -147,5 +_,9 @@
+ 
+    protected CommonListenerCookie m_295477_(ClientInformation p_297318_) {
+       return new CommonListenerCookie(this.m_293343_(), this.f_291042_, p_297318_);
++   }
++
++   public Connection getConnection() {
++      return this.f_291338_;
+    }
+ }

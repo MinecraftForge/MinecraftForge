@@ -5,7 +5,6 @@
 
 package net.minecraftforge.debug.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,21 +22,18 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 
 @Mod(GuiLayeringTest.MODID)
-public class GuiLayeringTest
-{
+public class GuiLayeringTest {
     private static final boolean ENABLED = false;
 
     private static final Random RANDOM = new Random();
     public static final String MODID = "gui_layer_test";
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public static class ClientEvents
-    {
+    public static class ClientEvents {
+        @SuppressWarnings("unused")
         @SubscribeEvent
-        public static void guiOpen(ScreenEvent.Init event)
-        {
-            if (event.getScreen() instanceof AbstractContainerScreen && ENABLED)
-            {
+        public static void guiOpen(ScreenEvent.Init event) {
+            if (event.getScreen() instanceof AbstractContainerScreen && ENABLED) {
                 event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
                     Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
                 }).pos(2,2).size(150, 20).build());
@@ -48,24 +44,20 @@ public class GuiLayeringTest
             }
         }
 
-        public static class TestLayer extends Screen
-        {
-            protected TestLayer(Component titleIn)
-            {
+        public static class TestLayer extends Screen {
+            protected TestLayer(Component titleIn) {
                 super(titleIn);
             }
 
             @Override
-            public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
-            {
-                this.renderBackground(graphics);
+            public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+                this.renderBackground(graphics, mouseX, mouseY, partialTicks);
                 graphics.drawString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
                 super.render(graphics, mouseX, mouseY, partialTicks);
             }
 
             @Override
-            protected void init()
-            {
+            protected void init() {
                 int buttonWidth = 150;
                 int buttonHeight = 30;
                 int buttonGap = 4;
@@ -86,18 +78,15 @@ public class GuiLayeringTest
                 this.addRenderableWidget(new ForgeSlider(xoff, yoff + buttonSpacing * cnt, 50, 25, Component.literal("Val: ").withStyle(ChatFormatting.GOLD), Component.literal("some text which will be cut off"), 5, 55, 6, true));
             }
 
-            private void closeStack(Button button)
-            {
+            private void closeStack(Button button) {
                 this.minecraft.setScreen(null);
             }
 
-            private void popLayerButton(Button button)
-            {
+            private void popLayerButton(Button button) {
                 this.minecraft.popGuiLayer();
             }
 
-            private void pushLayerButton(Button button)
-            {
+            private void pushLayerButton(Button button) {
                 this.minecraft.pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
             }
         }

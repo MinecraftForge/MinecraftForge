@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/Sheets.java
 +++ b/net/minecraft/client/renderer/Sheets.java
-@@ -145,11 +_,13 @@
+@@ -146,11 +_,13 @@
     }
  
     private static Material m_173385_(WoodType p_173386_) {
@@ -16,7 +16,7 @@
     }
  
     public static Material m_173381_(WoodType p_173382_) {
-@@ -208,6 +_,23 @@
+@@ -209,6 +_,23 @@
           case SINGLE:
           default:
              return p_110773_;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -513,7 +_,14 @@
+@@ -517,7 +_,14 @@
              endcrystal.m_31052_((BlockPos)null);
           }
        }

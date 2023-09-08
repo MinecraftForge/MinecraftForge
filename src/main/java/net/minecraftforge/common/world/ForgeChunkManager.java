@@ -62,7 +62,7 @@ public class ForgeChunkManager
      */
     public static boolean hasForcedChunks(ServerLevel level)
     {
-        ForcedChunksSavedData data = level.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
+        ForcedChunksSavedData data = level.getDataStorage().get(ForcedChunksSavedData.factory(), "chunks");
         if (data == null) return false;
         return !data.getChunks().isEmpty() || !data.getBlockForcedChunks().isEmpty() || !data.getEntityForcedChunks().isEmpty();
     }
@@ -115,7 +115,7 @@ public class ForgeChunkManager
             LOGGER.warn("A mod attempted to force a chunk for an unloaded mod of id: {}", modId);
             return false;
         }
-        ForcedChunksSavedData saveData = level.getDataStorage().computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, "chunks");
+        ForcedChunksSavedData saveData = level.getDataStorage().computeIfAbsent(ForcedChunksSavedData.factory(), "chunks");
         ChunkPos pos = new ChunkPos(chunkX, chunkZ);
         long chunk = pos.toLong();
         TicketTracker<T> tickets = ticketGetter.apply(saveData);

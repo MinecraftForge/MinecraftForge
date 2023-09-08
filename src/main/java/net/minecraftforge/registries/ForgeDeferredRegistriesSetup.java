@@ -25,7 +25,7 @@ public class ForgeDeferredRegistriesSetup
         }
 
         ForgeRegistries.DEFERRED_ENTITY_DATA_SERIALIZERS.register(modEventBus);
-        ForgeRegistries.DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
+        //ForgeRegistries.DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_FLUID_TYPES.register(modEventBus);
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);

@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.loot;
-
+/*
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -22,7 +22,7 @@ import java.util.Set;
 
 /**
  * This LootItemCondition "forge:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
- */
+ * /
 public class CanToolPerformAction implements LootItemCondition {
 
     public static final LootItemConditionType LOOT_CONDITION_TYPE = new LootItemConditionType(new CanToolPerformAction.Serializer());
@@ -64,3 +64,4 @@ public class CanToolPerformAction implements LootItemCondition {
     }
 
 }
+*/

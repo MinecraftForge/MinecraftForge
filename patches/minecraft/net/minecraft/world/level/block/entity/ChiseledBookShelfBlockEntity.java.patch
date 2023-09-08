@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChiseledBookShelfBlockEntity.java
-@@ -121,4 +_,28 @@
+@@ -125,4 +_,28 @@
     public int m_262444_() {
        return this.f_262317_;
     }

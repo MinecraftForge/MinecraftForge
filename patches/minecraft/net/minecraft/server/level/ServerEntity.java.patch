@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -92,10 +_,9 @@
+@@ -95,10 +_,9 @@
        if ($$11 instanceof ItemFrame itemframe) {
           if (this.f_8521_ % 10 == 0) {
              ItemStack itemstack = itemframe.m_31822_();
@@ -14,7 +14,7 @@
                    for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
                       mapitemsaveddata.m_77918_(serverplayer, itemstack);
                       Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
-@@ -104,11 +_,12 @@
+@@ -107,11 +_,12 @@
                       }
                    }
                 }
@@ -28,17 +28,17 @@
  
        if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
           if (this.f_8510_.m_20159_()) {
-@@ -215,6 +_,7 @@
+@@ -218,6 +_,7 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
-       p_8535_.f_8906_.m_9829_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
+       p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
 +      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
     }
  
     public void m_8541_(ServerPlayer p_8542_) {
-@@ -222,6 +_,7 @@
+@@ -225,6 +_,7 @@
        this.m_289200_(p_8542_, list::add);
-       p_8542_.f_8906_.m_9829_(new ClientboundBundlePacket(list));
+       p_8542_.f_8906_.m_141995_(new ClientboundBundlePacket(list));
        this.f_8510_.m_6457_(p_8542_);
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
     }

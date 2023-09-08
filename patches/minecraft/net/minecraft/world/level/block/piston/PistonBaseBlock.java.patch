@@ -24,7 +24,7 @@
        return true;
     }
  
-@@ -354,6 +_,10 @@
+@@ -353,6 +_,10 @@
  
     public BlockState m_6843_(BlockState p_60215_, Rotation p_60216_) {
        return p_60215_.m_61124_(f_52588_, p_60216_.m_55954_(p_60215_.m_61143_(f_52588_)));

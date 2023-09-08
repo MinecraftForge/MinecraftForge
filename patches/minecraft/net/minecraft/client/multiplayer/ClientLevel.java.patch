@@ -33,7 +33,7 @@
        p_104640_.m_8119_();
        this.m_46473_().m_7238_();
  
-@@ -327,8 +_,10 @@
+@@ -328,8 +_,10 @@
     }
  
     private void m_104739_(int p_104740_, Entity p_104741_) {
@@ -44,7 +44,7 @@
     }
  
     public void m_171642_(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -455,6 +_,12 @@
+@@ -456,6 +_,12 @@
     }
  
     public void m_262808_(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
@@ -57,7 +57,7 @@
        if (p_263381_ == this.f_104565_.f_91074_) {
           this.m_233602_(p_263372_, p_263404_, p_263365_, p_263335_.m_203334_(), p_263417_, p_263416_, p_263349_, false, p_263408_);
        }
-@@ -462,6 +_,12 @@
+@@ -463,6 +_,12 @@
     }
  
     public void m_213890_(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
@@ -70,7 +70,7 @@
        if (p_263514_ == this.f_104565_.f_91074_) {
           this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_263518_.m_203334_(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
        }
-@@ -899,6 +_,7 @@
+@@ -900,6 +_,7 @@
        }
  
        public void m_104851_(Difficulty p_104852_) {
@@ -78,7 +78,7 @@
           this.f_104840_ = p_104852_;
        }
  
-@@ -936,14 +_,46 @@
+@@ -937,14 +_,46 @@
              ClientLevel.this.f_104566_.add((AbstractClientPlayer)p_171712_);
           }
  

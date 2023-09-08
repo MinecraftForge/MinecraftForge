@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -163,7 +_,7 @@
+@@ -164,7 +_,7 @@
     public static final Block f_50027_ = m_50795_("green_bed", m_50764_(DyeColor.GREEN));
     public static final Block f_50028_ = m_50795_("red_bed", m_50764_(DyeColor.RED));
     public static final Block f_50029_ = m_50795_("black_bed", m_50764_(DyeColor.BLACK));
@@ -9,7 +9,7 @@
     public static final Block f_50031_ = m_50795_("detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.m_284310_().m_60910_().m_60978_(0.7F).m_60918_(SoundType.f_56743_)));
     public static final Block f_50032_ = m_50795_("sticky_piston", m_50798_(true));
     public static final Block f_50033_ = m_50795_("cobweb", new WebBlock(BlockBehaviour.Properties.m_284310_().m_284180_(MapColor.f_283930_).m_280606_().m_60910_().m_60999_().m_60978_(4.0F).m_278166_(PushReaction.DESTROY)));
-@@ -1253,17 +_,5 @@
+@@ -1258,17 +_,5 @@
  
     public static void m_50758_() {
        Block.f_49791_.forEach(BlockBehaviour.BlockStateBase::m_60611_);

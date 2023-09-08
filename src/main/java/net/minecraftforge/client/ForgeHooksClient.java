@@ -85,6 +85,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -280,20 +281,10 @@ public class ForgeHooksClient
         }
     }
 
-    public static void dispatchRenderStage(RenderLevelStageEvent.Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum)
-    {
-        var mc = Minecraft.getInstance();
-        var profiler = mc.getProfiler();
-        profiler.push(stage.toString());
-        MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(stage, levelRenderer, poseStack, projectionMatrix, renderTick, mc.getPartialTick(), camera, frustum));
-        profiler.pop();
-    }
-
-    public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum)
-    {
+    public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
         RenderLevelStageEvent.Stage stage = RenderLevelStageEvent.Stage.fromRenderType(renderType);
         if (stage != null)
-            dispatchRenderStage(stage, levelRenderer, poseStack, projectionMatrix, renderTick, camera, frustum);
+            stage.dispatch(levelRenderer, poseStack, projectionMatrix, renderTick, camera, frustum);
     }
 
     public static boolean renderSpecificFirstPersonHand(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
@@ -619,62 +610,6 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new MovementInputUpdateEvent(player, movementInput));
     }
 
-    public static boolean onScreenMouseClickedPre(Screen guiScreen, double mouseX, double mouseY, int button)
-    {
-        Event event = new ScreenEvent.MouseButtonPressed.Pre(guiScreen, mouseX, mouseY, button);
-        return MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static boolean onScreenMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
-    {
-        Event event = new ScreenEvent.MouseButtonPressed.Post(guiScreen, mouseX, mouseY, button, handled);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? handled : event.getResult() == Event.Result.ALLOW;
-    }
-
-    public static boolean onScreenMouseReleasedPre(Screen guiScreen, double mouseX, double mouseY, int button)
-    {
-        Event event = new ScreenEvent.MouseButtonReleased.Pre(guiScreen, mouseX, mouseY, button);
-        return MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static boolean onScreenMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
-    {
-        Event event = new ScreenEvent.MouseButtonReleased.Post(guiScreen, mouseX, mouseY, button, handled);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() == Event.Result.DEFAULT ? handled : event.getResult() == Event.Result.ALLOW;
-    }
-
-    public static boolean onScreenMouseDragPre(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
-    {
-        Event event = new ScreenEvent.MouseDragged.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
-        return MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static void onScreenMouseDragPost(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
-    {
-        Event event = new ScreenEvent.MouseDragged.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY);
-        MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static boolean onScreenMouseScrollPre(MouseHandler mouseHelper, Screen guiScreen, double scrollDelta)
-    {
-        Window mainWindow = guiScreen.getMinecraft().getWindow();
-        double mouseX = mouseHelper.xpos() * (double) mainWindow.getGuiScaledWidth() / (double) mainWindow.getScreenWidth();
-        double mouseY = mouseHelper.ypos() * (double) mainWindow.getGuiScaledHeight() / (double) mainWindow.getScreenHeight();
-        Event event = new ScreenEvent.MouseScrolled.Pre(guiScreen, mouseX, mouseY, scrollDelta);
-        return MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    public static void onScreenMouseScrollPost(MouseHandler mouseHelper, Screen guiScreen, double scrollDelta)
-    {
-        Window mainWindow = guiScreen.getMinecraft().getWindow();
-        double mouseX = mouseHelper.xpos() * (double) mainWindow.getGuiScaledWidth() / (double) mainWindow.getScreenWidth();
-        double mouseY = mouseHelper.ypos() * (double) mainWindow.getGuiScaledHeight() / (double) mainWindow.getScreenHeight();
-        Event event = new ScreenEvent.MouseScrolled.Post(guiScreen, mouseX, mouseY, scrollDelta);
-        MinecraftForge.EVENT_BUS.post(event);
-    }
-
     public static boolean onScreenKeyPressedPre(Screen guiScreen, int keyCode, int scanCode, int modifiers)
     {
         Event event = new ScreenEvent.KeyPressed.Pre(guiScreen, keyCode, scanCode, modifiers);
@@ -717,22 +652,6 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static boolean onMouseButtonPre(int button, int action, int mods)
-    {
-        return MinecraftForge.EVENT_BUS.post(new InputEvent.MouseButton.Pre(button, action, mods));
-    }
-
-    public static void onMouseButtonPost(int button, int action, int mods)
-    {
-        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseButton.Post(button, action, mods));
-    }
-
-    public static boolean onMouseScroll(MouseHandler mouseHelper, double scrollDelta)
-    {
-        Event event = new InputEvent.MouseScrollingEvent(scrollDelta, mouseHelper.isLeftPressed(), mouseHelper.isMiddlePressed(), mouseHelper.isRightPressed(), mouseHelper.xpos(), mouseHelper.ypos());
-        return MinecraftForge.EVENT_BUS.post(event);
-    }
-
     public static void onKeyInput(int key, int scanCode, int action, int modifiers)
     {
         MinecraftForge.EVENT_BUS.post(new InputEvent.Key(key, scanCode, action, modifiers));
@@ -770,21 +689,11 @@ public class ForgeHooksClient
     }
 
     @Nullable
-    public static SpriteContents loadSpriteContents(
-            ResourceLocation name,
-            Resource resource,
-            FrameSize frameSize,
-            NativeImage image,
-            AnimationMetadataSection animationMeta
-    )
-    {
-        try
-        {
+    public static SpriteContents loadSpriteContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, ResourceMetadata animationMeta) {
+        try {
             ForgeTextureMetadata forgeMeta = ForgeTextureMetadata.forResource(resource);
             return forgeMeta.getLoader() == null ? null : forgeMeta.getLoader().loadContents(name, resource, frameSize, image, animationMeta, forgeMeta);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             LOGGER.error("Unable to get Forge metadata for {}, falling back to vanilla loading", name);
             e.printStackTrace();
             return null;
