@@ -21,7 +21,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 
 /**
  * Used to spawn a custom entity without the same restrictions as
@@ -41,6 +40,7 @@ public class SpawnEntity {
     private final int velX, velY, velZ;
     private final FriendlyByteBuf buf;
 
+    @SuppressWarnings("deprecation")
     SpawnEntity(Entity e) {
         this.entity = e;
         this.typeId = BuiltInRegistries.ENTITY_TYPE.getId(e.getType()); //TODO: Codecs
@@ -125,6 +125,7 @@ public class SpawnEntity {
     public static void handle(SpawnEntity msg, CustomPayloadEvent.Context ctx) {
         ctx.enqueueWork(() -> {
             try {
+                @SuppressWarnings("deprecation")
                 EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
                 Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.getDirection().getReceptionSide());
                 Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
@@ -142,7 +143,8 @@ public class SpawnEntity {
 
                 e.setId(msg.entityId);
                 e.setUUID(msg.uuid);
-                world.filter(ClientLevel.class::isInstance).ifPresent(w -> ((ClientLevel) w).putNonPlayerEntity(msg.entityId, e));
+                if (world.orElse(null) instanceof ClientLevel cworld)
+                    cworld.addEntity(e);
                 e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
                 if (e instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
                     entityAdditionalSpawnData.readSpawnData(msg.buf);

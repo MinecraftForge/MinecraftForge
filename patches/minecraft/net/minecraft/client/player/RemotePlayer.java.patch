@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/RemotePlayer.java
 +++ b/net/minecraft/client/player/RemotePlayer.java
-@@ -31,6 +_,7 @@
+@@ -32,6 +_,7 @@
     }
  
     public boolean m_6469_(DamageSource p_108772_, float p_108773_) {

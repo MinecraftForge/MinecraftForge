@@ -5,20 +5,20 @@
        this.f_291812_.f_91064_.m_113434_();
        this.f_291812_.f_91074_.m_172530_();
 +      net.minecraftforge.client.ForgeHooksClient.firePlayerLogin(this.f_291812_.f_91072_, this.f_291812_.f_91074_, this.f_291812_.m_91403_().f_290549_);
-       int i = p_105030_.f_132360_();
-       this.f_291812_.f_91074_.m_20234_(i);
-       this.f_104889_.m_104630_(i, this.f_291812_.f_91074_);
-@@ -1026,7 +_,9 @@
+       this.f_291812_.f_91074_.m_20234_(p_105030_.f_132360_());
+       this.f_104889_.m_104739_(this.f_291812_.f_91074_);
+       this.f_291812_.f_91074_.f_108618_ = new KeyboardInput(this.f_291812_.f_91066_);
+@@ -1017,7 +_,9 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }
  
 +      localplayer1.updateSyncFields(localplayer); // Forge: fix MC-10657
        localplayer1.m_172530_();
 +      net.minecraftforge.client.ForgeHooksClient.firePlayerRespawn(this.f_291812_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.f_290549_);
-       this.f_104889_.m_104630_(i, localplayer1);
+       this.f_104889_.m_104739_(localplayer1);
        localplayer1.m_146922_(-180.0F);
        localplayer1.f_108618_ = new KeyboardInput(this.f_291812_.f_91066_);
-@@ -1135,10 +_,7 @@
+@@ -1126,10 +_,7 @@
        PacketUtils.m_131363_(p_104976_, this, this.f_291812_);
        BlockPos blockpos = p_104976_.m_131704_();
        this.f_291812_.f_91073_.m_141902_(blockpos, p_104976_.m_195645_()).ifPresent((p_205557_) -> {
@@ -30,7 +30,7 @@
  
           if (p_205557_ instanceof CommandBlockEntity && this.f_291812_.f_91080_ instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.f_291812_.f_91080_).m_98398_();
-@@ -1286,7 +_,9 @@
+@@ -1277,7 +_,9 @@
  
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
        PacketUtils.m_131363_(p_104990_, this, this.f_291812_);
@@ -41,15 +41,15 @@
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {
-@@ -1304,6 +_,7 @@
-       this.f_104900_.m_44024_(p_105132_.m_133644_());
+@@ -1296,6 +_,7 @@
        ClientRecipeBook clientrecipebook = this.f_291812_.f_91074_.m_108631_();
        clientrecipebook.m_266394_(this.f_104900_.m_44051_(), this.f_291812_.f_91073_.m_9598_());
+       this.f_291812_.m_231374_(SearchRegistry.f_301428_, clientrecipebook.m_90639_());
 +      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.f_104900_);
     }
  
     public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1402,7 +_,8 @@
+@@ -1394,7 +_,8 @@
           Blocks.m_50758_();
        }
  
@@ -59,7 +59,7 @@
     }
  
     public void m_142234_(ClientboundPlayerCombatEndPacket p_171771_) {
-@@ -2095,6 +_,8 @@
+@@ -2087,6 +_,8 @@
     }
  
     public void m_246175_(String p_249888_) {
@@ -68,7 +68,7 @@
        Instant instant = Instant.now();
        long i = Crypt.SaltSupplier.m_216113_();
        LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.f_244346_.m_246442_();
-@@ -2103,6 +_,7 @@
+@@ -2095,6 +_,7 @@
     }
  
     public void m_246623_(String p_250092_) {

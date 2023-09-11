@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -141,6 +_,7 @@
+@@ -156,6 +_,7 @@
     public void m_7026_(Component p_104543_) {
        if (this.f_243717_ != null && this.f_243717_.m_295074_()) {
           this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
@@ -8,7 +8,7 @@
        } else {
           this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
        }
-@@ -163,6 +_,7 @@
+@@ -178,6 +_,7 @@
     }
  
     public void m_7254_(ClientboundCustomQueryPacket p_104545_) {
