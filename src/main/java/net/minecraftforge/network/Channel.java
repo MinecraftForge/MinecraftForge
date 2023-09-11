@@ -6,7 +6,6 @@
 package net.minecraftforge.network;
 
 import java.util.Objects;
-import java.util.function.IntPredicate;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;

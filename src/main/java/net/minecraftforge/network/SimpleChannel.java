@@ -9,6 +9,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,13 +23,10 @@ import org.jetbrains.annotations.Nullable;
 
 import io.netty.buffer.Unpooled;
 import io.netty.util.AttributeKey;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
-import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
-
-import java.util.*;
-import java.util.function.*;
 
 public class SimpleChannel extends Channel<Object> {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -51,10 +52,10 @@ public class SimpleChannel extends Channel<Object> {
      * Build a new MessageBuilder.
      *
      * @param type Type of message
-     * @param discriminator Manually configured discriminator, Must be between 0 and 255 inclusive.
+     * @param discriminator Manually configured discriminator, Must be a positive number.
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, short discriminator) {
+    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int discriminator) {
         return messageBuilder(type, discriminator, null);
     }
 
@@ -74,26 +75,26 @@ public class SimpleChannel extends Channel<Object> {
      * Build a new MessageBuilder.
      *
      * @param type Type of message
-     * @param discriminator Manually configured discriminator, Must be between 0 and 255 inclusive.
+     * @param discriminator Manually configured discriminator, Must be a positive number.
      * @param direction a impl direction which will be asserted before any processing of this message occurs. Use to
      *                  enforce strict sided handling to prevent spoofing.
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, short discriminator, NetworkDirection direction) {
+    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int discriminator, NetworkDirection direction) {
         return new MessageBuilder<>(this, type, discriminator, direction);
     }
 
     public static class MessageBuilder<MSG>  {
         private final SimpleChannel channel;
         private final Class<MSG> type;
-        private final short id;
+        private final int id;
         private final Optional<NetworkDirection> direction;
 
         private BiConsumer<MSG, FriendlyByteBuf> encoder;
         private Function<FriendlyByteBuf, MSG> decoder;
         private BiConsumer<MSG, CustomPayloadEvent.Context> consumer;
 
-        private MessageBuilder(final SimpleChannel channel, final Class<MSG> type, short id, @Nullable NetworkDirection networkDirection) {
+        private MessageBuilder(final SimpleChannel channel, final Class<MSG> type, int id, @Nullable NetworkDirection networkDirection) {
             this.channel = channel;
             this.type = type;
             this.id = id;
@@ -256,6 +257,9 @@ public class SimpleChannel extends Channel<Object> {
          * @return The attached SimpleChannel to facilitate chaining.
          */
         public SimpleChannel add() {
+            if (this.id < 0)
+                throw new IllegalStateException("Failed to register SimpleChannel message, Invalid ID " + this.id + ": " + this.type.getName());
+
             var msg = new Message<>(this.id, this.type, this.direction, this.encoder, this.decoder, this.consumer);
 
             if (channel.byId.containsKey(msg.index()))
@@ -273,12 +277,12 @@ public class SimpleChannel extends Channel<Object> {
      *                           INTERNAL BELOW THIS
      * ===================================================================================
      */
-    private short lastIndex = 0;
-    private Short2ObjectMap<Message<?>> byId = new Short2ObjectArrayMap<>();
+    private int lastIndex = 0;
+    private Int2ObjectMap<Message<?>> byId = new Int2ObjectArrayMap<>();
     private Object2ObjectMap<Class<?>, Message<?>> byType = new Object2ObjectArrayMap<>();
 
     private record Message<MSG>(
-        short index,
+        int index,
         Class<MSG> type,
         Optional<NetworkDirection> direction,
         BiConsumer<MSG, FriendlyByteBuf> encoder,
@@ -286,13 +290,13 @@ public class SimpleChannel extends Channel<Object> {
         BiConsumer<MSG, CustomPayloadEvent.Context> consumer
     ){ };
 
-    private short nextIndex() {
+    private int nextIndex() {
         while (byId.containsKey(lastIndex)) {
             lastIndex++;
-            if (lastIndex > 0xFF)
-                throw new IllegalStateException("Ran out of discriminator, only 255 are allowed");
+            if (lastIndex < 0)
+                throw new IllegalStateException("Ran out of discriminator, only " + Integer.MAX_VALUE + " are allowed");
         }
-        return lastIndex++;
+        return lastIndex;
     }
 
     private void networkEventListener(CustomPayloadEvent event) {
@@ -302,10 +306,10 @@ public class SimpleChannel extends Channel<Object> {
             return;
         }
 
-        short id = data.readUnsignedByte();
+        int id = data.readVarInt();
         var msg = byId.get(id);
         if (msg == null) {
-            LOGGER.error(MARKER, "Received invalid discriminator byte {} on channel {}", id, getName());
+            LOGGER.error(MARKER, "Received invalid discriminator {} on channel {}", id, getName());
             return;
         }
 
@@ -338,7 +342,7 @@ public class SimpleChannel extends Channel<Object> {
             throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
         }
         var ret = new FriendlyByteBuf(Unpooled.buffer());
-        ret.writeByte(msg.index() & 0xFF);
+        ret.writeVarInt(msg.index());
         if (msg.encoder() != null)
             ((BiConsumer<Object, FriendlyByteBuf>)msg.encoder()).accept(message, ret);
 
