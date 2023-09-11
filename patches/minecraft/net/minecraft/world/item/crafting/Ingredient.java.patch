@@ -10,38 +10,38 @@
 +      INVALIDATION_COUNTER.incrementAndGet();
 +   }
 +
-    public static final Ingredient f_43901_ = new Ingredient(Stream.empty());
-    private final Ingredient.Value[] f_43902_;
+    public static final Ingredient EMPTY = new Ingredient(Stream.empty());
+    private final Ingredient.Value[] values;
     @Nullable
 @@ -38,6 +_,7 @@
-    private IntList f_43904_;
-    public static final Codec<Ingredient> f_291570_ = m_294319_(true);
-    public static final Codec<Ingredient> f_290991_ = m_294319_(false);
+    private IntList stackingIds;
+    public static final Codec<Ingredient> CODEC = codec(true);
+    public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
 +   private int invalidationCounter;
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
-       this.f_43902_ = p_43907_.toArray((p_43933_) -> {
+       this.values = p_43907_.toArray((p_43933_) -> {
 @@ -78,7 +_,8 @@
     }
  
-    public IntList m_43931_() {
--      if (this.f_43904_ == null) {
-+      if (this.f_43904_ == null || checkInvalidation()) {
+    public IntList getStackingIds() {
+-      if (this.stackingIds == null) {
++      if (this.stackingIds == null || checkInvalidation()) {
 +         this.markValid();
-          ItemStack[] aitemstack = this.m_43908_();
-          this.f_43904_ = new IntArrayList(aitemstack.length);
+          ItemStack[] aitemstack = this.getItems();
+          this.stackingIds = new IntArrayList(aitemstack.length);
  
 @@ -93,6 +_,12 @@
     }
  
-    public final void m_43923_(FriendlyByteBuf p_43924_) {
+    public final void toNetwork(FriendlyByteBuf p_43924_) {
 +      /*
 +      if (!this.isVanilla()) {
 +         net.minecraftforge.common.crafting.CraftingHelper.write(p_43924_, this);
 +         return;
 +      }
 +      */
-       p_43924_.m_236828_(Arrays.asList(this.m_43908_()), FriendlyByteBuf::m_130055_);
+       p_43924_.writeCollection(Arrays.asList(this.getItems()), FriendlyByteBuf::writeItem);
     }
  
 @@ -113,6 +_,40 @@
@@ -62,8 +62,8 @@
 +   }
 +
 +   protected void invalidate() {
-+      this.f_43903_ = null;
-+      this.f_43904_ = null;
++      this.itemStacks = null;
++      this.stackingIds = null;
 +   }
 +
 +   public boolean isSimple() {
@@ -82,20 +82,20 @@
 +   }
 +   */
 +
-    public static Ingredient m_43938_(Stream<? extends Ingredient.Value> p_43939_) {
+    public static Ingredient fromValues(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
-       return ingredient.m_43947_() ? f_43901_ : ingredient;
+       return ingredient.isEmpty() ? EMPTY : ingredient;
 @@ -141,7 +_,9 @@
     }
  
-    public static Ingredient m_43940_(FriendlyByteBuf p_43941_) {
--      return m_43938_(p_43941_.<ItemStack>m_236845_(FriendlyByteBuf::m_130267_).stream().map(Ingredient.ItemValue::new));
-+      var size = p_43941_.m_130242_();
+    public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
+-      return fromValues(p_43941_.<ItemStack>readList(FriendlyByteBuf::readItem).stream().map(Ingredient.ItemValue::new));
++      var size = p_43941_.readVarInt();
 +      //if (size == -1) return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
-+      return m_43938_(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.m_130267_())).limit(size));
++      return fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
     }
  
-    private static Codec<Ingredient> m_294319_(boolean p_298496_) {
+    private static Codec<Ingredient> codec(boolean p_298496_) {
 @@ -185,6 +_,12 @@
        }
     }
@@ -103,18 +103,18 @@
 +   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
 +   //Only public for internal use, so we can access a private field in here.
 +   public static Ingredient merge(Collection<Ingredient> parts) {
-+      return m_43938_(parts.stream().flatMap(i -> Arrays.stream(i.f_43902_)));
++      return fromValues(parts.stream().flatMap(i -> Arrays.stream(i.values)));
 +   }
 +
-    public static record TagValue(TagKey<Item> f_43959_) implements Ingredient.Value {
-       static final Codec<Ingredient.TagValue> f_291685_ = RecordCodecBuilder.create((p_300241_) -> {
-          return p_300241_.group(TagKey.m_203877_(Registries.f_256913_).fieldOf("tag").forGetter((p_301340_) -> {
+    public static record TagValue(TagKey<Item> tag) implements Ingredient.Value {
+       static final Codec<Ingredient.TagValue> CODEC = RecordCodecBuilder.create((p_300241_) -> {
+          return p_300241_.group(TagKey.codec(Registries.ITEM).fieldOf("tag").forGetter((p_301340_) -> {
 @@ -207,6 +_,9 @@
              list.add(new ItemStack(holder));
           }
  
 +         if (list.size() == 0) {
-+            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(net.minecraft.network.chat.Component.m_237113_("Empty Tag: " + this.f_43959_.f_203868_())));
++            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.BARRIER).setHoverName(net.minecraft.network.chat.Component.literal("Empty Tag: " + this.tag.location())));
 +         }
           return list;
        }

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/data/tags/GameEventTagsProvider.java
 @@ -13,10 +_,15 @@
     @VisibleForTesting
-    static final GameEvent[] f_236425_ = new GameEvent[]{GameEvent.f_157791_, GameEvent.f_157792_, GameEvent.f_157793_, GameEvent.f_157794_, GameEvent.f_157795_, GameEvent.f_157796_, GameEvent.f_157797_, GameEvent.f_223702_, GameEvent.f_223703_, GameEvent.f_157802_, GameEvent.f_157803_, GameEvent.f_223704_, GameEvent.f_157806_, GameEvent.f_223705_, GameEvent.f_223706_, GameEvent.f_223707_, GameEvent.f_268533_, GameEvent.f_223708_, GameEvent.f_268500_, GameEvent.f_157810_, GameEvent.f_290971_, GameEvent.f_157811_, GameEvent.f_157812_, GameEvent.f_157816_, GameEvent.f_157769_, GameEvent.f_157770_, GameEvent.f_223696_, GameEvent.f_223697_, GameEvent.f_157772_, GameEvent.f_223699_, GameEvent.f_157776_, GameEvent.f_157777_, GameEvent.f_157778_, GameEvent.f_157781_, GameEvent.f_157784_, GameEvent.f_157785_, GameEvent.f_157786_, GameEvent.f_238175_, GameEvent.f_291275_};
+    static final GameEvent[] VIBRATIONS_EXCEPT_FLAP = new GameEvent[]{GameEvent.BLOCK_ATTACH, GameEvent.BLOCK_CHANGE, GameEvent.BLOCK_CLOSE, GameEvent.BLOCK_DESTROY, GameEvent.BLOCK_DETACH, GameEvent.BLOCK_OPEN, GameEvent.BLOCK_PLACE, GameEvent.BLOCK_ACTIVATE, GameEvent.BLOCK_DEACTIVATE, GameEvent.CONTAINER_CLOSE, GameEvent.CONTAINER_OPEN, GameEvent.DRINK, GameEvent.EAT, GameEvent.ELYTRA_GLIDE, GameEvent.ENTITY_DAMAGE, GameEvent.ENTITY_DIE, GameEvent.ENTITY_DISMOUNT, GameEvent.ENTITY_INTERACT, GameEvent.ENTITY_MOUNT, GameEvent.ENTITY_PLACE, GameEvent.ENTITY_ACTION, GameEvent.EQUIP, GameEvent.EXPLODE, GameEvent.FLUID_PICKUP, GameEvent.FLUID_PLACE, GameEvent.HIT_GROUND, GameEvent.INSTRUMENT_PLAY, GameEvent.ITEM_INTERACT_FINISH, GameEvent.LIGHTNING_STRIKE, GameEvent.NOTE_BLOCK_PLAY, GameEvent.PRIME_FUSE, GameEvent.PROJECTILE_LAND, GameEvent.PROJECTILE_SHOOT, GameEvent.SHEAR, GameEvent.SPLASH, GameEvent.STEP, GameEvent.SWIM, GameEvent.TELEPORT, GameEvent.UNEQUIP};
  
 +   /** @deprecated Forge: Use the {@linkplain #GameEventTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
@@ -10,10 +10,10 @@
 +      this(p_256060_, p_255621_, "vanilla", null);
 +   }
 +   public GameEventTagsProvider(PackOutput p_256060_, CompletableFuture<HolderLookup.Provider> p_255621_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       super(p_256060_, Registries.f_256827_, p_255621_, (p_256368_) -> {
-          return p_256368_.m_204530_().m_205785_();
+       super(p_256060_, Registries.GAME_EVENT, p_255621_, (p_256368_) -> {
+          return p_256368_.builtInRegistryHolder().key();
 -      });
 +      }, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_255981_) {
+    protected void addTags(HolderLookup.Provider p_255981_) {

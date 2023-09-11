@@ -3,18 +3,18 @@
 @@ -66,6 +_,7 @@
     }
  
-    public void m_293234_(ServerboundCustomPayloadPacket p_300164_) {
-+      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.f_291338_);
+    public void handleCustomPayload(ServerboundCustomPayloadPacket p_300164_) {
++      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.connection);
     }
  
-    public void m_293248_(ServerboundResourcePackPacket p_300656_) {
+    public void handleResourcePackResponse(ServerboundResourcePackPacket p_300656_) {
 @@ -147,5 +_,9 @@
  
-    protected CommonListenerCookie m_295477_(ClientInformation p_297318_) {
-       return new CommonListenerCookie(this.m_293343_(), this.f_291042_, p_297318_);
+    protected CommonListenerCookie createCookie(ClientInformation p_297318_) {
+       return new CommonListenerCookie(this.playerProfile(), this.latency, p_297318_);
 +   }
 +
 +   public Connection getConnection() {
-+      return this.f_291338_;
++      return this.connection;
     }
  }

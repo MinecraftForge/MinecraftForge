@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/WorldLoader.java
 +++ b/net/minecraft/server/WorldLoader.java
 @@ -28,7 +_,7 @@
-          Pair<WorldDataConfiguration, CloseableResourceManager> pair = p_214363_.f_214378_.m_214399_();
+          Pair<WorldDataConfiguration, CloseableResourceManager> pair = p_214363_.packConfig.createResourceManager();
           CloseableResourceManager closeableresourcemanager = pair.getSecond();
-          LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = RegistryLayer.m_245849_();
--         LayeredRegistryAccess<RegistryLayer> layeredregistryaccess1 = m_245736_(closeableresourcemanager, layeredregistryaccess, RegistryLayer.WORLDGEN, RegistryDataLoader.f_243803_);
-+         LayeredRegistryAccess<RegistryLayer> layeredregistryaccess1 = m_245736_(closeableresourcemanager, layeredregistryaccess, RegistryLayer.WORLDGEN, net.minecraftforge.registries.DataPackRegistriesHooks.getDataPackRegistries());
-          RegistryAccess.Frozen registryaccess$frozen = layeredregistryaccess1.m_246035_(RegistryLayer.DIMENSIONS);
-          RegistryAccess.Frozen registryaccess$frozen1 = RegistryDataLoader.m_247207_(closeableresourcemanager, registryaccess$frozen, RegistryDataLoader.f_244547_);
+          LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = RegistryLayer.createRegistryAccess();
+-         LayeredRegistryAccess<RegistryLayer> layeredregistryaccess1 = loadAndReplaceLayer(closeableresourcemanager, layeredregistryaccess, RegistryLayer.WORLDGEN, RegistryDataLoader.WORLDGEN_REGISTRIES);
++         LayeredRegistryAccess<RegistryLayer> layeredregistryaccess1 = loadAndReplaceLayer(closeableresourcemanager, layeredregistryaccess, RegistryLayer.WORLDGEN, net.minecraftforge.registries.DataPackRegistriesHooks.getDataPackRegistries());
+          RegistryAccess.Frozen registryaccess$frozen = layeredregistryaccess1.getAccessForLoading(RegistryLayer.DIMENSIONS);
+          RegistryAccess.Frozen registryaccess$frozen1 = RegistryDataLoader.load(closeableresourcemanager, registryaccess$frozen, RegistryDataLoader.DIMENSION_REGISTRIES);
           WorldDataConfiguration worlddataconfiguration = pair.getFirst();

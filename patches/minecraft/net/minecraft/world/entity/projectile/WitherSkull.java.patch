@@ -3,9 +3,9 @@
 @@ -40,7 +_,7 @@
     }
  
-    public float m_7077_(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
--      return this.m_37635_() && WitherBoss.m_31491_(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
-+      return this.m_37635_() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
+    public float getBlockExplosionResistance(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
+-      return this.isDangerous() && WitherBoss.canDestroy(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
++      return this.isDangerous() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
     }
  
-    protected void m_5790_(EntityHitResult p_37626_) {
+    protected void onHitEntity(EntityHitResult p_37626_) {

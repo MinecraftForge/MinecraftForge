@@ -3,33 +3,33 @@
 @@ -171,6 +_,8 @@
     }
  
-    public boolean m_135988_(AdvancementHolder p_298135_, String p_135990_) {
+    public boolean award(AdvancementHolder p_298135_, String p_135990_) {
 +      // Forge: don't grant advancements for fake players
-+      if (this.f_135968_ instanceof net.minecraftforge.common.util.FakePlayer) return false;
++      if (this.player instanceof net.minecraftforge.common.util.FakePlayer) return false;
        boolean flag = false;
-       AdvancementProgress advancementprogress = this.m_135996_(p_298135_);
-       boolean flag1 = advancementprogress.m_8193_();
+       AdvancementProgress advancementprogress = this.getOrStartProgress(p_298135_);
+       boolean flag1 = advancementprogress.isDone();
 @@ -178,6 +_,7 @@
-          this.m_136008_(p_298135_);
-          this.f_135967_.add(p_298135_);
+          this.unregisterListeners(p_298135_);
+          this.progressChanged.add(p_298135_);
           flag = true;
-+         net.minecraftforge.event.ForgeEventFactory.onAdvancementGrant(this.f_135968_, p_298135_, advancementprogress, p_135990_);
-          if (!flag1 && advancementprogress.m_8193_()) {
-             p_298135_.f_290952_().f_138300_().m_9989_(this.f_135968_);
-             p_298135_.f_290952_().f_138299_().ifPresent((p_296444_) -> {
++         net.minecraftforge.event.ForgeEventFactory.onAdvancementGrant(this.player, p_298135_, advancementprogress, p_135990_);
+          if (!flag1 && advancementprogress.isDone()) {
+             p_298135_.value().rewards().grant(this.player);
+             p_298135_.value().display().ifPresent((p_296444_) -> {
 @@ -186,6 +_,7 @@
                 }
  
              });
-+            net.minecraftforge.event.ForgeEventFactory.onAdvancementEarned(this.f_135968_, p_298135_);
++            net.minecraftforge.event.ForgeEventFactory.onAdvancementEarned(this.player, p_298135_);
           }
        }
  
 @@ -204,6 +_,7 @@
-          this.m_136004_(p_297905_);
-          this.f_135967_.add(p_297905_);
+          this.registerListeners(p_297905_);
+          this.progressChanged.add(p_297905_);
           flag = true;
-+         net.minecraftforge.event.ForgeEventFactory.onAdvancementRevoke(this.f_135968_, p_297905_, advancementprogress, p_136000_);
++         net.minecraftforge.event.ForgeEventFactory.onAdvancementRevoke(this.player, p_297905_, advancementprogress, p_136000_);
        }
  
-       if (flag1 && !advancementprogress.m_8193_()) {
+       if (flag1 && !advancementprogress.isDone()) {

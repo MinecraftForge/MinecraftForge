@@ -1,16 +1,16 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -68,6 +_,8 @@
-    private MinecraftServerGui f_139605_;
+    private MinecraftServerGui gui;
     @Nullable
-    private final TextFilterClient f_139606_;
+    private final TextFilterClient textFilterClient;
 +   @Nullable
 +   private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
     public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
        super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
 @@ -79,6 +_,7 @@
-    public boolean m_7038_() throws IOException {
+    public boolean initServer() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
@@ -18,26 +18,26 @@
  
              String s1;
 @@ -156,11 +_,13 @@
-          long i = Util.m_137569_();
-          SkullBlockEntity.m_222885_(this.f_236721_, this);
-          GameProfileCache.m_11004_(this.m_129797_());
+          long i = Util.getNanos();
+          SkullBlockEntity.setup(this.services, this);
+          GameProfileCache.setUsesAuthentication(this.usesAuthentication());
 +         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-          f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
-          this.m_130006_();
-          long j = Util.m_137569_() - i;
+          LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
+          this.loadLevel();
+          long j = Util.getNanos() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-          f_139598_.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.f_129726_ = Util.m_137550_(); //Forge: Update server time to prevent watchdog/spaming during long load.
-          if (dedicatedserverproperties.f_139744_ != null) {
-             this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
+          LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
++         this.nextTickTime = Util.getMillis(); //Forge: Update server time to prevent watchdog/spaming during long load.
+          if (dedicatedserverproperties.announcePlayerAchievements != null) {
+             this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
           }
 @@ -188,7 +_,12 @@
-             f_139598_.info("JMX monitoring enabled");
+             LOGGER.info("JMX monitoring enabled");
           }
  
 -         return true;
 +         if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
-+            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.m_129916_(), String.valueOf(this.m_7448_()));
++            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
 +            this.dediLanPinger.start();
 +         }
 +
@@ -46,7 +46,7 @@
     }
  
 @@ -263,6 +_,10 @@
-          this.f_139601_.m_7530_();
+          this.queryThreadGs4.stop();
        }
  
 +      if (this.dediLanPinger != null) {
@@ -55,17 +55,17 @@
 +      }
     }
  
-    public void m_5703_(BooleanSupplier p_139661_) {
+    public void tickChildren(BooleanSupplier p_139661_) {
 @@ -496,7 +_,12 @@
     }
  
-    public void m_7041_() {
+    public void stopServer() {
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
-       super.m_7041_();
+       super.stopServer();
 +      if (this.dediLanPinger != null) {
 +         this.dediLanPinger.interrupt();
 +         this.dediLanPinger = null;
 +      }
-       Util.m_137580_();
-       SkullBlockEntity.m_196704_();
+       Util.shutdownExecutors();
+       SkullBlockEntity.clear();
     }

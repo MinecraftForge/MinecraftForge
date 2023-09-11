@@ -4,13 +4,13 @@
  import net.minecraft.network.protocol.common.custom.WorldGenAttemptDebugPayload;
  import net.minecraft.resources.ResourceLocation;
  
--public record ClientboundCustomPayloadPacket(CustomPacketPayload f_291001_) implements Packet<ClientCommonPacketListener> {
-+public record ClientboundCustomPayloadPacket(CustomPacketPayload f_291001_) implements Packet<ClientCommonPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomPayloadPacket> {
-    private static final int f_290501_ = 1048576;
-    private static final Map<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>> f_290559_ = ImmutableMap.<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>>builder().put(BrandPayload.f_291556_, BrandPayload::new).put(BeeDebugPayload.f_290721_, BeeDebugPayload::new).put(BrainDebugPayload.f_290905_, BrainDebugPayload::new).put(GameEventDebugPayload.f_290615_, GameEventDebugPayload::new).put(GameEventListenerDebugPayload.f_290865_, GameEventListenerDebugPayload::new).put(GameTestAddMarkerDebugPayload.f_291461_, GameTestAddMarkerDebugPayload::new).put(GameTestClearMarkersDebugPayload.f_291366_, GameTestClearMarkersDebugPayload::new).put(GoalDebugPayload.f_290680_, GoalDebugPayload::new).put(HiveDebugPayload.f_291748_, HiveDebugPayload::new).put(NeighborUpdatesDebugPayload.f_291649_, NeighborUpdatesDebugPayload::new).put(PathfindingDebugPayload.f_291536_, PathfindingDebugPayload::new).put(PoiAddedDebugPayload.f_290556_, PoiAddedDebugPayload::new).put(PoiRemovedDebugPayload.f_291534_, PoiRemovedDebugPayload::new).put(PoiTicketCountDebugPayload.f_291088_, PoiTicketCountDebugPayload::new).put(RaidsDebugPayload.f_291341_, RaidsDebugPayload::new).put(StructuresDebugPayload.f_291313_, StructuresDebugPayload::new).put(VillageSectionsDebugPayload.f_291109_, VillageSectionsDebugPayload::new).put(WorldGenAttemptDebugPayload.f_291888_, WorldGenAttemptDebugPayload::new).build();
+-public record ClientboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ClientCommonPacketListener> {
++public record ClientboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ClientCommonPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomPayloadPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
+    private static final Map<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>> KNOWN_TYPES = ImmutableMap.<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>>builder().put(BrandPayload.ID, BrandPayload::new).put(BeeDebugPayload.ID, BeeDebugPayload::new).put(BrainDebugPayload.ID, BrainDebugPayload::new).put(GameEventDebugPayload.ID, GameEventDebugPayload::new).put(GameEventListenerDebugPayload.ID, GameEventListenerDebugPayload::new).put(GameTestAddMarkerDebugPayload.ID, GameTestAddMarkerDebugPayload::new).put(GameTestClearMarkersDebugPayload.ID, GameTestClearMarkersDebugPayload::new).put(GoalDebugPayload.ID, GoalDebugPayload::new).put(HiveDebugPayload.ID, HiveDebugPayload::new).put(NeighborUpdatesDebugPayload.ID, NeighborUpdatesDebugPayload::new).put(PathfindingDebugPayload.ID, PathfindingDebugPayload::new).put(PoiAddedDebugPayload.ID, PoiAddedDebugPayload::new).put(PoiRemovedDebugPayload.ID, PoiRemovedDebugPayload::new).put(PoiTicketCountDebugPayload.ID, PoiTicketCountDebugPayload::new).put(RaidsDebugPayload.ID, RaidsDebugPayload::new).put(StructuresDebugPayload.ID, StructuresDebugPayload::new).put(VillageSectionsDebugPayload.ID, VillageSectionsDebugPayload::new).put(WorldGenAttemptDebugPayload.ID, WorldGenAttemptDebugPayload::new).build();
  
 @@ -42,8 +_,7 @@
-    private static DiscardedPayload m_294768_(ResourceLocation p_299265_, FriendlyByteBuf p_297545_) {
+    private static DiscardedPayload readUnknownPayload(ResourceLocation p_299265_, FriendlyByteBuf p_297545_) {
        int i = p_297545_.readableBytes();
        if (i >= 0 && i <= 1048576) {
 -         p_297545_.skipBytes(i);
@@ -20,11 +20,11 @@
           throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
        }
 @@ -57,4 +_,8 @@
-    public void m_5797_(ClientCommonPacketListener p_299773_) {
-       p_299773_.m_293213_(this);
+    public void handle(ClientCommonPacketListener p_299773_) {
+       p_299773_.handleCustomPayload(this);
     }
 +
-+   @Override public @org.jetbrains.annotations.Nullable FriendlyByteBuf getInternalData() { return f_291001_ instanceof DiscardedPayload dc ? dc.data() : null; }
-+   @Override public ResourceLocation getName() { return f_291001_.m_292644_(); }
++   @Override public @org.jetbrains.annotations.Nullable FriendlyByteBuf getInternalData() { return payload instanceof DiscardedPayload dc ? dc.data() : null; }
++   @Override public ResourceLocation getName() { return payload.id(); }
 +   @Override public int getIndex() { return 0; }
  }

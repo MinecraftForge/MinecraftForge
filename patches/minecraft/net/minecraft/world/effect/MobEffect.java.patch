@@ -6,20 +6,20 @@
  
 -public class MobEffect {
 +public class MobEffect implements net.minecraftforge.common.extensions.IForgeMobEffect {
-    private final Map<Attribute, AttributeModifierTemplate> f_19446_ = Maps.newHashMap();
-    private final MobEffectCategory f_19447_;
-    private final int f_19448_;
+    private final Map<Attribute, AttributeModifierTemplate> attributeModifiers = Maps.newHashMap();
+    private final MobEffectCategory category;
+    private final int color;
 @@ -31,6 +_,7 @@
     protected MobEffect(MobEffectCategory p_19451_, int p_19452_) {
-       this.f_19447_ = p_19451_;
-       this.f_19448_ = p_19452_;
+       this.category = p_19451_;
+       this.color = p_19452_;
 +      initClient();
     }
  
-    public Optional<MobEffectInstance.FactorData> m_216881_() {
+    public Optional<MobEffectInstance.FactorData> createFactorData() {
 @@ -117,6 +_,31 @@
-    public boolean m_19486_() {
-       return this.f_19447_ == MobEffectCategory.BENEFICIAL;
+    public boolean isBeneficial() {
+       return this.category == MobEffectCategory.BENEFICIAL;
     }
 +
 +   // FORGE START

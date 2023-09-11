@@ -3,10 +3,10 @@
 @@ -71,6 +_,9 @@
     }
  
-    public final CompoundTag m_192644_(StructurePieceSerializationContext p_192645_) {
-+      if (BuiltInRegistries.f_257014_.m_7981_(this.m_210000_()) == null) { // FORGE: Friendlier error then the Null String error below.
-+         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.m_210000_() + "\" unregistered, serializing impossible.");
+    public final CompoundTag createTag(StructurePieceSerializationContext p_192645_) {
++      if (BuiltInRegistries.STRUCTURE_PIECE.getKey(this.getType()) == null) { // FORGE: Friendlier error then the Null String error below.
++         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.getType() + "\" unregistered, serializing impossible.");
 +      }
        CompoundTag compoundtag = new CompoundTag();
-       compoundtag.m_128359_("id", BuiltInRegistries.f_257014_.m_7981_(this.m_210000_()).toString());
-       BoundingBox.f_162354_.encodeStart(NbtOps.f_128958_, this.f_73383_).resultOrPartial(f_163536_::error).ifPresent((p_163579_) -> {
+       compoundtag.putString("id", BuiltInRegistries.STRUCTURE_PIECE.getKey(this.getType()).toString());
+       BoundingBox.CODEC.encodeStart(NbtOps.INSTANCE, this.boundingBox).resultOrPartial(LOGGER::error).ifPresent((p_163579_) -> {

@@ -4,7 +4,7 @@
                       }
                    }
  
-+                  clientlevel.m_104583_().adjustLightmapColors(clientlevel, p_109882_, f, f7, f8, j, i, vector3f1);
++                  clientlevel.effects().adjustLightmapColors(clientlevel, p_109882_, f, f7, f8, j, i, vector3f1);
 +
                    if (f5 > 0.0F) {
                       float f13 = Math.max(vector3f1.x(), Math.max(vector3f1.y(), vector3f1.z()));
@@ -12,9 +12,9 @@
 @@ -192,7 +_,7 @@
     }
  
-    public static int m_109883_(int p_109884_) {
+    public static int block(int p_109884_) {
 -      return p_109884_ >> 4 & '\uffff';
 +      return (p_109884_ & 0xFFFF) >> 4; // Forge: Fix fullbright quads showing dark artifacts. Reported as MC-169806
     }
  
-    public static int m_109894_(int p_109895_) {
+    public static int sky(int p_109895_) {

@@ -5,17 +5,17 @@
     }
  
 +   public ResourceLocation getId() {
-+      return f_215913_;
++      return id;
 +   }
 +
 +   public boolean isRequired() {
-+      return f_215915_;
++      return required;
 +   }
 +
 +   public boolean isTag() {
-+      return f_215914_;
++      return tag;
 +   }
 +
     public interface Lookup<T> {
        @Nullable
-       T m_213619_(ResourceLocation p_215956_);
+       T element(ResourceLocation p_215956_);

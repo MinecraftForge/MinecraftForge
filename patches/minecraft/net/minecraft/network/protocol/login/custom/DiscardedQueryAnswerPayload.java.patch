@@ -6,13 +6,13 @@
  
 -public record DiscardedQueryAnswerPayload() implements CustomQueryAnswerPayload {
 +public record DiscardedQueryAnswerPayload(@javax.annotation.Nullable FriendlyByteBuf data) implements CustomQueryAnswerPayload {
-    public static final DiscardedQueryAnswerPayload f_290582_ = new DiscardedQueryAnswerPayload();
+    public static final DiscardedQueryAnswerPayload INSTANCE = new DiscardedQueryAnswerPayload();
  
 +   public DiscardedQueryAnswerPayload() {
 +      this(null);
 +   }
 +
-    public void m_295630_(FriendlyByteBuf p_299186_) {
+    public void write(FriendlyByteBuf p_299186_) {
 +      if (this.data != null)
 +         p_299186_.writeBytes(this.data.slice());
     }

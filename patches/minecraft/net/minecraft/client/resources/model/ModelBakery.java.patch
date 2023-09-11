@@ -1,48 +1,48 @@
 --- a/net/minecraft/client/resources/model/ModelBakery.java
 +++ b/net/minecraft/client/resources/model/ModelBakery.java
 @@ -153,6 +_,13 @@
-       p_252014_.m_6182_("special");
-       this.m_119306_(ItemRenderer.f_244055_);
-       this.m_119306_(ItemRenderer.f_243706_);
+       p_252014_.popPush("special");
+       this.loadTopLevel(ItemRenderer.TRIDENT_IN_HAND_MODEL);
+       this.loadTopLevel(ItemRenderer.SPYGLASS_IN_HAND_MODEL);
 +      Set<ResourceLocation> additionalModels = Sets.newHashSet();
 +      net.minecraftforge.client.ForgeHooksClient.onRegisterAdditionalModels(additionalModels);
 +      for (ResourceLocation rl : additionalModels) {
-+         UnbakedModel unbakedmodel = this.m_119341_(rl); // loadTopLevel(...), but w/o ModelResourceLocation limitation
-+         this.f_119212_.put(rl, unbakedmodel);
-+         this.f_119214_.put(rl, unbakedmodel);
++         UnbakedModel unbakedmodel = this.getModel(rl); // loadTopLevel(...), but w/o ModelResourceLocation limitation
++         this.unbakedCache.put(rl, unbakedmodel);
++         this.topLevelModels.put(rl, unbakedmodel);
 +      }
-       this.f_119214_.values().forEach((p_247954_) -> {
-          p_247954_.m_5500_(this::m_119341_);
+       this.topLevelModels.values().forEach((p_247954_) -> {
+          p_247954_.resolveParents(this::getModel);
        });
 @@ -452,7 +_,17 @@
-          return ModelBakery.this.m_119341_(p_248568_);
+          return ModelBakery.this.getModel(p_248568_);
        }
  
 +      @Override
 +      public Function<Material, TextureAtlasSprite> getModelTextureGetter() {
-+         return this.f_243920_;
++         return this.modelTextureGetter;
 +      }
 +
-       public BakedModel m_245240_(ResourceLocation p_252176_, ModelState p_249765_) {
-+         return bake(p_252176_, p_249765_, this.f_243920_);
+       public BakedModel bake(ResourceLocation p_252176_, ModelState p_249765_) {
++         return bake(p_252176_, p_249765_, this.modelTextureGetter);
 +      }
 +
 +      @Override
 +      public BakedModel bake(ResourceLocation p_252176_, ModelState p_249765_, Function<Material, TextureAtlasSprite> sprites) {
-          ModelBakery.BakedCacheKey modelbakery$bakedcachekey = new ModelBakery.BakedCacheKey(p_252176_, p_249765_.m_6189_(), p_249765_.m_7538_());
-          BakedModel bakedmodel = ModelBakery.this.f_119213_.get(modelbakery$bakedcachekey);
+          ModelBakery.BakedCacheKey modelbakery$bakedcachekey = new ModelBakery.BakedCacheKey(p_252176_, p_249765_.getRotation(), p_249765_.isUvLocked());
+          BakedModel bakedmodel = ModelBakery.this.bakedCache.get(modelbakery$bakedcachekey);
           if (bakedmodel != null) {
 @@ -462,11 +_,11 @@
              if (unbakedmodel instanceof BlockModel) {
                 BlockModel blockmodel = (BlockModel)unbakedmodel;
-                if (blockmodel.m_111490_() == ModelBakery.f_119232_) {
--                  return ModelBakery.f_119241_.m_111670_(this.f_243920_, blockmodel).m_111449_(this, blockmodel, this.f_243920_, p_249765_, p_252176_, false);
-+                  return ModelBakery.f_119241_.m_111670_(sprites, blockmodel).m_111449_(this, blockmodel, sprites, p_249765_, p_252176_, false);
+                if (blockmodel.getRootModel() == ModelBakery.GENERATION_MARKER) {
+-                  return ModelBakery.ITEM_MODEL_GENERATOR.generateBlockModel(this.modelTextureGetter, blockmodel).bake(this, blockmodel, this.modelTextureGetter, p_249765_, p_252176_, false);
++                  return ModelBakery.ITEM_MODEL_GENERATOR.generateBlockModel(sprites, blockmodel).bake(this, blockmodel, sprites, p_249765_, p_252176_, false);
                 }
              }
  
--            BakedModel bakedmodel1 = unbakedmodel.m_7611_(this, this.f_243920_, p_249765_, p_252176_);
-+            BakedModel bakedmodel1 = unbakedmodel.m_7611_(this, sprites, p_249765_, p_252176_);
-             ModelBakery.this.f_119213_.put(modelbakery$bakedcachekey, bakedmodel1);
+-            BakedModel bakedmodel1 = unbakedmodel.bake(this, this.modelTextureGetter, p_249765_, p_252176_);
++            BakedModel bakedmodel1 = unbakedmodel.bake(this, sprites, p_249765_, p_252176_);
+             ModelBakery.this.bakedCache.put(modelbakery$bakedcachekey, bakedmodel1);
              return bakedmodel1;
           }

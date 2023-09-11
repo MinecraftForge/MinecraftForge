@@ -2,19 +2,19 @@
 +++ b/net/minecraft/world/item/CreativeModeTabs.java
 @@ -1612,7 +_,7 @@
  
-    private static void m_269182_(CreativeModeTab.Output p_270868_, HolderLookup<Enchantment> p_270903_, Set<EnchantmentCategory> p_270380_, CreativeModeTab.TabVisibility p_270407_) {
-       p_270903_.m_214062_().map(Holder::m_203334_).filter((p_270008_) -> {
--         return p_270380_.contains(p_270008_.f_44672_);
-+         return p_270008_.allowedInCreativeTab(Items.f_42690_, p_270380_);
+    private static void generateEnchantmentBookTypesOnlyMaxLevel(CreativeModeTab.Output p_270868_, HolderLookup<Enchantment> p_270903_, Set<EnchantmentCategory> p_270380_, CreativeModeTab.TabVisibility p_270407_) {
+       p_270903_.listElements().map(Holder::value).filter((p_270008_) -> {
+-         return p_270380_.contains(p_270008_.category);
++         return p_270008_.allowedInCreativeTab(Items.ENCHANTED_BOOK, p_270380_);
        }).map((p_270038_) -> {
-          return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270038_, p_270038_.m_6586_()));
+          return EnchantedBookItem.createForEnchantment(new EnchantmentInstance(p_270038_, p_270038_.getMaxLevel()));
        }).forEach((p_269989_) -> {
 @@ -1622,7 +_,7 @@
  
-    private static void m_269335_(CreativeModeTab.Output p_270961_, HolderLookup<Enchantment> p_270628_, Set<EnchantmentCategory> p_271024_, CreativeModeTab.TabVisibility p_270805_) {
-       p_270628_.m_214062_().map(Holder::m_203334_).filter((p_269991_) -> {
--         return p_271024_.contains(p_269991_.f_44672_);
-+         return p_269991_.allowedInCreativeTab(Items.f_42690_, p_271024_);
+    private static void generateEnchantmentBookTypesAllLevels(CreativeModeTab.Output p_270961_, HolderLookup<Enchantment> p_270628_, Set<EnchantmentCategory> p_271024_, CreativeModeTab.TabVisibility p_270805_) {
+       p_270628_.listElements().map(Holder::value).filter((p_269991_) -> {
+-         return p_271024_.contains(p_269991_.category);
++         return p_269991_.allowedInCreativeTab(Items.ENCHANTED_BOOK, p_271024_);
        }).flatMap((p_270024_) -> {
-          return IntStream.rangeClosed(p_270024_.m_44702_(), p_270024_.m_6586_()).mapToObj((p_270006_) -> {
-             return EnchantedBookItem.m_41161_(new EnchantmentInstance(p_270024_, p_270006_));
+          return IntStream.rangeClosed(p_270024_.getMinLevel(), p_270024_.getMaxLevel()).mapToObj((p_270006_) -> {
+             return EnchantedBookItem.createForEnchantment(new EnchantmentInstance(p_270024_, p_270006_));

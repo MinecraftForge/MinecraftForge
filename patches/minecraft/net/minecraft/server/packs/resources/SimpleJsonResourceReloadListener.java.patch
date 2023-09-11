@@ -6,6 +6,6 @@
     }
 +
 +   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
-+      return rl.m_247449_(this.f_10765_ + "/" + rl.m_135815_() + ".json");
++      return rl.withPath(this.directory + "/" + rl.getPath() + ".json");
 +   }
  }

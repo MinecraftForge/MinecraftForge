@@ -1,18 +1,18 @@
 --- a/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
 +++ b/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
 @@ -61,6 +_,15 @@
-       return Component.m_237119_().m_7220_(this.f_200947_.f_287789_).m_130946_(": ").m_7220_(this.f_200947_.f_287787_);
+       return Component.empty().append(this.lines.title).append(": ").append(this.lines.detail);
     }
  
 +    @Override
-+    public boolean m_7933_(int key, int scanCode, int modifiers) {
++    public boolean keyPressed(int key, int scanCode, int modifiers) {
 +       if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
-+          f_96541_.m_91152_(this.f_88665_);
++          minecraft.setScreen(this.nextScreen);
 +          return true;
 +       }
-+       return super.m_7933_(key, scanCode, modifiers);
++       return super.keyPressed(key, scanCode, modifiers);
 +    }
 +
-    public void m_88315_(GuiGraphics p_283497_, int p_88680_, int p_88681_, float p_88682_) {
-       super.m_88315_(p_283497_, p_88680_, p_88681_, p_88682_);
-       p_283497_.m_280653_(this.f_96547_, this.f_200947_.f_287789_, this.f_96543_ / 2, 80, -1);
+    public void render(GuiGraphics p_283497_, int p_88680_, int p_88681_, float p_88682_) {
+       super.render(p_283497_, p_88680_, p_88681_, p_88682_);
+       p_283497_.drawCenteredString(this.font, this.lines.title, this.width / 2, 80, -1);

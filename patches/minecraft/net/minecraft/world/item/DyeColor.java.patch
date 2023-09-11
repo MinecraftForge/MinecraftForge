@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/item/DyeColor.java
 +++ b/net/minecraft/world/item/DyeColor.java
 @@ -40,6 +_,7 @@
-    private final MapColor f_283766_;
-    private final float[] f_41039_;
-    private final int f_41040_;
+    private final MapColor mapColor;
+    private final float[] textureDiffuseColors;
+    private final int fireworkColor;
 +   private final net.minecraft.tags.TagKey<Item> tag;
-    private final int f_41041_;
+    private final int textColor;
  
     private DyeColor(int p_41046_, String p_41047_, int p_41048_, MapColor p_285297_, int p_41050_, int p_41051_) {
 @@ -50,6 +_,7 @@
@@ -13,13 +13,13 @@
        int j = (p_41048_ & '\uff00') >> 8;
        int k = (p_41048_ & 255) >> 0;
 +      this.tag = net.minecraft.tags.ItemTags.create(new net.minecraft.resources.ResourceLocation("forge", "dyes/" + p_41047_));
-       this.f_41039_ = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
-       this.f_41040_ = p_41050_;
+       this.textureDiffuseColors = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
+       this.fireworkColor = p_41050_;
     }
 @@ -100,5 +_,23 @@
  
-    public String m_7912_() {
-       return this.f_41035_;
+    public String getSerializedName() {
+       return this.name;
 +   }
 +
 +   public net.minecraft.tags.TagKey<Item> getTag() {
@@ -28,12 +28,12 @@
 +
 +   @Nullable
 +   public static DyeColor getColor(ItemStack stack) {
-+      if (stack.m_41720_() instanceof DyeItem)
-+         return ((DyeItem)stack.m_41720_()).m_41089_();
++      if (stack.getItem() instanceof DyeItem)
++         return ((DyeItem)stack.getItem()).getDyeColor();
 +
-+      for (int x = 0; x < BLACK.m_41060_(); x++) {
-+         DyeColor color = m_41053_(x);
-+         if (stack.m_204117_(color.getTag()))
++      for (int x = 0; x < BLACK.getId(); x++) {
++         DyeColor color = byId(x);
++         if (stack.is(color.getTag()))
 +             return color;
 +      }
 +

@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/renderer/item/ItemProperties.java
 +++ b/net/minecraft/client/renderer/item/ItemProperties.java
 @@ -46,6 +_,9 @@
-    private static final Map<Item, Map<ResourceLocation, ItemPropertyFunction>> f_117825_ = Maps.newHashMap();
+    private static final Map<Item, Map<ResourceLocation, ItemPropertyFunction>> PROPERTIES = Maps.newHashMap();
  
-    private static ClampedItemPropertyFunction m_174581_(ResourceLocation p_174582_, ClampedItemPropertyFunction p_174583_) {
+    private static ClampedItemPropertyFunction registerGeneric(ResourceLocation p_174582_, ClampedItemPropertyFunction p_174583_) {
 +      return (ClampedItemPropertyFunction) registerGeneric(p_174582_, (ItemPropertyFunction) p_174583_);
 +   }
 +   public static ItemPropertyFunction registerGeneric(ResourceLocation p_174582_, ItemPropertyFunction p_174583_) {
-       f_117820_.put(p_174582_, p_174583_);
+       GENERIC_PROPERTIES.put(p_174582_, p_174583_);
        return p_174583_;
     }
 @@ -55,6 +_,9 @@
     }
  
-    private static void m_174570_(Item p_174571_, ResourceLocation p_174572_, ClampedItemPropertyFunction p_174573_) {
+    private static void register(Item p_174571_, ResourceLocation p_174572_, ClampedItemPropertyFunction p_174573_) {
 +      register(p_174571_, p_174572_, (ItemPropertyFunction) p_174573_);
 +   }
 +   public static void register(Item p_174571_, ResourceLocation p_174572_, ItemPropertyFunction p_174573_) {
-       f_117825_.computeIfAbsent(p_174571_, (p_117828_) -> {
+       PROPERTIES.computeIfAbsent(p_174571_, (p_117828_) -> {
           return Maps.newHashMap();
        }).put(p_174572_, p_174573_);

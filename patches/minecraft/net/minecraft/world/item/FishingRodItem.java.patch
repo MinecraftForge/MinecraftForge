@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/FishingRodItem.java
 +++ b/net/minecraft/world/item/FishingRodItem.java
 @@ -46,4 +_,11 @@
-    public int m_6473_() {
+    public int getEnchantmentValue() {
        return 1;
     }
 +

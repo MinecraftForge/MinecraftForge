@@ -1,12 +1,12 @@
 --- a/net/minecraft/client/renderer/texture/atlas/SpriteResourceLoader.java
 +++ b/net/minecraft/client/renderer/texture/atlas/SpriteResourceLoader.java
 @@ -44,6 +_,9 @@
-          AnimationMetadataSection animationmetadatasection = resourcemetadata.m_214059_(AnimationMetadataSection.f_119011_).orElse(AnimationMetadataSection.f_119012_);
-          FrameSize framesize = animationmetadatasection.m_245821_(nativeimage.m_84982_(), nativeimage.m_85084_());
-          if (Mth.m_264612_(nativeimage.m_84982_(), framesize.f_244129_()) && Mth.m_264612_(nativeimage.m_85084_(), framesize.f_244503_())) {
+          AnimationMetadataSection animationmetadatasection = resourcemetadata.getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
+          FrameSize framesize = animationmetadatasection.calculateFrameSize(nativeimage.getWidth(), nativeimage.getHeight());
+          if (Mth.isMultipleOf(nativeimage.getWidth(), framesize.width()) && Mth.isMultipleOf(nativeimage.getHeight(), framesize.height())) {
 +            SpriteContents contents = net.minecraftforge.client.ForgeHooksClient.loadSpriteContents(p_296303_, p_296304_, framesize, nativeimage, resourcemetadata);
 +            if (contents != null)
 +               return contents;
              return new SpriteContents(p_296303_, framesize, nativeimage, resourcemetadata);
           } else {
-             f_260482_.error("Image {} size {},{} is not multiple of frame size {},{}", p_296303_, nativeimage.m_84982_(), nativeimage.m_85084_(), framesize.f_244129_(), framesize.f_244503_());
+             LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", p_296303_, nativeimage.getWidth(), nativeimage.getHeight(), framesize.width(), framesize.height());

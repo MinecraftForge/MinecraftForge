@@ -3,10 +3,10 @@
 @@ -40,7 +_,8 @@
     }
  
-    public static <E> Codec<Registry<E>> m_246213_(ResourceKey<? extends Registry<E>> p_248884_, Lifecycle p_251810_, Codec<E> p_250169_) {
--      Codec<Map<ResourceKey<E>, E>> codec = Codec.unboundedMap(ResourceKey.m_195966_(p_248884_), p_250169_);
+    public static <E> Codec<Registry<E>> fullCodec(ResourceKey<? extends Registry<E>> p_248884_, Lifecycle p_251810_, Codec<E> p_250169_) {
+-      Codec<Map<ResourceKey<E>, E>> codec = Codec.unboundedMap(ResourceKey.codec(p_248884_), p_250169_);
 +      // FORGE: Fix MC-197860
-+      Codec<Map<ResourceKey<E>, E>> codec = new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceKey.m_195966_(p_248884_), p_250169_);
++      Codec<Map<ResourceKey<E>, E>> codec = new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceKey.codec(p_248884_), p_250169_);
        return codec.xmap((p_258184_) -> {
           WritableRegistry<E> writableregistry = new MappedRegistry<>(p_248884_, p_251810_);
           p_258184_.forEach((p_258191_, p_258192_) -> {

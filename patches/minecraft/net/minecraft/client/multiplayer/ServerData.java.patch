@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
 @@ -32,6 +_,7 @@
-    private byte[] f_271511_;
-    private ServerData.Type f_291831_;
-    private boolean f_242950_;
+    private byte[] iconBytes;
+    private ServerData.Type type;
+    private boolean enforcesSecureChat;
 +   public net.minecraftforge.client.ExtendedServerListData forgeData = null;
  
     public ServerData(String p_105375_, String p_105376_, ServerData.Type p_297678_) {
-       this.f_105362_ = p_105375_;
+       this.name = p_105375_;

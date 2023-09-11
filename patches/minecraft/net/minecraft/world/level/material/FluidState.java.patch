@@ -6,14 +6,14 @@
  
 -public final class FluidState extends StateHolder<Fluid, FluidState> {
 +public final class FluidState extends StateHolder<Fluid, FluidState> implements net.minecraftforge.common.extensions.IForgeFluidState {
-    public static final Codec<FluidState> f_76146_ = m_61127_(BuiltInRegistries.f_257020_.m_194605_(), Fluid::m_76145_).stable();
-    public static final int f_164510_ = 9;
-    public static final int f_164511_ = 8;
+    public static final Codec<FluidState> CODEC = codec(BuiltInRegistries.FLUID.byNameCodec(), Fluid::defaultFluidState).stable();
+    public static final int AMOUNT_MAX = 9;
+    public static final int AMOUNT_FULL = 8;
 @@ -113,6 +_,7 @@
-       return this.m_76152_() == p_192918_;
+       return this.getType() == p_192918_;
     }
  
 +   @Deprecated //Forge: Use more sensitive version
-    public float m_76190_() {
-       return this.m_76152_().m_6752_();
+    public float getExplosionResistance() {
+       return this.getType().getExplosionResistance();
     }

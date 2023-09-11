@@ -3,16 +3,16 @@
 @@ -110,6 +_,8 @@
     }
  
-    public InteractionResult m_6096_(Player p_38562_, InteractionHand p_38563_) {
-+      InteractionResult ret = super.m_6096_(p_38562_, p_38563_);
-+      if (ret.m_19077_()) return ret;
-       ItemStack itemstack = p_38562_.m_21120_(p_38563_);
-       if (f_38549_.test(itemstack) && this.f_38548_ + 3600 <= 32000) {
-          if (!p_38562_.m_150110_().f_35937_) {
+    public InteractionResult interact(Player p_38562_, InteractionHand p_38563_) {
++      InteractionResult ret = super.interact(p_38562_, p_38563_);
++      if (ret.consumesAction()) return ret;
+       ItemStack itemstack = p_38562_.getItemInHand(p_38563_);
+       if (INGREDIENT.test(itemstack) && this.fuel + 3600 <= 32000) {
+          if (!p_38562_.getAbilities().instabuild) {
 @@ -125,6 +_,11 @@
        }
  
-       return InteractionResult.m_19078_(this.m_9236_().f_46443_);
+       return InteractionResult.sidedSuccess(this.level().isClientSide);
 +   }
 +
 +   @Override
@@ -20,4 +20,4 @@
 +      return 0.2f;
     }
  
-    protected void m_7380_(CompoundTag p_38567_) {
+    protected void addAdditionalSaveData(CompoundTag p_38567_) {

@@ -6,12 +6,12 @@
  @OnlyIn(Dist.CLIENT)
 -public interface ModelBaker {
 +public interface ModelBaker extends net.minecraftforge.client.extensions.IForgeModelBaker {
-    UnbakedModel m_245361_(ResourceLocation p_252194_);
+    UnbakedModel getModel(ResourceLocation p_252194_);
  
 +   /**
 +    * @deprecated Forge: Use {@link #bake(ResourceLocation, ModelState, java.util.function.Function)} instead.
 +    */
 +   @Deprecated
     @Nullable
-    BakedModel m_245240_(ResourceLocation p_250776_, ModelState p_251280_);
+    BakedModel bake(ResourceLocation p_250776_, ModelState p_251280_);
  }

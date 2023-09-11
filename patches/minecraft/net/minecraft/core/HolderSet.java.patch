@@ -6,23 +6,23 @@
  
 -public interface HolderSet<T> extends Iterable<Holder<T>> {
 +public interface HolderSet<T> extends Iterable<Holder<T>>, net.minecraftforge.common.extensions.IForgeHolderSet<T> {
-    Stream<Holder<T>> m_203614_();
+    Stream<Holder<T>> stream();
  
-    int m_203632_();
+    int size();
 @@ -135,6 +_,9 @@
  
-       public void m_205835_(List<Holder<T>> p_205836_) {
-          this.f_205830_ = List.copyOf(p_205836_);
+       public void bind(List<Holder<T>> p_205836_) {
+          this.contents = List.copyOf(p_205836_);
 +         for (Runnable runnable : this.invalidationCallbacks) {
 +            runnable.run(); // FORGE: invalidate listeners when tags rebind
 +         }
        }
  
-       public TagKey<T> m_205839_() {
+       public TagKey<T> key() {
 @@ -163,6 +_,12 @@
  
-       public boolean m_207277_(HolderOwner<T> p_256542_) {
-          return this.f_254711_.m_254921_(p_256542_);
+       public boolean canSerializeIn(HolderOwner<T> p_256542_) {
+          return this.owner.canSerializeIn(p_256542_);
 +      }
 +
 +      // FORGE: Keep a list of invalidation callbacks so they can be run when tags rebind

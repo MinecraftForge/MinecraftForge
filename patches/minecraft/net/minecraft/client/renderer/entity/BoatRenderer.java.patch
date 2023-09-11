@@ -1,23 +1,23 @@
 --- a/net/minecraft/client/renderer/entity/BoatRenderer.java
 +++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
 @@ -73,7 +_,7 @@
-          p_113932_.m_252781_((new Quaternionf()).setAngleAxis(p_113929_.m_38352_(p_113931_) * ((float)Math.PI / 180F), 1.0F, 0.0F, 1.0F));
+          p_113932_.mulPose((new Quaternionf()).setAngleAxis(p_113929_.getBubbleAngle(p_113931_) * ((float)Math.PI / 180F), 1.0F, 0.0F, 1.0F));
        }
  
--      Pair<ResourceLocation, ListModel<Boat>> pair = this.f_173934_.get(p_113929_.m_28554_());
+-      Pair<ResourceLocation, ListModel<Boat>> pair = this.boatResources.get(p_113929_.getVariant());
 +      Pair<ResourceLocation, ListModel<Boat>> pair = getModelWithLocation(p_113929_);
        ResourceLocation resourcelocation = pair.getFirst();
        ListModel<Boat> listmodel = pair.getSecond();
-       p_113932_.m_85841_(-1.0F, -1.0F, 1.0F);
+       p_113932_.scale(-1.0F, -1.0F, 1.0F);
 @@ -93,7 +_,10 @@
-       super.m_7392_(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
+       super.render(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
     }
  
 +   @Deprecated // forge: override getModelWithLocation to change the texture / model
-    public ResourceLocation m_5478_(Boat p_113927_) {
--      return this.f_173934_.get(p_113927_.m_28554_()).getFirst();
+    public ResourceLocation getTextureLocation(Boat p_113927_) {
+-      return this.boatResources.get(p_113927_.getVariant()).getFirst();
 +      return getModelWithLocation(p_113927_).getFirst();
     }
 +
-+   public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) { return this.f_173934_.get(boat.m_28554_()); }
++   public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) { return this.boatResources.get(boat.getVariant()); }
  }

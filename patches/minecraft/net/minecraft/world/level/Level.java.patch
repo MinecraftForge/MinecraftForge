@@ -6,13 +6,13 @@
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
-    public static final Codec<ResourceKey<Level>> f_46427_ = ResourceKey.m_195966_(Registries.f_256858_);
-    public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("overworld"));
-    public static final ResourceKey<Level> f_46429_ = ResourceKey.m_135785_(Registries.f_256858_, new ResourceLocation("the_nether"));
+    public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
+    public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
+    public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
 @@ -110,8 +_,14 @@
-    private final RegistryAccess f_268710_;
-    private final DamageSources f_268497_;
-    private long f_186455_;
+    private final RegistryAccess registryAccess;
+    private final DamageSources damageSources;
+    private long subTickCount;
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -21,31 +21,31 @@
  
     protected Level(WritableLevelData p_270739_, ResourceKey<Level> p_270683_, RegistryAccess p_270200_, Holder<DimensionType> p_270240_, Supplier<ProfilerFiller> p_270692_, boolean p_270904_, boolean p_270470_, long p_270248_, int p_270466_) {
 +      super(Level.class);
-       this.f_46446_ = p_270692_;
-       this.f_46442_ = p_270739_;
-       this.f_204147_ = p_270240_;
+       this.profiler = p_270692_;
+       this.levelData = p_270739_;
+       this.dimensionTypeRegistration = p_270240_;
 @@ -198,11 +_,40 @@
        } else {
-          LevelChunk levelchunk = this.m_46745_(p_46605_);
-          Block block = p_46606_.m_60734_();
+          LevelChunk levelchunk = this.getChunkAt(p_46605_);
+          Block block = p_46606_.getBlock();
 +
-+         p_46605_ = p_46605_.m_7949_(); // Forge - prevent mutable BlockPos leaks
++         p_46605_ = p_46605_.immutable(); // Forge - prevent mutable BlockPos leaks
 +         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
-+         if (this.captureBlockSnapshots && !this.f_46443_) {
-+             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.f_46421_, this, p_46605_, p_46607_);
++         if (this.captureBlockSnapshots && !this.isClientSide) {
++             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, p_46605_, p_46607_);
 +             this.capturedBlockSnapshots.add(blockSnapshot);
 +         }
 +
-+         BlockState old = m_8055_(p_46605_);
++         BlockState old = getBlockState(p_46605_);
 +         int oldLight = old.getLightEmission(this, p_46605_);
-+         int oldOpacity = old.m_60739_(this, p_46605_);
++         int oldOpacity = old.getLightBlock(this, p_46605_);
 +
-          BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
+          BlockState blockstate = levelchunk.setBlockState(p_46605_, p_46606_, (p_46607_ & 64) != 0);
           if (blockstate == null) {
 +            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
              return false;
           } else {
-             BlockState blockstate1 = this.m_8055_(p_46605_);
+             BlockState blockstate1 = this.getBlockState(p_46605_);
 +
 +            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
 +               this.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, p_46608_);
@@ -58,17 +58,17 @@
 +
 +   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +   public void markAndNotifyBlock(BlockPos p_46605_, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_) {
-+      Block block = p_46606_.m_60734_();
-+      BlockState blockstate1 = m_8055_(p_46605_);
++      Block block = p_46606_.getBlock();
++      BlockState blockstate1 = getBlockState(p_46605_);
 +      {
 +         {
              if (blockstate1 == p_46606_) {
                 if (blockstate != blockstate1) {
-                   this.m_6550_(p_46605_, blockstate, blockstate1);
+                   this.setBlocksDirty(p_46605_, blockstate, blockstate1);
 @@ -227,9 +_,8 @@
                 }
  
-                this.m_6559_(p_46605_, blockstate, blockstate1);
+                this.onBlockStateChange(p_46605_, blockstate, blockstate1);
 +               p_46606_.onBlockStateChange(this, p_46605_, blockstate);
              }
 -
@@ -79,51 +79,51 @@
 @@ -279,6 +_,7 @@
     }
  
-    public void m_46672_(BlockPos p_46673_, Block p_46674_) {
-+      net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_46673_, this.m_8055_(p_46673_), java.util.EnumSet.allOf(Direction.class), false).isCanceled();
+    public void updateNeighborsAt(BlockPos p_46673_, Block p_46674_) {
++      net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_46673_, this.getBlockState(p_46673_), java.util.EnumSet.allOf(Direction.class), false).isCanceled();
     }
  
-    public void m_46590_(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
+    public void updateNeighborsAtExceptFromFacing(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
 @@ -398,10 +_,26 @@
-       (this.f_151504_ ? this.f_151503_ : this.f_151512_).add(p_151526_);
+       (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
     }
  
 +   public void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {
-+      if (this.f_151504_) {
++      if (this.tickingBlockEntities) {
 +         this.pendingFreshBlockEntities.addAll(beList);
 +      } else {
 +         this.freshBlockEntities.addAll(beList);
 +      }
 +   }
 +
-    protected void m_46463_() {
-       ProfilerFiller profilerfiller = this.m_46473_();
-       profilerfiller.m_6180_("blockEntities");
+    protected void tickBlockEntities() {
+       ProfilerFiller profilerfiller = this.getProfiler();
+       profilerfiller.push("blockEntities");
 +      if (!this.pendingFreshBlockEntities.isEmpty()) {
 +         this.freshBlockEntities.addAll(this.pendingFreshBlockEntities);
 +         this.pendingFreshBlockEntities.clear();
 +      }
-       this.f_151504_ = true;
+       this.tickingBlockEntities = true;
 +      if (!this.freshBlockEntities.isEmpty()) {
 +         this.freshBlockEntities.forEach(BlockEntity::onLoad);
 +         this.freshBlockEntities.clear();
 +      }
-       if (!this.f_151503_.isEmpty()) {
-          this.f_151512_.addAll(this.f_151503_);
-          this.f_151503_.clear();
+       if (!this.pendingBlockEntityTickers.isEmpty()) {
+          this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
+          this.pendingBlockEntityTickers.clear();
 @@ -424,12 +_,19 @@
  
-    public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
+    public <T extends Entity> void guardEntityTick(Consumer<T> p_46654_, T p_46655_) {
        try {
 +         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
           p_46654_.accept(p_46655_);
        } catch (Throwable throwable) {
-          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
-          CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
-          p_46655_.m_7976_(crashreportcategory);
+          CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking entity");
+          CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");
+          p_46655_.fillCrashReportCategory(crashreportcategory);
 +         if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
-+            com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.m_127526_());
-+            p_46655_.m_146870_();
++            com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport());
++            p_46655_.discard();
 +         } else
           throw new ReportedException(crashreport);
 +      } finally {
@@ -132,44 +132,44 @@
     }
  
 @@ -471,7 +_,7 @@
-             explosion$blockinteraction1 = this.m_255157_(GameRules.f_254629_);
+             explosion$blockinteraction1 = this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
              break;
           case MOB:
--            explosion$blockinteraction1 = this.m_46469_().m_46207_(GameRules.f_46132_) ? this.m_255157_(GameRules.f_254692_) : Explosion.BlockInteraction.KEEP;
-+            explosion$blockinteraction1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_256233_) ? this.m_255157_(GameRules.f_254692_) : Explosion.BlockInteraction.KEEP;
+-            explosion$blockinteraction1 = this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
++            explosion$blockinteraction1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_256233_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              break;
           case TNT:
-             explosion$blockinteraction1 = this.m_255157_(GameRules.f_254705_);
+             explosion$blockinteraction1 = this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
 @@ -482,6 +_,7 @@
  
        Explosion.BlockInteraction explosion$blockinteraction = explosion$blockinteraction1;
        Explosion explosion = new Explosion(this, p_256233_, p_255861_, p_255867_, p_256447_, p_255732_, p_255717_, p_256013_, p_256228_, explosion$blockinteraction);
 +      if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
-       explosion.m_46061_();
-       explosion.m_46075_(p_256377_);
+       explosion.explode();
+       explosion.finalizeExplosion(p_256377_);
        return explosion;
 @@ -513,6 +_,7 @@
-       if (!this.m_151570_(p_46748_)) {
-          this.m_46745_(p_46748_).m_8114_(p_46748_);
+       if (!this.isOutsideBuildHeight(p_46748_)) {
+          this.getChunkAt(p_46748_).removeBlockEntity(p_46748_);
        }
-+      this.m_46717_(p_46748_, m_8055_(p_46748_).m_60734_()); //Notify neighbors of changes
++      this.updateNeighbourForOutputSignal(p_46748_, getBlockState(p_46748_).getBlock()); //Notify neighbors of changes
     }
  
-    public boolean m_46749_(BlockPos p_46750_) {
+    public boolean isLoaded(BlockPos p_46750_) {
 @@ -583,6 +_,7 @@
              list.add(p_151522_);
           }
  
 +         if (false)
           if (p_151522_ instanceof EnderDragon) {
-             for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).m_31156_()) {
+             for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).getSubEntities()) {
                 if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
 @@ -592,6 +_,11 @@
           }
  
        });
 +      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
-+         if (p != p_46536_ && p.m_20191_().m_82381_(p_46537_) && p_46538_.test(p)) {
++         if (p != p_46536_ && p.getBoundingBox().intersects(p_46537_) && p_46538_.test(p)) {
 +            list.add(p);
 +         }
 +      }
@@ -183,15 +183,15 @@
 +
 +         if (false)
           if (p_261454_ instanceof EnderDragon enderdragon) {
-             for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
-                T t = p_261885_.m_141992_(enderdragonpart);
+             for(EnderDragonPart enderdragonpart : enderdragon.getSubEntities()) {
+                T t = p_261885_.tryCast(enderdragonpart);
 @@ -629,6 +_,15 @@
  
           return AbortableIterationConsumer.Continuation.CONTINUE;
        });
 +      for (net.minecraftforge.entity.PartEntity<?> p : this.getPartEntities()) {
-+         T t = p_261885_.m_141992_(p);
-+         if (t != null && t.m_20191_().m_82381_(p_262086_) && p_261688_.test(t)) {
++         T t = p_261885_.tryCast(p);
++         if (t != null && t.getBoundingBox().intersects(p_262086_) && p_261688_.test(t)) {
 +            p_262071_.add(t);
 +            if (p_262071_.size() >= p_261858_) {
 +               break;
@@ -202,30 +202,30 @@
  
     @Nullable
 @@ -760,16 +_,15 @@
-    public abstract Scoreboard m_6188_();
+    public abstract Scoreboard getScoreboard();
  
-    public void m_46717_(BlockPos p_46718_, Block p_46719_) {
+    public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
 -      for(Direction direction : Direction.Plane.HORIZONTAL) {
 +      for(Direction direction : Direction.values()) {
-          BlockPos blockpos = p_46718_.m_121945_(direction);
-          if (this.m_46805_(blockpos)) {
-             BlockState blockstate = this.m_8055_(blockpos);
--            if (blockstate.m_60713_(Blocks.f_50328_)) {
--               this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
--            } else if (blockstate.m_60796_(this, blockpos)) {
+          BlockPos blockpos = p_46718_.relative(direction);
+          if (this.hasChunkAt(blockpos)) {
+             BlockState blockstate = this.getBlockState(blockpos);
+-            if (blockstate.is(Blocks.COMPARATOR)) {
+-               this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
+-            } else if (blockstate.isRedstoneConductor(this, blockpos)) {
 +            blockstate.onNeighborChange(this, blockpos, p_46718_);
-+            if (blockstate.m_60796_(this, blockpos)) {
-                blockpos = blockpos.m_121945_(direction);
-                blockstate = this.m_8055_(blockpos);
--               if (blockstate.m_60713_(Blocks.f_50328_)) {
++            if (blockstate.isRedstoneConductor(this, blockpos)) {
+                blockpos = blockpos.relative(direction);
+                blockstate = this.getBlockState(blockpos);
+-               if (blockstate.is(Blocks.COMPARATOR)) {
 +               if (blockstate.getWeakChanges(this, blockpos)) {
-                   this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
+                   this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
 @@ -854,6 +_,18 @@
  
-    public BiomeManager m_7062_() {
-       return this.f_46420_;
+    public BiomeManager getBiomeManager() {
+       return this.biomeManager;
 +   }
 +
 +   private double maxEntityRadius = 2.0D;
@@ -240,4 +240,4 @@
 +      return maxEntityRadius;
     }
  
-    public final boolean m_46659_() {
+    public final boolean isDebug() {

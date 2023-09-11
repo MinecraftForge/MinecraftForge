@@ -7,11 +7,11 @@
 +
 +   // Forge Start
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
-+       if (this.f_244165_.f_244575_ != null) {
-+           x += this.f_244165_.f_244575_.m_245080_(frameIndex) * this.f_244165_.f_244302_;
-+           y += this.f_244165_.f_244575_.m_246436_(frameIndex) * this.f_244165_.f_244600_;
++       if (this.contents.animatedTexture != null) {
++           x += this.contents.animatedTexture.getFrameX(frameIndex) * this.contents.width;
++           y += this.contents.animatedTexture.getFrameY(frameIndex) * this.contents.height;
 +       }
 +
-+       return this.f_244165_.getOriginalImage().m_84985_(x, y);
++       return this.contents.getOriginalImage().getPixelRGBA(x, y);
 +   }
  }

@@ -1,54 +1,54 @@
 --- a/net/minecraft/client/renderer/block/model/BlockModel.java
 +++ b/net/minecraft/client/renderer/block/model/BlockModel.java
 @@ -68,9 +_,10 @@
-    public BlockModel f_111418_;
+    public BlockModel parent;
     @Nullable
-    protected ResourceLocation f_111419_;
+    protected ResourceLocation parentLocation;
 +   public final net.minecraftforge.client.model.geometry.BlockGeometryBakingContext customData = new net.minecraftforge.client.model.geometry.BlockGeometryBakingContext(this);
  
-    public static BlockModel m_111461_(Reader p_111462_) {
--      return GsonHelper.m_13776_(f_111415_, p_111462_, BlockModel.class);
-+      return GsonHelper.m_13776_(net.minecraftforge.client.model.ExtendedBlockModelDeserializer.INSTANCE, p_111462_, BlockModel.class);
+    public static BlockModel fromStream(Reader p_111462_) {
+-      return GsonHelper.fromJson(GSON, p_111462_, BlockModel.class);
++      return GsonHelper.fromJson(net.minecraftforge.client.model.ExtendedBlockModelDeserializer.INSTANCE, p_111462_, BlockModel.class);
     }
  
-    public static BlockModel m_111463_(String p_111464_) {
+    public static BlockModel fromString(String p_111464_) {
 @@ -87,10 +_,15 @@
-       this.f_111426_ = p_273099_;
+       this.overrides = p_273099_;
     }
  
 +   @Deprecated
-    public List<BlockElement> m_111436_() {
+    public List<BlockElement> getElements() {
 +      if (customData.hasCustomGeometry()) return java.util.Collections.emptyList();
-       return this.f_111422_.isEmpty() && this.f_111418_ != null ? this.f_111418_.m_111436_() : this.f_111422_;
+       return this.elements.isEmpty() && this.parent != null ? this.parent.getElements() : this.elements;
     }
  
 +   @Nullable
-+   public ResourceLocation getParentLocation() { return f_111419_; }
++   public ResourceLocation getParentLocation() { return parentLocation; }
 +
-    public boolean m_111476_() {
-       if (this.f_111424_ != null) {
-          return this.f_111424_;
+    public boolean hasAmbientOcclusion() {
+       if (this.hasAmbientOcclusion != null) {
+          return this.hasAmbientOcclusion;
 @@ -119,6 +_,10 @@
-       return this.f_111426_.isEmpty() ? ItemOverrides.f_111734_ : new ItemOverrides(p_250138_, p_251800_, this.f_111426_);
+       return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(p_250138_, p_251800_, this.overrides);
     }
  
 +   public ItemOverrides getOverrides(ModelBaker p_250138_, BlockModel p_251800_, Function<Material, TextureAtlasSprite> spriteGetter) {
-+      return this.f_111426_.isEmpty() ? ItemOverrides.f_111734_ : new ItemOverrides(p_250138_, p_251800_, this.f_111426_, spriteGetter);
++      return this.overrides.isEmpty() ? ItemOverrides.EMPTY : new ItemOverrides(p_250138_, p_251800_, this.overrides, spriteGetter);
 +   }
 +
-    public Collection<ResourceLocation> m_7970_() {
+    public Collection<ResourceLocation> getDependencies() {
        Set<ResourceLocation> set = Sets.newHashSet();
  
 @@ -160,6 +_,10 @@
-          blockmodel.f_111418_ = (BlockModel)unbakedmodel;
+          blockmodel.parent = (BlockModel)unbakedmodel;
        }
  
 +      if (customData.hasCustomGeometry()) {
 +         customData.getCustomGeometry().resolveParents(p_249059_, customData);
 +      }
 +
-       this.f_111426_.forEach((p_247932_) -> {
-          UnbakedModel unbakedmodel1 = p_249059_.apply(p_247932_.m_111718_());
+       this.overrides.forEach((p_247932_) -> {
+          UnbakedModel unbakedmodel1 = p_249059_.apply(p_247932_.getModel());
           if (!Objects.equals(unbakedmodel1, this)) {
 @@ -168,11 +_,18 @@
        });
@@ -58,28 +58,28 @@
 +    * @deprecated Forge: Use {@link #bake(ModelBaker, BlockModel, Function, ModelState, ResourceLocation, boolean)}.
 +    */
 +   @Deprecated
-    public BakedModel m_7611_(ModelBaker p_252120_, Function<Material, TextureAtlasSprite> p_250023_, ModelState p_251130_, ResourceLocation p_252208_) {
-       return this.m_111449_(p_252120_, this, p_250023_, p_251130_, p_252208_, true);
+    public BakedModel bake(ModelBaker p_252120_, Function<Material, TextureAtlasSprite> p_250023_, ModelState p_251130_, ResourceLocation p_252208_) {
+       return this.bake(p_252120_, this, p_250023_, p_251130_, p_252208_, true);
     }
  
-    public BakedModel m_111449_(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
+    public BakedModel bake(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
 +      return net.minecraftforge.client.model.geometry.UnbakedGeometryHelper.bake(this, p_249720_, p_111451_, p_111452_, p_111453_, p_111454_, p_111455_);
 +   }
 +   private BakedModel bakeVanilla(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
-       TextureAtlasSprite textureatlassprite = p_111452_.apply(this.m_111480_("particle"));
-       if (this.m_111490_() == ModelBakery.f_119233_) {
-          return new BuiltInModel(this.m_111491_(), this.m_246736_(p_249720_, p_111451_), textureatlassprite, this.m_111479_().m_111526_());
+       TextureAtlasSprite textureatlassprite = p_111452_.apply(this.getMaterial("particle"));
+       if (this.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
+          return new BuiltInModel(this.getTransforms(), this.getItemOverrides(p_249720_, p_111451_), textureatlassprite, this.getGuiLight().lightLikeBlock());
 @@ -255,7 +_,18 @@
-       ItemTransform itemtransform5 = this.m_269178_(ItemDisplayContext.GUI);
-       ItemTransform itemtransform6 = this.m_269178_(ItemDisplayContext.GROUND);
-       ItemTransform itemtransform7 = this.m_269178_(ItemDisplayContext.FIXED);
+       ItemTransform itemtransform5 = this.getTransform(ItemDisplayContext.GUI);
+       ItemTransform itemtransform6 = this.getTransform(ItemDisplayContext.GROUND);
+       ItemTransform itemtransform7 = this.getTransform(ItemDisplayContext.FIXED);
 -      return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7);
 +
 +      var builder = com.google.common.collect.ImmutableMap.<ItemDisplayContext, ItemTransform>builder();
 +      for(ItemDisplayContext type : ItemDisplayContext.values()) {
 +         if (type.isModded()) {
-+            var transform = this.m_269178_(type);
-+            if (transform != ItemTransform.f_111754_) {
++            var transform = this.getTransform(type);
++            if (transform != ItemTransform.NO_TRANSFORM) {
 +               builder.put(type, transform);
 +            }
 +         }
@@ -88,13 +88,13 @@
 +      return new ItemTransforms(itemtransform, itemtransform1, itemtransform2, itemtransform3, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
     }
  
-    private ItemTransform m_269178_(ItemDisplayContext p_270662_) {
+    private ItemTransform getTransform(ItemDisplayContext p_270662_) {
 @@ -373,6 +_,8 @@
-       public boolean m_111526_() {
+       public boolean lightLikeBlock() {
           return this == SIDE;
        }
 +
-+      public String getSerializedName() { return f_111519_; }
++      public String getSerializedName() { return name; }
     }
  
     @OnlyIn(Dist.CLIENT)

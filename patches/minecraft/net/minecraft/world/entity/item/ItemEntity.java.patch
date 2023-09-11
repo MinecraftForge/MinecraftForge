@@ -2,149 +2,149 @@
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
 @@ -42,6 +_,10 @@
     @Nullable
-    private UUID f_265881_;
-    public final float f_31983_;
+    private UUID target;
+    public final float bobOffs;
 +   /**
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
-+   public int lifespan = ItemEntity.f_149659_;
++   public int lifespan = ItemEntity.LIFETIME;
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
 @@ -58,6 +_,7 @@
-       this.m_6034_(p_149664_, p_149665_, p_149666_);
-       this.m_20334_(p_149668_, p_149669_, p_149670_);
-       this.m_32045_(p_149667_);
-+      this.lifespan = (p_149667_.m_41720_() == null ? ItemEntity.f_149659_ : p_149667_.getEntityLifespan(p_149663_));
+       this.setPos(p_149664_, p_149665_, p_149666_);
+       this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
+       this.setItem(p_149667_);
++      this.lifespan = (p_149667_.getItem() == null ? ItemEntity.LIFETIME : p_149667_.getEntityLifespan(p_149663_));
     }
  
     private ItemEntity(ItemEntity p_31994_) {
 @@ -66,6 +_,7 @@
-       this.m_20359_(p_31994_);
-       this.f_31985_ = p_31994_.f_31985_;
-       this.f_31983_ = p_31994_.f_31983_;
+       this.copyPosition(p_31994_);
+       this.age = p_31994_.age;
+       this.bobOffs = p_31994_.bobOffs;
 +      this.lifespan = p_31994_.lifespan;
     }
  
-    public boolean m_213854_() {
+    public boolean dampensVibrations() {
 @@ -94,6 +_,7 @@
     }
  
-    public void m_8119_() {
-+      if (m_32055_().onEntityItemUpdate(this)) return;
-       if (this.m_32055_().m_41619_()) {
-          this.m_146870_();
+    public void tick() {
++      if (getItem().onEntityItemUpdate(this)) return;
+       if (this.getItem().isEmpty()) {
+          this.discard();
        } else {
 @@ -107,6 +_,9 @@
-          this.f_19856_ = this.m_20189_();
-          Vec3 vec3 = this.m_20184_();
-          float f = this.m_20192_() - 0.11111111F;
+          this.zo = this.getZ();
+          Vec3 vec3 = this.getDeltaMovement();
+          float f = this.getEyeHeight() - 0.11111111F;
 +         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
 +         if (!fluidType.isAir() && !fluidType.isVanilla() && this.getFluidTypeHeight(fluidType) > (double)f) fluidType.setItemMovement(this);
 +         else
-          if (this.m_20069_() && this.m_204036_(FluidTags.f_13131_) > (double)f) {
-             this.m_32067_();
-          } else if (this.m_20077_() && this.m_204036_(FluidTags.f_13132_) > (double)f) {
+          if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > (double)f) {
+             this.setUnderwaterMovement();
+          } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > (double)f) {
 @@ -128,7 +_,8 @@
-             this.m_6478_(MoverType.SELF, this.m_20184_());
+             this.move(MoverType.SELF, this.getDeltaMovement());
              float f1 = 0.98F;
-             if (this.m_20096_()) {
--               f1 = this.m_9236_().m_8055_(this.m_20099_()).m_60734_().m_49958_() * 0.98F;
-+               BlockPos groundPos = m_20099_();
-+               f1 = this.m_9236_().m_8055_(groundPos).getFriction(m_9236_(), groundPos, this) * 0.98F;
+             if (this.onGround()) {
+-               f1 = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
++               BlockPos groundPos = getBlockPosBelowThatAffectsMyMovement();
++               f1 = this.level().getBlockState(groundPos).getFriction(level(), groundPos, this) * 0.98F;
              }
  
-             this.m_20256_(this.m_20184_().m_82542_((double)f1, 0.98D, (double)f1));
+             this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
 @@ -158,7 +_,16 @@
              }
           }
  
--         if (!this.m_9236_().f_46443_ && this.f_31985_ >= 6000) {
-+         ItemStack item = this.m_32055_();
-+         if (!this.m_9236_().f_46443_ && this.f_31985_ >= lifespan) {
+-         if (!this.level().isClientSide && this.age >= 6000) {
++         ItemStack item = this.getItem();
++         if (!this.level().isClientSide && this.age >= lifespan) {
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) {
-+                this.m_146870_();
++                this.discard();
 +             } else {
 +                this.lifespan += hook;
 +             }
 +         }
-+         if (item.m_41619_() && !this.m_213877_()) {
-             this.m_146870_();
++         if (item.isEmpty() && !this.isRemoved()) {
+             this.discard();
           }
  
 @@ -220,6 +_,8 @@
           return false;
-       } else if (p_32028_.m_41782_() ^ p_32027_.m_41782_()) {
+       } else if (p_32028_.hasTag() ^ p_32027_.hasTag()) {
           return false;
 +      } else if (!p_32027_.areCapsCompatible(p_32028_)) {
 +         return false;
        } else {
-          return !p_32028_.m_41782_() || p_32028_.m_41783_().equals(p_32027_.m_41783_());
+          return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
        }
 @@ -265,7 +_,7 @@
-          this.f_31987_ = (int)((float)this.f_31987_ - p_32014_);
-          this.m_146852_(GameEvent.f_223706_, p_32013_.m_7639_());
-          if (this.f_31987_ <= 0) {
--            this.m_32055_().m_150924_(this);
-+            this.m_32055_().onDestroyed(this, p_32013_);
-             this.m_146870_();
+          this.health = (int)((float)this.health - p_32014_);
+          this.gameEvent(GameEvent.ENTITY_DAMAGE, p_32013_.getEntity());
+          if (this.health <= 0) {
+-            this.getItem().onDestroyed(this);
++            this.getItem().onDestroyed(this, p_32013_);
+             this.discard();
           }
  
 @@ -277,6 +_,7 @@
-       p_32050_.m_128376_("Health", (short)this.f_31987_);
-       p_32050_.m_128376_("Age", (short)this.f_31985_);
-       p_32050_.m_128376_("PickupDelay", (short)this.f_31986_);
-+      p_32050_.m_128405_("Lifespan", this.lifespan);
-       if (this.f_31988_ != null) {
-          p_32050_.m_128362_("Thrower", this.f_31988_);
+       p_32050_.putShort("Health", (short)this.health);
+       p_32050_.putShort("Age", (short)this.age);
+       p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
++      p_32050_.putInt("Lifespan", this.lifespan);
+       if (this.thrower != null) {
+          p_32050_.putUUID("Thrower", this.thrower);
        }
 @@ -297,6 +_,9 @@
-       if (p_32034_.m_128441_("PickupDelay")) {
-          this.f_31986_ = p_32034_.m_128448_("PickupDelay");
+       if (p_32034_.contains("PickupDelay")) {
+          this.pickupDelay = p_32034_.getShort("PickupDelay");
        }
-+      if (p_32034_.m_128441_("Lifespan")) {
-+         this.lifespan = p_32034_.m_128451_("Lifespan");
++      if (p_32034_.contains("Lifespan")) {
++         this.lifespan = p_32034_.getInt("Lifespan");
 +      }
  
-       if (p_32034_.m_128403_("Owner")) {
-          this.f_265881_ = p_32034_.m_128342_("Owner");
+       if (p_32034_.hasUUID("Owner")) {
+          this.target = p_32034_.getUUID("Owner");
 @@ -316,10 +_,17 @@
  
-    public void m_6123_(Player p_32040_) {
-       if (!this.m_9236_().f_46443_) {
-+         if (this.f_31986_ > 0) return;
-          ItemStack itemstack = this.m_32055_();
-          Item item = itemstack.m_41720_();
-          int i = itemstack.m_41613_();
--         if (this.f_31986_ == 0 && (this.f_265881_ == null || this.f_265881_.equals(p_32040_.m_20148_())) && p_32040_.m_150109_().m_36054_(itemstack)) {
+    public void playerTouch(Player p_32040_) {
+       if (!this.level().isClientSide) {
++         if (this.pickupDelay > 0) return;
+          ItemStack itemstack = this.getItem();
+          Item item = itemstack.getItem();
+          int i = itemstack.getCount();
+-         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && p_32040_.getInventory().add(itemstack)) {
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
 +         if (hook < 0) return;
-+         ItemStack copy = itemstack.m_41777_();
-+         if (this.f_31986_ == 0 && (this.f_265881_ == null || this.f_265881_.equals(p_32040_.m_20148_())) && (hook == 1 || i <= 0 || p_32040_.m_150109_().m_36054_(itemstack))) {
-+            i = copy.m_41613_() - itemstack.m_41613_();
-+            copy.m_41764_(i);
++         ItemStack copy = itemstack.copy();
++         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && (hook == 1 || i <= 0 || p_32040_.getInventory().add(itemstack))) {
++            i = copy.getCount() - itemstack.getCount();
++            copy.setCount(i);
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
-             p_32040_.m_7938_(this, i);
-             if (itemstack.m_41619_()) {
-                this.m_146870_();
+             p_32040_.take(this, i);
+             if (itemstack.isEmpty()) {
+                this.discard();
 @@ -343,8 +_,8 @@
     }
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_32042_) {
--      Entity entity = super.m_5489_(p_32042_);
+-   public Entity changeDimension(ServerLevel p_32042_) {
+-      Entity entity = super.changeDimension(p_32042_);
 +   public Entity changeDimension(ServerLevel p_32042_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      Entity entity = super.changeDimension(p_32042_, teleporter);
-       if (!this.m_9236_().f_46443_ && entity instanceof ItemEntity) {
-          ((ItemEntity)entity).m_32069_();
+       if (!this.level().isClientSide && entity instanceof ItemEntity) {
+          ((ItemEntity)entity).mergeWithNeighbours();
        }
 @@ -410,7 +_,7 @@
  
-    public void m_32065_() {
-       this.m_32062_();
--      this.f_31985_ = 5999;
-+      this.f_31985_ = m_32055_().getEntityLifespan(this.m_9236_()) - 1;
+    public void makeFakeItem() {
+       this.setNeverPickUp();
+-      this.age = 5999;
++      this.age = getItem().getEntityLifespan(this.level()) - 1;
     }
  
-    public float m_32008_(float p_32009_) {
+    public float getSpin(float p_32009_) {

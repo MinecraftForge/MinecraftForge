@@ -2,53 +2,53 @@
 +++ b/net/minecraft/client/renderer/ShaderInstance.java
 @@ -98,10 +_,14 @@
     @Nullable
-    public final Uniform f_173320_;
+    public final Uniform CHUNK_OFFSET;
  
 +   @Deprecated // FORGE: Use the ResourceLocation variant below
     public ShaderInstance(ResourceProvider p_173336_, String p_173337_, VertexFormat p_173338_) throws IOException {
--      this.f_173300_ = p_173337_;
+-      this.name = p_173337_;
 +      this(p_173336_, new ResourceLocation(p_173337_), p_173338_);
 +   }
 +   public ShaderInstance(ResourceProvider p_173336_, ResourceLocation shaderLocation, VertexFormat p_173338_) throws IOException {
-+      this.f_173300_ = shaderLocation.m_135827_().equals("minecraft") ? shaderLocation.m_135815_() : shaderLocation.toString();
-       this.f_173307_ = p_173338_;
++      this.name = shaderLocation.getNamespace().equals("minecraft") ? shaderLocation.getPath() : shaderLocation.toString();
+       this.vertexFormat = p_173338_;
 -      ResourceLocation resourcelocation = new ResourceLocation("shaders/core/" + p_173337_ + ".json");
-+      ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.m_135827_(), "shaders/core/" + shaderLocation.m_135815_() + ".json");
++      ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.getNamespace(), "shaders/core/" + shaderLocation.getPath() + ".json");
  
-       try (Reader reader = p_173336_.m_215597_(resourcelocation)) {
-          JsonObject jsonobject = GsonHelper.m_13859_(reader);
+       try (Reader reader = p_173336_.openAsReader(resourcelocation)) {
+          JsonObject jsonobject = GsonHelper.parse(reader);
 @@ -208,8 +_,10 @@
-       Program program1 = p_173342_.m_85570_().get(p_173343_);
+       Program program1 = p_173342_.getPrograms().get(p_173343_);
        Program program;
        if (program1 == null) {
--         String s = "shaders/core/" + p_173343_ + p_173342_.m_85569_();
--         Resource resource = p_173341_.m_215593_(new ResourceLocation(s));
+-         String s = "shaders/core/" + p_173343_ + p_173342_.getExtension();
+-         Resource resource = p_173341_.getResourceOrThrow(new ResourceLocation(s));
 +         ResourceLocation loc = new ResourceLocation(p_173343_);
-+         String s = "shaders/core/" + loc.m_135815_() + p_173342_.m_85569_();
-+         ResourceLocation resourcelocation = new ResourceLocation(loc.m_135827_(), s);
-+         Resource resource = p_173341_.m_215593_(resourcelocation);
++         String s = "shaders/core/" + loc.getPath() + p_173342_.getExtension();
++         ResourceLocation resourcelocation = new ResourceLocation(loc.getNamespace(), s);
++         Resource resource = p_173341_.getResourceOrThrow(resourcelocation);
  
-          try (InputStream inputstream = resource.m_215507_()) {
-             final String s1 = FileUtil.m_179922_(s);
+          try (InputStream inputstream = resource.open()) {
+             final String s1 = FileUtil.getFullResourcePath(s);
 @@ -217,16 +_,17 @@
-                private final Set<String> f_173369_ = Sets.newHashSet();
+                private final Set<String> importedPaths = Sets.newHashSet();
  
-                public String m_142138_(boolean p_173374_, String p_173375_) {
--                  p_173375_ = FileUtil.m_179924_((p_173374_ ? s1 : "shaders/include/") + p_173375_);
--                  if (!this.f_173369_.add(p_173375_)) {
+                public String applyImport(boolean p_173374_, String p_173375_) {
+-                  p_173375_ = FileUtil.normalizeResourcePath((p_173374_ ? s1 : "shaders/include/") + p_173375_);
+-                  if (!this.importedPaths.add(p_173375_)) {
 +                  // FORGE: use the mod's namespace to look up resources if specified
 +                  ResourceLocation resourcelocation = net.minecraftforge.client.ForgeHooksClient.getShaderImportLocation(s1, p_173374_, p_173375_);
-+                  if (!this.f_173369_.add(resourcelocation.toString())) {
++                  if (!this.importedPaths.add(resourcelocation.toString())) {
                       return null;
                    } else {
 -                     ResourceLocation resourcelocation = new ResourceLocation(p_173375_);
  
-                      try (Reader reader = p_173341_.m_215597_(resourcelocation)) {
+                      try (Reader reader = p_173341_.openAsReader(resourcelocation)) {
                          return IOUtils.toString(reader);
                       } catch (IOException ioexception) {
--                        ShaderInstance.f_173323_.error("Could not open GLSL import {}: {}", p_173375_, ioexception.getMessage());
+-                        ShaderInstance.LOGGER.error("Could not open GLSL import {}: {}", p_173375_, ioexception.getMessage());
 +                        // FORGE: specify the namespace of the failed import in case of duplicates from multiple mods
-+                        ShaderInstance.f_173323_.error("Could not open GLSL import {}: {}", resourcelocation, ioexception.getMessage());
++                        ShaderInstance.LOGGER.error("Could not open GLSL import {}: {}", resourcelocation, ioexception.getMessage());
                          return "#error " + ioexception.getMessage();
                       }
                    }

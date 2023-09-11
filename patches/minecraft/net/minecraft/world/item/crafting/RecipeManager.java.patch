@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
 @@ -40,9 +_,17 @@
-    private Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> f_44007_ = ImmutableMap.of();
-    private Map<ResourceLocation, RecipeHolder<?>> f_199900_ = ImmutableMap.of();
-    private boolean f_44008_;
+    private Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
+    private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
+    private boolean hasErrors;
 +   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
 +   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
@@ -13,27 +13,27 @@
 +   }
 +
 +   public RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-       super(f_44005_, "recipes");
+       super(GSON, "recipes");
 +      this.context = context;
     }
  
-    protected void m_5787_(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
+    protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
 @@ -52,9 +_,18 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
-+         if (resourcelocation.m_135815_().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
++         if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
           try {
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
-+               f_44006_.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
-             RecipeHolder<?> recipeholder = m_44045_(resourcelocation, GsonHelper.m_13918_(entry.getValue(), "top element"));
+             RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
 +            if (recipeholder == null) {
-+               f_44006_.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++               LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
 +               continue;
 +            }
-             map.computeIfAbsent(recipeholder.f_291008_().m_6671_(), (p_44075_) -> {
+             map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, recipeholder);

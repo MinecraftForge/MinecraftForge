@@ -2,19 +2,19 @@
 +++ b/net/minecraft/client/model/HumanoidModel.java
 @@ -270,6 +_,8 @@
           case TOOT_HORN:
-             this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_, -1.2F, 1.2F) - 1.4835298F;
-             this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - ((float)Math.PI / 6F);
+             this.rightArm.xRot = Mth.clamp(this.head.xRot, -1.2F, 1.2F) - 1.4835298F;
+             this.rightArm.yRot = this.head.yRot - ((float)Math.PI / 6F);
 +         default:
-+            this.f_102816_.applyTransform(this, p_102876_, net.minecraft.world.entity.HumanoidArm.RIGHT);
++            this.rightArmPose.applyTransform(this, p_102876_, net.minecraft.world.entity.HumanoidArm.RIGHT);
        }
  
     }
 @@ -314,6 +_,8 @@
           case TOOT_HORN:
-             this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_, -1.2F, 1.2F) - 1.4835298F;
-             this.f_102812_.f_104204_ = this.f_102808_.f_104204_ + ((float)Math.PI / 6F);
+             this.leftArm.xRot = Mth.clamp(this.head.xRot, -1.2F, 1.2F) - 1.4835298F;
+             this.leftArm.yRot = this.head.yRot + ((float)Math.PI / 6F);
 +         default:
-+            this.f_102815_.applyTransform(this, p_102879_, net.minecraft.world.entity.HumanoidArm.LEFT);
++            this.leftArmPose.applyTransform(this, p_102879_, net.minecraft.world.entity.HumanoidArm.LEFT);
        }
  
     }
@@ -30,19 +30,19 @@
 @@ -422,10 +_,29 @@
  
        private ArmPose(boolean p_102896_) {
-          this.f_102890_ = p_102896_;
+          this.twoHanded = p_102896_;
 +         this.forgeArmPose = null;
        }
  
-       public boolean m_102897_() {
-          return this.f_102890_;
+       public boolean isTwoHanded() {
+          return this.twoHanded;
        }
 +      // FORGE START
 +      @javax.annotation.Nullable
 +      private final net.minecraftforge.client.IArmPoseTransformer forgeArmPose;
 +
 +      private ArmPose(boolean twoHanded, @javax.annotation.Nonnull net.minecraftforge.client.IArmPoseTransformer forgeArmPose) {
-+         this.f_102890_ = twoHanded;
++         this.twoHanded = twoHanded;
 +         com.google.common.base.Preconditions.checkNotNull(forgeArmPose, "Cannot create new ArmPose with null transformer!");
 +         this.forgeArmPose = forgeArmPose;
 +      }

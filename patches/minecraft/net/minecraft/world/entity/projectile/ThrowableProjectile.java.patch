@@ -4,8 +4,8 @@
           }
        }
  
--      if (hitresult.m_6662_() != HitResult.Type.MISS && !flag) {
-+      if (hitresult.m_6662_() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-          this.m_6532_(hitresult);
+-      if (hitresult.getType() != HitResult.Type.MISS && !flag) {
++      if (hitresult.getType() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+          this.onHit(hitresult);
        }
  

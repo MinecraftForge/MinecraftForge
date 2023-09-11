@@ -2,45 +2,45 @@
 +++ b/net/minecraft/server/level/ServerEntity.java
 @@ -95,10 +_,9 @@
        if ($$11 instanceof ItemFrame itemframe) {
-          if (this.f_8521_ % 10 == 0) {
-             ItemStack itemstack = itemframe.m_31822_();
--            if (itemstack.m_41720_() instanceof MapItem) {
--               Integer integer = MapItem.m_151131_(itemstack);
--               MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
+          if (this.tickCount % 10 == 0) {
+             ItemStack itemstack = itemframe.getItem();
+-            if (itemstack.getItem() instanceof MapItem) {
+-               Integer integer = MapItem.getMapId(itemstack);
+-               MapItemSavedData mapitemsaveddata = MapItem.getSavedData(integer, this.level);
 -               if (mapitemsaveddata != null) {
-+         Integer integer = MapItem.m_151131_(itemstack);
-+         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
++         Integer integer = MapItem.getMapId(itemstack);
++         MapItemSavedData mapitemsaveddata = MapItem.getSavedData(itemstack, this.level);
 +         if (mapitemsaveddata != null) {
-                   for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
-                      mapitemsaveddata.m_77918_(serverplayer, itemstack);
-                      Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
+                   for(ServerPlayer serverplayer : this.level.players()) {
+                      mapitemsaveddata.tickCarriedBy(serverplayer, itemstack);
+                      Packet<?> packet = mapitemsaveddata.getUpdatePacket(integer, serverplayer);
 @@ -107,11 +_,12 @@
                       }
                    }
                 }
 -            }
  
-             this.m_8543_();
+             this.sendDirtyEntityData();
           }
        }
 +
 +
  
-       if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
-          if (this.f_8510_.m_20159_()) {
+       if (this.tickCount % this.updateInterval == 0 || this.entity.hasImpulse || this.entity.getEntityData().isDirty()) {
+          if (this.entity.isPassenger()) {
 @@ -218,6 +_,7 @@
-    public void m_8534_(ServerPlayer p_8535_) {
-       this.f_8510_.m_6452_(p_8535_);
-       p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_19879_()));
-+      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
+    public void removePairing(ServerPlayer p_8535_) {
+       this.entity.stopSeenByPlayer(p_8535_);
+       p_8535_.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
++      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.entity, p_8535_);
     }
  
-    public void m_8541_(ServerPlayer p_8542_) {
+    public void addPairing(ServerPlayer p_8542_) {
 @@ -225,6 +_,7 @@
-       this.m_289200_(p_8542_, list::add);
-       p_8542_.f_8906_.m_141995_(new ClientboundBundlePacket(list));
-       this.f_8510_.m_6457_(p_8542_);
-+      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
+       this.sendPairingData(p_8542_, list::add);
+       p_8542_.connection.send(new ClientboundBundlePacket(list));
+       this.entity.startSeenByPlayer(p_8542_);
++      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.entity, p_8542_);
     }
  
-    public void m_289200_(ServerPlayer p_289562_, Consumer<Packet<ClientGamePacketListener>> p_289563_) {
+    public void sendPairingData(ServerPlayer p_289562_, Consumer<Packet<ClientGamePacketListener>> p_289563_) {

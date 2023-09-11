@@ -4,28 +4,28 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
--      Thread thread = new Thread("User Authenticator #" + f_10014_.incrementAndGet()) {
-+      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + f_10014_.incrementAndGet()) {
+-      Thread thread = new Thread("User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
++      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
           public void run() {
-             String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.f_291165_, "Player name not initialized");
+             String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
  
 @@ -220,6 +_,7 @@
     }
  
-    public void m_10044_(ServerboundCustomQueryAnswerPacket p_297965_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.f_10013_))
-       this.m_10053_(f_291075_);
+    public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
++      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
+       this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
     }
  
 @@ -230,6 +_,11 @@
-       this.f_10013_.m_129505_(serverconfigurationpacketlistenerimpl);
-       serverconfigurationpacketlistenerimpl.m_294295_();
-       this.f_10019_ = ServerLoginPacketListenerImpl.State.ACCEPTED;
+       this.connection.setListener(serverconfigurationpacketlistenerimpl);
+       serverconfigurationpacketlistenerimpl.startConfiguration();
+       this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
 +   }
 +
 +   @Nullable
 +   public GameProfile getAuthenticatedProfile() {
-+       return this.f_291112_;
++       return this.authenticatedProfile;
     }
  
-    protected static GameProfile m_295545_(String p_297551_) {
+    protected static GameProfile createOfflineProfile(String p_297551_) {

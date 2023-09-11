@@ -6,6 +6,6 @@
  public class OverworldBiomes {
 +   // TODO: getAdditionalOverworldBiomes, likely in this class. -C
 +
-    protected static final int f_194836_ = 4159204;
-    protected static final int f_194837_ = 329011;
-    private static final int f_194838_ = 12638463;
+    protected static final int NORMAL_WATER_COLOR = 4159204;
+    protected static final int NORMAL_WATER_FOG_COLOR = 329011;
+    private static final int OVERWORLD_FOG_COLOR = 12638463;

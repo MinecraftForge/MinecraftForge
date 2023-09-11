@@ -1,53 +1,53 @@
 --- a/net/minecraft/client/renderer/ItemInHandRenderer.java
 +++ b/net/minecraft/client/renderer/ItemInHandRenderer.java
 @@ -310,12 +_,14 @@
-       if (iteminhandrenderer$handrenderselection.f_172921_) {
+       if (iteminhandrenderer$handrenderselection.renderMainHand) {
           float f4 = interactionhand == InteractionHand.MAIN_HAND ? f : 0.0F;
-          float f5 = 1.0F - Mth.m_14179_(p_109315_, this.f_109303_, this.f_109302_);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f4, f5, this.f_109300_))
-          this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.MAIN_HAND, f4, this.f_109300_, f5, p_109316_, p_109317_, p_109319_);
+          float f5 = 1.0F - Mth.lerp(p_109315_, this.oMainHandHeight, this.mainHandHeight);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f4, f5, this.mainHandItem))
+          this.renderArmWithItem(p_109318_, p_109315_, f1, InteractionHand.MAIN_HAND, f4, this.mainHandItem, f5, p_109316_, p_109317_, p_109319_);
        }
  
-       if (iteminhandrenderer$handrenderselection.f_172922_) {
+       if (iteminhandrenderer$handrenderselection.renderOffHand) {
           float f6 = interactionhand == InteractionHand.OFF_HAND ? f : 0.0F;
-          float f7 = 1.0F - Mth.m_14179_(p_109315_, this.f_109305_, this.f_109304_);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.OFF_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f6, f7, this.f_109301_))
-          this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.OFF_HAND, f6, this.f_109301_, f7, p_109316_, p_109317_, p_109319_);
+          float f7 = 1.0F - Mth.lerp(p_109315_, this.oOffHandHeight, this.offHandHeight);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.OFF_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f6, f7, this.offHandItem))
+          this.renderArmWithItem(p_109318_, p_109315_, f1, InteractionHand.OFF_HAND, f6, this.offHandItem, f7, p_109316_, p_109317_, p_109319_);
        }
  
 @@ -366,7 +_,7 @@
              } else {
-                this.m_109353_(p_109379_, p_109380_, p_109381_, p_109378_, humanoidarm, p_109376_, p_109377_);
+                this.renderOneHandedMap(p_109379_, p_109380_, p_109381_, p_109378_, humanoidarm, p_109376_, p_109377_);
              }
--         } else if (p_109377_.m_150930_(Items.f_42717_)) {
-+         } else if (p_109377_.m_41720_() instanceof CrossbowItem) {
-             boolean flag1 = CrossbowItem.m_40932_(p_109377_);
+-         } else if (p_109377_.is(Items.CROSSBOW)) {
++         } else if (p_109377_.getItem() instanceof CrossbowItem) {
+             boolean flag1 = CrossbowItem.isCharged(p_109377_);
              boolean flag2 = humanoidarm == HumanoidArm.RIGHT;
              int i = flag2 ? 1 : -1;
 @@ -408,6 +_,7 @@
-             this.m_269530_(p_109372_, p_109377_, flag2 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !flag2, p_109379_, p_109380_, p_109381_);
+             this.renderItem(p_109372_, p_109377_, flag2 ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND, !flag2, p_109379_, p_109380_, p_109381_);
           } else {
              boolean flag3 = humanoidarm == HumanoidArm.RIGHT;
-+            if (!net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_109377_).applyForgeHandTransform(p_109379_, f_109299_.f_91074_, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) // FORGE: Allow items to define custom arm animation
-             if (p_109372_.m_6117_() && p_109372_.m_21212_() > 0 && p_109372_.m_7655_() == p_109375_) {
++            if (!net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_109377_).applyForgeHandTransform(p_109379_, minecraft.player, humanoidarm, p_109377_, p_109373_, p_109378_, p_109376_)) // FORGE: Allow items to define custom arm animation
+             if (p_109372_.isUsingItem() && p_109372_.getUseItemRemainingTicks() > 0 && p_109372_.getUsedItemHand() == p_109375_) {
                 int k = flag3 ? 1 : -1;
-                switch (p_109377_.m_41780_()) {
+                switch (p_109377_.getUseAnimation()) {
 @@ -514,8 +_,16 @@
-          this.f_109304_ = Mth.m_14036_(this.f_109304_ - 0.4F, 0.0F, 1.0F);
+          this.offHandHeight = Mth.clamp(this.offHandHeight - 0.4F, 0.0F, 1.0F);
        } else {
-          float f = localplayer.m_36403_(1.0F);
--         this.f_109302_ += Mth.m_14036_((this.f_109300_ == itemstack ? f * f * f : 0.0F) - this.f_109302_, -0.4F, 0.4F);
--         this.f_109304_ += Mth.m_14036_((float)(this.f_109301_ == itemstack1 ? 1 : 0) - this.f_109304_, -0.4F, 0.4F);
-+         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.f_109300_, itemstack, localplayer.m_150109_().f_35977_);
-+         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.f_109301_, itemstack1, -1);
+          float f = localplayer.getAttackStrengthScale(1.0F);
+-         this.mainHandHeight += Mth.clamp((this.mainHandItem == itemstack ? f * f * f : 0.0F) - this.mainHandHeight, -0.4F, 0.4F);
+-         this.offHandHeight += Mth.clamp((float)(this.offHandItem == itemstack1 ? 1 : 0) - this.offHandHeight, -0.4F, 0.4F);
++         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.mainHandItem, itemstack, localplayer.getInventory().selected);
++         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.offHandItem, itemstack1, -1);
 +
-+         if (!requipM && this.f_109300_ != itemstack)
-+            this.f_109300_ = itemstack;
-+         if (!requipO && this.f_109301_ != itemstack1)
-+            this.f_109301_ = itemstack1;
++         if (!requipM && this.mainHandItem != itemstack)
++            this.mainHandItem = itemstack;
++         if (!requipO && this.offHandItem != itemstack1)
++            this.offHandItem = itemstack1;
 +
-+         this.f_109302_ += Mth.m_14036_((!requipM ? f * f * f : 0.0F) - this.f_109302_, -0.4F, 0.4F);
-+         this.f_109304_ += Mth.m_14036_((float)(!requipO ? 1 : 0) - this.f_109304_, -0.4F, 0.4F);
++         this.mainHandHeight += Mth.clamp((!requipM ? f * f * f : 0.0F) - this.mainHandHeight, -0.4F, 0.4F);
++         this.offHandHeight += Mth.clamp((float)(!requipO ? 1 : 0) - this.offHandHeight, -0.4F, 0.4F);
        }
  
-       if (this.f_109302_ < 0.1F) {
+       if (this.mainHandHeight < 0.1F) {

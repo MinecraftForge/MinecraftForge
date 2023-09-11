@@ -1,122 +1,122 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
 @@ -104,13 +_,13 @@
-    protected BlockState m_53470_(BlockGetter p_53471_, BlockPos p_53472_) {
-       BlockPos blockpos = p_53472_.m_7495_();
-       BlockState blockstate = p_53471_.m_8055_(blockpos);
--      if (!this.m_7599_(blockstate) && !blockstate.m_60783_(p_53471_, blockpos, Direction.UP)) {
-+      if (!this.canCatchFire(p_53471_, p_53472_, Direction.UP) && !blockstate.m_60783_(p_53471_, blockpos, Direction.UP)) {
-          BlockState blockstate1 = this.m_49966_();
+    protected BlockState getStateForPlacement(BlockGetter p_53471_, BlockPos p_53472_) {
+       BlockPos blockpos = p_53472_.below();
+       BlockState blockstate = p_53471_.getBlockState(blockpos);
+-      if (!this.canBurn(blockstate) && !blockstate.isFaceSturdy(p_53471_, blockpos, Direction.UP)) {
++      if (!this.canCatchFire(p_53471_, p_53472_, Direction.UP) && !blockstate.isFaceSturdy(p_53471_, blockpos, Direction.UP)) {
+          BlockState blockstate1 = this.defaultBlockState();
  
           for(Direction direction : Direction.values()) {
-             BooleanProperty booleanproperty = f_53414_.get(direction);
+             BooleanProperty booleanproperty = PROPERTY_BY_DIRECTION.get(direction);
              if (booleanproperty != null) {
--               blockstate1 = blockstate1.m_61124_(booleanproperty, Boolean.valueOf(this.m_7599_(p_53471_.m_8055_(p_53472_.m_121945_(direction)))));
-+               blockstate1 = blockstate1.m_61124_(booleanproperty, Boolean.valueOf(this.canCatchFire(p_53471_, p_53472_.m_121945_(direction), direction.m_122424_())));
+-               blockstate1 = blockstate1.setValue(booleanproperty, Boolean.valueOf(this.canBurn(p_53471_.getBlockState(p_53472_.relative(direction)))));
++               blockstate1 = blockstate1.setValue(booleanproperty, Boolean.valueOf(this.canCatchFire(p_53471_, p_53472_.relative(direction), direction.getOpposite())));
              }
           }
  
 @@ -129,14 +_,14 @@
-       p_221161_.m_186460_(p_221162_, this, m_221148_(p_221161_.f_46441_));
-       if (p_221161_.m_46469_().m_46207_(GameRules.f_46131_)) {
-          if (!p_221160_.m_60710_(p_221161_, p_221162_)) {
--            p_221161_.m_7471_(p_221162_, false);
+       p_221161_.scheduleTick(p_221162_, this, getFireTickDelay(p_221161_.random));
+       if (p_221161_.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
+          if (!p_221160_.canSurvive(p_221161_, p_221162_)) {
+-            p_221161_.removeBlock(p_221162_, false);
           }
  
-          BlockState blockstate = p_221161_.m_8055_(p_221162_.m_7495_());
--         boolean flag = blockstate.m_204336_(p_221161_.m_6042_().f_63836_());
+          BlockState blockstate = p_221161_.getBlockState(p_221162_.below());
+-         boolean flag = blockstate.is(p_221161_.dimensionType().infiniburn());
 +         boolean flag = blockstate.isFireSource(p_221161_, p_221162_, Direction.UP);
-          int i = p_221160_.m_61143_(f_53408_);
-          if (!flag && p_221161_.m_46471_() && this.m_53428_(p_221161_, p_221162_) && p_221163_.m_188501_() < 0.2F + (float)i * 0.03F) {
-             p_221161_.m_7471_(p_221162_, false);
-+            p_221161_.m_7471_(p_221162_, false);
+          int i = p_221160_.getValue(AGE);
+          if (!flag && p_221161_.isRaining() && this.isNearRain(p_221161_, p_221162_) && p_221163_.nextFloat() < 0.2F + (float)i * 0.03F) {
+             p_221161_.removeBlock(p_221162_, false);
++            p_221161_.removeBlock(p_221162_, false);
           } else {
-             int j = Math.min(15, i + p_221163_.m_188503_(3) / 2);
+             int j = Math.min(15, i + p_221163_.nextInt(3) / 2);
              if (i != j) {
 @@ -154,7 +_,7 @@
                    return;
                 }
  
--               if (i == 15 && p_221163_.m_188503_(4) == 0 && !this.m_7599_(p_221161_.m_8055_(p_221162_.m_7495_()))) {
-+               if (i == 15 && p_221163_.m_188503_(4) == 0 && !this.canCatchFire(p_221161_, p_221162_.m_7495_(), Direction.UP)) {
-                   p_221161_.m_7471_(p_221162_, false);
+-               if (i == 15 && p_221163_.nextInt(4) == 0 && !this.canBurn(p_221161_.getBlockState(p_221162_.below()))) {
++               if (i == 15 && p_221163_.nextInt(4) == 0 && !this.canCatchFire(p_221161_, p_221162_.below(), Direction.UP)) {
+                   p_221161_.removeBlock(p_221162_, false);
                    return;
                 }
 @@ -162,12 +_,12 @@
  
-             boolean flag1 = p_221161_.m_204166_(p_221162_).m_203656_(BiomeTags.f_263839_);
+             boolean flag1 = p_221161_.getBiome(p_221162_).is(BiomeTags.INCREASED_FIRE_BURNOUT);
              int k = flag1 ? -50 : 0;
--            this.m_221150_(p_221161_, p_221162_.m_122029_(), 300 + k, p_221163_, i);
--            this.m_221150_(p_221161_, p_221162_.m_122024_(), 300 + k, p_221163_, i);
--            this.m_221150_(p_221161_, p_221162_.m_7495_(), 250 + k, p_221163_, i);
--            this.m_221150_(p_221161_, p_221162_.m_7494_(), 250 + k, p_221163_, i);
--            this.m_221150_(p_221161_, p_221162_.m_122012_(), 300 + k, p_221163_, i);
--            this.m_221150_(p_221161_, p_221162_.m_122019_(), 300 + k, p_221163_, i);
-+            this.tryCatchFire(p_221161_, p_221162_.m_122029_(), 300 + k, p_221163_, i, Direction.WEST);
-+            this.tryCatchFire(p_221161_, p_221162_.m_122024_(), 300 + k, p_221163_, i, Direction.EAST);
-+            this.tryCatchFire(p_221161_, p_221162_.m_7495_(), 250 + k, p_221163_, i, Direction.UP);
-+            this.tryCatchFire(p_221161_, p_221162_.m_7494_(), 250 + k, p_221163_, i, Direction.DOWN);
-+            this.tryCatchFire(p_221161_, p_221162_.m_122012_(), 300 + k, p_221163_, i, Direction.SOUTH);
-+            this.tryCatchFire(p_221161_, p_221162_.m_122019_(), 300 + k, p_221163_, i, Direction.NORTH);
+-            this.checkBurnOut(p_221161_, p_221162_.east(), 300 + k, p_221163_, i);
+-            this.checkBurnOut(p_221161_, p_221162_.west(), 300 + k, p_221163_, i);
+-            this.checkBurnOut(p_221161_, p_221162_.below(), 250 + k, p_221163_, i);
+-            this.checkBurnOut(p_221161_, p_221162_.above(), 250 + k, p_221163_, i);
+-            this.checkBurnOut(p_221161_, p_221162_.north(), 300 + k, p_221163_, i);
+-            this.checkBurnOut(p_221161_, p_221162_.south(), 300 + k, p_221163_, i);
++            this.tryCatchFire(p_221161_, p_221162_.east(), 300 + k, p_221163_, i, Direction.WEST);
++            this.tryCatchFire(p_221161_, p_221162_.west(), 300 + k, p_221163_, i, Direction.EAST);
++            this.tryCatchFire(p_221161_, p_221162_.below(), 250 + k, p_221163_, i, Direction.UP);
++            this.tryCatchFire(p_221161_, p_221162_.above(), 250 + k, p_221163_, i, Direction.DOWN);
++            this.tryCatchFire(p_221161_, p_221162_.north(), 300 + k, p_221163_, i, Direction.SOUTH);
++            this.tryCatchFire(p_221161_, p_221162_.south(), 300 + k, p_221163_, i, Direction.NORTH);
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
 @@ -205,28 +_,27 @@
-       return p_53429_.m_46758_(p_53430_) || p_53429_.m_46758_(p_53430_.m_122024_()) || p_53429_.m_46758_(p_53430_.m_122029_()) || p_53429_.m_46758_(p_53430_.m_122012_()) || p_53429_.m_46758_(p_53430_.m_122019_());
+       return p_53429_.isRainingAt(p_53430_) || p_53429_.isRainingAt(p_53430_.west()) || p_53429_.isRainingAt(p_53430_.east()) || p_53429_.isRainingAt(p_53430_.north()) || p_53429_.isRainingAt(p_53430_.south());
     }
  
 +   @Deprecated //Forge: Use IForgeBlockState.getFlammability, Public for default implementation only.
-    public int m_221164_(BlockState p_221165_) {
-       return p_221165_.m_61138_(BlockStateProperties.f_61362_) && p_221165_.m_61143_(BlockStateProperties.f_61362_) ? 0 : this.f_53422_.getInt(p_221165_.m_60734_());
+    public int getBurnOdds(BlockState p_221165_) {
+       return p_221165_.hasProperty(BlockStateProperties.WATERLOGGED) && p_221165_.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.burnOdds.getInt(p_221165_.getBlock());
     }
  
 +   @Deprecated //Forge: Use IForgeBlockState.getFireSpreadSpeed
-    public int m_221166_(BlockState p_221167_) {
-       return p_221167_.m_61138_(BlockStateProperties.f_61362_) && p_221167_.m_61143_(BlockStateProperties.f_61362_) ? 0 : this.f_221147_.getInt(p_221167_.m_60734_());
+    public int getIgniteOdds(BlockState p_221167_) {
+       return p_221167_.hasProperty(BlockStateProperties.WATERLOGGED) && p_221167_.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.igniteOdds.getInt(p_221167_.getBlock());
     }
  
--   private void m_221150_(Level p_221151_, BlockPos p_221152_, int p_221153_, RandomSource p_221154_, int p_221155_) {
--      int i = this.m_221164_(p_221151_.m_8055_(p_221152_));
--      if (p_221154_.m_188503_(p_221153_) < i) {
--         BlockState blockstate = p_221151_.m_8055_(p_221152_);
--         if (p_221154_.m_188503_(p_221155_ + 10) < 5 && !p_221151_.m_46758_(p_221152_)) {
--            int j = Math.min(p_221155_ + p_221154_.m_188503_(5) / 4, 15);
--            p_221151_.m_7731_(p_221152_, this.m_53437_(p_221151_, p_221152_, j), 3);
+-   private void checkBurnOut(Level p_221151_, BlockPos p_221152_, int p_221153_, RandomSource p_221154_, int p_221155_) {
+-      int i = this.getBurnOdds(p_221151_.getBlockState(p_221152_));
+-      if (p_221154_.nextInt(p_221153_) < i) {
+-         BlockState blockstate = p_221151_.getBlockState(p_221152_);
+-         if (p_221154_.nextInt(p_221155_ + 10) < 5 && !p_221151_.isRainingAt(p_221152_)) {
+-            int j = Math.min(p_221155_ + p_221154_.nextInt(5) / 4, 15);
+-            p_221151_.setBlock(p_221152_, this.getStateWithAge(p_221151_, p_221152_, j), 3);
 -         } else {
--            p_221151_.m_7471_(p_221152_, false);
+-            p_221151_.removeBlock(p_221152_, false);
 -         }
 +   private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face) {
-+      int i = p_53432_.m_8055_(p_53433_).getFlammability(p_53432_, p_53433_, face);
-+      if (p_53435_.m_188503_(p_53434_) < i) {
-+         BlockState blockstate = p_53432_.m_8055_(p_53433_);
++      int i = p_53432_.getBlockState(p_53433_).getFlammability(p_53432_, p_53433_, face);
++      if (p_53435_.nextInt(p_53434_) < i) {
++         BlockState blockstate = p_53432_.getBlockState(p_53433_);
 +         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
  
--         Block block = blockstate.m_60734_();
+-         Block block = blockstate.getBlock();
 -         if (block instanceof TntBlock) {
--            TntBlock.m_57433_(p_221151_, p_221152_);
-+         if (p_53435_.m_188503_(p_53434_ + 10) < 5 && !p_53432_.m_46758_(p_53433_)) {
-+            int j = Math.min(p_53434_ + p_53435_.m_188503_(5) / 4, 15);
-+            p_53432_.m_7731_(p_53433_, this.m_53437_(p_53432_, p_53433_, j), 3);
+-            TntBlock.explode(p_221151_, p_221152_);
++         if (p_53435_.nextInt(p_53434_ + 10) < 5 && !p_53432_.isRainingAt(p_53433_)) {
++            int j = Math.min(p_53434_ + p_53435_.nextInt(5) / 4, 15);
++            p_53432_.setBlock(p_53433_, this.getStateWithAge(p_53432_, p_53433_, j), 3);
 +         } else {
-+            p_53432_.m_7471_(p_53433_, false);
++            p_53432_.removeBlock(p_53433_, false);
           }
        }
  
 @@ -239,7 +_,7 @@
  
-    private boolean m_53485_(BlockGetter p_53486_, BlockPos p_53487_) {
+    private boolean isValidFireLocation(BlockGetter p_53486_, BlockPos p_53487_) {
        for(Direction direction : Direction.values()) {
--         if (this.m_7599_(p_53486_.m_8055_(p_53487_.m_121945_(direction)))) {
-+         if (this.canCatchFire(p_53486_, p_53487_.m_121945_(direction), direction.m_122424_())) {
+-         if (this.canBurn(p_53486_.getBlockState(p_53487_.relative(direction)))) {
++         if (this.canCatchFire(p_53486_, p_53487_.relative(direction), direction.getOpposite())) {
              return true;
           }
        }
 @@ -255,13 +_,14 @@
  
           for(Direction direction : Direction.values()) {
-             BlockState blockstate = p_221157_.m_8055_(p_221158_.m_121945_(direction));
--            i = Math.max(this.m_221166_(blockstate), i);
-+            i = Math.max(blockstate.getFireSpreadSpeed(p_221157_, p_221158_.m_121945_(direction), direction.m_122424_()), i);
+             BlockState blockstate = p_221157_.getBlockState(p_221158_.relative(direction));
+-            i = Math.max(this.getIgniteOdds(blockstate), i);
++            i = Math.max(blockstate.getFireSpreadSpeed(p_221157_, p_221158_.relative(direction), direction.getOpposite()), i);
           }
  
           return i;
@@ -124,16 +124,16 @@
     }
  
 +   @Deprecated //Forge: Use canCatchFire with more context
-    protected boolean m_7599_(BlockState p_53489_) {
-       return this.m_221166_(p_53489_) > 0;
+    protected boolean canBurn(BlockState p_53489_) {
+       return this.getIgniteOdds(p_53489_) > 0;
     }
 @@ -280,8 +_,21 @@
     }
  
-    private void m_53444_(Block p_53445_, int p_53446_, int p_53447_) {
-+      if (p_53445_ == Blocks.f_50016_) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
-       this.f_221147_.put(p_53445_, p_53446_);
-       this.f_53422_.put(p_53445_, p_53447_);
+    private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
++      if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
+       this.igniteOdds.put(p_53445_, p_53446_);
+       this.burnOdds.put(p_53445_, p_53447_);
 +   }
 +
 +   /**
@@ -145,7 +145,7 @@
 +    * @return True if the face can catch fire.
 +    */
 +   public boolean canCatchFire(BlockGetter world, BlockPos pos, Direction face) {
-+      return world.m_8055_(pos).isFlammable(world, pos, face);
++      return world.getBlockState(pos).isFlammable(world, pos, face);
     }
  
-    public static void m_53484_() {
+    public static void bootStrap() {

@@ -3,9 +3,9 @@
 @@ -246,7 +_,7 @@
           }
  
-          if (!this.m_9236_().f_46443_) {
--            if (this.f_19796_.m_188503_(10) == 0) {
-+            if (this.f_19796_.m_188503_(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
-                this.m_21828_(p_29414_);
-                this.m_9236_().m_7605_(this, (byte)7);
+          if (!this.level().isClientSide) {
+-            if (this.random.nextInt(10) == 0) {
++            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
+                this.tame(p_29414_);
+                this.level().broadcastEntityEvent(this, (byte)7);
              } else {

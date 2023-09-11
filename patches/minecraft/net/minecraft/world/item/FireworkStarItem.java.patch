@@ -3,9 +3,9 @@
 @@ -23,7 +_,7 @@
     }
  
-    public static void m_41256_(CompoundTag p_41257_, List<Component> p_41258_) {
--      FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.m_41237_(p_41257_.m_128445_("Type"));
+    public static void appendHoverText(CompoundTag p_41257_, List<Component> p_41258_) {
+-      FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.byId(p_41257_.getByte("Type"));
 +      FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.getShape(p_41257_);
-       p_41258_.add(Component.m_237115_("item.minecraft.firework_star.shape." + fireworkrocketitem$shape.m_41241_()).m_130940_(ChatFormatting.GRAY));
-       int[] aint = p_41257_.m_128465_("Colors");
+       p_41258_.add(Component.translatable("item.minecraft.firework_star.shape." + fireworkrocketitem$shape.getName()).withStyle(ChatFormatting.GRAY));
+       int[] aint = p_41257_.getIntArray("Colors");
        if (aint.length > 0) {

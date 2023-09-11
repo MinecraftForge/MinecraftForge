@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/horse/Horse.java
 +++ b/net/minecraft/world/entity/animal/horse/Horse.java
 @@ -144,6 +_,8 @@
-          this.m_5496_(SoundEvents.f_11974_, p_30709_.m_56773_() * 0.6F, p_30709_.m_56774_());
+          this.playSound(SoundEvents.HORSE_BREATHE, p_30709_.getVolume() * 0.6F, p_30709_.getPitch());
        }
  
-+      ItemStack stack = this.f_30520_.m_8020_(1);
-+      if (m_6010_(stack)) stack.onHorseArmorTick(m_9236_(), this);
++      ItemStack stack = this.inventory.getItem(1);
++      if (isArmor(stack)) stack.onHorseArmorTick(level(), this);
     }
  
-    protected SoundEvent m_7515_() {
+    protected SoundEvent getAmbientSound() {

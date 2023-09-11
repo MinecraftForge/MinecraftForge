@@ -8,21 +8,21 @@
 +public interface BakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
 +   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, RandomSource, net.minecraftforge.client.model.data.ModelData, net.minecraft.client.renderer.RenderType)}*/
 +   @Deprecated
-    List<BakedQuad> m_213637_(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_);
+    List<BakedQuad> getQuads(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_);
  
-    boolean m_7541_();
+    boolean useAmbientOcclusion();
 @@ -24,9 +_,13 @@
  
-    boolean m_7521_();
+    boolean isCustomRenderer();
  
 +   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.ModelData)}*/
 +   @Deprecated
-    TextureAtlasSprite m_6160_();
+    TextureAtlasSprite getParticleIcon();
  
--   ItemTransforms m_7442_();
+-   ItemTransforms getTransforms();
 +   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#applyTransform(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack, boolean)} instead */
 +   @Deprecated
-+   default ItemTransforms m_7442_() { return ItemTransforms.f_111786_; }
++   default ItemTransforms getTransforms() { return ItemTransforms.NO_TRANSFORMS; }
  
-    ItemOverrides m_7343_();
+    ItemOverrides getOverrides();
  }

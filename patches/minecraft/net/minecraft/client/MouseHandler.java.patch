@@ -1,30 +1,30 @@
 --- a/net/minecraft/client/MouseHandler.java
 +++ b/net/minecraft/client/MouseHandler.java
 @@ -74,6 +_,7 @@
-             this.f_91510_ = -1;
+             this.activeButton = -1;
           }
  
 +         if (net.minecraftforge.client.event.ForgeEventFactoryClient.onMouseButtonPre(p_91532_, p_91533_, p_91534_)) return;
           boolean[] aboolean = new boolean[]{false};
-          if (this.f_91503_.m_91265_() == null) {
-             if (this.f_91503_.f_91080_ == null) {
+          if (this.minecraft.getOverlay() == null) {
+             if (this.minecraft.screen == null) {
 @@ -87,11 +_,19 @@
                 if (flag) {
-                   screen.m_169415_();
-                   Screen.m_96579_(() -> {
--                     aboolean[0] = screen.m_6375_(d0, d1, i);
+                   screen.afterMouseAction();
+                   Screen.wrapScreenError(() -> {
+-                     aboolean[0] = screen.mouseClicked(d0, d1, i);
 +                     aboolean[0] = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseClickedPre(screen, d0, d1, i);
 +                     if (!aboolean[0]) {
-+                        aboolean[0] = this.f_91503_.f_91080_.m_6375_(d0, d1, i);
++                        aboolean[0] = this.minecraft.screen.mouseClicked(d0, d1, i);
 +                        aboolean[0] = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseClickedPost(screen, d0, d1, i, aboolean[0]);
 +                     }
                    }, "mouseClicked event handler", screen.getClass().getCanonicalName());
                 } else {
-                   Screen.m_96579_(() -> {
--                     aboolean[0] = screen.m_6348_(d0, d1, i);
+                   Screen.wrapScreenError(() -> {
+-                     aboolean[0] = screen.mouseReleased(d0, d1, i);
 +                     aboolean[0] = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseReleasedPre(screen, d0, d1, i);
 +                     if (!aboolean[0]) {
-+                        aboolean[0] = this.f_91503_.f_91080_.m_6348_(d0, d1, i);
++                        aboolean[0] = this.minecraft.screen.mouseReleased(d0, d1, i);
 +                        aboolean[0] = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseReleasedPost(screen, d0, d1, i, aboolean[0]);
 +                     }
                    }, "mouseReleased event handler", screen.getClass().getCanonicalName());
@@ -39,48 +39,48 @@
     }
  
 @@ -129,8 +_,10 @@
-             if (this.f_91503_.f_91080_ != null) {
-                double d3 = this.f_91507_ * (double)this.f_91503_.m_91268_().m_85445_() / (double)this.f_91503_.m_91268_().m_85443_();
-                double d4 = this.f_91508_ * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();
--               this.f_91503_.f_91080_.m_6050_(d3, d4, d1, d2);
-                this.f_91503_.f_91080_.m_169415_();
-+               if (net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPre(this.f_91503_.f_91080_, d3, d4, d1, d2)) return;
-+               if (this.f_91503_.f_91080_.m_6050_(d3, d4, d1, d2)) return;
-+               net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPost(this.f_91503_.f_91080_, d3, d4, d1, d2);
-             } else if (this.f_91503_.f_91074_ != null) {
-                if (this.f_291070_ != 0.0D && Math.signum(d1) != Math.signum(this.f_291070_)) {
-                   this.f_291070_ = 0.0D;
+             if (this.minecraft.screen != null) {
+                double d3 = this.xpos * (double)this.minecraft.getWindow().getGuiScaledWidth() / (double)this.minecraft.getWindow().getScreenWidth();
+                double d4 = this.ypos * (double)this.minecraft.getWindow().getGuiScaledHeight() / (double)this.minecraft.getWindow().getScreenHeight();
+-               this.minecraft.screen.mouseScrolled(d3, d4, d1, d2);
+                this.minecraft.screen.afterMouseAction();
++               if (net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPre(this.minecraft.screen, d3, d4, d1, d2)) return;
++               if (this.minecraft.screen.mouseScrolled(d3, d4, d1, d2)) return;
++               net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseScrollPost(this.minecraft.screen, d3, d4, d1, d2);
+             } else if (this.minecraft.player != null) {
+                if (this.accumulatedScrollX != 0.0D && Math.signum(d1) != Math.signum(this.accumulatedScrollX)) {
+                   this.accumulatedScrollX = 0.0D;
 @@ -151,6 +_,7 @@
-                this.f_291070_ -= (double)j;
-                this.f_291867_ -= (double)i;
+                this.accumulatedScrollX -= (double)j;
+                this.accumulatedScrollY -= (double)i;
                 int k = i == 0 ? -j : i;
 +               if (net.minecraftforge.client.event.ForgeEventFactoryClient.onMouseScroll(this, d1, d2)) return;
-                if (this.f_91503_.f_91074_.m_5833_()) {
-                   if (this.f_91503_.f_91065_.m_93085_().m_94768_()) {
-                      this.f_91503_.f_91065_.m_93085_().m_205380_(-k);
+                if (this.minecraft.player.isSpectator()) {
+                   if (this.minecraft.gui.getSpectatorGui().isMenuActive()) {
+                      this.minecraft.gui.getSpectatorGui().onMouseScrolled(-k);
 @@ -219,7 +_,9 @@
-                double d2 = (p_91563_ - this.f_91507_) * (double)this.f_91503_.m_91268_().m_85445_() / (double)this.f_91503_.m_91268_().m_85443_();
-                double d3 = (p_91564_ - this.f_91508_) * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();
-                Screen.m_96579_(() -> {
--                  screen.m_7979_(d0, d1, this.f_91510_, d2, d3);
-+                  if (net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseDragPre(screen, d0, d1, this.f_91510_, d2, d3)) return;
-+                  if (screen.m_7979_(d0, d1, this.f_91510_, d2, d3)) return;
-+                  net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseDragPost(screen, d0, d1, this.f_91510_, d2, d3);
+                double d2 = (p_91563_ - this.xpos) * (double)this.minecraft.getWindow().getGuiScaledWidth() / (double)this.minecraft.getWindow().getScreenWidth();
+                double d3 = (p_91564_ - this.ypos) * (double)this.minecraft.getWindow().getGuiScaledHeight() / (double)this.minecraft.getWindow().getScreenHeight();
+                Screen.wrapScreenError(() -> {
+-                  screen.mouseDragged(d0, d1, this.activeButton, d2, d3);
++                  if (net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseDragPre(screen, d0, d1, this.activeButton, d2, d3)) return;
++                  if (screen.mouseDragged(d0, d1, this.activeButton, d2, d3)) return;
++                  net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenMouseDragPost(screen, d0, d1, this.activeButton, d2, d3);
                 }, "mouseDragged event handler", screen.getClass().getCanonicalName());
              }
  
 @@ -302,6 +_,14 @@
  
-    public double m_91594_() {
-       return this.f_91508_;
+    public double ypos() {
+       return this.ypos;
 +   }
 +
 +   public double getXVelocity() {
-+      return this.f_91516_;
++      return this.accumulatedDX;
 +   }
 +
 +   public double getYVelocity() {
-+      return this.f_91517_;
++      return this.accumulatedDY;
     }
  
-    public void m_91599_() {
+    public void setIgnoreFirstMove() {

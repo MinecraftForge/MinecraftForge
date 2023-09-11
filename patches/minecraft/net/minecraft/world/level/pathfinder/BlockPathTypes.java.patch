@@ -10,8 +10,8 @@
     WALKABLE(0.0F),
 @@ -35,5 +_,17 @@
  
-    public float m_77124_() {
-       return this.f_77117_;
+    public float getMalus() {
+       return this.malus;
 +   }
 +
 +   @org.jetbrains.annotations.Nullable

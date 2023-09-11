@@ -3,72 +3,72 @@
 @@ -207,7 +_,7 @@
     }
  
-    public void m_7379_() {
--      this.f_96541_.m_91152_((Screen)null);
-+      this.f_96541_.popGuiLayer();
+    public void onClose() {
+-      this.minecraft.setScreen((Screen)null);
++      this.minecraft.popGuiLayer();
     }
  
-    protected <T extends GuiEventListener & Renderable & NarratableEntry> T m_142416_(T p_169406_) {
+    protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
 @@ -319,7 +_,10 @@
-       this.f_96543_ = p_96608_;
-       this.f_96544_ = p_96609_;
-       if (!this.f_267454_) {
-+         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.f_96540_, this::addEventWidget, this::m_169411_))) {
-          this.m_7856_();
+       this.width = p_96608_;
+       this.height = p_96609_;
+       if (!this.initialized) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget))) {
+          this.init();
 +         }
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.f_96540_, this::addEventWidget, this::m_169411_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
        } else {
-          this.m_267719_();
+          this.repositionElements();
        }
 @@ -332,7 +_,10 @@
-    protected void m_232761_() {
-       this.m_169413_();
-       this.m_264131_();
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.f_96540_, this::addEventWidget, this::m_169411_))) {
-       this.m_7856_();
+    protected void rebuildWidgets() {
+       this.clearWidgets();
+       this.clearFocus();
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget))) {
+       this.init();
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.f_96540_, this::addEventWidget, this::m_169411_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
     }
  
-    public List<? extends GuiEventListener> m_6702_() {
+    public List<? extends GuiEventListener> children() {
 @@ -354,6 +_,7 @@
-    public void m_280273_(GuiGraphics p_283688_, int p_299421_, int p_298679_, float p_297268_) {
-       if (this.f_96541_.f_91073_ != null) {
-          this.m_293900_(p_283688_);
+    public void renderBackground(GuiGraphics p_283688_, int p_299421_, int p_298679_, float p_297268_) {
+       if (this.minecraft.level != null) {
+          this.renderTransparentBackground(p_283688_);
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundRendered(this, p_283688_));
        } else {
-          this.m_280039_(p_283688_);
+          this.renderDirtBackground(p_283688_);
        }
 @@ -369,6 +_,7 @@
        int i = 32;
-       p_282281_.m_280398_(f_279548_, 0, 0, 0, 0.0F, 0.0F, this.f_96543_, this.f_96544_, 32, 32);
-       p_282281_.m_280246_(1.0F, 1.0F, 1.0F, 1.0F);
+       p_282281_.blit(BACKGROUND_LOCATION, 0, 0, 0, 0.0F, 0.0F, this.width, this.height, 32, 32);
+       p_282281_.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundRendered(this, p_282281_));
     }
  
-    public boolean m_7043_() {
+    public boolean isPauseScreen() {
 @@ -462,6 +_,10 @@
-    public void m_7400_(List<Path> p_96591_) {
+    public void onFilesDrop(List<Path> p_96591_) {
     }
  
 +   public Minecraft getMinecraft() {
-+      return this.f_96541_;
++      return this.minecraft;
 +   }
 +
-    private void m_169380_(long p_169381_, boolean p_169382_) {
-       this.f_169377_ = Util.m_137550_() + p_169381_;
+    private void scheduleNarration(long p_169381_, boolean p_169382_) {
+       this.nextNarrationTime = Util.getMillis() + p_169381_;
        if (p_169382_) {
 @@ -632,5 +_,13 @@
-          this.f_169421_ = p_169425_;
-          this.f_169422_ = p_169426_;
+          this.index = p_169425_;
+          this.priority = p_169426_;
        }
 +   }
 +
 +   private void addEventWidget(GuiEventListener b) {
 +      if (b instanceof Renderable r)
-+         this.f_169369_.add(r);
++         this.renderables.add(r);
 +      if (b instanceof NarratableEntry ne)
-+         this.f_169368_.add(ne);
-+      f_96540_.add(b);
++         this.narratables.add(ne);
++      children.add(b);
     }
  }

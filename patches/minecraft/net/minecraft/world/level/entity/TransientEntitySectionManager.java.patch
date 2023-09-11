@@ -3,27 +3,27 @@
 @@ -92,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {
-       private final T f_157668_;
+       private final T entity;
 +      private final Entity realEntity;
-       private long f_157669_;
-       private EntitySection<T> f_157670_;
+       private long currentSectionKey;
+       private EntitySection<T> currentSection;
  
        Callback(T p_157673_, long p_157674_, EntitySection<T> p_157675_) {
-          this.f_157668_ = p_157673_;
+          this.entity = p_157673_;
 +         this.realEntity = p_157673_ instanceof Entity ? (Entity) p_157673_ : null;
-          this.f_157669_ = p_157674_;
-          this.f_157670_ = p_157675_;
+          this.currentSectionKey = p_157674_;
+          this.currentSection = p_157675_;
        }
 @@ -113,6 +_,7 @@
-             TransientEntitySectionManager.this.m_157648_(this.f_157669_, this.f_157670_);
-             EntitySection<T> entitysection = TransientEntitySectionManager.this.f_157638_.m_156893_(i);
-             entitysection.m_188346_(this.f_157668_);
-+            long oldSectionKey = f_157669_;
-             this.f_157670_ = entitysection;
-             this.f_157669_ = i;
-             TransientEntitySectionManager.this.f_157636_.m_214006_(this.f_157668_);
+             TransientEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
+             EntitySection<T> entitysection = TransientEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
+             entitysection.add(this.entity);
++            long oldSectionKey = currentSectionKey;
+             this.currentSection = entitysection;
+             this.currentSectionKey = i;
+             TransientEntitySectionManager.this.callbacks.onSectionChange(this.entity);
 @@ -125,6 +_,7 @@
-                   TransientEntitySectionManager.this.f_157636_.m_141987_(this.f_157668_);
+                   TransientEntitySectionManager.this.callbacks.onTickingStart(this.entity);
                 }
              }
 +            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);

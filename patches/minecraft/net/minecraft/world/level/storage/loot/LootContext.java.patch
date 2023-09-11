@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
 @@ -86,15 +_,45 @@
-       return new LootContext.VisitedEntry<>(LootDataType.f_278496_, p_279163_);
+       return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
     }
  
 +   // ============================== FORGE START ==============================
 +   public int getLootingModifier() {
-+      return net.minecraftforge.common.ForgeHooks.getLootingLevel(m_78953_(LootContextParams.f_81455_), m_78953_(LootContextParams.f_81458_), m_78953_(LootContextParams.f_81457_));
++      return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
 +   }
 +
 +   private ResourceLocation queriedLootTableId;
@@ -28,24 +28,24 @@
 +   // =============================== FORGE END ===============================
 +
     public static class Builder {
-       private final LootParams f_78956_;
+       private final LootParams params;
        @Nullable
-       private RandomSource f_78958_;
+       private RandomSource random;
 +      private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
  
        public Builder(LootParams p_287628_) {
-          this.f_78956_ = p_287628_;
+          this.params = p_287628_;
        }
  
 +      public Builder(LootContext context) {
-+         this.f_78956_ = context.f_78914_;
-+         this.f_78958_ = context.f_78907_;
++         this.params = context.params;
++         this.random = context.random;
 +         this.queriedLootTableId = context.queriedLootTableId;
 +      }
 +
-       public LootContext.Builder m_78965_(long p_78966_) {
+       public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
           if (p_78966_ != 0L) {
-             this.f_78958_ = RandomSource.m_216335_(p_78966_);
+             this.random = RandomSource.create(p_78966_);
 @@ -103,6 +_,11 @@
           return this;
        }
@@ -55,27 +55,27 @@
 +         return this;
 +      }
 +
-       public ServerLevel m_78962_() {
-          return this.f_78956_.m_287182_();
+       public ServerLevel getLevel() {
+          return this.params.getLevel();
        }
 @@ -113,7 +_,7 @@
-          RandomSource randomsource = Optional.ofNullable(this.f_78958_).or(() -> {
-             return p_299315_.map(serverlevel::m_287143_);
-          }).orElseGet(serverlevel::m_213780_);
--         return new LootContext(this.f_78956_, randomsource, minecraftserver.m_278653_());
-+         return new LootContext(this.f_78956_, randomsource, minecraftserver.m_278653_(), queriedLootTableId);
+          RandomSource randomsource = Optional.ofNullable(this.random).or(() -> {
+             return p_299315_.map(serverlevel::getRandomSequence);
+          }).orElseGet(serverlevel::getRandom);
+-         return new LootContext(this.params, randomsource, minecraftserver.getLootData());
++         return new LootContext(this.params, randomsource, minecraftserver.getLootData(), queriedLootTableId);
        }
     }
  
 @@ -134,6 +_,11 @@
  
-       public LootContextParam<? extends Entity> m_79003_() {
-          return this.f_78995_;
+       public LootContextParam<? extends Entity> getParam() {
+          return this.param;
 +      }
 +
 +      // Forge: This method is patched in to expose the same name used in getByName so that ContextNbtProvider#forEntity serializes it properly
 +      public String getName() {
-+         return this.f_78994_;
++         return this.name;
        }
  
-       public static LootContext.EntityTarget m_79006_(String p_79007_) {
+       public static LootContext.EntityTarget getByName(String p_79007_) {

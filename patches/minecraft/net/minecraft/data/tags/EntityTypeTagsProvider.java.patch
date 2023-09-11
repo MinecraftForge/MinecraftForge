@@ -10,10 +10,10 @@
 +      this(p_256095_, p_256572_, "vanilla", null);
 +   }
 +   public EntityTypeTagsProvider(PackOutput p_256095_, CompletableFuture<HolderLookup.Provider> p_256572_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       super(p_256095_, Registries.f_256939_, p_256572_, (p_256665_) -> {
-          return p_256665_.m_204041_().m_205785_();
+       super(p_256095_, Registries.ENTITY_TYPE, p_256572_, (p_256665_) -> {
+          return p_256665_.builtInRegistryHolder().key();
 -      });
 +      }, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_255894_) {
+    protected void addTags(HolderLookup.Provider p_255894_) {

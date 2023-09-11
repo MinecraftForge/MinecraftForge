@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #BannerPatternTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_) {
-       super(p_256451_, Registries.f_256969_, p_256420_);
+       super(p_256451_, Registries.BANNER_PATTERN, p_256420_);
 +   }
 +   public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256451_, Registries.f_256969_, p_256420_, modId, existingFileHelper);
++      super(p_256451_, Registries.BANNER_PATTERN, p_256420_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_255819_) {
+    protected void addTags(HolderLookup.Provider p_255819_) {

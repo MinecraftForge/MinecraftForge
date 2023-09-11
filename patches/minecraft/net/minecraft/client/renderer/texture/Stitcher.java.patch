@@ -6,23 +6,23 @@
  public class Stitcher<T extends Stitcher.Entry> {
 +   private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
 +
-    private static final Comparator<Stitcher.Holder<?>> f_118161_ = Comparator.<Stitcher.Holder<?>, Integer>comparing((p_118201_) -> {
-       return -p_118201_.f_118204_;
+    private static final Comparator<Stitcher.Holder<?>> HOLDER_COMPARATOR = Comparator.<Stitcher.Holder<?>, Integer>comparing((p_118201_) -> {
+       return -p_118201_.height;
     }).thenComparing((p_118199_) -> {
 @@ -52,6 +_,14 @@
  
        for(Stitcher.Holder<T> holder : list) {
-          if (!this.m_118178_(holder)) {
+          if (!this.addToStorage(holder)) {
 +            if (LOGGER.isInfoEnabled()) {
 +               StringBuilder sb = new StringBuilder();
-+               sb.append("Unable to fit: ").append(holder.f_244486_().m_246162_());
-+               sb.append(" - size: ").append(holder.f_244486_.m_246492_()).append("x").append(holder.f_244486_.m_245330_());
++               sb.append("Unable to fit: ").append(holder.entry().name());
++               sb.append(" - size: ").append(holder.entry.width()).append("x").append(holder.entry.height());
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
 +               list.forEach(h -> sb.append("\t").append(h).append("\n"));
 +               LOGGER.info(sb.toString());
 +            }
-             throw new StitcherException(holder.f_244486_, list.stream().map((p_247946_) -> {
-                return p_247946_.f_244486_;
+             throw new StitcherException(holder.entry, list.stream().map((p_247946_) -> {
+                return p_247946_.entry;
              }).collect(ImmutableList.toImmutableList()));
 @@ -95,7 +_,7 @@
           boolean flag4 = flag2 && j != l;

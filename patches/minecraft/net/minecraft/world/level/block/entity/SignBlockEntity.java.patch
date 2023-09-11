@@ -7,6 +7,6 @@
 +
 +   @Override
 +   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
-+      return new net.minecraft.world.phys.AABB(this.m_58899_(), this.m_58899_().m_7918_(1, 1, 1));
++      return new net.minecraft.world.phys.AABB(this.getBlockPos(), this.getBlockPos().offset(1, 1, 1));
 +   }
  }

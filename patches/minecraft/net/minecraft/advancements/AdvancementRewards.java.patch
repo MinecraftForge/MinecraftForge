@@ -2,10 +2,10 @@
 +++ b/net/minecraft/advancements/AdvancementRewards.java
 @@ -43,7 +_,7 @@
  
-    public void m_9989_(ServerPlayer p_9990_) {
-       p_9990_.m_6756_(this.f_9979_);
--      LootParams lootparams = (new LootParams.Builder(p_9990_.m_284548_())).m_287286_(LootContextParams.f_81455_, p_9990_).m_287286_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_287235_(LootContextParamSets.f_81418_);
-+      LootParams lootparams = (new LootParams.Builder(p_9990_.m_284548_())).m_287286_(LootContextParams.f_81455_, p_9990_).m_287286_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_287239_(p_9990_.m_36336_()).m_287235_(LootContextParamSets.f_81418_); // Forge: Add luck to LootContext
+    public void grant(ServerPlayer p_9990_) {
+       p_9990_.giveExperiencePoints(this.experience);
+-      LootParams lootparams = (new LootParams.Builder(p_9990_.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, p_9990_).withParameter(LootContextParams.ORIGIN, p_9990_.position()).create(LootContextParamSets.ADVANCEMENT_REWARD);
++      LootParams lootparams = (new LootParams.Builder(p_9990_.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, p_9990_).withParameter(LootContextParams.ORIGIN, p_9990_.position()).withLuck(p_9990_.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // Forge: Add luck to LootContext
        boolean flag = false;
  
-       for(ResourceLocation resourcelocation : this.f_9980_) {
+       for(ResourceLocation resourcelocation : this.loot) {

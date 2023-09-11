@@ -3,9 +3,9 @@
 @@ -50,7 +_,7 @@
           return false;
        } else {
-          if (!this.f_45033_.isEmpty()) {
--            Map<Enchantment, Integer> map = EnchantmentHelper.m_44882_(p_45050_.m_41785_());
+          if (!this.enchantments.isEmpty()) {
+-            Map<Enchantment, Integer> map = EnchantmentHelper.deserializeEnchantments(p_45050_.getEnchantmentTags());
 +            Map<Enchantment, Integer> map = p_45050_.getAllEnchantments();
  
-             for(EnchantmentPredicate enchantmentpredicate : this.f_45033_) {
-                if (!enchantmentpredicate.m_30476_(map)) {
+             for(EnchantmentPredicate enchantmentpredicate : this.enchantments) {
+                if (!enchantmentpredicate.containedIn(map)) {

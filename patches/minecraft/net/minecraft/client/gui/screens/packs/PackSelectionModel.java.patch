@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
 @@ -110,6 +_,8 @@
-       boolean m_7802_();
+       boolean canMoveUp();
  
-       boolean m_7803_();
+       boolean canMoveDown();
 +
 +      default boolean notHidden() { return true; }
     }
@@ -11,13 +11,13 @@
     @OnlyIn(Dist.CLIENT)
 @@ -198,6 +_,11 @@
  
-       public void m_7845_() {
-          this.m_99938_(1);
+       public void moveDown() {
+          this.move(1);
 +      }
 +
 +      @Override
 +      public boolean notHidden() {
-+          return !f_99933_.isHidden();
++          return !pack.isHidden();
        }
     }
  

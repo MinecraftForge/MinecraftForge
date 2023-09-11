@@ -3,8 +3,8 @@
 @@ -89,6 +_,7 @@
     }
  
-    protected void m_105317_(GameType p_105318_) {
-+      net.minecraftforge.client.ForgeHooksClient.onClientChangeGameType(this, this.f_105300_, p_105318_);
-       this.f_105300_ = p_105318_;
+    protected void setGameMode(GameType p_105318_) {
++      net.minecraftforge.client.ForgeHooksClient.onClientChangeGameType(this, this.gameMode, p_105318_);
+       this.gameMode = p_105318_;
     }
  

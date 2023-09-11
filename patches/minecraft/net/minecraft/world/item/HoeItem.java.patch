@@ -10,23 +10,23 @@
 +    * or override {@link net.minecraftforge.common.extensions.IForgeBlock#getToolModifiedState(BlockState, UseOnContext, net.minecraftforge.common.ToolAction, boolean)}.
 +    */
 +   @Deprecated
-    protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> f_41332_ = Maps.newHashMap(ImmutableMap.of(Blocks.f_50440_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_152481_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_50493_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50093_.m_49966_())), Blocks.f_50546_, Pair.of(HoeItem::m_150856_, m_150858_(Blocks.f_50493_.m_49966_())), Blocks.f_152549_, Pair.of((p_238242_) -> {
+    protected static final Map<Block, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>>> TILLABLES = Maps.newHashMap(ImmutableMap.of(Blocks.GRASS_BLOCK, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT_PATH, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.FARMLAND.defaultBlockState())), Blocks.COARSE_DIRT, Pair.of(HoeItem::onlyIfAirAbove, changeIntoState(Blocks.DIRT.defaultBlockState())), Blocks.ROOTED_DIRT, Pair.of((p_238242_) -> {
        return true;
-    }, m_150849_(Blocks.f_50493_.m_49966_(), Items.f_151017_))));
+    }, changeIntoStateAndDropItem(Blocks.DIRT.defaultBlockState(), Items.HANGING_ROOTS))));
 @@ -33,7 +_,8 @@
-    public InteractionResult m_6225_(UseOnContext p_41341_) {
-       Level level = p_41341_.m_43725_();
-       BlockPos blockpos = p_41341_.m_8083_();
--      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
-+      BlockState toolModifiedState = level.m_8055_(blockpos).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
-+      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, m_150858_(toolModifiedState));
+    public InteractionResult useOn(UseOnContext p_41341_) {
+       Level level = p_41341_.getLevel();
+       BlockPos blockpos = p_41341_.getClickedPos();
+-      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = TILLABLES.get(level.getBlockState(blockpos).getBlock());
++      BlockState toolModifiedState = level.getBlockState(blockpos).getToolModifiedState(p_41341_, net.minecraftforge.common.ToolActions.HOE_TILL, false);
++      Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, changeIntoState(toolModifiedState));
        if (pair == null) {
           return InteractionResult.PASS;
        } else {
 @@ -75,5 +_,10 @@
  
-    public static boolean m_150856_(UseOnContext p_150857_) {
-       return p_150857_.m_43719_() != Direction.DOWN && p_150857_.m_43725_().m_8055_(p_150857_.m_8083_().m_7494_()).m_60795_();
+    public static boolean onlyIfAirAbove(UseOnContext p_150857_) {
+       return p_150857_.getClickedFace() != Direction.DOWN && p_150857_.getLevel().getBlockState(p_150857_.getClickedPos().above()).isAir();
 +   }
 +
 +   @Override

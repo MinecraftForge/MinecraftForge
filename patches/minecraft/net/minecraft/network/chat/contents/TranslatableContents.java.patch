@@ -6,7 +6,7 @@
  
 +         if (j == 0) {
 +            // Forge has some special formatting handlers defined in ForgeI18n, use those if no %s replacements present.
-+            j = net.minecraftforge.internal.TextComponentMessageFormatHandler.handle(this, p_237517_, this.f_237498_, p_237516_);
++            j = net.minecraftforge.internal.TextComponentMessageFormatHandler.handle(this, p_237517_, this.args, p_237516_);
 +         }
 +
           if (j < p_237516_.length()) {

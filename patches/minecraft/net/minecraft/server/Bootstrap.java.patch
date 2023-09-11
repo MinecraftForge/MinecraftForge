@@ -1,19 +1,19 @@
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
 @@ -54,6 +_,8 @@
-                CauldronInteraction.m_175649_();
-                BuiltInRegistries.m_257498_();
-                CreativeModeTabs.m_280019_();
+                CauldronInteraction.bootStrap();
+                BuiltInRegistries.bootStrap();
+                CreativeModeTabs.validate();
 +               net.minecraftforge.registries.GameData.vanillaSnapshot();
 +               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
-                m_135890_();
-                f_285608_.set(Duration.between(instant, Instant.now()).toMillis());
+                wrapStreams();
+                bootstrapDuration.set(Duration.between(instant, Instant.now()).toMillis());
              }
 @@ -127,7 +_,6 @@
-          Commands.m_82138_();
+          Commands.validate();
        }
  
--      DefaultAttributes.m_22296_();
+-      DefaultAttributes.validate();
     }
  
-    private static void m_135890_() {
+    private static void wrapStreams() {

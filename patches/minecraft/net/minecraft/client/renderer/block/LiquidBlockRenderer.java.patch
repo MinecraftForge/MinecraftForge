@@ -2,10 +2,10 @@
 +++ b/net/minecraft/client/renderer/block/LiquidBlockRenderer.java
 @@ -68,8 +_,9 @@
  
-    public void m_234369_(BlockAndTintGetter p_234370_, BlockPos p_234371_, VertexConsumer p_234372_, BlockState p_234373_, FluidState p_234374_) {
-       boolean flag = p_234374_.m_205070_(FluidTags.f_13132_);
--      TextureAtlasSprite[] atextureatlassprite = flag ? this.f_110940_ : this.f_110941_;
--      int i = flag ? 16777215 : BiomeColors.m_108811_(p_234370_, p_234371_);
+    public void tesselate(BlockAndTintGetter p_234370_, BlockPos p_234371_, VertexConsumer p_234372_, BlockState p_234373_, FluidState p_234374_) {
+       boolean flag = p_234374_.is(FluidTags.LAVA);
+-      TextureAtlasSprite[] atextureatlassprite = flag ? this.lavaIcons : this.waterIcons;
+-      int i = flag ? 16777215 : BiomeColors.getAverageWaterColor(p_234370_, p_234371_);
 +      TextureAtlasSprite[] atextureatlassprite = net.minecraftforge.client.ForgeHooksClient.getFluidSprites(p_234370_, p_234371_, p_234374_);
 +      int i = net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(p_234374_).getTintColor(p_234374_, p_234370_, p_234371_);
 +      float alpha = (float)(i >> 24 & 255) / 255.0F;
@@ -16,19 +16,19 @@
              float f52 = f4 * f;
              float f30 = f4 * f1;
              float f31 = f4 * f2;
--            this.m_110984_(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, f18, f22, l);
--            this.m_110984_(p_234372_, d1 + 0.0D, d2 + (double)f10, d0 + 1.0D, f52, f30, f31, f19, f23, l);
--            this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, f20, f24, l);
--            this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, f21, f25, l);
+-            this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, f18, f22, l);
+-            this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f10, d0 + 1.0D, f52, f30, f31, f19, f23, l);
+-            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, f20, f24, l);
+-            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, f21, f25, l);
 +            this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, alpha, f18, f22, l);
 +            this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f10, d0 + 1.0D, f52, f30, f31, alpha, f19, f23, l);
 +            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, alpha, f20, f24, l);
 +            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, alpha, f21, f25, l);
-             if (p_234374_.m_76171_(p_234370_, p_234371_.m_7494_())) {
--               this.m_110984_(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, f18, f22, l);
--               this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, f21, f25, l);
--               this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, f20, f24, l);
--               this.m_110984_(p_234372_, d1 + 0.0D, d2 + (double)f10, d0 + 1.0D, f52, f30, f31, f19, f23, l);
+             if (p_234374_.shouldRenderBackwardUpFace(p_234370_, p_234371_.above())) {
+-               this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, f18, f22, l);
+-               this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, f21, f25, l);
+-               this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, f20, f24, l);
+-               this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f10, d0 + 1.0D, f52, f30, f31, f19, f23, l);
 +               this.vertex(p_234372_, d1 + 0.0D, d2 + (double)f8, d0 + 0.0D, f52, f30, f31, alpha, f18, f22, l);
 +               this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f7, d0 + 0.0D, f52, f30, f31, alpha, f21, f25, l);
 +               this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f9, d0 + 1.0D, f52, f30, f31, alpha, f20, f24, l);
@@ -40,27 +40,27 @@
              float f46 = f3 * f;
              float f47 = f3 * f1;
              float f48 = f3 * f2;
--            this.m_110984_(p_234372_, d1, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, f40, f43, k);
--            this.m_110984_(p_234372_, d1, d2 + (double)f17, d0, f46, f47, f48, f40, f42, k);
--            this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f17, d0, f46, f47, f48, f41, f42, k);
--            this.m_110984_(p_234372_, d1 + 1.0D, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, f41, f43, k);
+-            this.vertex(p_234372_, d1, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, f40, f43, k);
+-            this.vertex(p_234372_, d1, d2 + (double)f17, d0, f46, f47, f48, f40, f42, k);
+-            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f17, d0, f46, f47, f48, f41, f42, k);
+-            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, f41, f43, k);
 +            this.vertex(p_234372_, d1, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, alpha, f40, f43, k);
 +            this.vertex(p_234372_, d1, d2 + (double)f17, d0, f46, f47, f48, alpha, f40, f42, k);
 +            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f17, d0, f46, f47, f48, alpha, f41, f42, k);
 +            this.vertex(p_234372_, d1 + 1.0D, d2 + (double)f17, d0 + 1.0D, f46, f47, f48, alpha, f41, f43, k);
           }
  
-          int j = this.m_110945_(p_234370_, p_234371_);
+          int j = this.getLightColor(p_234370_, p_234371_);
 @@ -256,10 +_,9 @@
-             if (flag7 && !m_203179_(p_234370_, p_234371_, direction, Math.max(f44, f45), p_234370_.m_8055_(p_234371_.m_121945_(direction)))) {
-                BlockPos blockpos = p_234371_.m_121945_(direction);
+             if (flag7 && !isFaceOccludedByNeighbor(p_234370_, p_234371_, direction, Math.max(f44, f45), p_234370_.getBlockState(p_234371_.relative(direction)))) {
+                BlockPos blockpos = p_234371_.relative(direction);
                 TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
 -               if (!flag) {
--                  Block block = p_234370_.m_8055_(blockpos).m_60734_();
+-                  Block block = p_234370_.getBlockState(blockpos).getBlock();
 -                  if (block instanceof HalfTransparentBlock || block instanceof LeavesBlock) {
--                     textureatlassprite2 = this.f_110942_;
+-                     textureatlassprite2 = this.waterOverlay;
 +               if (atextureatlassprite[2] != null) {
-+                  if (p_234370_.m_8055_(blockpos).shouldDisplayFluidOverlay(p_234370_, blockpos, p_234374_)) {
++                  if (p_234370_.getBlockState(blockpos).shouldDisplayFluidOverlay(p_234370_, blockpos, p_234374_)) {
 +                     textureatlassprite2 = atextureatlassprite[2];
                    }
                 }
@@ -69,19 +69,19 @@
                 float f37 = f4 * f36 * f;
                 float f38 = f4 * f36 * f1;
                 float f39 = f4 * f36 * f2;
--               this.m_110984_(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
--               this.m_110984_(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
--               this.m_110984_(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
--               this.m_110984_(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
+-               this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
+-               this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
+-               this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
+-               this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
 +               this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, alpha, f53, f33, j);
 +               this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, alpha, f32, f34, j);
 +               this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, alpha, f32, f35, j);
 +               this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, alpha, f53, f35, j);
-                if (textureatlassprite2 != this.f_110942_) {
--                  this.m_110984_(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
--                  this.m_110984_(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
--                  this.m_110984_(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
--                  this.m_110984_(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
+                if (textureatlassprite2 != this.waterOverlay) {
+-                  this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
+-                  this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
+-                  this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
+-                  this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
 +                  this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, alpha, f53, f35, j);
 +                  this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, alpha, f32, f35, j);
 +                  this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, alpha, f32, f34, j);
@@ -93,10 +93,10 @@
        }
     }
  
--   private void m_110984_(VertexConsumer p_110985_, double p_110986_, double p_110987_, double p_110988_, float p_110989_, float p_110990_, float p_110991_, float p_110992_, float p_110993_, int p_110994_) {
--      p_110985_.m_5483_(p_110986_, p_110987_, p_110988_).m_85950_(p_110989_, p_110990_, p_110991_, 1.0F).m_7421_(p_110992_, p_110993_).m_85969_(p_110994_).m_5601_(0.0F, 1.0F, 0.0F).m_5752_();
+-   private void vertex(VertexConsumer p_110985_, double p_110986_, double p_110987_, double p_110988_, float p_110989_, float p_110990_, float p_110991_, float p_110992_, float p_110993_, int p_110994_) {
+-      p_110985_.vertex(p_110986_, p_110987_, p_110988_).color(p_110989_, p_110990_, p_110991_, 1.0F).uv(p_110992_, p_110993_).uv2(p_110994_).normal(0.0F, 1.0F, 0.0F).endVertex();
 +   private void vertex(VertexConsumer p_110985_, double p_110986_, double p_110987_, double p_110988_, float p_110989_, float p_110990_, float p_110991_, float alpha, float p_110992_, float p_110993_, int p_110994_) {
-+      p_110985_.m_5483_(p_110986_, p_110987_, p_110988_).m_85950_(p_110989_, p_110990_, p_110991_, alpha).m_7421_(p_110992_, p_110993_).m_85969_(p_110994_).m_5601_(0.0F, 1.0F, 0.0F).m_5752_();
++      p_110985_.vertex(p_110986_, p_110987_, p_110988_).color(p_110989_, p_110990_, p_110991_, alpha).uv(p_110992_, p_110993_).uv2(p_110994_).normal(0.0F, 1.0F, 0.0F).endVertex();
     }
  
-    private int m_110945_(BlockAndTintGetter p_110946_, BlockPos p_110947_) {
+    private int getLightColor(BlockAndTintGetter p_110946_, BlockPos p_110947_) {

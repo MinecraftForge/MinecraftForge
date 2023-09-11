@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 @@ -159,6 +_,7 @@
-             return BuiltInRegistries.f_257020_.m_6612_(ResourceLocation.m_135820_(p_258990_));
+             return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(p_258990_));
           }, p_188233_);
-          chunkaccess = new LevelChunk(p_188231_.m_6018_(), p_188233_, upgradedata, levelchunkticks, levelchunkticks1, k1, alevelchunksection, m_196890_(p_188231_, p_188234_), blendingdata);
-+         if (p_188234_.m_128441_("ForgeCaps")) ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.m_128469_("ForgeCaps"));
+          chunkaccess = new LevelChunk(p_188231_.getLevel(), p_188233_, upgradedata, levelchunkticks, levelchunkticks1, k1, alevelchunksection, postLoadChunk(p_188231_, p_188234_), blendingdata);
++         if (p_188234_.contains("ForgeCaps")) ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.getCompound("ForgeCaps"));
        } else {
-          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.m_193302_(p_188234_.m_128437_("block_ticks", 10), (p_258992_) -> {
-             return BuiltInRegistries.f_256975_.m_6612_(ResourceLocation.m_135820_(p_258992_));
+          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.load(p_188234_.getList("block_ticks", 10), (p_258992_) -> {
+             return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(p_258992_));
 @@ -212,6 +_,7 @@
        }
  
@@ -17,7 +17,7 @@
        } else {
           ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
 @@ -235,6 +_,7 @@
-             protochunk1.m_188186_(generationstep$carving, new CarvingMask(compoundtag4.m_128467_(s1), chunkaccess.m_141937_()));
+             protochunk1.setCarvingMask(generationstep$carving, new CarvingMask(compoundtag4.getLongArray(s1), chunkaccess.getMinBuildHeight()));
           }
  
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
@@ -27,15 +27,15 @@
 @@ -340,6 +_,14 @@
           }
  
-          compoundtag.m_128365_("CarvingMasks", compoundtag4);
+          compoundtag.put("CarvingMasks", compoundtag4);
 +      }
 +      else if (p_63456_ instanceof LevelChunk levelChunk){
 +          try {
 +              final CompoundTag capTag = levelChunk.writeCapsToNBT();
-+              if (capTag != null) compoundtag.m_128365_("ForgeCaps", capTag);
++              if (capTag != null) compoundtag.put("ForgeCaps", capTag);
 +          } catch (Exception exception) {
-+              f_63449_.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++              LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +          }
        }
  
-       m_188235_(p_63455_, compoundtag, p_63456_.m_183568_());
+       saveTicks(p_63455_, compoundtag, p_63456_.getTicksForSerialization());

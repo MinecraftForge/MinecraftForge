@@ -1,23 +1,22 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
 @@ -21,9 +_,9 @@
-       NonNullList<ItemStack> nonnulllist = NonNullList.m_122780_(p_44004_.m_6643_(), ItemStack.f_41583_);
+       NonNullList<ItemStack> nonnulllist = NonNullList.withSize(p_44004_.getContainerSize(), ItemStack.EMPTY);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
--         Item item = p_44004_.m_8020_(i).m_41720_();
--         if (item.m_41470_()) {
--            nonnulllist.set(i, new ItemStack(item.m_41469_()));
-+         ItemStack item = p_44004_.m_8020_(i);
-+         if (item.hasCraftingRemainingItem()) {
+-         Item item = p_44004_.getItem(i).getItem();
++         ItemStack item = p_44004_.getItem(i);
+          if (item.hasCraftingRemainingItem()) {
+-            nonnulllist.set(i, new ItemStack(item.getCraftingRemainingItem()));
 +            nonnulllist.set(i, item.getCraftingRemainingItem());
           }
        }
  
 @@ -57,7 +_,7 @@
-    default boolean m_142505_() {
-       NonNullList<Ingredient> nonnulllist = this.m_7527_();
+    default boolean isIncomplete() {
+       NonNullList<Ingredient> nonnulllist = this.getIngredients();
        return nonnulllist.isEmpty() || nonnulllist.stream().anyMatch((p_151268_) -> {
--         return p_151268_.m_43908_().length == 0;
+-         return p_151268_.getItems().length == 0;
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151268_);
        });
     }

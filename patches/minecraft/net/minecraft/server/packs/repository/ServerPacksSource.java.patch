@@ -3,11 +3,11 @@
 @@ -50,7 +_,9 @@
     }
  
-    public static PackRepository m_245786_(Path p_251569_, DirectoryValidator p_300268_) {
--      return new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.f_10529_, p_300268_));
-+      var ret = new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.f_10529_, p_300268_));
+    public static PackRepository createPackRepository(Path p_251569_, DirectoryValidator p_300268_) {
+-      return new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
++      var ret = new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(PackType.SERVER_DATA, ret::addPackFinder));
 +      return ret;
     }
  
-    public static PackRepository m_293411_() {
+    public static PackRepository createVanillaTrustedRepository() {

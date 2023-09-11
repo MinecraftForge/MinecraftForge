@@ -19,35 +19,35 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    final int f_44146_;
-    final int f_44147_;
-    final NonNullList<Ingredient> f_44148_;
+    final int width;
+    final int height;
+    final NonNullList<Ingredient> recipeItems;
 @@ -115,10 +_,20 @@
-       return this.f_44146_;
+       return this.width;
     }
  
 +   @Override
 +   public int getRecipeWidth() {
-+      return m_44220_();
++      return getWidth();
 +   }
 +
-    public int m_44221_() {
-       return this.f_44147_;
+    public int getHeight() {
+       return this.height;
     }
  
 +   @Override
 +   public int getRecipeHeight() {
-+      return m_44221_();
++      return getHeight();
 +   }
 +
     @VisibleForTesting
-    static String[] m_44186_(List<String> p_299210_) {
+    static String[] shrink(List<String> p_299210_) {
        int i = Integer.MAX_VALUE;
 @@ -160,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
-          return !p_151277_.m_43947_();
+          return !p_151277_.isEmpty();
        }).anyMatch((p_151273_) -> {
--         return p_151273_.m_43908_().length == 0;
+-         return p_151273_.getItems().length == 0;
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
        });
     }
@@ -55,7 +55,7 @@
 @@ -182,9 +_,9 @@
  
     public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-       static final Codec<List<String>> f_291059_ = Codec.STRING.listOf().flatXmap((p_297814_) -> {
+       static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().flatXmap((p_297814_) -> {
 -         if (p_297814_.size() > 3) {
 +         if (p_297814_.size() > MAX_HEIGHT) {
              return DataResult.error(() -> {

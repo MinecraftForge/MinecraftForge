@@ -5,19 +5,19 @@
  
        if (p_60195_ == 0) {
 +         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_60193_, p_60194_, direction, true)) return false;
-          if (!this.m_60181_(p_60193_, p_60194_, direction, true)) {
+          if (!this.moveBlocks(p_60193_, p_60194_, direction, true)) {
              return false;
           }
 @@ -177,6 +_,7 @@
-          p_60193_.m_5594_((Player)null, p_60194_, SoundEvents.f_12312_, SoundSource.BLOCKS, 0.5F, p_60193_.f_46441_.m_188501_() * 0.25F + 0.6F);
-          p_60193_.m_220407_(GameEvent.f_223702_, p_60194_, GameEvent.Context.m_223722_(blockstate));
+          p_60193_.playSound((Player)null, p_60194_, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 0.5F, p_60193_.random.nextFloat() * 0.25F + 0.6F);
+          p_60193_.gameEvent(GameEvent.BLOCK_ACTIVATE, p_60194_, GameEvent.Context.of(blockstate));
        } else if (p_60195_ == 1 || p_60195_ == 2) {
 +         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_60193_, p_60194_, direction, false)) return false;
-          BlockEntity blockentity1 = p_60193_.m_7702_(p_60194_.m_121945_(direction));
+          BlockEntity blockentity1 = p_60193_.getBlockEntity(p_60194_.relative(direction));
           if (blockentity1 instanceof PistonMovingBlockEntity) {
-             ((PistonMovingBlockEntity)blockentity1).m_60401_();
+             ((PistonMovingBlockEntity)blockentity1).finalTick();
 @@ -217,6 +_,7 @@
-          p_60193_.m_220407_(GameEvent.f_223703_, p_60194_, GameEvent.Context.m_223722_(blockstate1));
+          p_60193_.gameEvent(GameEvent.BLOCK_DEACTIVATE, p_60194_, GameEvent.Context.of(blockstate1));
        }
  
 +      net.minecraftforge.event.ForgeEventFactory.onPistonMovePost(p_60193_, p_60194_, direction, (p_60195_ == 0));
@@ -26,12 +26,12 @@
  
 @@ -353,6 +_,10 @@
  
-    public BlockState m_6843_(BlockState p_60215_, Rotation p_60216_) {
-       return p_60215_.m_61124_(f_52588_, p_60216_.m_55954_(p_60215_.m_61143_(f_52588_)));
+    public BlockState rotate(BlockState p_60215_, Rotation p_60216_) {
+       return p_60215_.setValue(FACING, p_60216_.rotate(p_60215_.getValue(FACING)));
 +   }
 +
 +   public BlockState rotate(BlockState state, net.minecraft.world.level.LevelAccessor world, BlockPos pos, Rotation direction) {
-+       return state.m_61143_(f_60153_) ? state : super.rotate(state, world, pos, direction);
++       return state.getValue(EXTENDED) ? state : super.rotate(state, world, pos, direction);
     }
  
-    public BlockState m_6943_(BlockState p_60212_, Mirror p_60213_) {
+    public BlockState mirror(BlockState p_60212_, Mirror p_60213_) {

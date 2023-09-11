@@ -1,83 +1,83 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 @@ -59,7 +_,14 @@
-       return BuiltInRegistries.f_256876_.m_7981_(p_182433_);
+       return BuiltInRegistries.ENCHANTMENT.getKey(p_182433_);
     }
  
 +   /** @deprecated forge: use {@link #getTagEnchantmentLevel(Enchantment, ItemStack)} or {@link ItemStack#getEnchantmentLevel(Enchantment)} */
 +   @Deprecated
-    public static int m_44843_(Enchantment p_44844_, ItemStack p_44845_) {
+    public static int getItemEnchantmentLevel(Enchantment p_44844_, ItemStack p_44845_) {
 +      return p_44845_.getEnchantmentLevel(p_44844_);
 +   }
 +
 +   /** Gets the enchantment level from NBT. Generally should use {@link ItemStack#getEnchantmentLevel(Enchantment)} for gameplay logic */
 +   public static int getTagEnchantmentLevel(Enchantment p_44844_, ItemStack p_44845_) {
-       if (p_44845_.m_41619_()) {
+       if (p_44845_.isEmpty()) {
           return 0;
        } else {
 @@ -120,6 +_,13 @@
  
-    private static void m_44850_(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {
-       if (!p_44852_.m_41619_()) {
+    private static void runIterationOnItem(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {
+       if (!p_44852_.isEmpty()) {
 +         if (true) { // forge: redirect enchantment logic to allow non-NBT enchants
 +            for (Map.Entry<Enchantment, Integer> entry : p_44852_.getAllEnchantments().entrySet()) {
-+               p_44851_.m_44944_(entry.getKey(), entry.getValue());
++               p_44851_.accept(entry.getKey(), entry.getValue());
 +            }
 +            return;
 +         }
 +
-          ListTag listtag = p_44852_.m_41785_();
+          ListTag listtag = p_44852_.getEnchantmentTags();
  
           for(int i = 0; i < listtag.size(); ++i) {
 @@ -150,7 +_,7 @@
-    public static float m_44833_(ItemStack p_44834_, MobType p_44835_) {
+    public static float getDamageBonus(ItemStack p_44834_, MobType p_44835_) {
        MutableFloat mutablefloat = new MutableFloat();
-       m_44850_((p_44887_, p_44888_) -> {
--         mutablefloat.add(p_44887_.m_7335_(p_44888_, p_44835_));
+       runIterationOnItem((p_44887_, p_44888_) -> {
+-         mutablefloat.add(p_44887_.getDamageBonus(p_44888_, p_44835_));
 +         mutablefloat.add(p_44887_.getDamageBonus(p_44888_, p_44835_, p_44834_));
        }, p_44834_);
        return mutablefloat.floatValue();
     }
 @@ -168,6 +_,7 @@
-          m_44853_(enchantmenthelper$enchantmentvisitor, p_44824_.m_20158_());
+          runIterationOnInventory(enchantmenthelper$enchantmentvisitor, p_44824_.getAllSlots());
        }
  
 +      if(false) // Forge: Fix MC-248272
        if (p_44825_ instanceof Player) {
-          m_44850_(enchantmenthelper$enchantmentvisitor, p_44824_.m_21205_());
+          runIterationOnItem(enchantmenthelper$enchantmentvisitor, p_44824_.getMainHandItem());
        }
 @@ -182,6 +_,7 @@
-          m_44853_(enchantmenthelper$enchantmentvisitor, p_44897_.m_20158_());
+          runIterationOnInventory(enchantmenthelper$enchantmentvisitor, p_44897_.getAllSlots());
        }
  
 +      if(false) // Forge: Fix MC-248272
        if (p_44897_ instanceof Player) {
-          m_44850_(enchantmenthelper$enchantmentvisitor, p_44897_.m_21205_());
+          runIterationOnItem(enchantmenthelper$enchantmentvisitor, p_44897_.getMainHandItem());
        }
 @@ -306,7 +_,7 @@
  
-    public static int m_220287_(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
-       Item item = p_220291_.m_41720_();
--      int i = item.m_6473_();
+    public static int getEnchantmentCost(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
+       Item item = p_220291_.getItem();
+-      int i = item.getEnchantmentValue();
 +      int i = p_220291_.getEnchantmentValue();
        if (i <= 0) {
           return 0;
        } else {
 @@ -344,7 +_,7 @@
-    public static List<EnchantmentInstance> m_220297_(RandomSource p_220298_, ItemStack p_220299_, int p_220300_, boolean p_220301_) {
+    public static List<EnchantmentInstance> selectEnchantment(RandomSource p_220298_, ItemStack p_220299_, int p_220300_, boolean p_220301_) {
        List<EnchantmentInstance> list = Lists.newArrayList();
-       Item item = p_220299_.m_41720_();
--      int i = item.m_6473_();
+       Item item = p_220299_.getItem();
+-      int i = item.getEnchantmentValue();
 +      int i = p_220299_.getEnchantmentValue();
        if (i <= 0) {
           return list;
        } else {
 @@ -400,7 +_,7 @@
-       boolean flag = p_44819_.m_150930_(Items.f_42517_);
+       boolean flag = p_44819_.is(Items.BOOK);
  
-       for(Enchantment enchantment : BuiltInRegistries.f_256876_) {
--         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.f_44672_.m_7454_(item) || flag)) {
-+         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.canApplyAtEnchantingTable(p_44819_) || (flag && enchantment.isAllowedOnBooks()))) {
-             for(int i = enchantment.m_6586_(); i > enchantment.m_44702_() - 1; --i) {
-                if (p_44818_ >= enchantment.m_6183_(i) && p_44818_ <= enchantment.m_6175_(i)) {
+       for(Enchantment enchantment : BuiltInRegistries.ENCHANTMENT) {
+-         if ((!enchantment.isTreasureOnly() || p_44820_) && enchantment.isDiscoverable() && (enchantment.category.canEnchant(item) || flag)) {
++         if ((!enchantment.isTreasureOnly() || p_44820_) && enchantment.isDiscoverable() && (enchantment.canApplyAtEnchantingTable(p_44819_) || (flag && enchantment.isAllowedOnBooks()))) {
+             for(int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
+                if (p_44818_ >= enchantment.getMinCost(i) && p_44818_ <= enchantment.getMaxCost(i)) {
                    list.add(new EnchantmentInstance(enchantment, i));

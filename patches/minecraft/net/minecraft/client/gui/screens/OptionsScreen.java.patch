@@ -1,17 +1,17 @@
 --- a/net/minecraft/client/gui/screens/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screens/OptionsScreen.java
 @@ -150,6 +_,14 @@
-       p_283520_.m_280653_(this.f_96547_, this.f_96539_, this.f_96543_ / 2, 15, 16777215);
+       p_283520_.drawCenteredString(this.font, this.title, this.width / 2, 15, 16777215);
     }
  
 +    @Override
-+    public void m_7379_() {
++    public void onClose() {
 +        // We need to consider 2 potential parent screens here:
 +        // 1. From the main menu, in which case display the main menu
 +        // 2. From the pause menu, in which case exit back to game
-+        this.f_96541_.m_91152_(this.f_96235_ instanceof PauseScreen ? null : this.f_96235_);
++        this.minecraft.setScreen(this.lastScreen instanceof PauseScreen ? null : this.lastScreen);
 +    }
 +
-    private Button m_260993_(Component p_261565_, Supplier<Screen> p_262119_) {
-       return Button.m_253074_(p_261565_, (p_280808_) -> {
-          this.f_96541_.m_91152_(p_262119_.get());
+    private Button openScreenButton(Component p_261565_, Supplier<Screen> p_262119_) {
+       return Button.builder(p_261565_, (p_280808_) -> {
+          this.minecraft.setScreen(p_262119_.get());

@@ -3,27 +3,27 @@
 @@ -84,7 +_,7 @@
     }
  
-    public void m_142072_(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
--      if (!p_153227_.f_46443_ && p_153227_.f_46441_.m_188501_() < p_153231_ - 0.5F && p_153230_ instanceof LivingEntity && (p_153230_ instanceof Player || p_153227_.m_46469_().m_46207_(GameRules.f_46132_)) && p_153230_.m_20205_() * p_153230_.m_20205_() * p_153230_.m_20206_() > 0.512F) {
-+      if (!p_153227_.f_46443_ && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_153227_, p_153229_, Blocks.f_50493_.m_49966_(), p_153231_, p_153230_)) { // Forge: Move logic to Entity#canTrample
-          m_269406_(p_153230_, p_153228_, p_153227_, p_153229_);
+    public void fallOn(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
+-      if (!p_153227_.isClientSide && p_153227_.random.nextFloat() < p_153231_ - 0.5F && p_153230_ instanceof LivingEntity && (p_153230_ instanceof Player || p_153227_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) && p_153230_.getBbWidth() * p_153230_.getBbWidth() * p_153230_.getBbHeight() > 0.512F) {
++      if (!p_153227_.isClientSide && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_153227_, p_153229_, Blocks.DIRT.defaultBlockState(), p_153231_, p_153230_)) { // Forge: Move logic to Entity#canTrample
+          turnToDirt(p_153230_, p_153228_, p_153227_, p_153229_);
        }
  
 @@ -98,17 +_,20 @@
     }
  
-    private static boolean m_53250_(BlockGetter p_279219_, BlockPos p_279209_) {
--      return p_279219_.m_8055_(p_279209_.m_7494_()).m_204336_(BlockTags.f_279534_);
-+      BlockState plant = p_279219_.m_8055_(p_279209_.m_7494_());
-+      BlockState state = p_279219_.m_8055_(p_279209_);
-+      return plant.m_60734_() instanceof net.minecraftforge.common.IPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.m_60734_());
+    private static boolean shouldMaintainFarmland(BlockGetter p_279219_, BlockPos p_279209_) {
+-      return p_279219_.getBlockState(p_279209_.above()).is(BlockTags.MAINTAINS_FARMLAND);
++      BlockState plant = p_279219_.getBlockState(p_279209_.above());
++      BlockState state = p_279219_.getBlockState(p_279209_);
++      return plant.getBlock() instanceof net.minecraftforge.common.IPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.getBlock());
     }
  
-    private static boolean m_53258_(LevelReader p_53259_, BlockPos p_53260_) {
-+      BlockState state = p_53259_.m_8055_(p_53260_);
-       for(BlockPos blockpos : BlockPos.m_121940_(p_53260_.m_7918_(-4, 0, -4), p_53260_.m_7918_(4, 1, 4))) {
--         if (p_53259_.m_6425_(blockpos).m_205070_(FluidTags.f_13131_)) {
-+         if (state.canBeHydrated(p_53259_, p_53260_, p_53259_.m_6425_(blockpos), blockpos)) {
+    private static boolean isNearWater(LevelReader p_53259_, BlockPos p_53260_) {
++      BlockState state = p_53259_.getBlockState(p_53260_);
+       for(BlockPos blockpos : BlockPos.betweenClosed(p_53260_.offset(-4, 0, -4), p_53260_.offset(4, 1, 4))) {
+-         if (p_53259_.getFluidState(blockpos).is(FluidTags.WATER)) {
++         if (state.canBeHydrated(p_53259_, p_53260_, p_53259_.getFluidState(blockpos), blockpos)) {
              return true;
           }
        }
@@ -32,4 +32,4 @@
 +      return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_53259_, p_53260_);
     }
  
-    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_53283_) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_53283_) {

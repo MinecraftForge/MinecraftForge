@@ -6,35 +6,35 @@
  
 -public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Goal {
 +public class RangedBowAttackGoal<T extends net.minecraft.world.entity.Mob & RangedAttackMob> extends Goal {
-    private final T f_25782_;
-    private final double f_25783_;
-    private int f_25784_;
+    private final T mob;
+    private final double speedModifier;
+    private int attackIntervalMin;
 @@ -21,6 +_,10 @@
-    private boolean f_25789_;
-    private int f_25790_ = -1;
+    private boolean strafingBackwards;
+    private int strafingTime = -1;
  
 +   public <M extends Monster & RangedAttackMob> RangedBowAttackGoal(M p_25792_, double p_25793_, int p_25794_, float p_25795_){
 +      this((T) p_25792_, p_25793_, p_25794_, p_25795_);
 +   }
 +
     public RangedBowAttackGoal(T p_25792_, double p_25793_, int p_25794_, float p_25795_) {
-       this.f_25782_ = p_25792_;
-       this.f_25783_ = p_25793_;
+       this.mob = p_25792_;
+       this.speedModifier = p_25793_;
 @@ -38,7 +_,7 @@
     }
  
-    protected boolean m_25803_() {
--      return this.f_25782_.m_21055_(Items.f_42411_);
-+      return this.f_25782_.m_21093_(is -> is.m_41720_() instanceof BowItem);
+    protected boolean isHoldingBow() {
+-      return this.mob.isHolding(Items.BOW);
++      return this.mob.isHolding(is -> is.getItem() instanceof BowItem);
     }
  
-    public boolean m_8045_() {
+    public boolean canContinueToUse() {
 @@ -129,7 +_,7 @@
                 }
              }
-          } else if (--this.f_25786_ <= 0 && this.f_25787_ >= -60) {
--            this.f_25782_.m_6672_(ProjectileUtil.m_37297_(this.f_25782_, Items.f_42411_));
-+            this.f_25782_.m_6672_(ProjectileUtil.getWeaponHoldingHand(this.f_25782_, item -> item instanceof BowItem));
+          } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+-            this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.BOW));
++            this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof BowItem));
           }
  
        }

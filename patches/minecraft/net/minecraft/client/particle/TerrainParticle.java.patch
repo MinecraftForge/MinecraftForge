@@ -1,26 +1,26 @@
 --- a/net/minecraft/client/particle/TerrainParticle.java
 +++ b/net/minecraft/client/particle/TerrainParticle.java
 @@ -28,7 +_,7 @@
-       this.f_107227_ = 0.6F;
-       this.f_107228_ = 0.6F;
-       this.f_107229_ = 0.6F;
--      if (!p_172458_.m_60713_(Blocks.f_50440_)) {
+       this.rCol = 0.6F;
+       this.gCol = 0.6F;
+       this.bCol = 0.6F;
+-      if (!p_172458_.is(Blocks.GRASS_BLOCK)) {
 +      if (net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_172458_).areBreakingParticlesTinted(p_172458_, p_172451_, p_172459_)) {
-          int i = Minecraft.m_91087_().m_91298_().m_92577_(p_172458_, p_172451_, p_172459_, 0);
-          this.f_107227_ *= (float)(i >> 16 & 255) / 255.0F;
-          this.f_107228_ *= (float)(i >> 8 & 255) / 255.0F;
+          int i = Minecraft.getInstance().getBlockColors().getColor(p_172458_, p_172451_, p_172459_, 0);
+          this.rCol *= (float)(i >> 16 & 255) / 255.0F;
+          this.gCol *= (float)(i >> 8 & 255) / 255.0F;
 @@ -69,7 +_,13 @@
     public static class Provider implements ParticleProvider<BlockParticleOption> {
-       public Particle m_6966_(BlockParticleOption p_108304_, ClientLevel p_108305_, double p_108306_, double p_108307_, double p_108308_, double p_108309_, double p_108310_, double p_108311_) {
-          BlockState blockstate = p_108304_.m_123642_();
--         return !blockstate.m_60795_() && !blockstate.m_60713_(Blocks.f_50110_) && blockstate.m_295777_() ? new TerrainParticle(p_108305_, p_108306_, p_108307_, p_108308_, p_108309_, p_108310_, p_108311_, blockstate) : null;
-+         return !blockstate.m_60795_() && !blockstate.m_60713_(Blocks.f_50110_) ? (new TerrainParticle(p_108305_, p_108306_, p_108307_, p_108308_, p_108309_, p_108310_, p_108311_, blockstate)).updateSprite(blockstate, p_108304_.getPos()) : null;
+       public Particle createParticle(BlockParticleOption p_108304_, ClientLevel p_108305_, double p_108306_, double p_108307_, double p_108308_, double p_108309_, double p_108310_, double p_108311_) {
+          BlockState blockstate = p_108304_.getState();
+-         return !blockstate.isAir() && !blockstate.is(Blocks.MOVING_PISTON) && blockstate.shouldSpawnTerrainParticles() ? new TerrainParticle(p_108305_, p_108306_, p_108307_, p_108308_, p_108309_, p_108310_, p_108311_, blockstate) : null;
++         return !blockstate.isAir() && !blockstate.is(Blocks.MOVING_PISTON) ? (new TerrainParticle(p_108305_, p_108306_, p_108307_, p_108308_, p_108309_, p_108310_, p_108311_, blockstate)).updateSprite(blockstate, p_108304_.getPos()) : null;
        }
 +   }
 +
 +   public Particle updateSprite(BlockState state, BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
 +      if (pos != null) // There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
-+         this.m_108337_(Minecraft.m_91087_().m_91289_().m_110907_().getTexture(state, f_107208_, pos));
++         this.setSprite(Minecraft.getInstance().getBlockRenderer().getBlockModelShaper().getTexture(state, level, pos));
 +      return this;
     }
  }

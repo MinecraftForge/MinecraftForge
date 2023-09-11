@@ -6,13 +6,13 @@
  
 -public class FriendlyByteBuf extends ByteBuf {
 +public class FriendlyByteBuf extends ByteBuf implements net.minecraftforge.common.extensions.IForgeFriendlyByteBuf {
-    public static final int f_178337_ = 2097152;
-    private final ByteBuf f_130049_;
-    public static final short f_178333_ = Short.MAX_VALUE;
+    public static final int DEFAULT_NBT_QUOTA = 2097152;
+    private final ByteBuf source;
+    public static final short MAX_STRING_LENGTH = Short.MAX_VALUE;
 @@ -577,6 +_,15 @@
     }
  
-    public FriendlyByteBuf m_130055_(ItemStack p_130056_) {
+    public FriendlyByteBuf writeItem(ItemStack p_130056_) {
 +      return writeItemStack(p_130056_, true);
 +   }
 +
@@ -22,26 +22,26 @@
 +    * If you want to send the FULL tag set limitedTag to false
 +    */
 +   public FriendlyByteBuf writeItemStack(ItemStack p_130056_, boolean limitedTag) {
-       if (p_130056_.m_41619_()) {
+       if (p_130056_.isEmpty()) {
           this.writeBoolean(false);
        } else {
 @@ -585,8 +_,8 @@
-          this.m_236818_(BuiltInRegistries.f_257033_, item);
-          this.writeByte(p_130056_.m_41613_());
+          this.writeId(BuiltInRegistries.ITEM, item);
+          this.writeByte(p_130056_.getCount());
           CompoundTag compoundtag = null;
--         if (item.m_41465_() || item.m_41468_()) {
--            compoundtag = p_130056_.m_41783_();
-+         if (item.isDamageable(p_130056_) || item.m_41468_()) {
-+            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
+-         if (item.canBeDepleted() || item.shouldOverrideMultiplayerNbt()) {
+-            compoundtag = p_130056_.getTag();
++         if (item.isDamageable(p_130056_) || item.shouldOverrideMultiplayerNbt()) {
++            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.getTag();
           }
  
-          this.m_130079_(compoundtag);
+          this.writeNbt(compoundtag);
 @@ -602,7 +_,7 @@
-          Item item = this.m_236816_(BuiltInRegistries.f_257033_);
+          Item item = this.readById(BuiltInRegistries.ITEM);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);
--         itemstack.m_41751_(this.m_130260_());
-+         itemstack.readShareTag(this.m_130260_());
+-         itemstack.setTag(this.readNbt());
++         itemstack.readShareTag(this.readNbt());
           return itemstack;
        }
     }

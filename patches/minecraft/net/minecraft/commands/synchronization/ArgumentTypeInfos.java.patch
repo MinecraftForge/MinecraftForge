@@ -2,7 +2,7 @@
 +++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
 @@ -65,6 +_,20 @@
  public class ArgumentTypeInfos {
-    private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> f_235379_ = Maps.newHashMap();
+    private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> BY_CLASS = Maps.newHashMap();
  
 +   /**
 +    * Forge: Use this in conjunction with a
@@ -14,27 +14,27 @@
 +    * @return the provided argument type info instance for chaining
 +    */
 +   public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
-+      f_235379_.put(infoClass, argumentTypeInfo);
++      BY_CLASS.put(infoClass, argumentTypeInfo);
 +      return argumentTypeInfo;
 +   }
 +
-    private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> m_235386_(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
-       f_235379_.put(p_235389_, p_235390_);
-       return Registry.m_122961_(p_235387_, p_235388_, p_235390_);
+    private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> register(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
+       BY_CLASS.put(p_235389_, p_235390_);
+       return Registry.register(p_235387_, p_235388_, p_235390_);
 @@ -119,12 +_,14 @@
-       m_235386_(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.m_235451_(TemplateMirrorArgument::m_234343_));
-       m_235386_(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.m_235451_(TemplateRotationArgument::m_234414_));
-       m_235386_(p_235385_, "heightmap", HeightmapTypeArgument.class, SingletonArgumentInfo.m_235451_(HeightmapTypeArgument::m_274509_));
--      if (SharedConstants.f_136183_) {
+       register(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.contextFree(TemplateMirrorArgument::templateMirror));
+       register(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.contextFree(TemplateRotationArgument::templateRotation));
+       register(p_235385_, "heightmap", HeightmapTypeArgument.class, SingletonArgumentInfo.contextFree(HeightmapTypeArgument::heightmap));
+-      if (SharedConstants.IS_RUNNING_IN_IDE) {
 +      // Forge: Register before gametest arguments to provide forge server <-> vanilla client interop and matching int ids
-+      var uuidInfo = m_235386_(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.m_235451_(UuidArgument::m_113850_));
++      var uuidInfo = register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
 +      if (true) { // Forge: Always register gametest arguments to prevent issues when connecting from gametest-enabled client/server to non-gametest-enabled client/server
-          m_235386_(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.m_235451_(TestFunctionArgument::m_128088_));
-          m_235386_(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.m_235451_(TestClassNameArgument::m_127917_));
+          register(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.contextFree(TestFunctionArgument::testFunctionArgument));
+          register(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.contextFree(TestClassNameArgument::testClassName));
        }
  
--      return m_235386_(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.m_235451_(UuidArgument::m_113850_));
+-      return register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
 +      return uuidInfo;
     }
  
-    private static <T extends ArgumentType<?>> Class<T> m_235395_(Class<? super T> p_235396_) {
+    private static <T extends ArgumentType<?>> Class<T> fixClassType(Class<? super T> p_235396_) {

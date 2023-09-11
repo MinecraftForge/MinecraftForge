@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/entity/ai/navigation/WallClimberNavigation.java
 +++ b/net/minecraft/world/entity/ai/navigation/WallClimberNavigation.java
 @@ -41,7 +_,8 @@
-          super.m_7638_();
+          super.tick();
        } else {
-          if (this.f_26578_ != null) {
--            if (!this.f_26578_.m_203195_(this.f_26494_.m_20182_(), (double)this.f_26494_.m_20205_()) && (!(this.f_26494_.m_20186_() > (double)this.f_26578_.m_123342_()) || !BlockPos.m_274561_((double)this.f_26578_.m_123341_(), this.f_26494_.m_20186_(), (double)this.f_26578_.m_123343_()).m_203195_(this.f_26494_.m_20182_(), (double)this.f_26494_.m_20205_()))) {
+          if (this.pathToPosition != null) {
+-            if (!this.pathToPosition.closerToCenterThan(this.mob.position(), (double)this.mob.getBbWidth()) && (!(this.mob.getY() > (double)this.pathToPosition.getY()) || !BlockPos.containing((double)this.pathToPosition.getX(), this.mob.getY(), (double)this.pathToPosition.getZ()).closerToCenterThan(this.mob.position(), (double)this.mob.getBbWidth()))) {
 +            // FORGE: Fix MC-94054
-+            if (!this.f_26578_.m_203195_(this.f_26494_.m_20182_(), Math.max((double)this.f_26494_.m_20205_(), 1.0D)) && (!(this.f_26494_.m_20186_() > (double)this.f_26578_.m_123342_()) || !(BlockPos.m_274561_((double)this.f_26578_.m_123341_(), this.f_26494_.m_20186_(), (double)this.f_26578_.m_123343_())).m_203195_(this.f_26494_.m_20182_(), Math.max((double)this.f_26494_.m_20205_(), 1.0D)))) {
-                this.f_26494_.m_21566_().m_6849_((double)this.f_26578_.m_123341_(), (double)this.f_26578_.m_123342_(), (double)this.f_26578_.m_123343_(), this.f_26497_);
++            if (!this.pathToPosition.closerToCenterThan(this.mob.position(), Math.max((double)this.mob.getBbWidth(), 1.0D)) && (!(this.mob.getY() > (double)this.pathToPosition.getY()) || !(BlockPos.containing((double)this.pathToPosition.getX(), this.mob.getY(), (double)this.pathToPosition.getZ())).closerToCenterThan(this.mob.position(), Math.max((double)this.mob.getBbWidth(), 1.0D)))) {
+                this.mob.getMoveControl().setWantedPosition((double)this.pathToPosition.getX(), (double)this.pathToPosition.getY(), (double)this.pathToPosition.getZ(), this.speedModifier);
              } else {
-                this.f_26578_ = null;
+                this.pathToPosition = null;

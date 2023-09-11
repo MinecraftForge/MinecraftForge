@@ -1,42 +1,42 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
 @@ -18,12 +_,14 @@
-    final CraftingBookCategory f_244076_;
-    final ItemStack f_44243_;
-    final NonNullList<Ingredient> f_44244_;
+    final CraftingBookCategory category;
+    final ItemStack result;
+    final NonNullList<Ingredient> ingredients;
 +   private final boolean isSimple;
  
     public ShapelessRecipe(String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
-       this.f_44242_ = p_249640_;
-       this.f_244076_ = p_249390_;
-       this.f_44243_ = p_252071_;
-       this.f_44244_ = p_250689_;
+       this.group = p_249640_;
+       this.category = p_249390_;
+       this.result = p_252071_;
+       this.ingredients = p_250689_;
 +      this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
     }
  
-    public RecipeSerializer<?> m_7707_() {
+    public RecipeSerializer<?> getSerializer() {
 @@ -48,17 +_,20 @@
  
-    public boolean m_5818_(CraftingContainer p_44262_, Level p_44263_) {
+    public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
        StackedContents stackedcontents = new StackedContents();
 +      java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
        int i = 0;
  
-       for(int j = 0; j < p_44262_.m_6643_(); ++j) {
-          ItemStack itemstack = p_44262_.m_8020_(j);
-          if (!itemstack.m_41619_()) {
+       for(int j = 0; j < p_44262_.getContainerSize(); ++j) {
+          ItemStack itemstack = p_44262_.getItem(j);
+          if (!itemstack.isEmpty()) {
              ++i;
 +            if (isSimple)
-             stackedcontents.m_36468_(itemstack, 1);
+             stackedcontents.accountStack(itemstack, 1);
 +            else inputs.add(itemstack);
           }
        }
  
--      return i == this.f_44244_.size() && stackedcontents.m_36475_(this, (IntList)null);
-+      return i == this.f_44244_.size() && (isSimple ? stackedcontents.m_36475_(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.f_44244_) != null);
+-      return i == this.ingredients.size() && stackedcontents.canCraft(this, (IntList)null);
++      return i == this.ingredients.size() && (isSimple ? stackedcontents.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.ingredients) != null);
     }
  
-    public ItemStack m_5874_(CraftingContainer p_44260_, RegistryAccess p_266797_) {
+    public ItemStack assemble(CraftingContainer p_44260_, RegistryAccess p_266797_) {
 @@ -88,7 +_,7 @@
                    return "No ingredients for shapeless recipe";
                 });
@@ -44,5 +44,5 @@
 -               return aingredient.length > 9 ? DataResult.error(() -> {
 +               return aingredient.length > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT ? DataResult.error(() -> {
                    return "Too many ingredients for shapeless recipe";
-                }) : DataResult.success(NonNullList.m_122783_(Ingredient.f_43901_, aingredient));
+                }) : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
              }

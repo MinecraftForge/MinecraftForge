@@ -2,12 +2,12 @@
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 @@ -35,8 +_,10 @@
  
-    public void m_213898_(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
-       if (!m_56823_(p_222508_, p_222509_, p_222510_)) {
+    public void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
+       if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
 +         if (!p_222509_.isAreaLoaded(p_222510_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-          p_222509_.m_46597_(p_222510_, Blocks.f_50493_.m_49966_());
+          p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
        } else {
 +         if (!p_222509_.isAreaLoaded(p_222510_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-          if (p_222509_.m_46803_(p_222510_.m_7494_()) >= 9) {
-             BlockState blockstate = this.m_49966_();
+          if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
+             BlockState blockstate = this.defaultBlockState();
  

@@ -3,9 +3,9 @@
 @@ -59,6 +_,8 @@
     }
  
-    public boolean m_113029_(AABB p_113030_) {
+    public boolean isVisible(AABB p_113030_) {
 +      // FORGE: exit early for infinite bounds, these would otherwise fail in the intersection test at certain camera angles (GH-9321)
 +      if (p_113030_.equals(net.minecraftforge.common.extensions.IForgeBlockEntity.INFINITE_EXTENT_AABB)) return true;
-       return this.m_113006_(p_113030_.f_82288_, p_113030_.f_82289_, p_113030_.f_82290_, p_113030_.f_82291_, p_113030_.f_82292_, p_113030_.f_82293_);
+       return this.cubeInFrustum(p_113030_.minX, p_113030_.minY, p_113030_.minZ, p_113030_.maxX, p_113030_.maxY, p_113030_.maxZ);
     }
  

@@ -6,6 +6,6 @@
  
 -public class BlockState extends BlockBehaviour.BlockStateBase {
 +public class BlockState extends BlockBehaviour.BlockStateBase implements net.minecraftforge.common.extensions.IForgeBlockState {
-    public static final Codec<BlockState> f_61039_ = m_61127_(BuiltInRegistries.f_256975_.m_194605_(), Block::m_49966_).stable();
+    public static final Codec<BlockState> CODEC = codec(BuiltInRegistries.BLOCK.byNameCodec(), Block::defaultBlockState).stable();
  
     public BlockState(Block p_61042_, ImmutableMap<Property<?>, Comparable<?>> p_61043_, MapCodec<BlockState> p_61044_) {

@@ -5,10 +5,10 @@
     }
  
 +   @Override
-+   public void m_7379_() {
-+      this.f_96541_.m_91152_(this.f_99676_);
++   public void onClose() {
++      this.minecraft.setScreen(this.lastScreen);
 +   }
 +
-    public ServerStatusPinger m_99731_() {
-       return this.f_99675_;
+    public ServerStatusPinger getPinger() {
+       return this.pinger;
     }

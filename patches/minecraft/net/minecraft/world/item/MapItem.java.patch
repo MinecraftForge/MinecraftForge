@@ -3,11 +3,11 @@
 @@ -58,8 +_,18 @@
  
     @Nullable
-    public static MapItemSavedData m_42853_(ItemStack p_42854_, Level p_42855_) {
--      Integer integer = m_151131_(p_42854_);
--      return m_151128_(integer, p_42855_);
+    public static MapItemSavedData getSavedData(ItemStack p_42854_, Level p_42855_) {
+-      Integer integer = getMapId(p_42854_);
+-      return getSavedData(integer, p_42855_);
 +      // Forge: Add instance method so that mods can override
-+      Item map = p_42854_.m_41720_();
++      Item map = p_42854_.getItem();
 +      if(map instanceof MapItem) {
 +         return ((MapItem)map).getCustomMapData(p_42854_, p_42855_);
 +      }
@@ -16,8 +16,8 @@
 +
 +   @Nullable
 +   protected MapItemSavedData getCustomMapData(ItemStack p_42910_, Level p_42911_) {
-+      Integer integer = m_151131_(p_42910_);
-+      return m_151128_(integer, p_42911_);
++      Integer integer = getMapId(p_42910_);
++      return getSavedData(integer, p_42911_);
     }
  
     @Nullable

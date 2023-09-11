@@ -21,10 +21,10 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
--         DataGenerator datagenerator = m_236679_(path, optionset.valuesOf(optionspec8).stream().map((p_129659_) -> {
+-         DataGenerator datagenerator = createStandardGenerator(path, optionset.valuesOf(optionspec8).stream().map((p_129659_) -> {
 -            return Paths.get(p_129659_);
--         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5, SharedConstants.m_183709_(), true);
--         datagenerator.m_123917_();
+-         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5, SharedConstants.getCurrentVersion(), true);
+-         datagenerator.run();
 +         Collection<Path> inputs = optionset.valuesOf(optionspec8).stream().map(Paths::get).collect(Collectors.toList());
 +         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
 +         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
@@ -32,7 +32,7 @@
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
 +         net.minecraftforge.data.loading.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
-+            m_236679_(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5, SharedConstants.m_183709_(), true).m_123917_();
++            createStandardGenerator(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5, SharedConstants.getCurrentVersion(), true).run();
        } else {
           optionparser.printHelpOn(System.out);
        }

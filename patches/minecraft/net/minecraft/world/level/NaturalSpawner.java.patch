@@ -6,31 +6,31 @@
  
 +// TODO: ForgeHooks.canEntitySpawn
  public final class NaturalSpawner {
-    private static final Logger f_46977_ = LogUtils.getLogger();
-    private static final int f_151589_ = 24;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int MIN_SPAWN_DISTANCE = 24;
 @@ -74,7 +_,7 @@
              }
           }
  
--         MobCategory mobcategory = entity.m_6095_().m_20674_();
+-         MobCategory mobcategory = entity.getType().getCategory();
 +         MobCategory mobcategory = entity.getClassification(true);
           if (mobcategory != MobCategory.MISC) {
-             BlockPos blockpos = entity.m_20183_();
-             p_186527_.m_47103_(ChunkPos.m_151388_(blockpos), (p_275163_) -> {
+             BlockPos blockpos = entity.blockPosition();
+             p_186527_.query(ChunkPos.asLong(blockpos), (p_275163_) -> {
 @@ -177,7 +_,7 @@
                             ++l1;
-                            p_47040_.m_47205_(mob);
-                            p_47044_.m_47100_(mob, p_47041_);
--                           if (j >= mob.m_5792_()) {
+                            p_47040_.addFreshEntityWithPassengers(mob);
+                            p_47044_.run(mob, p_47041_);
+-                           if (j >= mob.getMaxSpawnClusterSize()) {
 +                           if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mob)) {
                                return;
                             }
  
 @@ -244,7 +_,7 @@
-       if (p_46994_ > (double)(p_46993_.m_6095_().m_20674_().m_21611_() * p_46993_.m_6095_().m_20674_().m_21611_()) && p_46993_.m_6785_(p_46994_)) {
+       if (p_46994_ > (double)(p_46993_.getType().getCategory().getDespawnDistance() * p_46993_.getType().getCategory().getDespawnDistance()) && p_46993_.removeWhenFarAway(p_46994_)) {
           return false;
        } else {
--         return p_46993_.m_5545_(p_46992_, MobSpawnType.NATURAL) && p_46993_.m_6914_(p_46992_);
+-         return p_46993_.checkSpawnRules(p_46992_, MobSpawnType.NATURAL) && p_46993_.checkSpawnObstruction(p_46992_);
 +         return net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(p_46993_, p_46992_, MobSpawnType.NATURAL);
        }
     }
@@ -38,17 +38,17 @@
 @@ -258,7 +_,8 @@
     }
  
-    private static WeightedRandomList<MobSpawnSettings.SpawnerData> m_220443_(ServerLevel p_220444_, StructureManager p_220445_, ChunkGenerator p_220446_, MobCategory p_220447_, BlockPos p_220448_, @Nullable Holder<Biome> p_220449_) {
--      return m_220455_(p_220448_, p_220444_, p_220447_, p_220445_) ? NetherFortressStructure.f_228517_ : p_220446_.m_223133_(p_220449_ != null ? p_220449_ : p_220444_.m_204166_(p_220448_), p_220445_, p_220447_, p_220448_);
+    private static WeightedRandomList<MobSpawnSettings.SpawnerData> mobsAt(ServerLevel p_220444_, StructureManager p_220445_, ChunkGenerator p_220446_, MobCategory p_220447_, BlockPos p_220448_, @Nullable Holder<Biome> p_220449_) {
+-      return isInNetherFortressBounds(p_220448_, p_220444_, p_220447_, p_220445_) ? NetherFortressStructure.FORTRESS_ENEMIES : p_220446_.getMobsAt(p_220449_ != null ? p_220449_ : p_220444_.getBiome(p_220448_), p_220445_, p_220447_, p_220448_);
 +      // Forge: Add in potential spawns, and replace hardcoded nether fortress mob list
-+      return net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_220444_, p_220447_, p_220448_, m_220455_(p_220448_, p_220444_, p_220447_, p_220445_) ? p_220445_.m_220521_().m_175515_(Registries.f_256944_).m_123013_(BuiltinStructures.f_209859_).m_226612_().get(MobCategory.MONSTER).f_210044_() : p_220446_.m_223133_(p_220449_ != null ? p_220449_ : p_220444_.m_204166_(p_220448_), p_220445_, p_220447_, p_220448_));
++      return net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_220444_, p_220447_, p_220448_, isInNetherFortressBounds(p_220448_, p_220444_, p_220447_, p_220445_) ? p_220445_.registryAccess().registryOrThrow(Registries.STRUCTURE).getOrThrow(BuiltinStructures.FORTRESS).spawnOverrides().get(MobCategory.MONSTER).spawns() : p_220446_.getMobsAt(p_220449_ != null ? p_220449_ : p_220444_.getBiome(p_220448_), p_220445_, p_220447_, p_220448_));
     }
  
-    public static boolean m_220455_(BlockPos p_220456_, ServerLevel p_220457_, MobCategory p_220458_, StructureManager p_220459_) {
+    public static boolean isInNetherFortressBounds(BlockPos p_220456_, ServerLevel p_220457_, MobCategory p_220458_, StructureManager p_220459_) {
 @@ -297,6 +_,13 @@
        if (p_47052_ == SpawnPlacements.Type.NO_RESTRICTIONS) {
           return true;
-       } else if (p_47055_ != null && p_47053_.m_6857_().m_61937_(p_47054_)) {
+       } else if (p_47055_ != null && p_47053_.getWorldBorder().isWithinBounds(p_47054_)) {
 +         return p_47052_.canSpawnAt(p_47053_, p_47054_, p_47055_);
 +      }
 +      return false;
@@ -56,18 +56,18 @@
 +
 +   public static boolean canSpawnAtBody(SpawnPlacements.Type p_47052_, LevelReader p_47053_, BlockPos p_47054_, @Nullable EntityType<?> p_47055_) {
 +      {
-          BlockState blockstate = p_47053_.m_8055_(p_47054_);
-          FluidState fluidstate = p_47053_.m_6425_(p_47054_);
-          BlockPos blockpos = p_47054_.m_7494_();
+          BlockState blockstate = p_47053_.getBlockState(p_47054_);
+          FluidState fluidstate = p_47053_.getFluidState(p_47054_);
+          BlockPos blockpos = p_47054_.above();
 @@ -309,14 +_,12 @@
              case ON_GROUND:
              default:
-                BlockState blockstate1 = p_47053_.m_8055_(blockpos1);
--               if (!blockstate1.m_60643_(p_47053_, blockpos1, p_47055_)) {
+                BlockState blockstate1 = p_47053_.getBlockState(blockpos1);
+-               if (!blockstate1.isValidSpawn(p_47053_, blockpos1, p_47055_)) {
 +            if (!blockstate1.isValidSpawn(p_47053_, blockpos1, p_47052_, p_47055_)) {
                    return false;
                 } else {
-                   return m_47056_(p_47053_, p_47054_, blockstate, fluidstate, p_47055_) && m_47056_(p_47053_, blockpos, p_47053_.m_8055_(blockpos), p_47053_.m_6425_(blockpos), p_47055_);
+                   return isValidEmptySpawnBlock(p_47053_, p_47054_, blockstate, fluidstate, p_47055_) && isValidEmptySpawnBlock(p_47053_, blockpos, p_47053_.getBlockState(blockpos), p_47053_.getFluidState(blockpos), p_47055_);
                 }
           }
 -      } else {
@@ -76,11 +76,11 @@
     }
  
 @@ -366,7 +_,7 @@
-                         entity.m_7678_(d0, (double)blockpos.m_123342_(), d1, p_220454_.m_188501_() * 360.0F, 0.0F);
+                         entity.moveTo(d0, (double)blockpos.getY(), d1, p_220454_.nextFloat() * 360.0F, 0.0F);
                          if (entity instanceof Mob) {
                             Mob mob = (Mob)entity;
--                           if (mob.m_5545_(p_220451_, MobSpawnType.CHUNK_GENERATION) && mob.m_6914_(p_220451_)) {
+-                           if (mob.checkSpawnRules(p_220451_, MobSpawnType.CHUNK_GENERATION) && mob.checkSpawnObstruction(p_220451_)) {
 +                           if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(mob, p_220451_, MobSpawnType.CHUNK_GENERATION)) {
-                               spawngroupdata = mob.m_6518_(p_220451_, p_220451_.m_6436_(mob.m_20183_()), MobSpawnType.CHUNK_GENERATION, spawngroupdata, (CompoundTag)null);
-                               p_220451_.m_47205_(mob);
+                               spawngroupdata = mob.finalizeSpawn(p_220451_, p_220451_.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.CHUNK_GENERATION, spawngroupdata, (CompoundTag)null);
+                               p_220451_.addFreshEntityWithPassengers(mob);
                                flag = true;

@@ -1,34 +1,34 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
 @@ -74,11 +_,11 @@
-    private static final int f_172264_ = 16384;
-    private static final List<ParticleRenderType> f_107288_ = ImmutableList.of(ParticleRenderType.f_107429_, ParticleRenderType.f_107430_, ParticleRenderType.f_107432_, ParticleRenderType.f_107431_, ParticleRenderType.f_107433_);
-    protected ClientLevel f_107287_;
--   private final Map<ParticleRenderType, Queue<Particle>> f_107289_ = Maps.newIdentityHashMap();
-+   private final Map<ParticleRenderType, Queue<Particle>> f_107289_ = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(f_107288_));
-    private final Queue<TrackingEmitter> f_107290_ = Queues.newArrayDeque();
-    private final TextureManager f_107291_;
-    private final RandomSource f_107292_ = RandomSource.m_216327_();
--   private final Int2ObjectMap<ParticleProvider<?>> f_107293_ = new Int2ObjectOpenHashMap<>();
-+   private final Map<ResourceLocation, ParticleProvider<?>> f_107293_ = new java.util.HashMap<>();
-    private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
-    private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
-    private final TextureAtlas f_107296_;
+    private static final int MAX_PARTICLES_PER_LAYER = 16384;
+    private static final List<ParticleRenderType> RENDER_ORDER = ImmutableList.of(ParticleRenderType.TERRAIN_SHEET, ParticleRenderType.PARTICLE_SHEET_OPAQUE, ParticleRenderType.PARTICLE_SHEET_LIT, ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT, ParticleRenderType.CUSTOM);
+    protected ClientLevel level;
+-   private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newIdentityHashMap();
++   private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(RENDER_ORDER));
+    private final Queue<TrackingEmitter> trackingEmitters = Queues.newArrayDeque();
+    private final TextureManager textureManager;
+    private final RandomSource random = RandomSource.create();
+-   private final Int2ObjectMap<ParticleProvider<?>> providers = new Int2ObjectOpenHashMap<>();
++   private final Map<ResourceLocation, ParticleProvider<?>> providers = new java.util.HashMap<>();
+    private final Queue<Particle> particlesToAdd = Queues.newArrayDeque();
+    private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> spriteSets = Maps.newHashMap();
+    private final TextureAtlas textureAtlas;
 @@ -194,10 +_,14 @@
-       this.m_107378_(ParticleTypes.f_276512_, SuspendedTownParticle.EggCrackProvider::new);
+       this.register(ParticleTypes.EGG_CRACK, SuspendedTownParticle.EggCrackProvider::new);
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
-    public <T extends ParticleOptions> void m_107381_(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
--      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7447_(p_107382_), p_107383_);
-+      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7981_(p_107382_), p_107383_);
+    public <T extends ParticleOptions> void register(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
+-      this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getId(p_107382_), p_107383_);
++      this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107382_), p_107383_);
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
-    public <T extends ParticleOptions> void m_272137_(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
-       this.m_107378_(p_273423_, (p_272320_) -> {
+    public <T extends ParticleOptions> void register(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
+       this.register(p_273423_, (p_272320_) -> {
           return (p_272323_, p_272324_, p_272325_, p_272326_, p_272327_, p_272328_, p_272329_, p_272330_) -> {
 @@ -211,10 +_,12 @@
        });
@@ -36,21 +36,21 @@
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
 +   @Deprecated
-    public <T extends ParticleOptions> void m_107378_(ParticleType<T> p_107379_, ParticleEngine.SpriteParticleRegistration<T> p_107380_) {
+    public <T extends ParticleOptions> void register(ParticleType<T> p_107379_, ParticleEngine.SpriteParticleRegistration<T> p_107380_) {
        ParticleEngine.MutableSpriteSet particleengine$mutablespriteset = new ParticleEngine.MutableSpriteSet();
-       this.f_107295_.put(BuiltInRegistries.f_257034_.m_7981_(p_107379_), particleengine$mutablespriteset);
--      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7447_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
-+      this.f_107293_.put(BuiltInRegistries.f_257034_.m_7981_(p_107379_), p_107380_.m_107419_(particleengine$mutablespriteset));
+       this.spriteSets.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107379_), particleengine$mutablespriteset);
+-      this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getId(p_107379_), p_107380_.create(particleengine$mutablespriteset));
++      this.providers.put(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107379_), p_107380_.create(particleengine$mutablespriteset));
     }
  
-    public CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_107305_, ResourceManager p_107306_, ProfilerFiller p_107307_, ProfilerFiller p_107308_, Executor p_107309_, Executor p_107310_) {
+    public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_107305_, ResourceManager p_107306_, ProfilerFiller p_107307_, ProfilerFiller p_107308_, Executor p_107309_, Executor p_107310_) {
 @@ -313,7 +_,7 @@
  
     @Nullable
-    private <T extends ParticleOptions> Particle m_107395_(T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_) {
--      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(BuiltInRegistries.f_257034_.m_7447_(p_107396_.m_6012_()));
-+      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.f_107293_.get(BuiltInRegistries.f_257034_.m_7981_(p_107396_.m_6012_()));
-       return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
+    private <T extends ParticleOptions> Particle makeParticle(T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_) {
+-      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.providers.get(BuiltInRegistries.PARTICLE_TYPE.getId(p_107396_.getType()));
++      ParticleProvider<T> particleprovider = (ParticleProvider<T>)this.providers.get(BuiltInRegistries.PARTICLE_TYPE.getKey(p_107396_.getType()));
+       return particleprovider == null ? null : particleprovider.createParticle(p_107396_, this.level, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
 @@ -394,15 +_,24 @@
@@ -59,69 +59,69 @@
  
 +   /**@deprecated Forge: use {@link #render(PoseStack, MultiBufferSource.BufferSource, LightTexture, Camera, float, net.minecraft.client.renderer.culling.Frustum)} with Frustum as additional parameter*/
 +   @Deprecated
-    public void m_107336_(PoseStack p_107337_, MultiBufferSource.BufferSource p_107338_, LightTexture p_107339_, Camera p_107340_, float p_107341_) {
+    public void render(PoseStack p_107337_, MultiBufferSource.BufferSource p_107338_, LightTexture p_107339_, Camera p_107340_, float p_107341_) {
 +       render(p_107337_, p_107338_, p_107339_, p_107340_, p_107341_, null);
 +   }
 +
 +   public void render(PoseStack p_107337_, MultiBufferSource.BufferSource p_107338_, LightTexture p_107339_, Camera p_107340_, float p_107341_, @Nullable net.minecraft.client.renderer.culling.Frustum clippingHelper) {
-       p_107339_.m_109896_();
+       p_107339_.turnOnLightLayer();
        RenderSystem.enableDepthTest();
 +      RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE2);
 +      RenderSystem.activeTexture(org.lwjgl.opengl.GL13.GL_TEXTURE0);
        PoseStack posestack = RenderSystem.getModelViewStack();
-       posestack.m_85836_();
-       posestack.m_252931_(p_107337_.m_85850_().m_252922_());
+       posestack.pushPose();
+       posestack.mulPoseMatrix(p_107337_.last().pose());
        RenderSystem.applyModelViewMatrix();
  
--      for(ParticleRenderType particlerendertype : f_107288_) {
-+      for(ParticleRenderType particlerendertype : this.f_107289_.keySet()) { // Forge: allow custom IParticleRenderType's
-+         if (particlerendertype == ParticleRenderType.f_107434_) continue;
-          Iterable<Particle> iterable = this.f_107289_.get(particlerendertype);
+-      for(ParticleRenderType particlerendertype : RENDER_ORDER) {
++      for(ParticleRenderType particlerendertype : this.particles.keySet()) { // Forge: allow custom IParticleRenderType's
++         if (particlerendertype == ParticleRenderType.NO_RENDER) continue;
+          Iterable<Particle> iterable = this.particles.get(particlerendertype);
           if (iterable != null) {
-             RenderSystem.setShader(GameRenderer::m_172829_);
+             RenderSystem.setShader(GameRenderer::getParticleShader);
 @@ -411,6 +_,7 @@
-             particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
+             particlerendertype.begin(bufferbuilder, this.textureManager);
  
              for(Particle particle : iterable) {
-+               if (clippingHelper != null && particle.shouldCull() && !clippingHelper.m_113029_(particle.m_107277_())) continue;
++               if (clippingHelper != null && particle.shouldCull() && !clippingHelper.isVisible(particle.getBoundingBox())) continue;
                 try {
-                   particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
+                   particle.render(bufferbuilder, p_107340_, p_107341_);
                 } catch (Throwable throwable) {
 @@ -440,7 +_,7 @@
     }
  
-    public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
--      if (!p_107357_.m_60795_() && p_107357_.m_295777_()) {
-+      if (!p_107357_.m_60795_() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.f_107287_, p_107356_, this)) {
-          VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
+    public void destroy(BlockPos p_107356_, BlockState p_107357_) {
+-      if (!p_107357_.isAir() && p_107357_.shouldSpawnTerrainParticles()) {
++      if (!p_107357_.isAir() && !net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(p_107357_).addDestroyEffects(p_107357_, this.level, p_107356_, this)) {
+          VoxelShape voxelshape = p_107357_.getShape(this.level, p_107356_);
           double d0 = 0.25D;
-          voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
+          voxelshape.forAllBoxes((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
 @@ -460,7 +_,7 @@
                       double d7 = d4 * d1 + p_172273_;
                       double d8 = d5 * d2 + p_172274_;
                       double d9 = d6 * d3 + p_172275_;
--                     this.m_107344_(new TerrainParticle(this.f_107287_, (double)p_107356_.m_123341_() + d7, (double)p_107356_.m_123342_() + d8, (double)p_107356_.m_123343_() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_));
-+                     this.m_107344_(new TerrainParticle(this.f_107287_, (double)p_107356_.m_123341_() + d7, (double)p_107356_.m_123342_() + d8, (double)p_107356_.m_123343_() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_).updateSprite(p_107357_, p_107356_));
+-                     this.add(new TerrainParticle(this.level, (double)p_107356_.getX() + d7, (double)p_107356_.getY() + d8, (double)p_107356_.getZ() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_));
++                     this.add(new TerrainParticle(this.level, (double)p_107356_.getX() + d7, (double)p_107356_.getY() + d8, (double)p_107356_.getZ() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_).updateSprite(p_107357_, p_107356_));
                    }
                 }
              }
 @@ -504,12 +_,18 @@
-             d0 = (double)i + aabb.f_82291_ + (double)0.1F;
+             d0 = (double)i + aabb.maxX + (double)0.1F;
           }
  
--         this.m_107344_((new TerrainParticle(this.f_107287_, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_)).m_107268_(0.2F).m_6569_(0.6F));
-+         this.m_107344_((new TerrainParticle(this.f_107287_, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_).updateSprite(blockstate, p_107368_)).m_107268_(0.2F).m_6569_(0.6F));
+-         this.add((new TerrainParticle(this.level, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_)).setPower(0.2F).scale(0.6F));
++         this.add((new TerrainParticle(this.level, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_).updateSprite(blockstate, p_107368_)).setPower(0.2F).scale(0.6F));
        }
     }
  
-    public String m_107403_() {
-       return String.valueOf(this.f_107289_.values().stream().mapToInt(Collection::size).sum());
+    public String countParticles() {
+       return String.valueOf(this.particles.values().stream().mapToInt(Collection::size).sum());
 +   }
 +
 +   public void addBlockHitEffects(BlockPos pos, net.minecraft.world.phys.BlockHitResult target) {
-+      BlockState state = f_107287_.m_8055_(pos);
-+      if (!net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(state).addHitEffects(state, f_107287_, target, this))
-+         m_107367_(pos, target.m_82434_());
++      BlockState state = level.getBlockState(pos);
++      if (!net.minecraftforge.client.extensions.common.IClientBlockExtensions.of(state).addHitEffects(state, level, target, this))
++         crack(pos, target.getDirection());
     }
  
-    private boolean m_172279_(ParticleGroup p_172280_) {
+    private boolean hasSpaceInParticleLimit(ParticleGroup p_172280_) {

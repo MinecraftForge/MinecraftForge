@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/item/Tiers.java
 +++ b/net/minecraft/world/item/Tiers.java
 @@ -64,4 +_,6 @@
-    public Ingredient m_6282_() {
-       return this.f_43326_.m_13971_();
+    public Ingredient getRepairIngredient() {
+       return this.repairIngredient.get();
     }
 +
 +   @org.jetbrains.annotations.Nullable public net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> getTag() { return net.minecraftforge.common.ForgeHooks.getTagFromVanillaTier(this); }

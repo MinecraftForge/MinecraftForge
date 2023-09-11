@@ -1,45 +1,45 @@
 --- a/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
 @@ -78,12 +_,16 @@
-    private Vec3 f_290602_ = Vec3.f_82478_;
+    private Vec3 camera = Vec3.ZERO;
  
     public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_) {
 +      this(p_299878_, p_299032_, p_298480_, p_298587_, p_299187_, -1);
 +   }
 +
 +   public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_, int countRenderBuilders) {
-       this.f_291400_ = p_299878_;
-       this.f_290611_ = p_299032_;
-       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.m_110506_().stream().mapToInt(RenderType::m_110507_).sum() * 4) - 1);
+       this.level = p_299878_;
+       this.renderer = p_299032_;
+       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.chunkBufferLayers().stream().mapToInt(RenderType::bufferSize).sum() * 4) - 1);
        int j = Runtime.getRuntime().availableProcessors();
        int k = p_298587_ ? j : Math.min(j, 4);
 -      int l = Math.max(1, Math.min(k, i));
 +      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k, i)) : countRenderBuilders;
-       this.f_290794_ = p_299187_;
+       this.fixedBuffers = p_299187_;
        List<SectionBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
  
 @@ -413,7 +_,7 @@
-          if (!sectionrenderdispatcher$compiledsection.f_290391_.contains(p_301074_)) {
+          if (!sectionrenderdispatcher$compiledsection.hasBlocks.contains(p_301074_)) {
              return false;
           } else {
--            this.f_291330_ = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(this.m_293828_(), sectionrenderdispatcher$compiledsection);
-+            this.f_291330_ = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(new net.minecraft.world.level.ChunkPos(m_295500_()), this.m_293828_(), sectionrenderdispatcher$compiledsection);
-             p_298196_.m_294204_(this.f_291330_);
+-            this.lastResortTransparencyTask = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(this.getDistToPlayerSqr(), sectionrenderdispatcher$compiledsection);
++            this.lastResortTransparencyTask = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), sectionrenderdispatcher$compiledsection);
+             p_298196_.schedule(this.lastResortTransparencyTask);
              return true;
           }
 @@ -445,7 +_,7 @@
-             this.f_291503_.incrementAndGet();
+             this.initialCompilationCancelCount.incrementAndGet();
           }
  
--         this.f_291315_ = new SectionRenderDispatcher.RenderSection.RebuildTask(this.m_293828_(), renderchunkregion, !flag1 || this.f_291503_.get() > 2);
-+         this.f_291315_ = new SectionRenderDispatcher.RenderSection.RebuildTask(new net.minecraft.world.level.ChunkPos(m_295500_()), this.m_293828_(), renderchunkregion, !flag1 || this.f_291503_.get() > 2);
-          return this.f_291315_;
+-         this.lastRebuildTask = new SectionRenderDispatcher.RenderSection.RebuildTask(this.getDistToPlayerSqr(), renderchunkregion, !flag1 || this.initialCompilationCancelCount.get() > 2);
++         this.lastRebuildTask = new SectionRenderDispatcher.RenderSection.RebuildTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), renderchunkregion, !flag1 || this.initialCompilationCancelCount.get() > 2);
+          return this.lastRebuildTask;
        }
  
 @@ -483,10 +_,20 @@
-          protected final double f_290350_;
-          protected final AtomicBoolean f_291175_ = new AtomicBoolean(false);
-          protected final boolean f_290632_;
+          protected final double distAtCreation;
+          protected final AtomicBoolean isCancelled = new AtomicBoolean(false);
+          protected final boolean isHighPriority;
 +         protected java.util.Map<net.minecraft.core.BlockPos, net.minecraftforge.client.model.data.ModelData> modelData;
  
           public CompileTask(double p_300617_, boolean p_299251_) {
@@ -47,19 +47,19 @@
 +         }
 +
 +         public CompileTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_300617_, boolean p_299251_) {
-             this.f_290350_ = p_300617_;
-             this.f_290632_ = p_299251_;
+             this.distAtCreation = p_300617_;
+             this.isHighPriority = p_299251_;
 +            if (pos == null) {
 +               this.modelData = java.util.Collections.emptyMap();
 +            } else {
-+               this.modelData = net.minecraft.client.Minecraft.m_91087_().f_91073_.getModelDataManager().getAt(pos);
++               this.modelData = net.minecraft.client.Minecraft.getInstance().level.getModelDataManager().getAt(pos);
 +            }
           }
  
-          public abstract CompletableFuture<SectionRenderDispatcher.SectionTaskResult> m_294443_(SectionBufferBuilderPack p_300298_);
+          public abstract CompletableFuture<SectionRenderDispatcher.SectionTaskResult> doTask(SectionBufferBuilderPack p_300298_);
 @@ -498,6 +_,10 @@
           public int compareTo(SectionRenderDispatcher.RenderSection.CompileTask p_298947_) {
-             return Doubles.compare(this.f_290350_, p_298947_.f_290350_);
+             return Doubles.compare(this.distAtCreation, p_298947_.distAtCreation);
           }
 +
 +         public net.minecraftforge.client.model.data.ModelData getModelData(net.minecraft.core.BlockPos pos) {
@@ -70,7 +70,7 @@
        @OnlyIn(Dist.CLIENT)
 @@ -505,8 +_,13 @@
           @Nullable
-          protected RenderChunkRegion f_290484_;
+          protected RenderChunkRegion region;
  
 +         @Deprecated
           public RebuildTask(double p_301300_, @Nullable RenderChunkRegion p_300496_, boolean p_299891_) {
@@ -80,47 +80,47 @@
 +
 +         public RebuildTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_301300_, @Nullable RenderChunkRegion p_300496_, boolean p_299891_) {
 +            super(pos, p_301300_, p_299891_);
-             this.f_290484_ = p_300496_;
+             this.region = p_300496_;
           }
  
 @@ -602,7 +_,10 @@
                    }
  
-                   if (blockstate.m_60799_() != RenderShape.INVISIBLE) {
--                     RenderType rendertype2 = ItemBlockRenderTypes.m_109282_(blockstate);
-+                     var model = blockrenderdispatcher.m_110910_(blockstate);
+                   if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+-                     RenderType rendertype2 = ItemBlockRenderTypes.getChunkRenderType(blockstate);
++                     var model = blockrenderdispatcher.getBlockModel(blockstate);
 +                     var modelData = model.getModelData(renderchunkregion, blockpos2, blockstate, getModelData(blockpos2));
-+                     randomsource.m_188584_(blockstate.m_60726_(blockpos2));
++                     randomsource.setSeed(blockstate.getSeed(blockpos2));
 +                     for (RenderType rendertype2 : model.getRenderTypes(blockstate, randomsource, modelData)) {
-                      BufferBuilder bufferbuilder2 = p_300020_.m_294384_(rendertype2);
+                      BufferBuilder bufferbuilder2 = p_300020_.builder(rendertype2);
                       if (set.add(rendertype2)) {
-                         RenderSection.this.m_293308_(bufferbuilder2);
+                         RenderSection.this.beginLayer(bufferbuilder2);
 @@ -610,8 +_,9 @@
  
-                      posestack.m_85836_();
-                      posestack.m_252880_((float)(blockpos2.m_123341_() & 15), (float)(blockpos2.m_123342_() & 15), (float)(blockpos2.m_123343_() & 15));
--                     blockrenderdispatcher.m_234355_(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
+                      posestack.pushPose();
+                      posestack.translate((float)(blockpos2.getX() & 15), (float)(blockpos2.getY() & 15), (float)(blockpos2.getZ() & 15));
+-                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
 +                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
-                      posestack.m_85849_();
+                      posestack.popPose();
 +                     }
                    }
                 }
  
 @@ -640,10 +_,10 @@
-          private <E extends BlockEntity> void m_293240_(SectionRenderDispatcher.RenderSection.RebuildTask.CompileResults p_297364_, E p_299361_) {
-             BlockEntityRenderer<E> blockentityrenderer = Minecraft.m_91087_().m_167982_().m_112265_(p_299361_);
+          private <E extends BlockEntity> void handleBlockEntity(SectionRenderDispatcher.RenderSection.RebuildTask.CompileResults p_297364_, E p_299361_) {
+             BlockEntityRenderer<E> blockentityrenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(p_299361_);
              if (blockentityrenderer != null) {
--               p_297364_.f_290796_.add(p_299361_);
-                if (blockentityrenderer.m_5932_(p_299361_)) {
-                   p_297364_.f_291894_.add(p_299361_);
+-               p_297364_.blockEntities.add(p_299361_);
+                if (blockentityrenderer.shouldRenderOffScreen(p_299361_)) {
+                   p_297364_.globalBlockEntities.add(p_299361_);
                 }
-+               else p_297364_.f_290796_.add(p_299361_); //FORGE: Fix MC-112730
++               else p_297364_.blockEntities.add(p_299361_); //FORGE: Fix MC-112730
              }
  
           }
 @@ -671,8 +_,13 @@
        class ResortTransparencyTask extends SectionRenderDispatcher.RenderSection.CompileTask {
-          private final SectionRenderDispatcher.CompiledSection f_291899_;
+          private final SectionRenderDispatcher.CompiledSection compiledSection;
  
 +         @Deprecated
           public ResortTransparencyTask(double p_300619_, SectionRenderDispatcher.CompiledSection p_297742_) {
@@ -130,6 +130,6 @@
 +
 +         public ResortTransparencyTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_300619_, SectionRenderDispatcher.CompiledSection p_297742_) {
 +            super(pos, p_300619_, true);
-             this.f_291899_ = p_297742_;
+             this.compiledSection = p_297742_;
           }
  

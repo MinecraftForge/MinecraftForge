@@ -6,33 +6,33 @@
  
 -public class CactusBlock extends Block {
 +public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
-    public static final IntegerProperty f_51131_ = BlockStateProperties.f_61410_;
-    public static final int f_152740_ = 15;
-    protected static final int f_152741_ = 1;
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
+    public static final int MAX_AGE = 15;
+    protected static final int AABB_OFFSET = 1;
 @@ -33,6 +_,7 @@
     }
  
-    public void m_213897_(BlockState p_220908_, ServerLevel p_220909_, BlockPos p_220910_, RandomSource p_220911_) {
+    public void tick(BlockState p_220908_, ServerLevel p_220909_, BlockPos p_220910_, RandomSource p_220911_) {
 +      if (!p_220909_.isAreaLoaded(p_220910_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
-       if (!p_220908_.m_60710_(p_220909_, p_220910_)) {
-          p_220909_.m_46961_(p_220910_, true);
+       if (!p_220908_.canSurvive(p_220909_, p_220910_)) {
+          p_220909_.destroyBlock(p_220910_, true);
        }
 @@ -48,15 +_,17 @@
  
           if (i < 3) {
-             int j = p_220913_.m_61143_(f_51131_);
+             int j = p_220913_.getValue(AGE);
 +            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220914_, blockpos, p_220913_, true)) {
              if (j == 15) {
-                p_220914_.m_46597_(blockpos, this.m_49966_());
--               BlockState blockstate = p_220913_.m_61124_(f_51131_, Integer.valueOf(0));
-+               BlockState blockstate = p_220913_.m_61124_(f_51131_, 0);
-                p_220914_.m_7731_(p_220915_, blockstate, 4);
-                p_220914_.m_213960_(blockstate, blockpos, this, p_220915_, false);
+                p_220914_.setBlockAndUpdate(blockpos, this.defaultBlockState());
+-               BlockState blockstate = p_220913_.setValue(AGE, Integer.valueOf(0));
++               BlockState blockstate = p_220913_.setValue(AGE, 0);
+                p_220914_.setBlock(p_220915_, blockstate, 4);
+                p_220914_.neighborChanged(blockstate, blockpos, this, p_220915_, false);
              } else {
--               p_220914_.m_7731_(p_220915_, p_220913_.m_61124_(f_51131_, Integer.valueOf(j + 1)), 4);
+-               p_220914_.setBlock(p_220915_, p_220913_.setValue(AGE, Integer.valueOf(j + 1)), 4);
 -            }
 -
-+               p_220914_.m_7731_(p_220915_, p_220913_.m_61124_(f_51131_, j + 1), 4);
++               p_220914_.setBlock(p_220915_, p_220913_.setValue(AGE, j + 1), 4);
 +            }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_220914_, p_220915_, p_220913_);
 +            }
@@ -42,15 +42,15 @@
 @@ -86,7 +_,7 @@
        }
  
-       BlockState blockstate1 = p_51154_.m_8055_(p_51155_.m_7495_());
--      return (blockstate1.m_60713_(Blocks.f_50128_) || blockstate1.m_204336_(BlockTags.f_13029_)) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_278721_();
-+      return blockstate1.canSustainPlant(p_51154_, p_51155_, Direction.UP, this) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_278721_();
+       BlockState blockstate1 = p_51154_.getBlockState(p_51155_.below());
+-      return (blockstate1.is(Blocks.CACTUS) || blockstate1.is(BlockTags.SAND)) && !p_51154_.getBlockState(p_51155_.above()).liquid();
++      return blockstate1.canSustainPlant(p_51154_, p_51155_, Direction.UP, this) && !p_51154_.getBlockState(p_51155_.above()).liquid();
     }
  
-    public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
+    public void entityInside(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
 @@ -99,5 +_,15 @@
  
-    public boolean m_7357_(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
+    public boolean isPathfindable(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
        return false;
 +   }
 +
@@ -61,6 +61,6 @@
 +
 +   @Override
 +   public BlockState getPlant(BlockGetter world, BlockPos pos) {
-+      return m_49966_();
++      return defaultBlockState();
     }
  }

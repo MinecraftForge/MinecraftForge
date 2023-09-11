@@ -2,73 +2,73 @@
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
 @@ -42,6 +_,7 @@
     @Nullable
-    private AdvancementTab f_97336_;
-    private boolean f_97337_;
+    private AdvancementTab selectedTab;
+    private boolean isScrolling;
 +   private static int tabPage, maxPages;
  
     public AdvancementsScreen(ClientAdvancements p_97340_) {
-       super(GameNarrator.f_93310_);
+       super(GameNarrator.NO_TITLE);
 @@ -58,7 +_,15 @@
        } else {
-          this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_293004_().m_295246_(), true);
+          this.advancements.setSelectedTab(this.selectedTab == null ? null : this.selectedTab.getRootNode().holder(), true);
        }
 -
-+      if (this.f_97335_.size() > AdvancementTabType.MAX_TABS) {
-+          int guiLeft = (this.f_96543_ - 252) / 2;
-+          int guiTop = (this.f_96544_ - 140) / 2;
-+          m_142416_(net.minecraft.client.gui.components.Button.m_253074_(Component.m_237113_("<"), b -> tabPage = Math.max(tabPage - 1, 0       ))
-+              .m_252794_(guiLeft, guiTop - 50).m_253046_(20, 20).m_253136_());
-+          m_142416_(net.minecraft.client.gui.components.Button.m_253074_(Component.m_237113_(">"), b -> tabPage = Math.min(tabPage + 1, maxPages))
-+              .m_252794_(guiLeft + f_169556_ - 20, guiTop - 50).m_253046_(20, 20).m_253136_());
-+          maxPages = this.f_97335_.size() / AdvancementTabType.MAX_TABS;
++      if (this.tabs.size() > AdvancementTabType.MAX_TABS) {
++          int guiLeft = (this.width - 252) / 2;
++          int guiTop = (this.height - 140) / 2;
++          addRenderableWidget(net.minecraft.client.gui.components.Button.builder(Component.literal("<"), b -> tabPage = Math.max(tabPage - 1, 0       ))
++              .pos(guiLeft, guiTop - 50).size(20, 20).build());
++          addRenderableWidget(net.minecraft.client.gui.components.Button.builder(Component.literal(">"), b -> tabPage = Math.min(tabPage + 1, maxPages))
++              .pos(guiLeft + WINDOW_WIDTH - 20, guiTop - 50).size(20, 20).build());
++          maxPages = this.tabs.size() / AdvancementTabType.MAX_TABS;
 +      }
     }
  
-    public void m_7861_() {
+    public void removed() {
 @@ -76,7 +_,7 @@
-          int j = (this.f_96544_ - 140) / 2;
+          int j = (this.height - 140) / 2;
  
-          for(AdvancementTab advancementtab : this.f_97335_.values()) {
--            if (advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
-+            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
-                this.f_97334_.m_104401_(advancementtab.m_293004_().m_295246_(), true);
+          for(AdvancementTab advancementtab : this.tabs.values()) {
+-            if (advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
++            if (advancementtab.getPage() == tabPage && advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
+                this.advancements.setSelectedTab(advancementtab.getRootNode().holder(), true);
                 break;
              }
 @@ -100,9 +_,15 @@
-       int i = (this.f_96543_ - 252) / 2;
-       int j = (this.f_96544_ - 140) / 2;
-       this.m_280273_(p_282589_, p_282255_, p_283354_, p_283123_);
+       int i = (this.width - 252) / 2;
+       int j = (this.height - 140) / 2;
+       this.renderBackground(p_282589_, p_282255_, p_283354_, p_283123_);
 +      if (maxPages != 0) {
-+         net.minecraft.network.chat.Component page = Component.m_237113_(String.format("%d / %d", tabPage + 1, maxPages + 1));
-+         int width = this.f_96547_.m_92852_(page);
-+         p_282589_.m_280648_(this.f_96547_, page.m_7532_(), i + (252 / 2) - (width / 2), j - 44, -1);
++         net.minecraft.network.chat.Component page = Component.literal(String.format("%d / %d", tabPage + 1, maxPages + 1));
++         int width = this.font.width(page);
++         p_282589_.drawString(this.font, page.getVisualOrderText(), i + (252 / 2) - (width / 2), j - 44, -1);
 +      }
-       this.m_97373_(p_282589_, p_282255_, p_283354_, i, j);
-       this.m_280088_(p_282589_, i, j);
-       this.m_280355_(p_282589_, p_282255_, p_283354_, i, j);
-+      super.m_88315_(p_282589_, p_282255_, p_283354_, p_283123_);
+       this.renderInside(p_282589_, p_282255_, p_283354_, i, j);
+       this.renderWindow(p_282589_, i, j);
+       this.renderTooltips(p_282589_, p_282255_, p_283354_, i, j);
++      super.render(p_282589_, p_282255_, p_283354_, p_283123_);
     }
  
-    public boolean m_7979_(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
+    public boolean mouseDragged(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
 @@ -146,10 +_,12 @@
-       p_283395_.m_280218_(f_97329_, p_281890_, p_282532_, 0, 0, 252, 140);
-       if (this.f_97335_.size() > 1) {
-          for(AdvancementTab advancementtab : this.f_97335_.values()) {
+       p_283395_.blit(WINDOW_LOCATION, p_281890_, p_282532_, 0, 0, 252, 140);
+       if (this.tabs.size() > 1) {
+          for(AdvancementTab advancementtab : this.tabs.values()) {
 +            if (advancementtab.getPage() == tabPage)
-             advancementtab.m_280105_(p_283395_, p_281890_, p_282532_, advancementtab == this.f_97336_);
+             advancementtab.drawTab(p_283395_, p_281890_, p_282532_, advancementtab == this.selectedTab);
           }
  
-          for(AdvancementTab advancementtab1 : this.f_97335_.values()) {
+          for(AdvancementTab advancementtab1 : this.tabs.values()) {
 +            if (advancementtab1.getPage() == tabPage)
-             advancementtab1.m_280485_(p_283395_, p_281890_, p_282532_);
+             advancementtab1.drawIcon(p_283395_, p_281890_, p_282532_);
           }
        }
 @@ -169,7 +_,7 @@
  
-       if (this.f_97335_.size() > 1) {
-          for(AdvancementTab advancementtab : this.f_97335_.values()) {
--            if (advancementtab.m_97154_(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
-+            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
-                p_282784_.m_280557_(this.f_96547_, advancementtab.m_97189_(), p_283556_, p_282458_);
+       if (this.tabs.size() > 1) {
+          for(AdvancementTab advancementtab : this.tabs.values()) {
+-            if (advancementtab.isMouseOver(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
++            if (advancementtab.getPage() == tabPage && advancementtab.isMouseOver(p_281519_, p_283371_, (double)p_283556_, (double)p_282458_)) {
+                p_282784_.renderTooltip(this.font, advancementtab.getTitle(), p_283556_, p_282458_);
              }
           }

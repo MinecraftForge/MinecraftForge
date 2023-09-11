@@ -1,61 +1,61 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 @@ -104,6 +_,14 @@
-       this.f_19794_ = true;
-       this.f_19811_ = true;
-       this.f_31074_ = new EnderDragonPhaseManager(this);
-+      this.m_20234_(f_19843_.getAndAdd(this.f_31089_.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
+       this.noPhysics = true;
+       this.noCulling = true;
+       this.phaseManager = new EnderDragonPhaseManager(this);
++      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
 +   }
 +
 +   @Override
-+   public void m_20234_(int p_20235_) {
-+      super.m_20234_(p_20235_);
-+      for (int i = 0; i < this.f_31089_.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-+         this.f_31089_[i].m_20234_(p_20235_ + i + 1);
++   public void setId(int p_20235_) {
++      super.setId(p_20235_);
++      for (int i = 0; i < this.subEntities.length; i++) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
++         this.subEntities[i].setId(p_20235_ + i + 1);
     }
  
-    public void m_287231_(EndDragonFight p_287736_) {
+    public void setDragonFight(EndDragonFight p_287736_) {
 @@ -159,7 +_,11 @@
        return adouble;
     }
  
 +   @org.jetbrains.annotations.Nullable private Player unlimitedLastHurtByPlayer = null;
-    public void m_8107_() {
+    public void aiStep() {
 +      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
-+      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
-+      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_213877_()) this.unlimitedLastHurtByPlayer = null;
-       this.m_146874_();
-       if (this.m_9236_().f_46443_) {
-          this.m_21153_(this.m_21223_());
++      if (this.lastHurtByPlayer != null) this.unlimitedLastHurtByPlayer = lastHurtByPlayer;
++      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.isRemoved()) this.unlimitedLastHurtByPlayer = null;
+       this.processFlappingMovement();
+       if (this.level().isClientSide) {
+          this.setHealth(this.getHealth());
 @@ -433,7 +_,7 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
-                BlockState blockstate = this.m_9236_().m_8055_(blockpos);
-                if (!blockstate.m_60795_() && !blockstate.m_204336_(BlockTags.f_215822_)) {
--                  if (this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_204336_(BlockTags.f_13069_)) {
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.m_9236_(), blockpos, this) && !blockstate.m_204336_(BlockTags.f_13069_)) {
-                      flag1 = this.m_9236_().m_7471_(blockpos, false) || flag1;
+                BlockState blockstate = this.level().getBlockState(blockpos);
+                if (!blockstate.isAir() && !blockstate.is(BlockTags.DRAGON_TRANSPARENT)) {
+-                  if (this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.level(), blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE)) {
+                      flag1 = this.level().removeBlock(blockpos, false) || flag1;
                    } else {
                       flag = true;
 @@ -524,7 +_,8 @@
  
-       if (this.m_9236_() instanceof ServerLevel) {
-          if (this.f_31084_ > 150 && this.f_31084_ % 5 == 0 && flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.08F));
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.08F));
-+            ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), award);
+       if (this.level() instanceof ServerLevel) {
+          if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && flag) {
+-            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.08F));
++            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.08F));
++            ExperienceOrb.award((ServerLevel) this.level(), this.position(), award);
           }
  
-          if (this.f_31084_ == 1 && !this.m_20067_()) {
+          if (this.dragonDeathTime == 1 && !this.isSilent()) {
 @@ -535,7 +_,8 @@
-       this.m_6478_(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
-       if (this.f_31084_ == 200 && this.m_9236_() instanceof ServerLevel) {
+       this.move(MoverType.SELF, new Vec3(0.0D, (double)0.1F, 0.0D));
+       if (this.dragonDeathTime == 200 && this.level() instanceof ServerLevel) {
           if (flag) {
--            ExperienceOrb.m_147082_((ServerLevel)this.m_9236_(), this.m_20182_(), Mth.m_14143_((float)i * 0.2F));
-+            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.m_14143_((float)i * 0.2F));
-+            ExperienceOrb.m_147082_((ServerLevel) this.m_9236_(), this.m_20182_(), award);
+-            ExperienceOrb.award((ServerLevel)this.level(), this.position(), Mth.floor((float)i * 0.2F));
++            int award = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.unlimitedLastHurtByPlayer, Mth.floor((float)i * 0.2F));
++            ExperienceOrb.award((ServerLevel) this.level(), this.position(), award);
           }
  
-          if (this.f_31073_ != null) {
+          if (this.dragonFight != null) {
 @@ -858,8 +_,19 @@
        return false;
     }
@@ -67,12 +67,12 @@
 +
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
-+      return this.f_31089_;
++      return this.subEntities;
 +   }
 +
-    public void m_141965_(ClientboundAddEntityPacket p_218825_) {
-       super.m_141965_(p_218825_);
+    public void recreateFromPacket(ClientboundAddEntityPacket p_218825_) {
+       super.recreateFromPacket(p_218825_);
 +      if (true) return; // Forge: Fix MC-158205: Moved into setId()
-       EnderDragonPart[] aenderdragonpart = this.m_31156_();
+       EnderDragonPart[] aenderdragonpart = this.getSubEntities();
  
        for(int i = 0; i < aenderdragonpart.length; ++i) {

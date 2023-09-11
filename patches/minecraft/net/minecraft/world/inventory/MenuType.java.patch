@@ -6,21 +6,21 @@
  
 -public class MenuType<T extends AbstractContainerMenu> implements FeatureElement {
 +public class MenuType<T extends AbstractContainerMenu> implements FeatureElement, net.minecraftforge.common.extensions.IForgeMenuType<T> {
-    public static final MenuType<ChestMenu> f_39957_ = m_39988_("generic_9x1", ChestMenu::m_39234_);
-    public static final MenuType<ChestMenu> f_39958_ = m_39988_("generic_9x2", ChestMenu::m_39243_);
-    public static final MenuType<ChestMenu> f_39959_ = m_39988_("generic_9x3", ChestMenu::m_39255_);
+    public static final MenuType<ChestMenu> GENERIC_9x1 = register("generic_9x1", ChestMenu::oneRow);
+    public static final MenuType<ChestMenu> GENERIC_9x2 = register("generic_9x2", ChestMenu::twoRows);
+    public static final MenuType<ChestMenu> GENERIC_9x3 = register("generic_9x3", ChestMenu::threeRows);
 @@ -53,6 +_,14 @@
  
-    public T m_39985_(int p_39986_, Inventory p_39987_) {
-       return this.f_39981_.m_39994_(p_39986_, p_39987_);
+    public T create(int p_39986_, Inventory p_39987_) {
+       return this.constructor.create(p_39986_, p_39987_);
 +   }
 +
 +   @Override
 +   public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
-+      if (this.f_39981_ instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
++      if (this.constructor instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
 +         return ctr.create(windowId, playerInv, extraData);
 +      }
-+      return m_39985_(windowId, playerInv);
++      return create(windowId, playerInv);
     }
  
-    public FeatureFlagSet m_245183_() {
+    public FeatureFlagSet requiredFeatures() {

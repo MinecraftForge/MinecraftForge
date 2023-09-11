@@ -3,13 +3,13 @@
 @@ -35,10 +_,11 @@
     }
  
-    public void m_213898_(BlockState p_221350_, ServerLevel p_221351_, BlockPos p_221352_, RandomSource p_221353_) {
--      if (p_221350_.m_61143_(f_53924_) < 25 && p_221353_.m_188500_() < this.f_53925_) {
-+      if (p_221350_.m_61143_(f_53924_) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221351_, p_221352_.m_121945_(this.f_53859_), p_221351_.m_8055_(p_221352_.m_121945_(this.f_53859_)),p_221353_.m_188500_() < this.f_53925_)) {
-          BlockPos blockpos = p_221352_.m_121945_(this.f_53859_);
-          if (this.m_5971_(p_221351_.m_8055_(blockpos))) {
-             p_221351_.m_46597_(blockpos, this.m_214070_(p_221350_, p_221351_.f_46441_));
-+            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221351_, blockpos, p_221351_.m_8055_(blockpos));
+    public void randomTick(BlockState p_221350_, ServerLevel p_221351_, BlockPos p_221352_, RandomSource p_221353_) {
+-      if (p_221350_.getValue(AGE) < 25 && p_221353_.nextDouble() < this.growPerTickProbability) {
++      if (p_221350_.getValue(AGE) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221351_, p_221352_.relative(this.growthDirection), p_221351_.getBlockState(p_221352_.relative(this.growthDirection)),p_221353_.nextDouble() < this.growPerTickProbability)) {
+          BlockPos blockpos = p_221352_.relative(this.growthDirection);
+          if (this.canGrowInto(p_221351_.getBlockState(blockpos))) {
+             p_221351_.setBlockAndUpdate(blockpos, this.getGrowIntoState(p_221350_, p_221351_.random));
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221351_, blockpos, p_221351_.getBlockState(blockpos));
           }
        }
  

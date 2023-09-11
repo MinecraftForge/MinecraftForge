@@ -2,63 +2,63 @@
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
 @@ -68,7 +_,7 @@
     public ItemRenderer(Minecraft p_266926_, TextureManager p_266774_, ModelManager p_266850_, ItemColors p_267016_, BlockEntityWithoutLevelRenderer p_267049_) {
-       this.f_265848_ = p_266926_;
-       this.f_115096_ = p_266774_;
--      this.f_115095_ = new ItemModelShaper(p_266850_);
-+      this.f_115095_ = new net.minecraftforge.client.model.ForgeItemModelShaper(p_266850_);
-       this.f_174223_ = p_267049_;
+       this.minecraft = p_266926_;
+       this.textureManager = p_266774_;
+-      this.itemModelShaper = new ItemModelShaper(p_266850_);
++      this.itemModelShaper = new net.minecraftforge.client.model.ForgeItemModelShaper(p_266850_);
+       this.blockEntityRenderer = p_267049_;
  
-       for(Item item : BuiltInRegistries.f_257033_) {
+       for(Item item : BuiltInRegistries.ITEM) {
 @@ -109,7 +_,7 @@
              }
           }
  
--         p_115151_.m_7442_().m_269404_(p_270188_).m_111763_(p_115146_, p_115147_);
+-         p_115151_.getTransforms().getTransform(p_270188_).apply(p_115146_, p_115147_);
 +         p_115151_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_115147_, p_115151_, p_270188_, p_115146_);
-          p_115147_.m_252880_(-0.5F, -0.5F, -0.5F);
-          if (!p_115151_.m_7521_() && (!p_115144_.m_150930_(Items.f_42713_) || flag)) {
+          p_115147_.translate(-0.5F, -0.5F, -0.5F);
+          if (!p_115151_.isCustomRenderer() && (!p_115144_.is(Items.TRIDENT) || flag)) {
              boolean flag1;
 @@ -119,8 +_,8 @@
              } else {
                 flag1 = true;
              }
 -
--            RenderType rendertype = ItemBlockRenderTypes.m_109279_(p_115144_, flag1);
+-            RenderType rendertype = ItemBlockRenderTypes.getRenderType(p_115144_, flag1);
 +            for (var model : p_115151_.getRenderPasses(p_115144_, flag1)) {
 +            for (var rendertype : model.getRenderTypes(p_115144_, flag1)) {
              VertexConsumer vertexconsumer;
-             if (m_285827_(p_115144_) && p_115144_.m_41790_()) {
-                p_115147_.m_85836_();
+             if (hasAnimatedTexture(p_115144_) && p_115144_.hasFoil()) {
+                p_115147_.pushPose();
 @@ -144,9 +_,11 @@
-                vertexconsumer = m_115211_(p_115148_, rendertype, true, p_115144_.m_41790_());
+                vertexconsumer = getFoilBuffer(p_115148_, rendertype, true, p_115144_.hasFoil());
              }
  
--            this.m_115189_(p_115151_, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
-+            this.m_115189_(model, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
+-            this.renderModelLists(p_115151_, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
++            this.renderModelLists(model, p_115144_, p_115149_, p_115150_, p_115147_, vertexconsumer);
 +            }
 +            }
           } else {
--            this.f_174223_.m_108829_(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
-+            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115144_).getCustomRenderer().m_108829_(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
+-            this.blockEntityRenderer.renderByItem(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
++            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_115144_).getCustomRenderer().renderByItem(p_115144_, p_270188_, p_115147_, p_115148_, p_115149_, p_115150_);
           }
  
-          p_115147_.m_85849_();
+          p_115147_.popPose();
 @@ -194,7 +_,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
--         p_115164_.m_85987_(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_);
+-         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, p_115167_, p_115168_);
 +         p_115164_.putBulkData(posestack$pose, bakedquad, f, f1, f2, 1.0F, p_115167_, p_115168_, true);
        }
  
     }
 @@ -227,5 +_,9 @@
  
-    public void m_6213_(ResourceManager p_115105_) {
-       this.f_115095_.m_109403_();
+    public void onResourceManagerReload(ResourceManager p_115105_) {
+       this.itemModelShaper.rebuildCache();
 +   }
 +
 +   public BlockEntityWithoutLevelRenderer getBlockEntityRenderer() {
-+       return f_174223_;
++       return blockEntityRenderer;
     }
  }

@@ -2,8 +2,8 @@
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
 @@ -14,9 +_,19 @@
  public class PoweredRailBlock extends BaseRailBlock {
-    public static final EnumProperty<RailShape> f_55214_ = BlockStateProperties.f_61404_;
-    public static final BooleanProperty f_55215_ = BlockStateProperties.f_61448_;
+    public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
     public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
@@ -17,62 +17,62 @@
 +   }
 +
 +   protected void registerDefaultState() {
-       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_55214_, RailShape.NORTH_SOUTH).m_61124_(f_55215_, Boolean.valueOf(false)).m_61124_(f_152149_, Boolean.valueOf(false)));
+       this.registerDefaultState(this.stateDefinition.any().setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(POWERED, Boolean.valueOf(false)).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
  
 @@ -28,7 +_,7 @@
-          int j = p_55221_.m_123342_();
-          int k = p_55221_.m_123343_();
+          int j = p_55221_.getY();
+          int k = p_55221_.getZ();
           boolean flag = true;
--         RailShape railshape = p_55222_.m_61143_(f_55214_);
-+         RailShape railshape = p_55222_.m_61143_(m_7978_());
+-         RailShape railshape = p_55222_.getValue(SHAPE);
++         RailShape railshape = p_55222_.getValue(getShapeProperty());
           switch (railshape) {
              case NORTH_SOUTH:
                 if (p_55223_) {
 @@ -99,14 +_,14 @@
  
-    protected boolean m_55225_(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
-       BlockState blockstate = p_55226_.m_8055_(p_55227_);
--      if (!blockstate.m_60713_(this)) {
-+      if (!(blockstate.m_60734_() instanceof PoweredRailBlock other)) {
+    protected boolean isSameRailWithPower(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
+       BlockState blockstate = p_55226_.getBlockState(p_55227_);
+-      if (!blockstate.is(this)) {
++      if (!(blockstate.getBlock() instanceof PoweredRailBlock other)) {
           return false;
        } else {
--         RailShape railshape = blockstate.m_61143_(f_55214_);
+-         RailShape railshape = blockstate.getValue(SHAPE);
 +         RailShape railshape = other.getRailDirection(blockstate, p_55226_, p_55227_, null);
           if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
              if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
--               if (blockstate.m_61143_(f_55215_)) {
--                  return p_55226_.m_276867_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
+-               if (blockstate.getValue(POWERED)) {
+-                  return p_55226_.hasNeighborSignal(p_55227_) ? true : this.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
 +               if (isActivatorRail() == other.isActivatorRail()) {
-+                  return p_55226_.m_276867_(p_55227_) ? true : other.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
++                  return p_55226_.hasNeighborSignal(p_55227_) ? true : other.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
                 } else {
                    return false;
                 }
 @@ -125,7 +_,7 @@
        if (flag1 != flag) {
-          p_55233_.m_7731_(p_55234_, p_55232_.m_61124_(f_55215_, Boolean.valueOf(flag1)), 3);
-          p_55233_.m_46672_(p_55234_.m_7495_(), this);
--         if (p_55232_.m_61143_(f_55214_).m_61745_()) {
-+         if (p_55232_.m_61143_(m_7978_()).m_61745_()) {
-             p_55233_.m_46672_(p_55234_.m_7494_(), this);
+          p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
+          p_55233_.updateNeighborsAt(p_55234_.below(), this);
+-         if (p_55232_.getValue(SHAPE).isAscending()) {
++         if (p_55232_.getValue(getShapeProperty()).isAscending()) {
+             p_55233_.updateNeighborsAt(p_55234_.above(), this);
           }
        }
 @@ -156,6 +_,9 @@
-                   return p_55240_.m_61124_(f_55214_, RailShape.SOUTH_EAST);
+                   return p_55240_.setValue(SHAPE, RailShape.SOUTH_EAST);
                 case NORTH_EAST:
-                   return p_55240_.m_61124_(f_55214_, RailShape.SOUTH_WEST);
+                   return p_55240_.setValue(SHAPE, RailShape.SOUTH_WEST);
 +               case NORTH_SOUTH: //Forge fix: MC-196102
 +               case EAST_WEST:
 +                  return p_55240_;
              }
           case COUNTERCLOCKWISE_90:
-             switch ((RailShape)p_55240_.m_61143_(f_55214_)) {
+             switch ((RailShape)p_55240_.getValue(SHAPE)) {
 @@ -253,6 +_,10 @@
     }
  
-    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_55243_) {
--      p_55243_.m_61104_(f_55214_, f_55215_, f_152149_);
-+      p_55243_.m_61104_(m_7978_(), f_55215_, f_152149_);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55243_) {
+-      p_55243_.add(SHAPE, POWERED, WATERLOGGED);
++      p_55243_.add(getShapeProperty(), POWERED, WATERLOGGED);
 +   }
 +
 +   public boolean isActivatorRail() {

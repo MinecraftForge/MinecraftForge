@@ -1,17 +1,17 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkCache.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkCache.java
 @@ -60,6 +_,7 @@
-          int i = this.f_104410_.m_104481_(p_298665_.f_45578_, p_298665_.f_45579_);
-          LevelChunk levelchunk = this.f_104410_.m_104479_(i);
-          if (m_104438_(levelchunk, p_298665_.f_45578_, p_298665_.f_45579_)) {
+          int i = this.storage.getIndex(p_298665_.x, p_298665_.z);
+          LevelChunk levelchunk = this.storage.getChunk(i);
+          if (isValidChunk(levelchunk, p_298665_.x, p_298665_.z)) {
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(levelchunk));
-             this.f_104410_.m_104487_(i, levelchunk, (LevelChunk)null);
+             this.storage.replace(i, levelchunk, (LevelChunk)null);
           }
  
 @@ -115,6 +_,7 @@
           }
  
-          this.f_104411_.m_171649_(chunkpos);
+          this.level.onChunkLoaded(chunkpos);
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, false));
           return levelchunk;
        }

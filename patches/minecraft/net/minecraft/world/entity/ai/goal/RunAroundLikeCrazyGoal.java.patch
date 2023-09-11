@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/entity/ai/goal/RunAroundLikeCrazyGoal.java
 @@ -55,7 +_,7 @@
              Player player = (Player)entity;
-             int i = this.f_25884_.m_30624_();
-             int j = this.f_25884_.m_7555_();
--            if (j > 0 && this.f_25884_.m_217043_().m_188503_(j) < i) {
-+            if (j > 0 && this.f_25884_.m_217043_().m_188503_(j) < i && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(f_25884_, (Player)entity)) {
-                this.f_25884_.m_30637_(player);
+             int i = this.horse.getTemper();
+             int j = this.horse.getMaxTemper();
+-            if (j > 0 && this.horse.getRandom().nextInt(j) < i) {
++            if (j > 0 && this.horse.getRandom().nextInt(j) < i && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(horse, (Player)entity)) {
+                this.horse.tameWithName(player);
                 return;
              }

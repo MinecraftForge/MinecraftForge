@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
 @@ -15,7 +_,7 @@
-    private static final Vector3f f_243728_ = new Vector3f(1.0F, 1.0F, 1.0F);
-    private static final int f_244604_ = 16;
-    private static final int f_244207_ = 16;
--   private final ResourceLocation f_243720_ = new ResourceLocation("textures/gui/hanging_signs/" + this.f_244069_.f_61839_() + ".png");
-+   private final ResourceLocation f_243720_ = new ResourceLocation(this.f_244069_.f_61839_() + ".png").m_246208_("textures/gui/hanging_signs/");
+    private static final Vector3f TEXT_SCALE = new Vector3f(1.0F, 1.0F, 1.0F);
+    private static final int TEXTURE_WIDTH = 16;
+    private static final int TEXTURE_HEIGHT = 16;
+-   private final ResourceLocation texture = new ResourceLocation("textures/gui/hanging_signs/" + this.woodType.name() + ".png");
++   private final ResourceLocation texture = new ResourceLocation(this.woodType.name() + ".png").withPrefix("textures/gui/hanging_signs/");
  
     public HangingSignEditScreen(SignBlockEntity p_278017_, boolean p_277942_, boolean p_277778_) {
-       super(p_278017_, p_277942_, p_277778_, Component.m_237115_("hanging_sign.edit"));
+       super(p_278017_, p_277942_, p_277778_, Component.translatable("hanging_sign.edit"));

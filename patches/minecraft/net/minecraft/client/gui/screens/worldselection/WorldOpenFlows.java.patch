@@ -3,36 +3,36 @@
 @@ -165,13 +_,23 @@
     }
  
-    private void m_233145_(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_) {
+    private void doLoadLevel(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_) {
 +      // FORGE: Patch in overload to reduce further patching
 +      this.doLoadLevel(p_233146_, p_233147_, p_233148_, p_233149_, false);
 +   }
 +
 +   // FORGE: Patch in confirmExperimentalWarning which confirms the experimental warning when true
 +   private void doLoadLevel(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_, boolean confirmExperimentalWarning) {
-       LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.m_233155_(p_233147_);
+       LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = this.createWorldAccess(p_233147_);
        if (levelstoragesource$levelstorageaccess != null) {
-          PackRepository packrepository = ServerPacksSource.m_247728_(levelstoragesource$levelstorageaccess);
+          PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
           WorldStem worldstem;
           try {
 +            levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData(); // Read extra (e.g. modded) data from the world before creating it
-             worldstem = this.m_233122_(levelstoragesource$levelstorageaccess, p_233148_, packrepository);
-+            if (confirmExperimentalWarning && worldstem.f_206895_() instanceof PrimaryLevelData pld) {
+             worldstem = this.loadWorldStem(levelstoragesource$levelstorageaccess, p_233148_, packrepository);
++            if (confirmExperimentalWarning && worldstem.worldData() instanceof PrimaryLevelData pld) {
 +               pld.withConfirmedWarning(true);
 +            }
           } catch (Exception exception) {
-             f_233088_.warn("Failed to load level data or datapacks, can't proceed with server load", (Throwable)exception);
+             LOGGER.warn("Failed to load level data or datapacks, can't proceed with server load", (Throwable)exception);
              if (!p_233148_) {
 @@ -191,7 +_,9 @@
-          WorldData worlddata = worldstem.f_206895_();
-          boolean flag = worlddata.m_246337_().m_247070_();
-          boolean flag1 = worlddata.m_5754_() != Lifecycle.stable();
+          WorldData worlddata = worldstem.worldData();
+          boolean flag = worlddata.worldGenOptions().isOldCustomizedWorld();
+          boolean flag1 = worlddata.worldGenSettingsLifecycle() != Lifecycle.stable();
 -         if (!p_233149_ || !flag && !flag1) {
 +         // Forge: Skip confirmation if it has been done already for this world
 +         boolean skipConfirmation = worlddata instanceof PrimaryLevelData pld && pld.hasConfirmedExperimentalWarning();
 +         if (skipConfirmation || !p_233149_ || !flag && !flag1) {
-             this.f_233089_.m_247489_().m_247400_(levelstoragesource$levelstorageaccess).thenApply((p_233177_) -> {
+             this.minecraft.getDownloadedPackSource().loadBundledResourcePack(levelstoragesource$levelstorageaccess).thenApply((p_233177_) -> {
                 return true;
              }).exceptionallyComposeAsync((p_233183_) -> {
 @@ -213,9 +_,11 @@
@@ -40,10 +40,10 @@
              });
           } else {
 +            if (flag) // Forge: For legacy world options, let vanilla handle it.
-             this.m_233140_(p_233146_, p_233147_, flag, () -> {
-                this.m_233145_(p_233146_, p_233147_, p_233148_, false);
+             this.askForBackup(p_233146_, p_233147_, flag, () -> {
+                this.doLoadLevel(p_233146_, p_233147_, p_233148_, false);
              });
 +            else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(() -> this.doLoadLevel(p_233146_, p_233147_, p_233148_, false, true));
              worldstem.close();
-             m_233116_(levelstoragesource$levelstorageaccess, p_233147_);
+             safeCloseAccess(levelstoragesource$levelstorageaccess, p_233147_);
           }

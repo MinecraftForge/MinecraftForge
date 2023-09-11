@@ -6,40 +6,40 @@
  
 -public class Sheep extends Animal implements Shearable {
 +public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
-    private static final int f_149039_ = 40;
-    private static final EntityDataAccessor<Byte> f_29799_ = SynchedEntityData.m_135353_(Sheep.class, EntityDataSerializers.f_135027_);
-    private static final Map<DyeColor, ItemLike> f_29800_ = Util.m_137469_(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
+    private static final int EAT_ANIMATION_TICKS = 40;
+    private static final EntityDataAccessor<Byte> DATA_WOOL_ID = SynchedEntityData.defineId(Sheep.class, EntityDataSerializers.BYTE);
+    private static final Map<DyeColor, ItemLike> ITEM_BY_DYE = Util.make(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
 @@ -235,7 +_,7 @@
  
-    public InteractionResult m_6071_(Player p_29853_, InteractionHand p_29854_) {
-       ItemStack itemstack = p_29853_.m_21120_(p_29854_);
--      if (itemstack.m_150930_(Items.f_42574_)) {
-+      if (false && itemstack.m_41720_() == Items.f_42574_) { //Forge: Moved to onSheared
-          if (!this.m_9236_().f_46443_ && this.m_6220_()) {
-             this.m_5851_(SoundSource.PLAYERS);
-             this.m_146852_(GameEvent.f_157781_, p_29853_);
+    public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
+       ItemStack itemstack = p_29853_.getItemInHand(p_29854_);
+-      if (itemstack.is(Items.SHEARS)) {
++      if (false && itemstack.getItem() == Items.SHEARS) { //Forge: Moved to onSheared
+          if (!this.level().isClientSide && this.readyForShearing()) {
+             this.shear(SoundSource.PLAYERS);
+             this.gameEvent(GameEvent.SHEAR, p_29853_);
 @@ -392,5 +_,27 @@
  
-    protected Vector3f m_292594_(Entity p_297780_, EntityDimensions p_298437_, float p_300315_) {
-       return new Vector3f(0.0F, p_298437_.f_20378_ - 0.0625F * p_300315_, 0.0F);
+    protected Vector3f getPassengerAttachmentPoint(Entity p_297780_, EntityDimensions p_298437_, float p_300315_) {
+       return new Vector3f(0.0F, p_298437_.height - 0.0625F * p_300315_, 0.0F);
 +   }
 +
 +   @Override
 +   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
-+      return m_6220_();
++      return readyForShearing();
 +   }
 +
 +   @Override
 +   public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, BlockPos pos, int fortune) {
-+      world.m_6269_(null, this, SoundEvents.f_12344_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
-+      this.m_146852_(GameEvent.f_157781_, player);
-+      if (!world.f_46443_) {
-+         this.m_29878_(true);
-+         int i = 1 + this.f_19796_.m_188503_(3);
++      world.playSound(null, this, SoundEvents.SHEEP_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++      this.gameEvent(GameEvent.SHEAR, player);
++      if (!world.isClientSide) {
++         this.setSheared(true);
++         int i = 1 + this.random.nextInt(3);
 +
 +         java.util.List<ItemStack> items = new java.util.ArrayList<>();
 +         for (int j = 0; j < i; ++j) {
-+            items.add(new ItemStack(f_29800_.get(this.m_29874_())));
++            items.add(new ItemStack(ITEM_BY_DYE.get(this.getColor())));
 +         }
 +         return items;
 +      }

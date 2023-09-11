@@ -10,10 +10,10 @@
 +      this(p_255941_, p_256600_, "vanilla", null);
 +   }
 +   public FluidTagsProvider(PackOutput p_255941_, CompletableFuture<HolderLookup.Provider> p_256600_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       super(p_255941_, Registries.f_256808_, p_256600_, (p_256474_) -> {
-          return p_256474_.m_205069_().m_205785_();
+       super(p_255941_, Registries.FLUID, p_256600_, (p_256474_) -> {
+          return p_256474_.builtInRegistryHolder().key();
 -      });
 +      }, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_256366_) {
+    protected void addTags(HolderLookup.Provider p_256366_) {

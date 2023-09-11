@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/ai/control/MoveControl.java
 +++ b/net/minecraft/world/entity/ai/control/MoveControl.java
 @@ -99,7 +_,7 @@
-          BlockPos blockpos = this.f_24974_.m_20183_();
-          BlockState blockstate = this.f_24974_.m_9236_().m_8055_(blockpos);
-          VoxelShape voxelshape = blockstate.m_60812_(this.f_24974_.m_9236_(), blockpos);
--         if (d2 > (double)this.f_24974_.m_274421_() && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.f_24974_.m_20205_()) || !voxelshape.m_83281_() && this.f_24974_.m_20186_() < voxelshape.m_83297_(Direction.Axis.Y) + (double)blockpos.m_123342_() && !blockstate.m_204336_(BlockTags.f_13103_) && !blockstate.m_204336_(BlockTags.f_13039_)) {
-+         if (d2 > (double)this.f_24974_.getStepHeight() && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.f_24974_.m_20205_()) || !voxelshape.m_83281_() && this.f_24974_.m_20186_() < voxelshape.m_83297_(Direction.Axis.Y) + (double)blockpos.m_123342_() && !blockstate.m_204336_(BlockTags.f_13103_) && !blockstate.m_204336_(BlockTags.f_13039_)) {
-             this.f_24974_.m_21569_().m_24901_();
-             this.f_24981_ = MoveControl.Operation.JUMPING;
+          BlockPos blockpos = this.mob.blockPosition();
+          BlockState blockstate = this.mob.level().getBlockState(blockpos);
+          VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level(), blockpos);
+-         if (d2 > (double)this.mob.maxUpStep() && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double)blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES)) {
++         if (d2 > (double)this.mob.getStepHeight() && d0 * d0 + d1 * d1 < (double)Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double)blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES)) {
+             this.mob.getJumpControl().jump();
+             this.operation = MoveControl.Operation.JUMPING;
           }

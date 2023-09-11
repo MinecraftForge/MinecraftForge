@@ -3,86 +3,86 @@
 @@ -179,6 +_,12 @@
  
  public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
-    static final Logger f_9744_ = LogUtils.getLogger();
+    static final Logger LOGGER = LogUtils.getLogger();
 +   /**
 +    * Forge: Deprecated in favor of range/reach attributes.
 +    * @see net.minecraftforge.common.ForgeMod#BLOCK_REACH
 +    * @see net.minecraftforge.common.ForgeMod#ENTITY_REACH
 +    */
 +   @Deprecated
-    public static final double f_215198_ = Mth.m_144952_(6.0D);
-    private static final int f_215199_ = -1;
-    private static final int f_244471_ = 4096;
+    public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
+    private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
+    private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
 @@ -413,9 +_,11 @@
              }
  
-             entity.m_19890_(d3, d4, d5, f, f1);
-+            this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-             boolean flag3 = serverlevel.m_45756_(entity, entity.m_20191_().m_82406_(0.0625D));
+             entity.absMoveTo(d3, d4, d5, f, f1);
++            this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
+             boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
              if (flag && (flag2 || !flag3)) {
-                entity.m_19890_(d0, d1, d2, f, f1);
-+               this.f_9743_.m_19890_(d3, d4, d5, this.f_9743_.m_146908_(), this.f_9743_.m_146909_()); // Forge - Resync player position on vehicle moving
-                this.m_141995_(new ClientboundMoveVehiclePacket(entity));
+                entity.absMoveTo(d0, d1, d2, f, f1);
++               this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
+                this.send(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
 @@ -960,8 +_,10 @@
           case SWAP_ITEM_WITH_OFFHAND:
-             if (!this.f_9743_.m_5833_()) {
-                ItemStack itemstack = this.f_9743_.m_21120_(InteractionHand.OFF_HAND);
--               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, this.f_9743_.m_21120_(InteractionHand.MAIN_HAND));
--               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, itemstack);
-+               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.f_9743_);
+             if (!this.player.isSpectator()) {
+                ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
+-               this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
+-               this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
++               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.player);
 +               if (event.isCanceled()) return;
-+               this.f_9743_.m_21008_(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
-+               this.f_9743_.m_21008_(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
-                this.f_9743_.m_5810_();
++               this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
++               this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
+                this.player.stopUsingItem();
              }
  
 @@ -1012,7 +_,7 @@
-          Vec3 vec3 = blockhitresult.m_82450_();
-          BlockPos blockpos = blockhitresult.m_82425_();
-          Vec3 vec31 = Vec3.m_82512_(blockpos);
--         if (!(this.f_9743_.m_146892_().m_82557_(vec31) > f_215198_)) {
-+         if (this.f_9743_.canReach(blockpos, 1.5)) { // Vanilla uses eye-to-center distance < 6, which implies a padding of 1.5
-             Vec3 vec32 = vec3.m_82546_(vec31);
+          Vec3 vec3 = blockhitresult.getLocation();
+          BlockPos blockpos = blockhitresult.getBlockPos();
+          Vec3 vec31 = Vec3.atCenterOf(blockpos);
+-         if (!(this.player.getEyePosition().distanceToSqr(vec31) > MAX_INTERACTION_DISTANCE)) {
++         if (this.player.canReach(blockpos, 1.5)) { // Vanilla uses eye-to-center distance < 6, which implies a padding of 1.5
+             Vec3 vec32 = vec3.subtract(vec31);
              double d0 = 1.0000001D;
-             if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
+             if (Math.abs(vec32.x()) < 1.0000001D && Math.abs(vec32.y()) < 1.0000001D && Math.abs(vec32.z()) < 1.0000001D) {
 @@ -1020,7 +_,7 @@
-                this.f_9743_.m_9243_();
-                int i = this.f_9743_.m_9236_().m_151558_();
-                if (blockpos.m_123342_() < i) {
--                  if (this.f_9766_ == null && this.f_9743_.m_20275_((double)blockpos.m_123341_() + 0.5D, (double)blockpos.m_123342_() + 0.5D, (double)blockpos.m_123343_() + 0.5D) < 64.0D && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-+                  if (this.f_9766_ == null && serverlevel.m_7966_(this.f_9743_, blockpos)) {
-                      InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
-                      if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
-                         Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
+                this.player.resetLastActionTime();
+                int i = this.player.level().getMaxBuildHeight();
+                if (blockpos.getY() < i) {
+-                  if (this.awaitingPositionFromClient == null && this.player.distanceToSqr((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && serverlevel.mayInteract(this.player, blockpos)) {
++                  if (this.awaitingPositionFromClient == null && serverlevel.mayInteract(this.player, blockpos)) {
+                      InteractionResult interactionresult = this.player.gameMode.useItemOn(this.player, serverlevel, itemstack, interactionhand, blockhitresult);
+                      if (direction == Direction.UP && !interactionresult.consumesAction() && blockpos.getY() >= i - 1 && wasBlockPlacementAttempt(this.player, itemstack)) {
+                         Component component = Component.translatable("build.tooHigh", i - 1).withStyle(ChatFormatting.RED);
 @@ -1135,9 +_,10 @@
                 }
  
-                CompletableFuture<FilteredText> completablefuture = this.m_243132_(playerchatmessage.m_245728_());
--               Component component = this.f_291389_.m_236742_().m_236961_(this.f_9743_, playerchatmessage.m_245692_());
-+               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.f_9743_, playerchatmessage.m_245692_());
-                this.f_241681_.m_241849_((p_296593_) -> {
+                CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+-               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
++               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
+                this.chatMessageChain.append((p_296593_) -> {
                    return completablefuture.thenAcceptAsync((p_296589_) -> {
 +                     if (component == null) return;
-                      PlayerChatMessage playerchatmessage1 = playerchatmessage.m_241956_(component).m_243072_(p_296589_.f_243010_());
-                      this.m_243086_(playerchatmessage1);
+                      PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
+                      this.broadcastChatMessage(playerchatmessage1);
                    }, p_296593_);
 @@ -1398,7 +_,7 @@
           }
  
-          AABB aabb = entity.m_20191_();
--         if (aabb.m_272282_(this.f_9743_.m_146892_()) < f_215198_) {
-+         if (this.f_9743_.canReach(entity, 3)) { // Vanilla padding is 3.0 (distSq < 6.0 * 6.0)
-             p_9866_.m_179617_(new ServerboundInteractPacket.Handler() {
-                private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
-                   ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_);
+          AABB aabb = entity.getBoundingBox();
+-         if (aabb.distanceToSqr(this.player.getEyePosition()) < MAX_INTERACTION_DISTANCE) {
++         if (this.player.canReach(entity, 3)) { // Vanilla padding is 3.0 (distSq < 6.0 * 6.0)
+             p_9866_.dispatch(new ServerboundInteractPacket.Handler() {
+                private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
+                   ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(p_143679_);
 @@ -1421,6 +_,8 @@
  
-                public void m_142143_(InteractionHand p_143682_, Vec3 p_143683_) {
-                   this.m_143678_(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
-+                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, p_143683_, p_143682_);
+                public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
+                   this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
++                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(player, entity, p_143683_, p_143682_);
 +                     if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
-                      return p_143687_.m_7111_(p_143686_, p_143683_, p_143688_);
+                      return p_143687_.interactAt(p_143686_, p_143683_, p_143688_);
                    });
                 }

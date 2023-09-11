@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/components/AbstractSelectionList.java
 +++ b/net/minecraft/client/gui/components/AbstractSelectionList.java
 @@ -504,6 +_,13 @@
-       return new ScreenRectangle(this.f_93393_, this.f_93390_, this.f_93392_ - this.f_93393_, this.f_93391_ - this.f_93390_);
+       return new ScreenRectangle(this.x0, this.y0, this.x1 - this.x0, this.y1 - this.y0);
     }
  
-+   public int getWidth() { return this.f_93388_; }
-+   public int getHeight() { return this.f_93389_; }
-+   public int getTop() { return this.f_93390_; }
-+   public int getBottom() { return this.f_93391_; }
-+   public int getLeft() { return this.f_93393_; }
-+   public int getRight() { return this.f_93392_; }
++   public int getWidth() { return this.width; }
++   public int getHeight() { return this.height; }
++   public int getTop() { return this.y0; }
++   public int getBottom() { return this.y1; }
++   public int getLeft() { return this.x0; }
++   public int getRight() { return this.x1; }
 +
     @OnlyIn(Dist.CLIENT)
     protected abstract static class Entry<E extends AbstractSelectionList.Entry<E>> implements GuiEventListener {

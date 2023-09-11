@@ -6,6 +6,6 @@
  
 -public class LeavesBlock extends Block implements SimpleWaterloggedBlock {
 +public class LeavesBlock extends Block implements SimpleWaterloggedBlock, net.minecraftforge.common.IForgeShearable {
-    public static final int f_153563_ = 7;
-    public static final IntegerProperty f_54418_ = BlockStateProperties.f_61414_;
-    public static final BooleanProperty f_54419_ = BlockStateProperties.f_61447_;
+    public static final int DECAY_DISTANCE = 7;
+    public static final IntegerProperty DISTANCE = BlockStateProperties.DISTANCE;
+    public static final BooleanProperty PERSISTENT = BlockStateProperties.PERSISTENT;

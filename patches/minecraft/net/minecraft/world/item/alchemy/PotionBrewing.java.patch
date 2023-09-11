@@ -2,81 +2,81 @@
 +++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
 @@ -51,7 +_,7 @@
  
-    public static boolean m_43511_(Potion p_43512_) {
-       for(PotionBrewing.Mix<Potion> mix : f_43494_) {
--         if (mix.f_43534_ == p_43512_) {
-+         if (mix.f_43534_.get() == p_43512_) {
+    public static boolean isBrewablePotion(Potion p_43512_) {
+       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
+-         if (mix.to == p_43512_) {
++         if (mix.to.get() == p_43512_) {
              return true;
           }
        }
 @@ -71,7 +_,7 @@
-       Item item = p_43520_.m_41720_();
+       Item item = p_43520_.getItem();
  
-       for(PotionBrewing.Mix<Item> mix : f_43495_) {
--         if (mix.f_43532_ == item && mix.f_43533_.test(p_43521_)) {
-+         if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43521_)) {
+       for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
+-         if (mix.from == item && mix.ingredient.test(p_43521_)) {
++         if (mix.from.get() == item && mix.ingredient.test(p_43521_)) {
              return true;
           }
        }
 @@ -83,7 +_,7 @@
-       Potion potion = PotionUtils.m_43579_(p_43525_);
+       Potion potion = PotionUtils.getPotion(p_43525_);
  
-       for(PotionBrewing.Mix<Potion> mix : f_43494_) {
--         if (mix.f_43532_ == potion && mix.f_43533_.test(p_43526_)) {
-+         if (mix.f_43532_.get() == potion && mix.f_43533_.test(p_43526_)) {
+       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
+-         if (mix.from == potion && mix.ingredient.test(p_43526_)) {
++         if (mix.from.get() == potion && mix.ingredient.test(p_43526_)) {
              return true;
           }
        }
 @@ -97,14 +_,14 @@
-          Item item = p_43531_.m_41720_();
+          Item item = p_43531_.getItem();
  
-          for(PotionBrewing.Mix<Item> mix : f_43495_) {
--            if (mix.f_43532_ == item && mix.f_43533_.test(p_43530_)) {
--               return PotionUtils.m_43549_(new ItemStack(mix.f_43534_), potion);
-+            if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43530_)) {
-+               return PotionUtils.m_43549_(new ItemStack(mix.f_43534_.get()), potion);
+          for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
+-            if (mix.from == item && mix.ingredient.test(p_43530_)) {
+-               return PotionUtils.setPotion(new ItemStack(mix.to), potion);
++            if (mix.from.get() == item && mix.ingredient.test(p_43530_)) {
++               return PotionUtils.setPotion(new ItemStack(mix.to.get()), potion);
              }
           }
  
-          for(PotionBrewing.Mix<Potion> mix1 : f_43494_) {
--            if (mix1.f_43532_ == potion && mix1.f_43533_.test(p_43530_)) {
--               return PotionUtils.m_43549_(new ItemStack(item), mix1.f_43534_);
-+            if (mix1.f_43532_.get() == potion && mix1.f_43533_.test(p_43530_)) {
-+               return PotionUtils.m_43549_(new ItemStack(item), mix1.f_43534_.get());
+          for(PotionBrewing.Mix<Potion> mix1 : POTION_MIXES) {
+-            if (mix1.from == potion && mix1.ingredient.test(p_43530_)) {
+-               return PotionUtils.setPotion(new ItemStack(item), mix1.to);
++            if (mix1.from.get() == potion && mix1.ingredient.test(p_43530_)) {
++               return PotionUtils.setPotion(new ItemStack(item), mix1.to.get());
              }
           }
        }
 @@ -181,7 +_,7 @@
        } else if (!(p_43505_ instanceof PotionItem)) {
-          throw new IllegalArgumentException("Expected a potion, got: " + BuiltInRegistries.f_257033_.m_7981_(p_43505_));
+          throw new IllegalArgumentException("Expected a potion, got: " + BuiltInRegistries.ITEM.getKey(p_43505_));
        } else {
--         f_43495_.add(new PotionBrewing.Mix<>(p_43503_, Ingredient.m_43929_(p_43504_), p_43505_));
-+         f_43495_.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.ITEMS, p_43503_, Ingredient.m_43929_(p_43504_), p_43505_));
+-         CONTAINER_MIXES.add(new PotionBrewing.Mix<>(p_43503_, Ingredient.of(p_43504_), p_43505_));
++         CONTAINER_MIXES.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.ITEMS, p_43503_, Ingredient.of(p_43504_), p_43505_));
        }
     }
  
 @@ -194,18 +_,18 @@
     }
  
-    private static void m_43513_(Potion p_43514_, Item p_43515_, Potion p_43516_) {
--      f_43494_.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
-+      f_43494_.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.POTIONS, p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
+    private static void addMix(Potion p_43514_, Item p_43515_, Potion p_43516_) {
+-      POTION_MIXES.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.of(p_43515_), p_43516_));
++      POTION_MIXES.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.POTIONS, p_43514_, Ingredient.of(p_43515_), p_43516_));
     }
  
     public static class Mix<T> {
--      final T f_43532_;
-+      public final net.minecraft.core.Holder.Reference<T> f_43532_;
-       public final Ingredient f_43533_;
--      final T f_43534_;
-+      public final net.minecraft.core.Holder.Reference<T> f_43534_;
+-      final T from;
++      public final net.minecraft.core.Holder.Reference<T> from;
+       public final Ingredient ingredient;
+-      final T to;
++      public final net.minecraft.core.Holder.Reference<T> to;
  
 -      public Mix(T p_43536_, Ingredient p_43537_, T p_43538_) {
--         this.f_43532_ = p_43536_;
+-         this.from = p_43536_;
 +      public Mix(net.minecraftforge.registries.IForgeRegistry<T> registry, T p_43536_, Ingredient p_43537_, T p_43538_) {
-+         this.f_43532_ = registry.getDelegateOrThrow(p_43536_);
-          this.f_43533_ = p_43537_;
--         this.f_43534_ = p_43538_;
-+         this.f_43534_ = registry.getDelegateOrThrow(p_43538_);
++         this.from = registry.getDelegateOrThrow(p_43536_);
+          this.ingredient = p_43537_;
+-         this.to = p_43538_;
++         this.to = registry.getDelegateOrThrow(p_43538_);
        }
     }
  }

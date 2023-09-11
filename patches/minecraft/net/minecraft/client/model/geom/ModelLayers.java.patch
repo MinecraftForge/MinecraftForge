@@ -3,16 +3,16 @@
 @@ -220,11 +_,13 @@
     }
  
-    public static ModelLayerLocation m_171291_(WoodType p_171292_) {
--      return m_171300_("sign/" + p_171292_.f_61839_(), "main");
-+      ResourceLocation location = new ResourceLocation(p_171292_.f_61839_());
-+      return new ModelLayerLocation(new ResourceLocation(location.m_135827_(), "sign/" + location.m_135815_()), "main");
+    public static ModelLayerLocation createSignModelName(WoodType p_171292_) {
+-      return createLocation("sign/" + p_171292_.name(), "main");
++      ResourceLocation location = new ResourceLocation(p_171292_.name());
++      return new ModelLayerLocation(new ResourceLocation(location.getNamespace(), "sign/" + location.getPath()), "main");
     }
  
-    public static ModelLayerLocation m_247439_(WoodType p_252225_) {
--      return m_171300_("hanging_sign/" + p_252225_.f_61839_(), "main");
-+      ResourceLocation location = new ResourceLocation(p_252225_.f_61839_());
-+      return new ModelLayerLocation(new ResourceLocation(location.m_135827_(), "hanging_sign/" + location.m_135815_()), "main");
+    public static ModelLayerLocation createHangingSignModelName(WoodType p_252225_) {
+-      return createLocation("hanging_sign/" + p_252225_.name(), "main");
++      ResourceLocation location = new ResourceLocation(p_252225_.name());
++      return new ModelLayerLocation(new ResourceLocation(location.getNamespace(), "hanging_sign/" + location.getPath()), "main");
     }
  
-    public static Stream<ModelLayerLocation> m_171288_() {
+    public static Stream<ModelLayerLocation> getKnownLocations() {

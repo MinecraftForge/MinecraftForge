@@ -3,9 +3,9 @@
 @@ -73,7 +_,7 @@
     }
  
-    public float m_5880_(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {
--      return p_48982_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
-+      return p_48982_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
+    public float getDestroyProgress(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {
+-      return p_48982_.getMainHandItem().getItem() instanceof SwordItem ? 1.0F : super.getDestroyProgress(p_48981_, p_48982_, p_48983_, p_48984_);
++      return p_48982_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.getDestroyProgress(p_48981_, p_48982_, p_48983_, p_48984_);
     }
  
-    protected void m_48972_(Level p_48973_, BlockPos p_48974_) {
+    protected void growBamboo(Level p_48973_, BlockPos p_48974_) {

@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil.java
 +++ b/net/minecraft/client/gui/screens/inventory/tooltip/TooltipRenderUtil.java
 @@ -17,16 +_,22 @@
-    private static final int f_262743_ = 1344798847;
+    private static final int BORDER_COLOR_BOTTOM = 1344798847;
  
-    public static void m_280205_(GuiGraphics p_282666_, int p_281901_, int p_281846_, int p_281559_, int p_283336_, int p_283422_) {
-+      renderTooltipBackground(p_282666_, p_281901_, p_281846_, p_281559_, p_283336_, p_283422_, f_262744_, f_262744_, f_262725_, f_262743_);
+    public static void renderTooltipBackground(GuiGraphics p_282666_, int p_281901_, int p_281846_, int p_281559_, int p_283336_, int p_283422_) {
++      renderTooltipBackground(p_282666_, p_281901_, p_281846_, p_281559_, p_283336_, p_283422_, BACKGROUND_COLOR, BACKGROUND_COLOR, BORDER_COLOR_TOP, BORDER_COLOR_BOTTOM);
 +   }
 +
 +   // Forge: Allow specifying colors for the inner border gradient and a gradient instead of a single color for the background and outer border
@@ -14,36 +14,36 @@
        int j = p_281846_ - 3;
        int k = p_281559_ + 3 + 3;
        int l = p_283336_ + 3 + 3;
--      m_280217_(p_282666_, i, j - 1, k, p_283422_, -267386864);
--      m_280217_(p_282666_, i, j + l, k, p_283422_, -267386864);
--      m_280538_(p_282666_, i, j, k, l, p_283422_, -267386864);
--      m_280387_(p_282666_, i - 1, j, l, p_283422_, -267386864);
--      m_280387_(p_282666_, i + k, j, l, p_283422_, -267386864);
--      m_280115_(p_282666_, i, j + 1, k, l, p_283422_, 1347420415, 1344798847);
-+      m_280217_(p_282666_, i, j - 1, k, p_283422_, backgroundTop);
-+      m_280217_(p_282666_, i, j + l, k, p_283422_, backgroundBottom);
+-      renderHorizontalLine(p_282666_, i, j - 1, k, p_283422_, -267386864);
+-      renderHorizontalLine(p_282666_, i, j + l, k, p_283422_, -267386864);
+-      renderRectangle(p_282666_, i, j, k, l, p_283422_, -267386864);
+-      renderVerticalLine(p_282666_, i - 1, j, l, p_283422_, -267386864);
+-      renderVerticalLine(p_282666_, i + k, j, l, p_283422_, -267386864);
+-      renderFrameGradient(p_282666_, i, j + 1, k, l, p_283422_, 1347420415, 1344798847);
++      renderHorizontalLine(p_282666_, i, j - 1, k, p_283422_, backgroundTop);
++      renderHorizontalLine(p_282666_, i, j + l, k, p_283422_, backgroundBottom);
 +      renderRectangle(p_282666_, i, j, k, l, p_283422_, backgroundTop, backgroundBottom);
-+      m_280556_(p_282666_, i - 1, j, l, p_283422_, backgroundTop, backgroundBottom);
-+      m_280556_(p_282666_, i + k, j, l, p_283422_, backgroundTop, backgroundBottom);
-+      m_280115_(p_282666_, i, j + 1, k, l, p_283422_, borderTop, borderBottom);
++      renderVerticalLineGradient(p_282666_, i - 1, j, l, p_283422_, backgroundTop, backgroundBottom);
++      renderVerticalLineGradient(p_282666_, i + k, j, l, p_283422_, backgroundTop, backgroundBottom);
++      renderFrameGradient(p_282666_, i, j + 1, k, l, p_283422_, borderTop, borderBottom);
     }
  
-    private static void m_280115_(GuiGraphics p_282000_, int p_282055_, int p_281580_, int p_283284_, int p_282599_, int p_283432_, int p_282907_, int p_283153_) {
+    private static void renderFrameGradient(GuiGraphics p_282000_, int p_282055_, int p_281580_, int p_283284_, int p_282599_, int p_283432_, int p_282907_, int p_283153_) {
 @@ -48,7 +_,16 @@
-       p_282981_.m_280046_(p_282028_, p_282141_, p_282028_ + p_281771_, p_282141_ + 1, p_282734_, p_281979_);
+       p_282981_.fill(p_282028_, p_282141_, p_282028_ + p_281771_, p_282141_ + 1, p_282734_, p_281979_);
     }
  
 +   /**
 +   * @deprecated Forge: Use gradient overload instead
 +   */
 +   @Deprecated
-    private static void m_280538_(GuiGraphics p_281392_, int p_282294_, int p_283353_, int p_282640_, int p_281964_, int p_283211_, int p_282349_) {
--      p_281392_.m_280046_(p_282294_, p_283353_, p_282294_ + p_282640_, p_283353_ + p_281964_, p_283211_, p_282349_);
+    private static void renderRectangle(GuiGraphics p_281392_, int p_282294_, int p_283353_, int p_282640_, int p_281964_, int p_283211_, int p_282349_) {
+-      p_281392_.fill(p_282294_, p_283353_, p_282294_ + p_282640_, p_283353_ + p_281964_, p_283211_, p_282349_);
 +      renderRectangle(p_281392_, p_282294_, p_283353_, p_282640_, p_281964_, p_283211_, p_282349_, p_282349_);
 +   }
 +
 +   // Forge: Allow specifying a gradient instead of a single color for the background
 +   private static void renderRectangle(GuiGraphics p_281392_, int p_282294_, int p_283353_, int p_282640_, int p_281964_, int p_283211_, int p_282349_, int colorTo) {
-+      p_281392_.m_280120_(p_282294_, p_283353_, p_282294_ + p_282640_, p_283353_ + p_281964_, p_283211_, p_282349_, colorTo);
++      p_281392_.fillGradient(p_282294_, p_283353_, p_282294_ + p_282640_, p_283353_ + p_281964_, p_283211_, p_282349_, colorTo);
     }
  }

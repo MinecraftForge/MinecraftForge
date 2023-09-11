@@ -4,8 +4,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class BlockEntityRenderers {
--   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> f_173587_ = Maps.newHashMap();
-+   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> f_173587_ = new java.util.concurrent.ConcurrentHashMap<>();
+-   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> PROVIDERS = Maps.newHashMap();
++   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> PROVIDERS = new java.util.concurrent.ConcurrentHashMap<>();
  
-    public static <T extends BlockEntity> void m_173590_(BlockEntityType<? extends T> p_173591_, BlockEntityRendererProvider<T> p_173592_) {
-       f_173587_.put(p_173591_, p_173592_);
+    public static <T extends BlockEntity> void register(BlockEntityType<? extends T> p_173591_, BlockEntityRendererProvider<T> p_173592_) {
+       PROVIDERS.put(p_173591_, p_173592_);

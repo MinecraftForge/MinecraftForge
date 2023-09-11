@@ -1,23 +1,23 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
 @@ -196,7 +_,7 @@
-          JfrCommand.m_183645_(this.f_82090_);
+          JfrCommand.register(this.dispatcher);
        }
  
--      if (SharedConstants.f_136183_) {
+-      if (SharedConstants.IS_RUNNING_IN_IDE) {
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
-          TestCommand.m_127946_(this.f_82090_);
-          SpawnArmorTrimsCommand.m_266283_(this.f_82090_);
-          if (p_230943_.f_82145_) {
+          TestCommand.register(this.dispatcher);
+          SpawnArmorTrimsCommand.register(this.dispatcher);
+          if (p_230943_.includeDedicated) {
 @@ -224,9 +_,11 @@
-       if (p_230943_.f_82144_) {
-          PublishCommand.m_138184_(this.f_82090_);
+       if (p_230943_.includeIntegrated) {
+          PublishCommand.register(this.dispatcher);
        }
-+      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.f_82090_, p_230943_, p_230944_);
++      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
  
-       this.f_82090_.setConsumer((p_230954_, p_230955_, p_230956_) -> {
-          p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
-+         p_230954_.getSource().m_81342_(p_230954_, p_230955_, p_230956_);
+       this.dispatcher.setConsumer((p_230954_, p_230955_, p_230956_) -> {
+          p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
++         p_230954_.getSource().onCommandComplete(p_230954_, p_230955_, p_230956_);
        });
     }
  
@@ -25,7 +25,7 @@
  
        try {
           try {
--            return this.f_82090_.execute(p_242844_);
+-            return this.dispatcher.execute(p_242844_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(p_242844_);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() instanceof Exception exception) {
@@ -35,17 +35,17 @@
 +               }
 +               return 1;
 +            }
-+            return this.f_82090_.execute(event.getParseResults());
++            return this.dispatcher.execute(event.getParseResults());
           } catch (CommandRuntimeException commandruntimeexception) {
-             commandsourcestack.m_81352_(commandruntimeexception.m_79226_());
+             commandsourcestack.sendFailure(commandruntimeexception.getComponent());
              return 0;
 @@ -305,7 +_,8 @@
        Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
        RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
-       map.put(this.f_82090_.getRoot(), rootcommandnode);
--      this.m_82112_(this.f_82090_.getRoot(), rootcommandnode, p_82096_.m_20203_(), map);
+       map.put(this.dispatcher.getRoot(), rootcommandnode);
+-      this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
 +      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
-+      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.f_82090_.getRoot(), rootcommandnode, map, p_82096_.m_20203_(), ctx -> 0, suggest -> SuggestionProviders.m_121664_((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
-       p_82096_.f_8906_.m_141995_(new ClientboundCommandsPacket(rootcommandnode));
++      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+       p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode));
     }
  

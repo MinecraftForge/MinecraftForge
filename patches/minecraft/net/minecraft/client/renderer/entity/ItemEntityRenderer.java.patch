@@ -1,18 +1,18 @@
 --- a/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
 @@ -61,18 +_,15 @@
-       boolean flag = bakedmodel.m_7539_();
-       int j = this.m_115042_(itemstack);
+       boolean flag = bakedmodel.isGui3d();
+       int j = this.getRenderAmount(itemstack);
        float f = 0.25F;
--      float f1 = Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F;
-+      float f1 = shouldBob() ? Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F : 0;
-       float f2 = bakedmodel.m_7442_().m_269404_(ItemDisplayContext.GROUND).f_111757_.y();
-       p_115039_.m_252880_(0.0F, f1 + 0.25F * f2, 0.0F);
-       float f3 = p_115036_.m_32008_(p_115038_);
-       p_115039_.m_252781_(Axis.f_252436_.m_252961_(f3));
--      float f4 = bakedmodel.m_7442_().f_111793_.f_111757_.x();
--      float f5 = bakedmodel.m_7442_().f_111793_.f_111757_.y();
--      float f6 = bakedmodel.m_7442_().f_111793_.f_111757_.z();
+-      float f1 = Mth.sin(((float)p_115036_.getAge() + p_115038_) / 10.0F + p_115036_.bobOffs) * 0.1F + 0.1F;
++      float f1 = shouldBob() ? Mth.sin(((float)p_115036_.getAge() + p_115038_) / 10.0F + p_115036_.bobOffs) * 0.1F + 0.1F : 0;
+       float f2 = bakedmodel.getTransforms().getTransform(ItemDisplayContext.GROUND).scale.y();
+       p_115039_.translate(0.0F, f1 + 0.25F * f2, 0.0F);
+       float f3 = p_115036_.getSpin(p_115038_);
+       p_115039_.mulPose(Axis.YP.rotation(f3));
+-      float f4 = bakedmodel.getTransforms().ground.scale.x();
+-      float f5 = bakedmodel.getTransforms().ground.scale.y();
+-      float f6 = bakedmodel.getTransforms().ground.scale.z();
        if (!flag) {
 -         float f7 = -0.0F * (float)(j - 1) * 0.5F * f4;
 -         float f8 = -0.0F * (float)(j - 1) * 0.5F * f5;
@@ -20,34 +20,34 @@
 +         float f7 = -0.0F * (float)(j - 1) * 0.5F;
 +         float f8 = -0.0F * (float)(j - 1) * 0.5F;
 +         float f9 = -0.09375F * (float)(j - 1) * 0.5F;
-          p_115039_.m_252880_(f7, f8, f9);
+          p_115039_.translate(f7, f8, f9);
        }
  
 @@ -83,18 +_,18 @@
-                float f11 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
-                float f13 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
-                float f10 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F;
--               p_115039_.m_252880_(f11, f13, f10);
-+               p_115039_.m_252880_(shouldSpreadItems() ? f11 : 0, shouldSpreadItems() ? f13 : 0, shouldSpreadItems() ? f10 : 0);
+                float f11 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f13 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f10 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
+-               p_115039_.translate(f11, f13, f10);
++               p_115039_.translate(shouldSpreadItems() ? f11 : 0, shouldSpreadItems() ? f13 : 0, shouldSpreadItems() ? f10 : 0);
              } else {
-                float f12 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F * 0.5F;
-                float f14 = (this.f_115020_.m_188501_() * 2.0F - 1.0F) * 0.15F * 0.5F;
--               p_115039_.m_252880_(f12, f14, 0.0F);
-+               p_115039_.m_85837_(shouldSpreadItems() ? f12 : 0, shouldSpreadItems() ? f14 : 0, 0.0D);
+                float f12 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+                float f14 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+-               p_115039_.translate(f12, f14, 0.0F);
++               p_115039_.translate(shouldSpreadItems() ? f12 : 0, shouldSpreadItems() ? f14 : 0, 0.0D);
              }
           }
  
-          this.f_115019_.m_115143_(itemstack, ItemDisplayContext.GROUND, false, p_115039_, p_115040_, p_115041_, OverlayTexture.f_118083_, bakedmodel);
-          p_115039_.m_85849_();
+          this.itemRenderer.render(itemstack, ItemDisplayContext.GROUND, false, p_115039_, p_115040_, p_115041_, OverlayTexture.NO_OVERLAY, bakedmodel);
+          p_115039_.popPose();
           if (!flag) {
--            p_115039_.m_252880_(0.0F * f4, 0.0F * f5, 0.09375F * f6);
-+            p_115039_.m_85837_(0.0, 0.0, 0.09375F);
+-            p_115039_.translate(0.0F * f4, 0.0F * f5, 0.09375F * f6);
++            p_115039_.translate(0.0, 0.0, 0.09375F);
           }
        }
  
 @@ -105,4 +_,21 @@
-    public ResourceLocation m_5478_(ItemEntity p_115034_) {
-       return TextureAtlas.f_118259_;
+    public ResourceLocation getTextureLocation(ItemEntity p_115034_) {
+       return TextureAtlas.LOCATION_BLOCKS;
     }
 +
 +   /*==================================== FORGE START ===========================================*/

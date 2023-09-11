@@ -3,25 +3,25 @@
 @@ -44,22 +_,23 @@
     }
  
-    public void m_213898_(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
+    public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
 +      if (!p_222539_.isAreaLoaded(p_222540_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_222539_.m_45524_(p_222540_, 0) >= 9) {
-          float f = CropBlock.m_52272_(this, p_222539_, p_222540_);
--         if (p_222541_.m_188503_((int)(25.0F / f) + 1) == 0) {
-+         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.m_188503_((int)(25.0F / f) + 1) == 0)) {
-             int i = p_222538_.m_61143_(f_57013_);
+       if (p_222539_.getRawBrightness(p_222540_, 0) >= 9) {
+          float f = CropBlock.getGrowthSpeed(this, p_222539_, p_222540_);
+-         if (p_222541_.nextInt((int)(25.0F / f) + 1) == 0) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.nextInt((int)(25.0F / f) + 1) == 0)) {
+             int i = p_222538_.getValue(AGE);
              if (i < 7) {
--               p_222538_ = p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1));
--               p_222539_.m_7731_(p_222540_, p_222538_, 2);
-+               p_222539_.m_7731_(p_222540_, p_222538_.m_61124_(f_57013_, Integer.valueOf(i + 1)), 2);
+-               p_222538_ = p_222538_.setValue(AGE, Integer.valueOf(i + 1));
+-               p_222539_.setBlock(p_222540_, p_222538_, 2);
++               p_222539_.setBlock(p_222540_, p_222538_.setValue(AGE, Integer.valueOf(i + 1)), 2);
              } else {
-                Direction direction = Direction.Plane.HORIZONTAL.m_235690_(p_222541_);
-                BlockPos blockpos = p_222540_.m_121945_(direction);
-                BlockState blockstate = p_222539_.m_8055_(blockpos.m_7495_());
--               if (p_222539_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
-+               if (p_222539_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.m_7495_(), Direction.UP, this.f_57015_) || blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_204336_(BlockTags.f_144274_))) {
-                   p_222539_.m_46597_(blockpos, this.f_57015_.m_49966_());
-                   p_222539_.m_46597_(p_222540_, this.f_57015_.m_7810_().m_49966_().m_61124_(HorizontalDirectionalBlock.f_54117_, direction));
+                Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
+                BlockPos blockpos = p_222540_.relative(direction);
+                BlockState blockstate = p_222539_.getBlockState(blockpos.below());
+-               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
++               if (p_222539_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit) || blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
+                   p_222539_.setBlockAndUpdate(blockpos, this.fruit.defaultBlockState());
+                   p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
@@ -30,8 +30,8 @@
        }
 @@ -93,5 +_,11 @@
  
-    public StemGrownBlock m_57056_() {
-       return this.f_57015_;
+    public StemGrownBlock getFruit() {
+       return this.fruit;
 +   }
 +
 +   //FORGE START

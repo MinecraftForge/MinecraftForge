@@ -6,28 +6,28 @@
  
 +   public net.minecraftforge.common.util.BrainBuilder<E> createBuilder(){
 +      var builder = new net.minecraftforge.common.util.BrainBuilder<>(this);
-+      builder.getMemoryTypes().addAll(this.f_21843_.keySet());
-+      builder.getSensorTypes().addAll(this.f_21844_.keySet());
-+      builder.addAvailableBehaviorsByPriorityFrom(this.f_21845_);
-+      builder.setSchedule(this.m_21932_());
-+      builder.addActivityRequirementsFrom(this.f_21847_);
-+      builder.addActivityMemoriesToEraseWhenStoppedFrom(this.f_21848_);
-+      builder.getCoreActivities().addAll(this.f_21849_);
-+      builder.setDefaultActivity(this.f_21851_);
-+      builder.setActiveActivites(this.f_21850_);
++      builder.getMemoryTypes().addAll(this.memories.keySet());
++      builder.getSensorTypes().addAll(this.sensors.keySet());
++      builder.addAvailableBehaviorsByPriorityFrom(this.availableBehaviorsByPriority);
++      builder.setSchedule(this.getSchedule());
++      builder.addActivityRequirementsFrom(this.activityRequirements);
++      builder.addActivityMemoriesToEraseWhenStoppedFrom(this.activityMemoriesToEraseWhenStopped);
++      builder.getCoreActivities().addAll(this.coreActivities);
++      builder.setDefaultActivity(this.defaultActivity);
++      builder.setActiveActivites(this.activeActivities);
 +      return builder;
 +   }
 +
 +   public void copyFromBuilder(net.minecraftforge.common.util.BrainBuilder<E> builder){
-+      builder.addAvailableBehaviorsByPriorityTo(this.f_21845_);
-+      this.m_21912_(builder.getSchedule());
-+      builder.addActivityRequirementsTo(this.f_21847_);
-+      builder.addActivityMemoriesToEraseWhenStoppedTo(this.f_21848_);
-+      this.m_21930_(builder.getCoreActivities());
-+      this.m_21944_(builder.getDefaultActivity());
-+      this.f_21850_.addAll(builder.getActiveActivites());
++      builder.addAvailableBehaviorsByPriorityTo(this.availableBehaviorsByPriority);
++      this.setSchedule(builder.getSchedule());
++      builder.addActivityRequirementsTo(this.activityRequirements);
++      builder.addActivityMemoriesToEraseWhenStoppedTo(this.activityMemoriesToEraseWhenStopped);
++      this.setCoreActivities(builder.getCoreActivities());
++      this.setDefaultActivity(builder.getDefaultActivity());
++      this.activeActivities.addAll(builder.getActiveActivites());
 +   }
 +
     static final class MemoryValue<U> {
-       private final MemoryModuleType<U> f_22030_;
-       private final Optional<? extends ExpirableValue<U>> f_22031_;
+       private final MemoryModuleType<U> type;
+       private final Optional<? extends ExpirableValue<U>> value;

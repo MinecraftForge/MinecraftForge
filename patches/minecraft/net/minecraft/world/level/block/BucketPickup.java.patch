@@ -6,8 +6,8 @@
  
 -public interface BucketPickup {
 +public interface BucketPickup extends net.minecraftforge.common.extensions.IForgeBucketPickup {
-    ItemStack m_142598_(@Nullable Player p_298551_, LevelAccessor p_152719_, BlockPos p_152720_, BlockState p_152721_);
+    ItemStack pickupBlock(@Nullable Player p_298551_, LevelAccessor p_152719_, BlockPos p_152720_, BlockState p_152721_);
  
 +   @Deprecated//Forge: Use state sensitive variant instead
-    Optional<SoundEvent> m_142298_();
+    Optional<SoundEvent> getPickupSound();
  }

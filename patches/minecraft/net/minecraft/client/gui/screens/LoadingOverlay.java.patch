@@ -3,16 +3,16 @@
 @@ -132,6 +_,7 @@
        }
  
-       if (this.f_96168_ == -1L && this.f_96164_.m_7746_() && (!this.f_96166_ || f1 >= 2.0F)) {
-+         this.f_96168_ = Util.m_137550_(); // Moved up to guard against inf loops caused by callback
+       if (this.fadeOutStart == -1L && this.reload.isDone() && (!this.fadeIn || f1 >= 2.0F)) {
++         this.fadeOutStart = Util.getMillis(); // Moved up to guard against inf loops caused by callback
           try {
-             this.f_96164_.m_7748_();
-             this.f_96165_.accept(Optional.empty());
+             this.reload.checkExceptions();
+             this.onFinish.accept(Optional.empty());
 @@ -139,7 +_,6 @@
-             this.f_96165_.accept(Optional.of(throwable));
+             this.onFinish.accept(Optional.of(throwable));
           }
  
--         this.f_96168_ = Util.m_137550_();
-          if (this.f_96163_.f_91080_ != null) {
-             this.f_96163_.f_91080_.m_6575_(this.f_96163_, p_281839_.m_280182_(), p_281839_.m_280206_());
+-         this.fadeOutStart = Util.getMillis();
+          if (this.minecraft.screen != null) {
+             this.minecraft.screen.init(this.minecraft, p_281839_.guiWidth(), p_281839_.guiHeight());
           }

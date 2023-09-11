@@ -3,15 +3,15 @@
 @@ -34,7 +_,8 @@
        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
        BiConsumer<String, String> biconsumer = builder::put;
-       m_280428_(biconsumer, "/assets/minecraft/lang/en_us.json");
+       parseTranslations(biconsumer, "/assets/minecraft/lang/en_us.json");
 -      final Map<String, String> map = builder.build();
 +      final Map<String, String> map = new java.util.HashMap<>(builder.build());
 +      net.minecraftforge.server.LanguageHook.captureLanguageMap(map);
        return new Language() {
-          public String m_118919_(String p_128127_, String p_265421_) {
+          public String getOrDefault(String p_128127_, String p_265421_) {
              return map.getOrDefault(p_128127_, p_265421_);
 @@ -55,6 +_,11 @@
-                }, Style.f_131099_).isPresent();
+                }, Style.EMPTY).isPresent();
              };
           }
 +
@@ -23,12 +23,12 @@
     }
  
 @@ -84,6 +_,9 @@
-    public static void m_128114_(Language p_128115_) {
-       f_128104_ = p_128115_;
+    public static void inject(Language p_128115_) {
+       instance = p_128115_;
     }
 +
 +   // FORGE START
 +   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
  
-    public String m_6834_(String p_128111_) {
-       return this.m_118919_(p_128111_, p_128111_);
+    public String getOrDefault(String p_128111_) {
+       return this.getOrDefault(p_128111_, p_128111_);

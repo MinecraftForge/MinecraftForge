@@ -6,37 +6,37 @@
  @OnlyIn(Dist.CLIENT)
 -public class MultiPartBakedModel implements BakedModel {
 +public class MultiPartBakedModel implements net.minecraftforge.client.model.IDynamicBakedModel {
-    private final List<Pair<Predicate<BlockState>, BakedModel>> f_119459_;
-    protected final boolean f_119453_;
-    protected final boolean f_119454_;
+    private final List<Pair<Predicate<BlockState>, BakedModel>> selectors;
+    protected final boolean hasAmbientOcclusion;
+    protected final boolean isGui3d;
 @@ -30,10 +_,12 @@
-    protected final ItemTransforms f_119457_;
-    protected final ItemOverrides f_119458_;
-    private final Map<BlockState, BitSet> f_119460_ = new Object2ObjectOpenCustomHashMap<>(Util.m_137583_());
+    protected final ItemTransforms transforms;
+    protected final ItemOverrides overrides;
+    private final Map<BlockState, BitSet> selectorCache = new Object2ObjectOpenCustomHashMap<>(Util.identityStrategy());
 +   private final BakedModel defaultModel;
  
     public MultiPartBakedModel(List<Pair<Predicate<BlockState>, BakedModel>> p_119462_) {
-       this.f_119459_ = p_119462_;
+       this.selectors = p_119462_;
        BakedModel bakedmodel = p_119462_.iterator().next().getRight();
 +      this.defaultModel = bakedmodel;
-       this.f_119453_ = bakedmodel.m_7541_();
-       this.f_119454_ = bakedmodel.m_7539_();
-       this.f_119455_ = bakedmodel.m_7547_();
+       this.hasAmbientOcclusion = bakedmodel.useAmbientOcclusion();
+       this.isGui3d = bakedmodel.isGui3d();
+       this.usesBlockLight = bakedmodel.usesBlockLight();
 @@ -42,10 +_,7 @@
-       this.f_119458_ = bakedmodel.m_7343_();
+       this.overrides = bakedmodel.getOverrides();
     }
  
--   public List<BakedQuad> m_213637_(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_) {
+-   public List<BakedQuad> getQuads(@Nullable BlockState p_235050_, @Nullable Direction p_235051_, RandomSource p_235052_) {
 -      if (p_235050_ == null) {
 -         return Collections.emptyList();
 -      } else {
 +   public BitSet getSelectors(@Nullable BlockState p_235050_) {
-          BitSet bitset = this.f_119460_.get(p_235050_);
+          BitSet bitset = this.selectorCache.get(p_235050_);
           if (bitset == null) {
              bitset = new BitSet();
 @@ -59,17 +_,27 @@
  
-             this.f_119460_.put(p_235050_, bitset);
+             this.selectorCache.put(p_235050_, bitset);
           }
 +         return bitset;
 +   }
@@ -49,14 +49,14 @@
 +      } else {
 +         BitSet bitset = getSelectors(p_235050_);
 +         List<List<BakedQuad>> list = Lists.newArrayList();
-          long k = p_235052_.m_188505_();
+          long k = p_235052_.nextLong();
  
           for(int j = 0; j < bitset.length(); ++j) {
              if (bitset.get(j)) {
--               list.addAll(this.f_119459_.get(j).getRight().m_213637_(p_235050_, p_235051_, RandomSource.m_216335_(k)));
-+               var model = this.f_119459_.get(j).getRight();
+-               list.addAll(this.selectors.get(j).getRight().getQuads(p_235050_, p_235051_, RandomSource.create(k)));
++               var model = this.selectors.get(j).getRight();
 +               if (renderType == null || model.getRenderTypes(p_235050_, p_235052_, modelData).contains(renderType)) // FORGE: Only put quad data if the model is using the render type passed
-+               list.add(model.getQuads(p_235050_, p_235051_, RandomSource.m_216335_(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(modelData, model), renderType));
++               list.add(model.getQuads(p_235050_, p_235051_, RandomSource.create(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(modelData, model), renderType));
              }
           }
  
@@ -66,7 +66,7 @@
     }
  
 @@ -77,6 +_,14 @@
-       return this.f_119453_;
+       return this.hasAmbientOcclusion;
     }
  
 +   public boolean useAmbientOcclusion(BlockState state) {
@@ -77,16 +77,16 @@
 +      return this.defaultModel.useAmbientOcclusion(state, renderType);
 +   }
 +
-    public boolean m_7539_() {
-       return this.f_119454_;
+    public boolean isGui3d() {
+       return this.isGui3d;
     }
 @@ -89,12 +_,32 @@
        return false;
     }
  
 +   @Deprecated
-    public TextureAtlasSprite m_6160_() {
-       return this.f_119456_;
+    public TextureAtlasSprite getParticleIcon() {
+       return this.particleIcon;
     }
  
 +   public TextureAtlasSprite getParticleIcon(net.minecraftforge.client.model.data.ModelData modelData) {
@@ -94,8 +94,8 @@
 +   }
 +
 +   @Deprecated
-    public ItemTransforms m_7442_() {
-       return this.f_119457_;
+    public ItemTransforms getTransforms() {
+       return this.transforms;
 +   }
 +
 +   public BakedModel applyTransform(net.minecraft.world.item.ItemDisplayContext transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
@@ -108,8 +108,8 @@
 +      var selectors = getSelectors(state);
 +      for (int i = 0; i < selectors.length(); i++)
 +         if (selectors.get(i))
-+            renderTypeSets.add(this.f_119459_.get(i).getRight().getRenderTypes(state, rand, data));
++            renderTypeSets.add(this.selectors.get(i).getRight().getRenderTypes(state, rand, data));
 +      return net.minecraftforge.client.ChunkRenderTypeSet.union(renderTypeSets);
     }
  
-    public ItemOverrides m_7343_() {
+    public ItemOverrides getOverrides() {

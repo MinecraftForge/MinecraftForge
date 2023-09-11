@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #PoiTypeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public PoiTypeTagsProvider(PackOutput p_256012_, CompletableFuture<HolderLookup.Provider> p_256617_) {
-       super(p_256012_, Registries.f_256805_, p_256617_);
+       super(p_256012_, Registries.POINT_OF_INTEREST_TYPE, p_256617_);
 +   }
 +   public PoiTypeTagsProvider(PackOutput p_256012_, CompletableFuture<HolderLookup.Provider> p_256617_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256012_, Registries.f_256805_, p_256617_, modId, existingFileHelper);
++      super(p_256012_, Registries.POINT_OF_INTEREST_TYPE, p_256617_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_256206_) {
+    protected void addTags(HolderLookup.Provider p_256206_) {

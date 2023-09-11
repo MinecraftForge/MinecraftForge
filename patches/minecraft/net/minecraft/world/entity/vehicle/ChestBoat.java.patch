@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
 @@ -204,6 +_,28 @@
-       this.f_219864_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+       this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
     }
  
 +   // Forge Start
@@ -9,7 +9,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++      if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
@@ -26,6 +26,6 @@
 +      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +   }
 +
-    public void m_5785_(Player p_270286_) {
-       this.m_9236_().m_214171_(GameEvent.f_157802_, this.m_20182_(), GameEvent.Context.m_223717_(p_270286_));
+    public void stopOpen(Player p_270286_) {
+       this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
     }

@@ -2,48 +2,48 @@
 +++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
 @@ -36,16 +_,19 @@
  public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements TickablePacketListener, ServerConfigurationPacketListener {
-    private static final Logger f_291519_ = LogUtils.getLogger();
-    private static final Component f_291657_ = Component.m_237115_("multiplayer.disconnect.invalid_player_data");
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Component DISCONNECT_REASON_INVALID_DATA = Component.translatable("multiplayer.disconnect.invalid_player_data");
 +   private static final ConfigurationTask.Type VANILLA_START = new ConfigurationTask.Type("vanilla_start");
-    private final GameProfile f_291596_;
-    private final Queue<ConfigurationTask> f_290691_ = new ConcurrentLinkedQueue<>();
+    private final GameProfile gameProfile;
+    private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
     @Nullable
-    private ConfigurationTask f_291862_;
-    private ClientInformation f_290851_;
+    private ConfigurationTask currentTask;
+    private ClientInformation clientInformation;
 +   private final net.minecraftforge.network.config.ConfigurationTaskContext taskContext;
  
     public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
        super(p_301415_, p_298106_, p_301309_);
-       this.f_291596_ = p_301309_.f_290628_();
-       this.f_290851_ = p_301309_.f_290565_();
-+      this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::m_141995_, this::m_293514_);
+       this.gameProfile = p_301309_.gameProfile();
+       this.clientInformation = p_301309_.clientInformation();
++      this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::send, this::finishCurrentTask);
     }
  
-    protected GameProfile m_293343_() {
+    protected GameProfile playerProfile() {
 @@ -61,12 +_,17 @@
-       return this.f_291338_.m_129536_();
+       return this.connection.isConnected();
     }
  
--   public void m_294295_() {
+-   public void startConfiguration() {
 +   private void vanillaStart() {
-       this.m_141995_(new ClientboundCustomPayloadPacket(new BrandPayload(this.f_291389_.getServerModName())));
-       LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.f_291389_.m_247573_();
-       this.m_141995_(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.f_244280_.m_245829_(this.f_291389_.m_129910_().m_247623_())));
-       this.m_141995_(new ClientboundRegistryDataPacket((new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.m_257599_(layeredregistryaccess))).m_203557_()));
-       this.m_141995_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(layeredregistryaccess)));
+       this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
+       LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.server.registries();
+       this.send(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.REGISTRY.toNames(this.server.getWorldData().enabledFeatures())));
+       this.send(new ClientboundRegistryDataPacket((new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.networkedRegistries(layeredregistryaccess))).freeze()));
+       this.send(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(layeredregistryaccess)));
 +   }
 +
-+   public void m_294295_() {
-+      net.minecraftforge.event.ForgeEventFactory.gatherLoginConfigTasks(this.f_291338_, this.f_290691_::add);
-+      this.f_290691_.add(new net.minecraftforge.network.config.SimpleConfigurationTask(VANILLA_START, this::vanillaStart));
-       this.m_295612_();
-       this.f_290691_.add(new JoinWorldTask());
-       this.m_295676_();
++   public void startConfiguration() {
++      net.minecraftforge.event.ForgeEventFactory.gatherLoginConfigTasks(this.connection, this.configurationTasks::add);
++      this.configurationTasks.add(new net.minecraftforge.network.config.SimpleConfigurationTask(VANILLA_START, this::vanillaStart));
+       this.addOptionalTasks();
+       this.configurationTasks.add(new JoinWorldTask());
+       this.startNextTask();
 @@ -135,7 +_,7 @@
-          ConfigurationTask configurationtask = this.f_290691_.poll();
+          ConfigurationTask configurationtask = this.configurationTasks.poll();
           if (configurationtask != null) {
-             this.f_291862_ = configurationtask;
--            configurationtask.m_293075_(this::m_141995_);
+             this.currentTask = configurationtask;
+-            configurationtask.start(this::send);
 +            configurationtask.start(this.taskContext);
           }
  

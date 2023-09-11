@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #FlatLevelGeneratorPresetTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public FlatLevelGeneratorPresetTagsProvider(PackOutput p_256604_, CompletableFuture<HolderLookup.Provider> p_255962_) {
-       super(p_256604_, Registries.f_256724_, p_255962_);
+       super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_);
 +   }
 +   public FlatLevelGeneratorPresetTagsProvider(PackOutput p_256604_, CompletableFuture<HolderLookup.Provider> p_255962_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256604_, Registries.f_256724_, p_255962_, modId, existingFileHelper);
++      super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_255741_) {
+    protected void addTags(HolderLookup.Provider p_255741_) {

@@ -3,17 +3,17 @@
 @@ -21,6 +_,7 @@
     }
  
-    public void m_7322_(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
-       switch (p_9975_.f_134723_()) {
+    public void handleIntention(ClientIntentionPacket p_9975_) {
++      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
+       switch (p_9975_.intention()) {
           case LOGIN:
-             this.f_9966_.m_294993_(ClientIntent.LOGIN);
+             this.connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
 @@ -42,7 +_,7 @@
-             ServerStatus serverstatus = this.f_9965_.m_129928_();
-             if (this.f_9965_.m_6373_() && serverstatus != null) {
-                this.f_9966_.m_294993_(ClientIntent.STATUS);
--               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_));
-+               this.f_9966_.m_129505_(new ServerStatusPacketListenerImpl(serverstatus, this.f_9966_, this.f_9965_.getStatusJson()));
+             ServerStatus serverstatus = this.server.getStatus();
+             if (this.server.repliesToStatus() && serverstatus != null) {
+                this.connection.setClientboundProtocolAfterHandshake(ClientIntent.STATUS);
+-               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection));
++               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection, this.server.getStatusJson()));
              } else {
-                this.f_9966_.m_129507_(f_9964_);
+                this.connection.disconnect(IGNORE_STATUS_REASON);
              }

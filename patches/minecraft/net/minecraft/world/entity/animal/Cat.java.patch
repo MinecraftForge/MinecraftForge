@@ -1,21 +1,21 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
 @@ -366,8 +_,8 @@
-             if (this.m_21830_(p_28153_)) {
+             if (this.isOwnedBy(p_28153_)) {
                 if (!(item instanceof DyeItem)) {
-                   if (item.m_41472_() && this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
-+                     this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
-                      this.m_142075_(p_28153_, p_28154_, itemstack);
--                     this.m_5634_((float)item.m_41473_().m_38744_());
+                   if (item.isEdible() && this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
++                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
+                      this.usePlayerItem(p_28153_, p_28154_, itemstack);
+-                     this.heal((float)item.getFoodProperties().getNutrition());
                       return InteractionResult.CONSUME;
                    }
  
 @@ -392,7 +_,7 @@
              }
-          } else if (this.m_6898_(itemstack)) {
-             this.m_142075_(p_28153_, p_28154_, itemstack);
--            if (this.f_19796_.m_188503_(3) == 0) {
-+            if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_)) {
-                this.m_21828_(p_28153_);
-                this.m_21839_(true);
-                this.m_9236_().m_7605_(this, (byte)7);
+          } else if (this.isFood(itemstack)) {
+             this.usePlayerItem(p_28153_, p_28154_, itemstack);
+-            if (this.random.nextInt(3) == 0) {
++            if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_)) {
+                this.tame(p_28153_);
+                this.setOrderedToSit(true);
+                this.level().broadcastEntityEvent(this, (byte)7);

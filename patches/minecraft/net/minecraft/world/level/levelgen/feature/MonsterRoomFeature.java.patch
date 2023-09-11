@@ -3,8 +3,8 @@
 @@ -128,6 +_,6 @@
     }
  
-    private EntityType<?> m_225153_(RandomSource p_225154_) {
--      return Util.m_214670_(f_66341_, p_225154_);
+    private EntityType<?> randomEntityId(RandomSource p_225154_) {
+-      return Util.getRandom(MOBS, p_225154_);
 +      return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_225154_);
     }
  }

@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/block/model/ItemTransform.java
 +++ b/net/minecraft/client/renderer/block/model/ItemTransform.java
 @@ -22,11 +_,17 @@
-    public final Vector3f f_111755_;
-    public final Vector3f f_111756_;
-    public final Vector3f f_111757_;
+    public final Vector3f rotation;
+    public final Vector3f translation;
+    public final Vector3f scale;
 +   public final Vector3f rightRotation;
  
     public ItemTransform(Vector3f p_254427_, Vector3f p_254496_, Vector3f p_254022_) {
@@ -11,28 +11,28 @@
 +   }
 +
 +   public ItemTransform(Vector3f p_254427_, Vector3f p_254496_, Vector3f p_254022_, Vector3f rightRotation) {
-       this.f_111755_ = new Vector3f((Vector3fc)p_254427_);
-       this.f_111756_ = new Vector3f((Vector3fc)p_254496_);
-       this.f_111757_ = new Vector3f((Vector3fc)p_254022_);
+       this.rotation = new Vector3f((Vector3fc)p_254427_);
+       this.translation = new Vector3f((Vector3fc)p_254496_);
+       this.scale = new Vector3f((Vector3fc)p_254022_);
 +      this.rightRotation = new Vector3f(rightRotation);
     }
  
-    public void m_111763_(boolean p_111764_, PoseStack p_111765_) {
+    public void apply(boolean p_111764_, PoseStack p_111765_) {
 @@ -43,6 +_,7 @@
-          p_111765_.m_252880_((float)i * this.f_111756_.x(), this.f_111756_.y(), this.f_111756_.z());
-          p_111765_.m_252781_((new Quaternionf()).rotationXYZ(f * ((float)Math.PI / 180F), f1 * ((float)Math.PI / 180F), f2 * ((float)Math.PI / 180F)));
-          p_111765_.m_85841_(this.f_111757_.x(), this.f_111757_.y(), this.f_111757_.z());
-+         p_111765_.m_252781_(net.minecraftforge.common.util.TransformationHelper.quatFromXYZ(rightRotation.x(), rightRotation.y() * (p_111764_ ? -1 : 1), rightRotation.z() * (p_111764_ ? -1 : 1), true));
+          p_111765_.translate((float)i * this.translation.x(), this.translation.y(), this.translation.z());
+          p_111765_.mulPose((new Quaternionf()).rotationXYZ(f * ((float)Math.PI / 180F), f1 * ((float)Math.PI / 180F), f2 * ((float)Math.PI / 180F)));
+          p_111765_.scale(this.scale.x(), this.scale.y(), this.scale.z());
++         p_111765_.mulPose(net.minecraftforge.common.util.TransformationHelper.quatFromXYZ(rightRotation.x(), rightRotation.y() * (p_111764_ ? -1 : 1), rightRotation.z() * (p_111764_ ? -1 : 1), true));
        }
     }
  
 @@ -79,7 +_,8 @@
-          vector3f1.set(Mth.m_14036_(vector3f1.x, -5.0F, 5.0F), Mth.m_14036_(vector3f1.y, -5.0F, 5.0F), Mth.m_14036_(vector3f1.z, -5.0F, 5.0F));
-          Vector3f vector3f2 = this.m_111778_(jsonobject, "scale", f_111771_);
-          vector3f2.set(Mth.m_14036_(vector3f2.x, -4.0F, 4.0F), Mth.m_14036_(vector3f2.y, -4.0F, 4.0F), Mth.m_14036_(vector3f2.z, -4.0F, 4.0F));
+          vector3f1.set(Mth.clamp(vector3f1.x, -5.0F, 5.0F), Mth.clamp(vector3f1.y, -5.0F, 5.0F), Mth.clamp(vector3f1.z, -5.0F, 5.0F));
+          Vector3f vector3f2 = this.getVector3f(jsonobject, "scale", DEFAULT_SCALE);
+          vector3f2.set(Mth.clamp(vector3f2.x, -4.0F, 4.0F), Mth.clamp(vector3f2.y, -4.0F, 4.0F), Mth.clamp(vector3f2.z, -4.0F, 4.0F));
 -         return new ItemTransform(vector3f, vector3f1, vector3f2);
-+         Vector3f rightRotation = this.m_111778_(jsonobject, "right_rotation", f_111769_);
++         Vector3f rightRotation = this.getVector3f(jsonobject, "right_rotation", DEFAULT_ROTATION);
 +         return new ItemTransform(vector3f, vector3f1, vector3f2, rightRotation);
        }
  
-       private Vector3f m_111778_(JsonObject p_111779_, String p_111780_, Vector3f p_253777_) {
+       private Vector3f getVector3f(JsonObject p_111779_, String p_111780_, Vector3f p_253777_) {

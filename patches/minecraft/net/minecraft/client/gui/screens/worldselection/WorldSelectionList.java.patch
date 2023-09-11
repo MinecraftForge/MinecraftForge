@@ -1,36 +1,36 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
 @@ -74,6 +_,7 @@
-    static final Logger f_101645_ = LogUtils.getLogger();
-    static final DateFormat f_101646_ = new SimpleDateFormat();
-    private static final ResourceLocation f_101647_ = new ResourceLocation("textures/misc/unknown_server.png");
+    static final Logger LOGGER = LogUtils.getLogger();
+    static final DateFormat DATE_FORMAT = new SimpleDateFormat();
+    private static final ResourceLocation ICON_MISSING = new ResourceLocation("textures/misc/unknown_server.png");
 +   private static final ResourceLocation FORGE_EXPERIMENTAL_WARNING_ICON = new ResourceLocation("forge","textures/gui/experimental_warning.png");
-    static final Component f_101649_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion1").m_130940_(ChatFormatting.RED);
-    static final Component f_101650_ = Component.m_237115_("selectWorld.tooltip.fromNewerVersion2").m_130940_(ChatFormatting.RED);
-    static final Component f_101651_ = Component.m_237115_("selectWorld.tooltip.snapshot1").m_130940_(ChatFormatting.GOLD);
+    static final Component FROM_NEWER_TOOLTIP_1 = Component.translatable("selectWorld.tooltip.fromNewerVersion1").withStyle(ChatFormatting.RED);
+    static final Component FROM_NEWER_TOOLTIP_2 = Component.translatable("selectWorld.tooltip.fromNewerVersion2").withStyle(ChatFormatting.RED);
+    static final Component SNAPSHOT_TOOLTIP_1 = Component.translatable("selectWorld.tooltip.snapshot1").withStyle(ChatFormatting.GOLD);
 @@ -362,6 +_,7 @@
           RenderSystem.enableBlend();
-          p_281612_.m_280163_(this.f_101698_.m_289196_(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
+          p_281612_.blit(this.icon.textureLocation(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
           RenderSystem.disableBlend();
 +         renderExperimentalWarning(p_281612_, p_283204_, p_283025_, p_283181_, p_282820_);
-          if (this.f_101693_.f_91066_.m_231828_().m_231551_() || p_283396_) {
-             p_281612_.m_280509_(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
+          if (this.minecraft.options.touchscreen().get() || p_283396_) {
+             p_281612_.fill(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
              int j = p_283204_ - p_282820_;
 @@ -608,6 +_,19 @@
  
-       public boolean m_214209_() {
-          return !this.f_101695_.m_164916_();
+       public boolean isSelectable() {
+          return !this.summary.isDisabled();
 +      }
 +
 +      // FORGE: Patch in experimental warning icon for worlds in the world selection screen
 +      private void renderExperimentalWarning(GuiGraphics guiGraphics, int mouseX, int mouseY, int top, int left) {
-+         if (this.f_101695_.isLifecycleExperimental()) {
-+            int leftStart = left + WorldSelectionList.this.m_5759_();
-+            guiGraphics.m_280163_(WorldSelectionList.FORGE_EXPERIMENTAL_WARNING_ICON, leftStart - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
-+            if (WorldSelectionList.this.m_93412_(mouseX, mouseY) == this && mouseX > leftStart - 36 && mouseX < leftStart) {
-+               var font = Minecraft.m_91087_().f_91062_;
-+               List<net.minecraft.util.FormattedCharSequence> tooltip = font.m_92923_(Component.m_237115_("forge.experimentalsettings.tooltip"), 200);
-+               guiGraphics.m_280245_(font, tooltip, mouseX, mouseY);
++         if (this.summary.isLifecycleExperimental()) {
++            int leftStart = left + WorldSelectionList.this.getRowWidth();
++            guiGraphics.blit(WorldSelectionList.FORGE_EXPERIMENTAL_WARNING_ICON, leftStart - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
++            if (WorldSelectionList.this.getEntryAtPosition(mouseX, mouseY) == this && mouseX > leftStart - 36 && mouseX < leftStart) {
++               var font = Minecraft.getInstance().font;
++               List<net.minecraft.util.FormattedCharSequence> tooltip = font.split(Component.translatable("forge.experimentalsettings.tooltip"), 200);
++               guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
 +            }
 +         }
        }

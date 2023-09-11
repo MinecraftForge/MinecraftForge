@@ -13,16 +13,16 @@
  
 +   /** @deprecated Forge: Use {@link #getStyleModifier()} */
 +   @Deprecated
-    public final ChatFormatting f_43022_;
+    public final ChatFormatting color;
 +   private final java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier;
  
     private Rarity(ChatFormatting p_43028_) {
-       this.f_43022_ = p_43028_;
-+      this.styleModifier = style -> style.m_131140_(p_43028_);
+       this.color = p_43028_;
++      this.styleModifier = style -> style.withColor(p_43028_);
 +   }
 +
 +   Rarity(java.util.function.UnaryOperator<net.minecraft.network.chat.Style> styleModifier) {
-+      this.f_43022_ = ChatFormatting.BLACK;
++      this.color = ChatFormatting.BLACK;
 +      this.styleModifier = styleModifier;
 +   }
 +

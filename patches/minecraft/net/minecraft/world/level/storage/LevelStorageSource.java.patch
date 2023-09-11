@@ -1,42 +1,42 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
 @@ -467,6 +_,19 @@
-          return LevelStorageSource.this.m_230817_(this.f_230867_, LevelStorageSource.m_245503_(p_248747_, p_251873_, p_249187_, p_249736_));
+          return LevelStorageSource.this.readLevelData(this.levelDirectory, LevelStorageSource.getLevelData(p_248747_, p_251873_, p_249187_, p_249736_));
        }
  
 +      public void readAdditionalLevelSaveData() {
-+         m_78313_();
-+         LevelStorageSource.this.m_230817_(this.f_230867_, (path, dataFixer) -> {
++         checkLock();
++         LevelStorageSource.this.readLevelData(this.levelDirectory, (path, dataFixer) -> {
 +            try {
-+               CompoundTag compoundTag = NbtIo.m_128937_(path.toFile());
-+               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.f_230867_);
++               CompoundTag compoundTag = NbtIo.readCompressed(path.toFile());
++               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.levelDirectory);
 +            } catch (Exception e) {
-+                f_78191_.error("Exception reading {}", path, e);
++                LOGGER.error("Exception reading {}", path, e);
 +            }
 +            return ""; // Return non-null to prevent level.dat-old inject
 +         });
 +      }
 +
        @Nullable
-       public WorldDataConfiguration m_247706_() {
-          this.m_78313_();
+       public WorldDataConfiguration getDataConfiguration() {
+          this.checkLock();
 @@ -483,6 +_,8 @@
           CompoundTag compoundtag1 = new CompoundTag();
-          compoundtag1.m_128365_("Data", compoundtag);
+          compoundtag1.put("Data", compoundtag);
  
 +         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
 +
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
-             NbtIo.m_128944_(compoundtag1, file2);
+             NbtIo.writeCompressed(compoundtag1, file2);
 @@ -497,6 +_,10 @@
  
-       public Optional<Path> m_182514_() {
-          return !this.f_78270_.m_13639_() ? Optional.empty() : Optional.of(this.f_230867_.m_230860_());
+       public Optional<Path> getIconFile() {
+          return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
 +      }
 +
 +      public Path getWorldDir() {
-+         return f_78194_;
++         return baseDir;
        }
  
-       public void m_78311_() throws IOException {
+       public void deleteLevel() throws IOException {

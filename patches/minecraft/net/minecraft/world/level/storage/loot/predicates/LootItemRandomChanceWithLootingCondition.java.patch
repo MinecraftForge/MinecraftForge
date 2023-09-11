@@ -4,13 +4,13 @@
     }
  
     public boolean test(LootContext p_81967_) {
--      Entity entity = p_81967_.m_78953_(LootContextParams.f_81458_);
+-      Entity entity = p_81967_.getParamOrNull(LootContextParams.KILLER_ENTITY);
 -      int i = 0;
 -      if (entity instanceof LivingEntity) {
--         i = EnchantmentHelper.m_44930_((LivingEntity)entity);
+-         i = EnchantmentHelper.getMobLooting((LivingEntity)entity);
 -      }
 -
 +      int i = p_81967_.getLootingModifier();
-       return p_81967_.m_230907_().m_188501_() < this.f_81953_ + (float)i * this.f_81954_;
+       return p_81967_.getRandom().nextFloat() < this.percent + (float)i * this.lootingMultiplier;
     }
  

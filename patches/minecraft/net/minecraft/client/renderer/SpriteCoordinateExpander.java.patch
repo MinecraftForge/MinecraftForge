@@ -3,40 +3,40 @@
 @@ -16,27 +_,33 @@
     }
  
-    public VertexConsumer m_5483_(double p_110801_, double p_110802_, double p_110803_) {
--      return this.f_110795_.m_5483_(p_110801_, p_110802_, p_110803_);
-+      this.f_110795_.m_5483_(p_110801_, p_110802_, p_110803_);
+    public VertexConsumer vertex(double p_110801_, double p_110802_, double p_110803_) {
+-      return this.delegate.vertex(p_110801_, p_110802_, p_110803_);
++      this.delegate.vertex(p_110801_, p_110802_, p_110803_);
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public VertexConsumer m_6122_(int p_110826_, int p_110827_, int p_110828_, int p_110829_) {
--      return this.f_110795_.m_6122_(p_110826_, p_110827_, p_110828_, p_110829_);
-+      this.f_110795_.m_6122_(p_110826_, p_110827_, p_110828_, p_110829_);
+    public VertexConsumer color(int p_110826_, int p_110827_, int p_110828_, int p_110829_) {
+-      return this.delegate.color(p_110826_, p_110827_, p_110828_, p_110829_);
++      this.delegate.color(p_110826_, p_110827_, p_110828_, p_110829_);
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public VertexConsumer m_7421_(float p_110805_, float p_110806_) {
--      return this.f_110795_.m_7421_(this.f_110796_.m_118367_(p_110805_), this.f_110796_.m_118393_(p_110806_));
-+      this.f_110795_.m_7421_(this.f_110796_.m_118367_(p_110805_), this.f_110796_.m_118393_(p_110806_));
+    public VertexConsumer uv(float p_110805_, float p_110806_) {
+-      return this.delegate.uv(this.sprite.getU(p_110805_), this.sprite.getV(p_110806_));
++      this.delegate.uv(this.sprite.getU(p_110805_), this.sprite.getV(p_110806_));
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public VertexConsumer m_7122_(int p_110823_, int p_110824_) {
--      return this.f_110795_.m_7122_(p_110823_, p_110824_);
-+      this.f_110795_.m_7122_(p_110823_, p_110824_);
+    public VertexConsumer overlayCoords(int p_110823_, int p_110824_) {
+-      return this.delegate.overlayCoords(p_110823_, p_110824_);
++      this.delegate.overlayCoords(p_110823_, p_110824_);
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public VertexConsumer m_7120_(int p_110835_, int p_110836_) {
--      return this.f_110795_.m_7120_(p_110835_, p_110836_);
-+      this.f_110795_.m_7120_(p_110835_, p_110836_);
+    public VertexConsumer uv2(int p_110835_, int p_110836_) {
+-      return this.delegate.uv2(p_110835_, p_110836_);
++      this.delegate.uv2(p_110835_, p_110836_);
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public VertexConsumer m_5601_(float p_110831_, float p_110832_, float p_110833_) {
--      return this.f_110795_.m_5601_(p_110831_, p_110832_, p_110833_);
-+      this.f_110795_.m_5601_(p_110831_, p_110832_, p_110833_);
+    public VertexConsumer normal(float p_110831_, float p_110832_, float p_110833_) {
+-      return this.delegate.normal(p_110831_, p_110832_, p_110833_);
++      this.delegate.normal(p_110831_, p_110832_, p_110833_);
 +      return this; //Forge: Fix MC-263524 not working with chained methods
     }
  
-    public void m_5752_() {
+    public void endVertex() {

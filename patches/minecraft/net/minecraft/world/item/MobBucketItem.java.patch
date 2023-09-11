@@ -4,16 +4,16 @@
  import net.minecraft.world.level.material.Fluid;
  
  public class MobBucketItem extends BucketItem {
--   private final EntityType<?> f_151134_;
--   private final SoundEvent f_151135_;
+-   private final EntityType<?> type;
+-   private final SoundEvent emptySound;
 +   private final java.util.function.Supplier<? extends EntityType<?>> entityTypeSupplier;
 +   private final java.util.function.Supplier<? extends SoundEvent> emptySoundSupplier;
  
 +   @Deprecated
     public MobBucketItem(EntityType<?> p_151137_, Fluid p_151138_, SoundEvent p_151139_, Item.Properties p_151140_) {
 -      super(p_151138_, p_151140_);
--      this.f_151134_ = p_151137_;
--      this.f_151135_ = p_151139_;
+-      this.type = p_151137_;
+-      this.emptySound = p_151139_;
 +      this(() -> p_151137_, () -> p_151138_, () -> p_151139_, p_151140_);
 +   }
 +
@@ -23,30 +23,30 @@
 +      this.entityTypeSupplier = entitySupplier;
     }
  
-    public void m_142131_(@Nullable Player p_151146_, Level p_151147_, ItemStack p_151148_, BlockPos p_151149_) {
+    public void checkExtraContent(@Nullable Player p_151146_, Level p_151147_, ItemStack p_151148_, BlockPos p_151149_) {
 @@ -40,11 +_,11 @@
     }
  
-    protected void m_7718_(@Nullable Player p_151151_, LevelAccessor p_151152_, BlockPos p_151153_) {
--      p_151152_.m_5594_(p_151151_, p_151153_, this.f_151135_, SoundSource.NEUTRAL, 1.0F, 1.0F);
-+      p_151152_.m_5594_(p_151151_, p_151153_, getEmptySound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+    protected void playEmptySound(@Nullable Player p_151151_, LevelAccessor p_151152_, BlockPos p_151153_) {
+-      p_151152_.playSound(p_151151_, p_151153_, this.emptySound, SoundSource.NEUTRAL, 1.0F, 1.0F);
++      p_151152_.playSound(p_151151_, p_151153_, getEmptySound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
     }
  
-    private void m_151141_(ServerLevel p_151142_, ItemStack p_151143_, BlockPos p_151144_) {
--      Entity entity = this.f_151134_.m_20592_(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
-+      Entity entity = getFishType().m_20592_(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
+    private void spawn(ServerLevel p_151142_, ItemStack p_151143_, BlockPos p_151144_) {
+-      Entity entity = this.type.spawn(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
++      Entity entity = getFishType().spawn(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
        if (entity instanceof Bucketable bucketable) {
-          bucketable.m_142278_(p_151143_.m_41784_());
-          bucketable.m_27497_(true);
+          bucketable.loadFromBucketTag(p_151143_.getOrCreateTag());
+          bucketable.setFromBucket(true);
 @@ -53,7 +_,7 @@
     }
  
-    public void m_7373_(ItemStack p_151155_, @Nullable Level p_151156_, List<Component> p_151157_, TooltipFlag p_151158_) {
--      if (this.f_151134_ == EntityType.f_20489_) {
-+      if (getFishType() == EntityType.f_20489_) {
-          CompoundTag compoundtag = p_151155_.m_41783_();
-          if (compoundtag != null && compoundtag.m_128425_("BucketVariantTag", 3)) {
-             int i = compoundtag.m_128451_("BucketVariantTag");
+    public void appendHoverText(ItemStack p_151155_, @Nullable Level p_151156_, List<Component> p_151157_, TooltipFlag p_151158_) {
+-      if (this.type == EntityType.TROPICAL_FISH) {
++      if (getFishType() == EntityType.TROPICAL_FISH) {
+          CompoundTag compoundtag = p_151155_.getTag();
+          if (compoundtag != null && compoundtag.contains("BucketVariantTag", 3)) {
+             int i = compoundtag.getInt("BucketVariantTag");
 @@ -79,5 +_,14 @@
           }
        }

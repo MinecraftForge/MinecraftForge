@@ -3,7 +3,7 @@
 @@ -36,6 +_,9 @@
           return false;
        } else {
-          Holder<ConfiguredFeature<?, ?>> holder = p_222897_.m_9598_().m_175515_(Registries.f_256911_).m_203636_(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
+          Holder<ConfiguredFeature<?, ?>> holder = p_222897_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse((Holder.Reference<ConfiguredFeature<?, ?>>)null);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_222897_, p_222901_, p_222899_, holder);
 +         holder = event.getFeature();
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;

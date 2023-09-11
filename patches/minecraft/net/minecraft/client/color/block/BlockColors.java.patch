@@ -3,42 +3,42 @@
 @@ -28,7 +_,8 @@
  @OnlyIn(Dist.CLIENT)
  public class BlockColors {
-    private static final int f_168640_ = -1;
--   private final IdMapper<BlockColor> f_92571_ = new IdMapper<>(32);
+    private static final int DEFAULT = -1;
+-   private final IdMapper<BlockColor> blockColors = new IdMapper<>(32);
 +   // FORGE: Use registry delegate as non-Vanilla block ids are not constant
-+   private final java.util.Map<net.minecraft.core.Holder.Reference<Block>, BlockColor> f_92571_ = new java.util.HashMap<>();
-    private final Map<Block, Set<Property<?>>> f_92572_ = Maps.newHashMap();
++   private final java.util.Map<net.minecraft.core.Holder.Reference<Block>, BlockColor> blockColors = new java.util.HashMap<>();
+    private final Map<Block, Set<Property<?>>> coloringStates = Maps.newHashMap();
  
-    public static BlockColors m_92574_() {
+    public static BlockColors createDefault() {
 @@ -80,11 +_,12 @@
-       blockcolors.m_92589_((p_92596_, p_92597_, p_92598_, p_92599_) -> {
+       blockcolors.register((p_92596_, p_92597_, p_92598_, p_92599_) -> {
           return p_92597_ != null && p_92598_ != null ? 2129968 : 7455580;
-       }, Blocks.f_50196_);
+       }, Blocks.LILY_PAD);
 +      net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
        return blockcolors;
     }
  
-    public int m_92582_(BlockState p_92583_, Level p_92584_, BlockPos p_92585_) {
--      BlockColor blockcolor = this.f_92571_.m_7942_(BuiltInRegistries.f_256975_.m_7447_(p_92583_.m_60734_()));
-+      BlockColor blockcolor = this.f_92571_.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92583_.m_60734_()));
+    public int getColor(BlockState p_92583_, Level p_92584_, BlockPos p_92585_) {
+-      BlockColor blockcolor = this.blockColors.byId(BuiltInRegistries.BLOCK.getId(p_92583_.getBlock()));
++      BlockColor blockcolor = this.blockColors.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92583_.getBlock()));
        if (blockcolor != null) {
-          return blockcolor.m_92566_(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
+          return blockcolor.getColor(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
        } else {
 @@ -94,13 +_,15 @@
     }
  
-    public int m_92577_(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {
--      BlockColor blockcolor = this.f_92571_.m_7942_(BuiltInRegistries.f_256975_.m_7447_(p_92578_.m_60734_()));
-+      BlockColor blockcolor = this.f_92571_.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92578_.m_60734_()));
-       return blockcolor == null ? -1 : blockcolor.m_92566_(p_92578_, p_92579_, p_92580_, p_92581_);
+    public int getColor(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {
+-      BlockColor blockcolor = this.blockColors.byId(BuiltInRegistries.BLOCK.getId(p_92578_.getBlock()));
++      BlockColor blockcolor = this.blockColors.get(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_92578_.getBlock()));
+       return blockcolor == null ? -1 : blockcolor.getColor(p_92578_, p_92579_, p_92580_, p_92581_);
     }
  
 +   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterColorHandlersEvent.Block} */
 +   @Deprecated
-    public void m_92589_(BlockColor p_92590_, Block... p_92591_) {
+    public void register(BlockColor p_92590_, Block... p_92591_) {
        for(Block block : p_92591_) {
--         this.f_92571_.m_122664_(p_92590_, BuiltInRegistries.f_256975_.m_7447_(block));
-+         this.f_92571_.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), p_92590_);
+-         this.blockColors.addMapping(p_92590_, BuiltInRegistries.BLOCK.getId(block));
++         this.blockColors.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), p_92590_);
        }
  
     }

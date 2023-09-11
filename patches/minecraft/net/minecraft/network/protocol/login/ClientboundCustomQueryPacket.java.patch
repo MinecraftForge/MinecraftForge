@@ -4,13 +4,13 @@
  import net.minecraft.network.protocol.login.custom.DiscardedQueryPayload;
  import net.minecraft.resources.ResourceLocation;
  
--public record ClientboundCustomQueryPacket(int f_134745_, CustomQueryPayload f_291166_) implements Packet<ClientLoginPacketListener> {
-+public record ClientboundCustomQueryPacket(int f_134745_, CustomQueryPayload f_291166_) implements Packet<ClientLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomQueryPacket> {
-    private static final int f_179804_ = 1048576;
+-public record ClientboundCustomQueryPacket(int transactionId, CustomQueryPayload payload) implements Packet<ClientLoginPacketListener> {
++public record ClientboundCustomQueryPacket(int transactionId, CustomQueryPayload payload) implements Packet<ClientLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomQueryPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
  
     public ClientboundCustomQueryPacket(FriendlyByteBuf p_179810_) {
 @@ -20,8 +_,7 @@
-    private static DiscardedQueryPayload m_294633_(ResourceLocation p_299981_, FriendlyByteBuf p_297706_) {
+    private static DiscardedQueryPayload readUnknownPayload(ResourceLocation p_299981_, FriendlyByteBuf p_297706_) {
        int i = p_297706_.readableBytes();
        if (i >= 0 && i <= 1048576) {
 -         p_297706_.skipBytes(i);
@@ -20,11 +20,11 @@
           throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
        }
 @@ -36,4 +_,8 @@
-    public void m_5797_(ClientLoginPacketListener p_134754_) {
-       p_134754_.m_7254_(this);
+    public void handle(ClientLoginPacketListener p_134754_) {
+       p_134754_.handleCustomQuery(this);
     }
 +
-+   @Override public int getIndex() { return f_134745_(); }
-+   @Override public ResourceLocation getName() { return this.f_291166_.m_293131_(); }
-+   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return ((DiscardedQueryPayload)this.f_291166_).data(); }
++   @Override public int getIndex() { return transactionId(); }
++   @Override public ResourceLocation getName() { return this.payload.id(); }
++   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return ((DiscardedQueryPayload)this.payload).data(); }
  }

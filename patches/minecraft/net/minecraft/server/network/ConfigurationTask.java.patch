@@ -5,9 +5,9 @@
  
  public interface ConfigurationTask {
 +   default void start(net.minecraftforge.network.config.ConfigurationTaskContext ctx) {
-+       m_293075_(ctx::send);
++       start(ctx::send);
 +   }
 +
-    void m_293075_(Consumer<Packet<?>> p_299398_);
+    void start(Consumer<Packet<?>> p_299398_);
  
-    ConfigurationTask.Type m_293172_();
+    ConfigurationTask.Type type();

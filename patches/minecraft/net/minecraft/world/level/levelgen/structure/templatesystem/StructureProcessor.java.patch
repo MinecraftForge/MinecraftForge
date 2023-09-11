@@ -9,15 +9,15 @@
 +    */
 +   @Deprecated
     @Nullable
-    public StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_) {
+    public StructureTemplate.StructureBlockInfo processBlock(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_) {
        return p_74420_;
     }
  
-    protected abstract StructureProcessorType<?> m_6953_();
+    protected abstract StructureProcessorType<?> getType();
 +
 +   @Nullable
 +   public StructureTemplate.StructureBlockInfo process(LevelReader p_74140_, BlockPos p_74141_, BlockPos p_74142_, StructureTemplate.StructureBlockInfo p_74143_, StructureTemplate.StructureBlockInfo p_74144_, StructurePlaceSettings p_74145_, @Nullable StructureTemplate template) {
-+      return m_7382_(p_74140_, p_74141_, p_74142_, p_74143_, p_74144_, p_74145_);
++      return processBlock(p_74140_, p_74141_, p_74142_, p_74143_, p_74144_, p_74145_);
 +   }
 +
 +   /**
@@ -39,5 +39,5 @@
 +      return entityInfo;
 +   }
  
-    public List<StructureTemplate.StructureBlockInfo> m_276976_(ServerLevelAccessor p_278247_, BlockPos p_277590_, BlockPos p_277935_, List<StructureTemplate.StructureBlockInfo> p_278070_, List<StructureTemplate.StructureBlockInfo> p_278053_, StructurePlaceSettings p_277497_) {
+    public List<StructureTemplate.StructureBlockInfo> finalizeProcessing(ServerLevelAccessor p_278247_, BlockPos p_277590_, BlockPos p_277935_, List<StructureTemplate.StructureBlockInfo> p_278070_, List<StructureTemplate.StructureBlockInfo> p_278053_, StructurePlaceSettings p_277497_) {
        return p_278053_;

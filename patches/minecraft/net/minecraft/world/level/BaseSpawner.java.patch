@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
 @@ -131,12 +_,14 @@
-                   entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), randomsource.m_188501_() * 360.0F, 0.0F);
+                   entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
--                     if (spawndata.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
+-                     if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, MobSpawnType.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
 +                     if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
                          continue;
                       }
  
--                     if (spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
--                        ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_20183_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
+-                     if (spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
+-                        ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
 +                     // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
-+                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.m_6436_(entity.m_20183_()), null, compoundtag, this);
-+                     if (event != null && spawndata.m_186567_().m_128440_() == 1 && spawndata.m_186567_().m_128425_("id", 8)) {
-+                        ((Mob)entity).m_6518_(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
++                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
++                     if (event != null && spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
++                        ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
                       }
                    }
  
 @@ -283,4 +_,12 @@
-    public double m_45474_() {
-       return this.f_45446_;
+    public double getoSpin() {
+       return this.oSpin;
     }
 +
 +   @Nullable

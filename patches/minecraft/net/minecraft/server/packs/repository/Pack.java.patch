@@ -1,32 +1,32 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
 @@ -28,6 +_,7 @@
-    private final Pack.Position f_10406_;
-    private final boolean f_10407_;
-    private final boolean f_10408_;
+    private final Pack.Position defaultPosition;
+    private final boolean required;
+    private final boolean fixedPosition;
 +   private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely
-    private final PackSource f_10409_;
+    private final PackSource packSource;
  
     @Nullable
 @@ -50,6 +_,7 @@
-       this.f_10406_ = p_251298_;
-       this.f_10408_ = p_249753_;
-       this.f_10409_ = p_251608_;
+       this.defaultPosition = p_251298_;
+       this.fixedPosition = p_249753_;
+       this.packSource = p_251608_;
 +      this.hidden = p_250162_.hidden();
     }
  
     @Nullable
 @@ -66,7 +_,7 @@
-             PackCompatibility packcompatibility = PackCompatibility.m_295204_(inclusiverange, p_299232_);
-             OverlayMetadataSection overlaymetadatasection = packresources.m_5550_(OverlayMetadataSection.f_290597_);
-             List<String> list = overlaymetadatasection != null ? overlaymetadatasection.m_293385_(p_299232_) : List.of();
--            return new Pack.Info(packmetadatasection.f_10367_(), packcompatibility, featureflagset, list);
-+            return new Pack.Info(packmetadatasection.f_10367_(), packcompatibility, featureflagset, list, packresources.isHidden());
+             PackCompatibility packcompatibility = PackCompatibility.forVersion(inclusiverange, p_299232_);
+             OverlayMetadataSection overlaymetadatasection = packresources.getMetadataSection(OverlayMetadataSection.TYPE);
+             List<String> list = overlaymetadatasection != null ? overlaymetadatasection.overlaysForVersion(p_299232_) : List.of();
+-            return new Pack.Info(packmetadatasection.description(), packcompatibility, featureflagset, list);
++            return new Pack.Info(packmetadatasection.description(), packcompatibility, featureflagset, list, packresources.isHidden());
           }
        } catch (Exception exception) {
-          f_10399_.warn("Failed to read pack {} metadata", p_250591_, exception);
+          LOGGER.warn("Failed to read pack {} metadata", p_250591_, exception);
 @@ -135,6 +_,10 @@
-       return this.f_10409_;
+       return this.packSource;
     }
  
 +   public boolean isHidden() {
@@ -37,13 +37,13 @@
        if (this == p_10448_) {
           return true;
 @@ -150,7 +_,10 @@
-       return this.f_10401_.hashCode();
+       return this.id.hashCode();
     }
  
--   public static record Info(Component f_244592_, PackCompatibility f_290856_, FeatureFlagSet f_244041_, List<String> f_291122_) {
-+   public static record Info(Component f_244592_, PackCompatibility f_290856_, FeatureFlagSet f_244041_, List<String> f_291122_, boolean hidden) {
-+      public Info(Component f_244592_, PackCompatibility f_290856_, FeatureFlagSet f_244041_, List<String> f_291122_) {
-+         this(f_244592_, f_290856_, f_244041_, f_291122_, false);
+-   public static record Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
++   public static record Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays, boolean hidden) {
++      public Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
++         this(description, compatibility, requestedFeatures, overlays, false);
 +      }
     }
  

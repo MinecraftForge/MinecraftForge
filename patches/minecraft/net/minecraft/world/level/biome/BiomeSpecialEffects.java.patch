@@ -7,23 +7,23 @@
 -   public static enum GrassColorModifier implements StringRepresentable {
 +   public static enum GrassColorModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
        NONE("none") {
-          public int m_6583_(double p_48081_, double p_48082_, int p_48083_) {
+          public int modifyColor(double p_48081_, double p_48082_, int p_48083_) {
              return p_48083_;
 @@ -220,14 +_,37 @@
        };
  
-       private final String f_48051_;
--      public static final Codec<BiomeSpecialEffects.GrassColorModifier> f_48050_ = StringRepresentable.m_216439_(BiomeSpecialEffects.GrassColorModifier::values);
-+      public static final Codec<BiomeSpecialEffects.GrassColorModifier> f_48050_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeSpecialEffects.GrassColorModifier::values, BiomeSpecialEffects.GrassColorModifier::byName);
-+      private static final java.util.Map<String, GrassColorModifier> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(BiomeSpecialEffects.GrassColorModifier::m_48072_, grassColorModifier -> grassColorModifier));
+       private final String name;
+-      public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = StringRepresentable.fromEnum(BiomeSpecialEffects.GrassColorModifier::values);
++      public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeSpecialEffects.GrassColorModifier::values, BiomeSpecialEffects.GrassColorModifier::byName);
++      private static final java.util.Map<String, GrassColorModifier> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(BiomeSpecialEffects.GrassColorModifier::getName, grassColorModifier -> grassColorModifier));
  
--      public abstract int m_6583_(double p_48065_, double p_48066_, int p_48067_);
-+      public int m_6583_(double p_48065_, double p_48066_, int p_48067_) {
+-      public abstract int modifyColor(double p_48065_, double p_48066_, int p_48067_);
++      public int modifyColor(double p_48065_, double p_48066_, int p_48067_) {
 +         return delegate.modifyGrassColor(p_48065_, p_48066_, p_48067_);
 +      }
  
        GrassColorModifier(String p_48058_) {
-          this.f_48051_ = p_48058_;
+          this.name = p_48058_;
        }
  
 +      private ColorModifier delegate;
@@ -36,7 +36,7 @@
 +      }
 +      @Override
 +      public void init() {
-+         BY_NAME.put(this.m_48072_(), this);
++         BY_NAME.put(this.getName(), this);
 +      }
 +      // Forge: Access enum members by name
 +      public static BiomeSpecialEffects.GrassColorModifier byName(String name) {
@@ -46,6 +46,6 @@
 +      public interface ColorModifier {
 +         int modifyGrassColor(double x, double z, int color);
 +      }
-       public String m_48072_() {
-          return this.f_48051_;
+       public String getName() {
+          return this.name;
        }

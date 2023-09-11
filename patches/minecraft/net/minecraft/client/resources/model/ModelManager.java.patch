@@ -2,69 +2,69 @@
 +++ b/net/minecraft/client/resources/model/ModelManager.java
 @@ -42,13 +_,14 @@
  public class ModelManager implements PreparableReloadListener, AutoCloseable {
-    private static final Logger f_243848_ = LogUtils.getLogger();
-    private static final Map<ResourceLocation, ResourceLocation> f_244614_ = Map.of(Sheets.f_110737_, new ResourceLocation("banner_patterns"), Sheets.f_110736_, new ResourceLocation("beds"), Sheets.f_110740_, new ResourceLocation("chests"), Sheets.f_110738_, new ResourceLocation("shield_patterns"), Sheets.f_110739_, new ResourceLocation("signs"), Sheets.f_110735_, new ResourceLocation("shulker_boxes"), Sheets.f_265912_, new ResourceLocation("armor_trims"), Sheets.f_271463_, new ResourceLocation("decorated_pot"), TextureAtlas.f_118259_, new ResourceLocation("blocks"));
--   private Map<ResourceLocation, BakedModel> f_119397_;
-+   private Map<ResourceLocation, BakedModel> f_119397_ = new java.util.HashMap<>();
-    private final AtlasSet f_119398_;
-    private final BlockModelShaper f_119399_;
-    private final BlockColors f_119401_;
-    private int f_119402_;
-    private BakedModel f_119403_;
-    private Object2IntMap<BlockState> f_119404_;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Map<ResourceLocation, ResourceLocation> VANILLA_ATLASES = Map.of(Sheets.BANNER_SHEET, new ResourceLocation("banner_patterns"), Sheets.BED_SHEET, new ResourceLocation("beds"), Sheets.CHEST_SHEET, new ResourceLocation("chests"), Sheets.SHIELD_SHEET, new ResourceLocation("shield_patterns"), Sheets.SIGN_SHEET, new ResourceLocation("signs"), Sheets.SHULKER_SHEET, new ResourceLocation("shulker_boxes"), Sheets.ARMOR_TRIMS_SHEET, new ResourceLocation("armor_trims"), Sheets.DECORATED_POT_SHEET, new ResourceLocation("decorated_pot"), TextureAtlas.LOCATION_BLOCKS, new ResourceLocation("blocks"));
+-   private Map<ResourceLocation, BakedModel> bakedRegistry;
++   private Map<ResourceLocation, BakedModel> bakedRegistry = new java.util.HashMap<>();
+    private final AtlasSet atlases;
+    private final BlockModelShaper blockModelShaper;
+    private final BlockColors blockColors;
+    private int maxMipmapLevels;
+    private BakedModel missingModel;
+    private Object2IntMap<BlockState> modelGroups;
 +   private ModelBakery modelBakery;
  
     public ModelManager(TextureManager p_119406_, BlockColors p_119407_, int p_119408_) {
-       this.f_119401_ = p_119407_;
+       this.blockColors = p_119407_;
 @@ -57,6 +_,10 @@
-       this.f_119398_ = new AtlasSet(f_244614_, p_119406_);
+       this.atlases = new AtlasSet(VANILLA_ATLASES, p_119406_);
     }
  
 +   public BakedModel getModel(ResourceLocation modelLocation) {
-+      return this.f_119397_.getOrDefault(modelLocation, this.f_119403_);
++      return this.bakedRegistry.getOrDefault(modelLocation, this.missingModel);
 +   }
 +
-    public BakedModel m_119422_(ModelResourceLocation p_119423_) {
-       return this.f_119397_.getOrDefault(p_119423_, this.f_119403_);
+    public BakedModel getModel(ModelResourceLocation p_119423_) {
+       return this.bakedRegistry.getOrDefault(p_119423_, this.missingModel);
     }
 @@ -71,6 +_,7 @@
  
-    public final CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_249079_, ResourceManager p_251134_, ProfilerFiller p_250336_, ProfilerFiller p_252324_, Executor p_250550_, Executor p_249221_) {
-       p_250336_.m_7242_();
+    public final CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_249079_, ResourceManager p_251134_, ProfilerFiller p_250336_, ProfilerFiller p_252324_, Executor p_250550_, Executor p_249221_) {
+       p_250336_.startTick();
 +      net.minecraftforge.client.model.geometry.GeometryLoaderManager.init();
-       CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = m_246704_(p_251134_, p_250550_);
-       CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = m_246899_(p_251134_, p_250550_);
+       CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = loadBlockModels(p_251134_, p_250550_);
+       CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = loadBlockStates(p_251134_, p_250550_);
        CompletableFuture<ModelBakery> completablefuture2 = completablefuture.thenCombineAsync(completablefuture1, (p_251201_, p_251281_) -> {
 @@ -164,6 +_,8 @@
-             return "    " + p_248692_.m_119193_() + ":" + p_248692_.m_119203_();
+             return "    " + p_248692_.atlasLocation() + ":" + p_248692_.texture();
           }).collect(Collectors.joining("\n")));
        });
-+      p_252136_.m_6182_("forge_modify_baking_result");
-+      net.minecraftforge.client.ForgeHooksClient.onModifyBakingResult(p_248945_.m_119251_(), p_248945_);
-       p_252136_.m_6182_("dispatch");
-       Map<ResourceLocation, BakedModel> map = p_248945_.m_119251_();
-       BakedModel bakedmodel = map.get(ModelBakery.f_119230_);
++      p_252136_.popPush("forge_modify_baking_result");
++      net.minecraftforge.client.ForgeHooksClient.onModifyBakingResult(p_248945_.getBakedTopLevelModels(), p_248945_);
+       p_252136_.popPush("dispatch");
+       Map<ResourceLocation, BakedModel> map = p_248945_.getBakedTopLevelModels();
+       BakedModel bakedmodel = map.get(ModelBakery.MISSING_MODEL_LOCATION);
 @@ -193,6 +_,8 @@
-       this.f_119397_ = modelbakery.m_119251_();
-       this.f_119404_ = modelbakery.m_119355_();
-       this.f_119403_ = p_248996_.f_244619_;
+       this.bakedRegistry = modelbakery.getBakedTopLevelModels();
+       this.modelGroups = modelbakery.getModelGroups();
+       this.missingModel = p_248996_.missingModel;
 +      this.modelBakery = modelbakery;
-+      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.f_119397_, modelbakery);
-       p_251960_.m_6182_("cache");
-       this.f_119399_.m_245515_(p_248996_.f_244561_);
-       p_251960_.m_7238_();
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.bakedRegistry, modelbakery);
+       p_251960_.popPush("cache");
+       this.blockModelShaper.replaceCache(p_248996_.modelCache);
+       p_251960_.pop();
 @@ -218,6 +_,7 @@
     }
  
-    public TextureAtlas m_119428_(ResourceLocation p_119429_) {
-+      if (this.f_119398_ == null) throw new RuntimeException("getAtlasTexture called too early!");
-       return this.f_119398_.m_245433_(p_119429_);
+    public TextureAtlas getAtlas(ResourceLocation p_119429_) {
++      if (this.atlases == null) throw new RuntimeException("getAtlasTexture called too early!");
+       return this.atlases.getAtlas(p_119429_);
     }
  
 @@ -227,6 +_,10 @@
  
-    public void m_119410_(int p_119411_) {
-       this.f_119402_ = p_119411_;
+    public void updateMaxMipLevel(int p_119411_) {
+       this.maxMipmapLevels = p_119411_;
 +   }
 +
 +   public ModelBakery getModelBakery() {

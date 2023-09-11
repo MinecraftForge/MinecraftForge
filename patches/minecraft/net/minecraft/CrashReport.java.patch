@@ -1,32 +1,32 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
 @@ -57,14 +_,8 @@
-       if (this.f_127506_ != null && this.f_127506_.length > 0) {
+       if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
           p_127520_.append("-- Head --\n");
           p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
 -         p_127520_.append("Stacktrace:\n");
 -
--         for(StackTraceElement stacktraceelement : this.f_127506_) {
+-         for(StackTraceElement stacktraceelement : this.uncategorizedStackTrace) {
 -            p_127520_.append("\t").append("at ").append((Object)stacktraceelement);
 -            p_127520_.append("\n");
 -         }
 -
 -         p_127520_.append("\n");
 +         p_127520_.append("Stacktrace:");
-+         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.f_127506_));
++         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.uncategorizedStackTrace));
        }
  
-       for(CrashReportCategory crashreportcategory : this.f_127503_) {
+       for(CrashReportCategory crashreportcategory : this.details) {
 @@ -72,6 +_,7 @@
           p_127520_.append("\n\n");
        }
  
-+      net.minecraftforge.logging.CrashReportExtender.extendSystemReport(f_178624_);
-       this.f_178624_.m_143525_(p_127520_);
++      net.minecraftforge.logging.CrashReportExtender.extendSystemReport(systemReport);
+       this.systemReport.appendToCrashReportString(p_127520_);
     }
  
 @@ -91,23 +_,13 @@
-          throwable.setStackTrace(this.f_127501_.getStackTrace());
+          throwable.setStackTrace(this.exception.getStackTrace());
        }
  
 -      String s;
@@ -44,10 +44,10 @@
 +      return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(throwable);
     }
  
-    public String m_127526_() {
+    public String getFriendlyReport() {
        StringBuilder stringbuilder = new StringBuilder();
        stringbuilder.append("---- Minecraft Crash Report ----\n");
 +      net.minecraftforge.logging.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
        stringbuilder.append("// ");
-       stringbuilder.append(m_127531_());
+       stringbuilder.append(getErrorComment());
        stringbuilder.append("\n\n");

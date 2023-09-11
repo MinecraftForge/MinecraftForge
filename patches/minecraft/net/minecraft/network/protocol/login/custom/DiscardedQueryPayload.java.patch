@@ -4,15 +4,15 @@
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.resources.ResourceLocation;
  
--public record DiscardedQueryPayload(ResourceLocation f_291669_) implements CustomQueryPayload {
-+public record DiscardedQueryPayload(ResourceLocation f_291669_, @org.jetbrains.annotations.Nullable FriendlyByteBuf data) implements CustomQueryPayload {
-+   public DiscardedQueryPayload(ResourceLocation f_291669_) {
-+      this(f_291669_, null);
+-public record DiscardedQueryPayload(ResourceLocation id) implements CustomQueryPayload {
++public record DiscardedQueryPayload(ResourceLocation id, @org.jetbrains.annotations.Nullable FriendlyByteBuf data) implements CustomQueryPayload {
++   public DiscardedQueryPayload(ResourceLocation id) {
++      this(id, null);
 +   }
 +
-    public void m_294761_(FriendlyByteBuf p_299949_) {
+    public void write(FriendlyByteBuf p_299949_) {
 +      if (this.data != null)
 +         p_299949_.writeBytes(this.data.slice());
     }
  
-    public ResourceLocation m_293131_() {
+    public ResourceLocation id() {

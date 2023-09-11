@@ -6,12 +6,12 @@
  
 +   /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
 +   @Deprecated
-    public static Advancement m_294730_(JsonObject p_300691_, DeserializationContext p_300053_) {
+    public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_) {
 +       return fromJson(p_300691_, p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
 +    }
 +
 +    public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
 +      //if ((p_300691_ = net.minecraftforge.common.crafting.ConditionalAdvancement.processConditional(p_300691_, context)) == null) return null;
-       Optional<ResourceLocation> optional = p_300691_.has("parent") ? Optional.of(new ResourceLocation(GsonHelper.m_13906_(p_300691_, "parent"))) : Optional.empty();
-       Optional<DisplayInfo> optional1 = p_300691_.has("display") ? Optional.of(DisplayInfo.m_14981_(GsonHelper.m_13930_(p_300691_, "display"))) : Optional.empty();
-       AdvancementRewards advancementrewards = p_300691_.has("rewards") ? AdvancementRewards.m_9991_(GsonHelper.m_13930_(p_300691_, "rewards")) : AdvancementRewards.f_9978_;
+       Optional<ResourceLocation> optional = p_300691_.has("parent") ? Optional.of(new ResourceLocation(GsonHelper.getAsString(p_300691_, "parent"))) : Optional.empty();
+       Optional<DisplayInfo> optional1 = p_300691_.has("display") ? Optional.of(DisplayInfo.fromJson(GsonHelper.getAsJsonObject(p_300691_, "display"))) : Optional.empty();
+       AdvancementRewards advancementrewards = p_300691_.has("rewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(p_300691_, "rewards")) : AdvancementRewards.EMPTY;

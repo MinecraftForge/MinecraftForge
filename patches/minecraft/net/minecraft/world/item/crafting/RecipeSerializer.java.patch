@@ -2,9 +2,9 @@
 +++ b/net/minecraft/world/item/crafting/RecipeSerializer.java
 @@ -32,6 +_,7 @@
  
-    Codec<T> m_292673_();
+    Codec<T> codec();
  
 +   @org.jetbrains.annotations.Nullable
-    T m_8005_(FriendlyByteBuf p_44106_);
+    T fromNetwork(FriendlyByteBuf p_44106_);
  
-    void m_6178_(FriendlyByteBuf p_44101_, T p_44102_);
+    void toNetwork(FriendlyByteBuf p_44101_, T p_44102_);

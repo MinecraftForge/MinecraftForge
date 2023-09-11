@@ -1,18 +1,18 @@
 --- a/net/minecraft/util/datafix/schemas/V2832.java
 +++ b/net/minecraft/util/datafix/schemas/V2832.java
 @@ -22,7 +_,7 @@
-          return DSL.constType(m_17310_());
+          return DSL.constType(namespacedString());
        });
-       p_185234_.registerType(false, References.f_16795_, () -> {
--         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(m_17310_()), DSL.fields("generator", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
-+         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(m_17310_()), DSL.fields("generator", DSL.or(DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
-             return DSL.optionalFields("settings", DSL.optionalFields("biome", References.f_16794_.in(p_185234_), "layers", DSL.list(DSL.optionalFields("block", References.f_16787_.in(p_185234_)))));
+       p_185234_.registerType(false, References.WORLD_GEN_SETTINGS, () -> {
+-         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(namespacedString()), DSL.fields("generator", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
++         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(namespacedString()), DSL.fields("generator", DSL.or(DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
+             return DSL.optionalFields("settings", DSL.optionalFields("biome", References.BIOME.in(p_185234_), "layers", DSL.list(DSL.optionalFields("block", References.BLOCK_NAME.in(p_185234_)))));
           }, "minecraft:noise", () -> {
              return DSL.optionalFields("biome_source", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:fixed", () -> {
 @@ -32,7 +_,7 @@
              }, "minecraft:checkerboard", () -> {
-                return DSL.fields("biomes", DSL.list(References.f_16794_.in(p_185234_)));
-             }, "minecraft:the_end", DSL::remainder)), "settings", DSL.or(DSL.constType(DSL.string()), DSL.optionalFields("default_block", References.f_16787_.in(p_185234_), "default_fluid", References.f_16787_.in(p_185234_))));
+                return DSL.fields("biomes", DSL.list(References.BIOME.in(p_185234_)));
+             }, "minecraft:the_end", DSL::remainder)), "settings", DSL.or(DSL.constType(DSL.string()), DSL.optionalFields("default_block", References.BLOCK_NAME.in(p_185234_), "default_fluid", References.BLOCK_NAME.in(p_185234_))));
 -         })))));
 +         })), DSL.remainder()))));
        });

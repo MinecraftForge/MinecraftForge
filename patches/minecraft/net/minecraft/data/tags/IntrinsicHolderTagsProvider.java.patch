@@ -2,7 +2,7 @@
 +++ b/net/minecraft/data/tags/IntrinsicHolderTagsProvider.java
 @@ -13,26 +_,40 @@
  public abstract class IntrinsicHolderTagsProvider<T> extends TagsProvider<T> {
-    private final Function<T, ResourceKey<T>> f_254687_;
+    private final Function<T, ResourceKey<T>> keyExtractor;
  
 +   /**
 +    * @deprecated Forge: Use the {@linkplain #IntrinsicHolderTagsProvider(PackOutput, ResourceKey, CompletableFuture, Function, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant}
@@ -14,7 +14,7 @@
 +   }
 +   public IntrinsicHolderTagsProvider(PackOutput p_256164_, ResourceKey<? extends Registry<T>> p_256155_, CompletableFuture<HolderLookup.Provider> p_256488_, Function<T, ResourceKey<T>> p_256168_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      super(p_256164_, p_256155_, p_256488_, modId, existingFileHelper);
-       this.f_254687_ = p_256168_;
+       this.keyExtractor = p_256168_;
     }
  
 +   /**
@@ -27,35 +27,35 @@
 +   }
 +   public IntrinsicHolderTagsProvider(PackOutput p_275304_, ResourceKey<? extends Registry<T>> p_275709_, CompletableFuture<HolderLookup.Provider> p_275227_, CompletableFuture<TagsProvider.TagLookup<T>> p_275311_, Function<T, ResourceKey<T>> p_275566_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
 +      super(p_275304_, p_275709_, p_275227_, p_275311_, modId, existingFileHelper);
-       this.f_254687_ = p_275566_;
+       this.keyExtractor = p_275566_;
     }
  
-    protected IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> m_206424_(TagKey<T> p_255730_) {
-       TagBuilder tagbuilder = this.m_236451_(p_255730_);
--      return new IntrinsicHolderTagsProvider.IntrinsicTagAppender<>(tagbuilder, this.f_254687_);
-+      return new IntrinsicHolderTagsProvider.IntrinsicTagAppender<>(tagbuilder, this.f_254687_, this.modId);
+    protected IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> tag(TagKey<T> p_255730_) {
+       TagBuilder tagbuilder = this.getOrCreateRawBuilder(p_255730_);
+-      return new IntrinsicHolderTagsProvider.IntrinsicTagAppender<>(tagbuilder, this.keyExtractor);
++      return new IntrinsicHolderTagsProvider.IntrinsicTagAppender<>(tagbuilder, this.keyExtractor, this.modId);
     }
  
 -   public static class IntrinsicTagAppender<T> extends TagsProvider.TagAppender<T> {
 +   public static class IntrinsicTagAppender<T> extends TagsProvider.TagAppender<T> implements net.minecraftforge.common.extensions.IForgeIntrinsicHolderTagAppender<T> {
-       private final Function<T, ResourceKey<T>> f_254707_;
+       private final Function<T, ResourceKey<T>> keyExtractor;
  
 -      IntrinsicTagAppender(TagBuilder p_256108_, Function<T, ResourceKey<T>> p_256433_) {
 -         super(p_256108_);
 +      IntrinsicTagAppender(TagBuilder p_256108_, Function<T, ResourceKey<T>> p_256433_, String modId) {
 +         super(p_256108_, modId);
-          this.f_254707_ = p_256433_;
+          this.keyExtractor = p_256433_;
        }
  
 @@ -50,6 +_,11 @@
-       public final IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> m_255179_(T... p_255868_) {
-          Stream.<T>of(p_255868_).map(this.f_254707_).forEach(this::m_255204_);
+       public final IntrinsicHolderTagsProvider.IntrinsicTagAppender<T> add(T... p_255868_) {
+          Stream.<T>of(p_255868_).map(this.keyExtractor).forEach(this::add);
           return this;
 +      }
 +
 +      @Override
 +      public final ResourceKey<T> getKey(T value) {
-+         return this.f_254707_.apply(value);
++         return this.keyExtractor.apply(value);
        }
     }
  }

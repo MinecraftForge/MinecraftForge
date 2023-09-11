@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/level/levelgen/feature/configurations/TreeConfiguration.java
 +++ b/net/minecraft/world/level/levelgen/feature/configurations/TreeConfiguration.java
 @@ -37,6 +_,7 @@
-          return p_225470_.f_161215_;
+          return p_225470_.forceDirt;
        })).apply(p_225468_, TreeConfiguration::new);
     });
 +   //TODO: Review this, see if we can hook in the sapling into the Codec
-    public final BlockStateProvider f_68185_;
-    public final BlockStateProvider f_161212_;
-    public final TrunkPlacer f_68190_;
+    public final BlockStateProvider trunkProvider;
+    public final BlockStateProvider dirtProvider;
+    public final TrunkPlacer trunkPlacer;

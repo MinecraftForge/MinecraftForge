@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
 @@ -138,10 +_,10 @@
-       TransferableSelectionList.PackEntry transferableselectionlist$packentry = p_100014_.m_93511_();
-       String s = transferableselectionlist$packentry == null ? "" : transferableselectionlist$packentry.m_264411_();
-       p_100014_.m_6987_((TransferableSelectionList.PackEntry)null);
+       TransferableSelectionList.PackEntry transferableselectionlist$packentry = p_100014_.getSelected();
+       String s = transferableselectionlist$packentry == null ? "" : transferableselectionlist$packentry.getPackId();
+       p_100014_.setSelected((TransferableSelectionList.PackEntry)null);
 -      p_100015_.forEach((p_280875_) -> {
--         TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(this.f_96541_, p_100014_, p_280875_);
+-         TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(this.minecraft, p_100014_, p_280875_);
 +      p_100015_.filter(PackSelectionModel.Entry::notHidden).forEach((p_264692_) -> {
-+         TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(this.f_96541_, p_100014_, p_264692_);
-          p_100014_.m_6702_().add(transferableselectionlist$packentry1);
--         if (p_280875_.m_264249_().equals(s)) {
-+         if (p_264692_.m_264249_().equals(s)) {
-             p_100014_.m_6987_(transferableselectionlist$packentry1);
++         TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(this.minecraft, p_100014_, p_264692_);
+          p_100014_.children().add(transferableselectionlist$packentry1);
+-         if (p_280875_.getId().equals(s)) {
++         if (p_264692_.getId().equals(s)) {
+             p_100014_.setSelected(transferableselectionlist$packentry1);
           }
  

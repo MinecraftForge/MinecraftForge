@@ -5,16 +5,16 @@
                       }
  
 -                     ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s4 + ".png");
-+                     ResourceLocation rl = ResourceLocation.m_135820_(s4);
-+                     ResourceLocation resourcelocation = new ResourceLocation(rl.m_135827_(), "textures/effect/" + rl.m_135815_() + ".png");
-                      this.f_110007_.m_213713_(resourcelocation).orElseThrow(() -> {
++                     ResourceLocation rl = ResourceLocation.tryParse(s4);
++                     ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "textures/effect/" + rl.getPath() + ".png");
+                      this.resourceManager.getResource(resourcelocation).orElseThrow(() -> {
                          return new ChainedJsonException("Render target or texture '" + s4 + "' does not exist");
                       });
 @@ -260,6 +_,7 @@
-    public void m_110038_(String p_110039_, int p_110040_, int p_110041_) {
-       RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.f_91002_);
-       rendertarget.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);
-+      if (f_110006_.isStencilEnabled()) { rendertarget.enableStencil(); }
-       this.f_110010_.put(p_110039_, rendertarget);
-       if (p_110040_ == this.f_110013_ && p_110041_ == this.f_110014_) {
-          this.f_110011_.add(rendertarget);
+    public void addTempTarget(String p_110039_, int p_110040_, int p_110041_) {
+       RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.ON_OSX);
+       rendertarget.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
++      if (screenTarget.isStencilEnabled()) { rendertarget.enableStencil(); }
+       this.customRenderTargets.put(p_110039_, rendertarget);
+       if (p_110040_ == this.screenWidth && p_110041_ == this.screenHeight) {
+          this.fullSizedTargets.add(rendertarget);

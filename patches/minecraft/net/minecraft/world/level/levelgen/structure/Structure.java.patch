@@ -2,15 +2,15 @@
 +++ b/net/minecraft/world/level/levelgen/structure/Structure.java
 @@ -41,11 +_,12 @@
  public abstract class Structure {
-    public static final Codec<Structure> f_226553_ = BuiltInRegistries.f_256763_.m_194605_().dispatch(Structure::m_213658_, StructureType::m_226884_);
-    public static final Codec<Holder<Structure>> f_226554_ = RegistryFileCodec.m_135589_(Registries.f_256944_, f_226553_);
--   protected final Structure.StructureSettings f_226555_;
+    public static final Codec<Structure> DIRECT_CODEC = BuiltInRegistries.STRUCTURE_TYPE.byNameCodec().dispatch(Structure::type, StructureType::codec);
+    public static final Codec<Holder<Structure>> CODEC = RegistryFileCodec.create(Registries.STRUCTURE, DIRECT_CODEC);
+-   protected final Structure.StructureSettings settings;
 +   //Forge: Make this field private so that the redirect coremod can target it
-+   private final Structure.StructureSettings f_226555_;
++   private final Structure.StructureSettings settings;
  
-    public static <S extends Structure> RecordCodecBuilder<S, Structure.StructureSettings> m_226567_(RecordCodecBuilder.Instance<S> p_226568_) {
-       return Structure.StructureSettings.f_226688_.forGetter((p_226595_) -> {
--         return p_226595_.f_226555_;
+    public static <S extends Structure> RecordCodecBuilder<S, Structure.StructureSettings> settingsCodec(RecordCodecBuilder.Instance<S> p_226568_) {
+       return Structure.StructureSettings.CODEC.forGetter((p_226595_) -> {
+-         return p_226595_.settings;
 +         return p_226595_.modifiableStructureInfo().getOriginalStructureInfo().structureSettings(); // FORGE: Patch codec to ignore field redirect coremods.
        });
     }
@@ -18,15 +18,15 @@
 @@ -57,6 +_,7 @@
  
     protected Structure(Structure.StructureSettings p_226558_) {
-       this.f_226555_ = p_226558_;
+       this.settings = p_226558_;
 +      this.modifiableStructureInfo = new net.minecraftforge.common.world.ModifiableStructureInfo(new net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo(p_226558_)); // FORGE: cache original structure info on construction so we can bypass our field read coremods where necessary
     }
  
-    public HolderSet<Biome> m_226559_() {
+    public HolderSet<Biome> biomes() {
 @@ -157,6 +_,29 @@
     }
  
-    public abstract StructureType<?> m_213658_();
+    public abstract StructureType<?> type();
 +
 +   // FORGE START
 +
@@ -51,5 +51,5 @@
 +
 +   // FORGE END
  
-    public static record GenerationContext(RegistryAccess f_226621_, ChunkGenerator f_226622_, BiomeSource f_226623_, RandomState f_226624_, StructureTemplateManager f_226625_, WorldgenRandom f_226626_, long f_226627_, ChunkPos f_226628_, LevelHeightAccessor f_226629_, Predicate<Holder<Biome>> f_226630_) {
+    public static record GenerationContext(RegistryAccess registryAccess, ChunkGenerator chunkGenerator, BiomeSource biomeSource, RandomState randomState, StructureTemplateManager structureTemplateManager, WorldgenRandom random, long seed, ChunkPos chunkPos, LevelHeightAccessor heightAccessor, Predicate<Holder<Biome>> validBiome) {
        public GenerationContext(RegistryAccess p_226632_, ChunkGenerator p_226633_, BiomeSource p_226634_, RandomState p_226635_, StructureTemplateManager p_226636_, long p_226637_, ChunkPos p_226638_, LevelHeightAccessor p_226639_, Predicate<Holder<Biome>> p_226640_) {

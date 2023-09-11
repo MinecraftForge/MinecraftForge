@@ -2,33 +2,33 @@
 +++ b/net/minecraft/world/entity/animal/Wolf.java
 @@ -325,11 +_,12 @@
           return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-       } else if (this.m_21824_()) {
-          if (this.m_6898_(itemstack) && this.m_21223_() < this.m_21233_()) {
-+            this.m_5634_((float)itemstack.getFoodProperties(this).m_38744_());
-             if (!p_30412_.m_150110_().f_35937_) {
-                itemstack.m_41774_(1);
+       } else if (this.isTame()) {
+          if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
++            this.heal((float)itemstack.getFoodProperties(this).getNutrition());
+             if (!p_30412_.getAbilities().instabuild) {
+                itemstack.shrink(1);
              }
  
--            this.m_5634_((float)item.m_41473_().m_38744_());
-+            this.m_146852_(GameEvent.f_157806_, this);
+-            this.heal((float)item.getFoodProperties().getNutrition());
++            this.gameEvent(GameEvent.EAT, this);
              return InteractionResult.SUCCESS;
           } else {
              if (item instanceof DyeItem) {
 @@ -365,7 +_,7 @@
-             itemstack.m_41774_(1);
+             itemstack.shrink(1);
           }
  
--         if (this.f_19796_.m_188503_(3) == 0) {
-+         if (this.f_19796_.m_188503_(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
-             this.m_21828_(p_30412_);
-             this.f_21344_.m_26573_();
-             this.m_6710_((LivingEntity)null);
+-         if (this.random.nextInt(3) == 0) {
++         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
+             this.tame(p_30412_);
+             this.navigation.stop();
+             this.setTarget((LivingEntity)null);
 @@ -404,7 +_,7 @@
  
-    public boolean m_6898_(ItemStack p_30440_) {
-       Item item = p_30440_.m_41720_();
--      return item.m_41472_() && item.m_41473_().m_38746_();
-+      return item.m_41472_() && p_30440_.getFoodProperties(this).m_38746_();
+    public boolean isFood(ItemStack p_30440_) {
+       Item item = p_30440_.getItem();
+-      return item.isEdible() && item.getFoodProperties().isMeat();
++      return item.isEdible() && p_30440_.getFoodProperties(this).isMeat();
     }
  
-    public int m_5792_() {
+    public int getMaxSpawnClusterSize() {

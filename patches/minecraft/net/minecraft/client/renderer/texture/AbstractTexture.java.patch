@@ -9,15 +9,15 @@
 +   private boolean lastMipmap;
 +
 +   public void setBlurMipmap(boolean blur, boolean mipmap) {
-+      this.lastBlur = this.f_117951_;
-+      this.lastMipmap = this.f_117952_;
-+      m_117960_(blur, mipmap);
++      this.lastBlur = this.blur;
++      this.lastMipmap = this.mipmap;
++      setFilter(blur, mipmap);
 +   }
 +
 +   public void restoreLastBlurMipmap() {
-+      m_117960_(this.lastBlur, this.lastMipmap);
++      setFilter(this.lastBlur, this.lastMipmap);
 +   }
 +
-    public int m_117963_() {
+    public int getId() {
        RenderSystem.assertOnRenderThreadOrInit();
-       if (this.f_117950_ == -1) {
+       if (this.id == -1) {

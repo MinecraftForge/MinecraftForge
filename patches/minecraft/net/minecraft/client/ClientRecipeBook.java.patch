@@ -1,20 +1,20 @@
 --- a/net/minecraft/client/ClientRecipeBook.java
 +++ b/net/minecraft/client/ClientRecipeBook.java
 @@ -56,7 +_,7 @@
-          Recipe<?> recipe = recipeholder.f_291008_();
-          if (!recipe.m_5598_() && !recipe.m_142505_()) {
-             RecipeBookCategories recipebookcategories = m_90646_(recipeholder);
--            String s = recipe.m_6076_();
-+            String s = recipe.m_6076_().isEmpty() ? recipeholder.f_291676_().toString() : recipe.m_6076_(); // FORGE: Group value defaults to the recipe's ID if the recipe's explicit group is empty.
+          Recipe<?> recipe = recipeholder.value();
+          if (!recipe.isSpecial() && !recipe.isIncomplete()) {
+             RecipeBookCategories recipebookcategories = getCategory(recipeholder);
+-            String s = recipe.getGroup();
++            String s = recipe.getGroup().isEmpty() ? recipeholder.id().toString() : recipe.getGroup(); // FORGE: Group value defaults to the recipe's ID if the recipe's explicit group is empty.
              if (s.isEmpty()) {
                 map.computeIfAbsent(recipebookcategories, (p_90645_) -> {
                    return Lists.newArrayList();
 @@ -144,6 +_,8 @@
-          } else if (recipetype == RecipeType.f_44113_) {
+          } else if (recipetype == RecipeType.SMITHING) {
              return RecipeBookCategories.SMITHING;
           } else {
 +            RecipeBookCategories categories = net.minecraftforge.client.RecipeBookManager.findCategories((RecipeType) recipetype, p_299041_);
 +            if (categories != null) return categories;
-             f_90618_.warn("Unknown recipe category: {}/{}", LogUtils.defer(() -> {
-                return BuiltInRegistries.f_256990_.m_7981_(recipe.m_6671_());
-             }), LogUtils.defer(p_299041_::f_291676_));
+             LOGGER.warn("Unknown recipe category: {}/{}", LogUtils.defer(() -> {
+                return BuiltInRegistries.RECIPE_TYPE.getKey(recipe.getType());
+             }), LogUtils.defer(p_299041_::id));

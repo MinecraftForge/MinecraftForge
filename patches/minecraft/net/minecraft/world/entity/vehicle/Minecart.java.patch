@@ -3,9 +3,9 @@
 @@ -18,6 +_,8 @@
     }
  
-    public InteractionResult m_6096_(Player p_38483_, InteractionHand p_38484_) {
-+      InteractionResult ret = super.m_6096_(p_38483_, p_38484_);
-+      if (ret.m_19077_()) return ret;
-       if (p_38483_.m_36341_()) {
+    public InteractionResult interact(Player p_38483_, InteractionHand p_38484_) {
++      InteractionResult ret = super.interact(p_38483_, p_38484_);
++      if (ret.consumesAction()) return ret;
+       if (p_38483_.isSecondaryUseActive()) {
           return InteractionResult.PASS;
-       } else if (this.m_20160_()) {
+       } else if (this.isVehicle()) {

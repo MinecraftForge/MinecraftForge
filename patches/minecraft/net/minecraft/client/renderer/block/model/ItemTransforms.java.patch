@@ -1,23 +1,23 @@
 --- a/net/minecraft/client/renderer/block/model/ItemTransforms.java
 +++ b/net/minecraft/client/renderer/block/model/ItemTransforms.java
 @@ -21,11 +_,13 @@
-    public final ItemTransform f_111792_;
-    public final ItemTransform f_111793_;
-    public final ItemTransform f_111794_;
+    public final ItemTransform gui;
+    public final ItemTransform ground;
+    public final ItemTransform fixed;
 +   public final com.google.common.collect.ImmutableMap<ItemDisplayContext, ItemTransform> moddedTransforms;
  
     private ItemTransforms() {
-       this(ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_);
+       this(ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM, ItemTransform.NO_TRANSFORM);
     }
  
 +   @Deprecated
     public ItemTransforms(ItemTransforms p_111807_) {
-       this.f_111787_ = p_111807_.f_111787_;
-       this.f_111788_ = p_111807_.f_111788_;
+       this.thirdPersonLeftHand = p_111807_.thirdPersonLeftHand;
+       this.thirdPersonRightHand = p_111807_.thirdPersonRightHand;
 @@ -35,9 +_,16 @@
-       this.f_111792_ = p_111807_.f_111792_;
-       this.f_111793_ = p_111807_.f_111793_;
-       this.f_111794_ = p_111807_.f_111794_;
+       this.gui = p_111807_.gui;
+       this.ground = p_111807_.ground;
+       this.fixed = p_111807_.fixed;
 +      this.moddedTransforms = p_111807_.moddedTransforms;
     }
  
@@ -28,42 +28,42 @@
 +
 +   public ItemTransforms(ItemTransform p_111798_, ItemTransform p_111799_, ItemTransform p_111800_, ItemTransform p_111801_, ItemTransform p_111802_, ItemTransform p_111803_, ItemTransform p_111804_, ItemTransform p_111805_,
 +           com.google.common.collect.ImmutableMap<ItemDisplayContext, ItemTransform> moddedTransforms) {
-       this.f_111787_ = p_111798_;
-       this.f_111788_ = p_111799_;
-       this.f_111789_ = p_111800_;
+       this.thirdPersonLeftHand = p_111798_;
+       this.thirdPersonRightHand = p_111799_;
+       this.firstPersonLeftHand = p_111800_;
 @@ -46,6 +_,7 @@
-       this.f_111792_ = p_111803_;
-       this.f_111793_ = p_111804_;
-       this.f_111794_ = p_111805_;
+       this.gui = p_111803_;
+       this.ground = p_111804_;
+       this.fixed = p_111805_;
 +      this.moddedTransforms = moddedTransforms;
     }
  
-    public ItemTransform m_269404_(ItemDisplayContext p_270619_) {
+    public ItemTransform getTransform(ItemDisplayContext p_270619_) {
 @@ -76,7 +_,7 @@
-             itemtransform = this.f_111794_;
+             itemtransform = this.fixed;
              break;
           default:
--            itemtransform = ItemTransform.f_111754_;
-+            return moddedTransforms.getOrDefault(p_270619_, ItemTransform.f_111754_);
+-            itemtransform = ItemTransform.NO_TRANSFORM;
++            return moddedTransforms.getOrDefault(p_270619_, ItemTransform.NO_TRANSFORM);
        }
  
        return itemtransform;
 @@ -106,7 +_,23 @@
-          ItemTransform itemtransform5 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.GUI);
-          ItemTransform itemtransform6 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.GROUND);
-          ItemTransform itemtransform7 = this.m_269518_(p_111822_, jsonobject, ItemDisplayContext.FIXED);
+          ItemTransform itemtransform5 = this.getTransform(p_111822_, jsonobject, ItemDisplayContext.GUI);
+          ItemTransform itemtransform6 = this.getTransform(p_111822_, jsonobject, ItemDisplayContext.GROUND);
+          ItemTransform itemtransform7 = this.getTransform(p_111822_, jsonobject, ItemDisplayContext.FIXED);
 -         return new ItemTransforms(itemtransform1, itemtransform, itemtransform3, itemtransform2, itemtransform4, itemtransform5, itemtransform6, itemtransform7);
 +
 +         var builder = com.google.common.collect.ImmutableMap.<ItemDisplayContext, ItemTransform>builder();
 +         for (ItemDisplayContext type : ItemDisplayContext.values()) {
 +            if (type.isModded()) {
-+               var transform = this.m_269518_(p_111822_, jsonobject, type);
++               var transform = this.getTransform(p_111822_, jsonobject, type);
 +               var fallbackType = type;
-+               while (transform == ItemTransform.f_111754_ && fallbackType.fallback() != null) {
++               while (transform == ItemTransform.NO_TRANSFORM && fallbackType.fallback() != null) {
 +                  fallbackType = fallbackType.fallback();
-+                  transform = this.m_269518_(p_111822_, jsonobject, fallbackType);
++                  transform = this.getTransform(p_111822_, jsonobject, fallbackType);
 +               }
-+               if (transform != ItemTransform.f_111754_){
++               if (transform != ItemTransform.NO_TRANSFORM){
 +                  builder.put(type, transform);
 +               }
 +            }
@@ -72,4 +72,4 @@
 +         return new ItemTransforms(itemtransform1, itemtransform, itemtransform3, itemtransform2, itemtransform4, itemtransform5, itemtransform6, itemtransform7, builder.build());
        }
  
-       private ItemTransform m_269518_(JsonDeserializationContext p_270385_, JsonObject p_270436_, ItemDisplayContext p_270100_) {
+       private ItemTransform getTransform(JsonDeserializationContext p_270385_, JsonObject p_270436_, ItemDisplayContext p_270100_) {

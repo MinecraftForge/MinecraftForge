@@ -4,8 +4,8 @@
        if (p_285372_ == p_285110_) {
           return false;
        } else {
--         return p_285372_.m_60739_(p_285159_, p_284985_) != p_285110_.m_60739_(p_285159_, p_284985_) || p_285372_.m_60791_() != p_285110_.m_60791_() || p_285372_.m_60787_() || p_285110_.m_60787_();
-+         return p_285372_.m_60739_(p_285159_, p_284985_) != p_285110_.m_60739_(p_285159_, p_284985_) || p_285372_.getLightEmission(p_285159_, p_284985_) != p_285110_.getLightEmission(p_285159_, p_284985_) || p_285372_.m_60787_() || p_285110_.m_60787_();
+-         return p_285372_.getLightBlock(p_285159_, p_284985_) != p_285110_.getLightBlock(p_285159_, p_284985_) || p_285372_.getLightEmission() != p_285110_.getLightEmission() || p_285372_.useShapeForLightOcclusion() || p_285110_.useShapeForLightOcclusion();
++         return p_285372_.getLightBlock(p_285159_, p_284985_) != p_285110_.getLightBlock(p_285159_, p_284985_) || p_285372_.getLightEmission(p_285159_, p_284985_) != p_285110_.getLightEmission(p_285159_, p_284985_) || p_285372_.useShapeForLightOcclusion() || p_285110_.useShapeForLightOcclusion();
        }
     }
  

@@ -3,8 +3,8 @@
 @@ -106,7 +_,7 @@
        }
  
-       compoundtag.m_128408_("Colors", list);
--      compoundtag.m_128344_("Type", (byte)fireworkrocketitem$shape.m_41236_());
+       compoundtag.putIntArray("Colors", list);
+-      compoundtag.putByte("Type", (byte)fireworkrocketitem$shape.getId());
 +      fireworkrocketitem$shape.save(compoundtag);
        return itemstack;
     }

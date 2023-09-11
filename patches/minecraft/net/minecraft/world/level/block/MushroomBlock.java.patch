@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
 @@ -72,7 +_,7 @@
-       if (blockstate.m_204336_(BlockTags.f_13057_)) {
+       if (blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
           return true;
        } else {
--         return p_54881_.m_45524_(p_54882_, 0) < 13 && this.m_6266_(blockstate, p_54881_, blockpos);
-+         return p_54881_.m_45524_(p_54882_, 0) < 13 && blockstate.canSustainPlant(p_54881_, blockpos, net.minecraft.core.Direction.UP, this);
+-         return p_54881_.getRawBrightness(p_54882_, 0) < 13 && this.mayPlaceOn(blockstate, p_54881_, blockpos);
++         return p_54881_.getRawBrightness(p_54882_, 0) < 13 && blockstate.canSustainPlant(p_54881_, blockpos, net.minecraft.core.Direction.UP, this);
        }
     }
  
@@ -15,9 +15,9 @@
        } else {
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221774_, p_221777_, p_221775_, optional.get());
 +         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return false;
-          p_221774_.m_7471_(p_221775_, false);
--         if (optional.get().m_203334_().m_224953_(p_221774_, p_221774_.m_7726_().m_8481_(), p_221777_, p_221775_)) {
-+         if (event.getFeature().m_203334_().m_224953_(p_221774_, p_221774_.m_7726_().m_8481_(), p_221777_, p_221775_)) {
+          p_221774_.removeBlock(p_221775_, false);
+-         if (optional.get().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
++         if (event.getFeature().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
              return true;
           } else {
-             p_221774_.m_7731_(p_221775_, p_221776_, 3);
+             p_221774_.setBlock(p_221775_, p_221776_, 3);

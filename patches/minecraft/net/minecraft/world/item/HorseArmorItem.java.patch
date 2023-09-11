@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/item/HorseArmorItem.java
 @@ -5,16 +_,20 @@
  public class HorseArmorItem extends Item {
-    private static final String f_150882_ = "textures/entity/horse/";
-    private final int f_41361_;
--   private final String f_41362_;
-+   private final ResourceLocation f_41362_;
+    private static final String TEX_FOLDER = "textures/entity/horse/";
+    private final int protection;
+-   private final String texture;
++   private final ResourceLocation texture;
  
     public HorseArmorItem(int p_41364_, String p_41365_, Item.Properties p_41366_) {
 +      this(p_41364_, new ResourceLocation("textures/entity/horse/armor/horse_armor_" + p_41365_ + ".png"), p_41366_);
@@ -13,14 +13,14 @@
 +
 +   public HorseArmorItem(int p_41364_, ResourceLocation p_41365_, Item.Properties p_41366_) {
        super(p_41366_);
-       this.f_41361_ = p_41364_;
--      this.f_41362_ = "textures/entity/horse/armor/horse_armor_" + p_41365_ + ".png";
-+      this.f_41362_ = p_41365_;
+       this.protection = p_41364_;
+-      this.texture = "textures/entity/horse/armor/horse_armor_" + p_41365_ + ".png";
++      this.texture = p_41365_;
     }
  
-    public ResourceLocation m_41367_() {
--      return new ResourceLocation(this.f_41362_);
-+      return f_41362_;
+    public ResourceLocation getTexture() {
+-      return new ResourceLocation(this.texture);
++      return texture;
     }
  
-    public int m_41368_() {
+    public int getProtection() {

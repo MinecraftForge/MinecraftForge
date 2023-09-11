@@ -7,5 +7,5 @@
 -public class Potion {
 +public class Potion implements net.minecraftforge.common.extensions.IForgePotion {
     @Nullable
-    private final String f_43481_;
-    private final ImmutableList<MobEffectInstance> f_43482_;
+    private final String name;
+    private final ImmutableList<MobEffectInstance> effects;

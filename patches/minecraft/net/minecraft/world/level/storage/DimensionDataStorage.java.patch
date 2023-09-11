@@ -2,14 +2,14 @@
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
 @@ -48,9 +_,13 @@
     @Nullable
-    public <T extends SavedData> T m_164858_(SavedData.Factory p_297465_, String p_164860_) {
-       SavedData saveddata = this.f_78144_.get(p_164860_);
+    public <T extends SavedData> T get(SavedData.Factory p_297465_, String p_164860_) {
+       SavedData saveddata = this.cache.get(p_164860_);
 +      if (saveddata == net.minecraftforge.common.util.DummySavedData.DUMMY) return null;
-       if (saveddata == null && !this.f_78144_.containsKey(p_164860_)) {
-          saveddata = this.m_164868_(p_297465_.f_291599_(), p_297465_.f_291120_(), p_164860_);
-          this.f_78144_.put(p_164860_, saveddata);
+       if (saveddata == null && !this.cache.containsKey(p_164860_)) {
+          saveddata = this.readSavedData(p_297465_.deserializer(), p_297465_.type(), p_164860_);
+          this.cache.put(p_164860_, saveddata);
 +      } else if (saveddata == null) {
-+         this.f_78144_.put(p_164860_, net.minecraftforge.common.util.DummySavedData.DUMMY);
++         this.cache.put(p_164860_, net.minecraftforge.common.util.DummySavedData.DUMMY);
 +         return null;
        }
  

@@ -4,9 +4,9 @@
              spreadplayerscommand$position = p_138732_[i++];
           }
  
--         entity.m_264318_(p_138731_, (double)Mth.m_14107_(spreadplayerscommand$position.f_138749_) + 0.5D, (double)spreadplayerscommand$position.m_138758_(p_138731_, p_138733_), (double)Mth.m_14107_(spreadplayerscommand$position.f_138750_) + 0.5D, Set.of(), entity.m_146908_(), entity.m_146909_());
-+         net.minecraftforge.event.entity.EntityTeleportEvent.SpreadPlayersCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity, (double)Mth.m_14107_(spreadplayerscommand$position.f_138749_) + 0.5D, (double)spreadplayerscommand$position.m_138758_(p_138731_, p_138733_), (double)Mth.m_14107_(spreadplayerscommand$position.f_138750_) + 0.5D);
-+         if (!event.isCanceled()) entity.m_20324_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+-         entity.teleportTo(p_138731_, (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D, (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_), (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D, Set.of(), entity.getYRot(), entity.getXRot());
++         net.minecraftforge.event.entity.EntityTeleportEvent.SpreadPlayersCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity, (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D, (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_), (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D);
++         if (!event.isCanceled()) entity.teleportToWithTicket(event.getTargetX(), event.getTargetY(), event.getTargetZ());
           double d2 = Double.MAX_VALUE;
  
           for(SpreadPlayersCommand.Position spreadplayerscommand$position1 : p_138732_) {

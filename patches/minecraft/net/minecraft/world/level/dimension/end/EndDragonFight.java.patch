@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
 @@ -517,7 +_,14 @@
-             endcrystal.m_31052_((BlockPos)null);
+             endcrystal.setBeamTarget((BlockPos)null);
           }
        }
 -
 +   }
 +
 +   public void addPlayer(ServerPlayer player) {
-+      this.f_64060_.m_6543_(player);
++      this.dragonEvent.addPlayer(player);
 +   }
 +
 +   public void removePlayer(ServerPlayer player) {
-+      this.f_64060_.m_6539_(player);
++      this.dragonEvent.removePlayer(player);
     }
  
     @Nullable

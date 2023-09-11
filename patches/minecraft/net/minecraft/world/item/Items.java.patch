@@ -3,19 +3,19 @@
 @@ -1279,11 +_,23 @@
     }
  
-    public static Item m_245048_(Block p_252092_, Block... p_248886_) {
+    public static Item registerBlock(Block p_252092_, Block... p_248886_) {
 -      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties());
 +      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties()) {
 +         @Override
-+         public void m_6192_(java.util.Map<Block, Item> map, Item self) {
-+            super.m_6192_(map, self);
++         public void registerBlocks(java.util.Map<Block, Item> map, Item self) {
++            super.registerBlocks(map, self);
 +            for (Block b : p_248886_) {
 +               map.put(b, self);
 +            }
 +         }
  
 -      for(Block block : p_248886_) {
--         Item.f_41373_.put(block, blockitem);
+-         Item.BY_BLOCK.put(block, blockitem);
 -      }
 +         @Override
 +         public void removeFromBlockToItemMap(java.util.Map<Block, Item> map, Item self) {
@@ -26,5 +26,5 @@
 +         }
 +      };
  
-       return m_42803_(blockitem);
+       return registerBlock(blockitem);
     }

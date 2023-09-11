@@ -2,14 +2,14 @@
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
 @@ -89,8 +_,12 @@
           ListTag listtag = new ListTag();
-          p_156559_.m_156792_().forEach((p_156567_) -> {
+          p_156559_.getEntities().forEach((p_156567_) -> {
              CompoundTag compoundtag1 = new CompoundTag();
 +            try {
-             if (p_156567_.m_20223_(compoundtag1)) {
+             if (p_156567_.save(compoundtag1)) {
                 listtag.add(compoundtag1);
 +            }
 +            } catch (Exception e) {
-+               f_156535_.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", p_156567_.m_6095_(), e);
++               LOGGER.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", p_156567_.getType(), e);
              }
  
           });

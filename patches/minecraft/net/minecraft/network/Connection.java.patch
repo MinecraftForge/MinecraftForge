@@ -1,64 +1,64 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
 @@ -102,15 +_,19 @@
-    private volatile Component f_290021_;
+    private volatile Component delayedDisconnect;
     @Nullable
-    BandwidthDebugMonitor f_291520_;
+    BandwidthDebugMonitor bandwidthDebugMonitor;
 +   private java.util.function.Consumer<Connection> activationHandler;
 +   private final net.minecraftforge.common.util.PacketLogger packetLogger;
  
     public Connection(PacketFlow p_129482_) {
-       this.f_129466_ = p_129482_;
+       this.receiving = p_129482_;
 +      this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
     }
  
     public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
        super.channelActive(p_129525_);
-       this.f_129468_ = p_129525_.channel();
-       this.f_129469_ = this.f_129468_.remoteAddress();
+       this.channel = p_129525_.channel();
+       this.address = this.channel.remoteAddress();
 +      if (activationHandler != null) activationHandler.accept(this);
-       if (this.f_290021_ != null) {
-          this.m_129507_(this.f_290021_);
+       if (this.delayedDisconnect != null) {
+          this.disconnect(this.delayedDisconnect);
        }
 @@ -169,6 +_,7 @@
           } else {
-             if (packetlistener.m_294638_(p_129488_)) {
+             if (packetlistener.shouldHandleMessage(p_129488_)) {
                 try {
 +                  packetLogger.recv(p_129488_);
-                   m_129517_(p_129488_, packetlistener);
+                   genericsFtw(p_129488_, packetlistener);
                 } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
                 } catch (RejectedExecutionException rejectedexecutionexception) {
 @@ -237,7 +_,8 @@
-       this.m_295864_((p_296374_) -> {
-          p_296374_.m_294993_(p_297789_);
-          this.m_129505_(p_298739_);
--         p_296374_.m_129520_(new ClientIntentionPacket(SharedConstants.m_183709_().m_132495_(), p_300730_, p_300598_, p_297789_), (PacketSendListener)null, true);
+       this.runOnceConnected((p_296374_) -> {
+          p_296374_.setClientboundProtocolAfterHandshake(p_297789_);
+          this.setListener(p_298739_);
+-         p_296374_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), p_300730_, p_300598_, p_297789_), (PacketSendListener)null, true);
 +         // TODO: Change this to be a immediately sent login custom payload packet?
-+         p_296374_.m_129520_(new ClientIntentionPacket(SharedConstants.m_183709_().m_132495_(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), (PacketSendListener)null, true);
++         p_296374_.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().getProtocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), (PacketSendListener)null, true);
        });
     }
  
 @@ -289,6 +_,7 @@
  
-    private void m_243087_(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
-       ChannelFuture channelfuture = p_299937_ ? this.f_129468_.writeAndFlush(p_243260_) : this.f_129468_.write(p_243260_);
+    private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
+       ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
 +      channelfuture.addListener(f -> packetLogger.send(p_243260_));
        if (p_243290_ != null) {
           channelfuture.addListener((p_243167_) -> {
              if (p_243167_.isSuccess()) {
 @@ -395,7 +_,7 @@
-       if (this.f_129469_ == null) {
+       if (this.address == null) {
           return "local";
        } else {
--         return p_298740_ ? this.f_129469_.toString() : "IP hidden";
-+         return p_298740_ ? net.minecraftforge.network.DualStackUtils.getAddressString(this.f_129469_) : "IP hidden";
+-         return p_298740_ ? this.address.toString() : "IP hidden";
++         return p_298740_ ? net.minecraftforge.network.DualStackUtils.getAddressString(this.address) : "IP hidden";
        }
     }
  
 @@ -435,6 +_,8 @@
     }
  
-    public static ChannelFuture m_290025_(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
+    public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
 +      p_290031_.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
        Class<? extends SocketChannel> oclass;
@@ -66,24 +66,24 @@
        if (Epoll.isAvailable() && p_290035_) {
 @@ -485,6 +_,7 @@
  
-    public static Connection m_129493_(SocketAddress p_129494_) {
+    public static Connection connectToLocalServer(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
 +      connection.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
-       (new Bootstrap()).group(f_129464_.get()).handler(new ChannelInitializer<Channel>() {
+       (new Bootstrap()).group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
-             Connection.m_294111_(p_129557_);
+             Connection.setInitialProtocolAttributes(p_129557_);
 @@ -581,6 +_,14 @@
  
-    public float m_129543_() {
-       return this.f_129477_;
+    public float getAverageSentPackets() {
+       return this.averageSentPackets;
 +   }
 +
 +   public Channel channel() {
-+      return this.f_129468_;
++      return this.channel;
 +   }
 +
 +   public ConnectionProtocol getProtocol() {
-+      return this.f_129468_.attr(m_295397_(m_178314_())).get().m_295191_();
++      return this.channel.attr(getProtocolKey(getSending())).get().protocol();
     }
  
-    public void m_292855_(SampleLogger p_300126_) {
+    public void setBandwidthLogger(SampleLogger p_300126_) {

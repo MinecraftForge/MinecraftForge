@@ -3,18 +3,18 @@
 @@ -105,7 +_,7 @@
     }
  
-    private int m_284436_(long p_285243_, BlockState p_284973_) {
--      int i = p_284973_.m_60791_();
-+      int i = p_284973_.getLightEmission(f_283884_.m_7653_(), f_75489_);
-       return i > 0 && this.f_283849_.m_284382_(SectionPos.m_123235_(p_285243_)) ? i : 0;
+    private int getEmission(long p_285243_, BlockState p_284973_) {
+-      int i = p_284973_.getLightEmission();
++      int i = p_284973_.getLightEmission(chunkSource.getLevel(), mutablePos);
+       return i > 0 && this.storage.lightOnInSection(SectionPos.blockToSection(p_285243_)) ? i : 0;
     }
  
 @@ -114,7 +_,7 @@
-       LightChunk lightchunk = this.f_283884_.m_6196_(p_285274_.f_45578_, p_285274_.f_45579_);
+       LightChunk lightchunk = this.chunkSource.getChunkForLighting(p_285274_.x, p_285274_.z);
        if (lightchunk != null) {
-          lightchunk.m_284254_((p_285266_, p_285452_) -> {
--            int i = p_285452_.m_60791_();
-+            int i = p_285452_.getLightEmission(f_283884_.m_7653_(), p_285266_);
-             this.m_284218_(p_285266_.m_121878_(), LightEngine.QueueEntry.m_284185_(i, m_284265_(p_285452_)));
+          lightchunk.findBlockLightSources((p_285266_, p_285452_) -> {
+-            int i = p_285452_.getLightEmission();
++            int i = p_285452_.getLightEmission(chunkSource.getLevel(), p_285266_);
+             this.enqueueIncrease(p_285266_.asLong(), LightEngine.QueueEntry.increaseLightFromEmission(i, isEmptyShape(p_285452_)));
           });
        }

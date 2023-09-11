@@ -1,28 +1,28 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
 @@ -164,7 +_,7 @@
-    public static final Block f_50027_ = m_50795_("green_bed", m_50764_(DyeColor.GREEN));
-    public static final Block f_50028_ = m_50795_("red_bed", m_50764_(DyeColor.RED));
-    public static final Block f_50029_ = m_50795_("black_bed", m_50764_(DyeColor.BLACK));
--   public static final Block f_50030_ = m_50795_("powered_rail", new PoweredRailBlock(BlockBehaviour.Properties.m_284310_().m_60910_().m_60978_(0.7F).m_60918_(SoundType.f_56743_)));
-+   public static final Block f_50030_ = m_50795_("powered_rail", new PoweredRailBlock(BlockBehaviour.Properties.m_284310_().m_60910_().m_60978_(0.7F).m_60918_(SoundType.f_56743_), true));
-    public static final Block f_50031_ = m_50795_("detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.m_284310_().m_60910_().m_60978_(0.7F).m_60918_(SoundType.f_56743_)));
-    public static final Block f_50032_ = m_50795_("sticky_piston", m_50798_(true));
-    public static final Block f_50033_ = m_50795_("cobweb", new WebBlock(BlockBehaviour.Properties.m_284310_().m_284180_(MapColor.f_283930_).m_280606_().m_60910_().m_60999_().m_60978_(4.0F).m_278166_(PushReaction.DESTROY)));
+    public static final Block GREEN_BED = register("green_bed", bed(DyeColor.GREEN));
+    public static final Block RED_BED = register("red_bed", bed(DyeColor.RED));
+    public static final Block BLACK_BED = register("black_bed", bed(DyeColor.BLACK));
+-   public static final Block POWERED_RAIL = register("powered_rail", new PoweredRailBlock(BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL)));
++   public static final Block POWERED_RAIL = register("powered_rail", new PoweredRailBlock(BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL), true));
+    public static final Block DETECTOR_RAIL = register("detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL)));
+    public static final Block STICKY_PISTON = register("sticky_piston", pistonBase(true));
+    public static final Block COBWEB = register("cobweb", new WebBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).forceSolidOn().noCollission().requiresCorrectToolForDrops().strength(4.0F).pushReaction(PushReaction.DESTROY)));
 @@ -1258,17 +_,5 @@
  
-    public static void m_50758_() {
-       Block.f_49791_.forEach(BlockBehaviour.BlockStateBase::m_60611_);
+    public static void rebuildCache() {
+       Block.BLOCK_STATE_REGISTRY.forEach(BlockBehaviour.BlockStateBase::initCache);
 -   }
 -
 -   static {
--      for(Block block : BuiltInRegistries.f_256975_) {
--         for(BlockState blockstate : block.m_49965_().m_61056_()) {
--            Block.f_49791_.m_122667_(blockstate);
--            blockstate.m_60611_();
+-      for(Block block : BuiltInRegistries.BLOCK) {
+-         for(BlockState blockstate : block.getStateDefinition().getPossibleStates()) {
+-            Block.BLOCK_STATE_REGISTRY.add(blockstate);
+-            blockstate.initCache();
 -         }
 -
--         block.m_60589_();
+-         block.getLootTable();
 -      }
 -
     }

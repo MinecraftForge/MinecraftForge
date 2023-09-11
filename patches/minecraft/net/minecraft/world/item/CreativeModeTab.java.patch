@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/item/CreativeModeTab.java
 +++ b/net/minecraft/world/item/CreativeModeTab.java
 @@ -31,16 +_,38 @@
-    private Consumer<List<ItemStack>> f_256965_;
-    private final Supplier<ItemStack> f_256912_;
-    private final CreativeModeTab.DisplayItemsGenerator f_256824_;
+    private Consumer<List<ItemStack>> searchTreeBuilder;
+    private final Supplier<ItemStack> iconGenerator;
+    private final CreativeModeTab.DisplayItemsGenerator displayItemsGenerator;
 +   private net.minecraft.resources.ResourceLocation backgroundLocation;
 +   private final boolean hasSearchBar;
 +   private final int searchBarWidth;
@@ -14,12 +14,12 @@
  
 -   CreativeModeTab(CreativeModeTab.Row p_260217_, int p_259557_, CreativeModeTab.Type p_260176_, Component p_260100_, Supplier<ItemStack> p_259543_, CreativeModeTab.DisplayItemsGenerator p_259085_) {
 +   CreativeModeTab(CreativeModeTab.Row p_260217_, int p_259557_, CreativeModeTab.Type p_260176_, Component p_260100_, Supplier<ItemStack> p_259543_, CreativeModeTab.DisplayItemsGenerator p_259085_, net.minecraft.resources.ResourceLocation backgroundLocation, boolean hasSearchBar, int searchBarWidth, int labelColor, int slotColor, List<net.minecraft.resources.ResourceLocation> tabsBefore, List<net.minecraft.resources.ResourceLocation> tabsAfter) {
-       this.f_256931_ = p_260217_;
-       this.f_256967_ = p_259557_;
-       this.f_40764_ = p_260100_;
-       this.f_256912_ = p_259543_;
-       this.f_256824_ = p_259085_;
-       this.f_256819_ = p_260176_;
+       this.row = p_260217_;
+       this.column = p_259557_;
+       this.displayName = p_260100_;
+       this.iconGenerator = p_259543_;
+       this.displayItemsGenerator = p_259085_;
+       this.type = p_260176_;
 -   }
 -
 +      this.backgroundLocation = backgroundLocation;
@@ -32,36 +32,36 @@
 +   }
 +
 +   protected CreativeModeTab(CreativeModeTab.Builder builder) {
-+      this(builder.f_256796_, builder.f_256977_, builder.f_256847_, builder.f_256856_, builder.f_256981_, builder.f_256953_, builder.backgroundLocation, builder.hasSearchBar, builder.searchBarWidth, builder.labelColor, builder.slotColor, builder.tabsBefore, builder.tabsAfter);
++      this(builder.row, builder.column, builder.type, builder.displayName, builder.iconGenerator, builder.displayItemsGenerator, builder.backgroundLocation, builder.hasSearchBar, builder.searchBarWidth, builder.labelColor, builder.slotColor, builder.tabsBefore, builder.tabsAfter);
 +   }
 +
 +   public static CreativeModeTab.Builder builder() {
 +      return new CreativeModeTab.Builder(Row.TOP, 0);
 +   }
 +   /** @deprecated Forge: use {@link #builder()} **/ @Deprecated
-    public static CreativeModeTab.Builder m_257815_(CreativeModeTab.Row p_259342_, int p_260312_) {
+    public static CreativeModeTab.Builder builder(CreativeModeTab.Row p_259342_, int p_260312_) {
        return new CreativeModeTab.Builder(p_259342_, p_260312_);
     }
 @@ -57,6 +_,10 @@
-       return this.f_40770_;
+       return this.iconItemStack;
     }
  
 +   /**
 +    * Forge: Use {@link #getBackgroundLocation()} instead.
 +    */
 +   @Deprecated
-    public String m_40788_() {
-       return this.f_40766_;
+    public String getBackgroundSuffix() {
+       return this.backgroundSuffix;
     }
 @@ -98,7 +_,7 @@
-       ResourceKey<CreativeModeTab> resourcekey = BuiltInRegistries.f_279662_.m_7854_(this).orElseThrow(() -> {
+       ResourceKey<CreativeModeTab> resourcekey = BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(this).orElseThrow(() -> {
           return new IllegalStateException("Unregistered creative tab: " + this);
        });
--      this.f_256824_.m_257865_(p_270156_, creativemodetab$itemdisplaybuilder);
-+      net.minecraftforge.common.ForgeHooks.onCreativeModeTabBuildContents(this, resourcekey, this.f_256824_, p_270156_, creativemodetab$itemdisplaybuilder);
-       this.f_243839_ = creativemodetab$itemdisplaybuilder.f_244363_;
-       this.f_243841_ = creativemodetab$itemdisplaybuilder.f_244585_;
-       this.m_257466_();
+-      this.displayItemsGenerator.accept(p_270156_, creativemodetab$itemdisplaybuilder);
++      net.minecraftforge.common.ForgeHooks.onCreativeModeTabBuildContents(this, resourcekey, this.displayItemsGenerator, p_270156_, creativemodetab$itemdisplaybuilder);
+       this.displayItems = creativemodetab$itemdisplaybuilder.tabContents;
+       this.displayItemsSearchTab = creativemodetab$itemdisplaybuilder.searchTabContents;
+       this.rebuildSearchTree();
 @@ -127,6 +_,26 @@
  
     }
@@ -87,12 +87,12 @@
 +   }
 +
     public static class Builder {
-       private static final CreativeModeTab.DisplayItemsGenerator f_256756_ = (p_270422_, p_259433_) -> {
+       private static final CreativeModeTab.DisplayItemsGenerator EMPTY_GENERATOR = (p_270422_, p_259433_) -> {
        };
 @@ -142,6 +_,15 @@
-       private boolean f_256854_ = false;
-       private CreativeModeTab.Type f_256847_ = CreativeModeTab.Type.CATEGORY;
-       private String f_257036_ = "items.png";
+       private boolean alignedRight = false;
+       private CreativeModeTab.Type type = CreativeModeTab.Type.CATEGORY;
+       private String backgroundSuffix = "items.png";
 +      @Nullable
 +      private net.minecraft.resources.ResourceLocation backgroundLocation;
 +      private boolean hasSearchBar = false;
@@ -104,18 +104,18 @@
 +      private final List<net.minecraft.resources.ResourceLocation> tabsAfter = new java.util.ArrayList<>();
  
        public Builder(CreativeModeTab.Row p_259171_, int p_259661_) {
-          this.f_256796_ = p_259171_;
+          this.row = p_259171_;
 @@ -180,11 +_,87 @@
  
-       protected CreativeModeTab.Builder m_257623_(CreativeModeTab.Type p_259283_) {
-          this.f_256847_ = p_259283_;
+       protected CreativeModeTab.Builder type(CreativeModeTab.Type p_259283_) {
+          this.type = p_259283_;
 +         if (p_259283_ == Type.SEARCH)
 +            return this.withSearchBar();
           return this;
        }
  
-       public CreativeModeTab.Builder m_257609_(String p_259981_) {
--         this.f_257036_ = p_259981_;
+       public CreativeModeTab.Builder backgroundSuffix(String p_259981_) {
+-         this.backgroundSuffix = p_259981_;
 +         return withBackgroundLocation(new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tab_" + p_259981_));
 +      }
 +
@@ -134,7 +134,7 @@
 +      public CreativeModeTab.Builder withSearchBar() {
 +         this.hasSearchBar = true;
 +         if (this.backgroundLocation == null)
-+            return this.m_257609_("item_search.png");
++            return this.backgroundSuffix("item_search.png");
 +         return this;
 +      }
 +
@@ -183,28 +183,28 @@
 +      /** Define tabs that should come <i>before</i> this tab. This tab will be placed <strong>after</strong> the {@code tabs}. **/
 +      @SafeVarargs
 +      public final CreativeModeTab.Builder withTabsBefore(net.minecraft.resources.ResourceKey<CreativeModeTab>... tabs) {
-+         java.util.stream.Stream.of(tabs).map(net.minecraft.resources.ResourceKey::m_135782_).forEach(this.tabsBefore::add);
++         java.util.stream.Stream.of(tabs).map(net.minecraft.resources.ResourceKey::location).forEach(this.tabsBefore::add);
 +         return this;
 +      }
 +
 +      /** Define tabs that should come <i>after</i> this tab. This tab will be placed <strong>before</strong> the {@code tabs}.**/
 +      @SafeVarargs
 +      public final CreativeModeTab.Builder withTabsAfter(net.minecraft.resources.ResourceKey<CreativeModeTab>... tabs) {
-+         java.util.stream.Stream.of(tabs).map(net.minecraft.resources.ResourceKey::m_135782_).forEach(this.tabsAfter::add);
++         java.util.stream.Stream.of(tabs).map(net.minecraft.resources.ResourceKey::location).forEach(this.tabsAfter::add);
           return this;
        }
  
 @@ -192,11 +_,12 @@
-          if ((this.f_256847_ == CreativeModeTab.Type.HOTBAR || this.f_256847_ == CreativeModeTab.Type.INVENTORY) && this.f_256953_ != f_256756_) {
+          if ((this.type == CreativeModeTab.Type.HOTBAR || this.type == CreativeModeTab.Type.INVENTORY) && this.displayItemsGenerator != EMPTY_GENERATOR) {
              throw new IllegalStateException("Special tabs can't have display items");
           } else {
--            CreativeModeTab creativemodetab = new CreativeModeTab(this.f_256796_, this.f_256977_, this.f_256847_, this.f_256856_, this.f_256981_, this.f_256953_);
+-            CreativeModeTab creativemodetab = new CreativeModeTab(this.row, this.column, this.type, this.displayName, this.iconGenerator, this.displayItemsGenerator);
 +            CreativeModeTab creativemodetab = tabFactory.apply(this);
-             creativemodetab.f_257018_ = this.f_256854_;
-             creativemodetab.f_40768_ = this.f_256851_;
-             creativemodetab.f_40767_ = this.f_256992_;
-             creativemodetab.f_40766_ = this.f_257036_;
-+            creativemodetab.backgroundLocation = this.backgroundLocation != null ? this.backgroundLocation : new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.f_257036_);
+             creativemodetab.alignedRight = this.alignedRight;
+             creativemodetab.showTitle = this.showTitle;
+             creativemodetab.canScroll = this.canScroll;
+             creativemodetab.backgroundSuffix = this.backgroundSuffix;
++            creativemodetab.backgroundLocation = this.backgroundLocation != null ? this.backgroundLocation : new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.backgroundSuffix);
              return creativemodetab;
           }
        }

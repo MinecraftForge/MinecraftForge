@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Pillager.java
 +++ b/net/minecraft/world/entity/monster/Pillager.java
 @@ -109,7 +_,7 @@
-    public AbstractIllager.IllagerArmPose m_6768_() {
-       if (this.m_33309_()) {
+    public AbstractIllager.IllagerArmPose getArmPose() {
+       if (this.isChargingCrossbow()) {
           return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;
--      } else if (this.m_21055_(Items.f_42717_)) {
-+      } else if (this.m_21093_(is -> is.m_41720_() instanceof net.minecraft.world.item.CrossbowItem)) {
+-      } else if (this.isHolding(Items.CROSSBOW)) {
++      } else if (this.isHolding(is -> is.getItem() instanceof net.minecraft.world.item.CrossbowItem)) {
           return AbstractIllager.IllagerArmPose.CROSSBOW_HOLD;
        } else {
-          return this.m_5912_() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
+          return this.isAggressive() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;

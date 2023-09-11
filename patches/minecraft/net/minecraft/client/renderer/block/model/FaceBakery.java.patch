@@ -1,13 +1,13 @@
 --- a/net/minecraft/client/renderer/block/model/FaceBakery.java
 +++ b/net/minecraft/client/renderer/block/model/FaceBakery.java
 @@ -50,7 +_,14 @@
-          this.m_111630_(aint, direction);
+          this.recalculateWinding(aint, direction);
        }
  
--      return new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_);
+-      return new BakedQuad(aint, p_111603_.tintIndex, direction, p_111604_, p_111608_);
 +      net.minecraftforge.client.ForgeHooksClient.fillNormal(aint, direction, p_111603_.getFaceData().calculateNormals());
 +      var data = p_111603_.getFaceData();
-+      var quad = new BakedQuad(aint, p_111603_.f_111355_, direction, p_111604_, p_111608_, data.ambientOcclusion());
++      var quad = new BakedQuad(aint, p_111603_.tintIndex, direction, p_111604_, p_111608_, data.ambientOcclusion());
 +      if (!net.minecraftforge.client.model.ForgeFaceData.DEFAULT.equals(data)) {
 +         net.minecraftforge.client.model.QuadTransformers.applyingLightmap(data.blockLight(), data.skyLight()).processInPlace(quad);
 +         net.minecraftforge.client.model.QuadTransformers.applyingColor(data.color()).processInPlace(quad);
@@ -15,4 +15,4 @@
 +      return quad;
     }
  
-    public static BlockFaceUV m_111581_(BlockFaceUV p_111582_, Direction p_111583_, Transformation p_111584_, ResourceLocation p_111585_) {
+    public static BlockFaceUV recomputeUVs(BlockFaceUV p_111582_, Direction p_111583_, Transformation p_111584_, ResourceLocation p_111585_) {

@@ -3,17 +3,17 @@
 @@ -203,7 +_,7 @@
     }
  
-    public void m_8038_(ServerLevel p_29473_, LightningBolt p_29474_) {
--      if (p_29473_.m_46791_() != Difficulty.PEACEFUL) {
-+      if (p_29473_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> {})) {
-          ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
+    public void thunderHit(ServerLevel p_29473_, LightningBolt p_29474_) {
+-      if (p_29473_.getDifficulty() != Difficulty.PEACEFUL) {
++      if (p_29473_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> {})) {
+          ZombifiedPiglin zombifiedpiglin = EntityType.ZOMBIFIED_PIGLIN.create(p_29473_);
           if (zombifiedpiglin != null) {
-             zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
+             zombifiedpiglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
 @@ -216,6 +_,7 @@
              }
  
-             zombifiedpiglin.m_21530_();
+             zombifiedpiglin.setPersistenceRequired();
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
-             p_29473_.m_7967_(zombifiedpiglin);
-             this.m_146870_();
+             p_29473_.addFreshEntity(zombifiedpiglin);
+             this.discard();
           } else {

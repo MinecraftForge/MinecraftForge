@@ -5,19 +5,19 @@
     }
  
 +   private java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-    public void m_139908_() {
-       this.f_139902_.start();
+    public void start() {
+       this.logAppenderThread.start();
 +      latch.countDown();
     }
  
-    public void m_139925_() {
+    public void close() {
 @@ -155,6 +_,9 @@
     }
  
-    public void m_139914_(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
+    public void print(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
 +      try {
 +         latch.await();
 +      } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
        if (!SwingUtilities.isEventDispatchThread()) {
           SwingUtilities.invokeLater(() -> {
-             this.m_139914_(p_139915_, p_139916_, p_139917_);
+             this.print(p_139915_, p_139916_, p_139917_);

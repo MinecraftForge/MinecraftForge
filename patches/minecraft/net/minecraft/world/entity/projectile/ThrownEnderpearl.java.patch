@@ -3,36 +3,36 @@
 @@ -45,6 +_,8 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
-             if (serverplayer.f_8906_.m_6198_() && serverplayer.m_9236_() == this.m_9236_() && !serverplayer.m_5803_()) {
-+               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.m_20185_(), this.m_20186_(), this.m_20189_(), this, 5.0F, p_37504_);
+             if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
++               net.minecraftforge.event.entity.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
 +               if (!event.isCanceled()) { // Don't indent to lower patch size
-                if (this.f_19796_.m_188501_() < 0.05F && this.m_9236_().m_46469_().m_46207_(GameRules.f_46134_)) {
-                   Endermite endermite = EntityType.f_20567_.m_20615_(this.m_9236_());
+                if (this.random.nextFloat() < 0.05F && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                   Endermite endermite = EntityType.ENDERMITE.create(this.level());
                    if (endermite != null) {
 @@ -59,8 +_,10 @@
-                   entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
+                   entity.teleportTo(this.getX(), this.getY(), this.getZ());
                 }
  
-+               entity.m_6021_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-                entity.m_183634_();
--               entity.m_6469_(this.m_269291_().m_268989_(), 5.0F);
-+               entity.m_6469_(this.m_269291_().m_268989_(), event.getAttackDamage());
++               entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+                entity.resetFallDistance();
+-               entity.hurt(this.damageSources().fall(), 5.0F);
++               entity.hurt(this.damageSources().fall(), event.getAttackDamage());
 +               } //Forge: End
              }
           } else if (entity != null) {
-             entity.m_6021_(this.m_20185_(), this.m_20186_(), this.m_20189_());
+             entity.teleportTo(this.getX(), this.getY(), this.getZ());
 @@ -83,12 +_,12 @@
     }
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_37506_) {
+-   public Entity changeDimension(ServerLevel p_37506_) {
 +   public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       Entity entity = this.m_19749_();
-       if (entity != null && entity.m_9236_().m_46472_() != p_37506_.m_46472_()) {
-          this.m_5602_((Entity)null);
+       Entity entity = this.getOwner();
+       if (entity != null && entity.level().dimension() != p_37506_.dimension()) {
+          this.setOwner((Entity)null);
        }
  
--      return super.m_5489_(p_37506_);
+-      return super.changeDimension(p_37506_);
 +      return super.changeDimension(p_37506_, teleporter);
     }
  }

@@ -3,13 +3,13 @@
 @@ -93,10 +_,8 @@
              }
  
-             slot.m_40234_(itemstack1, itemstack);
--         } else if (!this.f_39032_.m_6657_() && this.f_39032_.m_5857_(itemstack1) && itemstack1.m_41613_() == 1) {
--            if (!this.m_38903_(itemstack1, 0, 1, false)) {
--               return ItemStack.f_41583_;
+             slot.onQuickCraft(itemstack1, itemstack);
+-         } else if (!this.paymentSlot.hasItem() && this.paymentSlot.mayPlace(itemstack1) && itemstack1.getCount() == 1) {
+-            if (!this.moveItemStackTo(itemstack1, 0, 1, false)) {
+-               return ItemStack.EMPTY;
 -            }
-+         } else if (this.m_38903_(itemstack1, 0, 1, false)) { //Forge Fix Shift Clicking in beacons with stacks larger then 1.
-+            return ItemStack.f_41583_;
++         } else if (this.moveItemStackTo(itemstack1, 0, 1, false)) { //Forge Fix Shift Clicking in beacons with stacks larger then 1.
++            return ItemStack.EMPTY;
           } else if (p_39052_ >= 1 && p_39052_ < 28) {
-             if (!this.m_38903_(itemstack1, 28, 37, false)) {
-                return ItemStack.f_41583_;
+             if (!this.moveItemStackTo(itemstack1, 28, 37, false)) {
+                return ItemStack.EMPTY;

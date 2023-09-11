@@ -3,37 +3,37 @@
 @@ -130,7 +_,7 @@
  
        for(int k = 0; k < 9; ++k) {
-          int l = (this.f_35977_ + k) % 9;
--         if (!this.f_35974_.get(l).m_41793_()) {
-+         if (!this.f_35974_.get(l).isNotReplaceableByPickAction(this.f_35978_, l)) {
+          int l = (this.selected + k) % 9;
+-         if (!this.items.get(l).isEnchanted()) {
++         if (!this.items.get(l).isNotReplaceableByPickAction(this.player, l)) {
              return l;
           }
        }
 @@ -178,7 +_,8 @@
-       int i = p_36049_.m_41613_();
-       ItemStack itemstack = this.m_8020_(p_36048_);
-       if (itemstack.m_41619_()) {
+       int i = p_36049_.getCount();
+       ItemStack itemstack = this.getItem(p_36048_);
+       if (itemstack.isEmpty()) {
 -         itemstack = new ItemStack(item, 0);
-+         itemstack = p_36049_.m_41777_(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
-+         itemstack.m_41764_(0);
-          if (p_36049_.m_41782_()) {
-             itemstack.m_41751_(p_36049_.m_41783_().m_6426_());
++         itemstack = p_36049_.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++         itemstack.setCount(0);
+          if (p_36049_.hasTag()) {
+             itemstack.setTag(p_36049_.getTag().copy());
           }
 @@ -229,7 +_,7 @@
              }
           }
        }
 -
-+      f_35975_.forEach(e -> e.onArmorTick(f_35978_.m_9236_(), f_35978_));
++      armor.forEach(e -> e.onArmorTick(player.level(), player));
     }
  
-    public boolean m_36054_(ItemStack p_36055_) {
+    public boolean add(ItemStack p_36055_) {
 @@ -277,6 +_,8 @@
           } catch (Throwable throwable) {
-             CrashReport crashreport = CrashReport.m_127521_(throwable, "Adding item to inventory");
-             CrashReportCategory crashreportcategory = crashreport.m_127514_("Item being added");
-+            crashreportcategory.m_128165_("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_36042_.m_41720_())));
-+            crashreportcategory.m_128165_("Item Class", () -> p_36042_.m_41720_().getClass().getName());
-             crashreportcategory.m_128159_("Item ID", Item.m_41393_(p_36042_.m_41720_()));
-             crashreportcategory.m_128159_("Item data", p_36042_.m_41773_());
-             crashreportcategory.m_128165_("Item name", () -> {
+             CrashReport crashreport = CrashReport.forThrowable(throwable, "Adding item to inventory");
+             CrashReportCategory crashreportcategory = crashreport.addCategory("Item being added");
++            crashreportcategory.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_36042_.getItem())));
++            crashreportcategory.setDetail("Item Class", () -> p_36042_.getItem().getClass().getName());
+             crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
+             crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
+             crashreportcategory.setDetail("Item name", () -> {

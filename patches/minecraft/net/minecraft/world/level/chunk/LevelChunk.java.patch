@@ -6,51 +6,51 @@
  
 -public class LevelChunk extends ChunkAccess {
 +public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
-    static final Logger f_62771_ = LogUtils.getLogger();
-    private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
-       public void m_142224_() {
+    static final Logger LOGGER = LogUtils.getLogger();
+    private static final TickingBlockEntity NULL_TICKER = new TickingBlockEntity() {
+       public void tick() {
 @@ -94,6 +_,7 @@
-       this.f_62791_ = p_196861_;
-       this.f_62784_ = p_196857_;
-       this.f_187943_ = p_196858_;
+       this.postLoad = p_196861_;
+       this.blockTicks = p_196857_;
+       this.fluidTicks = p_196858_;
 +      this.capProvider.initInternal();
     }
  
     public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
 @@ -245,14 +_,14 @@
-             boolean flag2 = blockstate.m_155947_();
-             if (!this.f_62776_.f_46443_) {
-                blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
--            } else if (!blockstate.m_60713_(block) && flag2) {
-+         } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
-                this.m_8114_(p_62865_);
+             boolean flag2 = blockstate.hasBlockEntity();
+             if (!this.level.isClientSide) {
+                blockstate.onRemove(this.level, p_62865_, p_62866_, p_62867_);
+-            } else if (!blockstate.is(block) && flag2) {
++         } else if ((!blockstate.is(block) || !p_62866_.hasBlockEntity()) && flag2) {
+                this.removeBlockEntity(p_62865_);
              }
  
-             if (!levelchunksection.m_62982_(j, k, l).m_60713_(block)) {
+             if (!levelchunksection.getBlockState(j, k, l).is(block)) {
                 return null;
              } else {
--               if (!this.f_62776_.f_46443_) {
-+            if (!this.f_62776_.f_46443_ && !this.f_62776_.captureBlockSnapshots) {
-                   p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
+-               if (!this.level.isClientSide) {
++            if (!this.level.isClientSide && !this.level.captureBlockSnapshots) {
+                   p_62866_.onPlace(this.level, p_62865_, blockstate, p_62867_);
                 }
  
 @@ -295,6 +_,10 @@
     @Nullable
-    public BlockEntity m_5685_(BlockPos p_62868_, LevelChunk.EntityCreationType p_62869_) {
-       BlockEntity blockentity = this.f_187610_.get(p_62868_);
-+      if (blockentity != null && blockentity.m_58901_()) {
-+         f_187610_.remove(p_62868_);
+    public BlockEntity getBlockEntity(BlockPos p_62868_, LevelChunk.EntityCreationType p_62869_) {
+       BlockEntity blockentity = this.blockEntities.get(p_62868_);
++      if (blockentity != null && blockentity.isRemoved()) {
++         blockEntities.remove(p_62868_);
 +         blockentity = null;
 +      }
        if (blockentity == null) {
-          CompoundTag compoundtag = this.f_187609_.remove(p_62868_);
+          CompoundTag compoundtag = this.pendingBlockEntities.remove(p_62868_);
           if (compoundtag != null) {
 @@ -312,9 +_,6 @@
-                this.m_142170_(blockentity);
+                this.addAndRegisterBlockEntity(blockentity);
              }
           }
--      } else if (blockentity.m_58901_()) {
--         this.f_187610_.remove(p_62868_);
+-      } else if (blockentity.isRemoved()) {
+-         this.blockEntities.remove(p_62868_);
 -         return null;
        }
  
@@ -58,31 +58,31 @@
 @@ -330,6 +_,7 @@
           }
  
-          this.m_156406_(p_156391_);
+          this.updateBlockEntityTicker(p_156391_);
 +         p_156391_.onLoad();
        }
  
     }
 @@ -369,9 +_,14 @@
-    public CompoundTag m_8051_(BlockPos p_62932_) {
-       BlockEntity blockentity = this.m_7702_(p_62932_);
-       if (blockentity != null && !blockentity.m_58901_()) {
+    public CompoundTag getBlockEntityNbtForSaving(BlockPos p_62932_) {
+       BlockEntity blockentity = this.getBlockEntity(p_62932_);
+       if (blockentity != null && !blockentity.isRemoved()) {
 +         try {
-          CompoundTag compoundtag1 = blockentity.m_187480_();
-          compoundtag1.m_128379_("keepPacked", false);
+          CompoundTag compoundtag1 = blockentity.saveWithFullMetadata();
+          compoundtag1.putBoolean("keepPacked", false);
           return compoundtag1;
 +         } catch (Exception e) {
-+            f_62771_.error("A BlockEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", blockentity.getClass().getName(), e);
++            LOGGER.error("A BlockEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", blockentity.getClass().getName(), e);
 +            return null;
 +         }
        } else {
-          CompoundTag compoundtag = this.f_187609_.get(p_62932_);
+          CompoundTag compoundtag = this.pendingBlockEntities.get(p_62932_);
           if (compoundtag != null) {
 @@ -455,7 +_,7 @@
        p_187974_.accept((p_187968_, p_187969_, p_187970_) -> {
-          BlockEntity blockentity = this.m_5685_(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);
-          if (blockentity != null && p_187970_ != null && blockentity.m_58903_() == p_187969_) {
--            blockentity.m_142466_(p_187970_);
+          BlockEntity blockentity = this.getBlockEntity(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);
+          if (blockentity != null && p_187970_ != null && blockentity.getType() == p_187969_) {
+-            blockentity.load(p_187970_);
 +            blockentity.handleUpdateTag(p_187970_);
           }
  
@@ -90,18 +90,18 @@
 @@ -564,6 +_,7 @@
     }
  
-    public void m_187957_() {
-+      this.f_187610_.values().forEach(BlockEntity::onChunkUnloaded);
-       this.f_187610_.values().forEach(BlockEntity::m_7651_);
-       this.f_187610_.clear();
-       this.f_156362_.values().forEach((p_187966_) -> {
+    public void clearAllBlockEntities() {
++      this.blockEntities.values().forEach(BlockEntity::onChunkUnloaded);
+       this.blockEntities.values().forEach(BlockEntity::setRemoved);
+       this.blockEntities.clear();
+       this.tickersInLevel.values().forEach((p_187966_) -> {
 @@ -573,6 +_,7 @@
     }
  
-    public void m_156369_() {
-+      this.f_62776_.addFreshBlockEntities(this.f_187610_.values());
-       this.f_187610_.values().forEach((p_187988_) -> {
-          Level level = this.f_62776_;
+    public void registerAllBlockEntitiesAfterLevelLoad() {
++      this.level.addFreshBlockEntities(this.blockEntities.values());
+       this.blockEntities.values().forEach((p_187988_) -> {
+          Level level = this.level;
           if (level instanceof ServerLevel serverlevel) {
 @@ -621,6 +_,41 @@
        return new LevelChunk.BoundTickingBlockEntity<>(p_156376_, p_156377_);
@@ -143,25 +143,25 @@
 +   // FORGE END
 +
     class BoundTickingBlockEntity<T extends BlockEntity> implements TickingBlockEntity {
-       private final T f_156428_;
-       private final BlockEntityTicker<T> f_156429_;
+       private final T blockEntity;
+       private final BlockEntityTicker<T> ticker;
 @@ -637,6 +_,7 @@
-             if (LevelChunk.this.m_156410_(blockpos)) {
+             if (LevelChunk.this.isTicking(blockpos)) {
                 try {
-                   ProfilerFiller profilerfiller = LevelChunk.this.f_62776_.m_46473_();
-+                  net.minecraftforge.server.timings.TimeTracker.BLOCK_ENTITY_UPDATE.trackStart(f_156428_);
-                   profilerfiller.m_6521_(this::m_142280_);
-                   BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
-                   if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
+                   ProfilerFiller profilerfiller = LevelChunk.this.level.getProfiler();
++                  net.minecraftforge.server.timings.TimeTracker.BLOCK_ENTITY_UPDATE.trackStart(blockEntity);
+                   profilerfiller.push(this::getType);
+                   BlockState blockstate = LevelChunk.this.getBlockState(blockpos);
+                   if (this.blockEntity.getType().isValid(blockstate)) {
 @@ -652,6 +_,12 @@
-                   CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
-                   CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
-                   this.f_156428_.m_58886_(crashreportcategory);
+                   CrashReport crashreport = CrashReport.forThrowable(throwable, "Ticking block entity");
+                   CrashReportCategory crashreportcategory = crashreport.addCategory("Block entity being ticked");
+                   this.blockEntity.fillCrashReportCategory(crashreportcategory);
 +
 +                  if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringBlockEntities.get()) {
-+                     f_62771_.error("{}", crashreport.m_127526_());
-+                     f_156428_.m_7651_();
-+                     LevelChunk.this.m_8114_(f_156428_.m_58899_());
++                     LOGGER.error("{}", crashreport.getFriendlyReport());
++                     blockEntity.setRemoved();
++                     LevelChunk.this.removeBlockEntity(blockEntity.getBlockPos());
 +                  } else
                    throw new ReportedException(crashreport);
                 }
@@ -197,7 +197,7 @@
 +
 +   @Override
 +   public Level getWorldForge() {
-+      return m_62953_();
++      return getLevel();
     }
  
     @FunctionalInterface

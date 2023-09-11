@@ -5,9 +5,9 @@
  
     /** @deprecated */
 +   default boolean isAreaLoaded(BlockPos center, int range) {
-+      return this.m_46832_(center.m_7918_(-range, -range, -range), center.m_7918_(range, range, range));
++      return this.hasChunksAt(center.offset(-range, -range, -range), center.offset(range, range, range));
 +   }
 +
     @Deprecated
-    default boolean m_46832_(BlockPos p_46833_, BlockPos p_46834_) {
-       return this.m_46812_(p_46833_.m_123341_(), p_46833_.m_123342_(), p_46833_.m_123343_(), p_46834_.m_123341_(), p_46834_.m_123342_(), p_46834_.m_123343_());
+    default boolean hasChunksAt(BlockPos p_46833_, BlockPos p_46834_) {
+       return this.hasChunksAt(p_46833_.getX(), p_46833_.getY(), p_46833_.getZ(), p_46834_.getX(), p_46834_.getY(), p_46834_.getZ());

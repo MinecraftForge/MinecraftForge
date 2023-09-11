@@ -5,6 +5,6 @@
  
     static {
 +      if (System.getProperty("io.netty.leakDetection.level") == null) // Forge: allow level to be manually specified
-       ResourceLeakDetector.setLevel(f_136180_);
+       ResourceLeakDetector.setLevel(NETTY_LEAK_DETECTION);
        CommandSyntaxException.ENABLE_COMMAND_STACK_TRACES = false;
        CommandSyntaxException.BUILT_IN_EXCEPTIONS = new BrigadierExceptions();

@@ -1,23 +1,23 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
 @@ -190,6 +_,12 @@
-          f_109012_ = f_109012_ * (1.0F - f7) + f_109012_ * f9 * f7;
+          fogBlue = fogBlue * (1.0F - f7) + fogBlue * f9 * f7;
        }
  
-+      Vector3f fogColor = net.minecraftforge.client.ForgeHooksClient.getFogColor(p_109019_, p_109020_, p_109021_, p_109022_, p_109023_, f_109010_, f_109011_, f_109012_);
++      Vector3f fogColor = net.minecraftforge.client.ForgeHooksClient.getFogColor(p_109019_, p_109020_, p_109021_, p_109022_, p_109023_, fogRed, fogGreen, fogBlue);
 +
-+      f_109010_ = fogColor.x();
-+      f_109011_ = fogColor.y();
-+      f_109012_ = fogColor.z();
++      fogRed = fogColor.x();
++      fogGreen = fogColor.y();
++      fogBlue = fogColor.z();
 +
-       RenderSystem.clearColor(f_109010_, f_109011_, f_109012_, 0.0F);
+       RenderSystem.clearColor(fogRed, fogGreen, fogBlue, 0.0F);
     }
  
 @@ -271,6 +_,7 @@
-       RenderSystem.setShaderFogStart(fogrenderer$fogdata.f_234200_);
-       RenderSystem.setShaderFogEnd(fogrenderer$fogdata.f_234201_);
-       RenderSystem.setShaderFogShape(fogrenderer$fogdata.f_234202_);
-+      net.minecraftforge.client.ForgeHooksClient.onFogRender(p_234174_, fogtype, p_234173_, p_234177_, p_234175_, fogrenderer$fogdata.f_234200_, fogrenderer$fogdata.f_234201_, fogrenderer$fogdata.f_234202_);
+       RenderSystem.setShaderFogStart(fogrenderer$fogdata.start);
+       RenderSystem.setShaderFogEnd(fogrenderer$fogdata.end);
+       RenderSystem.setShaderFogShape(fogrenderer$fogdata.shape);
++      net.minecraftforge.client.ForgeHooksClient.onFogRender(p_234174_, fogtype, p_234173_, p_234177_, p_234175_, fogrenderer$fogdata.start, fogrenderer$fogdata.end, fogrenderer$fogdata.shape);
     }
  
-    public static void m_109036_() {
+    public static void levelFogColor() {
