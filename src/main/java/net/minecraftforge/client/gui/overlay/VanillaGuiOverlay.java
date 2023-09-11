@@ -164,6 +164,10 @@ public enum VanillaGuiOverlay {
         gui.renderFPSGraph(guiGraphics);
     }),
 
+    NETWORK_GRAPH("network_graph", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
+        gui.renderNetworkGraph(guiGraphics);
+    }),
+
     RECORD_OVERLAY("record_overlay", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         if (!gui.getMinecraft().options.hideGui)
             gui.renderRecordOverlay(screenWidth, screenHeight, partialTick, guiGraphics);

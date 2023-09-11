@@ -165,9 +165,9 @@ subprojects {
 
     tasks.withType(Javadoc).configureEach {
         options.tags = [
-                'apiNote:a:<em>API Note:</em>',
-                'implSpec:a:<em>Implementation Requirements:</em>',
-                'implNote:a:<em>Implementation Note:</em>'
+            'apiNote:a:<em>API Note:</em>',
+            'implSpec:a:<em>Implementation Requirements:</em>',
+            'implNote:a:<em>Implementation Note:</em>'
         ]
         options.addStringOption('Xdoclint:all,-missing', '-public')
     }
@@ -266,6 +266,11 @@ project(':clean') {
                 workingDirectory project.file('run/server')
             }
         }
+    }
+    eclipse.classpath.file.whenMerged {
+        // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
+        def src = entries.find { it.path == 'src/main/java' }
+        src.entryAttributes['ignore_optional_problems'] = 'true'
     }
 }
 
@@ -602,8 +607,12 @@ project(':forge') {
             }
         }
     }
-    //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
-    eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
+    
+    eclipse.classpath.file.whenMerged {
+        // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
+        def src = entries.find { it.path == 'src/main/java' }
+        src.entryAttributes['ignore_optional_problems'] = 'true'
+    }
 
     ext {
         SPEC_VERSION = gradleutils.gitInfo.tag

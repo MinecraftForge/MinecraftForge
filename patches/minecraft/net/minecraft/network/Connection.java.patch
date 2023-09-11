@@ -64,22 +64,6 @@
        Class<? extends SocketChannel> oclass;
        EventLoopGroup eventloopgroup;
        if (Epoll.isAvailable() && p_290035_) {
-@@ -465,7 +_,14 @@
-       PacketFlow packetflow = p_265104_.m_178539_();
-       AttributeKey<ConnectionProtocol.CodecData<?>> attributekey = m_295397_(p_265104_);
-       AttributeKey<ConnectionProtocol.CodecData<?>> attributekey1 = m_295397_(packetflow);
--      p_265436_.addLast("splitter", new Varint21FrameDecoder(p_299297_)).addLast("decoder", new PacketDecoder(attributekey)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(attributekey1)).addLast("unbundler", new PacketBundleUnpacker(attributekey1)).addLast("bundler", new PacketBundlePacker(attributekey));
-+      p_265436_
-+         .addLast("splitter", new Varint21FrameDecoder(p_299297_))
-+         .addLast("decoder", new PacketDecoder(attributekey))
-+         .addLast("prepender", new Varint21LengthFieldPrepender())
-+         .addLast("encoder", new PacketEncoder(attributekey1))
-+         .addLast("unbundler", new PacketBundleUnpacker(attributekey1))
-+         .addLast("bundler", new PacketBundlePacker(attributekey)
-+      );
-    }
- 
-    public void m_295611_(ChannelPipeline p_300754_) {
 @@ -485,6 +_,7 @@
  
     public static Connection m_129493_(SocketAddress p_129494_) {

@@ -9,7 +9,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
@@ -61,13 +60,9 @@ public class ForgeGui extends Gui {
     public int leftHeight = 39;
     public int rightHeight = 39;
 
-    private Font font = null;
-
-    private final ForgeDebugScreenOverlay debugOverlay;
-
     public ForgeGui(Minecraft mc) {
         super(mc, mc.getItemRenderer());
-        debugOverlay = new ForgeDebugScreenOverlay(mc);
+        this.debugOverlay = new OverlayAccess(mc);
     }
 
     public Minecraft getMinecraft() {
@@ -100,8 +95,6 @@ public class ForgeGui extends Gui {
 
         if (MinecraftForge.EVENT_BUS.post(new RenderGuiEvent.Pre(minecraft.getWindow(), guiGraphics, partialTick)))
             return;
-
-        font = minecraft.font;
 
         this.random.setSeed(tickCount * 312871L);
 
@@ -361,47 +354,28 @@ public class ForgeGui extends Gui {
                 listR.add(I18n.get("demo.remainingTime", StringUtil.formatTickDuration((int) (120500L - time))));
         }
 
-        if (debugOverlay.showDebugScreen()) {
-            debugOverlay.update();
-            listL.addAll(debugOverlay.getLeft());
-            listR.addAll(debugOverlay.getRight());
+        var forgeOverlay = (OverlayAccess)debugOverlay;
+        if (forgeOverlay.showDebugScreen()) {
+            forgeOverlay.update();
+            listL.addAll(forgeOverlay.getGameInformation());
+            listL.addAll(forgeOverlay.getOverlayHelp());
+            listR.addAll(forgeOverlay.getSystemInformation());
         }
 
         var event = new CustomizeGuiOverlayEvent.DebugText(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), listL, listR);
         MinecraftForge.EVENT_BUS.post(event);
-
-        int top = 2;
-        for (String msg : listL) {
-            if (msg != null && !msg.isEmpty()) {
-                guiGraphics.fill(1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
-                guiGraphics.drawString(font, msg, 2, top, 14737632, false);
-            }
-            top += font.lineHeight;
-        }
-
-        top = 2;
-        for (String msg : listR) {
-            if (msg != null && !msg.isEmpty()) {
-                int w = font.width(msg);
-                int left = width - 2 - w;
-                guiGraphics.fill(left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
-                guiGraphics.drawString(font, msg, left, top, 14737632, false);
-            }
-            top += font.lineHeight;
-        }
-
+        forgeOverlay.renderLines(guiGraphics, listL, true);
+        forgeOverlay.renderLines(guiGraphics, listR, false);
         minecraft.getProfiler().pop();
     }
 
     protected void renderFPSGraph(GuiGraphics guiGraphics) {
         if (debugOverlay.showDebugScreen())
-            this.debugOverlay.render(guiGraphics);
+            ((OverlayAccess)this.debugOverlay).drawFPSCharts(guiGraphics);
     }
-
-    @Override
-    public void clearCache() {
-        super.clearCache();
-        this.debugOverlay.clearChunkCache();
+    protected void renderNetworkGraph(GuiGraphics guiGraphics) {
+        if (debugOverlay.showDebugScreen())
+            ((OverlayAccess)this.debugOverlay).drawNetworkCharts(guiGraphics);
     }
 
     protected void renderRecordOverlay(int width, int height, float partialTick, GuiGraphics guiGraphics) {
@@ -421,9 +395,9 @@ public class ForgeGui extends Gui {
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
-                int messageWidth = font.width(overlayMessageString);
-                drawBackdrop(guiGraphics, font, -4, messageWidth, 16777215 | (opacity << 24));
-                guiGraphics.drawString(font, overlayMessageString.getVisualOrderText(), -messageWidth / 2, -4, color | (opacity << 24));
+                int messageWidth = getFont().width(overlayMessageString);
+                drawBackdrop(guiGraphics, getFont(), -4, messageWidth, 16777215 | (opacity << 24));
+                guiGraphics.drawString(getFont(), overlayMessageString.getVisualOrderText(), -messageWidth / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 guiGraphics.pose().popPose();
             }
@@ -454,12 +428,12 @@ public class ForgeGui extends Gui {
                 guiGraphics.pose().pushPose();
                 guiGraphics.pose().scale(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                guiGraphics.drawString(this.font, this.title.getVisualOrderText(), -this.getFont().width(this.title) / 2, -10, 16777215 | l, true);
+                guiGraphics.drawString(this.getFont(), this.title.getVisualOrderText(), -this.getFont().width(this.title) / 2, -10, 16777215 | l, true);
                 guiGraphics.pose().popPose();
                 if (this.subtitle != null) {
                     guiGraphics.pose().pushPose();
                     guiGraphics.pose().scale(2.0F, 2.0F, 2.0F);
-                    guiGraphics.drawString(this.font, this.subtitle.getVisualOrderText(), -this.getFont().width(this.subtitle) / 2, 5, 16777215 | l, true);
+                    guiGraphics.drawString(this.getFont(), this.subtitle.getVisualOrderText(), -this.getFont().width(this.subtitle) / 2, 5, 16777215 | l, true);
                     guiGraphics.pose().popPose();
                 }
                 RenderSystem.disableBlend();
@@ -546,41 +520,15 @@ public class ForgeGui extends Gui {
         MinecraftForge.EVENT_BUS.post(new RenderGuiOverlayEvent.Post(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), overlay));
     }
 
-    private static class ForgeDebugScreenOverlay extends DebugScreenOverlay {
-        private final Minecraft mc;
-
-        private ForgeDebugScreenOverlay(Minecraft mc) {
-            super(mc);
-            this.mc = mc;
-        }
-
-        public void update() {
-            Entity entity = this.mc.getCameraEntity();
-            this.block = entity.pick(rayTraceDistance, 0.0F, false);
-            this.liquid = entity.pick(rayTraceDistance, 0.0F, true);
-        }
-
-        @Override
-        protected void drawGameInformation(GuiGraphics guiGraphics) {
-            // Replicate the depth test state "leak" caused by the text that is rendered here in vanilla
-            // being flushed when the graphs start drawing (PR #9539)
-            RenderSystem.disableDepthTest();
-        }
-
-        @Override
-        protected void drawSystemInformation(GuiGraphics guiGraphics) {}
-
-        private List<String> getLeft() {
-            List<String> ret = this.getGameInformation();
-            ret.add("");
-            boolean flag = this.mc.getSingleplayerServer() != null;
-            ret.add("Debug: Pie [shift]: " + (this.renderProfilerChart ? "visible" : "hidden") + (flag ? " FPS + TPS" : " FPS") + " [alt]: " + (this.renderFpsCharts ? "visible" : "hidden"));
-            ret.add("For help: press F3 + Q");
-            return ret;
-        }
-
-        private List<String> getRight() {
-            return this.getSystemInformation();
-        }
+    // An access to protected methods in this class.
+    private static class OverlayAccess extends DebugScreenOverlay {
+        private OverlayAccess(Minecraft mc) { super(mc); }
+        @Override protected void drawFPSCharts(GuiGraphics gfx) { super.drawFPSCharts(gfx); }
+        @Override protected void drawNetworkCharts(GuiGraphics gfx) { super.drawNetworkCharts(gfx); }
+        @Override protected void update() { super.update(); }
+        @Override protected List<String> getOverlayHelp() { return super.getOverlayHelp(); }
+        @Override protected List<String> getGameInformation() { return super.getGameInformation(); }
+        @Override protected List<String> getSystemInformation(){ return super.getSystemInformation(); }
+        @Override protected void renderLines(GuiGraphics gfx, List<String> lines, boolean leftAlign) { super.renderLines(gfx, lines, leftAlign); }
     }
 }

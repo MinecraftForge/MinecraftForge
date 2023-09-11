@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
+@@ -130,7 +_,7 @@
+    public float f_92980_ = 1.0F;
+    protected int f_92993_;
+    protected ItemStack f_92994_ = ItemStack.f_41583_;
+-   protected final DebugScreenOverlay f_291320_;
++   protected DebugScreenOverlay f_291320_;
+    protected final SubtitleOverlay f_92996_;
+    protected final SpectatorGui f_92997_;
+    protected final PlayerTabOverlay f_92998_;
 @@ -453,6 +_,8 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {

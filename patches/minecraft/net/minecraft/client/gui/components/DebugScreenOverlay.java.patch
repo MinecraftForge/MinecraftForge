@@ -13,6 +13,75 @@
     private final SampleLogger f_291039_ = new SampleLogger();
     private final SampleLogger f_291524_ = new SampleLogger();
     private final SampleLogger f_290653_ = new SampleLogger();
+@@ -120,14 +_,18 @@
+       this.f_94035_ = null;
+    }
+ 
+-   public void m_94056_(GuiGraphics p_281427_) {
+-      this.f_94030_.m_91307_().m_6180_("debug");
++   protected void update() {
+       Entity entity = this.f_94030_.m_91288_();
+       this.f_94032_ = entity.m_19907_(20.0D, 0.0F, false);
+       this.f_94033_ = entity.m_19907_(20.0D, 0.0F, true);
+-      p_281427_.m_286007_(() -> {
+-         this.m_280186_(p_281427_);
+-         this.m_280532_(p_281427_);
++   }
++
++   protected void drawText(GuiGraphics p_281427_) {
++       this.m_280186_(p_281427_);
++       this.m_280532_(p_281427_);
++   }
++
++   protected void drawFPSCharts(GuiGraphics p_281427_) {
+          if (this.f_290551_) {
+             int i = p_281427_.m_280182_();
+             int j = i / 2;
+@@ -137,7 +_,9 @@
+                this.f_291179_.m_293623_(p_281427_, i - k, k);
+             }
+          }
++   }
+ 
++   protected void drawNetworkCharts(GuiGraphics p_281427_) {
+          if (this.f_291005_) {
+             int l = p_281427_.m_280182_();
+             int i1 = l / 2;
+@@ -148,17 +_,32 @@
+             int j1 = this.f_291349_.m_295014_(i1);
+             this.f_291349_.m_293623_(p_281427_, l - j1, j1);
+          }
++   }
++
++   public void m_94056_(GuiGraphics p_281427_) {
++      this.f_94030_.m_91307_().m_6180_("debug");
++      this.update();
++      p_281427_.m_286007_(() -> {
++         this.drawText(p_281427_);
++         this.drawFPSCharts(p_281427_);
++         this.drawNetworkCharts(p_281427_);
+ 
+       });
+       this.f_94030_.m_91307_().m_7238_();
+    }
+ 
+-   protected void m_280186_(GuiGraphics p_281525_) {
+-      List<String> list = this.m_94075_();
++   protected List<String> getOverlayHelp() {
++      List<String> list = Lists.newArrayList();
+       list.add("");
+       boolean flag = this.f_94030_.m_91092_() != null;
+       list.add("Debug charts: [F3+1] Profiler " + (this.f_291871_ ? "visible" : "hidden") + "; [F3+2] " + (flag ? "FPS + TPS " : "FPS ") + (this.f_290551_ ? "visible" : "hidden") + "; [F3+3] " + (!this.f_94030_.m_91090_() ? "Bandwidth + Ping" : "Ping") + (this.f_291005_ ? " visible" : " hidden"));
+       list.add("For help: press F3 + Q");
++      return list;
++   }
++
++   protected void m_280186_(GuiGraphics p_281525_) {
++      List<String> list = this.m_94075_();
++      list.addAll(this.getOverlayHelp());
+       this.m_286013_(p_281525_, list, true);
+    }
+ 
 @@ -430,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
