@@ -13,8 +13,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -27,8 +27,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * This test mod is disabled by default to ensure that users can join test servers without needing to specifically disable this test mod.
  */
 @Mod(ModMismatchTest.MOD_ID)
-public class ModMismatchTest
-{
+public class ModMismatchTest {
     public static final String MOD_ID = "mod_mismatch_test";
 
     private static final boolean ENABLED = false;
@@ -42,15 +41,15 @@ public class ModMismatchTest
     private static final boolean REGISTER_REGISTRY_ENTRY = false;
 
     private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
-    private static final String CHANNEL_PROTOCOL_VERSION = FMLEnvironment.dist == Dist.CLIENT ? "V1" : "V2";
+    private static final int CHANNEL_PROTOCOL_VERSION = FMLEnvironment.dist == Dist.CLIENT ? 1 : 2;
 
-    public ModMismatchTest()
-    {
-        if (ENABLED)
-        {
-            if ((FMLEnvironment.dist == Dist.DEDICATED_SERVER && REGISTER_FOR_SERVER) || (FMLEnvironment.dist == Dist.CLIENT && REGISTER_FOR_CLIENT))
-            {
-                NetworkRegistry.newSimpleChannel(new ResourceLocation(MOD_ID, "channel"), () -> CHANNEL_PROTOCOL_VERSION, p -> p.equals(CHANNEL_PROTOCOL_VERSION), (p) -> p.equals(CHANNEL_PROTOCOL_VERSION));
+    public ModMismatchTest() {
+        if (ENABLED) {
+            if ((FMLEnvironment.dist == Dist.DEDICATED_SERVER && REGISTER_FOR_SERVER) || (FMLEnvironment.dist == Dist.CLIENT && REGISTER_FOR_CLIENT)) {
+                var channel = ChannelBuilder
+                        .named(new ResourceLocation(MOD_ID, "channel"))
+                        .networkProtocolVersion(CHANNEL_PROTOCOL_VERSION)
+                        .simpleChannel();
             }
             if (REGISTER_REGISTRY_ENTRY && FMLEnvironment.dist == Dist.DEDICATED_SERVER)
             {

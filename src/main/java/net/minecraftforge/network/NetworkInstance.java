@@ -7,50 +7,54 @@ package net.minecraftforge.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.network.Channel.VersionTest;
 
-import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.Function;
+import org.jetbrains.annotations.ApiStatus;
 
-public class NetworkInstance
-{
-    public ResourceLocation getChannelName()
-    {
-        return channelName;
-    }
+import io.netty.util.AttributeKey;
 
+/**
+ * This is essentially the shared common class for {@link SimpleChannel} and {@link EventNetworkChannel}.
+ * I've now introduced {@link Channel} as that common modder facing base class. I am basically using this
+ * as the internal API and {@link Channel} as the public.
+ */
+@ApiStatus.Internal
+public class NetworkInstance {
+    private final IEventBus networkEventBus; // TODO: Evaluate why we even use event bus for this...
     private final ResourceLocation channelName;
-    private final String networkProtocolVersion;
-    private final Predicate<String> clientAcceptedVersions;
-    private final Predicate<String> serverAcceptedVersions;
-    private final IEventBus networkEventBus;
+    private final int networkProtocolVersion;
+    final VersionTest clientAcceptedVersions;
+    final VersionTest serverAcceptedVersions;
+    final Map<AttributeKey<?>, Function<Connection, ?>> attributes;
+    final Consumer<Connection> channelHandler;
+    final ServerStatusPing.ChannelData pingData;
 
-    NetworkInstance(ResourceLocation channelName, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
-    {
+    NetworkInstance(ResourceLocation channelName, int networkProtocolVersion,
+        VersionTest clientAcceptedVersions, VersionTest serverAcceptedVersions,
+        Map<AttributeKey<?>, Function<Connection, ?>> attributes, Consumer<Connection> channelHandler
+    ) {
         this.channelName = channelName;
-        this.networkProtocolVersion = networkProtocolVersion.get();
+        this.networkProtocolVersion = networkProtocolVersion;
         this.clientAcceptedVersions = clientAcceptedVersions;
         this.serverAcceptedVersions = serverAcceptedVersions;
+        this.attributes = attributes;
+        this.channelHandler = channelHandler;
         this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).useModLauncher().build();
+        this.pingData = new ServerStatusPing.ChannelData(channelName, networkProtocolVersion, this.clientAcceptedVersions.accepts(VersionTest.Status.MISSING, -1));
     }
 
-    private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
-    {
-
+    private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
     }
 
-    public <T extends NetworkEvent> void addListener(Consumer<T> eventListener)
-    {
-        this.networkEventBus.addListener(eventListener);
-    }
-
-    public void addGatherListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> eventListener)
-    {
+    public <T extends CustomPayloadEvent> void addListener(Consumer<T> eventListener) {
         this.networkEventBus.addListener(eventListener);
     }
 
@@ -62,42 +66,20 @@ public class NetworkInstance
         this.networkEventBus.unregister(object);
     }
 
-    boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final Connection manager)
-    {
-        final NetworkEvent.Context context = new NetworkEvent.Context(manager, side, packet.getIndex());
-        this.networkEventBus.post(side.getEvent(packet, () -> context));
-        return context.getPacketHandled();
+    public boolean dispatch(CustomPayloadEvent event) {
+        this.networkEventBus.post(event);
+        return event.getSource().getPacketHandled();
     }
 
-    String getNetworkProtocolVersion() {
+    ResourceLocation getChannelName() {
+        return channelName;
+    }
+
+    int getNetworkProtocolVersion() {
         return networkProtocolVersion;
     }
 
-    boolean tryServerVersionOnClient(final String serverVersion) {
-        return this.clientAcceptedVersions.test(serverVersion);
-    }
-
-    boolean tryClientVersionOnServer(final String clientVersion) {
-        return this.serverAcceptedVersions.test(clientVersion);
-    }
-
-    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
-        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList, isLocal));
-    }
-
-    void dispatchLoginPacket(final NetworkEvent.LoginPayloadEvent loginPayloadEvent) {
-        this.networkEventBus.post(loginPayloadEvent);
-    }
-
-    void dispatchEvent(final NetworkEvent networkEvent) {
-        this.networkEventBus.post(networkEvent);
-    }
-
-    public boolean isRemotePresent(Connection manager) {
-        ConnectionData connectionData = NetworkHooks.getConnectionData(manager);
-        MCRegisterPacketHandler.ChannelList channelList = NetworkHooks.getChannelList(manager);
-        return (connectionData != null && connectionData.getChannels().containsKey(channelName))
-                // if it's not in the fml connection data, let's check if it's sent by another modloader.
-                || (channelList != null && channelList.getRemoteLocations().contains(channelName));
+    void registrationChange(boolean registered) {
+        // TODO: Expose to listeners?
     }
 }

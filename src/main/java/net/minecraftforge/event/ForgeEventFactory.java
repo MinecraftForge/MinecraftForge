@@ -6,21 +6,18 @@
 package net.minecraftforge.event;
 
 import java.io.File;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.client.MouseHandler;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -58,6 +55,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -77,6 +75,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
@@ -88,9 +87,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -153,12 +149,13 @@ import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.level.PistonEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
+import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
+import net.minecraftforge.event.network.ConnectionStartEvent;
+import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModLoader;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -799,70 +796,19 @@ public class ForgeEventFactory {
     public static void onChunkDataSave(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {
         post(new ChunkDataEvent.Save(chunk, world, data));
     }
-
-    public static void gatherLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<Model, EntityRenderer<? extends Player>> playerRenderers, Context context) {
-        // TODO: Why is this a ModLoader event...
-        ModLoader.get().postEvent(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
-    }
-
-    public static boolean onScreenMouseReleasedPre(Screen guiScreen, double mouseX, double mouseY, int button) {
-        return post(new ScreenEvent.MouseButtonReleased.Pre(guiScreen, mouseX, mouseY, button));
-    }
-
-    public static boolean onScreenMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled) {
-        var result = fire(new ScreenEvent.MouseButtonReleased.Post(guiScreen, mouseX, mouseY, button, handled)).getResult();
-        return result == Event.Result.DEFAULT ? handled : result == Event.Result.ALLOW;
-    }
-
-    public static boolean onScreenMouseClickedPre(Screen guiScreen, double mouseX, double mouseY, int button) {
-        return post(new ScreenEvent.MouseButtonPressed.Pre(guiScreen, mouseX, mouseY, button));
-    }
-
-    public static boolean onScreenMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled) {
-        var result = fire(new ScreenEvent.MouseButtonPressed.Post(guiScreen, mouseX, mouseY, button, handled)).getResult();
-        return result == Event.Result.DEFAULT ? handled : result == Event.Result.ALLOW;
-    }
-
-    public static boolean onMouseButtonPre(int button, int action, int mods) {
-        return post(new InputEvent.MouseButton.Pre(button, action, mods));
-    }
-
-    public static void onMouseButtonPost(int button, int action, int mods) {
-        post(new InputEvent.MouseButton.Post(button, action, mods));
-    }
-
-    public static boolean onScreenMouseScrollPre(Screen guiScreen, double mouseX, double mouseY, double deltaX, double deltaY) {
-        return post(new ScreenEvent.MouseScrolled.Pre(guiScreen, mouseX, mouseY, deltaX, deltaY));
-    }
-
-    public static void onScreenMouseScrollPost(Screen guiScreen, double mouseX, double mouseY, double deltaX, double deltaY) {
-        post(new ScreenEvent.MouseScrolled.Post(guiScreen, mouseX, mouseY, deltaX, deltaY));
-    }
-
-    public static boolean onMouseScroll(MouseHandler mouseHelper, double deltaX, double deltaY) {
-        return post(new InputEvent.MouseScrollingEvent(deltaX, deltaY, mouseHelper.isLeftPressed(), mouseHelper.isMiddlePressed(), mouseHelper.isRightPressed(), mouseHelper.xpos(), mouseHelper.ypos()));
-    }
-
-    public static boolean onScreenMouseDragPre(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        return post(new ScreenEvent.MouseDragged.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
-    }
-
-    public static void onScreenMouseDragPost(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        post(new ScreenEvent.MouseDragged.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
-    }
-
-    public static @Nullable Screen onScreenOpening(Screen old, Screen screen) {
-         var event = new ScreenEvent.Opening(old, screen);
-         if (post(event))
-             return null;
-         return event.getNewScreen();
-    }
-
-    public static void onScreenClose(Screen screen) {
-        post(new ScreenEvent.Closing(screen));
-    }
-
     public static void onGameShuttingDown() {
         post(new GameShuttingDownEvent());
+    }
+
+    public static void gatherLoginConfigTasks(Connection connection, Consumer<ConfigurationTask> add) {
+        post(new GatherLoginConfigurationTasksEvent(connection, add));
+    }
+
+    public static void onConnectionStart(Connection connection) {
+        post(new ConnectionStartEvent(connection));
+    }
+
+    public static void onChannelRegistrationChange(Connection connection, ChannelRegistrationChangeEvent.Type changeType, HashSet<ResourceLocation> changed) {
+        post(new ChannelRegistrationChangeEvent(connection, changeType, changed));
     }
 }

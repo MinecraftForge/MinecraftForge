@@ -4,7 +4,7 @@
     }
  
     public void m_293213_(ClientboundCustomPayloadPacket p_298103_) {
-+      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_298103_, this.f_290549_)) return;
++      if (net.minecraftforge.common.ForgeHooks.onCustomPayload(p_298103_, this.f_290549_)) return;
        CustomPacketPayload custompacketpayload = p_298103_.f_291001_();
        if (!(custompacketpayload instanceof DiscardedPayload)) {
           PacketUtils.m_131363_(p_298103_, this, this.f_291812_);

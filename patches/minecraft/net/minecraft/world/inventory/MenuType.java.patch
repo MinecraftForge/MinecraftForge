@@ -17,8 +17,8 @@
 +
 +   @Override
 +   public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
-+      if (this.f_39981_ instanceof net.minecraftforge.network.IContainerFactory) {
-+         return ((net.minecraftforge.network.IContainerFactory<T>) this.f_39981_).create(windowId, playerInv, extraData);
++      if (this.f_39981_ instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
++         return ctr.create(windowId, playerInv, extraData);
 +      }
 +      return m_39985_(windowId, playerInv);
     }

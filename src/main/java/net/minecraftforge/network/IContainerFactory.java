@@ -10,13 +10,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
 
-public interface IContainerFactory<T extends AbstractContainerMenu> extends MenuType.MenuSupplier<T>
-{
+public interface IContainerFactory<T extends AbstractContainerMenu> extends MenuType.MenuSupplier<T> {
     T create(int windowId, Inventory inv, FriendlyByteBuf data);
-    
+
     @Override
-    default T create(int p_create_1_, Inventory p_create_2_)
-    {
-        return create(p_create_1_, p_create_2_, null);
+    default T create(int id, Inventory inv) {
+        return create(id, inv, null);
     }
 }

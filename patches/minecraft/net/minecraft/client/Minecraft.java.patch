@@ -79,9 +79,12 @@
           Util.m_137521_(p_296164_, (p_296162_) -> {
              this.m_91239_(p_296162_, minecraft$gameloadcookie);
           }, () -> {
-@@ -575,7 +_,7 @@
+@@ -574,8 +_,10 @@
+ 
              this.f_167847_.m_168556_();
              this.m_293750_(minecraft$gameloadcookie);
++            if (net.minecraftforge.client.loading.ClientModLoader.completeModLoading())
++                return; // Do not overwrite the error screen if there are errors
           });
 -      }, false));
 +      }, false).get());
@@ -150,23 +153,6 @@
        });
     }
  
-@@ -872,13 +_,13 @@
-       Bootstrap.m_135875_(p_91333_.m_127526_());
-       if (p_91333_.m_127527_() != null) {
-          Bootstrap.m_135875_("#@!@# Game crashed! Crash report saved to: #@!@# " + p_91333_.m_127527_());
--         System.exit(-1);
-+         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-1);
-       } else if (p_91333_.m_127512_(file2)) {
-          Bootstrap.m_135875_("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
--         System.exit(-1);
-+         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-1);
-       } else {
-          Bootstrap.m_135875_("#@?@# Game crashed! Crash report could not be saved. #@?@#");
--         System.exit(-2);
-+         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-2);
-       }
- 
-    }
 @@ -1003,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
@@ -185,13 +171,13 @@
 +      net.minecraftforge.client.ForgeHooksClient.clearGuiLayers(this);
 +      Screen old = this.f_91080_;
 +      if (p_91153_ != null) {
-+         var event = net.minecraftforge.event.ForgeEventFactory.onScreenOpening(old, p_91153_);
++         var event = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenOpening(old, p_91153_);
 +         if (event == null) return;
 +         p_91153_ = event;
 +      }
 +
 +      if (old != null && p_91153_ != old) {
-+         net.minecraftforge.event.ForgeEventFactory.onScreenClose(old);
++         net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenClose(old);
 +         old.m_7861_();
 +      }
 +

@@ -15,7 +15,7 @@
        if (i >= 0 && i <= 1048576) {
 -         p_297706_.skipBytes(i);
 -         return new DiscardedQueryPayload(p_299981_);
-+         return new DiscardedQueryPayload(p_299981_, p_297706_);
++         return new DiscardedQueryPayload(p_299981_, new FriendlyByteBuf(p_297706_.readBytes(i)));
        } else {
           throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
        }

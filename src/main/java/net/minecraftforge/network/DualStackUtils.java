@@ -16,18 +16,13 @@ import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.net.Inet4Address;
-import net.minecraftforge.common.ForgeConfig;
-
-import javax.annotation.Nullable;
 import java.net.SocketAddress;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.Optional;
 
-public class DualStackUtils
-{
+public class DualStackUtils {
     private static final String INITIAL_PREFER_IPv4_STACK = System.getProperty("java.net.preferIPv4Stack") == null ? "false" : System.getProperty("java.net.preferIPv4Stack");
     private static final String INITIAL_PREFER_IPv6_ADDRESSES = System.getProperty("java.net.preferIPv6Addresses") == null ? "false" : System.getProperty("java.net.preferIPv6Addresses");
 
@@ -48,12 +43,10 @@ public class DualStackUtils
      * @param hostAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean checkIPv6(final String hostAddress)
-    {
-        final Optional<InetSocketAddress> hostAddr =
-                ServerNameResolver.DEFAULT
-                        .resolveAddress(ServerAddress.parseString(hostAddress))
-                        .map(ResolvedServerAddress::asInetSocketAddress);
+    public static boolean checkIPv6(final String hostAddress) {
+        var hostAddr = ServerNameResolver.DEFAULT
+            .resolveAddress(ServerAddress.parseString(hostAddress))
+            .map(ResolvedServerAddress::asInetSocketAddress);
 
         if (hostAddr.isPresent()) return checkIPv6(hostAddr.get().getAddress());
         else return false;
@@ -65,55 +58,43 @@ public class DualStackUtils
      * @param inetAddress The address you want to check
      * @return true if IPv6, false if IPv4
      */
-    public static boolean checkIPv6(final InetAddress inetAddress)
-    {
+    public static boolean checkIPv6(final InetAddress inetAddress) {
         // only log debug messages if we're not in the server pinger thread, as otherwise it's unclear which IP
         // corresponds to which server as soon as you have more than one server in the multiplayer server list
-        final String currentThreadName = Thread.currentThread().getName();
-        final boolean shouldLogDebug = !currentThreadName.contains("Server Pinger #");
+        boolean thread = !Thread.currentThread().getName().contains("Server Pinger #");
 
-        if (inetAddress instanceof Inet6Address addr)
-        {
-            if (shouldLogDebug)
-                LOGGER.debug("Detected IPv6 address: \"" + addr.getHostAddress() + "\"");
+        if (inetAddress instanceof Inet6Address addr) {
+            debug(thread, "Detected IPv6 address: \"" + addr.getHostAddress() + "\"");
 
             System.setProperty("java.net.preferIPv4Stack", "false");
             System.setProperty("java.net.preferIPv6Addresses", "true");
             return true;
-        }
-        else if (inetAddress instanceof Inet4Address addr)
-        {
-            if (shouldLogDebug)
-                LOGGER.debug("Detected IPv4 address: \"" + addr.getHostAddress() + "\"");
+        } else if (inetAddress instanceof Inet4Address addr) {
+            debug(thread, "Detected IPv4 address: \"" + addr.getHostAddress() + "\"");
 
             System.setProperty("java.net.preferIPv4Stack", "true");
             System.setProperty("java.net.preferIPv6Addresses", "false");
             return false;
-        }
-        else
-        {
-            if (shouldLogDebug) {
-                final String addr = inetAddress == null ? "null" : "\"" + inetAddress.getHostAddress() + "\"";
-                LOGGER.debug("Unable to determine IP version of address: " + addr);
-            }
+        } else {
+            debug(thread, "Unable to determine IP version of address: " + (inetAddress == null ? "null" : "\"" + inetAddress.getHostAddress() + "\""));
 
-            if (INITIAL_PREFER_IPv4_STACK.equalsIgnoreCase("false") && INITIAL_PREFER_IPv6_ADDRESSES.equalsIgnoreCase("true"))
-            {
-                if (shouldLogDebug)
-                    LOGGER.debug("Assuming IPv6 as Java was explicitly told to prefer it...");
-
+            if (INITIAL_PREFER_IPv4_STACK.equalsIgnoreCase("false") && INITIAL_PREFER_IPv6_ADDRESSES.equalsIgnoreCase("true")) {
+                debug(thread, "Assuming IPv6 as Java was explicitly told to prefer it...");
                 System.setProperty("java.net.preferIPv4Stack", "false");
                 System.setProperty("java.net.preferIPv6Addresses", "true");
                 return true;
             }
 
-            if (shouldLogDebug)
-                LOGGER.debug("Assuming IPv4...");
-
+            debug(thread, "Assuming IPv4...");
             System.setProperty("java.net.preferIPv4Stack", "true");
             System.setProperty("java.net.preferIPv6Addresses", "false");
             return false;
         }
+    }
+
+    private static void debug(boolean shouldLogDebug, String message) {
+        if (shouldLogDebug)
+            LOGGER.debug(message);
     }
 
     /**
@@ -123,17 +104,13 @@ public class DualStackUtils
      * @return the client's local IP address or {@code null} if unable to determine it
      */
     @Nullable
-    public static InetAddress getLocalAddress()
-    {
+    public static InetAddress getLocalAddress() {
         final InetAddress localAddr = new InetSocketAddress(HttpUtil.getAvailablePort()).getAddress();
         if (localAddr.isAnyLocalAddress()) return localAddr;
 
-        try
-        {
+        try {
             return InetAddress.getByName("localhost");
-        }
-        catch (final UnknownHostException e)
-        {
+        } catch (final UnknownHostException e) {
             return null;
         }
     }
@@ -143,8 +120,7 @@ public class DualStackUtils
      * @return The multicast group to use for LAN discovery - IPv6 if available, IPv4 otherwise.
      */
     public static String getMulticastGroup() {
-        if (checkIPv6(getLocalAddress())) return "FF75:230::60";
-        else return "224.0.2.60";
+        return checkIPv6(getLocalAddress()) ? "FF75:230::60" : "224.0.2.60";
     }
 
     /**
@@ -162,9 +138,9 @@ public class DualStackUtils
     public static String getAddressString(final SocketAddress address) {
         if (address instanceof final InetSocketAddress inetAddress) {
             String formatted;
-            if (inetAddress.isUnresolved()) {
+            if (inetAddress.isUnresolved())
                 formatted = inetAddress.getHostName() + "/<unresolved>";
-            } else {
+            else {
                 formatted = InetAddresses.toAddrString(inetAddress.getAddress());
                 if (inetAddress.getAddress() instanceof Inet6Address)
                     formatted = '[' + formatted + ']';

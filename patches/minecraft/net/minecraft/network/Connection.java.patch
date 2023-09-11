@@ -1,14 +1,18 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -102,6 +_,7 @@
+@@ -102,15 +_,19 @@
     private volatile Component f_290021_;
     @Nullable
     BandwidthDebugMonitor f_291520_;
 +   private java.util.function.Consumer<Connection> activationHandler;
++   private final net.minecraftforge.common.util.PacketLogger packetLogger;
  
     public Connection(PacketFlow p_129482_) {
        this.f_129466_ = p_129482_;
-@@ -111,6 +_,7 @@
++      this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
+    }
+ 
+    public void channelActive(ChannelHandlerContext p_129525_) throws Exception {
        super.channelActive(p_129525_);
        this.f_129468_ = p_129525_.channel();
        this.f_129469_ = this.f_129468_.remoteAddress();
@@ -16,6 +20,32 @@
        if (this.f_290021_ != null) {
           this.m_129507_(this.f_290021_);
        }
+@@ -169,6 +_,7 @@
+          } else {
+             if (packetlistener.m_294638_(p_129488_)) {
+                try {
++                  packetLogger.recv(p_129488_);
+                   m_129517_(p_129488_, packetlistener);
+                } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
+                } catch (RejectedExecutionException rejectedexecutionexception) {
+@@ -237,7 +_,8 @@
+       this.m_295864_((p_296374_) -> {
+          p_296374_.m_294993_(p_297789_);
+          this.m_129505_(p_298739_);
+-         p_296374_.m_129520_(new ClientIntentionPacket(SharedConstants.m_183709_().m_132495_(), p_300730_, p_300598_, p_297789_), (PacketSendListener)null, true);
++         // TODO: Change this to be a immediately sent login custom payload packet?
++         p_296374_.m_129520_(new ClientIntentionPacket(SharedConstants.m_183709_().m_132495_(), net.minecraftforge.network.NetworkContext.enhanceHostName(p_300730_), p_300598_, p_297789_), (PacketSendListener)null, true);
+       });
+    }
+ 
+@@ -289,6 +_,7 @@
+ 
+    private void m_243087_(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
+       ChannelFuture channelfuture = p_299937_ ? this.f_129468_.writeAndFlush(p_243260_) : this.f_129468_.write(p_243260_);
++      channelfuture.addListener(f -> packetLogger.send(p_243260_));
+       if (p_243290_ != null) {
+          channelfuture.addListener((p_243167_) -> {
+             if (p_243167_.isSuccess()) {
 @@ -395,7 +_,7 @@
        if (this.f_129469_ == null) {
           return "local";
@@ -30,15 +60,31 @@
  
     public static ChannelFuture m_290025_(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_290034_.getAddress());
-+      p_290031_.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
++      p_290031_.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
        Class<? extends SocketChannel> oclass;
        EventLoopGroup eventloopgroup;
        if (Epoll.isAvailable() && p_290035_) {
+@@ -465,7 +_,14 @@
+       PacketFlow packetflow = p_265104_.m_178539_();
+       AttributeKey<ConnectionProtocol.CodecData<?>> attributekey = m_295397_(p_265104_);
+       AttributeKey<ConnectionProtocol.CodecData<?>> attributekey1 = m_295397_(packetflow);
+-      p_265436_.addLast("splitter", new Varint21FrameDecoder(p_299297_)).addLast("decoder", new PacketDecoder(attributekey)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(attributekey1)).addLast("unbundler", new PacketBundleUnpacker(attributekey1)).addLast("bundler", new PacketBundlePacker(attributekey));
++      p_265436_
++         .addLast("splitter", new Varint21FrameDecoder(p_299297_))
++         .addLast("decoder", new PacketDecoder(attributekey))
++         .addLast("prepender", new Varint21LengthFieldPrepender())
++         .addLast("encoder", new PacketEncoder(attributekey1))
++         .addLast("unbundler", new PacketBundleUnpacker(attributekey1))
++         .addLast("bundler", new PacketBundlePacker(attributekey)
++      );
+    }
+ 
+    public void m_295611_(ChannelPipeline p_300754_) {
 @@ -485,6 +_,7 @@
  
     public static Connection m_129493_(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
++      connection.activationHandler = net.minecraftforge.network.NetworkRegistry::onConnectionStart;
        (new Bootstrap()).group(f_129464_.get()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
              Connection.m_294111_(p_129557_);
@@ -52,8 +98,8 @@
 +      return this.f_129468_;
 +   }
 +
-+   public PacketFlow getDirection() {
-+      return this.f_129466_;
++   public ConnectionProtocol getProtocol() {
++      return this.f_129468_.attr(m_295397_(m_178314_())).get().m_295191_();
     }
  
     public void m_292855_(SampleLogger p_300126_) {

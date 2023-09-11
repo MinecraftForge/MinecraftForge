@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -149,7 +_,7 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.slf4j.Logger;
+ 
+-public class ServerPlayer extends Player {
++public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
+    private static final Logger f_8907_ = LogUtils.getLogger();
+    private static final int f_143381_ = 32;
+    private static final int f_143382_ = 10;
 @@ -571,6 +_,7 @@
  
     public void m_6667_(DamageSource p_9035_) {

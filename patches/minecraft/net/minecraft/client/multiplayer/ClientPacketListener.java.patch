@@ -8,14 +8,6 @@
        int i = p_105030_.f_132360_();
        this.f_291812_.f_91074_.m_20234_(i);
        this.f_104889_.m_104630_(i, this.f_291812_.f_91074_);
-@@ -400,6 +_,7 @@
-       this.f_291812_.f_91074_.m_287199_(commonplayerspawninfo.f_291470_());
-       this.f_291812_.f_91072_.m_171805_(commonplayerspawninfo.f_291098_(), commonplayerspawninfo.f_290730_());
-       this.f_291812_.f_91066_.m_193770_(p_105030_.f_132370_());
-+      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(f_290549_, "PLAY_TO_SERVER");
-       this.f_252517_ = null;
-       this.f_244346_ = new LastSeenMessagesTracker(20);
-       this.f_244113_ = MessageSignatureCache.m_246587_();
 @@ -1026,7 +_,9 @@
           localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
        }

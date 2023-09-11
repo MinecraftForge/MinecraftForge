@@ -15,7 +15,7 @@
        if (i >= 0 && i <= 1048576) {
 -         p_299934_.skipBytes(i);
 -         return DiscardedQueryAnswerPayload.f_290582_;
-+         return new DiscardedQueryAnswerPayload(p_299934_);
++         return new DiscardedQueryAnswerPayload(new FriendlyByteBuf(p_299934_.readBytes(i)));
        } else {
           throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
        }
@@ -24,7 +24,7 @@
        p_298492_.m_10044_(this);
     }
 +
++   @Nullable @Override public FriendlyByteBuf getInternalData() { return this.f_290461_ instanceof DiscardedQueryAnswerPayload dc ? dc.data() : null; }
++   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.NetworkInitialization.LOGIN_NAME; }
 +   @Override public int getIndex() { return f_290801_(); }
-+   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.LoginWrapper.WRAPPER; }
-+   @Nullable @Override public FriendlyByteBuf getInternalData() { return this.f_290461_ == null ? null : ((DiscardedQueryAnswerPayload)this.f_290461_).data(); }
  }

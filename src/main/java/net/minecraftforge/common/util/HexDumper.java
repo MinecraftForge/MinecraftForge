@@ -18,11 +18,8 @@ import io.netty.buffer.ByteBuf;
  *      Length: 34
  *</PRE>
  */
-public class HexDumper
-{
-
-    public static String dump(ByteBuf data)
-    {
+public class HexDumper {
+    public static String dump(ByteBuf data) {
         int current = data.readerIndex();
         data.readerIndex(0);
         Instance inst = new Instance(current, data.readableBytes());
@@ -34,29 +31,25 @@ public class HexDumper
         return inst.finish();
     }
 
-    public static String dump(byte[] data)
-    {
+    public static String dump(byte[] data) {
         return dump(data, -1);
     }
 
-    public static String dump(byte[] data, int marker)
-    {
+    public static String dump(byte[] data, int marker) {
         Instance inst = new Instance(marker, data.length);
         for (int x = 0; x < data.length; x++)
             inst.add(data[x]);
         return inst.finish();
     }
 
-    private static class Instance
-    {
+    private static class Instance {
         private static final String HEX = "0123456789ABCDEF";
         private final int marked;
         private final StringBuilder buf;
         private char[] ascii = new char[16];
         private int index = 0;
 
-        private Instance(int marked, int size)
-        {
+        private Instance(int marked, int size) {
             this.marked = marked;
             int lines = ((size + 15) / 16);
             this.buf = new StringBuilder((size * 3)          //Hex
@@ -68,16 +61,13 @@ public class HexDumper
                 ascii[x] = ' ';
         }
 
-        public void add(byte data)
-        {
+        public void add(byte data) {
             if (index == 0 && marked != -1)
                 buf.append(index == marked ? '<' : ' ');
 
-            if (index != 0 && index % 16 == 0)
-            {
+            if (index != 0 && index % 16 == 0) {
                 buf.append('\t');
-                for (int x = 0; x < 16; x++)
-                {
+                for (int x = 0; x < 16; x++) {
                     buf.append(ascii[x]);
                     ascii[x] = ' ';
                 }
@@ -96,11 +86,9 @@ public class HexDumper
             index++;
         }
 
-        public String finish()
-        {
+        public String finish() {
             int padding = 16 - (index % 16);
-            if (padding > 0)
-            {
+            if (padding > 0) {
                 for (int x = 0; x < padding * 3; x++)
                     buf.append(' ');
                 buf.append('\t');

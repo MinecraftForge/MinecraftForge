@@ -1,27 +1,18 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -133,6 +_,7 @@
-       this.f_104521_.accept(Component.m_237115_("connect.joining"));
-       GameProfile gameprofile = p_104547_.m_134774_();
-       this.f_104522_.m_129512_(new ServerboundLoginAcknowledgedPacket());
-+      net.minecraftforge.network.NetworkHooks.handleClientLoginSuccess(this.f_104522_);
-       this.f_104522_.m_129505_(new ClientConfigurationPacketListenerImpl(this.f_104519_, this.f_104522_, new CommonListenerCookie(gameprofile, this.f_104519_.m_261007_().m_285995_(this.f_260722_, this.f_260612_, this.f_285614_), ClientRegistryLayer.m_245874_().m_247579_(), FeatureFlags.f_244332_, (String)null, this.f_243717_, this.f_104520_)));
-       this.f_104522_.m_129512_(new ServerboundCustomPayloadPacket(new BrandPayload(ClientBrandRetriever.getClientModName())));
-       this.f_104522_.m_129512_(new ServerboundClientInformationPacket(this.f_104519_.f_91066_.m_294596_()));
-@@ -142,7 +_,7 @@
+@@ -141,6 +_,7 @@
+    public void m_7026_(Component p_104543_) {
        if (this.f_243717_ != null && this.f_243717_.m_295074_()) {
           this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
++      } else if (net.minecraftforge.client.ForgeHooksClient.onClientDisconnect(this.f_104522_, this.f_104519_, this.f_104520_, p_104543_)) {
        } else {
--         this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
-+         this.f_104519_.m_91152_(net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_) != null ? new net.minecraftforge.client.gui.ModMismatchDisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_, net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_)) : new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
+          this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
        }
- 
-    }
 @@ -163,6 +_,7 @@
     }
  
     public void m_7254_(ClientboundCustomQueryPacket p_104545_) {
-+      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
++      if (net.minecraftforge.common.ForgeHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
        this.f_104521_.accept(Component.m_237115_("connect.negotiating"));
        this.f_104522_.m_129512_(new ServerboundCustomQueryAnswerPacket(p_104545_.f_134745_(), (CustomQueryAnswerPayload)null));
     }

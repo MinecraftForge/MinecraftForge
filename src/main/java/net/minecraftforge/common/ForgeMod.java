@@ -71,7 +71,8 @@ import net.minecraftforge.registries.holdersets.AnyHolderSet;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 import net.minecraftforge.registries.holdersets.NotHolderSet;
 import net.minecraftforge.registries.holdersets.OrHolderSet;
-import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.network.NetworkInitialization;
+import net.minecraftforge.network.tasks.ForgeNetworkConfigurationHandler;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -115,11 +116,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Mod("forge")
-public class ForgeMod
-{
+public class ForgeMod {
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
@@ -260,9 +259,9 @@ public class ForgeMod
                     .viscosity(0))
             {
                 @Override
-                public void setItemMovement(ItemEntity entity)
-                {
-                    if (!entity.isNoGravity()) entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
+                public void setItemMovement(ItemEntity entity) {
+                    if (!entity.isNoGravity())
+                        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
                 }
             });
     public static final RegistryObject<FluidType> WATER_TYPE = VANILLA_FLUID_TYPES.register("water", () ->
@@ -278,60 +277,52 @@ public class ForgeMod
                     .canHydrate(true))
             {
                 @Override
-                public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog)
-                {
+                public @Nullable BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
                     return canFluidLog ? super.getBlockPathType(state, level, pos, mob, true) : null;
                 }
 
                 @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
-                {
-                    consumer.accept(new IClientFluidTypeExtensions()
-                    {
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
                         private static final ResourceLocation UNDERWATER_LOCATION = new ResourceLocation("textures/misc/underwater.png"),
                                 WATER_STILL = new ResourceLocation("block/water_still"),
                                 WATER_FLOW = new ResourceLocation("block/water_flow"),
                                 WATER_OVERLAY = new ResourceLocation("block/water_overlay");
 
                         @Override
-                        public ResourceLocation getStillTexture()
-                        {
+                        public ResourceLocation getStillTexture() {
                             return WATER_STILL;
                         }
 
                         @Override
-                        public ResourceLocation getFlowingTexture()
-                        {
+                        public ResourceLocation getFlowingTexture() {
                             return WATER_FLOW;
                         }
 
                         @Nullable
                         @Override
-                        public ResourceLocation getOverlayTexture()
-                        {
+                        public ResourceLocation getOverlayTexture() {
                             return WATER_OVERLAY;
                         }
 
                         @Override
-                        public ResourceLocation getRenderOverlayTexture(Minecraft mc)
-                        {
+                        public ResourceLocation getRenderOverlayTexture(Minecraft mc) {
                             return UNDERWATER_LOCATION;
                         }
 
                         @Override
-                        public int getTintColor()
-                        {
+                        public int getTintColor() {
                             return 0xFF3F76E4;
                         }
 
                         @Override
-                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos)
-                        {
+                        public int getTintColor(FluidState state, BlockAndTintGetter getter, BlockPos pos) {
                             return BiomeColors.getAverageWaterColor(getter, pos) | 0xFF000000;
                         }
                     });
                 }
             });
+
     public static final RegistryObject<FluidType> LAVA_TYPE = VANILLA_FLUID_TYPES.register("lava", () ->
             new FluidType(FluidType.Properties.create()
                     .descriptionId("block.minecraft.lava")
@@ -347,35 +338,29 @@ public class ForgeMod
                     .temperature(1300))
             {
                 @Override
-                public double motionScale(Entity entity)
-                {
+                public double motionScale(Entity entity) {
                     return entity.level().dimensionType().ultraWarm() ? 0.007D : 0.0023333333333333335D;
                 }
 
                 @Override
-                public void setItemMovement(ItemEntity entity)
-                {
+                public void setItemMovement(ItemEntity entity) {
                     Vec3 vec3 = entity.getDeltaMovement();
                     entity.setDeltaMovement(vec3.x * (double)0.95F, vec3.y + (double)(vec3.y < (double)0.06F ? 5.0E-4F : 0.0F), vec3.z * (double)0.95F);
                 }
 
                 @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
-                {
-                    consumer.accept(new IClientFluidTypeExtensions()
-                    {
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
                         private static final ResourceLocation LAVA_STILL = new ResourceLocation("block/lava_still"),
                                 LAVA_FLOW = new ResourceLocation("block/lava_flow");
 
                         @Override
-                        public ResourceLocation getStillTexture()
-                        {
+                        public ResourceLocation getStillTexture() {
                             return LAVA_STILL;
                         }
 
                         @Override
-                        public ResourceLocation getFlowingTexture()
-                        {
+                        public ResourceLocation getFlowingTexture() {
                             return LAVA_FLOW;
                         }
                     });
@@ -390,21 +375,18 @@ public class ForgeMod
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
     private static ForgeMod INSTANCE;
-    public static ForgeMod getInstance()
-    {
+    public static ForgeMod getInstance() {
         return INSTANCE;
     }
 
     /**
      * Run this method during mod constructor to enable milk and add it to the Minecraft milk bucket
      */
-    public static void enableMilkFluid()
-    {
+    public static void enableMilkFluid() {
         enableMilkFluid = true;
     }
 
-    public ForgeMod()
-    {
+    public ForgeMod() {
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         ForgeSnapshotsMod.logStartupWarning();
         INSTANCE = this;
@@ -415,7 +397,8 @@ public class ForgeMod
             return uuid.toString();
         });
 
-        LOGGER.debug(FORGEMOD, "Loading Network data for FML net version: {}", NetworkConstants.init());
+        NetworkInitialization.init();
+
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
@@ -440,7 +423,6 @@ public class ForgeMod
         HOLDER_SET_TYPES.register(modEventBus);
         VANILLA_FLUID_TYPES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        MinecraftForge.EVENT_BUS.addListener(this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
@@ -454,6 +436,7 @@ public class ForgeMod
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
+        MinecraftForge.EVENT_BUS.register(new ForgeNetworkConfigurationHandler());
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 
@@ -462,28 +445,23 @@ public class ForgeMod
         addAlias(ForgeRegistries.ATTRIBUTES, new ResourceLocation("forge", "attack_range"), new ResourceLocation("forge", "entity_reach"));
     }
 
-    public void preInit(FMLCommonSetupEvent evt)
-    {
+    public void preInit(FMLCommonSetupEvent evt) {
         VersionChecker.startVersionCheck();
         //VanillaPacketSplitter.register();
     }
 
-    public void loadComplete(FMLLoadCompleteEvent event)
-    {
+    public void loadComplete(FMLLoadCompleteEvent event) {
     }
 
-    public void serverStopping(ServerStoppingEvent evt)
-    {
+    public void serverStopping(ServerStoppingEvent evt) {
         WorldWorkerManager.clear();
     }
 
-    public void mappingChanged(IdMappingEvent evt)
-    {
+    public void mappingChanged(IdMappingEvent evt) {
         Ingredient.invalidateAll();
     }
 
-    public void gatherData(GatherDataEvent event)
-    {
+    public void gatherData(GatherDataEvent event) {
         DataGenerator gen = event.getGenerator();
         PackOutput packOutput = gen.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
@@ -509,33 +487,9 @@ public class ForgeMod
         gen.addProvider(event.includeClient(), new VanillaSoundDefinitionsProvider(packOutput, existingFileHelper));
     }
 
-    public void missingSoundMapping(MissingMappingsEvent event)
-    {
-        if (event.getKey() != ForgeRegistries.Keys.SOUND_EVENTS)
-            return;
-
-        //Removed in 1.15, see https://minecraft.gamepedia.com/Parrot#History
-        List<String> removedSounds = Arrays.asList("entity.parrot.imitate.panda", "entity.parrot.imitate.zombie_pigman", "entity.parrot.imitate.enderman", "entity.parrot.imitate.polar_bear", "entity.parrot.imitate.wolf");
-        for (MissingMappingsEvent.Mapping<SoundEvent> mapping : event.getAllMappings(ForgeRegistries.Keys.SOUND_EVENTS))
-        {
-            ResourceLocation regName = mapping.getKey();
-            if (regName != null && regName.getNamespace().equals("minecraft"))
-            {
-                String path = regName.getPath();
-                if (removedSounds.stream().anyMatch(s -> s.equals(path)))
-                {
-                    LOGGER.info("Ignoring removed minecraft sound {}", regName);
-                    mapping.ignore();
-                }
-            }
-        }
-    }
-
     // done in an event instead of deferred to only enable if a mod requests it
-    public void registerFluids(RegisterEvent event)
-    {
-        if (enableMilkFluid)
-        {
+    public void registerFluids(RegisterEvent event) {
+        if (enableMilkFluid) {
             // register milk fill, empty sounds (delegates to water fill, empty sounds)
             event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
                 helper.register(BUCKET_EMPTY_MILK.getId(), SoundEvent.createVariableRangeEvent(BUCKET_EMPTY_MILK.getId()));
@@ -544,28 +498,23 @@ public class ForgeMod
 
             // register fluid type
             event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(
-                    FluidType.Properties.create().density(1024).viscosity(1024)
-                            .sound(SoundActions.BUCKET_FILL, BUCKET_FILL_MILK.get())
-                            .sound(SoundActions.BUCKET_EMPTY, BUCKET_EMPTY_MILK.get())
-            )
-            {
+                FluidType.Properties.create().density(1024).viscosity(1024)
+                    .sound(SoundActions.BUCKET_FILL, BUCKET_FILL_MILK.get())
+                    .sound(SoundActions.BUCKET_EMPTY, BUCKET_EMPTY_MILK.get())
+            ) {
                 @Override
-                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
-                {
-                    consumer.accept(new IClientFluidTypeExtensions()
-                    {
-                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still"),
-                                MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
+                        private static final ResourceLocation MILK_STILL = new ResourceLocation("forge", "block/milk_still");
+                        private static final ResourceLocation MILK_FLOW = new ResourceLocation("forge", "block/milk_flowing");
 
                         @Override
-                        public ResourceLocation getStillTexture()
-                        {
+                        public ResourceLocation getStillTexture() {
                             return MILK_STILL;
                         }
 
                         @Override
-                        public ResourceLocation getFlowingTexture()
-                        {
+                        public ResourceLocation getFlowingTexture() {
                             return MILK_FLOW;
                         }
                     });
@@ -583,24 +532,20 @@ public class ForgeMod
         }
     }
 
-    public void registerVanillaDisplayContexts(RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.DISPLAY_CONTEXTS))
-        {
+    public void registerVanillaDisplayContexts(RegisterEvent event) {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.DISPLAY_CONTEXTS)) {
             IForgeRegistryInternal<ItemDisplayContext> forgeRegistry = (IForgeRegistryInternal<ItemDisplayContext>) event.<ItemDisplayContext>getForgeRegistry();
             if (forgeRegistry == null)
                 throw new IllegalStateException("Item display context was not a forge registry, wtf???");
 
             Arrays.stream(ItemDisplayContext.values())
-                    .filter(Predicate.not(ItemDisplayContext::isModded))
-                    .forEach(ctx -> forgeRegistry.register(ctx.getId(), new ResourceLocation("minecraft", ctx.getSerializedName()), ctx));
+                .filter(Predicate.not(ItemDisplayContext::isModded))
+                .forEach(ctx -> forgeRegistry.register(ctx.getId(), new ResourceLocation("minecraft", ctx.getSerializedName()), ctx));
         }
     }
 
-    public void registerRecipeSerializers(RegisterEvent event)
-    {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS))
-        {
+    public void registerRecipeSerializers(RegisterEvent event) {
+        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
             CraftingHelper.register(AndCondition.Serializer.INSTANCE);
             CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
             CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
@@ -623,8 +568,7 @@ public class ForgeMod
         }
     }
 
-    public void registerLootData(RegisterEvent event)
-    {
+    public void registerLootData(RegisterEvent event) {
         if (!event.getRegistryKey().equals(Registries.LOOT_CONDITION_TYPE))
             return;
 
@@ -635,8 +579,7 @@ public class ForgeMod
     public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("forge", "use_entity_selectors",
             PermissionTypes.BOOLEAN, (player, uuid, contexts) -> player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS));
 
-    public void registerPermissionNodes(PermissionGatherEvent.Nodes event)
-    {
+    public void registerPermissionNodes(PermissionGatherEvent.Nodes event) {
         event.addNodes(USE_SELECTORS_PERMISSION);
     }
 
@@ -644,8 +587,7 @@ public class ForgeMod
      * TODO: Remove when {@link ForgeRegistry#addAlias(ResourceLocation, ResourceLocation)} is elevated to {@link IForgeRegistry}.
      */
     @Deprecated(forRemoval = true, since = "1.20")
-    private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to)
-    {
+    private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to) {
         ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;
         fReg.addAlias(from, to);
     }

@@ -4,7 +4,7 @@
     }
  
     public void m_293234_(ServerboundCustomPayloadPacket p_300164_) {
-+      net.minecraftforge.network.NetworkHooks.onCustomPayload(p_300164_, this.f_291338_);
++      net.minecraftforge.common.ForgeHooks.onCustomPayload(p_300164_, this.f_291338_);
     }
  
     public void m_293248_(ServerboundResourcePackPacket p_300656_) {

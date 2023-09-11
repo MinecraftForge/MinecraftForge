@@ -9,10 +9,9 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.locale.Language;
 import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.network.NetworkContext;
 import java.util.Locale;
 
 public class TextComponentHelper {
@@ -29,10 +28,8 @@ public class TextComponentHelper {
     }
 
     private static boolean isVanillaClient(CommandSource sender) {
-        if (sender instanceof ServerPlayer playerMP) {
-            ServerGamePacketListenerImpl channel = playerMP.connection;
-            return NetworkHooks.getConnectionType(channel::getConnection) == ConnectionType.VANILLA;
-        }
+        if (sender instanceof ServerPlayer playerMP)
+            return NetworkContext.get(playerMP.connection.getConnection()).getType() == ConnectionType.VANILLA;
         return false;
     }
 }

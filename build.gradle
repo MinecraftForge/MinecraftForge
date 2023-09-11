@@ -248,7 +248,7 @@ project(':clean') {
                 ideaModule "${rootProject.name}.${project.name}.main"
 
                 main 'net.minecraft.client.main.Main'
-                workingDirectory project.file('run')
+                workingDirectory project.file('run/client')
 
                 args '--gameDir', '.'
                 args '--version', MC_VERSION
@@ -263,7 +263,7 @@ project(':clean') {
                 ideaModule "${rootProject.name}.${project.name}.main"
 
                 main 'net.minecraft.server.Main'
-                workingDirectory project.file('run')
+                workingDirectory project.file('run/server')
             }
         }
     }
@@ -476,7 +476,6 @@ def sharedFmlonlyForge = { Project prj ->
     }
     for (def run : prj.patcher.runs) {
         if (run.parents) continue // We already added this to the parent run config
-        run.workingDirectory prj.file('run')
 
         if (run.name.contains('client') || run.name.contains('data')) {
             // Natives are loaded from the classpath now in all cases
@@ -652,6 +651,7 @@ project(':forge') {
 
         runs {
             forge_client {
+                workingDirectory file('run/client')
                 property 'eventbus.checkTypesOnDispatch', 'true'
                 args '--launchTarget', 'forgeclientdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
@@ -661,6 +661,7 @@ project(':forge') {
             }
 
             forge_test_client {
+                workingDirectory file('run/client_test')
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
@@ -675,6 +676,7 @@ project(':forge') {
             }
 
             forge_server {
+                workingDirectory file('run/server')
                 args '--launchTarget', 'forgeserverdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
 
@@ -684,6 +686,7 @@ project(':forge') {
             }
 
             forge_test_server {
+                workingDirectory file('run/server_test')
                 parent runs.forge_server
                 taskName 'forge_test_server'
 

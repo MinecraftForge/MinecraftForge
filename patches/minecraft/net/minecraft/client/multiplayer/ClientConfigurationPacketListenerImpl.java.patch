@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
++++ b/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
+@@ -71,6 +_,7 @@
+       this.f_290549_.m_129505_(new ClientPacketListener(this.f_291812_, this.f_290549_, new CommonListenerCookie(this.f_290697_, this.f_291019_, this.f_291454_, this.f_291167_, this.f_291180_, this.f_291024_, this.f_291028_)));
+       this.f_290549_.m_294304_();
+       this.f_290549_.m_129512_(new ServerboundFinishConfigurationPacket());
++      net.minecraftforge.common.ForgeHooks.handleClientConfigurationComplete(this.f_290549_);
+    }
+ 
+    public void m_9933_() {

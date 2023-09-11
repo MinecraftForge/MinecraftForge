@@ -8,14 +8,6 @@
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
        this.f_11195_ = p_203842_;
-@@ -163,6 +_,7 @@
-       LevelData leveldata = serverlevel1.m_6106_();
-       p_11263_.m_143427_(compoundtag);
-       ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_, p_297215_);
-+      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(p_11262_, "PLAY_TO_CLIENT");
-       GameRules gamerules = serverlevel1.m_46469_();
-       boolean flag = gamerules.m_46207_(GameRules.f_46156_);
-       boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
 @@ -171,6 +_,7 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
