@@ -103,7 +103,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         try {
             tmp = MethodHandles.lookup().findVirtual(BitSet.class, "trimToSize", MethodType.methodType(void.class));
         } catch (Exception ignored) {
-            tmp = null; // We don't care... just a micro-optimization
+            tmp = null;
         }
         BITSET_TRIM_TO_SIZE = tmp;
     }
@@ -591,7 +591,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             try {
                 BITSET_TRIM_TO_SIZE.invokeExact(this.availabilityMap);
             } catch (Throwable ignored) {
-                // BitSet.trimToSize() doesn't throw, so this should never happen.
+                // We don't care... just a micro-optimization
             }
         }
 
