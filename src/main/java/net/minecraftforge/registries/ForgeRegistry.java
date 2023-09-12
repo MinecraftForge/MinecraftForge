@@ -5,6 +5,9 @@
 
 package net.minecraftforge.registries;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.IntFunction;
@@ -19,7 +22,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
@@ -54,8 +56,12 @@ import org.jetbrains.annotations.VisibleForTesting;
 public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
-    private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
-    private static Logger LOGGER = LogManager.getLogger();
+    private static final Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    @Nullable
+    private static final MethodHandle BITSET_TRIM_TO_SIZE;
+
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
@@ -91,6 +97,16 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final RegistryBuilder<V> builder;
 
     private final Codec<V> codec = new RegistryCodec();
+
+    static {
+        MethodHandle tmp;
+        try {
+            tmp = MethodHandles.lookup().findVirtual(BitSet.class, "trimToSize", MethodType.methodType(void.class));
+        } catch (Exception ignored) {
+            tmp = null;
+        }
+        BITSET_TRIM_TO_SIZE = tmp;
+    }
 
     @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
@@ -571,13 +587,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateContent(ResourceLocation registryName)
     {
-        try
-        {
-            ObfuscationReflectionHelper.findMethod(BitSet.class, "trimToSize").invoke(this.availabilityMap);
-        }
-        catch (Exception e)
-        {
-            //We don't care... Just a micro-optimization
+        if (BITSET_TRIM_TO_SIZE != null) {
+            try {
+                BITSET_TRIM_TO_SIZE.invokeExact(this.availabilityMap);
+            } catch (Throwable ignored) {
+                // We don't care... just a micro-optimization
+            }
         }
 
         for (V obj : this)
