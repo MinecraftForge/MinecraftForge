@@ -28,8 +28,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.11,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.11,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.13,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.13,6.2)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -44,10 +44,10 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MC_VERSION = '1.20.2-pre2'
+    MC_VERSION = '1.20.2-pre3'
     MAPPING_VERSION = MC_VERSION
     MC_NEXT_VERSION = '1.21'
-    MCP_VERSION = '20230911.115402'
+    MCP_VERSION = '20230912.103757'
     SNAPSHOT = false
 
     SPI_VERSION = '7.0.1'

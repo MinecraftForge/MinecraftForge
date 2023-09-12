@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -32,6 +_,7 @@
+@@ -35,6 +_,7 @@
     private byte[] iconBytes;
     private ServerData.Type type;
     private boolean enforcesSecureChat;

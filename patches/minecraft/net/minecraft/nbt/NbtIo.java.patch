@@ -1,8 +1,8 @@
 --- a/net/minecraft/nbt/NbtIo.java
 +++ b/net/minecraft/nbt/NbtIo.java
-@@ -154,10 +_,12 @@
+@@ -155,10 +_,12 @@
  
-    private static Tag readUnnamedTag(DataInput p_128931_, int p_128932_, NbtAccounter p_128933_) throws IOException {
+    private static Tag readUnnamedTag(DataInput p_128931_, NbtAccounter p_128933_) throws IOException {
        byte b0 = p_128931_.readByte();
 +      p_128933_.accountBytes(1); // Forge: Count everything!
        if (b0 == 0) {
@@ -11,6 +11,6 @@
 -         StringTag.skipString(p_128931_);
 +         p_128933_.readUTF(p_128931_.readUTF()); //Forge: Count this string.
 +         p_128933_.accountBytes(4); //Forge: 4 extra bytes for the object allocation.
-          return readTagSafe(p_128931_, p_128932_, p_128933_, b0);
+          return readTagSafe(p_128931_, p_128933_, b0);
        }
     }

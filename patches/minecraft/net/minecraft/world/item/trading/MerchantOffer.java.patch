@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/trading/MerchantOffer.java
 +++ b/net/minecraft/world/item/trading/MerchantOffer.java
-@@ -77,7 +_,7 @@
+@@ -90,7 +_,7 @@
        } else {
           int i = this.baseCostA.getCount();
           int j = Math.max(0, Mth.floor((float)(i * this.demand) * this.priceMultiplier));
@@ -9,7 +9,7 @@
        }
     }
  
-@@ -181,7 +_,7 @@
+@@ -194,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = p_45366_.copy();

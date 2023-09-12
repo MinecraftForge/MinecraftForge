@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -386,6 +_,7 @@
+@@ -385,6 +_,7 @@
  
        this.minecraft.debugRenderer.clear();
        this.minecraft.player.resetPos();
@@ -8,7 +8,7 @@
        this.minecraft.player.setId(p_105030_.playerId());
        this.level.addEntity(this.minecraft.player);
        this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
-@@ -1017,7 +_,9 @@
+@@ -1016,7 +_,9 @@
           localplayer1.getAttributes().assignValues(localplayer.getAttributes());
        }
  
@@ -18,7 +18,7 @@
        this.level.addEntity(localplayer1);
        localplayer1.setYRot(-180.0F);
        localplayer1.input = new KeyboardInput(this.minecraft.options);
-@@ -1126,10 +_,7 @@
+@@ -1125,10 +_,7 @@
        PacketUtils.ensureRunningOnSameThread(p_104976_, this, this.minecraft);
        BlockPos blockpos = p_104976_.getPos();
        this.minecraft.level.getBlockEntity(blockpos, p_104976_.getType()).ifPresent((p_205557_) -> {
@@ -30,7 +30,7 @@
  
           if (p_205557_ instanceof CommandBlockEntity && this.minecraft.screen instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.minecraft.screen).updateGui();
-@@ -1277,7 +_,9 @@
+@@ -1276,7 +_,9 @@
  
     public void handleCommands(ClientboundCommandsPacket p_104990_) {
        PacketUtils.ensureRunningOnSameThread(p_104990_, this, this.minecraft);
@@ -41,7 +41,7 @@
     }
  
     public void handleStopSoundEvent(ClientboundStopSoundPacket p_105116_) {
-@@ -1296,6 +_,7 @@
+@@ -1295,6 +_,7 @@
        ClientRecipeBook clientrecipebook = this.minecraft.player.getRecipeBook();
        clientrecipebook.setupCollections(this.recipeManager.getRecipes(), this.minecraft.level.registryAccess());
        this.minecraft.populateSearchTree(SearchRegistry.RECIPE_COLLECTIONS, clientrecipebook.getCollections());
@@ -49,7 +49,7 @@
     }
  
     public void handleLookAt(ClientboundPlayerLookAtPacket p_105054_) {
-@@ -1394,7 +_,8 @@
+@@ -1393,7 +_,8 @@
           Blocks.rebuildCache();
        }
  
@@ -59,7 +59,7 @@
     }
  
     public void handlePlayerCombatEnd(ClientboundPlayerCombatEndPacket p_171771_) {
-@@ -2087,6 +_,8 @@
+@@ -2086,6 +_,8 @@
     }
  
     public void sendChat(String p_249888_) {
@@ -68,7 +68,7 @@
        Instant instant = Instant.now();
        long i = Crypt.SaltSupplier.getLong();
        LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.lastSeenMessages.generateAndApplyUpdate();
-@@ -2095,6 +_,7 @@
+@@ -2094,6 +_,7 @@
     }
  
     public void sendCommand(String p_250092_) {

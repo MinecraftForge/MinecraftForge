@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -467,6 +_,19 @@
+@@ -465,6 +_,19 @@
           return LevelStorageSource.this.readLevelData(this.levelDirectory, LevelStorageSource.getLevelData(p_248747_, p_251873_, p_249187_, p_249736_));
        }
  
@@ -20,7 +20,7 @@
        @Nullable
        public WorldDataConfiguration getDataConfiguration() {
           this.checkLock();
-@@ -483,6 +_,8 @@
+@@ -481,6 +_,8 @@
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.put("Data", compoundtag);
  
@@ -29,7 +29,7 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              NbtIo.writeCompressed(compoundtag1, file2);
-@@ -497,6 +_,10 @@
+@@ -495,6 +_,10 @@
  
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
