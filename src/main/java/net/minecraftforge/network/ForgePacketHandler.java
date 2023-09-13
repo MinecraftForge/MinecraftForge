@@ -216,7 +216,7 @@ public class ForgePacketHandler {
                 var missing = new HashSet<ResourceLocation>();
                 for (var id : missingMods) {
                     var key = new ResourceLocation(id, "");
-                    var container = ModList.get().getModContainerById(id).get();
+                    var container = ModList.get().getModContainerById(id).orElse(null);
                     if (container != null)
                         mismatched.put(key, new NetworkMismatchData.Version(container.getModInfo().getVersion().toString(), ""));
                     else

@@ -5,10 +5,11 @@
 
 package net.minecraftforge.network.packets;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.forgespi.language.IModInfo;
 
 /**
  * Prefixes S2CModList by sending additional data about the mods installed on the server to the client
@@ -18,25 +19,20 @@ public record ModVersions(Map<String, Info> mods) {
     private static final int MAX_LENGTH = 0x100;
 
     public static ModVersions create() {
-        Map<String, ModVersions.Info> mods = new HashMap<>();
-        ModList.get().getMods().stream().forEach(mod ->
-            mods.put(
-                mod.getModId(),
-                new Info(mod.getDisplayName(), mod.getVersion().toString())
-            )
-        );
-        return new ModVersions(mods);
+        return new ModVersions(ModList.get().getMods().stream().collect(Collectors.toMap(
+            IModInfo::getModId,
+            mod -> new Info(mod.getDisplayName(), mod.getVersion().toString())
+        )));
     }
 
     public static ModVersions decode(FriendlyByteBuf buf) {
-        var mods = buf.<String, Info>readMap(
+        return new ModVersions(buf.readMap(
             o -> o.readUtf(MAX_LENGTH),
             o -> new Info(
                 o.readUtf(MAX_LENGTH),
                 o.readUtf(MAX_LENGTH)
             )
-        );
-        return new ModVersions(mods);
+        ));
     }
 
     public void encode(FriendlyByteBuf output) {
@@ -49,5 +45,5 @@ public record ModVersions(Map<String, Info> mods) {
         );
     }
 
-    public record Info(String name, String version) {}
+    public record Info(String name, String version) { }
 }

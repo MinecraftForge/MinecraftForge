@@ -1,9 +1,9 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -33,20 +_,21 @@
-       double d2 = p_123375_.y() + (double)((float)direction.getStepY() * 1.125F);
-       double d3 = p_123375_.z() + (double)direction.getStepZ() * d0;
-       BlockPos blockpos = p_123375_.getPos().relative(direction);
+@@ -34,20 +_,21 @@
+       double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
+       double d3 = vec3.z() + (double)direction.getStepZ() * d0;
+       BlockPos blockpos = p_123375_.pos().relative(direction);
 +      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
 +      boat.setVariant(this.type);
 +      boat.setYRot(direction.toYRot());

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -165,13 +_,23 @@
+@@ -183,13 +_,23 @@
     }
  
     private void doLoadLevel(Screen p_233146_, String p_233147_, boolean p_233148_, boolean p_233149_) {
@@ -24,7 +24,7 @@
           } catch (Exception exception) {
              LOGGER.warn("Failed to load level data or datapacks, can't proceed with server load", (Throwable)exception);
              if (!p_233148_) {
-@@ -191,7 +_,9 @@
+@@ -209,7 +_,9 @@
           WorldData worlddata = worldstem.worldData();
           boolean flag = worlddata.worldGenOptions().isOldCustomizedWorld();
           boolean flag1 = worlddata.worldGenSettingsLifecycle() != Lifecycle.stable();
@@ -35,7 +35,7 @@
              this.minecraft.getDownloadedPackSource().loadBundledResourcePack(levelstoragesource$levelstorageaccess).thenApply((p_233177_) -> {
                 return true;
              }).exceptionallyComposeAsync((p_233183_) -> {
-@@ -213,9 +_,11 @@
+@@ -231,9 +_,11 @@
                 return null;
              });
           } else {

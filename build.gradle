@@ -44,10 +44,10 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MC_VERSION = '1.20.2-pre3'
+    MC_VERSION = '1.20.2-pre4'
     MAPPING_VERSION = MC_VERSION
     MC_NEXT_VERSION = '1.21'
-    MCP_VERSION = '20230912.103757'
+    MCP_VERSION = '20230913.141520'
     SNAPSHOT = false
 
     SPI_VERSION = '7.0.1'
@@ -1523,6 +1523,19 @@ if (System.env.TEAMCITY_VERSION) {
         doLast {
             println "##teamcity[buildNumber '${project(':forge').version}']"
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
+        }
+    }
+}
+
+allprojects { prj ->
+    prj.tasks.eclipse.doFirst {
+        rootProject.fileTree('ide/eclipse/template/.settings/').matching { include '**/*.prefs' }.each { file ->
+            def target = project.file('.settings/' + file.name)
+            def temp = new CleanProperties().load(file)
+            def exst = new CleanProperties().load(target)
+            exst.put('eclipse.preferences.version', '1')
+            temp.forEach(exst::put)
+            exst.store(target)
         }
     }
 }

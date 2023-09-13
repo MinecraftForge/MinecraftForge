@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -251,7 +_,7 @@
+@@ -252,7 +_,7 @@
  import org.slf4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     static Minecraft instance;
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final boolean ON_OSX = Util.getPlatform() == Util.OS.OSX;
-@@ -421,7 +_,6 @@
+@@ -422,7 +_,6 @@
        }, Util.ioPool());
        this.userApiService = this.createUserApiService(this.authenticationService, p_91084_);
        LOGGER.info("Setting user: {}", (Object)this.user.getName());
@@ -17,7 +17,7 @@
        this.demo = p_91084_.game.demo;
        this.allowsMultiplayer = !p_91084_.game.disableMultiplayer;
        this.allowsChat = !p_91084_.game.disableChat;
-@@ -457,15 +_,15 @@
+@@ -458,15 +_,15 @@
        }
  
        this.window.setFramerateLimit(this.options.framerateLimit().get());
@@ -35,7 +35,7 @@
        this.resourcePackRepository.reload();
        this.options.loadSelectedResourcePacks(this.resourcePackRepository);
        this.languageManager = new LanguageManager(this.options.languageCode);
-@@ -511,10 +_,13 @@
+@@ -512,10 +_,13 @@
        this.gameRenderer = new GameRenderer(this, this.entityRenderDispatcher.getItemInHandRenderer(), this.resourceManager, this.renderBuffers);
        this.resourceManager.registerReloadListener(this.gameRenderer.createReloadListener());
        this.levelRenderer = new LevelRenderer(this, this.entityRenderDispatcher, this.blockEntityRenderDispatcher, this.renderBuffers);
@@ -50,7 +50,7 @@
        this.resourceManager.registerReloadListener(this.particleEngine);
        this.paintingTextures = new PaintingTextureManager(this.textureManager);
        this.resourceManager.registerReloadListener(this.paintingTextures);
-@@ -525,7 +_,10 @@
+@@ -526,7 +_,10 @@
        this.gpuWarnlistManager = new GpuWarnlistManager();
        this.resourceManager.registerReloadListener(this.gpuWarnlistManager);
        this.resourceManager.registerReloadListener(this.regionalCompliancies);
@@ -62,7 +62,7 @@
        this.debugRenderer = new DebugRenderer(this);
        RealmsClient realmsclient = RealmsClient.create(this);
        this.realmsDataFetcher = new RealmsDataFetcher(realmsclient);
-@@ -545,6 +_,7 @@
+@@ -546,6 +_,7 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -70,7 +70,7 @@
        this.window.updateVsync(this.options.enableVsync().get());
        this.window.updateRawMouseInput(this.options.rawMouseInput().get());
        this.window.setDefaultErrorCallback();
-@@ -564,7 +_,7 @@
+@@ -565,7 +_,7 @@
        ReloadInstance reloadinstance = this.resourceManager.createReload(Util.backgroundExecutor(), this, RESOURCE_RELOAD_INITIAL_TASK, list);
        GameLoadTimesEvent.INSTANCE.beginStep(TelemetryProperty.LOAD_TIME_LOADING_OVERLAY_MS);
        Minecraft.GameLoadCookie minecraft$gameloadcookie = new Minecraft.GameLoadCookie(realmsclient, p_91084_.quickPlay);
@@ -79,7 +79,7 @@
           Util.ifElse(p_296164_, (p_296162_) -> {
              this.rollbackResourcePacks(p_296162_, minecraft$gameloadcookie);
           }, () -> {
-@@ -574,8 +_,10 @@
+@@ -575,8 +_,10 @@
  
              this.reloadStateTracker.finishReload();
              this.onResourceLoadFinished(minecraft$gameloadcookie);
@@ -91,7 +91,7 @@
        this.quickPlayLog = QuickPlayLog.of(p_91084_.quickPlay.path());
     }
  
-@@ -673,7 +_,7 @@
+@@ -674,7 +_,7 @@
     private String createTitle() {
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
        if (checkModStatus().shouldReportAsModified()) {
@@ -100,7 +100,7 @@
        }
  
        stringbuilder.append(" ");
-@@ -698,6 +_,8 @@
+@@ -699,6 +_,8 @@
  
     private UserApiService createUserApiService(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
        try {
@@ -109,7 +109,7 @@
           return p_193586_.createUserApiService(p_193587_.user.user.getAccessToken());
        } catch (AuthenticationException authenticationexception) {
           LOGGER.error("Failed to verify authentication", (Throwable)authenticationexception);
-@@ -710,7 +_,7 @@
+@@ -711,7 +_,7 @@
     }
  
     private void rollbackResourcePacks(Throwable p_91240_, @Nullable Minecraft.GameLoadCookie p_299515_) {
@@ -118,7 +118,7 @@
           this.clearResourcePacksOnError(p_91240_, (Component)null, p_299515_);
        } else {
           Util.throwAsRuntime(p_91240_);
-@@ -802,7 +_,10 @@
+@@ -803,7 +_,10 @@
     }
  
     public void createSearchTrees() {
@@ -130,7 +130,7 @@
           return new FullTextSearchTree<>((p_210797_) -> {
              return p_210797_.getTooltipLines((Player)null, TooltipFlag.Default.NORMAL.asCreative()).stream().map((p_231455_) -> {
                 return ChatFormatting.stripFormatting(p_231455_.getString()).trim();
-@@ -813,7 +_,8 @@
+@@ -814,7 +_,8 @@
              return Stream.of(BuiltInRegistries.ITEM.getKey(p_91317_.getItem()));
           }, p_231451_);
        });
@@ -140,7 +140,7 @@
           return new IdSearchTree<>((p_231353_) -> {
              return p_231353_.getTags().map(TagKey::location);
           }, p_231430_);
-@@ -833,9 +_,12 @@
+@@ -834,9 +_,12 @@
              });
           }, p_301514_);
        });
@@ -156,7 +156,7 @@
        });
     }
  
-@@ -1018,10 +_,6 @@
+@@ -1019,10 +_,6 @@
           LOGGER.error("setScreen called from non-game thread");
        }
  
@@ -167,7 +167,7 @@
        if (p_91153_ == null && this.level == null) {
           p_91153_ = new TitleScreen();
        } else if (p_91153_ == null && this.player.isDeadOrDying()) {
-@@ -1032,6 +_,19 @@
+@@ -1033,6 +_,19 @@
           }
        }
  
@@ -187,7 +187,7 @@
        this.screen = p_91153_;
        if (this.screen != null) {
           this.screen.added();
-@@ -1178,9 +_,12 @@
+@@ -1179,9 +_,12 @@
        RenderSystem.enableCull();
        this.profiler.pop();
        if (!this.noRender) {
@@ -200,7 +200,7 @@
        }
  
        if (this.fpsPieResults != null) {
-@@ -1301,10 +_,12 @@
+@@ -1302,10 +_,12 @@
        this.window.setGuiScale((double)i);
        if (this.screen != null) {
           this.screen.resize(this, this.window.getGuiScaledWidth(), this.window.getGuiScaledHeight());
@@ -213,7 +213,7 @@
        this.gameRenderer.resize(this.window.getWidth(), this.window.getHeight());
        this.mouseHandler.setIgnoreFirstMove();
     }
-@@ -1578,6 +_,7 @@
+@@ -1579,6 +_,7 @@
     }
  
     public void stop() {
@@ -221,7 +221,7 @@
        this.running = false;
     }
  
-@@ -1607,10 +_,18 @@
+@@ -1608,10 +_,18 @@
           if (p_91387_ && this.hitResult != null && this.hitResult.getType() == HitResult.Type.BLOCK) {
              BlockHitResult blockhitresult = (BlockHitResult)this.hitResult;
              BlockPos blockpos = blockhitresult.getBlockPos();
@@ -243,7 +243,7 @@
                    this.player.swing(InteractionHand.MAIN_HAND);
                 }
              }
-@@ -1639,6 +_,8 @@
+@@ -1640,6 +_,8 @@
              return false;
           } else {
              boolean flag = false;
@@ -252,7 +252,7 @@
              switch (this.hitResult.getType()) {
                 case ENTITY:
                    this.gameMode.attack(this.player, ((EntityHitResult)this.hitResult).getEntity());
-@@ -1646,7 +_,7 @@
+@@ -1647,7 +_,7 @@
                 case BLOCK:
                    BlockHitResult blockhitresult = (BlockHitResult)this.hitResult;
                    BlockPos blockpos = blockhitresult.getBlockPos();
@@ -261,7 +261,7 @@
                       this.gameMode.startDestroyBlock(blockpos, blockhitresult.getDirection());
                       if (this.level.getBlockState(blockpos).isAir()) {
                          flag = true;
-@@ -1659,8 +_,10 @@
+@@ -1660,8 +_,10 @@
                    }
  
                    this.player.resetAttackStrengthTicker();
@@ -272,7 +272,7 @@
              this.player.swing(InteractionHand.MAIN_HAND);
              return flag;
           }
-@@ -1676,6 +_,11 @@
+@@ -1677,6 +_,11 @@
              }
  
              for(InteractionHand interactionhand : InteractionHand.values()) {
@@ -284,7 +284,7 @@
                 ItemStack itemstack = this.player.getItemInHand(interactionhand);
                 if (!itemstack.isItemEnabled(this.level.enabledFeatures())) {
                    return;
-@@ -1696,7 +_,7 @@
+@@ -1697,7 +_,7 @@
                          }
  
                          if (interactionresult.consumesAction()) {
@@ -293,7 +293,7 @@
                                this.player.swing(interactionhand);
                             }
  
-@@ -1708,7 +_,7 @@
+@@ -1709,7 +_,7 @@
                          int i = itemstack.getCount();
                          InteractionResult interactionresult1 = this.gameMode.useItemOn(this.player, interactionhand, blockhitresult);
                          if (interactionresult1.consumesAction()) {
@@ -302,7 +302,7 @@
                                this.player.swing(interactionhand);
                                if (!itemstack.isEmpty() && (itemstack.getCount() != i || this.gameMode.hasInfiniteItems())) {
                                   this.gameRenderer.itemInHandRenderer.itemUsed(interactionhand);
-@@ -1724,6 +_,9 @@
+@@ -1725,6 +_,9 @@
                    }
                 }
  
@@ -312,7 +312,7 @@
                 if (!itemstack.isEmpty()) {
                    InteractionResult interactionresult2 = this.gameMode.useItem(this.player, interactionhand);
                    if (interactionresult2.consumesAction()) {
-@@ -1750,6 +_,8 @@
+@@ -1751,6 +_,8 @@
           --this.rightClickDelay;
        }
  
@@ -321,7 +321,7 @@
        this.profiler.push("gui");
        this.chatListener.tick();
        this.gui.tick(this.pause);
-@@ -1838,6 +_,7 @@
+@@ -1839,6 +_,7 @@
  
              this.tutorial.tick();
  
@@ -329,7 +329,7 @@
              try {
                 this.level.tick(() -> {
                    return true;
-@@ -1853,6 +_,7 @@
+@@ -1854,6 +_,7 @@
  
                 throw new ReportedException(crashreport);
              }
@@ -337,7 +337,7 @@
           }
  
           this.profiler.popPush("animateTick");
-@@ -1872,6 +_,8 @@
+@@ -1873,6 +_,8 @@
        this.profiler.popPush("keyboard");
        this.keyboardHandler.tick();
        this.profiler.pop();
@@ -346,7 +346,7 @@
     }
  
     private boolean isMultiplayerServer() {
-@@ -2068,6 +_,7 @@
+@@ -2069,6 +_,7 @@
     }
  
     public void setLevel(ClientLevel p_91157_) {
@@ -354,7 +354,7 @@
        ProgressScreen progressscreen = new ProgressScreen(true);
        progressscreen.progressStartNoAbort(Component.translatable("connect.joining"));
        this.updateScreenAndTick(progressscreen);
-@@ -2101,10 +_,12 @@
+@@ -2102,10 +_,12 @@
        IntegratedServer integratedserver = this.singleplayerServer;
        this.singleplayerServer = null;
        this.gameRenderer.resetData();
@@ -367,7 +367,7 @@
           if (integratedserver != null) {
              this.profiler.push("waitForServer");
  
-@@ -2118,6 +_,7 @@
+@@ -2119,6 +_,7 @@
           this.downloadedPackSource.clearServerPack();
           this.gui.onDisconnected();
           this.isLocalServer = false;
@@ -375,7 +375,7 @@
        }
  
        this.level = null;
-@@ -2242,6 +_,7 @@
+@@ -2243,6 +_,7 @@
  
     private void pickBlock() {
        if (this.hitResult != null && this.hitResult.getType() != HitResult.Type.MISS) {
@@ -383,7 +383,7 @@
           boolean flag = this.player.getAbilities().instabuild;
           BlockEntity blockentity = null;
           HitResult.Type hitresult$type = this.hitResult.getType();
-@@ -2254,10 +_,7 @@
+@@ -2255,10 +_,7 @@
              }
  
              Block block = blockstate.getBlock();
@@ -395,7 +395,7 @@
  
              if (flag && Screen.hasControlDown() && blockstate.hasBlockEntity()) {
                 blockentity = this.level.getBlockEntity(blockpos);
-@@ -2268,7 +_,7 @@
+@@ -2269,7 +_,7 @@
              }
  
              Entity entity = ((EntityHitResult)this.hitResult).getEntity();
@@ -404,7 +404,7 @@
              if (itemstack == null) {
                 return;
              }
-@@ -2804,6 +_,19 @@
+@@ -2808,6 +_,19 @@
  
     public void updateMaxMipLevel(int p_91313_) {
        this.modelManager.updateMaxMipLevel(p_91313_);
