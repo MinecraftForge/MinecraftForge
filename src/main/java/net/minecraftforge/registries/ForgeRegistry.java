@@ -58,10 +58,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
     private static final Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
     private static final Logger LOGGER = LogManager.getLogger();
-
-    @Nullable
-    private static final MethodHandle BITSET_TRIM_TO_SIZE;
-
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
@@ -97,16 +93,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final RegistryBuilder<V> builder;
 
     private final Codec<V> codec = new RegistryCodec();
-
-    static {
-        MethodHandle tmp;
-        try {
-            tmp = MethodHandles.lookup().findVirtual(BitSet.class, "trimToSize", MethodType.methodType(void.class));
-        } catch (Exception ignored) {
-            tmp = null;
-        }
-        BITSET_TRIM_TO_SIZE = tmp;
-    }
 
     @SuppressWarnings("unchecked")
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
@@ -587,14 +573,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateContent(ResourceLocation registryName)
     {
-        if (BITSET_TRIM_TO_SIZE != null) {
-            try {
-                BITSET_TRIM_TO_SIZE.invokeExact(this.availabilityMap);
-            } catch (Throwable ignored) {
-                // We don't care... just a micro-optimization
-            }
-        }
-
         for (V obj : this)
         {
             int id = getID(obj);
