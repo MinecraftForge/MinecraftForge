@@ -16,8 +16,8 @@
 -               if (blockstate.getBlock() instanceof TntBlock) {
 -                  TntBlock.explode(level, blockpos);
 -                  level.removeBlock(blockpos, false);
-+               if (blockstate.isFlammable(level, blockpos, p_123412_.getBlockState().getValue(DispenserBlock.FACING).getOpposite())) {
-+                  blockstate.onCaughtFire(level, blockpos, p_123412_.getBlockState().getValue(DispenserBlock.FACING).getOpposite(), null);
++               if (blockstate.isFlammable(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite())) {
++                  blockstate.onCaughtFire(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite(), null);
 +                  if (blockstate.getBlock() instanceof TntBlock)
 +                     level.removeBlock(blockpos, false);
                 } else {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/CompoundTag.java
 +++ b/net/minecraft/nbt/CompoundTag.java
-@@ -210,6 +_,7 @@
+@@ -204,6 +_,7 @@
  
     @Nullable
     public Tag put(String p_128366_, Tag p_128367_) {

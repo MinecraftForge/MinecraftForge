@@ -4,7 +4,7 @@
        private static String readAccounted(DataInput p_301750_, NbtAccounter p_301732_) throws IOException {
           p_301732_.accountBytes(36L);
           String s = p_301750_.readUTF();
--         p_301732_.accountBytes(2L * (long)s.length());
+-         p_301732_.accountBytes(2L, (long)s.length());
 +         p_301732_.readUTF(s);
           return s;
        }

@@ -44,10 +44,10 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MC_VERSION = '1.20.2-pre4'
+    MC_VERSION = '1.20.2-rc1'
     MAPPING_VERSION = MC_VERSION
     MC_NEXT_VERSION = '1.21'
-    MCP_VERSION = '20230913.141520'
+    MCP_VERSION = '20230915.121641'
     SNAPSHOT = false
 
     SPI_VERSION = '7.0.1'
