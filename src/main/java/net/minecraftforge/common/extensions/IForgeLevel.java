@@ -7,12 +7,19 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Supplier;
 
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public interface IForgeLevel extends ICapabilityProvider
 {
+    default Level self() {
+        return (Level) this;
+    }
+
     /**
      * The maximum radius to scan for entities when trying to check bounding boxes. Vanilla's default is
      * 2.0D But mods that add larger entities may increase this.
@@ -33,5 +40,10 @@ public interface IForgeLevel extends ICapabilityProvider
     public default Collection<PartEntity<?>> getPartEntities()
     {
         return Collections.emptyList();
+    }
+
+    @Override
+    default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachLevel(self());
     }
 }

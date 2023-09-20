@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -224,6 +225,11 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         B getProvider()
         {
             return owner;
+        }
+
+        @Override
+        public Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+            return () -> owner.getAttachCapabilitiesEventFactory().get();
         }
     };
 
