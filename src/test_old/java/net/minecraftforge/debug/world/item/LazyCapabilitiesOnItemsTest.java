@@ -88,7 +88,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            bus.addListener(capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
@@ -125,7 +125,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.reset();
 
             ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
-            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            bus.addListener(capAttachmentHandler);
             //Warmup:
             for (int i = 0; i < (SAMPLE_SIZE); i++)
             {

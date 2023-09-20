@@ -5,29 +5,30 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.debug.caps.MyItem;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,24 +41,44 @@ public class CapabilitiesTest
 {
     public static final String MODID = "capabilities_test";
 
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     public static Capability<CapClass> INSTANCE = CapabilityManager.get(new CapabilityToken<>(){});
 
     private static ResourceLocation TEST_CAP_ID = new ResourceLocation("capabilities_test:test");
 
     private static final ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<>();
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CapabilitiesTest.MODID);
+    public static final RegistryObject<MyItem> MY_ITEM = ITEMS.register("mine", () -> new MyItem(new Item.Properties()));
+
+    public static Class<?> get(Class<?> classs) {
+        return classs;
+    }
+
+    public static class AttachMyPlayer extends AttachCapabilitiesEvent<ServerPlayer> {
+        public AttachMyPlayer(ServerPlayer obj) {
+            super(ServerPlayer.class, obj);
+        }
+    }
 
     public CapabilitiesTest()
     {
+        ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        AttachCapabilitiesEvent.EventFinder.register(ServerPlayer.class, AttachMyPlayer::new);
         if (ENABLED)
         {
-            new AttachTest<>(BlockEntity.class);
-            new AttachTest<>(Entity.class);
-            new AttachTest<>(ItemStack.class);
-            new AttachTest<>(LevelChunk.class);
-            new AttachTest<>(Level.class);
+            MinecraftForge.EVENT_BUS.addListener(CapabilitiesTest::onCap);
+            MinecraftForge.EVENT_BUS.addListener(CapabilitiesTest::onGen);
         }
+    }
+
+    public static void onCap(AttachMyPlayer attach) {
+        messages.add("Called AttachPlayer Cap");
+    }
+
+    public static void onGen(AttachCapabilitiesEvent<?> attach) {
+        if (attach.getType() == ServerPlayer.class)
+            messages.add("Detected AttachPlayer Cap");
     }
 
     public static class CapClass
@@ -70,7 +91,7 @@ public class CapabilitiesTest
         }
     }
 
-    public static class AttachTest<T extends ICapabilityProviderImpl<T>>
+    public static class AttachTest<T>
     {
         private final Class<T> cls;
 
@@ -78,11 +99,12 @@ public class CapabilitiesTest
         {
             this.cls = cls;
 
-            MinecraftForge.EVENT_BUS.addGenericListener(cls, this::attach);
+            MinecraftForge.EVENT_BUS.addListener(this::attach);
         }
 
-        public void attach(AttachCapabilitiesEvent<T> event)
+        public void attach(AttachMyPlayer event)
         {
+            var a = event.getType();
             event.addCapability(TEST_CAP_ID, new ICapabilitySerializable<>()
             {
                 final LazyOptional<CapClass> instance = LazyOptional.of(() -> new CapClass(this));
