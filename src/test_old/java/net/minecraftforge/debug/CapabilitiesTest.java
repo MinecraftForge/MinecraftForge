@@ -15,6 +15,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
@@ -55,29 +56,27 @@ public class CapabilitiesTest
         return classs;
     }
 
-    public static class AttachMyPlayer extends AttachCapabilitiesEvent<ServerPlayer> {
-        public AttachMyPlayer(ServerPlayer obj) {
-            super(ServerPlayer.class, obj);
-        }
-    }
-
     public CapabilitiesTest()
     {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        AttachCapabilitiesEvent.EventFinder.register(ServerPlayer.class, AttachMyPlayer::new);
         if (ENABLED)
         {
             MinecraftForge.EVENT_BUS.addListener(CapabilitiesTest::onCap);
             MinecraftForge.EVENT_BUS.addListener(CapabilitiesTest::onGen);
+            MinecraftForge.EVENT_BUS.addListener(CapabilitiesTest::onTe);
         }
     }
 
-    public static void onCap(AttachMyPlayer attach) {
-        messages.add("Called AttachPlayer Cap");
+    public static void onCap(AttachCapabilitiesEvent.AttachLevel attach) {
+        messages.add("Called AttachLevel");
+    }
+
+    public static void onTe(AttachCapabilitiesEvent.AttachItemStack attachItemStack) {
+       messages.add("Called AttachItemStack %s".formatted(attachItemStack.getObject() instanceof ItemStack));
     }
 
     public static void onGen(AttachCapabilitiesEvent<?> attach) {
-        if (attach.getType() == ServerPlayer.class)
+        if (attach.getObject() instanceof ServerPlayer)
             messages.add("Detected AttachPlayer Cap");
     }
 
@@ -102,7 +101,7 @@ public class CapabilitiesTest
             MinecraftForge.EVENT_BUS.addListener(this::attach);
         }
 
-        public void attach(AttachMyPlayer event)
+        public void attach(AttachCapabilitiesEvent.AttachEntity event)
         {
             var a = event.getType();
             event.addCapability(TEST_CAP_ID, new ICapabilitySerializable<>()
