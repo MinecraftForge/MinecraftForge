@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.GenericEvent;
@@ -98,40 +99,6 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
     public List<Runnable> getListeners()
     {
         return this.listenersView;
-    }
-
-    // Level/Entity/ItemStack/LevelChunk/BlockEntity/Item
-    public static class EventFinder {
-        private static final HashMap<Class<?>, Function<Object, ? extends AttachCapabilitiesEvent<?>>> EVENT_FACTORYS = new HashMap<>();
-
-        @SuppressWarnings("all")
-        public static <T> void register(Class<T> classType, Function<T, ? extends AttachCapabilitiesEvent<T>> eventFunction) {
-            EVENT_FACTORYS.put(classType, (Function<Object, ? extends AttachCapabilitiesEvent<?>>) eventFunction);
-        }
-
-        public static boolean hasType(Class<?> type) {
-            return EVENT_FACTORYS.containsKey(type);
-        }
-
-        @SuppressWarnings("all")
-        public static <X, T extends AttachCapabilitiesEvent<X>> T get(Class<? extends X> type, X object) {
-            return (T) EVENT_FACTORYS.get(type).apply((Object) object);
-        }
-
-        static {
-            register(Item.class, AttachItem::new);
-            register(ItemStack.class, AttachItemStack::new);
-            register(LevelChunk.class, AttachLevelChunk::new);
-            register(Level.class, AttachLevel::new);
-            register(BlockEntity.class, AttachBlockEntity::new);
-            register(Entity.class, AttachEntity::new);
-        }
-    }
-
-    public static class AttachItem extends AttachCapabilitiesEvent<Item> {
-        public AttachItem(Item obj) {
-            super(Item.class, obj);
-        }
     }
 
     public static class AttachLevel extends AttachCapabilitiesEvent<Level> {
