@@ -616,7 +616,7 @@ public class ForgeEventFactory
     {
         // If provider.getClass() exists use that, otherwise use type. type is the base class.
         return gatherCapabilities(
-                AttachCapabilitiesEvent.EventFinder.get(AttachCapabilitiesEvent.EventFinder.hasType(provider.getClass()) ? provider.getClass() : type, provider),
+                provider.getAttachCapabilitiesEventFactory().get(),
                 parent
         );
     }
