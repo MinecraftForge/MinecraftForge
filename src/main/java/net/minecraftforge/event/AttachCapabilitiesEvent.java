@@ -6,13 +6,27 @@
 package net.minecraftforge.event;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.GenericEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -21,14 +35,14 @@ import net.minecraftforge.eventbus.api.Event;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent<T> extends Event
+public abstract class AttachCapabilitiesEvent<T> extends Event
 {
     private final T obj;
-    private final Class<T> type;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
     private final List<Runnable> listeners = Lists.newArrayList();
     private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
+    private final Class<T> type;
 
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
@@ -44,8 +58,7 @@ public class AttachCapabilitiesEvent<T> extends Event
         return this.obj;
     }
 
-    public Class<T> getType()
-    {
+    public Class<T> getType() {
         return this.type;
     }
 
@@ -85,5 +98,69 @@ public class AttachCapabilitiesEvent<T> extends Event
     public List<Runnable> getListeners()
     {
         return this.listenersView;
+    }
+
+    // Level/Entity/ItemStack/LevelChunk/BlockEntity/Item
+    public static class EventFinder {
+        private static final HashMap<Class<?>, Function<Object, ? extends AttachCapabilitiesEvent<?>>> EVENT_FACTORYS = new HashMap<>();
+
+        @SuppressWarnings("all")
+        public static <T> void register(Class<T> classType, Function<T, ? extends AttachCapabilitiesEvent<T>> eventFunction) {
+            EVENT_FACTORYS.put(classType, (Function<Object, ? extends AttachCapabilitiesEvent<?>>) eventFunction);
+        }
+
+        public static boolean hasType(Class<?> type) {
+            return EVENT_FACTORYS.containsKey(type);
+        }
+
+        @SuppressWarnings("all")
+        public static <X, T extends AttachCapabilitiesEvent<X>> T get(Class<? extends X> type, X object) {
+            return (T) EVENT_FACTORYS.get(type).apply((Object) object);
+        }
+
+        static {
+            register(Item.class, AttachItem::new);
+            register(ItemStack.class, AttachItemStack::new);
+            register(LevelChunk.class, AttachLevelChunk::new);
+            register(Level.class, AttachLevel::new);
+            register(BlockEntity.class, AttachBlockEntity::new);
+            register(Entity.class, AttachEntity::new);
+        }
+    }
+
+    public static class AttachItem extends AttachCapabilitiesEvent<Item> {
+        public AttachItem(Item obj) {
+            super(Item.class, obj);
+        }
+    }
+
+    public static class AttachLevel extends AttachCapabilitiesEvent<Level> {
+        public AttachLevel(Level obj) {
+            super(Level.class, obj);
+        }
+    }
+
+    public static class AttachLevelChunk extends AttachCapabilitiesEvent<LevelChunk> {
+        public AttachLevelChunk(LevelChunk obj) {
+            super(LevelChunk.class, obj);
+        }
+    }
+
+    public static class AttachBlockEntity extends AttachCapabilitiesEvent<BlockEntity> {
+        public AttachBlockEntity(BlockEntity obj) {
+            super(BlockEntity.class, obj);
+        }
+    }
+
+    public static class AttachEntity extends AttachCapabilitiesEvent<Entity> {
+        public AttachEntity(Entity obj) {
+            super(Entity.class, obj);
+        }
+    }
+
+    public static class AttachItemStack extends AttachCapabilitiesEvent<ItemStack> {
+        public AttachItemStack(ItemStack obj) {
+            super(ItemStack.class, obj);
+        }
     }
 }
