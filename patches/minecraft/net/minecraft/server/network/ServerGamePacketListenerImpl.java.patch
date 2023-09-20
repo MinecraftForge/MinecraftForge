@@ -31,7 +31,7 @@
                 ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
 -               this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
 -               this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
-+               var event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.player);
++               var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
 +               if (event.isCanceled()) return;
 +               this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
 +               this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());

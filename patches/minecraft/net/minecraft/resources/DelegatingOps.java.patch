@@ -1,0 +1,36 @@
+--- a/net/minecraft/resources/DelegatingOps.java
++++ b/net/minecraft/resources/DelegatingOps.java
+@@ -160,4 +_,33 @@
+    public RecordBuilder<T> mapBuilder() {
+       return new RecordBuilder.MapBuilder<>(this);
+    }
++
++   java.util.Map<ResourceLocation, Object> ctx;
++   public <R> R getContext(ResourceLocation rl) {
++       return (R)this.ctx.get(rl);
++   }
++
++   public static <T, R extends DelegatingOps<T>> Builder<R> builder(java.util.function.Supplier<R> root) {
++       return new Builder(root);
++   }
++
++   public static class Builder<R extends DelegatingOps<?>> {
++      private final java.util.function.Supplier<R> func;
++      private final java.util.Map<ResourceLocation, Object> ctx = new java.util.HashMap<>();
++
++      private Builder(java.util.function.Supplier<R> func) {
++          this.func = func;
++      }
++
++      public Builder<R> with(ResourceLocation key, Object ctx) {
++         this.ctx.put(key, ctx);
++         return this;
++      }
++
++      public R build() {
++         var ret = this.func.get();
++         ret.ctx = this.ctx;
++         return ret;
++      }
++   }
+ }

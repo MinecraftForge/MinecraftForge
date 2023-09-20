@@ -1,9 +1,33 @@
 --- a/net/minecraft/resources/RegistryOps.java
 +++ b/net/minecraft/resources/RegistryOps.java
-@@ -74,6 +_,20 @@
-       });
+@@ -41,11 +_,20 @@
+       return new RegistryOps<>(p_256278_, p_256479_);
     }
  
++   public static <T> DelegatingOps.Builder<RegistryOps<T>> builder(DynamicOps<T> parent, RegistryOps.RegistryInfoLookup lookup) {
++      return DelegatingOps.builder(() -> create(parent, lookup));
++   }
++
+    private RegistryOps(DynamicOps<T> p_256313_, RegistryOps.RegistryInfoLookup p_255799_) {
+       super(p_256313_);
+       this.lookupProvider = p_255799_;
+    }
+ 
++   public RegistryOps(RegistryOps<T> parent) {
++      super(parent);
++      this.lookupProvider = parent.lookupProvider;
++   }
++
+    public <E> Optional<HolderOwner<E>> owner(ResourceKey<? extends Registry<? extends E>> p_255757_) {
+       return this.lookupProvider.lookup(p_255757_).map(RegistryOps.RegistryInfo::owner);
+    }
+@@ -71,6 +_,20 @@
+          }
+       }).forGetter((p_255526_) -> {
+          return null;
++      });
++   }
++
 +   public static <E> com.mojang.serialization.MapCodec<HolderLookup.RegistryLookup<E>> retrieveRegistryLookup(ResourceKey<? extends Registry<? extends E>> resourceKey) {
 +      return ExtraCodecs.retrieveContext(ops -> {
 +         if (!(ops instanceof RegistryOps<?> registryOps))
@@ -15,9 +39,6 @@
 +
 +            return DataResult.success(registryLookup, registryInfo.elementsLifecycle());
 +         }).orElseGet(() -> DataResult.error(() -> "Unknown registry: " + resourceKey));
-+      });
-+   }
-+
-    public static <E, O> RecordCodecBuilder<O, Holder.Reference<E>> retrieveElement(ResourceKey<E> p_256347_) {
-       ResourceKey<? extends Registry<E>> resourcekey = ResourceKey.createRegistryKey(p_256347_.registry());
-       return ExtraCodecs.retrieveContext((p_274808_) -> {
+       });
+    }
+ 

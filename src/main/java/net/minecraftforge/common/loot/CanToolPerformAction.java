@@ -4,11 +4,11 @@
  */
 
 package net.minecraftforge.common.loot;
-/*
+
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -22,46 +22,30 @@ import java.util.Set;
 
 /**
  * This LootItemCondition "forge:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
- * /
-public class CanToolPerformAction implements LootItemCondition {
+ */
+public record CanToolPerformAction(ToolAction action) implements LootItemCondition {
+    public static final Codec<CanToolPerformAction> CODEC = RecordCodecBuilder.create(b -> b.group(
+        ToolAction.CODEC.fieldOf("action").forGetter(CanToolPerformAction::action)
+    ).apply(b, CanToolPerformAction::new));
+    public static final LootItemConditionType TYPE = new LootItemConditionType(CODEC);
 
-    public static final LootItemConditionType LOOT_CONDITION_TYPE = new LootItemConditionType(new CanToolPerformAction.Serializer());
-
-    final ToolAction action;
-
-    public CanToolPerformAction(ToolAction action) {
-        this.action = action;
+    @Override
+    public @NotNull LootItemConditionType getType() {
+        return TYPE;
     }
 
-    @NotNull
-    public LootItemConditionType getType() {
-        return LOOT_CONDITION_TYPE;
-    }
-
-    @NotNull
-    public Set<LootContextParam<?>> getReferencedContextParams() {
+    @Override
+    public @NotNull Set<LootContextParam<?>> getReferencedContextParams() {
         return ImmutableSet.of(LootContextParams.TOOL);
     }
 
-    public boolean test(LootContext lootContext) {
-        ItemStack itemstack = lootContext.getParamOrNull(LootContextParams.TOOL);
+    @Override
+    public boolean test(LootContext ctx) {
+        ItemStack itemstack = ctx.getParamOrNull(LootContextParams.TOOL);
         return itemstack != null && itemstack.canPerformAction(this.action);
     }
 
     public static LootItemCondition.Builder canToolPerformAction(ToolAction action) {
         return () -> new CanToolPerformAction(action);
     }
-
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<CanToolPerformAction> {
-        public void serialize(JsonObject json, CanToolPerformAction itemCondition, @NotNull JsonSerializationContext context) {
-            json.addProperty("action", itemCondition.action.name());
-        }
-
-        @NotNull
-        public CanToolPerformAction deserialize(JsonObject json, @NotNull JsonDeserializationContext context) {
-            return new CanToolPerformAction(ToolAction.get(json.get("action").getAsString()));
-        }
-    }
-
 }
-*/

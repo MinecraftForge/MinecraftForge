@@ -27,9 +27,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Ingredient that matches if any of the child ingredients match * /
-public class CompoundIngredient extends AbstractIngredient
-{
+/** Ingredient that matches if any of the child ingredients match */
+/*
+public class CompoundIngredient extends Ingredient {
     private List<Ingredient> children;
     private ItemStack[] stacks;
     private IntList itemIds;
@@ -41,7 +41,8 @@ public class CompoundIngredient extends AbstractIngredient
         this.isSimple = children.stream().allMatch(Ingredient::isSimple);
     }
 
-    /** Creates a compound ingredient from the given list of ingredients * /
+    /** Creates a compound ingredient from the given list of ingredients */
+/*
     public static Ingredient of(Ingredient... children)
     {
         // if 0 or 1 ingredient, can save effort
@@ -68,10 +69,8 @@ public class CompoundIngredient extends AbstractIngredient
 
     @Override
     @NotNull
-    public ItemStack[] getItems()
-    {
-        if (stacks == null)
-        {
+    public ItemStack[] getItems() {
+        if (stacks == null) {
             List<ItemStack> tmp = Lists.newArrayList();
             for (Ingredient child : children)
                 Collections.addAll(tmp, child.getItems());
@@ -83,15 +82,11 @@ public class CompoundIngredient extends AbstractIngredient
 
     @Override
     @NotNull
-    public IntList getStackingIds()
-    {
+    public IntList getStackingIds() {
         boolean childrenNeedInvalidation = false;
         for (Ingredient child : children)
-        {
             childrenNeedInvalidation |= child.checkInvalidation();
-        }
-        if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation())
-        {
+        if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation()) {
             this.markValid();
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
@@ -103,8 +98,7 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    public boolean test(@Nullable ItemStack target)
-    {
+    public boolean test(@Nullable ItemStack target) {
         if (target == null)
             return false;
 
@@ -112,74 +106,18 @@ public class CompoundIngredient extends AbstractIngredient
     }
 
     @Override
-    protected void invalidate()
-    {
-        this.itemIds = null;
-        this.stacks = null;
-    }
-
-    @Override
-    public boolean isSimple()
-    {
+    public boolean isSimple() {
         return isSimple;
     }
 
-    @Override
-    public IIngredientSerializer<? extends Ingredient> getSerializer()
-    {
-        return Serializer.INSTANCE;
-    }
-
     @NotNull
-    public Collection<Ingredient> getChildren()
-    {
+    public Collection<Ingredient> getChildren() {
         return this.children;
     }
 
     @Override
-    public JsonElement toJson()
-    {
-       if (this.children.size() == 1)
-       {
-          return this.children.get(0).toJson();
-       }
-       else
-       {
-          JsonArray json = new JsonArray();
-          this.children.stream().forEach(e -> json.add(e.toJson()));
-          return json;
-       }
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return children.stream().allMatch(Ingredient::isEmpty);
-    }
-
-    public static class Serializer implements IIngredientSerializer<CompoundIngredient>
-    {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public CompoundIngredient parse(FriendlyByteBuf buffer)
-        {
-            return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
-        }
-
-        @Override
-        public CompoundIngredient parse(JsonObject json)
-        {
-            throw new JsonSyntaxException("CompoundIngredient should not be directly referenced in json, just use an array of ingredients.");
-        }
-
-        @Override
-        public void write(FriendlyByteBuf buffer, CompoundIngredient ingredient)
-        {
-            buffer.writeVarInt(ingredient.children.size());
-            ingredient.children.forEach(c -> c.toNetwork(buffer));
-        }
-
     }
 }
 */

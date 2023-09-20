@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
+@@ -35,7 +_,7 @@
+          return p_297013_.paramSet;
+       }), ExtraCodecs.strictOptionalField(ResourceLocation.CODEC, "random_sequence").forGetter((p_297014_) -> {
+          return p_297014_.randomSequence;
+-      }), ExtraCodecs.strictOptionalField(LootPool.CODEC.listOf(), "pools", List.of()).forGetter((p_297012_) -> {
++      }), ExtraCodecs.strictOptionalField(LootPool.CONDITIONAL_CODEC.listOf(), "pools", List.of()).forGetter((p_297012_) -> {
+          return p_297012_.pools;
+       }), ExtraCodecs.strictOptionalField(LootItemFunctions.CODEC.listOf(), "functions", List.of()).forGetter((p_297010_) -> {
+          return p_297010_.functions;
 @@ -50,7 +_,7 @@
     LootTable(LootContextParamSet p_287716_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
        this.paramSet = p_287716_;
@@ -47,11 +56,11 @@
        ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
 -      this.getRandomItems(p_230923_, objectarraylist::add);
 +      this.getRandomItemsRaw(p_230923_, createStackSplitter(p_230923_.getLevel(), objectarraylist::add));
-+      //objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_); //TODO: GLM
++      objectarraylist = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), objectarraylist, p_230923_);
        return objectarraylist;
     }
  
-@@ -207,6 +_,23 @@
+@@ -207,6 +_,51 @@
  
     public static LootTable.Builder lootTable() {
        return new LootTable.Builder();
@@ -68,10 +77,38 @@
 +      return this.lootTableId;
 +   }
 +
++   @org.jetbrains.annotations.Nullable
++   public LootPool removePool(String name) {
++      checkFrozen();
++      for (var pool : this.pools) {
++         if (name.equals(pool.getName())) {
++            this.pools.remove(pool);
++            return pool;
++         }
++      }
++      return null;
++   }
++
 +   public void addPool(LootPool pool) {
++      checkFrozen();
 +      if (pools.stream().anyMatch(e -> e == pool))
 +         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool);
 +      this.pools.add(pool);
++   }
++
++   private boolean isFrozen = false;
++   public void freeze() {
++      this.isFrozen = true;
++      this.pools.forEach(LootPool::freeze);
++   }
++
++   public boolean isFrozen() {
++      return this.isFrozen;
++   }
++
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
     }
  
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {

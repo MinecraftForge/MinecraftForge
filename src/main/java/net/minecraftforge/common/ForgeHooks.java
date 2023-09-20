@@ -22,9 +22,15 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -76,6 +82,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.WorldData;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -121,7 +129,6 @@ import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -139,10 +146,8 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
-import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
 import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -188,6 +193,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+@ApiStatus.Internal
 public class ForgeHooks {
     private static final Logger LOGGER = LogManager.getLogger();
     @SuppressWarnings("unused")
@@ -648,14 +655,6 @@ public class ForgeHooks {
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
 
-    /**
-     * @deprecated Use {@link #onLeftClickBlock(Player, BlockPos, Direction, ServerboundPlayerActionPacket.Action)} instead
-     */
-    @Deprecated(since = "1.20.1", forRemoval = true)
-    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face) {
-        return onLeftClickBlock(player, pos, face, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK);
-    }
-
     public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face, ServerboundPlayerActionPacket.Action action) {
         PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, PlayerInteractEvent.LeftClickBlock.Action.convert(action));
         MinecraftForge.EVENT_BUS.post(evt);
@@ -693,84 +692,22 @@ public class ForgeHooks {
         return evt.getNewGameMode();
     }
 
-    /* TODO: GLM
-    private static final ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<>();
-    private static LootTableContext getLootTableContext() {
-        LootTableContext ctx = lootContext.get().peek();
+    public static <E extends LootPool> Codec<List<E>> createLootTablePoolCodec(Codec<E> vanilla) {
+        var list = vanilla.listOf();
+        Decoder<List<E>> decoder = new Decoder<>() {
+            @Override
+            public <T> DataResult<Pair<List<E>, T>> decode(DynamicOps<T> ops, T input) {
+                return list.decode(ops, input).map(p -> {
+                    var decoded = p.getFirst();
+                    for (int x = 0; x < decoded.size(); x++)
+                        decoded.get(x);
 
-        if (ctx == null)
-            throw new JsonParseException("Invalid call stack, could not grab json context!"); // Should I throw this? Do we care about custom deserializers outside the manager?
-
-        return ctx;
-    }
-
-    public static TriFunction<ResourceLocation, JsonElement, ResourceManager, Optional<LootTable>> getLootTableDeserializer(Gson gson, String directory) {
-        return (location, data, resourceManager) -> {
-            try {
-                Resource resource = resourceManager.getResource(location.withPath(directory + "/" + location.getPath() + ".json")).orElse(null);
-                boolean custom = resource == null || !resource.isBuiltin();
-                return Optional.ofNullable(loadLootTable(gson, location, data, custom));
-            } catch (Exception exception) {
-                LOGGER.error("Couldn't parse element {}:{}", directory, location, exception);
-                return Optional.empty();
+                    return p;
+                });
             }
         };
+        return Codec.of(list, decoder);
     }
-
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonElement data, boolean custom) {
-        Deque<LootTableContext> que = lootContext.get();
-        if (que == null) {
-            que = Queues.newArrayDeque();
-            lootContext.set(que);
-        }
-
-        LootTable ret;
-        try {
-            que.push(new LootTableContext(name, custom));
-            ret = gson.fromJson(data, LootTable.class);
-            ret.setLootTableId(name);
-        } catch (JsonParseException e) {
-            throw e;
-        } finally {
-            que.pop();
-        }
-
-        if (!custom)
-            ret = ForgeEventFactory.loadLootTable(name, ret);
-
-        if (ret != null)
-           ret.freeze();
-
-        return ret;
-    }
-
-    private static class LootTableContext {
-        public final ResourceLocation name;
-        public final boolean vanilla;
-        public final boolean custom;
-        public int poolCount = 0;
-
-        private LootTableContext(ResourceLocation name, boolean custom) {
-            this.name = name;
-            this.custom = custom;
-            this.vanilla = "minecraft".equals(this.name.getNamespace());
-        }
-    }
-
-    public static String readPoolName(JsonObject json) {
-        LootTableContext ctx = getLootTableContext();
-
-        if (json.has("name"))
-            return GsonHelper.getAsString(json, "name");
-
-        if (ctx.custom)
-            return "custom#" + json.hashCode(); //We don't care about custom ones modders shouldn't be editing them!
-
-        ctx.poolCount++;
-
-        return ctx.poolCount == 1 ? "main" : "pool" + (ctx.poolCount - 1);
-    }
-    */
 
     /**
      * Returns a vanilla fluid type for the given fluid.
@@ -953,7 +890,6 @@ public class ForgeHooks {
         FurnaceBlockEntity.getFuel().entrySet().forEach(e -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(e.getKey()), e.getValue()));
     }
 
-    // TODO: GLM
     /**
      * Handles the modification of loot table drops via the registered Global Loot Modifiers,
      * so that custom effects can be processed.
@@ -967,16 +903,13 @@ public class ForgeHooks {
      *
      * @apiNote The given context will be modified by this method to also store the ID of the
      *          loot table being queried.
-     * /
+     */
     public static ObjectArrayList<ItemStack> modifyLoot(ResourceLocation lootTableId, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         context.setQueriedLootTableId(lootTableId); // In case the ID was set via copy constructor, this will be ignored: intended
-        LootModifierManager man = ForgeInternalHandler.getLootModifierManager();
-        for (IGlobalLootModifier mod : man.getAllLootMods()) {
+        for (var mod : ForgeInternalHandler.getLootModifierManager().getAllLootMods())
             generatedLoot = mod.apply(generatedLoot, context);
-        }
         return generatedLoot;
     }
-    */
 
     public static List<String> getModPacks() {
         List<String> modpacks = ResourcePackLoader.getPackNames();
@@ -992,13 +925,11 @@ public class ForgeHooks {
     }
 
     private static final Map<EntityType<? extends LivingEntity>, AttributeSupplier> FORGE_ATTRIBUTES = new HashMap<>();
-    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
     public static Map<EntityType<? extends LivingEntity>, AttributeSupplier> getAttributesView() {
         return Collections.unmodifiableMap(FORGE_ATTRIBUTES);
     }
 
-    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
     public static void modifyAttributes() {
         ModLoader.get().postEvent(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
@@ -1011,22 +942,6 @@ public class ForgeHooks {
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
-    }
-
-    public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos) {
-        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
-    }
-
-    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked) {
-        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
-        MinecraftForge.EVENT_BUS.post(e);
-        return e;
-    }
-
-    public static LivingSwapItemsEvent.Hands onLivingSwapHandItems(LivingEntity livingEntity) {
-        LivingSwapItemsEvent.Hands event = new LivingSwapItemsEvent.Hands(livingEntity);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
     }
 
     public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag) {

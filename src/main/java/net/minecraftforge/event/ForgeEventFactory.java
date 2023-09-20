@@ -63,6 +63,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -110,7 +111,9 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
+import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.PositionCheck;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
@@ -572,11 +575,9 @@ public class ForgeEventFactory {
         return onProjectileImpactResult(projectile, ray) != ProjectileImpactEvent.ImpactResult.DEFAULT;
     }
 
-    public static LootTable loadLootTable(ResourceLocation name, LootTable table) {
+    public static @Nullable LootTable onLoadLootTable(ResourceLocation name, LootTable table) {
         var event = new LootTableLoadEvent(name, table);
-        if (post(event))
-            return LootTable.EMPTY;
-        return event.getTable();
+        return post(event) ? null : event.getTable();
     }
 
     public static boolean canCreateFluidSource(Level level, BlockPos pos, BlockState state, boolean def) {
@@ -810,5 +811,17 @@ public class ForgeEventFactory {
 
     public static void onChannelRegistrationChange(Connection connection, ChannelRegistrationChangeEvent.Type changeType, HashSet<ResourceLocation> changed) {
         post(new ChannelRegistrationChangeEvent(connection, changeType, changed));
+    }
+
+    public static LivingSwapItemsEvent.Hands onLivingSwapHandItems(LivingEntity entity) {
+        return fire(new LivingSwapItemsEvent.Hands(entity));
+    }
+
+    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked) {
+        return fire(new ShieldBlockEvent(blocker, source, blocked));
+    }
+
+    public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos) {
+        post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 }

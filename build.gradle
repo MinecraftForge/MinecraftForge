@@ -769,9 +769,10 @@ project(':forge') {
                     }
 
                     args '--flat', '--all', '--validate',
+                            '--mod', 'empty',
                             //'--mod', 'data_gen_test',
                             //'--mod', 'piston_event_test',
-                            //'--mod', 'global_loot_test',
+                            '--mod', 'global_loot_test',
                             //'--mod', 'scaffolding_test',
                             //'--mod', 'custom_tag_types_test',
                             //'--mod', 'new_model_loader_test',

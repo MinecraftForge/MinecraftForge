@@ -15,3 +15,16 @@
        Optional<ResourceLocation> optional = p_300691_.has("parent") ? Optional.of(new ResourceLocation(GsonHelper.getAsString(p_300691_, "parent"))) : Optional.empty();
        Optional<DisplayInfo> optional1 = p_300691_.has("display") ? Optional.of(DisplayInfo.fromJson(GsonHelper.getAsJsonObject(p_300691_, "display"))) : Optional.empty();
        AdvancementRewards advancementrewards = p_300691_.has("rewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(p_300691_, "rewards")) : AdvancementRewards.EMPTY;
+@@ -182,7 +_,11 @@
+       }
+ 
+       public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, String p_138391_) {
+-         AdvancementHolder advancementholder = this.build(new ResourceLocation(p_138391_));
++          return save(p_138390_, new ResourceLocation(p_138391_));
++      }
++
++      public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, ResourceLocation id) {
++         AdvancementHolder advancementholder = this.build(id);
+          p_138390_.accept(advancementholder);
+          return advancementholder;
+       }

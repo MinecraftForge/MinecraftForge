@@ -4,13 +4,12 @@
  */
 
 package net.minecraftforge.debug;
-/*
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -30,25 +28,23 @@ import java.util.stream.Stream;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
 import net.minecraft.DetectedVersion;
-import net.minecraft.Util;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
-import net.minecraft.core.*;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
-import net.minecraft.data.recipes.*;
 import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.TheEndBiomeSource;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -61,11 +57,6 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraftforge.common.crafting.CompoundIngredient;
-import net.minecraftforge.common.crafting.PartialNBTIngredient;
-import net.minecraftforge.common.crafting.DifferenceIngredient;
-import net.minecraftforge.common.crafting.IntersectionIngredient;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.minecraftforge.common.data.*;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Triple;
@@ -85,7 +76,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransform;
@@ -108,9 +99,6 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.common.crafting.ConditionalAdvancement;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
@@ -130,8 +118,7 @@ import net.minecraft.world.level.block.TrapDoorBlock;
 @SuppressWarnings("deprecation")
 @Mod(DataGeneratorTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
-public class DataGeneratorTest
-{
+public class DataGeneratorTest {
     static final String MODID = "data_gen_test";
 
     private static Gson GSON = null;
@@ -144,24 +131,24 @@ public class DataGeneratorTest
             .add(Registries.LEVEL_STEM, DataGeneratorTest::levelStem);
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event)
-    {
+    public static void gatherData(GatherDataEvent event) {
         GSON = new GsonBuilder()
-                .registerTypeAdapter(Variant.class, new Variant.Deserializer())
-                .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
-                .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
-                .create();
+            .registerTypeAdapter(Variant.class, new Variant.Deserializer())
+            .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
+            .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
+            .create();
 
         DataGenerator gen = event.getGenerator();
         PackOutput packOutput = gen.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
-                .add(PackMetadataSection.TYPE, new PackMetadataSection(
-                        Component.literal("Forge tests resource pack"),
-                        DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
-                        Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
-                ))
+            .add(PackMetadataSection.TYPE, new PackMetadataSection(
+                Component.literal("Forge tests resource pack"),
+                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                Optional.empty()
+                //Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
+            ))
         );
         gen.addProvider(event.includeClient(), new Lang(packOutput));
         // Let blockstate provider see generated item models by passing its existing file helper
@@ -171,7 +158,7 @@ public class DataGeneratorTest
         gen.addProvider(event.includeClient(), new SoundDefinitions(packOutput, event.getExistingFileHelper()));
         gen.addProvider(event.includeClient(), new ParticleDescriptions(packOutput, event.getExistingFileHelper()));
 
-        gen.addProvider(event.includeServer(), new Recipes(packOutput));
+        //gen.addProvider(event.includeServer(), new Recipes(packOutput));
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
         gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(MODID)));
@@ -187,6 +174,7 @@ public class DataGeneratorTest
         context.register(TEST_LEVEL_STEM, levelStem);
     }
 
+    /*
     public static class Recipes extends RecipeProvider implements IConditionBuilder
     {
         public Recipes(PackOutput gen)
@@ -367,6 +355,7 @@ public class DataGeneratorTest
                                .save(consumer, new ResourceLocation("data_gen_test", "compound_ingredient_custom_types"));
         }
     }
+    */
 
     public static class SoundDefinitions extends SoundDefinitionsProvider
     {
@@ -1059,12 +1048,9 @@ public class DataGeneratorTest
         }
     }
 
-    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator
-    {
-
+    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator {
         @Override
-        public void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper)
-        {
+        public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper) {
             Advancement.Builder.advancement().display(Items.DIRT,
                             Component.translatable(Items.DIRT.getDescriptionId()),
                             Component.translatable("dirt_description"),
@@ -1074,7 +1060,7 @@ public class DataGeneratorTest
                             true,
                             false)
                     .addCriterion("has_dirt", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIRT))
-                    .save(saver, new ResourceLocation(MODID, "obtain_dirt"), existingFileHelper);
+                    .save(saver, new ResourceLocation(MODID, "obtain_dirt"));
 
             Advancement.Builder.advancement().display(Items.DIAMOND_BLOCK,
                             Component.translatable(Items.DIAMOND_BLOCK.getDescriptionId()),
@@ -1085,7 +1071,7 @@ public class DataGeneratorTest
                             true,
                             false)
                     .addCriterion("obtained_diamond_block", InventoryChangeTrigger.TriggerInstance.hasItems(Items.DIAMOND_BLOCK))
-                    .save(saver, new ResourceLocation("obtain_diamond_block"), existingFileHelper);
+                    .save(saver, new ResourceLocation("obtain_diamond_block"));
 
             Advancement.Builder.advancement()
                     .display(Blocks.GRASS_BLOCK,
@@ -1097,7 +1083,7 @@ public class DataGeneratorTest
                             false,
                             false)
                     .addCriterion("crafting_table", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.CRAFTING_TABLE))
-                    .save(saver, new ResourceLocation("story/root"), existingFileHelper);
+                    .save(saver, new ResourceLocation("story/root"));
 
             // This should cause an error because of the parent not existing
 /*            Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
@@ -1111,7 +1097,7 @@ public class DataGeneratorTest
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.Instance.hasItems(Items.COBBLESTONE))
                     .parent(new ResourceLocation("not_there/not_here"))
                     .save(consumer, new ResourceLocation("illegal_parent"), fileHelper);
-* /
+*/
 
             Advancement.Builder.advancement().display(Blocks.COBBLESTONE,
                             Component.translatable(Items.COBBLESTONE.getDescriptionId()),
@@ -1123,7 +1109,7 @@ public class DataGeneratorTest
                             false)
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
                     .parent(new ResourceLocation("forge", "dummy_parent"))
-                    .save(saver, new ResourceLocation("good_parent"), existingFileHelper);
+                    .save(saver, new ResourceLocation("good_parent"));
         }
     }
 
@@ -1266,4 +1252,3 @@ public class DataGeneratorTest
         return model.replaceAll("^\\w+:", "minecraft:");
     }
 }
-*/

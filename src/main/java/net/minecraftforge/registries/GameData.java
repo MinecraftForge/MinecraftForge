@@ -50,6 +50,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.StructureModifier;
@@ -91,6 +93,7 @@ public class GameData
         init();
     }
 
+    @SuppressWarnings("deprecation")
     public static void init()
     {
         if (DISABLE_VANILLA_REGISTRIES)
@@ -146,12 +149,10 @@ public class GameData
         return makeRegistry(Keys.ENTITY_DATA_SERIALIZERS, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides();
     }
 
-    /*
     static RegistryBuilder<Codec<? extends IGlobalLootModifier>> getGLMSerializersRegistryBuilder()
     {
         return makeRegistry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
-    */
 
     static RegistryBuilder<Codec<? extends BiomeModifier>> getBiomeModifierSerializersRegistryBuilder()
     {
@@ -171,6 +172,11 @@ public class GameData
     static RegistryBuilder<HolderSetType> getHolderSetTypeRegistryBuilder()
     {
         return new RegistryBuilder<HolderSetType>().disableSaving().disableSync();
+    }
+
+    static RegistryBuilder<Codec<? extends ICondition>> getConditionCodecRegistryBuilder()
+    {
+        return new RegistryBuilder<Codec<? extends ICondition>>().disableSaving().disableSync();
     }
 
     static RegistryBuilder<ItemDisplayContext> getItemDisplayContextRegistryBuilder()
@@ -232,7 +238,6 @@ public class GameData
         return RegistryManager.ACTIVE.getRegistry(Keys.POI_TYPES).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
         LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
@@ -250,13 +255,13 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Vanilla freeze snapshot created");
     }
 
+    @SuppressWarnings("deprecation")
     public static void unfreezeData()
     {
         LOGGER.debug(REGISTRIES, "Unfreezing vanilla registries");
         BuiltInRegistries.REGISTRY.stream().filter(r -> r instanceof MappedRegistry).forEach(r -> ((MappedRegistry<?>)r).unfreeze());
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
         LOGGER.debug(REGISTRIES, "Freezing registries");
@@ -286,7 +291,7 @@ public class GameData
     public static void revertToFrozen() {
         revertTo(RegistryManager.FROZEN, true);
     }
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
     public static void revertTo(final RegistryManager target, boolean fireEvents)
     {
         if (target.registries.isEmpty())
@@ -312,7 +317,6 @@ public class GameData
         LOGGER.debug(REGISTRIES, "{} state restored.", target.getName());
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
         LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());
@@ -381,8 +385,10 @@ public class GameData
             this.nextId = 0;
         }
 
+        @SuppressWarnings("unused")
         void remove(I key)
         {
+            @SuppressWarnings("deprecation")
             Integer prev = this.tToId.remove(key);
             if (prev != null)
             {
@@ -437,6 +443,7 @@ public class GameData
         {
             final ClearableObjectIntIdentityMap<BlockState> idMap = new ClearableObjectIntIdentityMap<BlockState>()
             {
+                @SuppressWarnings("deprecation")
                 @Override
                 public int getId(BlockState key)
                 {
@@ -527,6 +534,7 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<PoiType> owner, RegistryManager stage, int id, ResourceKey<PoiType> key, PoiType obj, @Nullable PoiType oldObj)
         {
+            @SuppressWarnings("unchecked")
             Map<BlockState, PoiType> map = owner.getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
             if (oldObj != null)
             {
@@ -595,7 +603,6 @@ public class GameData
     }
 
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
         LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
@@ -756,7 +763,6 @@ public class GameData
     }
 
     //Another bouncer for generic reasons
-    @SuppressWarnings("unchecked")
     private static <T> void processMissing(ResourceLocation name, RegistryManager STAGING, MissingMappingsEvent e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, IdMappingEvent.IdRemapping> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
         List<MissingMappingsEvent.Mapping<T>> mappings = e.getAllMappings(ResourceKey.createRegistryKey(name));

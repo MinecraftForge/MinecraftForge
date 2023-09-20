@@ -14,17 +14,14 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.CommonListenerCookie;
 
-
-@Deprecated // TODO: Re-write this whole system to be less hacky. Use until we get a good replacement.
-public class FakePlayerFactory
-{
+// TODO: Re-write this whole system to be less hacky. Use until we get a good replacement.
+public class FakePlayerFactory {
     private static final GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     // Map of all active fake player usernames to their entities
     private static final Map<FakePlayerKey, FakePlayer> fakePlayers = Maps.newHashMap();
     private record FakePlayerKey(ServerLevel level, GameProfile username) { }
 
-    public static FakePlayer getMinecraft(ServerLevel level)
-    {
+    public static FakePlayer getMinecraft(ServerLevel level) {
         return get(level, MINECRAFT);
     }
 
@@ -34,14 +31,12 @@ public class FakePlayerFactory
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory,
      * or call this function every time and let Forge take care of the cleanup.
      */
-    public static FakePlayer get(ServerLevel level, GameProfile username)
-    {
+    public static FakePlayer get(ServerLevel level, GameProfile username) {
         FakePlayerKey key = new FakePlayerKey(level, username);
         return fakePlayers.computeIfAbsent(key, FakePlayerFactory::create);
     }
 
-    public static void unloadLevel(ServerLevel level)
-    {
+    public static void unloadLevel(ServerLevel level) {
         fakePlayers.entrySet().removeIf(entry -> entry.getValue().level() == level);
     }
 

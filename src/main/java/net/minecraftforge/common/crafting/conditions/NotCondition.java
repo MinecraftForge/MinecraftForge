@@ -5,59 +5,26 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.google.gson.JsonObject;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public class NotCondition implements ICondition
-{
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "not");
-    private final ICondition child;
-
-    public NotCondition(ICondition child)
-    {
-        this.child = child;
-    }
+public record NotCondition(ICondition child) implements ICondition {
+    public static Codec<NotCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+        ICondition.CODEC.fieldOf("value").forGetter(NotCondition::child)
+    ).apply(b, NotCondition::new));
 
     @Override
-    public ResourceLocation getID()
-    {
-        return NAME;
-    }
-
-    @Override
-    public boolean test(IContext context)
-    {
+    public boolean test(IContext context) {
         return !child.test(context);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "!" + child;
     }
 
-    public static class Serializer implements IConditionSerializer<NotCondition>
-    {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, NotCondition value)
-        {
-            json.add("value", CraftingHelper.serialize(value.child));
-        }
-
-        @Override
-        public NotCondition read(JsonObject json)
-        {
-            return new NotCondition(CraftingHelper.getCondition(GsonHelper.getAsJsonObject(json, "value")));
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return NotCondition.NAME;
-        }
+    @Override
+    public Codec<? extends ICondition> codec() {
+        return CODEC;
     }
 }

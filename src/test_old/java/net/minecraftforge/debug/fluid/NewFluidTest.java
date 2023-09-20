@@ -4,7 +4,8 @@
  */
 
 package net.minecraftforge.debug.fluid;
-/*
+
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.FluidState;
@@ -59,41 +60,33 @@ public class NewFluidTest {
     public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, MODID);
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MODID);
 
-    private static ForgeFlowingFluid.Properties makeProperties()
-    {
+    private static ForgeFlowingFluid.Properties makeProperties() {
         return new ForgeFlowingFluid.Properties(test_fluid_type, test_fluid, test_fluid_flowing)
                 .bucket(TEST_FLUID_BUCKET).block(test_fluid_block);
     }
 
-    public static RegistryObject<FluidType> test_fluid_type = FLUID_TYPES.register("test_fluid", () -> new FluidType(FluidType.Properties.create())
-    {
+    public static RegistryObject<FluidType> test_fluid_type = FLUID_TYPES.register("test_fluid", () -> new FluidType(FluidType.Properties.create()) {
         @Override
-        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer)
-        {
-            consumer.accept(new IClientFluidTypeExtensions()
-            {
+        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+            consumer.accept(new IClientFluidTypeExtensions() {
                 @Override
-                public ResourceLocation getStillTexture()
-                {
+                public ResourceLocation getStillTexture() {
                     return FLUID_STILL;
                 }
 
                 @Override
-                public ResourceLocation getFlowingTexture()
-                {
+                public ResourceLocation getFlowingTexture() {
                     return FLUID_FLOWING;
                 }
 
                 @Nullable
                 @Override
-                public ResourceLocation getOverlayTexture()
-                {
+                public ResourceLocation getOverlayTexture() {
                     return FLUID_OVERLAY;
                 }
 
                 @Override
-                public int getTintColor()
-                {
+                public int getTintColor() {
                     return 0x3F1080FF;
                 }
             });
@@ -122,10 +115,8 @@ public class NewFluidTest {
             new BlockItem(fluidloggable_block.get(), new Item.Properties())
     );
 
-    public NewFluidTest()
-    {
-        if (ENABLE)
-        {
+    public NewFluidTest() {
+        if (ENABLE) {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
             modEventBus.addListener(this::loadComplete);
@@ -138,17 +129,14 @@ public class NewFluidTest {
         }
     }
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS)
-        {
+    private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
             event.accept(FLUID_LOGGABLE_BLOCK_ITEM);
             event.accept(TEST_FLUID_BUCKET);
         }
     }
 
-    public void loadComplete(FMLLoadCompleteEvent event)
-    {
+    public void loadComplete(FMLLoadCompleteEvent event) {
         // some sanity checks
         BlockState state = Fluids.WATER.defaultFluidState().createLegacyBlock();
         BlockState state2 = Fluids.WATER.getFluidType().getBlockForFluidState(null,null,Fluids.WATER.defaultFluidState());
@@ -159,30 +147,27 @@ public class NewFluidTest {
     }
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
-    private static class FluidloggableBlock extends Block implements SimpleWaterloggedBlock
-    {
+    private static class FluidloggableBlock extends Block implements SimpleWaterloggedBlock {
         public static final BooleanProperty FLUIDLOGGED = BooleanProperty.create("fluidlogged");
 
-        public FluidloggableBlock(Properties properties)
-        {
+        public FluidloggableBlock(Properties properties) {
             super(properties);
             registerDefaultState(getStateDefinition().any().setValue(FLUIDLOGGED, false));
         }
 
         @Override
-        protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
-        {
+        protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
             builder.add(FLUIDLOGGED);
         }
 
         @Override
-        public boolean canPlaceLiquid(BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+        public boolean canPlaceLiquid(@Nullable Player player, BlockGetter worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
             return !state.getValue(FLUIDLOGGED) && fluidIn == test_fluid.get();
         }
 
         @Override
         public boolean placeLiquid(LevelAccessor worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-            if (canPlaceLiquid(worldIn, pos, state, fluidStateIn.getType())) {
+            if (canPlaceLiquid(null, worldIn, pos, state, fluidStateIn.getType())) {
                 if (!worldIn.isClientSide()) {
                     worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, true), 3);
                     worldIn.scheduleTick(pos, fluidStateIn.getType(), fluidStateIn.getType().getTickDelay(worldIn));
@@ -195,7 +180,7 @@ public class NewFluidTest {
         }
 
         @Override
-        public ItemStack pickupBlock(LevelAccessor worldIn, BlockPos pos, BlockState state) {
+        public ItemStack pickupBlock(@Nullable Player player, LevelAccessor worldIn, BlockPos pos, BlockState state) {
             if (state.getValue(FLUIDLOGGED)) {
                 worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, false), 3);
                 return new ItemStack(TEST_FLUID_BUCKET.get());
@@ -209,4 +194,3 @@ public class NewFluidTest {
         }
     }
 }
-*/

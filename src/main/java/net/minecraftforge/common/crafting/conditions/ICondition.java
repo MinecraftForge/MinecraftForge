@@ -5,50 +5,46 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
-public interface ICondition
-{
-    static boolean shouldRegisterEntry(JsonElement json)
-    {
-        if (!(json instanceof JsonObject obj) || !obj.has("forge:conditions"))
-            return true;
-
-        return CraftingHelper.processConditions(obj, "forge:conditions", IContext.TAGS_INVALID);
-    }
-
-    ResourceLocation getID();
+public interface ICondition {
+    Codec<ICondition> CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec().dispatch(ICondition::codec, Function.identity()));
+    String DEFAULT_FIELD = "forge:condition";
+    MapCodec<Optional<ICondition>> OPTIONAL_FEILD_CODEC = CODEC.optionalFieldOf(DEFAULT_FIELD);
 
     boolean test(IContext context);
 
-    interface IContext
-    {
-        IContext EMPTY = new IContext()
-        {
+    Codec<? extends ICondition> codec();
+
+    interface IContext {
+        public static ResourceLocation KEY = new ResourceLocation("forge", "condition_context");
+
+        IContext EMPTY = new IContext() {
             @Override
-            public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry)
-            {
+            public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry) {
                 return Collections.emptyMap();
             }
         };
 
-        IContext TAGS_INVALID = new IContext()
-        {
+        IContext TAGS_INVALID = new IContext() {
             @Override
-            public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry)
-            {
+            public <T> Map<ResourceLocation, Collection<Holder<T>>> getAllTags(ResourceKey<? extends Registry<T>> registry) {
                 throw new UnsupportedOperationException("Usage of tag-based conditions is not permitted in this context!");
             }
         };
@@ -56,8 +52,7 @@ public interface ICondition
         /**
          * Return the requested tag if available, or an empty tag otherwise.
          */
-        default <T> Collection<Holder<T>> getTag(TagKey<T> key)
-        {
+        default <T> Collection<Holder<T>> getTag(TagKey<T> key) {
             return getAllTags(key.registry()).getOrDefault(key.location(), Set.of());
         }
 

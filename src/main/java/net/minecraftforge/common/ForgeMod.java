@@ -41,6 +41,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -50,6 +51,8 @@ import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
 import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgePlayer;
+import net.minecraftforge.common.loot.CanToolPerformAction;
+import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
@@ -89,9 +92,9 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
 import net.minecraftforge.common.crafting.conditions.FalseCondition;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
 import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.common.crafting.conditions.NotCondition;
@@ -129,9 +132,10 @@ public class ForgeMod {
     private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, "forge");
     private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = DeferredRegister.create(ForgeRegistries.Keys.HOLDER_SET_TYPES, "forge");
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
     private static final RegistryObject<EnumArgument.Info> ENUM_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("enum", () ->
             ArgumentTypeInfos.registerByClass(EnumArgument.class, new EnumArgument.Info()));
+    @SuppressWarnings("unused")
     private static final RegistryObject<SingletonArgumentInfo<ModIdArgument>> MODID_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("modid", () ->
             ArgumentTypeInfos.registerByClass(ModIdArgument.class,
                     SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument)));
@@ -367,6 +371,25 @@ public class ForgeMod {
                 }
             });
 
+    private static final DeferredRegister<LootItemConditionType> LOOT_CONDITION_TYPES = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, "forge");
+    static {
+        LOOT_CONDITION_TYPES.register("loot_table_id", () -> LootTableIdCondition.TYPE);
+        LOOT_CONDITION_TYPES.register("can_tool_perform_action", () -> CanToolPerformAction.TYPE);
+    }
+
+    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, "forge");
+    static {
+        CONDITION_SERIALIZERS.register("and", () -> AndCondition.CODEC);
+        CONDITION_SERIALIZERS.register("false", () -> FalseCondition.CODEC);
+        CONDITION_SERIALIZERS.register("item_exists", () -> ItemExistsCondition.CODEC);
+        CONDITION_SERIALIZERS.register("mod_loaded", () -> ModLoadedCondition.CODEC);
+        CONDITION_SERIALIZERS.register("not", () -> NotCondition.CODEC);
+        CONDITION_SERIALIZERS.register("or", () -> OrCondition.CODEC);
+        CONDITION_SERIALIZERS.register("true", () -> TrueCondition.CODEC);
+        CONDITION_SERIALIZERS.register("tag_empty", () -> TagEmptyCondition.CODEC);
+    }
+
+
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<SoundEvent> BUCKET_EMPTY_MILK = RegistryObject.create(new ResourceLocation("item.bucket.empty_milk"), ForgeRegistries.SOUND_EVENTS);
     public static final RegistryObject<SoundEvent> BUCKET_FILL_MILK = RegistryObject.create(new ResourceLocation("item.bucket.fill_milk"), ForgeRegistries.SOUND_EVENTS);
@@ -414,7 +437,6 @@ public class ForgeMod {
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
         modEventBus.addListener(this::registerRecipeSerializers);
-        modEventBus.addListener(this::registerLootData);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         COMMAND_ARGUMENT_TYPES.register(modEventBus);
@@ -422,6 +444,8 @@ public class ForgeMod {
         STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         HOLDER_SET_TYPES.register(modEventBus);
         VANILLA_FLUID_TYPES.register(modEventBus);
+        LOOT_CONDITION_TYPES.register(modEventBus);
+        CONDITION_SERIALIZERS.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -546,14 +570,6 @@ public class ForgeMod {
 
     public void registerRecipeSerializers(RegisterEvent event) {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-            CraftingHelper.register(AndCondition.Serializer.INSTANCE);
-            CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
-            CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
-            CraftingHelper.register(ModLoadedCondition.Serializer.INSTANCE);
-            CraftingHelper.register(NotCondition.Serializer.INSTANCE);
-            CraftingHelper.register(OrCondition.Serializer.INSTANCE);
-            CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
-            CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
             /*
             CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
@@ -566,14 +582,6 @@ public class ForgeMod {
 
             //event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, new ResourceLocation("forge", "conditional"), ConditionalRecipe.Serializer::new);
         }
-    }
-
-    public void registerLootData(RegisterEvent event) {
-        if (!event.getRegistryKey().equals(Registries.LOOT_CONDITION_TYPE))
-            return;
-
-        //event.register(Registries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), () -> LootTableIdCondition.LOOT_TABLE_ID);
-        //event.register(Registries.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), () -> CanToolPerformAction.LOOT_CONDITION_TYPE);
     }
 
     public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("forge", "use_entity_selectors",

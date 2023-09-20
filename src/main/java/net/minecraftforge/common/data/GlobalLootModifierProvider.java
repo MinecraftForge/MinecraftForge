@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.data;
-/*
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * Provider for forge's GlobalLootModifier system. See {@link LootModifier}
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
- * /
+ */
 public abstract class GlobalLootModifierProvider implements DataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -48,7 +48,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
 
     /**
      * Sets the "replace" key in global_loot_modifiers to true.
-     * /
+     */
     protected void replacing()
     {
         this.replace = true;
@@ -56,7 +56,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
 
     /**
      * Call {@link #add} here, which will pass in the necessary information to write the jsons.
-     * /
+     */
     protected abstract void start();
 
     @Override
@@ -91,7 +91,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      *
      * @param modifier      The name of the modifier, which will be the file name.
      * @param instance      The instance to serialize
-     * /
+     */
     public <T extends IGlobalLootModifier> void add(String modifier, T instance)
     {
         JsonElement json = IGlobalLootModifier.DIRECT_CODEC.encodeStart(JsonOps.INSTANCE, instance).getOrThrow(false, s -> {});
@@ -104,4 +104,3 @@ public abstract class GlobalLootModifierProvider implements DataProvider
         return "Global Loot Modifiers : " + modid;
     }
 }
-*/

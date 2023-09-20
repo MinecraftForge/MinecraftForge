@@ -4,3 +4,17 @@ license="LGPL v2.1"
 
 [[mods]]
 modId="empty"
+
+[[mods]]
+modId="creative_mode_tab_test"
+
+
+
+[[mods]]
+modId="global_loot_test"
+[[dependencies.global_loot_test]]
+modId="forge"
+mandatory=true
+versionRange="[1,)"
+ordering="AFTER"
+side="BOTH"

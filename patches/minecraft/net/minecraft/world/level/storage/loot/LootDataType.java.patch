@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/storage/loot/LootDataType.java
++++ b/net/minecraft/world/level/storage/loot/LootDataType.java
+@@ -42,7 +_,10 @@
+       dataresult.error().ifPresent((p_297003_) -> {
+          LOGGER.error("Couldn't parse element {}:{} - {}", this.directory, p_279253_, p_297003_.message());
+       });
+-      return dataresult.result();
++      var ret = dataresult.result();
++      if (this == TABLE && ret.isPresent())
++         ret = Optional.ofNullable((T)net.minecraftforge.event.ForgeEventFactory.onLoadLootTable(p_279253_, (LootTable)ret.get()));
++      return ret;
+    }
+ 
+    public static Stream<LootDataType<?>> values() {

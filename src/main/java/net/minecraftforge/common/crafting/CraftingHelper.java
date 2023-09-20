@@ -16,12 +16,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
@@ -173,13 +173,11 @@ public class CraftingHelper {
     }
 
     // CONDITIONS
-    private static final Map<ResourceLocation, IConditionSerializer<?>> conditions = new HashMap<>();
-    public static IConditionSerializer<?> register(IConditionSerializer<?> serializer) {
-        ResourceLocation key = serializer.getID();
+    private static final Map<ResourceLocation, Codec<? extends ICondition>> conditions = new HashMap<>();
+    public static void register(ResourceLocation key, Codec<? extends ICondition> codec) {
         if (conditions.containsKey(key))
             throw new IllegalStateException("Duplicate recipe condition serializer: " + key);
-        conditions.put(key, serializer);
-        return serializer;
+        conditions.put(key, codec);
     }
 
     public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context) {
@@ -187,38 +185,16 @@ public class CraftingHelper {
     }
 
     public static boolean processConditions(JsonArray conditions, ICondition.IContext context) {
-        for (int x = 0; x < conditions.size(); x++)
-        {
+        for (int x = 0; x < conditions.size(); x++) {
             if (!conditions.get(x).isJsonObject())
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
             JsonObject json = conditions.get(x).getAsJsonObject();
+            /*
             if (!CraftingHelper.getCondition(json).test(context))
                 return false;
+            */
         }
         return true;
-    }
-
-    public static ICondition getCondition(JsonObject json) {
-        ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(json, "type"));
-        IConditionSerializer<?> serializer = conditions.get(type);
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + type.toString());
-        return serializer.read(json);
-    }
-
-    public static <T extends ICondition> JsonObject serialize(T condition) {
-        @SuppressWarnings("unchecked")
-        IConditionSerializer<T> serializer = (IConditionSerializer<T>)conditions.get(condition.getID());
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown condition type: " + condition.getID().toString());
-        return serializer.getJson(condition);
-    }
-
-    public static JsonArray serialize(ICondition... conditions) {
-        JsonArray arr = new JsonArray();
-        for(ICondition iCond : conditions)
-            arr.add(serialize(iCond));
-        return arr;
     }
 }

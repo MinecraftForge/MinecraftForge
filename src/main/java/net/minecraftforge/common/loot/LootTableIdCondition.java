@@ -4,77 +4,51 @@
  */
 
 package net.minecraftforge.common.loot;
-/*
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import net.minecraft.world.level.storage.loot.Serializer;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 
-public class LootTableIdCondition implements LootItemCondition
-{
+public record LootTableIdCondition(ResourceLocation id) implements LootItemCondition {
+    public static final Codec<LootTableIdCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+        ResourceLocation.CODEC.fieldOf("loot_table_id").forGetter(LootTableIdCondition::id)
+    ).apply(b, LootTableIdCondition::new));
+
+
     // TODO Forge Registry at some point?
-    public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
+    public static final LootItemConditionType TYPE = new LootItemConditionType(CODEC);
     public static final ResourceLocation UNKNOWN_LOOT_TABLE = new ResourceLocation("forge", "unknown_loot_table");
 
-    private final ResourceLocation targetLootTableId;
-
-    private LootTableIdCondition(final ResourceLocation targetLootTableId)
-    {
-        this.targetLootTableId = targetLootTableId;
+    @Override
+    public LootItemConditionType getType() {
+        return TYPE;
     }
 
     @Override
-    public LootItemConditionType getType()
-    {
-        return LOOT_TABLE_ID;
+    public boolean test(LootContext ctx) {
+        return ctx.getQueriedLootTableId().equals(this.id());
     }
 
-    @Override
-    public boolean test(LootContext lootContext)
-    {
-        return lootContext.getQueriedLootTableId().equals(this.targetLootTableId);
-    }
-
-    public static Builder builder(final ResourceLocation targetLootTableId)
-    {
+    public static Builder builder(final ResourceLocation targetLootTableId) {
         return new Builder(targetLootTableId);
     }
 
-    public static class Builder implements LootItemCondition.Builder
-    {
-        private final ResourceLocation targetLootTableId;
+    public static class Builder implements LootItemCondition.Builder {
+        private final ResourceLocation id;
 
-        public Builder(ResourceLocation targetLootTableId)
-        {
-            if (targetLootTableId == null) throw new IllegalArgumentException("Target loot table must not be null");
-            this.targetLootTableId = targetLootTableId;
+        public Builder(ResourceLocation id) {
+            if (id == null)
+                throw new IllegalArgumentException("Target loot table must not be null");
+            this.id = id;
         }
 
         @Override
-        public LootItemCondition build()
-        {
-            return new LootTableIdCondition(this.targetLootTableId);
-        }
-    }
-
-    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootTableIdCondition>
-    {
-        @Override
-        public void serialize(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx)
-        {
-            object.addProperty("loot_table_id", instance.targetLootTableId.toString());
-        }
-
-        @Override
-        public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx)
-        {
-            return new LootTableIdCondition(new ResourceLocation(GsonHelper.getAsString(object, "loot_table_id")));
+        public LootItemCondition build() {
+            return new LootTableIdCondition(this.id);
         }
     }
 }
-*/

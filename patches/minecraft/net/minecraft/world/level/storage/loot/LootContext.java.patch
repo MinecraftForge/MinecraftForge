@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
-@@ -86,15 +_,45 @@
+@@ -86,15 +_,43 @@
        return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
     }
  
@@ -16,7 +16,6 @@
 +      this.queriedLootTableId = queriedLootTableId;
 +   }
 +
-+   /*
 +   public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
 +      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
 +   }
@@ -24,7 +23,6 @@
 +   public ResourceLocation getQueriedLootTableId() {
 +      return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 +   }
-+   */
 +   // =============================== FORGE END ===============================
 +
     public static class Builder {

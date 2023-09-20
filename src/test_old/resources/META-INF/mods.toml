@@ -98,14 +98,6 @@ modId="trsr_transformer_test"
 [[mods]]
 modId="nameplate_render_test"
 [[mods]]
-modId="global_loot_test"
-[[dependencies.global_loot_test]]
-modId="forge"
-mandatory=true
-versionRange="[1,)"
-ordering="AFTER"
-side="BOTH"
-[[mods]]
 modId="custom_plant_type_test"
 [[mods]]
 modId="chunk_data_event_save_null_world_test"
@@ -291,8 +283,6 @@ modId="ambient_occlusion_elements_test"
 modId="grindstone_event_test"
 [[mods]]
 modId="data_pack_registries_test"
-[[mods]]
-modId="creative_mode_tab_test"
 [[mods]]
 modId="render_level_stages_test"
 [[mods]]
