@@ -9,7 +9,7 @@ import com.mojang.serialization.Codec;
 
 public final class TrueCondition implements ICondition {
     public static final TrueCondition INSTANCE = new TrueCondition();
-    public static Codec<TrueCondition> CODEC = Codec.unit(INSTANCE).stable();
+    public static final Codec<TrueCondition> CODEC = Codec.unit(INSTANCE).stable();
 
     private TrueCondition() {}
 

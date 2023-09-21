@@ -10,7 +10,7 @@
 +      net.minecraftforge.common.crafting.conditions.ICondition.OPTIONAL_FEILD_CODEC.forGetter(p -> p.forge_condition)
 +      ).apply(p_297005_, LootPool::new);
     });
-+   public static final Codec<LootPool> CONDITIONAL_CODEC = net.minecraftforge.common.crafting.conditions.ConditionCodec.checkingDecode(CODEC);
++   public static final Codec<LootPool> CONDITIONAL_CODEC = net.minecraftforge.common.crafting.conditions.ConditionCodec.checkingDecode(CODEC, () -> lootPool().build());
     private final List<LootPoolEntryContainer> entries;
     private final List<LootItemCondition> conditions;
     private final Predicate<LootContext> compositeCondition;

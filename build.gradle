@@ -44,10 +44,10 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MC_VERSION = '1.20.2-rc2'
+    MC_VERSION = '1.20.2'
     MAPPING_VERSION = MC_VERSION
     MC_NEXT_VERSION = '1.21'
-    MCP_VERSION = '20230918.104552'
+    MCP_VERSION = '20230921.100330'
     SNAPSHOT = false
 
     SPI_VERSION = '7.0.1'
@@ -88,7 +88,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.5:all'
-    MIN_TAG_FOR_CHANGELOG = '41.0'
+    MIN_TAG_FOR_CHANGELOG = '47.999'
 }
 
 println('Version: ' + VERSION +

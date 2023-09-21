@@ -9,7 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record NotCondition(ICondition child) implements ICondition {
-    public static Codec<NotCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final Codec<NotCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
         ICondition.CODEC.fieldOf("value").forGetter(NotCondition::child)
     ).apply(b, NotCondition::new));
 

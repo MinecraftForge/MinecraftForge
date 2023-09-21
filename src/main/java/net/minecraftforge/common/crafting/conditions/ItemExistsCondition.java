@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public record ItemExistsCondition(ResourceLocation item) implements ICondition {
-    public static Codec<ItemExistsCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final Codec<ItemExistsCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
         ResourceLocation.CODEC.fieldOf("item").forGetter(ItemExistsCondition::item)
     ).apply(b, ItemExistsCondition::new));
 
