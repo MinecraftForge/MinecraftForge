@@ -605,20 +605,16 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider)
     {
-        return gatherCapabilities(type, provider, null);
+        return gatherCapabilities(provider, null);
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider, @Nullable ICapabilityProvider parent)
     {
-        // If provider.getClass() exists use that, otherwise use type. type is the base class.
-        return gatherCapabilities(
-                provider.getAttachCapabilitiesEventFactory().get(),
-                parent
-        );
+        return gatherCapabilities(provider.getAttachCapabilitiesEventFactory().get(), parent);
     }
 
     @Nullable
