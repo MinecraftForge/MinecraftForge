@@ -23,7 +23,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
@@ -185,5 +188,10 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
     default boolean hasCustomOutlineRendering(Player player)
     {
         return false;
+    }
+
+    @Override
+    default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachBlockEntityEvent(self());
     }
 }

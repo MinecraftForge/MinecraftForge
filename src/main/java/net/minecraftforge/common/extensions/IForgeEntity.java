@@ -7,6 +7,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,11 +30,10 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
@@ -447,5 +447,10 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     default boolean shouldUpdateFluidWhileBoating(FluidState state, Boat boat)
     {
         return boat.shouldUpdateFluidWhileRiding(state, self());
+    }
+
+    @Override
+    default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachEntityEvent(self());
     }
 }

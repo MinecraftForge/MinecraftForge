@@ -1,35 +1,15 @@
-/*
- * Copyright (c) Forge Development LLC and contributors
- * SPDX-License-Identifier: LGPL-2.1-only
- */
-
 package net.minecraftforge.debug;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,55 +18,48 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CapabilitiesTest {
     public static final String MOD_ID = "captest";
     private static final ConcurrentHashMap<Class<?>, AtomicInteger> TRACK = new ConcurrentHashMap<>();
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
-    public static void logAttachEvent(AttachCapabilitiesEvent<?> event) {
-        TRACK.computeIfAbsent(event.getType(), e -> new AtomicInteger()).getAndAdd(1);
+    public static void logAttachEvent(Event event) {
+        TRACK.computeIfAbsent(event.getClass(), e -> new AtomicInteger()).getAndAdd(1);
     }
 
     public CapabilitiesTest() {
-        if (ENABLED) { // Register our listeners if this test is enabled.
-
-
-            //CapabilitySystem.addListener(ItemStack.class, this::Attach);
-            //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
-            //CapabilitySystem.addListener(Level.class, this::Attach);
-            //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
-            //CapabilitySystem.addListener(Entity.class, this::Attach);
-
-            class test implements ICapabilitySerializable<CompoundTag> {
-                final IItemHandler handler = new ItemStackHandler(1);
-                final LazyOptional<IItemHandler> handlerLazyOptional = LazyOptional.of(() -> handler);
-                @Override
-                public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                    if (cap == ForgeCapabilities.ITEM_HANDLER)
-                        return handlerLazyOptional.cast();
-                    return LazyOptional.empty();
-                }
-
-                @Override
-                public CompoundTag serializeNBT() {
-                    CompoundTag tag = new CompoundTag();
-                    tag.putString("result", "mamngorage");
-                    return tag;
-                }
-
-                @Override
-                public void deserializeNBT(CompoundTag nbt) {
-
-                }
-            }
-
-
-            //CapabilitySystem.addListener(ServerPlayer.class, this::Attach);
-            //CapabilitySystem.addListener(LocalPlayer.class, this::Attach);
-        }
+        if (ENABLED) // Register our listeners if this test is enabled.
+            MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public void Attach(AttachCapabilitiesEvent<?> event) {
+    public void AttachItemStack(AttachCapabilitiesEvent.AttachItemStackEvent event) {
         logAttachEvent(event);
     }
+
+    @SubscribeEvent
+    public void AttachBlockEntity(AttachCapabilitiesEvent.AttachBlockEntityEvent event) {
+        logAttachEvent(event);
+    }
+
+    @SubscribeEvent
+    public void AttachLevel(AttachCapabilitiesEvent.AttachLevelEvent event) {
+        logAttachEvent(event);
+    }
+
+    @SubscribeEvent
+    public void AttachLevelChunk(AttachCapabilitiesEvent.AttachLevelChunkEvent event) {
+        logAttachEvent(event);
+    }
+
+    @SubscribeEvent
+    public void AttachEntity(AttachCapabilitiesEvent.AttachEntityEvent event) {
+        logAttachEvent(event);
+    }
+
+    @SubscribeEvent
+    public void AttachBucketItem(AttachCapabilitiesEvent.AttachBucketItemStackEvent event) {
+        logAttachEvent(event);
+    }
+
+
 
 
     @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = CapabilitiesTest.MOD_ID, bus= Mod.EventBusSubscriber.Bus.FORGE)
@@ -98,7 +71,6 @@ public class CapabilitiesTest {
         @SubscribeEvent
         public static void clientTick(TickEvent.ClientTickEvent event)
         {
-            if (!ENABLED) return;
             if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null)
             {
                 ticks++;
