@@ -515,14 +515,14 @@ public class ForgeEventFactory {
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider) {
-        return gatherCapabilities(type, provider, null);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider) {
+        return gatherCapabilities(provider, null);
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
-        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider, @Nullable ICapabilityProvider parent) {
+        return gatherCapabilities(provider.getAttachCapabilitiesEventFactory().get(), parent);
     }
 
     @Nullable
