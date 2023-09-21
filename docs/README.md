@@ -10,8 +10,9 @@ Forge is a free, open-source modding API all of your favourite mods use!
 
 | Version |    Support    |
 |---------| ------------- |
-| 1.19.x  |    Active     |
-| 1.18.x  |    LTS        |
+| 1.20.x  |    Active     |
+| 1.19.4  |    Legacy     |
+| 1.19.2  |    Legacy     |
 
 * [Download]
 * [Forum]
