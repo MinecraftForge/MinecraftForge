@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.ApiStatus;
+
 public interface ICondition {
     Codec<ICondition> CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec().dispatch(ICondition::codec, Function.identity()));
     String DEFAULT_FIELD = "forge:condition";
@@ -33,6 +35,8 @@ public interface ICondition {
     Codec<? extends ICondition> codec();
 
     interface IContext {
+        /* Key used to attach this context option to a DynamicOps instance */
+        @ApiStatus.Internal
         public static ResourceLocation KEY = new ResourceLocation("forge", "condition_context");
 
         IContext EMPTY = new IContext() {
