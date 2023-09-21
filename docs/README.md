@@ -27,7 +27,7 @@ You can download the installer for the *Recommended Build* or the
  *Latest build* there. Latest builds may have newer features but may be
  more unstable as a result. The installer will attempt to install Forge
  into your vanilla launcher environment, where you can then create a new
- profile using that version and play the game!
+ profile using that version and play the game! 
  
 For support and questions, visit [the Support Forum][Support-Forum] or [the Forge Discord server][Discord].
 
