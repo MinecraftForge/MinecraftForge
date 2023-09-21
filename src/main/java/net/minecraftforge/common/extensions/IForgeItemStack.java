@@ -595,6 +595,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
 
     @Override
     default Supplier<AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return () -> new AttachCapabilitiesEvent.AttachItemStack(self());
+        return () -> new AttachCapabilitiesEvent.AttachItemStackEvent(self());
     }
 }

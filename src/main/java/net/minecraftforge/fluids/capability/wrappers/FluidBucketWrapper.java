@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidUtil;
@@ -24,6 +25,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MilkBucketItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 /**
  * Wrapper for vanilla and forge buckets.
@@ -173,5 +176,10 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing)
     {
         return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(capability, holder);
+    }
+
+    @Override
+    public Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachBucketItemStackEvent(container); // Pass thru the itemstack.
     }
 }

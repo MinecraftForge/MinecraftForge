@@ -30,12 +30,10 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
@@ -453,6 +451,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
 
     @Override
     default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return () -> new AttachCapabilitiesEvent.AttachEntity(self());
+        return () -> new AttachCapabilitiesEvent.AttachEntityEvent(self());
     }
 }

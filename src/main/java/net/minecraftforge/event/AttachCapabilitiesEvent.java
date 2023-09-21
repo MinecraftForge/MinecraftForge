@@ -6,28 +6,19 @@
 package net.minecraftforge.event;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.GenericEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -101,32 +92,38 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
         return this.listenersView;
     }
 
-    public static class AttachLevel extends AttachCapabilitiesEvent<Level> {
-        public AttachLevel(Level obj) {
+    public static class AttachLevelEvent extends AttachCapabilitiesEvent<Level> {
+        public AttachLevelEvent(Level obj) {
             super(Level.class, obj);
         }
     }
 
-    public static class AttachLevelChunk extends AttachCapabilitiesEvent<LevelChunk> {
-        public AttachLevelChunk(LevelChunk obj) {
+    public static class AttachLevelChunkEvent extends AttachCapabilitiesEvent<LevelChunk> {
+        public AttachLevelChunkEvent(LevelChunk obj) {
             super(LevelChunk.class, obj);
         }
     }
 
-    public static class AttachBlockEntity extends AttachCapabilitiesEvent<BlockEntity> {
-        public AttachBlockEntity(BlockEntity obj) {
+    public static class AttachBlockEntityEvent extends AttachCapabilitiesEvent<BlockEntity> {
+        public AttachBlockEntityEvent(BlockEntity obj) {
             super(BlockEntity.class, obj);
         }
     }
 
-    public static class AttachEntity extends AttachCapabilitiesEvent<Entity> {
-        public AttachEntity(Entity obj) {
+    public static class AttachEntityEvent extends AttachCapabilitiesEvent<Entity> {
+        public AttachEntityEvent(Entity obj) {
             super(Entity.class, obj);
         }
     }
 
-    public static class AttachItemStack extends AttachCapabilitiesEvent<ItemStack> {
-        public AttachItemStack(ItemStack obj) {
+    public static class AttachItemStackEvent extends AttachCapabilitiesEvent<ItemStack> {
+        public AttachItemStackEvent(ItemStack obj) {
+            super(ItemStack.class, obj);
+        }
+    }
+
+    public static class AttachBucketItemStackEvent extends AttachCapabilitiesEvent<ItemStack> {
+        public AttachBucketItemStackEvent(ItemStack obj) {
             super(ItemStack.class, obj);
         }
     }

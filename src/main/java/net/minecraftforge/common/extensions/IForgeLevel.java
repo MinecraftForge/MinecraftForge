@@ -44,6 +44,6 @@ public interface IForgeLevel extends ICapabilityProvider
 
     @Override
     default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return () -> new AttachCapabilitiesEvent.AttachLevel(self());
+        return () -> new AttachCapabilitiesEvent.AttachLevelEvent(self());
     }
 }
