@@ -34,6 +34,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -590,5 +591,10 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean canGrindstoneRepair()
     {
         return self().getItem().canGrindstoneRepair(self());
+    }
+
+    @Override
+    default Supplier<AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachItemStackEvent(self());
     }
 }
