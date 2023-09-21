@@ -192,6 +192,6 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 
     @Override
     default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return () -> new AttachCapabilitiesEvent.AttachBlockEntity(self());
+        return () -> new AttachCapabilitiesEvent.AttachBlockEntityEvent(self());
     }
 }
