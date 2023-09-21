@@ -9,3 +9,14 @@
                 if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
                    return false;
                 }
+@@ -170,6 +_,10 @@
+    }
+ 
+    public void push(double p_31744_, double p_31745_, double p_31746_) {
++      var motion = net.minecraftforge.common.ForgeHooks.onPush(this, p_31744_, p_31745_, p_31746_);
++      p_31744_ = motion.x();
++      p_31745_ = motion.y();
++      p_31746_ = motion.z();
+       if (!this.level().isClientSide && !this.isRemoved() && p_31744_ * p_31744_ + p_31745_ * p_31745_ + p_31746_ * p_31746_ > 0.0D) {
+          this.kill();
+          this.dropItem((Entity)null);

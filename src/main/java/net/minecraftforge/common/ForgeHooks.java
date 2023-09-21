@@ -129,6 +129,7 @@ import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -329,6 +330,13 @@ public class ForgeHooks {
 
     public static void onLivingJump(LivingEntity entity) {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
+    }
+
+    public static Vec3 onPush(Entity entity, double motionX, double motionY, double motionZ)
+    {
+        var event = new EntityEvent.Push(entity, motionX, motionY, motionZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getMotion();
     }
 
     @SuppressWarnings("resource")

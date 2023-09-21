@@ -7,6 +7,7 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -106,6 +107,38 @@ public class EntityEvent extends Event {
          */
         public boolean didChunkChange() {
             return SectionPos.x(packedOldPos) != SectionPos.x(packedNewPos) || SectionPos.z(packedOldPos) != SectionPos.z(packedNewPos);
+        }
+    }
+
+    /**
+     * This event is fired whenever {@link Entity#push(double, double, double)} gets called.<br>
+     * You can use this to modify the push motion. <br>
+     * Setting the motion on all axies to 0 is equivalent to cancelling the push altogether
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class Push extends EntityEvent
+    {
+        private Vec3 motion;
+
+        public Push(Entity entity, double motionX, double motionY, double motionZ)
+        {
+            super(entity);
+            this.motion = new Vec3(motionX, motionY, motionZ);
+        }
+
+        public Vec3 getMotion()
+        {
+            return this.motion;
+        }
+
+        public void setMotion(Vec3 motion)
+        {
+            this.motion = motion;
         }
     }
 }
