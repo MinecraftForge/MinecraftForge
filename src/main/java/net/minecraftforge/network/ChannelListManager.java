@@ -41,6 +41,9 @@ public class ChannelListManager {
         var ctx = evt.getSource();
         updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.REGISTER);
         ctx.setPacketHandled(true);
+        // Send the client's channels to the server whenever asked. If we're in the login state then our login wrapper will unwrap for us.
+        if (ctx.isClientSide())
+            addChannels(ctx.getConnection());
     }
 
     private static void unregisterListener(CustomPayloadEvent evt) {

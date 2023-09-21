@@ -38,7 +38,7 @@ public class PacketLogger {
         common(connection.getReceiving(), connection.getSending(), packet);
     }
 
-    public void recv( Packet<?> packet) {
+    public void recv(Packet<?> packet) {
         common(connection.getReceiving(), connection.getReceiving(), packet);
     }
 
@@ -51,12 +51,15 @@ public class PacketLogger {
             var data = new FriendlyByteBuf(Unpooled.buffer());
 
             packet.write(data);
-            LOGGER.info(MARKER, "{} {} {}\n{}", side, dir(flow), packet.getClass().getName(), HexDumper.dump(data));
+            LOGGER.info(MARKER, "{} {} {}\n{}", side(side), dir(flow), packet.getClass().getName(), HexDumper.dump(data));
         } else {
-            LOGGER.info(MARKER, "{} {} {}", side, dir(flow), packet.getClass().getName());
+            LOGGER.info(MARKER, "{} {} {}", side(side), dir(flow), packet.getClass().getName());
         }
     }
 
+    private static String side(PacketFlow side) {
+        return side == PacketFlow.CLIENTBOUND ? "CLIENT" : "SERVER";
+    }
     private static String dir(PacketFlow flow) {
         return flow == PacketFlow.CLIENTBOUND ? "S->C" : "C->S";
     }
