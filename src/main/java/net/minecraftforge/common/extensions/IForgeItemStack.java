@@ -33,7 +33,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +45,7 @@ import java.util.function.Supplier;
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, ICapabilityEventProvider
+public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
 {
     // Helpers for accessing Item data
     private ItemStack self()
@@ -594,10 +593,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
         return self().getItem().canGrindstoneRepair(self());
     }
 
-
     @Override
-    @SuppressWarnings("all")
-    default <T> AttachCapabilitiesEvent<T> createAttachCapabilitiesEvent(T obj) {
-        return self().getItem().createAttachCapabilitiesEvent((T) self());
-    };
+    default Supplier<AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+        return () -> new AttachCapabilitiesEvent.AttachItemStackEvent(self());
+    }
 }
