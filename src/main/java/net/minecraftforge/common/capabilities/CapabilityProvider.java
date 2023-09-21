@@ -70,7 +70,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(getProvider(), parent);
         this.initialized = true;
     }
 
