@@ -177,9 +177,4 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     {
         return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(capability, holder);
     }
-
-    @Override
-    public Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return () -> new AttachCapabilitiesEvent.AttachBucketItemStackEvent(container); // Pass thru the itemstack.
-    }
 }

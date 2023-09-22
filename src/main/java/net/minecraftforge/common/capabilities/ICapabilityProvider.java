@@ -36,8 +36,4 @@ public interface ICapabilityProvider
     @NotNull default <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap) {
         return getCapability(cap, null);
     }
-
-    default Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-        return null;
-    }
 }
