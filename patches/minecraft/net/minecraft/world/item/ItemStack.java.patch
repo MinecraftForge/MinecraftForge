@@ -18,7 +18,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final ItemStack EMPTY = new ItemStack((Void)null);
     public static final DecimalFormat ATTRIBUTE_MODIFIER_FORMAT = Util.make(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -137,28 +_,40 @@
+@@ -137,28 +_,43 @@
        this(p_220155_.value(), p_220156_);
     }
  
@@ -28,7 +28,8 @@
 -      if (this.item.canBeDepleted()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class, true);
++      super(true);
++      setEventProvider(this);
 +      this.capNBT = p_41606_;
 +      this.item = p_41604_.asItem();
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.asItem());
@@ -41,13 +42,15 @@
     }
  
     private ItemStack(@Nullable Void p_282703_) {
-+      super(ItemStack.class, true);
++      super(true);
++      setEventProvider(this);
        this.item = null;
 +      this.delegate = null;
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
++      super(true);
++      setEventProvider(this);
 +      this.capNBT = p_41608_.contains("ForgeCaps") ? p_41608_.getCompound("ForgeCaps") : null;
 +      Item rawItem =
        this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));

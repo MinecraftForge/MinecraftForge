@@ -32,7 +32,7 @@
     private BlockState feetBlockState = null;
  
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
-+      super(Entity.class);
++      setEventProvider(this);
        this.type = p_19870_;
        this.level = p_19871_;
        this.dimensions = p_19870_.getDimensions();

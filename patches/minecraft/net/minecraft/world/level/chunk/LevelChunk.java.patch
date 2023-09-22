@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
-+public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
++public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.extensions.IForgeLevelChunk {
     static final Logger LOGGER = LogUtils.getLogger();
     private static final TickingBlockEntity NULL_TICKER = new TickingBlockEntity() {
        public void tick() {
@@ -103,23 +103,18 @@
        this.blockEntities.values().forEach((p_187988_) -> {
           Level level = this.level;
           if (level instanceof ServerLevel serverlevel) {
-@@ -621,6 +_,46 @@
+@@ -621,6 +_,41 @@
        return new LevelChunk.BoundTickingBlockEntity<>(p_156376_, p_156377_);
     }
  
 +   // FORGE START
-+   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(LevelChunk.class, this);
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(this, this);
 +
 +   @org.jetbrains.annotations.NotNull
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side)
 +   {
 +      return capProvider.getCapability(cap, side);
-+   }
-+
-+   @Override
-+   public Supplier<? extends net.minecraftforge.event.AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
-+      return () -> new net.minecraftforge.event.AttachCapabilitiesEvent.AttachLevelChunk(this);
 +   }
 +
 +   @Override

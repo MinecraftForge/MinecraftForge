@@ -10,12 +10,16 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import com.google.common.base.Stopwatch;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.commands.CommandBuildContext;
@@ -91,6 +95,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
+import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
@@ -162,6 +167,7 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 @ApiStatus.Internal
 public class ForgeEventFactory {
@@ -515,21 +521,32 @@ public class ForgeEventFactory {
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider) {
-        return gatherCapabilities(provider, null);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(ICapabilityEventProvider eventProvider, T provider) {
+        return gatherCapabilities(eventProvider, provider, null);
     }
 
+    public static final AtomicInteger INV = new AtomicInteger();
+    public static final AtomicInteger NANOS = new AtomicInteger();
+    public static final AtomicLong SECONDS = new AtomicLong();
+    public static final Logger LOGGER = LogUtils.getLogger();
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(T provider, @Nullable ICapabilityProvider parent) {
-        return gatherCapabilities(provider.getAttachCapabilitiesEventFactory().get(), parent);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(ICapabilityEventProvider eventProvider, T provider, @Nullable ICapabilityProvider parent) {
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
+        return gatherCapabilities(stopwatch, eventProvider.createAttachCapabilitiesEvent(null), parent);
     }
 
     @Nullable
-    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent) {
+    private static CapabilityDispatcher gatherCapabilities(Stopwatch stopwatch, AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent) {
         post(event);
-        if (parent != null && parent.getAttachCapabilitiesEventFactory() != null)
-            post(parent.getAttachCapabilitiesEventFactory().get());
+        stopwatch.stop();
+        NANOS.getAndAdd(stopwatch.elapsed().getNano());
+        SECONDS.getAndAdd(stopwatch.elapsed().getSeconds());
+        if (INV.getAndAdd(1) % 10000 == 0) {
+            LOGGER.info("MAP TIME: NANO: %s SECONDS: %s".formatted(NANOS.getAndSet(0), SECONDS.getAndSet(0)));
+            stopwatch.reset();
+        }
         return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
     }
 
