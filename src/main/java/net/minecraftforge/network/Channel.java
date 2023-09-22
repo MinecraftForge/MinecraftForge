@@ -58,7 +58,7 @@ public abstract class Channel<MSG> {
             return NetworkDirection.LOGIN_TO_CLIENT.buildPacket(data, getName()).getThis();
         } else if (protocol == ConnectionProtocol.PLAY || protocol == ConnectionProtocol.CONFIGURATION) {
             var dir = serverbound ? NetworkDirection.PLAY_TO_SERVER : NetworkDirection.PLAY_TO_CLIENT;
-            return dir.buildPacket(toBuffer(message), getName()).getThis();
+            return dir.buildPacket(data, getName()).getThis();
         } else
             throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in Forge Networking Channel");
     }
