@@ -5,7 +5,6 @@
 
 package net.minecraftforge.common.capabilities;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 public interface ICapabilityEventProvider {
