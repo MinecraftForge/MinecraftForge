@@ -8,17 +8,26 @@ package net.minecraftforge.event;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.MilkBucketItem;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.Test;
+import net.minecraftforge.eventbus.EventSubclassTransformer;
 import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -36,10 +45,12 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
     private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
     private final Class<T> type;
 
-    public AttachCapabilitiesEvent(Class<T> type, T obj)
+    @SuppressWarnings("unchecked")
+    public AttachCapabilitiesEvent(T obj)
     {
-        this.type = type;
+        this.type = (Class<T>) obj.getClass();
         this.obj = obj;
+        new Test();
     }
 
     /**
@@ -92,39 +103,33 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
         return this.listenersView;
     }
 
-    public static class AttachLevelEvent extends AttachCapabilitiesEvent<Level> {
-        public AttachLevelEvent(Level obj) {
-            super(Level.class, obj);
+    public static class AttachLevelEvent<T> extends AttachCapabilitiesEvent<T> {
+        public AttachLevelEvent(T obj) {
+            super(obj);
         }
     }
 
-    public static class AttachLevelChunkEvent extends AttachCapabilitiesEvent<LevelChunk> {
-        public AttachLevelChunkEvent(LevelChunk obj) {
-            super(LevelChunk.class, obj);
+    public static class AttachLevelChunkEvent<T> extends AttachCapabilitiesEvent<T> {
+        public AttachLevelChunkEvent(T obj) {
+            super(obj);
         }
     }
 
-    public static class AttachBlockEntityEvent extends AttachCapabilitiesEvent<BlockEntity> {
-        public AttachBlockEntityEvent(BlockEntity obj) {
-            super(BlockEntity.class, obj);
+    public static class AttachBlockEntityEvent<T> extends AttachCapabilitiesEvent<T> {
+        public AttachBlockEntityEvent(T obj) {
+            super(obj);
         }
     }
 
-    public static class AttachEntityEvent extends AttachCapabilitiesEvent<Entity> {
-        public AttachEntityEvent(Entity obj) {
-            super(Entity.class, obj);
+    public static class AttachEntityEvent<T> extends AttachCapabilitiesEvent<T> {
+        public AttachEntityEvent(T obj) {
+            super(obj);
         }
     }
 
-    public static class AttachItemStackEvent extends AttachCapabilitiesEvent<ItemStack> {
-        public AttachItemStackEvent(ItemStack obj) {
-            super(ItemStack.class, obj);
-        }
-    }
-
-    public static class AttachBucketItemStackEvent extends AttachCapabilitiesEvent<ItemStack> {
-        public AttachBucketItemStackEvent(ItemStack obj) {
-            super(ItemStack.class, obj);
+    public static class AttachItemEvent<T> extends AttachCapabilitiesEvent<T> {
+        public AttachItemEvent(T obj) {
+            super(obj);
         }
     }
 }
