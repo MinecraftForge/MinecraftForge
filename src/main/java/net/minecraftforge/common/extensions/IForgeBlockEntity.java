@@ -22,14 +22,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>, ICapabilityEventProvider
+public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
     private BlockEntity self() { return (BlockEntity) this; }
 
@@ -189,11 +187,5 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>,
     default boolean hasCustomOutlineRendering(Player player)
     {
         return false;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    default <T> AttachCapabilitiesEvent<T> createAttachCapabilitiesEvent(T obj) {
-        return new AttachCapabilitiesEvent.AttachBlockEntityEvent<>((T) self());
     }
 }
