@@ -293,9 +293,9 @@ public class ForgeGui extends Gui {
             guiGraphics.blitSprite(empty, x, y, 9, 9);
 
             if (idx < level)
-                guiGraphics.blitSprite(half, x, y, 9, 9);
-            else if (idx == level)
                 guiGraphics.blitSprite(full, x, y, 9, 9);
+            else if (idx == level)
+                guiGraphics.blitSprite(half, x, y, 9, 9);
         }
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
