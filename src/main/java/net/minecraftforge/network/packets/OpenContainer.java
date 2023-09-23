@@ -44,7 +44,9 @@ public class OpenContainer {
         buf.writeVarInt(msg.id);
         buf.writeVarInt(msg.windowId);
         buf.writeComponent(msg.name);
+        msg.additionalData.markReaderIndex();
         buf.writeByteArray(msg.additionalData.readByteArray());
+        msg.additionalData.resetReaderIndex();
     }
 
     public static OpenContainer decode(FriendlyByteBuf buf) {
