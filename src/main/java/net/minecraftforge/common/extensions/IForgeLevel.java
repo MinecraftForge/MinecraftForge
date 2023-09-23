@@ -7,15 +7,11 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Supplier;
-
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
-public interface IForgeLevel extends ICapabilityProvider, ICapabilityEventProvider
+public interface IForgeLevel extends ICapabilityProvider
 {
     default Level self() {
         return (Level) this;
@@ -42,10 +38,4 @@ public interface IForgeLevel extends ICapabilityProvider, ICapabilityEventProvid
     {
         return Collections.emptyList();
     }
-
-    @Override
-    @SuppressWarnings("all")
-    default <T> AttachCapabilitiesEvent<T> createAttachCapabilitiesEvent(T obj) {
-        return new AttachCapabilitiesEvent.AttachLevelEvent<>((T) self());
-    };
 }

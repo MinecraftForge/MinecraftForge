@@ -12,7 +12,7 @@ import static org.objectweb.asm.Type.getType;
 
 public class Names {
     public static final String EVENT_PROVIDER = "Lnet/minecraftforge/common/capabilities/ICapabilityEventProvider";
-    public static final String ATTACH_EVENT_TYPE = "Lnet/minecraftforge/event/AttachCapabilitiesEvent;";
+    public static final String ATTACH_EVENT_TYPE = "(Ljava/lang/Object;)Lnet/minecraftforge/event/AttachCapabilitiesEvent;";
     public static final Method EVENT_PROVIDER_CREATE = new Method("createAttachCapabilitiesEvent", getMethodDescriptor(getType(ATTACH_EVENT_TYPE)));
 
     static record Method(String name, String desc) {

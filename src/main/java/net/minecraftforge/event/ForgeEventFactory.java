@@ -10,12 +10,16 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import com.google.common.base.Stopwatch;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.commands.CommandBuildContext;
@@ -163,6 +167,7 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 @ApiStatus.Internal
 public class ForgeEventFactory {
@@ -516,12 +521,16 @@ public class ForgeEventFactory {
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider) {
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<?> type, T provider) {
         return gatherCapabilities(type, provider, null);
     }
 
-    @Nullable
+    public static final AtomicInteger INV = new AtomicInteger();
+    public static final AtomicInteger NANOS = new AtomicInteger();
+    public static final AtomicLong SECONDS = new AtomicLong();
+    public static final Logger LOGGER = LogUtils.getLogger();
     @SuppressWarnings("unchecked")
+    @Nullable
     public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<?> type, T provider, @Nullable ICapabilityProvider parent) {
         return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
     }

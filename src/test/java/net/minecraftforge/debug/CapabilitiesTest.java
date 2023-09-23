@@ -6,8 +6,12 @@
 package net.minecraftforge.debug;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,10 +22,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.ListenerList;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,45 +37,28 @@ public class CapabilitiesTest {
     private static final ConcurrentHashMap<Class<?>, AtomicInteger> TRACK = new ConcurrentHashMap<>();
     private static final boolean ENABLED = true;
 
-    public static void logAttachEvent(Event event) {
-        TRACK.computeIfAbsent(event.getClass(), e -> new AtomicInteger()).getAndAdd(1);
+    public static void logAttachEvent(AttachCapabilitiesEvent<?> event) {
+        TRACK.computeIfAbsent(event.getType(), e -> new AtomicInteger()).getAndAdd(1);
     }
 
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
-            CapabilitySystem.addListener(Item.class, this::AttachItemStack);
-            CapabilitySystem.addListener(BlockEntity.class, this::AttachBlockEntity);
-            CapabilitySystem.addListener(Level.class, this::AttachLevel);
-            CapabilitySystem.addListener(LevelChunk.class, this::AttachLevelChunk);
-            CapabilitySystem.addListener(Entity.class, this::AttachEntity);
+
+
+            CapabilitySystem.addListener(Item.class, this::Attach);
+            CapabilitySystem.addListener(BlockEntity.class, this::Attach);
+            CapabilitySystem.addListener(Level.class, this::Attach);
+            CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+            CapabilitySystem.addListener(Entity.class, this::Attach);
+            CapabilitySystem.addListener(ServerPlayer.class, this::Attach);
+            CapabilitySystem.addListener(LocalPlayer.class, this::Attach);
         }
     }
 
     @SubscribeEvent
-    public void AttachItemStack(AttachCapabilitiesEvent<ItemStack> event) {
+    public void Attach(AttachCapabilitiesEvent<?> event) {
         logAttachEvent(event);
     }
-
-    @SubscribeEvent
-    public void AttachBlockEntity(AttachCapabilitiesEvent<BlockEntity> event) {
-        logAttachEvent(event);
-    }
-
-    @SubscribeEvent
-    public void AttachLevel(AttachCapabilitiesEvent<Level> event) {
-        logAttachEvent(event);
-    }
-
-    @SubscribeEvent
-    public void AttachLevelChunk(AttachCapabilitiesEvent<LevelChunk> event) {
-        logAttachEvent(event);
-    }
-
-    @SubscribeEvent
-    public void AttachEntity(AttachCapabilitiesEvent<Entity> event) {
-        logAttachEvent(event);
-    }
-
 
 
     @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = CapabilitiesTest.MOD_ID, bus= Mod.EventBusSubscriber.Bus.FORGE)

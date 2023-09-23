@@ -5,15 +5,10 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
-import net.minecraftforge.common.capabilities.Test;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fluids.FluidType;
 
 public interface IForgeLivingEntity extends IForgeEntity
