@@ -95,7 +95,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
+import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
@@ -521,8 +521,8 @@ public class ForgeEventFactory {
     }
 
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(ICapabilityEventProvider eventProvider, T provider) {
-        return gatherCapabilities(eventProvider, provider, null);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<?> type, T provider) {
+        return gatherCapabilities(type, provider, null);
     }
 
     public static final AtomicInteger INV = new AtomicInteger();
@@ -531,22 +531,13 @@ public class ForgeEventFactory {
     public static final Logger LOGGER = LogUtils.getLogger();
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(ICapabilityEventProvider eventProvider, T provider, @Nullable ICapabilityProvider parent) {
-        Stopwatch stopwatch = Stopwatch.createUnstarted();
-        stopwatch.start();
-        return gatherCapabilities(stopwatch, eventProvider.createAttachCapabilitiesEvent(null), parent);
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<?> type, T provider, @Nullable ICapabilityProvider parent) {
+        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
     }
 
     @Nullable
-    private static CapabilityDispatcher gatherCapabilities(Stopwatch stopwatch, AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent) {
-        post(event);
-        stopwatch.stop();
-        NANOS.getAndAdd(stopwatch.elapsed().getNano());
-        SECONDS.getAndAdd(stopwatch.elapsed().getSeconds());
-        if (INV.getAndAdd(1) % 10000 == 0) {
-            LOGGER.info("MAP TIME: NANO: %s SECONDS: %s".formatted(NANOS.getAndSet(0), SECONDS.getAndSet(0)));
-            stopwatch.reset();
-        }
+    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent) {
+        CapabilitySystem.post(event);
         return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
     }
 

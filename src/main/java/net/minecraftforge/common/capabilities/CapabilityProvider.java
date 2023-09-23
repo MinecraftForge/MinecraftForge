@@ -19,6 +19,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.ASMEventHandler;
 import net.minecraftforge.eventbus.EventSubclassTransformer;
+import net.minecraftforge.eventbus.api.GenericEvent;
+import net.minecraftforge.network.packets.SpawnEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -32,7 +34,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private @Nullable ICapabilityEventProvider eventProvider = null;
+    private @Nullable Class<?> type = null;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
@@ -49,9 +51,9 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
     }
 
-    protected final void setEventProvider(@NotNull final ICapabilityEventProvider provider) {
-        if (this.eventProvider != null) throw new IllegalStateException("ICapabilityEventProvider is already set!");
-        this.eventProvider = provider;
+    protected final void setClassType(@NotNull final Class<?> type) {
+        if (this.type != null) throw new IllegalStateException("ICapabilityEventProvider is already set!");
+        this.type = type;
     }
 
     protected final void gatherCapabilities()
@@ -77,7 +79,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(eventProvider, getProvider(), parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(type, getProvider(), parent);
         this.initialized = true;
     }
 
@@ -199,17 +201,17 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     {
         private final B owner;
 
-        public AsField(ICapabilityEventProvider eventProvider, B owner)
+        public AsField(Class<?> type, B owner)
         {
-            setEventProvider(eventProvider);
             this.owner = owner;
+            setClassType(type);
         }
 
-        public AsField(ICapabilityEventProvider eventProvider, B owner, boolean isLazy)
+        public AsField(Class<?> type, B owner, boolean isLazy)
         {
             super(isLazy);
-            setEventProvider(eventProvider);
             this.owner = owner;
+            setClassType(type);
         }
 
         public void initInternal()

@@ -22,7 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.Test;
 import net.minecraftforge.eventbus.EventSubclassTransformer;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +35,7 @@ import javax.annotation.Nonnull;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public abstract class AttachCapabilitiesEvent<T> extends Event
+public class AttachCapabilitiesEvent<T> extends Event
 {
     private final T obj;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
@@ -46,11 +45,10 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
     private final Class<T> type;
 
     @SuppressWarnings("unchecked")
-    public AttachCapabilitiesEvent(T obj)
+    public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
-        this.type = (Class<T>) obj.getClass();
+        this.type = type;
         this.obj = obj;
-        new Test();
     }
 
     /**
@@ -101,35 +99,5 @@ public abstract class AttachCapabilitiesEvent<T> extends Event
     public List<Runnable> getListeners()
     {
         return this.listenersView;
-    }
-
-    public static class AttachLevelEvent<T> extends AttachCapabilitiesEvent<T> {
-        public AttachLevelEvent(T obj) {
-            super(obj);
-        }
-    }
-
-    public static class AttachLevelChunkEvent<T> extends AttachCapabilitiesEvent<T> {
-        public AttachLevelChunkEvent(T obj) {
-            super(obj);
-        }
-    }
-
-    public static class AttachBlockEntityEvent<T> extends AttachCapabilitiesEvent<T> {
-        public AttachBlockEntityEvent(T obj) {
-            super(obj);
-        }
-    }
-
-    public static class AttachEntityEvent<T> extends AttachCapabilitiesEvent<T> {
-        public AttachEntityEvent(T obj) {
-            super(obj);
-        }
-    }
-
-    public static class AttachItemEvent<T> extends AttachCapabilitiesEvent<T> {
-        public AttachItemEvent(T obj) {
-            super(obj);
-        }
     }
 }

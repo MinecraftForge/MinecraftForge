@@ -6,16 +6,8 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
-public interface IForgeLevelChunk extends net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk>, ICapabilityEventProvider
+public interface IForgeLevelChunk extends net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk>
 {
     private LevelChunk self() {return (LevelChunk) this;}
-
-    @Override
-    @SuppressWarnings("all")
-    default  <T> AttachCapabilitiesEvent<T> createAttachCapabilitiesEvent(T obj) {
-        return new AttachCapabilitiesEvent.AttachLevelChunkEvent<>((T) self());
-    }
 }

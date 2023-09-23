@@ -6,59 +6,56 @@
 package net.minecraftforge.common.capabilities;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.eventbus.EventSubclassTransformer;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
-import org.spongepowered.asm.service.MixinService;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 
-// TODO: USE ASM
 public class CapabilitySystem {
-    private static final HashMap<Class<?>, Class<? extends Event>> FIND = new HashMap<>();
+    private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> FIND = new HashMap<>();
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    static {
-        FIND.put(Item.class, AttachCapabilitiesEvent.AttachItemEvent.class);
-        FIND.put(Entity.class, AttachCapabilitiesEvent.AttachEntityEvent.class);
-        FIND.put(BlockEntity.class, AttachCapabilitiesEvent.AttachBlockEntityEvent.class);
-        FIND.put(Level.class, AttachCapabilitiesEvent.AttachLevelEvent.class);
-        FIND.put(LevelChunk.class, AttachCapabilitiesEvent.AttachLevelChunkEvent.class);
+
+
+    private static ArrayList<Consumer<AttachCapabilitiesEvent<?>>> find(ArrayList<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
+        var list = FIND.get(cls);
+        if (list != null) {
+            lists.addAll(list);
+        }
+        if (cls.getSuperclass() != Object.class) {
+            return find(lists, cls.getSuperclass());
+        }
+        return lists;
     }
 
-    public static <T extends Event> void register(Class<?> type, Consumer<T> eventConsumer) {
-        CapabilityEventProviderTransformer transformer = new CapabilityEventProviderTransformer();
-        ClassNode node = null;
-        try {
-            node = MixinService.getService().getBytecodeProvider().getClassNode(IForgeItem.class.getName());
-            if (node != null)
-                transformer.transform(node);
-            var a = node;
-        } catch (ClassNotFoundException | IOException e) {
 
+    static AtomicLong nano = new AtomicLong();
+    static AtomicInteger integer = new AtomicInteger();
+
+
+    public static void post(AttachCapabilitiesEvent<?> event) {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        ArrayList<Consumer<AttachCapabilitiesEvent<?>>> LIST = find(new ArrayList<>(), event.getType());
+        LIST.forEach(e -> e.accept(event));
+        watch.stop();
+        nano.getAndAdd(watch.getNanoTime());
+        if (integer.addAndGet(1) >= 1000) {
+            integer.set(0);
+            System.out.println("POST TIME -> %s".formatted(nano.getAndSet(0)));
         }
     }
 
     @SuppressWarnings("all")
-    public static <T extends Event> void addListener(Class<?> type, Consumer<T> eventConsumer) {
-        register(type, eventConsumer);
-        //MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, (Class<T>) FIND.get(type), (Consumer<T>) eventConsumer);
+    public static void addListener(Class<?> type, Consumer<AttachCapabilitiesEvent<?>> eventConsumer) {
+        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add(eventConsumer);
     }
 
 }
