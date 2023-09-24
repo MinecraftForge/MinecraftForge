@@ -351,7 +351,7 @@
 +   }
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_20118_.dimension())) return null;
++      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_20118_.dimension())) return null;
        if (this.level() instanceof ServerLevel && !this.isRemoved()) {
           this.level().getProfiler().push("changeDimension");
           this.unRide();
