@@ -108,7 +108,7 @@
     }
  
 +   // FORGE START
-+   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(getClass(), this);
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(getClass(),this);
 +
 +   @org.jetbrains.annotations.NotNull
 +   @Override
