@@ -783,7 +783,7 @@ public class ForgeEventFactory {
     }
 
     public static boolean onTravelToDimension(Entity entity, ResourceKey<Level> dimension) {
-        return post(new EntityTravelToDimensionEvent(entity, dimension));
+        return !post(new EntityTravelToDimensionEvent(entity, dimension));
     }
 
     public static void onChunkUnload(ChunkAccess chunk) {
