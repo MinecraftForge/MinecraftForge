@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public class LevelChunk extends ChunkAccess {
-+public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.extensions.IForgeLevelChunk {
++public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
     static final Logger LOGGER = LogUtils.getLogger();
     private static final TickingBlockEntity NULL_TICKER = new TickingBlockEntity() {
        public void tick() {
@@ -108,7 +108,7 @@
     }
  
 +   // FORGE START
-+   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(this, this);
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(getClass(),this);
 +
 +   @org.jetbrains.annotations.NotNull
 +   @Override

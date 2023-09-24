@@ -18,7 +18,7 @@
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final ItemStack EMPTY = new ItemStack((Void)null);
     public static final DecimalFormat ATTRIBUTE_MODIFIER_FORMAT = Util.make(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -137,28 +_,43 @@
+@@ -137,28 +_,40 @@
        this(p_220155_.value(), p_220156_);
     }
  
@@ -29,7 +29,6 @@
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
 +      super(true);
-+      setEventProvider(this);
 +      this.capNBT = p_41606_;
 +      this.item = p_41604_.asItem();
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.asItem());
@@ -43,14 +42,12 @@
  
     private ItemStack(@Nullable Void p_282703_) {
 +      super(true);
-+      setEventProvider(this);
        this.item = null;
 +      this.delegate = null;
     }
  
     private ItemStack(CompoundTag p_41608_) {
 +      super(true);
-+      setEventProvider(this);
 +      this.capNBT = p_41608_.contains("ForgeCaps") ? p_41608_.getCompound("ForgeCaps") : null;
 +      Item rawItem =
        this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
@@ -251,7 +248,7 @@
              return p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -945,12 +_,31 @@
+@@ -945,12 +_,32 @@
        this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -277,6 +274,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
++         setClassType(getItem().getClass());
 +         this.gatherCapabilities(() -> item.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }

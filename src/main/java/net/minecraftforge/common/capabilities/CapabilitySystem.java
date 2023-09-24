@@ -5,57 +5,44 @@
 
 package net.minecraftforge.common.capabilities;
 
-import com.mojang.logging.LogUtils;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import org.apache.commons.lang3.time.StopWatch;
-import org.slf4j.Logger;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-
 
 public class CapabilitySystem {
     private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> FIND = new HashMap<>();
-    private static final Logger LOGGER = LogUtils.getLogger();
-
-
+    private static final ArrayList<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_LIST = new ArrayList<>();
 
     private static ArrayList<Consumer<AttachCapabilitiesEvent<?>>> find(ArrayList<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
-        var list = FIND.get(cls);
-        if (list != null) {
-            lists.addAll(list);
-        }
-        if (cls.getSuperclass() != Object.class) {
-            return find(lists, cls.getSuperclass());
-        }
-        return lists;
+        lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST).stream().filter(ee -> !lists.contains(ee)).toList());
+
+        //lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST));
+        for (Class<?> anInterface : cls.getInterfaces())
+            find(lists, anInterface);
+
+        return cls.getSuperclass() != null ? find(lists, cls.getSuperclass()) : lists;
     }
 
-
-    static AtomicLong nano = new AtomicLong();
-    static AtomicInteger integer = new AtomicInteger();
-
-
     public static void post(AttachCapabilitiesEvent<?> event) {
-        StopWatch watch = new StopWatch();
-        watch.start();
-        ArrayList<Consumer<AttachCapabilitiesEvent<?>>> LIST = find(new ArrayList<>(), event.getType());
-        LIST.forEach(e -> e.accept(event));
-        watch.stop();
-        nano.getAndAdd(watch.getNanoTime());
-        if (integer.addAndGet(1) >= 1000) {
-            integer.set(0);
-            System.out.println("POST TIME -> %s".formatted(nano.getAndSet(0)));
-        }
+        find(new ArrayList<>(), event.getType()).forEach(e -> e.accept(event));
     }
 
     @SuppressWarnings("all")
-    public static void addListener(Class<?> type, Consumer<AttachCapabilitiesEvent<?>> eventConsumer) {
-        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add(eventConsumer);
+    public static <T> void addListener(Class<T> type, Consumer<AttachCapabilitiesEvent<T>> eventConsumer) {
+        if (Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addItemListener(ItemClass, Consumer)");
+        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
+    @SuppressWarnings("all")
+    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer) {
+        if (!Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
+        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((cls) -> {
+            eventConsumer.accept((AttachCapabilitiesEvent<T>) cls, (W) cls.getObject());
+        });
+    }
 }
