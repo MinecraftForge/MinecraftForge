@@ -19,7 +19,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
@@ -54,8 +53,8 @@ import org.jetbrains.annotations.VisibleForTesting;
 public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
-    private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
-    private static Logger LOGGER = LogManager.getLogger();
+    private static final Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
+    private static final Logger LOGGER = LogManager.getLogger();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
@@ -571,15 +570,6 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateContent(ResourceLocation registryName)
     {
-        try
-        {
-            ObfuscationReflectionHelper.findMethod(BitSet.class, "trimToSize").invoke(this.availabilityMap);
-        }
-        catch (Exception e)
-        {
-            //We don't care... Just a micro-optimization
-        }
-
         for (V obj : this)
         {
             int id = getID(obj);
