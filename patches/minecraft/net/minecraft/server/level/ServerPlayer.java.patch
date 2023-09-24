@@ -170,12 +170,11 @@
     }
  
     public void swing(InteractionHand p_9031_) {
-@@ -1412,21 +_,23 @@
-       this.stopRiding();
+@@ -1413,20 +_,23 @@
        if (p_9000_ == this.level()) {
           this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
--      } else {
-+      } else if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) {
+       } else {
++         if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
           ServerLevel serverlevel = this.serverLevel();
           LevelData leveldata = p_9000_.getLevelData();
           this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
