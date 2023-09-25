@@ -20,9 +20,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -48,7 +46,6 @@ public class CapabilitiesTest {
 
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
-
             //CapabilitySystem.addListener(ItemStack.class, this::Attach);
             //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
             //CapabilitySystem.addListener(Level.class, this::Attach);
