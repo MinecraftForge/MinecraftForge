@@ -448,4 +448,4 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     {
         return boat.shouldUpdateFluidWhileRiding(state, self());
     }
- }
+}

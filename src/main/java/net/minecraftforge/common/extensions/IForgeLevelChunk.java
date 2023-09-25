@@ -10,4 +10,4 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 public interface IForgeLevelChunk extends ICapabilityProvider
 {
 
- }
+}
