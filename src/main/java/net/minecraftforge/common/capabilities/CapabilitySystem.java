@@ -6,16 +6,7 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.MilkBucketItem;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.extensions.IForgeBlockEntity;
-import net.minecraftforge.common.extensions.IForgeEntity;
-import net.minecraftforge.common.extensions.IForgeItemStack;
-import net.minecraftforge.common.extensions.IForgeLevel;
-import net.minecraftforge.common.extensions.IForgeLevelChunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
