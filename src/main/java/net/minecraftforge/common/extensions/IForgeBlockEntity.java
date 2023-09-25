@@ -25,8 +25,6 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
     private BlockEntity self() { return (BlockEntity) this; }
