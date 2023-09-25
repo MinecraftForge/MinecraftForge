@@ -25,7 +25,6 @@ import net.minecraft.world.item.MilkBucketItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
