@@ -1,14 +1,29 @@
 --- a/net/minecraft/world/item/FishingRodItem.java
 +++ b/net/minecraft/world/item/FishingRodItem.java
-@@ -46,4 +_,11 @@
+@@ -21,9 +_,13 @@
+       if (p_41291_.fishing != null) {
+          if (!p_41290_.isClientSide) {
+             int i = p_41291_.fishing.retrieve(itemstack);
++            ItemStack original = itemstack.copy();
+             itemstack.hurtAndBreak(i, p_41291_, (p_41288_) -> {
+                p_41288_.broadcastBreakEvent(p_41292_);
+             });
++            if(itemstack.isEmpty()) {
++               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_41291_, original, p_41292_);
++            }
+          }
+ 
+          p_41290_.playSound((Player)null, p_41291_.getX(), p_41291_.getY(), p_41291_.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.NEUTRAL, 1.0F, 0.4F / (p_41290_.getRandom().nextFloat() * 0.4F + 0.8F));
+@@ -45,5 +_,12 @@
+ 
     public int getEnchantmentValue() {
        return 1;
-    }
++   }
 +
 +    /* ******************** FORGE START ******************** */
 +
 +    @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_FISHING_ROD_ACTIONS.contains(toolAction);
-+   }
+    }
  }
