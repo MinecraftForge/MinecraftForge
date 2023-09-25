@@ -26,7 +26,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private @NotNull Class<?> classType;
+    private @Nullable Class<?> classType;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
@@ -47,6 +47,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
 
     protected void setClassType(Class<?> type)
     {
+        if (classType != null) throw new IllegalStateException("Already set classType.");
         this.classType = type;
     }
 

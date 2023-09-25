@@ -15,33 +15,36 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CapabilitySystem {
-    private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> FIND = new HashMap<>();
+    private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> LISTENER_LIST = new HashMap<>();
     private static final ArrayList<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_LIST = new ArrayList<>();
 
-
-    private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> find(HashSet<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
-        lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST));
+    private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> getListenerList(HashSet<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls)
+    {
+        lists.addAll(LISTENER_LIST.getOrDefault(cls, EMPTY_LIST));
 
         for (Class<?> anInterface : cls.getInterfaces())
-            find(lists, anInterface);
+            getListenerList(lists, anInterface);
 
-        return cls.getSuperclass() != null ? find(lists, cls.getSuperclass()) : lists;
+        return cls.getSuperclass() != null ? getListenerList(lists, cls.getSuperclass()) : lists;
     }
 
-    public static void post(AttachCapabilitiesEvent<?> event) {
-        find(new HashSet<>(), event.getType()).forEach(e -> e.accept(event));
+    public static void post(AttachCapabilitiesEvent<?> event)
+    {
+        getListenerList(new HashSet<>(), event.getType()).forEach(e -> e.accept(event));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> void addListener(Class<T> type, Consumer<AttachCapabilitiesEvent<T>> eventConsumer) {
+    public static <T> void addListener(Class<T> type, Consumer<AttachCapabilitiesEvent<T>> eventConsumer)
+    {
         if (Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addItemListener(ItemClass, Consumer)");
-        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
+        LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer) {
+    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
+    {
         if (!Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
-        FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((cls) -> {
+        LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((cls) -> {
             eventConsumer.accept((AttachCapabilitiesEvent<T>) cls, (W) cls.getObject());
         });
     }

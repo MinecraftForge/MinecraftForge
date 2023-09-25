@@ -21,7 +21,7 @@ import net.minecraftforge.eventbus.api.Event;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent<T> extends Event
+public final class AttachCapabilitiesEvent<T> extends Event
 {
     private final T obj;
     private final Class<T> type;
@@ -59,8 +59,7 @@ public class AttachCapabilitiesEvent<T> extends Event
      */
     public void addCapability(ResourceLocation key, ICapabilityProvider cap)
     {
-        if (caps.containsKey(key))
-            throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
+        if (caps.containsKey(key)) throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
         this.caps.put(key, cap);
     }
 
