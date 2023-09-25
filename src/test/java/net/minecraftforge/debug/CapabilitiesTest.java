@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -56,7 +57,6 @@ public class CapabilitiesTest
             //CapabilitySystem.addListener(Level.class, this::Attach);
             //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
             //CapabilitySystem.addListener(Entity.class, this::Attach);
-
 
             class test implements ICapabilitySerializable<CompoundTag> {
                 final IItemHandler handler = new ItemStackHandler(1);
