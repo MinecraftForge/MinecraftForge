@@ -16,10 +16,10 @@
 +   private CompoundTag customPersistentData;
  
     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
++      setClassType(getClass());
        this.type = p_155228_;
        this.worldPosition = p_155229_.immutable();
        this.blockState = p_155230_;
-+      setClassType(getClass());
 +      this.gatherCapabilities();
     }
  
