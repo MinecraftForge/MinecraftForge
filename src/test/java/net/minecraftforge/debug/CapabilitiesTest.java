@@ -10,18 +10,20 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
@@ -46,10 +48,10 @@ public class CapabilitiesTest {
         if (ENABLED) { // Register our listeners if this test is enabled.
 
 
-            //CapabilitySystem.addListener(Item.class, this::Attach);
+            //CapabilitySystem.addListener(ItemStack.class, this::Attach);
             //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
             //CapabilitySystem.addListener(Level.class, this::Attach);
-            CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+            //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
             //CapabilitySystem.addListener(Entity.class, this::Attach);
 
             class test implements ICapabilitySerializable<CompoundTag> {

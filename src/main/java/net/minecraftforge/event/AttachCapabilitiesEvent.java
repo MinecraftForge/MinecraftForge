@@ -8,7 +8,6 @@ package net.minecraftforge.event;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
@@ -25,13 +24,12 @@ import net.minecraftforge.eventbus.api.Event;
 public class AttachCapabilitiesEvent<T> extends Event
 {
     private final T obj;
+    private final Class<T> type;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
     private final List<Runnable> listeners = Lists.newArrayList();
     private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
-    private final Class<T> type;
 
-    @SuppressWarnings("unchecked")
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
         this.type = type;
@@ -46,7 +44,8 @@ public class AttachCapabilitiesEvent<T> extends Event
         return this.obj;
     }
 
-    public Class<T> getType() {
+    public Class<T> getType()
+    {
         return this.type;
     }
 

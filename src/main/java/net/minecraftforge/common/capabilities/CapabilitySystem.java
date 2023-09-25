@@ -6,11 +6,10 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -18,10 +17,10 @@ public class CapabilitySystem {
     private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> FIND = new HashMap<>();
     private static final ArrayList<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_LIST = new ArrayList<>();
 
-    private static ArrayList<Consumer<AttachCapabilitiesEvent<?>>> find(ArrayList<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
-        lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST).stream().filter(ee -> !lists.contains(ee)).toList());
 
-        //lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST));
+    private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> find(HashSet<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
+        lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST));
+
         for (Class<?> anInterface : cls.getInterfaces())
             find(lists, anInterface);
 
@@ -29,16 +28,16 @@ public class CapabilitySystem {
     }
 
     public static void post(AttachCapabilitiesEvent<?> event) {
-        find(new ArrayList<>(), event.getType()).forEach(e -> e.accept(event));
+        find(new HashSet<>(), event.getType()).forEach(e -> e.accept(event));
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public static <T> void addListener(Class<T> type, Consumer<AttachCapabilitiesEvent<T>> eventConsumer) {
         if (Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addItemListener(ItemClass, Consumer)");
         FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer) {
         if (!Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
         FIND.computeIfAbsent(type, (e) -> new ArrayList<>()).add((cls) -> {

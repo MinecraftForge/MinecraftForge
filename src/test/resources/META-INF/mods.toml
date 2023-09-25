@@ -4,6 +4,8 @@ license="LGPL v2.1"
 
 [[mods]]
 modId="empty"
+[[mods]]
+modId="captest"
 
 [[mods]]
 modId="creative_mode_tab_test"
