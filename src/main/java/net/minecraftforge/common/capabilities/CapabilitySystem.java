@@ -12,6 +12,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.extensions.IForgeBlockEntity;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgeItemStack;
+import net.minecraftforge.common.extensions.IForgeLevel;
 import net.minecraftforge.common.extensions.IForgeLevelChunk;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -29,7 +30,7 @@ public class CapabilitySystem {
 
     private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> find(HashSet<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls) {
         lists.addAll(FIND.getOrDefault(cls, EMPTY_LIST));
-        MilkBucketItem
+
         for (Class<?> anInterface : cls.getInterfaces())
             find(lists, anInterface);
 
