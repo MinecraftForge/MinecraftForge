@@ -33,8 +33,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
