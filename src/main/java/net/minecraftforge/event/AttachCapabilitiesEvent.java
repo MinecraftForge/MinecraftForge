@@ -59,7 +59,8 @@ public final class AttachCapabilitiesEvent<T> extends Event
      */
     public void addCapability(ResourceLocation key, ICapabilityProvider cap)
     {
-        if (caps.containsKey(key)) throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
+        if (caps.containsKey(key))
+            throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
         this.caps.put(key, cap);
     }
 

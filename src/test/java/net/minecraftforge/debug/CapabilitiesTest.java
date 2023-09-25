@@ -18,10 +18,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.extensions.IForgeEntity;
+import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.common.extensions.IForgeLevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -36,7 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Mod(CapabilitiesTest.MOD_ID)
-public class CapabilitiesTest {
+public class CapabilitiesTest
+{
     public static final String MOD_ID = "captest";
     private static final ConcurrentHashMap<Class<?>, AtomicInteger> TRACK = new ConcurrentHashMap<>();
     private static final boolean ENABLED = true;
@@ -52,6 +56,7 @@ public class CapabilitiesTest {
             //CapabilitySystem.addListener(Level.class, this::Attach);
             //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
             //CapabilitySystem.addListener(Entity.class, this::Attach);
+
 
             class test implements ICapabilitySerializable<CompoundTag> {
                 final IItemHandler handler = new ItemStackHandler(1);

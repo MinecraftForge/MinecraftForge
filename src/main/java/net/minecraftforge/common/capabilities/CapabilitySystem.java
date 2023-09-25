@@ -14,7 +14,8 @@ import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class CapabilitySystem {
+public class CapabilitySystem
+{
     private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> LISTENER_LIST = new HashMap<>();
     private static final ArrayList<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_LIST = new ArrayList<>();
 
@@ -33,19 +34,19 @@ public class CapabilitySystem {
         getListenerList(new HashSet<>(), event.getType()).forEach(e -> e.accept(event));
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T> void addListener(Class<T> type, Consumer<AttachCapabilitiesEvent<T>> eventConsumer)
     {
-        if (Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addItemListener(ItemClass, Consumer)");
+        if (Item.class.isAssignableFrom(type))
+            throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addItemListener(ItemClass, Consumer)");
         LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
     @SuppressWarnings("unchecked")
     public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
     {
-        if (!Item.class.isAssignableFrom(type)) throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
-        LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((cls) -> {
-            eventConsumer.accept((AttachCapabilitiesEvent<T>) cls, (W) cls.getObject());
-        });
+        if (!Item.class.isAssignableFrom(type))
+            throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
+        LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) event.getObject());});
     }
 }
