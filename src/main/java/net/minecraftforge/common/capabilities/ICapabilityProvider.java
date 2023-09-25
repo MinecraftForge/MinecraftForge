@@ -6,13 +6,9 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 public interface ICapabilityProvider
 {
