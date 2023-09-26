@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class CapabilitySystem
 {
@@ -43,10 +44,8 @@ public class CapabilitySystem
     }
 
     @SuppressWarnings("unchecked")
-    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
+    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, Function<T, ?> conversion, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
     {
-        if (!Item.class.isAssignableFrom(type))
-            throw new IllegalStateException("Unable to add Listener for Items. Use CapabilitySystem.addListener(Class, Consumer) for non Item related stuff");
-        LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) event.getObject());});
+        LISTENER_LIST.computeIfAbsent(wrappedClass, (e) -> new ArrayList<>()).add((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) conversion.apply((T) event.getObject()));});
     }
 }

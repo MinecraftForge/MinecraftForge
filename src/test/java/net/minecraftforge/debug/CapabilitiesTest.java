@@ -5,28 +5,38 @@
 
 package net.minecraftforge.debug;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.common.extensions.IForgeLevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -36,6 +46,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,6 +62,8 @@ public class CapabilitiesTest
         TRACK.computeIfAbsent(event.getType(), e -> new AtomicInteger()).getAndAdd(1);
     }
 
+    public static void onEvent(AttachCapabilitiesEvent<Item> event, ItemStack stack) {}
+
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
             //CapabilitySystem.addListener(ItemStack.class, this::Attach);
@@ -58,6 +72,10 @@ public class CapabilitiesTest
             //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
             //CapabilitySystem.addListener(Entity.class, this::Attach);
 
+            CapabilitySystem.addWrappedListener(ItemStack.class, BlockItem.class, ItemStack::getItem,  (event, item) -> {
+                TRACK.computeIfAbsent(item.getClass(), (a) -> new AtomicInteger()).addAndGet(1);
+            });
+            
             class test implements ICapabilitySerializable<CompoundTag> {
                 final IItemHandler handler = new ItemStackHandler(1);
                 final LazyOptional<IItemHandler> handlerLazyOptional = LazyOptional.of(() -> handler);
@@ -102,7 +120,6 @@ public class CapabilitiesTest
         @SubscribeEvent
         public static void clientTick(TickEvent.ClientTickEvent event)
         {
-            if (!ENABLED) return;
             if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null)
             {
                 ticks++;
@@ -118,6 +135,8 @@ public class CapabilitiesTest
                                     aClass.getSimpleName(),
                                     atomicInteger.getAndSet(0)
                             )));
+                            if (aClass.getSimpleName().length() <= 6)
+                                player.sendSystemMessage(Component.literal("Weird Class Detected: %s".formatted(aClass.getName())));
                         }));
 
                         player.sendSystemMessage(Component.literal("End of CapabilitiesTest results for the last %s ticks".formatted(tickRate)));
