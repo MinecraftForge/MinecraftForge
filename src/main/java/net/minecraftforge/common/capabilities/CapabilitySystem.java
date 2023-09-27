@@ -6,6 +6,7 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import java.util.ArrayList;
@@ -43,8 +44,14 @@ public class CapabilitySystem
         LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
+
+    public static <W extends Item> void addWrappedItemListener(Class<W> type, BiConsumer<AttachCapabilitiesEvent<ItemStack>, W> eventConsumer)
+    {
+        addWrappedListener(ItemStack.class, type, ItemStack::getItem, eventConsumer);
+    }
+
     @SuppressWarnings("unchecked")
-    public static <T, W> void addWrappedListener(Class<T> type, Class<W> wrappedClass, Function<T, ?> conversion, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
+    public static <T, W, X> void addWrappedListener(Class<? extends T> type, Class<W> wrappedClass, Function<T, X> conversion, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
     {
         LISTENER_LIST.computeIfAbsent(wrappedClass, (e) -> new ArrayList<>()).add((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) conversion.apply((T) event.getObject()));});
     }
