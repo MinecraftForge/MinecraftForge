@@ -27,6 +27,7 @@ import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
@@ -628,6 +629,11 @@ public interface IForgeBlock
      */
     default boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
     {
+        if(state.hasProperty(BlockStateProperties.WATERLOGGED) &&
+           state.getValue(BlockStateProperties.WATERLOGGED))
+        {
+            return false;
+        }
         return state.ignitedByLava() || state.getFlammability(level, pos, direction) > 0;
     }
 
