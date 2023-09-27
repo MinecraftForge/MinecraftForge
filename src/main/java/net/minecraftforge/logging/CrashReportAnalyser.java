@@ -18,8 +18,8 @@ import java.util.*;
 public abstract class CrashReportAnalyser {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Map<String, IModInfo> basePackageModCache = new HashMap<>();
-    private static final Map<IModInfo, String> suspectedMods = new HashMap<>();
+    private static final Map<String, IModInfo> BASE_PACKAGE_MOD_CACHE = new HashMap<>();
+    private static final Map<IModInfo, String> SUSPECTED_MODS = new HashMap<>();
 
     /**
      * Appends the suspected mod(s) for this crash to the crash report,
@@ -30,12 +30,12 @@ public abstract class CrashReportAnalyser {
     public static String appendSuspectedMods() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Suspected Mod");
-        stringBuilder.append(suspectedMods.size() == 1 ? ": " : "s: ");
-        if(suspectedMods.isEmpty()){
+        stringBuilder.append(SUSPECTED_MODS.size() == 1 ? ": " : "s: ");
+        if (SUSPECTED_MODS.isEmpty()) {
             stringBuilder.append("NONE");
         }
         else {
-            suspectedMods.forEach((iModInfo, position) -> {
+            SUSPECTED_MODS.forEach((iModInfo, position) -> {
                 stringBuilder
                         .append("\n\t")
                         .append(iModInfo.getDisplayName())
@@ -59,11 +59,11 @@ public abstract class CrashReportAnalyser {
 
 
     public static Map<String, IModInfo> getBasePackageModCache() {
-        return basePackageModCache;
+        return BASE_PACKAGE_MOD_CACHE;
     }
 
-    public static Map<IModInfo, String> getSuspectedMods(){
-        return suspectedMods;
+    public static Map<IModInfo, String> getSuspectedMods() {
+        return SUSPECTED_MODS;
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class CrashReportAnalyser {
             scanThrowable(throwable);
             scanStacktrace(uncategorizedStackTrace);
         }
-        catch(Throwable t){
+        catch(Throwable t) {
             LOGGER.error("Failed to analyse crash report!", t);
         }
     }
@@ -85,10 +85,10 @@ public abstract class CrashReportAnalyser {
      * Checks the stacktrace of the given throwable and all its children for any occurrence of the base package names cached in the basePackageModCache,
      * including mixin classes.
      * **/
-    private static void scanThrowable(Throwable throwable){
+    private static void scanThrowable(Throwable throwable) {
         scanStacktrace(throwable.getStackTrace());
 
-        if(throwable.getCause() != null && throwable.getCause() != throwable){
+        if (throwable.getCause() != null && throwable.getCause() != throwable) {
             scanThrowable(throwable.getCause());
         }
     }
@@ -97,8 +97,8 @@ public abstract class CrashReportAnalyser {
      * Checks the given stacktrace for any occurrence of the base package names cached in the basePackageModCache,
      * including mixin classes.
      * **/
-    private static void scanStacktrace(StackTraceElement[] stackTrace){
-        for(StackTraceElement stackTraceElement : stackTrace){
+    private static void scanStacktrace(StackTraceElement[] stackTrace) {
+        for (StackTraceElement stackTraceElement : stackTrace) {
             identifyByClass(stackTraceElement);
             identifyByMixins(stackTraceElement);
         }
@@ -117,25 +117,25 @@ public abstract class CrashReportAnalyser {
      *     </ul>
      * </ul>
      * **/
-    public static void cacheModList(){
+    public static void cacheModList() {
         ModList.get().getMods().forEach(iModInfo -> {
             //Don't cache minecraft or forge as they will always be included in the stacktrace
-            if(!iModInfo.getModId().equals("forge") && !iModInfo.getModId().equals("minecraft")){
+            if (!iModInfo.getModId().equals("forge") && !iModInfo.getModId().equals("minecraft")) {
                 ModFileScanData scanData = iModInfo.getOwningFile().getFile().getScanResult();
                 Collection<String> commonClassPaths = resolveCommonClassPaths(scanData.getClasses());
-                commonClassPaths.forEach(s -> basePackageModCache.put(s, iModInfo));
+                commonClassPaths.forEach(s -> BASE_PACKAGE_MOD_CACHE.put(s, iModInfo));
             }
         });
     }
 
-    private static void identifyByClass(StackTraceElement stackTraceElement){
+    private static void identifyByClass(StackTraceElement stackTraceElement) {
         blameIfPresent(stackTraceElement);
     }
 
-    private static void identifyByMixins(StackTraceElement stackTraceElement){
+    private static void identifyByMixins(StackTraceElement stackTraceElement) {
         IMixinInfo mixinInfo = getMixinInfo(stackTraceElement);
 
-        if(mixinInfo != null){
+        if (mixinInfo != null) {
             String elementAsString = stackTraceElement.toString();
             String mixinClassName = mixinInfo.getClassName();
             List<String> targetClasses = mixinInfo.getTargetClasses();
@@ -148,14 +148,14 @@ public abstract class CrashReportAnalyser {
         }
     }
 
-    private static void blameIfPresent(StackTraceElement stackTraceElement){
+    private static void blameIfPresent(StackTraceElement stackTraceElement) {
         blameIfPresent("at " + stackTraceElement.toString(), stackTraceElement.getClassName());
     }
-    private static void blameIfPresent(String position, String className){
+    private static void blameIfPresent(String position, String className) {
         String commonPackage = findMatchingBasePackage(className);
 
-        if(commonPackage != null){
-            suspectedMods.putIfAbsent(basePackageModCache.get(commonPackage), position);
+        if (commonPackage != null) {
+            SUSPECTED_MODS.putIfAbsent(BASE_PACKAGE_MOD_CACHE.get(commonPackage), position);
         }
     }
 
@@ -164,9 +164,9 @@ public abstract class CrashReportAnalyser {
      * @return the base package name of the class or null if it is not present in the cache
      * */
     @Nullable
-    private static String findMatchingBasePackage(String className){
-        for(String s : basePackageModCache.keySet()) {
-            if(className.startsWith(s)){
+    private static String findMatchingBasePackage(String className) {
+        for (String s : BASE_PACKAGE_MOD_CACHE.keySet()) {
+            if (className.startsWith(s)) {
                 return s;
             }
         }
@@ -179,13 +179,13 @@ public abstract class CrashReportAnalyser {
      * @param classes the classes to resolve the base package for
      * @return a {@link Collection} of base package names
      * **/
-    private static Collection<String> resolveCommonClassPaths(Collection<ModFileScanData.ClassData> classes){
+    private static Collection<String> resolveCommonClassPaths(Collection<ModFileScanData.ClassData> classes) {
         Set<String> commonClassPaths = new HashSet<>();
         final String[] classNames = classes.stream().map(classData -> classData.clazz().getClassName()).toArray(String[]::new);
 
         Set<String> basePackages = new HashSet<>();
-        for(String className : classNames){
-            if(className.contains(".")){
+        for (String className : classNames) {
+            if (className.contains(".")) {
                 String firstPackage = className.substring(0, className.indexOf("."));
                 basePackages.add(firstPackage);
             }
@@ -195,7 +195,7 @@ public abstract class CrashReportAnalyser {
             String[] strings = Arrays.stream(classNames).filter(s1 -> s1.startsWith(s)).toArray(String[]::new);
             String root = findCommonClassPath(strings);
 
-            if(!root.isBlank()) commonClassPaths.add(root);
+            if (!root.isBlank()) commonClassPaths.add(root);
         });
 
         return commonClassPaths;
@@ -220,7 +220,7 @@ public abstract class CrashReportAnalyser {
                 String stem = reference.substring(i, j);
                 int k;
                 for (k = 0; k < n; k++) {
-                    if(!strings[k].startsWith(stem)) {
+                    if (!strings[k].startsWith(stem)) {
                         break;
                     }
                 }
