@@ -29,6 +29,7 @@ import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.internal.BrandingControl;
+import net.minecraftforge.logging.CrashReportAnalyser;
 import net.minecraftforge.logging.CrashReportExtender;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -71,6 +72,7 @@ public class ClientModLoader
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
+        createRunnableWithCatch(CrashReportAnalyser::cacheModList).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));

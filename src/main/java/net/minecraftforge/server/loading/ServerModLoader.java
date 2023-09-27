@@ -7,6 +7,7 @@ package net.minecraftforge.server.loading;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.*;
+import net.minecraftforge.logging.CrashReportAnalyser;
 import net.minecraftforge.logging.CrashReportExtender;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.server.LanguageHook;
@@ -28,6 +29,7 @@ public class ServerModLoader
         LanguageHook.loadForgeAndMCLangs();
         try {
             ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
+            CrashReportAnalyser.cacheModList();
             ModLoader.get().loadMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
             ModLoader.get().finishMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         } catch (LoadingFailedException error) {
