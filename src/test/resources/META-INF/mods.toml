@@ -33,6 +33,9 @@ modId="mdk_datagen"
 [[mods]]
     modId="custom_preset_editor_test"
 
+#[[mods]]
+#    modId="constructor_throw_test"
+
 # LEGACY TEST CASES
 ###### The mods below are from the old test framework and need to be yeeted later again.
 
