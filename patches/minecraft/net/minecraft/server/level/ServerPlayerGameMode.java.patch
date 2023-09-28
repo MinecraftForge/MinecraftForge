@@ -3,68 +3,68 @@
 @@ -124,7 +_,11 @@
     }
  
-    public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
--      if (this.f_9245_.m_146892_().m_82557_(Vec3.m_82512_(p_215120_)) > ServerGamePacketListenerImpl.f_215198_) {
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(f_9245_, p_215120_, p_215122_, p_215121_);
-+      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
+    public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
+-      if (this.player.getEyePosition().distanceToSqr(Vec3.atCenterOf(p_215120_)) > ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE) {
++      net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(player, p_215120_, p_215122_, p_215121_);
++      if (event.isCanceled() || (!this.isCreative() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }
-+      if (!this.f_9245_.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
-          this.m_215125_(p_215120_, false, p_215124_, "too far");
-       } else if (p_215120_.m_123342_() >= p_215123_) {
-          this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
++      if (!this.player.canReach(p_215120_, 1.5)) { // Vanilla check is eye-to-center distance < 6, so padding is 6 - 4.5 = 1.5
+          this.debugLogging(p_215120_, false, p_215124_, "too far");
+       } else if (p_215120_.getY() >= p_215123_) {
+          this.player.connection.send(new ClientboundBlockUpdatePacket(p_215120_, this.level.getBlockState(p_215120_)));
 @@ -152,6 +_,7 @@
              float f = 1.0F;
-             BlockState blockstate = this.f_9244_.m_8055_(p_215120_);
-             if (!blockstate.m_60795_()) {
+             BlockState blockstate = this.level.getBlockState(p_215120_);
+             if (!blockstate.isAir()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
-                blockstate.m_60686_(this.f_9244_, p_215120_, this.f_9245_);
-                f = blockstate.m_60625_(this.f_9245_, this.f_9245_.m_9236_(), p_215120_);
+                blockstate.attack(this.level, p_215120_, this.player);
+                f = blockstate.getDestroyProgress(this.player, this.player.level(), p_215120_);
              }
 @@ -221,7 +_,8 @@
  
-    public boolean m_9280_(BlockPos p_9281_) {
-       BlockState blockstate = this.f_9244_.m_8055_(p_9281_);
--      if (!this.f_9245_.m_21205_().m_41720_().m_6777_(blockstate, this.f_9244_, p_9281_, this.f_9245_)) {
-+      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(f_9244_, f_9247_, f_9245_, p_9281_);
+    public boolean destroyBlock(BlockPos p_9281_) {
+       BlockState blockstate = this.level.getBlockState(p_9281_);
+-      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) {
++      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(level, gameModeForPlayer, player, p_9281_);
 +      if (exp == -1) {
           return false;
        } else {
-          BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
+          BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
 @@ -229,30 +_,42 @@
-          if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
-             this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
+          if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
+             this.level.sendBlockUpdated(p_9281_, blockstate, blockstate, 3);
              return false;
-+         } else if (f_9245_.m_21205_().onBlockStartBreak(p_9281_, f_9245_)) {
++         } else if (player.getMainHandItem().onBlockStartBreak(p_9281_, player)) {
 +            return false;
-          } else if (this.f_9245_.m_36187_(this.f_9244_, p_9281_, this.f_9247_)) {
+          } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
              return false;
           } else {
--            block.m_5707_(this.f_9244_, p_9281_, blockstate, this.f_9245_);
--            boolean flag = this.f_9244_.m_7471_(p_9281_, false);
+-            block.playerWillDestroy(this.level, p_9281_, blockstate, this.player);
+-            boolean flag = this.level.removeBlock(p_9281_, false);
 -            if (flag) {
--               block.m_6786_(this.f_9244_, p_9281_, blockstate);
+-               block.destroy(this.level, p_9281_, blockstate);
 -            }
 -
-             if (this.m_9295_()) {
+             if (this.isCreative()) {
 +               removeBlock(p_9281_, false);
                 return true;
              } else {
-                ItemStack itemstack = this.f_9245_.m_21205_();
-                ItemStack itemstack1 = itemstack.m_41777_();
--               boolean flag1 = this.f_9245_.m_36298_(blockstate);
-+               boolean flag1 = blockstate.canHarvestBlock(this.f_9244_, p_9281_, this.f_9245_); // previously player.hasCorrectToolForDrops(blockstate)
-                itemstack.m_41686_(this.f_9244_, blockstate, p_9281_, this.f_9245_);
-+               if (itemstack.m_41619_() && !itemstack1.m_41619_())
-+                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.f_9245_, itemstack1, InteractionHand.MAIN_HAND);
+                ItemStack itemstack = this.player.getMainHandItem();
+                ItemStack itemstack1 = itemstack.copy();
+-               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
++               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
+                itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
++               if (itemstack.isEmpty() && !itemstack1.isEmpty())
++                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
 +               boolean flag = removeBlock(p_9281_, flag1);
 +
                 if (flag && flag1) {
-                   block.m_6240_(this.f_9244_, this.f_9245_, p_9281_, blockstate, blockentity, itemstack1);
+                   block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
 +               if (flag && exp > 0)
-+                  blockstate.m_60734_().m_49805_(f_9244_, p_9281_, exp);
++                  blockstate.getBlock().popExperience(level, p_9281_, exp);
 +
                 return true;
              }
@@ -73,35 +73,35 @@
 +   }
 +
 +   private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
-+      BlockState state = this.f_9244_.m_8055_(p_180235_1_);
-+      boolean removed = state.onDestroyedByPlayer(this.f_9244_, p_180235_1_, this.f_9245_, canHarvest, this.f_9244_.m_6425_(p_180235_1_));
++      BlockState state = this.level.getBlockState(p_180235_1_);
++      boolean removed = state.onDestroyedByPlayer(this.level, p_180235_1_, this.player, canHarvest, this.level.getFluidState(p_180235_1_));
 +      if (removed)
-+         state.m_60734_().m_6786_(this.f_9244_, p_180235_1_, state);
++         state.getBlock().destroy(this.level, p_180235_1_, state);
 +      return removed;
     }
  
-    public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
+    public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
 @@ -261,6 +_,8 @@
-       } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
+       } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
           return InteractionResult.PASS;
        } else {
 +         InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_9262_, p_9265_);
 +         if (cancelResult != null) return cancelResult;
-          int i = p_9264_.m_41613_();
-          int j = p_9264_.m_41773_();
-          InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.m_41682_(p_9263_, p_9262_, p_9265_);
+          int i = p_9264_.getCount();
+          int j = p_9264_.getDamageValue();
+          InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
 @@ -299,7 +_,10 @@
-       BlockState blockstate = p_9267_.m_8055_(blockpos);
-       if (!blockstate.m_60734_().m_245993_(p_9267_.m_246046_())) {
+       BlockState blockstate = p_9267_.getBlockState(blockpos);
+       if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
           return InteractionResult.FAIL;
--      } else if (this.f_9247_ == GameType.SPECTATOR) {
+-      } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
 +      }
 +      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
 +      if (event.isCanceled()) return event.getCancellationResult();
-+      if (this.f_9247_ == GameType.SPECTATOR) {
-          MenuProvider menuprovider = blockstate.m_60750_(p_9267_, blockpos);
++      if (this.gameModeForPlayer == GameType.SPECTATOR) {
+          MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
           if (menuprovider != null) {
-             p_9266_.m_5893_(menuprovider);
+             p_9266_.openMenu(menuprovider);
 @@ -308,10 +_,15 @@
              return InteractionResult.PASS;
           }
@@ -111,23 +111,23 @@
 +            InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
 +            if (result != InteractionResult.PASS) return result;
 +         }
-          boolean flag = !p_9266_.m_21205_().m_41619_() || !p_9266_.m_21206_().m_41619_();
--         boolean flag1 = p_9266_.m_36341_() && flag;
-+         boolean flag1 = (p_9266_.m_36341_() && flag) && !(p_9266_.m_21205_().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.m_21206_().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
-          ItemStack itemstack = p_9268_.m_41777_();
+          boolean flag = !p_9266_.getMainHandItem().isEmpty() || !p_9266_.getOffhandItem().isEmpty();
+-         boolean flag1 = p_9266_.isSecondaryUseActive() && flag;
++         boolean flag1 = (p_9266_.isSecondaryUseActive() && flag) && !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
+          ItemStack itemstack = p_9268_.copy();
 -         if (!flag1) {
 +         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-             InteractionResult interactionresult = blockstate.m_60664_(p_9267_, p_9266_, p_9269_, p_9270_);
-             if (interactionresult.m_19077_()) {
-                CriteriaTriggers.f_10562_.m_285767_(p_9266_, blockpos, itemstack);
+             InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
+             if (interactionresult.consumesAction()) {
+                CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
 @@ -319,8 +_,8 @@
              }
           }
  
--         if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
+-         if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 -            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))) {
++         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
              InteractionResult interactionresult1;
-             if (this.m_9295_()) {
-                int i = p_9268_.m_41613_();
+             if (this.isCreative()) {
+                int i = p_9268_.getCount();

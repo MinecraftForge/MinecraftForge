@@ -1,0 +1,135 @@
+--- a/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
++++ b/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
+@@ -78,12 +_,16 @@
+    private Vec3 camera = Vec3.ZERO;
+ 
+    public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_) {
++      this(p_299878_, p_299032_, p_298480_, p_298587_, p_299187_, -1);
++   }
++
++   public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_, int countRenderBuilders) {
+       this.level = p_299878_;
+       this.renderer = p_299032_;
+       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.chunkBufferLayers().stream().mapToInt(RenderType::bufferSize).sum() * 4) - 1);
+       int j = Runtime.getRuntime().availableProcessors();
+       int k = p_298587_ ? j : Math.min(j, 4);
+-      int l = Math.max(1, Math.min(k, i));
++      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k, i)) : countRenderBuilders;
+       this.fixedBuffers = p_299187_;
+       List<SectionBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
+ 
+@@ -413,7 +_,7 @@
+          if (!sectionrenderdispatcher$compiledsection.hasBlocks.contains(p_301074_)) {
+             return false;
+          } else {
+-            this.lastResortTransparencyTask = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(this.getDistToPlayerSqr(), sectionrenderdispatcher$compiledsection);
++            this.lastResortTransparencyTask = new SectionRenderDispatcher.RenderSection.ResortTransparencyTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), sectionrenderdispatcher$compiledsection);
+             p_298196_.schedule(this.lastResortTransparencyTask);
+             return true;
+          }
+@@ -445,7 +_,7 @@
+             this.initialCompilationCancelCount.incrementAndGet();
+          }
+ 
+-         this.lastRebuildTask = new SectionRenderDispatcher.RenderSection.RebuildTask(this.getDistToPlayerSqr(), renderchunkregion, !flag1 || this.initialCompilationCancelCount.get() > 2);
++         this.lastRebuildTask = new SectionRenderDispatcher.RenderSection.RebuildTask(new net.minecraft.world.level.ChunkPos(getOrigin()), this.getDistToPlayerSqr(), renderchunkregion, !flag1 || this.initialCompilationCancelCount.get() > 2);
+          return this.lastRebuildTask;
+       }
+ 
+@@ -483,10 +_,20 @@
+          protected final double distAtCreation;
+          protected final AtomicBoolean isCancelled = new AtomicBoolean(false);
+          protected final boolean isHighPriority;
++         protected java.util.Map<net.minecraft.core.BlockPos, net.minecraftforge.client.model.data.ModelData> modelData;
+ 
+          public CompileTask(double p_300617_, boolean p_299251_) {
++            this(null, p_300617_, p_299251_);
++         }
++
++         public CompileTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_300617_, boolean p_299251_) {
+             this.distAtCreation = p_300617_;
+             this.isHighPriority = p_299251_;
++            if (pos == null) {
++               this.modelData = java.util.Collections.emptyMap();
++            } else {
++               this.modelData = net.minecraft.client.Minecraft.getInstance().level.getModelDataManager().getAt(pos);
++            }
+          }
+ 
+          public abstract CompletableFuture<SectionRenderDispatcher.SectionTaskResult> doTask(SectionBufferBuilderPack p_300298_);
+@@ -498,6 +_,10 @@
+          public int compareTo(SectionRenderDispatcher.RenderSection.CompileTask p_298947_) {
+             return Doubles.compare(this.distAtCreation, p_298947_.distAtCreation);
+          }
++
++         public net.minecraftforge.client.model.data.ModelData getModelData(net.minecraft.core.BlockPos pos) {
++            return modelData.getOrDefault(pos, net.minecraftforge.client.model.data.ModelData.EMPTY);
++         }
+       }
+ 
+       @OnlyIn(Dist.CLIENT)
+@@ -505,8 +_,13 @@
+          @Nullable
+          protected RenderChunkRegion region;
+ 
++         @Deprecated
+          public RebuildTask(double p_301300_, @Nullable RenderChunkRegion p_300496_, boolean p_299891_) {
+-            super(p_301300_, p_299891_);
++            this(null, p_301300_, p_300496_, p_299891_);
++         }
++
++         public RebuildTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_301300_, @Nullable RenderChunkRegion p_300496_, boolean p_299891_) {
++            super(pos, p_301300_, p_299891_);
+             this.region = p_300496_;
+          }
+ 
+@@ -602,7 +_,10 @@
+                   }
+ 
+                   if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+-                     RenderType rendertype2 = ItemBlockRenderTypes.getChunkRenderType(blockstate);
++                     var model = blockrenderdispatcher.getBlockModel(blockstate);
++                     var modelData = model.getModelData(renderchunkregion, blockpos2, blockstate, getModelData(blockpos2));
++                     randomsource.setSeed(blockstate.getSeed(blockpos2));
++                     for (RenderType rendertype2 : model.getRenderTypes(blockstate, randomsource, modelData)) {
+                      BufferBuilder bufferbuilder2 = p_300020_.builder(rendertype2);
+                      if (set.add(rendertype2)) {
+                         RenderSection.this.beginLayer(bufferbuilder2);
+@@ -610,8 +_,9 @@
+ 
+                      posestack.pushPose();
+                      posestack.translate((float)(blockpos2.getX() & 15), (float)(blockpos2.getY() & 15), (float)(blockpos2.getZ() & 15));
+-                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource);
++                     blockrenderdispatcher.renderBatched(blockstate, blockpos2, renderchunkregion, posestack, bufferbuilder2, true, randomsource, modelData, rendertype2);
+                      posestack.popPose();
++                     }
+                   }
+                }
+ 
+@@ -640,10 +_,10 @@
+          private <E extends BlockEntity> void handleBlockEntity(SectionRenderDispatcher.RenderSection.RebuildTask.CompileResults p_297364_, E p_299361_) {
+             BlockEntityRenderer<E> blockentityrenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(p_299361_);
+             if (blockentityrenderer != null) {
+-               p_297364_.blockEntities.add(p_299361_);
+                if (blockentityrenderer.shouldRenderOffScreen(p_299361_)) {
+                   p_297364_.globalBlockEntities.add(p_299361_);
+                }
++               else p_297364_.blockEntities.add(p_299361_); //FORGE: Fix MC-112730
+             }
+ 
+          }
+@@ -671,8 +_,13 @@
+       class ResortTransparencyTask extends SectionRenderDispatcher.RenderSection.CompileTask {
+          private final SectionRenderDispatcher.CompiledSection compiledSection;
+ 
++         @Deprecated
+          public ResortTransparencyTask(double p_300619_, SectionRenderDispatcher.CompiledSection p_297742_) {
+-            super(p_300619_, true);
++            this(null, p_300619_, p_297742_);
++         }
++
++         public ResortTransparencyTask(@Nullable net.minecraft.world.level.ChunkPos pos, double p_300619_, SectionRenderDispatcher.CompiledSection p_297742_) {
++            super(pos, p_300619_, true);
+             this.compiledSection = p_297742_;
+          }
+ 

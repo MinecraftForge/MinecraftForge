@@ -1,68 +1,68 @@
 --- a/net/minecraft/client/renderer/block/BlockRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/block/BlockRenderDispatcher.java
 @@ -37,7 +_,7 @@
-       this.f_110899_ = p_173399_;
-       this.f_173397_ = p_173400_;
-       this.f_110903_ = p_173401_;
--      this.f_110900_ = new ModelBlockRenderer(this.f_110903_);
-+      this.f_110900_ = new net.minecraftforge.client.model.lighting.ForgeModelBlockRenderer(this.f_110903_);
-       this.f_110901_ = new LiquidBlockRenderer();
+       this.blockModelShaper = p_173399_;
+       this.blockEntityRenderer = p_173400_;
+       this.blockColors = p_173401_;
+-      this.modelRenderer = new ModelBlockRenderer(this.blockColors);
++      this.modelRenderer = new net.minecraftforge.client.model.lighting.ForgeModelBlockRenderer(this.blockColors);
+       this.liquidBlockRenderer = new LiquidBlockRenderer();
     }
  
 @@ -45,19 +_,27 @@
-       return this.f_110899_;
+       return this.blockModelShaper;
     }
  
 +   @Deprecated //Forge: Model data parameter
-    public void m_110918_(BlockState p_110919_, BlockPos p_110920_, BlockAndTintGetter p_110921_, PoseStack p_110922_, VertexConsumer p_110923_) {
+    public void renderBreakingTexture(BlockState p_110919_, BlockPos p_110920_, BlockAndTintGetter p_110921_, PoseStack p_110922_, VertexConsumer p_110923_) {
 +       renderBreakingTexture(p_110919_, p_110920_, p_110921_, p_110922_, p_110923_, net.minecraftforge.client.model.data.ModelData.EMPTY);
 +   }
 +   public void renderBreakingTexture(BlockState p_110919_, BlockPos p_110920_, BlockAndTintGetter p_110921_, PoseStack p_110922_, VertexConsumer p_110923_, net.minecraftforge.client.model.data.ModelData modelData) {
-       if (p_110919_.m_60799_() == RenderShape.MODEL) {
-          BakedModel bakedmodel = this.f_110899_.m_110893_(p_110919_);
-          long i = p_110919_.m_60726_(p_110920_);
--         this.f_110900_.m_234379_(p_110921_, bakedmodel, p_110919_, p_110920_, p_110922_, p_110923_, true, this.f_110902_, i, OverlayTexture.f_118083_);
-+         this.f_110900_.tesselateBlock(p_110921_, bakedmodel, p_110919_, p_110920_, p_110922_, p_110923_, true, this.f_110902_, i, OverlayTexture.f_118083_, modelData, null);
+       if (p_110919_.getRenderShape() == RenderShape.MODEL) {
+          BakedModel bakedmodel = this.blockModelShaper.getBlockModel(p_110919_);
+          long i = p_110919_.getSeed(p_110920_);
+-         this.modelRenderer.tesselateBlock(p_110921_, bakedmodel, p_110919_, p_110920_, p_110922_, p_110923_, true, this.random, i, OverlayTexture.NO_OVERLAY);
++         this.modelRenderer.tesselateBlock(p_110921_, bakedmodel, p_110919_, p_110920_, p_110922_, p_110923_, true, this.random, i, OverlayTexture.NO_OVERLAY, modelData, null);
        }
     }
  
 +   @Deprecated //Forge: Model data and render type parameter
-    public void m_234355_(BlockState p_234356_, BlockPos p_234357_, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource p_234362_) {
+    public void renderBatched(BlockState p_234356_, BlockPos p_234357_, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource p_234362_) {
 +      renderBatched(p_234356_, p_234357_, p_234358_, p_234359_, p_234360_, p_234361_, p_234362_, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
 +   }
 +   public void renderBatched(BlockState p_234356_, BlockPos p_234357_, BlockAndTintGetter p_234358_, PoseStack p_234359_, VertexConsumer p_234360_, boolean p_234361_, RandomSource p_234362_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
        try {
-          RenderShape rendershape = p_234356_.m_60799_();
+          RenderShape rendershape = p_234356_.getRenderShape();
           if (rendershape == RenderShape.MODEL) {
--            this.f_110900_.m_234379_(p_234358_, this.m_110910_(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.m_60726_(p_234357_), OverlayTexture.f_118083_);
-+            this.f_110900_.tesselateBlock(p_234358_, this.m_110910_(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.m_60726_(p_234357_), OverlayTexture.f_118083_, modelData, renderType);
+-            this.modelRenderer.tesselateBlock(p_234358_, this.getBlockModel(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.getSeed(p_234357_), OverlayTexture.NO_OVERLAY);
++            this.modelRenderer.tesselateBlock(p_234358_, this.getBlockModel(p_234356_), p_234356_, p_234357_, p_234359_, p_234360_, p_234361_, p_234362_, p_234356_.getSeed(p_234357_), OverlayTexture.NO_OVERLAY, modelData, renderType);
           }
  
        } catch (Throwable throwable) {
 @@ -87,7 +_,11 @@
-       return this.f_110899_.m_110893_(p_110911_);
+       return this.blockModelShaper.getBlockModel(p_110911_);
     }
  
 +   @Deprecated //Forge: Model data and render type parameter
-    public void m_110912_(BlockState p_110913_, PoseStack p_110914_, MultiBufferSource p_110915_, int p_110916_, int p_110917_) {
+    public void renderSingleBlock(BlockState p_110913_, PoseStack p_110914_, MultiBufferSource p_110915_, int p_110916_, int p_110917_) {
 +      renderSingleBlock(p_110913_, p_110914_, p_110915_, p_110916_, p_110917_, net.minecraftforge.client.model.data.ModelData.EMPTY, null);
 +   }
 +   public void renderSingleBlock(BlockState p_110913_, PoseStack p_110914_, MultiBufferSource p_110915_, int p_110916_, int p_110917_, net.minecraftforge.client.model.data.ModelData modelData, net.minecraft.client.renderer.RenderType renderType) {
-       RenderShape rendershape = p_110913_.m_60799_();
+       RenderShape rendershape = p_110913_.getRenderShape();
        if (rendershape != RenderShape.INVISIBLE) {
           switch (rendershape) {
 @@ -97,10 +_,12 @@
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
                 float f2 = (float)(i & 255) / 255.0F;
--               this.f_110900_.m_111067_(p_110914_.m_85850_(), p_110915_.m_6299_(ItemBlockRenderTypes.m_109284_(p_110913_, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_);
-+               for (net.minecraft.client.renderer.RenderType rt : bakedmodel.getRenderTypes(p_110913_, RandomSource.m_216335_(42), modelData))
-+                  this.f_110900_.renderModel(p_110914_.m_85850_(), p_110915_.m_6299_(renderType != null ? renderType : net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(rt, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_, modelData, rt);
+-               this.modelRenderer.renderModel(p_110914_.last(), p_110915_.getBuffer(ItemBlockRenderTypes.getRenderType(p_110913_, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_);
++               for (net.minecraft.client.renderer.RenderType rt : bakedmodel.getRenderTypes(p_110913_, RandomSource.create(42), modelData))
++                  this.modelRenderer.renderModel(p_110914_.last(), p_110915_.getBuffer(renderType != null ? renderType : net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(rt, false)), p_110913_, bakedmodel, f, f1, f2, p_110916_, p_110917_, modelData, rt);
                 break;
              case ENTITYBLOCK_ANIMATED:
--               this.f_173397_.m_108829_(new ItemStack(p_110913_.m_60734_()), ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
-+            ItemStack stack = new ItemStack(p_110913_.m_60734_());
-+            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(stack).getCustomRenderer().m_108829_(stack, ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
+-               this.blockEntityRenderer.renderByItem(new ItemStack(p_110913_.getBlock()), ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
++            ItemStack stack = new ItemStack(p_110913_.getBlock());
++            net.minecraftforge.client.extensions.common.IClientItemExtensions.of(stack).getCustomRenderer().renderByItem(stack, ItemDisplayContext.NONE, p_110914_, p_110915_, p_110916_, p_110917_);
           }
  
        }

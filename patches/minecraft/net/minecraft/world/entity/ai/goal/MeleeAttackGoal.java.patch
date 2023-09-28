@@ -1,39 +1,39 @@
 --- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 @@ -21,6 +_,8 @@
-    private final int f_25549_ = 20;
-    private long f_25550_;
-    private static final long f_148125_ = 20L;
+    private final int attackInterval = 20;
+    private long lastCanUseCheck;
+    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
 +   private int failedPathFindingPenalty = 0;
 +   private boolean canPenalize = false;
  
     public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
-       this.f_25540_ = p_25552_;
+       this.mob = p_25552_;
 @@ -41,6 +_,15 @@
-          } else if (!livingentity.m_6084_()) {
+          } else if (!livingentity.isAlive()) {
              return false;
           } else {
 +           if (canPenalize) {
-+               if (--this.f_25547_ <= 0) {
-+                  this.f_25543_ = this.f_25540_.m_21573_().m_6570_(livingentity, 0);
-+                  this.f_25547_ = 4 + this.f_25540_.m_217043_().m_188503_(7);
-+                  return this.f_25543_ != null;
++               if (--this.ticksUntilNextPathRecalculation <= 0) {
++                  this.path = this.mob.getNavigation().createPath(livingentity, 0);
++                  this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
++                  return this.path != null;
 +               } else {
 +                  return true;
 +               }
 +            }
-             this.f_25543_ = this.f_25540_.m_21573_().m_6570_(livingentity, 0);
-             if (this.f_25543_ != null) {
+             this.path = this.mob.getNavigation().createPath(livingentity, 0);
+             if (this.path != null) {
                 return true;
 @@ -98,6 +_,18 @@
-             this.f_25545_ = livingentity.m_20186_();
-             this.f_25546_ = livingentity.m_20189_();
-             this.f_25547_ = 4 + this.f_25540_.m_217043_().m_188503_(7);
+             this.pathedTargetZ = livingentity.getZ();
+             this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
+             double d0 = this.mob.distanceToSqr(livingentity);
 +         if (this.canPenalize) {
-+            this.f_25547_ += failedPathFindingPenalty;
-+            if (this.f_25540_.m_21573_().m_26570_() != null) {
-+               net.minecraft.world.level.pathfinder.Node finalPathPoint = this.f_25540_.m_21573_().m_26570_().m_77395_();
-+               if (finalPathPoint != null && livingentity.m_20275_(finalPathPoint.f_77271_, finalPathPoint.f_77272_, finalPathPoint.f_77273_) < 1)
++            this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
++            if (this.mob.getNavigation().getPath() != null) {
++               net.minecraft.world.level.pathfinder.Node finalPathPoint = this.mob.getNavigation().getPath().getEndNode();
++               if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
 +                  failedPathFindingPenalty = 0;
 +               else
 +                  failedPathFindingPenalty += 10;
@@ -42,5 +42,5 @@
 +            }
 +         }
              if (d0 > 1024.0D) {
-                this.f_25547_ += 10;
+                this.ticksUntilNextPathRecalculation += 10;
              } else if (d0 > 256.0D) {

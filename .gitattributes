@@ -21,3 +21,6 @@ src/generated/**/*.json text eol=lf
 src/generated_test/**/.cache/cache text eol=lf
 src/generated_test/**/*.json text eol=lf
 
+# We force eclipse to use unix line endings
+ide/eclipse/template/.settings/*.prefs text eol=lf
+

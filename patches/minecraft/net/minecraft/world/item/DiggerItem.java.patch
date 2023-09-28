@@ -1,26 +1,26 @@
 --- a/net/minecraft/world/item/DiggerItem.java
 +++ b/net/minecraft/world/item/DiggerItem.java
 @@ -60,7 +_,11 @@
-       return this.f_40981_;
+       return this.attackDamageBaseline;
     }
  
 +   @Deprecated // FORGE: Use stack sensitive variant below
-    public boolean m_8096_(BlockState p_150816_) {
-+      if (net.minecraftforge.common.TierSortingRegistry.isTierSorted(m_43314_())) {
-+         return net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(m_43314_(), p_150816_) && p_150816_.m_204336_(this.f_40979_);
+    public boolean isCorrectToolForDrops(BlockState p_150816_) {
++      if (net.minecraftforge.common.TierSortingRegistry.isTierSorted(getTier())) {
++         return net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(getTier(), p_150816_) && p_150816_.is(this.blocks);
 +      }
-       int i = this.m_43314_().m_6604_();
-       if (i < 3 && p_150816_.m_204336_(BlockTags.f_144284_)) {
+       int i = this.getTier().getLevel();
+       if (i < 3 && p_150816_.is(BlockTags.NEEDS_DIAMOND_TOOL)) {
           return false;
 @@ -69,5 +_,11 @@
        } else {
-          return i < 1 && p_150816_.m_204336_(BlockTags.f_144286_) ? false : p_150816_.m_204336_(this.f_40979_);
+          return i < 1 && p_150816_.is(BlockTags.NEEDS_STONE_TOOL) ? false : p_150816_.is(this.blocks);
        }
 +   }
 +
 +   // FORGE START
 +   @Override
 +   public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-+      return state.m_204336_(f_40979_) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(m_43314_(), state);
++      return state.is(blocks) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(getTier(), state);
     }
  }

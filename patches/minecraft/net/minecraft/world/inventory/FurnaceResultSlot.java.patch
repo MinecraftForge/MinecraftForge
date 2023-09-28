@@ -3,7 +3,7 @@
 @@ -48,5 +_,6 @@
        }
  
-       this.f_39540_ = 0;
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
+       this.removeCount = 0;
++      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, p_39558_);
     }
  }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ConduitBlockEntity.java
 @@ -152,10 +_,8 @@
-                   BlockPos blockpos1 = p_155416_.m_7918_(j1, k1, l1);
-                   BlockState blockstate = p_155415_.m_8055_(blockpos1);
+                   BlockPos blockpos1 = p_155416_.offset(j1, k1, l1);
+                   BlockState blockstate = p_155415_.getBlockState(blockpos1);
  
--                  for(Block block : f_59184_) {
--                     if (blockstate.m_60713_(block)) {
+-                  for(Block block : VALID_BLOCKS) {
+-                     if (blockstate.is(block)) {
 -                        p_155417_.add(blockpos1);
 -                     }
 +                  if (blockstate.isConduitFrame(p_155415_, blockpos1, p_155416_)) {

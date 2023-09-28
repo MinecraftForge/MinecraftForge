@@ -1,22 +1,22 @@
 --- a/net/minecraft/world/level/block/RailState.java
 +++ b/net/minecraft/world/level/block/RailState.java
 @@ -16,14 +_,16 @@
-    private BlockState f_55417_;
-    private final boolean f_55418_;
-    private final List<BlockPos> f_55419_ = Lists.newArrayList();
+    private BlockState state;
+    private final boolean isStraight;
+    private final List<BlockPos> connections = Lists.newArrayList();
 +   private final boolean canMakeSlopes;
  
     public RailState(Level p_55421_, BlockPos p_55422_, BlockState p_55423_) {
-       this.f_55414_ = p_55421_;
-       this.f_55415_ = p_55422_;
-       this.f_55417_ = p_55423_;
-       this.f_55416_ = (BaseRailBlock)p_55423_.m_60734_();
--      RailShape railshape = p_55423_.m_61143_(this.f_55416_.m_7978_());
--      this.f_55418_ = this.f_55416_.m_49413_();
-+      RailShape railshape = this.f_55416_.getRailDirection(f_55417_, p_55421_, p_55422_, null);
-+      this.f_55418_ = !this.f_55416_.isFlexibleRail(f_55417_, p_55421_, p_55422_);
-+      this.canMakeSlopes = this.f_55416_.canMakeSlopes(f_55417_, p_55421_, p_55422_);
-       this.m_55427_(railshape);
+       this.level = p_55421_;
+       this.pos = p_55422_;
+       this.state = p_55423_;
+       this.block = (BaseRailBlock)p_55423_.getBlock();
+-      RailShape railshape = p_55423_.getValue(this.block.getShapeProperty());
+-      this.isStraight = this.block.isStraight();
++      RailShape railshape = this.block.getRailDirection(state, p_55421_, p_55422_, null);
++      this.isStraight = !this.block.isFlexibleRail(state, p_55421_, p_55422_);
++      this.canMakeSlopes = this.block.canMakeSlopes(state, p_55421_, p_55422_);
+       this.updateConnections(railshape);
     }
  
 @@ -179,7 +_,7 @@
@@ -25,7 +25,7 @@
  
 -      if (railshape == RailShape.NORTH_SOUTH) {
 +      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
-          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos.m_7494_())) {
+          if (BaseRailBlock.isRail(this.level, blockpos.above())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
 @@ -189,7 +_,7 @@
@@ -34,19 +34,19 @@
  
 -      if (railshape == RailShape.EAST_WEST) {
 +      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
-          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
+          if (BaseRailBlock.isRail(this.level, blockpos3.above())) {
              railshape = RailShape.ASCENDING_EAST;
           }
 @@ -203,6 +_,10 @@
           railshape = RailShape.NORTH_SOUTH;
        }
  
-+      if (!this.f_55416_.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
-+         this.f_55419_.remove(p_55442_.f_55415_);
++      if (!this.block.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
++         this.connections.remove(p_55442_.pos);
 +         return;
 +      }
-       this.f_55417_ = this.f_55417_.m_61124_(this.f_55416_.m_7978_(), railshape);
-       this.f_55414_.m_7731_(this.f_55415_, this.f_55417_, 3);
+       this.state = this.state.setValue(this.block.getShapeProperty(), railshape);
+       this.level.setBlock(this.pos, this.state, 3);
     }
 @@ -305,7 +_,7 @@
           }
@@ -54,7 +54,7 @@
  
 -      if (railshape == RailShape.NORTH_SOUTH) {
 +      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
-          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos.m_7494_())) {
+          if (BaseRailBlock.isRail(this.level, blockpos.above())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
 @@ -315,7 +_,7 @@
@@ -63,7 +63,7 @@
  
 -      if (railshape == RailShape.EAST_WEST) {
 +      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
-          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
+          if (BaseRailBlock.isRail(this.level, blockpos3.above())) {
              railshape = RailShape.ASCENDING_EAST;
           }
 @@ -325,7 +_,7 @@
@@ -71,7 +71,7 @@
        }
  
 -      if (railshape == null) {
-+      if (railshape == null || !this.f_55416_.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
++      if (railshape == null || !this.block.isValidRailShape(railshape)) { // Forge: allow rail block to decide if the new shape is valid
           railshape = p_55434_;
        }
  

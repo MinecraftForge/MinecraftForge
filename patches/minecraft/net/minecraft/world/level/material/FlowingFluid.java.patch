@@ -1,36 +1,36 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
-@@ -159,7 +_,7 @@
-          BlockState blockstate = p_256464_.m_8055_(blockpos);
-          FluidState fluidstate = blockstate.m_60819_();
-          if (fluidstate.m_76152_().m_6212_(this) && this.m_76061_(direction, p_256464_, p_76037_, p_76038_, blockpos, blockstate)) {
--            if (fluidstate.m_76170_()) {
-+            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_256464_, blockpos, blockstate, fluidstate.canConvertToSource(p_256464_, blockpos))) {
+@@ -160,7 +_,7 @@
+          BlockState blockstate = p_256464_.getBlockState(blockpos);
+          FluidState fluidstate = blockstate.getFluidState();
+          if (fluidstate.getType().isSame(this) && this.canPassThroughWall(direction, p_256464_, p_76037_, p_76038_, blockpos, blockstate)) {
+-            if (fluidstate.isSource()) {
++            if (fluidstate.isSource() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_256464_, blockpos, blockstate, fluidstate.canConvertToSource(p_256464_, blockpos))) {
                 ++j;
              }
  
-@@ -167,7 +_,7 @@
+@@ -168,7 +_,7 @@
           }
        }
  
--      if (this.m_6760_(p_256464_) && j >= 2) {
+-      if (this.canConvertToSource(p_256464_) && j >= 2) {
 +      if (j >= 2) {
-          BlockState blockstate1 = p_256464_.m_8055_(p_76037_.m_7495_());
-          FluidState fluidstate1 = blockstate1.m_60819_();
-          if (blockstate1.m_280296_() || this.m_76096_(fluidstate1)) {
-@@ -231,6 +_,15 @@
-       return this.m_5613_().m_76145_().m_61124_(f_75947_, Boolean.valueOf(p_76069_));
+          BlockState blockstate1 = p_256464_.getBlockState(p_76037_.below());
+          FluidState fluidstate1 = blockstate1.getFluidState();
+          if (blockstate1.isSolid() || this.isSourceBlockOfThisType(fluidstate1)) {
+@@ -232,6 +_,15 @@
+       return this.getSource().defaultFluidState().setValue(FALLING, Boolean.valueOf(p_76069_));
     }
  
 +   @Override
 +   public boolean canConvertToSource(FluidState state, Level level, BlockPos pos) {
-+      return this.m_6760_(level);
++      return this.canConvertToSource(level);
 +   }
 +
 +   /**
 +    * @deprecated Forge: Use {@link #canConvertToSource(FluidState, Level, BlockPos)} instead.
 +    */
 +   @Deprecated
-    protected abstract boolean m_6760_(Level p_256009_);
+    protected abstract boolean canConvertToSource(Level p_256009_);
  
-    protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
+    protected void spreadTo(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {

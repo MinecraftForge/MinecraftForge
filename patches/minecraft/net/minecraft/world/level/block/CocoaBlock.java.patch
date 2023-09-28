@@ -3,14 +3,14 @@
 @@ -47,10 +_,11 @@
     }
  
-    public void m_213898_(BlockState p_221000_, ServerLevel p_221001_, BlockPos p_221002_, RandomSource p_221003_) {
--      if (p_221001_.f_46441_.m_188503_(5) == 0) {
+    public void randomTick(BlockState p_221000_, ServerLevel p_221001_, BlockPos p_221002_, RandomSource p_221003_) {
+-      if (p_221001_.random.nextInt(5) == 0) {
 +      if (true) {
-          int i = p_221000_.m_61143_(f_51736_);
+          int i = p_221000_.getValue(AGE);
 -         if (i < 2) {
--            p_221001_.m_7731_(p_221002_, p_221000_.m_61124_(f_51736_, Integer.valueOf(i + 1)), 2);
-+         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221001_, p_221002_, p_221000_, p_221001_.f_46441_.m_188503_(5) == 0)) {
-+            p_221001_.m_7731_(p_221002_, p_221000_.m_61124_(f_51736_, i + 1), 2);
+-            p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, Integer.valueOf(i + 1)), 2);
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221001_, p_221002_, p_221000_, p_221001_.random.nextInt(5) == 0)) {
++            p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, i + 1), 2);
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221001_, p_221002_, p_221000_);
           }
        }

@@ -3,18 +3,18 @@
 @@ -459,6 +_,9 @@
           }
  
-          this.f_121201_.skip();
+          this.reader.skip();
 +         EntitySelector forgeSelector = net.minecraftforge.common.command.EntitySelectorManager.parseSelector(this);
 +         if (forgeSelector != null)
 +            return forgeSelector;
-          this.m_121281_();
+          this.parseSelector();
        } else {
-          this.m_121304_();
+          this.parseNameOrUUID();
 @@ -474,6 +_,7 @@
-       p_121248_.suggest("@r", Component.m_237115_("argument.entity.selector.randomPlayer"));
-       p_121248_.suggest("@s", Component.m_237115_("argument.entity.selector.self"));
-       p_121248_.suggest("@e", Component.m_237115_("argument.entity.selector.allEntities"));
+       p_121248_.suggest("@r", Component.translatable("argument.entity.selector.randomPlayer"));
+       p_121248_.suggest("@s", Component.translatable("argument.entity.selector.self"));
+       p_121248_.suggest("@e", Component.translatable("argument.entity.selector.allEntities"));
 +      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
     }
  
-    private CompletableFuture<Suggestions> m_121286_(SuggestionsBuilder p_121287_, Consumer<SuggestionsBuilder> p_121288_) {
+    private CompletableFuture<Suggestions> suggestNameOrSelector(SuggestionsBuilder p_121287_, Consumer<SuggestionsBuilder> p_121288_) {

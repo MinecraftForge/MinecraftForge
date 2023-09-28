@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/packs/repository/ServerPacksSource.java
 +++ b/net/minecraft/server/packs/repository/ServerPacksSource.java
-@@ -48,7 +_,9 @@
+@@ -50,7 +_,9 @@
     }
  
-    public static PackRepository m_245786_(Path p_251569_) {
--      return new PackRepository(new ServerPacksSource(), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.f_10529_));
-+      final PackRepository packRepository = new PackRepository(new ServerPacksSource(), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.f_10529_));
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(PackType.SERVER_DATA, packRepository::addPackFinder));
-+      return packRepository;
+    public static PackRepository createPackRepository(Path p_251569_, DirectoryValidator p_300268_) {
+-      return new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
++      var ret = new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(PackType.SERVER_DATA, ret::addPackFinder));
++      return ret;
     }
  
-    public static PackRepository m_247728_(LevelStorageSource.LevelStorageAccess p_250213_) {
+    public static PackRepository createVanillaTrustedRepository() {

@@ -1,35 +1,35 @@
 --- a/net/minecraft/resources/HolderSetCodec.java
 +++ b/net/minecraft/resources/HolderSetCodec.java
 @@ -21,6 +_,8 @@
-    private final Codec<Holder<E>> f_206656_;
-    private final Codec<List<Holder<E>>> f_206657_;
-    private final Codec<Either<TagKey<E>, List<Holder<E>>>> f_206658_;
+    private final Codec<Holder<E>> elementCodec;
+    private final Codec<List<Holder<E>>> homogenousListCodec;
+    private final Codec<Either<TagKey<E>, List<Holder<E>>>> registryAwareCodec;
 +   private final Codec<net.minecraftforge.registries.holdersets.ICustomHolderSet<E>> forgeDispatchCodec;
 +   private final Codec<Either<net.minecraftforge.registries.holdersets.ICustomHolderSet<E>, Either<TagKey<E>, List<Holder<E>>>>> combinedCodec;
  
-    private static <E> Codec<List<Holder<E>>> m_206667_(Codec<Holder<E>> p_206668_, boolean p_206669_) {
-       Codec<List<Holder<E>>> codec = ExtraCodecs.m_264370_(p_206668_.listOf(), ExtraCodecs.m_203984_(Holder::m_203376_));
+    private static <E> Codec<List<Holder<E>>> homogenousList(Codec<Holder<E>> p_206668_, boolean p_206669_) {
+       Codec<List<Holder<E>>> codec = ExtraCodecs.validate(p_206668_.listOf(), ExtraCodecs.ensureHomogenous(Holder::kind));
 @@ -42,6 +_,10 @@
-       this.f_206656_ = p_206661_;
-       this.f_206657_ = m_206667_(p_206661_, p_206662_);
-       this.f_206658_ = Codec.either(TagKey.m_203886_(p_206660_), this.f_206657_);
+       this.elementCodec = p_206661_;
+       this.homogenousListCodec = homogenousList(p_206661_, p_206662_);
+       this.registryAwareCodec = Codec.either(TagKey.hashedCodec(p_206660_), this.homogenousListCodec);
 +      // FORGE: make registry-specific dispatch codec and make forge-or-vanilla either codec
-+      this.forgeDispatchCodec = ExtraCodecs.m_184415_(() -> net.minecraftforge.registries.ForgeRegistries.HOLDER_SET_TYPES.get().getCodec())
++      this.forgeDispatchCodec = ExtraCodecs.lazyInitializedCodec(() -> net.minecraftforge.registries.ForgeRegistries.HOLDER_SET_TYPES.get().getCodec())
 +          .dispatch(net.minecraftforge.registries.holdersets.ICustomHolderSet::type, type -> type.makeCodec(p_206660_, p_206661_, p_206662_));
-+      this.combinedCodec = new ExtraCodecs.EitherCodec<>(this.forgeDispatchCodec, this.f_206658_);
++      this.combinedCodec = new ExtraCodecs.EitherCodec<>(this.forgeDispatchCodec, this.registryAwareCodec);
     }
  
     public <T> DataResult<Pair<HolderSet<E>, T>> decode(DynamicOps<T> p_206696_, T p_206697_) {
 @@ -49,9 +_,10 @@
-          Optional<HolderGetter<E>> optional = registryops.m_255006_(this.f_206655_);
+          Optional<HolderGetter<E>> optional = registryops.getter(this.registryKey);
           if (optional.isPresent()) {
              HolderGetter<E> holdergetter = optional.get();
--            return this.f_206658_.decode(p_206696_, p_206697_).map((p_206682_) -> {
+-            return this.registryAwareCodec.decode(p_206696_, p_206697_).map((p_206682_) -> {
 +            // FORGE: use the wrapped codec to decode custom/tag/list instead of just tag/list
 +            return this.combinedCodec.decode(p_206696_, p_206697_).map((p_206682_) -> {
                 return p_206682_.mapFirst((p_206679_) -> {
--                  return p_206679_.map(holdergetter::m_254956_, HolderSet::m_205800_);
-+                  return p_206679_.map(java.util.function.Function.identity(), tagOrList -> tagOrList.map(holdergetter::m_254956_, HolderSet::m_205800_));
+-                  return p_206679_.map(holdergetter::getOrThrow, HolderSet::direct);
++                  return p_206679_.map(java.util.function.Function.identity(), tagOrList -> tagOrList.map(holdergetter::getOrThrow, HolderSet::direct));
                 });
              });
           }
@@ -40,6 +40,6 @@
 +            // FORGE: use the dispatch codec to encode custom holdersets, otherwise fall back to vanilla tag/list
 +            if (p_206674_ instanceof net.minecraftforge.registries.holdersets.ICustomHolderSet<E> customHolderSet)
 +                return this.forgeDispatchCodec.encode(customHolderSet, p_206675_, p_206676_);
-             return this.f_206658_.encode(p_206674_.m_203440_().mapRight(List::copyOf), p_206675_, p_206676_);
+             return this.registryAwareCodec.encode(p_206674_.unwrap().mapRight(List::copyOf), p_206675_, p_206676_);
           }
        }

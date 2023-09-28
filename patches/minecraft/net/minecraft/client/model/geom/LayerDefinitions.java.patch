@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/model/geom/LayerDefinitions.java
 +++ b/net/minecraft/client/model/geom/LayerDefinitions.java
 @@ -319,6 +_,7 @@
-       WoodType.m_61843_().forEach((p_247864_) -> {
-          builder.put(ModelLayers.m_247439_(p_247864_), layerdefinition24);
+       WoodType.values().forEach((p_247864_) -> {
+          builder.put(ModelLayers.createHangingSignModelName(p_247864_), layerdefinition24);
        });
 +      net.minecraftforge.client.ForgeHooksClient.loadLayerDefinitions(builder);
        ImmutableMap<ModelLayerLocation, LayerDefinition> immutablemap = builder.build();
-       List<ModelLayerLocation> list = ModelLayers.m_171288_().filter((p_171117_) -> {
+       List<ModelLayerLocation> list = ModelLayers.getKnownLocations().filter((p_171117_) -> {
           return !immutablemap.containsKey(p_171117_);

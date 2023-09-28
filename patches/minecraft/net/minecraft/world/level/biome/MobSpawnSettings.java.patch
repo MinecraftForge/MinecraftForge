@@ -1,22 +1,22 @@
 --- a/net/minecraft/world/level/biome/MobSpawnSettings.java
 +++ b/net/minecraft/world/level/biome/MobSpawnSettings.java
 @@ -40,20 +_,32 @@
-    private final float f_48328_;
-    private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> f_48329_;
-    private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> f_48330_;
+    private final float creatureGenerationProbability;
+    private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners;
+    private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> mobSpawnCosts;
 +   private final java.util.Set<MobCategory> typesView;
 +   private final java.util.Set<EntityType<?>> costView;
  
     MobSpawnSettings(float p_196689_, Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> p_196690_, Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> p_196691_) {
-       this.f_48328_ = p_196689_;
-       this.f_48329_ = ImmutableMap.copyOf(p_196690_);
-       this.f_48330_ = ImmutableMap.copyOf(p_196691_);
-+      this.typesView = java.util.Collections.unmodifiableSet(this.f_48329_.keySet());
-+      this.costView = java.util.Collections.unmodifiableSet(this.f_48330_.keySet());
+       this.creatureGenerationProbability = p_196689_;
+       this.spawners = ImmutableMap.copyOf(p_196690_);
+       this.mobSpawnCosts = ImmutableMap.copyOf(p_196691_);
++      this.typesView = java.util.Collections.unmodifiableSet(this.spawners.keySet());
++      this.costView = java.util.Collections.unmodifiableSet(this.mobSpawnCosts.keySet());
     }
  
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_151798_(MobCategory p_151799_) {
-       return this.f_48329_.getOrDefault(p_151799_, f_151796_);
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobs(MobCategory p_151799_) {
+       return this.spawners.getOrDefault(p_151799_, EMPTY_MOB_LIST);
     }
  
 +   public java.util.Set<MobCategory> getSpawnerTypes() {
@@ -24,12 +24,12 @@
 +   }
 +
     @Nullable
-    public MobSpawnSettings.MobSpawnCost m_48345_(EntityType<?> p_48346_) {
-       return this.f_48330_.get(p_48346_);
+    public MobSpawnSettings.MobSpawnCost getMobSpawnCost(EntityType<?> p_48346_) {
+       return this.mobSpawnCosts.get(p_48346_);
 +   }
 +
 +   public java.util.Set<EntityType<?>> getEntityTypes() {
 +       return this.costView;
     }
  
-    public float m_48344_() {
+    public float getCreatureProbability() {

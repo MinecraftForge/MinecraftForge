@@ -4,8 +4,8 @@
        if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
           StringReader stringreader = new StringReader(p_91483_.getInput());
           stringreader.setCursor(p_91483_.getStart());
--         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.m_6761_(2));
+-         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, sharedsuggestionprovider.hasPermission(2));
 +         EntitySelectorParser entityselectorparser = new EntitySelectorParser(stringreader, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(sharedsuggestionprovider));
  
           try {
-             entityselectorparser.m_121377_();
+             entityselectorparser.parse();

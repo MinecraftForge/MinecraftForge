@@ -1,29 +1,29 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
 @@ -54,6 +_,8 @@
-    private long f_140771_;
-    private int f_183902_ = 10;
+    private long ticketTickCounter;
+    private int simulationDistance = 10;
  
 +   private final Long2ObjectOpenHashMap<SortedArraySet<Ticket<?>>> forcedTickets = new Long2ObjectOpenHashMap<>();
 +
     protected DistanceManager(Executor p_140774_, Executor p_140775_) {
-       ProcessorHandle<Runnable> processorhandle = ProcessorHandle.m_18714_("player ticket throttler", p_140775_::execute);
+       ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(processorhandle), p_140774_, 4);
 @@ -159,6 +_,10 @@
-          this.f_140762_.m_140715_(p_140785_, p_140786_.m_9433_(), true);
+          this.ticketTracker.update(p_140785_, p_140786_.getTicketLevel(), true);
        }
  
 +      if (p_140786_.isForceTicks()) {
-+          SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(p_140785_, e -> SortedArraySet.m_14246_(4));
-+          tickets.m_14253_(ticket);
++          SortedArraySet<Ticket<?>> tickets = forcedTickets.computeIfAbsent(p_140785_, e -> SortedArraySet.create(4));
++          tickets.addOrGet(ticket);
 +      }
     }
  
-    void m_140818_(long p_140819_, Ticket<?> p_140820_) {
+    void removeTicket(long p_140819_, Ticket<?> p_140820_) {
 @@ -171,6 +_,13 @@
        }
  
-       this.f_140762_.m_140715_(p_140819_, m_140797_(sortedarrayset), false);
+       this.ticketTracker.update(p_140819_, getTicketLevelAt(sortedarrayset), false);
 +
 +      if (p_140820_.isForceTicks()) {
 +          SortedArraySet<Ticket<?>> tickets = forcedTickets.get(p_140819_);
@@ -33,34 +33,34 @@
 +      }
     }
  
-    public <T> void m_140792_(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
+    public <T> void addTicket(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
 @@ -183,14 +_,20 @@
     }
  
-    public <T> void m_140840_(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
--      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140843_, p_140844_);
+    public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
+-      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140843_, p_140844_);
 +      addRegionTicket(p_140841_, p_140842_, p_140843_, p_140844_, false);
 +   }
 +   public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_, boolean forceTicks) {
-+      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140843_, p_140844_, forceTicks);
-       long i = p_140842_.m_45588_();
-       this.m_140784_(i, ticket);
-       this.f_183901_.m_184151_(i, ticket);
++      Ticket<T> ticket = new Ticket<>(p_140841_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140843_, p_140844_, forceTicks);
+       long i = p_140842_.toLong();
+       this.addTicket(i, ticket);
+       this.tickingTicketsTracker.addTicket(i, ticket);
     }
  
-    public <T> void m_140849_(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_) {
--      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140852_, p_140853_);
+    public <T> void removeRegionTicket(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_) {
+-      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140852_, p_140853_);
 +      removeRegionTicket(p_140850_, p_140851_, p_140852_, p_140853_, false);
 +   }
 +   public <T> void removeRegionTicket(TicketType<T> p_140850_, ChunkPos p_140851_, int p_140852_, T p_140853_, boolean forceTicks) {
-+      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.m_287154_(FullChunkStatus.FULL) - p_140852_, p_140853_, forceTicks);
-       long i = p_140851_.m_45588_();
-       this.m_140818_(i, ticket);
-       this.f_183901_.m_184165_(i, ticket);
++      Ticket<T> ticket = new Ticket<>(p_140850_, ChunkLevel.byStatus(FullChunkStatus.FULL) - p_140852_, p_140853_, forceTicks);
+       long i = p_140851_.toLong();
+       this.removeTicket(i, ticket);
+       this.tickingTicketsTracker.removeTicket(i, ticket);
 @@ -281,6 +_,11 @@
  
-    public String m_140837_() {
-       return this.f_140766_.m_140558_();
+    public String getDebugStatus() {
+       return this.ticketThrottler.getDebugStatus();
 +   }
 +
 +   public boolean shouldForceTicks(long chunkPos) {
@@ -68,4 +68,4 @@
 +       return tickets != null && !tickets.isEmpty();
     }
  
-    private void m_143207_(String p_143208_) {
+    private void dumpTickets(String p_143208_) {

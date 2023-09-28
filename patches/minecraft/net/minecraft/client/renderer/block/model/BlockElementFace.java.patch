@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElementFace.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElementFace.java
 @@ -19,12 +_,30 @@
-    public final int f_111355_;
-    public final String f_111356_;
-    public final BlockFaceUV f_111357_;
+    public final int tintIndex;
+    public final String texture;
+    public final BlockFaceUV uv;
 +   @Nullable
 +   private final net.minecraftforge.client.model.ForgeFaceData faceData; // If null, we defer to the parent BlockElement's ForgeFaceData, which is not nullable.
 +   @Nullable
@@ -14,10 +14,10 @@
 +   }
 +
 +   public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, @Nullable net.minecraftforge.client.model.ForgeFaceData faceData) {
-       this.f_111354_ = p_111359_;
-       this.f_111355_ = p_111360_;
-       this.f_111356_ = p_111361_;
-       this.f_111357_ = p_111362_;
+       this.cullForDirection = p_111359_;
+       this.tintIndex = p_111360_;
+       this.texture = p_111361_;
+       this.uv = p_111362_;
 +      this.faceData = faceData;
 +   }
 +
@@ -32,12 +32,12 @@
  
     @OnlyIn(Dist.CLIENT)
 @@ -37,7 +_,8 @@
-          int i = this.m_111368_(jsonobject);
-          String s = this.m_111370_(jsonobject);
+          int i = this.getTintIndex(jsonobject);
+          String s = this.getTexture(jsonobject);
           BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);
 -         return new BlockElementFace(direction, i, s, blockfaceuv);
 +         var faceData = net.minecraftforge.client.model.ForgeFaceData.read(jsonobject.get("forge_data"), null);
 +         return new BlockElementFace(direction, i, s, blockfaceuv, faceData);
        }
  
-       protected int m_111368_(JsonObject p_111369_) {
+       protected int getTintIndex(JsonObject p_111369_) {

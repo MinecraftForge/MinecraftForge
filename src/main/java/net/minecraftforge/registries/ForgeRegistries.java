@@ -43,15 +43,12 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import net.minecraftforge.common.world.StructureModifier;
 
@@ -147,6 +144,13 @@ public class ForgeRegistries
      */
     public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = DEFERRED_DISPLAY_CONTEXTS.makeRegistry(GameData::getItemDisplayContextRegistryBuilder);
 
+    static final DeferredRegister<Codec<? extends ICondition>> DEFERRED_CONDITION_CODECS = DeferredRegister.create(Keys.CONDITION_SERIALIZERS, Keys.CONDITION_SERIALIZERS.location().getNamespace());
+    /**
+     * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
+     * Use {@link Keys#CONDITION_SERIALIZERS} to create a {@link DeferredRegister}.
+     */
+    public static final Supplier<IForgeRegistry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = DEFERRED_CONDITION_CODECS.makeRegistry(GameData::getConditionCodecRegistryBuilder);
+
     public static final class Keys {
         //Vanilla
         public static final ResourceKey<Registry<Block>>  BLOCKS  = key("block");
@@ -190,6 +194,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");
         public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("forge:holder_set_type");
         public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("forge:display_contexts");
+        public static final ResourceKey<Registry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
 
         // Forge Dynamic
         public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");

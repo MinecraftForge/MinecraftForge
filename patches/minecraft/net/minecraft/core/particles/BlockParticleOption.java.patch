@@ -1,8 +1,8 @@
 --- a/net/minecraft/core/particles/BlockParticleOption.java
 +++ b/net/minecraft/core/particles/BlockParticleOption.java
 @@ -51,4 +_,15 @@
-    public BlockState m_123642_() {
-       return this.f_123626_;
+    public BlockState getState() {
+       return this.state;
     }
 +
 +   //FORGE: Add a source pos property, so we can provide models with additional model data

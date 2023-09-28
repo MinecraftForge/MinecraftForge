@@ -1,38 +1,30 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -89,7 +_,9 @@
-             list.add(DataProvider.m_253162_(p_254020_, p_253413_.m_125966_(), this.f_236355_.m_245731_(p_253413_.m_6445_())));
-             JsonObject jsonobject = p_253413_.m_5860_();
-             if (jsonobject != null) {
--               list.add(DataProvider.m_253162_(p_254020_, jsonobject, this.f_236356_.m_245731_(p_253413_.m_6448_())));
-+               var saveAdvancementFuture = saveAdvancement(p_254020_, p_253413_, jsonobject);
-+               if (saveAdvancementFuture != null)
-+                  list.add(saveAdvancementFuture);
+@@ -93,7 +_,9 @@
+                AdvancementHolder advancementholder = p_300066_.advancement();
+                if (advancementholder != null) {
+                   JsonObject jsonobject = advancementholder.value().serializeToJson();
+-                  list.add(DataProvider.saveStable(p_254020_, jsonobject, RecipeProvider.this.advancementPathProvider.json(advancementholder.id())));
++                  var saveAdvancementFuture = saveAdvancement(p_254020_, jsonobject, advancementholder, p_300066_);
++                  if (saveAdvancementFuture != null)
++                     list.add(saveAdvancementFuture);
+                }
+ 
              }
- 
-          }
-@@ -99,13 +_,23 @@
+@@ -106,6 +_,16 @@
+       return CompletableFuture.allOf(list.toArray((p_253414_) -> {
+          return new CompletableFuture[p_253414_];
        }));
-    }
- 
++   }
++
 +   /**
 +    * Called every time a recipe is saved to also save the advancement JSON if it exists.
 +    *
 +    * @return A completable future that saves the advancement to disk, or null to cancel saving the advancement.
 +    */
-+   @org.jetbrains.annotations.Nullable
-+   protected CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
-+      return DataProvider.m_253162_(output, advancementJson, this.f_236356_.m_245731_(finishedRecipe.m_6448_()));
-+   }
-+
-    protected CompletableFuture<?> m_253240_(CachedOutput p_253674_, ResourceLocation p_254102_, Advancement.Builder p_253712_) {
-       return DataProvider.m_253162_(p_253674_, p_253712_.m_138400_(), this.f_236356_.m_245731_(p_254102_));
++   @Nullable
++   protected CompletableFuture<?> saveAdvancement(CachedOutput output, JsonObject advancementJson, AdvancementHolder holder, FinishedRecipe finishedRecipe) {
++      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(holder.id()));
     }
  
-    protected abstract void m_245200_(Consumer<FinishedRecipe> p_251297_);
- 
--   protected static void m_247051_(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
-+   protected void m_247051_(Consumer<FinishedRecipe> p_249188_, FeatureFlagSet p_251836_) {
-       BlockFamilies.m_175934_().filter((p_248034_) -> {
-          return p_248034_.m_245288_(p_251836_);
-       }).forEach((p_176624_) -> {
+    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, AdvancementHolder p_297687_) {

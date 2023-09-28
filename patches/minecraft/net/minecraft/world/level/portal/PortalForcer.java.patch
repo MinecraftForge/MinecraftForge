@@ -6,6 +6,6 @@
  
 -public class PortalForcer {
 +public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
-    private static final int f_164734_ = 3;
-    private static final int f_164735_ = 128;
-    private static final int f_164736_ = 16;
+    private static final int TICKET_RADIUS = 3;
+    private static final int SEARCH_RADIUS = 128;
+    private static final int CREATE_RADIUS = 16;

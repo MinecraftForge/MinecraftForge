@@ -3,9 +3,9 @@
 @@ -156,7 +_,7 @@
     }
  
-    protected static boolean m_159747_(BlockState p_159748_) {
--      return p_159748_.m_204336_(BlockTags.f_13061_);
-+      return p_159748_.m_204336_(net.minecraftforge.common.Tags.Blocks.STONE);
+    protected static boolean isStone(BlockState p_159748_) {
+-      return p_159748_.is(BlockTags.BASE_STONE_OVERWORLD);
++      return p_159748_.is(net.minecraftforge.common.Tags.Blocks.STONE);
     }
  
-    public static boolean m_159759_(BlockState p_159760_) {
+    public static boolean isDirt(BlockState p_159760_) {

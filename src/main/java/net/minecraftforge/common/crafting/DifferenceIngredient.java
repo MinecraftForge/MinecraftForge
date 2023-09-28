@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 
-/** Ingredient that matches everything from the first ingredient that is not included in the second ingredient */
+/** Ingredient that matches everything from the first ingredient that is not included in the second ingredient * /
 public class DifferenceIngredient extends AbstractIngredient
 {
     private final Ingredient base;
@@ -37,7 +37,7 @@ public class DifferenceIngredient extends AbstractIngredient
      * @param base        Ingredient the item must match
      * @param subtracted  Ingredient the item must not match
      * @return  Ingredient that {@code base} anything in base that is not in {@code subtracted}
-     */
+     * /
     public static DifferenceIngredient of(Ingredient base, Ingredient subtracted)
     {
         return new DifferenceIngredient(base, subtracted);
@@ -98,12 +98,12 @@ public class DifferenceIngredient extends AbstractIngredient
     }
 
     @Override
-    public JsonElement toJson()
+    public JsonElement toJson(boolean allowEmpty)
     {
         JsonObject json = new JsonObject();
         json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
-        json.add("base", base.toJson());
-        json.add("subtracted", subtracted.toJson());
+        json.add("base", base.toJson(allowEmpty));
+        json.add("subtracted", subtracted.toJson(allowEmpty));
         return json;
     }
 
@@ -113,8 +113,7 @@ public class DifferenceIngredient extends AbstractIngredient
         return Serializer.INSTANCE;
     }
 
-    public static class Serializer implements IIngredientSerializer<DifferenceIngredient>
-    {
+    public static class Serializer implements IIngredientSerializer<DifferenceIngredient> {
         public static final IIngredientSerializer<DifferenceIngredient> INSTANCE = new Serializer();
 
         @Override
@@ -141,3 +140,4 @@ public class DifferenceIngredient extends AbstractIngredient
         }
     }
 }
+*/

@@ -1,20 +1,46 @@
 --- a/net/minecraft/world/level/storage/loot/LootPool.java
 +++ b/net/minecraft/world/level/storage/loot/LootPool.java
-@@ -39,7 +_,8 @@
-    NumberProvider f_79028_;
-    NumberProvider f_79029_;
+@@ -38,8 +_,12 @@
+          return p_297004_.rolls;
+       }), NumberProviders.CODEC.fieldOf("bonus_rolls").orElse(ConstantValue.exactly(0.0F)).forGetter((p_297006_) -> {
+          return p_297006_.bonusRolls;
+-      })).apply(p_297005_, LootPool::new);
++      }),
++      Codec.STRING.optionalFieldOf("name").forGetter(p -> p.name.filter(n -> !n.startsWith("custom#"))),
++      net.minecraftforge.common.crafting.conditions.ICondition.OPTIONAL_FEILD_CODEC.forGetter(p -> p.forge_condition)
++      ).apply(p_297005_, LootPool::new);
+    });
++   public static final Codec<LootPool> CONDITIONAL_CODEC = net.minecraftforge.common.crafting.conditions.ConditionCodec.checkingDecode(CODEC, () -> lootPool().build());
+    private final List<LootPoolEntryContainer> entries;
+    private final List<LootItemCondition> conditions;
+    private final Predicate<LootContext> compositeCondition;
+@@ -47,8 +_,13 @@
+    private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
+    private NumberProvider rolls;
+    private NumberProvider bonusRolls;
++   private java.util.Optional<String> name;
++   private java.util.Optional<net.minecraftforge.common.crafting.conditions.ICondition> forge_condition;
  
--   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_) {
-+   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_, @org.jetbrains.annotations.Nullable String name) {
+    LootPool(List<LootPoolEntryContainer> p_298341_, List<LootItemCondition> p_297697_, List<LootItemFunction> p_299722_, NumberProvider p_165131_, NumberProvider p_165132_) {
++      this(p_298341_, p_297697_, p_299722_, p_165131_, p_165132_, java.util.Optional.empty(), java.util.Optional.empty());
++   }
++   LootPool(List<LootPoolEntryContainer> p_298341_, List<LootItemCondition> p_297697_, List<LootItemFunction> p_299722_, NumberProvider p_165131_, NumberProvider p_165132_, java.util.Optional<String> name, java.util.Optional<net.minecraftforge.common.crafting.conditions.ICondition> forge_conditions) {
+       this.entries = p_298341_;
+       this.conditions = p_297697_;
+       this.compositeCondition = LootItemConditions.andConditions(p_297697_);
+@@ -56,6 +_,8 @@
+       this.compositeFunction = LootItemFunctions.compose(p_299722_);
+       this.rolls = p_165131_;
+       this.bonusRolls = p_165132_;
 +      this.name = name;
-       this.f_79023_ = p_165128_;
-       this.f_79024_ = p_165129_;
-       this.f_79025_ = LootItemConditions.m_81834_(p_165129_);
-@@ -112,6 +_,23 @@
-       this.f_79028_.m_6169_(p_79052_.m_79365_(".rolls"));
-       this.f_79029_.m_6169_(p_79052_.m_79365_(".bonusRolls"));
++      this.forge_condition = forge_conditions;
     }
-+   //======================== FORGE START =============================================
+ 
+    private void addRandomItem(Consumer<ItemStack> p_79059_, LootContext p_79060_) {
+@@ -126,12 +_,35 @@
+       return new LootPool.Builder();
+    }
+ 
 +   private boolean isFrozen = false;
 +   public void freeze() { this.isFrozen = true; }
 +   public boolean isFrozen(){ return this.isFrozen; }
@@ -23,26 +49,31 @@
 +         throw new RuntimeException("Attempted to modify LootPool after being frozen!");
 +   }
 +   @org.jetbrains.annotations.Nullable
-+   private final String name;
-+   @org.jetbrains.annotations.Nullable
-+   public String getName() { return this.name; }
-+   public NumberProvider getRolls()      { return this.f_79028_; }
-+   public NumberProvider getBonusRolls() { return this.f_79029_; }
-+   public void setRolls     (NumberProvider v){ checkFrozen(); this.f_79028_ = v; }
-+   public void setBonusRolls(NumberProvider v){ checkFrozen(); this.f_79029_ = v; }
-+   //======================== FORGE END ===============================================
- 
-    public static LootPool.Builder m_79043_() {
-       return new LootPool.Builder();
-@@ -123,6 +_,7 @@
-       private final List<LootItemFunction> f_79069_ = Lists.newArrayList();
-       private NumberProvider f_79070_ = ConstantValue.m_165692_(1.0F);
-       private NumberProvider f_79071_ = ConstantValue.m_165692_(0.0F);
++   public String getName() { return this.name.orElse(null); }
++   void setName(final String name) {
++      if (this.name.isPresent())
++         throw new UnsupportedOperationException("Cannot change the name of a pool when it has a name set!");
++      this.name = java.util.Optional.of(name);
++   }
++   public NumberProvider getRolls()      { return this.rolls; }
++   public NumberProvider getBonusRolls() { return this.bonusRolls; }
++   public void setRolls     (NumberProvider v){ checkFrozen(); this.rolls = v; }
++   public void setBonusRolls(NumberProvider v){ checkFrozen(); this.bonusRolls = v; }
++
+    public static class Builder implements FunctionUserBuilder<LootPool.Builder>, ConditionUserBuilder<LootPool.Builder> {
+       private final ImmutableList.Builder<LootPoolEntryContainer> entries = ImmutableList.builder();
+       private final ImmutableList.Builder<LootItemCondition> conditions = ImmutableList.builder();
+       private final ImmutableList.Builder<LootItemFunction> functions = ImmutableList.builder();
+       private NumberProvider rolls = ConstantValue.exactly(1.0F);
+       private NumberProvider bonusRolls = ConstantValue.exactly(0.0F);
++      @org.jetbrains.annotations.Nullable
 +      private String name;
++      @org.jetbrains.annotations.Nullable
++      private net.minecraftforge.common.crafting.conditions.ICondition forge_condition;
  
-       public LootPool.Builder m_165133_(NumberProvider p_165134_) {
-          this.f_79070_ = p_165134_;
-@@ -153,11 +_,16 @@
+       public LootPool.Builder setRolls(NumberProvider p_165134_) {
+          this.rolls = p_165134_;
+@@ -162,8 +_,18 @@
           return this;
        }
  
@@ -51,27 +82,14 @@
 +         return this;
 +      }
 +
-       public LootPool m_79082_() {
-          if (this.f_79070_ == null) {
-             throw new IllegalArgumentException("Rolls not set");
-          } else {
--            return new LootPool(this.f_79067_.toArray(new LootPoolEntryContainer[0]), this.f_79068_.toArray(new LootItemCondition[0]), this.f_79069_.toArray(new LootItemFunction[0]), this.f_79070_, this.f_79071_);
-+            return new LootPool(this.f_79067_.toArray(new LootPoolEntryContainer[0]), this.f_79068_.toArray(new LootItemCondition[0]), this.f_79069_.toArray(new LootItemFunction[0]), this.f_79070_, this.f_79071_, name);
-          }
++      public LootPool.Builder when(net.minecraftforge.common.crafting.conditions.ICondition value) {
++         this.forge_condition = value;
++         return this;
++      }
++
+       public LootPool build() {
+-         return new LootPool(this.entries.build(), this.conditions.build(), this.functions.build(), this.rolls, this.bonusRolls);
++         return new LootPool(this.entries.build(), this.conditions.build(), this.functions.build(), this.rolls, this.bonusRolls, java.util.Optional.ofNullable(this.name), java.util.Optional.ofNullable(forge_condition));
        }
     }
-@@ -170,11 +_,13 @@
-          LootItemFunction[] alootitemfunction = GsonHelper.m_13845_(jsonobject, "functions", new LootItemFunction[0], p_79092_, LootItemFunction[].class);
-          NumberProvider numberprovider = GsonHelper.m_13836_(jsonobject, "rolls", p_79092_, NumberProvider.class);
-          NumberProvider numberprovider1 = GsonHelper.m_13845_(jsonobject, "bonus_rolls", ConstantValue.m_165692_(0.0F), p_79092_, NumberProvider.class);
--         return new LootPool(alootpoolentrycontainer, alootitemcondition, alootitemfunction, numberprovider, numberprovider1);
-+         return new LootPool(alootpoolentrycontainer, alootitemcondition, alootitemfunction, numberprovider, numberprovider1, net.minecraftforge.common.ForgeHooks.readPoolName(jsonobject));
-       }
- 
-       public JsonElement serialize(LootPool p_79094_, Type p_79095_, JsonSerializationContext p_79096_) {
-          JsonObject jsonobject = new JsonObject();
-+         if (p_79094_.name != null && !p_79094_.name.startsWith("custom#"))
-+            jsonobject.add("name", p_79096_.serialize(p_79094_.name));
-          jsonobject.add("rolls", p_79096_.serialize(p_79094_.f_79028_));
-          jsonobject.add("bonus_rolls", p_79096_.serialize(p_79094_.f_79029_));
-          jsonobject.add("entries", p_79096_.serialize(p_79094_.f_79023_));
+ }

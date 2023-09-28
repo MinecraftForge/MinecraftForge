@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/texture/atlas/SpriteResourceLoader.java
++++ b/net/minecraft/client/renderer/texture/atlas/SpriteResourceLoader.java
+@@ -44,6 +_,9 @@
+          AnimationMetadataSection animationmetadatasection = resourcemetadata.getSection(AnimationMetadataSection.SERIALIZER).orElse(AnimationMetadataSection.EMPTY);
+          FrameSize framesize = animationmetadatasection.calculateFrameSize(nativeimage.getWidth(), nativeimage.getHeight());
+          if (Mth.isMultipleOf(nativeimage.getWidth(), framesize.width()) && Mth.isMultipleOf(nativeimage.getHeight(), framesize.height())) {
++            SpriteContents contents = net.minecraftforge.client.ForgeHooksClient.loadSpriteContents(p_296303_, p_296304_, framesize, nativeimage, resourcemetadata);
++            if (contents != null)
++               return contents;
+             return new SpriteContents(p_296303_, framesize, nativeimage, resourcemetadata);
+          } else {
+             LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", p_296303_, nativeimage.getWidth(), nativeimage.getHeight(), framesize.width(), framesize.height());

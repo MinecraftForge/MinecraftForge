@@ -9,49 +9,49 @@
 +      return java.util.Collections.unmodifiableSet(KNOWN);
 +   }
 +   protected final void markKnown() {
-+      KNOWN.add(m_123023_().m_135782_());
++      KNOWN.add(key().location());
 +   }
 +
-    public Holder.Reference<T> m_203704_(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
+    public Holder.Reference<T> registerMapping(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
 +      markKnown();
-       this.m_205921_(p_256594_);
+       this.validateWrite(p_256594_);
        Validate.notNull(p_256594_);
        Validate.notNull(p_256374_);
 @@ -145,6 +_,8 @@
-          reference = this.f_205842_.computeIfAbsent(p_256594_, (p_258168_) -> {
-             return Holder.Reference.m_254896_(this.m_255331_(), p_258168_);
+          reference = this.byKey.computeIfAbsent(p_256594_, (p_258168_) -> {
+             return Holder.Reference.createStandAlone(this.holderOwner(), p_258168_);
           });
 +         // Forge: Bind the value immediately so it can be queried while the registry is not frozen
-+         reference.m_247654_(p_256374_);
++         reference.bindValue(p_256374_);
        }
  
-       this.f_205842_.put(p_256594_, reference);
+       this.byKey.put(p_256594_, reference);
 @@ -300,14 +_,17 @@
-       return this.f_205842_.containsKey(p_175392_);
+       return this.byKey.containsKey(p_175392_);
     }
  
 +   /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
 +   @Deprecated
 +   public void unfreeze() {
-+      this.f_205845_ = false;
++      this.frozen = false;
 +   }
 +
-    public Registry<T> m_203521_() {
-       if (this.f_205845_) {
+    public Registry<T> freeze() {
+       if (this.frozen) {
           return this;
        } else {
-          this.f_205845_ = true;
--         this.f_205843_.forEach((p_247989_, p_247990_) -> {
--            p_247990_.m_247654_(p_247989_);
+          this.frozen = true;
+-         this.byValue.forEach((p_247989_, p_247990_) -> {
+-            p_247990_.bindValue(p_247989_);
 -         });
-          List<ResourceLocation> list = this.f_205842_.entrySet().stream().filter((p_211055_) -> {
-             return !p_211055_.getValue().m_203633_();
+          List<ResourceLocation> list = this.byKey.entrySet().stream().filter((p_211055_) -> {
+             return !p_211055_.getValue().isBound();
           }).map((p_211794_) -> {
 @@ -321,7 +_,8 @@
-                   throw new IllegalStateException("Some intrusive holders were not registered: " + this.f_244282_.values());
+                   throw new IllegalStateException("Some intrusive holders were not registered: " + this.unregisteredIntrusiveHolders.values());
                 }
  
--               this.f_244282_ = null;
+-               this.unregisteredIntrusiveHolders = null;
 +               // Forge: We freeze/unfreeze vanilla registries more than once, so we need to keep the unregistered intrusive holders map around.
 +               // this.unregisteredIntrusiveHolders = null;
              }

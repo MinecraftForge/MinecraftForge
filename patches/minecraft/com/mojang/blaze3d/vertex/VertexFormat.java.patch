@@ -5,10 +5,10 @@
        }
     }
 +
-+   public ImmutableMap<String, VertexFormatElement> getElementMapping() { return f_166905_; }
-+   public int getOffset(int index) { return f_86013_.getInt(index); }
-+   public boolean hasPosition() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.POSITION); }
-+   public boolean hasNormal() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.NORMAL); }
-+   public boolean hasColor() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.COLOR); }
-+   public boolean hasUV(int which) { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.UV && e.m_86049_() == which); }
++   public ImmutableMap<String, VertexFormatElement> getElementMapping() { return elementMapping; }
++   public int getOffset(int index) { return offsets.getInt(index); }
++   public boolean hasPosition() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.POSITION); }
++   public boolean hasNormal() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.NORMAL); }
++   public boolean hasColor() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.COLOR); }
++   public boolean hasUV(int which) { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.UV && e.getIndex() == which); }
  }

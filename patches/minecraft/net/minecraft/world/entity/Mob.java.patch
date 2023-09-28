@@ -1,79 +1,79 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -115,6 +_,9 @@
-    private CompoundTag f_21359_;
-    private BlockPos f_21360_ = BlockPos.f_121853_;
-    private float f_21341_ = -1.0F;
+@@ -117,6 +_,9 @@
+    private CompoundTag leashInfoTag;
+    private BlockPos restrictCenter = BlockPos.ZERO;
+    private float restrictRadius = -1.0F;
 +   @Nullable
 +   private MobSpawnType spawnType;
 +   private boolean spawnCancelled = false;
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -229,7 +_,10 @@
+@@ -231,7 +_,10 @@
     }
  
-    public void m_6710_(@Nullable LivingEntity p_21544_) {
--      this.f_21362_ = p_21544_;
+    public void setTarget(@Nullable LivingEntity p_21544_) {
+-      this.target = p_21544_;
 +      net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(this, p_21544_, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.MOB_TARGET);
 +      if(!changeTargetEvent.isCanceled()) {
-+          this.f_21362_ = changeTargetEvent.getNewTarget();
++          this.target = changeTargetEvent.getNewTarget();
 +      }
     }
  
-    public boolean m_6549_(EntityType<?> p_21399_) {
-@@ -427,6 +_,9 @@
-          p_21484_.m_128379_("NoAI", this.m_21525_());
+    public boolean canAttackType(EntityType<?> p_21399_) {
+@@ -429,6 +_,9 @@
+          p_21484_.putBoolean("NoAI", this.isNoAi());
        }
  
 +      if (this.spawnType != null) {
-+         p_21484_.m_128359_("forge:spawn_type", this.spawnType.name());
++         p_21484_.putString("forge:spawn_type", this.spawnType.name());
 +      }
     }
  
-    public void m_7378_(CompoundTag p_21450_) {
-@@ -479,6 +_,14 @@
+    public void readAdditionalSaveData(CompoundTag p_21450_) {
+@@ -481,6 +_,14 @@
        }
  
-       this.m_21557_(p_21450_.m_128471_("NoAI"));
+       this.setNoAi(p_21450_.getBoolean("NoAI"));
 +
-+      if (p_21450_.m_128441_("forge:spawn_type")) {
++      if (p_21450_.contains("forge:spawn_type")) {
 +         try {
-+            this.spawnType = MobSpawnType.valueOf(p_21450_.m_128461_("forge:spawn_type"));
++            this.spawnType = MobSpawnType.valueOf(p_21450_.getString("forge:spawn_type"));
 +         } catch (Exception ex) {
-+            p_21450_.m_128473_("forge:spawn_type");
++            p_21450_.remove("forge:spawn_type");
 +         }
 +      }
     }
  
-    protected void m_7625_(DamageSource p_21389_, boolean p_21390_) {
-@@ -518,9 +_,9 @@
-    public void m_8107_() {
-       super.m_8107_();
-       this.m_9236_().m_46473_().m_6180_("looting");
--      if (!this.m_9236_().f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-          Vec3i vec3i = this.m_213552_();
+    protected void dropFromLootTable(DamageSource p_21389_, boolean p_21390_) {
+@@ -520,9 +_,9 @@
+    public void aiStep() {
+       super.aiStep();
+       this.level().getProfiler().push("looting");
+-      if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
+          Vec3i vec3i = this.getPickupReach();
  
-+      if (!this.m_9236_().f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this)) {
-          for(ItemEntity itementity : this.m_9236_().m_45976_(ItemEntity.class, this.m_20191_().m_82377_((double)vec3i.m_123341_(), (double)vec3i.m_123342_(), (double)vec3i.m_123343_()))) {
-             if (!itementity.m_213877_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
-                this.m_7581_(itementity);
-@@ -692,6 +_,14 @@
-          this.m_146870_();
-       } else if (!this.m_21532_() && !this.m_8023_()) {
-          Entity entity = this.m_9236_().m_45930_(this, -1.0D);
-+         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel) this.m_9236_());
++      if (!this.level().isClientSide && this.canPickUpLoot() && this.isAlive() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
+          for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
+             if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
+                this.pickUpItem(itementity);
+@@ -698,6 +_,14 @@
+          this.discard();
+       } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
+          Entity entity = this.level().getNearestPlayer(this, -1.0D);
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel) this.level());
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+            f_20891_ = 0;
++            noActionTime = 0;
 +            entity = null;
 +         } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
-+            this.m_146870_();
++            this.discard();
 +            entity = null;
 +         }
           if (entity != null) {
-             double d0 = entity.m_20280_(this);
-             int i = this.m_6095_().m_20674_().m_21611_();
-@@ -1025,6 +_,16 @@
+             double d0 = entity.distanceToSqr(this);
+             int i = this.getType().getCategory().getDespawnDistance();
+@@ -1031,6 +_,16 @@
  
     }
  
@@ -88,31 +88,31 @@
 +   @Deprecated
 +   @org.jetbrains.annotations.ApiStatus.OverrideOnly
     @Nullable
-    public SpawnGroupData m_6518_(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
-       RandomSource randomsource = p_21434_.m_213780_();
-@@ -1035,6 +_,7 @@
-          this.m_21559_(false);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
+       RandomSource randomsource = p_21434_.getRandom();
+@@ -1041,6 +_,7 @@
+          this.setLeftHanded(false);
        }
  
 +      this.spawnType = p_21436_;
        return p_21437_;
     }
  
-@@ -1414,15 +_,25 @@
+@@ -1425,15 +_,25 @@
        return false;
     }
  
 +   @Deprecated // FORGE: use jumpInFluid instead
-    protected void m_203347_(TagKey<Fluid> p_204045_) {
-+      this.jumpInLiquidInternal(() -> super.m_203347_(p_204045_));
+    protected void jumpInLiquid(TagKey<Fluid> p_204045_) {
++      this.jumpInLiquidInternal(() -> super.jumpInLiquid(p_204045_));
 +   }
 +
 +   private void jumpInLiquidInternal(Runnable onSuper) {
-       if (this.m_21573_().m_26576_()) {
--         super.m_203347_(p_204045_);
+       if (this.getNavigation().canFloat()) {
+-         super.jumpInLiquid(p_204045_);
 +         onSuper.run();
        } else {
-          this.m_20256_(this.m_20184_().m_82520_(0.0D, 0.3D, 0.0D));
+          this.setDeltaMovement(this.getDeltaMovement().add(0.0D, 0.3D, 0.0D));
        }
  
     }
@@ -122,12 +122,12 @@
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
 +   }
 +
-    public void m_147272_() {
-       this.m_262441_((p_262562_) -> {
+    public void removeFreeWill() {
+       this.removeAllGoals((p_262562_) -> {
           return true;
-@@ -1449,5 +_,40 @@
-    public ItemStack m_142340_() {
-       SpawnEggItem spawneggitem = SpawnEggItem.m_43213_(this.m_6095_());
+@@ -1460,5 +_,40 @@
+    public ItemStack getPickResult() {
+       SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);
 +   }
 +

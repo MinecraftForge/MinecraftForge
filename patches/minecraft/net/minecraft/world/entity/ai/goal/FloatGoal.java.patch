@@ -3,9 +3,9 @@
 @@ -14,7 +_,7 @@
     }
  
-    public boolean m_8036_() {
--      return this.f_25228_.m_20069_() && this.f_25228_.m_204036_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_();
-+      return this.f_25228_.m_20069_() && this.f_25228_.m_204036_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_() || this.f_25228_.isInFluidType((fluidType, height) -> this.f_25228_.canSwimInFluidType(fluidType) && height > this.f_25228_.m_20204_());
+    public boolean canUse() {
+-      return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava();
++      return this.mob.isInWater() && this.mob.getFluidHeight(FluidTags.WATER) > this.mob.getFluidJumpThreshold() || this.mob.isInLava() || this.mob.isInFluidType((fluidType, height) -> this.mob.canSwimInFluidType(fluidType) && height > this.mob.getFluidJumpThreshold());
     }
  
-    public boolean m_183429_() {
+    public boolean requiresUpdateEveryTick() {

@@ -6,14 +6,14 @@
  
 -public class Item implements FeatureElement, ItemLike {
 +public class Item implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
-    private static final Logger f_150883_ = LogUtils.getLogger();
--   public static final Map<Block, Item> f_41373_ = Maps.newHashMap();
-+   public static final Map<Block, Item> f_41373_ = net.minecraftforge.registries.GameData.getBlockItemMap();
-    protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-    protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
-    public static final int f_150884_ = 64;
+    private static final Logger LOGGER = LogUtils.getLogger();
+-   public static final Map<Block, Item> BY_BLOCK = Maps.newHashMap();
++   public static final Map<Block, Item> BY_BLOCK = net.minecraftforge.registries.GameData.getBlockItemMap();
+    protected static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+    protected static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+    public static final int MAX_STACK_SIZE = 64;
 @@ -99,7 +_,8 @@
-             f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
+             LOGGER.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
 -
@@ -23,53 +23,53 @@
  
     /** @deprecated */
 @@ -111,6 +_,8 @@
-    public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
+    public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
     }
  
 +   /** @deprecated Forge: {@link net.minecraftforge.common.extensions.IForgeItem#onDestroyed(ItemEntity, DamageSource) Use damage source sensitive version} */
 +   @Deprecated
-    public void m_142023_(ItemEntity p_150887_) {
+    public void onDestroyed(ItemEntity p_150887_) {
     }
  
 @@ -134,9 +_,9 @@
     }
  
-    public InteractionResultHolder<ItemStack> m_7203_(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
--      if (this.m_41472_()) {
--         ItemStack itemstack = p_41433_.m_21120_(p_41434_);
--         if (p_41433_.m_36391_(this.m_41473_().m_38747_())) {
-+      ItemStack itemstack = p_41433_.m_21120_(p_41434_);
-+      if (itemstack.m_41614_()) {
-+         if (p_41433_.m_36391_(itemstack.getFoodProperties(p_41433_).m_38747_())) {
-             p_41433_.m_6672_(p_41434_);
-             return InteractionResultHolder.m_19096_(itemstack);
+    public InteractionResultHolder<ItemStack> use(Level p_41432_, Player p_41433_, InteractionHand p_41434_) {
+-      if (this.isEdible()) {
+-         ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
+-         if (p_41433_.canEat(this.getFoodProperties().canAlwaysEat())) {
++      ItemStack itemstack = p_41433_.getItemInHand(p_41434_);
++      if (itemstack.isEdible()) {
++         if (p_41433_.canEat(itemstack.getFoodProperties(p_41433_).canAlwaysEat())) {
+             p_41433_.startUsingItem(p_41434_);
+             return InteractionResultHolder.consume(itemstack);
           } else {
 @@ -151,10 +_,12 @@
-       return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
+       return this.isEdible() ? p_41411_.eat(p_41410_, p_41409_) : p_41409_;
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
-    public final int m_41459_() {
-       return this.f_41370_;
+    public final int getMaxStackSize() {
+       return this.maxStackSize;
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
-    public final int m_41462_() {
-       return this.f_41371_;
+    public final int getMaxDamage() {
+       return this.maxDamage;
     }
 @@ -168,11 +_,12 @@
     }
  
-    public int m_142158_(ItemStack p_150900_) {
--      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.f_41371_);
-+      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.getMaxDamage(p_150900_));
+    public int getBarWidth(ItemStack p_150900_) {
+-      return Math.round(13.0F - (float)p_150900_.getDamageValue() * 13.0F / (float)this.maxDamage);
++      return Math.round(13.0F - (float)p_150900_.getDamageValue() * 13.0F / (float)this.getMaxDamage(p_150900_));
     }
  
-    public int m_142159_(ItemStack p_150901_) {
--      float f = Math.max(0.0F, ((float)this.f_41371_ - (float)p_150901_.m_41773_()) / (float)this.f_41371_);
+    public int getBarColor(ItemStack p_150901_) {
+-      float f = Math.max(0.0F, ((float)this.maxDamage - (float)p_150901_.getDamageValue()) / (float)this.maxDamage);
 +      float stackMaxDamage = this.getMaxDamage(p_150901_);
-+      float f = Math.max(0.0F, (stackMaxDamage - (float)p_150901_.m_41773_()) / stackMaxDamage);
-       return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
++      float f = Math.max(0.0F, (stackMaxDamage - (float)p_150901_.getDamageValue()) / stackMaxDamage);
+       return Mth.hsvToRgb(f / 3.0F, 1.0F, 1.0F);
     }
  
 @@ -229,10 +_,12 @@
@@ -77,46 +77,46 @@
  
     @Nullable
 +   @Deprecated // Use ItemStack sensitive version.
-    public final Item m_41469_() {
-       return this.f_41378_;
+    public final Item getCraftingRemainingItem() {
+       return this.craftingRemainingItem;
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
-    public boolean m_41470_() {
-       return this.f_41378_ != null;
+    public boolean hasCraftingRemainingItem() {
+       return this.craftingRemainingItem != null;
     }
 @@ -253,7 +_,7 @@
  
-    public int m_8105_(ItemStack p_41454_) {
-       if (p_41454_.m_41720_().m_41472_()) {
--         return this.m_41473_().m_38748_() ? 16 : 32;
-+         return p_41454_.getFoodProperties(null).m_38748_() ? 16 : 32;
+    public int getUseDuration(ItemStack p_41454_) {
+       if (p_41454_.getItem().isEdible()) {
+-         return this.getFoodProperties().isFastFood() ? 16 : 32;
++         return p_41454_.getFoodProperties(null).isFastFood() ? 16 : 32;
        } else {
           return 0;
        }
 @@ -295,7 +_,7 @@
     }
  
-    public boolean m_8120_(ItemStack p_41456_) {
--      return this.m_41459_() == 1 && this.m_41465_();
+    public boolean isEnchantable(ItemStack p_41456_) {
+-      return this.getMaxStackSize() == 1 && this.canBeDepleted();
 +      return this.getMaxStackSize(p_41456_) == 1 && this.isDamageable(p_41456_);
     }
  
-    protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
+    protected static BlockHitResult getPlayerPOVHitResult(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
 @@ -308,11 +_,13 @@
-       float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
+       float f5 = Mth.sin(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
 -      double d0 = 5.0D;
--      Vec3 vec31 = vec3.m_82520_((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
+-      Vec3 vec31 = vec3.add((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
 +      double d0 = p_41437_.getBlockReach();
-+      Vec3 vec31 = vec3.m_82520_((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
-       return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
++      Vec3 vec31 = vec3.add((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
+       return p_41436_.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
  
 +   /** Forge: Use ItemStack sensitive version. */
 +   @Deprecated
-    public int m_6473_() {
+    public int getEnchantmentValue() {
        return 0;
     }
 @@ -321,12 +_,20 @@
@@ -124,7 +124,7 @@
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
-    public Multimap<Attribute, AttributeModifier> m_7167_(EquipmentSlot p_41388_) {
+    public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot p_41388_) {
        return ImmutableMultimap.of();
     }
  
@@ -135,23 +135,23 @@
 +      return canRepair && isDamageable(stack);
 +   }
 +
-    public boolean m_41463_(ItemStack p_41464_) {
+    public boolean useOnRelease(ItemStack p_41464_) {
 -      return false;
-+      return p_41464_.m_41720_() == Items.f_42717_;
++      return p_41464_.getItem() == Items.CROSSBOW;
     }
  
-    public ItemStack m_7968_() {
+    public ItemStack getDefaultInstance() {
 @@ -337,6 +_,8 @@
-       return this.f_41380_ != null;
+       return this.foodProperties != null;
     }
  
 +   // Use IForgeItem#getFoodProperties(ItemStack, LivingEntity) in favour of this.
 +   @Deprecated
     @Nullable
-    public FoodProperties m_41473_() {
-       return this.f_41380_;
+    public FoodProperties getFoodProperties() {
+       return this.foodProperties;
 @@ -366,6 +_,32 @@
-       return this.f_243811_;
+       return this.requiredFeatures;
     }
  
 +   // FORGE START
@@ -181,20 +181,20 @@
 +   // END FORGE
 +
     public static class Properties {
-       int f_41478_ = 64;
-       int f_41479_;
+       int maxStackSize = 64;
+       int maxDamage;
 @@ -376,6 +_,7 @@
-       FoodProperties f_41483_;
-       boolean f_41484_;
-       FeatureFlagSet f_244559_ = FeatureFlags.f_244377_;
+       FoodProperties foodProperties;
+       boolean isFireResistant;
+       FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
 +      private boolean canRepair = true;
  
-       public Item.Properties m_41489_(FoodProperties p_41490_) {
-          this.f_41483_ = p_41490_;
+       public Item.Properties food(FoodProperties p_41490_) {
+          this.foodProperties = p_41490_;
 @@ -413,6 +_,11 @@
  
-       public Item.Properties m_41486_() {
-          this.f_41484_ = true;
+       public Item.Properties fireResistant() {
+          this.isFireResistant = true;
 +         return this;
 +      }
 +

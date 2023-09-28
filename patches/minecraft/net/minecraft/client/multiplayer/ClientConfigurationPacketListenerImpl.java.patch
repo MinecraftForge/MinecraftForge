@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
++++ b/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
+@@ -71,6 +_,7 @@
+       this.connection.setListener(new ClientPacketListener(this.minecraft, this.connection, new CommonListenerCookie(this.localGameProfile, this.telemetryManager, this.receivedRegistries, this.enabledFeatures, this.serverBrand, this.serverData, this.postDisconnectScreen)));
+       this.connection.resumeInboundAfterProtocolChange();
+       this.connection.send(new ServerboundFinishConfigurationPacket());
++      net.minecraftforge.common.ForgeHooks.handleClientConfigurationComplete(this.connection);
+    }
+ 
+    public void tick() {

@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/** Ingredient that matches if all child ingredients match */
+/** Ingredient that matches if all child ingredients match * /
 public class IntersectionIngredient extends AbstractIngredient
 {
     private final List<Ingredient> children;
@@ -44,7 +44,7 @@ public class IntersectionIngredient extends AbstractIngredient
      * Gets an intersection ingredient
      * @param ingredients  List of ingredients to match
      * @return  Ingredient that only matches if all the passed ingredients match
-     */
+     * /
     public static Ingredient of(Ingredient... ingredients)
     {
         if (ingredients.length == 0)
@@ -175,3 +175,4 @@ public class IntersectionIngredient extends AbstractIngredient
         }
     }
 }
+*/

@@ -1,67 +1,67 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -63,6 +_,7 @@
+@@ -64,6 +_,7 @@
     @Nullable
-    private TitleScreen.WarningLabel f_232768_;
-    private final LogoRenderer f_263781_;
+    private TitleScreen.WarningLabel warningLabel;
+    private final LogoRenderer logoRenderer;
 +   private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
  
     public TitleScreen() {
        this(false);
-@@ -113,11 +_,15 @@
-       int j = this.f_96543_ - i - 2;
+@@ -114,11 +_,15 @@
+       int j = this.width - i - 2;
        int k = 24;
-       int l = this.f_96544_ / 4 + 48;
+       int l = this.height / 4 + 48;
 +      Button modButton = null;
-       if (this.f_96541_.m_91402_()) {
-          this.m_96772_(l, 24);
+       if (this.minecraft.isDemo()) {
+          this.createDemoMenuOptions(l, 24);
        } else {
-          this.m_96763_(l, 24);
-+         modButton = this.m_142416_(Button.m_253074_(Component.m_237115_("fml.menu.mods"), button -> this.f_96541_.m_91152_(new net.minecraftforge.client.gui.ModListScreen(this)))
-+            .m_252794_(this.f_96543_ / 2 - 100, l + 24 * 2).m_253046_(98, 20).m_253136_());
+          this.createNormalMenuOptions(l, 24);
++         modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
++            .pos(this.width / 2 - 100, l + 24 * 2).size(98, 20).build());
        }
 +      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-       this.m_142416_(new ImageButton(this.f_96543_ / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.f_93617_, 256, 256, (p_280830_) -> {
-          this.f_96541_.m_91152_(new LanguageSelectScreen(this, this.f_96541_.f_91066_, this.f_96541_.m_91102_()));
-@@ -162,7 +_,7 @@
-       }).m_252987_(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).m_257505_(tooltip).m_253136_())).f_93623_ = flag;
-       (this.m_142416_(Button.m_253074_(Component.m_237115_("menu.online"), (p_210872_) -> {
-          this.m_96793_();
--      }).m_252987_(this.f_96543_ / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20).m_257505_(tooltip).m_253136_())).f_93623_ = flag;
-+      }).m_252987_(this.f_96543_ / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20).m_257505_(tooltip).m_253136_())).f_93623_ = flag;
+       SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (p_280830_) -> {
+          this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
+@@ -164,7 +_,7 @@
+       }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build())).active = flag;
+       (this.addRenderableWidget(Button.builder(Component.translatable("menu.online"), (p_210872_) -> {
+          this.realmsButtonClicked();
+-      }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20).tooltip(tooltip).build())).active = flag;
++      }).bounds(this.width / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20).tooltip(tooltip).build())).active = flag;
     }
  
     @Nullable
-@@ -244,6 +_,7 @@
-             this.f_232768_.m_280409_(p_282860_, i);
+@@ -248,6 +_,7 @@
+             this.warningLabel.render(p_282860_, i);
           }
  
-+         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.f_96547_, this.f_96543_, this.f_96544_, i);
-          if (this.f_96721_ != null) {
-             this.f_96721_.m_280672_(p_282860_, this.f_96543_, this.f_96547_, i);
++         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.font, this.width, this.height, i);
+          if (this.splash != null) {
+             this.splash.render(p_282860_, this.width, this.font, i);
           }
-@@ -259,7 +_,14 @@
-             s = s + I18n.m_118938_("menu.modded");
+@@ -263,7 +_,14 @@
+             s = s + I18n.get("menu.modded");
           }
  
--         p_282860_.m_280488_(this.f_96547_, s, 2, this.f_96544_ - 10, 16777215 | i);
+-         p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
 +         net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brdline, brd) ->
-+            p_282860_.m_280488_(this.f_96547_, brd, 2, this.f_96544_ - ( 10 + brdline * (this.f_96547_.f_92710_ + 1)), 16777215 | i)
++            p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
 +         );
 +
 +         net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
-+            p_282860_.m_280488_(this.f_96547_, brd, this.f_96543_ - f_96547_.m_92895_(brd), this.f_96544_ - (10 + (brdline + 1) * ( this.f_96547_.f_92710_ + 1)), 16777215 | i)
++            p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
 +         );
 +
  
-          for(GuiEventListener guieventlistener : this.m_6702_()) {
+          for(GuiEventListener guieventlistener : this.children()) {
              if (guieventlistener instanceof AbstractWidget) {
-@@ -272,6 +_,7 @@
+@@ -276,6 +_,7 @@
              RenderSystem.enableDepthTest();
-             this.f_96726_.m_88315_(p_282860_, p_281753_, p_283539_, p_282628_);
+             this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
           }
-+         if (f1 >= 1.0f) modUpdateNotification.m_88315_(p_282860_, p_281753_, p_283539_, p_282628_);
++         if (f1 >= 1.0f) modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
  
        }
     }

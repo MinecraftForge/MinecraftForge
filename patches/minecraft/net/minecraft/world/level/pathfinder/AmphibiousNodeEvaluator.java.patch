@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
 @@ -46,7 +_,7 @@
-       BlockPathTypes blockpathtypes1 = this.m_77567_(this.f_77313_, p_164677_.f_77271_, p_164677_.f_77272_, p_164677_.f_77273_);
+       BlockPathTypes blockpathtypes1 = this.getCachedBlockType(this.mob, p_164677_.x, p_164677_.y, p_164677_.z);
        int j;
-       if (this.f_77313_.m_21439_(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
--         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.m_274421_()));
-+         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.getStepHeight()));
+       if (this.mob.getPathfindingMalus(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
+-         j = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
++         j = Mth.floor(Math.max(1.0F, this.mob.getStepHeight()));
        } else {
           j = 0;
        }

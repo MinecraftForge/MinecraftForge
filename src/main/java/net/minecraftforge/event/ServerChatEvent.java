@@ -26,16 +26,14 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 @Cancelable
-public class ServerChatEvent extends Event
-{
+public class ServerChatEvent extends Event {
     private final ServerPlayer player;
     private final String username;
     private final String rawText;
     private Component message;
 
     @ApiStatus.Internal
-    public ServerChatEvent(ServerPlayer player, String rawText, Component message)
-    {
+    public ServerChatEvent(ServerPlayer player, String rawText, Component message) {
         this.player = player;
         this.username = player.getGameProfile().getName();
         this.rawText = rawText;
@@ -45,40 +43,35 @@ public class ServerChatEvent extends Event
     /**
      * {@return the player who initiated the chat action}
      */
-    public ServerPlayer getPlayer()
-    {
+    public ServerPlayer getPlayer() {
         return this.player;
     }
 
     /**
      * {@return the username of the player who initiated the chat action}
      */
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.username;
     }
 
     /**
      * {@return the original raw text of the player chat message}
      */
-    public String getRawText()
-    {
+    public String getRawText() {
         return this.rawText;
     }
 
     /**
      * Set the message to be sent to the relevant clients.
      */
-    public void setMessage(Component message)
-    {
+    public void setMessage(Component message) {
         this.message = Objects.requireNonNull(message);
     }
 
     /**
      * {@return the message that will be sent to the relevant clients, if the event is not cancelled}
      */
-    public Component getMessage()
-    {
+    public Component getMessage() {
         return this.message;
     }
 }

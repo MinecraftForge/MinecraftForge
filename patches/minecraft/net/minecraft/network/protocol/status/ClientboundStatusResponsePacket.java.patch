@@ -4,19 +4,19 @@
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.network.protocol.Packet;
  
--public record ClientboundStatusResponsePacket(ServerStatus f_134886_) implements Packet<ClientStatusPacketListener> {
-+public record ClientboundStatusResponsePacket(ServerStatus f_134886_, @org.jetbrains.annotations.Nullable String cachedStatus) implements Packet<ClientStatusPacketListener> {
-+   public ClientboundStatusResponsePacket(ServerStatus f_134886_) {
-+      this(f_134886_, null);
+-public record ClientboundStatusResponsePacket(ServerStatus status) implements Packet<ClientStatusPacketListener> {
++public record ClientboundStatusResponsePacket(ServerStatus status, @org.jetbrains.annotations.Nullable String cachedStatus) implements Packet<ClientStatusPacketListener> {
++   public ClientboundStatusResponsePacket(ServerStatus status) {
++      this(status, null);
 +   }
 +
     public ClientboundStatusResponsePacket(FriendlyByteBuf p_179834_) {
-       this(p_179834_.m_271872_(ServerStatus.f_271163_));
+       this(p_179834_.readJsonWithCodec(ServerStatus.CODEC));
     }
  
-    public void m_5779_(FriendlyByteBuf p_134899_) {
-+      if (cachedStatus != null) p_134899_.m_130070_(cachedStatus);
+    public void write(FriendlyByteBuf p_134899_) {
++      if (cachedStatus != null) p_134899_.writeUtf(cachedStatus);
 +      else
-       p_134899_.m_272073_(ServerStatus.f_271163_, this.f_134886_);
+       p_134899_.writeJsonWithCodec(ServerStatus.CODEC, this.status);
     }
  

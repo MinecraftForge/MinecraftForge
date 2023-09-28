@@ -1,27 +1,27 @@
 --- a/net/minecraft/data/loot/LootTableProvider.java
 +++ b/net/minecraft/data/loot/LootTableProvider.java
 @@ -43,7 +_,7 @@
-    public CompletableFuture<?> m_213708_(CachedOutput p_254060_) {
+    public CompletableFuture<?> run(CachedOutput p_254060_) {
        final Map<ResourceLocation, LootTable> map = Maps.newHashMap();
        Map<RandomSupport.Seed128bit, ResourceLocation> map1 = new Object2ObjectOpenHashMap<>();
--      this.f_124434_.forEach((p_288263_) -> {
+-      this.subProviders.forEach((p_288263_) -> {
 +      this.getTables().forEach((p_288263_) -> {
-          p_288263_.f_243941_().get().m_245126_((p_288259_, p_288260_) -> {
-             ResourceLocation resourcelocation1 = map1.put(RandomSequence.m_288221_(p_288259_), p_288259_);
+          p_288263_.provider().get().generate((p_288259_, p_288260_) -> {
+             ResourceLocation resourcelocation1 = map1.put(RandomSequence.seedForKey(p_288259_), p_288259_);
              if (resourcelocation1 != null) {
 @@ -63,13 +_,8 @@
           }
        });
  
--      for(ResourceLocation resourcelocation : Sets.difference(this.f_243940_, map.keySet())) {
--         validationcontext.m_79357_("Missing built-in table: " + resourcelocation);
+-      for(ResourceLocation resourcelocation : Sets.difference(this.requiredTables, map.keySet())) {
+-         validationcontext.reportProblem("Missing built-in table: " + resourcelocation);
 -      }
 +      validate(map, validationcontext);
  
 -      map.forEach((p_278897_, p_278898_) -> {
--         p_278898_.m_79136_(validationcontext.m_79355_(p_278898_.m_79122_()).m_278632_("{" + p_278897_ + "}", new LootDataId<>(LootDataType.f_278413_, p_278897_)));
+-         p_278898_.validate(validationcontext.setParams(p_278898_.getParamSet()).enterElement("{" + p_278897_ + "}", new LootDataId<>(LootDataType.TABLE, p_278897_)));
 -      });
-       Multimap<String, String> multimap = validationcontext.m_79352_();
+       Multimap<String, String> multimap = validationcontext.getProblems();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_124446_, p_124447_) -> {
 @@ -86,6 +_,20 @@
@@ -31,17 +31,17 @@
 +   }
 +
 +   public List<LootTableProvider.SubProviderEntry> getTables() {
-+      return this.f_124434_;
++      return this.subProviders;
 +   }
 +
 +   protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationcontext) {
-+      for(ResourceLocation resourcelocation : Sets.difference(this.f_243940_, map.keySet())) {
-+         validationcontext.m_79357_("Missing built-in table: " + resourcelocation);
++      for(ResourceLocation resourcelocation : Sets.difference(this.requiredTables, map.keySet())) {
++         validationcontext.reportProblem("Missing built-in table: " + resourcelocation);
 +      }
 +
 +      map.forEach((p_278897_, p_278898_) -> {
-+         p_278898_.m_79136_(validationcontext.m_79355_(p_278898_.m_79122_()).m_278632_("{" + p_278897_ + "}", new LootDataId<>(LootDataType.f_278413_, p_278897_)));
++         p_278898_.validate(validationcontext.setParams(p_278898_.getParamSet()).enterElement("{" + p_278897_ + "}", new LootDataId<>(LootDataType.TABLE, p_278897_)));
 +      });
     }
  
-    public final String m_6055_() {
+    public final String getName() {

@@ -3,9 +3,9 @@
 @@ -68,7 +_,7 @@
           WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
  
-          for(Variant variant : this.m_111848_()) {
--            BakedModel bakedmodel = p_249016_.m_245240_(variant.m_111883_(), variant);
-+            BakedModel bakedmodel = p_249016_.bake(variant.m_111883_(), variant, p_111851_);
-             weightedbakedmodel$builder.m_119559_(bakedmodel, variant.m_111886_());
+          for(Variant variant : this.getVariants()) {
+-            BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant);
++            BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant, p_111851_);
+             weightedbakedmodel$builder.add(bakedmodel, variant.getWeight());
           }
  

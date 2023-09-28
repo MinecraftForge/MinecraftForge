@@ -2,19 +2,19 @@
 +++ b/net/minecraft/commands/arguments/ObjectiveArgument.java
 @@ -31,7 +_,7 @@
  
-    public static Objective m_101960_(CommandContext<CommandSourceStack> p_101961_, String p_101962_) throws CommandSyntaxException {
+    public static Objective getObjective(CommandContext<CommandSourceStack> p_101961_, String p_101962_) throws CommandSyntaxException {
        String s = p_101961_.getArgument(p_101962_, String.class);
--      Scoreboard scoreboard = p_101961_.getSource().m_81377_().m_129896_();
+-      Scoreboard scoreboard = p_101961_.getSource().getServer().getScoreboard();
 +      Scoreboard scoreboard = p_101961_.getSource().getScoreboard();
-       Objective objective = scoreboard.m_83477_(s);
+       Objective objective = scoreboard.getObjective(s);
        if (objective == null) {
-          throw f_101953_.create(s);
+          throw ERROR_OBJECTIVE_NOT_FOUND.create(s);
 @@ -56,7 +_,7 @@
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_101974_, SuggestionsBuilder p_101975_) {
        S s = p_101974_.getSource();
        if (s instanceof CommandSourceStack commandsourcestack) {
--         return SharedSuggestionProvider.m_82970_(commandsourcestack.m_81377_().m_129896_().m_83474_(), p_101975_);
-+         return SharedSuggestionProvider.m_82970_(commandsourcestack.getScoreboard().m_83474_(), p_101975_);
+-         return SharedSuggestionProvider.suggest(commandsourcestack.getServer().getScoreboard().getObjectiveNames(), p_101975_);
++         return SharedSuggestionProvider.suggest(commandsourcestack.getScoreboard().getObjectiveNames(), p_101975_);
        } else if (s instanceof SharedSuggestionProvider sharedsuggestionprovider) {
-          return sharedsuggestionprovider.m_212155_(p_101974_);
+          return sharedsuggestionprovider.customSuggestion(p_101974_);
        } else {

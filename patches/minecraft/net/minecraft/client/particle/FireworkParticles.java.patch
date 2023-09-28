@@ -2,24 +2,24 @@
 +++ b/net/minecraft/client/particle/FireworkParticles.java
 @@ -172,7 +_,7 @@
              } else {
-                for(int i = 0; i < this.f_106752_.size(); ++i) {
-                   CompoundTag compoundtag = this.f_106752_.m_128728_(i);
--                  if (FireworkRocketItem.Shape.m_41237_(compoundtag.m_128445_("Type")) == FireworkRocketItem.Shape.LARGE_BALL) {
+                for(int i = 0; i < this.explosions.size(); ++i) {
+                   CompoundTag compoundtag = this.explosions.getCompound(i);
+-                  if (FireworkRocketItem.Shape.byId(compoundtag.getByte("Type")) == FireworkRocketItem.Shape.LARGE_BALL) {
 +                  if (FireworkRocketItem.Shape.getShape(compoundtag) == FireworkRocketItem.Shape.LARGE_BALL) {
                       flag1 = true;
                       break;
                    }
 @@ -192,7 +_,7 @@
-          if (this.f_106754_ % 2 == 0 && this.f_106752_ != null && this.f_106754_ / 2 < this.f_106752_.size()) {
-             int k = this.f_106754_ / 2;
-             CompoundTag compoundtag1 = this.f_106752_.m_128728_(k);
--            FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.m_41237_(compoundtag1.m_128445_("Type"));
+          if (this.life % 2 == 0 && this.explosions != null && this.life / 2 < this.explosions.size()) {
+             int k = this.life / 2;
+             CompoundTag compoundtag1 = this.explosions.getCompound(k);
+-            FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.byId(compoundtag1.getByte("Type"));
 +            FireworkRocketItem.Shape fireworkrocketitem$shape = FireworkRocketItem.Shape.getShape(compoundtag1);
-             boolean flag4 = compoundtag1.m_128471_("Trail");
-             boolean flag2 = compoundtag1.m_128471_("Flicker");
-             int[] aint = compoundtag1.m_128465_("Colors");
+             boolean flag4 = compoundtag1.getBoolean("Trail");
+             boolean flag2 = compoundtag1.getBoolean("Flicker");
+             int[] aint = compoundtag1.getIntArray("Colors");
 @@ -201,6 +_,10 @@
-                aint = new int[]{DyeColor.BLACK.m_41070_()};
+                aint = new int[]{DyeColor.BLACK.getFireworkColor()};
              }
  
 +            var factory = net.minecraftforge.client.FireworkShapeFactoryRegistry.get(fireworkrocketitem$shape);

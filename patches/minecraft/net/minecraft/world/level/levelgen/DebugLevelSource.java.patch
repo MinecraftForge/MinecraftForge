@@ -5,11 +5,11 @@
     }
  
 +   public static void initValidStates() {
-+      f_64114_ = StreamSupport.stream(BuiltInRegistries.f_256975_.spliterator(), false).flatMap(block -> block.m_49965_().m_61056_().stream()).collect(Collectors.toList());
-+      f_64115_ = Mth.m_14167_(Mth.m_14116_(f_64114_.size()));
-+      f_64116_ = Mth.m_14167_((float) (f_64114_.size() / f_64115_));
++      ALL_BLOCKS = StreamSupport.stream(BuiltInRegistries.BLOCK.spliterator(), false).flatMap(block -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toList());
++      GRID_WIDTH = Mth.ceil(Mth.sqrt(ALL_BLOCKS.size()));
++      GRID_HEIGHT = Mth.ceil((float) (ALL_BLOCKS.size() / GRID_WIDTH));
 +   }
 +
-    public void m_213679_(WorldGenRegion p_223970_, long p_223971_, RandomState p_223972_, BiomeManager p_223973_, StructureManager p_223974_, ChunkAccess p_223975_, GenerationStep.Carving p_223976_) {
+    public void applyCarvers(WorldGenRegion p_223970_, long p_223971_, RandomState p_223972_, BiomeManager p_223973_, StructureManager p_223974_, ChunkAccess p_223975_, GenerationStep.Carving p_223976_) {
     }
  

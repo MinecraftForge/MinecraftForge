@@ -1,109 +1,109 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
 @@ -116,12 +_,15 @@
-       p_194170_.put(BiomeColors.f_108791_, new BlockTintCache((p_194168_) -> {
-          return this.m_104762_(p_194168_, BiomeColors.f_108791_);
+       p_194170_.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache((p_194168_) -> {
+          return this.calculateBlockTint(p_194168_, BiomeColors.WATER_COLOR_RESOLVER);
        }));
 +      net.minecraftforge.client.ColorResolverManager.registerBlockTintCaches(ClientLevel.this, p_194170_);
     });
-    private final ClientChunkCache f_104559_;
-    private final Deque<Runnable> f_194122_ = Queues.newArrayDeque();
-    private int f_194123_;
-    private final BlockStatePredictionHandler f_233599_ = new BlockStatePredictionHandler();
-    private static final Set<Item> f_194124_ = Set.of(Items.f_42127_, Items.f_151033_);
+    private final ClientChunkCache chunkSource;
+    private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
+    private int serverSimulationDistance;
+    private final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
+    private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
 +   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
 +   private final net.minecraftforge.client.model.data.ModelDataManager modelDataManager = new net.minecraftforge.client.model.data.ModelDataManager(this);
  
-    public void m_233651_(int p_233652_) {
-       this.f_233599_.m_233856_(p_233652_, this);
+    public void handleBlockChangedAck(int p_233652_) {
+       this.blockStatePredictionHandler.endPredictionsUpTo(p_233652_, this);
 @@ -175,6 +_,8 @@
-       this.f_194123_ = p_205510_;
-       this.m_46465_();
-       this.m_46466_();
+       this.serverSimulationDistance = p_205510_;
+       this.updateSkyBrightness();
+       this.prepareWeather();
 +      this.gatherCapabilities();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(this));
     }
  
-    public void m_194171_(Runnable p_194172_) {
+    public void queueLightUpdate(Runnable p_194172_) {
 @@ -265,6 +_,7 @@
-       this.m_46473_().m_6521_(() -> {
-          return BuiltInRegistries.f_256780_.m_7981_(p_104640_.m_6095_()).toString();
+       this.getProfiler().push(() -> {
+          return BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString();
        });
 +      if (p_104640_.canUpdate())
-       p_104640_.m_8119_();
-       this.m_46473_().m_7238_();
+       p_104640_.tick();
+       this.getProfiler().pop();
  
-@@ -327,8 +_,10 @@
+@@ -320,8 +_,10 @@
     }
  
-    private void m_104739_(int p_104740_, Entity p_104741_) {
+    public void addEntity(Entity p_104741_) {
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_104741_, this))) return;
-       this.m_171642_(p_104740_, Entity.RemovalReason.DISCARDED);
-       this.f_171631_.m_157653_(p_104741_);
+       this.removeEntity(p_104741_.getId(), Entity.RemovalReason.DISCARDED);
+       this.entityStorage.addEntity(p_104741_);
 +      p_104741_.onAddedToWorld();
     }
  
-    public void m_171642_(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -455,6 +_,12 @@
+    public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
+@@ -448,6 +_,12 @@
     }
  
-    public void m_262808_(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
+    public void playSeededSound(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
 +      net.minecraftforge.event.PlayLevelSoundEvent.AtPosition event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263372_, p_263404_, p_263365_, p_263335_, p_263417_, p_263416_, p_263349_);
 +      if (event.isCanceled() || event.getSound() == null) return;
 +      p_263335_ = event.getSound();
 +      p_263417_ = event.getSource();
 +      p_263416_ = event.getNewVolume();
 +      p_263349_ = event.getNewPitch();
-       if (p_263381_ == this.f_104565_.f_91074_) {
-          this.m_233602_(p_263372_, p_263404_, p_263365_, p_263335_.m_203334_(), p_263417_, p_263416_, p_263349_, false, p_263408_);
+       if (p_263381_ == this.minecraft.player) {
+          this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
        }
-@@ -462,6 +_,12 @@
+@@ -455,6 +_,12 @@
     }
  
-    public void m_213890_(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
+    public void playSeededSound(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
 +      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_263536_, p_263518_, p_263487_, p_263538_, p_263524_);
 +      if (event.isCanceled() || event.getSound() == null) return;
 +      p_263518_ = event.getSound();
 +      p_263487_ = event.getSource();
 +      p_263538_ = event.getNewVolume();
 +      p_263524_ = event.getNewPitch();
-       if (p_263514_ == this.f_104565_.f_91074_) {
-          this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_263518_.m_203334_(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
+       if (p_263514_ == this.minecraft.player) {
+          this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
        }
-@@ -899,6 +_,7 @@
-       }
- 
-       public void m_104851_(Difficulty p_104852_) {
-+         net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_104852_, this.f_104840_);
-          this.f_104840_ = p_104852_;
+@@ -892,6 +_,7 @@
        }
  
-@@ -936,14 +_,46 @@
-             ClientLevel.this.f_104566_.add((AbstractClientPlayer)p_171712_);
+       public void setDifficulty(Difficulty p_104852_) {
++         net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_104852_, this.difficulty);
+          this.difficulty = p_104852_;
+       }
+ 
+@@ -929,14 +_,46 @@
+             ClientLevel.this.players.add((AbstractClientPlayer)p_171712_);
           }
  
 +         if (p_171712_.isMultipartEntity()) {
 +            for (net.minecraftforge.entity.PartEntity<?> part : p_171712_.getParts()) {
-+               ClientLevel.this.partEntities.put(part.m_19879_(), part);
++               ClientLevel.this.partEntities.put(part.getId(), part);
 +            }
 +         }
        }
  
-       public void m_141981_(Entity p_171716_) {
-          p_171716_.m_19877_();
-          ClientLevel.this.f_104566_.remove(p_171716_);
+       public void onTrackingEnd(Entity p_171716_) {
+          p_171716_.unRide();
+          ClientLevel.this.players.remove(p_171716_);
 +
 +         p_171716_.onRemovedFromWorld();
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_171716_, ClientLevel.this));
 +
 +         if (p_171716_.isMultipartEntity()) {
 +            for (net.minecraftforge.entity.PartEntity<?> part : p_171716_.getParts()) {
-+               ClientLevel.this.partEntities.remove(part.m_19879_());
++               ClientLevel.this.partEntities.remove(part.getId());
 +            }
 +         }
        }
  
-       public void m_214006_(Entity p_233660_) {
+       public void onSectionChange(Entity p_233660_) {
        }
 +   }
 +
@@ -119,7 +119,7 @@
 +
 +   @Override
 +   public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
-+      boolean constantAmbientLight = this.m_104583_().m_108885_();
++      boolean constantAmbientLight = this.effects().constantAmbientLight();
 +      if (!shade)
 +         return constantAmbientLight ? 0.9F : 1.0F;
 +      return net.minecraftforge.client.model.lighting.QuadLighter.calculateShade(normalX, normalY, normalZ, constantAmbientLight);

@@ -6,26 +6,26 @@
  
 -public class ResourceKey<T> {
 +public class ResourceKey<T> implements Comparable<ResourceKey<?>> {
-    private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> f_135775_ = (new MapMaker()).weakValues().makeMap();
-    private final ResourceLocation f_135776_;
-    private final ResourceLocation f_135777_;
+    private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = (new MapMaker()).weakValues().makeMap();
+    private final ResourceLocation registryName;
+    private final ResourceLocation location;
 @@ -55,6 +_,19 @@
  
-    public ResourceLocation m_211136_() {
-       return this.f_135776_;
+    public ResourceLocation registry() {
+       return this.registryName;
 +   }
 +
 +   public boolean equals(Object o) {
 +      if (this == o) return true;
 +      if (o == null || getClass() != o.getClass()) return false;
-+      return f_135777_.equals(((ResourceKey<?>) o).f_135777_) && f_135776_.equals(((ResourceKey<?>) o).f_135776_);
++      return location.equals(((ResourceKey<?>) o).location) && registryName.equals(((ResourceKey<?>) o).registryName);
 +   }
 +
 +   @Override
 +   public int compareTo(ResourceKey<?> o) {
-+      int ret = this.m_211136_().compareTo(o.m_211136_());
-+      if (ret == 0) ret = this.m_135782_().compareTo(o.m_135782_());
++      int ret = this.registry().compareTo(o.registry());
++      if (ret == 0) ret = this.location().compareTo(o.location());
 +      return ret;
     }
  
-    static record InternKey(ResourceLocation f_256880_, ResourceLocation f_257046_) {
+    static record InternKey(ResourceLocation registry, ResourceLocation location) {

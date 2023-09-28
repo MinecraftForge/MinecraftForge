@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/level/block/SculkSensorBlock.java
 @@ -252,9 +_,11 @@
  
-    public void m_213646_(BlockState p_222142_, ServerLevel p_222143_, BlockPos p_222144_, ItemStack p_222145_, boolean p_222146_) {
-       super.m_213646_(p_222142_, p_222143_, p_222144_, p_222145_, p_222146_);
+    public void spawnAfterBreak(BlockState p_222142_, ServerLevel p_222143_, BlockPos p_222144_, ItemStack p_222145_, boolean p_222146_) {
+       super.spawnAfterBreak(p_222142_, p_222143_, p_222144_, p_222145_, p_222146_);
 -      if (p_222146_) {
--         this.m_220822_(p_222143_, p_222144_, p_222145_, ConstantInt.m_146483_(5));
+-         this.tryDropExperience(p_222143_, p_222144_, p_222145_, ConstantInt.of(5));
 -      }
 -
 +

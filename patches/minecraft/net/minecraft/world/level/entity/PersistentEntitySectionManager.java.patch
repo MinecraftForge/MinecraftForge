@@ -1,68 +1,68 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 @@ -71,7 +_,16 @@
-       return this.m_157538_(p_157534_, false);
+       return this.addEntity(p_157534_, false);
     }
  
 +   public boolean addNewEntityWithoutEvent(T entity) {
 +      return this.addEntityWithoutEvent(entity, false);
 +   }
 +
-    private boolean m_157538_(T p_157539_, boolean p_157540_) {
-+      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(entity, entity.m_9236_(), p_157540_))) return false;
+    private boolean addEntity(T p_157539_, boolean p_157540_) {
++      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(entity, entity.level(), p_157540_))) return false;
 +      return addEntityWithoutEvent(p_157539_, p_157540_);
 +   }
 +
 +   private boolean addEntityWithoutEvent(T p_157539_, boolean p_157540_) {
-       if (!this.m_157557_(p_157539_)) {
+       if (!this.addEntityUuid(p_157539_)) {
           return false;
        } else {
 @@ -103,12 +_,14 @@
-    public void m_157552_(Stream<T> p_157553_) {
+    public void addLegacyChunkEntities(Stream<T> p_157553_) {
        p_157553_.forEach((p_157607_) -> {
-          this.m_157538_(p_157607_, true);
+          this.addEntity(p_157607_, true);
 +         if (p_157607_ instanceof Entity entity) entity.onAddedToWorld();
        });
     }
  
-    public void m_157559_(Stream<T> p_157560_) {
+    public void addWorldGenChunkEntities(Stream<T> p_157560_) {
        p_157560_.forEach((p_157605_) -> {
-          this.m_157538_(p_157605_, false);
+          this.addEntity(p_157605_, false);
 +         if (p_157605_ instanceof Entity entity) entity.onAddedToWorld();
        });
     }
  
 @@ -247,6 +_,7 @@
-       while((chunkentities = this.f_157500_.poll()) != null) {
-          chunkentities.m_156792_().forEach((p_157593_) -> {
-             this.m_157538_(p_157593_, true);
+       while((chunkentities = this.loadingInbox.poll()) != null) {
+          chunkentities.getEntities().forEach((p_157593_) -> {
+             this.addEntity(p_157593_, true);
 +            if (p_157593_ instanceof Entity entity) entity.onAddedToWorld();
           });
-          this.f_157498_.put(chunkentities.m_156791_().m_45588_(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
+          this.chunkLoadStatuses.put(chunkentities.getPos().toLong(), PersistentEntitySectionManager.ChunkLoadStatus.LOADED);
        }
 @@ -349,11 +_,13 @@
  
     class Callback implements EntityInLevelCallback {
-       private final T f_157609_;
+       private final T entity;
 +      private final Entity realEntity;
-       private long f_157610_;
-       private EntitySection<T> f_157611_;
+       private long currentSectionKey;
+       private EntitySection<T> currentSection;
  
        Callback(T p_157614_, long p_157615_, EntitySection<T> p_157616_) {
-          this.f_157609_ = p_157614_;
+          this.entity = p_157614_;
 +         this.realEntity = p_157614_ instanceof Entity ? (Entity) p_157614_ : null;
-          this.f_157610_ = p_157615_;
-          this.f_157611_ = p_157616_;
+          this.currentSectionKey = p_157615_;
+          this.currentSection = p_157616_;
        }
 @@ -370,9 +_,11 @@
-             PersistentEntitySectionManager.this.m_157509_(this.f_157610_, this.f_157611_);
-             EntitySection<T> entitysection = PersistentEntitySectionManager.this.f_157495_.m_156893_(i);
-             entitysection.m_188346_(this.f_157609_);
-+            long oldSectionKey = f_157610_;
-             this.f_157611_ = entitysection;
-             this.f_157610_ = i;
-             this.m_157620_(visibility, entitysection.m_156848_());
-+            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);
+             PersistentEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
+             EntitySection<T> entitysection = PersistentEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
+             entitysection.add(this.entity);
++            long oldSectionKey = currentSectionKey;
+             this.currentSection = entitysection;
+             this.currentSectionKey = i;
+             this.updateStatus(visibility, entitysection.getStatus());
++            if (this.realEntity != null) net.minecraftforge.event.ForgeEventFactory.onEntityEnterSection(this.realEntity, oldSectionKey, i);
           }
  
        }

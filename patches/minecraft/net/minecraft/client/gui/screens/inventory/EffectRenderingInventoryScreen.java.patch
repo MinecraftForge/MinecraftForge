@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectRenderingInventoryScreen.java
-@@ -41,12 +_,17 @@
-       Collection<MobEffectInstance> collection = this.f_96541_.f_91074_.m_21220_();
+@@ -45,12 +_,17 @@
+       Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
        if (!collection.isEmpty() && j >= 32) {
           boolean flag = j >= 120;
 +         var event = net.minecraftforge.client.ForgeHooksClient.onScreenPotionSize(this, j, !flag, i);
@@ -16,11 +16,11 @@
 -         Iterable<MobEffectInstance> iterable = Ordering.natural().sortedCopy(collection);
 +
 +         Iterable<MobEffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.ForgeHooksClient::shouldRenderEffect).sorted().collect(java.util.stream.Collectors.toList());
-          this.m_280172_(p_281945_, i, k, iterable, flag);
-          this.m_280301_(p_281945_, i, k, iterable, flag);
+          this.renderBackgrounds(p_281945_, i, k, iterable, flag);
+          this.renderIcons(p_281945_, i, k, iterable, flag);
           if (flag) {
-@@ -92,6 +_,11 @@
-       int i = this.f_97736_;
+@@ -96,6 +_,11 @@
+       int i = this.topPos;
  
        for(MobEffectInstance mobeffectinstance : p_282642_) {
 +         var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
@@ -28,11 +28,11 @@
 +            i += p_282291_;
 +            continue;
 +         }
-          MobEffect mobeffect = mobeffectinstance.m_19544_();
-          TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.m_118732_(mobeffect);
-          p_282745_.m_280159_(p_282521_ + (p_281536_ ? 6 : 7), i + 7, 0, 18, 18, textureatlassprite);
-@@ -104,6 +_,11 @@
-       int i = this.f_97736_;
+          MobEffect mobeffect = mobeffectinstance.getEffect();
+          TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(mobeffect);
+          p_282745_.blit(p_282521_ + (p_281536_ ? 6 : 7), i + 7, 0, 18, 18, textureatlassprite);
+@@ -108,6 +_,11 @@
+       int i = this.topPos;
  
        for(MobEffectInstance mobeffectinstance : p_281986_) {
 +         var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(mobeffectinstance);
@@ -40,6 +40,6 @@
 +            i += p_282057_;
 +            continue;
 +         }
-          Component component = this.m_194000_(mobeffectinstance);
-          p_281462_.m_280430_(this.f_96547_, component, p_283484_ + 10 + 18, i + 6, 16777215);
-          Component component1 = MobEffectUtil.m_267641_(mobeffectinstance, 1.0F);
+          Component component = this.getEffectName(mobeffectinstance);
+          p_281462_.drawString(this.font, component, p_283484_ + 10 + 18, i + 6, 16777215);
+          Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F);

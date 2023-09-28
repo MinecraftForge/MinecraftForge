@@ -8,25 +8,25 @@
 +   }
 +
 +   protected void registerDefaultState() {
-       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_52428_, Boolean.valueOf(false)).m_61124_(f_52427_, RailShape.NORTH_SOUTH).m_61124_(f_152149_, Boolean.valueOf(false)));
+       this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, Boolean.valueOf(false)).setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
  
 @@ -135,7 +_,9 @@
-             return list.get(0).m_38534_().m_45436_();
+             return list.get(0).getCommandBlock().getSuccessCount();
           }
  
--         List<AbstractMinecart> list1 = this.m_52436_(p_52455_, p_52456_, AbstractMinecart.class, EntitySelector.f_20405_);
-+         List<AbstractMinecart> carts = this.m_52436_(p_52455_, p_52456_, AbstractMinecart.class, e -> e.m_6084_());
+-         List<AbstractMinecart> list1 = this.getInteractingMinecartOfType(p_52455_, p_52456_, AbstractMinecart.class, EntitySelector.CONTAINER_ENTITY_SELECTOR);
++         List<AbstractMinecart> carts = this.getInteractingMinecartOfType(p_52455_, p_52456_, AbstractMinecart.class, e -> e.isAlive());
 +         if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
-+         List<AbstractMinecart> list1 = carts.stream().filter(EntitySelector.f_20405_).collect(java.util.stream.Collectors.toList());
++         List<AbstractMinecart> list1 = carts.stream().filter(EntitySelector.CONTAINER_ENTITY_SELECTOR).collect(java.util.stream.Collectors.toList());
           if (!list1.isEmpty()) {
-             return AbstractContainerMenu.m_38938_((Container)list1.get(0));
+             return AbstractContainerMenu.getRedstoneSignalFromContainer((Container)list1.get(0));
           }
 @@ -270,6 +_,6 @@
     }
  
-    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_52469_) {
--      p_52469_.m_61104_(f_52427_, f_52428_, f_152149_);
-+      p_52469_.m_61104_(m_7978_(), f_52428_, f_152149_);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_52469_) {
+-      p_52469_.add(SHAPE, POWERED, WATERLOGGED);
++      p_52469_.add(getShapeProperty(), POWERED, WATERLOGGED);
     }
  }

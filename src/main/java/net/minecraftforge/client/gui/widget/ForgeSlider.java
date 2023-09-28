@@ -17,8 +17,7 @@ import java.text.DecimalFormat;
 /**
  * Slider widget implementation which allows inputting values in a certain range with optional step size.
  */
-public class ForgeSlider extends AbstractSliderButton
-{
+public class ForgeSlider extends AbstractSliderButton {
     protected Component prefix;
     protected Component suffix;
 
@@ -46,8 +45,7 @@ public class ForgeSlider extends AbstractSliderButton
      * @param precision Only used when {@code stepSize} is 0. Limited to a maximum of 4 (inclusive).
      * @param drawString Should text be displayed on the widget
      */
-    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString)
-    {
+    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString) {
         super(x, y, width, height, Component.empty(), 0D);
         this.prefix = prefix;
         this.suffix = suffix;
@@ -57,8 +55,7 @@ public class ForgeSlider extends AbstractSliderButton
         this.value = this.snapToNearest((currentValue - minValue) / (maxValue - minValue));
         this.drawString = drawString;
 
-        if (stepSize == 0D)
-        {
+        if (stepSize == 0D) {
             precision = Math.min(precision, 4);
 
             StringBuilder builder = new StringBuilder("0");
@@ -70,13 +67,9 @@ public class ForgeSlider extends AbstractSliderButton
                 builder.append('0');
 
             this.format = new DecimalFormat(builder.toString());
-        }
-        else if (Mth.equal(this.stepSize, Math.floor(this.stepSize)))
-        {
+        } else if (Mth.equal(this.stepSize, Math.floor(this.stepSize))) {
             this.format = new DecimalFormat("0");
-        }
-        else
-        {
+        } else {
             this.format = new DecimalFormat(Double.toString(this.stepSize).replaceAll("\\d", "0"));
         }
 
@@ -86,68 +79,58 @@ public class ForgeSlider extends AbstractSliderButton
     /**
      * Overload with {@code stepSize} set to 1, useful for sliders with whole number values.
      */
-    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString)
-    {
+    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString) {
         this(x, y, width, height, prefix, suffix, minValue, maxValue, currentValue, 1D, 0, drawString);
     }
 
     /**
      * @return Current slider value as a double
      */
-    public double getValue()
-    {
+    public double getValue() {
         return this.value * (maxValue - minValue) + minValue;
     }
 
     /**
      * @return Current slider value as an long
      */
-    public long getValueLong()
-    {
+    public long getValueLong() {
         return Math.round(this.getValue());
     }
 
     /**
      * @return Current slider value as an int
      */
-    public int getValueInt()
-    {
+    public int getValueInt() {
         return (int) this.getValueLong();
     }
 
     /**
      * @param value The new slider value
      */
-    public void setValue(double value)
-    {
+    public void setValue(double value) {
         this.value = this.snapToNearest((value - this.minValue) / (this.maxValue - this.minValue));
         this.updateMessage();
     }
 
-    public String getValueString()
-    {
+    public String getValueString() {
         return this.format.format(this.getValue());
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY)
-    {
+    public void onClick(double mouseX, double mouseY) {
         this.setValueFromMouse(mouseX);
     }
 
     @Override
-    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY)
-    {
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
         super.onDrag(mouseX, mouseY, dragX, dragY);
         this.setValueFromMouse(mouseX);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers)
-    {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         boolean flag = keyCode == GLFW.GLFW_KEY_LEFT;
-        if (flag || keyCode == GLFW.GLFW_KEY_RIGHT)
-        {
+        if (flag || keyCode == GLFW.GLFW_KEY_RIGHT) {
             if (this.minValue > this.maxValue)
                 flag = !flag;
             float f = flag ? -1F : 1F;
@@ -160,16 +143,14 @@ public class ForgeSlider extends AbstractSliderButton
         return false;
     }
 
-    private void setValueFromMouse(double mouseX)
-    {
+    private void setValueFromMouse(double mouseX) {
         this.setSliderValue((mouseX - (this.getX() + 4)) / (this.width - 8));
     }
 
     /**
      * @param value Percentage of slider range
      */
-    private void setSliderValue(double value)
-    {
+    private void setSliderValue(double value) {
         double oldValue = this.value;
         this.value = this.snapToNearest(value);
         if (!Mth.equal(oldValue, this.value))
@@ -182,8 +163,7 @@ public class ForgeSlider extends AbstractSliderButton
      * Snaps the value, so that the displayed value is the nearest multiple of {@code stepSize}.
      * If {@code stepSize} is 0, no snapping occurs.
      */
-    private double snapToNearest(double value)
-    {
+    private double snapToNearest(double value) {
         if(stepSize <= 0D)
             return Mth.clamp(value, 0D, 1D);
 
@@ -192,40 +172,29 @@ public class ForgeSlider extends AbstractSliderButton
         value = (stepSize * Math.round(value / stepSize));
 
         if (this.minValue > this.maxValue)
-        {
             value = Mth.clamp(value, this.maxValue, this.minValue);
-        }
         else
-        {
             value = Mth.clamp(value, this.minValue, this.maxValue);
-        }
 
         return Mth.map(value, this.minValue, this.maxValue, 0D, 1D);
     }
 
     @Override
-    protected void updateMessage()
-    {
+    protected void updateMessage() {
         if (this.drawString)
-        {
             this.setMessage(Component.literal("").append(prefix).append(this.getValueString()).append(suffix));
-        }
         else
-        {
             this.setMessage(Component.empty());
-        }
     }
 
     @Override
     protected void applyValue() {}
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
-    {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         final Minecraft mc = Minecraft.getInstance();
-        guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX(), this.getY(), 0, getTextureY(), this.width, this.height, 200, 20, 2, 3, 2, 2);
-
-        guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, getHandleTextureY(), 8, this.height, 200, 20 , 2, 3, 2, 2);
+        guiGraphics.blitSprite(this.getSprite(), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        guiGraphics.blitSprite(this.getHandleSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.getHeight());
 
         renderScrollingString(guiGraphics, mc.font, 2, getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
     }

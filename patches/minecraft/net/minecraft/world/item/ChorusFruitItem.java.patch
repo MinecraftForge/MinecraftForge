@@ -3,12 +3,12 @@
 @@ -33,8 +_,10 @@
              }
  
-             Vec3 vec3 = p_40714_.m_20182_();
--            if (p_40714_.m_20984_(d3, d4, d5, true)) {
-                p_40713_.m_214171_(GameEvent.f_238175_, vec3, GameEvent.Context.m_223717_(p_40714_));
+             Vec3 vec3 = p_40714_.position();
+-            if (p_40714_.randomTeleport(d3, d4, d5, true)) {
+                p_40713_.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(p_40714_));
 +            net.minecraftforge.event.entity.EntityTeleportEvent.ChorusFruit event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(p_40714_, d3, d4, d5);
 +            if (event.isCanceled()) return itemstack;
-+            if (p_40714_.m_20984_(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
-                SoundEvent soundevent = p_40714_ instanceof Fox ? SoundEvents.f_11953_ : SoundEvents.f_11757_;
-                p_40713_.m_6263_((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
-                p_40714_.m_5496_(soundevent, 1.0F, 1.0F);
++            if (p_40714_.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
+                SoundEvent soundevent = p_40714_ instanceof Fox ? SoundEvents.FOX_TELEPORT : SoundEvents.CHORUS_FRUIT_TELEPORT;
+                p_40713_.playSound((Player)null, d0, d1, d2, soundevent, SoundSource.PLAYERS, 1.0F, 1.0F);
+                p_40714_.playSound(soundevent, 1.0F, 1.0F);

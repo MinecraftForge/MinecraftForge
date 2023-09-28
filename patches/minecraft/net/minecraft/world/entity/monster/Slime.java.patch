@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -124,6 +_,8 @@
-       if (this.m_20096_() && !this.f_33583_) {
-          int i = this.m_33632_();
+@@ -130,6 +_,8 @@
+       if (this.onGround() && !this.wasOnGround) {
+          int i = this.getSize();
  
 +         // Forge: Don't spawn particles if it's handled by the implementation itself
 +         if (!spawnCustomParticles())
           for(int j = 0; j < i * 8; ++j) {
-             float f = this.f_19796_.m_188501_() * ((float)Math.PI * 2F);
-             float f1 = this.f_19796_.m_188501_() * 0.5F + 0.5F;
-@@ -319,6 +_,12 @@
-    public EntityDimensions m_6972_(Pose p_33597_) {
-       return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
+             float f = this.random.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.random.nextFloat() * 0.5F + 0.5F;
+@@ -329,6 +_,12 @@
+    public EntityDimensions getDimensions(Pose p_33597_) {
+       return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }
 +
 +   /**
@@ -21,4 +21,4 @@
 +   protected boolean spawnCustomParticles() { return false; }
  
     static class SlimeAttackGoal extends Goal {
-       private final Slime f_33645_;
+       private final Slime slime;

@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartSpawner.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartSpawner.java
 @@ -16,6 +_,12 @@
-       public void m_142523_(Level p_150342_, BlockPos p_150343_, int p_150344_) {
-          p_150342_.m_7605_(MinecartSpawner.this, (byte)p_150344_);
+       public void broadcastEvent(Level p_150342_, BlockPos p_150343_, int p_150344_) {
+          p_150342_.broadcastEntityEvent(MinecartSpawner.this, (byte)p_150344_);
        }
 +
 +      @Override
@@ -11,5 +11,5 @@
 +         return MinecartSpawner.this;
 +      }
     };
-    private final Runnable f_150333_;
+    private final Runnable ticker;
  

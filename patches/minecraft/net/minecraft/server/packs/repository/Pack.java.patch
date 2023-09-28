@@ -1,57 +1,50 @@
 --- a/net/minecraft/server/packs/repository/Pack.java
 +++ b/net/minecraft/server/packs/repository/Pack.java
-@@ -27,6 +_,7 @@
-    private final Pack.Position f_10406_;
-    private final boolean f_10407_;
-    private final boolean f_10408_;
+@@ -28,6 +_,7 @@
+    private final Pack.Position defaultPosition;
+    private final boolean required;
+    private final boolean fixedPosition;
 +   private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely
-    private final PackSource f_10409_;
+    private final PackSource packSource;
  
     @Nullable
 @@ -50,6 +_,7 @@
-       this.f_10406_ = p_251298_;
-       this.f_10408_ = p_249753_;
-       this.f_10409_ = p_251608_;
+       this.defaultPosition = p_251298_;
+       this.fixedPosition = p_249753_;
+       this.packSource = p_251608_;
 +      this.hidden = p_250162_.hidden();
     }
  
     @Nullable
-@@ -62,7 +_,8 @@
-          } else {
-             FeatureFlagsMetadataSection featureflagsmetadatasection = packresources.m_5550_(FeatureFlagsMetadataSection.f_244642_);
-             FeatureFlagSet featureflagset = featureflagsmetadatasection != null ? featureflagsmetadatasection.f_244197_() : FeatureFlagSet.m_246902_();
--            return new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.m_10374_(), featureflagset);
-+            // Forge: Allow separate pack formats for server data and client resources and setting isHidden
-+            return new Pack.Info(packmetadatasection.m_10373_(), packmetadatasection.getPackFormat(PackType.SERVER_DATA), packmetadatasection.getPackFormat(PackType.CLIENT_RESOURCES), featureflagset, packresources.isHidden());
+@@ -66,7 +_,7 @@
+             PackCompatibility packcompatibility = PackCompatibility.forVersion(inclusiverange, p_299232_);
+             OverlayMetadataSection overlaymetadatasection = packresources.getMetadataSection(OverlayMetadataSection.TYPE);
+             List<String> list = overlaymetadatasection != null ? overlaymetadatasection.overlaysForVersion(p_299232_) : List.of();
+-            return new Pack.Info(packmetadatasection.description(), packcompatibility, featureflagset, list);
++            return new Pack.Info(packmetadatasection.description(), packcompatibility, featureflagset, list, packresources.isHidden());
           }
        } catch (Exception exception) {
-          f_10399_.warn("Failed to read pack metadata", (Throwable)exception);
-@@ -116,6 +_,8 @@
-       return this.f_10409_;
+          LOGGER.warn("Failed to read pack {} metadata", p_250591_, exception);
+@@ -135,6 +_,10 @@
+       return this.packSource;
     }
  
-+   public boolean isHidden() { return hidden; }
++   public boolean isHidden() {
++      return hidden;
++   }
 +
     public boolean equals(Object p_10448_) {
        if (this == p_10448_) {
           return true;
-@@ -131,9 +_,17 @@
-       return this.f_10401_.hashCode();
+@@ -150,7 +_,10 @@
+       return this.id.hashCode();
     }
  
--   public static record Info(Component f_244592_, int f_244194_, FeatureFlagSet f_244041_) {
-+   public static record Info(Component f_244592_, int dataFormat, int resourceFormat, FeatureFlagSet f_244041_, boolean hidden) {
-+      public Info(Component f_244592_, int f_244194_, FeatureFlagSet f_244041_) {
-+         this(f_244592_, f_244194_, f_244194_, f_244041_, false);
+-   public static record Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
++   public static record Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays, boolean hidden) {
++      public Info(Component description, PackCompatibility compatibility, FeatureFlagSet requestedFeatures, List<String> overlays) {
++         this(description, compatibility, requestedFeatures, overlays, false);
 +      }
-+
-+      public int getFormat(PackType type) {
-+         return type == PackType.SERVER_DATA ? this.dataFormat : this.resourceFormat;
-+      }
-+
-       public PackCompatibility m_246438_(PackType p_249204_) {
--         return PackCompatibility.m_143882_(this.f_244194_, p_249204_);
-+         return PackCompatibility.m_143882_(getFormat(p_249204_), p_249204_);
-       }
     }
  
+    public static enum Position {

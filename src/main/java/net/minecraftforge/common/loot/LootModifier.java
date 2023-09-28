@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.loot;
 
+import java.util.Arrays;
 import java.util.function.Predicate;
 
 import com.mojang.datafixers.Products;
@@ -21,8 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * A base implementation of a Global Loot Modifier for modders to extend.
  * Takes care of ILootCondition matching and comes with the base codec to extend.
  */
-public abstract class LootModifier implements IGlobalLootModifier
-{
+public abstract class LootModifier implements IGlobalLootModifier {
     protected final LootItemCondition[] conditions;
     private final Predicate<LootContext> combinedConditions;
 
@@ -36,8 +36,7 @@ public abstract class LootModifier implements IGlobalLootModifier
      * Otherwise can follow this with #and() to add more fields.
      * Examples: Forge Test Subclasses or {@link BendingTrunkPlacer#CODEC}
      */
-    protected static <T extends LootModifier> Products.P1<RecordCodecBuilder.Mu<T>, LootItemCondition[]> codecStart(RecordCodecBuilder.Instance<T> instance)
-    {
+    protected static <T extends LootModifier> Products.P1<RecordCodecBuilder.Mu<T>, LootItemCondition[]> codecStart(RecordCodecBuilder.Instance<T> instance) {
         return instance.group(LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(lm -> lm.conditions));
     }
 
@@ -45,16 +44,14 @@ public abstract class LootModifier implements IGlobalLootModifier
      * Constructs a LootModifier.
      * @param conditionsIn the ILootConditions that need to be matched before the loot is modified.
      */
-    protected LootModifier(LootItemCondition[] conditionsIn)
-    {
+    protected LootModifier(LootItemCondition[] conditionsIn) {
         this.conditions = conditionsIn;
-        this.combinedConditions = LootItemConditions.andConditions(conditionsIn);
+        this.combinedConditions = LootItemConditions.andConditions(Arrays.asList(conditionsIn));
     }
 
     @NotNull
     @Override
-    public final ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
-    {
+    public final ObjectArrayList<ItemStack> apply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         return this.combinedConditions.test(context) ? this.doApply(generatedLoot, context) : generatedLoot;
     }
 

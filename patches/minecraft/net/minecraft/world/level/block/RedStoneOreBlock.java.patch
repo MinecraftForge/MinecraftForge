@@ -2,17 +2,17 @@
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
 @@ -74,11 +_,11 @@
  
-    public void m_213646_(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
-       super.m_213646_(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
--      if (p_221911_ && EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_221910_) == 0) {
--         int i = 1 + p_221908_.f_46441_.m_188503_(5);
--         this.m_49805_(p_221908_, p_221909_, i);
+    public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
+       super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
+-      if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
+-         int i = 1 + p_221908_.random.nextInt(5);
+-         this.popExperience(p_221908_, p_221909_, i);
 -      }
 +   }
  
 +   @Override
 +   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
-+      return silktouch == 0 ? 1 + randomSource.m_188503_(5) : 0;
++      return silktouch == 0 ? 1 + randomSource.nextInt(5) : 0;
     }
  
-    public void m_214162_(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
+    public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {

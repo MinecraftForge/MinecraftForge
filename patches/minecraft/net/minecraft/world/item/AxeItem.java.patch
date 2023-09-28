@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/item/AxeItem.java
 +++ b/net/minecraft/world/item/AxeItem.java
 @@ -32,11 +_,9 @@
-       BlockPos blockpos = p_40529_.m_8083_();
-       Player player = p_40529_.m_43723_();
-       BlockState blockstate = level.m_8055_(blockpos);
--      Optional<BlockState> optional = this.m_150690_(blockstate);
--      Optional<BlockState> optional1 = WeatheringCopper.m_154899_(blockstate);
--      Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.f_150864_.get().get(blockstate.m_60734_())).map((p_150694_) -> {
--         return p_150694_.m_152465_(blockstate);
+       BlockPos blockpos = p_40529_.getClickedPos();
+       Player player = p_40529_.getPlayer();
+       BlockState blockstate = level.getBlockState(blockpos);
+-      Optional<BlockState> optional = this.getStripped(blockstate);
+-      Optional<BlockState> optional1 = WeatheringCopper.getPrevious(blockstate);
+-      Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(blockstate.getBlock())).map((p_150694_) -> {
+-         return p_150694_.withPropertiesOf(blockstate);
 -      });
 +      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP, false));
 +      Optional<BlockState> optional1 = optional.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_SCRAPE, false));
 +      Optional<BlockState> optional2 = optional.isPresent() || optional1.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_WAX_OFF, false));
-       ItemStack itemstack = p_40529_.m_43722_();
+       ItemStack itemstack = p_40529_.getItemInHand();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {
 @@ -71,9 +_,20 @@
@@ -21,13 +21,13 @@
  
 +   @org.jetbrains.annotations.Nullable
 +   public static BlockState getAxeStrippingState(BlockState originalState) {
-+      Block block = f_150683_.get(originalState.m_60734_());
-+      return block != null ? block.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, originalState.m_61143_(RotatedPillarBlock.f_55923_)) : null;
++      Block block = STRIPPABLES.get(originalState.getBlock());
++      return block != null ? block.defaultBlockState().setValue(RotatedPillarBlock.AXIS, originalState.getValue(RotatedPillarBlock.AXIS)) : null;
 +   }
 +
-    private Optional<BlockState> m_150690_(BlockState p_150691_) {
-       return Optional.ofNullable(f_150683_.get(p_150691_.m_60734_())).map((p_150689_) -> {
-          return p_150689_.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, p_150691_.m_61143_(RotatedPillarBlock.f_55923_));
+    private Optional<BlockState> getStripped(BlockState p_150691_) {
+       return Optional.ofNullable(STRIPPABLES.get(p_150691_.getBlock())).map((p_150689_) -> {
+          return p_150689_.defaultBlockState().setValue(RotatedPillarBlock.AXIS, p_150691_.getValue(RotatedPillarBlock.AXIS));
        });
 +   }
 +

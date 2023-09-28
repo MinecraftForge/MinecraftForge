@@ -2,10 +2,10 @@
 +++ b/net/minecraft/network/protocol/game/ServerboundSetCreativeModeSlotPacket.java
 @@ -24,7 +_,7 @@
  
-    public void m_5779_(FriendlyByteBuf p_134563_) {
-       p_134563_.writeShort(this.f_134549_);
--      p_134563_.m_130055_(this.f_134550_);
-+      p_134563_.writeItemStack(this.f_134550_, false); //Forge: Include full tag for C->S
+    public void write(FriendlyByteBuf p_134563_) {
+       p_134563_.writeShort(this.slotNum);
+-      p_134563_.writeItem(this.itemStack);
++      p_134563_.writeItemStack(this.itemStack, false); //Forge: Include full tag for C->S
     }
  
-    public int m_134561_() {
+    public int getSlotNum() {

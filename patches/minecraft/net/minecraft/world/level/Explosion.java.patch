@@ -1,52 +1,52 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
 @@ -56,6 +_,7 @@
-    private final ExplosionDamageCalculator f_46019_;
-    private final ObjectArrayList<BlockPos> f_46020_ = new ObjectArrayList<>();
-    private final Map<Player, Vec3> f_46021_ = Maps.newHashMap();
+    private final ExplosionDamageCalculator damageCalculator;
+    private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
+    private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
 +   private final Vec3 position;
  
     public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
        this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
 @@ -81,6 +_,7 @@
-       this.f_46010_ = p_46060_;
-       this.f_46018_ = p_46053_ == null ? p_46051_.m_269111_().m_269093_(this) : p_46053_;
-       this.f_46019_ = p_46054_ == null ? this.m_46062_(p_46052_) : p_46054_;
-+      this.position = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
+       this.blockInteraction = p_46060_;
+       this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this) : p_46053_;
+       this.damageCalculator = p_46054_ == null ? this.makeDamageCalculator(p_46052_) : p_46054_;
++      this.position = new Vec3(this.x, this.y, this.z);
     }
  
-    private ExplosionDamageCalculator m_46062_(@Nullable Entity p_46063_) {
+    private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity p_46063_) {
 @@ -176,6 +_,7 @@
-       int j2 = Mth.m_14107_(this.f_46015_ - (double)f2 - 1.0D);
-       int j1 = Mth.m_14107_(this.f_46015_ + (double)f2 + 1.0D);
-       List<Entity> list = this.f_46012_.m_45933_(this.f_46016_, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
-+      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.f_46012_, this, list, f2);
-       Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
+       int j2 = Mth.floor(this.z - (double)f2 - 1.0D);
+       int j1 = Mth.floor(this.z + (double)f2 + 1.0D);
+       List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
+       Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
-       for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -245,7 +_,7 @@
-             if (!blockstate.m_60795_()) {
-                BlockPos blockpos1 = blockpos.m_7949_();
-                this.f_46012_.m_46473_().m_6180_("explosion_blocks");
--               if (block.m_6903_(this)) {
-+               if (blockstate.canDropFromExplosion(this.f_46012_, blockpos, this)) {
-                   Level $$9 = this.f_46012_;
+       for(Entity entity : list) {
+@@ -244,7 +_,7 @@
+             if (!blockstate.isAir()) {
+                BlockPos blockpos1 = blockpos.immutable();
+                this.level.getProfiler().push("explosion_blocks");
+-               if (block.dropFromExplosion(this)) {
++               if (blockstate.canDropFromExplosion(this.level, blockpos, this)) {
+                   Level $$9 = this.level;
                    if ($$9 instanceof ServerLevel) {
                       ServerLevel serverlevel = (ServerLevel)$$9;
-@@ -262,8 +_,7 @@
+@@ -261,8 +_,7 @@
                    }
                 }
  
--               this.f_46012_.m_7731_(blockpos, Blocks.f_50016_.m_49966_(), 3);
--               block.m_7592_(this.f_46012_, blockpos, this);
-+               blockstate.onBlockExploded(this.f_46012_, blockpos, this);
-                this.f_46012_.m_46473_().m_7238_();
+-               this.level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 3);
+-               block.wasExploded(this.level, blockpos, this);
++               blockstate.onBlockExploded(this.level, blockpos, this);
+                this.level.getProfiler().pop();
              }
           }
-@@ -354,6 +_,15 @@
+@@ -353,6 +_,15 @@
  
-    public List<BlockPos> m_46081_() {
-       return this.f_46020_;
+    public List<BlockPos> getToBlow() {
+       return this.toBlow;
 +   }
 +
 +   public Vec3 getPosition() {
@@ -55,7 +55,7 @@
 +
 +   @Nullable
 +   public Entity getExploder() {
-+      return this.f_46016_;
++      return this.source;
     }
  
     public static enum BlockInteraction {

@@ -1,34 +1,34 @@
 --- a/net/minecraft/core/RegistrySetBuilder.java
 +++ b/net/minecraft/core/RegistrySetBuilder.java
 @@ -37,6 +_,10 @@
-       return this.m_255162_(p_256261_, Lifecycle.stable(), p_256010_);
+       return this.add(p_256261_, Lifecycle.stable(), p_256010_);
     }
  
 +   public List<? extends ResourceKey<? extends Registry<?>>> getEntryKeys() {
-+      return this.f_254732_.stream().map(RegistrySetBuilder.RegistryStub::f_254738_).toList();
++      return this.entries.stream().map(RegistrySetBuilder.RegistryStub::key).toList();
 +   }
 +
-    private RegistrySetBuilder.BuildState m_254900_(RegistryAccess p_256400_) {
-       RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.m_255369_(p_256400_, this.f_254732_.stream().map(RegistrySetBuilder.RegistryStub::f_254738_));
-       this.f_254732_.forEach((p_255629_) -> {
+    private RegistrySetBuilder.BuildState createState(RegistryAccess p_256400_) {
+       RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.create(p_256400_, this.entries.stream().map(RegistrySetBuilder.RegistryStub::key));
+       this.entries.forEach((p_255629_) -> {
 @@ -87,7 +_,7 @@
           RegistrySetBuilder.UniversalLookup registrysetbuilder$universallookup = new RegistrySetBuilder.UniversalLookup(registrysetbuilder$compositeowner);
           ImmutableMap.Builder<ResourceLocation, HolderGetter<?>> builder = ImmutableMap.builder();
-          p_255995_.m_206193_().forEach((p_258197_) -> {
--            builder.put(p_258197_.f_206233_().m_135782_(), RegistrySetBuilder.m_254882_(p_258197_.f_206234_().m_255303_()));
-+            builder.put(p_258197_.f_206233_().m_135782_(), net.minecraftforge.common.ForgeHooks.wrapRegistryLookup(p_258197_.f_206234_().m_255303_()));
+          p_255995_.registries().forEach((p_258197_) -> {
+-            builder.put(p_258197_.key().location(), RegistrySetBuilder.wrapContextLookup(p_258197_.value().asLookup()));
++            builder.put(p_258197_.key().location(), net.minecraftforge.common.ForgeHooks.wrapRegistryLookup(p_258197_.value().asLookup()));
           });
           p_256495_.forEach((p_256603_) -> {
-             builder.put(p_256603_.m_135782_(), registrysetbuilder$universallookup);
+             builder.put(p_256603_.location(), registrysetbuilder$universallookup);
 @@ -108,6 +_,11 @@
  
-             public <S> HolderGetter<S> m_255420_(ResourceKey<? extends Registry<? extends S>> p_255961_) {
-                return (HolderGetter<S>) BuildState.this.f_254690_.getOrDefault(p_255961_.m_135782_(), BuildState.this.f_254749_);
+             public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> p_255961_) {
+                return (HolderGetter<S>) BuildState.this.registries.getOrDefault(p_255961_.location(), BuildState.this.lookup);
 +            }
 +
 +            @Override
 +            public <S> Optional<HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
-+               return Optional.ofNullable((HolderLookup.RegistryLookup<S>) BuildState.this.f_254690_.get(registry.m_135782_()));
++               return Optional.ofNullable((HolderLookup.RegistryLookup<S>) BuildState.this.registries.get(registry.location()));
              }
           };
        }

@@ -6,6 +6,6 @@
  
 -public interface PackResources extends AutoCloseable {
 +public interface PackResources extends AutoCloseable, net.minecraftforge.common.extensions.IForgePackResources {
-    String f_143748_ = ".mcmeta";
-    String f_143749_ = "pack.mcmeta";
+    String METADATA_EXTENSION = ".mcmeta";
+    String PACK_META = "pack.mcmeta";
  

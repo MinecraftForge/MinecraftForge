@@ -6,12 +6,12 @@
  @OnlyIn(Dist.CLIENT)
 -public class Font {
 +public class Font implements net.minecraftforge.client.extensions.IForgeFont {
-    private static final float f_168643_ = 0.01F;
-    private static final Vector3f f_92712_ = new Vector3f(0.0F, 0.0F, 0.03F);
-    public static final int f_193827_ = 8;
+    private static final float EFFECT_DEPTH = 0.01F;
+    private static final Vector3f SHADOW_OFFSET = new Vector3f(0.0F, 0.0F, 0.03F);
+    public static final int ALPHA_CUTOFF = 8;
 @@ -202,6 +_,8 @@
-    public StringSplitter m_92865_() {
-       return this.f_92714_;
+    public StringSplitter getSplitter() {
+       return this.splitter;
     }
 +
 +   @Override public Font self() { return this; }

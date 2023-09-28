@@ -2,24 +2,24 @@
 +++ b/net/minecraft/client/renderer/texture/MipmapGenerator.java
 @@ -26,12 +_,15 @@
           anativeimage[0] = p_251300_[0];
-          boolean flag = m_246464_(anativeimage[0]);
+          boolean flag = hasTransparentPixel(anativeimage[0]);
  
-+         int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(anativeimage[0].m_84982_(), anativeimage[0].m_85084_());
++         int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(anativeimage[0].getWidth(), anativeimage[0].getHeight());
           for(int i = 1; i <= p_252326_; ++i) {
              if (i < p_251300_.length) {
                 anativeimage[i] = p_251300_[i];
              } else {
                 NativeImage nativeimage = anativeimage[i - 1];
--               NativeImage nativeimage1 = new NativeImage(nativeimage.m_84982_() >> 1, nativeimage.m_85084_() >> 1, false);
+-               NativeImage nativeimage1 = new NativeImage(nativeimage.getWidth() >> 1, nativeimage.getHeight() >> 1, false);
 +               // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
-+               NativeImage nativeimage1 = new NativeImage(Math.max(1, nativeimage.m_84982_() >> 1), Math.max(1, nativeimage.m_85084_() >> 1), false);
++               NativeImage nativeimage1 = new NativeImage(Math.max(1, nativeimage.getWidth() >> 1), Math.max(1, nativeimage.getHeight() >> 1), false);
 +               if (i <= maxMipmapLevel) {
-                int j = nativeimage1.m_84982_();
-                int k = nativeimage1.m_85084_();
+                int j = nativeimage1.getWidth();
+                int k = nativeimage1.getHeight();
  
 @@ -39,6 +_,7 @@
                    for(int i1 = 0; i1 < k; ++i1) {
-                      nativeimage1.m_84988_(l, i1, m_118048_(nativeimage.m_84985_(l * 2 + 0, i1 * 2 + 0), nativeimage.m_84985_(l * 2 + 1, i1 * 2 + 0), nativeimage.m_84985_(l * 2 + 0, i1 * 2 + 1), nativeimage.m_84985_(l * 2 + 1, i1 * 2 + 1), flag));
+                      nativeimage1.setPixelRGBA(l, i1, alphaBlend(nativeimage.getPixelRGBA(l * 2 + 0, i1 * 2 + 0), nativeimage.getPixelRGBA(l * 2 + 1, i1 * 2 + 0), nativeimage.getPixelRGBA(l * 2 + 0, i1 * 2 + 1), nativeimage.getPixelRGBA(l * 2 + 1, i1 * 2 + 1), flag));
                    }
 +               }
                 }

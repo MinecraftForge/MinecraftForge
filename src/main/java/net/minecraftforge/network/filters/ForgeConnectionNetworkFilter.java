@@ -5,6 +5,7 @@
 
 package net.minecraftforge.network.filters;
 
+/*
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Network filter for forge-forge connections.
- */
+ * /
 @ChannelHandler.Sharable
 public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
 {
@@ -65,3 +66,4 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
     }
 
 }
+*/

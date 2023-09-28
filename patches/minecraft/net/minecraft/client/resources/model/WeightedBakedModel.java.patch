@@ -6,60 +6,60 @@
  @OnlyIn(Dist.CLIENT)
 -public class WeightedBakedModel implements BakedModel {
 +public class WeightedBakedModel implements net.minecraftforge.client.model.IDynamicBakedModel {
-    private final int f_119540_;
-    private final List<WeightedEntry.Wrapper<BakedModel>> f_119541_;
-    private final BakedModel f_119542_;
+    private final int totalWeight;
+    private final List<WeightedEntry.Wrapper<BakedModel>> list;
+    private final BakedModel wrapped;
 @@ -28,9 +_,10 @@
-       this.f_119542_ = p_119544_.get(0).m_146310_();
+       this.wrapped = p_119544_.get(0).getData();
     }
  
--   public List<BakedQuad> m_213637_(@Nullable BlockState p_235058_, @Nullable Direction p_235059_, RandomSource p_235060_) {
+-   public List<BakedQuad> getQuads(@Nullable BlockState p_235058_, @Nullable Direction p_235059_, RandomSource p_235060_) {
 +   // FORGE: Implement our overloads (here and below) so child models can have custom logic
 +   public List<BakedQuad> getQuads(@Nullable BlockState p_235058_, @Nullable Direction p_235059_, RandomSource p_235060_, net.minecraftforge.client.model.data.ModelData modelData, @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.RenderType renderType) {
-       return WeightedRandom.m_146314_(this.f_119541_, Math.abs((int)p_235060_.m_188505_()) % this.f_119540_).map((p_235065_) -> {
--         return p_235065_.m_146310_().m_213637_(p_235058_, p_235059_, p_235060_);
-+         return p_235065_.m_146310_().getQuads(p_235058_, p_235059_, p_235060_, modelData, renderType);
+       return WeightedRandom.getWeightedItem(this.list, Math.abs((int)p_235060_.nextLong()) % this.totalWeight).map((p_235065_) -> {
+-         return p_235065_.getData().getQuads(p_235058_, p_235059_, p_235060_);
++         return p_235065_.getData().getQuads(p_235058_, p_235059_, p_235060_, modelData, renderType);
        }).orElse(Collections.emptyList());
     }
  
 @@ -38,6 +_,16 @@
-       return this.f_119542_.m_7541_();
+       return this.wrapped.useAmbientOcclusion();
     }
  
 +   @Override
 +   public boolean useAmbientOcclusion(BlockState state) {
-+      return this.f_119542_.useAmbientOcclusion(state);
++      return this.wrapped.useAmbientOcclusion(state);
 +   }
 +
 +   @Override
 +   public boolean useAmbientOcclusion(BlockState state, net.minecraft.client.renderer.RenderType renderType) {
-+      return this.f_119542_.useAmbientOcclusion(state, renderType);
++      return this.wrapped.useAmbientOcclusion(state, renderType);
 +   }
 +
-    public boolean m_7539_() {
-       return this.f_119542_.m_7539_();
+    public boolean isGui3d() {
+       return this.wrapped.isGui3d();
     }
 @@ -54,8 +_,23 @@
-       return this.f_119542_.m_6160_();
+       return this.wrapped.getParticleIcon();
     }
  
 +   public TextureAtlasSprite getParticleIcon(net.minecraftforge.client.model.data.ModelData modelData) {
-+      return this.f_119542_.getParticleIcon(modelData);
++      return this.wrapped.getParticleIcon(modelData);
 +   }
 +
-    public ItemTransforms m_7442_() {
-       return this.f_119542_.m_7442_();
+    public ItemTransforms getTransforms() {
+       return this.wrapped.getTransforms();
 +   }
 +
 +   public BakedModel applyTransform(net.minecraft.world.item.ItemDisplayContext transformType, com.mojang.blaze3d.vertex.PoseStack poseStack, boolean applyLeftHandTransform) {
-+      return this.f_119542_.applyTransform(transformType, poseStack, applyLeftHandTransform);
++      return this.wrapped.applyTransform(transformType, poseStack, applyLeftHandTransform);
 +   }
 +
 +   @Override // FORGE: Get render types based on the active weighted model
 +   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
-+      return WeightedRandom.m_146314_(this.f_119541_, Math.abs((int)rand.m_188505_()) % this.f_119540_)
-+              .map((p_235065_) -> p_235065_.m_146310_().getRenderTypes(state, rand, data))
++      return WeightedRandom.getWeightedItem(this.list, Math.abs((int)rand.nextLong()) % this.totalWeight)
++              .map((p_235065_) -> p_235065_.getData().getRenderTypes(state, rand, data))
 +              .orElse(net.minecraftforge.client.ChunkRenderTypeSet.none());
     }
  
-    public ItemOverrides m_7343_() {
+    public ItemOverrides getOverrides() {

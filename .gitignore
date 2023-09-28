@@ -13,6 +13,9 @@
 /classes
 *.iml
 
+# We however WANT the ide folder as it has tempaltes/configs for developing Forge.
+!ide/**
+
 #gradle
 /build
 /.gradle
@@ -23,7 +26,6 @@
 /projects/mcp/
 /projects/clean/
 /projects/forge/
-/projects/fmlonly/
 #/patches/*
 
 #occupational hazards

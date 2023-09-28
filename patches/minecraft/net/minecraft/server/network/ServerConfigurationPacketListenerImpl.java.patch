@@ -1,0 +1,50 @@
+--- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
+@@ -36,16 +_,19 @@
+ public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements TickablePacketListener, ServerConfigurationPacketListener {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Component DISCONNECT_REASON_INVALID_DATA = Component.translatable("multiplayer.disconnect.invalid_player_data");
++   private static final ConfigurationTask.Type VANILLA_START = new ConfigurationTask.Type("vanilla_start");
+    private final GameProfile gameProfile;
+    private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
+    @Nullable
+    private ConfigurationTask currentTask;
+    private ClientInformation clientInformation;
++   private final net.minecraftforge.network.config.ConfigurationTaskContext taskContext;
+ 
+    public ServerConfigurationPacketListenerImpl(MinecraftServer p_301415_, Connection p_298106_, CommonListenerCookie p_301309_) {
+       super(p_301415_, p_298106_, p_301309_);
+       this.gameProfile = p_301309_.gameProfile();
+       this.clientInformation = p_301309_.clientInformation();
++      this.taskContext = new net.minecraftforge.network.config.ConfigurationTaskContext(p_298106_, this::send, this::finishCurrentTask);
+    }
+ 
+    protected GameProfile playerProfile() {
+@@ -61,12 +_,17 @@
+       return this.connection.isConnected();
+    }
+ 
+-   public void startConfiguration() {
++   private void vanillaStart() {
+       this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
+       LayeredRegistryAccess<RegistryLayer> layeredregistryaccess = this.server.registries();
+       this.send(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.REGISTRY.toNames(this.server.getWorldData().enabledFeatures())));
+       this.send(new ClientboundRegistryDataPacket((new RegistryAccess.ImmutableRegistryAccess(RegistrySynchronization.networkedRegistries(layeredregistryaccess))).freeze()));
+       this.send(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(layeredregistryaccess)));
++   }
++
++   public void startConfiguration() {
++      net.minecraftforge.event.ForgeEventFactory.gatherLoginConfigTasks(this.connection, this.configurationTasks::add);
++      this.configurationTasks.add(new net.minecraftforge.network.config.SimpleConfigurationTask(VANILLA_START, this::vanillaStart));
+       this.addOptionalTasks();
+       this.configurationTasks.add(new JoinWorldTask());
+       this.startNextTask();
+@@ -135,7 +_,7 @@
+          ConfigurationTask configurationtask = this.configurationTasks.poll();
+          if (configurationtask != null) {
+             this.currentTask = configurationtask;
+-            configurationtask.start(this::send);
++            configurationtask.start(this.taskContext);
+          }
+ 
+       }

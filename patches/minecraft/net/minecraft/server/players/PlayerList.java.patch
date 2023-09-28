@@ -1,130 +1,114 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -132,6 +_,7 @@
-    private boolean f_11209_;
-    private static final boolean f_143988_ = false;
-    private int f_11210_;
-+   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
+@@ -126,6 +_,7 @@
+    private boolean allowCheatsForAllPlayers;
+    private static final boolean ALLOW_LOGOUTIVATOR = false;
+    private int sendAllPlayerInfoIn;
++   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
  
     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
-       this.f_11195_ = p_203842_;
-@@ -167,13 +_,14 @@
-       p_11263_.m_284127_(serverlevel1);
-       String s1 = "local";
-       if (p_11262_.m_129523_() != null) {
--         s1 = p_11262_.m_129523_().toString();
-+         s1 = net.minecraftforge.network.DualStackUtils.getAddressString(p_11262_.m_129523_());
-       }
- 
-       f_11188_.info("{}[{}] logged in with entity id {} at ({}, {}, {})", p_11263_.m_7755_().getString(), s1, p_11263_.m_19879_(), p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_());
-       LevelData leveldata = serverlevel1.m_6106_();
-       p_11263_.m_143427_(compoundtag);
-       ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
-+      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(p_11262_, "PLAY_TO_CLIENT");
-       GameRules gamerules = serverlevel1.m_46469_();
-       boolean flag = gamerules.m_46207_(GameRules.f_46156_);
-       boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -183,6 +_,7 @@
-       servergamepacketlistenerimpl.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
+       this.server = p_203842_;
+@@ -171,6 +_,7 @@
+       servergamepacketlistenerimpl.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
+       servergamepacketlistenerimpl.send(new ClientboundPlayerAbilitiesPacket(p_11263_.getAbilities()));
+       servergamepacketlistenerimpl.send(new ClientboundSetCarriedItemPacket(p_11263_.getInventory().selected));
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
-       servergamepacketlistenerimpl.m_9829_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
-       this.m_11289_(p_11263_);
-@@ -255,6 +_,7 @@
+       servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes()));
+       this.sendPlayerPermissionLevel(p_11263_);
+       p_11263_.getStats().markAllDirty();
+@@ -239,6 +_,7 @@
        }
  
-       p_11263_.m_143429_();
+       p_11263_.initInventoryMenu();
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
     }
  
-    protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -315,6 +_,7 @@
+    protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+@@ -299,6 +_,7 @@
           compoundtag1 = compoundtag;
-          p_11225_.m_20258_(compoundtag);
-          f_11188_.debug("loading single player");
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_11225_, this.f_11204_, p_11225_.m_20148_().toString());
+          p_11225_.load(compoundtag);
+          LOGGER.debug("loading single player");
++         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_11225_, this.playerIo, p_11225_.getUUID().toString());
        } else {
-          compoundtag1 = this.f_11204_.m_78435_(p_11225_);
+          compoundtag1 = this.playerIo.load(p_11225_);
        }
-@@ -323,6 +_,7 @@
+@@ -307,6 +_,7 @@
     }
  
-    protected void m_6765_(ServerPlayer p_11277_) {
-+      if (p_11277_.f_8906_ == null) return;
-       this.f_11204_.m_78433_(p_11277_);
-       ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_20148_());
+    protected void save(ServerPlayer p_11277_) {
++      if (p_11277_.connection == null) return;
+       this.playerIo.save(p_11277_);
+       ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
        if (serverstatscounter != null) {
-@@ -337,6 +_,7 @@
+@@ -321,6 +_,7 @@
     }
  
-    public void m_11286_(ServerPlayer p_11287_) {
+    public void remove(ServerPlayer p_11287_) {
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
-       ServerLevel serverlevel = p_11287_.m_284548_();
-       p_11287_.m_36220_(Stats.f_12989_);
-       this.m_6765_(p_11287_);
-@@ -478,6 +_,7 @@
-       this.f_11197_.put(serverplayer.m_20148_(), serverplayer);
-       serverplayer.m_143429_();
-       serverplayer.m_21153_(serverplayer.m_21223_());
+       ServerLevel serverlevel = p_11287_.serverLevel();
+       p_11287_.awardStat(Stats.LEAVE_GAME);
+       this.save(p_11287_);
+@@ -466,6 +_,7 @@
+       this.playersByUUID.put(serverplayer.getUUID(), serverplayer);
+       serverplayer.initInventoryMenu();
+       serverplayer.setHealth(serverplayer.getHealth());
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
        if (flag2) {
-          serverplayer.f_8906_.m_9829_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F, serverlevel1.m_213780_().m_188505_()));
+          serverplayer.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), 1.0F, 1.0F, serverlevel1.getRandom().nextLong()));
        }
-@@ -562,6 +_,7 @@
+@@ -550,6 +_,7 @@
     }
  
-    public void m_5749_(GameProfile p_11254_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.f_11195_.m_7022_(), this)) return;
-       this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
-       ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
+    public void op(GameProfile p_11254_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.server.getOperatorUserPermissionLevel(), this)) return;
+       this.ops.add(new ServerOpListEntry(p_11254_, this.server.getOperatorUserPermissionLevel(), this.ops.canBypassPlayerLimit(p_11254_)));
+       ServerPlayer serverplayer = this.getPlayer(p_11254_.getId());
        if (serverplayer != null) {
-@@ -571,6 +_,7 @@
+@@ -559,6 +_,7 @@
     }
  
-    public void m_5750_(GameProfile p_11281_) {
+    public void deop(GameProfile p_11281_) {
 +      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11281_, 0, this)) return;
-       this.f_11200_.m_11393_(p_11281_);
-       ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
+       this.ops.remove(p_11281_);
+       ServerPlayer serverplayer = this.getPlayer(p_11281_.getId());
        if (serverplayer != null) {
-@@ -785,13 +_,6 @@
+@@ -773,13 +_,6 @@
        if (serverstatscounter == null) {
-          File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
+          File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
           File file2 = new File(file1, uuid + ".json");
 -         if (!file2.exists()) {
--            File file3 = new File(file1, p_11240_.m_7755_().getString() + ".json");
+-            File file3 = new File(file1, p_11240_.getName().getString() + ".json");
 -            Path path = file3.toPath();
--            if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
+-            if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
 -               file3.renameTo(file2);
 -            }
 -         }
  
-          serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
-          this.f_11202_.put(uuid, serverstatscounter);
-@@ -809,6 +_,8 @@
-          this.f_11203_.put(uuid, playeradvancements);
+          serverstatscounter = new ServerStatsCounter(this.server, file2);
+          this.stats.put(uuid, serverstatscounter);
+@@ -797,6 +_,8 @@
+          this.advancements.put(uuid, playeradvancements);
        }
  
 +      // Forge: don't overwrite active player with a fake one.
 +      if (!(p_11297_ instanceof net.minecraftforge.common.util.FakePlayer))
-       playeradvancements.m_135979_(p_11297_);
+       playeradvancements.setPlayer(p_11297_);
        return playeradvancements;
     }
-@@ -838,7 +_,7 @@
+@@ -826,7 +_,7 @@
     }
  
-    public List<ServerPlayer> m_11314_() {
--      return this.f_11196_;
+    public List<ServerPlayer> getPlayers() {
+-      return this.players;
 +      return this.playersView; //Unmodifiable view, we don't want people removing things without us knowing.
     }
  
     @Nullable
-@@ -855,6 +_,7 @@
-          playeradvancements.m_135981_(this.f_11195_.m_129889_());
+@@ -843,6 +_,7 @@
+          playeradvancements.reload(this.server.getAdvancements());
        }
  
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
-       this.m_11268_(new ClientboundUpdateTagsPacket(TagNetworkSerialization.m_245799_(this.f_243858_)));
-       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
+       this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
+       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes());
  

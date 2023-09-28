@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
 +++ b/net/minecraft/client/renderer/block/model/ItemModelGenerator.java
 @@ -40,6 +_,8 @@
-       map.put("particle", p_111672_.m_111477_("particle") ? Either.left(p_111672_.m_111480_("particle")) : map.get("layer0"));
-       BlockModel blockmodel = new BlockModel((ResourceLocation)null, list, map, false, p_111672_.m_111479_(), p_111672_.m_111491_(), p_111672_.m_111484_());
-       blockmodel.f_111416_ = p_111672_.f_111416_;
+       map.put("particle", p_111672_.hasTexture("particle") ? Either.left(p_111672_.getMaterial("particle")) : map.get("layer0"));
+       BlockModel blockmodel = new BlockModel((ResourceLocation)null, list, map, false, p_111672_.getGuiLight(), p_111672_.getTransforms(), p_111672_.getOverrides());
+       blockmodel.name = p_111672_.name;
 +      blockmodel.customData.copyFrom(p_111672_.customData);
 +      blockmodel.customData.setGui3d(false);
        return blockmodel;

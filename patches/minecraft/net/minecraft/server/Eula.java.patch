@@ -3,9 +3,9 @@
 @@ -16,7 +_,7 @@
  
     public Eula(Path p_135943_) {
-       this.f_135939_ = p_135943_;
--      this.f_135940_ = SharedConstants.f_136183_ || this.m_135945_();
-+      this.f_135940_ = SharedConstants.f_136183_ || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.m_135945_(); // Forge: Automatically agree to EULA for gametest servers to aid CI
+       this.file = p_135943_;
+-      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || this.readFile();
++      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(); // Forge: Automatically agree to EULA for gametest servers to aid CI
     }
  
-    private boolean m_135945_() {
+    private boolean readFile() {

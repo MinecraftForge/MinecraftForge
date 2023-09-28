@@ -5,21 +5,21 @@
  
  public class RecordItem extends Item {
 +   @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
-    private static final Map<SoundEvent, RecordItem> f_43032_ = Maps.newHashMap();
-    private final int f_43033_;
+    private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
+    private final int analogOutput;
 +   @Deprecated // Forge: refer to soundSupplier
-    private final SoundEvent f_43034_;
-    private final int f_238749_;
+    private final SoundEvent sound;
+    private final int lengthInTicks;
 +   private final java.util.function.Supplier<SoundEvent> soundSupplier;
  
 +   @Deprecated // Forge: Use the constructor that takes a supplier instead
     public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
        super(p_239616_);
-       this.f_43033_ = p_239614_;
-       this.f_43034_ = p_239615_;
-       this.f_238749_ = p_239617_ * 20;
-       f_43032_.put(this.f_43034_, this);
-+      this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.f_43034_);
+       this.analogOutput = p_239614_;
+       this.sound = p_239615_;
+       this.lengthInTicks = p_239617_ * 20;
+       BY_NAME.put(this.sound, this);
++      this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.sound);
 +   }
 +
 +   /**
@@ -36,19 +36,19 @@
 +   public RecordItem(int comparatorValue, java.util.function.Supplier<SoundEvent> soundSupplier, Item.Properties builder, int lengthInTicks)
 +   {
 +      super(builder);
-+      this.f_43033_ = comparatorValue;
-+      this.f_43034_ = null;
++      this.analogOutput = comparatorValue;
++      this.sound = null;
 +      this.soundSupplier = soundSupplier;
-+      this.f_238749_ = lengthInTicks;
++      this.lengthInTicks = lengthInTicks;
     }
  
-    public InteractionResult m_6225_(UseOnContext p_43048_) {
+    public InteractionResult useOn(UseOnContext p_43048_) {
 @@ -80,7 +_,7 @@
     }
  
-    public SoundEvent m_43051_() {
--      return this.f_43034_;
+    public SoundEvent getSound() {
+-      return this.sound;
 +      return this.soundSupplier.get();
     }
  
-    public int m_43036_() {
+    public int getLengthInTicks() {

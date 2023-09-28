@@ -1,27 +1,18 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -129,6 +_,7 @@
-       this.f_104521_.accept(Component.m_237115_("connect.joining"));
-       this.f_104523_ = p_104547_.m_134774_();
-       this.f_104522_.m_129498_(ConnectionProtocol.PLAY);
-+      net.minecraftforge.network.NetworkHooks.handleClientLoginSuccess(this.f_104522_);
-       this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_243717_, this.f_104523_, this.f_104519_.m_261007_().m_285995_(this.f_260722_, this.f_260612_, this.f_285614_)));
-    }
- 
-@@ -136,7 +_,7 @@
-       if (this.f_104520_ != null && this.f_104520_ instanceof RealmsScreen) {
-          this.f_104519_.m_91152_(new DisconnectedRealmsScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
+@@ -156,6 +_,7 @@
+    public void onDisconnect(Component p_104543_) {
+       if (this.serverData != null && this.serverData.isRealm()) {
+          this.minecraft.setScreen(new DisconnectedRealmsScreen(this.parent, CommonComponents.CONNECT_FAILED, p_104543_));
++      } else if (net.minecraftforge.client.ForgeHooksClient.onClientDisconnect(this.connection, this.minecraft, this.parent, p_104543_)) {
        } else {
--         this.f_104519_.m_91152_(new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
-+         this.f_104519_.m_91152_(net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_) != null ? new net.minecraftforge.client.gui.ModMismatchDisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_, net.minecraftforge.network.NetworkHooks.getModMismatchData(f_104522_)) : new DisconnectedScreen(this.f_104520_, CommonComponents.f_130661_, p_104543_));
+          this.minecraft.setScreen(new DisconnectedScreen(this.parent, CommonComponents.CONNECT_FAILED, p_104543_));
        }
- 
-    }
-@@ -157,6 +_,7 @@
+@@ -178,6 +_,7 @@
     }
  
-    public void m_7254_(ClientboundCustomQueryPacket p_104545_) {
-+      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
-       this.f_104521_.accept(Component.m_237115_("connect.negotiating"));
-       this.f_104522_.m_129512_(new ServerboundCustomQueryPacket(p_104545_.m_134755_(), (FriendlyByteBuf)null));
+    public void handleCustomQuery(ClientboundCustomQueryPacket p_104545_) {
++      if (net.minecraftforge.common.ForgeHooks.onCustomPayload(p_104545_, this.connection)) return;
+       this.updateStatus.accept(Component.translatable("connect.negotiating"));
+       this.connection.send(new ServerboundCustomQueryAnswerPacket(p_104545_.transactionId(), (CustomQueryAnswerPayload)null));
     }

@@ -1,24 +1,24 @@
 --- a/net/minecraft/network/CompressionEncoder.java
 +++ b/net/minecraft/network/CompressionEncoder.java
 @@ -9,6 +_,8 @@
-    private final byte[] f_129444_ = new byte[8192];
-    private final Deflater f_129445_;
-    private int f_129446_;
+    private final byte[] encodeBuf = new byte[8192];
+    private final Deflater deflater;
+    private int threshold;
 +   private static final boolean DISABLE_PACKET_DEBUG = Boolean.parseBoolean(System.getProperty("forge.disablePacketCompressionDebug", "false"));
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
  
     public CompressionEncoder(int p_129448_) {
-       this.f_129446_ = p_129448_;
-@@ -22,6 +_,12 @@
-          friendlybytebuf.m_130130_(0);
-          friendlybytebuf.writeBytes(p_129453_);
+       this.threshold = p_129448_;
+@@ -21,6 +_,12 @@
+          VarInt.write(p_129454_, 0);
+          p_129454_.writeBytes(p_129453_);
        } else {
-+         if (!DISABLE_PACKET_DEBUG && i > net.minecraft.network.CompressionDecoder.f_182672_) {
++         if (!DISABLE_PACKET_DEBUG && i > net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH) {
 +             p_129453_.markReaderIndex();
-+             LOGGER.error("Attempted to send packet over maximum protocol size: {} > {}\nData:\n{}", i, net.minecraft.network.CompressionDecoder.f_182672_,
-+                     net.minecraftforge.logging.PacketDump.getContentDump(p_129453_));
++             LOGGER.error("Attempted to send packet over maximum protocol size: {} > {}\nData:\n{}", i, net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH,
++                     net.minecraftforge.common.util.HexDumper.dump(p_129453_));
 +             p_129453_.resetReaderIndex();
 +         }
           byte[] abyte = new byte[i];
           p_129453_.readBytes(abyte);
-          friendlybytebuf.m_130130_(abyte.length);
+          VarInt.write(p_129454_, abyte.length);

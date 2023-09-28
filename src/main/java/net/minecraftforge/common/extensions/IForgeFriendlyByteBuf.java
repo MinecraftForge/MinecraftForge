@@ -19,11 +19,9 @@ import java.util.Objects;
 /**
  * Extension-Interface providing methods for writing registry-id's instead of their registry-names.
  */
-public interface IForgeFriendlyByteBuf
-{
-    private FriendlyByteBuf self()
-    {
-        return (FriendlyByteBuf) this;
+public interface IForgeFriendlyByteBuf {
+    private FriendlyByteBuf self() {
+        return (FriendlyByteBuf)this;
     }
 
     /**
@@ -33,8 +31,7 @@ public interface IForgeFriendlyByteBuf
      * @param entry The entry who's registryName is to be written
      * @param <T> The type of the entry.
      */
-    default <T> void writeRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry, @NotNull T entry)
-    {
+    default <T> void writeRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry, @NotNull T entry) {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = forgeRegistry.getID(entry);
         self().writeVarInt(id);
@@ -46,8 +43,7 @@ public interface IForgeFriendlyByteBuf
      * @param registry The registry containing the entry represented by this key
      * @param entryKey The registry-name of an entry in this {@link IForgeRegistry}
      */
-    default void writeRegistryIdUnsafe(@NotNull IForgeRegistry<?> registry, @NotNull ResourceLocation entryKey)
-    {
+    default void writeRegistryIdUnsafe(@NotNull IForgeRegistry<?> registry, @NotNull ResourceLocation entryKey) {
         ForgeRegistry<?> forgeRegistry = (ForgeRegistry<?>) registry;
         int id = forgeRegistry.getID(entryKey);
         self().writeVarInt(id);
@@ -58,8 +54,7 @@ public interface IForgeFriendlyByteBuf
      * read id, that the registry's default value will be returned.
      * @param registry The registry containing the entry
      */
-    default <T> T readRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry)
-    {
+    default <T> T readRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry) {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = self().readVarInt();
         return forgeRegistry.getValue(id);
@@ -77,8 +72,7 @@ public interface IForgeFriendlyByteBuf
      * @throws NullPointerException if the registry or entry was null
      * @throws IllegalArgumentException if the registry does not contain the specified value
      */
-    default <T> void writeRegistryId(@NotNull IForgeRegistry<T> registry, @NotNull T entry)
-    {
+    default <T> void writeRegistryId(@NotNull IForgeRegistry<T> registry, @NotNull T entry) {
         Objects.requireNonNull(registry, "Cannot write a null registry key!");
         Objects.requireNonNull(entry,"Cannot write a null registry entry!");
         ResourceLocation name = registry.getRegistryName();
@@ -94,8 +88,7 @@ public interface IForgeFriendlyByteBuf
      * @param <T> The type of the registry-entry. Notice that this should match the actual type written to the buffer.
      * @throws NullPointerException if the registry could not be found.
      */
-    default <T> T readRegistryId()
-    {
+    default <T> T readRegistryId() {
         ResourceLocation location = self().readResourceLocation(); //TODO change to reading a varInt once registries use id's
         ForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(location);
         return registry.getValue(self().readVarInt());
@@ -107,8 +100,7 @@ public interface IForgeFriendlyByteBuf
      * @throws IllegalArgumentException if the retrieved entries registryType doesn't match the one passed in.
      * @throws NullPointerException if the registry could not be found.
      */
-    default <T> T readRegistryIdSafe(Class<? super T> registrySuperType)
-    {
+    default <T> T readRegistryIdSafe(Class<? super T> registrySuperType) {
         T value = readRegistryId();
         if (!registrySuperType.isAssignableFrom(value.getClass()))
             throw new IllegalArgumentException("Attempted to read an registryValue of the wrong type from the Buffer!");
@@ -121,11 +113,10 @@ public interface IForgeFriendlyByteBuf
      *
      * @param stack FluidStack to be written to the packet buffer.
      */
-    default void writeFluidStack(FluidStack stack)
-    {
-        if (stack.isEmpty()) {
+    default void writeFluidStack(FluidStack stack) {
+        if (stack.isEmpty())
             self().writeBoolean(false);
-        } else {
+        else {
             self().writeBoolean(true);
             stack.writeToPacket(self());
         }
@@ -134,8 +125,7 @@ public interface IForgeFriendlyByteBuf
     /**
      * Reads a FluidStack from this buffer.
      */
-    default FluidStack readFluidStack()
-    {
+    default FluidStack readFluidStack() {
         return !self().readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(self());
     }
 }

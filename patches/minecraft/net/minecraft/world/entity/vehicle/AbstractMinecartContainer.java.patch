@@ -3,23 +3,23 @@
 @@ -82,6 +_,8 @@
     }
  
-    public InteractionResult m_6096_(Player p_38232_, InteractionHand p_38233_) {
-+      InteractionResult ret = super.m_6096_(p_38232_, p_38233_);
-+      if (ret.m_19077_()) return ret;
-       return this.m_268996_(p_38232_);
+    public InteractionResult interact(Player p_38232_, InteractionHand p_38233_) {
++      InteractionResult ret = super.interact(p_38232_, p_38233_);
++      if (ret.consumesAction()) return ret;
+       return this.interactWithContainerVehicle(p_38232_);
     }
  
 @@ -119,6 +_,28 @@
     }
  
-    protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
+    protected abstract AbstractContainerMenu createMenu(int p_38222_, Inventory p_38223_);
 +
 +   // Forge Start
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++      if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }
@@ -37,4 +37,4 @@
 +   }
  
     @Nullable
-    public ResourceLocation m_214142_() {
+    public ResourceLocation getLootTable() {

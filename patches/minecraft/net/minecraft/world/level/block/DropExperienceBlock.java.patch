@@ -2,10 +2,10 @@
 +++ b/net/minecraft/world/level/block/DropExperienceBlock.java
 @@ -22,9 +_,11 @@
  
-    public void m_213646_(BlockState p_221086_, ServerLevel p_221087_, BlockPos p_221088_, ItemStack p_221089_, boolean p_221090_) {
-       super.m_213646_(p_221086_, p_221087_, p_221088_, p_221089_, p_221090_);
+    public void spawnAfterBreak(BlockState p_221086_, ServerLevel p_221087_, BlockPos p_221088_, ItemStack p_221089_, boolean p_221090_) {
+       super.spawnAfterBreak(p_221086_, p_221087_, p_221088_, p_221089_, p_221090_);
 -      if (p_221090_) {
--         this.m_220822_(p_221087_, p_221088_, p_221089_, this.f_221079_);
+-         this.tryDropExperience(p_221087_, p_221088_, p_221089_, this.xpRange);
 -      }
 -
 +
@@ -13,6 +13,6 @@
 +
 +   @Override
 +   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
-+      return silkTouchLevel == 0 ? this.f_221079_.m_214085_(randomSource) : 0;
++      return silkTouchLevel == 0 ? this.xpRange.sample(randomSource) : 0;
     }
  }

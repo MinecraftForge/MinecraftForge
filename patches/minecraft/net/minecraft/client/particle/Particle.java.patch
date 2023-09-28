@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
 @@ -226,4 +_,16 @@
-    public Optional<ParticleGroup> m_142654_() {
+    public Optional<ParticleGroup> getParticleGroup() {
        return Optional.empty();
     }
 +
@@ -14,6 +14,6 @@
 +    }
 +
 +    public net.minecraft.world.phys.Vec3 getPos() {
-+       return new net.minecraft.world.phys.Vec3(this.f_107212_, this.f_107213_, this.f_107214_);
++       return new net.minecraft.world.phys.Vec3(this.x, this.y, this.z);
 +    }
  }

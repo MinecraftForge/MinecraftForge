@@ -6,6 +6,6 @@
  
 -public class DeadBushBlock extends BushBlock {
 +public class DeadBushBlock extends BushBlock implements net.minecraftforge.common.IForgeShearable {
-    protected static final float f_153120_ = 6.0F;
-    protected static final VoxelShape f_52414_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+    protected static final float AABB_OFFSET = 6.0F;
+    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  

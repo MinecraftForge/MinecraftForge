@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/renderer/Sheets.java
 +++ b/net/minecraft/client/renderer/Sheets.java
-@@ -145,11 +_,13 @@
+@@ -146,11 +_,13 @@
     }
  
-    private static Material m_173385_(WoodType p_173386_) {
--      return new Material(f_110739_, new ResourceLocation("entity/signs/" + p_173386_.f_61839_()));
-+      ResourceLocation location = new ResourceLocation(p_173386_.f_61839_());
-+      return new Material(f_110739_, new ResourceLocation(location.m_135827_(), "entity/signs/" + location.m_135815_()));
+    private static Material createSignMaterial(WoodType p_173386_) {
+-      return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/" + p_173386_.name()));
++      ResourceLocation location = new ResourceLocation(p_173386_.name());
++      return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/" + location.getPath()));
     }
  
-    private static Material m_245275_(WoodType p_251735_) {
--      return new Material(f_110739_, new ResourceLocation("entity/signs/hanging/" + p_251735_.f_61839_()));
-+      ResourceLocation location = new ResourceLocation(p_251735_.f_61839_());
-+      return new Material(f_110739_, new ResourceLocation(location.m_135827_(), "entity/signs/hanging/" + location.m_135815_()));
+    private static Material createHangingSignMaterial(WoodType p_251735_) {
+-      return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/hanging/" + p_251735_.name()));
++      ResourceLocation location = new ResourceLocation(p_251735_.name());
++      return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/hanging/" + location.getPath()));
     }
  
-    public static Material m_173381_(WoodType p_173382_) {
-@@ -208,6 +_,23 @@
+    public static Material getSignMaterial(WoodType p_173382_) {
+@@ -209,6 +_,23 @@
           case SINGLE:
           default:
              return p_110773_;
@@ -27,8 +27,8 @@
 +    * Not threadsafe. Enqueue it in client setup.
 +    */
 +   public static void addWoodType(WoodType woodType) {
-+      f_110743_.put(woodType, m_173385_(woodType));
-+      f_244291_.put(woodType, m_245275_(woodType));
++      SIGN_MATERIALS.put(woodType, createSignMaterial(woodType));
++      HANGING_SIGN_MATERIALS.put(woodType, createHangingSignMaterial(woodType));
 +   }
 +
 +   static {

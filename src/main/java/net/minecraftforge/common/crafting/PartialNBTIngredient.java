@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Ingredient that matches the given items, performing a partial NBT match. Use {@link StrictNBTIngredient} if you want exact match on NBT */
+/** Ingredient that matches the given items, performing a partial NBT match. Use {@link StrictNBTIngredient} if you want exact match on NBT * /
 public class PartialNBTIngredient extends AbstractIngredient
 {
     private final Set<Item> items;
@@ -52,13 +52,13 @@ public class PartialNBTIngredient extends AbstractIngredient
         this.predicate = new NbtPredicate(nbt);
     }
 
-    /** Creates a new ingredient matching any item from the list, containing the given NBT */
+    /** Creates a new ingredient matching any item from the list, containing the given NBT * /
     public static PartialNBTIngredient of(CompoundTag nbt, ItemLike... items)
     {
         return new PartialNBTIngredient(Arrays.stream(items).map(ItemLike::asItem).collect(Collectors.toSet()), nbt);
     }
 
-    /** Creates a new ingredient matching the given item, containing the given NBT  */
+    /** Creates a new ingredient matching the given item, containing the given NBT  * /
     public static PartialNBTIngredient of(ItemLike item, CompoundTag nbt)
     {
         return new PartialNBTIngredient(Set.of(item.asItem()), nbt);
@@ -154,3 +154,4 @@ public class PartialNBTIngredient extends AbstractIngredient
         }
     }
 }
+*/

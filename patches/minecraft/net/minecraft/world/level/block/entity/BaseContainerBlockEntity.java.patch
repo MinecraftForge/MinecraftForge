@@ -3,7 +3,7 @@
 @@ -81,4 +_,27 @@
     }
  
-    protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
+    protected abstract AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_);
 +
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
@@ -11,7 +11,7 @@
 +   }
 +
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++      if (!this.remove && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
 +         return itemHandler.cast();
 +      return super.getCapability(cap, side);
 +   }

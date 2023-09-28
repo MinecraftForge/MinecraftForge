@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/inventory/Slot.java
 +++ b/net/minecraft/world/inventory/Slot.java
-@@ -78,7 +_,7 @@
+@@ -82,7 +_,7 @@
  
     @Nullable
-    public Pair<ResourceLocation, ResourceLocation> m_7543_() {
+    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 -      return null;
 +      return backgroundPair;
     }
  
-    public ItemStack m_6201_(int p_40227_) {
-@@ -91,6 +_,38 @@
+    public ItemStack remove(int p_40227_) {
+@@ -95,6 +_,38 @@
  
-    public boolean m_6659_() {
+    public boolean isActive() {
        return true;
 +   }
 +
@@ -22,7 +22,7 @@
 +    * @return Index in associated inventory for this slot.
 +    */
 +   public int getSlotIndex() {
-+      return f_40217_;
++      return slot;
 +   }
 +
 +   /**
@@ -31,7 +31,7 @@
 +    * @return true if the other slot is in the same inventory
 +    */
 +   public boolean isSameInventory(Slot other) {
-+      return this.f_40218_ == other.f_40218_;
++      return this.container == other.container;
 +   }
 +
 +   private Pair<ResourceLocation, ResourceLocation> backgroundPair;
@@ -47,4 +47,4 @@
 +       return this;
     }
  
-    public Optional<ItemStack> m_150641_(int p_150642_, int p_150643_, Player p_150644_) {
+    public Optional<ItemStack> tryRemove(int p_150642_, int p_150643_, Player p_150644_) {

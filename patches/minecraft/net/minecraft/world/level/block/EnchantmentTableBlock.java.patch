@@ -3,9 +3,9 @@
 @@ -41,7 +_,7 @@
     }
  
-    public static boolean m_207909_(Level p_207910_, BlockPos p_207911_, BlockPos p_207912_) {
--      return p_207910_.m_8055_(p_207911_.m_121955_(p_207912_)).m_204336_(BlockTags.f_278384_) && p_207910_.m_8055_(p_207911_.m_7918_(p_207912_.m_123341_() / 2, p_207912_.m_123342_(), p_207912_.m_123343_() / 2)).m_204336_(BlockTags.f_278486_);
-+      return p_207910_.m_8055_(p_207911_.m_121955_(p_207912_)).getEnchantPowerBonus(p_207910_, p_207911_.m_121955_(p_207912_)) != 0 && p_207910_.m_8055_(p_207911_.m_7918_(p_207912_.m_123341_() / 2, p_207912_.m_123342_(), p_207912_.m_123343_() / 2)).m_204336_(BlockTags.f_278486_);
+    public static boolean isValidBookShelf(Level p_207910_, BlockPos p_207911_, BlockPos p_207912_) {
+-      return p_207910_.getBlockState(p_207911_.offset(p_207912_)).is(BlockTags.ENCHANTMENT_POWER_PROVIDER) && p_207910_.getBlockState(p_207911_.offset(p_207912_.getX() / 2, p_207912_.getY(), p_207912_.getZ() / 2)).is(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
++      return p_207910_.getBlockState(p_207911_.offset(p_207912_)).getEnchantPowerBonus(p_207910_, p_207911_.offset(p_207912_)) != 0 && p_207910_.getBlockState(p_207911_.offset(p_207912_.getX() / 2, p_207912_.getY(), p_207912_.getZ() / 2)).is(BlockTags.ENCHANTMENT_POWER_TRANSMITTER);
     }
  
-    public boolean m_7923_(BlockState p_52997_) {
+    public boolean useShapeForLightOcclusion(BlockState p_52997_) {

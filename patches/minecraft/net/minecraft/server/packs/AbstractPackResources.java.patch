@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/packs/AbstractPackResources.java
 +++ b/net/minecraft/server/packs/AbstractPackResources.java
 @@ -64,4 +_,10 @@
-    public boolean m_246538_() {
-       return this.f_254645_;
+    public boolean isBuiltin() {
+       return this.isBuiltin;
     }
 +
 +   @Override
 +   public String toString()
 +   {
-+      return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), this.f_243737_);
++      return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), this.name);
 +   }
  }

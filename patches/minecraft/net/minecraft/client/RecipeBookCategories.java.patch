@@ -6,20 +6,20 @@
  @OnlyIn(Dist.CLIENT)
 -public enum RecipeBookCategories {
 +public enum RecipeBookCategories implements net.minecraftforge.common.IExtensibleEnum {
-    CRAFTING_SEARCH(new ItemStack(Items.f_42522_)),
-    CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.f_50076_)),
-    CRAFTING_REDSTONE(new ItemStack(Items.f_42451_)),
+    CRAFTING_SEARCH(new ItemStack(Items.COMPASS)),
+    CRAFTING_BUILDING_BLOCKS(new ItemStack(Blocks.BRICKS)),
+    CRAFTING_REDSTONE(new ItemStack(Items.REDSTONE)),
 @@ -36,7 +_,7 @@
-    public static final List<RecipeBookCategories> f_92257_ = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);
-    public static final List<RecipeBookCategories> f_92258_ = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);
-    public static final List<RecipeBookCategories> f_92259_ = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
--   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
-+   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> f_92260_ = net.minecraftforge.client.RecipeBookManager.getAggregateCategories();
-    private final List<ItemStack> f_92261_;
+    public static final List<RecipeBookCategories> BLAST_FURNACE_CATEGORIES = ImmutableList.of(BLAST_FURNACE_SEARCH, BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC);
+    public static final List<RecipeBookCategories> FURNACE_CATEGORIES = ImmutableList.of(FURNACE_SEARCH, FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC);
+    public static final List<RecipeBookCategories> CRAFTING_CATEGORIES = ImmutableList.of(CRAFTING_SEARCH, CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE);
+-   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES = ImmutableMap.of(CRAFTING_SEARCH, ImmutableList.of(CRAFTING_EQUIPMENT, CRAFTING_BUILDING_BLOCKS, CRAFTING_MISC, CRAFTING_REDSTONE), FURNACE_SEARCH, ImmutableList.of(FURNACE_FOOD, FURNACE_BLOCKS, FURNACE_MISC), BLAST_FURNACE_SEARCH, ImmutableList.of(BLAST_FURNACE_BLOCKS, BLAST_FURNACE_MISC), SMOKER_SEARCH, ImmutableList.of(SMOKER_FOOD));
++   public static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES = net.minecraftforge.client.RecipeBookManager.getAggregateCategories();
+    private final List<ItemStack> itemIcons;
  
     private RecipeBookCategories(ItemStack... p_92267_) {
 @@ -59,7 +_,7 @@
-             list = f_92256_;
+             list = SMOKER_CATEGORIES;
              break;
           default:
 -            throw new IncompatibleClassChangeError();
@@ -29,8 +29,8 @@
        return list;
 @@ -67,5 +_,9 @@
  
-    public List<ItemStack> m_92268_() {
-       return this.f_92261_;
+    public List<ItemStack> getIconItems() {
+       return this.itemIcons;
 +   }
 +
 +   public static RecipeBookCategories create(String name, ItemStack... icons) {

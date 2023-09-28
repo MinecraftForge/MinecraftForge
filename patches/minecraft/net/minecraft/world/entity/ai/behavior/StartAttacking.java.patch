@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 @@ -30,7 +_,11 @@
-                      if (!p_258774_.m_6779_(livingentity)) {
+                      if (!p_258774_.canAttack(livingentity)) {
                          return false;
                       } else {
--                        p_258778_.m_257512_(livingentity);
+-                        p_258778_.set(livingentity);
 +                        net.minecraftforge.event.entity.living.LivingChangeTargetEvent changeTargetEvent = net.minecraftforge.common.ForgeHooks.onLivingChangeTarget(p_258774_, livingentity, net.minecraftforge.event.entity.living.LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET);
 +                        if (changeTargetEvent.isCanceled())
 +                           return false;
 +
-+                        p_258778_.m_257512_(changeTargetEvent.getNewTarget());
-                         p_258779_.m_257971_();
++                        p_258778_.set(changeTargetEvent.getNewTarget());
+                         p_258779_.erase();
                          return true;
                       }

@@ -311,7 +311,6 @@ public class ModListScreen extends Screen
     @Override
     public void tick()
     {
-        search.tick();
         modList.setSelected(selected);
 
         if (!search.getValue().equals(lastFilterText))

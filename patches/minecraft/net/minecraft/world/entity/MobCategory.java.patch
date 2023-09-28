@@ -13,16 +13,16 @@
     WATER_AMBIENT("water_ambient", 20, true, false, 64),
     MISC("misc", -1, true, true, 128);
  
--   public static final Codec<MobCategory> f_21584_ = StringRepresentable.m_216439_(MobCategory::values);
-+   public static final Codec<MobCategory> f_21584_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::byName);
-+   private static final java.util.Map<String, MobCategory> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(MobCategory::m_21607_, mobCategory -> mobCategory));
-    private final int f_21586_;
-    private final boolean f_21587_;
-    private final boolean f_21588_;
+-   public static final Codec<MobCategory> CODEC = StringRepresentable.fromEnum(MobCategory::values);
++   public static final Codec<MobCategory> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::byName);
++   private static final java.util.Map<String, MobCategory> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(MobCategory::getName, mobCategory -> mobCategory));
+    private final int max;
+    private final boolean isFriendly;
+    private final boolean isPersistent;
 @@ -47,6 +_,21 @@
  
-    public boolean m_21610_() {
-       return this.f_21588_;
+    public boolean isPersistent() {
+       return this.isPersistent;
 +   }
 +
 +   public static MobCategory create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
@@ -32,7 +32,7 @@
 +   @Override
 +   @Deprecated
 +   public void init() {
-+      BY_NAME.put(this.m_21607_(), this);
++      BY_NAME.put(this.getName(), this);
 +   }
 +
 +   // Forge: Access enum members by name
@@ -40,4 +40,4 @@
 +      return BY_NAME.get(name);
     }
  
-    public int m_21611_() {
+    public int getDespawnDistance() {

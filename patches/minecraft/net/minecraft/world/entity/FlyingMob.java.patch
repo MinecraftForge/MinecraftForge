@@ -1,21 +1,21 @@
 --- a/net/minecraft/world/entity/FlyingMob.java
 +++ b/net/minecraft/world/entity/FlyingMob.java
 @@ -24,15 +_,16 @@
-             this.m_6478_(MoverType.SELF, this.m_20184_());
-             this.m_20256_(this.m_20184_().m_82490_(0.5D));
+             this.move(MoverType.SELF, this.getDeltaMovement());
+             this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
           } else {
-+            BlockPos ground = m_20099_();
++            BlockPos ground = getBlockPosBelowThatAffectsMyMovement();
              float f = 0.91F;
-             if (this.m_20096_()) {
--               f = this.m_9236_().m_8055_(this.m_20099_()).m_60734_().m_49958_() * 0.91F;
-+               f = this.m_9236_().m_8055_(ground).getFriction(this.m_9236_(), ground, this) * 0.91F;
+             if (this.onGround()) {
+-               f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.91F;
++               f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
              }
  
              float f1 = 0.16277137F / (f * f * f);
              f = 0.91F;
-             if (this.m_20096_()) {
--               f = this.m_9236_().m_8055_(this.m_20099_()).m_60734_().m_49958_() * 0.91F;
-+               f = this.m_9236_().m_8055_(ground).getFriction(this.m_9236_(), ground, this) * 0.91F;
+             if (this.onGround()) {
+-               f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.91F;
++               f = this.level().getBlockState(ground).getFriction(this.level(), ground, this) * 0.91F;
              }
  
-             this.m_19920_(this.m_20096_() ? 0.1F * f1 : 0.02F, p_20818_);
+             this.moveRelative(this.onGround() ? 0.1F * f1 : 0.02F, p_20818_);

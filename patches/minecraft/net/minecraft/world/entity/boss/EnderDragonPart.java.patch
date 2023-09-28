@@ -6,13 +6,13 @@
  
 -public class EnderDragonPart extends Entity {
 +public class EnderDragonPart extends net.minecraftforge.entity.PartEntity<EnderDragon> {
-    public final EnderDragon f_31010_;
-    public final String f_31011_;
-    private final EntityDimensions f_31012_;
+    public final EnderDragon parentMob;
+    public final String name;
+    private final EntityDimensions size;
  
     public EnderDragonPart(EnderDragon p_31014_, String p_31015_, float p_31016_, float p_31017_) {
--      super(p_31014_.m_6095_(), p_31014_.m_9236_());
+-      super(p_31014_.getType(), p_31014_.level());
 +      super(p_31014_);
-       this.f_31012_ = EntityDimensions.m_20395_(p_31016_, p_31017_);
-       this.m_6210_();
-       this.f_31010_ = p_31014_;
+       this.size = EntityDimensions.scalable(p_31016_, p_31017_);
+       this.refreshDimensions();
+       this.parentMob = p_31014_;

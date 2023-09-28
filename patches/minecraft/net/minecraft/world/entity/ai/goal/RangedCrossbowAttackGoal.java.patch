@@ -3,27 +3,27 @@
 @@ -34,7 +_,7 @@
     }
  
-    private boolean m_25821_() {
--      return this.f_25805_.m_21055_(Items.f_42717_);
-+      return this.f_25805_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem);
+    private boolean isHoldingCrossbow() {
+-      return this.mob.isHolding(Items.CROSSBOW);
++      return this.mob.isHolding(is -> is.getItem() instanceof CrossbowItem);
     }
  
-    public boolean m_8045_() {
+    public boolean canContinueToUse() {
 @@ -93,7 +_,7 @@
-          this.f_25805_.m_21563_().m_24960_(livingentity, 30.0F, 30.0F);
-          if (this.f_25806_ == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
+          this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+          if (this.crossbowState == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
              if (!flag2) {
--               this.f_25805_.m_6672_(ProjectileUtil.m_37297_(this.f_25805_, Items.f_42717_));
-+               this.f_25805_.m_6672_(ProjectileUtil.getWeaponHoldingHand(this.f_25805_, item -> item instanceof CrossbowItem));
-                this.f_25806_ = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
-                this.f_25805_.m_6136_(true);
+-               this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.CROSSBOW));
++               this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+                this.crossbowState = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
+                this.mob.setChargingCrossbow(true);
              }
 @@ -117,7 +_,7 @@
              }
-          } else if (this.f_25806_ == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
-             this.f_25805_.m_6504_(livingentity, 1.0F);
--            ItemStack itemstack1 = this.f_25805_.m_21120_(ProjectileUtil.m_37297_(this.f_25805_, Items.f_42717_));
-+            ItemStack itemstack1 = this.f_25805_.m_21120_(ProjectileUtil.getWeaponHoldingHand(this.f_25805_, item -> item instanceof CrossbowItem));
-             CrossbowItem.m_40884_(itemstack1, false);
-             this.f_25806_ = RangedCrossbowAttackGoal.CrossbowState.UNCHARGED;
+          } else if (this.crossbowState == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
+             this.mob.performRangedAttack(livingentity, 1.0F);
+-            ItemStack itemstack1 = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.CROSSBOW));
++            ItemStack itemstack1 = this.mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+             CrossbowItem.setCharged(itemstack1, false);
+             this.crossbowState = RangedCrossbowAttackGoal.CrossbowState.UNCHARGED;
           }

@@ -1,31 +1,31 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 @@ -48,7 +_,9 @@
-    private static final Set<BlockState> f_218069_ = ImmutableList.of(Blocks.f_50256_, Blocks.f_152477_, Blocks.f_152476_, Blocks.f_152478_).stream().flatMap((p_218093_) -> {
-       return p_218093_.m_49965_().m_61056_().stream();
+    private static final Set<BlockState> CAULDRONS = ImmutableList.of(Blocks.CAULDRON, Blocks.LAVA_CAULDRON, Blocks.WATER_CAULDRON, Blocks.POWDER_SNOW_CAULDRON).stream().flatMap((p_218093_) -> {
+       return p_218093_.getStateDefinition().getPossibleStates().stream();
     }).collect(ImmutableSet.toImmutableSet());
--   private static final Map<BlockState, Holder<PoiType>> f_218070_ = Maps.newHashMap();
+-   private static final Map<BlockState, Holder<PoiType>> TYPE_BY_STATE = Maps.newHashMap();
 +   // Forge: We patch these 2 fields to support modded entries
-+   private static final Map<BlockState, PoiType> f_218070_ = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
-+   protected static final Set<BlockState> f_218067_ = f_218070_.keySet();
++   private static final Map<BlockState, PoiType> TYPE_BY_STATE = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
++   protected static final Set<BlockState> f_218067_ = TYPE_BY_STATE.keySet();
  
-    private static Set<BlockState> m_218073_(Block p_218074_) {
-       return ImmutableSet.copyOf(p_218074_.m_49965_().m_61056_());
+    private static Set<BlockState> getBlockStates(Block p_218074_) {
+       return ImmutableSet.copyOf(p_218074_.getStateDefinition().getPossibleStates());
 @@ -66,16 +_,10 @@
     }
  
-    private static void m_246216_(Holder<PoiType> p_250815_, Set<BlockState> p_250679_) {
+    private static void registerBlockStates(Holder<PoiType> p_250815_, Set<BlockState> p_250679_) {
 -      p_250679_.forEach((p_218081_) -> {
--         Holder<PoiType> holder = f_218070_.put(p_218081_, p_250815_);
+-         Holder<PoiType> holder = TYPE_BY_STATE.put(p_218081_, p_250815_);
 -         if (holder != null) {
--            throw (IllegalStateException)Util.m_137570_(new IllegalStateException(String.format(Locale.ROOT, "%s is defined in more than one PoI type", p_218081_)));
+-            throw (IllegalStateException)Util.pauseInIde(new IllegalStateException(String.format(Locale.ROOT, "%s is defined in more than one PoI type", p_218081_)));
 -         }
 -      });
     }
  
-    public static Optional<Holder<PoiType>> m_218075_(BlockState p_218076_) {
--      return Optional.ofNullable(f_218070_.get(p_218076_));
-+      return Optional.ofNullable(f_218070_.get(p_218076_)).flatMap(net.minecraftforge.registries.ForgeRegistries.POI_TYPES::getHolder);
+    public static Optional<Holder<PoiType>> forState(BlockState p_218076_) {
+-      return Optional.ofNullable(TYPE_BY_STATE.get(p_218076_));
++      return Optional.ofNullable(TYPE_BY_STATE.get(p_218076_)).flatMap(net.minecraftforge.registries.ForgeRegistries.POI_TYPES::getHolder);
     }
  
-    public static boolean m_252831_(BlockState p_254440_) {
+    public static boolean hasPoi(BlockState p_254440_) {

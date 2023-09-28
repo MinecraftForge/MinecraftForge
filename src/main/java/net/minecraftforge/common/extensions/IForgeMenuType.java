@@ -12,12 +12,10 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.IContainerFactory;
 
-public interface IForgeMenuType<T>
-{
-    static <T extends AbstractContainerMenu> MenuType<T> create(IContainerFactory<T> factory)
-    {
+public interface IForgeMenuType<T> {
+    static <T extends AbstractContainerMenu> MenuType<T> create(IContainerFactory<T> factory) {
         return new MenuType<>(factory, FeatureFlags.DEFAULT_FLAGS);
     }
-    
+
     T create(int windowId, Inventory playerInv, FriendlyByteBuf extraData);
 }

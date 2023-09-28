@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
 +++ b/net/minecraft/client/renderer/blockentity/SkullBlockRenderer.java
-@@ -55,6 +_,7 @@
-       builder.put(SkullBlock.Types.CREEPER, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171130_)));
-       builder.put(SkullBlock.Types.DRAGON, new DragonHeadModel(p_173662_.m_171103_(ModelLayers.f_171135_)));
-       builder.put(SkullBlock.Types.PIGLIN, new PiglinHeadModel(p_173662_.m_171103_(ModelLayers.f_260668_)));
+@@ -53,6 +_,7 @@
+       builder.put(SkullBlock.Types.CREEPER, new SkullModel(p_173662_.bakeLayer(ModelLayers.CREEPER_HEAD)));
+       builder.put(SkullBlock.Types.DRAGON, new DragonHeadModel(p_173662_.bakeLayer(ModelLayers.DRAGON_SKULL)));
+       builder.put(SkullBlock.Types.PIGLIN, new PiglinHeadModel(p_173662_.bakeLayer(ModelLayers.PIGLIN_HEAD)));
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.CreateSkullModels(builder, p_173662_));
        return builder.build();
     }

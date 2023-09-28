@@ -1,185 +1,181 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -120,7 +_,7 @@
- import net.minecraft.world.scores.Team;
+@@ -122,7 +_,7 @@
+ import org.joml.Vector3f;
  import org.slf4j.Logger;
  
 -public abstract class Entity implements Nameable, EntityAccess, CommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements Nameable, EntityAccess, CommandSource, net.minecraftforge.common.extensions.IForgeEntity {
-    private static final Logger f_19849_ = LogUtils.getLogger();
-    public static final String f_146815_ = "id";
-    public static final String f_146816_ = "Passengers";
-@@ -141,6 +_,7 @@
-    private static final double f_146812_ = 0.0023333333333333335D;
-    public static final String f_146824_ = "UUID";
-    private static double f_19846_ = 1.0D;
+    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final String ID_TAG = "id";
+    public static final String PASSENGERS_TAG = "Passengers";
+@@ -143,6 +_,7 @@
+    private static final double LAVA_SLOW_FLOW_SCALE = 0.0023333333333333335D;
+    public static final String UUID_TAG = "UUID";
+    private static double viewScale = 1.0D;
 +   @Deprecated // Forge: Use the getter to allow overriding in mods
-    private final EntityType<?> f_19847_;
-    private int f_19848_ = f_19843_.incrementAndGet();
-    public boolean f_19850_;
-@@ -187,8 +_,10 @@
-    public int f_19797_;
-    private int f_19831_ = -this.m_6101_();
-    protected boolean f_19798_;
+    private final EntityType<?> type;
+    private int id = ENTITY_COUNTER.incrementAndGet();
+    public boolean blocksBuilding;
+@@ -189,8 +_,10 @@
+    public int tickCount;
+    private int remainingFireTicks = -this.getFireImmuneTicks();
+    protected boolean wasTouchingWater;
 +   @Deprecated // Forge: Use forgeFluidTypeHeight instead
-    protected Object2DoubleMap<TagKey<Fluid>> f_19799_ = new Object2DoubleArrayMap<>(2);
-    protected boolean f_19800_;
+    protected Object2DoubleMap<TagKey<Fluid>> fluidHeight = new Object2DoubleArrayMap<>(2);
+    protected boolean wasEyeInWater;
 +   @Deprecated // Forge: Use forgeFluidTypeOnEyes instead
-    private final Set<TagKey<Fluid>> f_19801_ = new HashSet<>();
-    public int f_19802_;
-    protected boolean f_19803_ = true;
-@@ -237,6 +_,7 @@
-    private BlockState f_185934_ = null;
+    private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
+    public int invulnerableTime;
+    protected boolean firstTick = true;
+@@ -239,6 +_,7 @@
+    private BlockState feetBlockState = null;
  
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
 +      super(Entity.class);
-       this.f_19847_ = p_19870_;
-       this.f_19853_ = p_19871_;
-       this.f_19815_ = p_19870_.m_20680_();
-@@ -254,7 +_,11 @@
-       this.f_19804_.m_135372_(f_146800_, 0);
-       this.m_8097_();
-       this.m_6034_(0.0D, 0.0D, 0.0D);
--      this.f_19816_ = this.m_6380_(Pose.STANDING, this.f_19815_);
-+      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.f_19815_, this.m_6380_(Pose.STANDING, this.f_19815_));
-+      this.f_19815_ = sizeEvent.getNewSize();
-+      this.f_19816_ = sizeEvent.getNewEyeHeight();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
+       this.type = p_19870_;
+       this.level = p_19871_;
+       this.dimensions = p_19870_.getDimensions();
+@@ -257,6 +_,8 @@
+       this.defineSynchedData();
+       this.setPos(0.0D, 0.0D, 0.0D);
+       this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
++      net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
 +      this.gatherCapabilities();
     }
  
-    public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
-@@ -344,6 +_,7 @@
+    public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
+@@ -346,6 +_,7 @@
  
-    public void m_142687_(Entity.RemovalReason p_146834_) {
-       this.m_142467_(p_146834_);
+    public void remove(Entity.RemovalReason p_146834_) {
+       this.setRemoved(p_146834_);
 +      this.invalidateCaps();
     }
  
-    public void m_142036_() {
-@@ -461,7 +_,7 @@
+    public void onClientRemoval() {
+@@ -463,7 +_,7 @@
  
-       if (this.m_20077_()) {
-          this.m_20093_();
--         this.f_19789_ *= 0.5F;
-+         this.f_19789_ *= this.getFluidFallDistanceModifier(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+       if (this.isInLava()) {
+          this.lavaHurt();
+-         this.fallDistance *= 0.5F;
++         this.fallDistance *= this.getFluidFallDistanceModifier(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
        }
  
-       this.m_146871_();
-@@ -672,7 +_,7 @@
-                double d1 = vec3.f_82479_;
-                double d2 = vec3.f_82480_;
-                double d3 = vec3.f_82481_;
--               this.f_146794_ += (float)(vec3.m_82553_() * 0.6D);
-+               this.f_146794_ = (float)((double)this.f_146794_ + vec3.m_82553_() * 0.6D);
-                BlockPos blockpos1 = this.m_20097_();
-                BlockState blockstate1 = this.m_9236_().m_8055_(blockpos1);
-                boolean flag1 = this.m_285776_(blockstate1);
-@@ -716,16 +_,16 @@
-                   this.m_7311_(-this.m_6101_());
+       this.checkBelowWorld();
+@@ -674,7 +_,7 @@
+                double d1 = vec3.x;
+                double d2 = vec3.y;
+                double d3 = vec3.z;
+-               this.flyDist += (float)(vec3.length() * 0.6D);
++               this.flyDist = (float)((double)this.flyDist + vec3.length() * 0.6D);
+                BlockPos blockpos1 = this.getOnPos();
+                BlockState blockstate1 = this.level().getBlockState(blockpos1);
+                boolean flag1 = this.isStateClimbable(blockstate1);
+@@ -718,16 +_,16 @@
+                   this.setRemainingFireTicks(-this.getFireImmuneTicks());
                 }
  
--               if (this.f_146810_ && (this.f_146808_ || this.m_20071_())) {
-+               if (this.f_146810_ && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
-                   this.m_146873_();
+-               if (this.wasOnFire && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
++               if (this.wasOnFire && (this.isInPowderSnow || this.isInWaterRainOrBubble() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
+                   this.playEntityOnFireExtinguishedSound();
                 }
              }
  
--            if (this.m_6060_() && (this.f_146808_ || this.m_20071_())) {
-+            if (this.m_6060_() && (this.f_146808_ || this.m_20071_() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
-                this.m_7311_(-this.m_6101_());
+-            if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble())) {
++            if (this.isOnFire() && (this.isInPowderSnow || this.isInWaterRainOrBubble() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType)))) {
+                this.setRemainingFireTicks(-this.getFireImmuneTicks());
              }
  
--            this.m_9236_().m_46473_().m_7238_();
-+            this.f_19853_.m_46473_().m_7238_();
+-            this.level().getProfiler().pop();
++            this.level.getProfiler().pop();
           }
        }
     }
-@@ -813,7 +_,7 @@
+@@ -815,7 +_,7 @@
              return blockpos;
           } else {
-             BlockState blockstate = this.m_9236_().m_8055_(blockpos);
--            return (!((double)p_216987_ <= 0.5D) || !blockstate.m_204336_(BlockTags.f_13039_)) && !blockstate.m_204336_(BlockTags.f_13032_) && !(blockstate.m_60734_() instanceof FenceGateBlock) ? blockpos.m_175288_(Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_)) : blockpos;
-+            return (!((double)p_216987_ <= 0.5D) || !blockstate.collisionExtendsVertically(this.m_9236_(), blockpos, this)) ? blockpos.m_175288_(Mth.m_14107_(this.f_19825_.f_82480_ - (double)p_216987_)) : blockpos;
+             BlockState blockstate = this.level().getBlockState(blockpos);
+-            return (!((double)p_216987_ <= 0.5D) || !blockstate.is(BlockTags.FENCES)) && !blockstate.is(BlockTags.WALLS) && !(blockstate.getBlock() instanceof FenceGateBlock) ? blockpos.atY(Mth.floor(this.position.y - (double)p_216987_)) : blockpos;
++            return (!((double)p_216987_ <= 0.5D) || !blockstate.collisionExtendsVertically(this.level(), blockpos, this)) ? blockpos.atY(Mth.floor(this.position.y - (double)p_216987_)) : blockpos;
           }
        } else {
-          int i = Mth.m_14107_(this.f_19825_.f_82479_);
-@@ -884,10 +_,11 @@
-       boolean flag1 = p_20273_.f_82480_ != vec3.f_82480_;
-       boolean flag2 = p_20273_.f_82481_ != vec3.f_82481_;
-       boolean flag3 = this.m_20096_() || flag1 && p_20273_.f_82480_ < 0.0D;
--      if (this.m_274421_() > 0.0F && flag3 && (flag || flag2)) {
--         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)this.m_274421_(), p_20273_.f_82481_), aabb, this.m_9236_(), list);
--         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)this.m_274421_(), 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.m_9236_(), list);
--         if (vec32.f_82480_ < (double)this.m_274421_()) {
+          int i = Mth.floor(this.position.x);
+@@ -886,10 +_,11 @@
+       boolean flag1 = p_20273_.y != vec3.y;
+       boolean flag2 = p_20273_.z != vec3.z;
+       boolean flag3 = this.onGround() || flag1 && p_20273_.y < 0.0D;
+-      if (this.maxUpStep() > 0.0F && flag3 && (flag || flag2)) {
+-         Vec3 vec31 = collideBoundingBox(this, new Vec3(p_20273_.x, (double)this.maxUpStep(), p_20273_.z), aabb, this.level(), list);
+-         Vec3 vec32 = collideBoundingBox(this, new Vec3(0.0D, (double)this.maxUpStep(), 0.0D), aabb.expandTowards(p_20273_.x, 0.0D, p_20273_.z), this.level(), list);
+-         if (vec32.y < (double)this.maxUpStep()) {
 +      float stepHeight = getStepHeight();
 +      if (stepHeight > 0.0F && flag3 && (flag || flag2)) {
-+         Vec3 vec31 = m_198894_(this, new Vec3(p_20273_.f_82479_, (double)stepHeight, p_20273_.f_82481_), aabb, this.f_19853_, list);
-+         Vec3 vec32 = m_198894_(this, new Vec3(0.0D, (double)stepHeight, 0.0D), aabb.m_82363_(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), this.f_19853_, list);
-+         if (vec32.f_82480_ < (double)stepHeight) {
-             Vec3 vec33 = m_198894_(this, new Vec3(p_20273_.f_82479_, 0.0D, p_20273_.f_82481_), aabb.m_82383_(vec32), this.m_9236_(), list).m_82549_(vec32);
-             if (vec33.m_165925_() > vec31.m_165925_()) {
++         Vec3 vec31 = collideBoundingBox(this, new Vec3(p_20273_.x, (double)stepHeight, p_20273_.z), aabb, this.level, list);
++         Vec3 vec32 = collideBoundingBox(this, new Vec3(0.0D, (double)stepHeight, 0.0D), aabb.expandTowards(p_20273_.x, 0.0D, p_20273_.z), this.level, list);
++         if (vec32.y < (double)stepHeight) {
+             Vec3 vec33 = collideBoundingBox(this, new Vec3(p_20273_.x, 0.0D, p_20273_.z), aabb.move(vec32), this.level(), list).add(vec32);
+             if (vec33.horizontalDistanceSqr() > vec31.horizontalDistanceSqr()) {
                 vec31 = vec33;
-@@ -1033,19 +_,20 @@
-       return !blockstate.m_204336_(BlockTags.f_144271_) && !blockstate.m_204336_(BlockTags.f_276549_) ? p_278049_ : blockpos;
+@@ -1039,19 +_,20 @@
+       return !blockstate.is(BlockTags.INSIDE_STEP_SOUND_BLOCKS) && !blockstate.is(BlockTags.COMBINATION_STEP_SOUND_BLOCKS) ? p_278049_ : blockpos;
     }
  
--   protected void m_276961_(BlockState p_277472_, BlockState p_277630_) {
--      SoundType soundtype = p_277472_.m_60827_();
+-   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_) {
+-      SoundType soundtype = p_277472_.getSoundType();
 +   protected void playCombinationStepSounds(BlockState p_277472_, BlockState p_277630_, BlockPos primaryPos, BlockPos secondaryPos) {
-+      SoundType soundtype = p_277472_.getSoundType(this.f_19853_, primaryPos, this);
-+      SoundType soundtype1 = p_277630_.getSoundType(this.f_19853_, secondaryPos, this);
-       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
--      this.m_280568_(p_277630_);
++      SoundType soundtype = p_277472_.getSoundType(this.level, primaryPos, this);
++      SoundType soundtype1 = p_277630_.getSoundType(this.level, secondaryPos, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
+-      this.playMuffledStepSound(p_277630_);
 +      this.playMuffledStepSound(p_277630_, secondaryPos);
     }
  
--   protected void m_280568_(BlockState p_283110_) {
--      SoundType soundtype = p_283110_.m_60827_();
+-   protected void playMuffledStepSound(BlockState p_283110_) {
+-      SoundType soundtype = p_283110_.getSoundType();
 +   protected void playMuffledStepSound(BlockState p_283110_, BlockPos pos) {
-+      SoundType soundtype = p_283110_.getSoundType(this.f_19853_, pos, this);
-       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.05F, soundtype.m_56774_() * 0.8F);
++      SoundType soundtype = p_283110_.getSoundType(this.level, pos, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.05F, soundtype.getPitch() * 0.8F);
     }
  
-    protected void m_7355_(BlockPos p_20135_, BlockState p_20136_) {
--      SoundType soundtype = p_20136_.m_60827_();
-+      SoundType soundtype = p_20136_.getSoundType(this.f_19853_, p_20135_, this);
-       this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
+    protected void playStepSound(BlockPos p_20135_, BlockState p_20136_) {
+-      SoundType soundtype = p_20136_.getSoundType();
++      SoundType soundtype = p_20136_.getSoundType(this.level, p_20135_, this);
+       this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
     }
  
-@@ -1176,31 +_,38 @@
+@@ -1186,31 +_,38 @@
  
-    public void m_5844_() {
-       if (this.m_6069_()) {
--         this.m_20282_(this.m_20142_() && this.m_20069_() && !this.m_20159_());
-+         this.m_20282_(this.m_20142_() && (this.m_20069_() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.m_20159_());
+    public void updateSwimming() {
+       if (this.isSwimming()) {
+-         this.setSwimming(this.isSprinting() && this.isInWater() && !this.isPassenger());
++         this.setSwimming(this.isSprinting() && (this.isInWater() || this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType))) && !this.isPassenger());
        } else {
--         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.m_9236_().m_6425_(this.f_19826_).m_205070_(FluidTags.f_13131_));
-+         this.m_20282_(this.m_20142_() && (this.m_5842_() || this.canStartSwimming()) && !this.m_20159_());
+-         this.setSwimming(this.isSprinting() && this.isUnderWater() && !this.isPassenger() && this.level().getFluidState(this.blockPosition).is(FluidTags.WATER));
++         this.setSwimming(this.isSprinting() && (this.isUnderWater() || this.canStartSwimming()) && !this.isPassenger());
        }
  
     }
  
-    protected boolean m_20073_() {
-       this.f_19799_.clear();
+    protected boolean updateInWaterStateAndDoFluidPushing() {
+       this.fluidHeight.clear();
 +      this.forgeFluidTypeHeight.clear();
-       this.m_20074_();
--      double d0 = this.m_9236_().m_6042_().f_63857_() ? 0.007D : 0.0023333333333333335D;
--      boolean flag = this.m_204031_(FluidTags.f_13132_, d0);
--      return this.m_20069_() || flag;
-+      if (!(this.m_20202_() instanceof Boat)) {
-+         this.f_19789_ *= this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().filter(e -> !e.getKey().isAir() && !e.getKey().isVanilla()).map(e -> this.getFluidFallDistanceModifier(e.getKey())).min(Float::compare).orElse(1F);
-+         if (this.isInFluidType((fluidType, height) -> !fluidType.isAir() && !fluidType.isVanilla() && this.canFluidExtinguish(fluidType))) this.m_20095_();
+       this.updateInWaterStateAndDoWaterCurrentPushing();
+-      double d0 = this.level().dimensionType().ultraWarm() ? 0.007D : 0.0023333333333333335D;
+-      boolean flag = this.updateFluidHeightAndDoFluidPushing(FluidTags.LAVA, d0);
+-      return this.isInWater() || flag;
++      if (!(this.getVehicle() instanceof Boat)) {
++         this.fallDistance *= this.forgeFluidTypeHeight.object2DoubleEntrySet().stream().filter(e -> !e.getKey().isAir() && !e.getKey().isVanilla()).map(e -> this.getFluidFallDistanceModifier(e.getKey())).min(Float::compare).orElse(1F);
++         if (this.isInFluidType((fluidType, height) -> !fluidType.isAir() && !fluidType.isVanilla() && this.canFluidExtinguish(fluidType))) this.clearFire();
 +      }
 +      return this.isInFluidType();
     }
  
-    void m_20074_() {
-       Entity entity = this.m_20202_();
-+      java.util.function.BooleanSupplier updateFluidHeight = () -> this.m_204031_(FluidTags.f_13131_, 0.014D);
+    void updateInWaterStateAndDoWaterCurrentPushing() {
+       Entity entity = this.getVehicle();
++      java.util.function.BooleanSupplier updateFluidHeight = () -> this.updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0.014D);
        if (entity instanceof Boat boat) {
-          if (!boat.m_5842_()) {
-             this.f_19798_ = false;
+          if (!boat.isUnderWater()) {
+             this.wasTouchingWater = false;
 -            return;
 +            updateFluidHeight = () -> {
 +               this.updateFluidHeightAndDoFluidPushing(state -> this.shouldUpdateFluidWhileBoating(state, boat));
@@ -188,249 +184,226 @@
           }
        }
  
--      if (this.m_204031_(FluidTags.f_13131_, 0.014D)) {
+-      if (this.updateFluidHeightAndDoFluidPushing(FluidTags.WATER, 0.014D)) {
 +      if (updateFluidHeight.getAsBoolean()) {
-          if (!this.f_19798_ && !this.f_19803_) {
-             this.m_5841_();
+          if (!this.wasTouchingWater && !this.firstTick) {
+             this.doWaterSplashEffect();
           }
-@@ -1217,6 +_,7 @@
-    private void m_20323_() {
-       this.f_19800_ = this.m_204029_(FluidTags.f_13131_);
-       this.f_19801_.clear();
+@@ -1227,6 +_,7 @@
+    private void updateFluidOnEyes() {
+       this.wasEyeInWater = this.isEyeInFluid(FluidTags.WATER);
+       this.fluidOnEyes.clear();
 +      this.forgeFluidTypeOnEyes = net.minecraftforge.common.ForgeMod.EMPTY_TYPE.get();
-       double d0 = this.m_20188_() - (double)0.11111111F;
-       Entity entity = this.m_20202_();
+       double d0 = this.getEyeY() - (double)0.11111111F;
+       Entity entity = this.getVehicle();
        if (entity instanceof Boat boat) {
-@@ -1229,7 +_,7 @@
-       FluidState fluidstate = this.m_9236_().m_6425_(blockpos);
-       double d1 = (double)((float)blockpos.m_123342_() + fluidstate.m_76155_(this.m_9236_(), blockpos));
+@@ -1239,7 +_,7 @@
+       FluidState fluidstate = this.level().getFluidState(blockpos);
+       double d1 = (double)((float)blockpos.getY() + fluidstate.getHeight(this.level(), blockpos));
        if (d1 > d0) {
--         fluidstate.m_205075_().forEach(this.f_19801_::add);
+-         fluidstate.getTags().forEach(this.fluidOnEyes::add);
 +         this.forgeFluidTypeOnEyes = fluidstate.getFluidType();
        }
  
     }
-@@ -1273,12 +_,13 @@
+@@ -1283,12 +_,13 @@
     }
  
-    public boolean m_5843_() {
--      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_();
-+      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_() && !this.isInFluidType();
+    public boolean canSpawnSprintParticle() {
+-      return this.isSprinting() && !this.isInWater() && !this.isSpectator() && !this.isCrouching() && !this.isInLava() && this.isAlive();
++      return this.isSprinting() && !this.isInWater() && !this.isSpectator() && !this.isCrouching() && !this.isInLava() && this.isAlive() && !this.isInFluidType();
     }
  
-    protected void m_20076_() {
-       BlockPos blockpos = this.m_216999_();
-       BlockState blockstate = this.m_9236_().m_8055_(blockpos);
-+      if(!blockstate.addRunningEffects(f_19853_, blockpos, this))
-       if (blockstate.m_60799_() != RenderShape.INVISIBLE) {
-          Vec3 vec3 = this.m_20184_();
-          BlockPos blockpos1 = this.m_20183_();
-@@ -1292,17 +_,20 @@
-             d1 = Mth.m_14008_(d1, (double)blockpos.m_123343_(), (double)blockpos.m_123343_() + 1.0D);
+    protected void spawnSprintParticle() {
+       BlockPos blockpos = this.getOnPosLegacy();
+       BlockState blockstate = this.level().getBlockState(blockpos);
++      if(!blockstate.addRunningEffects(level, blockpos, this))
+       if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
+          Vec3 vec3 = this.getDeltaMovement();
+          BlockPos blockpos1 = this.blockPosition();
+@@ -1302,17 +_,20 @@
+             d1 = Mth.clamp(d1, (double)blockpos.getZ(), (double)blockpos.getZ() + 1.0D);
           }
  
--         this.m_9236_().m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate), d0, this.m_20186_() + 0.1D, d1, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
-+         this.m_9236_().m_7106_(new BlockParticleOption(ParticleTypes.f_123794_, blockstate).setPos(blockpos), d0, this.m_20186_() + 0.1D, d1, vec3.f_82479_ * -4.0D, 1.5D, vec3.f_82481_ * -4.0D);
+-         this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), d0, this.getY() + 0.1D, d1, vec3.x * -4.0D, 1.5D, vec3.z * -4.0D);
++         this.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate).setPos(blockpos), d0, this.getY() + 0.1D, d1, vec3.x * -4.0D, 1.5D, vec3.z * -4.0D);
        }
  
     }
  
 +   @Deprecated // Forge: Use isEyeInFluidType instead
-    public boolean m_204029_(TagKey<Fluid> p_204030_) {
-+      if (p_204030_ == FluidTags.f_13131_) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
-+      else if (p_204030_ == FluidTags.f_13132_) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
-       return this.f_19801_.contains(p_204030_);
+    public boolean isEyeInFluid(TagKey<Fluid> p_204030_) {
++      if (p_204030_ == FluidTags.WATER) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++      else if (p_204030_ == FluidTags.LAVA) return this.isEyeInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+       return this.fluidOnEyes.contains(p_204030_);
     }
  
-    public boolean m_20077_() {
--      return !this.f_19803_ && this.f_19799_.getDouble(FluidTags.f_13132_) > 0.0D;
-+      return !this.f_19803_ && this.forgeFluidTypeHeight.getDouble(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) > 0.0D;
+    public boolean isInLava() {
+-      return !this.firstTick && this.fluidHeight.getDouble(FluidTags.LAVA) > 0.0D;
++      return !this.firstTick && this.forgeFluidTypeHeight.getDouble(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get()) > 0.0D;
     }
  
-    public void m_19920_(float p_19921_, Vec3 p_19922_) {
-@@ -1620,6 +_,8 @@
-             p_20241_.m_128379_("HasVisualFire", this.f_146813_);
+    public void moveRelative(float p_19921_, Vec3 p_19922_) {
+@@ -1630,6 +_,8 @@
+             p_20241_.putBoolean("HasVisualFire", this.hasVisualFire);
           }
  
-+         p_20241_.m_128379_("CanUpdate", canUpdate);
++         p_20241_.putBoolean("CanUpdate", canUpdate);
 +
-          if (!this.f_19841_.isEmpty()) {
+          if (!this.tags.isEmpty()) {
              ListTag listtag = new ListTag();
  
-@@ -1630,6 +_,10 @@
-             p_20241_.m_128365_("Tags", listtag);
+@@ -1640,6 +_,10 @@
+             p_20241_.put("Tags", listtag);
           }
  
 +         CompoundTag caps = serializeCaps();
-+         if (caps != null) p_20241_.m_128365_("ForgeCaps", caps);
-+         if (persistentData != null) p_20241_.m_128365_("ForgeData", persistentData.m_6426_());
++         if (caps != null) p_20241_.put("ForgeCaps", caps);
++         if (persistentData != null) p_20241_.put("ForgeData", persistentData.copy());
 +
-          this.m_7380_(p_20241_);
-          if (this.m_20160_()) {
+          this.addAdditionalSaveData(p_20241_);
+          if (this.isVehicle()) {
              ListTag listtag1 = new ListTag();
-@@ -1705,6 +_,9 @@
-                this.m_146915_(p_20259_.m_128471_("Glowing"));
-                this.m_146917_(p_20259_.m_128451_("TicksFrozen"));
-                this.f_146813_ = p_20259_.m_128471_("HasVisualFire");
-+               if (p_20259_.m_128425_("ForgeData", 10)) persistentData = p_20259_.m_128469_("ForgeData");
-+               if (p_20259_.m_128425_("CanUpdate", 99)) this.canUpdate(p_20259_.m_128471_("CanUpdate"));
-+               if (p_20259_.m_128425_("ForgeCaps", 10)) deserializeCaps(p_20259_.m_128469_("ForgeCaps"));
-                if (p_20259_.m_128425_("Tags", 9)) {
-                   this.f_19841_.clear();
-                   ListTag listtag3 = p_20259_.m_128437_("Tags", 8);
-@@ -1793,6 +_,8 @@
+@@ -1715,6 +_,9 @@
+                this.setGlowingTag(p_20259_.getBoolean("Glowing"));
+                this.setTicksFrozen(p_20259_.getInt("TicksFrozen"));
+                this.hasVisualFire = p_20259_.getBoolean("HasVisualFire");
++               if (p_20259_.contains("ForgeData", 10)) persistentData = p_20259_.getCompound("ForgeData");
++               if (p_20259_.contains("CanUpdate", 99)) this.canUpdate(p_20259_.getBoolean("CanUpdate"));
++               if (p_20259_.contains("ForgeCaps", 10)) deserializeCaps(p_20259_.getCompound("ForgeCaps"));
+                if (p_20259_.contains("Tags", 9)) {
+                   this.tags.clear();
+                   ListTag listtag3 = p_20259_.getList("Tags", 8);
+@@ -1803,6 +_,8 @@
        } else {
-          ItemEntity itementity = new ItemEntity(this.m_9236_(), this.m_20185_(), this.m_20186_() + (double)p_19986_, this.m_20189_(), p_19985_);
-          itementity.m_32060_();
+          ItemEntity itementity = new ItemEntity(this.level(), this.getX(), this.getY() + (double)p_19986_, this.getZ(), p_19985_);
+          itementity.setDefaultPickUpDelay();
 +         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
-          this.m_9236_().m_7967_(itementity);
+          this.level().addFreshEntity(itementity);
           return itementity;
        }
-@@ -1829,6 +_,7 @@
+@@ -1839,6 +_,7 @@
  
-    public void m_6083_() {
-       this.m_20256_(Vec3.f_82478_);
+    public void rideTick() {
+       this.setDeltaMovement(Vec3.ZERO);
 +      if (canUpdate())
-       this.m_8119_();
-       if (this.m_20159_()) {
-          this.m_20202_().m_7332_(this);
-@@ -1877,6 +_,7 @@
+       this.tick();
+       if (this.isPassenger()) {
+          this.getVehicle().positionRider(this);
+@@ -1895,6 +_,7 @@
              }
           }
  
 +      if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_19966_, true)) return false;
-          if (p_19967_ || this.m_7341_(p_19966_) && p_19966_.m_7310_(this)) {
-             if (this.m_20159_()) {
-                this.m_8127_();
-@@ -1915,6 +_,7 @@
-    public void m_6038_() {
-       if (this.f_19824_ != null) {
-          Entity entity = this.f_19824_;
+          if (p_19967_ || this.canRide(p_19966_) && p_19966_.canAddPassenger(this)) {
+             if (this.isPassenger()) {
+                this.stopRiding();
+@@ -1929,6 +_,7 @@
+    public void removeVehicle() {
+       if (this.vehicle != null) {
+          Entity entity = this.vehicle;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
-          this.f_19824_ = null;
-          entity.m_20351_(this);
+          this.vehicle = null;
+          entity.removePassenger(this);
        }
-@@ -1967,6 +_,8 @@
-       return this.f_19823_.isEmpty();
+@@ -1981,6 +_,8 @@
+       return this.passengers.isEmpty();
     }
  
 +   /** @deprecated Forge: Use {@link #canBeRiddenUnderFluidType(net.minecraftforge.fluids.FluidType, Entity) rider sensitive version} */
 +   @Deprecated
-    protected boolean m_269011_() {
+    protected boolean couldAcceptPassenger() {
        return true;
     }
-@@ -2148,7 +_,7 @@
+@@ -2186,7 +_,7 @@
     }
  
-    public boolean m_20143_() {
--      return this.m_6067_() && !this.m_20069_();
-+      return this.m_6067_() && !this.m_20069_() && !this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType));
+    public boolean isVisuallyCrawling() {
+-      return this.isVisuallySwimming() && !this.isInWater();
++      return this.isVisuallySwimming() && !this.isInWater() && !this.isInFluidType((fluidType, height) -> this.canSwimInFluidType(fluidType));
     }
  
-    public void m_20282_(boolean p_20283_) {
-@@ -2258,7 +_,7 @@
-          this.m_20254_(8);
+    public void setSwimming(boolean p_20283_) {
+@@ -2296,7 +_,7 @@
+          this.setSecondsOnFire(8);
        }
  
--      this.m_6469_(this.m_269291_().m_269548_(), 5.0F);
-+      this.m_6469_(this.m_269291_().m_269548_(), p_19928_.getDamage());
+-      this.hurt(this.damageSources().lightningBolt(), 5.0F);
++      this.hurt(this.damageSources().lightningBolt(), p_19928_.getDamage());
     }
  
-    public void m_6845_(boolean p_20313_) {
-@@ -2354,7 +_,7 @@
+    public void onAboveBubbleCol(boolean p_20313_) {
+@@ -2392,7 +_,7 @@
     }
  
-    protected Component m_5677_() {
--      return this.f_19847_.m_20676_();
-+      return this.m_6095_().m_20676_(); // Forge: Use getter to allow overriding by mods
+    protected Component getTypeName() {
+-      return this.type.getDescription();
++      return this.getType().getDescription(); // Forge: Use getter to allow overriding by mods
     }
  
-    public boolean m_7306_(Entity p_20356_) {
-@@ -2410,14 +_,20 @@
+    public boolean is(Entity p_20356_) {
+@@ -2448,14 +_,20 @@
  
     @Nullable
-    public Entity m_5489_(ServerLevel p_20118_) {
-+      return this.changeDimension(p_20118_, p_20118_.m_8871_());
+    public Entity changeDimension(ServerLevel p_20118_) {
++      return this.changeDimension(p_20118_, p_20118_.getPortalForcer());
 +   }
 +   @Nullable
 +   public Entity changeDimension(ServerLevel p_20118_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_20118_.m_46472_())) return null;
-       if (this.m_9236_() instanceof ServerLevel && !this.m_213877_()) {
-          this.m_9236_().m_46473_().m_6180_("changeDimension");
-          this.m_19877_();
-          this.m_9236_().m_46473_().m_6180_("reposition");
--         PortalInfo portalinfo = this.m_7937_(p_20118_);
-+         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_20118_, this::m_7937_);
++      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_20118_.dimension())) return null;
+       if (this.level() instanceof ServerLevel && !this.isRemoved()) {
+          this.level().getProfiler().push("changeDimension");
+          this.unRide();
+          this.level().getProfiler().push("reposition");
+-         PortalInfo portalinfo = this.findDimensionEntryPoint(p_20118_);
++         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_20118_, this::findDimensionEntryPoint);
           if (portalinfo == null) {
              return null;
           } else {
-+            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.f_19853_, p_20118_, this.f_19857_, spawnPortal -> { //Forge: Start vanilla logic
-             this.m_9236_().m_46473_().m_6182_("reloading");
-             Entity entity = this.m_6095_().m_20615_(p_20118_);
++            Entity transportedEntity = teleporter.placeEntity(this, (ServerLevel) this.level, p_20118_, this.yRot, spawnPortal -> { //Forge: Start vanilla logic
+             this.level().getProfiler().popPush("reloading");
+             Entity entity = this.getType().create(p_20118_);
              if (entity != null) {
-@@ -2425,17 +_,19 @@
-                entity.m_7678_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_, portalinfo.f_77678_, entity.m_146909_());
-                entity.m_20256_(portalinfo.f_77677_);
-                p_20118_.m_143334_(entity);
--               if (p_20118_.m_46472_() == Level.f_46430_) {
-+               if (spawnPortal && p_20118_.m_46472_() == Level.f_46430_) {
-                   ServerLevel.m_8617_(p_20118_);
+@@ -2463,17 +_,19 @@
+                entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.getXRot());
+                entity.setDeltaMovement(portalinfo.speed);
+                p_20118_.addDuringTeleport(entity);
+-               if (p_20118_.dimension() == Level.END) {
++               if (spawnPortal && p_20118_.dimension() == Level.END) {
+                   ServerLevel.makeObsidianPlatform(p_20118_);
                 }
              }
 +            return entity;
 +            }); //Forge: End vanilla logic
  
-             this.m_6089_();
-             this.m_9236_().m_46473_().m_7238_();
-             ((ServerLevel)this.m_9236_()).m_8886_();
-             p_20118_.m_8886_();
-             this.m_9236_().m_46473_().m_7238_();
+             this.removeAfterChangingDimensions();
+             this.level().getProfiler().pop();
+             ((ServerLevel)this.level()).resetEmptyTime();
+             p_20118_.resetEmptyTime();
+             this.level().getProfiler().pop();
 -            return entity;
 +            return transportedEntity;
           }
        } else {
           return null;
-@@ -2557,6 +_,7 @@
-       return this.f_19821_;
+@@ -2595,6 +_,7 @@
+       return this.stringUUID;
     }
  
 +   @Deprecated // Forge: Use FluidType sensitive version
-    public boolean m_6063_() {
+    public boolean isPushedByFluid() {
        return true;
     }
-@@ -2679,8 +_,10 @@
-       EntityDimensions entitydimensions = this.f_19815_;
-       Pose pose = this.m_20089_();
-       EntityDimensions entitydimensions1 = this.m_6972_(pose);
-+      var sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitydimensions, entitydimensions1, this.m_6380_(pose, entitydimensions1));
-+      entitydimensions1 = sizeEvent.getNewSize();
-       this.f_19815_ = entitydimensions1;
--      this.f_19816_ = this.m_6380_(pose, entitydimensions1);
-+      this.f_19816_ = sizeEvent.getNewEyeHeight();
-       this.m_20090_();
-       boolean flag = (double)entitydimensions1.f_20377_ <= 4.0D && (double)entitydimensions1.f_20378_ <= 4.0D;
-       if (!this.m_9236_().f_46443_ && !this.f_19803_ && !this.f_19794_ && flag && (entitydimensions1.f_20377_ > entitydimensions.f_20377_ || entitydimensions1.f_20378_ > entitydimensions.f_20378_) && !(this instanceof Player)) {
-@@ -2688,8 +_,9 @@
-          double d0 = (double)Math.max(0.0F, entitydimensions1.f_20377_ - entitydimensions.f_20377_) + 1.0E-6D;
-          double d1 = (double)Math.max(0.0F, entitydimensions1.f_20378_ - entitydimensions.f_20378_) + 1.0E-6D;
-          VoxelShape voxelshape = Shapes.m_83064_(AABB.m_165882_(vec3, d0, d1, d0));
-+         EntityDimensions finalEntitydimensions = entitydimensions1;
-          this.m_9236_().m_151418_(this, voxelshape, vec3, (double)entitydimensions1.f_20377_, (double)entitydimensions1.f_20378_, (double)entitydimensions1.f_20377_).ifPresent((p_185956_) -> {
--            this.m_146884_(p_185956_.m_82520_(0.0D, (double)(-entitydimensions1.f_20378_) / 2.0D, 0.0D));
-+            this.m_146884_(p_185956_.m_82520_(0.0D, (double)(-finalEntitydimensions.f_20378_) / 2.0D, 0.0D));
-          });
-       }
- 
-@@ -2980,9 +_,22 @@
-       this.f_19859_ = this.m_146908_();
+@@ -3010,9 +_,22 @@
+       this.yRotO = this.getYRot();
     }
  
 +   @Deprecated // Forge: Use predicate version instead, only for vanilla Tags
-    public boolean m_204031_(TagKey<Fluid> p_204032_, double p_204033_) {
+    public boolean updateFluidHeightAndDoFluidPushing(TagKey<Fluid> p_204032_, double p_204033_) {
 +      this.updateFluidHeightAndDoFluidPushing();
-+      if(p_204032_ == FluidTags.f_13131_) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
-+      else if (p_204032_ == FluidTags.f_13132_) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
++      if(p_204032_ == FluidTags.WATER) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++      else if (p_204032_ == FluidTags.LAVA) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
 +      else return false;
 +   }
 +
@@ -440,14 +413,14 @@
 +   }
 +
 +   public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
-       if (this.m_146899_()) {
+       if (this.touchingUnloadedChunk()) {
 -         return false;
 +         return;
        } else {
-          AABB aabb = this.m_20191_().m_82406_(0.001D);
-          int i = Mth.m_14107_(aabb.f_82288_);
-@@ -2997,25 +_,28 @@
-          Vec3 vec3 = Vec3.f_82478_;
+          AABB aabb = this.getBoundingBox().deflate(0.001D);
+          int i = Mth.floor(aabb.minX);
+@@ -3027,25 +_,28 @@
+          Vec3 vec3 = Vec3.ZERO;
           int k1 = 0;
           BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 +         it.unimi.dsi.fastutil.objects.Object2ObjectMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>> interimCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<>(net.minecraftforge.fluids.FluidType.SIZE.get() - 1);
@@ -455,101 +428,101 @@
           for(int l1 = i; l1 < j; ++l1) {
              for(int i2 = k; i2 < l; ++i2) {
                 for(int j2 = i1; j2 < j1; ++j2) {
-                   blockpos$mutableblockpos.m_122178_(l1, i2, j2);
-                   FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
--                  if (fluidstate.m_205070_(p_204032_)) {
+                   blockpos$mutableblockpos.set(l1, i2, j2);
+                   FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                  if (fluidstate.is(p_204032_)) {
 +                  net.minecraftforge.fluids.FluidType fluidType = fluidstate.getFluidType();
 +                  if (!fluidType.isAir() && shouldUpdate.test(fluidstate)) {
-                      double d1 = (double)((float)i2 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos));
-                      if (d1 >= aabb.f_82289_) {
+                      double d1 = (double)((float)i2 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
+                      if (d1 >= aabb.minY) {
                          flag1 = true;
--                        d0 = Math.max(d1 - aabb.f_82289_, d0);
+-                        d0 = Math.max(d1 - aabb.minY, d0);
 -                        if (flag) {
-+                        org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer> interim = interimCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.f_82478_, 0));
-+                        interim.setLeft(Math.max(d1 - aabb.f_82289_, interim.getLeft()));
++                        org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer> interim = interimCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.ZERO, 0));
++                        interim.setLeft(Math.max(d1 - aabb.minY, interim.getLeft()));
 +                        if (this.isPushedByFluid(fluidType)) {
-                            Vec3 vec31 = fluidstate.m_76179_(this.m_9236_(), blockpos$mutableblockpos);
+                            Vec3 vec31 = fluidstate.getFlow(this.level(), blockpos$mutableblockpos);
 -                           if (d0 < 0.4D) {
--                              vec31 = vec31.m_82490_(d0);
+-                              vec31 = vec31.scale(d0);
 +                           if (interim.getLeft() < 0.4D) {
-+                              vec31 = vec31.m_82490_(interim.getLeft());
++                              vec31 = vec31.scale(interim.getLeft());
                             }
  
--                           vec3 = vec3.m_82549_(vec31);
+-                           vec3 = vec3.add(vec31);
 -                           ++k1;
-+                           interim.setMiddle(interim.getMiddle().m_82549_(vec31));
++                           interim.setMiddle(interim.getMiddle().add(vec31));
 +                           interim.setRight(interim.getRight() + 1);
                          }
                       }
                    }
-@@ -3023,27 +_,28 @@
+@@ -3053,27 +_,28 @@
              }
           }
  
--         if (vec3.m_82553_() > 0.0D) {
+-         if (vec3.length() > 0.0D) {
 -            if (k1 > 0) {
--               vec3 = vec3.m_82490_(1.0D / (double)k1);
+-               vec3 = vec3.scale(1.0D / (double)k1);
 +         interimCalcs.forEach((fluidType, interim) -> {
-+         if (interim.getMiddle().m_82553_() > 0.0D) {
++         if (interim.getMiddle().length() > 0.0D) {
 +            if (interim.getRight() > 0) {
-+               interim.setMiddle(interim.getMiddle().m_82490_(1.0D / (double)interim.getRight()));
++               interim.setMiddle(interim.getMiddle().scale(1.0D / (double)interim.getRight()));
              }
  
              if (!(this instanceof Player)) {
--               vec3 = vec3.m_82541_();
-+               interim.setMiddle(interim.getMiddle().m_82541_());
+-               vec3 = vec3.normalize();
++               interim.setMiddle(interim.getMiddle().normalize());
              }
  
-             Vec3 vec32 = this.m_20184_();
--            vec3 = vec3.m_82490_(p_204033_ * 1.0D);
-+            interim.setMiddle(interim.getMiddle().m_82490_(this.getFluidMotionScale(fluidType)));
+             Vec3 vec32 = this.getDeltaMovement();
+-            vec3 = vec3.scale(p_204033_ * 1.0D);
++            interim.setMiddle(interim.getMiddle().scale(this.getFluidMotionScale(fluidType)));
              double d2 = 0.003D;
--            if (Math.abs(vec32.f_82479_) < 0.003D && Math.abs(vec32.f_82481_) < 0.003D && vec3.m_82553_() < 0.0045000000000000005D) {
--               vec3 = vec3.m_82541_().m_82490_(0.0045000000000000005D);
-+            if (Math.abs(vec32.f_82479_) < 0.003D && Math.abs(vec32.f_82481_) < 0.003D && interim.getMiddle().m_82553_() < 0.0045000000000000005D) {
-+               interim.setMiddle(interim.getMiddle().m_82541_().m_82490_(0.0045000000000000005D));
+-            if (Math.abs(vec32.x) < 0.003D && Math.abs(vec32.z) < 0.003D && vec3.length() < 0.0045000000000000005D) {
+-               vec3 = vec3.normalize().scale(0.0045000000000000005D);
++            if (Math.abs(vec32.x) < 0.003D && Math.abs(vec32.z) < 0.003D && interim.getMiddle().length() < 0.0045000000000000005D) {
++               interim.setMiddle(interim.getMiddle().normalize().scale(0.0045000000000000005D));
              }
  
--            this.m_20256_(this.m_20184_().m_82549_(vec3));
-+            this.m_20256_(this.m_20184_().m_82549_(interim.getMiddle()));
+-            this.setDeltaMovement(this.getDeltaMovement().add(vec3));
++            this.setDeltaMovement(this.getDeltaMovement().add(interim.getMiddle()));
           }
  
--         this.f_19799_.put(p_204032_, d0);
+-         this.fluidHeight.put(p_204032_, d0);
 -         return flag1;
 +         this.setFluidTypeHeight(fluidType, interim.getLeft());
 +         });
        }
     }
  
-@@ -3056,7 +_,10 @@
-       return !this.m_9236_().m_151572_(i, k, j, l);
+@@ -3086,7 +_,10 @@
+       return !this.level().hasChunksAt(i, k, j, l);
     }
  
 +   @Deprecated // Forge: Use getFluidTypeHeight instead
-    public double m_204036_(TagKey<Fluid> p_204037_) {
-+      if (p_204037_ == FluidTags.f_13131_) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
-+      else if (p_204037_ == FluidTags.f_13132_) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
-       return this.f_19799_.getDouble(p_204037_);
+    public double getFluidHeight(TagKey<Fluid> p_204037_) {
++      if (p_204037_ == FluidTags.WATER) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
++      else if (p_204037_ == FluidTags.LAVA) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
+       return this.fluidHeight.getDouble(p_204037_);
     }
  
-@@ -3192,6 +_,7 @@
+@@ -3222,6 +_,7 @@
  
-          this.f_146801_.m_142044_();
+          this.levelCallback.onMove();
        }
-+      if (this.isAddedToWorld() && !this.f_19853_.f_46443_ && !this.m_213877_()) this.f_19853_.m_6325_((int) Math.floor(p_20344_) >> 4, (int) Math.floor(p_20346_) >> 4); // Forge - ensure target chunk is loaded.
++      if (this.isAddedToWorld() && !this.level.isClientSide && !this.isRemoved()) this.level.getChunk((int) Math.floor(p_20344_) >> 4, (int) Math.floor(p_20346_) >> 4); // Forge - ensure target chunk is loaded.
  
     }
  
-@@ -3264,6 +_,7 @@
+@@ -3294,6 +_,7 @@
        return false;
     }
  
 +   @Deprecated /** Forge: Use {@link net.minecraftforge.common.extensions.IForgeEntity#getStepHeight()} */
-    public float m_274421_() {
-       return this.f_19793_;
+    public float maxUpStep() {
+       return this.maxUpStep;
     }
-@@ -3319,6 +_,109 @@
-    public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
+@@ -3349,6 +_,109 @@
+    public boolean mayInteract(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
 +
@@ -584,10 +557,10 @@
 +   }
 +   @Override
 +   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
-+      return f_19853_.f_46441_.m_188501_() < fallDistance - 0.5F
++      return level.random.nextFloat() < fallDistance - 0.5F
 +          && this instanceof LivingEntity
-+          && (this instanceof Player || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(f_19853_, this))
-+          && this.m_20205_() * this.m_20205_() * this.m_20206_() > 0.512F;
++          && (this instanceof Player || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this))
++          && this.getBbWidth() * this.getBbWidth() * this.getBbHeight() > 0.512F;
 +   }
 +
 +   /**
@@ -608,7 +581,7 @@
 +
 +   @Override
 +   public void revive() {
-+      this.m_146912_();
++      this.unsetRemoved();
 +      this.reviveCaps();
 +   }
 +
@@ -618,7 +591,7 @@
 +    */
 +   @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
 +   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
-+      return this.m_6380_(pose, size);
++      return this.getEyeHeight(pose, size);
 +   }
 +
 +   protected Object2DoubleMap<net.minecraftforge.fluids.FluidType> forgeFluidTypeHeight = new Object2DoubleArrayMap<>(net.minecraftforge.fluids.FluidType.SIZE.get());
@@ -650,11 +623,11 @@
 +
 +   @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
 +   public EntityDimensions getDimensionsForge(Pose pose) {
-+       return m_6972_(pose);
++       return getDimensions(pose);
 +   }
 +
 +   /* ================================== Forge End =====================================*/
 +
  
-    public Level m_9236_() {
-       return this.f_19853_;
+    public Level level() {
+       return this.level;

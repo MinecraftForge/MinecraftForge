@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/net/minecraft/world/entity/projectile/SmallFireball.java
 @@ -46,7 +_,7 @@
-       super.m_8060_(p_37384_);
-       if (!this.m_9236_().f_46443_) {
-          Entity entity = this.m_19749_();
--         if (!(entity instanceof Mob) || this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_)) {
-+         if (!(entity instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), entity)) {
-             BlockPos blockpos = p_37384_.m_82425_().m_121945_(p_37384_.m_82434_());
-             if (this.m_9236_().m_46859_(blockpos)) {
-                this.m_9236_().m_46597_(blockpos, BaseFireBlock.m_49245_(this.m_9236_(), blockpos));
+       super.onHitBlock(p_37384_);
+       if (!this.level().isClientSide) {
+          Entity entity = this.getOwner();
+-         if (!(entity instanceof Mob) || this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++         if (!(entity instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), entity)) {
+             BlockPos blockpos = p_37384_.getBlockPos().relative(p_37384_.getDirection());
+             if (this.level().isEmptyBlock(blockpos)) {
+                this.level().setBlockAndUpdate(blockpos, BaseFireBlock.getState(this.level(), blockpos));

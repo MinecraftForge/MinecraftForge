@@ -1,22 +1,10 @@
 --- a/net/minecraft/world/item/crafting/RecipeSerializer.java
 +++ b/net/minecraft/world/item/crafting/RecipeSerializer.java
-@@ -6,7 +_,7 @@
- import net.minecraft.network.FriendlyByteBuf;
- import net.minecraft.resources.ResourceLocation;
+@@ -32,6 +_,7 @@
  
--public interface RecipeSerializer<T extends Recipe<?>> {
-+public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.common.extensions.IForgeRecipeSerializer<T> {
-    RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
-    RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
-    RecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleCraftingRecipeSerializer<>(ArmorDyeRecipe::new));
-@@ -31,8 +_,10 @@
-    RecipeSerializer<SmithingTrimRecipe> f_265968_ = m_44098_("smithing_trim", new SmithingTrimRecipe.Serializer());
-    RecipeSerializer<DecoratedPotRecipe> f_271437_ = m_44098_("crafting_decorated_pot", new SimpleCraftingRecipeSerializer<>(DecoratedPotRecipe::new));
- 
-+   // Forge: use fromJson with IContext if you need the context
-    T m_6729_(ResourceLocation p_44103_, JsonObject p_44104_);
+    Codec<T> codec();
  
 +   @org.jetbrains.annotations.Nullable
-    T m_8005_(ResourceLocation p_44105_, FriendlyByteBuf p_44106_);
+    T fromNetwork(FriendlyByteBuf p_44106_);
  
-    void m_6178_(FriendlyByteBuf p_44101_, T p_44102_);
+    void toNetwork(FriendlyByteBuf p_44101_, T p_44102_);

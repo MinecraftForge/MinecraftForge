@@ -16,13 +16,13 @@
 +   }
 +   // FORGE: is this tag set to replace or not?
 +   private boolean replace = false;
-    private final List<TagEntry> f_215897_ = new ArrayList<>();
+    private final List<TagEntry> entries = new ArrayList<>();
  
-    public static TagBuilder m_215899_() {
+    public static TagBuilder create() {
 @@ -34,5 +_,21 @@
  
-    public TagBuilder m_215909_(ResourceLocation p_215910_) {
-       return this.m_215902_(TagEntry.m_215953_(p_215910_));
+    public TagBuilder addOptionalTag(ResourceLocation p_215910_) {
+       return this.add(TagEntry.optionalTag(p_215910_));
 +   }
 +
 +   // FORGE: Set the replace property of this tag.

@@ -1,17 +1,17 @@
 --- a/com/mojang/math/Transformation.java
 +++ b/com/mojang/math/Transformation.java
-@@ -14,7 +_,7 @@
+@@ -13,7 +_,7 @@
  import org.joml.Vector3f;
  import org.joml.Vector3fc;
  
 -public final class Transformation {
 +public final class Transformation implements net.minecraftforge.common.extensions.IForgeTransformation {
-    private final Matrix4f f_121078_;
-    public static final Codec<Transformation> f_268453_ = RecordCodecBuilder.create((p_269604_) -> {
-       return p_269604_.group(ExtraCodecs.f_252432_.fieldOf("translation").forGetter((p_269599_) -> {
-@@ -163,6 +_,19 @@
+    private final Matrix4f matrix;
+    public static final Codec<Transformation> CODEC = RecordCodecBuilder.create((p_269604_) -> {
+       return p_269604_.group(ExtraCodecs.VECTOR3F.fieldOf("translation").forGetter((p_269599_) -> {
+@@ -156,6 +_,19 @@
     public int hashCode() {
-       return Objects.hash(this.f_121078_);
+       return Objects.hash(this.matrix);
     }
 +
 +    private Matrix3f normalTransform = null;
@@ -21,11 +21,11 @@
 +    }
 +    private void checkNormalTransform() {
 +        if (normalTransform == null) {
-+            normalTransform = new Matrix3f(f_121078_);
++            normalTransform = new Matrix3f(matrix);
 +            normalTransform.invert();
 +            normalTransform.transpose();
 +        }
 +    }
  
-    public Transformation m_175937_(Transformation p_175938_, float p_175939_) {
-       Vector3f vector3f = this.m_252829_();
+    public Transformation slerp(Transformation p_175938_, float p_175939_) {
+       Vector3f vector3f = this.getTranslation();

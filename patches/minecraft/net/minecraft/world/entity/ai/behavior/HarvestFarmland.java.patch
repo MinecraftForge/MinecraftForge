@@ -3,19 +3,19 @@
 @@ -40,7 +_,7 @@
     }
  
-    protected boolean m_6114_(ServerLevel p_23174_, Villager p_23175_) {
--      if (!p_23174_.m_46469_().m_46207_(GameRules.f_46132_)) {
+    protected boolean checkExtraStartConditions(ServerLevel p_23174_, Villager p_23175_) {
+-      if (!p_23174_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_23174_, p_23175_)) {
           return false;
-       } else if (p_23175_.m_7141_().m_35571_() != VillagerProfession.f_35590_) {
+       } else if (p_23175_.getVillagerData().getProfession() != VillagerProfession.FARMER) {
           return false;
 @@ -115,6 +_,11 @@
-                         p_23196_.m_46597_(this.f_23159_, blockstate1);
-                         p_23196_.m_220407_(GameEvent.f_157797_, this.f_23159_, GameEvent.Context.m_223719_(p_23197_, blockstate1));
+                         p_23196_.setBlockAndUpdate(this.aboveFarmlandPos, blockstate1);
+                         p_23196_.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(p_23197_, blockstate1));
                          flag = true;
-+                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP) {
-+                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
++                     } else if (itemstack.getItem() instanceof net.minecraftforge.common.IPlantable) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlantType(p_23196_, aboveFarmlandPos) == net.minecraftforge.common.PlantType.CROP) {
++                           p_23196_.setBlock(aboveFarmlandPos, ((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlant(p_23196_, aboveFarmlandPos), 3);
 +                           flag = true;
 +                        }
                       }

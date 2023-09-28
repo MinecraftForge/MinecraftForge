@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
-@@ -12,6 +_,7 @@
-    LEFT(0, 64, 32, 28, 5),
-    RIGHT(96, 64, 32, 28, 5);
+@@ -13,6 +_,7 @@
+    LEFT(new AdvancementTabType.Sprites(new ResourceLocation("advancements/tab_left_top_selected"), new ResourceLocation("advancements/tab_left_middle_selected"), new ResourceLocation("advancements/tab_left_bottom_selected")), new AdvancementTabType.Sprites(new ResourceLocation("advancements/tab_left_top"), new ResourceLocation("advancements/tab_left_middle"), new ResourceLocation("advancements/tab_left_bottom")), 32, 28, 5),
+    RIGHT(new AdvancementTabType.Sprites(new ResourceLocation("advancements/tab_right_top_selected"), new ResourceLocation("advancements/tab_right_middle_selected"), new ResourceLocation("advancements/tab_right_bottom_selected")), new AdvancementTabType.Sprites(new ResourceLocation("advancements/tab_right_top"), new ResourceLocation("advancements/tab_right_middle"), new ResourceLocation("advancements/tab_right_bottom")), 32, 28, 5);
  
-+   public static final int MAX_TABS = java.util.Arrays.stream(values()).mapToInt(e -> e.f_97199_).sum();
-    private final int f_97195_;
-    private final int f_97196_;
-    private final int f_97197_;
++   public static final int MAX_TABS = java.util.Arrays.stream(values()).mapToInt(e -> e.max).sum();
+    private final AdvancementTabType.Sprites selectedSprites;
+    private final AdvancementTabType.Sprites unselectedSprites;
+    private final int width;

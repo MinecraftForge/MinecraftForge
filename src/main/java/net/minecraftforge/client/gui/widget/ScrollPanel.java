@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * Abstract scroll panel class.
  */
-public abstract class ScrollPanel extends AbstractContainerEventHandler implements Renderable, NarratableEntry
-{
+public abstract class ScrollPanel extends AbstractContainerEventHandler implements Renderable, NarratableEntry {
     private final Minecraft client;
     protected final int width;
     protected final int height;
@@ -54,8 +53,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param top the offset from the top (y coord)
      * @param left the offset from the left (x coord)
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left) {
         this(client, width, height, top, left, 4);
     }
 
@@ -67,8 +65,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param left the offset from the left (x coord)
      * @param border the size of the border
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border) {
         this(client, width, height, top, left, border, 6);
     }
 
@@ -81,8 +78,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param border the size of the border
      * @param barWidth the width of the scroll bar
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth) {
         this(client, width, height, top, left, border, barWidth, 0xC0101010, 0xD0101010);
     }
 
@@ -96,8 +92,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param barWidth the width of the scroll bar
      * @param bgColor the color for the background
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColor)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColor) {
         this(client, width, height, top, left, border, barWidth, bgColor, bgColor);
     }
 
@@ -112,8 +107,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param bgColorFrom the start color for the background gradient
      * @param bgColorTo the end color for the background gradient
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo) {
         this(client, width, height, top, left, border, barWidth, bgColorFrom, bgColorTo, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
     }
 
@@ -133,8 +127,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      * @param barColor the color for the scroll bar handle
      * @param barBorderColor the border color for the scroll bar handle
      */
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
-    {
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor) {
         this.client = client;
         this.width = width;
         this.height = height;
@@ -157,16 +150,12 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     /**
      * Draws the background of the scroll panel. This runs AFTER Scissors are enabled.
      */
-    protected void drawBackground(GuiGraphics guiGraphics, Tesselator tess, float partialTick)
-    {
+    protected void drawBackground(GuiGraphics guiGraphics, Tesselator tess, float partialTick) {
         BufferBuilder worldr = tess.getBuilder();
 
-        if (this.client.level != null)
-        {
+        if (this.client.level != null) {
             this.drawGradientRect(guiGraphics, this.left, this.top, this.right, this.bottom, bgColorFrom, bgColorTo);
-        }
-        else // Draw dark dirt background
-        {
+        } else { // Draw dark dirt background
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
             RenderSystem.setShaderTexture(0, Screen.BACKGROUND_LOCATION);
             final float texScale = 32.0F;
@@ -185,38 +174,31 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
      */
     protected abstract void drawPanel(GuiGraphics guiGraphics, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
 
-    protected boolean clickPanel(double mouseX, double mouseY, int button) { return false; }
+    protected boolean clickPanel(double mouseX, double mouseY, int button) {
+        return false;
+    }
 
-    private int getMaxScroll()
-    {
+    private int getMaxScroll() {
         return this.getContentHeight() - (this.height - this.border);
     }
 
-    private void applyScrollLimits()
-    {
+    private void applyScrollLimits() {
         int max = getMaxScroll();
 
         if (max < 0)
-        {
             max /= 2;
-        }
 
         if (this.scrollDistance < 0.0F)
-        {
             this.scrollDistance = 0.0F;
-        }
 
         if (this.scrollDistance > max)
-        {
             this.scrollDistance = max;
-        }
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
-    {
-        if (scroll != 0)
-        {
+    public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
+        double scroll = deltaX == 0 ? deltaY : deltaX;
+        if (scroll != 0) {
             this.scrollDistance += -scroll * getScrollAmount();
             applyScrollLimits();
             return true;
@@ -224,49 +206,42 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         return false;
     }
 
-    protected int getScrollAmount()
-    {
+    protected int getScrollAmount() {
         return 20;
     }
 
     @Override
-    public boolean isMouseOver(double mouseX, double mouseY)
-    {
+    public boolean isMouseOver(double mouseX, double mouseY) {
         return mouseX >= this.left && mouseX <= this.left + this.width &&
                 mouseY >= this.top && mouseY <= this.bottom;
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
-    {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (super.mouseClicked(mouseX, mouseY, button))
             return true;
 
         this.scrolling = button == 0 && mouseX >= barLeft && mouseX < barLeft + barWidth;
         if (this.scrolling)
-        {
             return true;
-        }
+
         int mouseListY = ((int)mouseY) - this.top - this.getContentHeight() + (int)this.scrollDistance - border;
         if (mouseX >= left && mouseX <= right && mouseListY < 0)
-        {
             return this.clickPanel(mouseX - left, mouseY - this.top + (int)this.scrollDistance - border, button);
-        }
         return false;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button)
-    {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (super.mouseReleased(mouseX, mouseY, button))
             return true;
+
         boolean ret = this.scrolling;
         this.scrolling = false;
         return ret;
     }
 
-    private int getBarHeight()
-    {
+    private int getBarHeight() {
         int barHeight = (height * height) / this.getContentHeight();
 
         if (barHeight < 32) barHeight = 32;
@@ -278,10 +253,8 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
-    {
-        if (this.scrolling)
-        {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (this.scrolling) {
             int maxScroll = height - getBarHeight();
             double moved = deltaY / maxScroll;
             this.scrollDistance += getMaxScroll() * moved;
@@ -292,8 +265,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
-    {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder worldr = tess.getBuilder();
 
@@ -309,15 +281,12 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.disableDepthTest();
 
         int extraHeight = (this.getContentHeight() + border) - height;
-        if (extraHeight > 0)
-        {
+        if (extraHeight > 0) {
             int barHeight = getBarHeight();
 
             int barTop = (int)this.scrollDistance * (height - barHeight) / extraHeight + this.top;
             if (barTop < this.top)
-            {
                 barTop = this.top;
-            }
 
             int barBgAlpha = this.barBgColor >> 24 & 0xff;
             int barBgRed   = this.barBgColor >> 16 & 0xff;
@@ -361,14 +330,12 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         RenderSystem.disableScissor();
     }
 
-    protected void drawGradientRect(GuiGraphics guiGraphics, int left, int top, int right, int bottom, int color1, int color2)
-    {
+    protected void drawGradientRect(GuiGraphics guiGraphics, int left, int top, int right, int bottom, int color1, int color2) {
         guiGraphics.fillGradient(left, top, right, bottom, color1, color2);
     }
 
     @Override
-    public List<? extends GuiEventListener> children()
-    {
+    public List<? extends GuiEventListener> children() {
         return Collections.emptyList();
     }
 }

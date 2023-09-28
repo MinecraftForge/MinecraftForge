@@ -1,29 +1,30 @@
 --- a/net/minecraft/network/protocol/login/ClientboundCustomQueryPacket.java
 +++ b/net/minecraft/network/protocol/login/ClientboundCustomQueryPacket.java
-@@ -4,7 +_,7 @@
- import net.minecraft.network.protocol.Packet;
+@@ -6,7 +_,7 @@
+ import net.minecraft.network.protocol.login.custom.DiscardedQueryPayload;
  import net.minecraft.resources.ResourceLocation;
  
--public class ClientboundCustomQueryPacket implements Packet<ClientLoginPacketListener> {
-+public class ClientboundCustomQueryPacket implements Packet<ClientLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomQueryPacket> {
-    private static final int f_179804_ = 1048576;
-    private final int f_134745_;
-    private final ResourceLocation f_134746_;
-@@ -30,7 +_,7 @@
-    public void m_5779_(FriendlyByteBuf p_134757_) {
-       p_134757_.m_130130_(this.f_134745_);
-       p_134757_.m_130085_(this.f_134746_);
--      p_134757_.writeBytes(this.f_134747_.copy());
-+      p_134757_.writeBytes(this.f_134747_.slice()); // Use Slice instead of copy, to not update the read index, allowing packet to be sent multiple times.
-    }
+-public record ClientboundCustomQueryPacket(int transactionId, CustomQueryPayload payload) implements Packet<ClientLoginPacketListener> {
++public record ClientboundCustomQueryPacket(int transactionId, CustomQueryPayload payload) implements Packet<ClientLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomQueryPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
  
-    public void m_5797_(ClientLoginPacketListener p_134754_) {
-@@ -48,4 +_,8 @@
-    public FriendlyByteBuf m_179812_() {
-       return this.f_134747_;
+    public ClientboundCustomQueryPacket(FriendlyByteBuf p_179810_) {
+@@ -20,8 +_,7 @@
+    private static DiscardedQueryPayload readUnknownPayload(ResourceLocation p_299981_, FriendlyByteBuf p_297706_) {
+       int i = p_297706_.readableBytes();
+       if (i >= 0 && i <= 1048576) {
+-         p_297706_.skipBytes(i);
+-         return new DiscardedQueryPayload(p_299981_);
++         return new DiscardedQueryPayload(p_299981_, new FriendlyByteBuf(p_297706_.readBytes(i)));
+       } else {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
+@@ -36,4 +_,8 @@
+    public void handle(ClientLoginPacketListener p_134754_) {
+       p_134754_.handleCustomQuery(this);
     }
 +
-+   @Override public int getIndex() { return m_134755_(); }
-+   @Override public ResourceLocation getName() { return m_179811_(); }
-+   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return m_179812_(); }
++   @Override public int getIndex() { return transactionId(); }
++   @Override public ResourceLocation getName() { return this.payload.id(); }
++   @org.jetbrains.annotations.Nullable @Override public FriendlyByteBuf getInternalData() { return ((DiscardedQueryPayload)this.payload).data(); }
  }

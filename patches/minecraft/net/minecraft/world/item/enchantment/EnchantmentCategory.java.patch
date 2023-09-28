@@ -7,13 +7,13 @@
 -public enum EnchantmentCategory {
 +public enum EnchantmentCategory implements net.minecraftforge.common.IExtensibleEnum {
     ARMOR {
-       public boolean m_7454_(Item p_44751_) {
+       public boolean canEnchant(Item p_44751_) {
           return p_44751_ instanceof ArmorItem;
 @@ -109,5 +_,19 @@
        }
     };
  
--   public abstract boolean m_7454_(Item p_44743_);
+-   public abstract boolean canEnchant(Item p_44743_);
 +   private java.util.function.Predicate<Item> delegate;
 +
 +   private EnchantmentCategory() {}
@@ -26,7 +26,7 @@
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
-+   public boolean m_7454_(Item p_44743_) {
++   public boolean canEnchant(Item p_44743_) {
 +      return this.delegate == null ? false : this.delegate.test(p_44743_);
 +   }
  }

@@ -7,7 +7,6 @@ package net.minecraftforge.common.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
@@ -18,21 +17,14 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.RegistryDataLoader;
-import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
 import org.slf4j.Logger;
 
 /**
@@ -96,6 +88,7 @@ public class JsonCodecProvider<T> implements DataProvider
             final Path path = outputFolder.resolve(id.getNamespace()).resolve(this.directory).resolve(id.getPath() + ".json");
             JsonElement encoded = this.codec.encodeStart(this.dynamicOps, value)
                   .getOrThrow(false, msg -> LOGGER.error("Failed to encode {}: {}", path, msg));
+            /* TODO: Conditional JSONS
             ICondition[] conditions = this.conditions.get(id);
             if (conditions != null && conditions.length > 0)
             {
@@ -108,6 +101,7 @@ public class JsonCodecProvider<T> implements DataProvider
                     LOGGER.error("Attempted to apply conditions to a type that is not a JsonObject! - Path: {}", path);
                 }
             }
+            */
             futuresBuilder.add(DataProvider.saveStable(cache, encoded, path));
         }));
 

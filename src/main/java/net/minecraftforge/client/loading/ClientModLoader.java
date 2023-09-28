@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.repository.RepositorySource;
+import net.minecraft.server.packs.repository.Pack.Info;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
@@ -37,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraftforge.api.distmarker.Dist;
@@ -163,9 +166,23 @@ public class ClientModLoader
         var hiddenPacks = new ArrayList<PathPackResources>();
         for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
         {
+
+            var supplier = new Pack.ResourcesSupplier() {
+                @Override
+                public PackResources openPrimary(String path) {
+                    return e.getValue();
+                }
+
+                @Override
+                public PackResources openFull(String path, Info info) {
+                    return e.getValue(); // TODO: composite
+                }
+
+            };
+
             IModInfo mod = e.getKey().getModInfos().get(0);
             final String name = "mod:" + mod.getModId();
-            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, id -> e.getValue(), PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
+            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, supplier, PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
             if (modPack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
@@ -178,11 +195,30 @@ public class ClientModLoader
                 hiddenPacks.add(e.getValue());
             }
         }
+        var delegating = new DelegatingPackResources("mod_resources", false,
+            new PackMetadataSection(
+                Component.translatable("fml.resources.modresources", hiddenPacks.size()),
+                SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES),
+                Optional.empty()
+            ),
+            hiddenPacks
+        );
+
+        var supplier = new Pack.ResourcesSupplier() {
+            @Override
+            public PackResources openPrimary(String path) {
+                return delegating;
+            }
+
+            @Override
+            public PackResources openFull(String path, Info info) {
+                return delegating; // TODO: composite
+            }
+
+        };
 
         // Create a resource pack merging all mod resources that should be hidden
-        final Pack modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true,
-                id -> new DelegatingPackResources(id, false, new PackMetadataSection(Component.translatable("fml.resources.modresources", hiddenPacks.size()),
-                        SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES)), hiddenPacks),
+        final Pack modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true, supplier,
                 PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
         packAcceptor.accept(modResourcesPack);
     }

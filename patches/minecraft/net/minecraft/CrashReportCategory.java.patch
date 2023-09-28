@@ -4,35 +4,35 @@
        if (astacktraceelement.length <= 0) {
           return 0;
        } else {
--         this.f_128139_ = new StackTraceElement[astacktraceelement.length - 3 - p_128149_];
--         System.arraycopy(astacktraceelement, 3 + p_128149_, this.f_128139_, 0, this.f_128139_.length);
+-         this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - p_128149_];
+-         System.arraycopy(astacktraceelement, 3 + p_128149_, this.stackTrace, 0, this.stackTrace.length);
 +         int len = astacktraceelement.length - 3 - p_128149_;
 +         if (len <= 0) len = astacktraceelement.length;
-+         this.f_128139_ = new StackTraceElement[len];
-+         System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.f_128139_, 0, this.f_128139_.length);
-          return this.f_128139_.length;
++         this.stackTrace = new StackTraceElement[len];
++         System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
+          return this.stackTrace.length;
        }
     }
 @@ -147,17 +_,17 @@
  
-       if (this.f_128139_ != null && this.f_128139_.length > 0) {
+       if (this.stackTrace != null && this.stackTrace.length > 0) {
           p_128169_.append("\nStacktrace:");
 -
--         for(StackTraceElement stacktraceelement : this.f_128139_) {
+-         for(StackTraceElement stacktraceelement : this.stackTrace) {
 -            p_128169_.append("\n\tat ");
 -            p_128169_.append((Object)stacktraceelement);
 -         }
-+         p_128169_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.f_128139_));
++         p_128169_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.stackTrace));
        }
  
     }
  
-    public StackTraceElement[] m_128143_() {
-       return this.f_128139_;
+    public StackTraceElement[] getStacktrace() {
+       return this.stackTrace;
 +   }
 +
 +   public void applyStackTrace(Throwable t) {
-+      this.f_128139_ = t.getStackTrace();
++      this.stackTrace = t.getStackTrace();
     }
  
-    public static void m_178950_(CrashReportCategory p_178951_, LevelHeightAccessor p_178952_, BlockPos p_178953_, @Nullable BlockState p_178954_) {
+    public static void populateBlockDetails(CrashReportCategory p_178951_, LevelHeightAccessor p_178952_, BlockPos p_178953_, @Nullable BlockState p_178954_) {

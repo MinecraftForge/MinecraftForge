@@ -24,12 +24,9 @@ import org.lwjgl.glfw.GLFW;
  * @see Key
  * @see InteractionKeyMappingTriggered
  */
-public abstract class InputEvent extends Event
-{
+public abstract class InputEvent extends Event {
     @ApiStatus.Internal
-    protected InputEvent()
-    {
-    }
+    protected InputEvent() {}
 
     /**
      * Fired when a mouse button is pressed/released. Sub-events get fired {@link Pre before} and {@link Post after} this happens.
@@ -41,15 +38,13 @@ public abstract class InputEvent extends Event
      * @see Pre
      * @see Post
      */
-    public static abstract class MouseButton extends InputEvent
-    {
+    public static abstract class MouseButton extends InputEvent {
         private final int button;
         private final int action;
         private final int modifiers;
 
         @ApiStatus.Internal
-        protected MouseButton(int button, int action, int modifiers)
-        {
+        protected MouseButton(int button, int action, int modifiers) {
             this.button = button;
             this.action = action;
             this.modifiers = modifiers;
@@ -61,8 +56,7 @@ public abstract class InputEvent extends Event
          * @see GLFW mouse constants starting with 'GLFW_MOUSE_BUTTON_'
          * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
          */
-        public int getButton()
-        {
+        public int getButton() {
             return this.button;
         }
 
@@ -72,8 +66,7 @@ public abstract class InputEvent extends Event
          * @see InputConstants#PRESS
          * @see InputConstants#RELEASE
          */
-        public int getAction()
-        {
+        public int getAction() {
             return this.action;
         }
 
@@ -88,8 +81,7 @@ public abstract class InputEvent extends Event
          * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
          * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
-        public int getModifiers()
-        {
+        public int getModifiers() {
             return this.modifiers;
         }
 
@@ -105,11 +97,9 @@ public abstract class InputEvent extends Event
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
         @Cancelable
-        public static class Pre extends MouseButton
-        {
+        public static class Pre extends MouseButton {
             @ApiStatus.Internal
-            public Pre(int button, int action, int modifiers)
-            {
+            public Pre(int button, int action, int modifiers) {
                 super(button, action, modifiers);
             }
         }
@@ -124,11 +114,9 @@ public abstract class InputEvent extends Event
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        public static class Post extends MouseButton
-        {
+        public static class Post extends MouseButton {
             @ApiStatus.Internal
-            public Post(int button, int action, int modifiers)
-            {
+            public Post(int button, int action, int modifiers) {
                 super(button, action, modifiers);
             }
         }
@@ -147,9 +135,9 @@ public abstract class InputEvent extends Event
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
-    public static class MouseScrollingEvent extends InputEvent
-    {
-        private final double scrollDelta;
+    public static class MouseScrollingEvent extends InputEvent {
+        private final double deltaX;
+        private final double deltaY;
         private final double mouseX;
         private final double mouseY;
         private final boolean leftDown;
@@ -157,9 +145,9 @@ public abstract class InputEvent extends Event
         private final boolean rightDown;
 
         @ApiStatus.Internal
-        public MouseScrollingEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
-        {
-            this.scrollDelta = scrollDelta;
+        public MouseScrollingEvent(double deltaX, double deltaY, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY) {
+            this.deltaX = deltaX;
+            this.deltaY = deltaY;
             this.leftDown = leftDown;
             this.middleDown = middleDown;
             this.rightDown = rightDown;
@@ -168,50 +156,51 @@ public abstract class InputEvent extends Event
         }
 
         /**
-         * {@return the amount of change / delta of the mouse scroll}
+         * {@return the amount of change / delta of the mouse scroll in the vertical direction}
          */
-        public double getScrollDelta()
-        {
-            return this.scrollDelta;
+        public double getDeltaX() {
+            return this.deltaX;
+        }
+
+        /**
+         * {@return the amount of change / delta of the mouse scroll in the horizontal direction}
+         */
+        public double getDeltaY() {
+            return this.deltaY;
         }
 
         /**
          * {@return {@code true} if the left mouse button is pressed}
          */
-        public boolean isLeftDown()
-        {
+        public boolean isLeftDown() {
             return this.leftDown;
         }
 
         /**
          * {@return {@code true} if the right mouse button is pressed}
          */
-        public boolean isRightDown()
-        {
+        public boolean isRightDown() {
             return this.rightDown;
         }
 
         /**
          * {@return  {@code true} if the middle mouse button is pressed}
          */
-        public boolean isMiddleDown()
-        {
+        public boolean isMiddleDown() {
             return this.middleDown;
         }
 
         /**
          * {@return the X position of the mouse cursor}
          */
-        public double getMouseX()
-        {
+        public double getMouseX() {
             return this.mouseX;
         }
 
         /**
          * {@return the Y position of the mouse cursor}
          */
-        public double getMouseY()
-        {
+        public double getMouseY() {
             return this.mouseY;
         }
     }
@@ -224,16 +213,14 @@ public abstract class InputEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Key extends InputEvent
-    {
+    public static class Key extends InputEvent {
         private final int key;
         private final int scanCode;
         private final int action;
         private final int modifiers;
 
         @ApiStatus.Internal
-        public Key(int key, int scanCode, int action, int modifiers)
-        {
+        public Key(int key, int scanCode, int action, int modifiers) {
             this.key = key;
             this.scanCode = scanCode;
             this.action = action;
@@ -247,8 +234,7 @@ public abstract class InputEvent extends Event
          * @see GLFW key constants starting with {@code GLFW_KEY_}
          * @see <a href="https://www.glfw.org/docs/latest/group__keys.html" target="_top">the online GLFW documentation</a>
          */
-        public int getKey()
-        {
+        public int getKey() {
             return this.key;
         }
 
@@ -261,8 +247,7 @@ public abstract class InputEvent extends Event
          *
          * @see InputConstants#getKey(int, int)
          */
-        public int getScanCode()
-        {
+        public int getScanCode() {
             return this.scanCode;
         }
 
@@ -273,8 +258,7 @@ public abstract class InputEvent extends Event
          * @see InputConstants#RELEASE
          * @see InputConstants#REPEAT
          */
-        public int getAction()
-        {
+        public int getAction() {
             return this.action;
         }
 
@@ -289,8 +273,7 @@ public abstract class InputEvent extends Event
          * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
          * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
-        public int getModifiers()
-        {
+        public int getModifiers() {
             return this.modifiers;
         }
     }
@@ -313,16 +296,14 @@ public abstract class InputEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class InteractionKeyMappingTriggered extends InputEvent
-    {
+    public static class InteractionKeyMappingTriggered extends InputEvent {
         private final int button;
         private final KeyMapping keyMapping;
         private final InteractionHand hand;
         private boolean handSwing = true;
 
         @ApiStatus.Internal
-        public InteractionKeyMappingTriggered(int button, KeyMapping keyMapping, InteractionHand hand)
-        {
+        public InteractionKeyMappingTriggered(int button, KeyMapping keyMapping, InteractionHand hand) {
             this.button = button;
             this.keyMapping = keyMapping;
             this.hand = hand;
@@ -333,16 +314,14 @@ public abstract class InputEvent extends Event
          *
          * @param value whether to swing the hand
          */
-        public void setSwingHand(boolean value)
-        {
+        public void setSwingHand(boolean value) {
             handSwing = value;
         }
 
         /**
          * {@return whether to swing the hand; always takes effect, regardless of cancellation}
          */
-        public boolean shouldSwingHand()
-        {
+        public boolean shouldSwingHand() {
             return handSwing;
         }
 
@@ -353,40 +332,35 @@ public abstract class InputEvent extends Event
          * of both event's cancellation.
          * Will always be {@link InteractionHand#MAIN_HAND} if this is an attack or pick block input.
          */
-        public InteractionHand getHand()
-        {
+        public InteractionHand getHand() {
             return hand;
         }
 
         /**
          * {@return {@code true} if the mouse button is the left mouse button}
          */
-        public boolean isAttack()
-        {
+        public boolean isAttack() {
             return button == 0;
         }
 
         /**
          * {@return {@code true} if the mouse button is the right mouse button}
          */
-        public boolean isUseItem()
-        {
+        public boolean isUseItem() {
             return button == 1;
         }
 
         /**
          * {@return {@code true} if the mouse button is the middle mouse button}
          */
-        public boolean isPickBlock()
-        {
+        public boolean isPickBlock() {
             return button == 2;
         }
 
         /**
          * {@return the key mapping which triggered this event}
          */
-        public KeyMapping getKeyMapping()
-        {
+        public KeyMapping getKeyMapping() {
             return keyMapping;
         }
     }

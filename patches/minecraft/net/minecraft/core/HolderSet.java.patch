@@ -1,29 +1,30 @@
 --- a/net/minecraft/core/HolderSet.java
 +++ b/net/minecraft/core/HolderSet.java
-@@ -14,7 +_,7 @@
- import org.jetbrains.annotations.Nullable;
+@@ -15,7 +_,7 @@
+ import net.minecraft.util.RandomSource;
  import org.jetbrains.annotations.VisibleForTesting;
  
 -public interface HolderSet<T> extends Iterable<Holder<T>> {
 +public interface HolderSet<T> extends Iterable<Holder<T>>, net.minecraftforge.common.extensions.IForgeHolderSet<T> {
-    Stream<Holder<T>> m_203614_();
+    Stream<Holder<T>> stream();
  
-    int m_203632_();
-@@ -133,6 +_,9 @@
+    int size();
+@@ -135,6 +_,9 @@
  
-       public void m_205835_(List<Holder<T>> p_205836_) {
-          this.f_205830_ = List.copyOf(p_205836_);
+       public void bind(List<Holder<T>> p_205836_) {
+          this.contents = List.copyOf(p_205836_);
 +         for (Runnable runnable : this.invalidationCallbacks) {
 +            runnable.run(); // FORGE: invalidate listeners when tags rebind
 +         }
        }
  
-       public TagKey<T> m_205839_() {
-@@ -161,6 +_,11 @@
+       public TagKey<T> key() {
+@@ -163,6 +_,12 @@
  
-       public boolean m_207277_(HolderOwner<T> p_256542_) {
-          return this.f_254711_.m_254921_(p_256542_);
+       public boolean canSerializeIn(HolderOwner<T> p_256542_) {
+          return this.owner.canSerializeIn(p_256542_);
 +      }
++
 +      // FORGE: Keep a list of invalidation callbacks so they can be run when tags rebind
 +      private List<Runnable> invalidationCallbacks = new java.util.ArrayList<>();
 +      public void addInvalidationListener(Runnable runnable) {

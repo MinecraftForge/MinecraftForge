@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #CatVariantTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public CatVariantTagsProvider(PackOutput p_256547_, CompletableFuture<HolderLookup.Provider> p_256090_) {
-       super(p_256547_, Registries.f_257006_, p_256090_);
+       super(p_256547_, Registries.CAT_VARIANT, p_256090_);
 +   }
 +   public CatVariantTagsProvider(PackOutput p_256547_, CompletableFuture<HolderLookup.Provider> p_256090_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256547_, Registries.f_257006_, p_256090_, modId, existingFileHelper);
++      super(p_256547_, Registries.CAT_VARIANT, p_256090_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_256078_) {
+    protected void addTags(HolderLookup.Provider p_256078_) {

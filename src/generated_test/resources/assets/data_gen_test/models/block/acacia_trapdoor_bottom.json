@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/template_orientable_trapdoor_bottom",
-  "textures": {
-    "texture": "minecraft:block/acacia_trapdoor"
-  }
-}

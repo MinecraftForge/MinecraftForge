@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/resources/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
 @@ -26,8 +_,17 @@
-    protected final TextureAtlasSprite f_119485_;
-    protected final ItemTransforms f_119486_;
-    protected final ItemOverrides f_119487_;
+    protected final TextureAtlasSprite particleIcon;
+    protected final ItemTransforms transforms;
+    protected final ItemOverrides overrides;
 +   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
 +   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
@@ -15,21 +15,21 @@
 +   }
 +
 +   public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
-       this.f_119480_ = p_119489_;
-       this.f_119481_ = p_119490_;
-       this.f_119482_ = p_119491_;
+       this.unculledFaces = p_119489_;
+       this.culledFaces = p_119490_;
+       this.hasAmbientOcclusion = p_119491_;
 @@ -36,6 +_,9 @@
-       this.f_119485_ = p_119494_;
-       this.f_119486_ = p_119495_;
-       this.f_119487_ = p_119496_;
+       this.particleIcon = p_119494_;
+       this.transforms = p_119495_;
+       this.overrides = p_119496_;
 +      this.blockRenderTypes = !renderTypes.isEmpty() ? net.minecraftforge.client.ChunkRenderTypeSet.of(renderTypes.block()) : null;
 +      this.itemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entity()) : null;
 +      this.fabulousItemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entityFabulous()) : null;
     }
  
-    public List<BakedQuad> m_213637_(@Nullable BlockState p_235054_, @Nullable Direction p_235055_, RandomSource p_235056_) {
+    public List<BakedQuad> getQuads(@Nullable BlockState p_235054_, @Nullable Direction p_235055_, RandomSource p_235056_) {
 @@ -70,6 +_,25 @@
-       return this.f_119487_;
+       return this.overrides;
     }
  
 +   @Override
@@ -53,23 +53,23 @@
 +
     @OnlyIn(Dist.CLIENT)
     public static class Builder {
-       private final List<BakedQuad> f_119508_ = Lists.newArrayList();
+       private final List<BakedQuad> unculledFaces = Lists.newArrayList();
 @@ -116,11 +_,17 @@
           return this;
        }
  
 +      /** @deprecated Forge: Use {@linkplain #build(net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
 +      @Deprecated
-       public BakedModel m_119533_() {
+       public BakedModel build() {
 +         return build(net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +      }
 +
 +      public BakedModel build(net.minecraftforge.client.RenderTypeGroup renderTypes) {
-          if (this.f_119512_ == null) {
+          if (this.particleIcon == null) {
              throw new RuntimeException("Missing particle!");
           } else {
--            return new SimpleBakedModel(this.f_119508_, this.f_119509_, this.f_119511_, this.f_119513_, this.f_119514_, this.f_119512_, this.f_119515_, this.f_119510_);
-+            return new SimpleBakedModel(this.f_119508_, this.f_119509_, this.f_119511_, this.f_119513_, this.f_119514_, this.f_119512_, this.f_119515_, this.f_119510_, renderTypes);
+-            return new SimpleBakedModel(this.unculledFaces, this.culledFaces, this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms, this.overrides);
++            return new SimpleBakedModel(this.unculledFaces, this.culledFaces, this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms, this.overrides, renderTypes);
           }
        }
     }

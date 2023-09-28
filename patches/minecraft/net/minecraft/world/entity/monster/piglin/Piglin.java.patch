@@ -1,29 +1,29 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -293,7 +_,7 @@
-       } else if (this.m_34773_()) {
+@@ -289,7 +_,7 @@
+       } else if (this.isChargingCrossbow()) {
           return PiglinArmPose.CROSSBOW_CHARGE;
        } else {
--         return this.m_5912_() && this.m_21055_(Items.f_42717_) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
-+         return this.m_5912_() && this.m_21093_(is -> is.m_41720_() instanceof net.minecraft.world.item.CrossbowItem) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
+-         return this.isAggressive() && this.isHolding(Items.CROSSBOW) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
++         return this.isAggressive() && this.isHolding(is -> is.getItem() instanceof net.minecraft.world.item.CrossbowItem) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
        }
     }
  
-@@ -335,7 +_,7 @@
+@@ -331,7 +_,7 @@
     }
  
-    protected void m_34785_(ItemStack p_34786_) {
--      if (p_34786_.m_150930_(PiglinAi.f_34794_)) {
+    protected void holdInOffHand(ItemStack p_34786_) {
+-      if (p_34786_.is(PiglinAi.BARTERING_ITEM)) {
 +      if (p_34786_.isPiglinCurrency()) {
-          this.m_8061_(EquipmentSlot.OFFHAND, p_34786_);
-          this.m_21508_(EquipmentSlot.OFFHAND);
+          this.setItemSlot(EquipmentSlot.OFFHAND, p_34786_);
+          this.setGuaranteedDrop(EquipmentSlot.OFFHAND);
        } else {
-@@ -345,7 +_,7 @@
+@@ -341,7 +_,7 @@
     }
  
-    public boolean m_7243_(ItemStack p_34777_) {
--      return this.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
-+      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.m_9236_(), this) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
+    public boolean wantsToPickUp(ItemStack p_34777_) {
+-      return this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && this.canPickUpLoot() && PiglinAi.wantsToPickup(this, p_34777_);
++      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this) && this.canPickUpLoot() && PiglinAi.wantsToPickup(this, p_34777_);
     }
  
-    protected boolean m_34787_(ItemStack p_34788_) {
+    protected boolean canReplaceCurrentItem(ItemStack p_34788_) {

@@ -8,6 +8,6 @@
 +    * @deprecated Forge: Use {@link net.minecraftforge.client.PresetEditorManager#get(ResourceKey)} instead.
 +    */
 +   @Deprecated
-    Map<Optional<ResourceKey<WorldPreset>>, PresetEditor> f_232950_ = Map.of(Optional.of(WorldPresets.f_226438_), (p_232974_, p_232975_) -> {
-       ChunkGenerator chunkgenerator = p_232975_.f_243796_().m_246737_();
-       RegistryAccess registryaccess = p_232975_.m_246480_();
+    Map<Optional<ResourceKey<WorldPreset>>, PresetEditor> EDITORS = Map.of(Optional.of(WorldPresets.FLAT), (p_232974_, p_232975_) -> {
+       ChunkGenerator chunkgenerator = p_232975_.selectedDimensions().overworld();
+       RegistryAccess registryaccess = p_232975_.worldgenLoadContext();

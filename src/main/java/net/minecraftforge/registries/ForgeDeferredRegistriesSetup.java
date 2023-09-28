@@ -31,5 +31,6 @@ public class ForgeDeferredRegistriesSetup
         ForgeRegistries.DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
         ForgeRegistries.DEFERRED_HOLDER_SET_TYPES.register(modEventBus);
         ForgeRegistries.DEFERRED_DISPLAY_CONTEXTS.register(modEventBus);
+        ForgeRegistries.DEFERRED_CONDITION_CODECS.register(modEventBus);
     }
 }

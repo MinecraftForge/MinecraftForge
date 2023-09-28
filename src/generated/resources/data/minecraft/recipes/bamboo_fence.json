@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "group": "wooden_custom_fence",
+  "group": "wooden_fence",
   "key": {
     "#": {
       "tag": "forge:rods/wooden"

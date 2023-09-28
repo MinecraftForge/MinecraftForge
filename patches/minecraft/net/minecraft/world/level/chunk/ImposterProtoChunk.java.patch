@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/chunk/ImposterProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ImposterProtoChunk.java
 @@ -181,6 +_,11 @@
-       this.f_62685_.m_284478_(p_285465_, p_285061_);
+       this.wrapped.findBlocks(p_285465_, p_285061_);
     }
  
 +   @Override
 +   public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
-+      this.f_62685_.findBlocks(p_285343_, p_285030_);
++      this.wrapped.findBlocks(p_285343_, p_285030_);
 +   }
 +
-    public TickContainerAccess<Block> m_183531_() {
-       return this.f_187918_ ? this.f_62685_.m_183531_() : BlackholeTickAccess.m_193144_();
+    public TickContainerAccess<Block> getBlockTicks() {
+       return this.allowWrites ? this.wrapped.getBlockTicks() : BlackholeTickAccess.emptyContainer();
     }

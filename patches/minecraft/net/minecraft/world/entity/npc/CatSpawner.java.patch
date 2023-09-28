@@ -4,9 +4,9 @@
        if (cat == null) {
           return 0;
        } else {
-+         cat.m_20035_(p_35334_, 0.0F, 0.0F); // Fix MC-147659: Some witch huts spawn the incorrect cat
-          cat.m_6518_(p_35335_, p_35335_.m_6436_(p_35334_), MobSpawnType.NATURAL, (SpawnGroupData)null, (CompoundTag)null);
--         cat.m_20035_(p_35334_, 0.0F, 0.0F);
-          p_35335_.m_47205_(cat);
++         cat.moveTo(p_35334_, 0.0F, 0.0F); // Fix MC-147659: Some witch huts spawn the incorrect cat
+          cat.finalizeSpawn(p_35335_, p_35335_.getCurrentDifficultyAt(p_35334_), MobSpawnType.NATURAL, (SpawnGroupData)null, (CompoundTag)null);
+-         cat.moveTo(p_35334_, 0.0F, 0.0F);
+          p_35335_.addFreshEntityWithPassengers(cat);
           return 1;
        }

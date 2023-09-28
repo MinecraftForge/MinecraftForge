@@ -3,18 +3,18 @@
 @@ -186,11 +_,15 @@
     }
  
-    public void m_6667_(DamageSource p_21809_) {
+    public void die(DamageSource p_21809_) {
 +      // FORGE: Super moved to top so that death message would be cancelled properly
-+      net.minecraft.network.chat.Component deathMessage = this.m_21231_().m_19293_();
-+      super.m_6667_(p_21809_);
++      net.minecraft.network.chat.Component deathMessage = this.getCombatTracker().getDeathMessage();
++      super.die(p_21809_);
 +
-+      if (this.f_20890_)
-       if (!this.m_9236_().f_46443_ && this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_) && this.m_269323_() instanceof ServerPlayer) {
--         this.m_269323_().m_213846_(this.m_21231_().m_19293_());
-+         this.m_269323_().m_213846_(deathMessage);
++      if (this.dead)
+       if (!this.level().isClientSide && this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && this.getOwner() instanceof ServerPlayer) {
+-         this.getOwner().sendSystemMessage(this.getCombatTracker().getDeathMessage());
++         this.getOwner().sendSystemMessage(deathMessage);
        }
  
--      super.m_6667_(p_21809_);
+-      super.die(p_21809_);
     }
  
-    public boolean m_21827_() {
+    public boolean isOrderedToSit() {

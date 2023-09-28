@@ -3,40 +3,40 @@
 @@ -64,7 +_,7 @@
     }
  
-    protected int m_5756_() {
--      return super.m_5756_() + 15;
-+      return super.m_5756_() + 15 + 20;
+    protected int getScrollbarPosition() {
+-      return super.getScrollbarPosition() + 15;
++      return super.getScrollbarPosition() + 15 + 20;
     }
  
-    public int m_5759_() {
+    public int getRowWidth() {
 @@ -129,10 +_,11 @@
-          this.f_193912_ = Button.m_253074_(p_193917_, (p_269618_) -> {
-             KeyBindsList.this.f_193858_.f_193975_ = p_193916_;
-             KeyBindsList.this.m_269130_();
--         }).m_252987_(0, 0, 75, 20).m_252778_((p_253311_) -> {
-+         }).m_252987_(0, 0, 75 + 20 /* Forge: Add space */, 20).m_252778_((p_253311_) -> {
-             return p_193916_.m_90862_() ? Component.m_237110_("narrator.controls.unbound", p_193917_) : Component.m_237110_("narrator.controls.bound", p_193917_, p_253311_.get());
-          }).m_253136_();
-          this.f_193913_ = Button.m_253074_(Component.m_237115_("controls.reset"), (p_269616_) -> {
-+            this.f_193910_.setToDefault();
-             KeyBindsList.this.f_93386_.f_91066_.m_92159_(p_193916_, p_193916_.m_90861_());
-             KeyBindsList.this.m_269130_();
-          }).m_252987_(0, 0, 50, 20).m_252778_((p_253313_) -> {
+          this.changeButton = Button.builder(p_193917_, (p_269618_) -> {
+             KeyBindsList.this.keyBindsScreen.selectedKey = p_193916_;
+             KeyBindsList.this.resetMappingAndUpdateButtons();
+-         }).bounds(0, 0, 75, 20).createNarration((p_253311_) -> {
++         }).bounds(0, 0, 75 + 20 /* Forge: Add space */, 20).createNarration((p_253311_) -> {
+             return p_193916_.isUnbound() ? Component.translatable("narrator.controls.unbound", p_193917_) : Component.translatable("narrator.controls.bound", p_193917_, p_253311_.get());
+          }).build();
+          this.resetButton = Button.builder(Component.translatable("controls.reset"), (p_269616_) -> {
++            this.key.setToDefault();
+             KeyBindsList.this.minecraft.options.setKey(p_193916_, p_193916_.getDefaultKey());
+             KeyBindsList.this.resetMappingAndUpdateButtons();
+          }).bounds(0, 0, 50, 20).createNarration((p_253313_) -> {
 @@ -144,7 +_,7 @@
-       public void m_6311_(GuiGraphics p_281805_, int p_281298_, int p_282357_, int p_281373_, int p_283433_, int p_281932_, int p_282224_, int p_282053_, boolean p_282605_, float p_281432_) {
-          int k = p_281373_ + 90 - KeyBindsList.this.f_193859_;
-          p_281805_.m_280614_(KeyBindsList.this.f_93386_.f_91062_, this.f_193911_, k, p_282357_ + p_281932_ / 2 - 9 / 2, 16777215, false);
--         this.f_193913_.m_252865_(p_281373_ + 190);
-+         this.f_193913_.m_252865_(p_281373_ + 190 + 20);
-          this.f_193913_.m_253211_(p_282357_);
-          this.f_193913_.m_88315_(p_281805_, p_282224_, p_282053_, p_281432_);
-          this.f_193912_.m_252865_(p_281373_ + 105);
+       public void render(GuiGraphics p_281805_, int p_281298_, int p_282357_, int p_281373_, int p_283433_, int p_281932_, int p_282224_, int p_282053_, boolean p_282605_, float p_281432_) {
+          int k = p_281373_ + 90 - KeyBindsList.this.maxNameWidth;
+          p_281805_.drawString(KeyBindsList.this.minecraft.font, this.name, k, p_282357_ + p_281932_ / 2 - 9 / 2, 16777215, false);
+-         this.resetButton.setX(p_281373_ + 190);
++         this.resetButton.setX(p_281373_ + 190 + 20);
+          this.resetButton.setY(p_282357_);
+          this.resetButton.render(p_281805_, p_282224_, p_282053_, p_281432_);
+          this.changeButton.setX(p_281373_ + 105);
 @@ -173,7 +_,7 @@
-          MutableComponent mutablecomponent = Component.m_237119_();
-          if (!this.f_193910_.m_90862_()) {
-             for(KeyMapping keymapping : KeyBindsList.this.f_93386_.f_91066_.f_92059_) {
--               if (keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) {
-+               if ((keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) || keymapping.hasKeyModifierConflict(this.f_193910_)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
-                   if (this.f_268447_) {
-                      mutablecomponent.m_130946_(", ");
+          MutableComponent mutablecomponent = Component.empty();
+          if (!this.key.isUnbound()) {
+             for(KeyMapping keymapping : KeyBindsList.this.minecraft.options.keyMappings) {
+-               if (keymapping != this.key && this.key.same(keymapping)) {
++               if ((keymapping != this.key && this.key.same(keymapping)) || keymapping.hasKeyModifierConflict(this.key)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
+                   if (this.hasCollision) {
+                      mutablecomponent.append(", ");
                    }

@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
 @@ -59,11 +_,12 @@
-       this.m_129997_(true);
-       this.m_129999_(true);
-       this.m_129793_();
+       this.setPvpAllowed(true);
+       this.setFlightAllowed(true);
+       this.initializeKeyPair();
 +      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.m_130006_();
-       GameProfile gameprofile = this.m_236731_();
-       String s = this.m_129910_().m_5462_();
-       this.m_129989_(gameprofile != null ? gameprofile.getName() + " - " + s : s);
+       this.loadLevel();
+       GameProfile gameprofile = this.getSingleplayerProfile();
+       String s = this.getWorldData().getLevelName();
+       this.setMotd(gameprofile != null ? gameprofile.getName() + " - " + s : s);
 -      return true;
 +      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
-    public void m_5705_(BooleanSupplier p_120049_) {
-@@ -192,6 +_,7 @@
+    public void tickServer(BooleanSupplier p_120049_) {
+@@ -196,6 +_,7 @@
     }
  
-    public void m_7570_(boolean p_120053_) {
-+      if (m_130010_())
-       this.m_18709_(() -> {
-          for(ServerPlayer serverplayer : Lists.newArrayList(this.m_6846_().m_11314_())) {
-             if (!serverplayer.m_20148_().equals(this.f_120019_)) {
+    public void halt(boolean p_120053_) {
++      if (isRunning())
+       this.executeBlocking(() -> {
+          for(ServerPlayer serverplayer : Lists.newArrayList(this.getPlayerList().getPlayers())) {
+             if (!serverplayer.getUUID().equals(this.uuid)) {

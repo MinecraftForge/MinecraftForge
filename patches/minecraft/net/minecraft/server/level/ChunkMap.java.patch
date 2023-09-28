@@ -1,66 +1,74 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -398,6 +_,7 @@
-             this.f_140140_ = true;
+@@ -392,6 +_,7 @@
+             this.modified = true;
           }
  
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.f_140133_, p_140177_, p_140180_, p_140178_, p_140179_);
++         net.minecraftforge.event.ForgeEventFactory.fireChunkTicketLevelUpdated(this.level, p_140177_, p_140180_, p_140178_, p_140179_);
           return p_140179_;
        }
     }
-@@ -503,6 +_,7 @@
-             if (this.f_140131_.remove(p_140182_, p_140183_) && p_203002_ != null) {
+@@ -497,6 +_,7 @@
+             if (this.pendingUnloads.remove(p_140182_, p_140183_) && p_203002_ != null) {
                 if (p_203002_ instanceof LevelChunk) {
-                   ((LevelChunk)p_203002_).m_62913_(false);
-+                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Unload(p_203002_));
+                   ((LevelChunk)p_203002_).setLoaded(false);
++                  net.minecraftforge.event.ForgeEventFactory.onChunkUnload(p_203002_);
                 }
  
-                this.m_140258_(p_203002_);
-@@ -713,8 +_,14 @@
-             levelchunk.m_62952_();
-             if (this.f_140132_.add(chunkpos.m_45588_())) {
-                levelchunk.m_62913_(true);
+                this.save(p_203002_);
+@@ -707,8 +_,14 @@
+             levelchunk.runPostLoad();
+             if (this.entitiesInLevel.add(chunkpos.toLong())) {
+                levelchunk.setLoaded(true);
 +               try {
 +               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
-                levelchunk.m_156369_();
-                levelchunk.m_187958_(this.f_140133_);
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(levelchunk, !(protochunk instanceof ImposterProtoChunk)));
+                levelchunk.registerAllBlockEntitiesAfterLevelLoad();
+                levelchunk.registerTickContainerInLevel(this.level);
++               net.minecraftforge.event.ForgeEventFactory.onChunkLoad(levelchunk, !(protochunk instanceof ImposterProtoChunk));
 +               } finally {
 +                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
 +               }
              }
  
              return levelchunk;
-@@ -819,6 +_,7 @@
- 
-             this.f_140133_.m_46473_().m_6174_("chunkSave");
-             CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
-             this.m_63502_(chunkpos, compoundtag);
-             this.m_140229_(chunkpos, chunkstatus.m_62494_());
-             return true;
-@@ -889,6 +_,7 @@
- 
-          if (!p_183759_ && p_183758_) {
-             p_183755_.m_9088_(p_183756_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_183755_, p_183756_, this.f_140133_);
+@@ -756,6 +_,7 @@
+       for(ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
+          if (serverplayer.getChunkTrackingView().contains(chunkpos)) {
+             markChunkPendingToSend(serverplayer, p_299599_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(serverplayer, p_299599_, this.level);
           }
- 
        }
-@@ -1132,7 +_,7 @@
+ 
+@@ -823,6 +_,7 @@
+ 
+             this.level.getProfiler().incrementCounter("chunkSave");
+             CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
++            net.minecraftforge.event.ForgeEventFactory.onChunkDataSave(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag);
+             this.write(chunkpos, compoundtag);
+             this.markPosition(chunkpos, chunkstatus.getChunkType());
+             return true;
+@@ -877,6 +_,7 @@
+       LevelChunk levelchunk = this.getChunkToSend(p_298062_.toLong());
+       if (levelchunk != null) {
+          markChunkPendingToSend(p_297974_, levelchunk);
++         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_297974_, levelchunk, this.level);
+       }
+ 
+    }
+@@ -1099,6 +_,7 @@
+             this.markChunkPendingToSend(p_301380_, p_296566_);
+          }, (p_296568_) -> {
+             dropChunk(p_301380_, p_296568_);
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.level);
+          });
+          p_301380_.setChunkTrackingView(p_301057_);
+       }
+@@ -1118,7 +_,7 @@
     }
  
-    protected void m_140199_(Entity p_140200_) {
+    protected void addEntity(Entity p_140200_) {
 -      if (!(p_140200_ instanceof EnderDragonPart)) {
 +      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
-          EntityType<?> entitytype = p_140200_.m_6095_();
-          int i = entitytype.m_20681_() * 16;
+          EntityType<?> entitytype = p_140200_.getType();
+          int i = entitytype.clientTrackingRange() * 16;
           if (i != 0) {
-@@ -1282,6 +_,7 @@
-          }
-       }
- 
-+      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_183761_, p_183763_, this.f_140133_);
-    }
- 
-    protected PoiManager m_140424_() {

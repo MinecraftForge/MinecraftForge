@@ -20,61 +20,50 @@ import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
  * If the block in question inherits from the Forge implementations,
  * consider using {@link FluidBlockWrapper}.
  */
-public class BlockWrapper extends VoidFluidHandler
-{
+public class BlockWrapper extends VoidFluidHandler {
     protected final BlockState state;
     protected final Level world;
     protected final BlockPos blockPos;
 
-    public BlockWrapper(BlockState state, Level world, BlockPos blockPos)
-    {
+    public BlockWrapper(BlockState state, Level world, BlockPos blockPos) {
         this.state = state;
         this.world = world;
         this.blockPos = blockPos;
     }
 
     @Override
-    public int fill(FluidStack resource, FluidAction action)
-    {
+    public int fill(FluidStack resource, FluidAction action) {
         // NOTE: "Filling" means placement in this context!
         if (resource.getAmount() < FluidType.BUCKET_VOLUME)
-        {
             return 0;
-        }
-        if (action.execute())
-        {
+
+        if (action.execute()) {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlock(blockPos, state, Block.UPDATE_ALL_IMMEDIATE);
         }
+
         return FluidType.BUCKET_VOLUME;
     }
 
-    public static class LiquidContainerBlockWrapper extends VoidFluidHandler
-    {
+    public static class LiquidContainerBlockWrapper extends VoidFluidHandler {
         protected final LiquidBlockContainer liquidContainer;
         protected final Level world;
         protected final BlockPos blockPos;
 
-        public LiquidContainerBlockWrapper(LiquidBlockContainer liquidContainer, Level world, BlockPos blockPos)
-        {
+        public LiquidContainerBlockWrapper(LiquidBlockContainer liquidContainer, Level world, BlockPos blockPos) {
             this.liquidContainer = liquidContainer;
             this.world = world;
             this.blockPos = blockPos;
         }
 
         @Override
-        public int fill(FluidStack resource, FluidAction action)
-        {
+        public int fill(FluidStack resource, FluidAction action) {
             // NOTE: "Filling" means placement in this context!
-            if (resource.getAmount() >= FluidType.BUCKET_VOLUME)
-            {
+            if (resource.getAmount() >= FluidType.BUCKET_VOLUME) {
                 BlockState state = world.getBlockState(blockPos);
-                if (liquidContainer.canPlaceLiquid(world, blockPos, state, resource.getFluid()))
-                {
+                if (liquidContainer.canPlaceLiquid(null, world, blockPos, state, resource.getFluid())) {
                     if (action.execute())
-                    {
                         liquidContainer.placeLiquid(world, blockPos, state, resource.getFluid().getFluidType().getStateForPlacement(world, blockPos, resource));
-                    }
                     return FluidType.BUCKET_VOLUME;
                 }
             }

@@ -2,59 +2,59 @@
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 @@ -148,6 +_,7 @@
  
-    private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
+    private static boolean isBrewable(NonNullList<ItemStack> p_155295_) {
        ItemStack itemstack = p_155295_.get(3);
-+      if (!itemstack.m_41619_()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(p_155295_, itemstack, f_58974_); // divert to VanillaBrewingRegistry
-       if (itemstack.m_41619_()) {
++      if (!itemstack.isEmpty()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(p_155295_, itemstack, SLOTS_FOR_SIDES); // divert to VanillaBrewingRegistry
+       if (itemstack.isEmpty()) {
           return false;
-       } else if (!PotionBrewing.m_43506_(itemstack)) {
+       } else if (!PotionBrewing.isIngredient(itemstack)) {
 @@ -165,21 +_,21 @@
     }
  
-    private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
+    private static void doBrew(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
 +      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_)) return;
        ItemStack itemstack = p_155293_.get(3);
  
 -      for(int i = 0; i < 3; ++i) {
--         p_155293_.set(i, PotionBrewing.m_43529_(itemstack, p_155293_.get(i)));
+-         p_155293_.set(i, PotionBrewing.mix(itemstack, p_155293_.get(i)));
 -      }
 -
--      itemstack.m_41774_(1);
--      if (itemstack.m_41720_().m_41470_()) {
--         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
-+      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, f_58974_);
+-      itemstack.shrink(1);
+-      if (itemstack.getItem().hasCraftingRemainingItem()) {
+-         ItemStack itemstack1 = new ItemStack(itemstack.getItem().getCraftingRemainingItem());
++      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, SLOTS_FOR_SIDES);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
 +      if (itemstack.hasCraftingRemainingItem()) {
 +         ItemStack itemstack1 = itemstack.getCraftingRemainingItem();
-+         itemstack.m_41774_(1);
-          if (itemstack.m_41619_()) {
++         itemstack.shrink(1);
+          if (itemstack.isEmpty()) {
              itemstack = itemstack1;
           } else {
-             Containers.m_18992_(p_155291_, (double)p_155292_.m_123341_(), (double)p_155292_.m_123342_(), (double)p_155292_.m_123343_(), itemstack1);
+             Containers.dropItemStack(p_155291_, (double)p_155292_.getX(), (double)p_155292_.getY(), (double)p_155292_.getZ(), itemstack1);
           }
        }
-+      else itemstack.m_41774_(1);
++      else itemstack.shrink(1);
  
        p_155293_.set(3, itemstack);
-       p_155291_.m_46796_(1035, p_155292_, 0);
+       p_155291_.levelEvent(1035, p_155292_, 0);
 @@ -225,11 +_,11 @@
  
-    public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
+    public boolean canPlaceItem(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
--         return PotionBrewing.m_43506_(p_59018_);
+-         return PotionBrewing.isIngredient(p_59018_);
 +         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_59018_);
        } else if (p_59017_ == 4) {
-          return p_59018_.m_150930_(Items.f_42593_);
+          return p_59018_.is(Items.BLAZE_POWDER);
        } else {
--         return (p_59018_.m_150930_(Items.f_42589_) || p_59018_.m_150930_(Items.f_42736_) || p_59018_.m_150930_(Items.f_42739_) || p_59018_.m_150930_(Items.f_42590_)) && this.m_8020_(p_59017_).m_41619_();
-+            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_59018_) && this.m_8020_(p_59017_).m_41619_();
+-         return (p_59018_.is(Items.POTION) || p_59018_.is(Items.SPLASH_POTION) || p_59018_.is(Items.LINGERING_POTION) || p_59018_.is(Items.GLASS_BOTTLE)) && this.getItem(p_59017_).isEmpty();
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_59018_) && this.getItem(p_59017_).isEmpty();
        }
     }
  
 @@ -255,5 +_,34 @@
  
-    protected AbstractContainerMenu m_6555_(int p_58990_, Inventory p_58991_) {
-       return new BrewingStandMenu(p_58990_, p_58991_, this, this.f_58971_);
+    protected AbstractContainerMenu createMenu(int p_58990_, Inventory p_58991_) {
+       return new BrewingStandMenu(p_58990_, p_58991_, this, this.dataAccess);
 +   }
 +
 +   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
@@ -62,7 +62,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++      if (!this.remove && facing != null && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
 +         if (facing == Direction.UP)
 +            return handlers[0].cast();
 +         else if (facing == Direction.DOWN)

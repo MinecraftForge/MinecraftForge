@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.fml.ModLoader;
@@ -39,10 +40,10 @@ public final class RecipeBookManager
      * Finds the category the specified recipe should display in, or null if none.
      */
     @Nullable
-    public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, T recipe)
+    public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, RecipeHolder<T> recipe)
     {
         var lookup = RECIPE_CATEGORY_LOOKUPS.get(type);
-        return lookup != null ? lookup.apply(recipe) : null;
+        return lookup != null ? lookup.apply(recipe.value()) : null;
     }
 
     @ApiStatus.Internal

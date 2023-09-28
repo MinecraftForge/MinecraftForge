@@ -1,17 +1,17 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
 @@ -459,4 +_,14 @@
-          this.f_276566_ = p_277855_;
+          this.sorting = p_277855_;
        }
     }
 +
 +   // Forge start
 +   public void putBulkData(ByteBuffer buffer) {
-+      m_85722_(buffer.limit() + this.f_85658_.m_86020_());
-+      this.f_85648_.position(this.f_85652_);
-+      this.f_85648_.put(buffer);
-+      this.f_85648_.position(0);
-+      this.f_85654_ += buffer.limit() / this.f_85658_.m_86020_();
-+      this.f_85652_ += buffer.limit();
++      ensureCapacity(buffer.limit() + this.format.getVertexSize());
++      this.buffer.position(this.nextElementByte);
++      this.buffer.put(buffer);
++      this.buffer.position(0);
++      this.vertices += buffer.limit() / this.format.getVertexSize();
++      this.nextElementByte += buffer.limit();
 +   }
  }

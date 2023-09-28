@@ -2,11 +2,11 @@
 +++ b/net/minecraft/world/entity/vehicle/ContainerEntity.java
 @@ -103,6 +_,9 @@
  
-          this.m_214199_((ResourceLocation)null);
-          LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel)this.m_9236_())).m_287286_(LootContextParams.f_81460_, this.m_20182_());
+          this.setLootTable((ResourceLocation)null);
+          LootParams.Builder lootparams$builder = (new LootParams.Builder((ServerLevel)this.level())).withParameter(LootContextParams.ORIGIN, this.position());
 +         // Forge: set the chest to killer_entity for loot context.
 +         if (this instanceof AbstractMinecartContainer entityContainer)
-+            lootparams$builder.m_287286_(LootContextParams.f_81458_, entityContainer);
++            lootparams$builder.withParameter(LootContextParams.KILLER_ENTITY, entityContainer);
           if (p_219950_ != null) {
-             lootparams$builder.m_287239_(p_219950_.m_36336_()).m_287286_(LootContextParams.f_81455_, p_219950_);
+             lootparams$builder.withLuck(p_219950_.getLuck()).withParameter(LootContextParams.THIS_ENTITY, p_219950_);
           }

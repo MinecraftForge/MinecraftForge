@@ -1,0 +1,30 @@
+--- a/net/minecraft/network/protocol/login/ServerboundCustomQueryAnswerPacket.java
++++ b/net/minecraft/network/protocol/login/ServerboundCustomQueryAnswerPacket.java
+@@ -6,7 +_,7 @@
+ import net.minecraft.network.protocol.login.custom.CustomQueryAnswerPayload;
+ import net.minecraft.network.protocol.login.custom.DiscardedQueryAnswerPayload;
+ 
+-public record ServerboundCustomQueryAnswerPacket(int transactionId, @Nullable CustomQueryAnswerPayload payload) implements Packet<ServerLoginPacketListener> {
++public record ServerboundCustomQueryAnswerPacket(int transactionId, @Nullable CustomQueryAnswerPayload payload) implements Packet<ServerLoginPacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomQueryAnswerPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 1048576;
+ 
+    public static ServerboundCustomQueryAnswerPacket read(FriendlyByteBuf p_300962_) {
+@@ -21,8 +_,7 @@
+    private static CustomQueryAnswerPayload readUnknownPayload(FriendlyByteBuf p_299934_) {
+       int i = p_299934_.readableBytes();
+       if (i >= 0 && i <= 1048576) {
+-         p_299934_.skipBytes(i);
+-         return DiscardedQueryAnswerPayload.INSTANCE;
++         return new DiscardedQueryAnswerPayload(new FriendlyByteBuf(p_299934_.readBytes(i)));
+       } else {
+          throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
+       }
+@@ -38,4 +_,8 @@
+    public void handle(ServerLoginPacketListener p_298492_) {
+       p_298492_.handleCustomQueryPacket(this);
+    }
++
++   @Nullable @Override public FriendlyByteBuf getInternalData() { return this.payload instanceof DiscardedQueryAnswerPayload dc ? dc.data() : null; }
++   @Override public net.minecraft.resources.ResourceLocation getName() { return net.minecraftforge.network.NetworkInitialization.LOGIN_NAME; }
++   @Override public int getIndex() { return transactionId(); }
+ }

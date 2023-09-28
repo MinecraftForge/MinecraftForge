@@ -1,35 +1,35 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -47,11 +_,12 @@
+@@ -49,11 +_,12 @@
  
  public class ServerConnectionListener {
-    private static final Logger f_9701_ = LogUtils.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
 +   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
-    public static final LazyLoadedValue<NioEventLoopGroup> f_9698_ = new LazyLoadedValue<>(() -> {
+    public static final Supplier<NioEventLoopGroup> SERVER_EVENT_GROUP = Suppliers.memoize(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
 +      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
-    public static final LazyLoadedValue<EpollEventLoopGroup> f_9699_ = new LazyLoadedValue<>(() -> {
+    public static final Supplier<EpollEventLoopGroup> SERVER_EPOLL_EVENT_GROUP = Suppliers.memoize(() -> {
 -      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
 +      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
     });
-    final MinecraftServer f_9702_;
-    public volatile boolean f_9700_;
-@@ -64,6 +_,8 @@
+    final MinecraftServer server;
+    public volatile boolean running;
+@@ -66,6 +_,8 @@
     }
  
-    public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
+    public void startTcpServerListener(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
 +      if (p_9712_ == null) p_9712_ = new java.net.InetSocketAddress(p_9713_).getAddress();
 +      net.minecraftforge.network.DualStackUtils.checkIPv6(p_9712_);
-       synchronized(this.f_9703_) {
+       synchronized(this.channels) {
           Class<? extends ServerSocketChannel> oclass;
-          LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
-@@ -84,7 +_,7 @@
+          EventLoopGroup eventloopgroup;
+@@ -88,7 +_,7 @@
                 } catch (ChannelException channelexception) {
                 }
  
--               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
-+               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this));
-                Connection.m_264299_(channelpipeline, PacketFlow.SERVERBOUND);
-                int i = ServerConnectionListener.this.f_9702_.m_7032_();
+-               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
++               ChannelPipeline channelpipeline = p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
+                Connection.configureSerialization(channelpipeline, PacketFlow.SERVERBOUND, (BandwidthDebugMonitor)null);
+                int i = ServerConnectionListener.this.server.getRateLimitPacketsPerSecond();
                 Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));

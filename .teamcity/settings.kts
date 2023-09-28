@@ -47,8 +47,6 @@ project {
             """.trimIndent(), label = "The branch specification of the repository", description = "By default all main branches are build by the configuration. Modify this value to adapt the branches build.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
         text("github_repository_name", "MinecraftForge", label = "The github repository name. Used to connect to it in VCS Roots.", description = "This is the repository slug on github. So for example `MinecraftForge` or `MinecraftForge`. It is interpolated into the global VCS Roots.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("env.PUBLISHED_JAVA_ARTIFACT_ID", "forge", label = "Published artifact id", description = "The maven coordinate artifact id that has been published by this build. Can not be empty.", allowEmpty = false)
-        text("env.PUBLISHED_JAVA_FML_ARTIFACT_ID", "fmlonly", label = "Published fmlonly artifact id", description = "The maven coordinate artifact id for fml only that has been published by this build. Can not be empty.", allowEmpty = false)
-        text("env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION", "0.0.0-SNAPSHOT", label = "Published fmlonly artifact version", description = "The version for fml only that has been published by this build. Can not be empty.", allowEmpty = false)
         text("env.PUBLISHED_JAVA_GROUP", "net.minecraftforge", label = "Published group", description = "The maven coordinate group that has been published by this build. Can not be empty.", allowEmpty = false)
         //These are references and not actually keys
         password("env.CROWDIN_KEY", "credentialsJSON:a3102dbe-805d-4177-9f54-3d2c2eb08fd5", display = ParameterDisplay.HIDDEN)
@@ -76,19 +74,6 @@ object Build : BuildType({
     id("MinecraftForge_MinecraftForge__Build")
     name = "Build"
     description = "Builds and Publishes the main branches of the project."
-
-    features {
-        feature {
-            id = "trigger_fml_only_files_generator"
-            type = "triggerBuildFeature"
-            param("triggers", "MinecraftForge_FilesGenerator_GeneratePages")
-            param("parameters", """
-                env.PUBLISHED_JAVA_FML_ARTIFACT_ID~env.PUBLISHED_JAVA_ARTIFACT_ID
-                env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION~env.PUBLISHED_JAVA_ARTIFACT_VERSION
-                env.PUBLISHED_JAVA_GROUP
-            """.trimIndent())
-        }
-    }
 })
 
 object BuildSecondaryBranches : BuildType({

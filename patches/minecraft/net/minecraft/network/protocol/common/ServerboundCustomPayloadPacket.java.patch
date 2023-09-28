@@ -1,0 +1,30 @@
+--- a/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
++++ b/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
+@@ -9,7 +_,7 @@
+ import net.minecraft.network.protocol.common.custom.DiscardedPayload;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ServerCommonPacketListener> {
++public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ServerCommonPacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomPayloadPacket> {
+    private static final int MAX_PAYLOAD_SIZE = 32767;
+    private static final Map<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>> KNOWN_TYPES = ImmutableMap.<ResourceLocation, FriendlyByteBuf.Reader<? extends CustomPacketPayload>>builder().put(BrandPayload.ID, BrandPayload::new).build();
+ 
+@@ -25,8 +_,7 @@
+    private static DiscardedPayload readUnknownPayload(ResourceLocation p_300234_, FriendlyByteBuf p_299925_) {
+       int i = p_299925_.readableBytes();
+       if (i >= 0 && i <= 32767) {
+-         p_299925_.skipBytes(i);
+-         return new DiscardedPayload(p_300234_);
++         return new DiscardedPayload(p_300234_, new FriendlyByteBuf(p_299925_.readBytes(i)));
+       } else {
+          throw new IllegalArgumentException("Payload may not be larger than 32767 bytes");
+       }
+@@ -40,4 +_,8 @@
+    public void handle(ServerCommonPacketListener p_297991_) {
+       p_297991_.handleCustomPayload(this);
+    }
++
++   @Override public @org.jetbrains.annotations.Nullable FriendlyByteBuf getInternalData() { return payload instanceof DiscardedPayload dc ? dc.data() : null; }
++   @Override public ResourceLocation getName() { return payload.id(); }
++   @Override public int getIndex() { return 0; }
+ }

@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
-@@ -229,7 +_,12 @@
-          p_281357_.m_280370_(this.f_96547_, p_283466_, p_282403_, p_283601_);
+@@ -236,7 +_,12 @@
+          p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_, p_283601_);
        } else {
-          p_281357_.m_280302_(this.f_96547_, p_282046_, p_282403_, p_283601_, p_282046_.m_41613_() == 1 ? "1" : null);
--         p_281357_.m_280302_(this.f_96547_, p_283466_, p_282403_ + 14, p_283601_, p_283466_.m_41613_() == 1 ? "1" : null);
+          p_281357_.renderItemDecorations(this.font, p_282046_, p_282403_, p_283601_, p_282046_.getCount() == 1 ? "1" : null);
+-         p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_ + 14, p_283601_, p_283466_.getCount() == 1 ? "1" : null);
 +         // Forge: fixes Forge-8806, code for count rendering taken from GuiGraphics#renderGuiItemDecorations
-+         p_281357_.m_280168_().m_85836_();
-+         p_281357_.m_280168_().m_252880_(0.0F, 0.0F, 200.0F);
-+         String count = p_283466_.m_41613_() == 1 ? "1" : String.valueOf(p_283466_.m_41613_());
-+         f_96547_.m_272078_(count, (float) (p_282403_ + 14) + 19 - 2 - f_96547_.m_92895_(count), (float)p_283601_ + 6 + 3, 0xFFFFFF, true, p_281357_.m_280168_().m_85850_().m_252922_(), p_281357_.m_280091_(), net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
-+         p_281357_.m_280168_().m_85849_();
-          p_281357_.m_280168_().m_85836_();
-          p_281357_.m_280168_().m_252880_(0.0F, 0.0F, 300.0F);
-          p_281357_.m_280398_(f_99113_, p_282403_ + 7, p_283601_ + 12, 0, 0.0F, 176.0F, 9, 2, 512, 256);
++         p_281357_.pose().pushPose();
++         p_281357_.pose().translate(0.0F, 0.0F, 200.0F);
++         String count = p_283466_.getCount() == 1 ? "1" : String.valueOf(p_283466_.getCount());
++         font.drawInBatch(count, (float) (p_282403_ + 14) + 19 - 2 - font.width(count), (float)p_283601_ + 6 + 3, 0xFFFFFF, true, p_281357_.pose().last().pose(), p_281357_.bufferSource(), net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
++         p_281357_.pose().popPose();
+          p_281357_.pose().pushPose();
+          p_281357_.pose().translate(0.0F, 0.0F, 300.0F);
+          p_281357_.blitSprite(DISCOUNT_STRIKETHRUOGH_SPRITE, p_282403_ + 7, p_283601_ + 12, 0, 9, 2);

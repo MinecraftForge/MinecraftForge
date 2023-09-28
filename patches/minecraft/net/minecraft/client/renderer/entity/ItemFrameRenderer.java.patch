@@ -3,47 +3,47 @@
 @@ -70,31 +_,32 @@
        }
  
-       if (!itemstack.m_41619_()) {
--         OptionalInt optionalint = p_115076_.m_218868_();
-+         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, p_115076_.m_9236_());
+       if (!itemstack.isEmpty()) {
+-         OptionalInt optionalint = p_115076_.getFramedMapId();
++         MapItemSavedData mapitemsaveddata = MapItem.getSavedData(itemstack, p_115076_.level());
           if (flag) {
-             p_115079_.m_252880_(0.0F, 0.0F, 0.5F);
+             p_115079_.translate(0.0F, 0.0F, 0.5F);
           } else {
-             p_115079_.m_252880_(0.0F, 0.0F, 0.4375F);
+             p_115079_.translate(0.0F, 0.0F, 0.4375F);
           }
  
--         int j = optionalint.isPresent() ? p_115076_.m_31823_() % 4 * 2 : p_115076_.m_31823_();
-+         int j = mapitemsaveddata != null ? p_115076_.m_31823_() % 4 * 2 : p_115076_.m_31823_();
-          p_115079_.m_252781_(Axis.f_252403_.m_252977_((float)j * 360.0F / 8.0F));
+-         int j = optionalint.isPresent() ? p_115076_.getRotation() % 4 * 2 : p_115076_.getRotation();
++         int j = mapitemsaveddata != null ? p_115076_.getRotation() % 4 * 2 : p_115076_.getRotation();
+          p_115079_.mulPose(Axis.ZP.rotationDegrees((float)j * 360.0F / 8.0F));
 -         if (optionalint.isPresent()) {
 +         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_115076_, this, p_115079_, p_115080_, p_115081_))) {
 +         if (mapitemsaveddata != null) {
-             p_115079_.m_252781_(Axis.f_252403_.m_252977_(180.0F));
+             p_115079_.mulPose(Axis.ZP.rotationDegrees(180.0F));
              float f = 0.0078125F;
-             p_115079_.m_85841_(0.0078125F, 0.0078125F, 0.0078125F);
-             p_115079_.m_252880_(-64.0F, -64.0F, 0.0F);
--            MapItemSavedData mapitemsaveddata = MapItem.m_151128_(optionalint.getAsInt(), p_115076_.m_9236_());
-             p_115079_.m_252880_(0.0F, 0.0F, -1.0F);
+             p_115079_.scale(0.0078125F, 0.0078125F, 0.0078125F);
+             p_115079_.translate(-64.0F, -64.0F, 0.0F);
+-            MapItemSavedData mapitemsaveddata = MapItem.getSavedData(optionalint.getAsInt(), p_115076_.level());
+             p_115079_.translate(0.0F, 0.0F, -1.0F);
              if (mapitemsaveddata != null) {
-                int i = this.m_174208_(p_115076_, 15728850, p_115081_);
--               Minecraft.m_91087_().f_91063_.m_109151_().m_168771_(p_115079_, p_115080_, optionalint.getAsInt(), mapitemsaveddata, true, i);
-+               Minecraft.m_91087_().f_91063_.m_109151_().m_168771_(p_115079_, p_115080_, p_115076_.m_218868_().getAsInt(), mapitemsaveddata, true, i);
+                int i = this.getLightVal(p_115076_, 15728850, p_115081_);
+-               Minecraft.getInstance().gameRenderer.getMapRenderer().render(p_115079_, p_115080_, optionalint.getAsInt(), mapitemsaveddata, true, i);
++               Minecraft.getInstance().gameRenderer.getMapRenderer().render(p_115079_, p_115080_, p_115076_.getFramedMapId().getAsInt(), mapitemsaveddata, true, i);
              }
           } else {
-             int k = this.m_174208_(p_115076_, 15728880, p_115081_);
-             p_115079_.m_85841_(0.5F, 0.5F, 0.5F);
-             this.f_115047_.m_269128_(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.f_118083_, p_115079_, p_115080_, p_115076_.m_9236_(), p_115076_.m_19879_());
+             int k = this.getLightVal(p_115076_, 15728880, p_115081_);
+             p_115079_.scale(0.5F, 0.5F, 0.5F);
+             this.itemRenderer.renderStatic(itemstack, ItemDisplayContext.FIXED, k, OverlayTexture.NO_OVERLAY, p_115079_, p_115080_, p_115076_.level(), p_115076_.getId());
           }
 +         }
        }
  
-       p_115079_.m_85849_();
+       p_115079_.popPose();
 @@ -106,7 +_,7 @@
  
-    private ModelResourceLocation m_174212_(T p_174213_, ItemStack p_174214_) {
-       boolean flag = p_174213_.m_6095_() == EntityType.f_147033_;
--      if (p_174214_.m_150930_(Items.f_42573_)) {
-+      if (p_174214_.m_41720_() instanceof MapItem) {
-          return flag ? f_174202_ : f_115045_;
+    private ModelResourceLocation getFrameModelResourceLoc(T p_174213_, ItemStack p_174214_) {
+       boolean flag = p_174213_.getType() == EntityType.GLOW_ITEM_FRAME;
+-      if (p_174214_.is(Items.FILLED_MAP)) {
++      if (p_174214_.getItem() instanceof MapItem) {
+          return flag ? GLOW_MAP_FRAME_LOCATION : MAP_FRAME_LOCATION;
        } else {
-          return flag ? f_174201_ : f_115044_;
+          return flag ? GLOW_FRAME_LOCATION : FRAME_LOCATION;

@@ -1,59 +1,59 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 @@ -112,7 +_,7 @@
-       BlockPathTypes blockpathtypes = this.m_77567_(this.f_77313_, p_77641_.f_77271_, p_77641_.f_77272_ + 1, p_77641_.f_77273_);
-       BlockPathTypes blockpathtypes1 = this.m_77567_(this.f_77313_, p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_);
-       if (this.f_77313_.m_21439_(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
--         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.m_274421_()));
-+         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.getStepHeight()));
+       BlockPathTypes blockpathtypes = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y + 1, p_77641_.z);
+       BlockPathTypes blockpathtypes1 = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y, p_77641_.z);
+       if (this.mob.getPathfindingMalus(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
+-         j = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
++         j = Mth.floor(Math.max(1.0F, this.mob.getStepHeight()));
        }
  
-       double d0 = this.m_142213_(new BlockPos(p_77641_.f_77271_, p_77641_.f_77272_, p_77641_.f_77273_));
+       double d0 = this.getFloorLevel(new BlockPos(p_77641_.x, p_77641_.y, p_77641_.z));
 @@ -306,7 +_,7 @@
     }
  
-    private double m_255203_() {
--      return Math.max(1.125D, (double)this.f_77313_.m_274421_());
-+      return Math.max(1.125D, (double)this.f_77313_.getStepHeight());
+    private double getMobJumpHeight() {
+-      return Math.max(1.125D, (double)this.mob.maxUpStep());
++      return Math.max(1.125D, (double)this.mob.getStepHeight());
     }
  
-    private Node m_230619_(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
+    private Node getNodeAndUpdateCostToMax(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
 @@ -453,6 +_,11 @@
                 if (l != 0 || j1 != 0) {
-                   p_77609_.m_122178_(i + l, j + i1, k + j1);
-                   BlockState blockstate = p_77608_.m_8055_(p_77609_);
+                   p_77609_.set(i + l, j + i1, k + j1);
+                   BlockState blockstate = p_77608_.getBlockState(p_77609_);
 +                  BlockPathTypes blockPathType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
 +                  if (blockPathType != null) return blockPathType;
-+                  FluidState fluidState = blockstate.m_60819_();
++                  FluidState fluidState = blockstate.getFluidState();
 +                  BlockPathTypes fluidPathType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
 +                  if (fluidPathType != null) return fluidPathType;
-                   if (blockstate.m_60713_(Blocks.f_50128_) || blockstate.m_60713_(Blocks.f_50685_)) {
+                   if (blockstate.is(Blocks.CACTUS) || blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
                       return BlockPathTypes.DANGER_OTHER;
                    }
 @@ -478,6 +_,8 @@
  
-    protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
-       BlockState blockstate = p_77644_.m_8055_(p_77645_);
+    protected static BlockPathTypes getBlockPathTypeRaw(BlockGetter p_77644_, BlockPos p_77645_) {
+       BlockState blockstate = p_77644_.getBlockState(p_77645_);
 +      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_, null);
 +      if (type != null) return type;
-       Block block = blockstate.m_60734_();
-       if (blockstate.m_60795_()) {
+       Block block = blockstate.getBlock();
+       if (blockstate.isAir()) {
           return BlockPathTypes.OPEN;
 @@ -491,6 +_,8 @@
                 return BlockPathTypes.COCOA;
-             } else if (!blockstate.m_60713_(Blocks.f_50070_) && !blockstate.m_60713_(Blocks.f_152588_)) {
-                FluidState fluidstate = p_77644_.m_6425_(p_77645_);
+             } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
+                FluidState fluidstate = p_77644_.getFluidState(p_77645_);
 +               BlockPathTypes nonLoggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, false);
 +               if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
-                if (fluidstate.m_205070_(FluidTags.f_13132_)) {
+                if (fluidstate.is(FluidTags.LAVA)) {
                    return BlockPathTypes.LAVA;
-                } else if (m_77622_(blockstate)) {
+                } else if (isBurningBlock(blockstate)) {
 @@ -510,6 +_,8 @@
-                   if (!blockstate.m_60647_(p_77644_, p_77645_, PathComputationType.LAND)) {
+                   if (!blockstate.isPathfindable(p_77644_, p_77645_, PathComputationType.LAND)) {
                       return BlockPathTypes.BLOCKED;
                    } else {
 +                     BlockPathTypes loggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, true);
 +                     if (loggableFluidPathType != null) return loggableFluidPathType;
-                      return fluidstate.m_205070_(FluidTags.f_13131_) ? BlockPathTypes.WATER : BlockPathTypes.OPEN;
+                      return fluidstate.is(FluidTags.WATER) ? BlockPathTypes.WATER : BlockPathTypes.OPEN;
                    }
                 } else {

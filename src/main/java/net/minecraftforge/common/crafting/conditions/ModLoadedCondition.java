@@ -5,60 +5,29 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
-public class ModLoadedCondition implements ICondition
-{
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "mod_loaded");
-    private final String modid;
-
-    public ModLoadedCondition(String modid)
-    {
-        this.modid = modid;
-    }
+public record ModLoadedCondition(String modid) implements ICondition {
+    public static final Codec<ModLoadedCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+        Codec.STRING.fieldOf("modid").forGetter(ModLoadedCondition::modid)
+    ).apply(b, ModLoadedCondition::new));
 
     @Override
-    public ResourceLocation getID()
-    {
-        return NAME;
-    }
-
-    @Override
-    public boolean test(IContext context)
-    {
+    public boolean test(IContext context) {
         return ModList.get().isLoaded(modid);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "mod_loaded(\"" + modid + "\")";
     }
 
-    public static class Serializer implements IConditionSerializer<ModLoadedCondition>
-    {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, ModLoadedCondition value)
-        {
-            json.addProperty("modid", value.modid);
-        }
-
-        @Override
-        public ModLoadedCondition read(JsonObject json)
-        {
-            return new ModLoadedCondition(GsonHelper.getAsString(json, "modid"));
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return ModLoadedCondition.NAME;
-        }
+    @Override
+    public Codec<? extends ICondition> codec() {
+        return CODEC;
     }
+
 }

@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -43,7 +_,7 @@
-       BlockPos blockpos = p_220982_.m_7494_();
-       if (p_220981_.m_46859_(blockpos) && blockpos.m_123342_() < p_220981_.m_151558_()) {
-          int i = p_220980_.m_61143_(f_51647_);
+@@ -50,7 +_,7 @@
+       BlockPos blockpos = p_220982_.above();
+       if (p_220981_.isEmptyBlock(blockpos) && blockpos.getY() < p_220981_.getMaxBuildHeight()) {
+          int i = p_220980_.getValue(AGE);
 -         if (i < 5) {
 +         if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_220981_, blockpos, p_220980_, true)) {
              boolean flag = false;
              boolean flag1 = false;
-             BlockState blockstate = p_220981_.m_8055_(p_220982_.m_7495_());
-@@ -99,7 +_,7 @@
+             BlockState blockstate = p_220981_.getBlockState(p_220982_.below());
+@@ -106,7 +_,7 @@
              } else {
-                this.m_51658_(p_220981_, p_220982_);
+                this.placeDeadFlower(p_220981_, p_220982_);
              }
 -
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_220981_, p_220982_, p_220980_);

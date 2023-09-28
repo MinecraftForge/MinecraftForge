@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElement.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElement.java
 @@ -28,14 +_,21 @@
-    public final Map<Direction, BlockElementFace> f_111310_;
-    public final BlockElementRotation f_111311_;
-    public final boolean f_111312_;
+    public final Map<Direction, BlockElementFace> faces;
+    public final BlockElementRotation rotation;
+    public final boolean shade;
 +   private net.minecraftforge.client.model.ForgeFaceData faceData;
  
     public BlockElement(Vector3f p_253626_, Vector3f p_254426_, Map<Direction, BlockElementFace> p_254454_, @Nullable BlockElementRotation p_254229_, boolean p_253661_) {
@@ -11,21 +11,21 @@
 +   }
 +
 +   public BlockElement(Vector3f p_253626_, Vector3f p_254426_, Map<Direction, BlockElementFace> p_254454_, @Nullable BlockElementRotation p_254229_, boolean p_253661_, net.minecraftforge.client.model.ForgeFaceData faceData) {
-       this.f_111308_ = p_253626_;
-       this.f_111309_ = p_254426_;
-       this.f_111310_ = p_254454_;
-       this.f_111311_ = p_254229_;
-       this.f_111312_ = p_253661_;
-       this.m_111319_();
+       this.from = p_253626_;
+       this.to = p_254426_;
+       this.faces = p_254454_;
+       this.rotation = p_254229_;
+       this.shade = p_253661_;
+       this.fillUvs();
 +      this.setFaceData(faceData);
-+      this.f_111310_.values().forEach(face -> face.parent = this);
++      this.faces.values().forEach(face -> face.parent = this);
     }
  
-    private void m_111319_() {
+    private void fillUvs() {
 @@ -78,7 +_,8 @@
              throw new JsonParseException("Expected shade to be a Boolean");
           } else {
-             boolean flag = GsonHelper.m_13855_(jsonobject, "shade", true);
+             boolean flag = GsonHelper.getAsBoolean(jsonobject, "shade", true);
 -            return new BlockElement(vector3f, vector3f1, map, blockelementrotation, flag);
 +            var faceData = net.minecraftforge.client.model.ForgeFaceData.read(jsonobject.get("forge_data"), net.minecraftforge.client.model.ForgeFaceData.DEFAULT);
 +            return new BlockElement(vector3f, vector3f1, map, blockelementrotation, flag, faceData);

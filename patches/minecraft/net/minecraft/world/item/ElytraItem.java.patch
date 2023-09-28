@@ -1,28 +1,28 @@
 --- a/net/minecraft/world/item/ElytraItem.java
 +++ b/net/minecraft/world/item/ElytraItem.java
 @@ -27,6 +_,25 @@
-       return this.m_269277_(this, p_41137_, p_41138_, p_41139_);
+       return this.swapWithEquipmentSlot(this, p_41137_, p_41138_, p_41139_);
     }
  
 +   @Override
 +   public boolean canElytraFly(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
-+      return ElytraItem.m_41140_(stack);
++      return ElytraItem.isFlyEnabled(stack);
 +   }
 +
 +   @Override
 +   public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
-+      if (!entity.m_9236_().f_46443_) {
++      if (!entity.level().isClientSide) {
 +         int nextFlightTick = flightTicks + 1;
 +         if (nextFlightTick % 10 == 0) {
 +            if (nextFlightTick % 20 == 0) {
-+               stack.m_41622_(1, entity, e -> e.m_21166_(net.minecraft.world.entity.EquipmentSlot.CHEST));
++               stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.CHEST));
 +            }
-+            entity.m_146850_(net.minecraft.world.level.gameevent.GameEvent.f_223705_);
++            entity.gameEvent(net.minecraft.world.level.gameevent.GameEvent.ELYTRA_GLIDE);
 +         }
 +      }
 +      return true;
 +   }
 +
-    public SoundEvent m_150681_() {
-       return SoundEvents.f_11674_;
+    public SoundEvent getEquipSound() {
+       return SoundEvents.ARMOR_EQUIP_ELYTRA;
     }

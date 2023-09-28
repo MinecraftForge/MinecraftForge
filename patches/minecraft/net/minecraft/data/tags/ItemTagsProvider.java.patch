@@ -1,8 +1,8 @@
 --- a/net/minecraft/data/tags/ItemTagsProvider.java
 +++ b/net/minecraft/data/tags/ItemTagsProvider.java
 @@ -16,14 +_,28 @@
-    private final CompletableFuture<TagsProvider.TagLookup<Block>> f_126528_;
-    private final Map<TagKey<Block>, TagKey<Item>> f_273814_ = new HashMap<>();
+    private final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags;
+    private final Map<TagKey<Block>, TagKey<Item>> tagsToCopy = new HashMap<>();
  
 +   /**
 +    * @deprecated Forge: Use the {@linkplain #ItemTagsProvider(PackOutput, CompletableFuture, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant}
@@ -12,11 +12,11 @@
 +      this(p_275343_, p_275729_, p_275322_, "vanilla", null);
 +   }
 +   public ItemTagsProvider(PackOutput p_275343_, CompletableFuture<HolderLookup.Provider> p_275729_, CompletableFuture<TagsProvider.TagLookup<Block>> p_275322_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       super(p_275343_, Registries.f_256913_, p_275729_, (p_255790_) -> {
-          return p_255790_.m_204114_().m_205785_();
+       super(p_275343_, Registries.ITEM, p_275729_, (p_255790_) -> {
+          return p_255790_.builtInRegistryHolder().key();
 -      });
 +      }, modId, existingFileHelper);
-       this.f_126528_ = p_275322_;
+       this.blockTags = p_275322_;
     }
  
 +   /**
@@ -27,6 +27,6 @@
 +      this(p_275204_, p_275194_, p_275207_, p_275634_, "vanilla", null);
 +   }
 +   public ItemTagsProvider(PackOutput p_275204_, CompletableFuture<HolderLookup.Provider> p_275194_, CompletableFuture<TagsProvider.TagLookup<Item>> p_275207_, CompletableFuture<TagsProvider.TagLookup<Block>> p_275634_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-       super(p_275204_, Registries.f_256913_, p_275194_, p_275207_, (p_274765_) -> {
-          return p_274765_.m_204114_().m_205785_();
+       super(p_275204_, Registries.ITEM, p_275194_, p_275207_, (p_274765_) -> {
+          return p_274765_.builtInRegistryHolder().key();
        });

@@ -1,26 +1,26 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -545,7 +_,8 @@
+@@ -507,7 +_,8 @@
     }, new OptionInstance.LazyEnum<>(() -> {
-       return Stream.concat(Stream.of(""), Minecraft.m_91087_().m_91106_().m_194525_().stream()).toList();
+       return Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList();
     }, (p_232011_) -> {
--      return Minecraft.m_91087_().m_91396_() && p_232011_ != "" && !Minecraft.m_91087_().m_91106_().m_194525_().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
+-      return Minecraft.getInstance().isRunning() && p_232011_ != "" && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
 +      // FORGE: fix incorrect string comparison - PR #8767
-+      return Minecraft.m_91087_().m_91396_() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.m_91087_().m_91106_().m_194525_().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
-    }, Codec.STRING), "", (p_275584_) -> {
-       SoundManager soundmanager = Minecraft.m_91087_().m_91106_();
-       soundmanager.m_194526_();
-@@ -869,6 +_,7 @@
++      return Minecraft.getInstance().isRunning() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
+    }, Codec.STRING), "", (p_299350_) -> {
+       SoundManager soundmanager = Minecraft.getInstance().getSoundManager();
+       soundmanager.reload();
+@@ -835,6 +_,7 @@
     }
  
     public Options(Minecraft p_92138_, File p_92139_) {
 +      setForgeKeybindProperties();
-       this.f_92060_ = p_92138_;
-       this.f_92110_ = new File(p_92139_, "options.txt");
-       boolean flag = p_92138_.m_91103_();
-@@ -990,11 +_,21 @@
-       p_168428_.m_213982_("telemetryOptInExtra", this.f_260461_);
-       this.f_263744_ = p_168428_.m_142682_("onboardAccessibility", this.f_263744_);
+       this.minecraft = p_92138_;
+       this.optionsFile = new File(p_92139_, "options.txt");
+       boolean flag = p_92138_.is64Bit();
+@@ -957,11 +_,21 @@
+       p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
+       this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
  
 +      net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.processOptions(p_168428_);
 +      processOptionsForge(p_168428_);
@@ -28,69 +28,69 @@
 +   // FORGE: split off to allow reloading options after mod loading is done
 +   private void processOptionsForge(Options.FieldAccess p_168428_)
 +   {
-       for(KeyMapping keymapping : this.f_92059_) {
--         String s = keymapping.m_90865_();
-+         String s = keymapping.m_90865_() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
-          String s1 = p_168428_.m_141943_("key_" + keymapping.m_90860_(), s);
+       for(KeyMapping keymapping : this.keyMappings) {
+-         String s = keymapping.saveString();
++         String s = keymapping.saveString() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
+          String s1 = p_168428_.process("key_" + keymapping.getName(), s);
           if (!s.equals(s1)) {
--            keymapping.m_90848_(InputConstants.m_84851_(s1));
+-            keymapping.setKey(InputConstants.getKey(s1));
 +            if (s1.indexOf(':') != -1) {
 +               String[] pts = s1.split(":");
-+               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputConstants.m_84851_(pts[0]));
++               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputConstants.getKey(pts[0]));
 +            } else
-+               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.m_84851_(s1));
++               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.getKey(s1));
           }
        }
  
-@@ -1013,6 +_,9 @@
+@@ -980,6 +_,9 @@
     }
  
-    public void m_92140_() {
+    public void load() {
 +      this.load(false);
 +   }
 +   public void load(boolean limited) {
        try {
-          if (!this.f_92110_.exists()) {
+          if (!this.optionsFile.exists()) {
              return;
-@@ -1041,7 +_,8 @@
+@@ -1008,7 +_,8 @@
              }
           }
  
--         this.m_168427_(new Options.FieldAccess() {
-+         java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsForge : this::m_168427_;
+-         this.processOptions(new Options.FieldAccess() {
++         java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsForge : this::processOptions;
 +         processor.accept(new Options.FieldAccess() {
              @Nullable
-             private String m_168458_(String p_168459_) {
-                return compoundtag1.m_128441_(p_168459_) ? compoundtag1.m_128461_(p_168459_) : null;
-@@ -1204,6 +_,7 @@
+             private String getValueOrNull(String p_168459_) {
+                return compoundtag1.contains(p_168459_) ? compoundtag1.getString(p_168459_) : null;
+@@ -1181,6 +_,7 @@
     }
  
-    public void m_92172_() {
+    public void broadcastOptions() {
 +      if (net.minecraftforge.client.loading.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
-       if (this.f_92060_.f_91074_ != null) {
-          int i = 0;
- 
-@@ -1268,6 +_,23 @@
+       if (this.minecraft.player != null) {
+          this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
+       }
+@@ -1239,6 +_,23 @@
        }
  
-       p_92146_.m_10509_(set);
+       p_92146_.setSelected(set);
 +   }
 +
 +   private void setForgeKeybindProperties() {
 +      net.minecraftforge.client.settings.KeyConflictContext inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
-+      f_92085_.setKeyConflictContext(inGame);
-+      f_92086_.setKeyConflictContext(inGame);
-+      f_92087_.setKeyConflictContext(inGame);
-+      f_92088_.setKeyConflictContext(inGame);
-+      f_92089_.setKeyConflictContext(inGame);
-+      f_92090_.setKeyConflictContext(inGame);
-+      f_92091_.setKeyConflictContext(inGame);
-+      f_92096_.setKeyConflictContext(inGame);
-+      f_92098_.setKeyConflictContext(inGame);
-+      f_92099_.setKeyConflictContext(inGame);
-+      f_92100_.setKeyConflictContext(inGame);
-+      f_92103_.setKeyConflictContext(inGame);
-+      f_92104_.setKeyConflictContext(inGame);
++      keyUp.setKeyConflictContext(inGame);
++      keyLeft.setKeyConflictContext(inGame);
++      keyDown.setKeyConflictContext(inGame);
++      keyRight.setKeyConflictContext(inGame);
++      keyJump.setKeyConflictContext(inGame);
++      keyShift.setKeyConflictContext(inGame);
++      keySprint.setKeyConflictContext(inGame);
++      keyAttack.setKeyConflictContext(inGame);
++      keyChat.setKeyConflictContext(inGame);
++      keyPlayerList.setKeyConflictContext(inGame);
++      keyCommand.setKeyConflictContext(inGame);
++      keyTogglePerspective.setKeyConflictContext(inGame);
++      keySmoothCamera.setKeyConflictContext(inGame);
     }
  
-    public CameraType m_92176_() {
+    public CameraType getCameraType() {

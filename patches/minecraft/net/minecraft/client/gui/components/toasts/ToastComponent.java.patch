@@ -3,8 +3,8 @@
 @@ -101,6 +_,7 @@
     }
  
-    public void m_94922_(Toast p_94923_) {
+    public void addToast(Toast p_94923_) {
 +      if (net.minecraftforge.client.ForgeHooksClient.onToastAdd(p_94923_)) return;
-       this.f_94916_.add(p_94923_);
+       this.queued.add(p_94923_);
     }
  

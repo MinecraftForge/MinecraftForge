@@ -1,19 +1,35 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -123,7 +_,7 @@
+@@ -123,13 +_,16 @@
     }
  
-    private static String m_246502_(ResourceLocation p_252033_) {
--      return p_252033_.m_135815_();
+    private static String registryDirPath(ResourceLocation p_252033_) {
+-      return p_252033_.getPath();
 +      return net.minecraftforge.common.ForgeHooks.prefixNamespace(p_252033_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
     }
  
-    static <E> void m_255048_(RegistryOps.RegistryInfoLookup p_256369_, ResourceManager p_256349_, ResourceKey<? extends Registry<E>> p_255792_, WritableRegistry<E> p_256211_, Decoder<E> p_256232_, Map<ResourceKey<?>, Exception> p_255884_) {
-@@ -139,6 +_,7 @@
-          try (Reader reader = resource.m_215508_()) {
+    static <E> void loadRegistryContents(RegistryOps.RegistryInfoLookup p_256369_, ResourceManager p_256349_, ResourceKey<? extends Registry<E>> p_255792_, WritableRegistry<E> p_256211_, Decoder<E> p_256232_, Map<ResourceKey<?>, Exception> p_255884_) {
+       String s = registryDirPath(p_255792_.location());
+       FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
+-      RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, p_256369_);
++      RegistryOps<JsonElement> registryops = RegistryOps.builder(JsonOps.INSTANCE, p_256369_)
++          .with(net.minecraftforge.common.crafting.conditions.ICondition.IContext.KEY, net.minecraftforge.common.crafting.conditions.ICondition.IContext.TAGS_INVALID)
++          .build();
++      Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_256232_);
+ 
+       for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_256349_).entrySet()) {
+          ResourceLocation resourcelocation = entry.getKey();
+@@ -138,7 +_,12 @@
+ 
+          try (Reader reader = resource.openAsReader()) {
              JsonElement jsonelement = JsonParser.parseReader(reader);
-             DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
-+               if (!net.minecraftforge.common.crafting.conditions.ICondition.shouldRegisterEntry(jsonelement)) continue;
+-            DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
++            var result = conditional.decode(registryops, jsonelement);
++            if (result.result().map(p -> p.getFirst()).isEmpty()) {
++               LOGGER.debug("Skipping {} conditions not met", resourcelocation);
++               continue;
++            }
++            DataResult<E> dataresult = result.map(p -> p.mapFirst(Optional::get)).map(p -> p.getFirst());
              E e = dataresult.getOrThrow(false, (p_248715_) -> {
              });
-             p_256211_.m_255290_(resourcekey, e, resource.m_247137_() ? Lifecycle.stable() : dataresult.lifecycle());
+             p_256211_.register(resourcekey, e, resource.isBuiltin() ? Lifecycle.stable() : dataresult.lifecycle());

@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #PaintingVariantTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_) {
-       super(p_255750_, Registries.f_256836_, p_256184_);
+       super(p_255750_, Registries.PAINTING_VARIANT, p_256184_);
 +   }
 +   public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_255750_, Registries.f_256836_, p_256184_, modId, existingFileHelper);
++      super(p_255750_, Registries.PAINTING_VARIANT, p_256184_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_256017_) {
+    protected void addTags(HolderLookup.Provider p_256017_) {

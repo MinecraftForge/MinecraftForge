@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/item/ShieldItem.java
 +++ b/net/minecraft/world/item/ShieldItem.java
 @@ -53,6 +_,13 @@
-       return compoundtag != null ? DyeColor.m_41053_(compoundtag.m_128451_("Base")) : DyeColor.WHITE;
+       return compoundtag != null ? DyeColor.byId(compoundtag.getInt("Base")) : DyeColor.WHITE;
     }
  
 +   /* ******************** FORGE START ******************** */
@@ -11,6 +11,6 @@
 +      return net.minecraftforge.common.ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
 +   }
 +
-    public EquipmentSlot m_40402_() {
+    public EquipmentSlot getEquipmentSlot() {
        return EquipmentSlot.OFFHAND;
     }

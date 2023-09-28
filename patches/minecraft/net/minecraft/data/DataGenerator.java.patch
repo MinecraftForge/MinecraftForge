@@ -1,24 +1,24 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
 @@ -21,6 +_,7 @@
-    final Map<String, DataProvider> f_236026_ = new LinkedHashMap<>();
-    private final WorldVersion f_236027_;
-    private final boolean f_236028_;
-+   private final Map<String, DataProvider> providersView = java.util.Collections.unmodifiableMap(this.f_236026_);
+    final Map<String, DataProvider> providersToRun = new LinkedHashMap<>();
+    private final WorldVersion version;
+    private final boolean alwaysGenerate;
++   private final Map<String, DataProvider> providersView = java.util.Collections.unmodifiableMap(this.providersToRun);
  
     public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
-       this.f_243753_ = p_251724_;
+       this.rootOutputFolder = p_251724_;
 @@ -38,6 +_,7 @@
-             f_123905_.debug("Generator {} already run for version {}", p_254418_, this.f_236027_.m_132493_());
+             LOGGER.debug("Generator {} already run for version {}", p_254418_, this.version.getName());
           } else {
-             f_123905_.info("Starting provider: {}", (Object)p_254418_);
+             LOGGER.info("Starting provider: {}", (Object)p_254418_);
 +            net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);
              stopwatch1.start();
-             hashcache.m_253116_(hashcache.m_253234_(p_254418_, p_253750_::m_213708_).join());
+             hashcache.applyUpdate(hashcache.generateUpdate(p_254418_, p_253750_::run).join());
              stopwatch1.stop();
 @@ -56,6 +_,34 @@
-    public DataGenerator.PackGenerator m_253030_(boolean p_253826_, String p_254134_) {
-       Path path = this.f_244116_.m_247566_(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
+    public DataGenerator.PackGenerator getBuiltinDatapack(boolean p_253826_, String p_254134_) {
+       Path path = this.vanillaPackOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
        return new DataGenerator.PackGenerator(p_253826_, p_254134_, new PackOutput(path));
 +   }
 +
@@ -27,25 +27,25 @@
 +   }
 +
 +   public PackOutput getPackOutput() {
-+      return this.f_244116_;
++      return this.vanillaPackOutput;
 +   }
 +
 +   public PackOutput getPackOutput(String path) {
-+      return new PackOutput(f_243753_.resolve(path));
++      return new PackOutput(rootOutputFolder.resolve(path));
 +   }
 +
 +   public <T extends DataProvider> T addProvider(boolean run, DataProvider.Factory<T> factory) {
-+      return addProvider(run, factory.m_253034_(this.f_244116_));
++      return addProvider(run, factory.create(this.vanillaPackOutput));
 +   }
 +
 +   public <T extends DataProvider> T addProvider(boolean run, T provider) {
-+      String id = provider.m_6055_();
++      String id = provider.getName();
 +
-+      if (!DataGenerator.this.f_252429_.add(id))
++      if (!DataGenerator.this.allProviderIds.add(id))
 +         throw new IllegalStateException("Duplicate provider: " + id);
 +
 +      if (run)
-+         DataGenerator.this.f_236026_.put(id, provider);
++         DataGenerator.this.providersToRun.put(id, provider);
 +
 +      return provider;
     }

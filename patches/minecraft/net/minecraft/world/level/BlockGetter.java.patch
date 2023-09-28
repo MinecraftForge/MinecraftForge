@@ -7,14 +7,14 @@
 -public interface BlockGetter extends LevelHeightAccessor {
 +public interface BlockGetter extends LevelHeightAccessor, net.minecraftforge.common.extensions.IForgeBlockGetter {
     @Nullable
-    BlockEntity m_7702_(BlockPos p_45570_);
+    BlockEntity getBlockEntity(BlockPos p_45570_);
  
 @@ -32,7 +_,7 @@
-    FluidState m_6425_(BlockPos p_45569_);
+    FluidState getFluidState(BlockPos p_45569_);
  
-    default int m_7146_(BlockPos p_45572_) {
--      return this.m_8055_(p_45572_).m_60791_();
-+      return this.m_8055_(p_45572_).getLightEmission(this, p_45572_);
+    default int getLightEmission(BlockPos p_45572_) {
+-      return this.getBlockState(p_45572_).getLightEmission();
++      return this.getBlockState(p_45572_).getLightEmission(this, p_45572_);
     }
  
-    default int m_7469_() {
+    default int getMaxLightLevel() {

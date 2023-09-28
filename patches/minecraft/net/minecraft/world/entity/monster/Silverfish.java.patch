@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
-@@ -140,7 +_,7 @@
+@@ -141,7 +_,7 @@
              return false;
           } else {
-             RandomSource randomsource = this.f_25725_.m_217043_();
--            if (this.f_25725_.m_9236_().m_46469_().m_46207_(GameRules.f_46132_) && randomsource.m_188503_(m_186073_(10)) == 0) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_25725_.m_9236_(), this.f_25725_) && randomsource.m_188503_(m_186073_(10)) == 0) {
-                this.f_33555_ = Direction.m_235672_(randomsource);
-                BlockPos blockpos = BlockPos.m_274561_(this.f_25725_.m_20185_(), this.f_25725_.m_20186_() + 0.5D, this.f_25725_.m_20189_()).m_121945_(this.f_33555_);
-                BlockState blockstate = this.f_25725_.m_9236_().m_8055_(blockpos);
-@@ -209,7 +_,7 @@
-                      BlockState blockstate = level.m_8055_(blockpos1);
-                      Block block = blockstate.m_60734_();
+             RandomSource randomsource = this.mob.getRandom();
+-            if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.mob.level(), this.mob) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
+                this.selectedDirection = Direction.getRandom(randomsource);
+                BlockPos blockpos = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
+                BlockState blockstate = this.mob.level().getBlockState(blockpos);
+@@ -210,7 +_,7 @@
+                      BlockState blockstate = level.getBlockState(blockpos1);
+                      Block block = blockstate.getBlock();
                       if (block instanceof InfestedBlock) {
--                        if (level.m_46469_().m_46207_(GameRules.f_46132_)) {
-+                        if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this.f_33562_)) {
-                            level.m_46953_(blockpos1, true, this.f_33562_);
+-                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                        if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this.silverfish)) {
+                            level.destroyBlock(blockpos1, true, this.silverfish);
                          } else {
-                            level.m_7731_(blockpos1, ((InfestedBlock)block).m_153432_(level.m_8055_(blockpos1)), 3);
+                            level.setBlock(blockpos1, ((InfestedBlock)block).hostStateByInfested(level.getBlockState(blockpos1)), 3);

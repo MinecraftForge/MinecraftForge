@@ -7,10 +7,10 @@
 +   /** @deprecated Forge: Use the {@linkplain #StructureTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +   @Deprecated
     public StructureTagsProvider(PackOutput p_256522_, CompletableFuture<HolderLookup.Provider> p_256661_) {
-       super(p_256522_, Registries.f_256944_, p_256661_);
+       super(p_256522_, Registries.STRUCTURE, p_256661_);
 +   }
 +   public StructureTagsProvider(PackOutput p_256522_, CompletableFuture<HolderLookup.Provider> p_256661_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256522_, Registries.f_256944_, p_256661_, modId, existingFileHelper);
++      super(p_256522_, Registries.STRUCTURE, p_256661_, modId, existingFileHelper);
     }
  
-    protected void m_6577_(HolderLookup.Provider p_256087_) {
+    protected void addTags(HolderLookup.Provider p_256087_) {

@@ -26,24 +26,20 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkDataEvent extends ChunkEvent
-{
+public class ChunkDataEvent extends ChunkEvent {
     private final CompoundTag data;
 
-    public ChunkDataEvent(ChunkAccess chunk, CompoundTag data)
-    {
+    public ChunkDataEvent(ChunkAccess chunk, CompoundTag data) {
         super(chunk);
         this.data = data;
     }
 
-    public ChunkDataEvent(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
-    {
+    public ChunkDataEvent(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {
         super(chunk, world);
         this.data = data;
     }
 
-    public CompoundTag getData()
-    {
+    public CompoundTag getData() {
         return data;
     }
 
@@ -58,18 +54,15 @@ public class ChunkDataEvent extends ChunkEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends ChunkDataEvent
-    {
+    public static class Load extends ChunkDataEvent {
         private ChunkStatus.ChunkType status;
 
-        public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status)
-        {
+        public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status) {
             super(chunk, data);
             this.status = status;
         }
 
-        public ChunkStatus.ChunkType getStatus()
-        {
+        public ChunkStatus.ChunkType getStatus() {
             return this.status;
         }
     }
@@ -85,10 +78,8 @@ public class ChunkDataEvent extends ChunkEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Save extends ChunkDataEvent
-    {
-        public Save(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
-        {
+    public static class Save extends ChunkDataEvent {
+        public Save(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {
             super(chunk, world, data);
         }
     }

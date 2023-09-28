@@ -4,7 +4,7 @@
  */
 
 package net.minecraftforge.common.crafting;
-
+/*
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -32,7 +32,7 @@ public class ConditionalAdvancement
      * Processes the conditional advancement during loading.
      * @param json The incoming json from the advancement file.
      * @return The advancement that passed the conditions, or null if none did.
-     */
+     * /
     @Nullable
     public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
         JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
@@ -128,3 +128,4 @@ public class ConditionalAdvancement
         }
     }
 }
+*/

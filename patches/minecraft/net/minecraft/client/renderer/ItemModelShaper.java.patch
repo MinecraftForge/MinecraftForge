@@ -2,9 +2,9 @@
 +++ b/net/minecraft/client/renderer/ItemModelShaper.java
 @@ -24,6 +_,7 @@
  
-    public BakedModel m_109406_(ItemStack p_109407_) {
-       BakedModel bakedmodel = this.m_109394_(p_109407_.m_41720_());
+    public BakedModel getItemModel(ItemStack p_109407_) {
+       BakedModel bakedmodel = this.getItemModel(p_109407_.getItem());
 +      // FORGE: Make sure to call the item overrides
-       return bakedmodel == null ? this.f_109390_.m_119409_() : bakedmodel;
+       return bakedmodel == null ? this.modelManager.getMissingModel() : bakedmodel;
     }
  

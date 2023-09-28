@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
@@ -20,8 +20,8 @@ import java.util.function.Consumer;
  * An extension of the {@link AdvancementProvider} to provide a feature-complete
  * experience to generate modded advancements.
  */
-public class ForgeAdvancementProvider extends AdvancementProvider
-{
+@SuppressWarnings("deprecation")
+public class ForgeAdvancementProvider extends AdvancementProvider {
     /**
      * Constructs an advancement provider using the generators to write the
      * advancements to a file.
@@ -31,8 +31,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider
      * @param existingFileHelper a helper used to find whether a file exists
      * @param subProviders the generators used to create the advancements
      */
-    public ForgeAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders)
-    {
+    public ForgeAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
         super(output, registries, subProviders.stream().map(generator -> generator.toSubProvider(existingFileHelper)).toList());
     }
 
@@ -42,8 +41,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider
      *
      * @see AdvancementSubProvider
      */
-    public interface AdvancementGenerator
-    {
+    public interface AdvancementGenerator {
         /**
          * A method used to generate advancements for a mod. Advancements should be
          * built via {@link net.minecraftforge.common.extensions.IForgeAdvancementBuilder#save(Consumer, ResourceLocation, ExistingFileHelper)}.
@@ -52,7 +50,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider
          * @param saver a consumer used to write advancements to a file
          * @param existingFileHelper a helper used to find whether a file exists
          */
-        void generate(HolderLookup.Provider registries, Consumer<Advancement> saver, ExistingFileHelper existingFileHelper);
+        void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper);
 
         /**
          * Creates an {@link AdvancementSubProvider} from this generator.
@@ -60,8 +58,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider
          * @param existingFileHelper a helper used to find whether a file exists
          * @return a sub provider wrapping this generator
          */
-        default AdvancementSubProvider toSubProvider(ExistingFileHelper existingFileHelper)
-        {
+        default AdvancementSubProvider toSubProvider(ExistingFileHelper existingFileHelper) {
             return (registries, saver) -> this.generate(registries, saver, existingFileHelper);
         }
     }

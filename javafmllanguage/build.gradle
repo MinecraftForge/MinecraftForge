@@ -2,10 +2,9 @@ plugins {
     id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
     id 'org.cadixdev.licenser'
+    id 'java-library'
+    id 'jacoco'
 }
-apply plugin: 'java-library'
-apply plugin: 'jacoco'
-apply plugin: 'org.javamodularity.moduleplugin'
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 

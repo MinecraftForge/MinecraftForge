@@ -1,22 +1,22 @@
 --- a/net/minecraft/server/packs/repository/PackRepository.java
 +++ b/net/minecraft/server/packs/repository/PackRepository.java
 @@ -23,7 +_,7 @@
-    private List<Pack> f_10499_ = ImmutableList.of();
+    private List<Pack> selected = ImmutableList.of();
  
     public PackRepository(RepositorySource... p_251886_) {
--      this.f_10497_ = ImmutableSet.copyOf(p_251886_);
-+      this.f_10497_ = new java.util.LinkedHashSet<>(List.of(p_251886_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
+-      this.sources = ImmutableSet.copyOf(p_251886_);
++      this.sources = new java.util.LinkedHashSet<>(List.of(p_251886_)); //Forge: This needs to be a mutable set, so that we can add to it later on.
     }
  
-    public void m_10506_() {
+    public void reload() {
 @@ -111,6 +_,10 @@
     @Nullable
-    public Pack m_10507_(String p_10508_) {
-       return this.f_10498_.get(p_10508_);
+    public Pack getPack(String p_10508_) {
+       return this.available.get(p_10508_);
 +   }
 +
 +   public synchronized void addPackFinder(RepositorySource packFinder) {
-+      this.f_10497_.add(packFinder);
++      this.sources.add(packFinder);
     }
  
-    public boolean m_10515_(String p_10516_) {
+    public boolean isAvailable(String p_10516_) {

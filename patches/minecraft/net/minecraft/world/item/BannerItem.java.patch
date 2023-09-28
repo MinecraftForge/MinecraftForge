@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/item/BannerItem.java
 +++ b/net/minecraft/world/item/BannerItem.java
 @@ -36,7 +_,8 @@
-                holder.m_203543_().map((p_220002_) -> {
-                   return p_220002_.m_135782_().m_214299_();
+                holder.unwrapKey().map((p_220002_) -> {
+                   return p_220002_.location().toShortLanguageKey();
                 }).ifPresent((p_220006_) -> {
--                  p_40544_.add(Component.m_237115_("block.minecraft.banner." + p_220006_ + "." + dyecolor.m_41065_()).m_130940_(ChatFormatting.GRAY));
+-                  p_40544_.add(Component.translatable("block.minecraft.banner." + p_220006_ + "." + dyecolor.getName()).withStyle(ChatFormatting.GRAY));
 +                  net.minecraft.resources.ResourceLocation fileLoc = new net.minecraft.resources.ResourceLocation(p_220006_);
-+                  p_40544_.add(Component.m_237115_("block." + fileLoc.m_135827_() + ".banner." + fileLoc.m_135815_() + "." + dyecolor.m_41065_()).m_130940_(ChatFormatting.GRAY));
++                  p_40544_.add(Component.translatable("block." + fileLoc.getNamespace() + ".banner." + fileLoc.getPath() + "." + dyecolor.getName()).withStyle(ChatFormatting.GRAY));
                 });
              }
           }

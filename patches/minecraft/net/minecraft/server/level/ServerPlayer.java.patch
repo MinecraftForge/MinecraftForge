@@ -1,165 +1,166 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -570,6 +_,7 @@
+@@ -147,7 +_,7 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import org.slf4j.Logger;
  
-    public void m_6667_(DamageSource p_9035_) {
-       this.m_146850_(GameEvent.f_223707_);
+-public class ServerPlayer extends Player {
++public class ServerPlayer extends Player implements net.minecraftforge.common.extensions.IForgeServerPlayer {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
+    private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
+@@ -569,6 +_,7 @@
+ 
+    public void die(DamageSource p_9035_) {
+       this.gameEvent(GameEvent.ENTITY_DIE);
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
-       boolean flag = this.m_9236_().m_46469_().m_46207_(GameRules.f_46142_);
+       boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
        if (flag) {
-          Component component = this.m_21231_().m_19293_();
-@@ -716,11 +_,12 @@
+          Component component = this.getCombatTracker().getDeathMessage();
+@@ -715,11 +_,12 @@
     }
  
     @Nullable
--   public Entity m_5489_(ServerLevel p_9180_) {
+-   public Entity changeDimension(ServerLevel p_9180_) {
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
-       this.f_8927_ = true;
-       ServerLevel serverlevel = this.m_284548_();
-       ResourceKey<Level> resourcekey = serverlevel.m_46472_();
--      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
-+      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
-          this.m_19877_();
-          this.m_284548_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
-          if (!this.f_8944_) {
-@@ -737,13 +_,14 @@
-          PlayerList playerlist = this.f_8924_.m_6846_();
-          playerlist.m_11289_(this);
-          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
--         this.m_146912_();
--         PortalInfo portalinfo = this.m_7937_(p_9180_);
++      if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9180_.dimension())) return null;
+       this.isChangingDimension = true;
+       ServerLevel serverlevel = this.serverLevel();
+       ResourceKey<Level> resourcekey = serverlevel.dimension();
+-      if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD) {
++      if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
+          this.unRide();
+          this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+          if (!this.wonGame) {
+@@ -736,13 +_,14 @@
+          PlayerList playerlist = this.server.getPlayerList();
+          playerlist.sendPlayerPermissionLevel(this);
+          serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-         this.unsetRemoved();
+-         PortalInfo portalinfo = this.findDimensionEntryPoint(p_9180_);
 +         this.revive();
-+         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::m_7937_);
++         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
           if (portalinfo != null) {
-+            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.m_146908_(), spawnPortal -> {//Forge: Start vanilla logic
-             serverlevel.m_46473_().m_6180_("moving");
-             if (resourcekey == Level.f_46428_ && p_9180_.m_46472_() == Level.f_46429_) {
-                this.f_8933_ = this.m_20182_();
--            } else if (p_9180_.m_46472_() == Level.f_46430_) {
-+            } else if (spawnPortal && p_9180_.m_46472_() == Level.f_46430_) {
-                this.m_9006_(p_9180_, BlockPos.m_274446_(portalinfo.f_77676_));
++            Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
+             serverlevel.getProfiler().push("moving");
+             if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
+                this.enteredNetherPosition = this.position();
+-            } else if (p_9180_.dimension() == Level.END) {
++            } else if (spawnPortal && p_9180_.dimension() == Level.END) {
+                this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
              }
  
-@@ -755,6 +_,9 @@
-             p_9180_.m_8817_(this);
-             serverlevel.m_46473_().m_7238_();
-             this.m_9209_(serverlevel);
+@@ -754,6 +_,9 @@
+             p_9180_.addDuringPortalTeleport(this);
+             serverlevel.getProfiler().pop();
+             this.triggerDimensionChangeTriggers(serverlevel);
 +            return this;//forge: this is part of the ITeleporter patch
 +            });//Forge: End vanilla logic
 +            if (e != this) throw new java.lang.IllegalArgumentException(String.format(java.util.Locale.ENGLISH, "Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
-             this.f_8906_.m_9829_(new ClientboundPlayerAbilitiesPacket(this.m_150110_()));
-             playerlist.m_11229_(this, p_9180_);
-             playerlist.m_11292_(this);
-@@ -763,10 +_,12 @@
-                this.f_8906_.m_9829_(new ClientboundUpdateMobEffectPacket(this.m_19879_(), mobeffectinstance));
+             this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
+             playerlist.sendLevelInfo(this, p_9180_);
+             playerlist.sendAllPlayerInfo(this);
+@@ -762,10 +_,12 @@
+                this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobeffectinstance));
              }
  
 +            if (teleporter.playTeleportSound(this, serverlevel, p_9180_))
-             this.f_8906_.m_9829_(new ClientboundLevelEventPacket(1032, BlockPos.f_121853_, 0, false));
-             this.f_8920_ = -1;
-             this.f_8917_ = -1.0F;
-             this.f_8918_ = -1;
-+            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
+             this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
+             this.lastSentExp = -1;
+             this.lastSentHealth = -1.0F;
+             this.lastSentFood = -1;
++            net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, p_9180_.dimension());
           }
  
           return this;
-@@ -830,6 +_,9 @@
+@@ -829,6 +_,9 @@
     }
  
-    public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
-+      java.util.Optional<BlockPos> optAt = java.util.Optional.of(p_9115_);
-+      Player.BedSleepingProblem ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
+    public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
++      var optAt = java.util.Optional.of(p_9115_);
++      var ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) return Either.left(ret);
-       Direction direction = this.m_9236_().m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
-       if (!this.m_5803_() && this.m_6084_()) {
-          if (!this.m_9236_().m_6042_().f_63858_()) {
-@@ -840,7 +_,7 @@
+       Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
+       if (!this.isSleeping() && this.isAlive()) {
+          if (!this.level().dimensionType().natural()) {
+@@ -839,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
-             this.m_9158_(this.m_9236_().m_46472_(), p_9115_, this.m_146908_(), false, true);
--            if (this.m_9236_().m_46461_()) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
+             this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
+-            if (this.level().isDay()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.onSleepingTimeCheck(this, optAt)) {
                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
-                if (!this.m_7500_()) {
-@@ -878,6 +_,7 @@
+                if (!this.isCreative()) {
+@@ -877,6 +_,7 @@
     }
  
-    private boolean m_9116_(BlockPos p_9117_, Direction p_9118_) {
+    private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
 +      if (p_9118_ == null) return false;
-       return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_121945_(p_9118_.m_122424_()));
+       return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
     }
  
-@@ -959,6 +_,7 @@
-             this.f_8906_.m_9829_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
-             this.m_143399_(abstractcontainermenu);
-             this.f_36096_ = abstractcontainermenu;
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.f_36096_));
-             return OptionalInt.of(this.f_8940_);
+@@ -958,6 +_,7 @@
+             this.connection.send(new ClientboundOpenScreenPacket(abstractcontainermenu.containerId, abstractcontainermenu.getType(), p_9033_.getDisplayName()));
+             this.initMenu(abstractcontainermenu);
+             this.containerMenu = abstractcontainermenu;
++            net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
+             return OptionalInt.of(this.containerCounter);
           }
        }
-@@ -977,6 +_,7 @@
-       this.f_8906_.m_9829_(new ClientboundHorseScreenOpenPacket(this.f_8940_, p_9060_.m_6643_(), p_9059_.m_19879_()));
-       this.f_36096_ = new HorseInventoryMenu(this.f_8940_, this.m_150109_(), p_9060_, p_9059_);
-       this.m_143399_(this.f_36096_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.f_36096_));
+@@ -976,6 +_,7 @@
+       this.connection.send(new ClientboundHorseScreenOpenPacket(this.containerCounter, p_9060_.getContainerSize(), p_9059_.getId()));
+       this.containerMenu = new HorseInventoryMenu(this.containerCounter, this.getInventory(), p_9060_, p_9059_);
+       this.initMenu(this.containerMenu);
++      net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
     }
  
-    public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -1002,6 +_,7 @@
-    public void m_9230_() {
-       this.f_36096_.m_6877_(this);
-       this.f_36095_.m_150414_(this.f_36096_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.f_36096_));
-       this.f_36096_ = this.f_36095_;
+    public void openItemGui(ItemStack p_9082_, InteractionHand p_9083_) {
+@@ -1001,6 +_,7 @@
+    public void doCloseContainer() {
+       this.containerMenu.removed(this);
+       this.inventoryMenu.transferState(this.containerMenu);
++      net.minecraftforge.event.ForgeEventFactory.onPlayerCloseContainer(this, this.containerMenu);
+       this.containerMenu = this.inventoryMenu;
     }
  
-@@ -1135,6 +_,15 @@
-       this.m_36362_(p_9016_.m_36331_());
-       this.m_36364_(p_9016_.m_36332_());
-       this.m_219749_(p_9016_.m_219759_());
+@@ -1134,6 +_,15 @@
+       this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
+       this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
+       this.setLastDeathLocation(p_9016_.getLastDeathLocation());
 +
 +      //Copy over a section of the Entity Data from the old player.
 +      //Allows mods to specify data that persists after players respawn.
 +      CompoundTag old = p_9016_.getPersistentData();
-+      if (old.m_128441_(PERSISTED_NBT_TAG))
-+          getPersistentData().m_128365_(PERSISTED_NBT_TAG, old.m_128423_(PERSISTED_NBT_TAG));
++      if (old.contains(PERSISTED_NBT_TAG))
++          getPersistentData().put(PERSISTED_NBT_TAG, old.get(PERSISTED_NBT_TAG));
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
 +      this.tabListHeader = p_9016_.tabListHeader;
 +      this.tabListFooter = p_9016_.tabListFooter;
     }
  
-    protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1215,6 +_,8 @@
+    protected void onEffectAdded(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
+@@ -1214,6 +_,7 @@
     }
  
-    public boolean m_143403_(GameType p_143404_) {
-+      p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.f_8941_.m_9290_(), p_143404_);
-+      if (p_143404_ == null) return false;
-       if (!this.f_8941_.m_143473_(p_143404_)) {
+    public boolean setGameMode(GameType p_143404_) {
++      p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.gameMode.getGameModeForPlayer(), p_143404_);
+       if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
           return false;
        } else {
-@@ -1282,6 +_,7 @@
-       this.f_184127_ = p_9157_.f_195812_();
-       this.m_20088_().m_135381_(f_36089_, (byte)p_9157_.f_133867_());
-       this.m_20088_().m_135381_(f_36090_, (byte)(p_9157_.f_133868_() == HumanoidArm.LEFT ? 0 : 1));
-+      this.language = p_9157_.f_133863_();
-    }
- 
-    public boolean m_143432_() {
-@@ -1341,6 +_,7 @@
-    public void m_9213_(@Nullable Entity p_9214_) {
-       Entity entity = this.m_8954_();
-       this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
-+      while (this.f_8926_ instanceof net.minecraftforge.entity.PartEntity<?> partEntity) this.f_8926_ = partEntity.getParent(); // FORGE: fix MC-46486
-       if (entity != this.f_8926_) {
-          Level level = this.f_8926_.m_9236_();
+@@ -1348,6 +_,8 @@
+    public void setCamera(@Nullable Entity p_9214_) {
+       Entity entity = this.getCamera();
+       this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
++      while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity)
++         this.camera = partEntity.getParent(); // FORGE: fix MC-46486
+       if (entity != this.camera) {
+          Level level = this.camera.level();
           if (level instanceof ServerLevel) {
-@@ -1380,7 +_,11 @@
+@@ -1387,7 +_,11 @@
  
     @Nullable
-    public Component m_8957_() {
+    public Component getTabListDisplayName() {
 -      return null;
 +      if (!this.hasTabListName) {
 +         this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
@@ -168,55 +169,55 @@
 +      return this.tabListDisplayName;
     }
  
-    public void m_6674_(InteractionHand p_9031_) {
-@@ -1405,21 +_,23 @@
-       this.m_8127_();
-       if (p_9000_ == this.m_9236_()) {
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
--      } else {
-+      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
-          ServerLevel serverlevel = this.m_284548_();
-          LevelData leveldata = p_9000_.m_6106_();
-          this.f_8906_.m_9829_(new ClientboundRespawnPacket(p_9000_.m_220362_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), (byte)3, this.m_219759_(), this.m_287157_()));
-          this.f_8906_.m_9829_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
-          this.f_8924_.m_6846_().m_11289_(this);
-          serverlevel.m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
--         this.m_146912_();
+    public void swing(InteractionHand p_9031_) {
+@@ -1413,20 +_,23 @@
+       if (p_9000_ == this.level()) {
+          this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+       } else {
++         if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
+          ServerLevel serverlevel = this.serverLevel();
+          LevelData leveldata = p_9000_.getLevelData();
+          this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
+          this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
+          this.server.getPlayerList().sendPlayerPermissionLevel(this);
+          serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-         this.unsetRemoved();
 +         this.revive();
-          this.m_7678_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-          this.m_284127_(p_9000_);
-          p_9000_.m_8622_(this);
-          this.m_9209_(serverlevel);
-          this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-+         this.f_8941_.m_9260_(p_9000_);
-          this.f_8924_.m_6846_().m_11229_(this, p_9000_);
-          this.f_8924_.m_6846_().m_11292_(this);
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
+          this.moveTo(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
+          this.setServerLevel(p_9000_);
+          p_9000_.addDuringCommandTeleport(this);
+          this.triggerDimensionChangeTriggers(serverlevel);
+          this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
++         this.gameMode.setLevel(p_9000_);
+          this.server.getPlayerList().sendLevelInfo(this, p_9000_);
+          this.server.getPlayerList().sendAllPlayerInfo(this);
++         net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, serverlevel.dimension(), p_9000_.dimension());
        }
  
     }
-@@ -1442,6 +_,7 @@
+@@ -1449,6 +_,8 @@
     }
  
-    public void m_9158_(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.f_46428_ : p_9159_, p_9160_, p_9162_)) return;
+    public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, p_9160_ == null ? Level.OVERWORLD : p_9159_, p_9160_, p_9162_))
++         return;
        if (p_9160_ != null) {
-          boolean flag = p_9160_.equals(this.f_8936_) && p_9159_.equals(this.f_8935_);
+          boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
           if (p_9163_ && !flag) {
-@@ -1493,6 +_,8 @@
+@@ -1493,6 +_,9 @@
        if (itementity == null) {
           return null;
        } else {
-+         if (captureDrops() != null) captureDrops().add(itementity);
++         if (captureDrops() != null)
++            captureDrops().add(itementity);
 +         else
-          this.m_9236_().m_7967_(itementity);
-          ItemStack itemstack = itementity.m_32055_();
+          this.level().addFreshEntity(itementity);
+          ItemStack itemstack = itementity.getItem();
           if (p_9087_) {
-@@ -1507,6 +_,76 @@
+@@ -1507,6 +_,75 @@
        }
     }
  
-+   private String language = "en_us";
 +   /**
 +    * Returns the language last reported by the player as their local language.
 +    * Defaults to en_us if the value is unknown.
@@ -225,8 +226,8 @@
 +      return this.language;
 +   }
 +
-+   private Component tabListHeader = Component.m_237119_();
-+   private Component tabListFooter = Component.m_237119_();
++   private Component tabListHeader = Component.empty();
++   private Component tabListFooter = Component.empty();
 +
 +   public Component getTabListHeader() {
 +       return this.tabListHeader;
@@ -269,7 +270,7 @@
 +       this.tabListHeader = java.util.Objects.requireNonNull(header, "header");
 +       this.tabListFooter = java.util.Objects.requireNonNull(footer, "footer");
 +
-+       this.f_8906_.m_9829_(new net.minecraft.network.protocol.game.ClientboundTabListPacket(header, footer));
++       this.connection.send(new net.minecraft.network.protocol.game.ClientboundTabListPacket(header, footer));
 +   }
 +
 +   // We need this as tablistDisplayname may be null even if the event was fired.
@@ -282,26 +283,26 @@
 +      Component oldName = this.tabListDisplayName;
 +      this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
 +      if (!java.util.Objects.equals(oldName, this.tabListDisplayName)) {
-+         this.m_20194_().m_6846_().m_11268_(new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this));
++         this.getServer().getPlayerList().broadcastAll(new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this));
 +      }
 +   }
 +
-    public TextFilter m_8967_() {
-       return this.f_8939_;
+    public TextFilter getTextFilter() {
+       return this.textFilter;
     }
 @@ -1566,11 +_,14 @@
  
-    public boolean m_182294_(boolean p_182295_) {
-       Inventory inventory = this.m_150109_();
-+      ItemStack selected = inventory.m_36056_();
-+      if (selected.m_41619_() || !selected.onDroppedByPlayer(this)) return false;
-+      if (m_6117_() && m_7655_() == InteractionHand.MAIN_HAND && (p_182295_ || selected.m_41613_() == 1)) m_5810_(); // Forge: fix MC-231097 on the serverside
-       ItemStack itemstack = inventory.m_182403_(p_182295_);
-       this.f_36096_.m_182417_(inventory, inventory.f_35977_).ifPresent((p_287377_) -> {
-          this.f_36096_.m_150404_(p_287377_, inventory.m_36056_());
+    public boolean drop(boolean p_182295_) {
+       Inventory inventory = this.getInventory();
++      ItemStack selected = inventory.getSelected();
++      if (selected.isEmpty() || !selected.onDroppedByPlayer(this)) return false;
++      if (isUsingItem() && getUsedItemHand() == InteractionHand.MAIN_HAND && (p_182295_ || selected.getCount() == 1)) stopUsingItem(); // Forge: fix MC-231097 on the serverside
+       ItemStack itemstack = inventory.removeFromSelected(p_182295_);
+       this.containerMenu.findSlot(inventory, inventory.selected).ifPresent((p_287377_) -> {
+          this.containerMenu.setRemoteSlot(p_287377_, inventory.getSelected());
        });
--      return this.m_7197_(itemstack, false, true) != null;
+-      return this.drop(itemstack, false, true) != null;
 +      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, itemstack, true) != null;
     }
  
-    public boolean m_184128_() {
+    public boolean allowsListing() {

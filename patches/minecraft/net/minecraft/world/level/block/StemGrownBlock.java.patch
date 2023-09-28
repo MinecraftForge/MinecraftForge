@@ -10,15 +10,15 @@
        super(p_57058_);
     }
 @@ -10,4 +_,12 @@
-    public abstract StemBlock m_7161_();
+    public abstract StemBlock getStem();
  
-    public abstract AttachedStemBlock m_7810_();
+    public abstract AttachedStemBlock getAttachedStem();
 +
 +   //FORGE START
 +   @Override
 +   public net.minecraft.world.level.block.state.BlockState getPlant(net.minecraft.world.level.BlockGetter world, net.minecraft.core.BlockPos pos) {
-+      net.minecraft.world.level.block.state.BlockState state = world.m_8055_(pos);
-+      if (state.m_60734_() != this) return m_49966_();
++      net.minecraft.world.level.block.state.BlockState state = world.getBlockState(pos);
++      if (state.getBlock() != this) return defaultBlockState();
 +      return state;
 +   }
  }

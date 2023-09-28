@@ -1,51 +1,51 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
 @@ -71,6 +_,8 @@
-          p_150474_.m_6749_(-this.f_39002_.m_6501_());
+          p_150474_.giveExperienceLevels(-this.cost.get());
        }
  
-+      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_150474_, p_150475_, AnvilMenu.this.f_39769_.m_8020_(0), AnvilMenu.this.f_39769_.m_8020_(1));
++      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_150474_, p_150475_, AnvilMenu.this.inputSlots.getItem(0), AnvilMenu.this.inputSlots.getItem(1));
 +
-       this.f_39769_.m_6836_(0, ItemStack.f_41583_);
-       if (this.f_39000_ > 0) {
-          ItemStack itemstack = this.f_39769_.m_8020_(1);
+       this.inputSlots.setItem(0, ItemStack.EMPTY);
+       if (this.repairItemCountCost > 0) {
+          ItemStack itemstack = this.inputSlots.getItem(1);
 @@ -87,7 +_,7 @@
-       this.f_39002_.m_6422_(0);
-       this.f_39770_.m_39292_((p_150479_, p_150480_) -> {
-          BlockState blockstate = p_150479_.m_8055_(p_150480_);
--         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_217043_().m_188501_() < 0.12F) {
-+         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_204336_(BlockTags.f_13033_) && p_150474_.m_217043_().m_188501_() < breakChance) {
-             BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
+       this.cost.set(0);
+       this.access.execute((p_150479_, p_150480_) -> {
+          BlockState blockstate = p_150479_.getBlockState(p_150480_);
+-         if (!p_150474_.getAbilities().instabuild && blockstate.is(BlockTags.ANVIL) && p_150474_.getRandom().nextFloat() < 0.12F) {
++         if (!p_150474_.getAbilities().instabuild && blockstate.is(BlockTags.ANVIL) && p_150474_.getRandom().nextFloat() < breakChance) {
+             BlockState blockstate1 = AnvilBlock.damage(blockstate);
              if (blockstate1 == null) {
-                p_150479_.m_7471_(p_150480_, false);
+                p_150479_.removeBlock(p_150480_, false);
 @@ -118,8 +_,11 @@
-          Map<Enchantment, Integer> map = EnchantmentHelper.m_44831_(itemstack1);
-          j += itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
-          this.f_39000_ = 0;
+          Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack1);
+          j += itemstack.getBaseRepairCost() + (itemstack2.isEmpty() ? 0 : itemstack2.getBaseRepairCost());
+          this.repairItemCountCost = 0;
 +         boolean flag = false;
 +
-+         if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, f_39768_, f_39001_, j, this.f_39771_)) return;
-          if (!itemstack2.m_41619_()) {
--            boolean flag = itemstack2.m_150930_(Items.f_42690_) && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
-+            flag = itemstack2.m_41720_() == Items.f_42690_ && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
-             if (itemstack1.m_41763_() && itemstack1.m_41720_().m_6832_(itemstack, itemstack2)) {
-                int l2 = Math.min(itemstack1.m_41773_(), itemstack1.m_41776_() / 4);
++         if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, resultSlots, itemName, j, this.player)) return;
+          if (!itemstack2.isEmpty()) {
+-            boolean flag = itemstack2.is(Items.ENCHANTED_BOOK) && !EnchantedBookItem.getEnchantments(itemstack2).isEmpty();
++            flag = itemstack2.getItem() == Items.ENCHANTED_BOOK && !EnchantedBookItem.getEnchantments(itemstack2).isEmpty();
+             if (itemstack1.isDamageableItem() && itemstack1.getItem().isValidRepairItem(itemstack, itemstack2)) {
+                int l2 = Math.min(itemstack1.getDamageValue(), itemstack1.getMaxDamage() / 4);
                 if (l2 <= 0) {
 @@ -236,6 +_,7 @@
              i += k;
-             itemstack1.m_41787_();
+             itemstack1.resetHoverName();
           }
-+         if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.f_41583_;
++         if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.EMPTY;
  
-          this.f_39002_.m_6422_(j + i);
+          this.cost.set(j + i);
           if (i <= 0) {
 @@ -301,5 +_,9 @@
  
-    public int m_39028_() {
-       return this.f_39002_.m_6501_();
+    public int getCost() {
+       return this.cost.get();
 +   }
 +
 +   public void setMaximumCost(int value) {
-+      this.f_39002_.m_6422_(value);
++      this.cost.set(value);
     }
  }

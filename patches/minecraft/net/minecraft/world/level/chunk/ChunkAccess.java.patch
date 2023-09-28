@@ -1,44 +1,44 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
 @@ -299,25 +_,30 @@
-    public abstract CompoundTag m_8051_(BlockPos p_62104_);
+    public abstract CompoundTag getBlockEntityNbtForSaving(BlockPos p_62104_);
  
-    public final void m_284254_(BiConsumer<BlockPos, BlockState> p_285269_) {
--      this.m_284478_((p_284897_) -> {
--         return p_284897_.m_60791_() != 0;
+    public final void findBlockLightSources(BiConsumer<BlockPos, BlockState> p_285269_) {
+-      this.findBlocks((p_284897_) -> {
+-         return p_284897_.getLightEmission() != 0;
 +      this.findBlocks((p_284897_, pos) -> {
 +         return p_284897_.getLightEmission(this, pos) != 0;
        }, p_285269_);
     }
  
-    public void m_284478_(Predicate<BlockState> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
+    public void findBlocks(Predicate<BlockState> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
 +      findBlocks((state, pos) -> p_285343_.test(state), p_285030_);
 +   }
 +
 +   public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
        BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
-       for(int i = this.m_151560_(); i < this.m_151561_(); ++i) {
-          LevelChunkSection levelchunksection = this.m_183278_(this.m_151566_(i));
--         if (levelchunksection.m_63002_(p_285343_)) {
-+         if (levelchunksection.m_63002_((state) -> p_285343_.test(state, BlockPos.f_121853_))) {
-             BlockPos blockpos = SectionPos.m_123196_(this.f_187604_, i).m_123249_();
+       for(int i = this.getMinSection(); i < this.getMaxSection(); ++i) {
+          LevelChunkSection levelchunksection = this.getSection(this.getSectionIndexFromSectionY(i));
+-         if (levelchunksection.maybeHas(p_285343_)) {
++         if (levelchunksection.maybeHas((state) -> p_285343_.test(state, BlockPos.ZERO))) {
+             BlockPos blockpos = SectionPos.of(this.chunkPos, i).origin();
  
              for(int j = 0; j < 16; ++j) {
                 for(int k = 0; k < 16; ++k) {
                    for(int l = 0; l < 16; ++l) {
-                      BlockState blockstate = levelchunksection.m_62982_(l, j, k);
+                      BlockState blockstate = levelchunksection.getBlockState(l, j, k);
 -                     if (p_285343_.test(blockstate)) {
--                        p_285030_.accept(blockpos$mutableblockpos.m_122154_(blockpos, l, j, k), blockstate);
-+                     blockpos$mutableblockpos.m_122154_(blockpos, l, j, k);
-+                     if (p_285343_.test(blockstate, blockpos$mutableblockpos.m_7949_())) {
+-                        p_285030_.accept(blockpos$mutableblockpos.setWithOffset(blockpos, l, j, k), blockstate);
++                     blockpos$mutableblockpos.setWithOffset(blockpos, l, j, k);
++                     if (p_285343_.test(blockstate, blockpos$mutableblockpos.immutable())) {
 +                        p_285030_.accept(blockpos$mutableblockpos, blockstate);
                       }
                    }
                 }
 @@ -463,4 +_,7 @@
  
-    public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {
+    public static record TicksToSave(SerializableTickContainer<Block> blocks, SerializableTickContainer<Fluid> fluids) {
     }
 +
 +   @Nullable

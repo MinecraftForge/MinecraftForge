@@ -1,25 +1,25 @@
 --- a/net/minecraft/world/entity/monster/MagmaCube.java
 +++ b/net/minecraft/world/entity/monster/MagmaCube.java
 @@ -67,17 +_,28 @@
-       float f = (float)this.m_33632_() * 0.1F;
-       this.m_20334_(vec3.f_82479_, (double)(this.m_6118_() + f), vec3.f_82481_);
-       this.f_19812_ = true;
+       float f = (float)this.getSize() * 0.1F;
+       this.setDeltaMovement(vec3.x, (double)(this.getJumpPower() + f), vec3.z);
+       this.hasImpulse = true;
 +      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
     }
  
 +   @Deprecated // FORGE: use jumpInFluid instead
-    protected void m_203347_(TagKey<Fluid> p_204065_) {
--      if (p_204065_ == FluidTags.f_13132_) {
-+      this.jumpInLiquidInternal(() -> p_204065_ == FluidTags.f_13132_, () -> super.m_203347_(p_204065_));
+    protected void jumpInLiquid(TagKey<Fluid> p_204065_) {
+-      if (p_204065_ == FluidTags.LAVA) {
++      this.jumpInLiquidInternal(() -> p_204065_ == FluidTags.LAVA, () -> super.jumpInLiquid(p_204065_));
 +   }
 +
 +   private void jumpInLiquidInternal(java.util.function.BooleanSupplier isLava, Runnable onSuper) {
 +      if (isLava.getAsBoolean()) {
-          Vec3 vec3 = this.m_20184_();
-          this.m_20334_(vec3.f_82479_, (double)(0.22F + (float)this.m_33632_() * 0.05F), vec3.f_82481_);
-          this.f_19812_ = true;
+          Vec3 vec3 = this.getDeltaMovement();
+          this.setDeltaMovement(vec3.x, (double)(0.22F + (float)this.getSize() * 0.05F), vec3.z);
+          this.hasImpulse = true;
        } else {
--         super.m_203347_(p_204065_);
+-         super.jumpInLiquid(p_204065_);
 +         onSuper.run();
        }
  
@@ -30,4 +30,4 @@
 +      this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
     }
  
-    protected boolean m_7483_() {
+    protected boolean isDealsDamage() {

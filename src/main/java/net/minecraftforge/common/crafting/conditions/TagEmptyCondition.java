@@ -5,73 +5,32 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 
-public class TagEmptyCondition implements ICondition
-{
-    private static final ResourceLocation NAME = new ResourceLocation("forge", "tag_empty");
-    private final TagKey<Item> tag;
+public record TagEmptyCondition(TagKey<Item> tag) implements ICondition {
+    public static final Codec<TagEmptyCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+        ResourceLocation.CODEC.xmap(loc -> TagKey.create(Registries.ITEM, loc), TagKey::location).fieldOf("tag").forGetter(TagEmptyCondition::tag)
+    ).apply(b, TagEmptyCondition::new));
 
-    public TagEmptyCondition(String location)
-    {
-        this(new ResourceLocation(location));
-    }
-
-    public TagEmptyCondition(String namespace, String path)
-    {
-        this(new ResourceLocation(namespace, path));
-    }
-
-    public TagEmptyCondition(ResourceLocation tag)
-    {
-        this.tag = TagKey.create(Registries.ITEM, tag);
-    }
 
     @Override
-    public ResourceLocation getID()
-    {
-        return NAME;
-    }
-
-    @Override
-    public boolean test(ICondition.IContext context)
-    {
+    public boolean test(ICondition.IContext context) {
         return context.getTag(tag).isEmpty();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "tag_empty(\"" + tag.location() + "\")";
     }
 
-    public static class Serializer implements IConditionSerializer<TagEmptyCondition>
-    {
-        public static final Serializer INSTANCE = new Serializer();
-
-        @Override
-        public void write(JsonObject json, TagEmptyCondition value)
-        {
-            json.addProperty("tag", value.tag.location().toString());
-        }
-
-        @Override
-        public TagEmptyCondition read(JsonObject json)
-        {
-            return new TagEmptyCondition(new ResourceLocation(GsonHelper.getAsString(json, "tag")));
-        }
-
-        @Override
-        public ResourceLocation getID()
-        {
-            return TagEmptyCondition.NAME;
-        }
+    @Override
+    public Codec<? extends ICondition> codec() {
+        return CODEC;
     }
 }
