@@ -42,12 +42,20 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
                       !path.startsWith("META-INF/"));
             }, mcextra
         );
+
+        // Todo in 1.20.2: Change the default filter to null instead of always true.
         BiPredicate<String, String> filter = (path, base) -> true;
+        final BiPredicate<String, String> alwaysTrueFilter = filter;
 
         var mcstream = Stream.<Path>builder().add(mc).add(mcextra_filtered.getRootPath());
         var modstream = Stream.<List<Path>>builder();
 
         filter = processMCStream(vers, mcstream, filter, modstream);
+
+        // Ensure backwards compatibility if anything overrides processMCStream()
+        // and expects the default always true filter by only changing it to null afterwards if left unchanged.
+        if (filter == alwaysTrueFilter)
+            filter = null;
 
         var fmlcore = LibraryFinder.findPathForMaven(vers.forgeGroup(), "fmlcore", "", "", vers.mcAndForgeVersion());
         var javafmllang = LibraryFinder.findPathForMaven(vers.forgeGroup(), "javafmllanguage", "", "", vers.mcAndForgeVersion());

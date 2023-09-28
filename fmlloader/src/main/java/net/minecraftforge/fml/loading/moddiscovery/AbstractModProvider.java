@@ -38,7 +38,7 @@ public abstract class AbstractModProvider implements IModProvider
         var sj = SecureJar.from(
                 Manifest::new,
                 jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
-                (root, p) -> true,
+                null,
                 path
         );
 
