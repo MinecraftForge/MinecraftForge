@@ -94,16 +94,16 @@ public class NetworkInitialization {
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModMismatchData)
             .add()
 
-        .messageBuilder(SpawnEntity.class)
+        .messageBuilder(SpawnEntity.class, NetworkDirection.PLAY_TO_CLIENT)
            .decoder(SpawnEntity::decode)
            .encoder(SpawnEntity::encode)
-           .consumerNetworkThread(SpawnEntity::handle)
+           .consumerMainThread(SpawnEntity::handle)
            .add()
 
        .messageBuilder(OpenContainer.class)
            .decoder(OpenContainer::decode)
            .encoder(OpenContainer::encode)
-           .consumerNetworkThread(OpenContainer::handle)
+           .consumerMainThread(OpenContainer::handle)
            .add();
 
     public static void init() {

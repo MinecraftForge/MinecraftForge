@@ -38,7 +38,7 @@ public abstract class Channel<MSG> {
         return NetworkContext.get(connection).getRemoteChannels().contains(getName());
     }
 
-    protected abstract FriendlyByteBuf toBuffer(MSG message);
+    public abstract FriendlyByteBuf toBuffer(MSG message);
 
     // Package private so we can call from ourselves.
     Packet<?> toVanillaPacket(Connection connection, MSG message) {

@@ -30,6 +30,7 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
 
+import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -42,6 +43,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -96,6 +98,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.world.item.alchemy.Potion;
@@ -116,6 +119,7 @@ import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
+import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -166,7 +170,10 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.ICustomPacket;
 import net.minecraftforge.network.NetworkContext;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkInitialization;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.packets.SpawnEntity;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -1251,4 +1258,16 @@ public class ForgeHooks {
             LOGGER.info("Connected to a modded server.");
     }
 
+    @ApiStatus.Internal
+    public static Packet<ClientGamePacketListener> getEntitySpawnPacket(Entity entity) {
+        if (!(entity instanceof IEntityAdditionalSpawnData add))
+            throw new IllegalArgumentException(entity.getClass() + " is not an instance of " + IEntityAdditionalSpawnData.class);
+
+        var play = NetworkInitialization.PLAY;
+        var msg = new SpawnEntity(entity);
+        var data = play.toBuffer(msg);
+        @SuppressWarnings("unchecked")
+        var pkt = (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(data, play.getName()).getThis();
+        return pkt;
+    }
 }

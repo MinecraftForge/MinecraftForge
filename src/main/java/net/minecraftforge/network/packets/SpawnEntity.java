@@ -8,6 +8,8 @@ package net.minecraftforge.network.packets;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,6 +32,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  * {@link EntityType})
  * see {@link EntityType.Builder#setCustomClientFactory}.
  */
+// TODO: Re-write this packet into something simpler. This is literally just ClientboundAddEntityPacket with an extra byte[]
 public class SpawnEntity {
     private final Entity entity;
     private final int typeId;
@@ -41,7 +44,8 @@ public class SpawnEntity {
     private final FriendlyByteBuf buf;
 
     @SuppressWarnings("deprecation")
-    SpawnEntity(Entity e) {
+    @ApiStatus.Internal
+    public SpawnEntity(Entity e) {
         this.entity = e;
         this.typeId = BuiltInRegistries.ENTITY_TYPE.getId(e.getType()); //TODO: Codecs
         this.entityId = e.getId();
@@ -123,36 +127,33 @@ public class SpawnEntity {
     }
 
     public static void handle(SpawnEntity msg, CustomPayloadEvent.Context ctx) {
-        ctx.enqueueWork(() -> {
-            try {
-                @SuppressWarnings("deprecation")
-                EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
-                Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.getDirection().getReceptionSide());
-                Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
-                if (e == null)
-                    return;
+        try {
+            @SuppressWarnings("deprecation")
+            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
+            Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.getDirection().getReceptionSide());
+            Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
+            if (e == null)
+                return;
 
-                /*
-                 * Sets the postiion on the client, Mirrors what
-                 * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
-                 */
-                e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
-                e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
-                e.setYHeadRot((msg.headYaw * 360) / 256.0F);
-                e.setYBodyRot((msg.headYaw * 360) / 256.0F);
+            /*
+             * Sets the postiion on the client, Mirrors what
+             * Entity#recreateFromPacket and LivingEntity#recreateFromPacket does.
+             */
+            e.syncPacketPositionCodec(msg.posX, msg.posY, msg.posZ);
+            e.absMoveTo(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
+            e.setYHeadRot((msg.headYaw * 360) / 256.0F);
+            e.setYBodyRot((msg.headYaw * 360) / 256.0F);
 
-                e.setId(msg.entityId);
-                e.setUUID(msg.uuid);
-                if (world.orElse(null) instanceof ClientLevel cworld)
-                    cworld.addEntity(e);
-                e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
-                if (e instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
-                    entityAdditionalSpawnData.readSpawnData(msg.buf);
-            } finally {
-                msg.buf.release();
-            }
-        });
-        ctx.setPacketHandled(true);
+            e.setId(msg.entityId);
+            e.setUUID(msg.uuid);
+            if (world.orElse(null) instanceof ClientLevel cworld)
+                cworld.addEntity(e);
+            e.lerpMotion(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
+            if (e instanceof IEntityAdditionalSpawnData entityAdditionalSpawnData)
+                entityAdditionalSpawnData.readSpawnData(msg.buf);
+        } finally {
+            msg.buf.release();
+        }
     }
 
     public Entity getEntity() {

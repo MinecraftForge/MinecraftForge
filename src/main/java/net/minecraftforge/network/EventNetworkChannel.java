@@ -42,7 +42,7 @@ public class EventNetworkChannel extends Channel<FriendlyByteBuf> {
     }
 
     @Override
-    protected FriendlyByteBuf toBuffer(FriendlyByteBuf message) {
+    public FriendlyByteBuf toBuffer(FriendlyByteBuf message) {
         return message;
     }
 }

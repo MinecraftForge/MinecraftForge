@@ -334,7 +334,7 @@ public class SimpleChannel extends Channel<Object> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected FriendlyByteBuf toBuffer(Object message) {
+    public FriendlyByteBuf toBuffer(Object message) {
         var msg = byType.get(message.getClass());
 
         if (msg == null) {
