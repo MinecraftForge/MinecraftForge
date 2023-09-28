@@ -766,4 +766,8 @@ public interface IForgeBlockState
     {
         return self().getBlock().getAppearance(self(), level, pos, side, queryState, queryPos);
     }
+
+    default boolean isWaterlogged(BlockGetter level, BlockPos pos) {
+        return self().getBlock().isWaterlogged(self(), level, pos);
+    }
 }
