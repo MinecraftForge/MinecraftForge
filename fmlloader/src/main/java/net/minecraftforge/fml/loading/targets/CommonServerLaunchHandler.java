@@ -39,12 +39,11 @@ public abstract class CommonServerLaunchHandler extends CommonLaunchHandler {
                       !path.startsWith("META-INF/"));
             }, mcextra
         );
-        BiPredicate<String, String> filter = (path, base) -> true;
 
         var mcstream = Stream.<Path>builder().add(mc).add(mcextra_filtered.getRootPath());
         var modstream = Stream.<List<Path>>builder();
 
-        filter = processMCStream(vers, mcstream, filter, modstream);
+        BiPredicate<String, String> filter = processMCStream(vers, mcstream, null, modstream);
 
         var fmlcore = LibraryFinder.findPathForMaven(vers.forgeGroup(), "fmlcore", "", "", vers.mcAndForgeVersion());
         var javafmllang = LibraryFinder.findPathForMaven(vers.forgeGroup(), "javafmllanguage", "", "", vers.mcAndForgeVersion());
