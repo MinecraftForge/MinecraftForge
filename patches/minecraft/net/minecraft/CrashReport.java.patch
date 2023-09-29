@@ -12,7 +12,7 @@
 -         }
 -
 -         p_127520_.append("\n");
-+         p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods());
++         p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods(this.exception, this.uncategorizedStackTrace));
 +         p_127520_.append("Stacktrace:");
 +         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.uncategorizedStackTrace));
        }
@@ -52,12 +52,3 @@
        stringbuilder.append("// ");
        stringbuilder.append(getErrorComment());
        stringbuilder.append("\n\n");
-@@ -123,7 +_,7 @@
-       for(int i = 0; i < 87; ++i) {
-          stringbuilder.append("-");
-       }
--
-+      net.minecraftforge.logging.CrashReportAnalyser.analyseCrashReport(this.exception, this.uncategorizedStackTrace);
-       stringbuilder.append("\n\n");
-       this.getDetails(stringbuilder);
-       return stringbuilder.toString();

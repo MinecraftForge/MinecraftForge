@@ -6,52 +6,51 @@
 package net.minecraftforge.client.loading;
 
 
+import net.minecraft.SharedConstants;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.Pack.Info;
+import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.RepositorySource;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.DataPackConfig;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.gui.LoadingErrorScreen;
+import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.loading.ImmediateWindowHandler;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.internal.BrandingControl;
+import net.minecraftforge.logging.CrashReportExtender;
+import net.minecraftforge.resource.DelegatingPackResources;
+import net.minecraftforge.resource.PathPackResources;
+import net.minecraftforge.resource.ResourcePackLoader;
+import net.minecraftforge.server.LanguageHook;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
-
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.packs.repository.RepositorySource;
-import net.minecraft.server.packs.repository.Pack.Info;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.world.level.DataPackConfig;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.internal.BrandingControl;
-import net.minecraftforge.logging.CrashReportAnalyser;
-import net.minecraftforge.logging.CrashReportExtender;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathPackResources;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.client.gui.LoadingErrorScreen;
-import net.minecraftforge.resource.DelegatingPackResources;
-import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.server.LanguageHook;
-import net.minecraftforge.forgespi.language.IModInfo;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader
@@ -72,7 +71,6 @@ public class ClientModLoader
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
-        createRunnableWithCatch(CrashReportAnalyser::cacheModList).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
