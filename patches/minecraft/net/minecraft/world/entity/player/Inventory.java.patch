@@ -19,15 +19,21 @@
           if (p_36049_.hasTag()) {
              itemstack.setTag(p_36049_.getTag().copy());
           }
-@@ -225,7 +_,7 @@
+@@ -222,11 +_,13 @@
+    }
+ 
+    public void tick() {
++      int idx = 0;
        for(NonNullList<ItemStack> nonnulllist : this.compartments) {
           for(int i = 0; i < nonnulllist.size(); ++i) {
              if (!nonnulllist.get(i).isEmpty()) {
 -               nonnulllist.get(i).inventoryTick(this.player.level(), this.player, i, this.selected == i);
-+               nonnulllist.get(i).onInventoryTick(this.player.level(), this.player, i, this.selected);
++               nonnulllist.get(i).onInventoryTick(this.player.level(), this.player, idx, this.selected);
              }
++            idx++;
           }
        }
+ 
 @@ -277,6 +_,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.forThrowable(throwable, "Adding item to inventory");
