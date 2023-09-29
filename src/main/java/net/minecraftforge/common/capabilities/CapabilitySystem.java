@@ -8,10 +8,13 @@ package net.minecraftforge.common.capabilities;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.eventbus.ListenerList;
+import net.minecraftforge.eventbus.api.GenericEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,7 +22,34 @@ import java.util.function.Function;
 public class CapabilitySystem
 {
     private static final HashMap<Class<?>, ArrayList<Consumer<AttachCapabilitiesEvent<?>>>> LISTENER_LIST = new HashMap<>();
+    private static final HashMap<Class<?>, HashSet<Consumer<AttachCapabilitiesEvent<?>>>> CACHED_LISTENER_LIST = new HashMap<>();
+    private static final HashSet<Class<?>> CLASSES = new HashSet<>();
+
     private static final ArrayList<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_LIST = new ArrayList<>();
+    private static final HashSet<Consumer<AttachCapabilitiesEvent<?>>> EMPTY_HASH_SET = new HashSet<>();
+
+
+    private static void reconstruct(Class<?> mainClass) {
+        AtomicReference<Class<?>> cls = new AtomicReference<>(mainClass);
+        while (cls.get() != null) {
+            Class<?> main = cls.get();
+
+            for (Class<?> anInterface : main.getInterfaces()) {
+                CACHED_LISTENER_LIST.put(anInterface, getListenerList(new HashSet<>(), anInterface));
+            }
+
+            CACHED_LISTENER_LIST.put(main, getListenerList(new HashSet<>(), main));
+            cls.set(main.getSuperclass());
+        }
+    }
+
+    private static boolean shouldRebuild(Class<?> cls) {
+        return !CACHED_LISTENER_LIST.containsKey(cls);
+    }
+
+    private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> getListenerList(Class<?> cls) {
+        return CACHED_LISTENER_LIST.getOrDefault(cls, EMPTY_HASH_SET);
+    }
 
     private static HashSet<Consumer<AttachCapabilitiesEvent<?>>> getListenerList(HashSet<Consumer<AttachCapabilitiesEvent<?>>> lists, Class<?> cls)
     {
@@ -33,7 +63,9 @@ public class CapabilitySystem
 
     public static void post(AttachCapabilitiesEvent<?> event)
     {
-        getListenerList(new HashSet<>(), event.getType()).forEach(e -> e.accept(event));
+        if (shouldRebuild(event.getType()))
+            reconstruct(event.getType());
+        getListenerList(event.getType()).forEach(e -> e.accept(event));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
