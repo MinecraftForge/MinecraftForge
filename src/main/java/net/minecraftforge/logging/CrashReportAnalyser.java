@@ -37,7 +37,7 @@ public abstract class CrashReportAnalyser {
             analyseCrashReport(throwable, uncategorizedStackTrace);
             buildSuspectedModsSection(stringBuilder);
         }
-        catch(Throwable t){
+        catch (Throwable t) {
             LOGGER.error("Failed to append suspected mod(s) to crash report!", t);
         }
         
@@ -69,7 +69,7 @@ public abstract class CrashReportAnalyser {
      * as well as the position where the exception occurred (either the stacktrace element
      * or the mixin class and its target(s))
      * **/
-    private static void buildSuspectedModsSection(StringBuilder stringBuilder){
+    private static void buildSuspectedModsSection(StringBuilder stringBuilder) {
         stringBuilder.append("Suspected Mod");
         stringBuilder.append(SUSPECTED_MODS.size() == 1 ? ": " : "s: ");
         if (SUSPECTED_MODS.isEmpty()) {
@@ -92,7 +92,7 @@ public abstract class CrashReportAnalyser {
 
                 stringBuilder.append("\n\t\t");
 
-                for(String s : position) {
+                for (String s : position) {
                     stringBuilder.append(s);
                 }
                 stringBuilder.append("\n");
@@ -131,7 +131,7 @@ public abstract class CrashReportAnalyser {
         ModList modList = ModList.get();
         ModuleLayer gameLayer = FMLLoader.getGameLayer();
 
-        if(modList != null){
+        if (modList != null) {
             modList.getMods().forEach(iModInfo -> {
                 //Don't cache minecraft or forge as they will always be included in the stacktrace
                 if (!iModInfo.getModId().equals("forge") && !iModInfo.getModId().equals("minecraft")) {
