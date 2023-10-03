@@ -86,7 +86,7 @@ public abstract class CrashReportAnalyser {
                 iModInfo.getOwningFile().getConfig().<String>getConfigElement("issueTrackerURL").ifPresent(issuesLink -> {
                     stringBuilder
                             .append("\n\t\t")
-                            .append("Issues URL: ")
+                            .append("Issue tracker URL: ")
                             .append(issuesLink);
                 });
 
