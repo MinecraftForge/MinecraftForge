@@ -16,7 +16,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModValidator;
 import net.minecraftforge.accesstransformer.service.AccessTransformerService;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
@@ -137,6 +136,7 @@ public class FMLLoader
             throw new RuntimeException("Missing launch handler: " + launchTarget);
         }
 
+        // TODO: What the fuck is the point of using a service if you require a specific concrete class
         if (!(launchHandler.get() instanceof CommonLaunchHandler)) {
             LOGGER.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");

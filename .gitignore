@@ -34,9 +34,9 @@
 /projects/**/run/
 /projects/**/*.launch
 /repo/
-src/generated/resources/.cache/
-src/generated_test/resources/.cache/
-src/generated_mdk/resources/.cache/
+src/generated/resources/**/.cache/
+src/generated_test/resources/**/.cache/
+src/generated_mdk/resources/**/.cache/
 
 #Patch rejects
 #/patches-/

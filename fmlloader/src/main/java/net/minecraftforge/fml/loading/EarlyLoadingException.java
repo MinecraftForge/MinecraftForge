@@ -14,6 +14,8 @@ import java.util.List;
  * or server.
  */
 public class EarlyLoadingException extends RuntimeException {
+    private static final long serialVersionUID = 2302192216172508006L;
+
     public static class ExceptionData {
         private final IModInfo modInfo;
         private final String i18message;

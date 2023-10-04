@@ -1,10 +1,15 @@
-net.minecraftforge.fml.loading.targets.ForgeClientLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeClientDevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeClientUserdevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeServerLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeServerDevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeServerUserdevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeDataDevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeDataUserdevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeGametestDevLaunchHandler
-net.minecraftforge.fml.loading.targets.ForgeGametestUserdevLaunchHandler
+# Production
+net.minecraftforge.fml.loading.targets.ForgeProdLaunchHandler$Client
+net.minecraftforge.fml.loading.targets.ForgeProdLaunchHandler$Server
+
+# Mod Developers
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Client
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Data
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Server
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$ServerGameTest
+
+#Working on Forge itself
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Client
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Data
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Server
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$ServerGameTest

@@ -10,7 +10,6 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
@@ -207,8 +206,11 @@ public class ModFile implements IModFile {
         this.securityStatus = status;
     }
 
-    public ArtifactVersion getJarVersion()
-    {
+    public SecureJar.Status getSecurityStatus() {
+        return this.securityStatus;
+    }
+
+    public ArtifactVersion getJarVersion() {
         return new DefaultArtifactVersion(this.jarVersion);
     }
 

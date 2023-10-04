@@ -90,7 +90,7 @@ public class GlobalLootModifiersTest {
         var entries = event.getEntries();
         var vis = TabVisibility.PARENT_AND_SEARCH_TABS;
         if (event.getTabKey() == Empty.TAB) {
-            var smelt = new ItemStack(Items.SHEARS);
+            var smelt = new ItemStack(Items.IRON_AXE);
             EnchantmentHelper.setEnchantments(ImmutableMap.<Enchantment, Integer>builder().put(SMELT.get(), 1).build(), smelt);
             entries.put(smelt, vis);
         }

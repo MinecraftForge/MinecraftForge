@@ -10,49 +10,52 @@ import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
-import sun.misc.Unsafe;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 
+/**
+ * This is required by FMLLoader because ILaunchHandlerService doesn't have the context we need.
+ * I need to clean this up to make proper api. But that involves editing ModLauncher itself which i'm not gunna do right now.
+ *
+ * So until that happens, guess this is public api.
+ */
 public abstract class CommonLaunchHandler implements ILaunchHandlerService {
-    public record LocatedPaths(List<Path> minecraftPaths, BiPredicate<String, String> minecraftFilter, List<List<Path>> otherModPaths, List<Path> otherArtifacts) {}
+    public record LocatedPaths(
+        List<Path> minecraftPaths,
+        BiPredicate<String, String> minecraftFilter,
+        List<List<Path>> otherModPaths,
+        List<Path> otherArtifacts
+    ) {}
 
     protected static final Logger LOGGER = LogUtils.getLogger();
 
-    public abstract Dist getDist();
+    private final LaunchType type;
+    private final String prefix;
 
+    protected CommonLaunchHandler(LaunchType type, String prefix) {
+        this.type = type;
+        this.prefix = prefix;
+    }
+
+    @Override public String name() { return this.prefix + this.type.name(); }
+    public Dist getDist() { return this.type.dist(); }
+    public boolean isData() { return this.type.data(); }
+    public boolean isProduction() { return false; }
     public abstract String getNaming();
-
-    public boolean isProduction() {
-        return false;
-    }
-
-    public boolean isData() {
-        return false;
-    }
 
     public abstract LocatedPaths getMinecraftPaths();
 
     @Override
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
-
     }
 
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
@@ -69,45 +72,23 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
         return arguments;
     }
 
-    protected final Map<String, List<Path>> getModClasses() {
-        final String modClasses = Optional.ofNullable(System.getenv("MOD_CLASSES")).orElse("");
-        LOGGER.debug(LogMarkers.CORE, "Got mod coordinates {} from env", modClasses);
-
-        record ExplodedModPath(String modid, Path path) {}
-        // "a/b/;c/d/;" -> "modid%%c:\fish\pepper;modid%%c:\fish2\pepper2\;modid2%%c:\fishy\bums;modid2%%c:\hmm"
-        final var modClassPaths = Arrays.stream(modClasses.split(File.pathSeparator))
-                .map(inp -> inp.split("%%", 2))
-                .map(splitString -> new ExplodedModPath(splitString.length == 1 ? "defaultmodid" : splitString[0], Paths.get(splitString[splitString.length - 1])))
-                .collect(Collectors.groupingBy(ExplodedModPath::modid, Collectors.mapping(ExplodedModPath::path, Collectors.toList())));
-
-        LOGGER.debug(LogMarkers.CORE, "Found supplied mod coordinates [{}]", modClassPaths);
-
-        //final var explodedTargets = ((Map<String, List<ExplodedDirectoryLocator.ExplodedMod>>)arguments).computeIfAbsent("explodedTargets", a -> new ArrayList<>());
-        //modClassPaths.forEach((modlabel,paths) -> explodedTargets.add(new ExplodedDirectoryLocator.ExplodedMod(modlabel, paths)));
-        return modClassPaths;
-    }
-
     @Override
     public ServiceRunner launchService(final String[] arguments, final ModuleLayer gameLayer) {
         FMLLoader.beforeStart(gameLayer);
         return makeService(arguments, gameLayer);
     }
 
-    protected abstract ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer);
-
-    protected void clientService(final String[] arguments, final ModuleLayer layer) throws Throwable {
-        runTarget("net.minecraft.client.main.Main", arguments, layer);
+    protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
+        return () -> runTarget(this.type.module(), this.type.main(), arguments, gameLayer);
     }
 
-    protected void serverService(final String[] arguments, final ModuleLayer layer) throws Throwable {
-        runTarget("net.minecraft.server.Main", arguments, layer);
-    }
+    protected record LaunchType(String name, String module, String main, Dist dist, boolean data) {};
+    protected static final LaunchType CLIENT          = new LaunchType("client", "minecraft", "net.minecraft.client.main.Main", Dist.CLIENT, false);
+    protected static final LaunchType DATA            = new LaunchType("data",   "minecraft", "net.minecraft.data.Main", Dist.CLIENT, true);
+    protected static final LaunchType SERVER          = new LaunchType("server", "minecraft", "net.minecraft.server.Main", Dist.DEDICATED_SERVER, false);
+    protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "forge", "net.minecratforge.gametest.GameTestMain", Dist.DEDICATED_SERVER, false);
 
-    protected void dataService(final String[] arguments, final ModuleLayer layer) throws Throwable {
-        runTarget("net.minecraft.data.Main", arguments, layer);
-    }
-
-    protected void runTarget(final String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
-        Class.forName(layer.findModule("minecraft").orElseThrow(),target).getMethod("main", String[].class).invoke(null, (Object)arguments);
+    protected void runTarget(String module, String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
+        Class.forName(layer.findModule(module).orElseThrow(),target).getMethod("main", String[].class).invoke(null, (Object)arguments);
     }
 }

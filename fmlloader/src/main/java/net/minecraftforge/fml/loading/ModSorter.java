@@ -10,7 +10,6 @@ import com.google.common.graph.MutableGraph;
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
-import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -72,7 +71,6 @@ public class ModSorter
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private void sort()
     {
         // lambdas are identity based, so sorting them is impossible unless you hold reference to them
@@ -121,7 +119,6 @@ public class ModSorter
                 .collect(toList());
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
         final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
@@ -133,6 +130,7 @@ public class ModSorter
         switch (dep.getOrdering()) {
             case BEFORE -> topoGraph.putEdge(self, target);
             case AFTER -> topoGraph.putEdge(target, self);
+            default -> {}
         }
     }
 

@@ -68,6 +68,7 @@ ext {
     SLF4J_API_VERSION = '1.8.0-beta4'
     APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
     JARJAR_VERSION = '0.3.19'
+	JIMFS_VERSION = '1.3.0' // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
 
     // These versions should be kept in sync with the version manifest JSON
     // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
@@ -276,14 +277,17 @@ project(':clean') {
 }
 
 def sharedDeps = {
-    moduleonly "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
-    moduleonly "org.ow2.asm:asm:${ASM_VERSION}"
-    moduleonly "org.ow2.asm:asm-commons:${ASM_VERSION}"
-    moduleonly "org.ow2.asm:asm-tree:${ASM_VERSION}"
-    moduleonly "org.ow2.asm:asm-util:${ASM_VERSION}"
-    moduleonly "org.ow2.asm:asm-analysis:${ASM_VERSION}"
-    moduleonly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
-    moduleonly "net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}"
+    moduleonly("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
+    moduleonly("org.ow2.asm:asm:${ASM_VERSION}")
+    moduleonly("org.ow2.asm:asm-commons:${ASM_VERSION}")
+    moduleonly("org.ow2.asm:asm-tree:${ASM_VERSION}")
+    moduleonly("org.ow2.asm:asm-util:${ASM_VERSION}")
+    moduleonly("org.ow2.asm:asm-analysis:${ASM_VERSION}")
+    moduleonly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
+    moduleonly("net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}")
+    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") {
+		transitive = false
+	}
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
@@ -320,50 +324,6 @@ def sharedDeps = {
 }
 
 def sharedFmlonlyForge = { Project prj ->
-    ['Client', 'Server', 'Joined'].each { side ->
-        ['slim', 'extra'].each { type ->
-            prj.task([type: DownloadMavenArtifact], "download${side}${type.capitalize()}") {
-                artifact = "net.minecraft:${side.toLowerCase()}:${MC_VERSION}-${MCP_VERSION}:${type}"
-            }
-        }
-
-        if (side.equals('Joined')) {
-            prj.task([type: DownloadMavenArtifact], "createJoinedSRG") {
-                artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:srg"
-            }
-        } else {
-            prj.task([type: RenameJar, dependsOn: prj.tasks.createMcp2Srg], "create${side}SRG") {
-                tool = FART
-                args = [
-                        '--input', '{input}',
-                        '--output', '{output}',
-                        '--names', '{mappings}',
-                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
-                ]
-                mappings = prj.tasks.createMcp2Srg.srg
-                input = prj.tasks.getByName("download${side}Slim").output
-                output = prj.file("build/create${side}SRG/output.jar")
-            }
-        }
-
-        def gen = prj.tasks.getByName("gen${side}BinPatches")
-        def createSRG = prj.tasks.getByName("create${side}SRG")
-        gen.dependsOn(createSRG)
-        gen.tool = BINPATCH_TOOL
-        gen.cleanJar = createSRG.output
-
-        prj.task([type: ApplyBinPatches, dependsOn: gen], "apply${side}BinPatches") {
-            clean = gen.cleanJar
-            patch = gen.output
-            tool = BINPATCH_TOOL
-        }
-    }
-
-    prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
-        changing = true
-    }
-
     prj.afterEvaluate {
         [prj.tasks.universalJar, prj.tasks.installerJar].each { t ->
             def signTask = prj.task([type: SignJar, dependsOn: t], "sign${t.name.capitalize()}") {
@@ -383,7 +343,6 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     prj.tasks.userdevConfig {
-        def launchPrefix = prj.name == "forge" ? "forge" : "fml"
         getArtifacts(prj, prj.configurations.installer, true).each { key, lib -> libraries.add(lib.name) }
         getArtifacts(prj, prj.configurations.moduleonly, true).each { key, lib ->
             libraries.add(lib.name)
@@ -396,46 +355,28 @@ def sharedFmlonlyForge = { Project prj ->
         inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
         runs {
             client {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                // Natives are loaded from the classpath now in all cases
-                // property 'nativesDirectory', '{natives}'
-                if (prj.name == 'forge') {
-                    property 'forge.enableGameTest', 'true'
-                }
-
-                args '--launchTarget', "${launchPrefix}clientuserdev"
+				property 'forge.enableGameTest', 'true'
+                args '--launchTarget', "forge_userdev_client"
                 args '--version', 'MOD_DEV'
                 args '--assetIndex', '{asset_index}'
                 args '--assetsDir', '{assets_root}'
             }
 
             server {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                if (prj.name == 'forge') {
-                    property 'forge.enableGameTest', 'true'
-                }
-
-                args '--launchTarget', "${launchPrefix}serveruserdev"
+				property 'forge.enableGameTest', 'true'
+                args '--launchTarget', "forge_userdev_server"
             }
 
-            if (prj.name == 'forge') {
-                gameTestServer {
-                    environment 'MOD_CLASSES', '{source_roots}'
-                    environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                    args '--launchTarget', "${launchPrefix}gametestserveruserdev"
-                }
-            }
+			gameTestServer {
+				environment 'MCP_MAPPINGS', '{mcp_mappings}'
+				args '--launchTarget', "forge_userdev_server_gametest"
+			}
 
             data {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
-
-                args '--launchTarget', "${launchPrefix}datauserdev"
+                args '--launchTarget', "forge_userdev_data"
                 args '--assetIndex', '{asset_index}'
                 args '--assetsDir', '{assets_root}'
             }
@@ -456,11 +397,7 @@ def sharedFmlonlyForge = { Project prj ->
 
         run.jvmArgs '-Djava.net.preferIPv6Addresses=system'
 
-        if (run.name.contains('client')) {
-            run.client true
-        } else {
-            run.client false
-        }
+		run.client run.name.contains('client')
 
         // SecureJarHandler bootstrap values.
         run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
@@ -481,42 +418,29 @@ def sharedFmlonlyForge = { Project prj ->
         run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
     }
     for (def run : prj.patcher.runs) {
-        if (run.parents) continue // We already added this to the parent run config
+		def isTest = run.name.endsWith('_test')
+		
+		run.taskName = run.name
+		run.environment 'FORGE_SPEC', prj.SPEC_VERSION
+		run.workingDirectory prj.file('run/' + run.name)
+	    run.ideaModule rootProject.name + '.' + prj.name + '.' + (isTest ? 'test' : 'main')
+		
+		run.mods {
+			minecraft { source prj.sourceSets.main }
+		}
+		
+		if (isTest) {
+			run.property 'forge.enableGameTest', 'true'
 
-        if (run.name.contains('client') || run.name.contains('data')) {
-            // Natives are loaded from the classpath now in all cases
-            // run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
-            run.args '--assetsDir', prj.downloadAssets.output
-            run.args '--assetIndex', "{asset_index}"
-        }
-
-        if (run.name.contains('client')) {
-            run.property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-            run.args '--username', 'Dev'
-            run.args '--version', prj.name
-            //run.args '--uuid', '0'
-            run.args '--accessToken', '0'
-            run.args '--userType', 'mojang'
-            run.args '--versionType', 'release'
-        }
-
-        if (prj.name == 'forge') {
-            run.environment 'FORGE_SPEC', prj.SPEC_VERSION
-        }
-    }
-
-    eclipse.project.resourceFilter {
-        appliesTo = 'FOLDERS'
-        type = 'EXCLUDE_ALL'
-        matcher {
-            id = 'org.eclipse.ui.ide.multiFilter'
-            arguments = '1.0-name-matches-false-false-run'
-        }
+			run.mods {
+				tests { sources prj.sourceSets.test }
+			}
+		}
     }
 
     def MODULE_PATH = Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
     def tokens = [
-            TASK:          prj.name.equals('forge') ? 'forgeserver' : 'fmlserver',
+            TASK:          'forge_server',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
             FORGE_VERSION: FORGE_VERSION,
             MC_VERSION:    MC_VERSION,
@@ -560,8 +484,6 @@ def sharedFmlonlyForge = { Project prj ->
                 exclude 'args.txt'
                 filter(ReplaceTokens, tokens: tokens)
                 into('data/')
-                //rename 'run.sh',  "run_forge_${VERSION.replace('-', '_').sh"
-                //rename 'run.bat', "run_forge_${VERSION.replace('-', '_').bat"
             }
         }
     }
@@ -609,10 +531,21 @@ project(':forge') {
         }
     }
     
-    eclipse.classpath.file.whenMerged {
-        // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
-        def src = entries.find { it.path == 'src/main/java' }
-        src.entryAttributes['ignore_optional_problems'] = 'true'
+    eclipse {
+		classpath.file.whenMerged {
+			// Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
+			def src = entries.find { it.path == 'src/main/java' }
+			src.entryAttributes['ignore_optional_problems'] = 'true'
+		}
+		
+		project.resourceFilter {
+			appliesTo = 'FOLDERS'
+			type = 'EXCLUDE_ALL'
+			matcher {
+				id = 'org.eclipse.ui.ide.multiFilter'
+				arguments = '1.0-name-matches-false-false-run'
+			}
+		}
     }
 
     ext {
@@ -661,160 +594,64 @@ project(':forge') {
 
         runs {
             forge_client {
-                workingDirectory file('run/client')
                 property 'eventbus.checkTypesOnDispatch', 'true'
-                args '--launchTarget', 'forgeclientdev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-                mods {
-                    minecraft { source sourceSets.main }
-                }
+				property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+				
+                args '--launchTarget', 'forge_dev_client',
+					 '--username', 'Dev',
+					 '--version', project.name,
+					 '--accessToken', '0',
+					 '--userType', 'mojang',
+					 '--versionType', 'release',
+					 '--assetsDir', downloadAssets.output,
+					 '--assetIndex', "{asset_index}"
             }
 
-            forge_test_client {
-                workingDirectory file('run/client_test')
+            forge_client_test {
                 parent runs.forge_client
-                taskName 'forge_test_client'
-
-                property 'forge.enableGameTest', 'true'
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
             }
 
             forge_server {
-                workingDirectory file('run/server')
-                args '--launchTarget', 'forgeserverdev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-
-                mods {
-                    minecraft { source sourceSets.main }
-                }
+                args '--launchTarget', 'forge_dev_server'
             }
 
-            forge_test_server {
-                workingDirectory file('run/server_test')
+            forge_server_test {
                 parent runs.forge_server
-                taskName 'forge_test_server'
-
-                property 'forge.enableGameTest', 'true'
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
             }
 
-            forge_gameTestServer {
-                taskName 'forge_gameTestServer'
-                args '--launchTarget', 'forgegametestserverdev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-
-                mods {
-                    minecraft { source sourceSets.main }
-                }
+            forge_server_gametest {
+                args '--launchTarget', 'forge_dev_server_gametest'
             }
 
-            forge_test_gameTestServer {
-                parent runs.forge_gameTestServer
-                taskName 'forge_test_gameTestServer'
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
+            forge_server_gametest_test {
+                parent runs.forge_server_gametest
             }
 
-            def forgeDataArgs = [
-                    '--mod', 'forge',
-                    '--all',
-                    '--output', rootProject.file('src/generated/resources/'),
-                    '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs[0]
-                    ]
             forge_data {
-                taskName 'forge_data'
-                args '--launchTarget', 'forgedatadev'
-                ideaModule "${rootProject.name}.${project.name}.main"
-
-                mods {
-                    minecraft { source sourceSets.main }
-                }
-
-                args forgeDataArgs
+                args '--launchTarget', 'forge_dev_data',
+					 '--mod', 'forge',
+					 '--all',
+					 '--validate',
+					 '--output', rootProject.file('src/generated/resources/'),
+					 '--validate',
+					 '--existing', sourceSets.main.resources.srcDirs[0],
+					 '--assetsDir', downloadAssets.output,
+					 '--assetIndex', "{asset_index}"
             }
 
-            forge_test_data {
-                parent runs.forge_data
-                taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
-
-                afterEvaluate {
-                    // Clear forge's main datagen args
-                    args.removeAll {
-                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
-                    }
-
-                    args '--flat', '--all', '--validate',
-                            '--mod', 'empty',
-                            //'--mod', 'data_gen_test',
-                            //'--mod', 'piston_event_test',
-                            '--mod', 'global_loot_test',
-                            //'--mod', 'scaffolding_test',
-                            //'--mod', 'custom_tag_types_test',
-                            //'--mod', 'new_model_loader_test',
-                            //'--mod', 'remove_tag_datagen_test',
-                            //'--mod', 'tag_based_tool_types',
-                            //'--mod', 'custom_transformtype_test',
-                            //'--mod', 'data_pack_registries_test',
-                            //'--mod', 'biome_modifiers_test',
-                            //'--mod', 'structure_modifiers_test',
-                            //'--mod', 'custom_preset_editor_test',
-                            '--output', rootProject.file('src/generated_test/resources/'),
-                            '--existing', sourceSets.main.resources.srcDirs[0],
-                            '--existing', sourceSets.test.resources.srcDirs[0]
-                }
+            forge_data_test {
+				args '--launchTarget', 'forge_dev_data',
+					 '--mod', '.+',
+					 '--all', 
+					 '--validate',
+					 '--output', rootProject.file('src/generated_test/resources/'),
+					 '--existing', sourceSets.main.resources.srcDirs[0],
+					 '--existing', sourceSets.test.resources.srcDirs[0],
+					 '--assetsDir', downloadAssets.output,
+					 '--assetIndex', "{asset_index}"
             }
 
-            forge_mdk_data {
-                parent runs.forge_data
-                taskName 'forge_mdk_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.test"
-
-                mods {
-                    tests { sources sourceSets.test }
-                }
-
-                afterEvaluate {
-                    // Clear forge's main datagen args
-                    args.removeAll {
-                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
-                    }
-
-                    args '--flat', '--all', '--validate',
-                            '--mod', 'mdk_datagen',
-                            '--output', rootProject.file('src/generated_mdk/resources/'),
-                            '--existing', sourceSets.main.resources.srcDirs[0],
-                            '--existing', sourceSets.test.resources.srcDirs[0]
-                }
-            }
-        }
+		}
     }
     
     afterEvaluate {
@@ -847,7 +684,6 @@ project(':forge') {
     ext {
         MANIFESTS = [
             '/': [
-                'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': gradleutils.gitInfo.abbreviatedId,
                 'Git-Branch': gradleutils.gitInfo.branch,
                 'FML-System-Mods': 'forge'
@@ -914,7 +750,7 @@ project(':forge') {
         libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) }
     }
 
-    task findFieldInstanceChecks(type: FieldCompareFinder, dependsOn: ['createJoinedSRG']) {
+    tasks.register("findFieldInstanceChecks", FieldCompareFinder) {
         jar = createJoinedSRG.output
         output = rootProject.file('src/main/resources/coremods/field_to_instanceof.json')
         fields {
@@ -933,7 +769,7 @@ project(':forge') {
         }
     }
 
-    task findFinalizeSpawnTargets(type: BytecodePredicateFinder, dependsOn: ['createJoinedSRG']) {
+    tasks.register("findFinalizeSpawnTargets", BytecodePredicateFinder) {
         jar = createJoinedSRG.output
         output = rootProject.file('src/main/resources/coremods/finalize_spawn_targets.json')
         predicate = {
@@ -952,6 +788,74 @@ project(':forge') {
 
     tasks.jar.finalizedBy 'validateDeprecations'
 
+    tasks.register("downloadInstaller", DownloadMavenArtifact) {
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        changing = true
+    }
+	tasks.register("downloadClientSlim", DownloadMavenArtifact) {
+		artifact = "net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim"
+	}
+	tasks.register("downloadClientExtra", DownloadMavenArtifact) {
+		artifact = "net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:extra"
+	}
+	tasks.register("downloadServerSlim", DownloadMavenArtifact) {
+		artifact = "net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim"
+	}
+	tasks.register("downloadServerExtra", DownloadMavenArtifact) {
+		artifact = "net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:extra"
+	}
+	tasks.register("downloadJoinedSlim", DownloadMavenArtifact) {
+		artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:slim"
+	}
+	tasks.register("downloadJoinedExtra", DownloadMavenArtifact) {
+		artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:extra"
+	}
+	tasks.register("createJoinedSRG", DownloadMavenArtifact) {
+		artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:srg"
+	}
+	tasks.register("createClientSRG", RenameJar) {
+		tool = FART
+		args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix']
+		mappings = createMcp2Srg.srg
+		input = downloadClientSlim.output
+		output = file("build/createClientSRG/output.jar")
+	}
+	tasks.register("createServerSRG", RenameJar) {
+		tool = FART
+		args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix']
+		mappings = createMcp2Srg.srg
+		input = downloadServerSlim.output
+		output = file("build/createServerSRG/output.jar")
+	}	
+	genClientBinPatches {
+		tool = BINPATCH_TOOL
+		cleanJar = createClientSRG.output
+	}
+	genServerBinPatches {
+		tool = BINPATCH_TOOL
+		cleanJar = createServerSRG.output
+	}
+	genJoinedBinPatches {
+		tool = BINPATCH_TOOL
+		cleanJar = createJoinedSRG.output
+	}
+	tasks.register("applyClientBinPatches", ApplyBinPatches) {
+		tool = BINPATCH_TOOL
+		clean = genClientBinPatches.cleanJar
+		patch = genClientBinPatches.output
+	}
+	tasks.register("applyServerBinPatches", ApplyBinPatches) {
+		tool = BINPATCH_TOOL
+		clean = genServerBinPatches.cleanJar
+		patch = genServerBinPatches.output
+	}
+	tasks.register("applyJoinedBinPatches", ApplyBinPatches) {
+		tool = BINPATCH_TOOL
+		clean = genJoinedBinPatches.cleanJar
+		patch = genJoinedBinPatches.output
+	}
+
+	
     tasks.register('checkAll') {
         dependsOn 'checkLicenses'
         group = 'checks'
@@ -1065,7 +969,7 @@ project(':forge') {
                 inheritsFrom: MC_VERSION,
                 logging: {},
                 arguments: [
-                    game: ['--launchTarget', 'forgeclient',
+                    game: ['--launchTarget', 'forge_client',
                            '--fml.forgeVersion', FORGE_VERSION,
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
@@ -1369,7 +1273,7 @@ project(':forge') {
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
         }
-        from(rootProject.file('src/generated_mdk/resources/')) {
+        from(rootProject.file('src/generated_test/resources/mdk_datagen/')) {
             into('src/main/resources/')
             exclude '**/.cache/'
         }

@@ -9,7 +9,6 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.*;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class ModValidator {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final Map<IModFile.Type, List<ModFile>> modFiles;
+    //private final Map<IModFile.Type, List<ModFile>> modFiles;
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
     private LoadingModList loadingModList;
@@ -31,7 +30,7 @@ public class ModValidator {
     private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<IModFileInfo> brokenFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
-        this.modFiles = modFiles;
+        //this.modFiles = modFiles;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));

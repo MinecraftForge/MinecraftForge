@@ -35,6 +35,7 @@ dependencies {
     implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
     implementation("net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}")
     implementation("net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}")
+    implementation("com.google.jimfs:jimfs:${JIMFS_VERSION}")
     // implementation("org.jline:jline:${JLINE_VERSION}")
 
     implementation("org.apache.logging.log4j:log4j-core:${LOG4J_VERSION}")

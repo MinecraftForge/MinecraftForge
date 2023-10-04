@@ -11,12 +11,11 @@ import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import java.util.Locale;
 import java.util.Optional;
 
-public class InvalidModFileException extends ModFileLoadingException
-{
+public class InvalidModFileException extends ModFileLoadingException {
+    private static final long serialVersionUID = 1230464325917450374L;
     private final IModFileInfo modFileInfo;
 
-    public InvalidModFileException(String message, IModFileInfo modFileInfo)
-    {
+    public InvalidModFileException(String message, IModFileInfo modFileInfo) {
         super(String.format(Locale.ROOT, "%s (%s)", message, Optional.ofNullable(modFileInfo).map(mf->mf.getFile().getFileName()).orElse("MISSING FILE NAME")));
         this.modFileInfo = modFileInfo;
     }

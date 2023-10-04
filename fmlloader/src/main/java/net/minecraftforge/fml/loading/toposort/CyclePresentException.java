@@ -11,6 +11,7 @@ import java.util.Set;
  * An exception thrown for graphs with cycles as an argument for topological sort.
  */
 public final class CyclePresentException extends IllegalArgumentException {
+    private static final long serialVersionUID = -2609660010927054667L;
     private final Set<Set<?>> cycles;
 
     /**
