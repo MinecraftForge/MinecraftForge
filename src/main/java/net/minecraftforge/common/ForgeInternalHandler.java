@@ -11,15 +11,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.TickTask;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.loot.LootModifierManager;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,13 +48,6 @@ public class ForgeInternalHandler {
                 }
             }
         }
-    }
-
-
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionUnload(LevelEvent.Unload event) {
-        if (event.getLevel() instanceof ServerLevel)
-            FakePlayerFactory.unloadLevel((ServerLevel) event.getLevel());
     }
 
     @SubscribeEvent

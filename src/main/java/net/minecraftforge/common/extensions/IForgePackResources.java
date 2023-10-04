@@ -8,17 +8,14 @@ package net.minecraftforge.common.extensions;
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.server.packs.PackResources;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.resource.DelegatingPackResources;
 
-public interface IForgePackResources
-{
+public interface IForgePackResources {
     /**
      * {@return {@code true} if the pack should be hidden from any user interfaces}
      */
-    default boolean isHidden()
-    {
+    default boolean isHidden() {
         return false;
     }
 
@@ -30,5 +27,8 @@ public interface IForgePackResources
      * @return Collection of nested {@code PackResource}, or null if this pack has no children
      * @see DelegatingPackResources
      */
-    @Nullable default Collection<PackResources> getChildren() { return null; }
+    @Nullable
+    default Collection<PackResources> getChildren() {
+        return null;
+    }
 }

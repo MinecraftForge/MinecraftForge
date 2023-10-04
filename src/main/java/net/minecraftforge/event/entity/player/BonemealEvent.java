@@ -6,12 +6,14 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * This event is called when a player attempts to use Bonemeal on a block.
@@ -23,17 +25,15 @@ import org.jetbrains.annotations.NotNull;
  * setResult(ALLOW) is the same as the old setHandled()
  */
 @Cancelable
-@net.minecraftforge.eventbus.api.Event.HasResult
-public class BonemealEvent extends PlayerEvent
-{
-
+@HasResult
+// TODO: Redesign BonemealEvent the whole thing, it doens't make sense.
+public class BonemealEvent extends PlayerEvent {
     private final Level level;
     private final BlockPos pos;
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@NotNull Player player, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState block, @NotNull ItemStack stack)
-    {
+    public BonemealEvent(@Nullable Player player, Level level, BlockPos pos, BlockState block, ItemStack stack) {
         super(player);
         this.level = level;
         this.pos = pos;
@@ -41,24 +41,20 @@ public class BonemealEvent extends PlayerEvent
         this.stack = stack;
     }
 
-    public Level getLevel()
-    {
+    public Level getLevel() {
         return level;
     }
 
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 
-    public BlockState getBlock()
-    {
+    public BlockState getBlock() {
         return block;
     }
 
     @NotNull
-    public ItemStack getStack()
-    {
+    public ItemStack getStack() {
         return stack;
     }
 }

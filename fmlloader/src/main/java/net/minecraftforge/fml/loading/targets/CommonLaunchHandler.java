@@ -86,9 +86,15 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     protected static final LaunchType CLIENT          = new LaunchType("client", "minecraft", "net.minecraft.client.main.Main", Dist.CLIENT, false);
     protected static final LaunchType DATA            = new LaunchType("data",   "minecraft", "net.minecraft.data.Main", Dist.CLIENT, true);
     protected static final LaunchType SERVER          = new LaunchType("server", "minecraft", "net.minecraft.server.Main", Dist.DEDICATED_SERVER, false);
-    protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "forge", "net.minecratforge.gametest.GameTestMain", Dist.DEDICATED_SERVER, false);
+    protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "forge", "net.minecraftforge.gametest.GameTestMain", Dist.DEDICATED_SERVER, false);
 
     protected void runTarget(String module, String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
-        Class.forName(layer.findModule(module).orElseThrow(),target).getMethod("main", String[].class).invoke(null, (Object)arguments);
+        var mod = layer.findModule(module).orElseThrow();
+        if (mod == null) throw new IllegalStateException("Could not find module " + module);
+        var cls = Class.forName(mod, target);
+        if (cls == null) throw new IllegalStateException("Could not find class " + target + " in module " + module);
+        var mtd = cls.getMethod("main", String[].class);
+        if (mtd == null) throw new IllegalStateException("Class " + target + " in module " + module + " does not have a main(String[]) method");
+        mtd.invoke(null, (Object)arguments);
     }
 }

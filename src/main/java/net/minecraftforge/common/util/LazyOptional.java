@@ -5,7 +5,6 @@
 
 package net.minecraftforge.common.util;
 
-import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
