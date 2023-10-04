@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.creativetabs;
 
 import java.util.List;
 import net.minecraft.core.registries.Registries;

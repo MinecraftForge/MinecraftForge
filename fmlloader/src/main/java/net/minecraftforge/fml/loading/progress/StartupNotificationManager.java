@@ -10,8 +10,6 @@ import com.google.common.base.CharMatcher;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class StartupNotificationManager {
     private static volatile EnumMap<Message.MessageType, List<Message>> messages = new EnumMap<>(Message.MessageType.class);

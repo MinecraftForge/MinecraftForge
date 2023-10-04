@@ -1,15 +1,3 @@
-modLoader="javafml"
-loaderVersion="[28,)"
-license="LGPL v2.1"
-
-[[mods]]
-modId="empty"
-
-[[mods]]
-modId="creative_mode_tab_test"
-
-
-
 [[mods]]
 modId="global_loot_test"
 [[dependencies.global_loot_test]]

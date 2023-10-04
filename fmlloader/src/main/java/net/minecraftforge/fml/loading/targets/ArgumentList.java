@@ -6,6 +6,8 @@
 package net.minecraftforge.fml.loading.targets;
 
 import com.mojang.logging.LogUtils;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.function.Supplier;
  * A class that attempts to parse command line arguments into key value pairs to allow addition and editing.
  * Can not use JOptSimple as that doesn't parse out the values for keys unless the spec says it has a value.
  */
+@ApiStatus.Internal
 class ArgumentList {
     private static final Logger LOGGER = LogUtils.getLogger();
     private List<Supplier<String[]>> entries = new ArrayList<>();

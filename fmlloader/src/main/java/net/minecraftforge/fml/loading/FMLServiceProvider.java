@@ -126,6 +126,7 @@ public class FMLServiceProvider implements ITransformationService
         targetMcpMappings = option.value(mappingsOption);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public @NotNull List<ITransformer> transformers()
     {

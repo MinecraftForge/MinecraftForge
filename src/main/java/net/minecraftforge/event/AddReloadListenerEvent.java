@@ -27,14 +27,12 @@ import java.util.concurrent.Executor;
  * The event is fired on each reload and lets modders add their own ReloadListeners, for server-side resources.
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
-public class AddReloadListenerEvent extends Event
-{
+public class AddReloadListenerEvent extends Event {
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
     private final ReloadableServerResources serverResources;
     private final RegistryAccess registryAccess;
 
-    public AddReloadListenerEvent(ReloadableServerResources serverResources, RegistryAccess registryAccess)
-    {
+    public AddReloadListenerEvent(ReloadableServerResources serverResources, RegistryAccess registryAccess) {
         this.serverResources = serverResources;
         this.registryAccess = registryAccess;
     }
@@ -42,21 +40,18 @@ public class AddReloadListenerEvent extends Event
    /**
     * @param listener the listener to add to the ResourceManager on reload
     */
-    public void addListener(PreparableReloadListener listener)
-    {
+    public void addListener(PreparableReloadListener listener) {
        listeners.add(new WrappedStateAwareListener(listener));
     }
 
-    public List<PreparableReloadListener> getListeners()
-    {
+    public List<PreparableReloadListener> getListeners() {
        return ImmutableList.copyOf(listeners);
     }
 
     /**
      * @return The ReloableServerResources being reloaded.
      */
-    public ReloadableServerResources getServerResources()
-    {
+    public ReloadableServerResources getServerResources() {
         return serverResources;
     }
 
@@ -64,8 +59,7 @@ public class AddReloadListenerEvent extends Event
      * This context object holds data relevant to the current reload, such as staged tags.
      * @return The condition context for the currently active reload.
      */
-    public ICondition.IContext getConditionContext()
-    {
+    public ICondition.IContext getConditionContext() {
         return serverResources.getConditionContext();
     }
 
@@ -74,8 +68,7 @@ public class AddReloadListenerEvent extends Event
      * All built-in and dynamic registries are loaded and frozen by this point.
      * @return The RegistryAccess context for the currently active reload.
      */
-    public RegistryAccess getRegistryAccess()
-    {
+    public RegistryAccess getRegistryAccess() {
         return registryAccess;
     }
 

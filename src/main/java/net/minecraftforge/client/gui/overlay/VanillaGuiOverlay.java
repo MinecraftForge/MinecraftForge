@@ -23,6 +23,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * All the vanilla {@linkplain IGuiOverlay HUD overlays} in the order that they render.
  */
+@SuppressWarnings("resource")
 public enum VanillaGuiOverlay {
     VIGNETTE("vignette", (gui, guiGraphics, partialTick, screenWidth, screenHeight) -> {
         if (Minecraft.useFancyGraphics()) {
