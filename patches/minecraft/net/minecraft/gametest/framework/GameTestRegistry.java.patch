@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
-@@ -25,21 +_,33 @@
+@@ -25,22 +_,31 @@
     private static final Map<String, Consumer<ServerLevel>> AFTER_BATCH_FUNCTIONS = Maps.newHashMap();
     private static final Collection<TestFunction> LAST_FAILED_TESTS = Sets.newHashSet();
  
@@ -15,27 +15,27 @@
     public static void register(Method p_177504_) {
 +       register(p_177504_, java.util.Set.of());
 +   }
++
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
-+   public static void register(Method p_177504_, java.util.Set<String> allowedNamespaces) {
++   public static void register(Method p_177504_, java.util.Set<String> allowed) {
        String s = p_177504_.getDeclaringClass().getSimpleName();
        GameTest gametest = p_177504_.getAnnotation(GameTest.class);
--      if (gametest != null) {
-+      if (gametest != null && (allowedNamespaces.isEmpty() || allowedNamespaces.contains(net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177504_)))) {
-          TEST_FUNCTIONS.add(turnMethodIntoTestFunction(p_177504_));
-          TEST_CLASS_NAMES.add(s);
+       if (gametest != null) {
+-         TEST_FUNCTIONS.add(turnMethodIntoTestFunction(p_177504_));
+-         TEST_CLASS_NAMES.add(s);
++         net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
        }
  
        GameTestGenerator gametestgenerator = p_177504_.getAnnotation(GameTestGenerator.class);
        if (gametestgenerator != null) {
 -         TEST_FUNCTIONS.addAll(useTestGeneratorMethod(p_177504_));
-+         Collection<TestFunction> testFunctions = new java.util.ArrayList<>(useTestGeneratorMethod(p_177504_));
-+         if (!allowedNamespaces.isEmpty())
-+             testFunctions.removeIf(t -> !allowedNamespaces.contains(new net.minecraft.resources.ResourceLocation(t.getStructureName()).getNamespace()));
-+         TEST_FUNCTIONS.addAll(testFunctions);
-          TEST_CLASS_NAMES.add(s);
+-         TEST_CLASS_NAMES.add(s);
++          for (var func : useTestGeneratorMethod(p_177504_))
++             net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
        }
  
+       registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
 @@ -104,7 +_,9 @@
  
     private static Collection<TestFunction> useTestGeneratorMethod(Method p_177514_) {
@@ -47,18 +47,19 @@
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
-@@ -115,8 +_,9 @@
+@@ -115,9 +_,9 @@
        GameTest gametest = p_177516_.getAnnotation(GameTest.class);
        String s = p_177516_.getDeclaringClass().getSimpleName();
        String s1 = s.toLowerCase();
 -      String s2 = s1 + "." + p_177516_.getName().toLowerCase();
 -      String s3 = gametest.template().isEmpty() ? s2 : s1 + "." + gametest.template();
-+      boolean prefixGameTestTemplate = net.minecraftforge.gametest.ForgeGameTestHooks.prefixGameTestTemplate(p_177516_);
-+      String s2 = (prefixGameTestTemplate ? s1 + "." : "") + p_177516_.getName().toLowerCase();
-+      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177516_) + ":" + (gametest.template().isEmpty() ? s2 : (prefixGameTestTemplate ? s1 + "." : "") + gametest.template());
-       String s4 = gametest.batch();
+-      String s4 = gametest.batch();
++      String s2 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestName(p_177516_, gametest);
++      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestTemplate(p_177516_, gametest, s2);
++      String s4 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestBatch(p_177516_, gametest);
        Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
        return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
+    }
 @@ -125,7 +_,9 @@
     private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
        return (p_177512_) -> {

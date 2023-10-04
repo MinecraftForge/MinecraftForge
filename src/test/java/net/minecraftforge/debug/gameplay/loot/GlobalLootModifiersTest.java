@@ -6,16 +6,18 @@
 package net.minecraftforge.debug.gameplay.loot;
 
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.data.PackOutput;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantment.Rarity;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -47,14 +49,17 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@GameTestHolder("forge.global_loot_modifiers")
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
     public static final String MODID = "global_loot_test";
@@ -68,7 +73,6 @@ public class GlobalLootModifiersTest {
         GLM.register(modBus);
         ENCHANTS.register(modBus);
         modBus.register(this);
-
     }
 
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
@@ -91,9 +95,27 @@ public class GlobalLootModifiersTest {
         var vis = TabVisibility.PARENT_AND_SEARCH_TABS;
         if (event.getTabKey() == Empty.TAB) {
             var smelt = new ItemStack(Items.IRON_AXE);
-            EnchantmentHelper.setEnchantments(ImmutableMap.<Enchantment, Integer>builder().put(SMELT.get(), 1).build(), smelt);
+            EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
             entries.put(smelt, vis);
         }
+    }
+
+    @GameTest(template = "forge:empty3x3x3")
+    public static void test_smelting_modifier(GameTestHelper helper) {
+        var center = new BlockPos(1, 1, 1);
+        helper.setBlock(center, Blocks.OAK_LOG);
+        helper.assertBlock(center, block -> block == Blocks.OAK_LOG, "Failed to set log");
+
+        var smelt = new ItemStack(Items.IRON_AXE);
+        EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
+
+        var player = helper.makeMockServerPlayer();
+        player.setItemSlot(EquipmentSlot.MAINHAND, smelt);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+
+        helper.assertItemEntityPresent(Items.CHARCOAL, center, 1.0);
+
+        helper.succeed();
     }
 
     private static class DataProvider extends GlobalLootModifierProvider {

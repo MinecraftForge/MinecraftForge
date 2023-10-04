@@ -13,22 +13,14 @@ import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
-public interface IForgeFluid
-{
-    private Fluid self()
-    {
-        return (Fluid) this;
-    }
-
+public interface IForgeFluid {
     /**
      * Returns the explosion resistance of the fluid.
      *
@@ -39,8 +31,7 @@ public interface IForgeFluid
      * @return the amount of the explosion the fluid can absorb
      */
     @SuppressWarnings("deprecation")
-    default float getExplosionResistance(FluidState state, BlockGetter level, BlockPos pos, Explosion explosion)
-    {
+    default float getExplosionResistance(FluidState state, BlockGetter level, BlockPos pos, Explosion explosion) {
         return state.getExplosionResistance();
     }
 
@@ -65,8 +56,7 @@ public interface IForgeFluid
      * @param gravity the gravity to apply to the entity
      * @return {@code true} if custom movement logic is performed, {@code false} otherwise
      */
-    default boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity)
-    {
+    default boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity) {
         return getFluidType().move(state, entity, movementVector, gravity);
     }
 
@@ -78,8 +68,7 @@ public interface IForgeFluid
      * @param pos the location of the fluid
      * @return {@code true} if the fluid can create a source, {@code false} otherwise
      */
-    default boolean canConvertToSource(FluidState state, Level level, BlockPos pos)
-    {
+    default boolean canConvertToSource(FluidState state, Level level, BlockPos pos) {
         return getFluidType().canConvertToSource(state, level, pos);
     }
 
@@ -90,8 +79,7 @@ public interface IForgeFluid
      * @param boat the boat trying to be used on the fluid
      * @return {@code true} if the boat can be used, {@code false} otherwise
      */
-    default boolean supportsBoating(FluidState state, Boat boat)
-    {
+    default boolean supportsBoating(FluidState state, Boat boat) {
         return getFluidType().supportsBoating(state, boat);
     }
 
@@ -104,8 +92,7 @@ public interface IForgeFluid
      * @param rider the rider of the boat
      * @return {@code true} if the fluid height should be updated, {@code false} otherwise
      */
-    default boolean shouldUpdateWhileBoating(FluidState state, Boat boat, Entity rider)
-    {
+    default boolean shouldUpdateWhileBoating(FluidState state, Boat boat, Entity rider) {
         return getFluidType().shouldUpdateWhileBoating(state, boat, rider);
     }
 
@@ -122,8 +109,7 @@ public interface IForgeFluid
      * @return the path type of this fluid
      */
     @Nullable
-    default BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob, boolean canFluidLog)
-    {
+    default BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, boolean canFluidLog) {
         return getFluidType().getBlockPathType(state, level, pos, mob, canFluidLog);
     }
 
@@ -141,8 +127,7 @@ public interface IForgeFluid
      * @return the path type of this fluid
      */
     @Nullable
-    default BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @org.jetbrains.annotations.Nullable Mob mob, BlockPathTypes originalType)
-    {
+    default BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType) {
         return getFluidType().getAdjacentBlockPathType(state, level, pos, mob, originalType);
     }
 
@@ -163,8 +148,7 @@ public interface IForgeFluid
      * @param sourcePos the position of the block being hydrated
      * @return {@code true} if the block can be hydrated, {@code false} otherwise
      */
-    default boolean canHydrate(FluidState state, BlockGetter getter, BlockPos pos, BlockState source, BlockPos sourcePos)
-    {
+    default boolean canHydrate(FluidState state, BlockGetter getter, BlockPos pos, BlockState source, BlockPos sourcePos) {
         return getFluidType().canHydrate(state, getter, pos, source, sourcePos);
     }
 
@@ -176,8 +160,7 @@ public interface IForgeFluid
      * @param pos the position of the fluid
      * @return {@code true} if the block can be extinguished, {@code false} otherwise
      */
-    default boolean canExtinguish(FluidState state, BlockGetter getter, BlockPos pos)
-    {
+    default boolean canExtinguish(FluidState state, BlockGetter getter, BlockPos pos) {
         return getFluidType().canExtinguish(state, getter, pos);
     }
 }

@@ -16,7 +16,7 @@
 +   @Deprecated //Forge: Use Player/Hand version
     public static boolean growCrop(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_) {
 +      if (p_40629_ instanceof net.minecraft.server.level.ServerLevel)
-+         return applyBonemeal(p_40628_, p_40629_, p_40630_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.server.level.ServerLevel)p_40629_));
++         return applyBonemeal(p_40628_, p_40629_, p_40630_, null);
 +      return false;
 +   }
 +

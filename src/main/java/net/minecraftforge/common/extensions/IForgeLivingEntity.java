@@ -11,18 +11,17 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fluids.FluidType;
 
-public interface IForgeLivingEntity extends IForgeEntity
-{
-    default LivingEntity self()
-    {
-        return (LivingEntity) this;
+public interface IForgeLivingEntity extends IForgeEntity {
+    default LivingEntity self() {
+        return (LivingEntity)this;
     }
 
     @Override
-    default boolean canSwimInFluidType(FluidType type)
-    {
-        if (type == ForgeMod.WATER_TYPE.get()) return !self().isSensitiveToWater();
-        else return IForgeEntity.super.canSwimInFluidType(type);
+    default boolean canSwimInFluidType(FluidType type) {
+        if (type == ForgeMod.WATER_TYPE.get())
+            return !self().isSensitiveToWater();
+        else
+            return IForgeEntity.super.canSwimInFluidType(type);
     }
 
     /**
@@ -30,8 +29,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      *
      * @param type the type of the fluid
      */
-    default void jumpInFluid(FluidType type)
-    {
+    default void jumpInFluid(FluidType type) {
         self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }
 
@@ -40,8 +38,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      *
      * @param type the type of the fluid
      */
-    default void sinkInFluid(FluidType type)
-    {
+    default void sinkInFluid(FluidType type) {
         self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.get()), 0.0D));
     }
 
@@ -51,10 +48,12 @@ public interface IForgeLivingEntity extends IForgeEntity
      * @param type the type of the fluid
      * @return {@code true} if the entity can drown in the fluid, {@code false} otherwise
      */
-    default boolean canDrownInFluidType(FluidType type)
-    {
-        if (type == ForgeMod.WATER_TYPE.get()) return !self().canBreatheUnderwater();
-        return type.canDrownIn(self());
+    @SuppressWarnings("deprecation")
+    default boolean canDrownInFluidType(FluidType type) {
+        if (type == ForgeMod.WATER_TYPE.get())
+            return !self().canBreatheUnderwater();
+        return
+                type.canDrownIn(self());
     }
 
     /**
@@ -67,8 +66,7 @@ public interface IForgeLivingEntity extends IForgeEntity
      * @param gravity the gravity to apply to the entity
      * @return {@code true} if custom movement logic is performed, {@code false} otherwise
      */
-    default boolean moveInFluid(FluidState state, Vec3 movementVector, double gravity)
-    {
+    default boolean moveInFluid(FluidState state, Vec3 movementVector, double gravity) {
         return state.move(self(), movementVector, gravity);
     }
 }

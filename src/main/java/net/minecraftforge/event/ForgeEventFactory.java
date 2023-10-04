@@ -382,7 +382,10 @@ public class ForgeEventFactory {
         return post(event) ? null : event.getFinalState();
     }
 
-    public static int onApplyBonemeal(@NotNull Player player, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ItemStack stack) {
+    public static int onApplyBonemeal(@Nullable Player player, Level level, BlockPos pos, BlockState state, ItemStack stack) {
+        if (player == null)
+            return 0;
+
         var event = new BonemealEvent(player, level, pos, state, stack);
         if (post(event)) return -1;
         if (event.getResult() == Result.ALLOW) {
