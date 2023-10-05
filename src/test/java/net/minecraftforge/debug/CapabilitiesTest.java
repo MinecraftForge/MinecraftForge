@@ -67,15 +67,20 @@ public class CapabilitiesTest
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
             //CapabilitySystem.addListener(ItemStack.class, this::Attach);
+
             //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
+
             //CapabilitySystem.addListener(Level.class, this::Attach);
+
             //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+
             //CapabilitySystem.addListener(Entity.class, this::Attach);
+
 
             CapabilitySystem.addWrappedListener(ItemStack.class, BlockItem.class, ItemStack::getItem,  (event, item) -> {
                 TRACK.computeIfAbsent(item.getClass(), (a) -> new AtomicInteger()).addAndGet(1);
             });
-            
+
             class test implements ICapabilitySerializable<CompoundTag> {
                 final IItemHandler handler = new ItemStackHandler(1);
                 final LazyOptional<IItemHandler> handlerLazyOptional = LazyOptional.of(() -> handler);
@@ -135,7 +140,7 @@ public class CapabilitiesTest
                                     aClass.getSimpleName(),
                                     atomicInteger.getAndSet(0)
                             )));
-                            if (aClass.getSimpleName().length() <= 6)
+                            if (aClass.getName().length() <= 6)
                                 player.sendSystemMessage(Component.literal("Weird Class Detected: %s".formatted(aClass.getName())));
                         }));
 

@@ -30,6 +30,7 @@ public final class AttachCapabilitiesEvent<T> extends Event
     private final List<Runnable> listeners = Lists.newArrayList();
     private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
 
+
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
         this.type = type;
