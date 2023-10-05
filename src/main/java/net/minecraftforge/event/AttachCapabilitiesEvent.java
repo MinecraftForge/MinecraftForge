@@ -11,6 +11,7 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.eventbus.api.Event;
 

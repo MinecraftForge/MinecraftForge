@@ -25,6 +25,7 @@ public class CapabilitySystem
 {
 
     private static final HashMap<Class<?>, ListenerList> LISTENERS = new HashMap<>();
+
     private static final List<Class<?>> IGNORE = List.of(
             Object.class,
             ICapabilityProvider.class,
@@ -55,9 +56,8 @@ public class CapabilitySystem
 
         @SuppressWarnings({"unchecked", "ConstantConditions"}) // IDE will not shut up about this, but it is safe.
         public void post(AttachCapabilitiesEvent<?> event) {
-            if (this.dirty) {
-
-                synchronized (this) {
+            synchronized (this) {
+                if (this.dirty) {
                     ArrayList<Consumer<AttachCapabilitiesEvent<?>>> all = new ArrayList<>();
 
                     this.supers.forEach(list -> {
@@ -73,11 +73,11 @@ public class CapabilitySystem
                         }
                     }
                 }
-            }
 
-            if (this.all == null) return;
-            for (Consumer<AttachCapabilitiesEvent<?>> consumer : this.all)
-                consumer.accept(event);
+                if (this.all == null) return;
+                for (Consumer<AttachCapabilitiesEvent<?>> consumer : this.all)
+                    consumer.accept(event);
+            }
         }
     }
 
@@ -108,12 +108,10 @@ public class CapabilitySystem
         set.add(cls);
         visit(set, cls.getSuperclass());
 
-        /** // TOOD: Deal with interfaces later!
         for (Class<?> inf : cls.getInterfaces()) {
             set.add(inf);
-            visit(set, inf); // maybe inf.getSuperclass()?
+            visit(set, inf.getSuperclass());
         }
-         **/
     }
 
 
@@ -131,7 +129,6 @@ public class CapabilitySystem
 
         var listeners = getListeners(type);
         listeners.addListener((Consumer) eventConsumer);
-        //LISTENER_LIST.computeIfAbsent(type, (e) -> new ArrayList<>()).add((Consumer) eventConsumer);
     }
 
 
@@ -143,11 +140,7 @@ public class CapabilitySystem
     @SuppressWarnings("unchecked")
     public static <T, W, X> void addWrappedListener(Class<? extends T> type, Class<W> wrappedClass, Function<T, X> conversion, BiConsumer<AttachCapabilitiesEvent<T>, W> eventConsumer)
     {
-        // TODO: ADD LATER!
-
         var listeners = getListeners(wrappedClass);
         listeners.addListener((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) conversion.apply((T) event.getObject()));});
-
-        //LISTENER_LIST.computeIfAbsent(wrappedClass, (e) -> new ArrayList<>()).add((event) -> {eventConsumer.accept((AttachCapabilitiesEvent<T>) event, (W) conversion.apply((T) event.getObject()));});
     }
 }

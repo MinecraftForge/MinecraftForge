@@ -24,6 +24,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.extensions.IForgeItem;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -47,25 +48,28 @@ public class CapabilitiesTest
         TRACK.computeIfAbsent(event.getType(), e -> new AtomicInteger()).getAndAdd(1);
     }
 
-    public static void onEvent(AttachCapabilitiesEvent<Item> event, ItemStack stack) {}
+    public static void onEvent(AttachCapabilitiesEvent<ItemStack> event, BlockItem item) {
+        TRACK.computeIfAbsent(item.getClass(), (a) -> new AtomicInteger()).addAndGet(1);
+    }
 
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
 
-            CapabilitySystem.addListener(ItemStack.class, this::Attach);
+            //CapabilitySystem.addListener(ItemStack.class, this::Attach);
 
-            CapabilitySystem.addListener(BlockEntity.class, this::Attach);
+            //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
 
-            CapabilitySystem.addListener(Level.class, this::Attach);
+            //CapabilitySystem.addListener(Level.class, this::Attach);
 
-            CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+            //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
 
-            CapabilitySystem.addListener(Entity.class, this::Attach);
+            //CapabilitySystem.addListener(Entity.class, this::Attach);
 
-
-            CapabilitySystem.addWrappedListener(ItemStack.class, BlockItem.class, ItemStack::getItem,  (event, item) -> {
-                TRACK.computeIfAbsent(item.getClass(), (a) -> new AtomicInteger()).addAndGet(1);
+            CapabilitySystem.addWrappedListener(ItemStack.class, IForgeItem.class, ItemStack::getItem,  (event, forgeItem) -> {
+                TRACK.computeIfAbsent(forgeItem.getClass(), (a) -> new AtomicInteger()).addAndGet(1);
             });
+            //CapabilitySystem.addWrappedItemListener(BlockItem.class, CapabilitiesTest::onEvent);
+
 
             class test implements ICapabilitySerializable<CompoundTag> {
                 final IItemHandler handler = new ItemStackHandler(1);
@@ -80,7 +84,7 @@ public class CapabilitiesTest
                 @Override
                 public CompoundTag serializeNBT() {
                     CompoundTag tag = new CompoundTag();
-                    tag.putString("result", "mamngorage");
+                    tag.putString("result", "mangorage");
                     return tag;
                 }
 
@@ -93,6 +97,7 @@ public class CapabilitiesTest
 
             CapabilitySystem.addListener(ServerPlayer.class, this::Attach);
             CapabilitySystem.addListener(LocalPlayer.class, this::Attach);
+            CapabilitySystem.addListener(Player.class, this::Attach);
         }
     }
 
