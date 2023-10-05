@@ -505,16 +505,6 @@
        return this.fluidHeight.getDouble(p_204037_);
     }
  
-@@ -3106,7 +_,9 @@
-       return this.getBbHeight() + 0.5F;
-    }
- 
-+   private boolean hasExtraSpawnData = this instanceof net.minecraftforge.entity.IEntityAdditionalSpawnData;
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-+      if (hasExtraSpawnData) return net.minecraftforge.common.ForgeHooks.getEntitySpawnPacket(this);
-       return new ClientboundAddEntityPacket(this);
-    }
- 
 @@ -3222,6 +_,7 @@
  
           this.levelCallback.onMove();

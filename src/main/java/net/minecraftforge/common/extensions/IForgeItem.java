@@ -41,15 +41,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.ICapabilityEventProvider;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.items.wrapper.ShulkerItemStackInvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 // TODO systemic review of all extension functions. lots of unused -C
-public interface IForgeItem extends ICapabilityEventProvider
+public interface IForgeItem
 {
     private Item self()
     {
@@ -874,10 +872,5 @@ public interface IForgeItem extends ICapabilityEventProvider
     default boolean canGrindstoneRepair(ItemStack stack)
     {
         return false;
-    }
-
-    @Override
-    default <T> AttachCapabilitiesEvent<T> createAttachCapabilitiesEvent(T obj) {
-        return new AttachCapabilitiesEvent.AttachItemEvent<>(obj);
     }
 }

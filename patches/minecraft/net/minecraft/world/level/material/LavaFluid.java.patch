@@ -40,7 +40,7 @@
     }
  
 +   private boolean isFlammable(LevelReader level, BlockPos pos, Direction face) {
-+      return pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && !level.hasChunkAt(pos) ? false : level.getBlockState(pos).ignitedByLava() && level.getBlockState(pos).isFlammable(level, pos, face);
++      return pos.getY() >= level.getMinBuildHeight() && pos.getY() < level.getMaxBuildHeight() && !level.hasChunkAt(pos) ? false : level.getBlockState(pos).isFlammable(level, pos, face);
 +   }
 +
     @Nullable

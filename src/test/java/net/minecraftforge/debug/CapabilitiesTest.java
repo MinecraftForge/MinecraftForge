@@ -5,49 +5,34 @@
 
 package net.minecraftforge.debug;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilitySystem;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.extensions.IForgeEntity;
-import net.minecraftforge.common.extensions.IForgeItem;
-import net.minecraftforge.common.extensions.IForgeItemStack;
-import net.minecraftforge.common.extensions.IForgeLevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -66,15 +51,16 @@ public class CapabilitiesTest
 
     public CapabilitiesTest() {
         if (ENABLED) { // Register our listeners if this test is enabled.
-            //CapabilitySystem.addListener(ItemStack.class, this::Attach);
 
-            //CapabilitySystem.addListener(BlockEntity.class, this::Attach);
+            CapabilitySystem.addListener(ItemStack.class, this::Attach);
 
-            //CapabilitySystem.addListener(Level.class, this::Attach);
+            CapabilitySystem.addListener(BlockEntity.class, this::Attach);
 
-            //CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+            CapabilitySystem.addListener(Level.class, this::Attach);
 
-            //CapabilitySystem.addListener(Entity.class, this::Attach);
+            CapabilitySystem.addListener(LevelChunk.class, this::Attach);
+
+            CapabilitySystem.addListener(Entity.class, this::Attach);
 
 
             CapabilitySystem.addWrappedListener(ItemStack.class, BlockItem.class, ItemStack::getItem,  (event, item) -> {
@@ -105,8 +91,8 @@ public class CapabilitiesTest
             }
 
 
-            //CapabilitySystem.addListener(ServerPlayer.class, this::Attach);
-            //CapabilitySystem.addListener(LocalPlayer.class, this::Attach);
+            CapabilitySystem.addListener(ServerPlayer.class, this::Attach);
+            CapabilitySystem.addListener(LocalPlayer.class, this::Attach);
         }
     }
 
