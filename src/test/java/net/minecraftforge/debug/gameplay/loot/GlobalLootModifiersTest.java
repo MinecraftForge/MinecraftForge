@@ -28,7 +28,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -44,11 +43,9 @@ import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.Empty;
+import net.minecraftforge.test.BaseTestMod;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.DeferredRegister;
@@ -61,43 +58,31 @@ import java.util.stream.Collectors;
 
 @GameTestHolder("forge.global_loot_modifiers")
 @Mod(GlobalLootModifiersTest.MODID)
-public class GlobalLootModifiersTest {
+public class GlobalLootModifiersTest extends BaseTestMod {
     public static final String MODID = "global_loot_test";
-    public static final boolean ENABLE = true;
-
-    public GlobalLootModifiersTest() {
-        if (!ENABLE)
-            return;
-
-        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        GLM.register(modBus);
-        ENCHANTS.register(modBus);
-        modBus.register(this);
-    }
 
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
-    private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
+    static {
+        GLM.register("dungeon_loot", DungeonLootEnhancerModifier.CODEC);
+        GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
+        GLM.register("wheat_harvest", WheatSeedsConverterModifier.CODEC);
+        GLM.register("silk_touch_bamboo", SilkTouchTestModifier.CODEC);
+    }
 
-    public static final RegistryObject<Codec<DungeonLootEnhancerModifier>> DUNGEON_LOOT = GLM.register("dungeon_loot", DungeonLootEnhancerModifier.CODEC);
-    public static final RegistryObject<Codec<SmeltingEnchantmentModifier>> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
-    public static final RegistryObject<Codec<WheatSeedsConverterModifier>> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.CODEC);
-    public static final RegistryObject<Codec<SilkTouchTestModifier>> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.CODEC);
-    public static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
+    private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
+    private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
+
+    public GlobalLootModifiersTest() {
+        testItem(() -> {
+            var smelt = new ItemStack(Items.IRON_AXE);
+            EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
+            return smelt;
+        });
+    }
 
     @SubscribeEvent
     public void runData(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator().getPackOutput(), MODID));
-    }
-
-    @SubscribeEvent
-    public void onCreativeModeTabBuildContents(BuildCreativeModeTabContentsEvent event) {
-        var entries = event.getEntries();
-        var vis = TabVisibility.PARENT_AND_SEARCH_TABS;
-        if (event.getTabKey() == Empty.TAB) {
-            var smelt = new ItemStack(Items.IRON_AXE);
-            EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
-            entries.put(smelt, vis);
-        }
     }
 
     @GameTest(template = "forge:empty3x3x3")

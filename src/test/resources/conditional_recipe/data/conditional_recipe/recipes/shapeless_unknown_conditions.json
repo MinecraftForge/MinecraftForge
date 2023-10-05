@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "forge:condition": {
+    "type": "forge:this_is_unknown_it_should_not_error_in_log_but_just_fail",
+    "value": {}
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:redstone_ore"
+    },
+    {
+      "item": "minecraft:redstone_ore"
+    },
+    {
+      "item": "minecraft:redstone_ore"
+    }
+  ],
+  "result": {
+    "item": "minecraft:diamond_block"
+  }
+}

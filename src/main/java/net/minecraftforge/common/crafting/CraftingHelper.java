@@ -14,15 +14,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraft.nbt.TagParser;
+import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -170,31 +173,5 @@ public class CraftingHelper {
         }
 
         return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
-    }
-
-    // CONDITIONS
-    private static final Map<ResourceLocation, Codec<? extends ICondition>> conditions = new HashMap<>();
-    public static void register(ResourceLocation key, Codec<? extends ICondition> codec) {
-        if (conditions.containsKey(key))
-            throw new IllegalStateException("Duplicate recipe condition serializer: " + key);
-        conditions.put(key, codec);
-    }
-
-    public static boolean processConditions(JsonObject json, String memberName, ICondition.IContext context) {
-        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName), context);
-    }
-
-    public static boolean processConditions(JsonArray conditions, ICondition.IContext context) {
-        for (int x = 0; x < conditions.size(); x++) {
-            if (!conditions.get(x).isJsonObject())
-                throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
-
-            JsonObject json = conditions.get(x).getAsJsonObject();
-            /*
-            if (!CraftingHelper.getCondition(json).test(context))
-                return false;
-            */
-        }
-        return true;
     }
 }

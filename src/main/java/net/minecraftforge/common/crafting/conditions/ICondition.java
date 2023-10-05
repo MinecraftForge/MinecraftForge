@@ -29,6 +29,7 @@ public interface ICondition {
     Codec<ICondition> CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec().dispatch(ICondition::codec, Function.identity()));
     String DEFAULT_FIELD = "forge:condition";
     MapCodec<Optional<ICondition>> OPTIONAL_FEILD_CODEC = CODEC.optionalFieldOf(DEFAULT_FIELD);
+    Codec<ICondition> SAFE_CODEC = CODEC.orElse(FalseCondition.INSTANCE);
 
     boolean test(IContext context);
 
