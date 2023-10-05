@@ -18,22 +18,17 @@
     }
  
     protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -52,9 +_,18 @@
+@@ -52,8 +_,13 @@
  
        for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
 +         if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
           try {
-+            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions", this.context)) {
++            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.ForgeHooks.readAndTestCondition(this.context, entry.getValue().getAsJsonObject())) {
 +               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
 +               continue;
 +            }
              RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
-+            if (recipeholder == null) {
-+               LOGGER.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
-+               continue;
-+            }
              map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
                 return ImmutableMap.builder();
-             }).put(resourcelocation, recipeholder);

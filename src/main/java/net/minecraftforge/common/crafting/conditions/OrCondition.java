@@ -12,9 +12,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record OrCondition(List<ICondition> children) implements ICondition {
-    public static final Codec<AndCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
-        ICondition.CODEC.listOf().fieldOf("values").forGetter(AndCondition::children)
-    ).apply(b, AndCondition::new));
+    public static final Codec<OrCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+        ICondition.CODEC.listOf().fieldOf("values").forGetter(OrCondition::children)
+    ).apply(b, OrCondition::new));
 
 
     @Override
@@ -29,7 +29,7 @@ public record OrCondition(List<ICondition> children) implements ICondition {
 
     @Override
     public String toString() {
-        return Joiner.on(" || ").join(children);
+        return '(' + Joiner.on(" || ").join(children) + ')';
     }
 
     @Override

@@ -22,12 +22,16 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -51,6 +55,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.CrudeIncrementalIntIdentityHashBiMap;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraft.world.Difficulty;
@@ -112,6 +117,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -185,6 +191,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1267,5 +1274,43 @@ public class ForgeHooks {
         @SuppressWarnings("unchecked")
         var pkt = (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(data, play.getName()).getThis();
         return pkt;
+    }
+
+    @ApiStatus.Internal
+    public static boolean readAndTestCondition(ICondition.IContext context, JsonObject json) {
+        if (!json.has(ICondition.DEFAULT_FIELD))
+            return true;
+
+        var condition = Util.getOrThrow(ICondition.SAFE_CODEC.parse(JsonOps.INSTANCE, json.getAsJsonObject(ICondition.DEFAULT_FIELD)), JsonParseException::new);
+        return condition.test(context);
+    }
+
+    @ApiStatus.Internal
+    public static void writeCondition(ICondition condition, JsonObject out) {
+        if (condition == null)
+            return;
+        var data = ICondition.CODEC.encode(condition, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).getOrThrow(false, JsonSyntaxException::new);
+        out.add(ICondition.DEFAULT_FIELD, data);
+    }
+
+    @Nullable
+    @ApiStatus.Internal
+    public static JsonObject readConditionalAdvancement(ICondition.IContext context, JsonObject json) {
+        var entries = GsonHelper.getAsJsonArray(json, "advancements", null);
+        if (entries == null)
+            return readAndTestCondition(context, json) ? json : null;
+
+        int idx = 0;
+        for (var ele : entries) {
+            if (!ele.isJsonObject())
+                throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
+
+            if (readAndTestCondition(context, ele.getAsJsonObject()))
+                return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
+
+            idx++;
+        }
+
+        return null;
     }
 }

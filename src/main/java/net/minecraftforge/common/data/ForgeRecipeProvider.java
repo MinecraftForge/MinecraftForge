@@ -133,7 +133,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
     @Nullable
     @Override
-    protected CompletableFuture<?> saveAdvancement(CachedOutput output, JsonObject advancementJson, AdvancementHolder holder, FinishedRecipe finishedRecipe) {
+    protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonObject advancementJson, FinishedRecipe finishedRecipe) {
         // NOOP - We don't replace any of the advancement things yet...
         return null;
     }

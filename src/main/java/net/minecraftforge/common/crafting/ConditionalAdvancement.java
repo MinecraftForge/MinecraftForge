@@ -4,123 +4,113 @@
  */
 
 package net.minecraftforge.common.crafting;
-/*
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import org.jetbrains.annotations.Nullable;
 
-public class ConditionalAdvancement
-{
-    public static Builder builder()
-    {
+/**
+ * A `ConditionalAdvancement` is a single advancment file that contains multiple advancements, each having a condition.
+ * When loaded it will return the first advancement that the conditions pass.
+ *
+ * This allows for multiple variants of an advancement to share the same name in the registry. Which allows dependents
+ * to reference it without having to care about the conditions themselves.
+ *
+ * This is most likely useful when you have variants of a recipe based on what mods/resources are installed but want
+ * to maintain the same 'entry' in the advancement book.
+ */
+public class ConditionalAdvancement {
+    public static Builder builder() {
         return new Builder();
     }
 
-    /**
-     * Processes the conditional advancement during loading.
-     * @param json The incoming json from the advancement file.
-     * @return The advancement that passed the conditions, or null if none did.
-     * /
-    @Nullable
-    public static JsonObject processConditional(JsonObject json, ICondition.IContext context) {
-        JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
-        if (entries == null)
-        {
-            return CraftingHelper.processConditions(json, "conditions", context) ? json : null;
+    public static class Builder {
+        private static final ResourceLocation DOESNT_MATTER = new ResourceLocation("doesnt", "matter");
+
+        private List<Pair> advancements = new ArrayList<>();
+        private ICondition condition;
+
+        public Builder condition(ICondition value) {
+            this.condition = value;
+            return this;
         }
 
-        int idx = 0;
-        for (JsonElement ele : entries)
-        {
-            if (!ele.isJsonObject())
-                throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions"), context))
-                return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
-            idx++;
+        public Builder advancement(Consumer<Consumer<Advancement.Builder>> callable) {
+            callable.accept(this::advancement);
+            return this;
         }
-        return null;
+
+        public Builder advancement(Advancement.Builder builder) {
+            return advancement(builder.build(DOESNT_MATTER).value());
+        }
+
+        public Builder advancement(FinishedRecipe fromRecipe) {
+            return advancement(fromRecipe.advancement());
+        }
+
+        public Builder advancement(AdvancementHolder holder) {
+            return advancement(holder.value());
+        }
+
+        private Builder advancement(Advancement value) {
+            if (condition == null)
+                throw new IllegalStateException("Can not add a advancement with no conditions.");
+
+            if (value == null)
+                throw new IllegalStateException("Can not add a null advancement");
+
+            this.advancements.add(new Pair(this.condition, value));
+            this.condition = null;
+
+            return this;
+        }
+
+        public IResult build() {
+            return new Result(List.copyOf(advancements));
+        }
+
+        public JsonObject write() {
+            var json = new JsonObject();
+            var array = new JsonArray();
+            json.add("advancements", array);
+
+            for (var pair : advancements) {
+                var holder = pair.adv().serializeToJson();
+                if (holder.has(ICondition.DEFAULT_FIELD))
+                    throw new IllegalStateException("Recipe already serialized conditions!");
+                ForgeHooks.writeCondition(pair.condition(), holder);
+
+                array.add(holder);
+            }
+            return json;
+        }
     }
 
-    public static class Builder
-    {
-        private List<ICondition[]> conditions = new ArrayList<>();
-        private List<Supplier<JsonElement>> advancements = new ArrayList<>();
+    public interface IResult {
+        JsonObject serializeToJson();
+    }
 
-        private List<ICondition> currentConditions = new ArrayList<>();
-        private boolean locked = false;
-
-        public Builder addCondition(ICondition condition)
-        {
-            if (locked)
-                throw new IllegalStateException("Attempted to modify finished builder");
-            currentConditions.add(condition);
-            return this;
-        }
-
-        public Builder addAdvancement(Consumer<Consumer<Advancement.Builder>> callable)
-        {
-            if (locked)
-                throw new IllegalStateException("Attempted to modify finished builder");
-            callable.accept(this::addAdvancement);
-            return this;
-        }
-
-        public Builder addAdvancement(Advancement.Builder advancement)
-        {
-            return addAdvancement(advancement::serializeToJson);
-        }
-
-        public Builder addAdvancement(FinishedRecipe fromRecipe)
-        {
-            return addAdvancement(fromRecipe::serializeAdvancement);
-        }
-
-        private Builder addAdvancement(Supplier<JsonElement> jsonSupplier)
-        {
-            if (locked)
-                throw new IllegalStateException("Attempted to modify finished builder");
-            if (currentConditions.isEmpty())
-                throw new IllegalStateException("Can not add a advancement with no conditions.");
-            conditions.add(currentConditions.toArray(new ICondition[currentConditions.size()]));
-            advancements.add(jsonSupplier);
-            currentConditions.clear();
-            return this;
-        }
-
-        public JsonObject write()
-        {
-            if (!locked)
-            {
-                if (!currentConditions.isEmpty())
-                    throw new IllegalStateException("Invalid builder state: Orphaned conditions");
-                if (advancements.isEmpty())
-                    throw new IllegalStateException("Invalid builder state: No Advancements");
-                locked = true;
-            }
-            JsonObject json = new JsonObject();
-            JsonArray array = new JsonArray();
+    private record Pair(ICondition condition, Advancement adv) {}
+    private record Result(List<Pair> advancements) implements IResult {
+        @Override
+        public JsonObject serializeToJson() {
+            var json = new JsonObject();
+            var array = new JsonArray();
             json.add("advancements", array);
-            for (int x = 0; x < conditions.size(); x++)
-            {
-                JsonObject holder = new JsonObject();
 
-                JsonArray conds = new JsonArray();
-                for (ICondition c : conditions.get(x))
-                    conds.add(CraftingHelper.serialize(c));
-                holder.add("conditions", conds);
-                holder.add("advancement", advancements.get(x).get());
+            for (var pair : advancements) {
+                var holder = pair.adv().serializeToJson();
+                if (holder.has(ICondition.DEFAULT_FIELD))
+                    throw new IllegalStateException("Recipe already serialized conditions!");
+                ForgeHooks.writeCondition(pair.condition(), holder);
 
                 array.add(holder);
             }
@@ -128,4 +118,3 @@ public class ConditionalAdvancement
         }
     }
 }
-*/

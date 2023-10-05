@@ -6,10 +6,12 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import com.mojang.authlib.GameProfile;
 
 import io.netty.channel.embedded.EmbeddedChannel;
+import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
@@ -21,6 +23,16 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 public interface IForgeGameTestHelper {
     private GameTestHelper self() {
         return (GameTestHelper)this;
+    }
+
+    default void assertTrue(boolean value, Supplier<String> message) {
+       if (!value)
+          throw new GameTestAssertException(message.get());
+    }
+
+    default void assertFalse(boolean value, Supplier<String> message) {
+       if (value)
+          throw new GameTestAssertException(message.get());
     }
 
     default ServerPlayer makeMockServerPlayer() {

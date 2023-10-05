@@ -27,7 +27,7 @@ public record AndCondition(List<ICondition> children) implements ICondition {
 
     @Override
     public String toString() {
-        return Joiner.on(" && ").join(children);
+        return '(' + Joiner.on(" && ").join(children) + ')';
     }
 
     @Override

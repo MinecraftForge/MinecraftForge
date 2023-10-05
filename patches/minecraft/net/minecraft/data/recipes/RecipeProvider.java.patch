@@ -1,11 +1,16 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -93,7 +_,9 @@
-                AdvancementHolder advancementholder = p_300066_.advancement();
-                if (advancementholder != null) {
-                   JsonObject jsonobject = advancementholder.value().serializeToJson();
+@@ -90,10 +_,11 @@
+                throw new IllegalStateException("Duplicate recipe " + p_300066_.id());
+             } else {
+                list.add(DataProvider.saveStable(p_254020_, p_300066_.serializeRecipe(), RecipeProvider.this.recipePathProvider.json(p_300066_.id())));
+-               AdvancementHolder advancementholder = p_300066_.advancement();
+-               if (advancementholder != null) {
+-                  JsonObject jsonobject = advancementholder.value().serializeToJson();
 -                  list.add(DataProvider.saveStable(p_254020_, jsonobject, RecipeProvider.this.advancementPathProvider.json(advancementholder.id())));
-+                  var saveAdvancementFuture = saveAdvancement(p_254020_, jsonobject, advancementholder, p_300066_);
++               var advancementdata = p_300066_.advancementData();
++               if (advancementdata != null) {
++                  var saveAdvancementFuture = saveAdvancement(p_254020_, advancementdata.id(), advancementdata.data(), p_300066_);
 +                  if (saveAdvancementFuture != null)
 +                     list.add(saveAdvancementFuture);
                 }
@@ -23,8 +28,8 @@
 +    * @return A completable future that saves the advancement to disk, or null to cancel saving the advancement.
 +    */
 +   @Nullable
-+   protected CompletableFuture<?> saveAdvancement(CachedOutput output, JsonObject advancementJson, AdvancementHolder holder, FinishedRecipe finishedRecipe) {
-+      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(holder.id()));
++   protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonObject advancementJson, FinishedRecipe finishedRecipe) {
++      return DataProvider.saveStable(output, advancementJson, this.advancementPathProvider.json(advancementId));
     }
  
     protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, AdvancementHolder p_297687_) {
