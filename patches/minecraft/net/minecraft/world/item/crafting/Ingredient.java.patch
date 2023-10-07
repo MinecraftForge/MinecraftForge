@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -30,6 +_,12 @@
+@@ -30,14 +_,24 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -13,10 +13,16 @@
     public static final Ingredient EMPTY = new Ingredient(Stream.empty());
     private final Ingredient.Value[] values;
     @Nullable
-@@ -38,6 +_,7 @@
+    private ItemStack[] itemStacks;
+    @Nullable
     private IntList stackingIds;
-    public static final Codec<Ingredient> CODEC = codec(true);
-    public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
+-   public static final Codec<Ingredient> CODEC = codec(true);
+-   public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
++   /** The vanilla codec that doesn't support custom Ingredient types. */
++   public static final Codec<Ingredient> VANILLA_CODEC = codec(true);
++   public static final Codec<Ingredient> CODEC = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC);
++   private static final Codec<Ingredient> VANILLA_CODEC_NONEMPTY = codec(false);
++   public static final Codec<Ingredient> CODEC_NONEMPTY = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC_NONEMPTY);
 +   private int invalidationCounter;
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
@@ -31,20 +37,15 @@
           ItemStack[] aitemstack = this.getItems();
           this.stackingIds = new IntArrayList(aitemstack.length);
  
-@@ -93,6 +_,12 @@
+@@ -93,6 +_,7 @@
     }
  
     public final void toNetwork(FriendlyByteBuf p_43924_) {
-+      /*
-+      if (!this.isVanilla()) {
-+         net.minecraftforge.common.crafting.CraftingHelper.write(p_43924_, this);
-+         return;
-+      }
-+      */
++      if (net.minecraftforge.common.ForgeHooks.ingredientToNetwork(p_43924_, this))
        p_43924_.writeCollection(Arrays.asList(this.getItems()), FriendlyByteBuf::writeItem);
     }
  
-@@ -113,6 +_,40 @@
+@@ -113,6 +_,38 @@
        }
     }
  
@@ -72,15 +73,13 @@
 +
 +   private final boolean isVanilla = this.getClass() == Ingredient.class;
 +   public final boolean isVanilla() {
-+       return isVanilla;
++      return isVanilla;
 +   }
 +
-+   /*
-+   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
-+      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.getSerializer in their custom Ingredients: " + this);
-+      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
++   public net.minecraftforge.common.crafting.ingredients.IIngredientSerializer<? extends Ingredient> serializer() {
++      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.codec in their custom Ingredients: " + getClass());
++      return net.minecraftforge.common.crafting.ingredients.IIngredientSerializer.VANILLA;
 +   }
-+   */
 +
     public static Ingredient fromValues(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
@@ -91,24 +90,11 @@
     public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
 -      return fromValues(p_43941_.<ItemStack>readList(FriendlyByteBuf::readItem).stream().map(Ingredient.ItemValue::new));
 +      var size = p_43941_.readVarInt();
-+      //if (size == -1) return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43941_.readResourceLocation(), p_43941_);
++      if (size == -1) return net.minecraftforge.common.ForgeHooks.ingredientFromNetwork(p_43941_);
 +      return fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
     }
  
     private static Codec<Ingredient> codec(boolean p_298496_) {
-@@ -185,6 +_,12 @@
-       }
-    }
- 
-+   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
-+   //Only public for internal use, so we can access a private field in here.
-+   public static Ingredient merge(Collection<Ingredient> parts) {
-+      return fromValues(parts.stream().flatMap(i -> Arrays.stream(i.values)));
-+   }
-+
-    public static record TagValue(TagKey<Item> tag) implements Ingredient.Value {
-       static final Codec<Ingredient.TagValue> CODEC = RecordCodecBuilder.create((p_300241_) -> {
-          return p_300241_.group(TagKey.codec(Registries.ITEM).fieldOf("tag").forGetter((p_301340_) -> {
 @@ -207,6 +_,9 @@
              list.add(new ItemStack(holder));
           }

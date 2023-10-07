@@ -8,7 +8,6 @@ package net.minecraftforge.common;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.function.Function;
@@ -34,8 +33,7 @@ import java.util.function.Supplier;
  * {@code create} methods <strong>can</strong> be defined as long as each
  * matches a constructor.
  */
-public interface IExtensibleEnum
-{
+public interface IExtensibleEnum {
     /**
      * Called by generated factory code to do any post-constructor setup required by
      * the enum. Should not be called manually.

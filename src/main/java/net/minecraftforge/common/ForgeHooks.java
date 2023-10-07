@@ -25,6 +25,7 @@ import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -34,6 +35,7 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 
+import io.netty.handler.codec.DecoderException;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -46,6 +48,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -55,6 +58,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.CrudeIncrementalIntIdentityHashBiMap;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
@@ -118,6 +122,7 @@ import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -856,7 +861,7 @@ public class ForgeHooks {
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null) {
             // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
+            var registry = (ForgeRegistry<EntityDataSerializer<?>>)ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 serializer = registry.getValue(id);
         }
@@ -867,7 +872,7 @@ public class ForgeHooks {
         int id = vanilla.getId(serializer);
         if (id < 0) {
             // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            ForgeRegistry<EntityDataSerializer<?>> registry = (ForgeRegistry<EntityDataSerializer<?>>) ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
+            var registry = (ForgeRegistry<EntityDataSerializer<?>>)ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 id = registry.getID(serializer);
         }
@@ -1312,5 +1317,45 @@ public class ForgeHooks {
         }
 
         return null;
+    }
+
+    @ApiStatus.Internal
+    public static Codec<Ingredient> enhanceIngredientCodec(Codec<Ingredient> vanilla) {
+        return ExtraCodecs.lazyInitializedCodec(() ->
+            ExtraCodecs.<Ingredient, Ingredient>either(
+                ForgeRegistries.INGREDIENT_SERIALIZERS.get().getCodec().dispatch(Ingredient::serializer, IIngredientSerializer::codec),
+                vanilla
+            )
+            .flatComapMap(
+                i -> i.left().isPresent() ? i.left().get() : i.right().get(),
+                i -> DataResult.success(i.isVanilla() ? Either.right(i) : Either.left(i))
+            )
+        );
+    }
+
+    @ApiStatus.Internal
+    public static <T extends Ingredient> boolean ingredientToNetwork(FriendlyByteBuf buffer, T ingredient) {
+        if (ingredient.isVanilla())
+            return true;
+
+        @SuppressWarnings("unchecked")
+        var serializer = (IIngredientSerializer<T>)ingredient.serializer();
+        var key = ForgeRegistries.INGREDIENT_SERIALIZERS.get().getKey(ingredient.serializer());
+        if (key == null)
+            throw new IllegalArgumentException("Tried to write unregistered Ingredient to network: " + ingredient);
+
+        buffer.writeVarInt(-1); // Our Marker
+        buffer.writeResourceLocation(key);
+        serializer.write(buffer, ingredient);
+        return false;
+    }
+
+    public static Ingredient ingredientFromNetwork(FriendlyByteBuf buffer) {
+        // We have already read our marker
+        var key = buffer.readResourceLocation();
+        var serializer = ForgeRegistries.INGREDIENT_SERIALIZERS.get().getValue(key);
+        if (serializer == null)
+            throw new DecoderException("Could not read ingredient of type: " + key);
+        return serializer.read(buffer);
     }
 }

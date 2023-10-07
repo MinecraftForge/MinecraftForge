@@ -22,6 +22,18 @@ import java.util.function.Function;
 
 public class RegistryBuilder<T>
 {
+    public static <T> RegistryBuilder<T> of() {
+        return new RegistryBuilder<T>();
+    }
+
+    public static <T> RegistryBuilder<T> of(String name) {
+        return of(new ResourceLocation(name));
+    }
+
+    public static <T> RegistryBuilder<T> of(ResourceLocation name) {
+        return new RegistryBuilder<T>().setName(name);
+    }
+
     private static final int MAX_ID = Integer.MAX_VALUE - 1;
 
     private ResourceLocation registryName;

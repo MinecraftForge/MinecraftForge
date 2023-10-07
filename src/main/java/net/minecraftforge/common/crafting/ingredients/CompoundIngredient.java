@@ -3,20 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting;
-/*
+package net.minecraftforge.common.crafting.ingredients;
+
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
@@ -28,43 +23,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /** Ingredient that matches if any of the child ingredients match */
-/*
-public class CompoundIngredient extends Ingredient {
+public class CompoundIngredient extends AbstractIngredient {
+    public static Ingredient of(Ingredient... children) {
+        if (children.length == 0)
+            throw new IllegalArgumentException("Cannot create a compound ingredient with no children, use Ingredient.of() to create an empty ingredient");
+
+        if (children.length == 1)
+            return children[0];
+
+        return new CompoundIngredient(Arrays.asList(children));
+    }
+
     private List<Ingredient> children;
     private ItemStack[] stacks;
     private IntList itemIds;
     private final boolean isSimple;
 
-    protected CompoundIngredient(List<Ingredient> children)
-    {
+    private CompoundIngredient(List<Ingredient> children) {
         this.children = Collections.unmodifiableList(children);
         this.isSimple = children.stream().allMatch(Ingredient::isSimple);
-    }
-
-    /** Creates a compound ingredient from the given list of ingredients */
-/*
-    public static Ingredient of(Ingredient... children)
-    {
-        // if 0 or 1 ingredient, can save effort
-        if (children.length == 0)
-            throw new IllegalArgumentException("Cannot create a compound ingredient with no children, use Ingredient.of() to create an empty ingredient");
-        if (children.length == 1)
-            return children[0];
-
-        // need to merge vanilla ingredients, as otherwise the JSON produced by this ingredient could be invalid
-        List<Ingredient> vanillaIngredients = new ArrayList<>();
-        List<Ingredient> allIngredients = new ArrayList<>();
-        for (Ingredient child : children) {
-            if (child.getSerializer() == VanillaIngredientSerializer.INSTANCE)
-                vanillaIngredients.add(child);
-            else
-                allIngredients.add(child);
-        }
-        if (!vanillaIngredients.isEmpty())
-            allIngredients.add(merge(vanillaIngredients));
-        if (allIngredients.size() == 1)
-            return allIngredients.get(0);
-        return new CompoundIngredient(allIngredients);
     }
 
     @Override
@@ -110,14 +87,42 @@ public class CompoundIngredient extends Ingredient {
         return isSimple;
     }
 
-    @NotNull
-    public Collection<Ingredient> getChildren() {
-        return this.children;
-    }
-
     @Override
     public boolean isEmpty() {
         return children.stream().allMatch(Ingredient::isEmpty);
     }
+
+    @Override
+    public IIngredientSerializer<? extends Ingredient> serializer() {
+        return SERIALIZER;
+    }
+
+    public static final Codec<CompoundIngredient> CODEC = RecordCodecBuilder.create(builder ->
+        builder.group(
+            Ingredient.CODEC_NONEMPTY.listOf().fieldOf("children").forGetter(i -> i.children)
+        ).apply(builder, CompoundIngredient::new)
+    );
+
+    public static final IIngredientSerializer<CompoundIngredient> SERIALIZER = new IIngredientSerializer<>() {
+        @Override
+        public Codec<CompoundIngredient> codec() {
+            return CODEC;
+        }
+
+        @Override
+        public void write(FriendlyByteBuf buffer, CompoundIngredient value) {
+            buffer.writeVarInt(value.children.size());
+            for (var child : value.children)
+                child.toNetwork(buffer);
+        }
+
+        @Override
+        public CompoundIngredient read(FriendlyByteBuf buffer) {
+            int size = buffer.readVarInt();
+            var children = new ArrayList<Ingredient>(size);
+            for (int x = 0; x < size; x++)
+                children.add(Ingredient.fromNetwork(buffer));
+            return new CompoundIngredient(children);
+        }
+    };
 }
-*/

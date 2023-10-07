@@ -437,7 +437,7 @@ public interface IForgeItem {
      * @param damage the new damage value
      */
     default void setDamage(ItemStack stack, int damage) {
-        stack.getOrCreateTag().putInt("Damage", Math.max(0, damage));
+        stack.getOrCreateTag().putInt(ItemStack.TAG_DAMAGE, Math.max(0, damage));
     }
 
     /**
