@@ -107,14 +107,14 @@ def extraTxts = [
     rootProject.tasks.createChangelog.outputFile
 ]
 
-task downloadVersionManifest(type: Download) {
+tasks.register('downloadVersionManifest', Download) {
     src 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
     dest file('build/versions/version_manifest.json')
     useETag 'all'
     onlyIfModified true
     quiet true
 }
-task downloadJson(type: Download, dependsOn: downloadVersionManifest) {
+tasks.register('downloadJson', Download) {
     inputs.file downloadVersionManifest.dest
     src { downloadVersionManifest.dest.json.versions.find{ it.id == MC_VERSION }.url }
     dest file("build/versions/${MC_VERSION}/version.json")
@@ -122,15 +122,21 @@ task downloadJson(type: Download, dependsOn: downloadVersionManifest) {
     onlyIfModified true
     quiet true
 }
-['client', 'server'].each { id ->
-    task "download${id.capitalize()}Raw"(type: Download, dependsOn: downloadJson) {
-        inputs.file downloadJson.dest
-        src { downloadJson.dest.json.downloads.get(id).url }
-        dest file("build/versions/${MC_VERSION}/${id}.jar")
-        useETag 'all'
-        onlyIfModified true
-        quiet true
-    }
+tasks.register('downloadClientRaw', Download) {
+	inputs.file downloadJson.dest
+	src { downloadJson.dest.json.downloads.client.url }
+	dest file("build/versions/${MC_VERSION}/client.jar")
+	useETag 'all'
+	onlyIfModified true
+	quiet true
+}
+tasks.register('downloadServerRaw', Download) {
+	inputs.file downloadJson.dest
+	src { downloadJson.dest.json.downloads.server.url }
+	dest file("build/versions/${MC_VERSION}/server.jar")
+	useETag 'all'
+	onlyIfModified true
+	quiet true
 }
 
 subprojects {
@@ -384,6 +390,11 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     def userdevRuns = prj.tasks.userdevConfig.runs
+	def ignoreList = ( //bsl uses filename.startsWith, so we have to use the project name, i add '-' for saftey's sake and not wanting to ignore things that modders add. But the whole system is really dumb/fragile.
+			prj.configurations.moduleonly.allDependencies.collect{ it.name }
+			+ ['client-extra', 'fmlcore', 'javafmllanguage', 'lowcodelanguage', 'mclanguage', prj.name]
+		).collect{ it + '-' }.sort().join(',')
+	
     for (def run : prj.patcher.runs + userdevRuns) {
         if (run.parents) continue // We already added this to the parent run config
         //run.property 'bsl.debug', 'true'
@@ -400,7 +411,7 @@ def sharedFmlonlyForge = { Project prj ->
 		run.client run.name.contains('client')
 
         // SecureJarHandler bootstrap values.
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,lowcodelanguage,mclanguage,${prj.name}-"
+        run.property 'ignoreList', ignoreList
         // FIXME: Without this jna doesn't work at runtime. Someone figure out why please?
         run.property 'mergeModules', 'jna-5.10.0.jar,jna-platform-5.10.0.jar'
         if (userdevRuns.contains(run)) {
