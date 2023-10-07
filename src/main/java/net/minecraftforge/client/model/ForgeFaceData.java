@@ -23,7 +23,7 @@ import net.minecraft.util.ExtraCodecs;
 /**
  * Holds extra data that may be injected into a face.<p>
  * Used by {@link ItemLayerModel}, {@link BlockElement} and {@link BlockElementFace}
- * 
+ *
  * @param color Color in ARGB format
  * @param blockLight Block Light for this face from 0-15 (inclusive)
  * @param skyLight Sky Light for this face from 0-15 (inclusive)
@@ -39,7 +39,7 @@ public record ForgeFaceData(int color, int blockLight, int skyLight, boolean amb
 
     public static final ForgeFaceData DEFAULT = new ForgeFaceData(0xFFFFFFFF, 0, 0, true, false);
 
-    public static final Codec<Integer> COLOR = new ExtraCodecs.EitherCodec<>(Codec.INT, Codec.STRING).xmap(
+    public static final Codec<Integer> COLOR = ExtraCodecs.either(Codec.INT, Codec.STRING).xmap(
             either -> either.map(Function.identity(), str -> (int) Long.parseLong(str, 16)),
             color -> Either.right(Integer.toHexString(color)));
 

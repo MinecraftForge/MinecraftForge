@@ -5,128 +5,25 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
-
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
 public class CraftingHelper {
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LogManager.getLogger();
-    @SuppressWarnings("unused")
-    private static final Marker CRAFTHELPER = MarkerManager.getMarker("CRAFTHELPER");
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    /* TODO: Custom Ingredients
-    private static final BiMap<ResourceLocation, IIngredientSerializer<?>> ingredients = HashBiMap.create();
-
-
-    public static <T extends Ingredient> IIngredientSerializer<T> register(ResourceLocation key, IIngredientSerializer<T> serializer) {
-        if (ingredients.containsKey(key))
-            throw new IllegalStateException("Duplicate recipe ingredient serializer: " + key);
-        if (ingredients.containsValue(serializer))
-            throw new IllegalStateException("Duplicate recipe ingredient serializer: " + key + " " + serializer);
-        ingredients.put(key, serializer);
-        return serializer;
-    }
-
-    @Nullable
-    public static ResourceLocation getID(IIngredientSerializer<?> serializer) {
-        return ingredients.inverse().get(serializer);
-    }
-
-    public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient) {
-        @SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
-        IIngredientSerializer<T> serializer = (IIngredientSerializer<T>)ingredient.getSerializer();
-        ResourceLocation key = ingredients.inverse().get(serializer);
-        if (key == null)
-            throw new IllegalArgumentException("Tried to serialize unregistered Ingredient: " + ingredient + " " + serializer);
-        if (serializer != VanillaIngredientSerializer.INSTANCE) {
-            buffer.writeVarInt(-1); //Marker to know there is a custom ingredient
-            buffer.writeResourceLocation(key);
-        }
-        serializer.write(buffer, ingredient);
-    }
-
-    public static Ingredient getIngredient(ResourceLocation type, FriendlyByteBuf buffer) {
-        IIngredientSerializer<?> serializer = ingredients.get(type);
-        if (serializer == null)
-            throw new IllegalArgumentException("Can not deserialize unknown Ingredient type: " + type);
-        return serializer.parse(buffer);
-    }
-
-    public static Ingredient getIngredient(JsonElement json, boolean allowEmpty) {
-        if (json == null || json.isJsonNull())
-            throw new JsonSyntaxException("Json cannot be null");
-
-        if (json.isJsonArray()) {
-            List<Ingredient> ingredients = Lists.newArrayList();
-            List<Ingredient> vanilla = Lists.newArrayList();
-            json.getAsJsonArray().forEach((ele) -> {
-                Ingredient ing = CraftingHelper.getIngredient(ele, allowEmpty);
-
-                if (ing.getClass() == Ingredient.class) //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
-                    vanilla.add(ing);
-                else
-                    ingredients.add(ing);
-            });
-
-            if (!vanilla.isEmpty())
-                ingredients.add(Ingredient.merge(vanilla));
-
-            if (ingredients.size() == 0) {
-                if (allowEmpty)
-                    return Ingredient.EMPTY;
-                throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
-            }
-
-            if (ingredients.size() == 1)
-                return ingredients.get(0);
-
-            return new CompoundIngredient(ingredients);
-        }
-
-        if (!json.isJsonObject())
-            throw new JsonSyntaxException("Expcted ingredient to be a object or array of objects");
-
-        JsonObject obj = (JsonObject)json;
-
-        String type = GsonHelper.getAsString(obj, "type", "minecraft:item");
-        if (type.isEmpty())
-            throw new JsonSyntaxException("Ingredient type can not be an empty string");
-
-        IIngredientSerializer<?> serializer = ingredients.get(new ResourceLocation(type));
-        if (serializer == null)
-            throw new JsonSyntaxException("Unknown ingredient type: " + type);
-
-        return serializer.parse(obj);
-    }
-    */
 
     public static ItemStack getItemStack(JsonObject json, boolean readNBT) {
         return getItemStack(json, readNBT, false);

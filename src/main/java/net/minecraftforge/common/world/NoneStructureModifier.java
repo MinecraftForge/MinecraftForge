@@ -8,22 +8,21 @@ package net.minecraftforge.common.world;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Builder;
 
-public class NoneStructureModifier implements StructureModifier
-{
+/**
+ * Noop structure modifier. Can be used in a structure modifier json with "type": "forge:none".
+ * intended for datapack makers who want to disable a structure modifier
+ */
+public class NoneStructureModifier implements StructureModifier {
     public static final NoneStructureModifier INSTANCE = new NoneStructureModifier();
+    public static final Codec<NoneStructureModifier> CODEC = Codec.unit(NoneStructureModifier.INSTANCE);
 
     @Override
-    public void modify(Holder<Structure> structure, Phase phase, Builder builder)
-    {
-        // NOOP - intended for datapack makers who want to disable a structure modifier
-    }
+    public void modify(Holder<Structure> structure, Phase phase, Builder builder) {}
 
     @Override
-    public Codec<? extends StructureModifier> codec()
-    {
-        return ForgeMod.NONE_STRUCTURE_MODIFIER_TYPE.get();
+    public Codec<? extends StructureModifier> codec() {
+        return CODEC;
     }
 }

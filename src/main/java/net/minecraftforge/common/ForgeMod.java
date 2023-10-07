@@ -13,6 +13,7 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
@@ -31,15 +32,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
-import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
-import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.core.RegistryCodecs;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
@@ -93,6 +88,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
@@ -104,6 +100,12 @@ import net.minecraftforge.common.crafting.conditions.NotCondition;
 import net.minecraftforge.common.crafting.conditions.OrCondition;
 import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
 import net.minecraftforge.common.crafting.conditions.TrueCondition;
+import net.minecraftforge.common.crafting.ingredients.CompoundIngredient;
+import net.minecraftforge.common.crafting.ingredients.DifferenceIngredient;
+import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftforge.common.crafting.ingredients.IntersectionIngredient;
+import net.minecraftforge.common.crafting.ingredients.PartialNBTIngredient;
+import net.minecraftforge.common.crafting.ingredients.StrictNBTIngredient;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
@@ -112,15 +114,12 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Mod("forge")
@@ -129,20 +128,24 @@ public class ForgeMod {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
 
-    private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(ForgeRegistries.Keys.ATTRIBUTES, "forge");
-    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(Registries.COMMAND_ARGUMENT_TYPE, "forge");
-    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "forge");
-    private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, "forge");
-    private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = DeferredRegister.create(ForgeRegistries.Keys.HOLDER_SET_TYPES, "forge");
+    private static final List<DeferredRegister<?>> registries = new ArrayList<>();
+    private static <T> DeferredRegister<T> deferred(ResourceKey<Registry<T>> key) {
+        return deferred(key, "forge");
+    }
+    private static <T> DeferredRegister<T> deferred(ResourceKey<Registry<T>> key, String modid) {
+        var ret = DeferredRegister.create(key, modid);
+        registries.add(ret);
+        return ret;
+    }
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
-    private static final RegistryObject<EnumArgument.Info> ENUM_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("enum", () ->
-            ArgumentTypeInfos.registerByClass(EnumArgument.class, new EnumArgument.Info()));
-    @SuppressWarnings("unused")
-    private static final RegistryObject<SingletonArgumentInfo<ModIdArgument>> MODID_COMMAND_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("modid", () ->
-            ArgumentTypeInfos.registerByClass(ModIdArgument.class,
-                    SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument)));
+    private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = deferred(Registries.COMMAND_ARGUMENT_TYPE);
+    static {
+        @SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+        var v = COMMAND_ARGUMENT_TYPES.register("enum", () -> ArgumentTypeInfos.registerByClass(EnumArgument.class, new EnumArgument.Info()));
+        COMMAND_ARGUMENT_TYPES.register("modid", () -> ArgumentTypeInfos.registerByClass(ModIdArgument.class, SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument)));
+    }
 
+    private static final DeferredRegister<Attribute> ATTRIBUTES = deferred(ForgeRegistries.Keys.ATTRIBUTES);
     public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
     public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.name_tag_distance", 64.0D, 0.0D, 64.0).setSyncable(true));
     public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).setSyncable(true));
@@ -169,64 +172,22 @@ public class ForgeMod {
      */
     public static final RegistryObject<Attribute> STEP_HEIGHT_ADDITION = ATTRIBUTES.register("step_height_addition", () -> new RangedAttribute("forge.step_height", 0.0D, -512.0D, 512.0D).setSyncable(true));
 
-    /**
-     * Noop biome modifier. Can be used in a biome modifier json with "type": "forge:none".
-     */
-    public static final RegistryObject<Codec<NoneBiomeModifier>> NONE_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneBiomeModifier.INSTANCE));
 
-    /**
-     * Stock biome modifier for adding features to biomes.
-     */
-    public static final RegistryObject<Codec<AddFeaturesBiomeModifier>> ADD_FEATURES_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_features", () ->
-        RecordCodecBuilder.create(builder -> builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddFeaturesBiomeModifier::biomes),
-                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(AddFeaturesBiomeModifier::features),
-                Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
-            ).apply(builder, AddFeaturesBiomeModifier::new))
-        );
+    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS);
+    static {
+        BIOME_MODIFIER_SERIALIZERS.register("none", () -> NoneBiomeModifier.CODEC);
+        BIOME_MODIFIER_SERIALIZERS.register("add_features", () -> AddFeaturesBiomeModifier.CODEC);
+        BIOME_MODIFIER_SERIALIZERS.register("remove_features", () -> RemoveFeaturesBiomeModifier.CODEC);
+        BIOME_MODIFIER_SERIALIZERS.register("add_spawns", () -> AddSpawnsBiomeModifier.CODEC);
+        BIOME_MODIFIER_SERIALIZERS.register("remove_spawns", () -> RemoveSpawnsBiomeModifier.CODEC);
+    }
 
-    /**
-     * Stock biome modifier for removing features from biomes.
-     */
-    public static final RegistryObject<Codec<RemoveFeaturesBiomeModifier>> REMOVE_FEATURES_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("remove_features", () ->
-        RecordCodecBuilder.create(builder -> builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveFeaturesBiomeModifier::biomes),
-                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(RemoveFeaturesBiomeModifier::features),
-                new ExtraCodecs.EitherCodec<List<Decoration>, Decoration>(Decoration.CODEC.listOf(), Decoration.CODEC).<Set<Decoration>>xmap(
-                        either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
-                        set -> set.size() == 1 ? Either.right(set.toArray(Decoration[]::new)[0]) : Either.left(List.copyOf(set))
-                    ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
-            ).apply(builder, RemoveFeaturesBiomeModifier::new))
-        );
+    private static final DeferredRegister<Codec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS);
+    static {
+        STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> NoneStructureModifier.CODEC);
+    }
 
-    /**
-     * Stock biome modifier for adding mob spawns to biomes.
-     */
-    public static final RegistryObject<Codec<AddSpawnsBiomeModifier>> ADD_SPAWNS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("add_spawns", () ->
-        RecordCodecBuilder.create(builder -> builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnsBiomeModifier::biomes),
-                // Allow either a list or single spawner, attempting to decode the list format first.
-                // Uses the better EitherCodec that logs both errors if both formats fail to parse.
-                new ExtraCodecs.EitherCodec<>(SpawnerData.CODEC.listOf(), SpawnerData.CODEC).xmap(
-                        either -> either.map(Function.identity(), List::of), // convert list/singleton to list when decoding
-                        list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list) // convert list to singleton/list when encoding
-                    ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
-            ).apply(builder, AddSpawnsBiomeModifier::new))
-        );
-
-    /**
-     * Stock biome modifier for removing mob spawns from biomes.
-     */
-    public static final RegistryObject<Codec<RemoveSpawnsBiomeModifier>> REMOVE_SPAWNS_BIOME_MODIFIER_TYPE = BIOME_MODIFIER_SERIALIZERS.register("remove_spawns", () ->
-        RecordCodecBuilder.create(builder -> builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveSpawnsBiomeModifier::biomes),
-                RegistryCodecs.homogeneousList(ForgeRegistries.Keys.ENTITY_TYPES).fieldOf("entity_types").forGetter(RemoveSpawnsBiomeModifier::entityTypes)
-            ).apply(builder, RemoveSpawnsBiomeModifier::new))
-        );
-    /**
-     * Noop structure modifier. Can be used in a structure modifier json with "type": "forge:none".
-     */
-    public static final RegistryObject<Codec<NoneStructureModifier>> NONE_STRUCTURE_MODIFIER_TYPE = STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> Codec.unit(NoneStructureModifier.INSTANCE));
+    private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = deferred(ForgeRegistries.Keys.HOLDER_SET_TYPES);
 
     /**
      * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with {@code { "type": "forge:any" }}
@@ -249,7 +210,7 @@ public class ForgeMod {
      */
     public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
 
-    private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
+    private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = deferred(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
 
     public static final RegistryObject<FluidType> EMPTY_TYPE = VANILLA_FLUID_TYPES.register("empty", () ->
             new FluidType(FluidType.Properties.create()
@@ -374,13 +335,13 @@ public class ForgeMod {
                 }
             });
 
-    private static final DeferredRegister<LootItemConditionType> LOOT_CONDITION_TYPES = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, "forge");
+    private static final DeferredRegister<LootItemConditionType> LOOT_CONDITION_TYPES = deferred(Registries.LOOT_CONDITION_TYPE);
     static {
         LOOT_CONDITION_TYPES.register("loot_table_id", () -> LootTableIdCondition.TYPE);
         LOOT_CONDITION_TYPES.register("can_tool_perform_action", () -> CanToolPerformAction.TYPE);
     }
 
-    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.CONDITION_SERIALIZERS, "forge");
+    private static final DeferredRegister<Codec<? extends ICondition>> CONDITION_SERIALIZERS = deferred(ForgeRegistries.Keys.CONDITION_SERIALIZERS);
     static {
         CONDITION_SERIALIZERS.register("and", () -> AndCondition.CODEC);
         CONDITION_SERIALIZERS.register("false", () -> FalseCondition.CODEC);
@@ -392,9 +353,18 @@ public class ForgeMod {
         CONDITION_SERIALIZERS.register("tag_empty", () -> TagEmptyCondition.CODEC);
     }
 
-    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.RECIPE_SERIALIZERS, "forge");
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = deferred(ForgeRegistries.Keys.RECIPE_SERIALIZERS);
     static {
         RECIPE_SERIALIZERS.register("conditional", () -> ConditionalRecipe.SERIALZIER);
+    }
+
+    private static final DeferredRegister<IIngredientSerializer<?>> INGREDIENT_SERIALIZERS = deferred(ForgeRegistries.Keys.INGREDIENT_SERIALIZERS);
+    static {
+        INGREDIENT_SERIALIZERS.register("compound", () -> CompoundIngredient.SERIALIZER);
+        INGREDIENT_SERIALIZERS.register("nbt", () -> StrictNBTIngredient.SERIALIZER);
+        INGREDIENT_SERIALIZERS.register("partial_nbt", () -> PartialNBTIngredient.SERIALIZER);
+        INGREDIENT_SERIALIZERS.register("difference", () -> DifferenceIngredient.SERIALIZER);
+        INGREDIENT_SERIALIZERS.register("intersection", () -> IntersectionIngredient.SERIALIZER);
     }
 
 
@@ -444,17 +414,9 @@ public class ForgeMod {
         modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
-        modEventBus.addListener(this::registerRecipeSerializers);
         modEventBus.register(this);
-        ATTRIBUTES.register(modEventBus);
-        COMMAND_ARGUMENT_TYPES.register(modEventBus);
-        BIOME_MODIFIER_SERIALIZERS.register(modEventBus);
-        STRUCTURE_MODIFIER_SERIALIZERS.register(modEventBus);
-        HOLDER_SET_TYPES.register(modEventBus);
-        VANILLA_FLUID_TYPES.register(modEventBus);
-        LOOT_CONDITION_TYPES.register(modEventBus);
-        CONDITION_SERIALIZERS.register(modEventBus);
-        RECIPE_SERIALIZERS.register(modEventBus);
+        registries.forEach(r -> r.register(modEventBus));
+
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -574,22 +536,6 @@ public class ForgeMod {
             Arrays.stream(ItemDisplayContext.values())
                 .filter(Predicate.not(ItemDisplayContext::isModded))
                 .forEach(ctx -> forgeRegistry.register(ctx.getId(), new ResourceLocation("minecraft", ctx.getSerializedName()), ctx));
-        }
-    }
-
-    public void registerRecipeSerializers(RegisterEvent event) {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-
-            /*
-            CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "nbt"), StrictNBTIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "partial_nbt"), PartialNBTIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "difference"), DifferenceIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("forge", "intersection"), IntersectionIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
-            */
-
-            //event.register(ForgeRegistries.Keys.RECIPE_SERIALIZERS, new ResourceLocation("forge", "conditional"), ConditionalRecipe.Serializer::new);
         }
     }
 

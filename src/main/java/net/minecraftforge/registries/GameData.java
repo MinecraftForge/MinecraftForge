@@ -50,11 +50,8 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -62,7 +59,6 @@ import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.util.EnhancedRuntimeException;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.registries.holdersets.HolderSetType;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -154,29 +150,13 @@ public class GameData
         return makeRegistry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS).disableSaving().disableSync();
     }
 
-    static RegistryBuilder<Codec<? extends BiomeModifier>> getBiomeModifierSerializersRegistryBuilder()
-    {
-        return new RegistryBuilder<Codec<? extends BiomeModifier>>().disableSaving().disableSync();
-    }
-
-    static RegistryBuilder<Codec<? extends StructureModifier>> getStructureModifierSerializersRegistryBuilder()
-    {
-        return new RegistryBuilder<Codec<? extends StructureModifier>>().disableSaving().disableSync();
-    }
-
     static RegistryBuilder<FluidType> getFluidTypeRegistryBuilder()
     {
         return makeRegistry(Keys.FLUID_TYPES).disableSaving();
     }
 
-    static RegistryBuilder<HolderSetType> getHolderSetTypeRegistryBuilder()
-    {
-        return new RegistryBuilder<HolderSetType>().disableSaving().disableSync();
-    }
-
-    static RegistryBuilder<Codec<? extends ICondition>> getConditionCodecRegistryBuilder()
-    {
-        return new RegistryBuilder<Codec<? extends ICondition>>().disableSaving().disableSync();
+    static <T> RegistryBuilder<T> makeUnsavedAndUnsynced() {
+        return RegistryBuilder.<T>of().disableSaving().disableSync();
     }
 
     static RegistryBuilder<ItemDisplayContext> getItemDisplayContextRegistryBuilder()

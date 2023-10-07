@@ -12,7 +12,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 
 @FunctionalInterface
-public interface HolderSetType
-{
-    <T> Codec<? extends ICustomHolderSet<T>> makeCodec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList); 
+public interface HolderSetType {
+    <T> Codec<? extends ICustomHolderSet<T>> makeCodec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList);
 }
