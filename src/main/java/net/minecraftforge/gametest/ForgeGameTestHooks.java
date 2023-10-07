@@ -14,6 +14,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
 import org.apache.logging.log4j.LogManager;
@@ -153,8 +154,8 @@ public class ForgeGameTestHooks {
 
     private static String getDefaultBatch() {
         try {
-            return (String)GameTest.class.getDeclaredMethod("batch").getDefaultValue();
-        } catch (NoSuchMethodException | SecurityException e) {
+            return (String)ObfuscationReflectionHelper.findMethod(GameTest.class, "m_177043" + '_').getDefaultValue();
+        } catch (Exception e) {
             e.printStackTrace(); // Should never happen, but just in case.
             return "defaultBatch";
         }

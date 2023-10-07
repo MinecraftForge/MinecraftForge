@@ -285,9 +285,9 @@ def sharedDeps = {
     moduleonly("org.ow2.asm:asm-analysis:${ASM_VERSION}")
     moduleonly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
     moduleonly("net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}")
-    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") {
-		transitive = false
-	}
+    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") { transitive = false }
+    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") { transitive = false } // Need by jimfs
+	moduleonly("com.google.guava:failureaccess:1.0.1"){ transitive = false} // Needed by guava
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
