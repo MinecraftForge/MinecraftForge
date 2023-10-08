@@ -1,0 +1,51 @@
+plugins {
+    id 'org.cadixdev.licenser'
+    id 'java-library'
+	id 'eclipse'
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.14,6.2)'
+}
+
+evaluationDependsOn(':mcp')
+
+dependencies {
+	implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
+}
+
+patcher {
+	parent = project(':mcp')
+	mcVersion = MC_VERSION
+	patchedSrc = file('src/main/java')
+
+	mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
+
+	runs {
+		clean_client {
+			client true
+			taskName 'clean_client'
+			ideaModule "${rootProject.name}.${project.name}.main"
+
+			main 'net.minecraft.client.main.Main'
+			workingDirectory project.file('run/client')
+
+			args '--gameDir', '.'
+			args '--version', MC_VERSION
+			args '--assetsDir', downloadAssets.output
+			args '--assetIndex', '{asset_index}'
+			args '--accessToken', '0'
+		}
+
+		clean_server {
+			client false
+			taskName 'clean_server'
+			ideaModule "${rootProject.name}.${project.name}.main"
+
+			main 'net.minecraft.server.Main'
+			workingDirectory project.file('run/server')
+		}
+	}
+}
+eclipse.classpath.file.whenMerged {
+	// Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
+	def src = entries.find { it.path == 'src/main/java' }
+	src.entryAttributes['ignore_optional_problems'] = 'true'
+}

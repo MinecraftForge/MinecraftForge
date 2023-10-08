@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:diamond_block"
+        }
+      ],
+      "forge:condition": {
+        "type": "forge:false",
+        "value": {}
+      },
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:golden_apple"
+        }
+      ],
+      "forge:condition": {
+        "type": "forge:true",
+        "value": {}
+      },
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "conditional_loot_test:blocks/test"
+}

@@ -30,9 +30,13 @@ include 'lowcodelanguage'
 include 'fmlearlydisplay'
 
 include ':mcp'
-include ':clean'
 include ':forge'
 
 project(":mcp").projectDir = file("projects/mcp")
-project(":clean").projectDir = file("projects/clean")
 project(":forge").projectDir = file("projects/forge")
+
+if (!System.env.TEAMCITY_VERSION) {
+	include ':clean'
+	project(':clean').projectDir = file('projects/clean')
+	project(':clean').buildFileName = '../../build_clean.gradle'
+}

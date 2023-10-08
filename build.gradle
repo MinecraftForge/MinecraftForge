@@ -4,7 +4,6 @@ import net.minecraftforge.forge.tasks.checks.CheckExcs
 import net.minecraftforge.forge.tasks.checks.CheckPatches
 import net.minecraftforge.forge.tasks.checks.CheckSAS
 import net.minecraftforge.forge.tasks.checks.CheckTask
-import net.minecraftforge.forge.tasks.FixPatchImports
 
 import java.nio.file.Files
 import java.util.Date
@@ -28,8 +27,8 @@ plugins {
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.13,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.13,6.2)' apply false
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.14,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0.14,6.2)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -115,6 +114,7 @@ tasks.register('downloadVersionManifest', Download) {
     quiet true
 }
 tasks.register('downloadJson', Download) {
+	dependsOn downloadVersionManifest
     inputs.file downloadVersionManifest.dest
     src { downloadVersionManifest.dest.json.versions.find{ it.id == MC_VERSION }.url }
     dest file("build/versions/${MC_VERSION}/version.json")
@@ -123,6 +123,7 @@ tasks.register('downloadJson', Download) {
     quiet true
 }
 tasks.register('downloadClientRaw', Download) {
+	dependsOn downloadJson
 	inputs.file downloadJson.dest
 	src { downloadJson.dest.json.downloads.client.url }
 	dest file("build/versions/${MC_VERSION}/client.jar")
@@ -131,6 +132,7 @@ tasks.register('downloadClientRaw', Download) {
 	quiet true
 }
 tasks.register('downloadServerRaw', Download) {
+	dependsOn downloadJson
 	inputs.file downloadJson.dest
 	src { downloadJson.dest.json.downloads.server.url }
 	dest file("build/versions/${MC_VERSION}/server.jar")
@@ -147,14 +149,6 @@ subprojects {
     group = 'net.minecraftforge'
     version = VERSION
     //println(name + ' Version: ' + version)
-
-    ext {
-        isNonStable = { String version ->
-            def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { ver -> version.toUpperCase().contains(ver) }
-            def regex = /^[0-9,.v-]+(-r)?$/
-            return !stableKeyword && !(version ==~ regex)
-        }
-    }
 
     repositories {
         mavenLocal()
@@ -233,55 +227,6 @@ project(':mcp') {
     }
 }
 
-project(':clean') {
-    evaluationDependsOn(':mcp')
-    apply plugin: 'net.minecraftforge.gradle.patcher'
-    tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
-
-    dependencies {
-        implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
-    }
-
-    patcher {
-        parent = project(':mcp')
-        mcVersion = MC_VERSION
-        patchedSrc = file('src/main/java')
-
-        mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
-
-        runs {
-            clean_client {
-                client true
-                taskName 'clean_client'
-                ideaModule "${rootProject.name}.${project.name}.main"
-
-                main 'net.minecraft.client.main.Main'
-                workingDirectory project.file('run/client')
-
-                args '--gameDir', '.'
-                args '--version', MC_VERSION
-                args '--assetsDir', downloadAssets.output
-                args '--assetIndex', '{asset_index}'
-                args '--accessToken', '0'
-            }
-
-            clean_server {
-                client false
-                taskName 'clean_server'
-                ideaModule "${rootProject.name}.${project.name}.main"
-
-                main 'net.minecraft.server.Main'
-                workingDirectory project.file('run/server')
-            }
-        }
-    }
-    eclipse.classpath.file.whenMerged {
-        // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
-        def src = entries.find { it.path == 'src/main/java' }
-        src.entryAttributes['ignore_optional_problems'] = 'true'
-    }
-}
-
 def sharedDeps = {
     moduleonly("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
     moduleonly("org.ow2.asm:asm:${ASM_VERSION}")
@@ -291,9 +236,9 @@ def sharedDeps = {
     moduleonly("org.ow2.asm:asm-analysis:${ASM_VERSION}")
     moduleonly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
     moduleonly("net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}")
-    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}") { transitive = false }
-    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") { transitive = false } // Need by jimfs
-	moduleonly("com.google.guava:failureaccess:1.0.1"){ transitive = false} // Needed by guava
+    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}")
+    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") // Need by jimfs
+	moduleonly("com.google.guava:failureaccess:1.0.1")    // Needed by guava
 
     installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
     installer "org.ow2.asm:asm:${ASM_VERSION}"
@@ -449,7 +394,7 @@ def sharedFmlonlyForge = { Project prj ->
 		}
     }
 
-    def MODULE_PATH = Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
+    def MODULE_PATH = Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}.sort()
     def tokens = [
             TASK:          'forge_server',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
@@ -457,7 +402,7 @@ def sharedFmlonlyForge = { Project prj ->
             MC_VERSION:    MC_VERSION,
             MCP_VERSION:   MCP_VERSION,
             FORGE_GROUP:   prj.group,
-            IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
+            IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.sort().join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
 
@@ -501,7 +446,7 @@ def sharedFmlonlyForge = { Project prj ->
 }
 
 project(':forge') {
-    evaluationDependsOn(':clean')
+    evaluationDependsOn(':mcp')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
@@ -571,11 +516,9 @@ project(':forge') {
     }
 
     configurations {
-        installer {
-            // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-            transitive = false
-        }
-        moduleonly
+        // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
+        installer { transitive = false }
+        moduleonly  { transitive = false }
         api.extendsFrom(installer)
     }
 
@@ -596,7 +539,9 @@ project(':forge') {
 
     patcher {
         excs.from file("$rootDir/src/main/resources/forge.exc")
-        parent = project(':clean')
+        parent = project(':mcp')
+		mcVersion = MC_VERSION
+		mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
         srgPatches = false
@@ -902,11 +847,6 @@ project(':forge') {
                 'minecraft/net/minecraft/client/renderer/ViewArea.java.patch',
                 'minecraft/net/minecraft/data/models/blockstates/Variant.java.patch',
         ]
-    }
-
-    tasks.register('fixPatchImports', FixPatchImports) {
-        clean.set(rootProject.file('projects/clean/src/main/java'))
-        patched.set(rootProject.file('projects/forge/src/main/java'))
     }
 
     genPatches {
@@ -1420,18 +1360,16 @@ project(':forge') {
         publish.dependsOn(':forge:checkJarCompatibility')
 }
 
-//evaluationDependsOnChildren()
-task setup() {  //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
-    dependsOn ':clean:extractMapped'
+tasks.register('setup') {
     dependsOn ':forge:extractMapped'
+	if (findProject(':clean'))
+		dependsOn ':clean:extractMapped'
 }
 
-task doChecks {
+tasks.register('doChecks') {
     dependsOn ':forge:checkJarCompatibility'
     dependsOn ':forge:publish'
 }
-
-project.gradle.startParameter.excludedTaskNames.add(':clean:genPatches')
 
 if (System.env.TEAMCITY_VERSION) {
     //Only setup the CI environment if and only if the environment variables are set.
