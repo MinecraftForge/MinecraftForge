@@ -8,50 +8,44 @@ package net.minecraftforge.gametest;
 import net.minecraft.SharedConstants;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestRegistry;
-import net.minecraft.gametest.framework.TestFunction;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Internal class used to glue mods into the game test framework.
- * Modders should use the supplied annotations and {@link RegisterGameTestsEvent}
- */
-@ApiStatus.Internal
-public class ForgeGameTestHooks {
+public class ForgeGameTestHooks
+{
     private static boolean registeredGametests = false;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type GAME_TEST_HOLDER = Type.getType(GameTestHolder.class);
-    private static final String DEFAULT_BATCH = getDefaultBatch();
 
-    public static boolean isGametestEnabled() {
+    public static boolean isGametestEnabled()
+    {
         return !FMLLoader.isProduction() && (SharedConstants.IS_RUNNING_IN_IDE || isGametestServer() || Boolean.getBoolean("forge.enableGameTest"));
     }
 
-    public static boolean isGametestServer() {
+    public static boolean isGametestServer()
+    {
         return !FMLLoader.isProduction() && Boolean.getBoolean("forge.gameTestServer");
     }
 
     @SuppressWarnings("deprecation")
-    public static void registerGametests() {
-        if (!registeredGametests && isGametestEnabled() && ModLoader.isLoadingStateValid()) {
+    public static void registerGametests()
+    {
+        if (!registeredGametests && isGametestEnabled() && ModLoader.isLoadingStateValid())
+        {
             Set<String> enabledNamespaces = getEnabledNamespaces();
             LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
 
@@ -61,12 +55,13 @@ public class ForgeGameTestHooks {
             ModLoader.get().postEvent(event);
 
             ModList.get().getAllScanData().stream()
-                .map(ModFileScanData::getAnnotations)
-                .flatMap(Collection::stream)
-                .filter(a -> GAME_TEST_HOLDER.equals(a.annotationType()))
-                .forEach(a -> addGameTestMethods(a, gameTestMethods));
+                    .map(ModFileScanData::getAnnotations)
+                    .flatMap(Collection::stream)
+                    .filter(a -> GAME_TEST_HOLDER.equals(a.annotationType()))
+                    .forEach(a -> addGameTestMethods(a, gameTestMethods));
 
-            for (Method gameTestMethod : gameTestMethods) {
+            for (Method gameTestMethod : gameTestMethods)
+            {
                 GameTestRegistry.register(gameTestMethod, enabledNamespaces);
             }
 
@@ -74,118 +69,61 @@ public class ForgeGameTestHooks {
         }
     }
 
-    private static Set<String> getEnabledNamespaces() {
+    private static Set<String> getEnabledNamespaces()
+    {
         String enabledNamespacesStr = System.getProperty("forge.enabledGameTestNamespaces");
         if (enabledNamespacesStr == null)
+        {
             return Set.of();
+        }
 
         return Arrays.stream(enabledNamespacesStr.split(",")).filter(s -> !s.isBlank()).collect(Collectors.toUnmodifiableSet());
     }
 
-    private static void addGameTestMethods(AnnotationData annotationData, Set<Method> gameTestMethods) {
-        try {
+    private static void addGameTestMethods(AnnotationData annotationData, Set<Method> gameTestMethods)
+    {
+        try
+        {
             Class<?> clazz = Class.forName(annotationData.clazz().getClassName(), true, ForgeGameTestHooks.class.getClassLoader());
 
             gameTestMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e)
+        {
             // Should not be possible
             throw new RuntimeException(e);
         }
     }
 
-    public static String getTestName(Method method, GameTest meta) {
-        var name = method.getName().toLowerCase(Locale.ENGLISH);
-        return getPrefixed(method, name);
-    }
+    public static String getTemplateNamespace(Method method)
+    {
+        GameTest gameTest = method.getAnnotation(GameTest.class);
 
-    private static String getPrefixed(Method method, String name) {
-        var prefix = getPrefix(method);
-        return prefix == null ? name : prefix + '.' + name;
-    }
-
-    @Nullable
-    private static String getPrefix(Method method) {
-        var cls = method.getDeclaringClass();
-        var shouldPrefix = !method.isAnnotationPresent(GameTestDontPrefix.class) &&
-                           !cls.isAnnotationPresent(GameTestDontPrefix.class);
-        if (!shouldPrefix)
-            return null;
-
-        var prefix = cls.getAnnotation(GameTestPrefix.class);
-        if (prefix != null)
-            return prefix.value();
-
-        var holder = cls.getAnnotation(GameTestHolder.class);
-        if (holder != null && !holder.value().isEmpty())
-            return holder.value();
-
-        var mod = method.getDeclaringClass().getAnnotation(Mod.class);
-        if (mod != null)
-            return mod.value();
-
-        return cls.getSimpleName().toLowerCase(Locale.ENGLISH);
-    }
-
-    public static String getTestTemplate(Method method, GameTest meta, String testName) {
-        // If we have a ':' assume we specified the exact template path
-        if (meta.template().indexOf(':') != -1)
-            return meta.template();
-
-        String template = null;
-
-        if (meta.template().isEmpty())
-            template = testName;
-        else
-            template = getPrefixed(method, meta.template());
-
-        var cls = method.getDeclaringClass();
-
-        var holder = cls.getAnnotation(GameTestHolder.class);
-        if (holder != null && !holder.namespace().isEmpty())
-            return holder.namespace() + ':' + template;
-
-        var mod = cls.getAnnotation(Mod.class);
-        if (mod != null)
-            return mod.value() + ':' + template;
-
-        return template;
-    }
-
-    private static String getDefaultBatch() {
-        try {
-            return (String)GameTest.class.getDeclaredMethod("batch").getDefaultValue();
-        } catch (NoSuchMethodException | SecurityException e) {
-            e.printStackTrace(); // Should never happen, but just in case.
-            return "defaultBatch";
-        }
-    }
-
-    public static String getTestBatch(Method method, GameTest gametest) {
-        var batch = gametest.batch();
-
-        if (DEFAULT_BATCH.equals(batch)) {
-            var prefix = getPrefix(method);
-            return prefix == null ? batch : prefix;
+        if (gameTest != null && !gameTest.templateNamespace().isEmpty())
+        {
+            return gameTest.templateNamespace();
         }
 
-        return getPrefixed(method, batch.toLowerCase(Locale.ENGLISH));
+        GameTestHolder gameTestHolder = method.getDeclaringClass().getAnnotation(GameTestHolder.class);
+
+        if (gameTestHolder != null)
+        {
+            return gameTestHolder.value();
+        }
+
+        return "minecraft";
     }
 
-    public static void addTest(Collection<TestFunction> functions, Set<String> classes, Set<String> filters, TestFunction func) {
-        boolean allowed = filters.isEmpty() || filters.stream().anyMatch(f -> f.equals(func.getBatchName()) || func.getBatchName().startsWith(f + '.'));
-        if (!allowed)
-            return;
+    public static boolean prefixGameTestTemplate(Method method)
+    {
+        PrefixGameTestTemplate annotation = method.getAnnotation(PrefixGameTestTemplate.class);
 
-        functions.add(func);
-
-        var batch = func.getBatchName();
-        classes.add(batch);
-
-        int idx = batch.indexOf('.');
-        while (idx != -1) {
-            batch = batch.substring(0, idx);
-            idx = batch.indexOf('.');
-            classes.add(batch);
+        if (annotation == null)
+        {
+            annotation = method.getDeclaringClass().getAnnotation(PrefixGameTestTemplate.class);
         }
+
+        // The vanilla game test system prefixes the classname by default, so we preserve that behavior here.
+        return annotation == null || annotation.value();
     }
 }

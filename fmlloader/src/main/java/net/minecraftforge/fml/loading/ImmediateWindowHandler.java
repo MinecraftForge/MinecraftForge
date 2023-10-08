@@ -23,7 +23,7 @@ public class ImmediateWindowHandler {
 
     private static ProgressMeter earlyProgress;
     public static void load(final String launchTarget, final String[] arguments) {
-        if (!List.of("forgeclient", "forgeclientuserdev", "forgeclientdev").contains(launchTarget)) {
+        if (!launchTarget.contains("client")) {
             provider = new DummyProvider();
             LOGGER.info("ImmediateWindowProvider not loading because launch target is {}", launchTarget);
         } else if (!FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_CONTROL)) {
