@@ -28,7 +28,7 @@
 -      if (this.item.canBeDepleted()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class, true);
++      super(true);
 +      this.capNBT = p_41606_;
 +      this.item = p_41604_.asItem();
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.asItem());
@@ -41,13 +41,13 @@
     }
  
     private ItemStack(@Nullable Void p_282703_) {
-+      super(ItemStack.class, true);
++      super(true);
        this.item = null;
 +      this.delegate = null;
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
++      super(true);
 +      this.capNBT = p_41608_.contains("ForgeCaps") ? p_41608_.getCompound("ForgeCaps") : null;
 +      Item rawItem =
        this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
@@ -248,7 +248,7 @@
              return p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -945,12 +_,31 @@
+@@ -945,12 +_,32 @@
        this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
     }
  
@@ -274,6 +274,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
++         setClassType(getItem().getClass());
 +         this.gatherCapabilities(() -> item.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }

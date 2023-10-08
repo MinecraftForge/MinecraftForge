@@ -21,6 +21,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
@@ -28,26 +29,31 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
-public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
-    private Entity self() {
-        return (Entity)this;
-    }
+public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
+{
+    private Entity self() { return (Entity) this; }
 
-    default void deserializeNBT(CompoundTag nbt) {
+    default void deserializeNBT(CompoundTag nbt)
+    {
         self().load(nbt);
     }
 
-    default CompoundTag serializeNBT() {
-        var ret = new CompoundTag();
-        var id = self().getEncodeId();
+    default CompoundTag serializeNBT()
+    {
+        CompoundTag ret = new CompoundTag();
+        String id = self().getEncodeId();
         if (id != null)
+        {
             ret.putString("id", self().getEncodeId());
+        }
         return self().saveWithoutId(ret);
     }
 
@@ -57,6 +63,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
     @Nullable
     Collection<ItemEntity> captureDrops();
     Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> captureDrops);
+
 
     /**
      * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -69,7 +76,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
      * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
      */
-    default boolean shouldRiderSit() {
+    default boolean shouldRiderSit()
+    {
         return true;
     }
 
@@ -79,11 +87,15 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param target The full target the player is looking at
      * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
      */
-    default ItemStack getPickedResult(HitResult target) {
-        var result = self().getPickResult();
+    default ItemStack getPickedResult(HitResult target)
+    {
+        ItemStack result = self().getPickResult();
         if (result == null) {
-            var egg = ForgeSpawnEggItem.fromEntityType(self().getType());
-            result = egg == null ? ItemStack.EMPTY : new ItemStack(egg);
+            SpawnEggItem egg = ForgeSpawnEggItem.fromEntityType(self().getType());
+            if (egg != null)
+                result = new ItemStack(egg);
+            else
+                result = ItemStack.EMPTY;
         }
         return result;
     }
@@ -94,7 +106,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      *
      * @return if the entity can be interacted with from a rider
      */
-    default boolean canRiderInteract() {
+    default boolean canRiderInteract()
+    {
         return false;
     }
 
@@ -106,7 +119,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return {@code true} if the vehicle can be ridden in under this fluid,
      *         {@code false} otherwise
      */
-    default boolean canBeRiddenUnderFluidType(FluidType type, Entity rider) {
+    default boolean canBeRiddenUnderFluidType(FluidType type, Entity rider)
+    {
         return type.canRideVehicleUnder(self(), rider);
     }
 
@@ -124,7 +138,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param forSpawnCount If this is being invoked to check spawn count caps.
      * @return If the creature is of the type provided
      */
-    default MobCategory getClassification(boolean forSpawnCount) {
+    default MobCategory getClassification(boolean forSpawnCount)
+    {
         return self().getType().getCategory();
     }
 
@@ -168,7 +183,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * See {@link EnderDragon} for an example implementation.
      * @return true if this is a multipart entity.
      */
-    default boolean isMultipartEntity() {
+    default boolean isMultipartEntity()
+    {
         return false;
     }
 
@@ -185,7 +201,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return The child parts of this entity. The value to be returned here should be cached.
      */
     @Nullable
-    default PartEntity<?>[] getParts() {
+    default PartEntity<?>[] getParts()
+    {
         return null;
     }
 
@@ -195,13 +212,16 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * of the {@link net.minecraftforge.common.ForgeMod#STEP_HEIGHT_ADDITION} attribute
      * (if this Entity is a {@link LivingEntity} and has the attribute), clamped at 0.
      */
-    default float getStepHeight() {
-        @SuppressWarnings("deprecation")
+    default float getStepHeight()
+    {
         float vanillaStep = self().maxUpStep();
-        if (self() instanceof LivingEntity living) {
+        if (self() instanceof LivingEntity living)
+        {
             AttributeInstance stepHeightAttribute = living.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
             if (stepHeightAttribute != null)
+            {
                 return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
+            }
         }
         return vanillaStep;
     }
@@ -232,7 +252,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return {@code true} if the entity is within the fluid type of the
      *         state, {@code false} otherwise
      */
-    default boolean isInFluidType(FluidState state) {
+    default boolean isInFluidType(FluidState state)
+    {
         return this.isInFluidType(state.getFluidType());
     }
 
@@ -243,7 +264,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return {@code true} if the entity is within the fluid type,
      *         {@code false} otherwise
      */
-    default boolean isInFluidType(FluidType type) {
+    default boolean isInFluidType(FluidType type)
+    {
         return this.getFluidTypeHeight(type) > 0.0D;
     }
 
@@ -255,7 +277,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return {@code true} if a fluid type meets the condition, {@code false}
      *         otherwise
      */
-    default boolean isInFluidType(BiPredicate<FluidType, Double> predicate) {
+    default boolean isInFluidType(BiPredicate<FluidType, Double> predicate)
+    {
         return isInFluidType(predicate, false);
     }
 
@@ -290,7 +313,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      *
      * @return {@code true} if the fluid is on the entity's eyes, {@code false} otherwise
      */
-    default boolean isEyeInFluidType(FluidType type) {
+    default boolean isEyeInFluidType(FluidType type)
+    {
         return type == this.getEyeInFluidType();
     }
 
@@ -299,7 +323,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      *
      * @return {@code true} if the entity can start swimming, {@code false} otherwise
      */
-    default boolean canStartSwimming() {
+    default boolean canStartSwimming()
+    {
         return !this.getEyeInFluidType().isAir() && this.canSwimInFluidType(this.getEyeInFluidType());
     }
 
@@ -310,7 +335,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param type the type of the fluid
      * @return a scalar to multiply to the fluid velocity
      */
-    default double getFluidMotionScale(FluidType type) {
+    default double getFluidMotionScale(FluidType type)
+    {
         return type.motionScale(self());
     }
 
@@ -320,8 +346,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param type the type of the fluid
      * @return {@code true} if the entity can be pushed by the fluid, {@code false} otherwise
      */
-    @SuppressWarnings("deprecation")
-    default boolean isPushedByFluid(FluidType type) {
+    default boolean isPushedByFluid(FluidType type)
+    {
         return self().isPushedByFluid() && type.canPushEntity(self());
     }
 
@@ -331,7 +357,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param type the type of the fluid
      * @return {@code true} if the entity can swim in the fluid, {@code false} otherwise
      */
-    default boolean canSwimInFluidType(FluidType type) {
+    default boolean canSwimInFluidType(FluidType type)
+    {
         return type.canSwim(self());
     }
 
@@ -341,7 +368,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param type the type of the fluid
      * @return {@code true} if the entity can be extinguished, {@code false} otherwise
      */
-    default boolean canFluidExtinguish(FluidType type) {
+    default boolean canFluidExtinguish(FluidType type)
+    {
         return type.canExtinguish(self());
     }
 
@@ -355,7 +383,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param type the type of the fluid
      * @return a scalar to multiply to the fall damage
      */
-    default float getFluidFallDistanceModifier(FluidType type) {
+    default float getFluidFallDistanceModifier(FluidType type)
+    {
         return type.getFallDistanceModifier(self());
     }
 
@@ -368,7 +397,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return {@code true} if the entity can be hydrated, {@code false}
      *         otherwise
      */
-    default boolean canHydrateInFluidType(FluidType type) {
+    default boolean canHydrateInFluidType(FluidType type)
+    {
         return type.canHydrate(self());
     }
 
@@ -382,7 +412,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @return the sound to play when performing the action
      */
     @Nullable
-    default SoundEvent getSoundFromFluidType(FluidType type, SoundAction action) {
+    default SoundEvent getSoundFromFluidType(FluidType type, SoundAction action)
+    {
         return type.getSound(self(), action);
     }
 
@@ -394,12 +425,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param player the local player currently viewing this {@code Entity}
      * @return {@code true} to enable outline processing
      */
-    default boolean hasCustomOutlineRendering(Player player) {
+    default boolean hasCustomOutlineRendering(Player player)
+    {
         return false;
     }
 
     @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
-    default float getEyeHeightForge(Pose pose, EntityDimensions size) {
+    default float getEyeHeightForge(Pose pose, EntityDimensions size)
+    {
         return self().getEyeHeightAccess(pose, size);
     }
 
@@ -411,7 +444,8 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      * @param boat the boat the rider is within that is not inside a fluid
      * @return {@code true} if the fluid height should be updated, {@code false} otherwise
      */
-    default boolean shouldUpdateFluidWhileBoating(FluidState state, Boat boat) {
+    default boolean shouldUpdateFluidWhileBoating(FluidState state, Boat boat)
+    {
         return boat.shouldUpdateFluidWhileRiding(state, self());
     }
 }

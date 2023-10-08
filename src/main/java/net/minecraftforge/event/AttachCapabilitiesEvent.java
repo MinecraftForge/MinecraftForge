@@ -11,8 +11,9 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.eventbus.api.GenericEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
@@ -21,17 +22,19 @@ import net.minecraftforge.eventbus.api.GenericEvent;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
+public final class AttachCapabilitiesEvent<T> extends Event
 {
     private final T obj;
+    private final Class<T> type;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
     private final List<Runnable> listeners = Lists.newArrayList();
     private final List<Runnable> listenersView = Collections.unmodifiableList(listeners);
 
+
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
-        super(type);
+        this.type = type;
         this.obj = obj;
     }
 
@@ -41,6 +44,11 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     public T getObject()
     {
         return this.obj;
+    }
+
+    public Class<T> getType()
+    {
+        return this.type;
     }
 
     /**

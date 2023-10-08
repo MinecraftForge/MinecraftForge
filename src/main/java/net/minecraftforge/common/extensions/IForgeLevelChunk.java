@@ -5,9 +5,9 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.world.level.chunk.LevelChunk;
 
-public interface IForgeLevelChunk extends ICapabilityProvider
+public interface IForgeLevelChunk extends net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk>
 {
-
+    private LevelChunk self() {return (LevelChunk) this;}
 }

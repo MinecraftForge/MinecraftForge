@@ -32,7 +32,7 @@
     private BlockState feetBlockState = null;
  
     public Entity(EntityType<?> p_19870_, Level p_19871_) {
-+      super(Entity.class);
++      setClassType(getClass());
        this.type = p_19870_;
        this.level = p_19871_;
        this.dimensions = p_19870_.getDimensions();
@@ -503,16 +503,6 @@
 +      if (p_204037_ == FluidTags.WATER) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
 +      else if (p_204037_ == FluidTags.LAVA) return getFluidTypeHeight(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
        return this.fluidHeight.getDouble(p_204037_);
-    }
- 
-@@ -3106,7 +_,9 @@
-       return this.getBbHeight() + 0.5F;
-    }
- 
-+   private boolean hasExtraSpawnData = this instanceof net.minecraftforge.entity.IEntityAdditionalSpawnData;
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-+      if (hasExtraSpawnData) return net.minecraftforge.common.ForgeHooks.getEntitySpawnPacket(this);
-       return new ClientboundAddEntityPacket(this);
     }
  
 @@ -3222,6 +_,7 @@

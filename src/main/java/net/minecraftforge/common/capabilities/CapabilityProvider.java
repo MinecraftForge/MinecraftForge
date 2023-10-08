@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private final @NotNull Class<B> baseClass;
+    private @Nullable Class<?> classType;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
@@ -35,15 +36,20 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     private CompoundTag                   lazyData           = null;
     private boolean initialized = false;
 
-    protected CapabilityProvider(Class<B> baseClass)
+    protected CapabilityProvider()
     {
-        this(baseClass, false);
+        this(false);
     }
 
-    protected CapabilityProvider(final Class<B> baseClass, final boolean isLazy)
+    protected CapabilityProvider(final boolean isLazy)
     {
-        this.baseClass = baseClass;
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
+    }
+
+    protected void setClassType(Class<?> type)
+    {
+        if (classType != null) throw new IllegalStateException("Already set classType.");
+        this.classType = type;
     }
 
     protected final void gatherCapabilities()
@@ -69,7 +75,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(classType, getProvider(), parent);
         this.initialized = true;
     }
 
@@ -191,15 +197,16 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     {
         private final B owner;
 
-        public AsField(Class<B> baseClass, B owner)
+        public AsField(Class<?> classType, B owner)
         {
-            super(baseClass);
+            setClassType(classType);
             this.owner = owner;
         }
 
-        public AsField(Class<B> baseClass, B owner, boolean isLazy)
+        public AsField(Class<?> classType, B owner, boolean isLazy)
         {
-            super(baseClass, isLazy);
+            super(isLazy);
+            setClassType(classType);
             this.owner = owner;
         }
 
@@ -224,6 +231,11 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         B getProvider()
         {
             return owner;
+        }
+
+        @Override
+        public Supplier<? extends AttachCapabilitiesEvent<?>> getAttachCapabilitiesEventFactory() {
+            return () -> owner.getAttachCapabilitiesEventFactory().get();
         }
     };
 
