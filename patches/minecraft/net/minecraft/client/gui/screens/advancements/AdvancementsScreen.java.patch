@@ -46,7 +46,7 @@
        this.renderInside(p_282589_, p_282255_, p_283354_, i, j);
        this.renderWindow(p_282589_, i, j);
        this.renderTooltips(p_282589_, p_282255_, p_283354_, i, j);
-+      super.render(p_282589_, p_282255_, p_283354_, p_283123_);
++      this.renderables.forEach(r -> r.render(p_282589_, p_282255_, p_283354_, p_283123_));
     }
  
     public boolean mouseDragged(double p_97347_, double p_97348_, int p_97349_, double p_97350_, double p_97351_) {
