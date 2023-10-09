@@ -293,12 +293,6 @@ public class ForgeHooks {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
-    @Nullable
-    public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
-        LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
-    }
-
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
         int looting = 0;
         if (killer instanceof LivingEntity living)

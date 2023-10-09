@@ -326,10 +326,10 @@
     }
  
     public boolean causeFallDamage(float p_147187_, float p_147188_, DamageSource p_147189_) {
-+      float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, p_147187_, p_147188_);
-+      if (ret == null) return false;
-+      p_147187_ = ret[0];
-+      p_147188_ = ret[1];
++      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_147187_, p_147188_);
++      if (event.isCanceled()) return false;
++      p_147187_ = event.getDistance();
++      p_147188_ = event.getDamageMultiplier();
 +
        boolean flag = super.causeFallDamage(p_147187_, p_147188_, p_147189_);
        int i = this.calculateFallDamage(p_147187_, p_147188_);

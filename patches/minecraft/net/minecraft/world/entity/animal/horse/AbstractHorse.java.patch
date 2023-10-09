@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
+@@ -283,6 +_,11 @@
+    }
+ 
+    public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
++      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149499_, p_149500_);
++      if (event.isCanceled()) return false;
++      p_149499_ = event.getDistance();
++      p_149500_ = event.getDamageMultiplier();
++
+       if (p_149499_ > 1.0F) {
+          this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
+       }
 @@ -328,6 +_,7 @@
  
        this.inventory.addListener(this);
