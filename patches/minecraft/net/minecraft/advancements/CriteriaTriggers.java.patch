@@ -1,0 +1,27 @@
+--- a/net/minecraft/advancements/CriteriaTriggers.java
++++ b/net/minecraft/advancements/CriteriaTriggers.java
+@@ -47,6 +_,8 @@
+ 
+ public class CriteriaTriggers {
+    private static final BiMap<ResourceLocation, CriterionTrigger<?>> CRITERIA = HashBiMap.create();
++   // forge: reentrant lock guarantees memory barriers are passed between threads, while synchronized may as well be not
++   private static final java.util.concurrent.locks.ReentrantLock lock = new java.util.concurrent.locks.ReentrantLock();
+    public static final ImpossibleTrigger IMPOSSIBLE = register("impossible", new ImpossibleTrigger());
+    public static final KilledTrigger PLAYER_KILLED_ENTITY = register("player_killed_entity", new KilledTrigger());
+    public static final KilledTrigger ENTITY_KILLED_PLAYER = register("entity_killed_player", new KilledTrigger());
+@@ -102,10 +_,15 @@
+ 
+    public static <T extends CriterionTrigger<?>> T register(String p_298570_, T p_10596_) {
+       ResourceLocation resourcelocation = new ResourceLocation(p_298570_);
++      try {
++         lock.lock();
+       if (CRITERIA.putIfAbsent(resourcelocation, p_10596_) != null) {
+          throw new IllegalArgumentException("Duplicate criterion id " + resourcelocation);
+       } else {
+          return p_10596_;
++      }
++      } finally {
++         lock.unlock();
+       }
+    }
+ 
