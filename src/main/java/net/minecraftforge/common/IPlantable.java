@@ -8,6 +8,7 @@ package net.minecraftforge.common;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.AttachedStemBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,7 @@ public interface IPlantable
 {
     default PlantType getPlantType(BlockGetter level, BlockPos pos) {
         if (this instanceof CropBlock) return PlantType.CROP;
+        if (this instanceof AttachedStemBlock) return PlantType.CROP;
         if (this instanceof SaplingBlock) return PlantType.PLAINS;
         if (this instanceof FlowerBlock) return PlantType.PLAINS;
         if (this == Blocks.DEAD_BUSH)      return PlantType.DESERT;
