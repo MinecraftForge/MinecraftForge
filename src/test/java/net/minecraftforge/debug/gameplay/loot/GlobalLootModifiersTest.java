@@ -14,8 +14,12 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -24,7 +28,9 @@ import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -36,7 +42,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
@@ -52,7 +58,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -63,7 +71,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     static {
-        GLM.register("dungeon_loot", DungeonLootEnhancerModifier.CODEC);
+        GLM.register("multiply_loot", MultiplyDropsModifier.CODEC);
         GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
         GLM.register("wheat_harvest", WheatSeedsConverterModifier.CODEC);
         GLM.register("silk_touch_bamboo", SilkTouchTestModifier.CODEC);
@@ -71,6 +79,11 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
     private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
     private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
+
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(BlockBehaviour.Properties.of()));
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
     public GlobalLootModifiersTest() {
         testItem(() -> {
@@ -83,13 +96,13 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     @SubscribeEvent
     public void runData(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator().getPackOutput(), MODID));
+        event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput()));
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void test_smelting_modifier(GameTestHelper helper) {
         var center = new BlockPos(1, 1, 1);
         helper.setBlock(center, Blocks.OAK_LOG);
-        helper.assertBlock(center, block -> block == Blocks.OAK_LOG, "Failed to set log");
 
         var smelt = new ItemStack(Items.IRON_AXE);
         EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
@@ -99,6 +112,24 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         player.gameMode.destroyBlock(helper.absolutePos(center));
 
         helper.assertItemEntityPresent(Items.CHARCOAL, center, 1.0);
+
+        helper.succeed();
+    }
+
+    @GameTest(template = "forge:empty3x3x3")
+    public static void table_name_condition(GameTestHelper helper) {
+        var center = new BlockPos(1, 1, 1);
+        var player = helper.makeMockServerPlayer();
+
+        // Should be doubled
+        helper.setBlock(center, TEST_BLOCK.get());
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+        helper.assertItemEntityCountIs(TEST_ITEM.get(), center, 1.0, 2);
+
+        // Should not be modified
+        helper.setBlock(center, Blocks.OAK_LOG);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+        helper.assertItemEntityCountIs(Items.OAK_LOG, center, 1.0, 1);
 
         helper.succeed();
     }
@@ -128,9 +159,9 @@ public class GlobalLootModifiersTest extends BaseTestMod {
                 3, Items.WHEAT_SEEDS, Items.WHEAT)
             );
 
-            add("dungeon_loot", new DungeonLootEnhancerModifier(
+            add("multiply_loot", new MultiplyDropsModifier(
                 new LootItemCondition[] {
-                    LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build()
+                    LootTableIdCondition.builder(TEST_BLOCK.get().getLootTable()).build()
                 }, 2)
             );
 
@@ -140,6 +171,30 @@ public class GlobalLootModifiersTest extends BaseTestMod {
                     MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.BAMBOO)).build()
                 })
             );
+        }
+    }
+
+    private static class LootProvider extends LootTableProvider {
+        public LootProvider(PackOutput out) {
+            super(out, Set.of(), List.of(
+                new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)
+            ));
+        }
+
+        private static class BlockLoot extends BlockLootSubProvider implements IConditionBuilder {
+            public BlockLoot() {
+                super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+            }
+
+            @Override
+            protected Iterable<Block> getKnownBlocks() {
+               return List.of(TEST_BLOCK.get());
+            }
+
+            @Override
+            protected void generate() {
+                this.dropSelf(TEST_BLOCK.get());
+            }
         }
     }
 
@@ -281,15 +336,15 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         }
     }
 
-    private static class DungeonLootEnhancerModifier extends LootModifier {
-        public static final Supplier<Codec<DungeonLootEnhancerModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
+    private static class MultiplyDropsModifier extends LootModifier {
+        public static final Supplier<Codec<MultiplyDropsModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
             .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).forGetter(m -> m.multiplicationFactor))
-            .apply(inst, DungeonLootEnhancerModifier::new)
+            .apply(inst, MultiplyDropsModifier::new)
         ));
 
         private final int multiplicationFactor;
 
-        public DungeonLootEnhancerModifier(final LootItemCondition[] conditionsIn, final int multiplicationFactor) {
+        public MultiplyDropsModifier(final LootItemCondition[] conditionsIn, final int multiplicationFactor) {
             super(conditionsIn);
             this.multiplicationFactor = multiplicationFactor;
         }

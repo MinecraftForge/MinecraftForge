@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "global_loot_test:test"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "global_loot_test:blocks/test"
+}
