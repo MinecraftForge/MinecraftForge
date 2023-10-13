@@ -5,11 +5,11 @@
 
 package net.minecraftforge.logging;
 
+import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo;
 import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
@@ -20,14 +20,16 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 
-public abstract class CrashReportAnalyser {
+public final class CrashReportAnalyser {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Map<String, IModInfo> PACKAGE_MOD_CACHE = new HashMap<>();
     private static final Map<IModInfo, String[]> SUSPECTED_MODS = new HashMap<>();
 
+    private CrashReportAnalyser() {}
+
     /**
-     * Tries to cache, analyse and append the suspected mods for this crash to the crash report.
+     * Tries to cache, analyze and append the suspected mods for this crash to the crash report.
      * */
     public static String appendSuspectedMods(Throwable throwable, StackTraceElement[] uncategorizedStackTrace) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -44,21 +46,12 @@ public abstract class CrashReportAnalyser {
         return stringBuilder.toString();
     }
 
-
-    public static Map<String, IModInfo> getPackageModCache() {
-        return PACKAGE_MOD_CACHE;
-    }
-
-    public static Map<IModInfo, String[]> getSuspectedMods() {
-        return SUSPECTED_MODS;
-    }
-
     /**
-     * Tries to analyse the given exception and uncategorized stacktrace of the crash report.
+     * Tries to analyze the given exception and uncategorized stacktrace of the crash report.
      * It checks the stacktrace for any occurrence of the package names cached in the {@link #PACKAGE_MOD_CACHE},
      * including mixin classes.
      * **/
-    public static void analyseCrashReport(Throwable throwable, StackTraceElement[] uncategorizedStackTrace) {
+    private static void analyseCrashReport(Throwable throwable, StackTraceElement[] uncategorizedStackTrace) {
         scanThrowable(throwable);
         scanStacktrace(uncategorizedStackTrace);
     }
@@ -97,6 +90,7 @@ public abstract class CrashReportAnalyser {
                 }
                 stringBuilder.append("\n");
             });
+            SUSPECTED_MODS.clear();
         }
     }
 
@@ -127,7 +121,7 @@ public abstract class CrashReportAnalyser {
     /**
      * Iterates over all loaded mods, resolving and caching their package names with the corresponding {@link IModInfo}.
      * **/
-    public static void cacheModList() {
+    private static void cacheModList() {
         ModList modList = ModList.get();
         ModuleLayer gameLayer = FMLLoader.getGameLayer();
 
