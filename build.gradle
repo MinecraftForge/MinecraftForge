@@ -23,12 +23,12 @@ import org.objectweb.asm.Opcodes
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.github.ben-manes.versions' version '0.36.0'
+    id 'com.github.ben-manes.versions' version '0.46.0'
     id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
-    id 'de.undercouch.download' version '5.1.3'
-    id 'net.minecraftforge.gradle.patcher' version '[5.1.77,5.2.0)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[5.1.77,5.2.0)' apply false
+    id 'de.undercouch.download' version '5.4.0'
+    id 'net.minecraftforge.gradle.patcher' version '[6.0,6.2)' apply false
+    id 'net.minecraftforge.gradle.mcp' version '[6.0,6.2)' apply false
 }
 
 Util.init() //Init all our extension methods!
@@ -102,7 +102,7 @@ def extraTxts = [
     rootProject.tasks.createChangelog.outputFile
 ]
 
-task downloadVersionManifest(type: Download) {
+tasks.register('downloadVersionManifest', Download) {
     src 'https://piston-meta.mojang.com/mc/game/version_manifest_v2.json'
     dest file('build/versions/version_manifest.json')
     useETag 'all'
@@ -1623,7 +1623,7 @@ project(':forge') {
                     exclude it
             }
             filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
+                FORGE_VERSION: FORGE_VERSION,
                 FORGE_GROUP: project.group,
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
