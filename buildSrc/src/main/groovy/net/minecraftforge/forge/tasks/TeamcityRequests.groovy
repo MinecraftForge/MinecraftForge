@@ -32,7 +32,7 @@ class TeamcityRequests {
     @Nullable
     static Map<String, Build> buildsByCommit() throws IOException {
         final Map<String, Build> builds = [:]
-        jsonRequest(new TypeToken<Builds>() {}, "https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?fields=build:(revisions,number)&locator=buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build),count:300,status:SUCCESS")
+        jsonRequest(new TypeToken<Builds>() {}, 'https://teamcity.minecraftforge.net/guestAuth/app/rest/builds?fields=build:(revisions,number)&locator=buildType:(id:MinecraftForge_MinecraftForge_MinecraftForge_MinecraftForge__Build),defaultFilter:false,count:300,status:SUCCESS')
                 ?.build?.forEach {
             it.revisions.revision.each { rev -> builds[rev.version] = it }
         }
