@@ -59,6 +59,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Internal - use the public {@link IForgeRegistry} and {@link ForgeRegistries} APIs to get the data
+ */
 @ApiStatus.Internal
 public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V> {
     public static final Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");

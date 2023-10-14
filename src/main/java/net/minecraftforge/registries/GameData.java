@@ -71,6 +71,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
+ * <p>Use the public {@link IForgeRegistry} and {@link ForgeRegistries} APIs to get the data</p>
  */
 @ApiStatus.Internal
 public class GameData
