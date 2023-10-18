@@ -91,18 +91,20 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
                                                    @DelegatesTo(genericTypeIndex = 0, target = 'type') Closure configuration) {
         taskName = taskName.capitalize()
         tasks.register("check$taskName", clazz) { CheckTask task ->
-            configuration.setDelegate((T) task)
-            configuration.call(task)
-            task.mode.set(CheckMode.CHECK)
-            task.group = 'checks'
+            def castedTask = task as T
+            configuration.setDelegate(castedTask)
+            configuration.call(castedTask)
+            castedTask.mode.set(CheckMode.CHECK)
+            castedTask.group = 'checks'
         }
         tasks.named('checkAll').configure { it.dependsOn("check$taskName") }
 
         tasks.register("checkAndFix$taskName", clazz) { CheckTask task ->
-            configuration.setDelegate((T) task)
-            configuration.call(task)
-            task.mode.set(CheckMode.FIX)
-            task.group = 'checks'
+            def castedTask = task as T
+            configuration.setDelegate(castedTask)
+            configuration.call(castedTask)
+            castedTask.mode.set(CheckMode.CHECK)
+            castedTask.group = 'checks'
         }
         tasks.named('checkAllAndFix').configure { it.dependsOn("checkAndFix$taskName") }
     }
