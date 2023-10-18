@@ -858,6 +858,11 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
+    public static void firePauseGameEvent(boolean paused)
+    {
+        MinecraftForge.EVENT_BUS.post(new PauseGameEvent(paused));
+    }
+
     public static void onRenderTickStart(float timer)
     {
         MinecraftForgeClient.setPartialTick(timer);
