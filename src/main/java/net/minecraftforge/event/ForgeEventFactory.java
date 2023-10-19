@@ -79,6 +79,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.PauseGameEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
@@ -797,6 +798,11 @@ public class ForgeEventFactory
     public static void firePlayerSmeltedEvent(Player player, ItemStack smelted)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
+    }
+
+    public static void firePauseGameEvent(boolean paused)
+    {
+        MinecraftForge.EVENT_BUS.post(new PauseGameEvent(paused));
     }
 
     public static void onRenderTickStart(float timer)
