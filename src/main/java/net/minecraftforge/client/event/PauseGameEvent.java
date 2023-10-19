@@ -1,4 +1,4 @@
-package net.minecraftforge.event;
+package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
 
