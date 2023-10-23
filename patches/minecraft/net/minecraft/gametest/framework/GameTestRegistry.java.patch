@@ -32,7 +32,7 @@
 -         TEST_FUNCTIONS.addAll(useTestGeneratorMethod(p_177504_));
 -         TEST_CLASS_NAMES.add(s);
 +          for (var func : useTestGeneratorMethod(p_177504_))
-+             net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
++             net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, func);
        }
  
        registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
