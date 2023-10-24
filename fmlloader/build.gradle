@@ -10,39 +10,35 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 configurations.forEach{ it.transitive = false }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+    compileOnly(libs.nulls)
 
-    api("org.ow2.asm:asm:${ASM_VERSION}")
-    api("org.ow2.asm:asm-tree:${ASM_VERSION}")
-    api("org.ow2.asm:asm-commons:${ASM_VERSION}")
-    api("net.minecraftforge:forgespi:${SPI_VERSION}")
-    api("net.minecraftforge:mergetool:${MERGETOOL_VERSION}:api")
-    api("org.apache.logging.log4j:log4j-api:${LOG4J_VERSION}")
-    api("org.slf4j:slf4j-api:${SLF4J_API_VERSION}")
-    api("com.google.guava:guava:${GUAVA_VERSION}")
-    api("com.google.code.gson:gson:${GSON_VERSION}")
-    api("org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}")
-    api("org.apache.commons:commons-lang3:${APACHE_COMMONS_LANG3_VERSION}")
-    api("com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}")
-    api("com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}")
-    api("cpw.mods:modlauncher:${MODLAUNCHER_VERSION}")
-    api("net.minecraftforge:coremods:${COREMODS_VERSION}")
-    api("com.mojang:logging:${MOJANG_LOGGING_VERSION}")
-    api "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
-    api "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
+    api(libs.bundles.asm) // Needed by all the black magic
+    api(libs.forgespi)
+    api(libs.mergetool.api)
+    api(libs.log4j.api)
+    api(libs.slf4j.api)
+    api(libs.guava)
+    api(libs.gson)
+    api(libs.maven.artifact)
+    api(libs.apache.commons)
+    api(libs.bundles.night.config)
+    api(libs.modlauncher)
+    api(libs.coremods)
+    api(libs.mojang.logging)
+    api(libs.jarjar.selector)
+    api(libs.jarjar.meta)
 
-    implementation("net.sf.jopt-simple:jopt-simple:${JOPT_SIMPLE_VERSION}")
-    implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
-    implementation("net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}")
-    implementation("net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}")
-    implementation("com.google.jimfs:jimfs:${JIMFS_VERSION}")
-    // implementation("org.jline:jline:${JLINE_VERSION}")
+    implementation(libs.jopt.simple)
+    implementation(libs.securemodules)
+    implementation(libs.accesstransformers)
+    implementation(libs.terminalconsoleappender)
+    implementation(libs.jimfs)
 
-    implementation("org.apache.logging.log4j:log4j-core:${LOG4J_VERSION}")
-    annotationProcessor("org.apache.logging.log4j:log4j-core:${LOG4J_VERSION}")
+    implementation(libs.log4j.core)
+    annotationProcessor(libs.log4j.core)
 
-    testCompileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
-    testRuntimeOnly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
+    testCompileOnly(libs.nulls)
+    testRuntimeOnly(libs.bootstrap)
 }
 
 task sourcesJar(type: Jar) {
@@ -52,12 +48,6 @@ task sourcesJar(type: Jar) {
 
 ext {
     MANIFESTS = [
-        '/': [
-            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': GIT_INFO.branch,
-            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
-        ] as LinkedHashMap,
         'net/minecraftforge/fml/loading/': [
             'Specification-Title':      'FMLLoader',
             'Specification-Vendor':     'Forge Development LLC',

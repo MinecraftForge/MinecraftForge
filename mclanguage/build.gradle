@@ -1,51 +1,33 @@
 plugins {
-    id 'com.github.ben-manes.versions'
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
     id 'org.cadixdev.licenser'
     id 'java-library'
     id 'jacoco'
 }
 
-dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
-
 dependencies {
-    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+    compileOnly(libs.nulls)
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    withSourcesJar()
 }
 
-ext {
-    MANIFESTS = [
-        '': [
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': project.name.toLowerCase(),
             'FMLModType': 'LANGPROVIDER',
-            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': GIT_INFO.branch,
-            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
-        ] as LinkedHashMap,
-        'net/minecraftforge/fml/mclanguageprovider/': [
-            'Specification-Title':      'FMLLoader',
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':      'MCLanguage',
             'Specification-Vendor':     'Forge Development LLC',
             'Specification-Version':    '1',
-            'Implementation-Title':     'FML Loader',
+            'Implementation-Title':     'MCLanguage',
             'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge'
-        ] as LinkedHashMap
-    ]
-}
-
-jar.doFirst {
-    manifest.attributes['Automatic-Module-Name'] = project.name
-    MANIFESTS.each { pkg, values ->
-        if (pkg == '')
-            manifest.attributes(values)
-        else
-            manifest.attributes(values, pkg)
+            'Implementation-Vendor':    'Forge Development LLC',
+        ] as LinkedHashMap, 'net/minecraftforge/fml/mclanguageprovider/')
     }
 }
 
@@ -55,16 +37,9 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-
     include 'net/minecraftforge/'
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
 }
 
 publishing.publications.mavenJava(MavenPublication) {
     from components.java
-    artifact sourcesJar
 }

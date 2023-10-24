@@ -26,7 +26,7 @@
        this.systemReport.appendToCrashReportString(p_127520_);
     }
  
-@@ -91,23 +_,13 @@
+@@ -91,18 +_,7 @@
           throwable.setStackTrace(this.exception.getStackTrace());
        }
  
@@ -46,9 +46,3 @@
     }
  
     public String getFriendlyReport() {
-       StringBuilder stringbuilder = new StringBuilder();
-       stringbuilder.append("---- Minecraft Crash Report ----\n");
-+      net.minecraftforge.logging.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
-       stringbuilder.append("// ");
-       stringbuilder.append(getErrorComment());
-       stringbuilder.append("\n\n");

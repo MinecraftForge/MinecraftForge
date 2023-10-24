@@ -8,7 +8,7 @@ plugins {
 evaluationDependsOn(':mcp')
 
 dependencies {
-	implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
+	implementation(libs.forgespi)
 }
 
 patcher {

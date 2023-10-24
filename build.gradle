@@ -17,6 +17,7 @@ import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
 import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
+import net.minecraftforge.gradleutils.PomUtils
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.objectweb.asm.Opcodes
@@ -24,7 +25,7 @@ import org.objectweb.asm.Opcodes
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '2.+'
+    id 'net.minecraftforge.gradleutils' version '[2.1.3,)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
     id 'net.minecraftforge.gradle.patcher' version '[6.0.14,6.2)' apply false
@@ -49,35 +50,7 @@ ext {
     MCP_VERSION = '20230921.100330'
     SNAPSHOT = false
 
-    SPI_VERSION = '7.0.1'
-    MERGETOOL_VERSION = '1.1.5'
-    ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '6.0.5'
-    MODLAUNCHER_VERSION = '10.0.9'
-    SECUREJARHANDLER_VERSION = '2.1.10'
-    BOOTSTRAPLAUNCHER_VERSION = '1.1.2'
-    ASM_VERSION = '9.5'
     INSTALLER_VERSION = '2.1.+'
-    MIXIN_VERSION = '0.8.5'
-    TERMINALCONSOLEAPPENDER_VERSION = '1.2.0'
-    JLINE_VERSION = '3.12.+'
-    NIGHTCONFIG_VERSION = '3.6.4'
-    JETBRAINS_ANNOTATIONS_VERSION = '23.0.0'
-    SLF4J_API_VERSION = '1.8.0-beta4'
-    APACHE_MAVEN_ARTIFACT_VERSION = '3.8.5'
-    JARJAR_VERSION = '0.3.19'
-    JIMFS_VERSION = '1.3.0' // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
-
-    // These versions should be kept in sync with the version manifest JSON
-    // To use a version newer than the version manifest JSON, the dependency must be added to the installer configuration
-    MOJANG_LOGGING_VERSION = '1.1.1'
-    LOG4J_VERSION = '2.19.0'
-    GUAVA_VERSION = '32.1.2-jre'
-    GSON_VERSION = '2.10.1'
-    APACHE_COMMONS_LANG3_VERSION = '3.12.0'
-    JOPT_SIMPLE_VERSION = '5.0.4'
-    COMMONS_IO_VERSION = '2.13.0'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -151,16 +124,9 @@ subprojects {
     //println(name + ' Version: ' + version)
 
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven {
-            name = 'forge'
-            url = 'https://maven.minecraftforge.net/'
-        }
-        maven {
-            name = 'minecraft'
-            url = 'https://libraries.minecraft.net/'
-        }
+        maven gradleutils.forgeMaven
+        maven gradleutils.minecraftLibsMaven
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -185,30 +151,13 @@ subprojects {
                     name = project.name
                     description = 'Modifactions to Minecraft to enable mod developers.'
                     url = 'https://github.com/MinecraftForge/MinecraftForge'
-
-                    scm {
-                        url = 'https://github.com/MinecraftForge/MinecraftForge'
-                        connection = 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                        developerConnection = 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                    }
-
-                    issueManagement {
-                        system = 'github'
-                        url = 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'LGPL 2.1'
-                            url = 'https://github.com/MinecraftForge/MinecraftForge/blob/1.13-pre/LICENSE.txt'
-                            distribution = 'repo'
-                        }
-                    }
+                    PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+                    license PomUtils.Licenses.LGPLv2_1
                 }
             }
         }
         repositories {
-            maven gradleutils.getPublishingForgeMaven()
+            maven gradleutils.publishingForgeMaven
         }
     }
     
@@ -225,53 +174,6 @@ project(':mcp') {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
     }
-}
-
-def sharedDeps = {
-    moduleonly("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
-    moduleonly("org.ow2.asm:asm:${ASM_VERSION}")
-    moduleonly("org.ow2.asm:asm-commons:${ASM_VERSION}")
-    moduleonly("org.ow2.asm:asm-tree:${ASM_VERSION}")
-    moduleonly("org.ow2.asm:asm-util:${ASM_VERSION}")
-    moduleonly("org.ow2.asm:asm-analysis:${ASM_VERSION}")
-    moduleonly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
-    moduleonly("net.minecraftforge:JarJarFileSystems:${JARJAR_VERSION}")
-    moduleonly("com.google.jimfs:jimfs:${JIMFS_VERSION}")
-    moduleonly("com.google.guava:guava:${GUAVA_VERSION}") // Need by jimfs
-    moduleonly("com.google.guava:failureaccess:1.0.1")    // Needed by guava
-
-    installer "cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}"
-    installer "org.ow2.asm:asm:${ASM_VERSION}"
-    installer "org.ow2.asm:asm-commons:${ASM_VERSION}"
-    installer "org.ow2.asm:asm-tree:${ASM_VERSION}"
-    installer "org.ow2.asm:asm-util:${ASM_VERSION}"
-    installer "org.ow2.asm:asm-analysis:${ASM_VERSION}"
-    installer "net.minecraftforge:accesstransformers:${ACCESSTRANSFORMERS_VERSION}"
-    installer 'org.antlr:antlr4-runtime:4.9.1' // Dep of AccessTransformer
-    installer "net.minecraftforge:eventbus:${EVENTBUS_VERSION}"
-    installer "net.minecraftforge:forgespi:${SPI_VERSION}"
-    installer "net.minecraftforge:coremods:${COREMODS_VERSION}"
-    installer "cpw.mods:modlauncher:${MODLAUNCHER_VERSION}"
-    installer 'net.minecraftforge:unsafe:0.2.+'
-    installer "net.minecraftforge:mergetool:${MERGETOOL_VERSION}:api"
-    installer "com.electronwill.night-config:core:${NIGHTCONFIG_VERSION}"
-    installer "com.electronwill.night-config:toml:${NIGHTCONFIG_VERSION}"
-    installer "org.apache.maven:maven-artifact:${APACHE_MAVEN_ARTIFACT_VERSION}"
-    installer 'net.jodah:typetools:0.6.3'
-    installer "net.minecrell:terminalconsoleappender:${TERMINALCONSOLEAPPENDER_VERSION}"
-    installer "org.jline:jline-reader:${JLINE_VERSION}"   // Dep of TerminalConsoleAppender
-    installer "org.jline:jline-terminal:${JLINE_VERSION}" // Dep of TerminalConsoleAppender
-    installer "org.spongepowered:mixin:${MIXIN_VERSION}"
-    installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer "net.minecraftforge:JarJarSelector:${JARJAR_VERSION}"
-    installer "net.minecraftforge:JarJarMetadata:${JARJAR_VERSION}"
-
-    /*
-    installer 'org.lwjgl:lwjgl:3.2.2'
-    installer 'org.lwjgl:lwjgl-glfw:3.2.2'
-    installer 'org.lwjgl:lwjgl-opengl:3.2.2'
-    installer 'org.lwjgl:lwjgl-stb:3.2.2'
-    */
 }
 
 def sharedFmlonlyForge = { Project prj ->
@@ -343,7 +245,7 @@ def sharedFmlonlyForge = { Project prj ->
     for (def run : prj.patcher.runs + userdevRuns) {
         if (run.parents) continue // We already added this to the parent run config
         //run.property 'bsl.debug', 'true'
-        run.main 'cpw.mods.bootstraplauncher.BootstrapLauncher'
+        run.main 'net.minecraftforge.bootstrap.BootstrapLauncher'
 
         run.args '--gameDir', '.'
         run.args '--fml.forgeVersion', FORGE_VERSION
@@ -368,9 +270,6 @@ def sharedFmlonlyForge = { Project prj ->
         }
         run.jvmArgs '--add-modules', 'ALL-MODULE-PATH'
         // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
-        run.jvmArgs '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler'
-        run.jvmArgs '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler'
-        run.jvmArgs '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler'
         run.jvmArgs '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
     }
     for (def run : prj.patcher.runs) {
@@ -460,8 +359,7 @@ project(':forge') {
             java {
                 srcDirs = [
                     "$rootDir/src/main/java",
-                    "$rootDir/src/fmlcommon/java",
-                    SNAPSHOT ? "$rootDir/src/snapshots/java" : "$rootDir/src/snapshots_disabled/java"
+                    "$rootDir/src/fmlcommon/java"
                 ]
             }
             resources {
@@ -522,20 +420,41 @@ project(':forge') {
         api.extendsFrom(installer)
     }
 
-    dependencies {
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-        testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
-        testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
-        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
+    dependencies {        
+        moduleonly(libs.bootstrap)
+        moduleonly(libs.securemodules) // Needed by bootstrap
+        moduleonly(libs.unsafe) // Needed by securemodules
+        moduleonly(libs.bundles.asm) // Needed by all the black magic
+        moduleonly(libs.jarjar.fs) // Filesystems need to be on the bootstrap? I think thats why this is here. 
+        moduleonly(libs.bundles.jimfs) // In memory file system used for ForgeDev launches
+
+        installer(libs.unsafe)
+        installer(libs.securemodules)
+        installer(libs.bundles.asm) // Needed by all the black magic
+        installer(libs.accesstransformers)
+        installer(libs.antlr.runtime) // Dep of AccessTransformer
+        installer(libs.eventbus)
+        installer(libs.typetools) // Dep of EventBus
+        installer(libs.forgespi)
+        installer(libs.coremods)
+        installer(libs.nashorn) // Dep of Coremods
+        installer(libs.modlauncher)
+        installer(libs.mergetool.api)
+        installer(libs.bundles.night.config)
+        installer(libs.maven.artifact)
+        installer(libs.bundles.terminalconsoleappender)
+        installer(libs.mixin)
+        installer(libs.bundles.jarjar)
+        
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':fmlearlydisplay')
         implementation project(':javafmllanguage')
         implementation project(':lowcodelanguage')
         implementation project(':mclanguage')
-        runtimeOnly "cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}"
+        
+        runtimeOnly(libs.bootstrap)
     }
-    dependencies sharedDeps
 
     patcher {
         excs.from file("$rootDir/src/main/resources/forge.exc")
@@ -919,7 +838,7 @@ project(':forge') {
                 time: timestamp,
                 releaseTime: timestamp,
                 type: 'release',
-                mainClass: 'cpw.mods.bootstraplauncher.BootstrapLauncher',
+                mainClass: 'net.minecraftforge.bootstrap.BootstrapLauncher',
                 inheritsFrom: MC_VERSION,
                 logging: {},
                 arguments: [
@@ -935,9 +854,6 @@ project(':forge') {
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
                           '--add-modules', 'ALL-MODULE-PATH',
                           // Additions to these JVM module args should be mirrored to server_files/args.txt and other similar blocks in the buildscript
-                          '--add-opens', 'java.base/java.util.jar=cpw.mods.securejarhandler',
-                          '--add-opens', 'java.base/java.lang.invoke=cpw.mods.securejarhandler',
-                          '--add-exports', 'java.base/sun.security.util=cpw.mods.securejarhandler',
                           '--add-exports', 'jdk.naming.dns/com.sun.jndi.dns=java.naming'
                     ]
                 ],
@@ -1196,6 +1112,10 @@ project(':forge') {
         from(genServerBinPatches.output) {
             rename { 'data/server.lzma' }
         }
+    }
+    
+    tasks.register('devInstallerJar', DevInstallerJar) {
+        input = installerJar.archiveFile
     }
 
     task makeMdk(type: Zip) {
