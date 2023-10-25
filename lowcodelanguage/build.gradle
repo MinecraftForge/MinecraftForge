@@ -25,7 +25,7 @@ tasks.named('jar', Jar).configure {
             'Specification-Vendor':     'Forge Development LLC',
             'Specification-Version':    '1.0',
             'Implementation-Title':     project.name,
-            'Implementation-Version':   project.version,
+            'Implementation-Version':   FORGE_VERSION.split('\\.')[0], //project.version, TODO: Split out into a real versioned system, for now use the default that net.minecraftforge.fml.loading.LanguageLoadingProvider.loadLanguageProviders() used
             'Implementation-Vendor':    'Forge Development LLC'
         ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
     }
