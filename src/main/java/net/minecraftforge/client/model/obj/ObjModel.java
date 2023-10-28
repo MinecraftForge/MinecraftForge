@@ -424,8 +424,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             quadBaker.vertex(position.x(), position.y(), position.z());
             quadBaker.color(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
             quadBaker.uv(
-                    texture.getU(texCoord.x * 16),
-                    texture.getV((flipV ? 1 - texCoord.y : texCoord.y) * 16)
+                    texture.getU(texCoord.x),
+                    texture.getV((flipV ? 1 - texCoord.y : texCoord.y))
             );
             quadBaker.uv2(uv2);
             quadBaker.normal(normal.x(), normal.y(), normal.z());
