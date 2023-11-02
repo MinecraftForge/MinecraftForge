@@ -1,6 +1,6 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
-@@ -57,14 +_,8 @@
+@@ -57,14 +_,9 @@
        if (this.f_127506_ != null && this.f_127506_.length > 0) {
           p_127520_.append("-- Head --\n");
           p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
@@ -12,6 +12,7 @@
 -         }
 -
 -         p_127520_.append("\n");
++         p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods(this.f_127501_, this.f_127506_));
 +         p_127520_.append("Stacktrace:");
 +         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.f_127506_));
        }
