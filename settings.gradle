@@ -6,6 +6,20 @@ pluginManagement {
     }
 }
 
+buildscript {
+    dependencies {
+        classpath('com.google.code.gson:gson') {
+            version {
+                strictly '2.10.1'
+            }
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}
+
 rootProject.name = 'ForgeRoot'
 
 include 'fmlloader'
