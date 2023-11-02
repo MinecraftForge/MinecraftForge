@@ -69,7 +69,9 @@ public class ModInfo implements IModInfo, IConfigurable
                 .map(s -> StringSubstitutor.replace(s, ownFile.map(ModFileInfo::getFile).orElse(null)))
                 .map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
         this.displayName = config.<String>getConfigElement("displayName").orElse(this.modId);
-        this.description = config.<String>getConfigElement("description").orElse("MISSING DESCRIPTION");
+        this.description = config.<String>getConfigElement("description")
+                .orElse("MISSING DESCRIPTION")
+                .replace("\r\n", "\n").stripIndent();
 
         this.logoFile = Optional.ofNullable(config.<String>getConfigElement("logoFile")
                 .orElseGet(() -> ownFile.flatMap(mf -> mf.<String>getConfigElement("logoFile")).orElse(null)));
@@ -196,7 +198,7 @@ public class ModInfo implements IModInfo, IConfigurable
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
-        private Optional<URL> referralUrl;
+        private final Optional<URL> referralUrl;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
