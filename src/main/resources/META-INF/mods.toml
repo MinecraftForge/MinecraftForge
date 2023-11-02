@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="[24,]"
-issueTrackerURL="http://www.minecraftforge.net/"
+issueTrackerURL="https://minecraftforge.net/"
 logoFile="forge_logo.png"
 license="LGPL v2.1"
 
 [[mods]]
     modId="forge"
-    # We use the global forge version
     version="${global.forgeVersion}"
     updateJSONURL="https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
+    displayURL="https://minecraftforge.net/"
     displayName="Forge"
     credits="Anyone who has contributed on Github and supports our development"
     authors="LexManos,cpw"
