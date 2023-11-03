@@ -81,7 +81,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.PauseGameEvent;
+import net.minecraftforge.client.event.ClientPauseEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
@@ -856,9 +856,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
-    public static void firePauseGameEvent(boolean paused)
+    public static void fireClientPauseEvent(boolean paused)
     {
-        MinecraftForge.EVENT_BUS.post(new PauseGameEvent(paused));
+        MinecraftForge.EVENT_BUS.post(new ClientPauseEvent(paused));
     }
 
     public static void onRenderTickStart(float timer)
