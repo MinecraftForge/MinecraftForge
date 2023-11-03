@@ -88,6 +88,7 @@ public class ChannelListManager {
     }
 
     private static void sendChannels(EventNetworkChannel channel, Connection connection, Collection<ResourceLocation> channels) {
+        if (channels.isEmpty()) return;
         var buf = new FriendlyByteBuf(Unpooled.buffer());
         for (var c : channels) {
             buf.writeBytes(c.toString().getBytes(StandardCharsets.UTF_8));
