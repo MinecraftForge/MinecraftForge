@@ -222,7 +222,7 @@ public class ForgeHooksClient
         return 1000.0F + 2000.0F * (1 + guiLayers.size());
     }
 
-    public static void clientPauseEvent(boolean paused)
+    public static void clientPause(boolean paused)
     {
         MinecraftForge.EVENT_BUS.post(new ClientPauseEvent(paused));
     }
