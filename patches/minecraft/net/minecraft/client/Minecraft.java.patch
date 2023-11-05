@@ -213,7 +213,7 @@
           }
  
           this.f_91012_ = flag;
-+         net.minecraftforge.event.ForgeEventFactory.firePauseGameEvent(this.f_91012_);
++         net.minecraftforge.client.ForgeHooksClient.clientPauseEvent(this.f_91012_);
        }
  
        long i1 = Util.m_137569_();
