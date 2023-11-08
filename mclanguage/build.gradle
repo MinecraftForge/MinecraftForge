@@ -1,7 +1,6 @@
 plugins {
     id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
 }
 
 dependencies {
@@ -17,16 +16,16 @@ java {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': project.name.toLowerCase(),
-            'FMLModType': 'LANGPROVIDER',
+            'Automatic-Module-Name': 'net.minecraftforge.mclanguageprovider',
+            'FMLModType': 'LANGPROVIDER'
         ] as LinkedHashMap)
         attributes([
-            'Specification-Title':      'MCLanguage',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'MCLanguage',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge Development LLC',
+            'Specification-Title':    'MCLanguage',
+            'Specification-Vendor':   'Forge Development LLC',
+            'Specification-Version':  '1',
+            'Implementation-Title':   'MCLanguage',
+            'Implementation-Vendor':  'Forge Development LLC',
+            'Implementation-Version': '1.0'
         ] as LinkedHashMap, 'net/minecraftforge/fml/mclanguageprovider/')
     }
 }
@@ -37,7 +36,6 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-    include 'net/minecraftforge/'
 }
 
 publishing.publications.mavenJava(MavenPublication) {

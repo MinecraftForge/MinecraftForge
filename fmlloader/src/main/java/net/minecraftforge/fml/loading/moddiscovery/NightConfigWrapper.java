@@ -15,9 +15,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import static java.util.Arrays.asList;
 
-public class NightConfigWrapper implements IConfigurable {
+@ApiStatus.Internal
+class NightConfigWrapper implements IConfigurable {
     private final UnmodifiableConfig config;
     private IModFileInfo file;
 

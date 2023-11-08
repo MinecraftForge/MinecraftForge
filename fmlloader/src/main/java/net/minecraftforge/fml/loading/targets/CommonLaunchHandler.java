@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.BiPredicate;
 
 /**
  * This is required by FMLLoader because ILaunchHandlerService doesn't have the context we need.
@@ -29,16 +28,9 @@ import java.util.function.BiPredicate;
  * So until that happens, guess this is public api.
  */
 public abstract class CommonLaunchHandler implements ILaunchHandlerService {
-    public record LocatedPaths(
-        List<Path> minecraftPaths,
-        BiPredicate<String, String> minecraftFilter,
-        List<List<Path>> otherModPaths,
-        List<Path> otherArtifacts
-    ) {}
-
     protected static final Logger LOGGER = LogUtils.getLogger();
 
-    private final LaunchType type;
+    protected final LaunchType type;
     private final String prefix;
 
     protected CommonLaunchHandler(LaunchType type, String prefix) {
@@ -52,7 +44,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     public boolean isProduction() { return false; }
     public abstract String getNaming();
 
-    public abstract LocatedPaths getMinecraftPaths();
+    public abstract List<Path> getMinecraftPaths();
 
     @Override
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
@@ -60,7 +52,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
 
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         URI uri;
-        try (var reader = layer.configuration().findModule("fmlloader").orElseThrow().reference().open()) {
+        try (var reader = layer.configuration().findModule("net.minecraftforge.fmlloader").orElseThrow().reference().open()) {
             uri = reader.find("log4j2.xml").orElseThrow();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -89,7 +81,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "forge", "net.minecraftforge.gametest.GameTestMain", Dist.DEDICATED_SERVER, false);
 
     protected void runTarget(String module, String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
-        var mod = layer.findModule(module).orElseThrow();
+        var mod = layer.findModule(module).orElse(null);
         if (mod == null) throw new IllegalStateException("Could not find module " + module);
         var cls = Class.forName(mod, target);
         if (cls == null) throw new IllegalStateException("Could not find class " + target + " in module " + module);

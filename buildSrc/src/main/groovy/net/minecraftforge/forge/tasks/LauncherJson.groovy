@@ -16,59 +16,63 @@ abstract class LauncherJson extends DefaultTask {
     @OutputFile abstract RegularFileProperty getOutput()
     @InputFiles abstract ConfigurableFileCollection getInput()
     @Input Map<String, Object> json = new LinkedHashMap<>()
-    @Input @Optional abstract SetProperty<String> getPackedDependencies()
-    
-    @Internal final vanilla = project.project(':mcp').file('build/mcp/downloadJson/version.json')
-    @Internal final timestamp = iso8601Now()
-    @Internal final comment = [
-        "Please do not automate the download and installation of Forge.",
-        "Our efforts are supported by ads from the download page.",
-        "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
-    ]
-    @Internal final id = "${project.rootProject.ext.MC_VERSION}-${project.name}${project.version.substring(project.rootProject.ext.MC_VERSION.length())}"
 
     LauncherJson() {
-        getOutput().convention(project.layout.buildDirectory.file('version.json'))
+        output.convention(project.layout.buildDirectory.file('libs/version.json'))
 
-        dependsOn(':fmlloader:jar', 'universalJar')
-        getInput().from(project.tasks.universalJar.archiveFile,
-                project.project(':fmlloader').jar.archiveFile,
-                vanilla)
-                
-        project.afterEvaluate {
-            packedDependencies.get().forEach {
-                def jarTask = project.rootProject.tasks.findByPath(it)
-                dependsOn(jarTask)
-                input.from jarTask.archiveFile
+        dependsOn(project.tasks.universalJar)
+        input.from(project.tasks.universalJar.archiveFile)
+        input.from(project.configurations.installer)
+        configure {
+            def mc    = project.rootProject.ext.MC_VERSION
+            def forge = project.rootProject.ext.FORGE_VERSION
+            def timestamp = iso8601Now()
+            json.putAll([
+                _comment: [
+                    "Please do not automate the download and installation of Forge.",
+                    "Our efforts are supported by ads from the download page.",
+                    "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
+                ],
+                id: "$mc-$project.name$forge",
+                time: timestamp,
+                releaseTime: timestamp,
+                inheritsFrom: mc,
+                type: 'release',
+                logging: [:],
+                mainClass: '',
+                libraries: []
+            ] as LinkedHashMap)
+            
+            [
+                project.tasks.universalJar
+            ].forEach { packed ->
+                dependsOn(packed)
+                input.from packed.archiveFile
             }
         }
     }
 
     @TaskAction
     protected void exec() {
-        if (!json.libraries)
-            json.libraries = []
-        def libs = [:]
-        getArtifacts(project, project.configurations.installer, false).each { key, lib -> libs[key] = lib }
-        getArtifacts(project, project.configurations.moduleonly, false).each { key, lib -> libs[key] = lib }
-
-        packedDependencies.get().collect{ project.rootProject.tasks.findByPath(it) }.forEach {
-            def path = Util.getMavenPath(it)
-            def key = Util.getMavenDep(it)
-            
-            libs[key] = [
-                name: key,
+        [
+            project.tasks.universalJar
+        ].forEach { packed ->
+            def info = Util.getMavenInfoFromTask(packed)
+            json.libraries.add([
+                name: info.name,
                 downloads: [
                     artifact: [
-                        path: path,
-                        url: "https://maven.minecraftforge.net/${path}",
-                        sha1: it.archiveFile.get().asFile.sha1(),
-                        size: it.archiveFile.get().asFile.length()
+                        path: info.path,
+                        url: "https://maven.minecraftforge.net/$info.path",
+                        sha1: packed.archiveFile.get().asFile.sha1(),
+                        size: packed.archiveFile.get().asFile.length()
                     ]
                 ]
-            ]
+            ])
         }
-        libs.each { key, lib -> json.libraries.add(lib) }
+        getArtifacts(project, project.configurations.installer).each { key, lib -> 
+            json.libraries.add(lib)
+        }
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
     }
 }

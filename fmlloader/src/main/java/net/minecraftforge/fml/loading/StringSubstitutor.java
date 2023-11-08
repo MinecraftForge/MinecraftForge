@@ -10,37 +10,30 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
-import java.util.Map;
-
 @SuppressWarnings("deprecation")
-public class StringSubstitutor
-{
-    private static final Map<String,String> globals = ImmutableMap.of(
-            "mcVersion", FMLLoader.versionInfo().mcVersion(),
-            "forgeVersion", FMLLoader.versionInfo().forgeVersion()
-    );
-
+public class StringSubstitutor {
     public static String replace(final String in, final ModFile file) {
         return new StrSubstitutor(getStringLookup(file)).replace(in);
     }
 
     private static StrLookup<String> getStringLookup(final ModFile file) {
-        return new StrLookup<String>()
-        {
+        var globals = ImmutableMap.of(
+            "mcVersion", FMLLoader.versionInfo().mcVersion(),
+            "forgeVersion", FMLLoader.versionInfo().forgeVersion()
+        );
+        return new StrLookup<String>() {
             @Override
-            public String lookup(String key)
-            {
-                final String[] parts = key.split("\\.");
-                if (parts.length == 1) return key;
-                final String pfx = parts[0];
+            public String lookup(String key) {
+                var parts = key.split("\\.");
+                if (parts.length == 1)
+                    return key;
+                var pfx = parts[0];
+
                 if ("global".equals(pfx))
-                {
                     return globals.get(parts[1]);
-                }
                 else if ("file".equals(pfx) && file != null)
-                {
                     return String.valueOf(file.getSubstitutionMap().get().get(parts[1]));
-                }
+
                 return key;
             }
         };

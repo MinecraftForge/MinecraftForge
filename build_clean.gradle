@@ -6,6 +6,14 @@ plugins {
 
 evaluationDependsOn(':mcp')
 
+repositories {
+    mavenCentral()
+    maven gradleutils.forgeMaven
+    maven gradleutils.minecraftLibsMaven
+}
+    
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
 dependencies {
 	implementation(libs.forgespi)
 }
@@ -42,6 +50,11 @@ patcher {
 			workingDirectory project.file('run/server')
 		}
 	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.warnings = false // Shutup deprecated for removal warnings
 }
 
 eclipse.classpath.file.whenMerged {

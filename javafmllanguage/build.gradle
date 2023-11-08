@@ -1,12 +1,7 @@
 plugins {
-    id 'com.github.ben-manes.versions'
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
     id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
 }
-
-dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
 dependencies {
     compileOnly(libs.nulls)
@@ -14,38 +9,24 @@ dependencies {
     implementation(project(':fmlcore'))
 }
 
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    withSourcesJar()
 }
 
-ext {
-    MANIFESTS = [
-        '': [
-            'FMLModType': 'LANGPROVIDER',
-            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': GIT_INFO.branch,
-            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
-        ] as LinkedHashMap,
-        'net/minecraftforge/fml/loading/': [
-            'Specification-Title':      'FMLLoader',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML Loader',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge'
-        ] as LinkedHashMap
-    ]
-}
-
-jar.doFirst {
-    manifest.attributes['Automatic-Module-Name'] = project.name
-    MANIFESTS.each { pkg, values ->
-        if (pkg == '')
-            manifest.attributes(values)
-        else
-            manifest.attributes(values, pkg)
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': 'net.minecraftforge.javafmlmod',
+            'FMLModType': 'LANGPROVIDER'
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':   'JavaFMLMod',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version': '1',
+            'Implementation-Title':  'JavaFMLMod',
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': FORGE_VERSION
+        ] as LinkedHashMap, 'net/minecraftforge/fml/javafmlmod/')
     }
 }
 
@@ -55,16 +36,8 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-
-    include 'net/minecraftforge/'
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
 }
 
 publishing.publications.mavenJava(MavenPublication) {
     from components.java
-    artifact sourcesJar
 }

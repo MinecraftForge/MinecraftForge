@@ -21,6 +21,8 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
+@ApiStatus.Internal
 public class ModDiscoverer {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ServiceLoader<IModLocator> modLocators;

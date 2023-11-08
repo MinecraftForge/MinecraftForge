@@ -8,14 +8,12 @@ package net.minecraftforge.versions.forge;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public class ForgeVersion
-{
+public class ForgeVersion {
     private static final Logger LOGGER = LogManager.getLogger();
     // This is Forge's Mod Id, used for the ForgeMod and resource locations
     public static final String MOD_ID = "forge";
@@ -26,35 +24,29 @@ public class ForgeVersion
 
     static {
         LOGGER.debug(Logging.CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
-        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(FMLLoader.versionInfo().forgeVersion());
-        if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
-        String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_SPEC"));
-        if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
-        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(FMLLoader.versionInfo().forgeGroup());
-        if (group == null) {
-            group = "net.minecraftforge"; // If all else fails, Our normal group
-        }
-        forgeVersion = vers;
-        forgeSpec = spec;
-        forgeGroup = group;
+        var info = JarVersionLookupHandler.getInfo(ForgeVersion.class);
+
+        if (info.impl().version().isEmpty() || info.spec().version().isEmpty())
+            throw new IllegalStateException("Failed to find version for package " + ForgeVersion.class.getPackageName() + " This is an invalid environment");
+
+        forgeSpec = info.spec().version().get();
+        forgeVersion = info.impl().version().get();
+        forgeGroup = "net.minecraftforge";
         LOGGER.debug(Logging.CORE, "Found Forge version {}", forgeVersion);
         LOGGER.debug(Logging.CORE, "Found Forge spec {}", forgeSpec);
         LOGGER.debug(Logging.CORE, "Found Forge group {}", forgeGroup);
     }
 
-    public static String getVersion()
-    {
+    public static String getVersion() {
         return forgeVersion;
     }
 
-    public static VersionChecker.Status getStatus()
-    {
+    public static VersionChecker.Status getStatus() {
         return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0)).status();
     }
 
     @Nullable
-    public static String getTarget()
-    {
+    public static String getTarget() {
         VersionChecker.CheckResult res = VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0));
         return res.target() == null ? "" : res.target().toString();
     }

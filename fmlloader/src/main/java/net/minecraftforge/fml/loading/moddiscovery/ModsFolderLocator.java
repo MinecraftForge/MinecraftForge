@@ -9,33 +9,28 @@ import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
-import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.forgespi.locating.IModLocator;
+
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Support loading mods located in JAR files in the mods folder
  */
-public class ModsFolderLocator extends AbstractJarFileModLocator
-{
+public class ModsFolderLocator extends AbstractModProvider implements IModLocator {
     private static final String SUFFIX = ".jar";
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Path modFolder;
     private final String customName;
 
     public ModsFolderLocator() {
-        this(FMLPaths.MODSDIR.get());
-    }
-
-    ModsFolderLocator(Path modFolder) {
-        this(modFolder, "mods folder");
+        this(FMLPaths.MODSDIR.get(), "mods folder");
     }
 
     ModsFolderLocator(Path modFolder, String name) {
@@ -44,13 +39,22 @@ public class ModsFolderLocator extends AbstractJarFileModLocator
     }
 
     @Override
-    public Stream<Path> scanCandidates() {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning mods dir {} for mods", this.modFolder);
+    public List<IModLocator.ModFileOrException> scanMods() {
+        LOGGER.debug(LogMarkers.SCAN, "Scanning mods dir {} for mods", this.modFolder);
         var excluded = ModDirTransformerDiscoverer.allExcluded();
+        try (var stream = Files.list(this.modFolder)) {
+            return stream.filter(path -> !excluded.contains(path) && path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(SUFFIX))
+                .sorted(Comparator.comparing(path -> path.getFileName().toString().toLowerCase(Locale.ROOT)))
+                .map(this::createMod)
+                .toList();
+        } catch (IOException e) {
+            return sneak(e);
+        }
+    }
 
-        return uncheck(()-> Files.list(this.modFolder))
-                .filter(p-> !excluded.contains(p) && StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
-                .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())));
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable, R> R sneak(Throwable e) throws E {
+        throw (E)e;
     }
 
     @Override
@@ -61,9 +65,5 @@ public class ModsFolderLocator extends AbstractJarFileModLocator
     @Override
     public String toString() {
         return "{"+customName+" locator at "+this.modFolder+"}";
-    }
-
-    @Override
-    public void initArguments(final Map<String, ?> arguments) {
     }
 }
