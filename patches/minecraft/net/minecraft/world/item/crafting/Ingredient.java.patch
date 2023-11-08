@@ -27,6 +27,15 @@
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.values = p_43907_.toArray((p_43933_) -> {
+@@ -50,7 +_,7 @@
+    }
+ 
+    public ItemStack[] getItems() {
+-      if (this.itemStacks == null) {
++      if (this.itemStacks == null || checkInvalidation()) {
+          this.itemStacks = Arrays.stream(this.values).flatMap((p_43916_) -> {
+             return p_43916_.getItems().stream();
+          }).distinct().toArray((p_43910_) -> {
 @@ -78,7 +_,8 @@
     }
  
