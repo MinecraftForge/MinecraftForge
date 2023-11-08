@@ -45,7 +45,7 @@ public class NetworkConstants
     /**
      * Return this value in your {@link DisplayTest} function to be ignored.
      */
-    public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
+    public static final String IGNORESERVERONLY = DisplayTest.IGNORESERVERONLY;
 
     public static String init() {
         return NetworkConstants.NETVERSION;
