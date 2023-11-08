@@ -110,7 +110,7 @@ tasks.register('downloadServerRaw', Download) {
 tasks.register('extractServer', ExtractFile) {
     dependsOn downloadServerRaw
     input = downloadServerRaw.dest
-    target = "META-INF/versions/$MC_VERSION/server-$MC_VERSION.jar"
+    target = "META-INF/versions/$MC_VERSION/server-${MC_VERSION}.jar"
     output = file("build/versions/$MC_VERSION/server.jar")
 }
 
@@ -177,8 +177,13 @@ project(':mcp') {
 
 def sharedFmlonlyForge = { Project prj ->
     prj.tasks.userdevConfig {
-        getArtifacts(prj, prj.configurations.installer).each { key, lib -> libraries.add(lib.name) }
-        //libraries.add("${project.group}:${project.name}:${project.version}:launcher")
+        prj.configurations.installer.allDependencies.forEach {
+            def dep = it.toString()
+            if (it instanceof ProjectDependency) 
+                dep = "$it.dependencyProject.group:$it.dependencyProject.name:$it.dependencyProject.version"
+            libraries.add(dep)
+            
+        }
         inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
         runs {
             client {
