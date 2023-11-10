@@ -57,7 +57,13 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
 
     private List<Path> getMods() {
         // Forge is an exploded directory as well
+        var minecraft = ForgeDevLaunchHandler.getPathFromResource("net/minecraft/client/Minecraft.class");
         var forge = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
+        if (minecraft.equals(forge)) {
+            // If both Forge and MC are in the same folder, then we are in intellij or gradle
+            // So we have to create a filtered jar
+            forge = CommonDevLaunchHandler.getForgeOnly(forge);
+        }
         var ret = new ArrayList<Path>();
         ret.add(forge);
 

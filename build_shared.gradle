@@ -1,0 +1,74 @@
+import net.minecraftforge.forge.tasks.CleanProperties
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'net.minecraftforge.gradleutils'
+
+group = 'net.minecraftforge'
+version = VERSION
+println("Version: $version")
+
+repositories {
+    mavenCentral()
+    maven gradleutils.forgeMaven
+    maven gradleutils.minecraftLibsMaven
+    //mavenLocal()
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.tags = [
+        'apiNote:a:<em>API Note:</em>',
+        'implSpec:a:<em>Implementation Requirements:</em>',
+        'implNote:a:<em>Implementation Note:</em>'
+    ]
+    options.addStringOption('Xdoclint:all,-missing', '-public')
+}
+
+// We need to write the manifest to the binary file so we have properly versioned packaged at dev time.
+tasks.register('writeManifest') {
+    doLast {
+        def task = plugins.findPlugin('net.minecraftforge.gradle.patcher') ? universalJar : jar
+        task.manifest.writeTo(rootProject.file('src/main/resources/META-INF/MANIFEST.MF'))
+    }
+}
+
+tasks.register('generateResources') {
+    dependsOn('writeManifest')
+}
+
+// Make sure out manifests get written before compiling the code, IDEA calls this task if you tell it to use the gradle build.
+tasks.withType(JavaCompile).configureEach {
+    dependsOn(generateResources)
+    dependsOn(processResources) // Needed because we merge the output of this with the output of the compile task. And gradle detects downstream tasks using the output without a hard dep
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.warnings = false // Shutup deprecated for removal warnings
+}
+
+// Merge the resources and classes into the same directory. We'll need to split them at runtime because
+// Minecraft and Forge are in the same sourceSet as they are inter dependent.. for now..
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
+
+tasks.register('copyEclipseSettings') {
+    doLast {
+        rootProject.fileTree('ide/eclipse/template/.settings/').matching { include '**/*.prefs' }.each { file ->
+            def target = project.file('.settings/' + file.name)
+            def temp = new CleanProperties().load(file)
+            def exst = new CleanProperties().load(target)
+            exst.put('eclipse.preferences.version', '1')
+            temp.forEach(exst::put)
+            exst.store(target)
+        }
+    }
+}
+
+// TODO: [Gradle][IntelliJ] Auto trigger these tasks on import.
+eclipse {
+    // Run everytime eclipse builds the code
+    //autoBuildTasks writeManifest
+    // Run when importing the project
+    synchronizationTasks generateResources, copyEclipseSettings
+}

@@ -24,7 +24,15 @@ abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
         var extra = findJarOnClasspath(legacyCP, "client-extra");
         // Minecraft is an exploded directory, so find it.
         var minecraft = getPathFromResource("net/minecraft/client/Minecraft.class");
-        return List.of(minecraft, extra);
+        var forge = getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
+
+        // If both Forge and MC are in the same folder, then we are in intellij or gradle
+        // So we have to create a filtered jar
+        if (!forge.equals(minecraft))
+            return List.of(minecraft, extra);
+
+        var filtered = CommonDevLaunchHandler.getMinecraftOnly(extra, minecraft);
+        return List.of(filtered);
     }
 
     static Path getPathFromResource(String resource) {

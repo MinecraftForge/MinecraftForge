@@ -1,8 +1,13 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'eclipse'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
+
+apply from: rootProject.file('build_shared.gradle')
 
 configurations.forEach{ it.transitive = false }
 
@@ -39,6 +44,7 @@ dependencies {
 }
 
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
     withSourcesJar()
 }
 
@@ -67,8 +73,22 @@ license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'fmlloader'
+        pom {
+            name = project.name
+            description = 'Modifactions to Minecraft to enable mod developers.'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
 }
 
 tasks.register('writeForgeVersionJson') {
@@ -81,8 +101,6 @@ tasks.register('writeForgeVersionJson') {
     }
 }
 
-// TODO: [Gradle][IntelliJ] Auto trigger this task on import.
-eclipse {
-    // Run when importing the project
-    synchronizationTasks(writeForgeVersionJson)
+tasks.named('generateResources').configure {
+    dependsOn(writeForgeVersionJson)
 }

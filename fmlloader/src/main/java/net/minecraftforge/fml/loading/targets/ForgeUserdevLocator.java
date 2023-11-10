@@ -20,8 +20,7 @@ public class ForgeUserdevLocator extends AbstractModProvider implements IModLoca
         if (!(handler instanceof ForgeUserdevLaunchHandler))
             return List.of();
         var forge = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
-        @SuppressWarnings("deprecation")
-        var filtered = ForgeUserdevLaunchHandler.getForgeMod(forge);
+        var filtered = ForgeUserdevLaunchHandler.getForgeOnly(forge);
         var mod = createMod(filtered);
         return List.of(mod);
     }

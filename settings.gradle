@@ -112,10 +112,11 @@ include 'lowcodelanguage'
 include 'fmlearlydisplay'
 
 include ':mcp'
-include ':forge'
-
 project(":mcp").projectDir = file("projects/mcp")
+
+include ':forge'
 project(":forge").projectDir = file("projects/forge")
+project(':forge').buildFileName = '../../build_forge.gradle'
 
 if (!System.env.TEAMCITY_VERSION) {
     include ':clean'

@@ -1,10 +1,18 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
 
-java.withSourcesJar()
+apply from: rootProject.file('build_shared.gradle')
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
 
 dependencies {
     compileOnly(libs.nulls)
@@ -38,6 +46,20 @@ license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'lowcodelanguage'
+        pom {
+            name = project.name
+            description = 'Language provider for Minecraft Forge that loads resource packs as mods'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
 }

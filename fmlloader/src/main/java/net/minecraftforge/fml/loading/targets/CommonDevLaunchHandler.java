@@ -5,10 +5,12 @@
 
 package net.minecraftforge.fml.loading.targets;
 
+import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.ServiceRunner;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,8 +89,49 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         }
 
         if (ret == null)
-            new IllegalStateException("Could not find " + match + " in classpath");
+            throw new IllegalStateException("Could not find " + match + " in classpath");
 
         return Paths.get(ret);
+    }
+
+    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
+    protected static Path getMinecraftOnly(Path extra, Path forge) {
+        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
+        var extraPath = extra.toString().replace('\\', '/');
+
+        // We serve everything, except for things in the forge packages.
+        BiPredicate<String, String> mcFilter = (path, base) -> {
+            if (base.equals(extraPath) ||
+                    path.endsWith("/")) return true;
+            for (var pkg : packages)
+                if (path.startsWith(pkg)) return false;
+            return true;
+        };
+        var fs = UnionHelper.newFileSystem(mcFilter, new Path[] { forge, extra });
+        return fs.getRootDirectories().iterator().next();
+    }
+
+    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
+    protected static Path getForgeOnly(Path forge) {
+        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
+        // We need to separate out our resources/code so that we can show up as a different data pack.
+        var modJar = SecureJar.from((path, base) -> {
+            if (!path.endsWith(".class")) return true;
+            for (var pkg : packages)
+                if (path.startsWith(pkg)) return true;
+            return false;
+        }, new Path[] { forge });
+
+        //modJar.getPackages().stream().sorted().forEach(System.out::println);
+        return modJar.getRootPath();
+    }
+
+    private static String[] getPackages() {
+        return new String[] {
+            "net/minecraftforge/",
+            "META-INF/services/",
+            "META-INF/coremods.json",
+            "META-INF/mods.toml"
+        };
     }
 }

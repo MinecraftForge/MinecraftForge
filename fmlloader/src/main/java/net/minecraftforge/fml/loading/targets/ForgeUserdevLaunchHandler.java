@@ -29,50 +29,8 @@ abstract class ForgeUserdevLaunchHandler extends CommonDevLaunchHandler {
         var extra = findJarOnClasspath(legacyCP, "client-extra");
         var forge = findJarOnClasspath(legacyCP, "forge-" + vers.mcAndForgeVersion());
         // We need to filter the forge jar to just MC code
-        var minecraft = getMinecraftOnly(extra, forge);
+        var minecraft = CommonDevLaunchHandler.getMinecraftOnly(extra, forge);
         return List.of(minecraft);
-    }
-
-    @Deprecated // TODO: [Forge][Userdev] Make Forge and MC separate jars at dev time, so this filter isn't needed.
-    private Path getMinecraftOnly(Path extra, Path forge) {
-        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
-        var extraPath = extra.toString().replace('\\', '/');
-
-        // We serve everything, except for things in the forge packages.
-        BiPredicate<String, String> mcFilter = (path, base) -> {
-            if (base.equals(extraPath) ||
-                path.endsWith("/")) return true;
-            for (var pkg : packages)
-                if (path.startsWith(pkg)) return false;
-            return true;
-        };
-        var fs = UnionHelper.newFileSystem(mcFilter, new Path[] { forge, extra });
-        return fs.getRootDirectories().iterator().next();
-    }
-
-
-    @Deprecated // TODO: [Forge][Userdev] Make Forge and MC separate jars at dev time, so this filter isn't needed.
-    static Path getForgeMod(Path forge) {
-        var packages = getPackages(); // Pulled out so it is passed to the lambda as value
-        // We need to separate out our resources/code so that we can show up as a different data pack.
-        var modJar = SecureJar.from((path, base) -> {
-            if (!path.endsWith(".class")) return true;
-            for (var pkg : packages)
-                if (path.startsWith(pkg)) return true;
-            return false;
-        }, new Path[] { forge });
-
-        //modJar.getPackages().stream().sorted().forEach(System.out::println);
-        return modJar.getRootPath();
-    }
-
-    private static String[] getPackages() {
-        return new String[] {
-            "net/minecraftforge/",
-            "META-INF/services/",
-            "META-INF/coremods.json",
-            "META-INF/mods.toml"
-        };
     }
 
     public static class Client extends ForgeUserdevLaunchHandler {

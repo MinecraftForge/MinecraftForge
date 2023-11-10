@@ -7,6 +7,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
@@ -41,11 +42,15 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
         //var cl = ClassLoader.getSystemClassLoader();
         var cl = getClass().getClassLoader();
 
+        // Find 'minecraft' during dev time this is also Forge. So skip it.
+        var minecraft = getPathFromResource(cl, "net/minecraft/obfuscate/DontObfuscate.class");
+
         var claimed = new HashSet<Path>();
         var tomls = getUrls(cl, MODS_TOML);
         for (var url : tomls) {
             var path = getPath(url, MODS_TOML);
-            claimed.add(path);
+            if (!path.equals(minecraft))
+                claimed.add(path);
         }
 
         var manifests = getUrls(cl, JarFile.MANIFEST_NAME);
@@ -96,5 +101,12 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
         str = str.substring(0, str.length() - len);
         var path = Paths.get(URI.create(str));
         return path;
+    }
+
+    private static Path getPathFromResource(ClassLoader cl, String resource) {
+        var url = cl.getResource(resource);
+        if (url == null)
+            throw new IllegalStateException("Could not find " + resource + " in classloader " + cl);
+        return getPath(url, resource);
     }
 }

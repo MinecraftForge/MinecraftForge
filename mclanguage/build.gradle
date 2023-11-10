@@ -1,7 +1,13 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.cadixdev.licenser'
     id 'java-library'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
+
+apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
     compileOnly(libs.nulls)
@@ -10,6 +16,7 @@ dependencies {
 }
 
 java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
     withSourcesJar()
 }
 
@@ -38,6 +45,20 @@ license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'mclanguage'
+        pom {
+            name = project.name
+            description = 'Language provider for Minecraft Forge that provides Minecraft Itself'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
 }

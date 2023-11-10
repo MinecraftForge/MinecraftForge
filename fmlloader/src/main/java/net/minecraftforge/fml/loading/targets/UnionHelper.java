@@ -15,7 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 final class UnionHelper {
     private static final FileSystemProvider UFSP = getUnionFileSystemProvider();
-    private static final FileSystemProvider getUnionFileSystemProvider() {
+    private static FileSystemProvider getUnionFileSystemProvider() {
         for (var provider : FileSystemProvider.installedProviders()) {
             if ("union".equals(provider.getScheme()))
                 return provider;

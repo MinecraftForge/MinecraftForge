@@ -1,9 +1,13 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.javamodularity.moduleplugin' version '1.8.7' apply false
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
+
+apply from: rootProject.file('build_shared.gradle')
 
 import org.gradle.internal.os.OperatingSystem
 switch (OperatingSystem.current()) {
@@ -18,7 +22,10 @@ switch (OperatingSystem.current()) {
 		break
 }
 
-java.withSourcesJar()
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
 
 dependencies {
     compileOnly(libs.nulls)
@@ -63,9 +70,22 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-    include 'net/minecraftforge/'
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'fmlearlydisplay'
+        pom {
+            name = project.name
+            description = 'A pretty looking, but prone to erroring screen displayed during Forge loading.'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
 }

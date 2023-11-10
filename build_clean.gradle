@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
-	id 'eclipse'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradle.patcher'
 }
 
 evaluationDependsOn(':mcp')
@@ -12,7 +12,7 @@ repositories {
     maven gradleutils.minecraftLibsMaven
 }
     
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
 
 dependencies {
 	implementation(libs.forgespi)

@@ -50,3 +50,5 @@ changelog.txt
 *.7z
 /logs/
 
+/ForgeRoot.ipr
+/ForgeRoot.iws
