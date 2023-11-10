@@ -1,8 +1,7 @@
 plugins {
-    id 'org.cadixdev.licenser'
     id 'java-library'
 	id 'eclipse'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.14,6.2)'
+    id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)'
 }
 
 evaluationDependsOn(':mcp')
@@ -44,6 +43,7 @@ patcher {
 		}
 	}
 }
+
 eclipse.classpath.file.whenMerged {
 	// Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
 	def src = entries.find { it.path == 'src/main/java' }
