@@ -22,8 +22,6 @@ eclipse {
         ]
         
         entries.forEach { e -> 
-            // TODO: [Gradle][IntelliJ] Make sure that the output merges both bin and resources into one folder so we don't need the UnionFileSystem
-            // Seperate their output folders by mod
             if ('src'.equals(e.kind) && e.hasProperty('output')) {
                 if (mods.containsKey(e.path))
                     e.output = 'bin/' + mods[e.path]

@@ -73,12 +73,6 @@ minecraft {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
-
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
         }
 
         client {
@@ -169,13 +163,13 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-                'Specification-Title'     : mod_id,
-                'Specification-Vendor'    : mod_authors,
-                'Specification-Version'   : '1', // We are version 1 of ourselves
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.jar.archiveVersion,
-                'Implementation-Vendor'   : mod_authors,
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            'Specification-Title'     : mod_id,
+            'Specification-Vendor'    : mod_authors,
+            'Specification-Version'   : '1', // We are version 1 of ourselves
+            'Implementation-Title'    : project.name,
+            'Implementation-Version'  : project.jar.archiveVersion,
+            'Implementation-Vendor'   : mod_authors,
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 
