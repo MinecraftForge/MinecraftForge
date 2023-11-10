@@ -70,5 +70,5 @@ eclipse {
     // Run everytime eclipse builds the code
     //autoBuildTasks writeManifest
     // Run when importing the project
-    synchronizationTasks generateResources, copyEclipseSettings
+    synchronizationTasks generateResources, copyEclipseSettings, eclipseClasspath, eclipseProject
 }

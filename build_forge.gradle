@@ -32,6 +32,9 @@ plugins {
 
 Util.init() //Init all our extension methods!
 
+// We depend on all other projects so that we can know their versions for userdev config
+rootProject.subprojects.each { sib -> if (sib != project) evaluationDependsOn(sib.path) }
+
 apply from: rootProject.file('build_shared.gradle')
 
 java {
@@ -235,12 +238,12 @@ tasks.register('downloadCrowdin', Download) {
     quiet true
 }
 
-tasks.userdevConfig {
+tasks.userdevConfig.configure {
     configurations.installer.allDependencies.forEach {
         def dep = it.toString()
         if (it instanceof ProjectDependency) 
-            dep = "$it.dependencyProject.group:$it.dependencyProject.name:$it.dependencyProject.version"
-        libraries.add(dep)    
+            dep = "net.minecraftforge:$it.dependencyProject.name:$it.dependencyProject.version"
+        libraries.add(dep)
     }
     
     inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
@@ -1006,6 +1009,7 @@ publishing {
         artifact installerJar
         artifact mdkZip
         artifact userdevJar
+        artifact sourcesJar
         artifact serverShimJar
 
         artifactId = project.name
