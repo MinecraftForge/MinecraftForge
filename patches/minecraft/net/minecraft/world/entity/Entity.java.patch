@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -122,7 +_,7 @@
+@@ -119,10 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Team;
++import net.minecraftforge.common.extensions.IForgeEntity;
  import org.joml.Vector3f;
  import org.slf4j.Logger;
  
@@ -36,7 +40,11 @@
        this.type = p_19870_;
        this.level = p_19871_;
        this.dimensions = p_19870_.getDimensions();
-@@ -257,6 +_,8 @@
+@@ -254,9 +_,12 @@
+       this.entityData.define(DATA_NO_GRAVITY, false);
+       this.entityData.define(DATA_POSE, Pose.STANDING);
+       this.entityData.define(DATA_TICKS_FROZEN, 0);
++      this.entityData.define(IForgeEntity.DATA_PERSISTENT_DATA,new CompoundTag());
        this.defineSynchedData();
        this.setPos(0.0D, 0.0D, 0.0D);
        this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
@@ -259,7 +267,7 @@
  
 +         CompoundTag caps = serializeCaps();
 +         if (caps != null) p_20241_.put("ForgeCaps", caps);
-+         if (persistentData != null) p_20241_.put("ForgeData", persistentData.copy());
++         if (!getPersistentData().isEmpty())p_20241_.put("ForgeData", getPersistentData().copy());
 +
           this.addAdditionalSaveData(p_20241_);
           if (this.isVehicle()) {
@@ -268,7 +276,7 @@
                 this.setGlowingTag(p_20259_.getBoolean("Glowing"));
                 this.setTicksFrozen(p_20259_.getInt("TicksFrozen"));
                 this.hasVisualFire = p_20259_.getBoolean("HasVisualFire");
-+               if (p_20259_.contains("ForgeData", 10)) persistentData = p_20259_.getCompound("ForgeData");
++               if (p_20259_.contains("ForgeData", 10)) this.entityData.set(IForgeEntity.DATA_PERSISTENT_DATA,p_20259_.getCompound("ForgeData"));
 +               if (p_20259_.contains("CanUpdate", 99)) this.canUpdate(p_20259_.getBoolean("CanUpdate"));
 +               if (p_20259_.contains("ForgeCaps", 10)) deserializeCaps(p_20259_.getCompound("ForgeCaps"));
                 if (p_20259_.contains("Tags", 9)) {
@@ -531,7 +539,7 @@
     public float maxUpStep() {
        return this.maxUpStep;
     }
-@@ -3349,6 +_,109 @@
+@@ -3349,6 +_,106 @@
     public boolean mayInteract(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -558,12 +566,9 @@
 +      this.captureDrops = value;
 +      return ret;
 +   }
-+   private CompoundTag persistentData;
 +   @Override
 +   public CompoundTag getPersistentData() {
-+      if (persistentData == null)
-+         persistentData = new CompoundTag();
-+      return persistentData;
++      return this.entityData.get(IForgeEntity.DATA_PERSISTENT_DATA);
 +   }
 +   @Override
 +   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {

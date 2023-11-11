@@ -8,6 +8,9 @@ package net.minecraftforge.common.extensions;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -35,6 +38,8 @@ import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
+    EntityDataAccessor<CompoundTag> DATA_PERSISTENT_DATA = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.COMPOUND_TAG);
+
     private Entity self() {
         return (Entity)this;
     }
