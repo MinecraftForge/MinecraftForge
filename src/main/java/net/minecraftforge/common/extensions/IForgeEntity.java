@@ -39,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
     EntityDataAccessor<CompoundTag> DATA_PERSISTENT_DATA = SynchedEntityData.defineId(Entity.class, EntityDataSerializers.COMPOUND_TAG);
-
     private Entity self() {
         return (Entity)this;
     }
