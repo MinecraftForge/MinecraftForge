@@ -58,9 +58,7 @@ public class ChunkWatchEvent extends Event {
     }
 
     /**
-     * This event is fired whenever a {@link ServerPlayer} receives data packet of chunk.
-     * <p>
-     * This event is fired when chunk data is sent to the client (see {@link net.minecraft.server.network.PlayerChunkSender}).
+     * This event is fired when chunk data is sent to the {@link ServerPlayer} (see {@link net.minecraft.server.network.PlayerChunkSender}).
      * <p>
      * This event may be used to send additional chunk-related data to the client.
      * <p>
@@ -83,10 +81,7 @@ public class ChunkWatchEvent extends Event {
     }
 
     /**
-     * This event is fired whenever a {@link ServerPlayer} stops watching a chunk.
-     * <p>
-     * This event is fired when a chunk is removed from the watched chunks of an {@link ServerPlayer}
-     * in {@code net.minecraft.server.level.ChunkMap#updateChunkTracking(ServerPlayer, ChunkPos, Packet[], boolean, boolean)}.
+     * This event is fired when server sends "forget chunk" packet to the {@link ServerPlayer}.
      * <p>
      * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain HasResult have a result}.
      * <p>
