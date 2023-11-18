@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.gameplay.criterion;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.serialization.Codec;
@@ -23,6 +24,8 @@ import net.minecraft.advancements.critereon.DeserializationContext;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.DelegatingOps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -35,8 +38,7 @@ import java.util.stream.Stream;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWithItemCriterion.Instance> {
-    // this will be removed once Mojang figure out how to decode context aware predicates with codecs
-    private static final ThreadLocal<ArrayDeque<Optional<ContextAwarePredicate>>> stack = ThreadLocal.withInitial(ArrayDeque::new);
+    private static final ResourceLocation CONTEXT = new ResourceLocation("forge", "player_context_criterion");
 
     private static final class ContextPredicate extends MapCodec<Optional<ContextAwarePredicate>> {
         public static final ContextPredicate INSTANCE = new ContextPredicate();
@@ -46,12 +48,18 @@ public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWi
             return Stream.of(ops.createString("player"));
         }
 
+        @SuppressWarnings("OptionalAssignedToNull")
         @Override
         public <T> DataResult<Optional<ContextAwarePredicate>> decode(DynamicOps<T> ops, MapLike<T> input) {
-            if (stack.get().isEmpty())
+            Optional<ContextAwarePredicate> result = null;
+
+            if (ops instanceof DelegatingOps<T> dops)
+                result = dops.getContext(CONTEXT);
+
+            if (result == null)
                 return DataResult.error(() -> "Not deserializing criterion");
-            else
-                return DataResult.success(stack.get().getLast());
+
+            return DataResult.success(result);
         }
 
         @Override
@@ -74,17 +82,14 @@ public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWi
 
     @Override
     protected Instance createInstance(JsonObject data, Optional<ContextAwarePredicate> playerPredicate, DeserializationContext context) {
-        try {
-            stack.get().addLast(playerPredicate);
+        var builder = DelegatingOps.builder(() -> new DelegatingOps<>(JsonOps.INSTANCE) {});
+        builder.with(CONTEXT, playerPredicate);
 
-            return CODEC.decode(JsonOps.INSTANCE, data)
-                .getOrThrow(false, e -> {
-                    throw new JsonSyntaxException("Unable to deserialize criterion instance: " + e);
-                })
-                .getFirst();
-        } finally {
-            stack.get().removeLast();
-        }
+        return CODEC.decode(builder.build(), data)
+            .getOrThrow(false, e -> {
+                throw new JsonSyntaxException("Unable to deserialize criterion instance: " + e);
+            })
+            .getFirst();
     }
 
     public void trigger(ServerPlayer player, BlockPos block) {
