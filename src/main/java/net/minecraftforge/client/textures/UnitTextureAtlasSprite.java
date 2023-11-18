@@ -27,11 +27,11 @@ public class UnitTextureAtlasSprite extends TextureAtlasSprite {
 
     @Override
     public float getU(float u) {
-        return u / 16;
+        return u;
     }
 
     @Override
     public float getV(float v) {
-        return v / 16;
+        return v;
     }
 }

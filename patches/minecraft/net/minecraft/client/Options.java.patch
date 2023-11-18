@@ -18,11 +18,10 @@
        this.minecraft = p_92138_;
        this.optionsFile = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.is64Bit();
-@@ -957,11 +_,21 @@
+@@ -957,11 +_,20 @@
        p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
        this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
  
-+      net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.processOptions(p_168428_);
 +      processOptionsForge(p_168428_);
 +   }
 +   // FORGE: split off to allow reloading options after mod loading is done

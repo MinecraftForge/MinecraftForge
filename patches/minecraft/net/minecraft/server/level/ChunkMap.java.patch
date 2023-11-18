@@ -31,14 +31,6 @@
              }
  
              return levelchunk;
-@@ -756,6 +_,7 @@
-       for(ServerPlayer serverplayer : this.playerMap.getAllPlayers()) {
-          if (serverplayer.getChunkTrackingView().contains(chunkpos)) {
-             markChunkPendingToSend(serverplayer, p_299599_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(serverplayer, p_299599_, this.level);
-          }
-       }
- 
 @@ -823,6 +_,7 @@
  
              this.level.getProfiler().incrementCounter("chunkSave");
@@ -47,22 +39,6 @@
              this.write(chunkpos, compoundtag);
              this.markPosition(chunkpos, chunkstatus.getChunkType());
              return true;
-@@ -877,6 +_,7 @@
-       LevelChunk levelchunk = this.getChunkToSend(p_298062_.toLong());
-       if (levelchunk != null) {
-          markChunkPendingToSend(p_297974_, levelchunk);
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_297974_, levelchunk, this.level);
-       }
- 
-    }
-@@ -1099,6 +_,7 @@
-             this.markChunkPendingToSend(p_301380_, p_296566_);
-          }, (p_296568_) -> {
-             dropChunk(p_301380_, p_296568_);
-+            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_301380_, p_296568_, this.level);
-          });
-          p_301380_.setChunkTrackingView(p_301057_);
-       }
 @@ -1118,7 +_,7 @@
     }
  

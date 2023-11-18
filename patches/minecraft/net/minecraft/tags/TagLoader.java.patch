@@ -13,7 +13,7 @@
  
     private Either<Collection<TagLoader.EntryWithSource>, Collection<T>> build(TagEntry.Lookup<T> p_215979_, List<TagLoader.EntryWithSource> p_215980_) {
 -      ImmutableSet.Builder<T> builder = ImmutableSet.builder();
-+      var builder = new java.util.HashSet<T>();
++      var builder = new java.util.LinkedHashSet<T>(); // Order is important, as ImmutableSet is ordered and some people rely on that. https://github.com/MinecraftForge/MinecraftForge/issues/9774
        List<TagLoader.EntryWithSource> list = new ArrayList<>();
  
        for(TagLoader.EntryWithSource tagloader$entrywithsource : p_215980_) {

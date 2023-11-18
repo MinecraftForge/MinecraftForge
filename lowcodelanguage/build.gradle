@@ -1,49 +1,33 @@
 plugins {
-    id 'com.github.ben-manes.versions'
     id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
     id 'org.cadixdev.licenser'
     id 'java-library'
     id 'jacoco'
 }
 
-dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
-
 java.withSourcesJar()
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:${JETBRAINS_ANNOTATIONS_VERSION}")
+    compileOnly(libs.nulls)
 
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
 }
 
-ext {
-    MANIFESTS = [
-        '': [
-            'FMLModType': 'LANGPROVIDER',
-            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            'Git-Commit': GIT_INFO.abbreviatedId,
-            'Git-Branch': GIT_INFO.branch,
-            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
-        ] as LinkedHashMap,
-        'net/minecraftforge/fml/loading/': [
-            'Specification-Title':      'FMLLoader',
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': project.name.toLowerCase(),
+            'FMLModType': 'LANGPROVIDER'
+        ] as java.util.LinkedHashMap)
+        attributes([
+            'Specification-Title':      'LowCodeMod',
             'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML Loader',
-            'Implementation-Version':   '1.0',
-            'Implementation-Vendor':    'Forge'
-        ] as LinkedHashMap
-    ]
-}
-
-jar.doFirst {
-    manifest.attributes['Automatic-Module-Name'] = project.name
-    MANIFESTS.each { pkg, values ->
-        if (pkg == '')
-            manifest.attributes(values)
-        else
-            manifest.attributes(values, pkg)
+            'Specification-Version':    '1.0',
+            'Implementation-Title':     project.name,
+            'Implementation-Version':   FORGE_VERSION.split('\\.')[0], //project.version, TODO: Split out into a real versioned system, for now use the default that net.minecraftforge.fml.loading.LanguageLoadingProvider.loadLanguageProviders() used
+            'Implementation-Vendor':    'Forge Development LLC'
+        ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
     }
 }
 

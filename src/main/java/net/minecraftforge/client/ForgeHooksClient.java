@@ -16,6 +16,8 @@ import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Constants;
+
+import net.minecraft.ChatFormatting;
 import net.minecraft.FileUtil;
 import net.minecraft.client.Camera;
 import net.minecraft.client.KeyMapping;
@@ -155,7 +157,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.snapshots.ForgeSnapshotsModClient;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkInitialization;
@@ -344,9 +345,16 @@ public class ForgeHooksClient {
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    public static void renderMainMenu(TitleScreen gui, GuiGraphics guiGraphics, Font font, int width, int height, int alpha) {
+    public static void renderMainMenu(TitleScreen gui, GuiGraphics graphics, Font font, int width, int height, int alpha) {
         VersionChecker.Status status = ForgeVersion.getStatus();
-        ForgeSnapshotsModClient.renderMainMenuWarning(status, gui, guiGraphics, font, width, height, alpha);
+
+        if (status == VersionChecker.Status.BETA || status == VersionChecker.Status.BETA_OUTDATED) {
+            // Render a warning at the top of the screen
+            Component line = Component.translatable("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
+            graphics.drawCenteredString(font, line, width / 2, 4 + (0 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+            line = Component.translatable("forge.update.beta.2");
+            graphics.drawCenteredString(font, line, width / 2, 4 + (1 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+        }
 
         forgeStatusLine = switch(status) {
             // case FAILED -> " Version check failed";

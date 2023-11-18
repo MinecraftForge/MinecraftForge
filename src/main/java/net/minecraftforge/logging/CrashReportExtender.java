@@ -21,23 +21,12 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class CrashReportExtender
-{
-
-    public static void extendSystemReport(final SystemReport systemReport)
-    {
-        for (final ISystemReportExtender call : CrashReportCallables.allCrashCallables())
-        {
+public class CrashReportExtender {
+    public static void extendSystemReport(final SystemReport systemReport) {
+        for (final ISystemReportExtender call : CrashReportCallables.allCrashCallables()) {
             if (call.isActive())
-            {
                 systemReport.setDetail(call.getLabel(), call);
-            }
         }
-    }
-
-    public static void addCrashReportHeader(StringBuilder stringbuilder, CrashReport crashReport)
-    {
-        net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.addCrashReportHeader(stringbuilder, crashReport);
     }
 
     public static String generateEnhancedStackTrace(final Throwable throwable) {
@@ -54,7 +43,6 @@ public class CrashReportExtender
         final String s = TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
         return header ? s : s.substring(s.indexOf(Strings.LINE_SEPARATOR));
     }
-
 
     public static File dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
         final CrashReport crashReport = CrashReport.forThrowable(new Exception("Mod Loading has failed"), "Mod loading error has occurred");

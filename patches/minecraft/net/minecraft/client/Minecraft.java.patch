@@ -96,7 +96,7 @@
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
        if (checkModStatus().shouldReportAsModified()) {
 -         stringbuilder.append("*");
-+         stringbuilder.append(' ').append(net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.BRANDING_NAME).append('*');
++         stringbuilder.append(" Forge").append('*');
        }
  
        stringbuilder.append(" ");

@@ -16,23 +16,18 @@ import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forge.snapshots.ForgeSnapshotsMod;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
-
-public class BrandingControl
-{
+public class BrandingControl {
     private static List<String> brandings;
     private static List<String> brandingsNoMC;
     private static List<String> overCopyrightBrandings;
 
-    private static void computeBranding()
-    {
-        if (brandings == null)
-        {
+    private static void computeBranding() {
+        if (brandings == null) {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add(ForgeSnapshotsMod.BRANDING_NAME + ' ' + ForgeVersion.getVersion());
+            brd.add("Forge " + ForgeVersion.getVersion());
             brd.add("Minecraft " + MCPVersion.getMCVersion());
             brd.add("MCP " + MCPVersion.getMCPVersion());
             int tModCount = ModList.get().size();
@@ -42,14 +37,12 @@ public class BrandingControl
         }
     }
 
-    private static List<String> getBrandings(boolean includeMC, boolean reverse)
-    {
+    private static List<String> getBrandings(boolean includeMC, boolean reverse) {
         computeBranding();
-        if (includeMC) {
+        if (includeMC)
             return reverse ? Lists.reverse(brandings) : brandings;
-        } else {
+        else
             return reverse ? Lists.reverse(brandingsNoMC) : brandingsNoMC;
-        }
     }
 
     private static void computeOverCopyrightBrandings() {
@@ -71,11 +64,11 @@ public class BrandingControl
     }
 
     public static String getClientBranding() {
-        return ForgeSnapshotsMod.BRANDING_ID;
+        return "forge";
     }
 
     public static String getServerBranding() {
-        return ForgeSnapshotsMod.BRANDING_ID;
+        return "forge";
     }
 
     public static ResourceManagerReloadListener resourceManagerReloadListener() {

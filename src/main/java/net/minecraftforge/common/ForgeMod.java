@@ -58,13 +58,13 @@ import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModi
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.forge.snapshots.ForgeSnapshotsMod;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
@@ -389,7 +389,6 @@ public class ForgeMod {
 
     public ForgeMod() {
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
-        ForgeSnapshotsMod.logStartupWarning();
         INSTANCE = this;
         MinecraftForge.initialize();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
@@ -430,6 +429,7 @@ public class ForgeMod {
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
+        MinecraftForge.EVENT_BUS.addListener(this::tagsUpdated);
         MinecraftForge.EVENT_BUS.addListener(this::registerPermissionNodes);
         MinecraftForge.EVENT_BUS.register(new ForgeNetworkConfigurationHandler());
 
@@ -453,6 +453,10 @@ public class ForgeMod {
     }
 
     public void mappingChanged(IdMappingEvent evt) {
+        Ingredient.invalidateAll();
+    }
+
+    public void tagsUpdated(TagsUpdatedEvent evt) {
         Ingredient.invalidateAll();
     }
 

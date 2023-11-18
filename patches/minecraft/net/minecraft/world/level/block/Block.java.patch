@@ -150,8 +150,8 @@
 +
 +   @Override
 +   public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, net.minecraftforge.common.IPlantable plantable) {
-+      BlockState plant = plantable.getPlant(world, pos.relative(facing));
-+      net.minecraftforge.common.PlantType type = plantable.getPlantType(world, pos.relative(facing));
++      var plant = plantable.getPlant(world, pos.relative(facing));
++      var type = plantable.getPlantType(world, pos.relative(facing));
 +
 +      if (plant.getBlock() == Blocks.CACTUS)
 +         return state.is(Blocks.CACTUS) || state.is(BlockTags.SAND);
@@ -159,7 +159,7 @@
 +      if (plant.getBlock() == Blocks.SUGAR_CANE && this == Blocks.SUGAR_CANE)
 +         return true;
 +
-+      if (plantable instanceof BushBlock && ((BushBlock)plantable).mayPlaceOn(state, world, pos))
++      if (plantable instanceof BushBlock bush && bush.mayPlaceOn(state, world, pos))
 +         return true;
 +
 +      if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {

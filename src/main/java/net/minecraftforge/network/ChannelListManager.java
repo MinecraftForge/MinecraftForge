@@ -88,6 +88,9 @@ public class ChannelListManager {
     }
 
     private static void sendChannels(EventNetworkChannel channel, Connection connection, Collection<ResourceLocation> channels) {
+        if (channels.isEmpty())
+            return;
+
         var buf = new FriendlyByteBuf(Unpooled.buffer());
         for (var c : channels) {
             buf.writeBytes(c.toString().getBytes(StandardCharsets.UTF_8));
@@ -100,19 +103,31 @@ public class ChannelListManager {
     private static void updateFrom(CustomPayloadEvent.Context source, FriendlyByteBuf buffer, final ChannelRegistrationChangeEvent.Type changeType) {
         byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
         buffer.readBytes(data);
-        var changed = new HashSet<ResourceLocation>();
+        var channels = new HashSet<String>();
 
         int last = 0;
         for (int cur = 0; cur < data.length; cur++) {
             if (data[cur] == '\0') {
-                var channel = new String(data, last, cur - last, StandardCharsets.UTF_8);
-                try {
-                    changed.add(new ResourceLocation(channel));
-                } catch (ResourceLocationException ex) {
-                    // Vanilla packet deserializers now force this to be a resource location, so we should never get this, but just in case.
-                    LOGGER.warn("Invalid channel name received: {}. Ignoring", channel);
-                }
+                channels.add(new String(data, last, cur - last, StandardCharsets.UTF_8));
                 last = cur + 1;
+            }
+        }
+
+        // Add the end of the data because the spec doesn't actually say null terminated, just null separated
+        if (last < data.length)
+            channels.add(new String(data, last, data.length - last, StandardCharsets.UTF_8));
+
+        var changed = new HashSet<ResourceLocation>();
+        for (var channel : channels) {
+            // It also says nothing about the format of channels of channels so ignore bad channels.
+            if (channel.isEmpty())
+                continue;
+
+            try {
+                changed.add(new ResourceLocation(channel));
+            } catch (ResourceLocationException ex) {
+                // Vanilla packet deserializers now force this to be a resource location, so we should never get this, but just in case.
+                LOGGER.warn("Invalid channel name received: {}. Ignoring", channel);
             }
         }
 
