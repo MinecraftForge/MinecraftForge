@@ -5,8 +5,10 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+
+import java.util.Map;
+
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 
@@ -17,7 +19,7 @@ public class StringSubstitutor {
     }
 
     private static StrLookup<String> getStringLookup(final ModFile file) {
-        var globals = ImmutableMap.of(
+        var globals = Map.of(
             "mcVersion", FMLLoader.versionInfo().mcVersion(),
             "forgeVersion", FMLLoader.versionInfo().forgeVersion()
         );

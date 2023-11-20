@@ -90,7 +90,7 @@ public class Util {
         return ret
     }
     
-    public static def getMavenInfoFromDep(dep) {
+    public static Map getMavenInfoFromDep(dep) {
         return getMavenInfoFromMap([
             group: dep.moduleVersion.id.group,
             name: dep.moduleVersion.id.name,
@@ -99,7 +99,7 @@ public class Util {
             extension: dep.extension
         ])
     }
-    public static def getMavenInfoFromTask(task) {
+    public static Map getMavenInfoFromTask(task) {
         return getMavenInfoFromMap([
             group: task.project.group,
             name: task.project.name,
@@ -109,7 +109,7 @@ public class Util {
         ])
     }
     
-    private static def getMavenInfoFromMap(art) {
+    private static Map getMavenInfoFromMap(art) {
         def key = "$art.group:$art.name"
         def name = "$art.group:$art.name:$art.version"
         def path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"

@@ -27,8 +27,10 @@ tasks.withType(Javadoc).configureEach {
 // We need to write the manifest to the binary file so we have properly versioned packaged at dev time.
 tasks.register('writeManifest') {
     doLast {
-        def task = plugins.findPlugin('net.minecraftforge.gradle.patcher') ? universalJar : jar
-        task.manifest.writeTo(rootProject.file('src/main/resources/META-INF/MANIFEST.MF'))
+        if (plugins.findPlugin('net.minecraftforge.gradle.patcher')) // Forge project
+            universalJar.manifest.writeTo(rootProject.file('src/main/resources/META-INF/MANIFEST.MF'))
+        else
+            jar.manifest.writeTo(project.file('src/main/resources/META-INF/MANIFEST.MF'))
     }
 }
 

@@ -4,7 +4,8 @@ eclipse {
     classpath.file.whenMerged {
         def minecraft = entries.find { it.path == 'src/main/java' }
         // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
-        minecraft.entryAttributes['ignore_optional_problems'] = 'true'
+        if (minecraft != null)
+            minecraft.entryAttributes['ignore_optional_problems'] = 'true'
         
         def mods = [
             'src/main/java':      'minecraft',
@@ -25,8 +26,8 @@ eclipse {
             if ('src'.equals(e.kind) && e.hasProperty('output')) {
                 if (mods.containsKey(e.path))
                     e.output = 'bin/' + mods[e.path]
-                else
-                    throw new IllegalStateException('Unknown path: ' + e.toString())
+                //else
+                //    throw new IllegalStateException('Unknown path: ' + e.toString())
             }
         }
     }
