@@ -49,7 +49,7 @@ tasks.withType(JavaCompile).configureEach {
 // Merge the resources and classes into the same directory. We'll need to split them at runtime because
 // Minecraft and Forge are in the same sourceSet as they are inter dependent.. for now..
 sourceSets.each {
-    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    def dir = layout.buildDirectory.dir("classes/java/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
 }
