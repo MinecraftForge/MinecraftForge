@@ -102,5 +102,5 @@ tasks.register('writeForgeVersionJson') {
 }
 
 tasks.named('generateResources').configure {
-    dependsOn(writeForgeVersionJson)
+    dependsOn('writeForgeVersionJson')
 }

@@ -60,6 +60,6 @@ tasks.withType(JavaCompile).configureEach {
 eclipse.classpath.file.whenMerged {
 	// Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
 	def src = entries.find { it.path == 'src/main/java' }
-	if (src != null)
-        src.entryAttributes['ignore_optional_problems'] = 'true'
+    if (src == null) throw new IllegalStateException("You must run `setup` task before importing")
+    src.entryAttributes['ignore_optional_problems'] = 'true'
 }
