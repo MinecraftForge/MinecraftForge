@@ -114,11 +114,13 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public String name() {
         return "fmlearlywindow";
     }
+
     @Override
     public Runnable initialize(String[] arguments) {
+        String mcVersion = FMLLoader.versionInfo().mcVersion();
+        String forgeVersion = FMLLoader.versionInfo().forgeVersion();
+
         final OptionParser parser = new OptionParser();
-        var mcversionopt = parser.accepts("fml.mcVersion").withRequiredArg().ofType(String.class);
-        var forgeversionopt = parser.accepts("fml.forgeVersion").withRequiredArg().ofType(String.class);
         var widthopt = parser.accepts("width")
                 .withRequiredArg().ofType(Integer.class)
                 .defaultsTo(FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH));
@@ -133,7 +135,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH, winWidth);
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_HEIGHT, winHeight);
         fbScale = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_FBSCALE);
-        if (System.getenv("FML_EARLY_WINDOW_DARK")!= null) {
+        if (System.getenv("FML_EARLY_WINDOW_DARK") != null) {
             this.colourScheme = ColourScheme.BLACK;
         } else {
             try {
@@ -148,10 +150,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }
         this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
 
-        var forgeVersion = parsed.valueOf(forgeversionopt);
-        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading "+ forgeVersion));
+        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading " + forgeVersion));
         performanceInfo = new PerformanceInfo();
-        return start(parsed.valueOf(mcversionopt), forgeVersion);
+        return start(mcVersion, forgeVersion);
     }
 
     private static final long MINFRAMETIME = TimeUnit.MILLISECONDS.toNanos(10); // This is the FPS cap on the window - note animation is capped at 20FPS via the tickTimer
@@ -229,11 +230,11 @@ public class DisplayWindow implements ImmediateWindowProvider {
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
         }
         this.elements = new ArrayList<>(Arrays.asList(
-                RenderElement.anvil(font),
-                RenderElement.logMessageOverlay(font),
-                RenderElement.forgeVersionOverlay(font, mcVersion+"-"+forgeVersion.split("-")[0]),
-                RenderElement.performanceBar(font),
-                RenderElement.progressBars(font)
+            RenderElement.anvil(font),
+            RenderElement.logMessageOverlay(font),
+            RenderElement.forgeVersionOverlay(font, mcVersion + "-" + forgeVersion),
+            RenderElement.performanceBar(font),
+            RenderElement.progressBars(font)
         ));
 
         var date = Calendar.getInstance();
@@ -285,6 +286,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public Runnable start(@Nullable String mcVersion, final String forgeVersion) {
         renderScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             final var thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setName("EarlyDisplay");
             thread.setDaemon(true);
             return thread;
         });

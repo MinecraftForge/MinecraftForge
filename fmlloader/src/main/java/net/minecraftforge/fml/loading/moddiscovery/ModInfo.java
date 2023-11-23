@@ -15,6 +15,7 @@ import net.minecraftforge.forgespi.locating.ForgeFeature;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.net.URL;
@@ -24,8 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class ModInfo implements IModInfo, IConfigurable
-{
+@ApiStatus.Internal
+public class ModInfo implements IModInfo, IConfigurable {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
     private static final Pattern VALID_MODID = Pattern.compile("^[a-z][a-z0-9_]{1,63}$");

@@ -6,47 +6,16 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.jarhandling.JarMetadata;
-import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
-
 import java.lang.module.ModuleDescriptor;
-import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
+import org.jetbrains.annotations.ApiStatus;
+
+@ApiStatus.Internal
 public final class ModJarMetadata implements JarMetadata {
     private IModFile modFile;
     private ModuleDescriptor descriptor;
-
-    // TODO: Remove helper functions to cleanup api
-    @Deprecated(forRemoval = true, since="1.18")
-    static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
-        return buildFile(j->new ModFile(j, locator, ModFileParser::modsTomlParser), jarTest, filter, files);
-    }
-
-    // TODO: Remove helper functions to cleanup api
-    @Deprecated(forRemoval = true, since="1.18")
-    static IModFile buildFile(IModLocator locator, Path... files) {
-        return buildFile(locator, j->true, null, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
-    }
-
-    // TODO: Remove helper functions to cleanup api
-    @Deprecated(forRemoval = true, since="1.18")
-    static Optional<IModFile> buildFile(Function<SecureJar, IModFile> mfConstructor, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
-        var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(()->ModFile.DEFAULTMANIFEST, j->mjm, filter, files);
-        if (jarTest.test(sj)) {
-            var mf = mfConstructor.apply(sj);
-            mjm.setModFile(mf);
-            return Optional.of(mf);
-        } else {
-            return Optional.empty();
-        }
-    }
 
     ModJarMetadata() {
     }

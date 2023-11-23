@@ -25,8 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Optional;
 
-public class FMLModContainer extends ModContainer
-{
+public class FMLModContainer extends ModContainer {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker LOADING = MarkerManager.getMarker("LOADING");
     private final ModFileScanData scanResults;
@@ -34,8 +33,7 @@ public class FMLModContainer extends ModContainer
     private Object modInstance;
     private final Class<?> modClass;
 
-    public FMLModContainer(IModInfo info, String className, ModFileScanData modFileScanResults, ModuleLayer gameLayer)
-    {
+    public FMLModContainer(IModInfo info, String className, ModFileScanData modFileScanResults, ModuleLayer gameLayer) {
         super(info);
         LOGGER.debug(LOADING,"Creating FMLModContainer instance for {}", className);
         this.scanResults = modFileScanResults;
@@ -44,66 +42,60 @@ public class FMLModContainer extends ModContainer
         this.configHandler = Optional.of(ce->this.eventBus.post(ce.self()));
         final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
         this.contextExtension = () -> contextExtension;
-        try
-        {
-            var layer = gameLayer.findModule(info.getOwningFile().moduleName()).orElseThrow();
-            modClass = Class.forName(layer, className);
+
+
+        try {
+            var moduleName = info.getOwningFile().moduleName();
+            var module = gameLayer.findModule(moduleName)
+                .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
+            modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             LOGGER.error(LOADING, "Failed to load class {}", className, e);
             throw new ModLoadingException(info, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmodclass", e);
         }
     }
 
-    private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
-    {
+    private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
     }
 
-    private void constructMod()
-    {
-        try
-        {
+    private void constructMod() {
+        try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
             this.modInstance = modClass.getDeclaredConstructor().newInstance();
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
-        }
-        catch (Throwable e)
-        {
+        } catch (Throwable e) {
             // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
             // actual exception from the mod loading error screen.
             if (e instanceof InvocationTargetException wrapped)
                 e = Objects.requireNonNullElse(wrapped.getCause(), e); // unwrap the exception
 
-            LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING, "Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
+
         try {
             LOGGER.trace(LOADING, "Injecting Automatic event subscribers for {}", getModId());
             AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
             LOGGER.trace(LOADING, "Completed Automatic event subscribers for {}", getModId());
         } catch (Throwable e) {
-            LOGGER.error(LOADING,"Failed to register automatic subscribers. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING, "Failed to register automatic subscribers. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
     }
 
     @Override
-    public boolean matches(Object mod)
-    {
+    public boolean matches(Object mod) {
         return mod == modInstance;
     }
 
     @Override
-    public Object getMod()
-    {
+    public Object getMod() {
         return modInstance;
     }
 
-    public IEventBus getEventBus()
-    {
+    public IEventBus getEventBus() {
         return this.eventBus;
     }
 
