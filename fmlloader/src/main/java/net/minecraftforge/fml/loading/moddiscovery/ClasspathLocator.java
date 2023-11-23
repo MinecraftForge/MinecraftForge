@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
@@ -43,6 +42,8 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
         var cl = getClass().getClassLoader();
 
         // Find 'minecraft' during dev time this is also Forge. So skip it.
+        // Can return null for dedicated server as Minecraft isn't on the classpath
+        // On the client it doesn't matter as it's the vanilla jar so wouldnt have mods.toml in it.
         var minecraft = getPathFromResource(cl, "net/minecraft/obfuscate/DontObfuscate.class");
 
         var claimed = new HashSet<Path>();
@@ -106,7 +107,7 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
     private static Path getPathFromResource(ClassLoader cl, String resource) {
         var url = cl.getResource(resource);
         if (url == null)
-            throw new IllegalStateException("Could not find " + resource + " in classloader " + cl);
+            return null;
         return getPath(url, resource);
     }
 }
