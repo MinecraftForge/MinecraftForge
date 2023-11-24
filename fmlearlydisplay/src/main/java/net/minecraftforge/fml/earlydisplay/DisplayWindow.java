@@ -40,11 +40,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -86,6 +88,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private int framecount;
     private EarlyFramebuffer framebuffer;
     private ScheduledFuture<?> windowTick;
+    private ScheduledFuture<?> initializationFuture;
 
     private PerformanceInfo performanceInfo;
     private ScheduledFuture<?> performanceTick;
@@ -287,7 +290,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             return thread;
         });
         initWindow(mcVersion);
-        renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
+        this.initializationFuture = renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
         return this::periodicTick;
     }
 
@@ -518,6 +521,16 @@ public class DisplayWindow implements ImmediateWindowProvider {
      * @return the Window we own.
      */
     public long setupMinecraftWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
+        // wait for the window to actually be initialized
+        try {
+            this.initializationFuture.get(30, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            Thread.dumpStack();
+            crashElegantly("We seem to be having trouble initializing the window, waited for 30 seconds");
+        }
+
         // we have to spin wait for the window ticker
         ImmediateWindowHandler.updateProgress("Initializing Game Graphics");
         while (!this.windowTick.isDone()) {
