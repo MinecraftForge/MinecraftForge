@@ -90,6 +90,7 @@ public abstract class AbstractModProvider implements IModProvider {
         @Override public List<IModInfo> getMods() { return Collections.emptyList(); }
         @Override public List<LanguageSpec> requiredLanguageLoaders() { return Collections.emptyList(); }
         @Override public boolean showAsResourcePack() { return false; }
+        @Override public boolean showAsDataPack() { return false; }
         @Override public Map<String, Object> getFileProperties() { return Collections.emptyMap(); }
         @Override public String getLicense() { return license; }
         @Override public IModFile getFile() { return mod; }
