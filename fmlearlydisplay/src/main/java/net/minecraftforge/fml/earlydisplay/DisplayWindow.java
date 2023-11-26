@@ -264,7 +264,6 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public void render(int alpha) {
         var currentVAO = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         var currentFB = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
-        glfwSwapInterval(0);
         glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
         RenderElement.globalAlpha = alpha;
         framebuffer.activate();
