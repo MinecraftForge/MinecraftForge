@@ -13,14 +13,34 @@
     public boolean m_7933_(int p_193987_, int p_193988_, int p_193989_) {
        if (this.f_193975_ != null) {
           if (p_193987_ == 256) {
-+            this.f_193975_.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.f_84822_);
++            this.f_193975_.setKeyModifierAndCode(null, InputConstants.f_84822_);
              this.f_96282_.m_92159_(this.f_193975_, InputConstants.f_84822_);
           } else {
-+            this.f_193975_.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.m_84827_(p_193987_, p_193988_));
++            this.f_193975_.setKeyModifierAndCode(null, InputConstants.m_84827_(p_193987_, p_193988_));
              this.f_96282_.m_92159_(this.f_193975_, InputConstants.m_84827_(p_193987_, p_193988_));
           }
  
-+         if(!net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.f_193975_.getKey()))
++         if (p_193987_ == 256 || !net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.f_193975_.getKey()))
           this.f_193975_ = null;
           this.f_193976_ = Util.m_137550_();
           this.f_193977_.m_269130_();
+@@ -67,6 +_,19 @@
+       } else {
+          return super.m_7933_(p_193987_, p_193988_, p_193989_);
+       }
++   }
++
++   @Override
++   public boolean m_7920_(int keyCode, int scanCode, int modifiers) {
++      // Forge: We wait for a second key above if the first press is a modifier
++      // but if they release the modifier then set it explicitly.
++      var key = InputConstants.m_84827_(keyCode, scanCode);
++      if (this.f_193975_ != null && this.f_193975_.getKey() == key) {
++         this.f_193975_ = null;
++         this.f_193976_ = Util.m_137550_();
++         this.f_193977_.m_269130_();
++      }
++      return super.m_7920_(keyCode, scanCode, modifiers);
+    }
+ 
+    public void m_88315_(GuiGraphics p_282556_, int p_193992_, int p_193993_, float p_193994_) {

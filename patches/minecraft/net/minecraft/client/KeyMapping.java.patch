@@ -90,12 +90,12 @@
     }
  
     public String m_90865_() {
-@@ -184,4 +_,84 @@
+@@ -183,5 +_,88 @@
+ 
     public void m_7249_(boolean p_90846_) {
        this.f_90817_ = p_90846_;
-    }
++   }
 +
-+   /****************** Forge Start *****************************/
 +   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
@@ -165,13 +165,17 @@
 +   }
 +
 +   @Override
-+   public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
-+       this.f_90816_ = keyCode;
-+       if (keyModifier.matches(keyCode))
-+           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++   public void setKeyModifierAndCode(@org.jetbrains.annotations.Nullable net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
 +       f_90810_.remove(this);
++
++       if (keyModifier == null)
++           keyModifier = net.minecraftforge.client.settings.KeyModifier.getModifier(this.f_90816_);
++       if (keyModifier == null || keyCode == InputConstants.f_84822_ || net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(keyCode))
++           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++
++       this.f_90816_ = keyCode;
 +       this.keyModifier = keyModifier;
++
 +       f_90810_.put(keyCode, this);
-+   }
-+   /****************** Forge End *****************************/
+    }
  }

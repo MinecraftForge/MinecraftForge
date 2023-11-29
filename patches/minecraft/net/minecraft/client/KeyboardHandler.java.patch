@@ -1,26 +1,6 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -329,7 +_,9 @@
-             }
-          }
- 
--         if (p_90897_ == 1 && (!(this.f_90867_.f_91080_ instanceof KeyBindsScreen) || ((KeyBindsScreen)screen).f_193976_ <= Util.m_137550_() - 20L)) {
-+
-+         if ((!(this.f_90867_.f_91080_ instanceof KeyBindsScreen) || ((KeyBindsScreen)screen).f_193976_ <= Util.m_137550_() - 20L)) {
-+            if (p_90897_ == 1) {
-             if (this.f_90867_.f_91066_.f_92105_.m_90832_(p_90895_, p_90896_)) {
-                this.f_90867_.m_91268_().m_85438_();
-                this.f_90867_.f_91066_.m_231829_().m_231514_(this.f_90867_.m_91268_().m_85440_());
-@@ -347,6 +_,8 @@
-                });
-                return;
-             }
-+            } else if (p_90897_ == 0 /*GLFW_RELEASE*/ && this.f_90867_.f_91080_ instanceof KeyBindsScreen)
-+               ((KeyBindsScreen)this.f_90867_.f_91080_).f_193975_ = null; //Forge: Unset pure modifiers.
-          }
- 
-          if (this.f_90867_.m_240477_().m_93316_()) {
-@@ -369,11 +_,15 @@
+@@ -329,6 +_,7 @@
              Screen.m_96579_(() -> {
                 if (p_90897_ != 1 && p_90897_ != 2) {
                    if (p_90897_ == 0) {
