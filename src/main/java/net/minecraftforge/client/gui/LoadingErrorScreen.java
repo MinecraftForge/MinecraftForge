@@ -149,7 +149,7 @@ public class LoadingErrorScreen extends ErrorScreen {
                 for (FormattedCharSequence string : strings)
                 {
                     if (center)
-                        guiGraphics.drawString(font, string, left + (width) - font.width(string) / 2F, (float) y, 0xFFFFFF, false);
+                        guiGraphics.drawString(font, string, left + (width / 2F) - font.width(string) / 2F, (float) y, 0xFFFFFF, false);
                     else
                         guiGraphics.drawString(font, string, left + 5, y, 0xFFFFFF, false);
                     y += font.lineHeight;
