@@ -53,12 +53,9 @@ import java.util.function.Supplier;
  * @see EntityRenderersEvent.RegisterRenderers
  * @see EntityRenderersEvent.AddLayers
  */
-public abstract class EntityRenderersEvent extends Event implements IModBusEvent
-{
+public abstract class EntityRenderersEvent extends Event implements IModBusEvent {
     @ApiStatus.Internal
-    protected EntityRenderersEvent()
-    {
-    }
+    protected EntityRenderersEvent() {}
 
     /**
      * Fired for registering layer definitions at the appropriate time.
@@ -68,12 +65,9 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterLayerDefinitions extends EntityRenderersEvent
-    {
+    public static class RegisterLayerDefinitions extends EntityRenderersEvent {
         @ApiStatus.Internal
-        public RegisterLayerDefinitions()
-        {
-        }
+        public RegisterLayerDefinitions() {}
 
         /**
          * Registers a layer definition supplier with the given {@link ModelLayerLocation}.
@@ -84,8 +78,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * @param supplier      a supplier to create a {@link LayerDefinition}, generally a static method reference in
          *                      the entity model class
          */
-        public void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier)
-        {
+        public void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier) {
             ForgeHooksClient.registerLayerDefinition(layerLocation, supplier);
         }
     }
@@ -100,12 +93,9 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterRenderers extends EntityRenderersEvent
-    {
+    public static class RegisterRenderers extends EntityRenderersEvent {
         @ApiStatus.Internal
-        public RegisterRenderers()
-        {
-        }
+        public RegisterRenderers() {}
 
         /**
          * Registers an entity renderer for the given entity type.
@@ -113,8 +103,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * @param entityType             the entity type to register a renderer for
          * @param entityRendererProvider the renderer provider
          */
-        public <T extends Entity> void registerEntityRenderer(EntityType<? extends T> entityType, EntityRendererProvider<T> entityRendererProvider)
-        {
+        public <T extends Entity> void registerEntityRenderer(EntityType<? extends T> entityType, EntityRendererProvider<T> entityRendererProvider) {
             EntityRenderers.register(entityType, entityRendererProvider);
         }
 
@@ -124,8 +113,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * @param blockEntityType             the block entity type to register a renderer for
          * @param blockEntityRendererProvider the renderer provider
          */
-        public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> blockEntityType, BlockEntityRendererProvider<T> blockEntityRendererProvider)
-        {
+        public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> blockEntityType, BlockEntityRendererProvider<T> blockEntityRendererProvider) {
             BlockEntityRenderers.register(blockEntityType, blockEntityRendererProvider);
         }
     }
@@ -139,15 +127,13 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class AddLayers extends EntityRenderersEvent
-    {
+    public static class AddLayers extends EntityRenderersEvent {
         private final Map<EntityType<?>, EntityRenderer<?>> renderers;
         private final Map<PlayerSkin.Model, EntityRenderer<? extends Player>> skinMap;
         private final EntityRendererProvider.Context context;
 
         @ApiStatus.Internal
-        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<PlayerSkin.Model, EntityRenderer<? extends Player>> playerRenderers, EntityRendererProvider.Context context)
-        {
+        public AddLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<PlayerSkin.Model, EntityRenderer<? extends Player>> playerRenderers, EntityRendererProvider.Context context) {
             this.renderers = renderers;
             this.skinMap = playerRenderers;
             this.context = context;
@@ -160,8 +146,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * {@linkplain ModelLayers#PLAYER regular player model} and {@code slim} for the
          * {@linkplain ModelLayers#PLAYER_SLIM slim player model}.
          */
-        public Set<PlayerSkin.Model> getSkins()
-        {
+        public Set<PlayerSkin.Model> getSkins() {
             return skinMap.keySet();
         }
 
@@ -175,9 +160,18 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          */
         @Nullable
         @SuppressWarnings("unchecked")
-        public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(PlayerSkin.Model skinName)
-        {
-            return (R) skinMap.get(skinName);
+        public <R extends EntityRenderer<? extends Player>> R getPlayerSkin(PlayerSkin.Model skinName) {
+            return (R)skinMap.get(skinName);
+        }
+
+        /**
+         * @deprecated Use getEntitySkin, return type down graded to EntityRenderer instead of LivingEntityRenderer
+         */
+        @Nullable
+        @SuppressWarnings("unchecked")
+        @Deprecated(forRemoval = true, since = "1.20.2")
+        public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(PlayerSkin.Model skinName) {
+            return (R)skinMap.get(skinName);
         }
 
         /**
@@ -190,24 +184,31 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          */
         @Nullable
         @SuppressWarnings("unchecked")
-        public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType)
-        {
+        public <T extends LivingEntity, R extends EntityRenderer<T>> R getEntityRenderer(EntityType<? extends T> entityType) {
+            return (R)renderers.get(entityType);
+        }
+
+        /**
+         * @deprecated Use getEntityRenderer, return type down graded to EntityRenderer instead of LivingEntityRenderer
+         */
+        @Nullable
+        @SuppressWarnings("unchecked")
+        @Deprecated(forRemoval = true, since = "1.20.2")
+        public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType) {
             return (R) renderers.get(entityType);
         }
 
         /**
          * {@return the set of entity models}
          */
-        public EntityModelSet getEntityModels()
-        {
+        public EntityModelSet getEntityModels() {
             return this.context.getModelSet();
         }
 
         /**
          * {@return the context for the entity renderer provider}
          */
-        public EntityRendererProvider.Context getContext()
-        {
+        public EntityRendererProvider.Context getContext() {
             return context;
         }
     }
@@ -220,14 +221,12 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class CreateSkullModels extends EntityRenderersEvent
-    {
+    public static class CreateSkullModels extends EntityRenderersEvent {
         private final ImmutableMap.Builder<Type, SkullModelBase> builder;
         private final EntityModelSet entityModelSet;
 
         @ApiStatus.Internal
-        public CreateSkullModels(ImmutableMap.Builder<Type, SkullModelBase> builder, EntityModelSet entityModelSet)
-        {
+        public CreateSkullModels(ImmutableMap.Builder<Type, SkullModelBase> builder, EntityModelSet entityModelSet) {
             this.builder = builder;
             this.entityModelSet = entityModelSet;
         }
@@ -235,8 +234,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         /**
          * {@return the set of entity models}
          */
-        public EntityModelSet getEntityModelSet()
-        {
+        public EntityModelSet getEntityModelSet() {
             return entityModelSet;
         }
 
@@ -251,8 +249,7 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          *              {@link EntityModelSet#bakeLayer(ModelLayerLocation)} and pass it to the constructor for
          *              {@link SkullModel}.
          */
-        public void registerSkullModel(SkullBlock.Type type, SkullModelBase model)
-        {
+        public void registerSkullModel(SkullBlock.Type type, SkullModelBase model) {
             builder.put(type, model);
         }
     }
