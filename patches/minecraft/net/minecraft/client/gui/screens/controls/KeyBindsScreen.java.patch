@@ -9,18 +9,38 @@
           }
  
           this.keyBindsList.resetMappingAndUpdateButtons();
-@@ -55,11 +_,14 @@
+@@ -55,11 +_,13 @@
     public boolean keyPressed(int p_193987_, int p_193988_, int p_193989_) {
        if (this.selectedKey != null) {
           if (p_193987_ == 256) {
-+            this.selectedKey.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.UNKNOWN);
++            this.selectedKey.setKeyModifierAndCode(null, InputConstants.UNKNOWN);
              this.options.setKey(this.selectedKey, InputConstants.UNKNOWN);
           } else {
-+            this.selectedKey.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.getKey(p_193987_, p_193988_));
++            this.selectedKey.setKeyModifierAndCode(null, InputConstants.getKey(p_193987_, p_193988_));
              this.options.setKey(this.selectedKey, InputConstants.getKey(p_193987_, p_193988_));
           }
- 
-+         if(!net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.selectedKey.getKey()))
+-
++         if (p_193987_ == 256 || !net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.selectedKey.getKey()))
           this.selectedKey = null;
           this.lastKeySelection = Util.getMillis();
           this.keyBindsList.resetMappingAndUpdateButtons();
+@@ -67,6 +_,19 @@
+       } else {
+          return super.keyPressed(p_193987_, p_193988_, p_193989_);
+       }
++   }
++
++   @Override
++   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
++      // Forge: We wait for a second key above if the first press is a modifier
++      // but if they release the modifier then set it explicitly.
++      var key = InputConstants.getKey(keyCode, scanCode);
++      if (this.selectedKey != null && this.selectedKey.getKey() == key) {
++         this.selectedKey = null;
++         this.lastKeySelection = Util.getMillis();
++         this.keyBindsList.resetMappingAndUpdateButtons();
++      }
++      return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+ 
+    public void render(GuiGraphics p_282556_, int p_193992_, int p_193993_, float p_193994_) {

@@ -58,15 +58,17 @@ public class KeyMappingLookup {
      */
     public List<KeyMapping> getAll(InputConstants.Key keyCode) {
         var ret = new ArrayList<KeyMapping>();
-        var modifier = KeyModifier.getActiveModifier();
-        if (!modifier.matches(keyCode)) {
+        for (var modifier : KeyModifier.getValues(false)) {
+            if (!modifier.isActive(null) || modifier.matches(keyCode))
+                continue;
+
             for (var binding : get(modifier, keyCode)) {
                 if (binding.isActiveAndMatches(keyCode))
                     ret.add(binding);
             }
         }
 
-        if (!ret.isEmpty() || modifier == KeyModifier.NONE)
+        if (!ret.isEmpty())
             return ret;
 
         for (var binding : get(KeyModifier.NONE, keyCode)) {

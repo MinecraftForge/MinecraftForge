@@ -5,6 +5,7 @@
 
 package net.minecraftforge.client.settings;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
@@ -78,7 +79,7 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext) {
             if (conflictContext != null && !conflictContext.conflicts(KeyConflictContext.IN_GAME)) {
-                for (KeyModifier keyModifier : MODIFIER_VALUES) {
+                for (KeyModifier keyModifier : VALUES) {
                     if (keyModifier.isActive(conflictContext))
                         return false;
                 }
@@ -92,18 +93,36 @@ public enum KeyModifier {
         }
     };
 
+    @Deprecated(forRemoval = true, since = "1.20.2")
     public static final KeyModifier[] MODIFIER_VALUES = {SHIFT, CONTROL, ALT};
 
+    @Deprecated(forRemoval = true, since = "1.20.2")
     public static KeyModifier getActiveModifier() {
-        for (KeyModifier keyModifier : MODIFIER_VALUES) {
+        for (var keyModifier : VALUES) {
             if (keyModifier.isActive(null))
                 return keyModifier;
         }
         return NONE;
     }
 
+    private static final KeyModifier[] VALUES = {SHIFT, CONTROL, ALT};
+    private static final List<KeyModifier> VALUES_LIST = List.of(SHIFT, CONTROL, ALT);
+    private static final List<KeyModifier> ALL = List.of(SHIFT, CONTROL, ALT, NONE);
+    public static final List<KeyModifier> getValues(boolean includeNone) {
+        return includeNone ? ALL : VALUES_LIST;
+    }
+
+    @Nullable
+    public static KeyModifier getModifier(InputConstants.Key key) {
+        for (var modifier : VALUES) {
+            if (modifier.matches(key))
+                return modifier;
+        }
+        return null;
+    }
+
     public static boolean isKeyCodeModifier(InputConstants.Key key) {
-        for (KeyModifier keyModifier : MODIFIER_VALUES) {
+        for (KeyModifier keyModifier : VALUES) {
             if (keyModifier.matches(key))
                 return true;
         }
