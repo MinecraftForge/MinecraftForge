@@ -34,7 +34,7 @@
        dependencysorter.m_284430_((p_284682_, p_284683_) -> {
           this.m_215978_(lookup, p_284683_.f_283922_).ifLeft((p_215977_) -> {
 -            f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_284682_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", ")));
-+               f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_215977_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", \n\t")));
++            f_13445_.error("Couldn't load tag {} as it is missing following references: {}", p_284682_, p_215977_.stream().map(Objects::toString).collect(Collectors.joining(", \n\t")));
           }).ifRight((p_216001_) -> {
              map.put(p_284682_, p_216001_);
           });
