@@ -8,6 +8,8 @@ package net.minecraftforge.fml;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -20,6 +22,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -56,9 +59,37 @@ public abstract class ModContainer
         this.namespace = this.modId;
         this.modInfo = info;
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
-        // default displaytest extension checks for version string match
-        registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(()->this.modInfo.getVersion().toString(),
-                (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString())));
+
+        // SPI doesn't give config
+        IConfigurable configurable = (IConfigurable) info;
+        final String displayTestOption = configurable.<String>getConfigElement("displayTest").orElse("MATCH_VERSION"); // missing defaults to DEFAULT type
+        Supplier<Pair<Supplier<String>, BiPredicate<String, Boolean>>> displayTest;
+        switch (displayTestOption) {
+            case "MATCH_VERSION": // default displaytest checks for version string match
+                displayTest = () -> Pair.of(() -> this.modInfo.getVersion().toString(),
+                        (incoming, isNetwork) -> Objects.equals(incoming, this.modInfo.getVersion().toString()));
+                break;
+
+            case "IGNORE_SERVER_VERSION": // Ignores any version information coming from the server - use for server only
+                displayTest = () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (incoming, isNetwork) -> true);
+                break;
+
+            case "IGNORE_ALL_VERSION": // Ignores all information and provides no information
+                displayTest = () -> Pair.of(() -> "", (incoming, isNetwork) -> true);
+                break;
+
+            case "NONE":// NO display test at all - use this if you're going to do your own display test
+                displayTest = null;
+                break;
+
+            default:// any other value throws an exception
+                throw new IllegalArgumentException("Invalid displayTest value supplied in mods.toml");
+        }
+
+        if (displayTest != null)
+            registerExtensionPoint(ExtensionPoint.DISPLAYTEST, displayTest);
+        else
+            extensionPoints.remove(ExtensionPoint.DISPLAYTEST);
     }
 
     /**
