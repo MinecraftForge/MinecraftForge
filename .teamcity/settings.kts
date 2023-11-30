@@ -1,7 +1,5 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubIssues
-import jetbrains.buildServer.configs.kotlin.*
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.gradle
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -32,13 +30,11 @@ project {
     buildType(Build)
     buildType(BuildSecondaryBranches)
     buildType(PullRequests)
-    buildType(PullRequestChecks)
-    buildType(PullRequestCompatibility)
 
     params {
         text("docker_jdk_version", "8", label = "Gradle version", description = "The version of the JDK to use during execution of tasks in a JDK.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("docker_gradle_version", "7.5.1", label = "Gradle version", description = "The version of Gradle to use during execution of Gradle tasks.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
-        text("git_main_branch", "1.16.x5", label = "Git Main Branch", description = "The git main or default branch to use in VCS operations.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
+        text("git_main_branch", "1.16.5", label = "Git Main Branch", description = "The git main or default branch to use in VCS operations.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("git_branch_spec", """
                 +:refs/heads/(main*)
                 +:refs/heads/(master*)
@@ -50,9 +46,9 @@ project {
         text("env.PUBLISHED_JAVA_GROUP", "net.minecraftforge", label = "Published group", description = "The maven coordinate group that has been published by this build. Can not be empty.", allowEmpty = false)
         //These are references and not actually keys
         password("env.CROWDIN_KEY", "credentialsJSON:a3102dbe-805d-4177-9f54-3d2c2eb08fd5", display = ParameterDisplay.HIDDEN)
-        password("env.KEYSTORE_URL", "credentialsJSON:a7ae1c82-8058-4061-8d12-7f6bc2618d2e", display = ParameterDisplay.HIDDEN)
-        password("env.KEYSTORE_PASSWORD", "credentialsJSON:d7b964e3-a1fd-47a8-b892-6f601fe47479", display = ParameterDisplay.HIDDEN)
-        text("additional_publishing_gradle_parameters", "-PcrowdinKey=%env.CROWDIN_KEY% -PkeystoreKeyPass=%env.KEYSTORE_PASSWORD% -PkeystoreStorePass=%env.KEYSTORE_PASSWORD% -Pkeystore=%env.KEYSTORE_URL%", label = "Additional gradle parameters for publish", description = "Contains the additional gradle parameters used during publishing.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
+        password("env.LEGACY_KEYSTORE_URL", "credentialsJSON:a2d2efc7-4492-47b6-9826-d14b2c1243a0", display = ParameterDisplay.HIDDEN)
+        password("env.LEGACY_KEYSTORE_PASSWORD", "credentialsJSON:9f9a1a9e-f91b-40d5-b888-8ebc79a99ded", display = ParameterDisplay.HIDDEN)
+        text("additional_publishing_gradle_parameters", "-PcrowdinKey=%env.CROWDIN_KEY% -PkeystoreKeyPass=%env.LEGACY_KEYSTORE_PASSWORD% -PkeystoreStorePass=%env.LEGACY_KEYSTORE_PASSWORD% -Pkeystore=%env.LEGACY_KEYSTORE_URL%", label = "Additional gradle parameters for publish", description = "Contains the additional gradle parameters used during publishing.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
 
         checkbox("should_execute_build", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
             checked = "true", unchecked = "false")
@@ -113,47 +109,5 @@ object PullRequests : BuildType({
             display = ParameterDisplay.HIDDEN,
             allowEmpty = false
         )
-    }
-
-    vcs {
-        branchFilter = """
-            +:*
-            -:1.*
-            -:<default>
-        """.trimIndent()
-    }
-})
-
-object PullRequestChecks : BuildType({
-    templates(AbsoluteId("MinecraftForge_BuildPullRequests"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_SetupProjectUsingGradle"))
-    id("MinecraftForge_MinecraftForge__PullRequestChecks")
-    name = "Pull Requests (Checks)"
-    description = "Checks pull requests for the project"
-
-    steps {
-        gradle {
-            name = "Check"
-            id = "RUNNER_10_Check"
-
-            tasks = "checkAll"
-            gradleParams = "--continue %gradle_custom_args%"
-            enableStacktrace = true
-            dockerImage = "%docker_gradle_image%"
-            dockerRunParameters = """
-                -v "/opt/cache/agent/gradle:/home/gradle/.gradle"
-                -v "/opt/cache/shared/gradle:/home/gradle/rocache:ro"
-                --network=host
-                -u 1000:1000
-                %docker_additional_args%
-            """.trimIndent()
-        }
-    }
-
-    vcs {
-        branchFilter = """
-            +:*
-            -:1.*
-            -:<default>
-        """.trimIndent()
     }
 })
