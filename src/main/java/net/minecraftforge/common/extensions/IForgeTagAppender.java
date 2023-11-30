@@ -25,6 +25,10 @@ public interface IForgeTagAppender<T>
         return builder;
     }
 
+    default TagsProvider.TagAppender<T> addOptionalTag(TagKey<T> value) {
+        return self().addOptionalTag(value.location());
+    }
+
     default TagsProvider.TagAppender<T> replace() {
         return replace(true);
     }
