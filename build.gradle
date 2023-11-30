@@ -563,6 +563,11 @@ project(':forge') {
         lineEnding = '\n'
     }
 
+    task checkJarCompatibility() {
+        def yep = true
+        // TODO: standing empty make it work?
+    }
+
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archiveFile
         inputs.file { launcherJar.archiveFile }
