@@ -244,6 +244,16 @@
     }
  
     public void moveRelative(float p_19921_, Vec3 p_19922_) {
+@@ -1450,7 +_,8 @@
+    }
+ 
+    public void push(double p_20286_, double p_20287_, double p_20288_) {
+-      this.setDeltaMovement(this.getDeltaMovement().add(p_20286_, p_20287_, p_20288_));
++      var motion = net.minecraftforge.common.ForgeHooks.onPush(this, p_20286_, p_20287_, p_20288_);
++      this.setDeltaMovement(this.getDeltaMovement().add(motion.x(), motion.y(), motion.z()));
+       this.hasImpulse = true;
+    }
+ 
 @@ -1630,6 +_,8 @@
              p_20241_.putBoolean("HasVisualFire", this.hasVisualFire);
           }
