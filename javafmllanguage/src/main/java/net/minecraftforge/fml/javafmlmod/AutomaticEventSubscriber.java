@@ -6,67 +6,74 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
+import net.minecraftforge.forgespi.language.ModFileScanData.EnumData;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
-import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.LOADING;
-
 /**
- * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
- * annotations and passes the class instances to the {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus}
+ * Automatic eventbus subscriber - reads {@link EventBusSubscriber}
+ * annotations and passes the class instances to the {@link nBus}
  * defined by the annotation. Defaults to {@code MinecraftForge#EVENT_BUS}
  */
-public class AutomaticEventSubscriber
-{
+public class AutomaticEventSubscriber {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
+    private static final Type AUTO_SUBSCRIBER = Type.getType(EventBusSubscriber.class);
     private static final Type MOD_TYPE = Type.getType(Mod.class);
-    public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
-    {
-        if (scanData == null) return;
-        LOGGER.debug(LOADING,"Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
-        List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
-                filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.annotationType())).
-                collect(Collectors.toList());
-        Map<String, String> modids = scanData.getAnnotations().stream().
-                filter(annotationData -> MOD_TYPE.equals(annotationData.annotationType())).
-                collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
 
-        ebsTargets.forEach(ad -> {
-            @SuppressWarnings("unchecked")
-            final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)ad.annotationData().
-                    getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
-            final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
-                    collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
-            final String modId = (String)ad.annotationData().getOrDefault("modid", modids.getOrDefault(ad.clazz().getClassName(), mod.getModId()));
-            final ModAnnotation.EnumHolder busTargetHolder = (ModAnnotation.EnumHolder)ad.annotationData().getOrDefault("bus", new ModAnnotation.EnumHolder(null, "FORGE"));
-            final Mod.EventBusSubscriber.Bus busTarget = Mod.EventBusSubscriber.Bus.valueOf(busTargetHolder.getValue());
+    public static void inject(ModContainer mod, ModFileScanData scanData, ClassLoader loader) {
+        if (scanData == null) return;
+        LOGGER.debug(Logging.LOADING, "Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
+
+        var targets = scanData.getAnnotations().stream()
+            .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
+            .toList();
+
+        var modids = scanData.getAnnotations().stream()
+            .filter(data -> MOD_TYPE.equals(data.annotationType()))
+            .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
+
+        var defaultSides = List.of(new EnumData(null, "CLIENT"), new EnumData(null, "DEDICATED_SERVER"));
+        var defaultBus = new EnumData(null, "FORGE");
+
+        for (var data : targets) {
+            var modId = modids.getOrDefault(data.clazz().getClassName(), mod.getModId());
+            modId = value(data, "modid", modId);
+
+            var sidesValue = value(data, "value", defaultSides);
+            var sides = sidesValue.stream()
+                .map(EnumData::value)
+                .map(Dist::valueOf)
+                .collect(Collectors.toSet());
+
+            var busName = value(data, "bus", defaultBus).value();
+            var busTarget = Bus.valueOf(busName);
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
-                try
-                {
-                    LOGGER.debug(LOADING, "Auto-subscribing {} to {}", ad.clazz().getClassName(), busTarget);
-                    busTarget.bus().get().register(Class.forName(ad.clazz().getClassName(), true, loader));
-                }
-                catch (ClassNotFoundException e)
-                {
-                    LOGGER.fatal(LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", ad.clazz(), e);
+                try {
+                    LOGGER.debug(Logging.LOADING, "Auto-subscribing {} to {}", data.clazz().getClassName(), busTarget);
+                    busTarget.bus().get().register(Class.forName(data.clazz().getClassName(), true, loader));
+                } catch (ClassNotFoundException e) {
+                    LOGGER.fatal(Logging.LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", data.clazz(), e);
                     throw new RuntimeException(e);
                 }
             }
-        });
+        }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <R> R value(AnnotationData data, String key, R value) {
+        return (R)data.annotationData().getOrDefault(key, value);
+    }
 }

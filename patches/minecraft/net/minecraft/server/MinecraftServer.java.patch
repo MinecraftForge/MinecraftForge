@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -245,7 +_,7 @@
+@@ -252,7 +_,7 @@
  
     public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
        AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,7 +9,7 @@
           atomicreference.get().runServer();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -338,6 +_,7 @@
+@@ -346,6 +_,7 @@
        this.readScoreboard(dimensiondatastorage);
        this.commandStorage = new CommandStorage(dimensiondatastorage);
        WorldBorder worldborder = serverlevel.getWorldBorder();
@@ -17,7 +17,7 @@
        if (!serverleveldata.isInitialized()) {
           try {
              setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -374,6 +_,7 @@
+@@ -382,6 +_,7 @@
              ServerLevel serverlevel1 = new ServerLevel(this, this.executor, this.storageSource, derivedleveldata, resourcekey1, entry.getValue(), p_129816_, flag, j, ImmutableList.of(), false, randomsequences);
              worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
              this.levels.put(resourcekey1, serverlevel1);
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -385,6 +_,7 @@
+@@ -393,6 +_,7 @@
           p_177898_.setSpawn(BlockPos.ZERO.above(80), 0.0F);
        } else {
           ServerChunkCache serverchunkcache = p_177897_.getChunkSource();
@@ -33,7 +33,7 @@
           ChunkPos chunkpos = new ChunkPos(serverchunkcache.randomState().sampler().findSpawnPosition());
           int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
           if (i < p_177897_.getMinBuildHeight()) {
-@@ -467,6 +_,7 @@
+@@ -475,6 +_,7 @@
                 ChunkPos chunkpos = new ChunkPos(i);
                 serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
              }
@@ -41,7 +41,7 @@
           }
        }
  
-@@ -577,6 +_,7 @@
+@@ -585,6 +_,7 @@
        for(ServerLevel serverlevel2 : this.getAllLevels()) {
           if (serverlevel2 != null) {
              try {
@@ -49,28 +49,28 @@
                 serverlevel2.close();
              } catch (IOException ioexception1) {
                 LOGGER.error("Exception closing the level", (Throwable)ioexception1);
-@@ -625,9 +_,11 @@
+@@ -633,9 +_,11 @@
              throw new IllegalStateException("Failed to initialize server");
           }
  
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStarted(this);
-          this.nextTickTime = Util.getMillis();
+          this.nextTickTimeNanos = Util.getNanos();
           this.statusIcon = this.loadStatusIcon().orElse((ServerStatus.Favicon)null);
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
  
           while(this.running) {
-             long i = Util.getMillis() - this.nextTickTime;
-@@ -656,6 +_,8 @@
+             long i;
+@@ -679,6 +_,8 @@
              this.isReady = true;
-             JvmProfiler.INSTANCE.onServerTick(this.averageTickTime);
+             JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
           }
 +         net.minecraftforge.server.ServerLifecycleHooks.handleServerStopping(this);
 +         net.minecraftforge.server.ServerLifecycleHooks.expectServerStopped(); // Forge: Has to come before MinecraftServer#onServerCrash to avoid race conditions
        } catch (Throwable throwable1) {
           LOGGER.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport = constructOrExtractCrashReport(throwable1);
-@@ -667,6 +_,7 @@
+@@ -690,6 +_,7 @@
              LOGGER.error("We were unable to save this crash report to disk.");
           }
  
@@ -78,7 +78,7 @@
           this.onServerCrash(crashreport);
        } finally {
           try {
-@@ -679,6 +_,7 @@
+@@ -702,6 +_,7 @@
                 this.services.profileCache().clearExecutor();
              }
  
@@ -86,23 +86,24 @@
              this.onServerExit();
           }
  
-@@ -793,11 +_,13 @@
+@@ -820,12 +_,14 @@
  
     public void tickServer(BooleanSupplier p_129871_) {
        long i = Util.getNanos();
 +      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_, this);
        ++this.tickCount;
+       this.tickRateManager.tick();
        this.tickChildren(p_129871_);
-       if (i - this.lastServerStatus >= 5000000000L) {
+       if (i - this.lastServerStatus >= STATUS_EXPIRE_TIME_NANOS) {
           this.lastServerStatus = i;
           this.status = this.buildServerStatus();
 +         resetStatusCache(status);
        }
  
-       if (this.tickCount % 6000 == 0) {
-@@ -814,6 +_,17 @@
-       long k = Util.getNanos();
-       this.logTickTime(k - i);
+       --this.ticksUntilAutosave;
+@@ -848,6 +_,17 @@
+       long l = Util.getNanos();
+       this.logTickTime(l - i);
        this.profiler.pop();
 +      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_, this);
 +   }
@@ -117,8 +118,8 @@
 +      return cachedServerStatus;
     }
  
-    protected void logTickTime(long p_298126_) {
-@@ -821,7 +_,7 @@
+    private int computeNextAutosaveInterval() {
+@@ -876,7 +_,7 @@
  
     private ServerStatus buildServerStatus() {
        ServerStatus.Players serverstatus$players = this.buildPlayerStatus();
@@ -127,7 +128,7 @@
     }
  
     private ServerStatus.Players buildPlayerStatus() {
-@@ -852,7 +_,8 @@
+@@ -907,7 +_,8 @@
        this.getFunctions().tick();
        this.profiler.popPush("levels");
  
@@ -137,7 +138,7 @@
           this.profiler.push(() -> {
              return serverlevel + " " + serverlevel.dimension().location();
           });
-@@ -863,6 +_,7 @@
+@@ -918,6 +_,7 @@
           }
  
           this.profiler.push("tick");
@@ -145,7 +146,7 @@
  
           try {
              serverlevel.tick(p_129954_);
-@@ -871,16 +_,18 @@
+@@ -926,16 +_,18 @@
              serverlevel.fillReportDetails(crashreport);
              throw new ReportedException(crashreport);
           }
@@ -160,12 +161,12 @@
        this.getConnection().tick();
        this.profiler.popPush("players");
        this.playerList.tick();
--      if (SharedConstants.IS_RUNNING_IN_IDE) {
+-      if (SharedConstants.IS_RUNNING_IN_IDE && this.tickRateManager.runsNormally()) {
 +      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
           GameTestTicker.SINGLETON.tick();
        }
  
-@@ -969,7 +_,7 @@
+@@ -1024,7 +_,7 @@
  
     @DontObfuscate
     public String getServerModName() {
@@ -174,7 +175,7 @@
     }
  
     public SystemReport fillSystemReport(SystemReport p_177936_) {
-@@ -1318,6 +_,7 @@
+@@ -1373,6 +_,7 @@
           this.getPlayerList().reloadResources();
           this.functionManager.replaceLibrary(this.resources.managers.getFunctionLibrary());
           this.structureTemplateManager.onResourceManagerReload(this.resources.resourceManager);
@@ -182,7 +183,7 @@
        }, this);
        if (this.isSameThread()) {
           this.managedBlock(completablefuture::isDone);
-@@ -1327,10 +_,13 @@
+@@ -1382,10 +_,13 @@
     }
  
     public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
@@ -198,7 +199,7 @@
        } else {
           Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1484,6 +_,31 @@
+@@ -1551,6 +_,31 @@
  
     public abstract boolean isSingleplayerOwner(GameProfile p_129840_);
  
@@ -230,7 +231,7 @@
     public void dumpServerProperties(Path p_177911_) throws IOException {
     }
  
-@@ -1647,6 +_,10 @@
+@@ -1714,6 +_,10 @@
  
     public WorldData getWorldData() {
        return this.worldData;

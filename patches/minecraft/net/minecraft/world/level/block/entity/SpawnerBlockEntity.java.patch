@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
-@@ -27,6 +_,9 @@
+@@ -28,6 +_,9 @@
           }
  
        }

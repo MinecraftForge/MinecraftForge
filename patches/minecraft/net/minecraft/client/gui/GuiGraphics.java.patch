@@ -33,7 +33,7 @@
        int i = p_282636_.drawInBatch(p_281596_, (float)p_281586_, (float)p_282816_, p_281743_, p_282394_, this.pose.last().pose(), this.bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
        this.flushIfUnmanaged();
        return i;
-@@ -511,6 +_,7 @@
+@@ -515,6 +_,7 @@
              crashreportcategory.setDetail("Item Type", () -> {
                 return String.valueOf((Object)p_281675_.getItem());
              });
@@ -41,7 +41,7 @@
              crashreportcategory.setDetail("Item Damage", () -> {
                 return String.valueOf(p_281675_.getDamageValue());
              });
-@@ -558,18 +_,26 @@
+@@ -562,18 +_,26 @@
           }
  
           this.pose.popPose();
@@ -72,7 +72,7 @@
        this.renderTooltipInternal(p_283128_, list, p_283678_, p_281696_, DefaultTooltipPositioner.INSTANCE);
     }
  
-@@ -578,7 +_,15 @@
+@@ -582,7 +_,15 @@
     }
  
     public void renderComponentTooltip(Font p_282739_, List<Component> p_281832_, int p_282191_, int p_282446_) {
@@ -89,7 +89,7 @@
     }
  
     public void renderTooltip(Font p_282192_, List<? extends FormattedCharSequence> p_282297_, int p_281680_, int p_283325_) {
-@@ -591,11 +_,13 @@
+@@ -595,11 +_,13 @@
  
     private void renderTooltipInternal(Font p_282675_, List<ClientTooltipComponent> p_282615_, int p_283230_, int p_283417_, ClientTooltipPositioner p_282442_) {
        if (!p_282615_.isEmpty()) {
@@ -104,7 +104,7 @@
              if (k > i) {
                 i = k;
              }
-@@ -605,20 +_,21 @@
+@@ -609,20 +_,21 @@
  
           int i2 = i;
           int j2 = j;
@@ -129,7 +129,7 @@
              k1 += clienttooltipcomponent1.getHeight() + (l1 == 0 ? 2 : 0);
           }
  
-@@ -626,7 +_,7 @@
+@@ -630,7 +_,7 @@
  
           for(int k2 = 0; k2 < p_282615_.size(); ++k2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_282615_.get(k2);

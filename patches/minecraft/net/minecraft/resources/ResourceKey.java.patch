@@ -2,7 +2,7 @@
 +++ b/net/minecraft/resources/ResourceKey.java
 @@ -7,7 +_,7 @@
  import net.minecraft.core.Registry;
- import net.minecraft.core.registries.BuiltInRegistries;
+ import net.minecraft.core.registries.Registries;
  
 -public class ResourceKey<T> {
 +public class ResourceKey<T> implements Comparable<ResourceKey<?>> {

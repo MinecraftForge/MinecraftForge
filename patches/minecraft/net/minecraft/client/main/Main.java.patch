@@ -1,12 +1,12 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -150,8 +_,8 @@
-       }
- 
+@@ -152,8 +_,8 @@
        CrashReport.preload();
--      Bootstrap.bootStrap();
-       GameLoadTimesEvent.INSTANCE.setBootstrapTime(Bootstrap.bootstrapDuration.get());
-+      net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(()->Bootstrap.bootStrap(), net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
-       Bootstrap.validate();
-       Util.startTimerHackThread();
-       String s12 = optionspec25.value(optionset);
+ 
+       try {
+-         Bootstrap.bootStrap();
+          GameLoadTimesEvent.INSTANCE.setBootstrapTime(Bootstrap.bootstrapDuration.get());
++         net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(()->Bootstrap.bootStrap(), net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
+          Bootstrap.validate();
+       } catch (Throwable throwable2) {
+          CrashReport crashreport = CrashReport.forThrowable(throwable2, "Bootstrap");

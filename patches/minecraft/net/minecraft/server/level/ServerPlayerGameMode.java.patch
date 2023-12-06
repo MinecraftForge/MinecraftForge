@@ -24,47 +24,48 @@
 @@ -221,7 +_,8 @@
  
     public boolean destroyBlock(BlockPos p_9281_) {
-       BlockState blockstate = this.level.getBlockState(p_9281_);
--      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate, this.level, p_9281_, this.player)) {
+       BlockState blockstate1 = this.level.getBlockState(p_9281_);
+-      if (!this.player.getMainHandItem().getItem().canAttackBlock(blockstate1, this.level, p_9281_, this.player)) {
 +      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(level, gameModeForPlayer, player, p_9281_);
 +      if (exp == -1) {
           return false;
        } else {
           BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
-@@ -229,30 +_,42 @@
+@@ -229,30 +_,43 @@
           if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
-             this.level.sendBlockUpdated(p_9281_, blockstate, blockstate, 3);
+             this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
              return false;
 +         } else if (player.getMainHandItem().onBlockStartBreak(p_9281_, player)) {
 +            return false;
           } else if (this.player.blockActionRestricted(this.level, p_9281_, this.gameModeForPlayer)) {
              return false;
           } else {
--            block.playerWillDestroy(this.level, p_9281_, blockstate, this.player);
--            boolean flag = this.level.removeBlock(p_9281_, false);
--            if (flag) {
+-            BlockState blockstate = block.playerWillDestroy(this.level, p_9281_, blockstate1, this.player);
+-            boolean flag1 = this.level.removeBlock(p_9281_, false);
+-            if (flag1) {
 -               block.destroy(this.level, p_9281_, blockstate);
 -            }
 -
++            BlockState blockstate = blockstate1;
              if (this.isCreative()) {
 +               removeBlock(p_9281_, false);
                 return true;
              } else {
                 ItemStack itemstack = this.player.getMainHandItem();
                 ItemStack itemstack1 = itemstack.copy();
--               boolean flag1 = this.player.hasCorrectToolForDrops(blockstate);
-+               boolean flag1 = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
+-               boolean flag = this.player.hasCorrectToolForDrops(blockstate);
++               boolean flag = blockstate.canHarvestBlock(this.level, p_9281_, this.player); // previously player.hasCorrectToolForDrops(blockstate)
                 itemstack.mineBlock(this.level, blockstate, p_9281_, this.player);
 +               if (itemstack.isEmpty() && !itemstack1.isEmpty())
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, itemstack1, InteractionHand.MAIN_HAND);
-+               boolean flag = removeBlock(p_9281_, flag1);
++               boolean flag1 = removeBlock(p_9281_, flag);
 +
-                if (flag && flag1) {
+                if (flag1 && flag) {
                    block.playerDestroy(this.level, this.player, p_9281_, blockstate, blockentity, itemstack1);
                 }
  
 +               if (flag && exp > 0)
-+                  blockstate.getBlock().popExperience(level, p_9281_, exp);
++                  blockstate1.getBlock().popExperience(level, p_9281_, exp);
 +
                 return true;
              }

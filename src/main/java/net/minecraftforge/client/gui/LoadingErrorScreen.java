@@ -42,8 +42,7 @@ public class LoadingErrorScreen extends ErrorScreen {
     private Component errorHeader;
     private Component warningHeader;
 
-    public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings, final File dumpedLocation)
-    {
+    public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings, final File dumpedLocation) {
         super(Component.literal("Loading Error"), null);
         this.modLoadWarnings = warnings;
         this.modLoadErrors = loadingException == null ? Collections.emptyList() : loadingException.getErrors();
@@ -53,8 +52,7 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     @Override
-    public void init()
-    {
+    public void init() {
         super.init();
         this.clearWidgets();
 
@@ -64,13 +62,10 @@ public class LoadingErrorScreen extends ErrorScreen {
         int yOffset = 46;
         this.addRenderableWidget(new ExtendedButton(50, this.height - yOffset, this.width / 2 - 55, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getPlatform().openFile(modsDir.toFile())));
         this.addRenderableWidget(new ExtendedButton(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), b -> Util.getPlatform().openFile(logFile.toFile())));
-        if (this.modLoadErrors.isEmpty()) {
-            this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> {
-                this.minecraft.setScreen(null);
-            }));
-        } else {
+        if (this.modLoadErrors.isEmpty())
+            this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> this.minecraft.setScreen(null)));
+        else
             this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, Component.literal(ForgeI18n.parseMessage("fml.button.open.file", dumpedLocation.getFileName())), b -> Util.getPlatform().openFile(dumpedLocation.toFile())));
-        }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
         this.addWidget(this.entryList);
@@ -78,8 +73,7 @@ public class LoadingErrorScreen extends ErrorScreen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick)
-    {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         this.entryList.render(guiGraphics, mouseX, mouseY, partialTick);
         drawMultiLineCenteredString(guiGraphics, font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
@@ -92,13 +86,15 @@ public class LoadingErrorScreen extends ErrorScreen {
             y+=fr.lineHeight;
         }
     }
+
     public static class LoadingEntryList extends ObjectSelectionList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
-            super(Objects.requireNonNull(parent.minecraft), parent.width, parent.height, 35, parent.height - 50,
-              Math.max(
-                errors.stream().mapToInt(error -> parent.font.split(Component.literal(error.getMessage() != null ? error.getMessage() : ""), parent.width - 20).size()).max().orElse(0),
-                warnings.stream().mapToInt(warning -> parent.font.split(Component.literal(warning.formatToString() != null ? warning.formatToString() : ""), parent.width - 20).size()).max().orElse(0)
-              ) * parent.minecraft.font.lineHeight + 8);
+            super(Objects.requireNonNull(parent.minecraft), parent.width, parent.height, 35,
+                Math.max(
+                    errors.stream().mapToInt(error -> parent.font.split(Component.literal(error.getMessage() != null ? error.getMessage() : ""), parent.width - 20).size()).max().orElse(0),
+                    warnings.stream().mapToInt(warning -> parent.font.split(Component.literal(warning.formatToString() != null ? warning.formatToString() : ""), parent.width - 20).size()).max().orElse(0)
+                ) * parent.minecraft.font.lineHeight + 8
+            );
             boolean both = !errors.isEmpty() && !warnings.isEmpty();
             if (both)
                 addEntry(new LoadingMessageEntry(parent.errorHeader, true));
@@ -112,14 +108,12 @@ public class LoadingErrorScreen extends ErrorScreen {
         }
 
         @Override
-        protected int getScrollbarPosition()
-        {
+        protected int getScrollbarPosition() {
             return this.getRight() - 6;
         }
 
         @Override
-        public int getRowWidth()
-        {
+        public int getRowWidth() {
             return this.width;
         }
 
@@ -144,12 +138,11 @@ public class LoadingErrorScreen extends ErrorScreen {
             @Override
             public void render(GuiGraphics guiGraphics, int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTick) {
                 Font font = Minecraft.getInstance().font;
-                final List<FormattedCharSequence> strings = font.split(message, LoadingEntryList.this.width - 20);
+                var strings = font.split(message, LoadingEntryList.this.width - 20);
                 int y = top + 2;
-                for (FormattedCharSequence string : strings)
-                {
+                for (var string : strings) {
                     if (center)
-                        guiGraphics.drawString(font, string, left + (width) - font.width(string) / 2F, (float) y, 0xFFFFFF, false);
+                        guiGraphics.drawString(font, string, left + (width / 2F) - (font.width(string) / 2F), y, 0xFFFFFF, false);
                     else
                         guiGraphics.drawString(font, string, left + 5, y, 0xFFFFFF, false);
                     y += font.lineHeight;

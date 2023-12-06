@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -84,7 +_,7 @@
+@@ -90,7 +_,7 @@
     }
  
     public void fallOn(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
@@ -9,7 +9,7 @@
           turnToDirt(p_153230_, p_153228_, p_153227_, p_153229_);
        }
  
-@@ -98,17 +_,20 @@
+@@ -104,17 +_,20 @@
     }
  
     private static boolean shouldMaintainFarmland(BlockGetter p_279219_, BlockPos p_279209_) {

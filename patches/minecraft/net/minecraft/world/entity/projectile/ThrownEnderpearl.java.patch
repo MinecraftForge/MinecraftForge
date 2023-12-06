@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -45,6 +_,8 @@
+@@ -48,6 +_,8 @@
           if (entity instanceof ServerPlayer) {
              ServerPlayer serverplayer = (ServerPlayer)entity;
              if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
@@ -9,19 +9,20 @@
                 if (this.random.nextFloat() < 0.05F && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
                    Endermite endermite = EntityType.ENDERMITE.create(this.level());
                    if (endermite != null) {
-@@ -59,8 +_,10 @@
+@@ -62,9 +_,11 @@
                    entity.teleportTo(this.getX(), this.getY(), this.getZ());
                 }
  
 +               entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.resetFallDistance();
 -               entity.hurt(this.damageSources().fall(), 5.0F);
+                this.level().playSound((Player)null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
 +               entity.hurt(this.damageSources().fall(), event.getAttackDamage());
 +               } //Forge: End
              }
           } else if (entity != null) {
              entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -83,12 +_,12 @@
+@@ -87,12 +_,12 @@
     }
  
     @Nullable

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DropExperienceBlock.java
 +++ b/net/minecraft/world/level/block/DropExperienceBlock.java
-@@ -22,9 +_,11 @@
+@@ -28,9 +_,11 @@
  
     public void spawnAfterBreak(BlockState p_221086_, ServerLevel p_221087_, BlockPos p_221088_, ItemStack p_221089_, boolean p_221090_) {
        super.spawnAfterBreak(p_221086_, p_221087_, p_221088_, p_221089_, p_221090_);

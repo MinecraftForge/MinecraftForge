@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -507,7 +_,8 @@
+@@ -509,7 +_,8 @@
     }, new OptionInstance.LazyEnum<>(() -> {
        return Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList();
     }, (p_232011_) -> {
@@ -10,7 +10,7 @@
     }, Codec.STRING), "", (p_299350_) -> {
        SoundManager soundmanager = Minecraft.getInstance().getSoundManager();
        soundmanager.reload();
-@@ -835,6 +_,7 @@
+@@ -841,6 +_,7 @@
     }
  
     public Options(Minecraft p_92138_, File p_92139_) {
@@ -18,7 +18,7 @@
        this.minecraft = p_92138_;
        this.optionsFile = new File(p_92139_, "options.txt");
        boolean flag = p_92138_.is64Bit();
-@@ -957,11 +_,20 @@
+@@ -964,11 +_,20 @@
        p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
        this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
  
@@ -41,7 +41,7 @@
           }
        }
  
-@@ -980,6 +_,9 @@
+@@ -987,6 +_,9 @@
     }
  
     public void load() {
@@ -51,7 +51,7 @@
        try {
           if (!this.optionsFile.exists()) {
              return;
-@@ -1008,7 +_,8 @@
+@@ -1015,7 +_,8 @@
              }
           }
  
@@ -61,7 +61,7 @@
              @Nullable
              private String getValueOrNull(String p_168459_) {
                 return compoundtag1.contains(p_168459_) ? compoundtag1.getString(p_168459_) : null;
-@@ -1181,6 +_,7 @@
+@@ -1188,6 +_,7 @@
     }
  
     public void broadcastOptions() {
@@ -69,7 +69,7 @@
        if (this.minecraft.player != null) {
           this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
        }
-@@ -1239,6 +_,23 @@
+@@ -1246,6 +_,23 @@
        }
  
        p_92146_.setSelected(set);

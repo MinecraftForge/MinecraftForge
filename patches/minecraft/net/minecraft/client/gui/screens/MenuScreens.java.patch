@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/MenuScreens.java
 +++ b/net/minecraft/client/gui/screens/MenuScreens.java
-@@ -40,6 +_,10 @@
+@@ -41,6 +_,10 @@
     private static final Map<MenuType<?>, MenuScreens.ScreenConstructor<?, ?>> SCREENS = Maps.newHashMap();
  
     public static <T extends AbstractContainerMenu> void create(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
@@ -11,7 +11,7 @@
        if (p_96202_ == null) {
           LOGGER.warn("Trying to open invalid screen with name: {}", (Object)p_96205_.getString());
        } else {
-@@ -47,9 +_,10 @@
+@@ -48,9 +_,10 @@
           if (screenconstructor == null) {
              LOGGER.warn("Failed to create screen for menu type: {}", (Object)BuiltInRegistries.MENU.getKey(p_96202_));
           } else {

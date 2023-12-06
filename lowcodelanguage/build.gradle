@@ -1,11 +1,18 @@
+import net.minecraftforge.gradleutils.PomUtils
+
 plugins {
-    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
-    id 'org.cadixdev.licenser'
     id 'java-library'
-    id 'jacoco'
+    id 'maven-publish'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradleutils'
 }
 
-java.withSourcesJar()
+apply from: rootProject.file('build_shared.gradle')
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
 
 dependencies {
     compileOnly(libs.nulls)
@@ -17,16 +24,16 @@ dependencies {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': project.name.toLowerCase(),
+            'Automatic-Module-Name': 'net.minecraftforge.lowcodemod',
             'FMLModType': 'LANGPROVIDER'
-        ] as java.util.LinkedHashMap)
+        ] as LinkedHashMap)
         attributes([
-            'Specification-Title':      'LowCodeMod',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1.0',
-            'Implementation-Title':     project.name,
-            'Implementation-Version':   FORGE_VERSION.split('\\.')[0], //project.version, TODO: Split out into a real versioned system, for now use the default that net.minecraftforge.fml.loading.LanguageLoadingProvider.loadLanguageProviders() used
-            'Implementation-Vendor':    'Forge Development LLC'
+            'Specification-Title':   'LowCodeMod',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version': '1.0',
+            'Implementation-Title':   project.name,
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': FORGE_VERSION.split('\\.')[0]
         ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
     }
 }
@@ -37,9 +44,22 @@ tasks.withType(JavaCompile) {
 
 license {
     header = rootProject.file('LICENSE-header.txt')
-    include 'net/minecraftforge/'
 }
 
-publishing.publications.mavenJava(MavenPublication) {
-    from components.java
+publishing {
+    publications.register('mavenJava', MavenPublication).configure {
+        from components.java
+        artifactId = 'lowcodelanguage'
+        pom {
+            name = project.name
+            description = 'Language provider for Minecraft Forge that loads resource packs as mods'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+    
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
 }

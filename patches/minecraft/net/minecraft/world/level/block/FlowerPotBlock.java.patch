@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
-@@ -28,10 +_,33 @@
-    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
-    private final Block content;
+@@ -41,10 +_,33 @@
+       return CODEC;
+    }
  
 +   @Deprecated // Mods should use the constructor below
     public FlowerPotBlock(Block p_53528_, BlockBehaviour.Properties p_53529_) {
 -      super(p_53529_);
--      this.content = p_53528_;
+-      this.potted = p_53528_;
 -      POTTED_BY_CONTENT.put(p_53528_, this);
 +       this(Blocks.FLOWER_POT == null ? null : () -> (FlowerPotBlock) net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_53528_).get(), p_53529_);
 +       if (Blocks.FLOWER_POT != null) {
@@ -25,7 +25,7 @@
 +    */
 +   public FlowerPotBlock(@org.jetbrains.annotations.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
 +      super(properties);
-+      this.content = null; // Unused, redirected by coremod
++      this.potted = null; // Unused, redirected by coremod
 +      this.flowerDelegate = p_53528_;
 +      if (emptyPot == null) {
 +         this.fullPots = Maps.newHashMap();
@@ -37,7 +37,7 @@
     }
  
     public VoxelShape getShape(BlockState p_53556_, BlockGetter p_53557_, BlockPos p_53558_, CollisionContext p_53559_) {
-@@ -45,7 +_,7 @@
+@@ -58,7 +_,7 @@
     public InteractionResult use(BlockState p_53540_, Level p_53541_, BlockPos p_53542_, Player p_53543_, InteractionHand p_53544_, BlockHitResult p_53545_) {
        ItemStack itemstack = p_53543_.getItemInHand(p_53544_);
        Item item = itemstack.getItem();
@@ -46,7 +46,7 @@
        boolean flag = blockstate.is(Blocks.AIR);
        boolean flag1 = this.isEmpty();
        if (flag != flag1) {
-@@ -63,7 +_,7 @@
+@@ -76,7 +_,7 @@
                 p_53543_.drop(itemstack1, false);
              }
  
@@ -55,19 +55,18 @@
           }
  
           p_53541_.gameEvent(p_53543_, GameEvent.BLOCK_CHANGE, p_53542_);
-@@ -86,10 +_,31 @@
+@@ -99,10 +_,29 @@
     }
  
-    public Block getContent() {
--      return this.content;
+    public Block getPotted() {
+-      return this.potted;
 +      return flowerDelegate.get();
     }
  
     public boolean isPathfindable(BlockState p_53535_, BlockGetter p_53536_, BlockPos p_53537_, PathComputationType p_53538_) {
        return false;
-    }
++   }
 +
-+   //Forge Start
 +   private final Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
 +   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
 +   private final java.util.function.Supplier<? extends Block> flowerDelegate;
@@ -85,6 +84,5 @@
 +
 +   public Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> getFullPotsView() {
 +      return java.util.Collections.unmodifiableMap(fullPots);
-+   }
-+   //Forge End
+    }
  }

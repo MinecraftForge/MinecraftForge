@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -116,12 +_,15 @@
+@@ -118,12 +_,15 @@
        p_194170_.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache((p_194168_) -> {
           return this.calculateBlockTint(p_194168_, BiomeColors.WATER_COLOR_RESOLVER);
        }));
@@ -16,7 +16,7 @@
  
     public void handleBlockChangedAck(int p_233652_) {
        this.blockStatePredictionHandler.endPredictionsUpTo(p_233652_, this);
-@@ -175,6 +_,8 @@
+@@ -178,6 +_,8 @@
        this.serverSimulationDistance = p_205510_;
        this.updateSkyBrightness();
        this.prepareWeather();
@@ -25,7 +25,7 @@
     }
  
     public void queueLightUpdate(Runnable p_194172_) {
-@@ -265,6 +_,7 @@
+@@ -271,6 +_,7 @@
        this.getProfiler().push(() -> {
           return BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString();
        });
@@ -33,7 +33,7 @@
        p_104640_.tick();
        this.getProfiler().pop();
  
-@@ -320,8 +_,10 @@
+@@ -326,8 +_,10 @@
     }
  
     public void addEntity(Entity p_104741_) {
@@ -44,7 +44,7 @@
     }
  
     public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -448,6 +_,12 @@
+@@ -457,6 +_,12 @@
     }
  
     public void playSeededSound(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
@@ -57,7 +57,7 @@
        if (p_263381_ == this.minecraft.player) {
           this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
        }
-@@ -455,6 +_,12 @@
+@@ -464,6 +_,12 @@
     }
  
     public void playSeededSound(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
@@ -70,7 +70,7 @@
        if (p_263514_ == this.minecraft.player) {
           this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
        }
-@@ -892,6 +_,7 @@
+@@ -909,6 +_,7 @@
        }
  
        public void setDifficulty(Difficulty p_104852_) {
@@ -78,7 +78,7 @@
           this.difficulty = p_104852_;
        }
  
-@@ -929,14 +_,46 @@
+@@ -946,14 +_,46 @@
              ClientLevel.this.players.add((AbstractClientPlayer)p_171712_);
           }
  

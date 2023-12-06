@@ -34,7 +34,7 @@ class TPSCommand
                     sendTime(ctx.getSource(), dim);
 
                 @SuppressWarnings("resource")
-                double meanTickTime = mean(ctx.getSource().getServer().tickTimes) * 1.0E-6D;
+                double meanTickTime = mean(ctx.getSource().getServer().tickTimesNanos) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
                 ctx.getSource().sendSuccess(() -> Component.translatable("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
 

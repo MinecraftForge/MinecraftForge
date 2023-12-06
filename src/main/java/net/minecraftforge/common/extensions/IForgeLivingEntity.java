@@ -53,7 +53,7 @@ public interface IForgeLivingEntity extends IForgeEntity {
         if (type == ForgeMod.WATER_TYPE.get())
             return !self().canBreatheUnderwater();
         return
-                type.canDrownIn(self());
+            type.canDrownIn(self());
     }
 
     /**

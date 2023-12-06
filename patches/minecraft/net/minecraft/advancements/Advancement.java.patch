@@ -1,21 +1,6 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -62,7 +_,14 @@
-       return jsonobject;
-    }
- 
-+   /** @deprecated Forge: use {@linkplain #fromJson(JsonObject, DeserializationContext, net.minecraftforge.common.crafting.conditions.ICondition.IContext) overload with context}. */
-+   @Deprecated
-    public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_) {
-+       return fromJson(p_300691_, p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
-+   }
-+
-+   public static Advancement fromJson(JsonObject p_300691_, DeserializationContext p_300053_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-+      if ((p_300691_ = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(context, p_300691_)) == null) return null;
-       Optional<ResourceLocation> optional = p_300691_.has("parent") ? Optional.of(new ResourceLocation(GsonHelper.getAsString(p_300691_, "parent"))) : Optional.empty();
-       Optional<DisplayInfo> optional1 = p_300691_.has("display") ? Optional.of(DisplayInfo.fromJson(GsonHelper.getAsJsonObject(p_300691_, "display"))) : Optional.empty();
-       AdvancementRewards advancementrewards = p_300691_.has("rewards") ? AdvancementRewards.deserialize(GsonHelper.getAsJsonObject(p_300691_, "rewards")) : AdvancementRewards.EMPTY;
-@@ -182,7 +_,11 @@
+@@ -171,7 +_,11 @@
        }
  
        public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, String p_138391_) {

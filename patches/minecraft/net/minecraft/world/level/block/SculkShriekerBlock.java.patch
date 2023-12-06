@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SculkShriekerBlock.java
 +++ b/net/minecraft/world/level/block/SculkShriekerBlock.java
-@@ -121,10 +_,12 @@
+@@ -127,10 +_,12 @@
  
     public void spawnAfterBreak(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
        super.spawnAfterBreak(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);

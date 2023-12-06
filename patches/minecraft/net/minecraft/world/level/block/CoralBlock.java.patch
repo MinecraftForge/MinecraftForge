@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/CoralBlock.java
 +++ b/net/minecraft/world/level/block/CoralBlock.java
-@@ -37,9 +_,10 @@
+@@ -50,9 +_,10 @@
     }
  
     protected boolean scanForWater(BlockGetter p_52135_, BlockPos p_52136_) {

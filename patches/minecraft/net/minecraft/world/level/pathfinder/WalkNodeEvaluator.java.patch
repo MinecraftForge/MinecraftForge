@@ -18,7 +18,7 @@
     }
  
     private Node getNodeAndUpdateCostToMax(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
-@@ -453,6 +_,11 @@
+@@ -459,6 +_,11 @@
                 if (l != 0 || j1 != 0) {
                    p_77609_.set(i + l, j + i1, k + j1);
                    BlockState blockstate = p_77608_.getBlockState(p_77609_);
@@ -30,7 +30,7 @@
                    if (blockstate.is(Blocks.CACTUS) || blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
                       return BlockPathTypes.DANGER_OTHER;
                    }
-@@ -478,6 +_,8 @@
+@@ -484,6 +_,8 @@
  
     protected static BlockPathTypes getBlockPathTypeRaw(BlockGetter p_77644_, BlockPos p_77645_) {
        BlockState blockstate = p_77644_.getBlockState(p_77645_);
@@ -39,7 +39,7 @@
        Block block = blockstate.getBlock();
        if (blockstate.isAir()) {
           return BlockPathTypes.OPEN;
-@@ -491,6 +_,8 @@
+@@ -497,6 +_,8 @@
                 return BlockPathTypes.COCOA;
              } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
                 FluidState fluidstate = p_77644_.getFluidState(p_77645_);
@@ -48,7 +48,7 @@
                 if (fluidstate.is(FluidTags.LAVA)) {
                    return BlockPathTypes.LAVA;
                 } else if (isBurningBlock(blockstate)) {
-@@ -510,6 +_,8 @@
+@@ -516,6 +_,8 @@
                    if (!blockstate.isPathfindable(p_77644_, p_77645_, PathComputationType.LAND)) {
                       return BlockPathTypes.BLOCKED;
                    } else {

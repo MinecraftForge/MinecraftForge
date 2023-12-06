@@ -14,11 +14,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Extension interface for {@link KeyMapping}.
  */
-public interface IForgeKeyMapping
-{
-    private KeyMapping self()
-    {
-        return (KeyMapping) this;
+public interface IForgeKeyMapping {
+    private KeyMapping self() {
+        return (KeyMapping)this;
     }
 
     @NotNull InputConstants.Key getKey();
@@ -26,13 +24,11 @@ public interface IForgeKeyMapping
     /**
      * {@return true if the key conflict context and modifier are active and the keyCode matches this binding, false otherwise}
      */
-    default boolean isActiveAndMatches(InputConstants.Key keyCode)
-    {
+    default boolean isActiveAndMatches(InputConstants.Key keyCode) {
         return keyCode != InputConstants.UNKNOWN && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
 
-    default void setToDefault()
-    {
+    default void setToDefault() {
         setKeyModifierAndCode(getDefaultKeyModifier(), self().getDefaultKey());
     }
 
@@ -46,22 +42,17 @@ public interface IForgeKeyMapping
 
     void setKeyModifierAndCode(KeyModifier keyModifier, InputConstants.Key keyCode);
 
-    default boolean isConflictContextAndModifierActive()
-    {
+    default boolean isConflictContextAndModifierActive() {
         return getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
 
     /**
      * Returns true when one of the bindings' key codes conflicts with the other's modifier.
      */
-    default boolean hasKeyModifierConflict(KeyMapping other)
-    {
-        if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext()))
-        {
+    default boolean hasKeyModifierConflict(KeyMapping other) {
+        if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext())) {
             if (getKeyModifier().matches(other.getKey()) || other.getKeyModifier().matches(getKey()))
-            {
                 return true;
-            }
         }
         return false;
     }

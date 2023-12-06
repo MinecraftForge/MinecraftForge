@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -93,9 +_,9 @@
+@@ -95,9 +_,9 @@
     @Nullable
     private CompletableFuture<LevelChunk> serverChunk;
     private boolean renderDebug;
@@ -13,7 +13,7 @@
     private final SampleLogger frameTimeLogger = new SampleLogger();
     private final SampleLogger tickTimeLogger = new SampleLogger();
     private final SampleLogger pingLogger = new SampleLogger();
-@@ -120,14 +_,18 @@
+@@ -124,14 +_,18 @@
        this.clientChunk = null;
     }
  
@@ -37,7 +37,7 @@
           if (this.renderFpsCharts) {
              int i = p_281427_.guiWidth();
              int j = i / 2;
-@@ -137,7 +_,9 @@
+@@ -141,7 +_,9 @@
                 this.tpsChart.drawChart(p_281427_, i - k, k);
              }
           }
@@ -47,7 +47,7 @@
           if (this.renderNetworkCharts) {
              int l = p_281427_.guiWidth();
              int i1 = l / 2;
-@@ -148,17 +_,32 @@
+@@ -152,17 +_,32 @@
              int j1 = this.pingChart.getWidth(i1);
              this.pingChart.drawChart(p_281427_, l - j1, j1);
           }
@@ -82,7 +82,7 @@
        this.renderLines(p_281525_, list, true);
     }
  
-@@ -430,6 +_,7 @@
+@@ -451,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
              list.add(String.valueOf((Object)BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())));

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -1279,11 +_,23 @@
+@@ -1337,11 +_,23 @@
     }
  
     public static Item registerBlock(Block p_252092_, Block... p_248886_) {

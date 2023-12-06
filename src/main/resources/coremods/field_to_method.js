@@ -5,7 +5,7 @@ function initializeCoreMod() {
         'biome': {
             'target': {
                 'type': 'CLASS',
-                'name': 'net.minecraft.world.level.biome.Biome' 
+                'name': 'net.minecraft.world.level.biome.Biome'
             },
             'transformer': function(classNode) {
                 ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_47437_'), 'getModifiedClimateSettings')
@@ -53,24 +53,13 @@ function initializeCoreMod() {
                 return classNode;
             }
         },
-        'stairsblock': {
-            'target': {
-                'type': 'CLASS',
-                'name': 'net.minecraft.world.level.block.StairBlock'
-            },
-            'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_56858_'), 'getModelBlock')
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_56859_'), 'getModelState')
-                return classNode;
-            }
-        },
         'flowerpotblock': {
             'target': {
                 'type': 'CLASS',
                 'name': 'net.minecraft.world.level.block.FlowerPotBlock'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_53525_'), ASMAPI.mapMethod('m_53560_')) // flower
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_302266_'), ASMAPI.mapMethod('m_304918_')) // potted
                 return classNode;
             }
         },

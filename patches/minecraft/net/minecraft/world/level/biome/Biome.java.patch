@@ -38,7 +38,7 @@
     }
  
     public int getFogColor() {
-@@ -373,4 +_,34 @@
+@@ -384,4 +_,34 @@
           return this.name;
        }
     }

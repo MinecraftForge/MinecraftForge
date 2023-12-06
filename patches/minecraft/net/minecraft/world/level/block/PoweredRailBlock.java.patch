@@ -1,10 +1,14 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -14,9 +_,19 @@
- public class PoweredRailBlock extends BaseRailBlock {
+@@ -16,13 +_,23 @@
+    public static final MapCodec<PoweredRailBlock> CODEC = simpleCodec(PoweredRailBlock::new);
     public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 +   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
+ 
+    public MapCodec<PoweredRailBlock> codec() {
+       return CODEC;
+    }
  
     public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
 +      this(p_55218_, false);
@@ -20,7 +24,7 @@
        this.registerDefaultState(this.stateDefinition.any().setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(POWERED, Boolean.valueOf(false)).setValue(WATERLOGGED, Boolean.valueOf(false)));
     }
  
-@@ -28,7 +_,7 @@
+@@ -34,7 +_,7 @@
           int j = p_55221_.getY();
           int k = p_55221_.getZ();
           boolean flag = true;
@@ -29,7 +33,7 @@
           switch (railshape) {
              case NORTH_SOUTH:
                 if (p_55223_) {
-@@ -99,14 +_,14 @@
+@@ -105,14 +_,14 @@
  
     protected boolean isSameRailWithPower(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
        BlockState blockstate = p_55226_.getBlockState(p_55227_);
@@ -48,7 +52,7 @@
                 } else {
                    return false;
                 }
-@@ -125,7 +_,7 @@
+@@ -131,7 +_,7 @@
        if (flag1 != flag) {
           p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
           p_55233_.updateNeighborsAt(p_55234_.below(), this);
@@ -57,7 +61,7 @@
              p_55233_.updateNeighborsAt(p_55234_.above(), this);
           }
        }
-@@ -156,6 +_,9 @@
+@@ -162,6 +_,9 @@
                    return p_55240_.setValue(SHAPE, RailShape.SOUTH_EAST);
                 case NORTH_EAST:
                    return p_55240_.setValue(SHAPE, RailShape.SOUTH_WEST);
@@ -67,7 +71,7 @@
              }
           case COUNTERCLOCKWISE_90:
              switch ((RailShape)p_55240_.getValue(SHAPE)) {
-@@ -253,6 +_,10 @@
+@@ -259,6 +_,10 @@
     }
  
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55243_) {

@@ -13,60 +13,14 @@
  
     }
 @@ -610,6 +_,7 @@
-          list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_gui_ghost_recipe_overlay", DefaultVertexFormat.POSITION_COLOR), (p_286147_) -> {
-             rendertypeGuiGhostRecipeOverlayShader = p_286147_;
+          list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_breeze_wind", DefaultVertexFormat.NEW_ENTITY), (p_308287_) -> {
+             rendertypeBreezeWindShader = p_308287_;
           }));
 +         net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterShadersEvent(p_250719_, list1));
        } catch (IOException ioexception) {
           list1.forEach((p_172729_) -> {
              p_172729_.getFirst().close();
-@@ -686,12 +_,13 @@
-             this.minecraft.getProfiler().push("pick");
-             this.minecraft.crosshairPickEntity = null;
-             double d0 = (double)this.minecraft.gameMode.getPickRange();
--            this.minecraft.hitResult = entity.pick(d0, p_109088_, false);
-+            double entityReach = this.minecraft.player.getEntityReach(); // Note - MC-76493 - We must validate players cannot click-through objects.
-+            this.minecraft.hitResult = entity.pick(Math.max(d0, entityReach), p_109088_, false); // Run pick() with the max of the two, so we can prevent click-through.
-             Vec3 vec3 = entity.getEyePosition(p_109088_);
-             boolean flag = false;
-             int i = 3;
-             double d1 = d0;
--            if (this.minecraft.gameMode.hasFarPickRange()) {
-+            if (false && this.minecraft.gameMode.hasFarPickRange()) {
-                d1 = 6.0D;
-                d0 = d1;
-             } else {
-@@ -701,10 +_,19 @@
- 
-                d0 = d0;
-             }
-+            d0 = d1 = Math.max(d0, entityReach); // Pick entities with the max of both for the same reason.
- 
-             d1 *= d1;
--            if (this.minecraft.hitResult != null) {
-+            // If we picked a block, we need to ignore entities past that block. Added != MISS check to not truncate on failed picks.
-+            // Also fixes MC-250858
-+            if (this.minecraft.hitResult != null && this.minecraft.hitResult.getType() != HitResult.Type.MISS) {
-                d1 = this.minecraft.hitResult.getLocation().distanceToSqr(vec3);
-+               double blockReach = this.minecraft.player.getBlockReach();
-+               // Discard the result as a miss if it is outside the block reach.
-+               if (d1 > blockReach * blockReach) {
-+                  Vec3 pos = this.minecraft.hitResult.getLocation();
-+                  this.minecraft.hitResult = BlockHitResult.miss(pos, Direction.getNearest(vec3.x, vec3.y, vec3.z), BlockPos.containing(pos));
-+               }
-             }
- 
-             Vec3 vec31 = entity.getViewVector(1.0F);
-@@ -718,7 +_,7 @@
-                Entity entity1 = entityhitresult.getEntity();
-                Vec3 vec33 = entityhitresult.getLocation();
-                double d2 = vec3.distanceToSqr(vec33);
--               if (flag && d2 > 9.0D) {
-+               if (d2 > d1 || d2 > entityReach * entityReach) { // Discard if the result is behind a block, or past the entity reach max. The var "flag" no longer has a use.
-                   this.minecraft.hitResult = BlockHitResult.miss(vec33, Direction.getNearest(vec31.x, vec31.y, vec31.z), BlockPos.containing(vec33));
-                } else if (d2 < d1 || this.minecraft.hitResult == null) {
-                   this.minecraft.hitResult = entityhitresult;
-@@ -772,7 +_,7 @@
+@@ -757,7 +_,7 @@
              d0 *= Mth.lerp(this.minecraft.options.fovEffectScale().get(), 1.0D, (double)0.85714287F);
           }
  
@@ -75,7 +29,7 @@
        }
     }
  
-@@ -908,12 +_,12 @@
+@@ -894,12 +_,12 @@
  
           Window window = this.minecraft.getWindow();
           RenderSystem.clear(256, Minecraft.ON_OSX);
@@ -90,7 +44,7 @@
           RenderSystem.applyModelViewMatrix();
           Lighting.setupFor3DItems();
           GuiGraphics guigraphics = new GuiGraphics(this.minecraft, this.renderBuffers.bufferSource());
-@@ -949,7 +_,7 @@
+@@ -935,7 +_,7 @@
              }
           } else if (flag && this.minecraft.screen != null) {
              try {
@@ -99,10 +53,10 @@
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.forThrowable(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.addCategory("Screen render details");
-@@ -1103,12 +_,19 @@
+@@ -1090,12 +_,19 @@
+ 
        Matrix4f matrix4f = posestack.last().pose();
        this.resetProjectionMatrix(matrix4f);
-       camera.setup(this.minecraft.level, (Entity)(this.minecraft.getCameraEntity() == null ? this.minecraft.player : this.minecraft.getCameraEntity()), !this.minecraft.options.getCameraType().isFirstPerson(), this.minecraft.options.getCameraType().isMirrored(), p_109090_);
 +
 +      net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, camera, p_109090_);
 +      camera.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());

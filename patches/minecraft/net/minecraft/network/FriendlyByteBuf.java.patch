@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/FriendlyByteBuf.java
 +++ b/net/minecraft/network/FriendlyByteBuf.java
-@@ -78,7 +_,7 @@
+@@ -80,7 +_,7 @@
  import org.joml.Quaternionf;
  import org.joml.Vector3f;
  
@@ -9,7 +9,7 @@
     public static final int DEFAULT_NBT_QUOTA = 2097152;
     private final ByteBuf source;
     public static final short MAX_STRING_LENGTH = Short.MAX_VALUE;
-@@ -577,6 +_,15 @@
+@@ -578,6 +_,15 @@
     }
  
     public FriendlyByteBuf writeItem(ItemStack p_130056_) {
@@ -25,7 +25,7 @@
        if (p_130056_.isEmpty()) {
           this.writeBoolean(false);
        } else {
-@@ -585,8 +_,8 @@
+@@ -586,8 +_,8 @@
           this.writeId(BuiltInRegistries.ITEM, item);
           this.writeByte(p_130056_.getCount());
           CompoundTag compoundtag = null;
@@ -36,7 +36,7 @@
           }
  
           this.writeNbt(compoundtag);
-@@ -602,7 +_,7 @@
+@@ -603,7 +_,7 @@
           Item item = this.readById(BuiltInRegistries.ITEM);
           int i = this.readByte();
           ItemStack itemstack = new ItemStack(item, i);

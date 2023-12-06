@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -162,6 +_,7 @@
+@@ -160,6 +_,7 @@
           if (chunkholder == null) {
              return null;
           } else {
@@ -8,16 +8,16 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
-@@ -351,7 +_,7 @@
-          for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
-             LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
-             ChunkPos chunkpos = levelchunk1.getPos();
--            if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
-+            if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
-                levelchunk1.incrementInhabitedTime(j);
-                if (flag2 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
-                   NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag1);
-@@ -432,11 +_,17 @@
+@@ -347,7 +_,7 @@
+             for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
+                LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
+                ChunkPos chunkpos = levelchunk1.getPos();
+-               if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
++               if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
+                   levelchunk1.incrementInhabitedTime(j);
+                   if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
+                      NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag);
+@@ -428,11 +_,17 @@
     }
  
     public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {

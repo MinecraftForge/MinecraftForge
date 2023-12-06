@@ -5,15 +5,12 @@
 
 package net.minecraftforge.common.data;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.Advancement.Builder;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -24,6 +21,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Ingredient.ItemValue;
 import net.minecraft.world.item.crafting.Ingredient.TagValue;
 import net.minecraft.world.item.crafting.Ingredient.Value;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
@@ -95,34 +96,38 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
         super.buildRecipes(new RecipeOutput() {
             @Override
-            public void accept(FinishedRecipe vanilla) {
-                var modified = enhance(vanilla);
+            public void accept(ResourceLocation id, Recipe<?> recipe, AdvancementHolder advancement) {
+                var modified = enhance(id, recipe);
                 if (modified != null)
-                    consumer.accept(modified);
+                    consumer.accept(id, modified, advancement);
             }
 
             @Override
             public Builder advancement() {
                 return consumer.advancement();
             }
+
+            @Override
+            public void accept(ResourceLocation id, Recipe<?> recipe, ResourceLocation advancementId, JsonElement advancement) {
+            }
         });
     }
 
     @Nullable
-    private FinishedRecipe enhance(FinishedRecipe vanilla) {
-        if (vanilla instanceof ShapelessRecipeBuilder.Result shapeless)
-            return enhance(shapeless);
-        if (vanilla instanceof ShapedRecipeBuilder.Result shaped)
-            return enhance(shaped);
+    private Recipe<?> enhance(ResourceLocation id, Recipe<?> vanilla) {
+        if (vanilla instanceof ShapelessRecipe shapeless)
+            return enhance(id, shapeless);
+        if (vanilla instanceof ShapedRecipe shaped)
+            return enhance(id, shaped);
         return null;
     }
 
     @Nullable
-    private FinishedRecipe enhance(ShapelessRecipeBuilder.Result vanilla) {
-        List<Ingredient> ingredients = getField(ShapelessRecipeBuilder.Result.class, vanilla, 4);
+    private Recipe<?> enhance(ResourceLocation id, ShapelessRecipe vanilla) {
+        List<Ingredient> ingredients = getField(ShapelessRecipe.class, vanilla, 3);
         boolean modified = false;
         for (int x = 0; x < ingredients.size(); x++) {
-            Ingredient ing = enhance(vanilla.id(), ingredients.get(x));
+            Ingredient ing = enhance(id, ingredients.get(x));
             if (ing != null) {
                 ingredients.set(x, ing);
                 modified = true;
@@ -133,7 +138,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
     @Nullable
     @Override
-    protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonObject advancementJson, FinishedRecipe finishedRecipe) {
+    protected CompletableFuture<?> saveAdvancement(CachedOutput output, ResourceLocation advancementId, JsonElement advancement) {
         // NOOP - We don't replace any of the advancement things yet...
         return null;
     }
@@ -145,11 +150,13 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     }
 
     @Nullable
-    private FinishedRecipe enhance(ShapedRecipeBuilder.Result vanilla) {
-        Map<Character, Ingredient> ingredients = getField(ShapedRecipeBuilder.Result.class, vanilla, 5);
+    private Recipe<?> enhance(ResourceLocation id, ShapedRecipe vanilla) {
+        ShapedRecipePattern pattern = getField(ShapedRecipe.class, vanilla, 2);
+        var data = pattern.data().orElseThrow(() -> new IllegalStateException("Weird shaped recipe, data is missing? " + id + " " + vanilla));
+        Map<Character, Ingredient> ingredients = data.key();
         boolean modified = false;
         for (Character x : ingredients.keySet()) {
-            Ingredient ing = enhance(vanilla.id(), ingredients.get(x));
+            Ingredient ing = enhance(id, ingredients.get(x));
             if (ing != null) {
                 ingredients.put(x, ing);
                 modified = true;

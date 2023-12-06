@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
 +++ b/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
-@@ -104,6 +_,7 @@
+@@ -105,6 +_,7 @@
     }
  
     public boolean destroyBlock(BlockPos p_105268_) {
@@ -8,7 +8,7 @@
        if (this.minecraft.player.blockActionRestricted(this.minecraft.level, p_105268_, this.localPlayerMode)) {
           return false;
        } else {
-@@ -118,9 +_,8 @@
+@@ -119,9 +_,8 @@
              } else if (blockstate.isAir()) {
                 return false;
              } else {
@@ -19,7 +19,7 @@
                 if (flag) {
                    block.destroy(level, p_105268_, blockstate);
                 }
-@@ -141,6 +_,7 @@
+@@ -142,6 +_,7 @@
              BlockState blockstate = this.minecraft.level.getBlockState(p_105270_);
              this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105270_, blockstate, 1.0F);
              this.startPrediction(this.minecraft.level, (p_233757_) -> {
@@ -27,7 +27,7 @@
                 this.destroyBlock(p_105270_);
                 return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
              });
-@@ -149,15 +_,19 @@
+@@ -150,15 +_,19 @@
              if (this.isDestroying) {
                 this.connection.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, p_105271_));
              }
@@ -47,7 +47,7 @@
                 if (flag && blockstate1.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105270_) >= 1.0F) {
                    this.destroyBlock(p_105270_);
                 } else {
-@@ -169,7 +_,7 @@
+@@ -170,7 +_,7 @@
                    this.minecraft.level.destroyBlockProgress(this.minecraft.player.getId(), this.destroyBlockPos, this.getDestroyStage());
                 }
  
@@ -56,7 +56,7 @@
              });
           }
  
-@@ -200,6 +_,7 @@
+@@ -201,6 +_,7 @@
           BlockState blockstate1 = this.minecraft.level.getBlockState(p_105284_);
           this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105284_, blockstate1, 1.0F);
           this.startPrediction(this.minecraft.level, (p_233753_) -> {
@@ -64,7 +64,7 @@
              this.destroyBlock(p_105284_);
              return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105284_, p_105285_, p_233753_);
           });
-@@ -212,12 +_,13 @@
+@@ -213,12 +_,13 @@
           } else {
              this.destroyProgress += blockstate.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105284_);
              if (this.destroyTicks % 4.0F == 0.0F) {
@@ -79,16 +79,16 @@
              if (this.destroyProgress >= 1.0F) {
                 this.isDestroying = false;
                 this.startPrediction(this.minecraft.level, (p_233739_) -> {
-@@ -247,7 +_,7 @@
+@@ -248,7 +_,7 @@
     }
  
     public float getPickRange() {
--      return this.localPlayerMode.isCreative() ? 5.0F : 4.5F;
+-      return Player.getPickRange(this.localPlayerMode.isCreative());
 +      return (float) this.minecraft.player.getBlockReach();
     }
  
     public void tick() {
-@@ -262,7 +_,7 @@
+@@ -263,7 +_,7 @@
  
     private boolean sameDestroyTarget(BlockPos p_105282_) {
        ItemStack itemstack = this.minecraft.player.getMainHandItem();
@@ -97,7 +97,7 @@
     }
  
     private void ensureHasSentCarriedItem() {
-@@ -291,25 +_,38 @@
+@@ -292,25 +_,38 @@
     private InteractionResult performUseItemOn(LocalPlayer p_233747_, InteractionHand p_233748_, BlockHitResult p_233749_) {
        BlockPos blockpos = p_233749_.getBlockPos();
        ItemStack itemstack = p_233747_.getItemInHand(p_233748_);
@@ -140,7 +140,7 @@
              InteractionResult interactionresult1;
              if (this.localPlayerMode.isCreative()) {
                 int i = itemstack.getCount();
-@@ -340,10 +_,17 @@
+@@ -341,10 +_,17 @@
                 mutableobject.setValue(InteractionResult.PASS);
                 return serverbounduseitempacket;
              } else {
@@ -158,7 +158,7 @@
                 }
  
                 mutableobject.setValue(interactionresultholder.getResult());
-@@ -382,6 +_,9 @@
+@@ -383,6 +_,9 @@
        this.ensureHasSentCarriedItem();
        Vec3 vec3 = p_105233_.getLocation().subtract(p_105232_.getX(), p_105232_.getY(), p_105232_.getZ());
        this.connection.send(ServerboundInteractPacket.createInteractionPacket(p_105232_, p_105231_.isShiftKeyDown(), p_105234_, vec3));

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DropperBlock.java
 +++ b/net/minecraft/world/level/block/DropperBlock.java
-@@ -45,7 +_,7 @@
+@@ -51,7 +_,7 @@
              p_52944_.levelEvent(1001, p_52945_, 0);
           } else {
              ItemStack itemstack = dispenserblockentity.getItem(i);

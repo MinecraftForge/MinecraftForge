@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -322,7 +_,7 @@
+@@ -323,7 +_,7 @@
     }
  
     public static RenderType text(ResourceLocation p_110498_) {
@@ -9,7 +9,7 @@
     }
  
     public static RenderType textBackground() {
-@@ -330,19 +_,19 @@
+@@ -331,19 +_,19 @@
     }
  
     public static RenderType textIntensity(ResourceLocation p_173238_) {
@@ -33,7 +33,7 @@
     }
  
     public static RenderType textBackgroundSeeThrough() {
-@@ -350,7 +_,7 @@
+@@ -351,7 +_,7 @@
     }
  
     public static RenderType textIntensitySeeThrough(ResourceLocation p_173241_) {
@@ -42,7 +42,7 @@
     }
  
     public static RenderType lightning() {
-@@ -677,4 +_,17 @@
+@@ -678,4 +_,17 @@
           return this.name;
        }
     }

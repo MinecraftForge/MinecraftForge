@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -20,7 +_,7 @@
+@@ -32,7 +_,7 @@
     }
  
     public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
 -      if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
 +      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-          p_52068_.setBlock(p_52069_, this.concrete, 3);
+          p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
        }
  
-@@ -33,20 +_,24 @@
-       return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete : super.getStateForPlacement(p_52063_);
+@@ -45,20 +_,24 @@
+       return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete.defaultBlockState() : super.getStateForPlacement(p_52063_);
     }
  
 +   private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_, net.minecraft.world.level.material.FluidState fluidState) {
@@ -38,12 +38,12 @@
                 flag = true;
                 break;
              }
-@@ -61,7 +_,7 @@
+@@ -73,7 +_,7 @@
     }
  
     public BlockState updateShape(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
--      return touchesLiquid(p_52077_, p_52078_) ? this.concrete : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
-+      return touchesLiquid(p_52077_, p_52078_, p_52074_) ? this.concrete : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
+-      return touchesLiquid(p_52077_, p_52078_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
++      return touchesLiquid(p_52077_, p_52078_, p_52074_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
     }
  
     public int getDustColor(BlockState p_52085_, BlockGetter p_52086_, BlockPos p_52087_) {

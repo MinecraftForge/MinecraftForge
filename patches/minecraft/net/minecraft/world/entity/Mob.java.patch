@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -117,6 +_,9 @@
+@@ -118,6 +_,9 @@
     private CompoundTag leashInfoTag;
     private BlockPos restrictCenter = BlockPos.ZERO;
     private float restrictRadius = -1.0F;
@@ -10,7 +10,7 @@
  
     protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
        super(p_21368_, p_21369_);
-@@ -231,7 +_,10 @@
+@@ -232,7 +_,10 @@
     }
  
     public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -22,7 +22,7 @@
     }
  
     public boolean canAttackType(EntityType<?> p_21399_) {
-@@ -429,6 +_,9 @@
+@@ -430,6 +_,9 @@
           p_21484_.putBoolean("NoAI", this.isNoAi());
        }
  
@@ -32,7 +32,7 @@
     }
  
     public void readAdditionalSaveData(CompoundTag p_21450_) {
-@@ -481,6 +_,14 @@
+@@ -482,6 +_,14 @@
        }
  
        this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -47,7 +47,7 @@
     }
  
     protected void dropFromLootTable(DamageSource p_21389_, boolean p_21390_) {
-@@ -520,9 +_,9 @@
+@@ -521,9 +_,9 @@
     public void aiStep() {
        super.aiStep();
        this.level().getProfiler().push("looting");
@@ -58,7 +58,7 @@
           for(ItemEntity itementity : this.level().getEntitiesOfClass(ItemEntity.class, this.getBoundingBox().inflate((double)vec3i.getX(), (double)vec3i.getY(), (double)vec3i.getZ()))) {
              if (!itementity.isRemoved() && !itementity.getItem().isEmpty() && !itementity.hasPickUpDelay() && this.wantsToPickUp(itementity.getItem())) {
                 this.pickUpItem(itementity);
-@@ -698,6 +_,14 @@
+@@ -699,6 +_,14 @@
           this.discard();
        } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
           Entity entity = this.level().getNearestPlayer(this, -1.0D);
@@ -73,7 +73,7 @@
           if (entity != null) {
              double d0 = entity.distanceToSqr(this);
              int i = this.getType().getCategory().getDespawnDistance();
-@@ -1031,6 +_,16 @@
+@@ -1032,6 +_,16 @@
  
     }
  
@@ -90,7 +90,7 @@
     @Nullable
     public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_, @Nullable CompoundTag p_21438_) {
        RandomSource randomsource = p_21434_.getRandom();
-@@ -1041,6 +_,7 @@
+@@ -1042,6 +_,7 @@
           this.setLeftHanded(false);
        }
  
@@ -98,7 +98,7 @@
        return p_21437_;
     }
  
-@@ -1425,15 +_,25 @@
+@@ -1426,15 +_,25 @@
        return false;
     }
  
@@ -122,10 +122,10 @@
 +      this.jumpInLiquidInternal(() -> super.jumpInFluid(type));
 +   }
 +
+    @VisibleForTesting
     public void removeFreeWill() {
        this.removeAllGoals((p_262562_) -> {
-          return true;
-@@ -1460,5 +_,40 @@
+@@ -1462,5 +_,40 @@
     public ItemStack getPickResult() {
        SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
        return spawneggitem == null ? null : new ItemStack(spawneggitem);

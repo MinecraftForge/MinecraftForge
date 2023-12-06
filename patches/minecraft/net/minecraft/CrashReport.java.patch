@@ -1,6 +1,6 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
-@@ -57,14 +_,9 @@
+@@ -59,14 +_,9 @@
        if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
           p_127520_.append("-- Head --\n");
           p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
@@ -18,7 +18,7 @@
        }
  
        for(CrashReportCategory crashreportcategory : this.details) {
-@@ -72,6 +_,7 @@
+@@ -74,6 +_,7 @@
           p_127520_.append("\n\n");
        }
  
@@ -26,7 +26,7 @@
        this.systemReport.appendToCrashReportString(p_127520_);
     }
  
-@@ -91,18 +_,7 @@
+@@ -93,18 +_,7 @@
           throwable.setStackTrace(this.exception.getStackTrace());
        }
  

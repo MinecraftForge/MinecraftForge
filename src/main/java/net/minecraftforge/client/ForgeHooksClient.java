@@ -111,6 +111,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.ClientPauseEvent;
 import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
@@ -246,6 +247,11 @@ public class ForgeHooksClient {
         // and 10000 units for each layered Screen,
 
         return 1000.0F + 10000.0F * (1 + guiLayers.size());
+    }
+
+    public static void onClientPauseUpdate(boolean paused)
+    {
+        MinecraftForge.EVENT_BUS.post(new ClientPauseEvent(paused));
     }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type) {

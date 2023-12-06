@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/NoteBlock.java
 +++ b/net/minecraft/world/level/block/NoteBlock.java
-@@ -89,7 +_,9 @@
+@@ -95,7 +_,9 @@
        } else if (p_55035_.isClientSide) {
           return InteractionResult.SUCCESS;
        } else {
@@ -11,7 +11,7 @@
           p_55035_.setBlock(p_55036_, p_55034_, 3);
           this.playNote(p_55037_, p_55034_, p_55035_, p_55036_);
           p_55037_.awardStat(Stats.TUNE_NOTEBLOCK);
-@@ -109,6 +_,9 @@
+@@ -115,6 +_,9 @@
     }
  
     public boolean triggerEvent(BlockState p_55023_, Level p_55024_, BlockPos p_55025_, int p_55026_, int p_55027_) {

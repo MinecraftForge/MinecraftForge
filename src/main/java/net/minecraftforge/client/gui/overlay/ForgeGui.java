@@ -16,6 +16,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -351,7 +352,7 @@ public class ForgeGui extends Gui {
             if (time >= 120500L)
                 listR.add(I18n.get("demo.demoExpired"));
             else
-                listR.add(I18n.get("demo.remainingTime", StringUtil.formatTickDuration((int) (120500L - time))));
+                listR.add(I18n.get("demo.remainingTime", StringUtil.formatTickDuration((int)(120500L - this.minecraft.level.getGameTime()), this.minecraft.level.tickRateManager().tickrate())));
         }
 
         var forgeOverlay = (OverlayAccess)debugOverlay;

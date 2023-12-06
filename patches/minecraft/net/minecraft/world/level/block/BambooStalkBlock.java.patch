@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/BambooStalkBlock.java
 +++ b/net/minecraft/world/level/block/BambooStalkBlock.java
-@@ -26,7 +_,7 @@
+@@ -27,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class BambooStalkBlock extends Block implements BonemealableBlock {
 +public class BambooStalkBlock extends Block implements BonemealableBlock, net.minecraftforge.common.IPlantable {
+    public static final MapCodec<BambooStalkBlock> CODEC = simpleCodec(BambooStalkBlock::new);
     protected static final float SMALL_LEAVES_AABB_OFFSET = 3.0F;
     protected static final float LARGE_LEAVES_AABB_OFFSET = 5.0F;
-    protected static final float COLLISION_AABB_OFFSET = 1.5F;
-@@ -110,10 +_,11 @@
+@@ -116,10 +_,11 @@
  
     public void randomTick(BlockState p_261931_, ServerLevel p_261751_, BlockPos p_261616_, RandomSource p_261766_) {
        if (p_261931_.getValue(STAGE) == 0) {
@@ -23,7 +23,7 @@
              }
           }
  
-@@ -167,7 +_,7 @@
+@@ -173,7 +_,7 @@
     }
  
     public float getDestroyProgress(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
@@ -32,7 +32,7 @@
     }
  
     protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
-@@ -208,5 +_,12 @@
+@@ -214,5 +_,12 @@
        }
  
        return i;

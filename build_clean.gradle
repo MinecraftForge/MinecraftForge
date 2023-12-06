@@ -1,10 +1,18 @@
 plugins {
     id 'java-library'
-	id 'eclipse'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.16,6.2)'
+    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.gradle.patcher'
 }
 
 evaluationDependsOn(':mcp')
+
+repositories {
+    mavenCentral()
+    maven gradleutils.forgeMaven
+    maven gradleutils.minecraftLibsMaven
+}
+    
+java.toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
 
 dependencies {
 	implementation(libs.forgespi)
@@ -44,8 +52,14 @@ patcher {
 	}
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+    options.warnings = false // Shutup deprecated for removal warnings
+}
+
 eclipse.classpath.file.whenMerged {
 	// Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
 	def src = entries.find { it.path == 'src/main/java' }
-	src.entryAttributes['ignore_optional_problems'] = 'true'
+    if (src == null) throw new IllegalStateException("You must run `setup` task before importing")
+    src.entryAttributes['ignore_optional_problems'] = 'true'
 }

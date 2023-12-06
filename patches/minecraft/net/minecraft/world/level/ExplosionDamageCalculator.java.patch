@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ExplosionDamageCalculator.java
 +++ b/net/minecraft/world/level/ExplosionDamageCalculator.java
-@@ -7,7 +_,7 @@
+@@ -9,7 +_,7 @@
  
  public class ExplosionDamageCalculator {
     public Optional<Float> getBlockExplosionResistance(Explosion p_46099_, BlockGetter p_46100_, BlockPos p_46101_, BlockState p_46102_, FluidState p_46103_) {

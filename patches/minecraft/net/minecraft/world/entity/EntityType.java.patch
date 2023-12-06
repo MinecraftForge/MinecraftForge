@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -308,6 +_,11 @@
+@@ -312,6 +_,11 @@
     private final EntityDimensions dimensions;
     private final FeatureFlagSet requiredFeatures;
  
@@ -12,7 +12,7 @@
     private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
        return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
     }
-@@ -321,17 +_,24 @@
+@@ -325,17 +_,24 @@
     }
  
     public EntityType(EntityType.EntityFactory<T> p_273268_, MobCategory p_272918_, boolean p_273417_, boolean p_273389_, boolean p_273556_, boolean p_272654_, ImmutableSet<Block> p_273631_, EntityDimensions p_272946_, int p_272895_, int p_273451_, FeatureFlagSet p_273518_) {
@@ -48,7 +48,7 @@
     }
  
     @Nullable
-@@ -601,14 +_,23 @@
+@@ -605,14 +_,23 @@
     }
  
     public int clientTrackingRange() {
@@ -72,7 +72,7 @@
        return this != PLAYER && this != LLAMA_SPIT && this != WITHER && this != BAT && this != ITEM_FRAME && this != GLOW_ITEM_FRAME && this != LEASH_KNOT && this != PAINTING && this != END_CRYSTAL && this != EVOKER_FANGS;
     }
  
-@@ -635,6 +_,12 @@
+@@ -639,6 +_,12 @@
        return this.builtInRegistryHolder;
     }
  
@@ -85,7 +85,7 @@
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> factory;
        private final MobCategory category;
-@@ -648,6 +_,11 @@
+@@ -652,6 +_,11 @@
        private EntityDimensions dimensions = EntityDimensions.scalable(0.6F, 1.8F);
        private FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
  
@@ -97,7 +97,7 @@
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.factory = p_20696_;
           this.category = p_20697_;
-@@ -709,12 +_,36 @@
+@@ -713,12 +_,36 @@
           return this;
        }
  

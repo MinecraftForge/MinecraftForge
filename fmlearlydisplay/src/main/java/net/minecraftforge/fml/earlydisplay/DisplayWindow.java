@@ -40,11 +40,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -86,6 +88,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private int framecount;
     private EarlyFramebuffer framebuffer;
     private ScheduledFuture<?> windowTick;
+    private ScheduledFuture<?> initializationFuture;
 
     private PerformanceInfo performanceInfo;
     private ScheduledFuture<?> performanceTick;
@@ -111,11 +114,13 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public String name() {
         return "fmlearlywindow";
     }
+
     @Override
     public Runnable initialize(String[] arguments) {
+        String mcVersion = FMLLoader.versionInfo().mcVersion();
+        String forgeVersion = FMLLoader.versionInfo().forgeVersion();
+
         final OptionParser parser = new OptionParser();
-        var mcversionopt = parser.accepts("fml.mcVersion").withRequiredArg().ofType(String.class);
-        var forgeversionopt = parser.accepts("fml.forgeVersion").withRequiredArg().ofType(String.class);
         var widthopt = parser.accepts("width")
                 .withRequiredArg().ofType(Integer.class)
                 .defaultsTo(FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH));
@@ -130,7 +135,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_WIDTH, winWidth);
         FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_HEIGHT, winHeight);
         fbScale = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_FBSCALE);
-        if (System.getenv("FML_EARLY_WINDOW_DARK")!= null) {
+        if (System.getenv("FML_EARLY_WINDOW_DARK") != null) {
             this.colourScheme = ColourScheme.BLACK;
         } else {
             try {
@@ -145,10 +150,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }
         this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
 
-        var forgeVersion = parsed.valueOf(forgeversionopt);
-        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading "+ forgeVersion));
+        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading " + forgeVersion));
         performanceInfo = new PerformanceInfo();
-        return start(parsed.valueOf(mcversionopt), forgeVersion);
+        return start(mcVersion, forgeVersion);
     }
 
     private static final long MINFRAMETIME = TimeUnit.MILLISECONDS.toNanos(10); // This is the FPS cap on the window - note animation is capped at 20FPS via the tickTimer
@@ -226,11 +230,11 @@ public class DisplayWindow implements ImmediateWindowProvider {
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
         }
         this.elements = new ArrayList<>(Arrays.asList(
-                RenderElement.anvil(font),
-                RenderElement.logMessageOverlay(font),
-                RenderElement.forgeVersionOverlay(font, mcVersion+"-"+forgeVersion.split("-")[0]),
-                RenderElement.performanceBar(font),
-                RenderElement.progressBars(font)
+            RenderElement.anvil(font),
+            RenderElement.logMessageOverlay(font),
+            RenderElement.forgeVersionOverlay(font, mcVersion + "-" + forgeVersion),
+            RenderElement.performanceBar(font),
+            RenderElement.progressBars(font)
         ));
 
         var date = Calendar.getInstance();
@@ -264,7 +268,6 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public void render(int alpha) {
         var currentVAO = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         var currentFB = glGetInteger(GL_READ_FRAMEBUFFER_BINDING);
-        glfwSwapInterval(0);
         glViewport(0, 0, this.context.scaledWidth(), this.context.scaledHeight());
         RenderElement.globalAlpha = alpha;
         framebuffer.activate();
@@ -283,11 +286,12 @@ public class DisplayWindow implements ImmediateWindowProvider {
     public Runnable start(@Nullable String mcVersion, final String forgeVersion) {
         renderScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
             final var thread = Executors.defaultThreadFactory().newThread(r);
+            thread.setName("EarlyDisplay");
             thread.setDaemon(true);
             return thread;
         });
         initWindow(mcVersion);
-        renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
+        this.initializationFuture = renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
         return this::periodicTick;
     }
 
@@ -518,6 +522,16 @@ public class DisplayWindow implements ImmediateWindowProvider {
      * @return the Window we own.
      */
     public long setupMinecraftWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitorSupplier) {
+        // wait for the window to actually be initialized
+        try {
+            this.initializationFuture.get(30, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            Thread.dumpStack();
+            crashElegantly("We seem to be having trouble initializing the window, waited for 30 seconds");
+        }
+
         // we have to spin wait for the window ticker
         ImmediateWindowHandler.updateProgress("Initializing Game Graphics");
         while (!this.windowTick.isDone()) {

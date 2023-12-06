@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/StringTag.java
 +++ b/net/minecraft/nbt/StringTag.java
-@@ -21,7 +_,7 @@
+@@ -19,7 +_,7 @@
        private static String readAccounted(DataInput p_301750_, NbtAccounter p_301732_) throws IOException {
           p_301732_.accountBytes(36L);
           String s = p_301750_.readUTF();
