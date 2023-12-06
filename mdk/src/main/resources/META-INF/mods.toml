@@ -12,6 +12,9 @@ loaderVersion="${loader_version_range}" #mandatory This is typically bumped ever
 license="${mod_license}"
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+# If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
+# set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
+#clientSideOnly=true #optional - defaults to false if absent
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
@@ -30,9 +33,6 @@ displayName="${mod_name}" #mandatory
 #credits="" #optional
 # A text field displayed in the mod UI
 authors="${mod_authors}" #optional
-# If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
-# set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
-#clientSideOnly=true #optional - defaults to false if absent
 # Display Test controls the display for your mod in the server connection screen
 # MATCH_VERSION means that your mod will cause a red X if the versions on client and server differ. This is the default behaviour and should be what you choose if you have server and client elements to your mod.
 # IGNORE_SERVER_VERSION means that your mod will not cause a red X if it's present on the server but not on the client. This is what you should use if you're a server only mod.
