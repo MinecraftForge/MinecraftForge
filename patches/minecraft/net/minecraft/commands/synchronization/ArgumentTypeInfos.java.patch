@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
-@@ -65,6 +_,20 @@
+@@ -66,6 +_,20 @@
  public class ArgumentTypeInfos {
     private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> BY_CLASS = Maps.newHashMap();
  
@@ -21,7 +21,7 @@
     private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> register(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
        BY_CLASS.put(p_235389_, p_235390_);
        return Registry.register(p_235387_, p_235388_, p_235390_);
-@@ -119,12 +_,14 @@
+@@ -121,12 +_,14 @@
        register(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.contextFree(TemplateMirrorArgument::templateMirror));
        register(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.contextFree(TemplateRotationArgument::templateRotation));
        register(p_235385_, "heightmap", HeightmapTypeArgument.class, SingletonArgumentInfo.contextFree(HeightmapTypeArgument::heightmap));

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TntBlock.java
 +++ b/net/minecraft/world/level/block/TntBlock.java
-@@ -33,10 +_,14 @@
+@@ -39,10 +_,14 @@
        this.registerDefaultState(this.defaultBlockState().setValue(UNSTABLE, Boolean.valueOf(false)));
     }
  
@@ -16,7 +16,7 @@
              p_57467_.removeBlock(p_57468_, false);
           }
  
-@@ -45,7 +_,7 @@
+@@ -51,7 +_,7 @@
  
     public void neighborChanged(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
        if (p_57458_.hasNeighborSignal(p_57459_)) {
@@ -25,16 +25,16 @@
           p_57458_.removeBlock(p_57459_, false);
        }
  
-@@ -53,7 +_,7 @@
+@@ -59,7 +_,7 @@
  
-    public void playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
+    public BlockState playerWillDestroy(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
        if (!p_57445_.isClientSide() && !p_57448_.isCreative() && p_57447_.getValue(UNSTABLE)) {
 -         explode(p_57445_, p_57446_);
 +         onCaughtFire(p_57447_, p_57445_, p_57446_, null, null);
        }
  
-       super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
-@@ -68,10 +_,12 @@
+       return super.playerWillDestroy(p_57445_, p_57446_, p_57447_, p_57448_);
+@@ -74,10 +_,12 @@
        }
     }
  
@@ -47,7 +47,7 @@
     private static void explode(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
        if (!p_57437_.isClientSide) {
           PrimedTnt primedtnt = new PrimedTnt(p_57437_, (double)p_57438_.getX() + 0.5D, (double)p_57438_.getY(), (double)p_57438_.getZ() + 0.5D, p_57439_);
-@@ -86,7 +_,7 @@
+@@ -92,7 +_,7 @@
        if (!itemstack.is(Items.FLINT_AND_STEEL) && !itemstack.is(Items.FIRE_CHARGE)) {
           return super.use(p_57450_, p_57451_, p_57452_, p_57453_, p_57454_, p_57455_);
        } else {
@@ -56,7 +56,7 @@
           p_57451_.setBlock(p_57452_, Blocks.AIR.defaultBlockState(), 11);
           Item item = itemstack.getItem();
           if (!p_57453_.isCreative()) {
-@@ -109,7 +_,7 @@
+@@ -115,7 +_,7 @@
           BlockPos blockpos = p_57431_.getBlockPos();
           Entity entity = p_57432_.getOwner();
           if (p_57432_.isOnFire() && p_57432_.mayInteract(p_57429_, blockpos)) {

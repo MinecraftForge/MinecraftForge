@@ -72,7 +72,7 @@
        this.ops.remove(p_11281_);
        ServerPlayer serverplayer = this.getPlayer(p_11281_.getId());
        if (serverplayer != null) {
-@@ -773,13 +_,6 @@
+@@ -778,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -86,7 +86,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.server, file2);
           this.stats.put(uuid, serverstatscounter);
-@@ -826,7 +_,7 @@
+@@ -831,7 +_,7 @@
     }
  
     public List<ServerPlayer> getPlayers() {
@@ -95,7 +95,7 @@
     }
  
     @Nullable
-@@ -843,6 +_,7 @@
+@@ -848,6 +_,7 @@
           playeradvancements.reload(this.server.getAdvancements());
        }
  

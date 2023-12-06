@@ -1,22 +1,22 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -56,6 +_,7 @@
-    private final ExplosionDamageCalculator damageCalculator;
+@@ -57,6 +_,7 @@
+    private final SoundEvent explosionSound;
     private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
     private final Map<Player, Vec3> hitPlayers = Maps.newHashMap();
 +   private final Vec3 position;
  
-    public Explosion(Level p_46024_, @Nullable Entity p_46025_, double p_46026_, double p_46027_, double p_46028_, float p_46029_, List<BlockPos> p_46030_) {
-       this(p_46024_, p_46025_, p_46026_, p_46027_, p_46028_, p_46029_, false, Explosion.BlockInteraction.DESTROY_WITH_DECAY, p_46030_);
-@@ -81,6 +_,7 @@
-       this.blockInteraction = p_46060_;
-       this.damageSource = p_46053_ == null ? p_46051_.damageSources().explosion(this) : p_46053_;
-       this.damageCalculator = p_46054_ == null ? this.makeDamageCalculator(p_46052_) : p_46054_;
+    public static DamageSource getDefaultDamageSource(Level p_309890_, @Nullable Entity p_311046_) {
+       return p_309890_.damageSources().explosion(p_311046_, getIndirectSourceEntityInternal(p_311046_));
+@@ -90,6 +_,7 @@
+       this.smallExplosionParticles = p_312175_;
+       this.largeExplosionParticles = p_310459_;
+       this.explosionSound = p_311795_;
 +      this.position = new Vec3(this.x, this.y, this.z);
     }
  
     private ExplosionDamageCalculator makeDamageCalculator(@Nullable Entity p_46063_) {
-@@ -176,6 +_,7 @@
+@@ -193,6 +_,7 @@
        int j2 = Mth.floor(this.z - (double)f2 - 1.0D);
        int j1 = Mth.floor(this.z + (double)f2 + 1.0D);
        List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -24,26 +24,7 @@
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
        for(Entity entity : list) {
-@@ -244,7 +_,7 @@
-             if (!blockstate.isAir()) {
-                BlockPos blockpos1 = blockpos.immutable();
-                this.level.getProfiler().push("explosion_blocks");
--               if (block.dropFromExplosion(this)) {
-+               if (blockstate.canDropFromExplosion(this.level, blockpos, this)) {
-                   Level $$9 = this.level;
-                   if ($$9 instanceof ServerLevel) {
-                      ServerLevel serverlevel = (ServerLevel)$$9;
-@@ -261,8 +_,7 @@
-                   }
-                }
- 
--               this.level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 3);
--               block.wasExploded(this.level, blockpos, this);
-+               blockstate.onBlockExploded(this.level, blockpos, this);
-                this.level.getProfiler().pop();
-             }
-          }
-@@ -353,6 +_,15 @@
+@@ -345,6 +_,15 @@
  
     public List<BlockPos> getToBlow() {
        return this.toBlow;
@@ -58,4 +39,4 @@
 +      return this.source;
     }
  
-    public static enum BlockInteraction {
+    public Explosion.BlockInteraction getBlockInteraction() {

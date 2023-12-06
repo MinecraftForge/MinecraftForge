@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -44,22 +_,23 @@
+@@ -65,17 +_,18 @@
     }
  
     public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -18,20 +18,22 @@
                 Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
                 BlockPos blockpos = p_222540_.relative(direction);
                 BlockState blockstate = p_222539_.getBlockState(blockpos.below());
--               if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-+               if (p_222539_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit) || blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-                   p_222539_.setBlockAndUpdate(blockpos, this.fruit.defaultBlockState());
-                   p_222539_.setBlockAndUpdate(p_222540_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, direction));
++               // Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
+                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
+                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
+                   Optional<Block> optional = registry.getOptional(this.fruit);
+@@ -86,6 +_,7 @@
+                   }
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
           }
  
        }
-@@ -93,5 +_,11 @@
+@@ -115,5 +_,11 @@
  
-    public StemGrownBlock getFruit() {
-       return this.fruit;
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57040_) {
+       p_57040_.add(AGE);
 +   }
 +
 +   //FORGE START

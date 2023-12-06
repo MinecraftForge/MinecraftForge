@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/CactusBlock.java
 +++ b/net/minecraft/world/level/block/CactusBlock.java
-@@ -20,7 +_,7 @@
+@@ -21,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class CactusBlock extends Block {
 +public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final MapCodec<CactusBlock> CODEC = simpleCodec(CactusBlock::new);
     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
     public static final int MAX_AGE = 15;
-    protected static final int AABB_OFFSET = 1;
-@@ -33,6 +_,7 @@
+@@ -39,6 +_,7 @@
     }
  
     public void tick(BlockState p_220908_, ServerLevel p_220909_, BlockPos p_220910_, RandomSource p_220911_) {
@@ -17,7 +17,7 @@
        if (!p_220908_.canSurvive(p_220909_, p_220910_)) {
           p_220909_.destroyBlock(p_220910_, true);
        }
-@@ -48,15 +_,17 @@
+@@ -54,15 +_,17 @@
  
           if (i < 3) {
              int j = p_220913_.getValue(AGE);
@@ -39,7 +39,7 @@
           }
        }
     }
-@@ -86,7 +_,7 @@
+@@ -92,7 +_,7 @@
        }
  
        BlockState blockstate1 = p_51154_.getBlockState(p_51155_.below());
@@ -48,7 +48,7 @@
     }
  
     public void entityInside(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
-@@ -99,5 +_,15 @@
+@@ -105,5 +_,15 @@
  
     public boolean isPathfindable(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
        return false;

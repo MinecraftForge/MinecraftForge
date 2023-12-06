@@ -1,21 +1,16 @@
 --- a/net/minecraft/world/item/AxeItem.java
 +++ b/net/minecraft/world/item/AxeItem.java
-@@ -32,11 +_,9 @@
+@@ -32,7 +_,8 @@
+       Level level = p_40529_.getLevel();
        BlockPos blockpos = p_40529_.getClickedPos();
        Player player = p_40529_.getPlayer();
-       BlockState blockstate = level.getBlockState(blockpos);
--      Optional<BlockState> optional = this.getStripped(blockstate);
--      Optional<BlockState> optional1 = WeatheringCopper.getPrevious(blockstate);
--      Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(blockstate.getBlock())).map((p_150694_) -> {
--         return p_150694_.withPropertiesOf(blockstate);
--      });
-+      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP, false));
-+      Optional<BlockState> optional1 = optional.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_SCRAPE, false));
-+      Optional<BlockState> optional2 = optional.isPresent() || optional1.isPresent() ? Optional.empty() : Optional.ofNullable(blockstate.getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_WAX_OFF, false));
-       ItemStack itemstack = p_40529_.getItemInHand();
-       Optional<BlockState> optional3 = Optional.empty();
-       if (optional.isPresent()) {
-@@ -71,9 +_,20 @@
+-      Optional<BlockState> optional = this.evaluateNewBlockState(level, blockpos, player, level.getBlockState(blockpos));
++      var modded = level.getBlockState(blockpos).getToolModifiedState(p_40529_, net.minecraftforge.common.ToolActions.AXE_STRIP, false);
++      Optional<BlockState> optional = modded != null ? Optional.of(modded) : this.evaluateNewBlockState(level, blockpos, player, level.getBlockState(blockpos));
+       if (optional.isEmpty()) {
+          return InteractionResult.PASS;
+       } else {
+@@ -79,9 +_,20 @@
        }
     }
  

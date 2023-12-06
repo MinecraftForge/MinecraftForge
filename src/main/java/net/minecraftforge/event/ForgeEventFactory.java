@@ -18,6 +18,7 @@ import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -796,6 +797,14 @@ public class ForgeEventFactory {
 
     public static void onChunkLoad(ChunkAccess chunk, boolean newChunk) {
         post(new ChunkEvent.Load(chunk, newChunk));
+    }
+
+    public static void onLevelUnload(Level level) {
+         post(new LevelEvent.Unload(level));
+    }
+
+    public static void onLevelLoad(Level level) {
+         post(new LevelEvent.Load(level));
     }
 
     public static void onChunkDataSave(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {

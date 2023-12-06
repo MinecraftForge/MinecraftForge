@@ -1,35 +1,14 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -465,6 +_,19 @@
-          return LevelStorageSource.this.readLevelData(this.levelDirectory, LevelStorageSource.getLevelData(p_248747_, p_251873_, p_249187_, p_249736_));
-       }
- 
-+      public void readAdditionalLevelSaveData() {
-+         checkLock();
-+         LevelStorageSource.this.readLevelData(this.levelDirectory, (path, dataFixer) -> {
-+            try {
-+               CompoundTag compoundTag = NbtIo.readCompressed(path.toFile());
-+               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag, this.levelDirectory);
-+            } catch (Exception e) {
-+                LOGGER.error("Exception reading {}", path, e);
-+            }
-+            return ""; // Return non-null to prevent level.dat-old inject
-+         });
-+      }
-+
-       @Nullable
-       public WorldDataConfiguration getDataConfiguration() {
-          this.checkLock();
-@@ -481,6 +_,8 @@
+@@ -483,6 +_,7 @@
+          CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.put("Data", compoundtag);
- 
 +         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
-+
-          try {
-             File file2 = File.createTempFile("level", ".dat", file1);
-             NbtIo.writeCompressed(compoundtag1, file2);
-@@ -495,6 +_,10 @@
+          this.saveLevelData(compoundtag1);
+       }
+ 
+@@ -503,6 +_,10 @@
  
        public Optional<Path> getIconFile() {
           return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());

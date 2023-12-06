@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -17,7 +_,20 @@
+@@ -10,7 +_,20 @@
+ import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
- import org.apache.commons.lang3.NotImplementedException;
  
 -public class ShapedRecipe implements CraftingRecipe {
 +public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
@@ -19,11 +19,11 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    final int width;
-    final int height;
-    final NonNullList<Ingredient> recipeItems;
-@@ -115,10 +_,20 @@
-       return this.width;
+    final ShapedRecipePattern pattern;
+    final ItemStack result;
+    final String group;
+@@ -37,10 +_,20 @@
+       return this.group;
     }
  
 +   @Override
@@ -31,8 +31,8 @@
 +      return getWidth();
 +   }
 +
-    public int getHeight() {
-       return this.height;
+    public CraftingBookCategory category() {
+       return this.category;
     }
  
 +   @Override
@@ -40,10 +40,10 @@
 +      return getHeight();
 +   }
 +
-    @VisibleForTesting
-    static String[] shrink(List<String> p_299210_) {
-       int i = Integer.MAX_VALUE;
-@@ -160,7 +_,7 @@
+    public ItemStack getResultItem(RegistryAccess p_266881_) {
+       return this.result;
+    }
+@@ -78,7 +_,7 @@
        return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
           return !p_151277_.isEmpty();
        }).anyMatch((p_151273_) -> {
@@ -51,28 +51,4 @@
 +         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
        });
     }
- 
-@@ -182,9 +_,9 @@
- 
-    public static class Serializer implements RecipeSerializer<ShapedRecipe> {
-       static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().flatXmap((p_297814_) -> {
--         if (p_297814_.size() > 3) {
-+         if (p_297814_.size() > MAX_HEIGHT) {
-             return DataResult.error(() -> {
--               return "Invalid pattern: too many rows, 3 is maximum";
-+               return "Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum";
-             });
-          } else if (p_297814_.isEmpty()) {
-             return DataResult.error(() -> {
-@@ -194,9 +_,9 @@
-             int i = p_297814_.get(0).length();
- 
-             for(String s : p_297814_) {
--               if (s.length() > 3) {
-+               if (s.length() > MAX_WIDTH) {
-                   return DataResult.error(() -> {
--                     return "Invalid pattern: too many columns, 3 is maximum";
-+                     return "Invalid pattern: too many columns, " + MAX_WIDTH  + " is maximum";
-                   });
-                }
  

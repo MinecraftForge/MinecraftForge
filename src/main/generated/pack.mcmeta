@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": {
+      "translate": "pack.forge.description"
+    },
+    "pack_format": 22
+  }
+}

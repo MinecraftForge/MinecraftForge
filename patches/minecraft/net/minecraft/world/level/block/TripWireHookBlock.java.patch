@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/level/block/TripWireHookBlock.java
 +++ b/net/minecraft/world/level/block/TripWireHookBlock.java
-@@ -156,8 +_,8 @@
-             BlockPos blockpos2 = p_57687_.relative(direction, k);
-             BlockState blockstate2 = ablockstate[k];
-             if (blockstate2 != null) {
-+               if (!p_57686_.getBlockState(blockpos2).isAir()) { // FORGE: fix MC-129055
-                p_57686_.setBlock(blockpos2, blockstate2.setValue(ATTACHED, Boolean.valueOf(flag2)), 3);
--               if (!p_57686_.getBlockState(blockpos2).isAir()) {
+@@ -166,8 +_,8 @@
+                BlockPos blockpos2 = p_57687_.relative(direction, k);
+                BlockState blockstate2 = ablockstate[k];
+                if (blockstate2 != null) {
++                  if (!p_57686_.getBlockState(blockpos2).isAir()) { // FORGE: fix MC-129055
+                   p_57686_.setBlock(blockpos2, blockstate2.trySetValue(ATTACHED, Boolean.valueOf(flag2)), 3);
+-                  if (!p_57686_.getBlockState(blockpos2).isAir()) {
+                   }
                 }
              }
-          }

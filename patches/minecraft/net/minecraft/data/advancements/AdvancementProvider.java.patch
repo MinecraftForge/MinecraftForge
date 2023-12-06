@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/advancements/AdvancementProvider.java
 +++ b/net/minecraft/data/advancements/AdvancementProvider.java
-@@ -14,6 +_,11 @@
+@@ -15,6 +_,11 @@
  import net.minecraft.data.PackOutput;
  import net.minecraft.resources.ResourceLocation;
  

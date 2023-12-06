@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
-@@ -346,6 +_,8 @@
+@@ -342,6 +_,8 @@
              this.screen.setToolTip(list1);
           }
  

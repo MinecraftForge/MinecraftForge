@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl.java
-@@ -89,6 +_,7 @@
+@@ -93,6 +_,7 @@
     }
  
     public void handleCustomPayload(ClientboundCustomPayloadPacket p_298103_) {

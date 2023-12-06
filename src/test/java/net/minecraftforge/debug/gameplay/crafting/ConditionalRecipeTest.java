@@ -163,12 +163,7 @@ public class ConditionalRecipeTest extends BaseTestMod {
         @Override
         protected void buildRecipes(RecipeOutput out) {
             // TODO: Move this to a Condition test instead of using recipe encoders.
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
-                .pattern("XXX")
-                .pattern("XXX")
-                .pattern("XXX")
-                .define('X', Blocks.DIRT)
-                .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+            ConditionalRecipe.builder()
                 .condition(
                     and (
                         or (
@@ -180,61 +175,102 @@ public class ConditionalRecipeTest extends BaseTestMod {
                         FALSE()
                     )
                 )
+                .recipe(
+                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .define('X', Blocks.DIRT)
+                        .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+                        ::save
+                )
                 .save(out, rl("test_encode_all_conditions"));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
-                .pattern("XXX")
-                .pattern("XXX")
-                .pattern("XXX")
-                .define('X', Blocks.DIRT)
-                .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+            ConditionalRecipe.builder()
                 .condition(FALSE())
+                .recipe(
+                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .define('X', Blocks.DIRT)
+                        .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+                        ::save
+                )
                 .save(out, rl("shaped_false_conditions"));
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
-                .pattern("XXX")
-                .pattern("XXX")
-                .pattern("XXX")
-                .define('X', Blocks.OAK_LOG)
-                .unlockedBy(getHasName(Blocks.OAK_LOG), has(Blocks.OAK_LOG))
+            ConditionalRecipe.builder()
                 .condition(TRUE())
+                .recipe(
+                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 64)
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .pattern("XXX")
+                        .define('X', Blocks.OAK_LOG)
+                        .unlockedBy(getHasName(Blocks.OAK_LOG), has(Blocks.OAK_LOG))
+                        ::save
+                )
                 .save(out, rl("shaped_true_conditions"));
 
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
-                .requires(Blocks.REDSTONE_ORE)
-                .requires(Blocks.REDSTONE_ORE)
-                .requires(Blocks.REDSTONE_ORE)
-                .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+            ConditionalRecipe.builder()
                 .condition(FALSE())
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+                        ::save
+                )
                 .save(out, rl("shapeless_false_conditions"));
 
-            ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
-                .requires(Blocks.REDSTONE_ORE)
-                .requires(Blocks.REDSTONE_ORE)
-                .requires(Blocks.REDSTONE_ORE)
-                .requires(Blocks.REDSTONE_ORE)
-                .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+            ConditionalRecipe.builder()
                 .condition(TRUE())
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .requires(Blocks.REDSTONE_ORE)
+                        .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+                        ::save
+                )
                 .save(out, rl("shapeless_true_conditions"));
 
-            SimpleCookingRecipeBuilder.smelting(Ingredient.of(Blocks.DIRT), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 0.1F, 200)
-                .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+            ConditionalRecipe.builder()
                 .condition(FALSE())
+                .recipe(
+                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(Blocks.DIRT), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 0.1F, 200)
+                        .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+                        ::save
+                )
                 .save(out, rl("cooking_false_conditions"));
 
-            SimpleCookingRecipeBuilder.smelting(Ingredient.of(Blocks.BEE_NEST), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 0.1F, 200)
-                .unlockedBy(getHasName(Blocks.BEE_NEST), has(Blocks.BEE_NEST))
+            ConditionalRecipe.builder()
                 .condition(TRUE())
+                .recipe(
+                    SimpleCookingRecipeBuilder.smelting(Ingredient.of(Blocks.BEE_NEST), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK, 0.1F, 200)
+                        .unlockedBy(getHasName(Blocks.BEE_NEST), has(Blocks.BEE_NEST))
+                        ::save
+                )
                 .save(out, rl("cooking_true_conditions"));
 
-            SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.DIRT), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
-                .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+            ConditionalRecipe.builder()
                 .condition(FALSE())
+                .recipe(
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.DIRT), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .unlockedBy(getHasName(Blocks.DIRT), has(Blocks.DIRT))
+                        ::save
+                )
                 .save(out, rl("single_item_false_conditions"));
 
-            SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.REDSTONE_ORE), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
-                .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+            ConditionalRecipe.builder()
                 .condition(TRUE())
+                .recipe(
+                    SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.REDSTONE_ORE), RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                    .unlockedBy(getHasName(Blocks.REDSTONE_ORE), has(Blocks.REDSTONE_ORE))
+                    ::save
+                )
                 .save(out, rl("singe_item_true_conditions"));
 
             // TODO SmithingTransformRecipeBuilder

@@ -16,26 +16,28 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.jar.Manifest;
+import java.util.function.Consumer;
+import java.util.jar.JarFile;
 
+@ApiStatus.Internal
 public abstract class AbstractModProvider implements IModProvider {
     private static final   Logger LOGGER    = LogUtils.getLogger();
     protected static final String MODS_TOML = "META-INF/mods.toml";
-    protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
-    protected IModLocator.ModFileOrException createMod(Path... path) {
+    protected IModLocator.ModFileOrException createMod(Path path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
-            Manifest::new,
             jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
             path
         );
@@ -49,18 +51,18 @@ public abstract class AbstractModProvider implements IModProvider {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
         } else if (type != null) {
-            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
+            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", JarFile.MANIFEST_NAME, type, path);
             mod = new ModFile(sj, this, this::manifestParser, type);
         } else
-            return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + Arrays.toString(path)));
+            return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + path));
 
         mjm.setModFile(mod);
         return new IModLocator.ModFileOrException(mod, null);
     }
 
     protected IModFileInfo manifestParser(final IModFile mod) {
-        Function<String, Optional<String>> cfg = name -> Optional.ofNullable(mod.getSecureJar().moduleDataProvider().getManifest().getMainAttributes().getValue(name));
-        var license = cfg.apply("LICENSE").orElse("");
+        var mf = mod.getSecureJar().moduleDataProvider().getManifest().getMainAttributes();
+        var license = mf.getValue("LICENSE");
         var dummy = new IConfigurable() {
             @Override
             public <T> Optional<T> getConfigElement(String... key) {
@@ -72,7 +74,7 @@ public abstract class AbstractModProvider implements IModProvider {
             }
         };
 
-        return new DefaultModFileInfo(mod, license, dummy);
+        return new DefaultModFileInfo(mod, license == null ? "" : license, dummy);
     }
 
     @Override
@@ -80,8 +82,48 @@ public abstract class AbstractModProvider implements IModProvider {
         return true;
     }
 
+    @Override
+    public void initArguments(final Map<String, ?> arguments) {
+    }
+
     protected String getDefaultJarModType() {
         return null;
+    }
+
+    @Override
+    public void scanFile(IModFile file, Consumer<Path> pathConsumer) {
+        LOGGER.debug(LogMarkers.SCAN, "Scan started: {}", file);
+        var jar = file.getSecureJar();
+        var root = jar.getRootPath();
+        Consumer<Path> consumer = pathConsumer;
+
+        //TODO: [SecureJar] Actually redesign this to have a proper validation.
+        var holder = new Holder<SecureJar.Status>();
+        holder.value = SecureJar.Status.NONE;
+        if (jar.hasSecurityData()) {
+            consumer = path -> {
+                pathConsumer.accept(path);
+                var status = jar.verifyPath(path);
+                if (status.ordinal() < holder.value.ordinal())
+                    holder.value = status;
+            };
+        }
+
+        try {
+            Files.walk(root)
+                .filter(p -> p.toString().endsWith(".class"))
+                .forEach(consumer);
+
+            file.setSecurityStatus(holder.value);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        LOGGER.debug(LogMarkers.SCAN, "Scan finished: {}", file);
+    }
+
+    private static class Holder<T> {
+        T value;
     }
 
     private record DefaultModFileInfo(IModFile mod, String license, IConfigurable configurable) implements IModFileInfo, IConfigurable {

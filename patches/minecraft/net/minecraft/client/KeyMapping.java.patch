@@ -90,10 +90,11 @@
     }
  
     public String saveString() {
-@@ -184,4 +_,84 @@
+@@ -183,5 +_,89 @@
+ 
     public void setDown(boolean p_90846_) {
        this.isDown = p_90846_;
-    }
++   }
 +
 +   /****************** Forge Start *****************************/
 +   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
@@ -165,13 +166,17 @@
 +   }
 +
 +   @Override
-+   public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
-+       this.key = keyCode;
-+       if (keyModifier.matches(keyCode))
-+           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++   public void setKeyModifierAndCode(@org.jetbrains.annotations.Nullable net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
 +       MAP.remove(this);
++
++       if (keyModifier == null)
++           keyModifier = net.minecraftforge.client.settings.KeyModifier.getModifier(this.key);
++       if (keyModifier == null || keyCode == InputConstants.UNKNOWN || net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(keyCode))
++           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++
++       this.key = keyCode;
 +       this.keyModifier = keyModifier;
++
 +       MAP.put(keyCode, this);
-+   }
-+   /****************** Forge End *****************************/
+    }
  }

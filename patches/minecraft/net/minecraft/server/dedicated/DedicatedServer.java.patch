@@ -27,7 +27,7 @@
           long j = Util.getNanos() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.nextTickTime = Util.getMillis(); //Forge: Update server time to prevent watchdog/spaming during long load.
++         this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
           if (dedicatedserverproperties.announcePlayerAchievements != null) {
              this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
           }

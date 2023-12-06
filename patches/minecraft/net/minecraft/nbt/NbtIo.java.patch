@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NbtIo.java
 +++ b/net/minecraft/nbt/NbtIo.java
-@@ -154,10 +_,12 @@
+@@ -168,10 +_,12 @@
  
     private static Tag readUnnamedTag(DataInput p_128931_, NbtAccounter p_128933_) throws IOException {
        byte b0 = p_128931_.readByte();

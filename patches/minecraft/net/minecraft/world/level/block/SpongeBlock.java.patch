@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpongeBlock.java
 +++ b/net/minecraft/world/level/block/SpongeBlock.java
-@@ -41,6 +_,7 @@
+@@ -47,6 +_,7 @@
     }
  
     private boolean removeWaterBreadthFirstSearch(Level p_56808_, BlockPos p_56809_) {
@@ -8,7 +8,7 @@
        return BlockPos.breadthFirstTraversal(p_56809_, 6, 65, (p_277519_, p_277492_) -> {
           for(Direction direction : ALL_DIRECTIONS) {
              p_277492_.accept(p_277519_.relative(direction));
-@@ -52,7 +_,7 @@
+@@ -58,7 +_,7 @@
           } else {
              BlockState blockstate = p_56808_.getBlockState(p_296944_);
              FluidState fluidstate = p_56808_.getFluidState(p_296944_);

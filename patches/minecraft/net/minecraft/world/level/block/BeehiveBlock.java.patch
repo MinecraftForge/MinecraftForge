@@ -1,17 +1,6 @@
 --- a/net/minecraft/world/level/block/BeehiveBlock.java
 +++ b/net/minecraft/world/level/block/BeehiveBlock.java
-@@ -72,6 +_,10 @@
-       return p_49620_.getValue(HONEY_LEVEL);
-    }
- 
-+   // Forge: Fixed MC-227255 Beehives and bee nests do not rotate/mirror correctly in structure blocks
-+   @Override public BlockState rotate(BlockState blockState, net.minecraft.world.level.block.Rotation rotation) { return blockState.setValue(FACING, rotation.rotate(blockState.getValue(FACING))); }
-+   @Override public BlockState mirror(BlockState blockState, net.minecraft.world.level.block.Mirror mirror) { return blockState.rotate(mirror.getRotation(blockState.getValue(FACING))); }
-+
-    public void playerDestroy(Level p_49584_, Player p_49585_, BlockPos p_49586_, BlockState p_49587_, @Nullable BlockEntity p_49588_, ItemStack p_49589_) {
-       super.playerDestroy(p_49584_, p_49585_, p_49586_, p_49587_, p_49588_, p_49589_);
-       if (!p_49584_.isClientSide && p_49588_ instanceof BeehiveBlockEntity beehiveblockentity) {
-@@ -115,7 +_,7 @@
+@@ -121,7 +_,7 @@
        boolean flag = false;
        if (i >= 5) {
           Item item = itemstack.getItem();

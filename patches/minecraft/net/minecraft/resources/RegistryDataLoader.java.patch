@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -123,13 +_,16 @@
+@@ -124,13 +_,16 @@
     }
  
     private static String registryDirPath(ResourceLocation p_252033_) {
@@ -19,7 +19,7 @@
  
        for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_256349_).entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
-@@ -138,7 +_,12 @@
+@@ -139,7 +_,12 @@
  
           try (Reader reader = resource.openAsReader()) {
              JsonElement jsonelement = JsonParser.parseReader(reader);

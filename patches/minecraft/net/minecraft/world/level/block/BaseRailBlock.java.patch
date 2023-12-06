@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BaseRailBlock.java
 +++ b/net/minecraft/world/level/block/BaseRailBlock.java
-@@ -19,7 +_,7 @@
+@@ -20,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
@@ -9,7 +9,7 @@
     protected static final VoxelShape FLAT_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
     protected static final VoxelShape HALF_BLOCK_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-@@ -44,6 +_,7 @@
+@@ -47,6 +_,7 @@
  
     public VoxelShape getShape(BlockState p_49403_, BlockGetter p_49404_, BlockPos p_49405_, CollisionContext p_49406_) {
        RailShape railshape = p_49403_.is(this) ? p_49403_.getValue(this.getShapeProperty()) : null;
@@ -17,7 +17,7 @@
        return railshape != null && railshape.isAscending() ? HALF_BLOCK_AABB : FLAT_AABB;
     }
  
-@@ -68,7 +_,7 @@
+@@ -71,7 +_,7 @@
  
     public void neighborChanged(BlockState p_49377_, Level p_49378_, BlockPos p_49379_, Block p_49380_, BlockPos p_49381_, boolean p_49382_) {
        if (!p_49378_.isClientSide && p_49378_.getBlockState(p_49379_).is(this)) {
@@ -26,7 +26,7 @@
           if (shouldBeRemoved(p_49379_, p_49378_, railshape)) {
              dropResources(p_49377_, p_49378_, p_49379_);
              p_49378_.removeBlock(p_49379_, p_49382_);
-@@ -113,7 +_,7 @@
+@@ -116,7 +_,7 @@
     public void onRemove(BlockState p_49384_, Level p_49385_, BlockPos p_49386_, BlockState p_49387_, boolean p_49388_) {
        if (!p_49388_) {
           super.onRemove(p_49384_, p_49385_, p_49386_, p_49387_, p_49388_);
@@ -35,7 +35,7 @@
              p_49385_.updateNeighborsAt(p_49386_.above(), this);
           }
  
-@@ -134,6 +_,11 @@
+@@ -137,6 +_,11 @@
        return blockstate.setValue(this.getShapeProperty(), flag1 ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH).setValue(WATERLOGGED, Boolean.valueOf(flag));
     }
  
@@ -47,7 +47,7 @@
     public abstract Property<RailShape> getShapeProperty();
  
     public BlockState updateShape(BlockState p_152151_, Direction p_152152_, BlockState p_152153_, LevelAccessor p_152154_, BlockPos p_152155_, BlockPos p_152156_) {
-@@ -146,5 +_,15 @@
+@@ -149,5 +_,15 @@
  
     public FluidState getFluidState(BlockState p_152158_) {
        return p_152158_.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(p_152158_);

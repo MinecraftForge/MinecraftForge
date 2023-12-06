@@ -26,16 +26,6 @@ abstract class SetupCheckJarCompatibility extends DefaultTask {
     @TaskAction
     void run() {
         def inputVersion = inputVersion.get()
-        def fmlLibs = project.configurations.detachedConfiguration(project.PACKED_DEPS.collect {
-            def artifactId = it.split(':')[1]
-            return project.dependencies.create("net.minecraftforge:${artifactId}:${inputVersion}")
-        }.toArray(Dependency[]::new))
-
-        project.tasks.named('checkJarCompatibility') {
-            baseLibraries.from(project.provider {
-                fmlLibs.resolvedConfiguration.lenientConfiguration.files
-            })
-        }
 
         def baseForgeUserdev = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-userdev.jar") }.get().asFile
         project.rootProject.extensions.download.run {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelSummary.java
 +++ b/net/minecraft/world/level/storage/LevelSummary.java
-@@ -193,6 +_,10 @@
+@@ -257,6 +_,10 @@
        }
     }
  
@@ -9,5 +9,5 @@
 +   }
 +
     public static class SymlinkLevelSummary extends LevelSummary {
-       public SymlinkLevelSummary(String p_289942_, Path p_289953_) {
-          super((LevelSettings)null, (LevelVersion)null, p_289942_, false, false, false, p_289953_);
+       private static final Component MORE_INFO_BUTTON = Component.translatable("symlink_warning.more_info");
+       private static final Component INFO = Component.translatable("symlink_warning.title").withColor(-65536);

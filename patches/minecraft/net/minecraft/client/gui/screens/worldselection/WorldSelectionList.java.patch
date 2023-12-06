@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldSelectionList.java
-@@ -74,6 +_,7 @@
+@@ -76,6 +_,7 @@
+    static final ResourceLocation JOIN_SPRITE = new ResourceLocation("world_list/join");
     static final Logger LOGGER = LogUtils.getLogger();
-    static final DateFormat DATE_FORMAT = new SimpleDateFormat();
     private static final ResourceLocation ICON_MISSING = new ResourceLocation("textures/misc/unknown_server.png");
 +   private static final ResourceLocation FORGE_EXPERIMENTAL_WARNING_ICON = new ResourceLocation("forge","textures/gui/experimental_warning.png");
     static final Component FROM_NEWER_TOOLTIP_1 = Component.translatable("selectWorld.tooltip.fromNewerVersion1").withStyle(ChatFormatting.RED);
     static final Component FROM_NEWER_TOOLTIP_2 = Component.translatable("selectWorld.tooltip.fromNewerVersion2").withStyle(ChatFormatting.RED);
     static final Component SNAPSHOT_TOOLTIP_1 = Component.translatable("selectWorld.tooltip.snapshot1").withStyle(ChatFormatting.GOLD);
-@@ -362,6 +_,7 @@
+@@ -372,6 +_,7 @@
           RenderSystem.enableBlend();
           p_281612_.blit(this.icon.textureLocation(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
           RenderSystem.disableBlend();
@@ -16,10 +16,10 @@
           if (this.minecraft.options.touchscreen().get() || p_283396_) {
              p_281612_.fill(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
              int j = p_283204_ - p_282820_;
-@@ -608,6 +_,19 @@
+@@ -579,6 +_,19 @@
  
-       public boolean isSelectable() {
-          return !this.summary.isDisabled();
+       public String getLevelName() {
+          return this.summary.getLevelName();
 +      }
 +
 +      // FORGE: Patch in experimental warning icon for worlds in the world selection screen

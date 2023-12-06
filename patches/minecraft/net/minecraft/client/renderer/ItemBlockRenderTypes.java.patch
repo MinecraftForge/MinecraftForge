@@ -5,18 +5,18 @@
  @OnlyIn(Dist.CLIENT)
  public class ItemBlockRenderTypes {
 +   @Deprecated
-    private static final Map<Block, RenderType> TYPE_BY_BLOCK = Util.make(Maps.newHashMap(), (p_296246_) -> {
+    private static final Map<Block, RenderType> TYPE_BY_BLOCK = Util.make(Maps.newHashMap(), (p_308288_) -> {
        RenderType rendertype = RenderType.tripwire();
-       p_296246_.put(Blocks.TRIPWIRE, rendertype);
-@@ -309,6 +_,7 @@
-       p_296246_.put(Blocks.BUBBLE_COLUMN, rendertype3);
-       p_296246_.put(Blocks.TINTED_GLASS, rendertype3);
+       p_308288_.put(Blocks.TRIPWIRE, rendertype);
+@@ -334,6 +_,7 @@
+       p_308288_.put(Blocks.BUBBLE_COLUMN, rendertype3);
+       p_308288_.put(Blocks.TINTED_GLASS, rendertype3);
     });
 +   @Deprecated
     private static final Map<Fluid, RenderType> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (p_109290_) -> {
        RenderType rendertype = RenderType.translucent();
        p_109290_.put(Fluids.FLOWING_WATER, rendertype);
-@@ -316,6 +_,8 @@
+@@ -341,6 +_,8 @@
     });
     private static boolean renderCutout;
  
@@ -25,7 +25,7 @@
     public static RenderType getChunkRenderType(BlockState p_109283_) {
        Block block = p_109283_.getBlock();
        if (block instanceof LeavesBlock) {
-@@ -326,6 +_,8 @@
+@@ -351,6 +_,8 @@
        }
     }
  
@@ -34,7 +34,7 @@
     public static RenderType getMovingBlockRenderType(BlockState p_109294_) {
        Block block = p_109294_.getBlock();
        if (block instanceof LeavesBlock) {
-@@ -340,6 +_,8 @@
+@@ -365,6 +_,8 @@
        }
     }
  
@@ -43,7 +43,7 @@
     public static RenderType getRenderType(BlockState p_109285_, boolean p_109286_) {
        RenderType rendertype = getChunkRenderType(p_109285_);
        if (rendertype == RenderType.translucent()) {
-@@ -353,6 +_,8 @@
+@@ -378,6 +_,8 @@
        }
     }
  
@@ -52,7 +52,7 @@
     public static RenderType getRenderType(ItemStack p_109280_, boolean p_109281_) {
        Item item = p_109280_.getItem();
        if (item instanceof BlockItem) {
-@@ -364,8 +_,73 @@
+@@ -389,8 +_,73 @@
     }
  
     public static RenderType getRenderLayer(FluidState p_109288_) {

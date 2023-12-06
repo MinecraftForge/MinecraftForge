@@ -30,7 +30,7 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
 
     public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().lineHeight * 2 + 8);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, top, parent.getFontRenderer().lineHeight * 2 + 8);
         this.parent = parent;
         this.listWidth = listWidth;
         this.refreshList();
@@ -53,11 +53,13 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
         parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
 
+    /*
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.parent.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
+    */
 
     public class ModEntry extends ObjectSelectionList.Entry<ModEntry> {
         private final IModInfo modInfo;
@@ -87,7 +89,7 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
                 //TODO: Consider adding more icons for visualization
                 RenderSystem.setShaderColor(1, 1, 1, 1);
                 guiGraphics.pose().pushPose();
-                guiGraphics.blit(VERSION_CHECK_ICONS, getLeft() + width - 12, top + entryHeight / 4, vercheck.status().getSheetOffset() * 8, (vercheck.status().isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                guiGraphics.blit(VERSION_CHECK_ICONS, getX() + width - 12, top + entryHeight / 4, vercheck.status().getSheetOffset() * 8, (vercheck.status().isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 guiGraphics.pose().popPose();
             }
         }

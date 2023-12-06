@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -42,6 +_,10 @@
+@@ -44,6 +_,10 @@
     @Nullable
     private UUID target;
     public final float bobOffs;
@@ -11,7 +11,7 @@
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
-@@ -58,6 +_,7 @@
+@@ -60,6 +_,7 @@
        this.setPos(p_149664_, p_149665_, p_149666_);
        this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
        this.setItem(p_149667_);
@@ -19,7 +19,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -66,6 +_,7 @@
+@@ -68,6 +_,7 @@
        this.copyPosition(p_31994_);
        this.age = p_31994_.age;
        this.bobOffs = p_31994_.bobOffs;
@@ -27,7 +27,7 @@
     }
  
     public boolean dampensVibrations() {
-@@ -94,6 +_,7 @@
+@@ -109,6 +_,7 @@
     }
  
     public void tick() {
@@ -35,7 +35,7 @@
        if (this.getItem().isEmpty()) {
           this.discard();
        } else {
-@@ -107,6 +_,9 @@
+@@ -122,6 +_,9 @@
           this.zo = this.getZ();
           Vec3 vec3 = this.getDeltaMovement();
           float f = this.getEyeHeight() - 0.11111111F;
@@ -45,7 +45,7 @@
           if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > (double)f) {
              this.setUnderwaterMovement();
           } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > (double)f) {
-@@ -128,7 +_,8 @@
+@@ -143,7 +_,8 @@
              this.move(MoverType.SELF, this.getDeltaMovement());
              float f1 = 0.98F;
              if (this.onGround()) {
@@ -55,7 +55,7 @@
              }
  
              this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
-@@ -158,7 +_,16 @@
+@@ -173,7 +_,16 @@
              }
           }
  
@@ -73,7 +73,7 @@
              this.discard();
           }
  
-@@ -220,6 +_,8 @@
+@@ -235,6 +_,8 @@
           return false;
        } else if (p_32028_.hasTag() ^ p_32027_.hasTag()) {
           return false;
@@ -82,7 +82,7 @@
        } else {
           return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
        }
-@@ -265,7 +_,7 @@
+@@ -280,7 +_,7 @@
           this.health = (int)((float)this.health - p_32014_);
           this.gameEvent(GameEvent.ENTITY_DAMAGE, p_32013_.getEntity());
           if (this.health <= 0) {
@@ -91,7 +91,7 @@
              this.discard();
           }
  
-@@ -277,6 +_,7 @@
+@@ -292,6 +_,7 @@
        p_32050_.putShort("Health", (short)this.health);
        p_32050_.putShort("Age", (short)this.age);
        p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
@@ -99,7 +99,7 @@
        if (this.thrower != null) {
           p_32050_.putUUID("Thrower", this.thrower);
        }
-@@ -297,6 +_,9 @@
+@@ -312,6 +_,9 @@
        if (p_32034_.contains("PickupDelay")) {
           this.pickupDelay = p_32034_.getShort("PickupDelay");
        }
@@ -109,7 +109,7 @@
  
        if (p_32034_.hasUUID("Owner")) {
           this.target = p_32034_.getUUID("Owner");
-@@ -316,10 +_,17 @@
+@@ -332,10 +_,17 @@
  
     public void playerTouch(Player p_32040_) {
        if (!this.level().isClientSide) {
@@ -128,7 +128,7 @@
              p_32040_.take(this, i);
              if (itemstack.isEmpty()) {
                 this.discard();
-@@ -343,8 +_,8 @@
+@@ -359,8 +_,8 @@
     }
  
     @Nullable
@@ -139,7 +139,7 @@
        if (!this.level().isClientSide && entity instanceof ItemEntity) {
           ((ItemEntity)entity).mergeWithNeighbours();
        }
-@@ -410,7 +_,7 @@
+@@ -427,7 +_,7 @@
  
     public void makeFakeItem() {
        this.setNeverPickUp();

@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/critereon/ItemPredicate.java
 +++ b/net/minecraft/advancements/critereon/ItemPredicate.java
-@@ -50,7 +_,7 @@
+@@ -45,7 +_,7 @@
           return false;
        } else {
           if (!this.enchantments.isEmpty()) {

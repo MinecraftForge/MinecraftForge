@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
 +++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
-@@ -169,6 +_,7 @@
+@@ -181,6 +_,7 @@
        }
  
        if (p_60195_ == 0) {
@@ -8,7 +8,7 @@
           if (!this.moveBlocks(p_60193_, p_60194_, direction, true)) {
              return false;
           }
-@@ -177,6 +_,7 @@
+@@ -189,6 +_,7 @@
           p_60193_.playSound((Player)null, p_60194_, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 0.5F, p_60193_.random.nextFloat() * 0.25F + 0.6F);
           p_60193_.gameEvent(GameEvent.BLOCK_ACTIVATE, p_60194_, GameEvent.Context.of(blockstate));
        } else if (p_60195_ == 1 || p_60195_ == 2) {
@@ -16,7 +16,7 @@
           BlockEntity blockentity1 = p_60193_.getBlockEntity(p_60194_.relative(direction));
           if (blockentity1 instanceof PistonMovingBlockEntity) {
              ((PistonMovingBlockEntity)blockentity1).finalTick();
-@@ -217,6 +_,7 @@
+@@ -229,6 +_,7 @@
           p_60193_.gameEvent(GameEvent.BLOCK_DEACTIVATE, p_60194_, GameEvent.Context.of(blockstate1));
        }
  
@@ -24,7 +24,7 @@
        return true;
     }
  
-@@ -353,6 +_,10 @@
+@@ -365,6 +_,10 @@
  
     public BlockState rotate(BlockState p_60215_, Rotation p_60216_) {
        return p_60215_.setValue(FACING, p_60216_.rotate(p_60215_.getValue(FACING)));

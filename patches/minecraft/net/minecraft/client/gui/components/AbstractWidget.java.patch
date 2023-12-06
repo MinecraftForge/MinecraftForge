@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/AbstractWidget.java
 +++ b/net/minecraft/client/gui/components/AbstractWidget.java
-@@ -259,6 +_,19 @@
+@@ -233,6 +_,19 @@
        this.focused = p_93693_;
     }
  

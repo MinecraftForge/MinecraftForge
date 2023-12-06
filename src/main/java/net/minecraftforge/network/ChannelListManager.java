@@ -119,7 +119,7 @@ public class ChannelListManager {
 
         var changed = new HashSet<ResourceLocation>();
         for (var channel : channels) {
-            // It also says nothing about the format of channels of channels so ignore bad channels.
+            // It also says nothing about the format of channels so ignore bad channels.
             if (channel.isEmpty())
                 continue;
 

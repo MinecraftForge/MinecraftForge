@@ -9,9 +9,11 @@
     }
  
     public int getRowWidth() {
-@@ -129,10 +_,11 @@
+@@ -128,11 +_,13 @@
+          this.name = p_193917_;
           this.changeButton = Button.builder(p_193917_, (p_269618_) -> {
              KeyBindsList.this.keyBindsScreen.selectedKey = p_193916_;
++            p_193916_.setKeyModifierAndCode(null, com.mojang.blaze3d.platform.InputConstants.UNKNOWN);
              KeyBindsList.this.resetMappingAndUpdateButtons();
 -         }).bounds(0, 0, 75, 20).createNarration((p_253311_) -> {
 +         }).bounds(0, 0, 75 + 20 /* Forge: Add space */, 20).createNarration((p_253311_) -> {

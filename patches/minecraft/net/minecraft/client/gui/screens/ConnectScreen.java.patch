@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/ConnectScreen.java
 +++ b/net/minecraft/client/gui/screens/ConnectScreen.java
-@@ -84,6 +_,8 @@
+@@ -85,6 +_,8 @@
                 }
  
                 if (optional.isEmpty()) {

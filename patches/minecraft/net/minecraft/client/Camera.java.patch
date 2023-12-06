@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/Camera.java
 +++ b/net/minecraft/client/Camera.java
-@@ -206,6 +_,18 @@
-       this.initialized = false;
+@@ -212,6 +_,18 @@
+       return this.partialTickTime;
     }
  
 +   public void setAnglesInternal(float yaw, float pitch) {

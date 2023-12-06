@@ -32,15 +32,16 @@ public class ImmediateWindowHandler {
         } else {
             final var providername = FMLConfig.getConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_PROVIDER);
             LOGGER.info("Loading ImmediateWindowProvider {}", providername);
-            final var maybeProvider = ServiceLoader.load(ImmediateWindowProvider.class)
-                    .stream()
-                    .map(ServiceLoader.Provider::get)
-                    .filter(p -> Objects.equals(p.name(), providername))
-                    .findFirst();
-            provider = maybeProvider.or(() -> {
+            for (var service : ServiceLoader.load(ImmediateWindowProvider.class)) {
+                if (providername.equals(service.name())) {
+                    provider = service;
+                    break;
+                }
+            }
+            if (provider == null) {
                 LOGGER.info("Failed to find ImmediateWindowProvider {}, disabling", providername);
-                return Optional.of(new DummyProvider());
-            }).orElseThrow();
+                provider = new DummyProvider();
+            }
         }
         // Only update config if the provider isn't the dummy provider
         if (!Objects.equals(provider.name(), "dummyprovider"))

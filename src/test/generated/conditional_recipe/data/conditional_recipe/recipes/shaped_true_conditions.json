@@ -1,0 +1,27 @@
+{
+  "type": "forge:conditional",
+  "forge:condition": {
+    "type": "forge:true",
+    "value": {}
+  },
+  "recipes": [
+    {
+      "type": "minecraft:crafting_shaped",
+      "category": "misc",
+      "key": {
+        "X": {
+          "item": "minecraft:oak_log"
+        }
+      },
+      "pattern": [
+        "XXX",
+        "XXX",
+        "XXX"
+      ],
+      "result": {
+        "count": 64,
+        "item": "minecraft:diamond_block"
+      }
+    }
+  ]
+}

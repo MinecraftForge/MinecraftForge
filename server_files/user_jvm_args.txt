@@ -1,9 +1,0 @@
-# Xmx and Xms set the maximum and minimum RAM usage, respectively.
-# They can take any number, followed by an M or a G.
-# M means Megabyte, G means Gigabyte.
-# For example, to set the maximum to 3GB: -Xmx3G
-# To set the minimum to 2.5GB: -Xms2500M
-
-# A good default for a modded server is 4GB.
-# Uncomment the next line to set it.
-# -Xmx4G

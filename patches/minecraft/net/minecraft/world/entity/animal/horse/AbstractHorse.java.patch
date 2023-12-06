@@ -32,7 +32,7 @@
           }
  
           if (this.isVehicle() && this.canGallop) {
-@@ -787,6 +_,7 @@
+@@ -784,6 +_,7 @@
        this.setDeltaMovement(vec3.x, d1, vec3.z);
        this.setIsJumping(true);
        this.hasImpulse = true;
@@ -40,7 +40,7 @@
        if (p_275435_.z > 0.0D) {
           float f = Mth.sin(this.getYRot() * ((float)Math.PI / 180F));
           float f1 = Mth.cos(this.getYRot() * ((float)Math.PI / 180F));
-@@ -1109,6 +_,25 @@
+@@ -1106,6 +_,25 @@
  
        this.randomizeAttributes(p_30555_.getRandom());
        return super.finalizeSpawn(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);

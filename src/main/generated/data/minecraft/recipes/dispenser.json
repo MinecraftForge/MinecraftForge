@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "tag": "forge:cobblestone/normal"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "X": {
+      "item": "minecraft:bow"
+    }
+  },
+  "pattern": [
+    "###",
+    "#X#",
+    "#R#"
+  ],
+  "result": {
+    "item": "minecraft:dispenser"
+  }
+}

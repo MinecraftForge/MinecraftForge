@@ -42,4 +42,4 @@
 +         }
           Component component = this.getEffectName(mobeffectinstance);
           p_281462_.drawString(this.font, component, p_283484_ + 10 + 18, i + 6, 16777215);
-          Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F);
+          Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -164,7 +_,7 @@
+@@ -170,7 +_,7 @@
     public static final Block GREEN_BED = register("green_bed", bed(DyeColor.GREEN));
     public static final Block RED_BED = register("red_bed", bed(DyeColor.RED));
     public static final Block BLACK_BED = register("black_bed", bed(DyeColor.BLACK));
@@ -9,7 +9,7 @@
     public static final Block DETECTOR_RAIL = register("detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL)));
     public static final Block STICKY_PISTON = register("sticky_piston", pistonBase(true));
     public static final Block COBWEB = register("cobweb", new WebBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOL).forceSolidOn().noCollission().requiresCorrectToolForDrops().strength(4.0F).pushReaction(PushReaction.DESTROY)));
-@@ -1258,17 +_,5 @@
+@@ -1305,17 +_,5 @@
  
     public static void rebuildCache() {
        Block.BLOCK_STATE_REGISTRY.forEach(BlockBehaviour.BlockStateBase::initCache);

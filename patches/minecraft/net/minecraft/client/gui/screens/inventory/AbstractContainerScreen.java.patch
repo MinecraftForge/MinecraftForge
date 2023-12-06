@@ -52,7 +52,7 @@
        p_282567_.pose().popPose();
     }
  
-@@ -274,7 +_,8 @@
+@@ -280,7 +_,8 @@
        if (super.mouseClicked(p_97748_, p_97749_, p_97750_)) {
           return true;
        } else {
@@ -62,7 +62,7 @@
           Slot slot = this.findSlot(p_97748_, p_97749_);
           long i = Util.getMillis();
           this.doubleclick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == p_97750_;
-@@ -285,6 +_,7 @@
+@@ -291,6 +_,7 @@
              int j = this.leftPos;
              int k = this.topPos;
              boolean flag1 = this.hasClickedOutside(p_97748_, p_97749_, j, k, p_97750_);
@@ -70,7 +70,7 @@
              int l = -1;
              if (slot != null) {
                 l = slot.index;
-@@ -310,7 +_,7 @@
+@@ -316,7 +_,7 @@
                    }
                 } else if (!this.isQuickCrafting) {
                    if (this.menu.getCarried().isEmpty()) {
@@ -79,7 +79,7 @@
                          this.slotClicked(slot, l, p_97750_, ClickType.CLONE);
                       } else {
                          boolean flag2 = l != -999 && (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344));
-@@ -334,7 +_,7 @@
+@@ -340,7 +_,7 @@
                          this.quickCraftingType = 0;
                       } else if (p_97750_ == 1) {
                          this.quickCraftingType = 1;
@@ -88,7 +88,7 @@
                          this.quickCraftingType = 2;
                       }
                    }
-@@ -403,10 +_,13 @@
+@@ -409,10 +_,13 @@
     }
  
     public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
@@ -102,7 +102,7 @@
        int k = -1;
        if (slot != null) {
           k = slot.index;
-@@ -420,7 +_,7 @@
+@@ -426,7 +_,7 @@
           if (hasShiftDown()) {
              if (!this.lastQuickMoved.isEmpty()) {
                 for(Slot slot2 : this.menu.slots) {
@@ -111,7 +111,7 @@
                       this.slotClicked(slot2, slot2.index, p_97814_, ClickType.QUICK_MOVE);
                    }
                 }
-@@ -483,7 +_,7 @@
+@@ -489,7 +_,7 @@
  
              this.slotClicked((Slot)null, -999, AbstractContainerMenu.getQuickcraftMask(2, this.quickCraftingType), ClickType.QUICK_CRAFT);
           } else if (!this.menu.getCarried().isEmpty()) {
@@ -120,7 +120,7 @@
                 this.slotClicked(slot, k, p_97814_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 340) || InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), 344));
-@@ -530,34 +_,39 @@
+@@ -540,34 +_,39 @@
     }
  
     public boolean keyPressed(int p_97765_, int p_97766_, int p_97767_) {
@@ -167,7 +167,7 @@
                 this.slotClicked(this.hoveredSlot, this.hoveredSlot.index, i, ClickType.SWAP);
                 return true;
              }
-@@ -592,6 +_,18 @@
+@@ -602,6 +_,18 @@
  
     public T getMenu() {
        return this.menu;

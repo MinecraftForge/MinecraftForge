@@ -1,29 +1,30 @@
 --- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
-@@ -34,20 +_,21 @@
+@@ -35,21 +_,22 @@
        double d2 = vec3.y() + (double)((float)direction.getStepY() * 1.125F);
        double d3 = vec3.z() + (double)direction.getStepZ() * d0;
        BlockPos blockpos = p_123375_.pos().relative(direction);
-+      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d0, d1, d2) : new Boat(level, d0, d1, d2));
++      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d0, d1, d2) : new Boat(serverlevel, d0, d1, d2));
 +      boat.setVariant(this.type);
 +      boat.setYRot(direction.toYRot());
        double d4;
--      if (level.getFluidState(blockpos).is(FluidTags.WATER)) {
-+      if (boat.canBoatInFluid(level.getFluidState(blockpos))) {
+-      if (serverlevel.getFluidState(blockpos).is(FluidTags.WATER)) {
++      if (boat.canBoatInFluid(serverlevel.getFluidState(blockpos))) {
           d4 = 1.0D;
        } else {
--         if (!level.getBlockState(blockpos).isAir() || !level.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
-+         if (!level.getBlockState(blockpos).isAir() || !boat.canBoatInFluid(level.getFluidState(blockpos.below()))) {
+-         if (!serverlevel.getBlockState(blockpos).isAir() || !serverlevel.getFluidState(blockpos.below()).is(FluidTags.WATER)) {
++         if (!serverlevel.getBlockState(blockpos).isAir() || !boat.canBoatInFluid(serverlevel.getFluidState(blockpos.below()))) {
              return this.defaultDispenseItemBehavior.dispense(p_123375_, p_123376_);
           }
  
           d4 = 0.0D;
        }
  
--      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(level, d1, d2 + d4, d3) : new Boat(level, d1, d2 + d4, d3));
+-      Boat boat = (Boat)(this.isChestBoat ? new ChestBoat(serverlevel, d1, d2 + d4, d3) : new Boat(serverlevel, d1, d2 + d4, d3));
+       EntityType.<Boat>createDefaultStackConfig(serverlevel, p_123376_, (Player)null).accept(boat);
 -      boat.setVariant(this.type);
 -      boat.setYRot(direction.toYRot());
 +      boat.setPos(d1, d2 + d4, d3);
-       level.addFreshEntity(boat);
+       serverlevel.addFreshEntity(boat);
        p_123376_.shrink(1);
        return p_123376_;

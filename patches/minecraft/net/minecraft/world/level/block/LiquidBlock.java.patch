@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -32,11 +_,13 @@
- 
- public class LiquidBlock extends Block implements BucketPickup {
+@@ -56,7 +_,8 @@
+       }), propertiesCodec()).apply(p_310157_, LiquidBlock::new);
+    });
     public static final IntegerProperty LEVEL = BlockStateProperties.LEVEL;
 -   protected final FlowingFluid fluid;
 +   @Deprecated // Use getFluid
@@ -10,12 +10,15 @@
     private final List<FluidState> stateCache;
     public static final VoxelShape STABLE_SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final ImmutableList<Direction> POSSIBLE_FLOW_DIRECTIONS = ImmutableList.of(Direction.DOWN, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
+@@ -65,6 +_,7 @@
+       return CODEC;
+    }
  
 +   @Deprecated  // Forge: Use the constructor that takes a supplier
     public LiquidBlock(FlowingFluid p_54694_, BlockBehaviour.Properties p_54695_) {
        super(p_54695_);
        this.fluid = p_54694_;
-@@ -49,6 +_,19 @@
+@@ -77,6 +_,19 @@
  
        this.stateCache.add(p_54694_.getFlowing(8, true));
        this.registerDefaultState(this.stateDefinition.any().setValue(LEVEL, Integer.valueOf(0)));
@@ -35,7 +38,7 @@
     }
  
     public VoxelShape getCollisionShape(BlockState p_54760_, BlockGetter p_54761_, BlockPos p_54762_, CollisionContext p_54763_) {
-@@ -73,6 +_,7 @@
+@@ -101,6 +_,7 @@
  
     public FluidState getFluidState(BlockState p_54765_) {
        int i = p_54765_.getValue(LEVEL);
@@ -43,7 +46,7 @@
        return this.stateCache.get(Math.min(i, 8));
     }
  
-@@ -93,7 +_,7 @@
+@@ -121,7 +_,7 @@
     }
  
     public void onPlace(BlockState p_54754_, Level p_54755_, BlockPos p_54756_, BlockState p_54757_, boolean p_54758_) {
@@ -52,7 +55,7 @@
           p_54755_.scheduleTick(p_54756_, p_54754_.getFluidState().getType(), this.fluid.getTickDelay(p_54755_));
        }
  
-@@ -108,12 +_,13 @@
+@@ -136,12 +_,13 @@
     }
  
     public void neighborChanged(BlockState p_54709_, Level p_54710_, BlockPos p_54711_, Block p_54712_, BlockPos p_54713_, boolean p_54714_) {
@@ -67,7 +70,7 @@
     private boolean shouldSpreadLiquid(Level p_54697_, BlockPos p_54698_, BlockState p_54699_) {
        if (this.fluid.is(FluidTags.LAVA)) {
           boolean flag = p_54697_.getBlockState(p_54698_.below()).is(Blocks.SOUL_SOIL);
-@@ -152,6 +_,25 @@
+@@ -180,6 +_,25 @@
           return new ItemStack(this.fluid.getBucket());
        } else {
           return ItemStack.EMPTY;
