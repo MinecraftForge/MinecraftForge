@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
-@@ -72,7 +_,7 @@
+@@ -83,7 +_,7 @@
        if (blockstate.is(BlockTags.MUSHROOM_GROW_BLOCK)) {
           return true;
        } else {
@@ -9,7 +9,7 @@
        }
     }
  
-@@ -81,8 +_,10 @@
+@@ -92,8 +_,10 @@
        if (optional.isEmpty()) {
           return false;
        } else {

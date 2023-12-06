@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ServerStatusPinger.java
 +++ b/net/minecraft/client/multiplayer/ServerStatusPinger.java
-@@ -105,6 +_,7 @@
+@@ -103,6 +_,7 @@
                       }
  
                    });

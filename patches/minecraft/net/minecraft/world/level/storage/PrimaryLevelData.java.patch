@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -82,6 +_,7 @@
+@@ -77,6 +_,7 @@
     private boolean wasModded;
     private final Set<String> removedFeatureFlags;
     private final TimerQueue<MinecraftServer> scheduledEvents;
 +   private boolean confirmedExperimentalWarning = false;
  
-    private PrimaryLevelData(@Nullable DataFixer p_277859_, int p_277672_, @Nullable CompoundTag p_277888_, boolean p_278109_, int p_277714_, int p_278088_, int p_278037_, float p_277542_, long p_277414_, long p_277635_, int p_277595_, int p_277794_, int p_278007_, boolean p_277943_, int p_277674_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277856_, int p_278051_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
-       this.fixerUpper = p_277859_;
-@@ -127,7 +_,7 @@
+    private PrimaryLevelData(@Nullable CompoundTag p_277888_, boolean p_278109_, int p_277672_, int p_277714_, int p_278088_, float p_277542_, long p_277414_, long p_277635_, int p_278037_, int p_277595_, int p_277794_, boolean p_277943_, int p_278007_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277674_, int p_277856_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
+       this.wasModded = p_278109_;
+@@ -120,7 +_,7 @@
           return p_78529_.asString().result().stream();
        }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), p_78531_.get("removed_features").asStream().flatMap((p_277335_) -> {
           return p_277335_.asString().result().stream();
@@ -17,7 +17,7 @@
     }
  
     public CompoundTag createTag(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
-@@ -203,6 +_,8 @@
+@@ -195,6 +_,8 @@
           p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
        }
  
@@ -26,7 +26,7 @@
     }
  
     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-@@ -483,6 +_,15 @@
+@@ -461,6 +_,15 @@
  
     public LevelSettings getLevelSettings() {
        return this.settings.copy();

@@ -30,6 +30,5 @@
     "recipes": [
       "custom_ingredients:intersection_ingredient"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

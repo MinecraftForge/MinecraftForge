@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/CreativeModeTabs.java
 +++ b/net/minecraft/world/item/CreativeModeTabs.java
-@@ -1612,7 +_,7 @@
+@@ -1679,7 +_,7 @@
  
     private static void generateEnchantmentBookTypesOnlyMaxLevel(CreativeModeTab.Output p_270868_, HolderLookup<Enchantment> p_270903_, Set<EnchantmentCategory> p_270380_, CreativeModeTab.TabVisibility p_270407_) {
        p_270903_.listElements().map(Holder::value).filter((p_270008_) -> {
@@ -9,7 +9,7 @@
        }).map((p_270038_) -> {
           return EnchantedBookItem.createForEnchantment(new EnchantmentInstance(p_270038_, p_270038_.getMaxLevel()));
        }).forEach((p_269989_) -> {
-@@ -1622,7 +_,7 @@
+@@ -1689,7 +_,7 @@
  
     private static void generateEnchantmentBookTypesAllLevels(CreativeModeTab.Output p_270961_, HolderLookup<Enchantment> p_270628_, Set<EnchantmentCategory> p_271024_, CreativeModeTab.TabVisibility p_270805_) {
        p_270628_.listElements().map(Holder::value).filter((p_269991_) -> {

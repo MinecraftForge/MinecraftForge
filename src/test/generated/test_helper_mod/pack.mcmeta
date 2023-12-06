@@ -1,8 +1,6 @@
 {
   "pack": {
-    "description": {
-      "text": "Forge tests resource pack"
-    },
-    "pack_format": 18
+    "description": "Forge tests resource pack",
+    "pack_format": 22
   }
 }

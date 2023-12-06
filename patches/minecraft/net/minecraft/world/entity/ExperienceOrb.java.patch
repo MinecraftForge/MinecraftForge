@@ -30,8 +30,8 @@
        Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
        if (entry != null) {
           ItemStack itemstack = entry.getValue();
--         int i = Math.min(this.xpToDurability(this.value), itemstack.getDamageValue());
-+         int i = Math.min((int) (this.value * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
+-         int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
++         int i = Math.min((int) (p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
           itemstack.setDamageValue(itemstack.getDamageValue() - i);
           int j = p_147094_ - this.durabilityToXp(i);
           return j > 0 ? this.repairPlayerItems(p_147093_, j) : 0;

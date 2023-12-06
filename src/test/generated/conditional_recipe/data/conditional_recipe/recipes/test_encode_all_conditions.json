@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "forge:conditional",
   "forge:condition": {
     "type": "forge:and",
     "values": [
@@ -34,19 +33,24 @@
       }
     ]
   },
-  "key": {
-    "X": {
-      "item": "minecraft:dirt"
+  "recipes": [
+    {
+      "type": "minecraft:crafting_shaped",
+      "category": "misc",
+      "key": {
+        "X": {
+          "item": "minecraft:dirt"
+        }
+      },
+      "pattern": [
+        "XXX",
+        "XXX",
+        "XXX"
+      ],
+      "result": {
+        "count": 64,
+        "item": "minecraft:diamond_block"
+      }
     }
-  },
-  "pattern": [
-    "XXX",
-    "XXX",
-    "XXX"
-  ],
-  "result": {
-    "count": 64,
-    "item": "minecraft:diamond_block"
-  },
-  "show_notification": true
+  ]
 }

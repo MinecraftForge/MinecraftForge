@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -114,41 +_,89 @@
+@@ -122,41 +_,89 @@
     public static final DefaultedRegistry<GameEvent> GAME_EVENT = registerDefaultedWithIntrusiveHolders(Registries.GAME_EVENT, "step", (p_260052_) -> {
        return GameEvent.STEP;
     });
@@ -102,7 +102,7 @@
        return ChunkStatus.EMPTY;
     });
     public static final Registry<RuleTestType<?>> RULE_TEST = registerSimple(Registries.RULE_TEST, (p_259641_) -> {
-@@ -160,42 +_,90 @@
+@@ -168,42 +_,90 @@
     public static final Registry<PosRuleTestType<?>> POS_RULE_TEST = registerSimple(Registries.POS_RULE_TEST, (p_259262_) -> {
        return PosRuleTestType.ALWAYS_TRUE_TEST;
     });
@@ -205,7 +205,7 @@
        return Activity.IDLE;
     });
     public static final Registry<LootPoolEntryType> LOOT_POOL_ENTRY_TYPE = registerSimple(Registries.LOOT_POOL_ENTRY_TYPE, (p_260042_) -> {
-@@ -228,10 +_,18 @@
+@@ -236,10 +_,18 @@
     public static final Registry<BlockPredicateType<?>> BLOCK_PREDICATE_TYPE = registerSimple(Registries.BLOCK_PREDICATE_TYPE, (p_260006_) -> {
        return BlockPredicateType.NOT;
     });
@@ -226,7 +226,7 @@
        return Feature.ORE;
     });
     public static final Registry<StructurePlacementType<?>> STRUCTURE_PLACEMENT = registerSimple(Registries.STRUCTURE_PLACEMENT, (p_259179_) -> {
-@@ -246,10 +_,18 @@
+@@ -254,10 +_,18 @@
     public static final Registry<PlacementModifierType<?>> PLACEMENT_MODIFIER_TYPE = registerSimple(Registries.PLACEMENT_MODIFIER_TYPE, (p_260335_) -> {
        return PlacementModifierType.COUNT;
     });
@@ -247,7 +247,7 @@
        return FoliagePlacerType.BLOB_FOLIAGE_PLACER;
     });
     public static final Registry<TrunkPlacerType<?>> TRUNK_PLACER_TYPE = registerSimple(Registries.TRUNK_PLACER_TYPE, (p_259690_) -> {
-@@ -258,7 +_,11 @@
+@@ -266,7 +_,11 @@
     public static final Registry<RootPlacerType<?>> ROOT_PLACER_TYPE = registerSimple(Registries.ROOT_PLACER_TYPE, (p_259493_) -> {
        return RootPlacerType.MANGROVE_ROOT_PLACER;
     });
@@ -260,7 +260,7 @@
        return TreeDecoratorType.LEAVE_VINE;
     });
     public static final Registry<FeatureSizeType<?>> FEATURE_SIZE_TYPE = registerSimple(Registries.FEATURE_SIZE_TYPE, (p_259370_) -> {
-@@ -293,10 +_,18 @@
+@@ -305,10 +_,18 @@
        return internalRegister(p_297531_, new MappedRegistry<>(p_297531_, Lifecycle.stable(), true), p_298446_, Lifecycle.stable());
     }
  
@@ -279,7 +279,7 @@
     private static <T> DefaultedRegistry<T> registerDefaultedWithIntrusiveHolders(ResourceKey<? extends Registry<T>> p_259296_, String p_259101_, BuiltInRegistries.RegistryBootstrap<T> p_259485_) {
        return registerDefaultedWithIntrusiveHolders(p_259296_, p_259101_, Lifecycle.stable(), p_259485_);
     }
-@@ -305,10 +_,19 @@
+@@ -317,10 +_,19 @@
        return internalRegister(p_259121_, new MappedRegistry<>(p_259121_, p_259977_, false), p_259874_, p_259977_);
     }
  
@@ -299,7 +299,7 @@
     private static <T> DefaultedRegistry<T> registerDefaultedWithIntrusiveHolders(ResourceKey<? extends Registry<T>> p_260010_, String p_260220_, Lifecycle p_260139_, BuiltInRegistries.RegistryBootstrap<T> p_260185_) {
        return internalRegister(p_260010_, new DefaultedMappedRegistry<>(p_260220_, p_260010_, p_260139_, true), p_260185_, p_260139_);
     }
-@@ -354,7 +_,7 @@
+@@ -369,7 +_,7 @@
  
           if (p_259410_ instanceof DefaultedRegistry) {
              ResourceLocation resourcelocation = ((DefaultedRegistry)p_259410_).getDefaultKey();

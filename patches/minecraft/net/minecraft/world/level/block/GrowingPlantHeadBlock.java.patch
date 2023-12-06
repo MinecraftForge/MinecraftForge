@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
 +++ b/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
-@@ -35,10 +_,11 @@
+@@ -38,10 +_,11 @@
     }
  
     public void randomTick(BlockState p_221350_, ServerLevel p_221351_, BlockPos p_221352_, RandomSource p_221353_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FungusBlock.java
 +++ b/net/minecraft/world/level/block/FungusBlock.java
-@@ -52,7 +_,9 @@
+@@ -66,7 +_,9 @@
  
     public void performBonemeal(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {
        this.getFeature(p_221243_).ifPresent((p_256352_) -> {

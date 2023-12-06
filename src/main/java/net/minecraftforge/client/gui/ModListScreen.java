@@ -270,7 +270,7 @@ public class ModListScreen extends Screen
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
         this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.getY() - getFontRenderer().lineHeight - PADDING);
-        this.modList.setLeftPos(6);
+        this.modList.setX(6);
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
 
         this.addRenderableWidget(modList);
@@ -365,7 +365,7 @@ public class ModListScreen extends Screen
             this.modInfo.render(guiGraphics, mouseX, mouseY, partialTick);
 
         Component text = Component.translatable("fml.menu.mods.search");
-        int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().width(text) / 2);
+        int x = modList.getX() + (modList.getWidth() / 2) - (getFontRenderer().width(text) / 2);
         this.search.render(guiGraphics, mouseX , mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.drawString(getFontRenderer(), text.getVisualOrderText(), x, search.getY() - getFontRenderer().lineHeight, 0xFFFFFF, false);

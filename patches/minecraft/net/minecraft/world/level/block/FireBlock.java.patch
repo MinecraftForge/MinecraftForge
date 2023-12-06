@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/FireBlock.java
 +++ b/net/minecraft/world/level/block/FireBlock.java
-@@ -104,13 +_,13 @@
+@@ -110,13 +_,13 @@
     protected BlockState getStateForPlacement(BlockGetter p_53471_, BlockPos p_53472_) {
        BlockPos blockpos = p_53472_.below();
        BlockState blockstate = p_53471_.getBlockState(blockpos);
@@ -16,7 +16,7 @@
              }
           }
  
-@@ -129,14 +_,14 @@
+@@ -135,14 +_,14 @@
        p_221161_.scheduleTick(p_221162_, this, getFireTickDelay(p_221161_.random));
        if (p_221161_.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
           if (!p_221160_.canSurvive(p_221161_, p_221162_)) {
@@ -33,7 +33,7 @@
           } else {
              int j = Math.min(15, i + p_221163_.nextInt(3) / 2);
              if (i != j) {
-@@ -154,7 +_,7 @@
+@@ -160,7 +_,7 @@
                    return;
                 }
  
@@ -42,7 +42,7 @@
                    p_221161_.removeBlock(p_221162_, false);
                    return;
                 }
-@@ -162,12 +_,12 @@
+@@ -168,12 +_,12 @@
  
              boolean flag1 = p_221161_.getBiome(p_221162_).is(BiomeTags.INCREASED_FIRE_BURNOUT);
              int k = flag1 ? -50 : 0;
@@ -61,7 +61,7 @@
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -205,28 +_,27 @@
+@@ -211,28 +_,27 @@
        return p_53429_.isRainingAt(p_53430_) || p_53429_.isRainingAt(p_53430_.west()) || p_53429_.isRainingAt(p_53430_.east()) || p_53429_.isRainingAt(p_53430_.north()) || p_53429_.isRainingAt(p_53430_.south());
     }
  
@@ -102,7 +102,7 @@
           }
        }
  
-@@ -239,7 +_,7 @@
+@@ -245,7 +_,7 @@
  
     private boolean isValidFireLocation(BlockGetter p_53486_, BlockPos p_53487_) {
        for(Direction direction : Direction.values()) {
@@ -111,7 +111,7 @@
              return true;
           }
        }
-@@ -255,13 +_,14 @@
+@@ -261,13 +_,14 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_221157_.getBlockState(p_221158_.relative(direction));
@@ -127,10 +127,10 @@
     protected boolean canBurn(BlockState p_53489_) {
        return this.getIgniteOdds(p_53489_) > 0;
     }
-@@ -280,8 +_,21 @@
+@@ -286,8 +_,21 @@
     }
  
-    private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
+    public void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
 +      if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
        this.igniteOdds.put(p_53445_, p_53446_);
        this.burnOdds.put(p_53445_, p_53447_);

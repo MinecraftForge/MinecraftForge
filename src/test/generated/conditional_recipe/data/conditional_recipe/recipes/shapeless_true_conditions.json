@@ -1,25 +1,30 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "type": "forge:conditional",
   "forge:condition": {
     "type": "forge:true",
     "value": {}
   },
-  "ingredients": [
+  "recipes": [
     {
-      "item": "minecraft:redstone_ore"
-    },
-    {
-      "item": "minecraft:redstone_ore"
-    },
-    {
-      "item": "minecraft:redstone_ore"
-    },
-    {
-      "item": "minecraft:redstone_ore"
+      "type": "minecraft:crafting_shapeless",
+      "category": "misc",
+      "ingredients": [
+        {
+          "item": "minecraft:redstone_ore"
+        },
+        {
+          "item": "minecraft:redstone_ore"
+        },
+        {
+          "item": "minecraft:redstone_ore"
+        },
+        {
+          "item": "minecraft:redstone_ore"
+        }
+      ],
+      "result": {
+        "item": "minecraft:diamond_block"
+      }
     }
-  ],
-  "result": {
-    "item": "minecraft:diamond_block"
-  }
+  ]
 }

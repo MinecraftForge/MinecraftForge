@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -246,7 +_,7 @@
+@@ -247,7 +_,7 @@
           }
  
           if (!this.level().isClientSide) {

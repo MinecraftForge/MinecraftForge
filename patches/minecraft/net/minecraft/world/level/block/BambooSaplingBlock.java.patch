@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BambooSaplingBlock.java
 +++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
-@@ -73,7 +_,7 @@
+@@ -79,7 +_,7 @@
     }
  
     public float getDestroyProgress(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {

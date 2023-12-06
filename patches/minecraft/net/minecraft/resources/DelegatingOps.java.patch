@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/DelegatingOps.java
 +++ b/net/minecraft/resources/DelegatingOps.java
-@@ -160,4 +_,33 @@
+@@ -160,4 +_,37 @@
     public RecordBuilder<T> mapBuilder() {
        return new RecordBuilder.MapBuilder<>(this);
     }
@@ -12,6 +12,10 @@
 +
 +   public static <T, R extends DelegatingOps<T>> Builder<R> builder(java.util.function.Supplier<R> root) {
 +       return new Builder(root);
++   }
++
++   public static <T> Builder<DelegatingOps<T>> builder(DynamicOps<T> ops) {
++       return builder(() -> new DelegatingOps<>(ops) {});
 +   }
 +
 +   public static class Builder<R extends DelegatingOps<?>> {

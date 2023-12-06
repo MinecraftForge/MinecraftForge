@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DiodeBlock.java
 +++ b/net/minecraft/world/level/block/DiodeBlock.java
-@@ -159,6 +_,8 @@
+@@ -162,6 +_,8 @@
     protected void updateNeighborsInFront(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
        Direction direction = p_52583_.getValue(FACING);
        BlockPos blockpos = p_52582_.relative(direction.getOpposite());

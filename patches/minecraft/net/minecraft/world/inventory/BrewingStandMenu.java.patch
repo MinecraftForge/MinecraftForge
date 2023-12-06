@@ -23,7 +23,7 @@
           Potion potion = PotionUtils.getPotion(p_150500_);
           if (p_150499_ instanceof ServerPlayer) {
 +            net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_150499_, p_150500_);
-             CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion);
+             CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion.builtInRegistryHolder());
           }
  
 @@ -177,7 +_,7 @@

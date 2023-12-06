@@ -20,8 +20,7 @@
       "result": {
         "count": 64,
         "item": "minecraft:diamond_block"
-      },
-      "show_notification": true
+      }
     },
     {
       "type": "minecraft:crafting_shaped",
@@ -42,8 +41,7 @@
       "result": {
         "count": 64,
         "item": "minecraft:diamond_block"
-      },
-      "show_notification": true
+      }
     }
   ]
 }

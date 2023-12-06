@@ -30,7 +30,7 @@
  
           Path path = optionset.valueOf(optionspec13);
           if (path != null) {
-@@ -102,25 +_,24 @@
+@@ -102,23 +_,21 @@
           Bootstrap.validate();
           Util.startTimerHackThread();
           Path path1 = Paths.get("server.properties");
@@ -58,20 +58,27 @@
 +         }
           LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
-+         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
-          LevelSummary levelsummary = levelstoragesource$levelstorageaccess.getSummary();
-          if (levelsummary != null) {
-             if (levelsummary.requiresManualConversion()) {
-@@ -166,6 +_,8 @@
-                         worlddimensions = dedicatedserverproperties.createDimensions(p_248079_.datapackWorldgen());
+          Dynamic<?> dynamic;
+@@ -165,6 +_,8 @@
+ 
+          PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
+ 
++         if (dynamic != null)
++             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(dynamic, levelstoragesource$levelstorageaccess.getLevelDirectory());
+          WorldStem worldstem;
+          try {
+             WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
+@@ -190,6 +_,9 @@
+                         worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
                       }
  
 +                     //Forge: Do a write-read-cycle to inject modded dimensions on first start of a dedicated server into its generated world dimensions list.
++                     net.minecraft.resources.RegistryOps<net.minecraft.nbt.Tag> dynamicops = net.minecraft.resources.RegistryOps.create(net.minecraft.nbt.NbtOps.INSTANCE, p_308589_.datapackWorldgen());
 +                     worlddimensions = WorldDimensions.CODEC.encoder().encodeStart(dynamicops, worlddimensions).flatMap((writtenPayloadWithModdedDimensions) -> WorldDimensions.CODEC.decoder().parse(dynamicops, writtenPayloadWithModdedDimensions)).resultOrPartial(LOGGER::error).orElse(worlddimensions);
                       WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
-                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_248079_.datapackWorldgen().allRegistriesLifecycle());
+                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_308589_.datapackWorldgen().allRegistriesLifecycle());
                       return new WorldLoader.DataLoadOutput<>(new PrimaryLevelData(levelsettings, worldoptions, worlddimensions$complete.specialWorldProperty(), lifecycle), worlddimensions$complete.dimensionsRegistryAccess());
-@@ -186,21 +_,32 @@
+@@ -210,21 +_,32 @@
  
           WorldData worlddata = worldstem.worldData();
           levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);

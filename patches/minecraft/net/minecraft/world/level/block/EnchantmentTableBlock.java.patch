@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/EnchantmentTableBlock.java
 +++ b/net/minecraft/world/level/block/EnchantmentTableBlock.java
-@@ -41,7 +_,7 @@
+@@ -47,7 +_,7 @@
     }
  
     public static boolean isValidBookShelf(Level p_207910_, BlockPos p_207911_, BlockPos p_207912_) {

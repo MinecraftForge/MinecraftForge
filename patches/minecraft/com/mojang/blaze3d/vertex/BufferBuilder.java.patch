@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
-@@ -459,4 +_,14 @@
+@@ -477,4 +_,14 @@
           this.sorting = p_277855_;
        }
     }

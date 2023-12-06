@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/GameTestHelper.java
 +++ b/net/minecraft/gametest/framework/GameTestHelper.java
-@@ -54,7 +_,7 @@
+@@ -60,7 +_,7 @@
  import net.minecraft.world.phys.BlockHitResult;
  import net.minecraft.world.phys.Vec3;
  

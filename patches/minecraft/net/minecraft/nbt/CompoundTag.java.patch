@@ -8,10 +8,10 @@
 +      return (new net.minecraftforge.common.util.INBTBuilder(){}).nbt();
 +   }
 +
-    public static final Codec<CompoundTag> CODEC = Codec.PASSTHROUGH.comapFlatMap((p_274781_) -> {
-       Tag tag = p_274781_.convert(NbtOps.INSTANCE).getValue();
-       return tag instanceof CompoundTag ? DataResult.success((CompoundTag)tag) : DataResult.error(() -> {
-@@ -204,6 +_,7 @@
+    public static final Codec<CompoundTag> CODEC = Codec.PASSTHROUGH.comapFlatMap((p_308555_) -> {
+       Tag tag = p_308555_.convert(NbtOps.INSTANCE).getValue();
+       if (tag instanceof CompoundTag compoundtag) {
+@@ -208,6 +_,7 @@
  
     @Nullable
     public Tag put(String p_128366_, Tag p_128367_) {

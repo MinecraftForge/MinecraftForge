@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
-@@ -31,7 +_,7 @@
-       this.addWidget(this.keyBindsList);
+@@ -30,7 +_,7 @@
+       this.keyBindsList = this.addRenderableWidget(new KeyBindsList(this, this.minecraft));
        this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("controls.resetAll"), (p_269619_) -> {
           for(KeyMapping keymapping : this.options.keyMappings) {
 -            keymapping.setKey(keymapping.getDefaultKey());
@@ -9,7 +9,7 @@
           }
  
           this.keyBindsList.resetMappingAndUpdateButtons();
-@@ -55,11 +_,13 @@
+@@ -54,11 +_,13 @@
     public boolean keyPressed(int p_193987_, int p_193988_, int p_193989_) {
        if (this.selectedKey != null) {
           if (p_193987_ == 256) {
@@ -24,7 +24,7 @@
           this.selectedKey = null;
           this.lastKeySelection = Util.getMillis();
           this.keyBindsList.resetMappingAndUpdateButtons();
-@@ -67,6 +_,19 @@
+@@ -66,6 +_,19 @@
        } else {
           return super.keyPressed(p_193987_, p_193988_, p_193989_);
        }

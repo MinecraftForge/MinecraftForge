@@ -30,6 +30,5 @@
     "recipes": [
       "custom_ingredients:difference_ingredient"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

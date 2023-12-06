@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/net/minecraft/world/level/block/NetherWartBlock.java
-@@ -38,9 +_,10 @@
+@@ -45,9 +_,10 @@
  
     public void randomTick(BlockState p_221806_, ServerLevel p_221807_, BlockPos p_221808_, RandomSource p_221809_) {
        int i = p_221806_.getValue(AGE);

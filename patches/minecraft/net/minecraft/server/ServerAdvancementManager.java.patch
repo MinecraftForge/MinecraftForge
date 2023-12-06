@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -29,10 +_,18 @@
+@@ -32,17 +_,30 @@
     private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
     private AdvancementTree tree = new AdvancementTree();
     private final LootDataManager lootData;
@@ -19,16 +19,16 @@
     }
  
     protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
-@@ -40,7 +_,11 @@
-       p_136034_.forEach((p_296449_, p_296450_) -> {
+       ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
+       p_136034_.forEach((p_308595_, p_308596_) -> {
           try {
-             JsonObject jsonobject = GsonHelper.convertToJsonObject(p_296450_, "advancement");
--            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.lootData));
-+            Advancement advancement = Advancement.fromJson(jsonobject, new DeserializationContext(p_296449_, this.lootData), this.context);
-+            if (advancement == null) {
-+                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_296449_);
+-            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
++            var json = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(null, (com.google.gson.JsonObject)p_308596_);
++            if (json == null) {
++                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_308595_);
 +                return;
 +            }
-             builder.put(p_296449_, new AdvancementHolder(p_296449_, advancement));
++            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, json), JsonParseException::new);
+             this.validate(p_308595_, advancement);
+             builder.put(p_308595_, new AdvancementHolder(p_308595_, advancement));
           } catch (Exception exception) {
-             LOGGER.error("Parsing error loading custom advancement {}: {}", p_296449_, exception.getMessage());

@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -43,7 +_,7 @@
+@@ -27,7 +_,7 @@
  
     public void grant(ServerPlayer p_9990_) {
        p_9990_.giveExperiencePoints(this.experience);

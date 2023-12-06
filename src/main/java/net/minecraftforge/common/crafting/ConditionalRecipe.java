@@ -8,28 +8,36 @@ package net.minecraftforge.common.crafting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import com.google.gson.JsonArray;
+import java.util.stream.Stream;
+
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapDecoder;
+import com.mojang.serialization.MapEncoder;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 
 import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -52,17 +60,29 @@ public class ConditionalRecipe {
     }
 
     public static class Builder {
-        private List<RecipePair> recipes = new ArrayList<>();
+        private List<InnerRecipe> recipes = new ArrayList<>();
+        private List<InnerAdvancement> advancements = new ArrayList<>();
+
         private RecipeOutput bouncer = new RecipeOutput() {
             @Override
-            public void accept(FinishedRecipe value) {
-                recipe(value);
+            public void accept(ResourceLocation id, Recipe<?> value, @Nullable AdvancementHolder advancement) {
+                recipe(id, value, advancement);
             }
 
             @SuppressWarnings("removal")
             @Override
             public Advancement.Builder advancement() {
                 return Advancement.Builder.recipeAdvancement().parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
+            }
+
+            @Override
+            public void accept(ResourceLocation id, Recipe<?> recipe, ResourceLocation advancementId, JsonElement advancement) {
+                AdvancementHolder holder = null;
+                if (advancement != null) {
+                    Advancement adv = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, advancement), JsonParseException::new);
+                    holder = new AdvancementHolder(advancementId, adv);
+                }
+                accept(id, recipe, holder);
             }
         };
 
@@ -93,10 +113,12 @@ public class ConditionalRecipe {
             return this;
         }
 
-        public Builder recipe(FinishedRecipe recipe) {
+        public Builder recipe(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement) {
             if (condition == null)
                 throw new IllegalStateException("Can not add a recipe with no conditions.");
-            recipes.add(new RecipePair(this.condition, recipe));
+            recipes.add(new InnerRecipe(this.condition, recipe));
+            if (advancement != null)
+                advancements.add(new InnerAdvancement(this.condition, advancement));
             condition = null;
             return this;
         }
@@ -117,94 +139,91 @@ public class ConditionalRecipe {
             if (recipes.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
-            var adv = ConditionalAdvancement.builder();
-            var hasAdvancement = false;
-            for (var pair : recipes) {
-                if (pair.recipe().advancement() != null) {
-                    adv.condition(pair.condition())
-                       .advancement(pair.recipe().advancement());
-                    hasAdvancement = true;
+            JsonElement advancement = null;
+            if (!advancements.isEmpty()) {
+                var adv = ConditionalAdvancement.builder();
+                for (var data : advancements) {
+                    adv.condition(data.condition())
+                       .advancement(data.advancement());
                 }
+                if (advancementId == null)
+                    advancementId = id.withPrefix("recipes/");
+                advancement = adv.build();
+            } else {
+                advancementId = null;
             }
 
-            if (advancementId == null)
-                advancementId = id.withPrefix("recipes/");
-
-            out.accept(new Finished(id, mainCondition, recipes, advancementId, hasAdvancement ? adv.write() : null));
+            out.accept(id, new Wrapper(mainCondition, recipes), advancementId, advancement);
         }
     }
 
-    private record Finished(
-        ResourceLocation id,
-        @Nullable
-        ICondition mainCondition,
-        List<RecipePair> recipes,
-        ResourceLocation advId,
-        JsonObject advData
-    ) implements FinishedRecipe {
-        @Override
-        public void serializeRecipeData(JsonObject json) {
-            JsonArray array = new JsonArray();
-            var main = mainCondition;
-            if (main == null && recipes.size() == 1)
-                main = recipes.get(0).condition();
+    private record InnerRecipe(ICondition condition, Recipe<?> recipe) {}
+    private record InnerAdvancement(ICondition condition, AdvancementHolder advancement) {}
 
-            ForgeHooks.writeCondition(main, json);
+    private static class Wrapper implements Recipe<Container> {
+        @Override public boolean matches(Container inv, Level level) { return false; }
+        @Override public ItemStack assemble(Container inv, RegistryAccess reg) { return null; }
+        @Override public boolean canCraftInDimensions(int width, int height) { return false; }
+        @Override public ItemStack getResultItem(RegistryAccess reg) { return null; }
+        @Override public RecipeSerializer<?> getSerializer() { return ConditionalRecipe.SERIALZIER; }
+        @Override public RecipeType<?> getType() { throw new UnsupportedOperationException(); }
 
-            json.add("recipes", array);
-            for (var pair : recipes) {
-                var holder = pair.recipe().serializeRecipe();
-                if (holder.has(ICondition.DEFAULT_FIELD))
-                    throw new IllegalStateException("Recipe already serialized conditions!");
-                ForgeHooks.writeCondition(pair.condition(), holder);
-                array.add(holder);
-            }
+        @Nullable private final ICondition main;
+        private final List<InnerRecipe> recipes;
+        private Wrapper(@Nullable ICondition main, List<InnerRecipe> recipes) {
+            this.main = main;
+            this.recipes = recipes;
         }
 
-        @Override
-        public ResourceLocation id() {
-            return id;
-        }
-
-        @Override
-        public RecipeSerializer<?> type() {
-            return ConditionalRecipe.SERIALZIER;
-        }
-
-        @Nullable
-        @Override
-        public AdvancementHolder advancement() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public AdvancementData advancementData() {
-            return advData == null ? null : new AdvancementData(advId, advData);
-        }
     }
-
-    private record RecipePair(ICondition condition, FinishedRecipe recipe) {}
-
-    private static Codec<Recipe<?>> CODEC = new Codec<Recipe<?>>() {
+    private static final Codec<Recipe<?>> CODEC = Codec.of(new MapEncoder.Implementation<>() {
         @Override
-        public <T> DataResult<T> encode(Recipe<?> input, DynamicOps<T> ops, T prefix) {
-            throw new UnsupportedOperationException("ConditionRecipe.CODEC does not support encoding");
+        public <T> RecordBuilder<T> encode(Recipe<?> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+            if (!(input instanceof Wrapper))
+                new IllegalStateException("ConditionalRecipe.CODEC can only be used during data gen, how did you get here?");
+            Wrapper wrapper = (Wrapper)input;
+
+            if (wrapper.main != null)
+                prefix.add(ICondition.DEFAULT_FIELD, ICondition.CODEC.encodeStart(ops, wrapper.main));
+            else if (wrapper.recipes.size() == 1)
+                prefix.add(ICondition.DEFAULT_FIELD, ICondition.CODEC.encodeStart(ops, wrapper.recipes.get(0).condition()));
+
+            var recipes = new ArrayList<T>();
+            for (var recipe : wrapper.recipes) {
+                var json = (JsonObject)json(Recipe.CODEC, recipe.recipe());
+                if (wrapper.recipes.size() > 1)
+                    json.add(ICondition.DEFAULT_FIELD, json(ICondition.CODEC, recipe.condition()));
+                recipes.add(JsonOps.INSTANCE.convertTo(ops, json));
+            }
+            prefix.add("recipes", ops.createList(recipes.stream()));
+            return prefix;
         }
 
         @Override
-        public <T> DataResult<Pair<Recipe<?>, T>> decode(DynamicOps<T> ops, T input) {
+        public <T> Stream<T> keys(DynamicOps<T> ops) {
+            return Stream.of(ops.createString(ICondition.DEFAULT_FIELD), ops.createString("recipes"));
+        }
+
+
+        private static <T> JsonElement json(Codec<T> codec, T object) {
+            return Util.getOrThrow(codec.encodeStart(JsonOps.INSTANCE, object), IllegalStateException::new);
+        }
+    }, new MapDecoder.Implementation<Recipe<?>>() {
+        @Override
+        public <T> DataResult<Recipe<?>> decode(DynamicOps<T> ops, MapLike<T> input) {
             var context = ConditionCodec.getContext(ops);
-            var json = new Dynamic<>(ops, input).convert(JsonOps.INSTANCE).getValue();
+            var json = ops.convertTo(JsonOps.INSTANCE, input.get("recipes"));
             try {
-                var recipes = GsonHelper.getAsJsonArray(GsonHelper.convertToJsonObject(json.getAsJsonObject(), "root"), "recipes");
+                var recipes = GsonHelper.convertToJsonArray(json, "recipes");
                 int idx = 0;
                 for (var entry : recipes) {
                     var object = GsonHelper.convertToJsonObject(entry, "recipe[" + idx++ + "]");
-                    var conditionjson = GsonHelper.getAsJsonObject(object, ICondition.DEFAULT_FIELD);
-                    var condition = Util.getOrThrow(ICondition.SAFE_CODEC.parse(JsonOps.INSTANCE, conditionjson), JsonSyntaxException::new);
-                    if (!condition.test(context))
-                        continue;
+                    if (object.has(ICondition.DEFAULT_FIELD)) {
+                        var conditionjson = GsonHelper.getAsJsonObject(object, ICondition.DEFAULT_FIELD);
+                        var condition = Util.getOrThrow(ICondition.SAFE_CODEC.parse(JsonOps.INSTANCE, conditionjson), JsonSyntaxException::new);
+                        if (!condition.test(context))
+                            continue;
+                    }
                     var type = new ResourceLocation(GsonHelper.getAsString(object, "type"));
                     var serializer = ForgeRegistries.RECIPE_SERIALIZERS.getValue(type);
                     if (serializer == null)
@@ -215,14 +234,19 @@ public class ConditionalRecipe {
                     else if (!parsed.result().isPresent())
                         return DataResult.error(() -> "Recipe passed all conditions but did not parse a valid return");
                     else
-                        return DataResult.success(Pair.of(parsed.result().get(), ops.empty()));
+                        return DataResult.success(parsed.result().get());
                 }
                 return DataResult.error(() -> "No recipe passed conditions, if this is the case, you should have an outer condition.");
             } catch (JsonSyntaxException e) {
                 return DataResult.error(() -> e.getMessage());
             }
         }
-    }.stable();
+
+        @Override
+        public <T> Stream<T> keys(DynamicOps<T> ops) {
+            return Stream.of(ops.createString(ICondition.DEFAULT_FIELD), ops.createString("recipes"));
+        }
+    }).codec();
 
     public static final RecipeSerializer<Recipe<?>> SERIALZIER = new RecipeSerializer<Recipe<?>>() {
         @Override

@@ -8,10 +8,6 @@
     {
       "type": "minecraft:crafting_shapeless",
       "category": "misc",
-      "forge:condition": {
-        "type": "forge:false",
-        "value": {}
-      },
       "ingredients": [
         {
           "item": "minecraft:dirt"

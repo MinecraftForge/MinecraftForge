@@ -1,24 +1,24 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -76,12 +_,16 @@
+@@ -80,12 +_,16 @@
  import net.minecraft.world.level.block.state.pattern.BlockInWorld;
  import org.slf4j.Logger;
  
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
-    public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_258963_) -> {
-       return p_258963_.group(BuiltInRegistries.ITEM.byNameCodec().fieldOf("id").forGetter(ItemStack::getItem), Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount), CompoundTag.CODEC.optionalFieldOf("tag").forGetter((p_281115_) -> {
+    public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_309238_) -> {
+       return p_309238_.group(BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder), Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount), CompoundTag.CODEC.optionalFieldOf("tag").forGetter((p_281115_) -> {
           return Optional.ofNullable(p_281115_.getTag());
-       })).apply(p_258963_, ItemStack::new);
+       })).apply(p_309238_, ItemStack::new);
     });
 +   @org.jetbrains.annotations.Nullable
 +   private final net.minecraft.core.Holder.Reference<Item> delegate;
 +   private CompoundTag capNBT;
 +
-    private static final Logger LOGGER = LogUtils.getLogger();
-    public static final ItemStack EMPTY = new ItemStack((Void)null);
-    public static final DecimalFormat ATTRIBUTE_MODIFIER_FORMAT = Util.make(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -137,28 +_,40 @@
+    private static final Codec<Item> ITEM_NON_AIR_CODEC = ExtraCodecs.validate(BuiltInRegistries.ITEM.byNameCodec(), (p_309237_) -> {
+       return p_309237_ == Items.AIR ? DataResult.error(() -> {
+          return "Item must not be minecraft:air";
+@@ -160,28 +_,40 @@
        this(p_220155_.value(), p_220156_);
     }
  
@@ -54,7 +54,7 @@
 +      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
        this.count = p_41608_.getByte("Count");
        if (p_41608_.contains("tag", 10)) {
-          this.tag = p_41608_.getCompound("tag");
+          this.tag = p_41608_.getCompound("tag").copy();
           this.getItem().verifyTagAfterLoad(this.tag);
        }
 +      this.forgeInit();
@@ -64,7 +64,7 @@
           this.setDamageValue(this.getDamageValue());
        }
  
-@@ -174,7 +_,7 @@
+@@ -197,7 +_,7 @@
     }
  
     public boolean isEmpty() {
@@ -73,7 +73,7 @@
     }
  
     public boolean isItemEnabled(FeatureFlagSet p_250869_) {
-@@ -199,7 +_,7 @@
+@@ -222,7 +_,7 @@
     }
  
     public Item getItem() {
@@ -82,7 +82,7 @@
     }
  
     public Holder<Item> getItemHolder() {
-@@ -231,6 +_,15 @@
+@@ -254,6 +_,15 @@
     }
  
     public InteractionResult useOn(UseOnContext p_41662_) {
@@ -98,7 +98,7 @@
        Player player = p_41662_.getPlayer();
        BlockPos blockpos = p_41662_.getClickedPos();
        BlockInWorld blockinworld = new BlockInWorld(p_41662_.getLevel(), blockpos, false);
-@@ -238,7 +_,7 @@
+@@ -261,7 +_,7 @@
           return InteractionResult.PASS;
        } else {
           Item item = this.getItem();
@@ -107,7 +107,7 @@
           if (player != null && interactionresult.shouldAwardStats()) {
              player.awardStat(Stats.ITEM_USED.get(item));
           }
-@@ -267,11 +_,15 @@
+@@ -290,11 +_,15 @@
           p_41740_.put("tag", this.tag.copy());
        }
  
@@ -124,7 +124,7 @@
     }
  
     public boolean isStackable() {
-@@ -279,7 +_,7 @@
+@@ -302,7 +_,7 @@
     }
  
     public boolean isDamageableItem() {
@@ -133,7 +133,7 @@
           CompoundTag compoundtag = this.getTag();
           return compoundtag == null || !compoundtag.getBoolean("Unbreakable");
        } else {
-@@ -288,19 +_,19 @@
+@@ -311,19 +_,19 @@
     }
  
     public boolean isDamaged() {
@@ -157,7 +157,7 @@
     }
  
     public boolean hurt(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -336,6 +_,7 @@
+@@ -359,6 +_,7 @@
     public <T extends LivingEntity> void hurtAndBreak(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.level().isClientSide && (!(p_41624_ instanceof Player) || !((Player)p_41624_).getAbilities().instabuild)) {
           if (this.isDamageableItem()) {
@@ -165,7 +165,7 @@
              if (this.hurt(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer ? (ServerPlayer)p_41624_ : null)) {
                 p_41625_.accept(p_41624_);
                 Item item = this.getItem();
-@@ -388,7 +_,7 @@
+@@ -411,7 +_,7 @@
     }
  
     public boolean isCorrectToolForDrops(BlockState p_41736_) {
@@ -174,7 +174,7 @@
     }
  
     public InteractionResult interactLivingEntity(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -399,7 +_,7 @@
+@@ -422,7 +_,7 @@
        if (this.isEmpty()) {
           return EMPTY;
        } else {
@@ -183,7 +183,7 @@
           itemstack.setPopTime(this.getPopTime());
           if (this.tag != null) {
              itemstack.tag = this.tag.copy();
-@@ -435,7 +_,7 @@
+@@ -458,7 +_,7 @@
        if (!p_150943_.is(p_150944_.getItem())) {
           return false;
        } else {
@@ -192,7 +192,7 @@
        }
     }
  
-@@ -527,7 +_,7 @@
+@@ -554,7 +_,7 @@
  
     public void setTag(@Nullable CompoundTag p_41752_) {
        this.tag = p_41752_;
@@ -201,7 +201,7 @@
           this.setDamageValue(this.getDamageValue());
        }
  
-@@ -588,7 +_,7 @@
+@@ -615,7 +_,7 @@
  
     public List<Component> getTooltipLines(@Nullable Player p_41652_, TooltipFlag p_41653_) {
        List<Component> list = Lists.newArrayList();
@@ -210,7 +210,7 @@
        if (this.hasCustomHoverName()) {
           mutablecomponent.withStyle(ChatFormatting.ITALIC);
        }
-@@ -735,6 +_,7 @@
+@@ -762,6 +_,7 @@
           list.add(DISABLED_ITEM_TOOLTIP);
        }
  
@@ -218,7 +218,7 @@
        return list;
     }
  
-@@ -743,7 +_,7 @@
+@@ -770,7 +_,7 @@
     }
  
     private int getHideFlags() {
@@ -227,7 +227,7 @@
     }
  
     public void hideTooltipPart(ItemStack.TooltipPart p_41655_) {
-@@ -863,9 +_,10 @@
+@@ -890,9 +_,10 @@
              }
           }
        } else {
@@ -239,7 +239,7 @@
        return multimap;
     }
  
-@@ -893,7 +_,7 @@
+@@ -920,7 +_,7 @@
  
        MutableComponent mutablecomponent1 = ComponentUtils.wrapInSquareBrackets(mutablecomponent);
        if (!this.isEmpty()) {
@@ -248,7 +248,7 @@
              return p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this)));
           });
        }
-@@ -945,12 +_,31 @@
+@@ -972,12 +_,31 @@
        this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
     }
  

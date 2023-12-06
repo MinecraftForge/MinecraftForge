@@ -16,7 +16,7 @@
     }
  
     private synchronized void loadLibrary() {
-@@ -324,7 +_,8 @@
+@@ -331,7 +_,8 @@
  
     public void play(SoundInstance p_120313_) {
        if (this.loaded) {
@@ -26,12 +26,12 @@
              WeighedSoundEvents weighedsoundevents = p_120313_.resolve(this.soundManager);
              ResourceLocation resourcelocation = p_120313_.getLocation();
              if (weighedsoundevents == null) {
-@@ -393,18 +_,21 @@
+@@ -397,18 +_,21 @@
                                   p_194488_.setSelfPosition(vec3);
                                   p_194488_.setRelative(flag);
                                });
 +                           final SoundInstance soundinstance = p_120313_;
-                               if (!flag3) {
+                               if (!flag2) {
                                   this.soundBuffers.getCompleteBuffer(sound.getPath()).thenAccept((p_194501_) -> {
                                      channelaccess$channelhandle.execute((p_194495_) -> {
                                         p_194495_.attachStaticBuffer(p_194501_);
@@ -40,7 +40,7 @@
                                      });
                                   });
                                } else {
--                                 this.soundBuffers.getStream(sound.getPath(), flag2).thenAccept((p_194504_) -> {
+-                                 this.soundBuffers.getStream(sound.getPath(), flag1).thenAccept((p_194504_) -> {
 +                              soundinstance.getStream(this.soundBuffers, sound, flag2).thenAccept((p_194504_) -> {
                                      channelaccess$channelhandle.execute((p_194498_) -> {
                                         p_194498_.attachBufferStream(p_194504_);

@@ -1,0 +1,71 @@
+{
+  "advancements": [
+    {
+      "parent": "minecraft:recipes/root",
+      "criteria": {
+        "has_dirt": {
+          "conditions": {
+            "items": [
+              {
+                "items": [
+                  "minecraft:dirt"
+                ]
+              }
+            ]
+          },
+          "trigger": "minecraft:inventory_changed"
+        },
+        "has_the_recipe": {
+          "conditions": {
+            "recipe": "minecraft:diamond_block"
+          },
+          "trigger": "minecraft:recipe_unlocked"
+        }
+      },
+      "forge:condition": {
+        "type": "forge:and",
+        "values": [
+          {
+            "type": "forge:or",
+            "values": [
+              {
+                "type": "forge:not",
+                "value": {
+                  "type": "forge:mod_loaded",
+                  "modid": "minecraft"
+                }
+              },
+              {
+                "type": "forge:item_exists",
+                "item": "minecraft:dirt"
+              },
+              {
+                "type": "forge:true",
+                "value": {}
+              },
+              {
+                "type": "forge:tag_empty",
+                "tag": "minecraft:dirt"
+              }
+            ]
+          },
+          {
+            "type": "forge:false",
+            "value": {}
+          }
+        ]
+      },
+      "requirements": [
+        [
+          "has_the_recipe",
+          "has_dirt"
+        ]
+      ],
+      "rewards": {
+        "recipes": [
+          "minecraft:diamond_block"
+        ]
+      }
+    }
+  ]
+}

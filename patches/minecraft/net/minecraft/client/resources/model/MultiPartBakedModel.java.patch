@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/MultiPartBakedModel.java
 +++ b/net/minecraft/client/resources/model/MultiPartBakedModel.java
-@@ -21,7 +_,7 @@
+@@ -20,7 +_,7 @@
  import org.apache.commons.lang3.tuple.Pair;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,10 +9,10 @@
     private final List<Pair<Predicate<BlockState>, BakedModel>> selectors;
     protected final boolean hasAmbientOcclusion;
     protected final boolean isGui3d;
-@@ -30,10 +_,12 @@
+@@ -29,10 +_,12 @@
     protected final ItemTransforms transforms;
     protected final ItemOverrides overrides;
-    private final Map<BlockState, BitSet> selectorCache = new Object2ObjectOpenCustomHashMap<>(Util.identityStrategy());
+    private final Map<BlockState, BitSet> selectorCache = new Reference2ObjectOpenHashMap<>();
 +   private final BakedModel defaultModel;
  
     public MultiPartBakedModel(List<Pair<Predicate<BlockState>, BakedModel>> p_119462_) {
@@ -22,7 +22,7 @@
        this.hasAmbientOcclusion = bakedmodel.useAmbientOcclusion();
        this.isGui3d = bakedmodel.isGui3d();
        this.usesBlockLight = bakedmodel.usesBlockLight();
-@@ -42,10 +_,7 @@
+@@ -41,10 +_,7 @@
        this.overrides = bakedmodel.getOverrides();
     }
  
@@ -34,7 +34,7 @@
           BitSet bitset = this.selectorCache.get(p_235050_);
           if (bitset == null) {
              bitset = new BitSet();
-@@ -59,17 +_,27 @@
+@@ -58,17 +_,27 @@
  
              this.selectorCache.put(p_235050_, bitset);
           }
@@ -65,7 +65,7 @@
        }
     }
  
-@@ -77,6 +_,14 @@
+@@ -76,6 +_,14 @@
        return this.hasAmbientOcclusion;
     }
  
@@ -80,7 +80,7 @@
     public boolean isGui3d() {
        return this.isGui3d;
     }
-@@ -89,12 +_,32 @@
+@@ -88,12 +_,32 @@
        return false;
     }
  

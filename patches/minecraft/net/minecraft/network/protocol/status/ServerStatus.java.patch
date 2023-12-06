@@ -2,13 +2,13 @@
 +++ b/net/minecraft/network/protocol/status/ServerStatus.java
 @@ -15,9 +_,9 @@
  import net.minecraft.network.chat.Component;
- import net.minecraft.util.ExtraCodecs;
+ import net.minecraft.network.chat.ComponentSerialization;
  
 -public record ServerStatus(Component description, Optional<ServerStatus.Players> players, Optional<ServerStatus.Version> version, Optional<ServerStatus.Favicon> favicon, boolean enforcesSecureChat) {
 +public record ServerStatus(Component description, Optional<ServerStatus.Players> players, Optional<ServerStatus.Version> version, Optional<ServerStatus.Favicon> favicon, boolean enforcesSecureChat, Optional<net.minecraftforge.network.ServerStatusPing> forgeData) {
-    public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((p_273270_) -> {
--      return p_273270_.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat)).apply(p_273270_, ServerStatus::new);
-+      return p_273270_.group(ExtraCodecs.COMPONENT.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat), net.minecraftforge.network.ServerStatusPing.CODEC.optionalFieldOf("forgeData").forGetter(ServerStatus::forgeData)).apply(p_273270_, ServerStatus::new);
+    public static final Codec<ServerStatus> CODEC = RecordCodecBuilder.create((p_308583_) -> {
+-      return p_308583_.group(ComponentSerialization.CODEC.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat)).apply(p_308583_, ServerStatus::new);
++      return p_308583_.group(ComponentSerialization.CODEC.optionalFieldOf("description", CommonComponents.EMPTY).forGetter(ServerStatus::description), ServerStatus.Players.CODEC.optionalFieldOf("players").forGetter(ServerStatus::players), ServerStatus.Version.CODEC.optionalFieldOf("version").forGetter(ServerStatus::version), ServerStatus.Favicon.CODEC.optionalFieldOf("favicon").forGetter(ServerStatus::favicon), Codec.BOOL.optionalFieldOf("enforcesSecureChat", Boolean.valueOf(false)).forGetter(ServerStatus::enforcesSecureChat), net.minecraftforge.network.ServerStatusPing.CODEC.optionalFieldOf("forgeData").forGetter(ServerStatus::forgeData)).apply(p_308583_, ServerStatus::new);
     });
  
     public static record Favicon(byte[] iconBytes) {

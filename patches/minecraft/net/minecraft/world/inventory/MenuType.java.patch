@@ -9,7 +9,7 @@
     public static final MenuType<ChestMenu> GENERIC_9x1 = register("generic_9x1", ChestMenu::oneRow);
     public static final MenuType<ChestMenu> GENERIC_9x2 = register("generic_9x2", ChestMenu::twoRows);
     public static final MenuType<ChestMenu> GENERIC_9x3 = register("generic_9x3", ChestMenu::threeRows);
-@@ -53,6 +_,14 @@
+@@ -54,6 +_,14 @@
  
     public T create(int p_39986_, Inventory p_39987_) {
        return this.constructor.create(p_39986_, p_39987_);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -30,14 +_,24 @@
+@@ -27,14 +_,24 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -27,7 +27,7 @@
  
     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
        this.values = p_43907_.toArray((p_43933_) -> {
-@@ -50,7 +_,7 @@
+@@ -47,7 +_,7 @@
     }
  
     public ItemStack[] getItems() {
@@ -36,7 +36,7 @@
           this.itemStacks = Arrays.stream(this.values).flatMap((p_43916_) -> {
              return p_43916_.getItems().stream();
           }).distinct().toArray((p_43910_) -> {
-@@ -78,7 +_,8 @@
+@@ -75,7 +_,8 @@
     }
  
     public IntList getStackingIds() {
@@ -46,7 +46,7 @@
           ItemStack[] aitemstack = this.getItems();
           this.stackingIds = new IntArrayList(aitemstack.length);
  
-@@ -93,6 +_,7 @@
+@@ -90,6 +_,7 @@
     }
  
     public final void toNetwork(FriendlyByteBuf p_43924_) {
@@ -54,7 +54,7 @@
        p_43924_.writeCollection(Arrays.asList(this.getItems()), FriendlyByteBuf::writeItem);
     }
  
-@@ -113,6 +_,38 @@
+@@ -105,6 +_,38 @@
        }
     }
  
@@ -93,7 +93,7 @@
     public static Ingredient fromValues(Stream<? extends Ingredient.Value> p_43939_) {
        Ingredient ingredient = new Ingredient(p_43939_);
        return ingredient.isEmpty() ? EMPTY : ingredient;
-@@ -141,7 +_,9 @@
+@@ -133,7 +_,9 @@
     }
  
     public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
@@ -104,7 +104,7 @@
     }
  
     private static Codec<Ingredient> codec(boolean p_298496_) {
-@@ -207,6 +_,9 @@
+@@ -199,6 +_,9 @@
              list.add(new ItemStack(holder));
           }
  
@@ -114,3 +114,27 @@
           return list;
        }
     }
+@@ -221,5 +_,23 @@
+       });
+ 
+       Collection<ItemStack> getItems();
++   }
++
++   @Override
++   public String toString() {
++       var buf = new StringBuilder();
++       buf.append("Ingredient[");
++       for (int x = 0; x < values.length; x++) {
++           if (x != 0)
++               buf.append(", ");
++           if (values[x] instanceof TagValue tag)
++               buf.append('#').append(tag.tag().location());
++           else if (values[x] instanceof ItemValue item)
++               buf.append(item.item());
++           else
++               buf.append(values[x]);
++       }
++       buf.append(']');
++       return buf.toString();
+    }
+ }

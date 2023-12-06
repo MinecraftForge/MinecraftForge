@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/BushBlock.java
 +++ b/net/minecraft/world/level/block/BushBlock.java
-@@ -10,7 +_,7 @@
+@@ -11,7 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.pathfinder.PathComputationType;
  
--public class BushBlock extends Block {
-+public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
-    public BushBlock(BlockBehaviour.Properties p_51021_) {
+-public abstract class BushBlock extends Block {
++public abstract class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
+    protected BushBlock(BlockBehaviour.Properties p_51021_) {
        super(p_51021_);
     }
-@@ -25,6 +_,8 @@
+@@ -28,6 +_,8 @@
  
     public boolean canSurvive(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {
        BlockPos blockpos = p_51030_.below();
@@ -18,7 +18,7 @@
        return this.mayPlaceOn(p_51029_.getBlockState(blockpos), p_51029_, blockpos);
     }
  
-@@ -34,5 +_,12 @@
+@@ -37,5 +_,12 @@
  
     public boolean isPathfindable(BlockState p_51023_, BlockGetter p_51024_, BlockPos p_51025_, PathComputationType p_51026_) {
        return p_51026_ == PathComputationType.AIR && !this.hasCollision ? true : super.isPathfindable(p_51023_, p_51024_, p_51025_, p_51026_);

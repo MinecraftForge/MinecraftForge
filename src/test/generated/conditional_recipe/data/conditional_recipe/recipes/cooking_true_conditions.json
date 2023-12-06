@@ -1,14 +1,19 @@
 {
-  "type": "minecraft:smelting",
-  "category": "blocks",
-  "cookingtime": 200,
-  "experience": 0.1,
+  "type": "forge:conditional",
   "forge:condition": {
     "type": "forge:true",
     "value": {}
   },
-  "ingredient": {
-    "item": "minecraft:bee_nest"
-  },
-  "result": "minecraft:diamond_block"
+  "recipes": [
+    {
+      "type": "minecraft:smelting",
+      "category": "blocks",
+      "cookingtime": 200,
+      "experience": 0.1,
+      "ingredient": {
+        "item": "minecraft:bee_nest"
+      },
+      "result": "minecraft:diamond_block"
+    }
+  ]
 }

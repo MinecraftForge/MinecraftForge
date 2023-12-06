@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/storage/DimensionDataStorage.java
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
-@@ -48,9 +_,13 @@
+@@ -49,9 +_,13 @@
     @Nullable
-    public <T extends SavedData> T get(SavedData.Factory p_297465_, String p_164860_) {
+    public <T extends SavedData> T get(SavedData.Factory<T> p_297465_, String p_164860_) {
        SavedData saveddata = this.cache.get(p_164860_);
 +      if (saveddata == net.minecraftforge.common.util.DummySavedData.DUMMY) return null;
        if (saveddata == null && !this.cache.containsKey(p_164860_)) {

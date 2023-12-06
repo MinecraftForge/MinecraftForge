@@ -30,6 +30,5 @@
     "recipes": [
       "custom_ingredients:partial_nbt_name_only"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

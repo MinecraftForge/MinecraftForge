@@ -53,7 +53,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents.LiteralContents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -103,6 +103,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -122,6 +123,7 @@ import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
@@ -977,7 +979,8 @@ public class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag, LevelStorageSource.LevelDirectory levelDirectory) {
+    public static void readAdditionalLevelSaveData(Dynamic<?> data, LevelStorageSource.LevelDirectory levelDirectory) {
+        CompoundTag rootTag = (CompoundTag)data.convert(NbtOps.INSTANCE).getValue();
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList")) {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
@@ -1276,7 +1279,10 @@ public class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static boolean readAndTestCondition(ICondition.IContext context, JsonObject json) {
+    public static boolean readAndTestCondition(@Nullable ICondition.IContext context, JsonObject json) {
+        if (context == null)
+            context = IContext.EMPTY;
+
         if (!json.has(ICondition.DEFAULT_FIELD))
             return true;
 
@@ -1294,7 +1300,9 @@ public class ForgeHooks {
 
     @Nullable
     @ApiStatus.Internal
-    public static JsonObject readConditionalAdvancement(ICondition.IContext context, JsonObject json) {
+    public static JsonObject readConditionalAdvancement(@Nullable ICondition.IContext context, JsonObject json) {
+        if (context == null)
+            context = IContext.EMPTY;
         var entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
             return readAndTestCondition(context, json) ? json : null;
@@ -1305,7 +1313,7 @@ public class ForgeHooks {
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
 
             if (readAndTestCondition(context, ele.getAsJsonObject()))
-                return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
+                return ele.getAsJsonObject();
 
             idx++;
         }

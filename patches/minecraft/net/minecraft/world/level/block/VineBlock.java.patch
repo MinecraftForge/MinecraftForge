@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -23,7 +_,7 @@
+@@ -24,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class VineBlock extends Block {
 +public class VineBlock extends Block implements net.minecraftforge.common.IForgeShearable {
+    public static final MapCodec<VineBlock> CODEC = simpleCodec(VineBlock::new);
     public static final BooleanProperty UP = PipeBlock.UP;
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
-    public static final BooleanProperty EAST = PipeBlock.EAST;
-@@ -158,7 +_,7 @@
+@@ -164,7 +_,7 @@
  
     public void randomTick(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
        if (p_222656_.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {

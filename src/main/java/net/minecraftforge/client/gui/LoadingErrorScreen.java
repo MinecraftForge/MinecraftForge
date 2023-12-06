@@ -89,7 +89,7 @@ public class LoadingErrorScreen extends ErrorScreen {
 
     public static class LoadingEntryList extends ObjectSelectionList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
-            super(Objects.requireNonNull(parent.minecraft), parent.width, parent.height, 35, parent.height - 50,
+            super(Objects.requireNonNull(parent.minecraft), parent.width, parent.height, 35,
                 Math.max(
                     errors.stream().mapToInt(error -> parent.font.split(Component.literal(error.getMessage() != null ? error.getMessage() : ""), parent.width - 20).size()).max().orElse(0),
                     warnings.stream().mapToInt(warning -> parent.font.split(Component.literal(warning.formatToString() != null ? warning.formatToString() : ""), parent.width - 20).size()).max().orElse(0)

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DoublePlantBlock.java
 +++ b/net/minecraft/world/level/block/DoublePlantBlock.java
-@@ -54,6 +_,7 @@
+@@ -60,6 +_,7 @@
           return super.canSurvive(p_52887_, p_52888_, p_52889_);
        } else {
           BlockState blockstate = p_52888_.getBlockState(p_52889_.below());

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/SeagrassBlock.java
 +++ b/net/minecraft/world/level/block/SeagrassBlock.java
-@@ -21,7 +_,7 @@
+@@ -22,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class SeagrassBlock extends BushBlock implements BonemealableBlock, LiquidBlockContainer {
 +public class SeagrassBlock extends BushBlock implements BonemealableBlock, LiquidBlockContainer, net.minecraftforge.common.IForgeShearable {
+    public static final MapCodec<SeagrassBlock> CODEC = simpleCodec(SeagrassBlock::new);
     protected static final float AABB_OFFSET = 6.0F;
     protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
- 

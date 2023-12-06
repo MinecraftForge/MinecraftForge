@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.SuggestionProviders;
@@ -156,16 +155,11 @@ public class ClientCommandHandler
 
         ClientCommandSourceStack source = getSource();
 
-        try
-        {
+        try {
             commands.execute(reader, source);
-        }
-        catch (CommandRuntimeException execution)// Probably thrown by the command
-        {
-            Minecraft.getInstance().player.sendSystemMessage(Component.literal("").append(execution.getComponent()).withStyle(ChatFormatting.RED));
-        }
-        catch (CommandSyntaxException syntax)// Usually thrown by the CommandDispatcher
-        {
+        //} catch (CommandRuntimeException execution) { // Probably thrown by the command
+        //    Minecraft.getInstance().player.sendSystemMessage(Component.literal("").append(execution.getComponent()).withStyle(ChatFormatting.RED));
+        } catch (CommandSyntaxException syntax) {
             if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand() || syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownArgument())
             {
                 // in case of unknown command, let the server try and handle it

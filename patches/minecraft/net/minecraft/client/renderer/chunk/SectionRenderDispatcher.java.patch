@@ -1,24 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/SectionRenderDispatcher.java
-@@ -78,12 +_,16 @@
-    private Vec3 camera = Vec3.ZERO;
- 
-    public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_) {
-+      this(p_299878_, p_299032_, p_298480_, p_298587_, p_299187_, -1);
-+   }
-+
-+   public SectionRenderDispatcher(ClientLevel p_299878_, LevelRenderer p_299032_, Executor p_298480_, boolean p_298587_, SectionBufferBuilderPack p_299187_, int countRenderBuilders) {
-       this.level = p_299878_;
-       this.renderer = p_299032_;
-       int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / (RenderType.chunkBufferLayers().stream().mapToInt(RenderType::bufferSize).sum() * 4) - 1);
-       int j = Runtime.getRuntime().availableProcessors();
-       int k = p_298587_ ? j : Math.min(j, 4);
--      int l = Math.max(1, Math.min(k, i));
-+      int l = countRenderBuilders < 0 ? Math.max(1, Math.min(k, i)) : countRenderBuilders;
-       this.fixedBuffers = p_299187_;
-       List<SectionBufferBuilderPack> list = Lists.newArrayListWithExpectedSize(l);
- 
-@@ -413,7 +_,7 @@
+@@ -394,7 +_,7 @@
           if (!sectionrenderdispatcher$compiledsection.hasBlocks.contains(p_301074_)) {
              return false;
           } else {
@@ -27,7 +9,7 @@
              p_298196_.schedule(this.lastResortTransparencyTask);
              return true;
           }
-@@ -445,7 +_,7 @@
+@@ -426,7 +_,7 @@
              this.initialCompilationCancelCount.incrementAndGet();
           }
  
@@ -36,7 +18,7 @@
           return this.lastRebuildTask;
        }
  
-@@ -483,10 +_,20 @@
+@@ -464,10 +_,20 @@
           protected final double distAtCreation;
           protected final AtomicBoolean isCancelled = new AtomicBoolean(false);
           protected final boolean isHighPriority;
@@ -57,7 +39,7 @@
           }
  
           public abstract CompletableFuture<SectionRenderDispatcher.SectionTaskResult> doTask(SectionBufferBuilderPack p_300298_);
-@@ -498,6 +_,10 @@
+@@ -479,6 +_,10 @@
           public int compareTo(SectionRenderDispatcher.RenderSection.CompileTask p_298947_) {
              return Doubles.compare(this.distAtCreation, p_298947_.distAtCreation);
           }
@@ -68,7 +50,7 @@
        }
  
        @OnlyIn(Dist.CLIENT)
-@@ -505,8 +_,13 @@
+@@ -486,8 +_,13 @@
           @Nullable
           protected RenderChunkRegion region;
  
@@ -83,7 +65,7 @@
              this.region = p_300496_;
           }
  
-@@ -602,7 +_,10 @@
+@@ -583,7 +_,10 @@
                    }
  
                    if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
@@ -95,7 +77,7 @@
                       BufferBuilder bufferbuilder2 = p_300020_.builder(rendertype2);
                       if (set.add(rendertype2)) {
                          RenderSection.this.beginLayer(bufferbuilder2);
-@@ -610,8 +_,9 @@
+@@ -591,8 +_,9 @@
  
                       posestack.pushPose();
                       posestack.translate((float)(blockpos2.getX() & 15), (float)(blockpos2.getY() & 15), (float)(blockpos2.getZ() & 15));
@@ -106,7 +88,7 @@
                    }
                 }
  
-@@ -640,10 +_,10 @@
+@@ -621,10 +_,10 @@
           private <E extends BlockEntity> void handleBlockEntity(SectionRenderDispatcher.RenderSection.RebuildTask.CompileResults p_297364_, E p_299361_) {
              BlockEntityRenderer<E> blockentityrenderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(p_299361_);
              if (blockentityrenderer != null) {
@@ -118,7 +100,7 @@
              }
  
           }
-@@ -671,8 +_,13 @@
+@@ -652,8 +_,13 @@
        class ResortTransparencyTask extends SectionRenderDispatcher.RenderSection.CompileTask {
           private final SectionRenderDispatcher.CompiledSection compiledSection;
  

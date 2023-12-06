@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -74,11 +_,11 @@
+@@ -80,11 +_,11 @@
  
     public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
        super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);

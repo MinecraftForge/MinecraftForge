@@ -1,13 +1,13 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
-@@ -25,22 +_,31 @@
+@@ -26,22 +_,31 @@
     private static final Map<String, Consumer<ServerLevel>> AFTER_BATCH_FUNCTIONS = Maps.newHashMap();
     private static final Collection<TestFunction> LAST_FAILED_TESTS = Sets.newHashSet();
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
     public static void register(Class<?> p_177502_) {
-       Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::register);
+       Arrays.stream(p_177502_.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(GameTestRegistry::register);
     }
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
@@ -36,7 +36,7 @@
        }
  
        registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
-@@ -104,7 +_,9 @@
+@@ -105,7 +_,9 @@
  
     private static Collection<TestFunction> useTestGeneratorMethod(Method p_177514_) {
        try {
@@ -47,7 +47,7 @@
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
-@@ -115,9 +_,9 @@
+@@ -116,9 +_,9 @@
        GameTest gametest = p_177516_.getAnnotation(GameTest.class);
        String s = p_177516_.getDeclaringClass().getSimpleName();
        String s1 = s.toLowerCase();
@@ -60,7 +60,7 @@
        Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
        return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
     }
-@@ -125,7 +_,9 @@
+@@ -126,7 +_,9 @@
     private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
        return (p_177512_) -> {
           try {

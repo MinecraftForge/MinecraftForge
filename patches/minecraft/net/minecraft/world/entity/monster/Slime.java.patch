@@ -9,7 +9,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.random.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -329,6 +_,12 @@
+@@ -337,6 +_,12 @@
     public EntityDimensions getDimensions(Pose p_33597_) {
        return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
     }

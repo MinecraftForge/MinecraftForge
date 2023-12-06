@@ -13,8 +13,8 @@
 +      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
     }
  
-    public void tickServer(BooleanSupplier p_120049_) {
-@@ -196,6 +_,7 @@
+    public boolean isPaused() {
+@@ -200,6 +_,7 @@
     }
  
     public void halt(boolean p_120053_) {

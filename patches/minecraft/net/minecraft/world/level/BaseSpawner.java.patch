@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -131,12 +_,14 @@
+@@ -133,12 +_,14 @@
                    entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
@@ -18,7 +18,7 @@
                       }
                    }
  
-@@ -283,4 +_,12 @@
+@@ -285,4 +_,12 @@
     public double getoSpin() {
        return this.oSpin;
     }

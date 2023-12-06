@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/model/geom/LayerDefinitions.java
 +++ b/net/minecraft/client/model/geom/LayerDefinitions.java
-@@ -319,6 +_,7 @@
+@@ -325,6 +_,7 @@
        WoodType.values().forEach((p_247864_) -> {
           builder.put(ModelLayers.createHangingSignModelName(p_247864_), layerdefinition24);
        });
