@@ -33,8 +33,7 @@
 +            idx++;
           }
        }
- 
-    public boolean m_36054_(ItemStack p_36055_) {
+
 @@ -277,6 +_,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.m_127521_(throwable, "Adding item to inventory");
