@@ -996,6 +996,18 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    public static class MapValue<K, V> extends ConfigValue<Map<K, V>> {
+        MapValue(Builder parent, List<String> path, Supplier<Map<K, V>> defaultSupplier) {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Map<K, V> getRaw(Config config, List<String> path, Supplier<Map<K, V>> defaultSupplier) {
+            Map<K, V> m = config.getRaw(path);
+            return m;
+        }
+    }
+
     private static final Joiner LINE_JOINER = Joiner.on("\n");
     private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Splitter DOT_SPLITTER = Splitter.on(".");
