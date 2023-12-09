@@ -503,6 +503,20 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }, Boolean.class).getPath(), defaultSupplier);
         }
 
+        //Floats
+        public FloatValue defineInRange(String path, float defaultValue, float min, float max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, float defaultValue, float min, float max) {
+            return defineInRange(path, () -> defaultValue, min, max);
+        }
+        public FloatValue defineInRange(String path, Supplier<Float> defaultSupplier, float min, float max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public FloatValue defineInRange(List<String> path, Supplier<Float> defaultSupplier, float min, float max) {
+            return new FloatValue(this, defineInRange(path, defaultSupplier, min, max, Float.class).getPath(), defaultSupplier);
+        }
+
         //Double
         public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
             return defineInRange(split(path), defaultValue, min, max);
@@ -934,6 +948,17 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
         {
             return config.getLongOrElse(path, () -> defaultSupplier.get());
+        }
+    }
+    public static class FloatValue extends ConfigValue<Float> {
+        FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier) {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Float getRaw(Config config, List<String> path, Supplier<Float> defaultSupplier) {
+            Number n = config.<Number>get(path);
+            return n == null ? defaultSupplier.get() : n.floatValue();
         }
     }
 
