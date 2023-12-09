@@ -241,6 +241,14 @@
        }
  
        if (this.f_91056_ != null) {
+@@ -1157,6 +_,7 @@
+          }
+ 
+          this.f_91012_ = flag1;
++         net.minecraftforge.client.ForgeHooksClient.onClientPauseUpdate(this.f_91012_);
+       }
+ 
+       long l = Util.m_137569_();
 @@ -1240,10 +_,12 @@
        this.f_90990_.m_85378_((double)i);
        if (this.f_91080_ != null) {
