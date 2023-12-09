@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-/*
+/**
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
  * and other things Forge configs would find useful.
  */
@@ -87,8 +87,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     (action, path, incorrectValue, correctedValue) ->
                             LOGGER.debug(Logging.CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
 
-            if (config instanceof FileConfig) {
-                ((FileConfig) config).save();
+            if (config instanceof FileConfig fileConfig) {
+                fileConfig.save();
             }
         }
         this.afterReload();
@@ -331,7 +331,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
-            comment("Range: " + range.toString());
+            comment("Range: " + range);
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -348,6 +348,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
             return define(path, defaultSupplier, acceptableValues::contains);
         }
+
+        //Collections
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
@@ -362,11 +364,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
-                    if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
+                    if (!(value instanceof List<?> list) || list.isEmpty()) {
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
                         return getDefault();
                     }
-                    List<?> list = new ArrayList<>((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
@@ -390,11 +391,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context, path) {
                 @Override
                 public Object correct(Object value) {
-                    if (value == null || !(value instanceof List)) {
+                    if (!(value instanceof List<?> list)) {
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
                         return getDefault();
                     }
-                    List<?> list = new ArrayList<>((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
@@ -522,7 +522,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInRange(split(path), defaultValue, min, max);
         }
         public DoubleValue defineInRange(List<String> path, double defaultValue, double min, double max) {
-            return defineInRange(path, (Supplier<Double>)() -> defaultValue, min, max);
+            return defineInRange(path, () -> defaultValue, min, max);
         }
         public DoubleValue defineInRange(String path, Supplier<Double> defaultSupplier, double min, double max) {
             return defineInRange(split(path), defaultSupplier, min, max);
@@ -854,20 +854,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public T get()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
-            // TODO: Remove this dev-time check so this errors out on both production and dev
-            // This is dev-time-only in 1.19.x, to avoid breaking already published mods while forcing devs to fix their errors
-            if (!FMLEnvironment.production)
-            {
-                // When the above if-check is removed, change message to "Cannot get config value before config is loaded"
-                Preconditions.checkState(spec.childConfig != null, """
-                        Cannot get config value before config is loaded.
-                        This error is currently only thrown in the development environment, to avoid breaking published mods.
-                        In a future version, this will also throw in the production environment.
-                        """);
-            }
-
-            if (spec.childConfig == null)
-                return defaultSupplier.get();
+            Preconditions.checkState(spec.childConfig != null, "Cannot get config value before config is loaded");
 
             if (USE_CACHES && cachedValue == null)
                 cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
@@ -933,7 +920,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         protected Integer getRaw(Config config, List<String> path, Supplier<Integer> defaultSupplier)
         {
-            return config.getIntOrElse(path, () -> defaultSupplier.get());
+            return config.getIntOrElse(path, defaultSupplier::get);
         }
     }
 
@@ -947,7 +934,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
         {
-            return config.getLongOrElse(path, () -> defaultSupplier.get());
+            return config.getLongOrElse(path, defaultSupplier::get);
         }
     }
     public static class FloatValue extends ConfigValue<Float> {
