@@ -49,6 +49,10 @@ abstract class LauncherJson extends DefaultTask {
                 dependsOn(packed)
                 input.from packed.archiveFile
             }
+            
+            def patched = project.tasks.applyClientBinPatches
+            dependsOn(patched)
+            input.from patched.output
         }
     }
 
@@ -66,6 +70,22 @@ abstract class LauncherJson extends DefaultTask {
                         url: "https://maven.minecraftforge.net/$info.path",
                         sha1: packed.archiveFile.get().asFile.sha1(),
                         size: packed.archiveFile.get().asFile.length()
+                    ]
+                ]
+            ])
+        }
+        [
+            'client': project.tasks.applyClientBinPatches
+        ].forEach { classifier, genned ->
+            def info = Util.getMavenInfoFromTask(genned, classifier)
+            json.libraries.add([
+                name: info.name,
+                downloads: [
+                    artifact: [
+                        path: info.path,
+                        url: "",
+                        sha1: genned.output.get().asFile.sha1(),
+                        size: genned.output.get().asFile.length()
                     ]
                 ]
             ])

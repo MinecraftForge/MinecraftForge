@@ -36,6 +36,13 @@ abstract class BundleList extends DefaultTask {
             def file = packed.archiveFile.get().asFile
             entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
         }
+        [
+            'client': project.tasks.applyClientBinPatches
+        ].forEach { classifier, genned ->
+            def info = Util.getMavenInfoFromTask(genned, classifier)
+            def file = genned.output.get().asFile
+            entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
+        }
         
         try (def zip = new java.util.zip.ZipFile(serverBundle.get().asFile)) {
             def entry = zip.getEntry('META-INF/libraries.list')

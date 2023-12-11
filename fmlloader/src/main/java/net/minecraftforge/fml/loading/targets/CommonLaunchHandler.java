@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -88,5 +89,22 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
         var mtd = cls.getMethod("main", String[].class);
         if (mtd == null) throw new IllegalStateException("Class " + target + " in module " + module + " does not have a main(String[]) method");
         mtd.invoke(null, (Object)arguments);
+    }
+
+    protected static Path getPathFromResource(String resource) {
+        var cl = ForgeDevLaunchHandler.class.getClassLoader();
+        var url = cl.getResource(resource);
+        if (url == null)
+            throw new IllegalStateException("Could not find " + resource + " in classloader " + cl);
+
+        var str = url.toString();
+        int len = resource.length();
+        if ("jar".equalsIgnoreCase(url.getProtocol())) {
+            str = url.getFile();
+            len += 2;
+        }
+        str = str.substring(0, str.length() - len);
+        var path = Paths.get(URI.create(str));
+        return path;
     }
 }
