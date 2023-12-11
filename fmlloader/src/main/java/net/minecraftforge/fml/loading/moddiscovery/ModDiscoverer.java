@@ -12,6 +12,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
@@ -70,6 +71,7 @@ public class ModDiscoverer {
         List<EarlyLoadingException.ExceptionData> discoveryErrorData = new ArrayList<>();
         boolean successfullyLoadedMods = true;
         List<IModFileInfo> brokenFiles = new ArrayList<>();
+        boolean distIsDedicatedServer = FMLLoader.getDist().isDedicatedServer();
         ImmediateWindowHandler.updateProgress("Discovering mod files");
         //Loop all mod locators to get the prime mods to load from.
         for (IModLocator locator : modLocatorList) {
@@ -88,8 +90,17 @@ public class ModDiscoverer {
                 if (!badModFiles.isEmpty()) {
                     LOGGER.error(LogMarkers.SCAN, "Locator {} returned {} files which is are not ModFile instances! They will be skipped!", locator, badModFiles.size());
                     brokenFiles.addAll(badModFiles.stream().map(IModFile::getModFileInfo).toList());
+                    locatedFiles.removeAll(badModFiles);
                 }
-                locatedFiles.removeAll(badModFiles);
+
+                if (distIsDedicatedServer) {
+                    var clientOnlyModFiles = locatedFiles.stream().filter(file -> file.getModFileInfo().isClientSideOnly()).toList();
+                    if (!clientOnlyModFiles.isEmpty()) {
+                        LOGGER.warn(LogMarkers.SCAN, "Locator {} returned {} files which are client-side-only mods, but we're on a dedicated server. They will be skipped!", locator, clientOnlyModFiles.size());
+                        locatedFiles.removeAll(clientOnlyModFiles);
+                    }
+                }
+
                 LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} valid mod files", locator, locatedFiles.size());
                 handleLocatedFiles(loadedFiles, locatedFiles);
             } catch (InvalidModFileException imfe) {
