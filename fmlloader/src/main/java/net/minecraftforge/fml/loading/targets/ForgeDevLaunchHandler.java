@@ -4,9 +4,7 @@
  */
 
 package net.minecraftforge.fml.loading.targets;
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -33,23 +31,6 @@ abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
 
         var filtered = CommonDevLaunchHandler.getMinecraftOnly(extra, minecraft);
         return List.of(filtered);
-    }
-
-    static Path getPathFromResource(String resource) {
-        var cl = ForgeDevLaunchHandler.class.getClassLoader();
-        var url = cl.getResource(resource);
-        if (url == null)
-            throw new IllegalStateException("Could not find " + resource + " in classloader " + cl);
-
-        var str = url.toString();
-        int len = resource.length();
-        if ("jar".equalsIgnoreCase(url.getProtocol())) {
-            str = url.getFile();
-            len += 2;
-        }
-        str = str.substring(0, str.length() - len);
-        var path = Paths.get(URI.create(str));
-        return path;
     }
 
     public static class Client extends ForgeDevLaunchHandler {
