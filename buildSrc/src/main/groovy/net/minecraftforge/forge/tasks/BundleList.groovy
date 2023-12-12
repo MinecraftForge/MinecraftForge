@@ -37,7 +37,7 @@ abstract class BundleList extends DefaultTask {
             entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
         }
         [
-            'client': project.tasks.applyClientBinPatches
+            'server': project.tasks.applyServerBinPatches
         ].forEach { classifier, genned ->
             def info = Util.getMavenInfoFromTask(genned, classifier)
             def file = genned.output.get().asFile
