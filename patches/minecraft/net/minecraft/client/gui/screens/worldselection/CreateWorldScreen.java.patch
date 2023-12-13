@@ -21,7 +21,7 @@
        if (path != null) {
           if (this.tempDataPackRepository == null) {
              this.tempDataPackRepository = ServerPacksSource.createPackRepository(path, this.packValidator);
-+            net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(this.tempDataPackRepository, net.minecraftforge.server.ServerLifecycleHooks::buildPackFinder);
++            net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(this.tempDataPackRepository, false);
              this.tempDataPackRepository.reload();
           }
  

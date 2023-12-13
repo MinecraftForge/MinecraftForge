@@ -1,5 +1,16 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
+@@ -75,7 +_,9 @@
+       });
+       if (!map.isEmpty()) {
+          logErrors(map);
+-         throw new IllegalStateException("Failed to load registries due to above errors");
++         var buf = new StringBuilder("Failed to load registries, see debug.log for more details:");
++         map.forEach((k,v) -> buf.append("\n\t").append(k.toString()).append(": ").append(v.getMessage()));
++         throw new IllegalStateException(buf.toString());
+       } else {
+          return (new RegistryAccess.ImmutableRegistryAccess(list.stream().map(Pair::getFirst).toList())).freeze();
+       }
 @@ -124,13 +_,16 @@
     }
  

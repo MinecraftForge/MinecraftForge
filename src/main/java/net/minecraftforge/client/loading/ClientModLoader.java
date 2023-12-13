@@ -53,16 +53,14 @@ import net.minecraftforge.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 @OnlyIn(Dist.CLIENT)
-public class ClientModLoader
-{
+public class ClientModLoader {
     private static final Logger LOGGER = LogManager.getLogger();
     private static boolean loading;
     private static Minecraft mc;
     private static boolean loadingComplete;
     private static LoadingFailedException error;
 
-    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager)
-    {
+    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager) {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
         ImmediateWindowHandler.updateProgress("Loading mods");
@@ -72,7 +70,7 @@ public class ClientModLoader
         LanguageHook.loadForgeAndMCLangs();
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
         if (error == null) {
-            ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
+            ResourcePackLoader.loadResourcePacks(defaultResourcePacks, true);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.registerReloadListener(ClientModLoader::onResourceReload);
@@ -101,8 +99,7 @@ public class ClientModLoader
         createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, ImmediateWindowHandler::renderTick)).run();
     }
 
-    private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)
-    {
+    private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
         createRunnableWithCatch(() -> ModLoader.get().finishMods(syncExecutor, parallelExecutor, ImmediateWindowHandler::renderTick)).run();
         loading = false;
         loadingComplete = true;
@@ -110,8 +107,7 @@ public class ClientModLoader
         syncExecutor.execute(()->mc.options.load(true));
     }
 
-    public static VersionChecker.Status checkForUpdates()
-    {
+    public static VersionChecker.Status checkForUpdates() {
         boolean anyOutdated = ModList.get().getMods().stream()
                 .map(VersionChecker::getResult)
                 .map(result -> result.status())
@@ -119,8 +115,7 @@ public class ClientModLoader
         return anyOutdated ? VersionChecker.Status.OUTDATED : null;
     }
 
-    public static boolean completeModLoading()
-    {
+    public static boolean completeModLoading() {
         var warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
@@ -128,6 +123,7 @@ public class ClientModLoader
         } catch (NullPointerException | IllegalStateException e) {
             // We're in an early error state, config is not available. Assume true.
         }
+
         if (!showWarnings) {
             //User disabled warning screen, as least log them
             if (!warnings.isEmpty()) {
@@ -136,6 +132,7 @@ public class ClientModLoader
             }
             warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
         }
+
         File dumpedLocation = null;
         if (error == null) {
             // We can finally start the forge eventbus up
@@ -145,81 +142,16 @@ public class ClientModLoader
             LanguageHook.loadForgeAndMCLangs();
             dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDirectory);
         }
+
         if (error != null || !warnings.isEmpty()) {
             mc.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
-    public static boolean isLoading()
-    {
+    public static boolean isLoading() {
         return loading;
-    }
-
-    private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks) {
-        return packAcceptor -> clientPackFinder(modResourcePacks, packAcceptor);
-    }
-
-    private static void clientPackFinder(Map<IModFile, ? extends PathPackResources> modResourcePacks, Consumer<Pack> packAcceptor) {
-        var hiddenPacks = new ArrayList<PathPackResources>();
-        for (Entry<IModFile, ? extends PathPackResources> e : modResourcePacks.entrySet())
-        {
-
-            var supplier = new Pack.ResourcesSupplier() {
-                @Override
-                public PackResources openPrimary(String path) {
-                    return e.getValue();
-                }
-
-                @Override
-                public PackResources openFull(String path, Info info) {
-                    return e.getValue(); // TODO: composite
-                }
-
-            };
-
-            IModInfo mod = e.getKey().getModInfos().get(0);
-            final String name = "mod:" + mod.getModId();
-            final Pack modPack = Pack.readMetaAndCreate(name, Component.literal(e.getValue().packId()), false, supplier, PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
-            if (modPack == null) {
-                // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
-                ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
-                continue;
-            }
-            LOGGER.debug(Logging.CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
-            if (mod.getOwningFile().showAsResourcePack()) {
-                packAcceptor.accept(modPack);
-            } else {
-                hiddenPacks.add(e.getValue());
-            }
-        }
-        var delegating = new DelegatingPackResources("mod_resources", false,
-            new PackMetadataSection(
-                Component.translatable("fml.resources.modresources", hiddenPacks.size()),
-                SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES),
-                Optional.empty()
-            ),
-            hiddenPacks
-        );
-
-        var supplier = new Pack.ResourcesSupplier() {
-            @Override
-            public PackResources openPrimary(String path) {
-                return delegating;
-            }
-
-            @Override
-            public PackResources openFull(String path, Info info) {
-                return delegating; // TODO: composite
-            }
-
-        };
-
-        // Create a resource pack merging all mod resources that should be hidden
-        final Pack modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true, supplier,
-                PackType.CLIENT_RESOURCES, Pack.Position.BOTTOM, PackSource.DEFAULT);
-        packAcceptor.accept(modResourcesPack);
     }
 }

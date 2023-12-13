@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ModLoadingWarning
-{
+public class ModLoadingWarning {
     /**
      * Mod Info for mod with warning
      */

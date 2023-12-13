@@ -22,18 +22,21 @@ import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.Pack.Info;
 import net.minecraft.server.packs.resources.IoSupplier;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class DelegatingPackResources extends AbstractPackResources
-{
+@ApiStatus.Internal
+public class DelegatingPackResources extends AbstractPackResources {
     private final PackMetadataSection packMeta;
     private final List<PackResources> delegates;
     private final Map<String, List<PackResources>> namespacesAssets;
     private final Map<String, List<PackResources>> namespacesData;
 
-    public DelegatingPackResources(String packId,  boolean isBuiltin, PackMetadataSection packMeta, List<? extends PackResources> packs)
-    {
+    public DelegatingPackResources(String packId,  boolean isBuiltin, PackMetadataSection packMeta, List<? extends PackResources> packs) {
         super(packId, isBuiltin);
         this.packMeta = packMeta;
         this.delegates = ImmutableList.copyOf(packs);
@@ -41,15 +44,11 @@ public class DelegatingPackResources extends AbstractPackResources
         this.namespacesData = this.buildNamespaceMap(PackType.SERVER_DATA, delegates);
     }
 
-    private Map<String, List<PackResources>> buildNamespaceMap(PackType type, List<PackResources> packList)
-    {
+    private Map<String, List<PackResources>> buildNamespaceMap(PackType type, List<PackResources> packList) {
         Map<String, List<PackResources>> map = new HashMap<>();
-        for (PackResources pack : packList)
-        {
+        for (PackResources pack : packList) {
             for (String namespace : pack.getNamespaces(type))
-            {
                 map.computeIfAbsent(namespace, k -> new ArrayList<>()).add(pack);
-            }
         }
         map.replaceAll((k, list) -> ImmutableList.copyOf(list));
         return ImmutableMap.copyOf(map);
@@ -58,49 +57,38 @@ public class DelegatingPackResources extends AbstractPackResources
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T> T getMetadataSection(MetadataSectionSerializer<T> deserializer) throws IOException
-    {
+    public <T> T getMetadataSection(MetadataSectionSerializer<T> deserializer) throws IOException {
         return deserializer.getMetadataSectionName().equals("pack") ? (T) this.packMeta : null;
     }
 
     @Override
-    public void listResources(PackType type, String resourceNamespace, String paths, ResourceOutput resourceOutput)
-    {
+    public void listResources(PackType type, String resourceNamespace, String paths, ResourceOutput resourceOutput) {
         for (PackResources delegate : this.delegates)
-        {
             delegate.listResources(type, resourceNamespace, paths, resourceOutput);
-        }
     }
 
     @Override
-    public Set<String> getNamespaces(PackType type)
-    {
+    public Set<String> getNamespaces(PackType type) {
         return type == PackType.CLIENT_RESOURCES ? namespacesAssets.keySet() : namespacesData.keySet();
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         for (PackResources pack : delegates)
-        {
             pack.close();
-        }
     }
 
     @Nullable
     @Override
-    public IoSupplier<InputStream> getRootResource(String... paths)
-    {
+    public IoSupplier<InputStream> getRootResource(String... paths) {
         // Root resources do not make sense here
         return null;
     }
 
     @Nullable
     @Override
-    public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location)
-    {
-        for (PackResources pack : getCandidatePacks(type, location))
-        {
+    public IoSupplier<InputStream> getResource(PackType type, ResourceLocation location) {
+        for (PackResources pack : getCandidatePacks(type, location)) {
             IoSupplier<InputStream> ioSupplier = pack.getResource(type, location);
             if (ioSupplier != null)
                 return ioSupplier;
@@ -110,15 +98,29 @@ public class DelegatingPackResources extends AbstractPackResources
     }
 
     @Nullable
-    public Collection<PackResources> getChildren()
-    {
+    public Collection<PackResources> getChildren() {
         return delegates;
     }
 
-    private List<PackResources> getCandidatePacks(PackType type, ResourceLocation location)
-    {
+    private List<PackResources> getCandidatePacks(PackType type, ResourceLocation location) {
         Map<String, List<PackResources>> map = type == PackType.CLIENT_RESOURCES ? namespacesAssets : namespacesData;
         List<PackResources> packsWithNamespace = map.get(location.getNamespace());
         return packsWithNamespace == null ? Collections.emptyList() : packsWithNamespace;
+    }
+
+    public Pack.ResourcesSupplier supplier() {
+        return new Supplier();
+    }
+
+    private class Supplier implements Pack.ResourcesSupplier {
+        @Override
+        public PackResources openPrimary(String path) {
+            return DelegatingPackResources.this;
+        }
+
+        @Override
+        public PackResources openFull(String path, Info info) {
+            return DelegatingPackResources.this;
+        }
     }
 }

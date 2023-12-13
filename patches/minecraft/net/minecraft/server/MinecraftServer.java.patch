@@ -187,7 +187,7 @@
     }
  
     public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, DataPackConfig p_248920_, boolean p_249869_, FeatureFlagSet p_251243_) {
-+      net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(p_248681_, net.minecraftforge.server.ServerLifecycleHooks::buildPackFinder);
++      net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(p_248681_, false);
        p_248681_.reload();
 +      DataPackConfig.DEFAULT.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
 +      p_248920_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
