@@ -30,7 +30,7 @@ dependencyResolutionManagement {
             library('bootstrap-api', 'net.minecraftforge:bootstrap-api:2.0.0')
             library('bootstrap-shim', 'net.minecraftforge:bootstrap-shim:2.0.1')
             library('modlauncher', 'net.minecraftforge:modlauncher:10.1.2') // Needs securemodules
-            library('securemodules', 'net.minecraftforge:securemodules:2.2.7') // Needs unsafe
+            library('securemodules', 'net.minecraftforge:securemodules:2.2.9') // Needs unsafe
             library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.1.1')
             library('antlr-runtime', 'org.antlr:antlr4-runtime:4.9.1') // Needed by Access Transformer because parsing a simple text file was too complicated
