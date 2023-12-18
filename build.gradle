@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,5.2.0)'
     }
 }
 
@@ -16,6 +16,8 @@ import java.util.Date
 import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
+import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
@@ -49,6 +51,8 @@ ext {
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
     MIN_TAG_FOR_CHANGELOG = "36.0"
+    GIT_INFO = gradleutils.gitInfo
+    LAST_RB = GIT_INFO.tag.rsplit('.', 1)[1] as int >= 1 ? GIT_INFO.tag + '.0' : null
 }
 
 version = gradleutils.getMCTagOffsetBranchVersion(MC_VERSION)
@@ -561,6 +565,47 @@ project(':forge') {
         finalizedBy checkPatches
         autoHeader true
         lineEnding = '\n'
+    }
+
+    def baseForgeVersion = LAST_RB == null ? null : "${MC_VERSION}-${LAST_RB}"
+
+    task downloadBaseCompatibilityBinPatches(type: DownloadBaseCompatibilityBinPatches) {
+        inputVersion = baseForgeVersion
+    }
+
+    task applyBaseCompatibilityJarBinPatches(type: ApplyBinPatches) {
+        group = 'jar compatibility'
+        onlyIf {
+            baseForgeVersion != null
+        }
+        inputs.property 'baseForgeVersion', baseForgeVersion
+
+        clean = createJoinedSRG.output
+        patch = downloadBaseCompatibilityBinPatches.output
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    task checkJarCompatibility(type: CheckJarCompatibility) {
+        group = 'jar compatibility'
+        onlyIf {
+            baseForgeVersion != null
+        }
+        inputs.property 'baseForgeVersion', baseForgeVersion
+
+        if (baseForgeVersion != null) {
+            def baseForgeUniversal = project.configurations.detachedConfiguration(project.dependencies.create("net.minecraftforge:forge:${baseForgeVersion}:universal"))
+
+            baseJar = project.tasks.applyBaseCompatibilityJarBinPatches.output
+            baseLibraries.from(project.file(project.provider {
+                baseForgeUniversal.resolve().iterator().next()
+            }))
+            baseLibraries.from(project.tasks.createJoinedSRG.output)
+
+            inputJar = project.tasks.reobfJar.output
+
+            commonLibraries.from(project.configurations.minecraftImplementation)
+            commonLibraries.from(project.configurations.installer)
+        }
     }
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
