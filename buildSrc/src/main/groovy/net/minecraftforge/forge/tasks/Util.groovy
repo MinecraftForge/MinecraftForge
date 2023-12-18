@@ -125,4 +125,9 @@ public class Util {
 			throw e
 		}
 	}
+
+	public static String getLatestForgeVersion(mcVersion) {
+		def json = new JsonSlurper().parseText(new URL("https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json").getText("UTF-8"))
+		return json.promos["$mcVersion-latest"]
+	}
 }

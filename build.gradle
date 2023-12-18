@@ -5,17 +5,25 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,5.2.0)'
     }
 }
 
 import groovy.json.JsonBuilder
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
+import net.minecraftforge.forge.tasks.checks.CheckMode
 
 import java.nio.file.Files
 import java.util.Date
 import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
+import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
@@ -26,8 +34,9 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '2.+'
+    id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
+    id 'de.undercouch.download' version '5.1.3'
 }
 
 Util.init() //Init all our extension methods
@@ -49,6 +58,8 @@ ext {
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
     MIN_TAG_FOR_CHANGELOG = "36.0"
+    GIT_INFO = gradleutils.gitInfo
+    LAST_RB = GIT_INFO.tag.rsplit('.', 1)[1] as int >= 1 ? GIT_INFO.tag + '.0' : null
 }
 
 version = gradleutils.getMCTagOffsetBranchVersion(MC_VERSION)
@@ -196,7 +207,7 @@ project(':forge') {
         SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-        INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.6'
+        INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
     }
 
     version = gradleutils.getMCTagOffsetBranchVersion(MC_VERSION)
@@ -217,6 +228,12 @@ project(':forge') {
 
                 main 'net.minecraftforge.userdev.LaunchTesting'
                 workingDirectory project.file('run')
+
+                // Support Forge devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
 
                 environment 'target', 'fmldevclient'
                 environment 'assetIndex', '{asset_index}'
@@ -262,6 +279,12 @@ project(':forge') {
                 main 'net.minecraftforge.userdev.LaunchTesting'
                 workingDirectory project.file('run')
 
+                // Support Forge devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
+
                 environment 'target', 'fmldevserver'
 
                 environment 'MC_VERSION', MC_VERSION
@@ -298,6 +321,12 @@ project(':forge') {
 
                 main 'net.minecraftforge.userdev.LaunchTesting'
                 workingDirectory project.file('run')
+
+                // Support Forge devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
 
                 environment 'target', 'fmldevdata'
                 environment 'assetIndex', '{asset_index}'
@@ -490,6 +519,7 @@ project(':forge') {
     
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         tool = INSTALLER_TOOLS + ':fatjar'
+        args.add '--annotations'
         input = genJoinedBinPatches.cleanJar
         libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) }
     }
@@ -530,37 +560,96 @@ project(':forge') {
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+        group = 'checks'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
+    }
+
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
         mappings = createSrg2Mcp.output
     }
 
-    task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
-        inheritance = extractInheritance.output
+    CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
+        dependsOn extractInheritance
         sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
-    task checkExcs(type: CheckExcs, dependsOn: jar) {
-        binary = jar.archiveFile
+    CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
+        dependsOn jar
+        binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
-
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        dependsOn genPatches
         patchDir = file("$rootDir/patches")
-        autoFix = true
+        patchesWithS2SArtifact = [
+                'minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch',
+                'minecraft/net/minecraft/data/BlockModelDefinition.java.patch',
+        ]
     }
 
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
-    }
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
+    }
+
+    def baseForgeVersionProperty = project.objects.property(String)
+    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.finalizeValueOnRead()
+    def jarCompatibilityTaskSetup = { task ->
+        task.group = 'jar compatibility'
+        task.onlyIf {
+            baseForgeVersionProperty.getOrNull() != null
+        }
+    }
+
+    tasks.register('setupCheckJarCompatibility', SetupCheckJarCompatibility) {
+        inputVersion = baseForgeVersionProperty
+    }
+
+    tasks.register('applyBaseCompatibilityJarBinPatches', ApplyBinPatches) {
+        jarCompatibilityTaskSetup(it)
+
+        clean = project.tasks.createJoinedSRG.output
+        patch = project.tasks.named('setupCheckJarCompatibility').flatMap { it.baseBinPatchesOutput }
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    tasks.register('mergeBaseForgeJar', MergeJars) {
+        jarCompatibilityTaskSetup(it)
+
+        inputJars.from(project.tasks.named('applyBaseCompatibilityJarBinPatches').flatMap { it.output })
+        inputJars.from(baseForgeVersionProperty.map { inputVersion ->
+            def output = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-universal.jar") }.get().asFile
+            project.rootProject.extensions.download.run {
+                src "https://maven.minecraftforge.net/net/minecraftforge/forge/${inputVersion}/forge-${inputVersion}-universal.jar"
+                dest output
+            }
+            return output
+        })
+    }
+
+    tasks.register('checkJarCompatibility', CheckJarCompatibility) {
+        jarCompatibilityTaskSetup(it)
+        dependsOn 'setupCheckJarCompatibility'
+
+        baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
+
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+
+        commonLibraries.from(project.configurations.minecraftImplementation)
+        commonLibraries.from(project.configurations.installer)
     }
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
