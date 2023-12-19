@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -152,6 +153,14 @@ public abstract class ModContainer
 
     public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
         registerExtensionPoint(IExtensionPoint.DisplayTest.class, displayTest);
+    }
+
+    public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
+        registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
+    }
+
+    public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
+        registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
     }
 
     public void addConfig(final ModConfig modConfig) {
