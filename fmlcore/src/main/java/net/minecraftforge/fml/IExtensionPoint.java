@@ -96,5 +96,14 @@ public interface IExtensionPoint<T extends Record>
     @SuppressWarnings("JavadocReference") // reference to NetworkConstants, ForgeHooksClient
     record DisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) implements IExtensionPoint<DisplayTest> {
         public static final String IGNORESERVERONLY = "SERVER_ONLY";
+
+        /**
+         * An optional alternative to {@link #DisplayTest(Supplier, BiPredicate)} which accepts a constant version string
+         * instead of a {@link Supplier}.
+         * <p>Internally, the provided version string is wrapped in a Supplier for you.</p>
+         */
+        public DisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
+            this(() -> version, remoteVersionTest);
+        }
     }
 }
