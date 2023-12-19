@@ -146,6 +146,14 @@ public abstract class ModContainer
         extensionPoints.put(point, extension);
     }
 
+    public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
+        registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> displayTest);
+    }
+
+    public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
+        registerExtensionPoint(IExtensionPoint.DisplayTest.class, displayTest);
+    }
+
     public void addConfig(final ModConfig modConfig) {
        configs.put(modConfig.getType(), modConfig);
     }

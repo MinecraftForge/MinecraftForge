@@ -50,6 +50,24 @@ public class ModLoadingContext
         getActiveContainer().registerExtensionPoint(point, extension);
     }
 
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)}.</p>
+     * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
+     */
+    public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
+        getActiveContainer().registerDisplayTest(() -> displayTest);
+    }
+
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest supplier with {@link #registerExtensionPoint(Class, Supplier)}.</p>
+     * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
+     */
+    public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
+        getActiveContainer().registerDisplayTest(displayTest);
+    }
+
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
         if (spec.isEmpty())
         {
