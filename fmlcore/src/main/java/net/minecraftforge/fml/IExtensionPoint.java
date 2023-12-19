@@ -104,6 +104,8 @@ public interface IExtensionPoint<T extends Record>
 
         /**
          * Ignores all information and provides no information
+         * <p>Note: If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or
+         * Open to LAN), consider setting {@code clientSideOnly=true} in the root of your mods.toml.</p>
          */
         public static final Supplier<DisplayTest> IGNORE_ALL_VERSION = () -> new DisplayTest("", (remoteVersion, isFromServer) -> true);
 
