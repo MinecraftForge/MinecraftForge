@@ -95,5 +95,26 @@ public interface IExtensionPoint<T extends Record>
     @SuppressWarnings("JavadocReference") // reference to NetworkConstants, ForgeHooksClient
     record DisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) implements IExtensionPoint<DisplayTest> {
         public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
+
+        /**
+         * Ignores any version information coming from the server - use for server only mods
+         */
+        public static final Supplier<DisplayTest> IGNORE_SERVER_VERSION = () -> new DisplayTest(IGNORESERVERONLY, (remoteVersion, isFromServer) -> true);
+
+        /**
+         * Ignores all information and provides no information
+         * <p>Note: If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or
+         * Open to LAN), consider setting {@code clientSideOnly=true} in the root of your mods.toml.</p>
+         */
+        public static final Supplier<DisplayTest> IGNORE_ALL_VERSION = () -> new DisplayTest("", (remoteVersion, isFromServer) -> true);
+
+        /**
+         * An optional alternative to {@link #DisplayTest(Supplier, BiPredicate)} which accepts a constant version string
+         * instead of a {@link Supplier}.
+         * <p>Internally, the provided version string is wrapped in a Supplier for you.</p>
+         */
+        public DisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
+            this(() -> version, remoteVersionTest);
+        }
     }
 }
