@@ -21,10 +21,10 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
--         DataGenerator datagenerator = func_200264_a(path, optionset.valuesOf(optionspec8).stream().map((p_200263_0_) -> {
+-         DataGenerator datagenerator = createStandardGenerator(path, optionset.valuesOf(optionspec8).stream().map((p_200263_0_) -> {
 -            return Paths.get(p_200263_0_);
 -         }).collect(Collectors.toList()), flag1, flag2, flag3, flag4, flag5);
--         datagenerator.func_200392_c();
+-         datagenerator.run();
 +         Collection<Path> inputs = optionset.valuesOf(optionspec8).stream().map(Paths::get).collect(Collectors.toList());
 +         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
 +         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
@@ -32,7 +32,7 @@
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
 +         net.minecraftforge.fml.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
-+            func_200264_a(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).func_200392_c();
++            createStandardGenerator(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).run();
        } else {
           optionparser.printHelpOn(System.out);
        }

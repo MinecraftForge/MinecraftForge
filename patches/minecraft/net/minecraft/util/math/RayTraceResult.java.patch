@@ -3,7 +3,7 @@
 @@ -5,6 +_,11 @@
  
  public abstract class RayTraceResult {
-    protected final Vector3d field_72307_f;
+    protected final Vector3d location;
 +   /** Used to determine what sub-segment is hit */
 +   public int subHit = -1;
 +
@@ -11,4 +11,4 @@
 +   public Object hitInfo = null;
  
     protected RayTraceResult(Vector3d p_i51183_1_) {
-       this.field_72307_f = p_i51183_1_;
+       this.location = p_i51183_1_;

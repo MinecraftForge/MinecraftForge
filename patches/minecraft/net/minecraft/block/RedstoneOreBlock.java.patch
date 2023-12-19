@@ -2,11 +2,11 @@
 +++ b/net/minecraft/block/RedstoneOreBlock.java
 @@ -71,11 +_,11 @@
  
-    public void func_220062_a(BlockState p_220062_1_, ServerWorld p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
-       super.func_220062_a(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);
--      if (EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_220062_4_) == 0) {
--         int i = 1 + p_220062_2_.field_73012_v.nextInt(5);
--         this.func_180637_b(p_220062_2_, p_220062_3_, i);
+    public void spawnAfterBreak(BlockState p_220062_1_, ServerWorld p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
+       super.spawnAfterBreak(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);
+-      if (EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_220062_4_) == 0) {
+-         int i = 1 + p_220062_2_.random.nextInt(5);
+-         this.popExperience(p_220062_2_, p_220062_3_, i);
 -      }
 +   }
  

@@ -4,20 +4,20 @@
  
        try {
           URL url = VanillaPack.class.getResource(s);
--         return func_223459_a(s, url) ? url.openStream() : null;
-+         return func_223459_a(s, url) ? getExtraInputStream(p_195782_1_, s) : null;
+-         return isResourceUrlValid(s, url) ? url.openStream() : null;
++         return isResourceUrlValid(s, url) ? getExtraInputStream(p_195782_1_, s) : null;
        } catch (IOException ioexception) {
           return VanillaPack.class.getResourceAsStream(s);
        }
 @@ -187,7 +_,7 @@
  
     @Nullable
-    protected InputStream func_200010_a(String p_200010_1_) {
+    protected InputStream getResourceAsStream(String p_200010_1_) {
 -      return VanillaPack.class.getResourceAsStream("/" + p_200010_1_);
 +      return getExtraInputStream(ResourcePackType.SERVER_DATA, "/" + p_200010_1_);
     }
  
-    public boolean func_195764_b(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
+    public boolean hasResource(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
 @@ -225,5 +_,19 @@
     }
  
@@ -29,7 +29,7 @@
 +   //So find that extra jar using the .mcassetsroot marker.
 +   private InputStream getExtraInputStream(ResourcePackType type, String resource) {
 +      try {
-+         FileSystem fs = field_217810_e.get(type);
++         FileSystem fs = JAR_FILESYSTEM_BY_TYPE.get(type);
 +         if (fs != null)
 +            return Files.newInputStream(fs.getPath(resource));
 +         return VanillaPack.class.getResourceAsStream(resource);

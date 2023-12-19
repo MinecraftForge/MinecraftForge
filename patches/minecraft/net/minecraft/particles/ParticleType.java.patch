@@ -6,6 +6,6 @@
  
 -public abstract class ParticleType<T extends IParticleData> {
 +public abstract class ParticleType<T extends IParticleData>  extends net.minecraftforge.registries.ForgeRegistryEntry<ParticleType<?>>{
-    private final boolean field_197581_e;
-    private final IParticleData.IDeserializer<T> field_197582_f;
+    private final boolean overrideLimiter;
+    private final IParticleData.IDeserializer<T> deserializer;
  

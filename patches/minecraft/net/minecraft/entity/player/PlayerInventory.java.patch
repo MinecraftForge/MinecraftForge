@@ -1,30 +1,30 @@
 --- a/net/minecraft/entity/player/PlayerInventory.java
 +++ b/net/minecraft/entity/player/PlayerInventory.java
 @@ -187,7 +_,8 @@
-       int i = p_191973_2_.func_190916_E();
-       ItemStack itemstack = this.func_70301_a(p_191973_1_);
-       if (itemstack.func_190926_b()) {
+       int i = p_191973_2_.getCount();
+       ItemStack itemstack = this.getItem(p_191973_1_);
+       if (itemstack.isEmpty()) {
 -         itemstack = new ItemStack(item, 0);
-+         itemstack = p_191973_2_.func_77946_l(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
-+         itemstack.func_190920_e(0);
-          if (p_191973_2_.func_77942_o()) {
-             itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
++         itemstack = p_191973_2_.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++         itemstack.setCount(0);
+          if (p_191973_2_.hasTag()) {
+             itemstack.setTag(p_191973_2_.getTag().copy());
           }
 @@ -238,7 +_,7 @@
              }
           }
        }
 -
-+      field_70460_b.forEach(e -> e.onArmorTick(field_70458_d.field_70170_p, field_70458_d));
++      armor.forEach(e -> e.onArmorTick(player.level, player));
     }
  
-    public boolean func_70441_a(ItemStack p_70441_1_) {
+    public boolean add(ItemStack p_70441_1_) {
 @@ -287,6 +_,8 @@
           } catch (Throwable throwable) {
-             CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
-             CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
-+            crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_191971_2_.func_77973_b().getRegistryName()));
-+            crashreportcategory.func_189529_a("Item Class", () -> p_191971_2_.func_77973_b().getClass().getName());
-             crashreportcategory.func_71507_a("Item ID", Item.func_150891_b(p_191971_2_.func_77973_b()));
-             crashreportcategory.func_71507_a("Item data", p_191971_2_.func_77952_i());
-             crashreportcategory.func_189529_a("Item name", () -> {
+             CrashReport crashreport = CrashReport.forThrowable(throwable, "Adding item to inventory");
+             CrashReportCategory crashreportcategory = crashreport.addCategory("Item being added");
++            crashreportcategory.setDetail("Registry Name", () -> String.valueOf(p_191971_2_.getItem().getRegistryName()));
++            crashreportcategory.setDetail("Item Class", () -> p_191971_2_.getItem().getClass().getName());
+             crashreportcategory.setDetail("Item ID", Item.getId(p_191971_2_.getItem()));
+             crashreportcategory.setDetail("Item data", p_191971_2_.getDamageValue());
+             crashreportcategory.setDetail("Item name", () -> {

@@ -1,12 +1,12 @@
 --- a/net/minecraft/pathfinding/ClimberPathNavigator.java
 +++ b/net/minecraft/pathfinding/ClimberPathNavigator.java
 @@ -38,7 +_,8 @@
-          super.func_75501_e();
+          super.tick();
        } else {
-          if (this.field_179696_f != null) {
--            if (!this.field_179696_f.func_218137_a(this.field_75515_a.func_213303_ch(), (double)this.field_75515_a.func_213311_cf()) && (!(this.field_75515_a.func_226278_cu_() > (double)this.field_179696_f.func_177956_o()) || !(new BlockPos((double)this.field_179696_f.func_177958_n(), this.field_75515_a.func_226278_cu_(), (double)this.field_179696_f.func_177952_p())).func_218137_a(this.field_75515_a.func_213303_ch(), (double)this.field_75515_a.func_213311_cf()))) {
+          if (this.pathToPosition != null) {
+-            if (!this.pathToPosition.closerThan(this.mob.position(), (double)this.mob.getBbWidth()) && (!(this.mob.getY() > (double)this.pathToPosition.getY()) || !(new BlockPos((double)this.pathToPosition.getX(), this.mob.getY(), (double)this.pathToPosition.getZ())).closerThan(this.mob.position(), (double)this.mob.getBbWidth()))) {
 +            // FORGE: Fix MC-94054
-+            if (!this.field_179696_f.func_218137_a(this.field_75515_a.func_213303_ch(), Math.max((double)this.field_75515_a.func_213311_cf(), 1.0D)) && (!(this.field_75515_a.func_226278_cu_() > (double)this.field_179696_f.func_177956_o()) || !(new BlockPos((double)this.field_179696_f.func_177958_n(), this.field_75515_a.func_226278_cu_(), (double)this.field_179696_f.func_177952_p())).func_218137_a(this.field_75515_a.func_213303_ch(), Math.max((double)this.field_75515_a.func_213311_cf(), 1.0D)))) {
-                this.field_75515_a.func_70605_aq().func_75642_a((double)this.field_179696_f.func_177958_n(), (double)this.field_179696_f.func_177956_o(), (double)this.field_179696_f.func_177952_p(), this.field_75511_d);
++            if (!this.pathToPosition.closerThan(this.mob.position(), Math.max((double)this.mob.getBbWidth(), 1.0D)) && (!(this.mob.getY() > (double)this.pathToPosition.getY()) || !(new BlockPos((double)this.pathToPosition.getX(), this.mob.getY(), (double)this.pathToPosition.getZ())).closerThan(this.mob.position(), Math.max((double)this.mob.getBbWidth(), 1.0D)))) {
+                this.mob.getMoveControl().setWantedPosition((double)this.pathToPosition.getX(), (double)this.pathToPosition.getY(), (double)this.pathToPosition.getZ(), this.speedModifier);
              } else {
-                this.field_179696_f = null;
+                this.pathToPosition = null;

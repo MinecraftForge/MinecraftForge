@@ -27,6 +27,7 @@ import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
+import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.patcher.tasks.ReobfuscateJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
@@ -219,7 +220,7 @@ project(':forge') {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
-        srgPatches = true
+        srgPatches = false
         accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
@@ -372,6 +373,33 @@ project(':forge') {
                     '--output', rootProject.file('src/generated_test/resources/'),
                     '--existing', sourceSets.main.resources.srcDirs[0],
                     '--existing', sourceSets.test.resources.srcDirs[0]
+            }
+        }
+    }
+
+    afterEvaluate {
+        if (!patcher.srgPatches) {
+            srg2mcpClean {
+                dependsOn = []
+                input = project(':mcp').setupMCP.output
+            }
+            userdevJar {
+                onlyIf = { t -> true }
+            }
+            def patches = project.file('build/genPatchesForUserdev/output/')
+            patches.mkdirs()
+            def genPatchesForUserdev = tasks.register('genPatchesForUserdev', GeneratePatches){
+                base = project(':mcp').setupMCP.output
+                modified = applyRangeMapBase.output
+                originalPrefix = genPatches.originalPrefix
+                modifiedPrefix = genPatches.modifiedPrefix
+                output = patches
+                autoHeader true
+                lineEnding = '\n'
+            }
+            bakePatches {
+                dependsOn = []
+                input = genPatchesForUserdev.get().output
             }
         }
     }

@@ -4,7 +4,7 @@
     LEFT(0, 64, 32, 28, 5),
     RIGHT(96, 64, 32, 28, 5);
  
-+   public static final int MAX_TABS = java.util.Arrays.stream(values()).mapToInt(e -> e.field_192664_j).sum();
-    private final int field_192660_f;
-    private final int field_192661_g;
-    private final int field_192662_h;
++   public static final int MAX_TABS = java.util.Arrays.stream(values()).mapToInt(e -> e.max).sum();
+    private final int textureX;
+    private final int textureY;
+    private final int width;

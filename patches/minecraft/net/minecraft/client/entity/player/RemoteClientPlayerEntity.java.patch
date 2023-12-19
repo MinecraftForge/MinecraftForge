@@ -3,7 +3,7 @@
 @@ -29,6 +_,7 @@
     }
  
-    public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
+    public boolean hurt(DamageSource p_70097_1_, float p_70097_2_) {
 +      net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_);
        return true;
     }

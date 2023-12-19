@@ -3,8 +3,8 @@
 @@ -62,6 +_,7 @@
     }
  
-    public WorldSettings func_234948_a_(Difficulty p_234948_1_) {
-+      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_234948_1_, this.field_234944_d_);
-       return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, p_234948_1_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_);
+    public WorldSettings withDifficulty(Difficulty p_234948_1_) {
++      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_234948_1_, this.difficulty);
+       return new WorldSettings(this.levelName, this.gameType, this.hardcore, p_234948_1_, this.allowCommands, this.gameRules, this.dataPackConfig);
     }
  

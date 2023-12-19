@@ -3,9 +3,9 @@
 @@ -150,7 +_,7 @@
     }
  
-    protected boolean func_217058_b(ItemStack p_217058_1_) {
--      return AbstractFurnaceTileEntity.func_213991_b(p_217058_1_);
-+      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_217058_1_, this.field_217065_f) > 0;
+    protected boolean isFuel(ItemStack p_217058_1_) {
+-      return AbstractFurnaceTileEntity.isFuel(p_217058_1_);
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_217058_1_, this.recipeType) > 0;
     }
  
     @OnlyIn(Dist.CLIENT)

@@ -5,51 +5,51 @@
  @OnlyIn(Dist.CLIENT)
  public class RenderTypeLookup {
 +   @Deprecated
-    private static final Map<Block, RenderType> field_228386_a_ = Util.func_200696_a(Maps.newHashMap(), (p_228395_0_) -> {
-       RenderType rendertype = RenderType.func_241715_r_();
-       p_228395_0_.put(Blocks.field_150473_bD, rendertype);
+    private static final Map<Block, RenderType> TYPE_BY_BLOCK = Util.make(Maps.newHashMap(), (p_228395_0_) -> {
+       RenderType rendertype = RenderType.tripwire();
+       p_228395_0_.put(Blocks.TRIPWIRE, rendertype);
 @@ -263,6 +_,7 @@
-       p_228395_0_.put(Blocks.field_185778_de, rendertype3);
-       p_228395_0_.put(Blocks.field_203203_C, rendertype3);
+       p_228395_0_.put(Blocks.FROSTED_ICE, rendertype3);
+       p_228395_0_.put(Blocks.BUBBLE_COLUMN, rendertype3);
     });
 +   @Deprecated
-    private static final Map<Fluid, RenderType> field_228387_b_ = Util.func_200696_a(Maps.newHashMap(), (p_228392_0_) -> {
-       RenderType rendertype = RenderType.func_228645_f_();
-       p_228392_0_.put(Fluids.field_207212_b, rendertype);
+    private static final Map<Fluid, RenderType> TYPE_BY_FLUID = Util.make(Maps.newHashMap(), (p_228392_0_) -> {
+       RenderType rendertype = RenderType.translucent();
+       p_228392_0_.put(Fluids.FLOWING_WATER, rendertype);
 @@ -270,6 +_,7 @@
     });
-    private static boolean field_228388_c_;
+    private static boolean renderCutout;
  
 +   @Deprecated // FORGE: Use canRenderInLayer
-    public static RenderType func_228390_a_(BlockState p_228390_0_) {
-       Block block = p_228390_0_.func_177230_c();
+    public static RenderType getChunkRenderType(BlockState p_228390_0_) {
+       Block block = p_228390_0_.getBlock();
        if (block instanceof LeavesBlock) {
 @@ -280,6 +_,7 @@
        }
     }
  
 +   @Deprecated // FORGE: Use canRenderInLayer
-    public static RenderType func_239221_b_(BlockState p_239221_0_) {
-       Block block = p_239221_0_.func_177230_c();
+    public static RenderType getMovingBlockRenderType(BlockState p_239221_0_) {
+       Block block = p_239221_0_.getBlock();
        if (block instanceof LeavesBlock) {
 @@ -295,8 +_,7 @@
     }
  
-    public static RenderType func_239220_a_(BlockState p_239220_0_, boolean p_239220_1_) {
--      RenderType rendertype = func_228390_a_(p_239220_0_);
--      if (rendertype == RenderType.func_228645_f_()) {
-+      if (canRenderInLayer(p_239220_0_, RenderType.func_228645_f_())) {
-          if (!Minecraft.func_238218_y_()) {
-             return Atlases.func_228785_j_();
+    public static RenderType getRenderType(BlockState p_239220_0_, boolean p_239220_1_) {
+-      RenderType rendertype = getChunkRenderType(p_239220_0_);
+-      if (rendertype == RenderType.translucent()) {
++      if (canRenderInLayer(p_239220_0_, RenderType.translucent())) {
+          if (!Minecraft.useShaderTransparency()) {
+             return Atlases.translucentCullBlockSheet();
           } else {
 @@ -317,9 +_,58 @@
        }
     }
  
 +   @Deprecated // FORGE: Use canRenderInLayer
-    public static RenderType func_228391_a_(FluidState p_228391_0_) {
-       RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
-       return rendertype != null ? rendertype : RenderType.func_228639_c_();
+    public static RenderType getRenderLayer(FluidState p_228391_0_) {
+       RenderType rendertype = TYPE_BY_FLUID.get(p_228391_0_.getType());
+       return rendertype != null ? rendertype : RenderType.solid();
 +   }
 +
 +   // FORGE START
@@ -57,29 +57,29 @@
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
 +   static {
-+      field_228386_a_.forEach(RenderTypeLookup::setRenderLayer);
-+      field_228387_b_.forEach(RenderTypeLookup::setRenderLayer);
++      TYPE_BY_BLOCK.forEach(RenderTypeLookup::setRenderLayer);
++      TYPE_BY_FLUID.forEach(RenderTypeLookup::setRenderLayer);
 +   }
 +
 +   public static boolean canRenderInLayer(BlockState state, RenderType type) {
-+      Block block = state.func_177230_c();
++      Block block = state.getBlock();
 +      if (block instanceof LeavesBlock) {
-+         return field_228388_c_ ? type == RenderType.func_228641_d_() : type == RenderType.func_228639_c_();
++         return renderCutout ? type == RenderType.cutoutMipped() : type == RenderType.solid();
 +      } else {
 +         java.util.function.Predicate<RenderType> rendertype;
 +         synchronized (RenderTypeLookup.class) {
 +            rendertype = blockRenderChecks.get(block.delegate);
 +         }
-+         return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
++         return rendertype != null ? rendertype.test(type) : type == RenderType.solid();
 +      }
 +   }
 +
 +   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
 +      java.util.function.Predicate<RenderType> rendertype;
 +      synchronized (RenderTypeLookup.class) {
-+         rendertype = fluidRenderChecks.get(fluid.func_206886_c().delegate);
++         rendertype = fluidRenderChecks.get(fluid.getType().delegate);
 +      }
-+      return rendertype != null ? rendertype.test(type) : type == RenderType.func_228639_c_();
++      return rendertype != null ? rendertype.test(type) : type == RenderType.solid();
 +   }
 +
 +   public static void setRenderLayer(Block block, RenderType type) {
@@ -100,4 +100,4 @@
 +      fluidRenderChecks.put(fluid.delegate, predicate);
     }
  
-    public static void func_228393_a_(boolean p_228393_0_) {
+    public static void setFancy(boolean p_228393_0_) {

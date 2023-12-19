@@ -2,29 +2,29 @@
 +++ b/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
 @@ -30,7 +_,7 @@
  
-    public void func_225628_a_(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
-       ItemStack itemstack = p_225628_4_.func_184582_a(EquipmentSlotType.CHEST);
--      if (itemstack.func_77973_b() == Items.field_185160_cR) {
+    public void render(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
+       ItemStack itemstack = p_225628_4_.getItemBySlot(EquipmentSlotType.CHEST);
+-      if (itemstack.getItem() == Items.ELYTRA) {
 +      if (shouldRender(itemstack, p_225628_4_)) {
           ResourceLocation resourcelocation;
           if (p_225628_4_ instanceof AbstractClientPlayerEntity) {
              AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)p_225628_4_;
 @@ -39,10 +_,10 @@
-             } else if (abstractclientplayerentity.func_152122_n() && abstractclientplayerentity.func_110303_q() != null && abstractclientplayerentity.func_175148_a(PlayerModelPart.CAPE)) {
-                resourcelocation = abstractclientplayerentity.func_110303_q();
+             } else if (abstractclientplayerentity.isCapeLoaded() && abstractclientplayerentity.getCloakTextureLocation() != null && abstractclientplayerentity.isModelPartShown(PlayerModelPart.CAPE)) {
+                resourcelocation = abstractclientplayerentity.getCloakTextureLocation();
              } else {
--               resourcelocation = field_188355_a;
+-               resourcelocation = WINGS_LOCATION;
 +               resourcelocation = getElytraTexture(itemstack, p_225628_4_);
              }
           } else {
--            resourcelocation = field_188355_a;
+-            resourcelocation = WINGS_LOCATION;
 +            resourcelocation = getElytraTexture(itemstack, p_225628_4_);
           }
  
-          p_225628_1_.func_227860_a_();
+          p_225628_1_.pushPose();
 @@ -53,5 +_,30 @@
-          this.field_188357_c.func_225598_a_(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.field_229196_a_, 1.0F, 1.0F, 1.0F, 1.0F);
-          p_225628_1_.func_227865_b_();
+          this.elytraModel.renderToBuffer(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+          p_225628_1_.popPose();
        }
 +   }
 +
@@ -38,7 +38,7 @@
 +    * @return If the ElytraLayer should render.
 +    */
 +   public boolean shouldRender(ItemStack stack, T entity) {
-+      return stack.func_77973_b() == Items.field_185160_cR;
++      return stack.getItem() == Items.ELYTRA;
 +   }
 +
 +   /**
@@ -50,6 +50,6 @@
 +    * @return The texture.
 +    */
 +   public ResourceLocation getElytraTexture(ItemStack stack, T entity) {
-+      return field_188355_a;
++      return WINGS_LOCATION;
     }
  }

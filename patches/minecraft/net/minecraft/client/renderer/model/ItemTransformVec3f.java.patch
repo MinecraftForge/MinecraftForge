@@ -10,5 +10,5 @@
  @OnlyIn(Dist.CLIENT)
 +@Deprecated
  public class ItemTransformVec3f {
-    public static final ItemTransformVec3f field_178366_a = new ItemTransformVec3f(new Vector3f(), new Vector3f(), new Vector3f(1.0F, 1.0F, 1.0F));
-    public final Vector3f field_178364_b;
+    public static final ItemTransformVec3f NO_TRANSFORM = new ItemTransformVec3f(new Vector3f(), new Vector3f(), new Vector3f(1.0F, 1.0F, 1.0F));
+    public final Vector3f rotation;

@@ -6,6 +6,6 @@
  
 -public class SCustomPayloadLoginPacket implements IPacket<IClientLoginNetHandler> {
 +public class SCustomPayloadLoginPacket implements IPacket<IClientLoginNetHandler>, net.minecraftforge.fml.network.ICustomPacket<SCustomPayloadLoginPacket> {
-    private int field_209919_a;
-    private ResourceLocation field_209920_b;
-    private PacketBuffer field_209921_c;
+    private int transactionId;
+    private ResourceLocation identifier;
+    private PacketBuffer data;

@@ -6,6 +6,6 @@
  
 -public abstract class SurfaceBuilder<C extends ISurfaceBuilderConfig> {
 +public abstract class SurfaceBuilder<C extends ISurfaceBuilderConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<SurfaceBuilder<?>> {
-    private static final BlockState field_215410_g = Blocks.field_150346_d.func_176223_P();
-    private static final BlockState field_215411_h = Blocks.field_196658_i.func_176223_P();
-    private static final BlockState field_215412_i = Blocks.field_196661_l.func_176223_P();
+    private static final BlockState DIRT = Blocks.DIRT.defaultBlockState();
+    private static final BlockState GRASS_BLOCK = Blocks.GRASS_BLOCK.defaultBlockState();
+    private static final BlockState PODZOL = Blocks.PODZOL.defaultBlockState();

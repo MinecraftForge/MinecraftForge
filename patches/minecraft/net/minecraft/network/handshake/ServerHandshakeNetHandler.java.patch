@@ -3,8 +3,8 @@
 @@ -23,6 +_,7 @@
     }
  
-    public void func_147383_a(CHandshakePacket p_147383_1_) {
-+      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerLogin(p_147383_1_, this.field_147386_b)) return;
-       switch(p_147383_1_.func_149594_c()) {
+    public void handleIntention(CHandshakePacket p_147383_1_) {
++      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerLogin(p_147383_1_, this.connection)) return;
+       switch(p_147383_1_.getIntention()) {
        case LOGIN:
-          this.field_147386_b.func_150723_a(ProtocolType.LOGIN);
+          this.connection.setProtocol(ProtocolType.LOGIN);

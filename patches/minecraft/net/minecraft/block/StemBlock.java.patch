@@ -3,26 +3,26 @@
 @@ -37,22 +_,24 @@
     }
  
-    public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
+    public void randomTick(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
 +      if (!p_225542_2_.isAreaLoaded(p_225542_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_225542_2_.func_226659_b_(p_225542_3_, 0) >= 9) {
-          float f = CropsBlock.func_180672_a(this, p_225542_2_, p_225542_3_);
+       if (p_225542_2_.getRawBrightness(p_225542_3_, 0) >= 9) {
+          float f = CropsBlock.getGrowthSpeed(this, p_225542_2_, p_225542_3_);
 -         if (p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0) {
 +         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, p_225542_3_, p_225542_1_, p_225542_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
-             int i = p_225542_1_.func_177229_b(field_176484_a);
+             int i = p_225542_1_.getValue(AGE);
              if (i < 7) {
--               p_225542_1_ = p_225542_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
--               p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_, 2);
-+               p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1)), 2);
+-               p_225542_1_ = p_225542_1_.setValue(AGE, Integer.valueOf(i + 1));
+-               p_225542_2_.setBlock(p_225542_3_, p_225542_1_, 2);
++               p_225542_2_.setBlock(p_225542_3_, p_225542_1_.setValue(AGE, Integer.valueOf(i + 1)), 2);
              } else {
-                Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_225542_4_);
-                BlockPos blockpos = p_225542_3_.func_177972_a(direction);
-                BlockState blockstate = p_225542_2_.func_180495_p(blockpos.func_177977_b());
--               if (p_225542_2_.func_180495_p(blockpos).func_196958_f() && (blockstate.func_203425_a(Blocks.field_150458_ak) || blockstate.func_203425_a(Blocks.field_150346_d) || blockstate.func_203425_a(Blocks.field_196660_k) || blockstate.func_203425_a(Blocks.field_196661_l) || blockstate.func_203425_a(Blocks.field_196658_i))) {
-+               Block block = blockstate.func_177230_c();
-+               if (p_225542_2_.func_175623_d(blockpos) && (blockstate.canSustainPlant(p_225542_2_, blockpos.func_177977_b(), Direction.UP, this) || block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
-                   p_225542_2_.func_175656_a(blockpos, this.field_149877_a.func_176223_P());
-                   p_225542_2_.func_175656_a(p_225542_3_, this.field_149877_a.func_196523_e().func_176223_P().func_206870_a(HorizontalBlock.field_185512_D, direction));
+                Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_225542_4_);
+                BlockPos blockpos = p_225542_3_.relative(direction);
+                BlockState blockstate = p_225542_2_.getBlockState(blockpos.below());
+-               if (p_225542_2_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(Blocks.DIRT) || blockstate.is(Blocks.COARSE_DIRT) || blockstate.is(Blocks.PODZOL) || blockstate.is(Blocks.GRASS_BLOCK))) {
++               Block block = blockstate.getBlock();
++               if (p_225542_2_.isEmptyBlock(blockpos) && (blockstate.canSustainPlant(p_225542_2_, blockpos.below(), Direction.UP, this) || block == Blocks.FARMLAND || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.PODZOL || block == Blocks.GRASS_BLOCK)) {
+                   p_225542_2_.setBlockAndUpdate(blockpos, this.fruit.defaultBlockState());
+                   p_225542_2_.setBlockAndUpdate(p_225542_3_, this.fruit.getAttachedStem().defaultBlockState().setValue(HorizontalBlock.FACING, direction));
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
@@ -31,8 +31,8 @@
        }
 @@ -96,5 +_,11 @@
  
-    public StemGrownBlock func_208486_d() {
-       return this.field_149877_a;
+    public StemGrownBlock getFruit() {
+       return this.fruit;
 +   }
 +
 +   //FORGE START

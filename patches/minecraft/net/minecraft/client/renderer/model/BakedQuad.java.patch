@@ -6,13 +6,13 @@
  @OnlyIn(Dist.CLIENT)
 -public class BakedQuad {
 +public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer {
-    protected final int[] field_178215_a;
-    protected final int field_178213_b;
-    protected final Direction field_178214_c;
+    protected final int[] vertices;
+    protected final int tintIndex;
+    protected final Direction direction;
 @@ -35,6 +_,15 @@
  
-    public Direction func_178210_d() {
-       return this.field_178214_c;
+    public Direction getDirection() {
+       return this.direction;
 +   }
 +
 +   @Override
@@ -20,8 +20,8 @@
 +      net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
 +   }
 +
-+   public TextureAtlasSprite func_187508_a() {
-+      return field_187509_d;
++   public TextureAtlasSprite getSprite() {
++      return sprite;
     }
  
-    public boolean func_239287_f_() {
+    public boolean isShade() {

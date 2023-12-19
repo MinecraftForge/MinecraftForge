@@ -2,10 +2,10 @@
 +++ b/net/minecraft/entity/projectile/ProjectileHelper.java
 @@ -60,7 +_,7 @@
              Vector3d vector3d1 = optional.get();
-             double d1 = p_221273_1_.func_72436_e(vector3d1);
+             double d1 = p_221273_1_.distanceToSqr(vector3d1);
              if (d1 < d0 || d0 == 0.0D) {
--               if (entity1.func_184208_bv() == p_221273_0_.func_184208_bv()) {
-+               if (entity1.func_184208_bv() == p_221273_0_.func_184208_bv() && !entity1.canRiderInteract()) {
+-               if (entity1.getRootVehicle() == p_221273_0_.getRootVehicle()) {
++               if (entity1.getRootVehicle() == p_221273_0_.getRootVehicle() && !entity1.canRiderInteract()) {
                    if (d0 == 0.0D) {
                       entity = entity1;
                       vector3d = vector3d1;
@@ -14,13 +14,13 @@
     }
  
 +   @Deprecated // Forge: Use the version below that takes in a Predicate<Item> instead of an Item
-    public static Hand func_221274_a(LivingEntity p_221274_0_, Item p_221274_1_) {
-       return p_221274_0_.func_184614_ca().func_77973_b() == p_221274_1_ ? Hand.MAIN_HAND : Hand.OFF_HAND;
+    public static Hand getWeaponHoldingHand(LivingEntity p_221274_0_, Item p_221274_1_) {
+       return p_221274_0_.getMainHandItem().getItem() == p_221274_1_ ? Hand.MAIN_HAND : Hand.OFF_HAND;
 +   }
 +
 +   public static Hand getWeaponHoldingHand(LivingEntity livingEntity, Predicate<Item> itemPredicate)
 +   {
-+      return itemPredicate.test(livingEntity.func_184614_ca().func_77973_b()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
++      return itemPredicate.test(livingEntity.getMainHandItem().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
  
-    public static AbstractArrowEntity func_221272_a(LivingEntity p_221272_0_, ItemStack p_221272_1_, float p_221272_2_) {
+    public static AbstractArrowEntity getMobArrow(LivingEntity p_221272_0_, ItemStack p_221272_1_, float p_221272_2_) {

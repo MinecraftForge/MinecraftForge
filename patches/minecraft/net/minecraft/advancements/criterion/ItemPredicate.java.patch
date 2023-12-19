@@ -6,20 +6,20 @@
  public class ItemPredicate {
 +   private static final Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> custom_predicates = new java.util.HashMap<>();
 +   private static final Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> unmod_predicates = java.util.Collections.unmodifiableMap(custom_predicates);
-    public static final ItemPredicate field_192495_a = new ItemPredicate();
+    public static final ItemPredicate ANY = new ItemPredicate();
     @Nullable
-    private final ITag<Item> field_200018_b;
+    private final ITag<Item> tag;
 @@ -105,6 +_,11 @@
-    public static ItemPredicate func_192492_a(@Nullable JsonElement p_192492_0_) {
+    public static ItemPredicate fromJson(@Nullable JsonElement p_192492_0_) {
        if (p_192492_0_ != null && !p_192492_0_.isJsonNull()) {
-          JsonObject jsonobject = JSONUtils.func_151210_l(p_192492_0_, "item");
+          JsonObject jsonobject = JSONUtils.convertToJsonObject(p_192492_0_, "item");
 +         if (jsonobject.has("type")) {
-+            final ResourceLocation rl = new ResourceLocation(JSONUtils.func_151200_h(jsonobject, "type"));
++            final ResourceLocation rl = new ResourceLocation(JSONUtils.getAsString(jsonobject, "type"));
 +            if (custom_predicates.containsKey(rl)) return custom_predicates.get(rl).apply(jsonobject);
 +            else throw new JsonSyntaxException("There is no ItemPredicate of type "+rl);
 +         }
-          MinMaxBounds.IntBound minmaxbounds$intbound = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("count"));
-          MinMaxBounds.IntBound minmaxbounds$intbound1 = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("durability"));
+          MinMaxBounds.IntBound minmaxbounds$intbound = MinMaxBounds.IntBound.fromJson(jsonobject.get("count"));
+          MinMaxBounds.IntBound minmaxbounds$intbound1 = MinMaxBounds.IntBound.fromJson(jsonobject.get("durability"));
           if (jsonobject.has("data")) {
 @@ -202,6 +_,14 @@
        } else {

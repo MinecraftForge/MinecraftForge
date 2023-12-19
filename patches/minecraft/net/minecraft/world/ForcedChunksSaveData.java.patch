@@ -2,21 +2,21 @@
 +++ b/net/minecraft/world/ForcedChunksSaveData.java
 @@ -14,14 +_,30 @@
  
-    public void func_76184_a(CompoundNBT p_76184_1_) {
-       this.field_212439_a = new LongOpenHashSet(p_76184_1_.func_197645_o("Forced"));
+    public void load(CompoundNBT p_76184_1_) {
+       this.chunks = new LongOpenHashSet(p_76184_1_.getLongArray("Forced"));
 +      this.blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
 +      this.entityForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
 +      net.minecraftforge.common.world.ForgeChunkManager.readForgeForcedChunks(p_76184_1_, this.blockForcedChunks, this.entityForcedChunks);
     }
  
-    public CompoundNBT func_189551_b(CompoundNBT p_189551_1_) {
-       p_189551_1_.func_197644_a("Forced", this.field_212439_a.toLongArray());
+    public CompoundNBT save(CompoundNBT p_189551_1_) {
+       p_189551_1_.putLongArray("Forced", this.chunks.toLongArray());
 +      net.minecraftforge.common.world.ForgeChunkManager.writeForgeForcedChunks(p_189551_1_, this.blockForcedChunks, this.entityForcedChunks);
        return p_189551_1_;
     }
  
-    public LongSet func_212438_a() {
-       return this.field_212439_a;
+    public LongSet getChunks() {
+       return this.chunks;
 +   }
 +
 +   /* ======================================== FORGE START =====================================*/

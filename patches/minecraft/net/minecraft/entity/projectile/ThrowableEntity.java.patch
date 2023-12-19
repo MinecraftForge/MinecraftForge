@@ -4,8 +4,8 @@
           }
        }
  
--      if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !flag) {
-+      if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-          this.func_70227_a(raytraceresult);
+-      if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag) {
++      if (raytraceresult.getType() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+          this.onHit(raytraceresult);
        }
  

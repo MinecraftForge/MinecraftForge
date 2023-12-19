@@ -1,17 +1,17 @@
 --- a/net/minecraft/block/FlowerPotBlock.java
 +++ b/net/minecraft/block/FlowerPotBlock.java
 @@ -24,10 +_,33 @@
-    protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
-    private final Block field_196452_c;
+    protected static final VoxelShape SHAPE = Block.box(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+    private final Block content;
  
 +   @Deprecated // Mods should use the constructor below
     public FlowerPotBlock(Block p_i48395_1_, AbstractBlock.Properties p_i48395_2_) {
 -      super(p_i48395_2_);
--      this.field_196452_c = p_i48395_1_;
--      field_196451_b.put(p_i48395_1_, this);
-+       this(Blocks.field_150457_bL == null ? null : () -> (FlowerPotBlock) Blocks.field_150457_bL.delegate.get(), () -> p_i48395_1_.delegate.get(), p_i48395_2_);
-+       if (Blocks.field_150457_bL != null) {
-+           ((FlowerPotBlock)Blocks.field_150457_bL).addPlant(p_i48395_1_.getRegistryName(), () -> this);
+-      this.content = p_i48395_1_;
+-      POTTED_BY_CONTENT.put(p_i48395_1_, this);
++       this(Blocks.FLOWER_POT == null ? null : () -> (FlowerPotBlock) Blocks.FLOWER_POT.delegate.get(), () -> p_i48395_1_.delegate.get(), p_i48395_2_);
++       if (Blocks.FLOWER_POT != null) {
++           ((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(p_i48395_1_.getRegistryName(), () -> this);
 +       }
 +   }
 +
@@ -25,7 +25,7 @@
 +    */
 +   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, AbstractBlock.Properties properties) {
 +      super(properties);
-+      this.field_196452_c = null; // Unused, redirected by coremod
++      this.content = null; // Unused, redirected by coremod
 +      this.flowerDelegate = p_i48395_1_;
 +      if (emptyPot == null) {
 +         this.fullPots = Maps.newHashMap();
@@ -36,34 +36,34 @@
 +      }
     }
  
-    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
+    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
 @@ -41,7 +_,7 @@
-    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-       ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
-       Item item = itemstack.func_77973_b();
--      Block block = item instanceof BlockItem ? field_196451_b.getOrDefault(((BlockItem)item).func_179223_d(), Blocks.field_150350_a) : Blocks.field_150350_a;
-+      Block block = item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).func_179223_d().getRegistryName(), Blocks.field_150350_a.delegate).get() : Blocks.field_150350_a;
-       boolean flag = block == Blocks.field_150350_a;
-       boolean flag1 = this.field_196452_c == Blocks.field_150350_a;
+    public ActionResultType use(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+       ItemStack itemstack = p_225533_4_.getItemInHand(p_225533_5_);
+       Item item = itemstack.getItem();
+-      Block block = item instanceof BlockItem ? POTTED_BY_CONTENT.getOrDefault(((BlockItem)item).getBlock(), Blocks.AIR) : Blocks.AIR;
++      Block block = item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).getBlock().getRegistryName(), Blocks.AIR.delegate).get() : Blocks.AIR;
+       boolean flag = block == Blocks.AIR;
+       boolean flag1 = this.content == Blocks.AIR;
        if (flag != flag1) {
 @@ -59,7 +_,7 @@
-                p_225533_4_.func_71019_a(itemstack1, false);
+                p_225533_4_.drop(itemstack1, false);
              }
  
--            p_225533_2_.func_180501_a(p_225533_3_, Blocks.field_150457_bL.func_176223_P(), 3);
-+            p_225533_2_.func_180501_a(p_225533_3_, getEmptyPot().func_176223_P(), 3);
+-            p_225533_2_.setBlock(p_225533_3_, Blocks.FLOWER_POT.defaultBlockState(), 3);
++            p_225533_2_.setBlock(p_225533_3_, getEmptyPot().defaultBlockState(), 3);
           }
  
-          return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
+          return ActionResultType.sidedSuccess(p_225533_2_.isClientSide);
 @@ -77,10 +_,31 @@
     }
  
-    public Block func_220276_d() {
--      return this.field_196452_c;
+    public Block getContent() {
+-      return this.content;
 +      return flowerDelegate.get();
     }
  
-    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+    public boolean isPathfindable(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
     }
 +

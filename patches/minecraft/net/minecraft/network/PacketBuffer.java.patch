@@ -6,13 +6,13 @@
  
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
-    private final ByteBuf field_150794_a;
+    private final ByteBuf source;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
 @@ -287,6 +_,15 @@
     }
  
-    public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
+    public PacketBuffer writeItem(ItemStack p_150788_1_) {
 +      return writeItemStack(p_150788_1_, true);
 +   }
 +
@@ -22,26 +22,26 @@
 +    * If you want to send the FULL tag set limitedTag to false
 +    */
 +   public PacketBuffer writeItemStack(ItemStack p_150788_1_, boolean limitedTag) {
-       if (p_150788_1_.func_190926_b()) {
+       if (p_150788_1_.isEmpty()) {
           this.writeBoolean(false);
        } else {
 @@ -295,8 +_,8 @@
-          this.func_150787_b(Item.func_150891_b(item));
-          this.writeByte(p_150788_1_.func_190916_E());
+          this.writeVarInt(Item.getId(item));
+          this.writeByte(p_150788_1_.getCount());
           CompoundNBT compoundnbt = null;
--         if (item.func_77645_m() || item.func_77651_p()) {
--            compoundnbt = p_150788_1_.func_77978_p();
-+         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
-+            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
+-         if (item.canBeDepleted() || item.shouldOverrideMultiplayerNbt()) {
+-            compoundnbt = p_150788_1_.getTag();
++         if (item.isDamageable(p_150788_1_) || item.shouldOverrideMultiplayerNbt()) {
++            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.getTag();
           }
  
-          this.func_150786_a(compoundnbt);
+          this.writeNbt(compoundnbt);
 @@ -312,7 +_,7 @@
-          int i = this.func_150792_a();
+          int i = this.readVarInt();
           int j = this.readByte();
-          ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
--         itemstack.func_77982_d(this.func_150793_b());
-+         itemstack.readShareTag(this.func_150793_b());
+          ItemStack itemstack = new ItemStack(Item.byId(i), j);
+-         itemstack.setTag(this.readNbt());
++         itemstack.readShareTag(this.readNbt());
           return itemstack;
        }
     }

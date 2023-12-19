@@ -12,7 +12,7 @@
 @@ -12,5 +_,9 @@
  
     private Rarity(TextFormatting p_i48837_3_) {
-       this.field_77937_e = p_i48837_3_;
+       this.color = p_i48837_3_;
 +   }
 +
 +   public static Rarity create(String name, TextFormatting p_i48837_3_) {

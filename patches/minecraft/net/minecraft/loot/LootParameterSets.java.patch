@@ -2,17 +2,17 @@
 +++ b/net/minecraft/loot/LootParameterSets.java
 @@ -12,6 +_,7 @@
     });
-    public static final LootParameterSet field_216261_b = func_216253_a("chest", (p_216259_0_) -> {
-       p_216259_0_.func_216269_a(LootParameters.field_237457_g_).func_216271_b(LootParameters.field_216281_a);
-+      p_216259_0_.func_216271_b(LootParameters.field_216284_d); //Forge: Chest Minecarts can have killers.
+    public static final LootParameterSet CHEST = register("chest", (p_216259_0_) -> {
+       p_216259_0_.required(LootParameters.ORIGIN).optional(LootParameters.THIS_ENTITY);
++      p_216259_0_.optional(LootParameters.KILLER_ENTITY); //Forge: Chest Minecarts can have killers.
     });
-    public static final LootParameterSet field_227557_c_ = func_216253_a("command", (p_216250_0_) -> {
-       p_216250_0_.func_216269_a(LootParameters.field_237457_g_).func_216271_b(LootParameters.field_216281_a);
+    public static final LootParameterSet COMMAND = register("command", (p_216250_0_) -> {
+       p_216250_0_.required(LootParameters.ORIGIN).optional(LootParameters.THIS_ENTITY);
 @@ -21,6 +_,7 @@
     });
-    public static final LootParameterSet field_216262_c = func_216253_a("fishing", (p_216258_0_) -> {
-       p_216258_0_.func_216269_a(LootParameters.field_237457_g_).func_216269_a(LootParameters.field_216289_i).func_216271_b(LootParameters.field_216281_a);
-+      p_216258_0_.func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216281_a); //Forge: Allow fisher, and bobber
+    public static final LootParameterSet FISHING = register("fishing", (p_216258_0_) -> {
+       p_216258_0_.required(LootParameters.ORIGIN).required(LootParameters.TOOL).optional(LootParameters.THIS_ENTITY);
++      p_216258_0_.optional(LootParameters.KILLER_ENTITY).optional(LootParameters.THIS_ENTITY); //Forge: Allow fisher, and bobber
     });
-    public static final LootParameterSet field_216263_d = func_216253_a("entity", (p_216251_0_) -> {
-       p_216251_0_.func_216269_a(LootParameters.field_216281_a).func_216269_a(LootParameters.field_237457_g_).func_216269_a(LootParameters.field_216283_c).func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216285_e).func_216271_b(LootParameters.field_216282_b);
+    public static final LootParameterSet ENTITY = register("entity", (p_216251_0_) -> {
+       p_216251_0_.required(LootParameters.THIS_ENTITY).required(LootParameters.ORIGIN).required(LootParameters.DAMAGE_SOURCE).optional(LootParameters.KILLER_ENTITY).optional(LootParameters.DIRECT_KILLER_ENTITY).optional(LootParameters.LAST_DAMAGE_PLAYER);

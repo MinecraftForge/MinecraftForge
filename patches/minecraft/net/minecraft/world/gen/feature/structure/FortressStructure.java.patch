@@ -4,9 +4,9 @@
        return FortressStructure.Start::new;
     }
  
--   public List<MobSpawnInfo.Spawners> func_202279_e() {
+-   public List<MobSpawnInfo.Spawners> getSpecialEnemies() {
 +   @Override
 +   public List<MobSpawnInfo.Spawners> getDefaultSpawnList() {
-       return field_202381_d;
+       return FORTRESS_ENEMIES;
     }
  

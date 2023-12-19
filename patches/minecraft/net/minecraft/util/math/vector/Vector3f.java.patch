@@ -2,7 +2,7 @@
 +++ b/net/minecraft/util/math/vector/Vector3f.java
 @@ -196,4 +_,17 @@
     public String toString() {
-       return "[" + this.field_229184_g_ + ", " + this.field_229185_h_ + ", " + this.field_229186_i_ + "]";
+       return "[" + this.x + ", " + this.y + ", " + this.z + "]";
     }
 +
 +    // Forge start
@@ -10,11 +10,11 @@
 +        set(values);
 +    }
 +    public void set(float[] values) {
-+        this.field_229184_g_ = values[0];
-+        this.field_229185_h_ = values[1];
-+        this.field_229186_i_ = values[2];
++        this.x = values[0];
++        this.y = values[1];
++        this.z = values[2];
 +    }
-+    public void setX(float x) { this.field_229184_g_ = x; }
-+    public void setY(float y) { this.field_229185_h_ = y; }
-+    public void setZ(float z) { this.field_229186_i_ = z; }
++    public void setX(float x) { this.x = x; }
++    public void setY(float y) { this.y = y; }
++    public void setZ(float z) { this.z = z; }
  }

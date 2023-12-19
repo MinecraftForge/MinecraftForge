@@ -2,24 +2,24 @@
 +++ b/net/minecraft/client/renderer/entity/PlayerRenderer.java
 @@ -60,7 +_,9 @@
  
-    public void func_225623_a_(AbstractClientPlayerEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
-       this.func_177137_d(p_225623_1_);
+    public void render(AbstractClientPlayerEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
+       this.setModelProperties(p_225623_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_225623_1_, this, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_))) return;
-       super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
+       super.render(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_225623_1_, this, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_));
     }
  
-    public Vector3d func_225627_b_(AbstractClientPlayerEntity p_225627_1_, float p_225627_2_) {
+    public Vector3d getRenderOffset(AbstractClientPlayerEntity p_225627_1_, float p_225627_2_) {
 @@ -156,10 +_,12 @@
     }
  
-    public void func_229144_a_(MatrixStack p_229144_1_, IRenderTypeBuffer p_229144_2_, int p_229144_3_, AbstractClientPlayerEntity p_229144_4_) {
+    public void renderRightHand(MatrixStack p_229144_1_, IRenderTypeBuffer p_229144_2_, int p_229144_3_, AbstractClientPlayerEntity p_229144_4_) {
 +      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_229144_1_, p_229144_2_, p_229144_3_, p_229144_4_, HandSide.RIGHT))
-       this.func_229145_a_(p_229144_1_, p_229144_2_, p_229144_3_, p_229144_4_, (this.field_77045_g).field_178723_h, (this.field_77045_g).field_178732_b);
+       this.renderHand(p_229144_1_, p_229144_2_, p_229144_3_, p_229144_4_, (this.model).rightArm, (this.model).rightSleeve);
     }
  
-    public void func_229146_b_(MatrixStack p_229146_1_, IRenderTypeBuffer p_229146_2_, int p_229146_3_, AbstractClientPlayerEntity p_229146_4_) {
+    public void renderLeftHand(MatrixStack p_229146_1_, IRenderTypeBuffer p_229146_2_, int p_229146_3_, AbstractClientPlayerEntity p_229146_4_) {
 +      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_229146_1_, p_229146_2_, p_229146_3_, p_229146_4_, HandSide.LEFT))
-       this.func_229145_a_(p_229146_1_, p_229146_2_, p_229146_3_, p_229146_4_, (this.field_77045_g).field_178724_i, (this.field_77045_g).field_178734_a);
+       this.renderHand(p_229146_1_, p_229146_2_, p_229146_3_, p_229146_4_, (this.model).leftArm, (this.model).leftSleeve);
     }
  

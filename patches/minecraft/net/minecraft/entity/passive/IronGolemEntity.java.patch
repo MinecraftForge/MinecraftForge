@@ -1,24 +1,24 @@
 --- a/net/minecraft/entity/passive/IronGolemEntity.java
 +++ b/net/minecraft/entity/passive/IronGolemEntity.java
 @@ -120,9 +_,10 @@
-          int i = MathHelper.func_76128_c(this.func_226277_ct_());
-          int j = MathHelper.func_76128_c(this.func_226278_cu_() - (double)0.2F);
-          int k = MathHelper.func_76128_c(this.func_226281_cx_());
--         BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
--         if (!blockstate.func_196958_f()) {
--            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.func_226277_ct_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
+          int i = MathHelper.floor(this.getX());
+          int j = MathHelper.floor(this.getY() - (double)0.2F);
+          int k = MathHelper.floor(this.getZ());
+-         BlockState blockstate = this.level.getBlockState(new BlockPos(i, j, k));
+-         if (!blockstate.isAir()) {
+-            this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), this.getX() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), this.getY() + 0.1D, this.getZ() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), 4.0D * ((double)this.random.nextFloat() - 0.5D), 0.5D, ((double)this.random.nextFloat() - 0.5D) * 4.0D);
 +         BlockPos pos = new BlockPos(i, j, k);
-+         BlockState blockstate = this.field_70170_p.func_180495_p(pos);
-+         if (!blockstate.isAir(this.field_70170_p, pos)) {
-+            this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(pos), this.func_226277_ct_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.func_213311_cf(), 4.0D * ((double)this.field_70146_Z.nextFloat() - 0.5D), 0.5D, ((double)this.field_70146_Z.nextFloat() - 0.5D) * 4.0D);
++         BlockState blockstate = this.level.getBlockState(pos);
++         if (!blockstate.isAir(this.level, pos)) {
++            this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(pos), this.getX() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), this.getY() + 0.1D, this.getZ() + ((double)this.random.nextFloat() - 0.5D) * (double)this.getBbWidth(), 4.0D * ((double)this.random.nextFloat() - 0.5D), 0.5D, ((double)this.random.nextFloat() - 0.5D) * 4.0D);
           }
        }
  
 @@ -149,6 +_,7 @@
-    public void func_70037_a(CompoundNBT p_70037_1_) {
-       super.func_70037_a(p_70037_1_);
-       this.func_70849_f(p_70037_1_.func_74767_n("PlayerCreated"));
-+      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
-       this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    public void readAdditionalSaveData(CompoundNBT p_70037_1_) {
+       super.readAdditionalSaveData(p_70037_1_);
+       this.setPlayerCreated(p_70037_1_.getBoolean("PlayerCreated"));
++      if(!level.isClientSide) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
+       this.readPersistentAngerSaveData((ServerWorld)this.level, p_70037_1_);
     }
  

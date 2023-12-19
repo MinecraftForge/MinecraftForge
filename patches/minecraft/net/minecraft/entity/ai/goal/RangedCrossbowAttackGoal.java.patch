@@ -3,27 +3,27 @@
 @@ -33,7 +_,7 @@
     }
  
-    private boolean func_220745_g() {
--      return this.field_220748_a.func_233631_a_(Items.field_222114_py);
-+      return this.field_220748_a.func_233634_a_(item -> item instanceof CrossbowItem);
+    private boolean isHoldingCrossbow() {
+-      return this.mob.isHolding(Items.CROSSBOW);
++      return this.mob.isHolding(item -> item instanceof CrossbowItem);
     }
  
-    public boolean func_75253_b() {
+    public boolean canContinueToUse() {
 @@ -88,7 +_,7 @@
-          this.field_220748_a.func_70671_ap().func_75651_a(livingentity, 30.0F, 30.0F);
-          if (this.field_220749_b == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
+          this.mob.getLookControl().setLookAt(livingentity, 30.0F, 30.0F);
+          if (this.crossbowState == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
              if (!flag2) {
--               this.field_220748_a.func_184598_c(ProjectileHelper.func_221274_a(this.field_220748_a, Items.field_222114_py));
-+               this.field_220748_a.func_184598_c(ProjectileHelper.getWeaponHoldingHand(this.field_220748_a, item -> item instanceof CrossbowItem));
-                this.field_220749_b = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
-                this.field_220748_a.func_213671_a(true);
+-               this.mob.startUsingItem(ProjectileHelper.getWeaponHoldingHand(this.mob, Items.CROSSBOW));
++               this.mob.startUsingItem(ProjectileHelper.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+                this.crossbowState = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
+                this.mob.setChargingCrossbow(true);
              }
 @@ -112,7 +_,7 @@
              }
-          } else if (this.field_220749_b == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
-             this.field_220748_a.func_82196_d(livingentity, 1.0F);
--            ItemStack itemstack1 = this.field_220748_a.func_184586_b(ProjectileHelper.func_221274_a(this.field_220748_a, Items.field_222114_py));
-+            ItemStack itemstack1 = this.field_220748_a.func_184586_b(ProjectileHelper.getWeaponHoldingHand(this.field_220748_a, item -> item instanceof CrossbowItem));
-             CrossbowItem.func_220011_a(itemstack1, false);
-             this.field_220749_b = RangedCrossbowAttackGoal.CrossbowState.UNCHARGED;
+          } else if (this.crossbowState == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
+             this.mob.performRangedAttack(livingentity, 1.0F);
+-            ItemStack itemstack1 = this.mob.getItemInHand(ProjectileHelper.getWeaponHoldingHand(this.mob, Items.CROSSBOW));
++            ItemStack itemstack1 = this.mob.getItemInHand(ProjectileHelper.getWeaponHoldingHand(this.mob, item -> item instanceof CrossbowItem));
+             CrossbowItem.setCharged(itemstack1, false);
+             this.crossbowState = RangedCrossbowAttackGoal.CrossbowState.UNCHARGED;
           }

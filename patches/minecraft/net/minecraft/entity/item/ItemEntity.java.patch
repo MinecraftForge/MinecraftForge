@@ -1,9 +1,9 @@
 --- a/net/minecraft/entity/item/ItemEntity.java
 +++ b/net/minecraft/entity/item/ItemEntity.java
 @@ -38,6 +_,10 @@
-    private UUID field_145801_f;
-    private UUID field_145802_g;
-    public final float field_70290_d;
+    private UUID thrower;
+    private UUID owner;
+    public final float bobOffs;
 +   /**
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
@@ -14,114 +14,114 @@
 @@ -54,6 +_,7 @@
     public ItemEntity(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_) {
        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
-       this.func_92058_a(p_i1710_8_);
-+      this.lifespan = (p_i1710_8_.func_77973_b() == null ? 6000 : p_i1710_8_.getEntityLifespan(p_i1710_1_));
+       this.setItem(p_i1710_8_);
++      this.lifespan = (p_i1710_8_.getItem() == null ? 6000 : p_i1710_8_.getEntityLifespan(p_i1710_1_));
     }
  
     @OnlyIn(Dist.CLIENT)
 @@ -74,6 +_,7 @@
     }
  
-    public void func_70071_h_() {
-+      if (func_92059_d().onEntityItemUpdate(this)) return;
-       if (this.func_92059_d().func_190926_b()) {
-          this.func_70106_y();
+    public void tick() {
++      if (getItem().onEntityItemUpdate(this)) return;
+       if (this.getItem().isEmpty()) {
+          this.remove();
        } else {
 @@ -108,7 +_,7 @@
-             this.func_213315_a(MoverType.SELF, this.func_213322_ci());
+             this.move(MoverType.SELF, this.getDeltaMovement());
              float f1 = 0.98F;
-             if (this.field_70122_E) {
--               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).func_177230_c().func_208618_m() * 0.98F;
-+               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).getSlipperiness(field_70170_p, new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_()), this) * 0.98F;
+             if (this.onGround) {
+-               f1 = this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 1.0D, this.getZ())).getBlock().getFriction() * 0.98F;
++               f1 = this.level.getBlockState(new BlockPos(this.getX(), this.getY() - 1.0D, this.getZ())).getSlipperiness(level, new BlockPos(this.getX(), this.getY() - 1.0D, this.getZ()), this) * 0.98F;
              }
  
-             this.func_213317_d(this.func_213322_ci().func_216372_d((double)f1, 0.98D, (double)f1));
+             this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
 @@ -144,7 +_,14 @@
              }
           }
  
--         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= 6000) {
-+         ItemStack item = this.func_92059_d();
-+         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= lifespan) {
+-         if (!this.level.isClientSide && this.age >= 6000) {
++         ItemStack item = this.getItem();
++         if (!this.level.isClientSide && this.age >= lifespan) {
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
-+             if (hook < 0) this.func_70106_y();
++             if (hook < 0) this.remove();
 +             else          this.lifespan += hook;
 +         }
 +
-+         if (item.func_190926_b()) {
-             this.func_70106_y();
++         if (item.isEmpty()) {
+             this.remove();
           }
  
 @@ -202,6 +_,8 @@
           return false;
-       } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
+       } else if (p_226532_1_.hasTag() ^ p_226532_0_.hasTag()) {
           return false;
 +      } else if (!p_226532_0_.areCapsCompatible(p_226532_1_)) {
 +         return false;
        } else {
-          return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
+          return !p_226532_1_.hasTag() || p_226532_1_.getTag().equals(p_226532_0_.getTag());
        }
 @@ -235,6 +_,7 @@
     }
  
-    public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
-       if (this.func_180431_b(p_70097_1_)) {
+    public boolean hurt(DamageSource p_70097_1_, float p_70097_2_) {
++      if (this.level.isClientSide || this.removed) return false; //Forge: Fixes MC-53850
+       if (this.isInvulnerableTo(p_70097_1_)) {
           return false;
-       } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
+       } else if (!this.getItem().isEmpty() && this.getItem().getItem() == Items.NETHER_STAR && p_70097_1_.isExplosion()) {
 @@ -256,6 +_,7 @@
-       p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
-       p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
-       p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
-+      p_213281_1_.func_74768_a("Lifespan", lifespan);
-       if (this.func_200214_m() != null) {
-          p_213281_1_.func_186854_a("Thrower", this.func_200214_m());
+       p_213281_1_.putShort("Health", (short)this.health);
+       p_213281_1_.putShort("Age", (short)this.age);
+       p_213281_1_.putShort("PickupDelay", (short)this.pickupDelay);
++      p_213281_1_.putInt("Lifespan", lifespan);
+       if (this.getThrower() != null) {
+          p_213281_1_.putUUID("Thrower", this.getThrower());
        }
 @@ -276,6 +_,7 @@
-       if (p_70037_1_.func_74764_b("PickupDelay")) {
-          this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
+       if (p_70037_1_.contains("PickupDelay")) {
+          this.pickupDelay = p_70037_1_.getShort("PickupDelay");
        }
-+      if (p_70037_1_.func_74764_b("Lifespan")) lifespan = p_70037_1_.func_74762_e("Lifespan");
++      if (p_70037_1_.contains("Lifespan")) lifespan = p_70037_1_.getInt("Lifespan");
  
-       if (p_70037_1_.func_186855_b("Owner")) {
-          this.field_145802_g = p_70037_1_.func_186857_a("Owner");
+       if (p_70037_1_.hasUUID("Owner")) {
+          this.owner = p_70037_1_.getUUID("Owner");
 @@ -295,10 +_,18 @@
  
-    public void func_70100_b_(PlayerEntity p_70100_1_) {
-       if (!this.field_70170_p.field_72995_K) {
-+         if (this.field_145804_b > 0) return;
-          ItemStack itemstack = this.func_92059_d();
-          Item item = itemstack.func_77973_b();
-          int i = itemstack.func_190916_E();
--         if (this.field_145804_b == 0 && (this.field_145802_g == null || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && p_70100_1_.field_71071_by.func_70441_a(itemstack)) {
+    public void playerTouch(PlayerEntity p_70100_1_) {
+       if (!this.level.isClientSide) {
++         if (this.pickupDelay > 0) return;
+          ItemStack itemstack = this.getItem();
+          Item item = itemstack.getItem();
+          int i = itemstack.getCount();
+-         if (this.pickupDelay == 0 && (this.owner == null || this.owner.equals(p_70100_1_.getUUID())) && p_70100_1_.inventory.add(itemstack)) {
 +
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +         if (hook < 0) return;
 +
-+         ItemStack copy = itemstack.func_77946_l();
-+         if (this.field_145804_b == 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack))) {
-+            copy.func_190920_e(copy.func_190916_E() - func_92059_d().func_190916_E());
++         ItemStack copy = itemstack.copy();
++         if (this.pickupDelay == 0 && (this.owner == null || lifespan - this.age <= 200 || this.owner.equals(p_70100_1_.getUUID())) && (hook == 1 || i <= 0 || p_70100_1_.inventory.add(itemstack))) {
++            copy.setCount(copy.getCount() - getItem().getCount());
 +            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerItemPickupEvent(p_70100_1_, this, copy);
-             p_70100_1_.func_71001_a(this, i);
-             if (itemstack.func_190926_b()) {
-                this.func_70106_y();
+             p_70100_1_.take(this, i);
+             if (itemstack.isEmpty()) {
+                this.remove();
 @@ -322,8 +_,8 @@
     }
  
     @Nullable
--   public Entity func_241206_a_(ServerWorld p_241206_1_) {
--      Entity entity = super.func_241206_a_(p_241206_1_);
+-   public Entity changeDimension(ServerWorld p_241206_1_) {
+-      Entity entity = super.changeDimension(p_241206_1_);
 +   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      Entity entity = super.changeDimension(p_241206_1_, teleporter);
-       if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
-          ((ItemEntity)entity).func_85054_d();
+       if (!this.level.isClientSide && entity instanceof ItemEntity) {
+          ((ItemEntity)entity).mergeWithNeighbours();
        }
 @@ -396,7 +_,7 @@
  
-    public void func_174870_v() {
-       this.func_174871_r();
--      this.field_70292_b = 5999;
-+      this.field_70292_b = func_92059_d().getEntityLifespan(field_70170_p) - 1;
+    public void makeFakeItem() {
+       this.setNeverPickUp();
+-      this.age = 5999;
++      this.age = getItem().getEntityLifespan(level) - 1;
     }
  
     @OnlyIn(Dist.CLIENT)

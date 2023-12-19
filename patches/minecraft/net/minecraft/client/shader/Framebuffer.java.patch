@@ -1,34 +1,34 @@
 --- a/net/minecraft/client/shader/Framebuffer.java
 +++ b/net/minecraft/client/shader/Framebuffer.java
 @@ -118,7 +_,10 @@
-          GlStateManager.func_227677_b_(3553, 10242, 10496);
-          GlStateManager.func_227677_b_(3553, 10243, 10496);
-          GlStateManager.func_227677_b_(3553, 34892, 0);
+          GlStateManager._texParameter(3553, 10242, 10496);
+          GlStateManager._texParameter(3553, 10243, 10496);
+          GlStateManager._texParameter(3553, 34892, 0);
 +         if (!stencilEnabled)
-          GlStateManager.func_227647_a_(3553, 0, 6402, this.field_147622_a, this.field_147620_b, 0, 6402, 5126, (IntBuffer)null);
+          GlStateManager._texImage2D(3553, 0, 6402, this.width, this.height, 0, 6402, 5126, (IntBuffer)null);
 +         else
-+         GlStateManager.func_227647_a_(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.field_147622_a, this.field_147620_b, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
++         GlStateManager._texImage2D(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.width, this.height, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
        }
  
-       this.func_147607_a(9728);
+       this.setFilterMode(9728);
 @@ -127,7 +_,14 @@
-       GlStateManager.func_227727_h_(FramebufferConstants.field_227592_a_, this.field_147616_f);
-       GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227594_c_, 3553, this.field_147617_g, 0);
-       if (this.field_147619_e) {
+       GlStateManager._glBindFramebuffer(FramebufferConstants.GL_FRAMEBUFFER, this.frameBufferId);
+       GlStateManager._glFramebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_COLOR_ATTACHMENT0, 3553, this.colorTextureId, 0);
+       if (this.useDepth) {
 +         if(!stencilEnabled)
-          GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, FramebufferConstants.field_227595_d_, 3553, this.field_147624_h, 0);
+          GlStateManager._glFramebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, FramebufferConstants.GL_DEPTH_ATTACHMENT, 3553, this.depthBufferId, 0);
 +         else if(net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
-+            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.field_147624_h, 0);
++            GlStateManager._glFramebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
 +         } else {
-+            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.field_147624_h, 0);
-+            GlStateManager.func_227645_a_(FramebufferConstants.field_227592_a_, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.field_147624_h, 0);
++            GlStateManager._glFramebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.depthBufferId, 0);
++            GlStateManager._glFramebufferTexture2D(FramebufferConstants.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
 +         }
        }
  
-       this.func_147611_b();
+       this.checkStatus();
 @@ -280,6 +_,32 @@
-       GlStateManager.func_227658_a_(i, p_216493_1_);
-       this.func_147609_e();
+       GlStateManager._clear(i, p_216493_1_);
+       this.unbindWrite();
     }
 +
 +
@@ -44,7 +44,7 @@
 +   {
 +      if(stencilEnabled) return;
 +      stencilEnabled = true;
-+      this.func_216491_a(field_147621_c, field_147618_d, net.minecraft.client.Minecraft.field_142025_a);
++      this.resize(viewWidth, viewHeight, net.minecraft.client.Minecraft.ON_OSX);
 +   }
 +
 +   /**
@@ -57,5 +57,5 @@
 +   }
 +   /*================================ FORGE END   ================================================*/
  
-    public int func_242996_f() {
-       return this.field_147617_g;
+    public int getColorTextureId() {
+       return this.colorTextureId;

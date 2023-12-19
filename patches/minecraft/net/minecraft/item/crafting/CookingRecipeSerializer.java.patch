@@ -6,25 +6,25 @@
  
 -public class CookingRecipeSerializer<T extends AbstractCookingRecipe> implements IRecipeSerializer<T> {
 +public class CookingRecipeSerializer<T extends AbstractCookingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T> {
-    private final int field_222178_t;
-    private final CookingRecipeSerializer.IFactory<T> field_222179_u;
+    private final int defaultCookingTime;
+    private final CookingRecipeSerializer.IFactory<T> factory;
  
 @@ -21,11 +_,17 @@
-       String s = JSONUtils.func_151219_a(p_199425_2_, "group", "");
-       JsonElement jsonelement = (JsonElement)(JSONUtils.func_151202_d(p_199425_2_, "ingredient") ? JSONUtils.func_151214_t(p_199425_2_, "ingredient") : JSONUtils.func_152754_s(p_199425_2_, "ingredient"));
-       Ingredient ingredient = Ingredient.func_199802_a(jsonelement);
+       String s = JSONUtils.getAsString(p_199425_2_, "group", "");
+       JsonElement jsonelement = (JsonElement)(JSONUtils.isArrayNode(p_199425_2_, "ingredient") ? JSONUtils.getAsJsonArray(p_199425_2_, "ingredient") : JSONUtils.getAsJsonObject(p_199425_2_, "ingredient"));
+       Ingredient ingredient = Ingredient.fromJson(jsonelement);
 +      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
 +      if (!p_199425_2_.has("result")) throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
 +      ItemStack itemstack;
-+      if (p_199425_2_.get("result").isJsonObject()) itemstack = ShapedRecipe.func_199798_a(JSONUtils.func_152754_s(p_199425_2_, "result"));
++      if (p_199425_2_.get("result").isJsonObject()) itemstack = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(p_199425_2_, "result"));
 +      else {
-       String s1 = JSONUtils.func_151200_h(p_199425_2_, "result");
+       String s1 = JSONUtils.getAsString(p_199425_2_, "result");
        ResourceLocation resourcelocation = new ResourceLocation(s1);
--      ItemStack itemstack = new ItemStack(Registry.field_212630_s.func_241873_b(resourcelocation).orElseThrow(() -> {
-+      itemstack = new ItemStack(Registry.field_212630_s.func_241873_b(resourcelocation).orElseThrow(() -> {
+-      ItemStack itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
++      itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
           return new IllegalStateException("Item: " + s1 + " does not exist");
        }));
 +      }
-       float f = JSONUtils.func_151221_a(p_199425_2_, "experience", 0.0F);
-       int i = JSONUtils.func_151208_a(p_199425_2_, "cookingtime", this.field_222178_t);
-       return this.field_222179_u.create(p_199425_1_, s, ingredient, itemstack, f, i);
+       float f = JSONUtils.getAsFloat(p_199425_2_, "experience", 0.0F);
+       int i = JSONUtils.getAsInt(p_199425_2_, "cookingtime", this.defaultCookingTime);
+       return this.factory.create(p_199425_1_, s, ingredient, itemstack, f, i);

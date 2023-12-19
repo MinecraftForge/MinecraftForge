@@ -6,7 +6,7 @@
  
 +         if (j == 0) {
 +            // if we failed to match above, lets try the messageformat handler instead.
-+            j = net.minecraftforge.fml.TextComponentMessageFormatHandler.handle(this, this.field_150278_b, this.field_150277_e, p_240758_1_);
++            j = net.minecraftforge.fml.TextComponentMessageFormatHandler.handle(this, this.decomposedParts, this.args, p_240758_1_);
 +         }
           if (j < p_240758_1_.length()) {
              String s3 = p_240758_1_.substring(j);

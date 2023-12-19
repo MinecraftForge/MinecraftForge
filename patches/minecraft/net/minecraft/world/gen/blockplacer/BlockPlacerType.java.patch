@@ -6,6 +6,6 @@
  
 -public class BlockPlacerType<P extends BlockPlacer> {
 +public class BlockPlacerType<P extends BlockPlacer> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockPlacerType<?>> {
-    public static final BlockPlacerType<SimpleBlockPlacer> field_227259_a_ = func_236438_a_("simple_block_placer", SimpleBlockPlacer.field_236446_b_);
-    public static final BlockPlacerType<DoublePlantBlockPlacer> field_227260_b_ = func_236438_a_("double_plant_placer", DoublePlantBlockPlacer.field_236443_b_);
-    public static final BlockPlacerType<ColumnBlockPlacer> field_227261_c_ = func_236438_a_("column_placer", ColumnBlockPlacer.field_236439_b_);
+    public static final BlockPlacerType<SimpleBlockPlacer> SIMPLE_BLOCK_PLACER = register("simple_block_placer", SimpleBlockPlacer.CODEC);
+    public static final BlockPlacerType<DoublePlantBlockPlacer> DOUBLE_PLANT_PLACER = register("double_plant_placer", DoublePlantBlockPlacer.CODEC);
+    public static final BlockPlacerType<ColumnBlockPlacer> COLUMN_PLACER = register("column_placer", ColumnBlockPlacer.CODEC);

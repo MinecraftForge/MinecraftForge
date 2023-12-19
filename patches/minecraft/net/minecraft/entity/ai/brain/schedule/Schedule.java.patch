@@ -6,6 +6,6 @@
  
 -public class Schedule {
 +public class Schedule extends net.minecraftforge.registries.ForgeRegistryEntry<Schedule> {
-    public static final Schedule field_221383_a = func_221380_a("empty").func_221402_a(0, Activity.field_221366_b).func_221404_a();
-    public static final Schedule field_221384_b = func_221380_a("simple").func_221402_a(5000, Activity.field_221367_c).func_221402_a(11000, Activity.field_221369_e).func_221404_a();
-    public static final Schedule field_221385_c = func_221380_a("villager_baby").func_221402_a(10, Activity.field_221366_b).func_221402_a(3000, Activity.field_221368_d).func_221402_a(6000, Activity.field_221366_b).func_221402_a(10000, Activity.field_221368_d).func_221402_a(12000, Activity.field_221369_e).func_221404_a();
+    public static final Schedule EMPTY = register("empty").changeActivityAt(0, Activity.IDLE).build();
+    public static final Schedule SIMPLE = register("simple").changeActivityAt(5000, Activity.WORK).changeActivityAt(11000, Activity.REST).build();
+    public static final Schedule VILLAGER_BABY = register("villager_baby").changeActivityAt(10, Activity.IDLE).changeActivityAt(3000, Activity.PLAY).changeActivityAt(6000, Activity.IDLE).changeActivityAt(10000, Activity.PLAY).changeActivityAt(12000, Activity.REST).build();

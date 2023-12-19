@@ -8,6 +8,6 @@
 +   /*================================ FORGE START ================================================*/
 +
 +   default java.util.concurrent.CompletableFuture<net.minecraft.client.audio.IAudioStream> getStream(net.minecraft.client.audio.AudioStreamManager soundBuffers, Sound sound, boolean looping) {
-+      return soundBuffers.func_217917_b(sound.func_188721_b(), looping);
++      return soundBuffers.getStream(sound.getPath(), looping);
 +   }
  }

@@ -7,5 +7,5 @@
 -public interface IResourcePack extends AutoCloseable {
 +public interface IResourcePack extends AutoCloseable, net.minecraftforge.common.extensions.IForgeResourcePack {
     @OnlyIn(Dist.CLIENT)
-    InputStream func_195763_b(String p_195763_1_) throws IOException;
+    InputStream getRootResource(String p_195763_1_) throws IOException;
  

@@ -2,33 +2,33 @@
 +++ b/net/minecraft/client/renderer/OverlayRenderer.java
 @@ -27,18 +_,21 @@
        RenderSystem.disableAlphaTest();
-       PlayerEntity playerentity = p_228734_0_.field_71439_g;
-       if (!playerentity.field_70145_X) {
--         BlockState blockstate = func_230018_a_(playerentity);
+       PlayerEntity playerentity = p_228734_0_.player;
+       if (!playerentity.noPhysics) {
+-         BlockState blockstate = getViewBlockingState(playerentity);
 -         if (blockstate != null) {
--            func_228735_a_(p_228734_0_, p_228734_0_.func_175602_ab().func_175023_a().func_178122_a(blockstate), p_228734_1_);
+-            renderTex(p_228734_0_, p_228734_0_.getBlockRenderer().getBlockModelShaper().getParticleIcon(blockstate), p_228734_1_);
 +         org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> overlay = getOverlayBlock(playerentity);
 +         if (overlay != null) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(playerentity, p_228734_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
-+            func_228735_a_(p_228734_0_, p_228734_0_.func_175602_ab().func_175023_a().getTexture(overlay.getLeft(), p_228734_0_.field_71441_e, overlay.getRight()), p_228734_1_);
++            renderTex(p_228734_0_, p_228734_0_.getBlockRenderer().getBlockModelShaper().getTexture(overlay.getLeft(), p_228734_0_.level, overlay.getRight()), p_228734_1_);
           }
        }
  
-       if (!p_228734_0_.field_71439_g.func_175149_v()) {
-          if (p_228734_0_.field_71439_g.func_208600_a(FluidTags.field_206959_a)) {
+       if (!p_228734_0_.player.isSpectator()) {
+          if (p_228734_0_.player.isEyeInFluid(FluidTags.WATER)) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(playerentity, p_228734_1_))
-             func_228736_b_(p_228734_0_, p_228734_1_);
+             renderWater(p_228734_0_, p_228734_1_);
           }
  
-          if (p_228734_0_.field_71439_g.func_70027_ad()) {
+          if (p_228734_0_.player.isOnFire()) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(playerentity, p_228734_1_))
-             func_228737_c_(p_228734_0_, p_228734_1_);
+             renderFire(p_228734_0_, p_228734_1_);
           }
        }
 @@ -48,6 +_,11 @@
  
     @Nullable
-    private static BlockState func_230018_a_(PlayerEntity p_230018_0_) {
+    private static BlockState getViewBlockingState(PlayerEntity p_230018_0_) {
 +      return getOverlayBlock(p_230018_0_).getLeft();
 +   }
 +
@@ -38,11 +38,11 @@
  
        for(int i = 0; i < 8; ++i) {
 @@ -57,7 +_,7 @@
-          blockpos$mutable.func_189532_c(d0, d1, d2);
-          BlockState blockstate = p_230018_0_.field_70170_p.func_180495_p(blockpos$mutable);
-          if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE && blockstate.func_215696_m(p_230018_0_.field_70170_p, blockpos$mutable)) {
+          blockpos$mutable.set(d0, d1, d2);
+          BlockState blockstate = p_230018_0_.level.getBlockState(blockpos$mutable);
+          if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE && blockstate.isViewBlocking(p_230018_0_.level, blockpos$mutable)) {
 -            return blockstate;
-+            return org.apache.commons.lang3.tuple.Pair.of(blockstate, blockpos$mutable.func_185334_h());
++            return org.apache.commons.lang3.tuple.Pair.of(blockstate, blockpos$mutable.immutable());
           }
        }
  

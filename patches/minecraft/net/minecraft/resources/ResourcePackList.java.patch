@@ -3,20 +3,20 @@
 @@ -22,7 +_,7 @@
  
     public ResourcePackList(ResourcePackInfo.IFactory p_i231423_1_, IPackFinder... p_i231423_2_) {
-       this.field_198990_d = p_i231423_1_;
--      this.field_198987_a = ImmutableSet.copyOf(p_i231423_2_);
-+      this.field_198987_a = new java.util.HashSet<>(java.util.Arrays.asList(p_i231423_2_));
+       this.constructor = p_i231423_1_;
+-      this.sources = ImmutableSet.copyOf(p_i231423_2_);
++      this.sources = new java.util.HashSet<>(java.util.Arrays.asList(p_i231423_2_));
     }
  
     public ResourcePackList(IPackFinder... p_i241886_1_) {
 @@ -87,6 +_,10 @@
     @Nullable
-    public ResourcePackInfo func_198981_a(String p_198981_1_) {
-       return this.field_198988_b.get(p_198981_1_);
+    public ResourcePackInfo getPack(String p_198981_1_) {
+       return this.available.get(p_198981_1_);
 +   }
 +
 +   public synchronized void addPackFinder(IPackFinder packFinder) {
-+      this.field_198987_a.add(packFinder);
++      this.sources.add(packFinder);
     }
  
     public void close() {

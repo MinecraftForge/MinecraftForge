@@ -3,15 +3,15 @@
 @@ -77,7 +_,7 @@
     @Nullable
     @OnlyIn(Dist.CLIENT)
-    public Pair<ResourceLocation, ResourceLocation> func_225517_c_() {
+    public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 -      return null;
 +      return backgroundPair;
     }
  
-    public ItemStack func_75209_a(int p_75209_1_) {
+    public ItemStack remove(int p_75209_1_) {
 @@ -91,5 +_,37 @@
     @OnlyIn(Dist.CLIENT)
-    public boolean func_111238_b() {
+    public boolean isActive() {
        return true;
 +   }
 +
@@ -22,7 +22,7 @@
 +    * @return Index in associated inventory for this slot.
 +    */
 +   public int getSlotIndex() {
-+      return field_75225_a;
++      return slot;
 +   }
 +
 +   /**
@@ -31,7 +31,7 @@
 +    * @return true if the other slot is in the same inventory
 +    */
 +   public boolean isSameInventory(Slot other) {
-+      return this.field_75224_c == other.field_75224_c;
++      return this.container == other.container;
 +   }
 +
 +   private Pair<ResourceLocation, ResourceLocation> backgroundPair;

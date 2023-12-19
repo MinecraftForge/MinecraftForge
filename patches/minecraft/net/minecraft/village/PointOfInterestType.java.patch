@@ -6,36 +6,36 @@
  
 -public class PointOfInterestType {
 +public class PointOfInterestType extends net.minecraftforge.registries.ForgeRegistryEntry<PointOfInterestType> {
-    private static final Supplier<Set<PointOfInterestType>> field_234168_y_ = Suppliers.memoize(() -> {
-       return Registry.field_218370_L.func_201756_e().map(VillagerProfession::func_221149_b).collect(Collectors.toSet());
+    private static final Supplier<Set<PointOfInterestType>> ALL_JOB_POI_TYPES = Suppliers.memoize(() -> {
+       return Registry.VILLAGER_PROFESSION.stream().map(VillagerProfession::getJobPoiType).collect(Collectors.toSet());
     });
 @@ -36,7 +_,7 @@
     }).filter((p_234173_0_) -> {
-       return p_234173_0_.func_177229_b(BedBlock.field_176472_a) == BedPart.HEAD;
+       return p_234173_0_.getValue(BedBlock.PART) == BedPart.HEAD;
     }).collect(ImmutableSet.toImmutableSet());
--   private static final Map<BlockState, PointOfInterestType> field_221073_u = Maps.newHashMap();
-+   private static final Map<BlockState, PointOfInterestType> field_221073_u = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
-    public static final PointOfInterestType field_221054_b = func_226360_a_("unemployed", ImmutableSet.of(), 1, field_221071_s, 1);
-    public static final PointOfInterestType field_221055_c = func_226359_a_("armorer", func_221042_a(Blocks.field_222424_lM), 1, 1);
-    public static final PointOfInterestType field_221056_d = func_226359_a_("butcher", func_221042_a(Blocks.field_222423_lL), 1, 1);
+-   private static final Map<BlockState, PointOfInterestType> TYPE_BY_STATE = Maps.newHashMap();
++   private static final Map<BlockState, PointOfInterestType> TYPE_BY_STATE = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
+    public static final PointOfInterestType UNEMPLOYED = register("unemployed", ImmutableSet.of(), 1, ALL_JOBS, 1);
+    public static final PointOfInterestType ARMORER = register("armorer", getBlockStates(Blocks.BLAST_FURNACE), 1, 1);
+    public static final PointOfInterestType BUTCHER = register("butcher", getBlockStates(Blocks.SMOKER), 1, 1);
 @@ -112,16 +_,14 @@
     }
  
-    private static PointOfInterestType func_221052_a(PointOfInterestType p_221052_0_) {
--      p_221052_0_.field_221075_w.forEach((p_234169_1_) -> {
--         PointOfInterestType pointofinteresttype = field_221073_u.put(p_234169_1_, p_221052_0_);
+    private static PointOfInterestType registerBlockStates(PointOfInterestType p_221052_0_) {
+-      p_221052_0_.matchingStates.forEach((p_234169_1_) -> {
+-         PointOfInterestType pointofinteresttype = TYPE_BY_STATE.put(p_234169_1_, p_221052_0_);
 -         if (pointofinteresttype != null) {
--            throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException(String.format("%s is defined in too many tags", p_234169_1_)));
+-            throw (IllegalStateException)Util.pauseInIde(new IllegalStateException(String.format("%s is defined in too many tags", p_234169_1_)));
 -         }
 -      });
        return p_221052_0_;
     }
  
-    public static Optional<PointOfInterestType> func_221047_b(BlockState p_221047_0_) {
-       return Optional.ofNullable(field_221073_u.get(p_221047_0_));
+    public static Optional<PointOfInterestType> forState(BlockState p_221047_0_) {
+       return Optional.ofNullable(TYPE_BY_STATE.get(p_221047_0_));
 +   }
 +   
 +   public ImmutableSet<BlockState> getBlockStates() {
-+      return ImmutableSet.copyOf(this.field_221075_w);
++      return ImmutableSet.copyOf(this.matchingStates);
     }
  }

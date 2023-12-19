@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/effect/LightningBoltEntity.java
 +++ b/net/minecraft/entity/effect/LightningBoltEntity.java
 @@ -30,6 +_,7 @@
-    private boolean field_184529_d;
+    private boolean visualOnly;
     @Nullable
-    private ServerPlayerEntity field_204810_e;
+    private ServerPlayerEntity cause;
 +   private float damage = 5.0F;
  
     public LightningBoltEntity(EntityType<? extends LightningBoltEntity> p_i231491_1_, World p_i231491_2_) {
        super(p_i231491_1_, p_i231491_2_);
 @@ -51,6 +_,14 @@
-       this.field_204810_e = p_204809_1_;
+       this.cause = p_204809_1_;
     }
  
 +   public void setDamage(float damage){
@@ -20,14 +20,14 @@
 +      return this.damage;
 +   }
 +
-    public void func_70071_h_() {
-       super.func_70071_h_();
-       if (this.field_70262_b == 2) {
+    public void tick() {
+       super.tick();
+       if (this.life == 2) {
 @@ -83,6 +_,7 @@
-             List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
+             List<Entity> list = this.level.getEntities(this, new AxisAlignedBB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
  
              for(Entity entity : list) {
 +               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
-                entity.func_241841_a((ServerWorld)this.field_70170_p, this);
+                entity.thunderHit((ServerWorld)this.level, this);
              }
  

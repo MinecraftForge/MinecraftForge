@@ -6,6 +6,6 @@
  
 -public class PaintingType {
 +public class PaintingType extends net.minecraftforge.registries.ForgeRegistryEntry<PaintingType> {
-    public static final PaintingType field_200843_b = func_221119_a("kebab", 16, 16);
-    public static final PaintingType field_200844_c = func_221119_a("aztec", 16, 16);
-    public static final PaintingType field_200845_d = func_221119_a("alban", 16, 16);
+    public static final PaintingType KEBAB = register("kebab", 16, 16);
+    public static final PaintingType AZTEC = register("aztec", 16, 16);
+    public static final PaintingType ALBAN = register("alban", 16, 16);

@@ -1,8 +1,8 @@
 --- a/net/minecraft/block/WoodType.java
 +++ b/net/minecraft/block/WoodType.java
 @@ -32,4 +_,11 @@
-    public String func_227048_b_() {
-       return this.field_227045_h_;
+    public String name() {
+       return this.name;
     }
 +
 +   /**

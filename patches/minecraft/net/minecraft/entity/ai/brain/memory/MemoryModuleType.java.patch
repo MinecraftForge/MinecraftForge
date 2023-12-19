@@ -6,6 +6,6 @@
  
 -public class MemoryModuleType<U> {
 +public class MemoryModuleType<U> extends net.minecraftforge.registries.ForgeRegistryEntry<MemoryModuleType<?>> {
-    public static final MemoryModuleType<Void> field_220940_a = func_223541_a("dummy");
-    public static final MemoryModuleType<GlobalPos> field_220941_b = func_234108_a_("home", GlobalPos.field_239645_a_);
-    public static final MemoryModuleType<GlobalPos> field_220942_c = func_234108_a_("job_site", GlobalPos.field_239645_a_);
+    public static final MemoryModuleType<Void> DUMMY = register("dummy");
+    public static final MemoryModuleType<GlobalPos> HOME = register("home", GlobalPos.CODEC);
+    public static final MemoryModuleType<GlobalPos> JOB_SITE = register("job_site", GlobalPos.CODEC);

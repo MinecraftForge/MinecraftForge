@@ -2,59 +2,59 @@
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
 @@ -173,11 +_,11 @@
  
-    public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
-       BlockState blockstate = this.func_180495_p(p_241212_1_);
--      if (blockstate.func_196958_f()) {
+    public boolean destroyBlock(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
+       BlockState blockstate = this.getBlockState(p_241212_1_);
+-      if (blockstate.isAir()) {
 +      if (blockstate.isAir(this, p_241212_1_)) {
           return false;
        } else {
           if (p_241212_2_) {
--            TileEntity tileentity = blockstate.func_177230_c().func_235695_q_() ? this.func_175625_s(p_241212_1_) : null;
-+            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_241212_1_) : null;
-             Block.func_220054_a(blockstate, this.field_201689_f, p_241212_1_, tileentity, p_241212_3_, ItemStack.field_190927_a);
+-            TileEntity tileentity = blockstate.getBlock().isEntityBlock() ? this.getBlockEntity(p_241212_1_) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? this.getBlockEntity(p_241212_1_) : null;
+             Block.dropResources(blockstate, this.level, p_241212_1_, tileentity, p_241212_3_, ItemStack.EMPTY);
           }
  
 @@ -197,11 +_,11 @@
           if (compoundnbt != null) {
-             if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
-                Block block = blockstate.func_177230_c();
+             if ("DUMMY".equals(compoundnbt.getString("id"))) {
+                Block block = blockstate.getBlock();
 -               if (!(block instanceof ITileEntityProvider)) {
 +               if (!blockstate.hasTileEntity()) {
                    return null;
                 }
  
--               tileentity = ((ITileEntityProvider)block).func_196283_a_(this.field_201689_f);
-+               tileentity = blockstate.createTileEntity(this.field_201689_f);
+-               tileentity = ((ITileEntityProvider)block).newBlockEntity(this.level);
++               tileentity = blockstate.createTileEntity(this.level);
              } else {
-                tileentity = TileEntity.func_235657_b_(blockstate, compoundnbt);
+                tileentity = TileEntity.loadStatic(blockstate, compoundnbt);
              }
 @@ -212,7 +_,7 @@
              }
           }
  
--         if (blockstate.func_177230_c() instanceof ITileEntityProvider) {
+-         if (blockstate.getBlock() instanceof ITileEntityProvider) {
 +         if (blockstate.hasTileEntity()) {
-             field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
+             LOGGER.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
           }
  
 @@ -228,9 +_,9 @@
        }
  
-       Block block = p_241211_2_.func_177230_c();
--      if (block.func_235695_q_()) {
+       Block block = p_241211_2_.getBlock();
+-      if (block.isEntityBlock()) {
 +      if (p_241211_2_.hasTileEntity()) {
-          if (ichunk.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
--            ichunk.func_177426_a(p_241211_1_, ((ITileEntityProvider)block).func_196283_a_(this));
-+            ichunk.func_177426_a(p_241211_1_, p_241211_2_.createTileEntity(this));
+          if (ichunk.getStatus().getChunkType() == ChunkStatus.Type.LEVELCHUNK) {
+-            ichunk.setBlockEntity(p_241211_1_, ((ITileEntityProvider)block).newBlockEntity(this));
++            ichunk.setBlockEntity(p_241211_1_, p_241211_2_.createTileEntity(this));
           } else {
              CompoundNBT compoundnbt = new CompoundNBT();
-             compoundnbt.func_74768_a("x", p_241211_1_.func_177958_n());
+             compoundnbt.putInt("x", p_241211_1_.getX());
 @@ -239,7 +_,7 @@
-             compoundnbt.func_74778_a("id", "DUMMY");
-             ichunk.func_201591_a(compoundnbt);
+             compoundnbt.putString("id", "DUMMY");
+             ichunk.setBlockEntityNbt(compoundnbt);
           }
--      } else if (blockstate != null && blockstate.func_177230_c().func_235695_q_()) {
+-      } else if (blockstate != null && blockstate.getBlock().isEntityBlock()) {
 +      } else if (blockstate != null && blockstate.hasTileEntity()) {
-          ichunk.func_177425_e(p_241211_1_);
+          ichunk.removeBlockEntity(p_241211_1_);
        }
  

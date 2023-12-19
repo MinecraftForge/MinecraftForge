@@ -6,8 +6,8 @@
     }
 +   
 +   public static void initValidStates() {
-+      field_177464_a = StreamSupport.stream(Registry.field_212618_g.spliterator(), false).flatMap(block -> block.func_176194_O().func_177619_a().stream()).collect(Collectors.toList());
-+      field_177462_b = MathHelper.func_76123_f(MathHelper.func_76129_c(field_177464_a.size()));
-+      field_181039_c = MathHelper.func_76123_f((float) (field_177464_a.size() / field_177462_b));
++      ALL_BLOCKS = StreamSupport.stream(Registry.BLOCK.spliterator(), false).flatMap(block -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toList());
++      GRID_WIDTH = MathHelper.ceil(MathHelper.sqrt(ALL_BLOCKS.size()));
++      GRID_HEIGHT = MathHelper.ceil((float) (ALL_BLOCKS.size() / GRID_WIDTH));
 +   }
  }

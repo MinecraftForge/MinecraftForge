@@ -3,30 +3,30 @@
 @@ -156,17 +_,28 @@
           }
  
-          float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
+          float f9 = Math.min(1.0F / fogRed, Math.min(1.0F / fogGreen, 1.0F / fogBlue));
 +         // Forge: fix MC-4647 and MC-10480
 +         if (Float.isInfinite(f9)) f9 = Math.nextAfter(f9, 0.0);
-          field_205093_c = field_205093_c * (1.0F - f6) + field_205093_c * f9 * f6;
-          field_205094_d = field_205094_d * (1.0F - f6) + field_205094_d * f9 * f6;
-          field_205095_e = field_205095_e * (1.0F - f6) + field_205095_e * f9 * f6;
-       } else if (p_228371_0_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228371_0_.func_216773_g()).func_70644_a(Effects.field_76439_r)) {
-          float f7 = GameRenderer.func_180438_a((LivingEntity)p_228371_0_.func_216773_g(), p_228371_1_);
-          float f10 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
+          fogRed = fogRed * (1.0F - f6) + fogRed * f9 * f6;
+          fogGreen = fogGreen * (1.0F - f6) + fogGreen * f9 * f6;
+          fogBlue = fogBlue * (1.0F - f6) + fogBlue * f9 * f6;
+       } else if (p_228371_0_.getEntity() instanceof LivingEntity && ((LivingEntity)p_228371_0_.getEntity()).hasEffect(Effects.NIGHT_VISION)) {
+          float f7 = GameRenderer.getNightVisionScale((LivingEntity)p_228371_0_.getEntity(), p_228371_1_);
+          float f10 = Math.min(1.0F / fogRed, Math.min(1.0F / fogGreen, 1.0F / fogBlue));
 +         // Forge: fix MC-4647 and MC-10480
 +         if (Float.isInfinite(f10)) f10 = Math.nextAfter(f10, 0.0);
-          field_205093_c = field_205093_c * (1.0F - f7) + field_205093_c * f10 * f7;
-          field_205094_d = field_205094_d * (1.0F - f7) + field_205094_d * f10 * f7;
-          field_205095_e = field_205095_e * (1.0F - f7) + field_205095_e * f10 * f7;
+          fogRed = fogRed * (1.0F - f7) + fogRed * f10 * f7;
+          fogGreen = fogGreen * (1.0F - f7) + fogGreen * f10 * f7;
+          fogBlue = fogBlue * (1.0F - f7) + fogBlue * f10 * f7;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_228371_0_, p_228371_1_, field_205093_c, field_205094_d, field_205095_e);
++      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_228371_0_, p_228371_1_, fogRed, fogGreen, fogBlue);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
-+      field_205093_c = event.getRed();
-+      field_205094_d = event.getGreen();
-+      field_205095_e = event.getBlue();
++      fogRed = event.getRed();
++      fogGreen = event.getGreen();
++      fogBlue = event.getBlue();
 +
-       RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
+       RenderSystem.clearColor(fogRed, fogGreen, fogBlue, 0.0F);
     }
  
 @@ -174,10 +_,17 @@
@@ -35,17 +35,17 @@
     }
 -
 +   @Deprecated // FORGE: Pass in partialTicks
-    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
+    public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
 +      setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
 +   }
 +
 +   public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {
-       FluidState fluidstate = p_228372_0_.func_216771_k();
-       Entity entity = p_228372_0_.func_216773_g();
+       FluidState fluidstate = p_228372_0_.getFluidInCamera();
+       Entity entity = p_228372_0_.getEntity();
 +      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_228372_1_, p_228372_0_, partialTicks, 0.1F);
 +      if (hook >= 0) RenderSystem.fogDensity(hook);
 +      else
-       if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
+       if (fluidstate.is(FluidTags.WATER)) {
           float f = 1.0F;
           f = 0.05F;
 @@ -228,6 +_,7 @@

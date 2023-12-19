@@ -1,88 +1,88 @@
 --- a/net/minecraft/client/renderer/model/BlockModel.java
 +++ b/net/minecraft/client/renderer/model/BlockModel.java
 @@ -57,9 +_,10 @@
-    public BlockModel field_178315_d;
+    public BlockModel parent;
     @Nullable
-    protected ResourceLocation field_178316_e;
+    protected ResourceLocation parentLocation;
 +   public final net.minecraftforge.client.model.BlockModelConfiguration customData = new net.minecraftforge.client.model.BlockModelConfiguration(this);
  
-    public static BlockModel func_178307_a(Reader p_178307_0_) {
--      return JSONUtils.func_193839_a(field_178319_a, p_178307_0_, BlockModel.class);
-+      return JSONUtils.func_193839_a(net.minecraftforge.client.model.ModelLoaderRegistry.ExpandedBlockModelDeserializer.INSTANCE, p_178307_0_, BlockModel.class);
+    public static BlockModel fromStream(Reader p_178307_0_) {
+-      return JSONUtils.fromJson(GSON, p_178307_0_, BlockModel.class);
++      return JSONUtils.fromJson(net.minecraftforge.client.model.ModelLoaderRegistry.ExpandedBlockModelDeserializer.INSTANCE, p_178307_0_, BlockModel.class);
     }
  
-    public static BlockModel func_178294_a(String p_178294_0_) {
+    public static BlockModel fromString(String p_178294_0_) {
 @@ -76,10 +_,15 @@
-       this.field_187968_k = p_i230056_7_;
+       this.overrides = p_i230056_7_;
     }
  
 +   @Deprecated
-    public List<BlockPart> func_178298_a() {
+    public List<BlockPart> getElements() {
 +      if (customData.hasCustomGeometry()) return java.util.Collections.emptyList();
-       return this.field_178314_g.isEmpty() && this.field_178315_d != null ? this.field_178315_d.func_178298_a() : this.field_178314_g;
+       return this.elements.isEmpty() && this.parent != null ? this.parent.getElements() : this.elements;
     }
  
 +   @Nullable
-+   public ResourceLocation getParentLocation() { return field_178316_e; }
++   public ResourceLocation getParentLocation() { return parentLocation; }
 +
-    public boolean func_178309_b() {
-       return this.field_178315_d != null ? this.field_178315_d.func_178309_b() : this.field_178322_i;
+    public boolean hasAmbientOcclusion() {
+       return this.parent != null ? this.parent.hasAmbientOcclusion() : this.hasAmbientOcclusion;
     }
 @@ -100,6 +_,10 @@
-       return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
+       return this.overrides.isEmpty() ? ItemOverrideList.EMPTY : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::getModel, this.overrides);
     }
  
 +   public ItemOverrideList getOverrides(ModelBakery p_217646_1_, BlockModel p_217646_2_, Function<RenderMaterial, TextureAtlasSprite> textureGetter) {
-+      return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, textureGetter, this.field_187968_k);
++      return this.overrides.isEmpty() ? ItemOverrideList.EMPTY : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::getModel, textureGetter, this.overrides);
 +   }
 +
-    public Collection<ResourceLocation> func_187965_e() {
+    public Collection<ResourceLocation> getDependencies() {
        Set<ResourceLocation> set = Sets.newHashSet();
  
 @@ -143,6 +_,9 @@
  
-       Set<RenderMaterial> set1 = Sets.newHashSet(this.func_228816_c_("particle"));
+       Set<RenderMaterial> set1 = Sets.newHashSet(this.getMaterial("particle"));
  
 +      if(customData.hasCustomGeometry())
 +         set1.addAll(customData.getTextureDependencies(p_225614_1_, p_225614_2_));
 +      else
-       for(BlockPart blockpart : this.func_178298_a()) {
-          for(BlockPartFace blockpartface : blockpart.field_178240_c.values()) {
-             RenderMaterial rendermaterial = this.func_228816_c_(blockpartface.field_178242_d);
+       for(BlockPart blockpart : this.getElements()) {
+          for(BlockPartFace blockpartface : blockpart.faces.values()) {
+             RenderMaterial rendermaterial = this.getMaterial(blockpartface.texture);
 @@ -169,11 +_,17 @@
        return set1;
     }
  
 +   @Deprecated //Forge: Use Boolean variant
-    public IBakedModel func_225613_a_(ModelBakery p_225613_1_, Function<RenderMaterial, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
-       return this.func_228813_a_(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_, true);
+    public IBakedModel bake(ModelBakery p_225613_1_, Function<RenderMaterial, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
+       return this.bake(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_, true);
     }
  
-    public IBakedModel func_228813_a_(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
+    public IBakedModel bake(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
 +      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
 +   }
 +
 +   @Deprecated //Forge: exposed for our callbacks only. Use the above function.
 +   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
-       TextureAtlasSprite textureatlassprite = p_228813_3_.apply(this.func_228816_c_("particle"));
-       if (this.func_178310_f() == ModelBakery.field_177616_r) {
-          return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_228813_1_, p_228813_2_), textureatlassprite, this.func_230176_c_().func_230178_a_());
+       TextureAtlasSprite textureatlassprite = p_228813_3_.apply(this.getMaterial("particle"));
+       if (this.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
+          return new BuiltInModel(this.getTransforms(), this.getItemOverrides(p_228813_1_, p_228813_2_), textureatlassprite, this.getGuiLight().lightLikeBlock());
 @@ -200,6 +_,10 @@
-       return field_217647_g.func_228824_a_(p_228812_0_.field_178241_a, p_228812_0_.field_178239_b, p_228812_1_, p_228812_2_, p_228812_3_, p_228812_4_, p_228812_0_.field_178237_d, p_228812_0_.field_178238_e, p_228812_5_);
+       return FACE_BAKERY.bakeQuad(p_228812_0_.from, p_228812_0_.to, p_228812_1_, p_228812_2_, p_228812_3_, p_228812_4_, p_228812_0_.rotation, p_228812_0_.shade, p_228812_5_);
     }
  
 +   public static BakedQuad makeBakedQuad(BlockPart p_228812_0_, BlockPartFace p_228812_1_, TextureAtlasSprite p_228812_2_, Direction p_228812_3_, IModelTransform p_228812_4_, ResourceLocation p_228812_5_) {
-+      return func_228812_a_(p_228812_0_, p_228812_1_, p_228812_2_, p_228812_3_, p_228812_4_, p_228812_5_);
++      return bakeFace(p_228812_0_, p_228812_1_, p_228812_2_, p_228812_3_, p_228812_4_, p_228812_5_);
 +   }
 +
-    public boolean func_178300_b(String p_178300_1_) {
-       return !MissingTextureSprite.func_195675_b().equals(this.func_228816_c_(p_178300_1_).func_229313_b_());
+    public boolean hasTexture(String p_178300_1_) {
+       return !MissingTextureSprite.getLocation().equals(this.getMaterial(p_178300_1_).texture());
     }
 @@ -373,5 +_,7 @@
-       public boolean func_230178_a_() {
+       public boolean lightLikeBlock() {
           return this == SIDE;
        }
 +      
-+      public String getSerializedName() { return field_230177_c_; }
++      public String getSerializedName() { return name; }
     }
  }

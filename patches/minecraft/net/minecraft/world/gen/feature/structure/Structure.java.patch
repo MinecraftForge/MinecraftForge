@@ -6,18 +6,18 @@
  
 -public abstract class Structure<C extends IFeatureConfig> {
 +public abstract class Structure<C extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Structure<?>> implements net.minecraftforge.common.extensions.IForgeStructure {
-    public static final BiMap<String, Structure<?>> field_236365_a_ = HashBiMap.create();
-    private static final Map<Structure<?>, GenerationStage.Decoration> field_236385_u_ = Maps.newHashMap();
-    private static final Logger field_208204_b = LogManager.getLogger();
+    public static final BiMap<String, Structure<?>> STRUCTURES_REGISTRY = HashBiMap.create();
+    private static final Map<Structure<?>, GenerationStage.Decoration> STEP = Maps.newHashMap();
+    private static final Logger LOGGER = LogManager.getLogger();
 @@ -237,11 +_,16 @@
     }
  
-    public List<MobSpawnInfo.Spawners> func_202279_e() {
+    public List<MobSpawnInfo.Spawners> getSpecialEnemies() {
 -      return ImmutableList.of();
 +      return getSpawnList(net.minecraft.entity.EntityClassification.MONSTER);
     }
  
-    public List<MobSpawnInfo.Spawners> func_214469_f() {
+    public List<MobSpawnInfo.Spawners> getSpecialAnimals() {
 -      return ImmutableList.of();
 +      return getSpawnList(net.minecraft.entity.EntityClassification.CREATURE);
 +   }

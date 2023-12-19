@@ -3,19 +3,19 @@
 @@ -37,7 +_,7 @@
     }
  
-    protected boolean func_212832_a_(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
--      if (!p_212832_1_.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
+    protected boolean checkExtraStartConditions(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
+-      if (!p_212832_1_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
 +      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_212832_1_, p_212832_2_)) {
           return false;
-       } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
+       } else if (p_212832_2_.getVillagerData().getProfession() != VillagerProfession.FARMER) {
           return false;
 @@ -117,6 +_,11 @@
-                      } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
-                         p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
+                      } else if (itemstack.getItem() == Items.BEETROOT_SEEDS) {
+                         p_212833_1_.setBlock(this.aboveFarmlandPos, Blocks.BEETROOTS.defaultBlockState(), 3);
                          flag = true;
-+                     } else if (itemstack.func_77973_b() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(p_212833_1_, field_220422_a) == net.minecraftforge.common.PlantType.CROP) {
-+                           p_212833_1_.func_180501_a(field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a), 3);
++                     } else if (itemstack.getItem() instanceof net.minecraftforge.common.IPlantable) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlantType(p_212833_1_, aboveFarmlandPos) == net.minecraftforge.common.PlantType.CROP) {
++                           p_212833_1_.setBlock(aboveFarmlandPos, ((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlant(p_212833_1_, aboveFarmlandPos), 3);
 +                           flag = true;
 +                        }
                       }

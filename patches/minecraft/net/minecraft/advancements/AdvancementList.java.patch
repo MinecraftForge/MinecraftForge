@@ -4,7 +4,7 @@
           }
        }
  
-+      net.minecraftforge.common.AdvancementLoadFix.buildSortedTrees(this.field_192093_c);
-       field_192091_a.info("Loaded {} advancements", (int)this.field_192092_b.size());
++      net.minecraftforge.common.AdvancementLoadFix.buildSortedTrees(this.roots);
+       LOGGER.info("Loaded {} advancements", (int)this.advancements.size());
     }
  

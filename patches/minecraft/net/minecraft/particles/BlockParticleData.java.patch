@@ -1,8 +1,8 @@
 --- a/net/minecraft/particles/BlockParticleData.java
 +++ b/net/minecraft/particles/BlockParticleData.java
 @@ -54,4 +_,15 @@
-    public BlockState func_197584_c() {
-       return this.field_197587_c;
+    public BlockState getState() {
+       return this.state;
     }
 +
 +   //FORGE: Add a source pos property, so we can provide models with additional model data

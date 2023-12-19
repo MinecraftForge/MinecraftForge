@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Enchantments {
-    private static final EquipmentSlotType[] field_222195_L = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
-    public static final Enchantment field_180310_c = func_222191_a("protection", new ProtectionEnchantment(Enchantment.Rarity.COMMON, ProtectionEnchantment.Type.ALL, field_222195_L));
+    private static final EquipmentSlotType[] ARMOR_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
+    public static final Enchantment ALL_DAMAGE_PROTECTION = register("protection", new ProtectionEnchantment(Enchantment.Rarity.COMMON, ProtectionEnchantment.Type.ALL, ARMOR_SLOTS));

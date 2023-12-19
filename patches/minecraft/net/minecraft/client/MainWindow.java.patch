@@ -4,24 +4,24 @@
        GLFW.glfwWindowHint(139266, 2);
        GLFW.glfwWindowHint(139267, 0);
        GLFW.glfwWindowHint(139272, 0);
--      this.field_198119_f = GLFW.glfwCreateWindow(this.field_198129_p, this.field_198130_q, p_i51170_5_, this.field_198125_l && monitor != null ? monitor.func_197995_f() : 0L, 0L);
-+      this.field_198119_f = net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.handOffWindow(()->this.field_198129_p, ()->this.field_198130_q, ()->p_i51170_5_, ()->this.field_198125_l && monitor != null ? monitor.func_197995_f() : 0L);
+-      this.window = GLFW.glfwCreateWindow(this.width, this.height, p_i51170_5_, this.fullscreen && monitor != null ? monitor.getMonitor() : 0L, 0L);
++      this.window = net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.handOffWindow(()->this.width, ()->this.height, ()->p_i51170_5_, ()->this.fullscreen && monitor != null ? monitor.getMonitor() : 0L);
        if (monitor != null) {
-          VideoMode videomode = monitor.func_197992_a(this.field_198125_l ? this.field_198124_k : Optional.empty());
-          this.field_198120_g = this.field_198127_n = monitor.func_197989_c() + videomode.func_198064_a() / 2 - this.field_198129_p / 2;
+          VideoMode videomode = monitor.getPreferredVidMode(this.fullscreen ? this.preferredFullscreenVideoMode : Optional.empty());
+          this.windowedX = this.x = monitor.getX() + videomode.getWidth() / 2 - this.width / 2;
 @@ -136,6 +_,7 @@
  
-    public void func_216529_a(InputStream p_216529_1_, InputStream p_216529_2_) {
+    public void setIcon(InputStream p_216529_1_, InputStream p_216529_2_) {
        RenderSystem.assertThread(RenderSystem::isInInitPhase);
-+      if (net.minecraft.client.Minecraft.field_142025_a) return;
++      if (net.minecraft.client.Minecraft.ON_OSX) return;
  
        try (MemoryStack memorystack = MemoryStack.stackPush()) {
           if (p_216529_1_ == null) {
 @@ -271,6 +_,7 @@
-       GLFW.glfwGetFramebufferSize(this.field_198119_f, aint, aint1);
-       this.field_198131_r = aint[0];
-       this.field_198132_s = aint1[0];
-+      if (this.field_198132_s == 0 || this.field_198131_r==0) net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.updateFBSize(w->this.field_198131_r=w, h->this.field_198132_s=h);
+       GLFW.glfwGetFramebufferSize(this.window, aint, aint1);
+       this.framebufferWidth = aint[0];
+       this.framebufferHeight = aint1[0];
++      if (this.framebufferHeight == 0 || this.framebufferWidth==0) net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.updateFBSize(w->this.framebufferWidth=w, h->this.framebufferHeight=h);
     }
  
-    private void func_198089_c(long p_198089_1_, int p_198089_3_, int p_198089_4_) {
+    private void onResize(long p_198089_1_, int p_198089_3_, int p_198089_4_) {
