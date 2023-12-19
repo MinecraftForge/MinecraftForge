@@ -205,7 +205,6 @@ project(':forge') {
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
         SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -1158,16 +1157,11 @@ project(':forge') {
         archiveClassifier.set('userdev-temp')
     }
 
-    reobfJar {
-        tool = SPECIAL_SOURCE + ':shaded'
-    }
-
     task userdevExtrasReobf(type: ReobfuscateJar) {
         dependsOn userdevExtras, createMcp2Srg
         input = tasks.userdevExtras.archiveFile
         classpath.from project.configurations.userdevCompileClasspath
         srg = tasks.createMcp2Srg.output
-        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     userdevJar {
