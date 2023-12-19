@@ -65,9 +65,9 @@ public abstract class ModContainer
                     () -> new IExtensionPoint.DisplayTest(() -> this.modInfo.getVersion().toString(),
                         (incoming, isNetwork) -> Objects.equals(incoming, this.modInfo.getVersion().toString()));
             case "IGNORE_SERVER_VERSION" -> // Ignores any version information coming from the server - use for server only mods
-                    () -> new IExtensionPoint.DisplayTest(IExtensionPoint.DisplayTest.IGNORESERVERONLY, (incoming, isNetwork) -> true);
+                    IExtensionPoint.DisplayTest.IGNORE_SERVER_VERSION;
             case "IGNORE_ALL_VERSION" -> // Ignores all information and provides no information
-                    () -> new IExtensionPoint.DisplayTest("", (incoming, isNetwork) -> true);
+                    IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION;
             case "NONE" -> null; // NO display test at all - use this if you're going to do your own display test
             default -> // any other value throws an exception
                     throw new IllegalArgumentException("Invalid displayTest value supplied in mods.toml");

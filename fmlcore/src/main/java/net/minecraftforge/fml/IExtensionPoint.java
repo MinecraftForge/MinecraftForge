@@ -98,6 +98,16 @@ public interface IExtensionPoint<T extends Record>
         public static final String IGNORESERVERONLY = "SERVER_ONLY";
 
         /**
+         * Ignores any version information coming from the server - use for server only mods
+         */
+        public static final Supplier<DisplayTest> IGNORE_SERVER_VERSION = () -> new DisplayTest(IGNORESERVERONLY, (remoteVersion, isFromServer) -> true);
+
+        /**
+         * Ignores all information and provides no information
+         */
+        public static final Supplier<DisplayTest> IGNORE_ALL_VERSION = () -> new DisplayTest("", (remoteVersion, isFromServer) -> true);
+
+        /**
          * An optional alternative to {@link #DisplayTest(Supplier, BiPredicate)} which accepts a constant version string
          * instead of a {@link Supplier}.
          * <p>Internally, the provided version string is wrapped in a Supplier for you.</p>
