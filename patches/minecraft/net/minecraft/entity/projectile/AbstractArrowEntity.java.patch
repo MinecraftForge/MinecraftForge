@@ -2,19 +2,19 @@
 +++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
 @@ -130,7 +_,7 @@
  
-       BlockPos blockpos = this.func_233580_cy_();
-       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
--      if (!blockstate.func_196958_f() && !flag) {
-+      if (!blockstate.isAir(this.field_70170_p, blockpos) && !flag) {
-          VoxelShape voxelshape = blockstate.func_196952_d(this.field_70170_p, blockpos);
-          if (!voxelshape.func_197766_b()) {
-             Vector3d vector3d1 = this.func_213303_ch();
+       BlockPos blockpos = this.blockPosition();
+       BlockState blockstate = this.level.getBlockState(blockpos);
+-      if (!blockstate.isAir() && !flag) {
++      if (!blockstate.isAir(this.level, blockpos) && !flag) {
+          VoxelShape voxelshape = blockstate.getCollisionShape(this.level, blockpos);
+          if (!voxelshape.isEmpty()) {
+             Vector3d vector3d1 = this.position();
 @@ -184,7 +_,7 @@
                 }
              }
  
 -            if (raytraceresult != null && !flag) {
-+            if (raytraceresult != null && raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-                this.func_70227_a(raytraceresult);
-                this.field_70160_al = true;
++            if (raytraceresult != null && raytraceresult.getType() != RayTraceResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+                this.onHit(raytraceresult);
+                this.hasImpulse = true;
              }

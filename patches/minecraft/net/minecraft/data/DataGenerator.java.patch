@@ -1,30 +1,30 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
 @@ -16,10 +_,11 @@
-    private final Collection<Path> field_200394_b;
-    private final Path field_200395_c;
-    private final List<IDataProvider> field_200396_d = Lists.newArrayList();
-+   private final List<IDataProvider> providerView = java.util.Collections.unmodifiableList(field_200396_d);
+    private final Collection<Path> inputFolders;
+    private final Path outputFolder;
+    private final List<IDataProvider> providers = Lists.newArrayList();
++   private final List<IDataProvider> providerView = java.util.Collections.unmodifiableList(providers);
  
     public DataGenerator(Path p_i48266_1_, Collection<Path> p_i48266_2_) {
-       this.field_200395_c = p_i48266_1_;
--      this.field_200394_b = p_i48266_2_;
-+      this.field_200394_b = Lists.newArrayList(p_i48266_2_);
+       this.outputFolder = p_i48266_1_;
+-      this.inputFolders = p_i48266_2_;
++      this.inputFolders = Lists.newArrayList(p_i48266_2_);
     }
  
-    public Collection<Path> func_200389_a() {
+    public Collection<Path> getInputFolders() {
 @@ -38,6 +_,7 @@
  
-       for(IDataProvider idataprovider : this.field_200396_d) {
-          field_200393_a.info("Starting provider: {}", (Object)idataprovider.func_200397_b());
-+         net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + idataprovider.func_200397_b());
+       for(IDataProvider idataprovider : this.providers) {
+          LOGGER.info("Starting provider: {}", (Object)idataprovider.getName());
++         net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + idataprovider.getName());
           stopwatch1.start();
-          idataprovider.func_200398_a(directorycache);
+          idataprovider.run(directorycache);
           stopwatch1.stop();
 @@ -51,6 +_,14 @@
  
-    public void func_200390_a(IDataProvider p_200390_1_) {
-       this.field_200396_d.add(p_200390_1_);
+    public void addProvider(IDataProvider p_200390_1_) {
+       this.providers.add(p_200390_1_);
 +   }
 +
 +   public List<IDataProvider> getProviders() {
@@ -32,7 +32,7 @@
 +   }
 +
 +   public void addInput(Path value) {
-+      this.field_200394_b.add(value);
++      this.inputFolders.add(value);
     }
  
     static {

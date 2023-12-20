@@ -6,14 +6,14 @@
  
 -public class Potion {
 +public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Potion> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.TagCollectionManager.func_242178_a().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.POTION_TYPES));
-    private final String field_185179_d;
-    private final ImmutableList<EffectInstance> field_185180_e;
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Potion> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.TagCollectionManager.getInstance().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.POTION_TYPES));
+    private final String name;
+    private final ImmutableList<EffectInstance> effects;
  
 @@ -21,6 +_,14 @@
     public Potion(@Nullable String p_i46740_1_, EffectInstance... p_i46740_2_) {
-       this.field_185179_d = p_i46740_1_;
-       this.field_185180_e = ImmutableList.copyOf(p_i46740_2_);
+       this.name = p_i46740_1_;
+       this.effects = ImmutableList.copyOf(p_i46740_2_);
 +   }
 +
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
@@ -21,7 +21,7 @@
 +   }
 +
 +   public boolean isIn(net.minecraft.tags.ITag<Potion> tag) {
-+      return tag.func_230235_a_(this);
++      return tag.contains(this);
     }
  
-    public String func_185174_b(String p_185174_1_) {
+    public String getName(String p_185174_1_) {

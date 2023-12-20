@@ -8,25 +8,25 @@
 +   public static enum GrassColorModifier implements IStringSerializable, net.minecraftforge.common.IExtensibleEnum {
        NONE("none") {
           @OnlyIn(Dist.CLIENT)
-          public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
+          public int modifyColor(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
 @@ -226,18 +_,36 @@
        };
  
-       private final String field_242543_e;
--      public static final Codec<BiomeAmbience.GrassColorModifier> field_242542_d = IStringSerializable.func_233023_a_(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::func_242546_a);
-+      public static final Codec<BiomeAmbience.GrassColorModifier> field_242542_d = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::func_242546_a);
-       private static final Map<String, BiomeAmbience.GrassColorModifier> field_242544_f = Arrays.stream(values()).collect(Collectors.toMap(BiomeAmbience.GrassColorModifier::func_242547_b, (p_242545_0_) -> {
+       private final String name;
+-      public static final Codec<BiomeAmbience.GrassColorModifier> CODEC = IStringSerializable.fromEnum(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::byName);
++      public static final Codec<BiomeAmbience.GrassColorModifier> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::byName);
+       private static final Map<String, BiomeAmbience.GrassColorModifier> BY_NAME = Arrays.stream(values()).collect(Collectors.toMap(BiomeAmbience.GrassColorModifier::getName, (p_242545_0_) -> {
           return p_242545_0_;
        }));
  
        @OnlyIn(Dist.CLIENT)
--      public abstract int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_);
-+      public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
+-      public abstract int modifyColor(double p_241853_1_, double p_241853_3_, int p_241853_5_);
++      public int modifyColor(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
 +         return delegate.modifyGrassColor(p_241853_1_, p_241853_3_, p_241853_5_);
 +      }
  
        private GrassColorModifier(String p_i241940_3_) {
-          this.field_242543_e = p_i241940_3_;
+          this.name = p_i241940_3_;
        }
  
 +      private ColorModifier delegate;
@@ -39,12 +39,12 @@
 +      }
 +      @Override
 +      public void init() {
-+         field_242544_f.put(this.func_242547_b(), this);
++         BY_NAME.put(this.getName(), this);
 +      }
 +      @FunctionalInterface
 +      public interface ColorModifier {
 +         int modifyGrassColor(double x, double z, int color);
 +      }
-       public String func_242547_b() {
-          return this.field_242543_e;
+       public String getName() {
+          return this.name;
        }

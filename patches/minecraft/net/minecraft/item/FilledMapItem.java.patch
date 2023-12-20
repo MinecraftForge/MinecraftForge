@@ -3,9 +3,9 @@
 @@ -52,6 +_,16 @@
  
     @Nullable
-    public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
+    public static MapData getOrCreateSavedData(ItemStack p_195950_0_, World p_195950_1_) {
 +      // FORGE: Add instance method for mods to override
-+      Item map = p_195950_0_.func_77973_b();
++      Item map = p_195950_0_.getItem();
 +      if (map instanceof FilledMapItem) {
 +        return ((FilledMapItem)map).getCustomMapData(p_195950_0_, p_195950_1_);
 +      }
@@ -14,6 +14,6 @@
 +
 +   @Nullable
 +   protected MapData getCustomMapData(ItemStack p_195950_0_, World p_195950_1_) {
-       MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
+       MapData mapdata = getSavedData(p_195950_0_, p_195950_1_);
        if (mapdata == null && p_195950_1_ instanceof ServerWorld) {
-          mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.func_234923_W_());
+          mapdata = createAndStoreSavedData(p_195950_0_, p_195950_1_, p_195950_1_.getLevelData().getXSpawn(), p_195950_1_.getLevelData().getZSpawn(), 3, false, false, p_195950_1_.dimension());

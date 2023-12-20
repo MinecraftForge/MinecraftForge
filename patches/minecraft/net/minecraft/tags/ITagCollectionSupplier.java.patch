@@ -6,48 +6,48 @@
  
 -public interface ITagCollectionSupplier {
 +public interface ITagCollectionSupplier extends net.minecraftforge.common.extensions.IForgeTagCollectionSupplier {
-    ITagCollectionSupplier field_242208_a = func_242209_a(ITagCollection.func_242205_c(), ITagCollection.func_242205_c(), ITagCollection.func_242205_c(), ITagCollection.func_242205_c());
+    ITagCollectionSupplier EMPTY = of(ITagCollection.empty(), ITagCollection.empty(), ITagCollection.empty(), ITagCollection.empty());
  
-    ITagCollection<Block> func_241835_a();
+    ITagCollection<Block> getBlocks();
 @@ -22,6 +_,7 @@
-    default void func_242212_e() {
-       TagRegistryManager.func_242193_a(this);
-       Blocks.func_235419_a_();
+    default void bindToGlobal() {
+       TagRegistryManager.resetAll(this);
+       Blocks.rebuildCache();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes(this));
     }
  
-    default void func_242210_a(PacketBuffer p_242210_1_) {
+    default void serializeToNetwork(PacketBuffer p_242210_1_) {
 @@ -55,6 +_,34 @@
  
-          public ITagCollection<EntityType<?>> func_241838_d() {
+          public ITagCollection<EntityType<?>> getEntityTypes() {
              return p_242209_3_;
 +         }
 +      };
 +   }
 +
 +   static ITagCollectionSupplier reinjectOptionalTags(ITagCollectionSupplier tagCollectionSupplier) {
-+      ITagCollection<Block> blockTagCollection = BlockTags.field_199899_c.reinjectOptionalTags(tagCollectionSupplier.func_241835_a());
-+      ITagCollection<Item> itemTagCollection = ItemTags.field_199906_c.reinjectOptionalTags(tagCollectionSupplier.func_241836_b());
-+      ITagCollection<Fluid> fluidTagCollection = FluidTags.field_206961_c.reinjectOptionalTags(tagCollectionSupplier.func_241837_c());
-+      ITagCollection<EntityType<?>> entityTypeTagCollection = EntityTypeTags.field_219766_c.reinjectOptionalTags(tagCollectionSupplier.func_241838_d());
++      ITagCollection<Block> blockTagCollection = BlockTags.HELPER.reinjectOptionalTags(tagCollectionSupplier.getBlocks());
++      ITagCollection<Item> itemTagCollection = ItemTags.HELPER.reinjectOptionalTags(tagCollectionSupplier.getItems());
++      ITagCollection<Fluid> fluidTagCollection = FluidTags.HELPER.reinjectOptionalTags(tagCollectionSupplier.getFluids());
++      ITagCollection<EntityType<?>> entityTypeTagCollection = EntityTypeTags.HELPER.reinjectOptionalTags(tagCollectionSupplier.getEntityTypes());
 +      return new ITagCollectionSupplier() {
 +         @Override
-+         public ITagCollection<Block> func_241835_a() {
++         public ITagCollection<Block> getBlocks() {
 +            return blockTagCollection;
 +         }
 +
 +         @Override
-+         public ITagCollection<Item> func_241836_b() {
++         public ITagCollection<Item> getItems() {
 +            return itemTagCollection;
 +         }
 +
 +         @Override
-+         public ITagCollection<Fluid> func_241837_c() {
++         public ITagCollection<Fluid> getFluids() {
 +            return fluidTagCollection;
 +         }
 +
 +         @Override
-+         public ITagCollection<EntityType<?>> func_241838_d() {
++         public ITagCollection<EntityType<?>> getEntityTypes() {
 +            return entityTypeTagCollection;
           }
        };

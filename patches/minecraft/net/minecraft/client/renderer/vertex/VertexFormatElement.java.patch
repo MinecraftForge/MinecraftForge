@@ -1,12 +1,12 @@
 --- a/net/minecraft/client/renderer/vertex/VertexFormatElement.java
 +++ b/net/minecraft/client/renderer/vertex/VertexFormatElement.java
 @@ -88,6 +_,12 @@
-       this.field_177380_c.func_227901_a_(this.field_177377_d);
+       this.usage.clearBufferState(this.index);
     }
  
 +    //Forge Start
 +    public int getElementCount() {
-+       return field_177378_e;
++       return count;
 +    }
 +    //Forge End
 +

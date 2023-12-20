@@ -1,20 +1,20 @@
 --- a/net/minecraft/item/PickaxeItem.java
 +++ b/net/minecraft/item/PickaxeItem.java
 @@ -11,25 +_,16 @@
-    private static final Set<Block> field_150915_c = ImmutableSet.of(Blocks.field_150408_cc, Blocks.field_150365_q, Blocks.field_150347_e, Blocks.field_150319_E, Blocks.field_150484_ah, Blocks.field_150482_ag, Blocks.field_196552_aC, Blocks.field_150340_R, Blocks.field_150352_o, Blocks.field_235334_I_, Blocks.field_150432_aD, Blocks.field_150339_S, Blocks.field_150366_p, Blocks.field_150368_y, Blocks.field_150369_x, Blocks.field_150341_Y, Blocks.field_150424_aL, Blocks.field_150403_cj, Blocks.field_205164_gk, Blocks.field_150448_aq, Blocks.field_150450_ax, Blocks.field_150322_A, Blocks.field_196583_aj, Blocks.field_196585_ak, Blocks.field_196798_hA, Blocks.field_196799_hB, Blocks.field_180395_cM, Blocks.field_150348_b, Blocks.field_196650_c, Blocks.field_196652_d, Blocks.field_196654_e, Blocks.field_196655_f, Blocks.field_196656_g, Blocks.field_196657_h, Blocks.field_150333_U, Blocks.field_222401_hJ, Blocks.field_196640_bx, Blocks.field_196643_by, Blocks.field_196646_bz, Blocks.field_196571_bA, Blocks.field_196573_bB, Blocks.field_196575_bC, Blocks.field_196576_bD, Blocks.field_196578_bE, Blocks.field_185771_cX, Blocks.field_196581_bI, Blocks.field_196582_bJ, Blocks.field_196580_bH, Blocks.field_196579_bG, Blocks.field_150430_aB, Blocks.field_150456_au, Blocks.field_222446_lj, Blocks.field_222447_lk, Blocks.field_222448_ll, Blocks.field_222449_lm, Blocks.field_222450_ln, Blocks.field_222451_lo, Blocks.field_222452_lp, Blocks.field_222453_lq, Blocks.field_222454_lr, Blocks.field_222455_ls, Blocks.field_222456_lt, Blocks.field_222457_lu, Blocks.field_222458_lv, Blocks.field_204409_il, Blocks.field_190975_dA, Blocks.field_190988_dw, Blocks.field_190989_dx, Blocks.field_190986_du, Blocks.field_190984_ds, Blocks.field_190990_dy, Blocks.field_190980_do, Blocks.field_196875_ie, Blocks.field_190982_dq, Blocks.field_190979_dn, Blocks.field_190978_dm, Blocks.field_190983_dr, Blocks.field_190987_dv, Blocks.field_190991_dz, Blocks.field_190977_dl, Blocks.field_190981_dp, Blocks.field_150331_J, Blocks.field_150320_F, Blocks.field_150332_K);
+    private static final Set<Block> DIGGABLES = ImmutableSet.of(Blocks.ACTIVATOR_RAIL, Blocks.COAL_ORE, Blocks.COBBLESTONE, Blocks.DETECTOR_RAIL, Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.POWERED_RAIL, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.NETHER_GOLD_ORE, Blocks.ICE, Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE, Blocks.MOSSY_COBBLESTONE, Blocks.NETHERRACK, Blocks.PACKED_ICE, Blocks.BLUE_ICE, Blocks.RAIL, Blocks.REDSTONE_ORE, Blocks.SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE, Blocks.RED_SANDSTONE, Blocks.STONE, Blocks.GRANITE, Blocks.POLISHED_GRANITE, Blocks.DIORITE, Blocks.POLISHED_DIORITE, Blocks.ANDESITE, Blocks.POLISHED_ANDESITE, Blocks.STONE_SLAB, Blocks.SMOOTH_STONE_SLAB, Blocks.SANDSTONE_SLAB, Blocks.PETRIFIED_OAK_SLAB, Blocks.COBBLESTONE_SLAB, Blocks.BRICK_SLAB, Blocks.STONE_BRICK_SLAB, Blocks.NETHER_BRICK_SLAB, Blocks.QUARTZ_SLAB, Blocks.RED_SANDSTONE_SLAB, Blocks.PURPUR_SLAB, Blocks.SMOOTH_QUARTZ, Blocks.SMOOTH_RED_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.SMOOTH_STONE, Blocks.STONE_BUTTON, Blocks.STONE_PRESSURE_PLATE, Blocks.POLISHED_GRANITE_SLAB, Blocks.SMOOTH_RED_SANDSTONE_SLAB, Blocks.MOSSY_STONE_BRICK_SLAB, Blocks.POLISHED_DIORITE_SLAB, Blocks.MOSSY_COBBLESTONE_SLAB, Blocks.END_STONE_BRICK_SLAB, Blocks.SMOOTH_SANDSTONE_SLAB, Blocks.SMOOTH_QUARTZ_SLAB, Blocks.GRANITE_SLAB, Blocks.ANDESITE_SLAB, Blocks.RED_NETHER_BRICK_SLAB, Blocks.POLISHED_ANDESITE_SLAB, Blocks.DIORITE_SLAB, Blocks.SHULKER_BOX, Blocks.BLACK_SHULKER_BOX, Blocks.BLUE_SHULKER_BOX, Blocks.BROWN_SHULKER_BOX, Blocks.CYAN_SHULKER_BOX, Blocks.GRAY_SHULKER_BOX, Blocks.GREEN_SHULKER_BOX, Blocks.LIGHT_BLUE_SHULKER_BOX, Blocks.LIGHT_GRAY_SHULKER_BOX, Blocks.LIME_SHULKER_BOX, Blocks.MAGENTA_SHULKER_BOX, Blocks.ORANGE_SHULKER_BOX, Blocks.PINK_SHULKER_BOX, Blocks.PURPLE_SHULKER_BOX, Blocks.RED_SHULKER_BOX, Blocks.WHITE_SHULKER_BOX, Blocks.YELLOW_SHULKER_BOX, Blocks.PISTON, Blocks.STICKY_PISTON, Blocks.PISTON_HEAD);
  
     public PickaxeItem(IItemTier p_i48478_1_, int p_i48478_2_, float p_i48478_3_, Item.Properties p_i48478_4_) {
--      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, field_150915_c, p_i48478_4_);
-+      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, field_150915_c, p_i48478_4_.addToolType(net.minecraftforge.common.ToolType.PICKAXE, p_i48478_1_.func_200925_d()));
+-      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, DIGGABLES, p_i48478_4_);
++      super((float)p_i48478_2_, p_i48478_3_, p_i48478_1_, DIGGABLES, p_i48478_4_.addToolType(net.minecraftforge.common.ToolType.PICKAXE, p_i48478_1_.getLevel()));
     }
  
-    public boolean func_150897_b(BlockState p_150897_1_) {
-       int i = this.func_200891_e().func_200925_d();
--      if (!p_150897_1_.func_203425_a(Blocks.field_150343_Z) && !p_150897_1_.func_203425_a(Blocks.field_235399_ni_) && !p_150897_1_.func_203425_a(Blocks.field_235397_ng_) && !p_150897_1_.func_203425_a(Blocks.field_235400_nj_) && !p_150897_1_.func_203425_a(Blocks.field_235398_nh_)) {
--         if (!p_150897_1_.func_203425_a(Blocks.field_150484_ah) && !p_150897_1_.func_203425_a(Blocks.field_150482_ag) && !p_150897_1_.func_203425_a(Blocks.field_150412_bA) && !p_150897_1_.func_203425_a(Blocks.field_150475_bE) && !p_150897_1_.func_203425_a(Blocks.field_150340_R) && !p_150897_1_.func_203425_a(Blocks.field_150352_o) && !p_150897_1_.func_203425_a(Blocks.field_150450_ax)) {
--            if (!p_150897_1_.func_203425_a(Blocks.field_150339_S) && !p_150897_1_.func_203425_a(Blocks.field_150366_p) && !p_150897_1_.func_203425_a(Blocks.field_150368_y) && !p_150897_1_.func_203425_a(Blocks.field_150369_x)) {
--               Material material = p_150897_1_.func_185904_a();
--               return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g || p_150897_1_.func_203425_a(Blocks.field_235334_I_);
+    public boolean isCorrectToolForDrops(BlockState p_150897_1_) {
+       int i = this.getTier().getLevel();
+-      if (!p_150897_1_.is(Blocks.OBSIDIAN) && !p_150897_1_.is(Blocks.CRYING_OBSIDIAN) && !p_150897_1_.is(Blocks.NETHERITE_BLOCK) && !p_150897_1_.is(Blocks.RESPAWN_ANCHOR) && !p_150897_1_.is(Blocks.ANCIENT_DEBRIS)) {
+-         if (!p_150897_1_.is(Blocks.DIAMOND_BLOCK) && !p_150897_1_.is(Blocks.DIAMOND_ORE) && !p_150897_1_.is(Blocks.EMERALD_ORE) && !p_150897_1_.is(Blocks.EMERALD_BLOCK) && !p_150897_1_.is(Blocks.GOLD_BLOCK) && !p_150897_1_.is(Blocks.GOLD_ORE) && !p_150897_1_.is(Blocks.REDSTONE_ORE)) {
+-            if (!p_150897_1_.is(Blocks.IRON_BLOCK) && !p_150897_1_.is(Blocks.IRON_ORE) && !p_150897_1_.is(Blocks.LAPIS_BLOCK) && !p_150897_1_.is(Blocks.LAPIS_ORE)) {
+-               Material material = p_150897_1_.getMaterial();
+-               return material == Material.STONE || material == Material.METAL || material == Material.HEAVY_METAL || p_150897_1_.is(Blocks.NETHER_GOLD_ORE);
 -            } else {
 -               return i >= 1;
 -            }
@@ -26,8 +26,8 @@
 +      if (p_150897_1_.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
 +         return i >= p_150897_1_.getHarvestLevel();
        }
-+      Material material = p_150897_1_.func_185904_a();
-+      return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g;
++      Material material = p_150897_1_.getMaterial();
++      return material == Material.STONE || material == Material.METAL || material == Material.HEAVY_METAL;
     }
  
-    public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {
+    public float getDestroySpeed(ItemStack p_150893_1_, BlockState p_150893_2_) {

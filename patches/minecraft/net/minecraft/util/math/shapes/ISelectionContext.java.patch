@@ -6,6 +6,6 @@
  
 -public interface ISelectionContext {
 +public interface ISelectionContext extends net.minecraftforge.common.extensions.IForgeSelectionContext {
-    static ISelectionContext func_216377_a() {
-       return EntitySelectionContext.field_216379_a;
+    static ISelectionContext empty() {
+       return EntitySelectionContext.EMPTY;
     }

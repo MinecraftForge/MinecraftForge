@@ -4,7 +4,7 @@
           f *= 1.0F - f1 * 0.15F;
        }
  
--      return MathHelper.func_219799_g(Minecraft.func_71410_x().field_71474_y.field_243227_aN, 1.0F, f);
+-      return MathHelper.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, f);
 +      return net.minecraftforge.client.ForgeHooksClient.getOffsetFOV(this, f);
     }
  }

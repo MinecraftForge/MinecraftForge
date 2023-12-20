@@ -6,46 +6,46 @@
  @OnlyIn(Dist.CLIENT)
 -public class WeightedBakedModel implements IBakedModel {
 +public class WeightedBakedModel implements net.minecraftforge.client.model.data.IDynamicBakedModel {
-    private final int field_177567_a;
-    private final List<WeightedBakedModel.WeightedModel> field_177565_b;
-    private final IBakedModel field_177566_c;
+    private final int totalWeight;
+    private final List<WeightedBakedModel.WeightedModel> list;
+    private final IBakedModel wrapped;
 @@ -23,14 +_,20 @@
-       this.field_177566_c = (p_i46073_1_.get(0)).field_185281_b;
+       this.wrapped = (p_i46073_1_.get(0)).model;
     }
  
--   public List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
--      return (WeightedRandom.func_180166_a(this.field_177565_b, Math.abs((int)p_200117_3_.nextLong()) % this.field_177567_a)).field_185281_b.func_200117_a(p_200117_1_, p_200117_2_, p_200117_3_);
+-   public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
+-      return (WeightedRandom.getWeightedItem(this.list, Math.abs((int)p_200117_3_.nextLong()) % this.totalWeight)).model.getQuads(p_200117_1_, p_200117_2_, p_200117_3_);
 +   // FORGE: Implement our overloads (here and below) so child models can have custom logic 
 +   public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_, net.minecraftforge.client.model.data.IModelData modelData) {
-+      return (WeightedRandom.func_180166_a(this.field_177565_b, Math.abs((int)p_200117_3_.nextLong()) % this.field_177567_a)).field_185281_b.getQuads(p_200117_1_, p_200117_2_, p_200117_3_, modelData);
++      return (WeightedRandom.getWeightedItem(this.list, Math.abs((int)p_200117_3_.nextLong()) % this.totalWeight)).model.getQuads(p_200117_1_, p_200117_2_, p_200117_3_, modelData);
     }
  
-    public boolean func_177555_b() {
-       return this.field_177566_c.func_177555_b();
+    public boolean useAmbientOcclusion() {
+       return this.wrapped.useAmbientOcclusion();
     }
  
 +   @Override
 +   public boolean isAmbientOcclusion(BlockState state) {
-+      return this.field_177566_c.isAmbientOcclusion(state);
++      return this.wrapped.isAmbientOcclusion(state);
 +   }
 +
-    public boolean func_177556_c() {
-       return this.field_177566_c.func_177556_c();
+    public boolean isGui3d() {
+       return this.wrapped.isGui3d();
     }
 @@ -47,8 +_,16 @@
-       return this.field_177566_c.func_177554_e();
+       return this.wrapped.getParticleIcon();
     }
  
 +   public TextureAtlasSprite getParticleTexture(net.minecraftforge.client.model.data.IModelData modelData) {
-+      return this.field_177566_c.getParticleTexture(modelData);
++      return this.wrapped.getParticleTexture(modelData);
 +   }
 +
-    public ItemCameraTransforms func_177552_f() {
-       return this.field_177566_c.func_177552_f();
+    public ItemCameraTransforms getTransforms() {
+       return this.wrapped.getTransforms();
 +   }
 +
 +   public IBakedModel handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType transformType, com.mojang.blaze3d.matrix.MatrixStack matrixStack) {
-+      return this.field_177566_c.handlePerspective(transformType, matrixStack);
++      return this.wrapped.handlePerspective(transformType, matrixStack);
     }
  
-    public ItemOverrideList func_188617_f() {
+    public ItemOverrideList getOverrides() {

@@ -6,53 +6,53 @@
  
 -public abstract class TileEntity {
 +public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
-    private static final Logger field_145852_a = LogManager.getLogger();
-    private final TileEntityType<?> field_200663_e;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final TileEntityType<?> type;
     @Nullable
 @@ -26,9 +_,12 @@
     @Nullable
-    private BlockState field_195045_e;
-    private boolean field_222816_g;
+    private BlockState blockState;
+    private boolean hasLoggedInvalidStateBefore;
 +   private CompoundNBT customTileData;
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
 +      super(TileEntity.class);
-       this.field_200663_e = p_i48289_1_;
+       this.type = p_i48289_1_;
 +      this.gatherCapabilities();
     }
  
     @Nullable
 @@ -47,6 +_,8 @@
  
-    public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-       this.field_174879_c = new BlockPos(p_230337_2_.func_74762_e("x"), p_230337_2_.func_74762_e("y"), p_230337_2_.func_74762_e("z"));
-+      if (p_230337_2_.func_74764_b("ForgeData")) this.customTileData = p_230337_2_.func_74775_l("ForgeData");
-+      if (getCapabilities() != null && p_230337_2_.func_74764_b("ForgeCaps")) deserializeCaps(p_230337_2_.func_74775_l("ForgeCaps"));
+    public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
+       this.worldPosition = new BlockPos(p_230337_2_.getInt("x"), p_230337_2_.getInt("y"), p_230337_2_.getInt("z"));
++      if (p_230337_2_.contains("ForgeData")) this.customTileData = p_230337_2_.getCompound("ForgeData");
++      if (getCapabilities() != null && p_230337_2_.contains("ForgeCaps")) deserializeCaps(p_230337_2_.getCompound("ForgeCaps"));
     }
  
-    public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
+    public CompoundNBT save(CompoundNBT p_189515_1_) {
 @@ -62,6 +_,8 @@
-          p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
-          p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
-          p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
-+         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
-+         if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
+          p_189516_1_.putInt("x", this.worldPosition.getX());
+          p_189516_1_.putInt("y", this.worldPosition.getY());
+          p_189516_1_.putInt("z", this.worldPosition.getZ());
++         if (this.customTileData != null) p_189516_1_.put("ForgeData", this.customTileData);
++         if (getCapabilities() != null) p_189516_1_.put("ForgeCaps", serializeCaps());
           return p_189516_1_;
        }
     }
 @@ -94,7 +_,7 @@
-       if (this.field_145850_b != null) {
-          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
-          this.field_145850_b.func_175646_b(this.field_174879_c, this);
--         if (!this.field_195045_e.func_196958_f()) {
-+         if (!this.field_195045_e.isAir(this.field_145850_b, this.field_174879_c)) {
-             this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
+       if (this.level != null) {
+          this.blockState = this.level.getBlockState(this.worldPosition);
+          this.level.blockEntityChanged(this.worldPosition, this);
+-         if (!this.blockState.isAir()) {
++         if (!this.blockState.isAir(this.level, this.worldPosition)) {
+             this.level.updateNeighbourForOutputSignal(this.worldPosition, this.blockState.getBlock());
           }
        }
 @@ -133,6 +_,13 @@
  
-    public void func_145843_s() {
-       this.field_145846_f = true;
+    public void setRemoved() {
+       this.remove = true;
 +      this.invalidateCaps();
 +      requestModelDataUpdate();
 +   }
@@ -62,11 +62,11 @@
 +      this.invalidateCaps();
     }
  
-    public void func_145829_t() {
+    public void clearRemoved() {
 @@ -173,6 +_,13 @@
  
-    public TileEntityType<?> func_200662_C() {
-       return this.field_200663_e;
+    public TileEntityType<?> getType() {
+       return this.type;
 +   }
 +
 +   @Override
@@ -76,4 +76,4 @@
 +      return this.customTileData;
     }
  
-    public void func_222814_r() {
+    public void logInvalidState() {

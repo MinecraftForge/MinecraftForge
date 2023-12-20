@@ -5,24 +5,24 @@
           }
        });
 +      if (this.getClass() == RecipeProvider.class) //Forge: Subclasses don't need this.
-       func_208310_b(p_200398_1_, Advancement.Builder.func_200278_a().func_200275_a("impossible", new ImpossibleTrigger.Instance()).func_200273_b(), path.resolve("data/minecraft/advancements/recipes/root.json"));
+       saveAdvancement(p_200398_1_, Advancement.Builder.advancement().addCriterion("impossible", new ImpossibleTrigger.Instance()).serializeToJson(), path.resolve("data/minecraft/advancements/recipes/root.json"));
     }
  
 @@ -81,7 +_,7 @@
  
     }
  
--   protected static void func_208310_b(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
-+   protected void func_208310_b(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
+-   protected static void saveAdvancement(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
++   protected void saveAdvancement(DirectoryCache p_208310_0_, JsonObject p_208310_1_, Path p_208310_2_) {
        try {
-          String s = field_200412_b.toJson((JsonElement)p_208310_1_);
-          String s1 = field_208307_a.hashUnencodedChars(s).toString();
+          String s = GSON.toJson((JsonElement)p_208310_1_);
+          String s1 = SHA1.hashUnencodedChars(s).toString();
 @@ -100,7 +_,7 @@
  
     }
  
--   protected static void func_200404_a(Consumer<IFinishedRecipe> p_200404_0_) {
-+   protected void func_200404_a(Consumer<IFinishedRecipe> p_200404_0_) {
-       func_240470_a_(p_200404_0_, Blocks.field_196670_r, ItemTags.field_203297_q);
-       func_240472_b_(p_200404_0_, Blocks.field_196666_p, ItemTags.field_203296_p);
-       func_240472_b_(p_200404_0_, Blocks.field_235344_mC_, ItemTags.field_232913_w_);
+-   protected static void buildShapelessRecipes(Consumer<IFinishedRecipe> p_200404_0_) {
++   protected void buildShapelessRecipes(Consumer<IFinishedRecipe> p_200404_0_) {
+       planksFromLog(p_200404_0_, Blocks.ACACIA_PLANKS, ItemTags.ACACIA_LOGS);
+       planksFromLogs(p_200404_0_, Blocks.BIRCH_PLANKS, ItemTags.BIRCH_LOGS);
+       planksFromLogs(p_200404_0_, Blocks.CRIMSON_PLANKS, ItemTags.CRIMSON_STEMS);

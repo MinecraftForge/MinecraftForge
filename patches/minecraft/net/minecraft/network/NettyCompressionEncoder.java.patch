@@ -1,16 +1,16 @@
 --- a/net/minecraft/network/NettyCompressionEncoder.java
 +++ b/net/minecraft/network/NettyCompressionEncoder.java
 @@ -9,6 +_,8 @@
-    private final byte[] field_179302_a = new byte[8192];
-    private final Deflater field_179300_b;
-    private int field_179301_c;
+    private final byte[] encodeBuf = new byte[8192];
+    private final Deflater deflater;
+    private int threshold;
 +   private static final boolean DISABLE_PACKET_DEBUG = Boolean.parseBoolean(System.getProperty("forge.disablePacketCompressionDebug", "false"));
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
  
     public NettyCompressionEncoder(int p_i46005_1_) {
-       this.field_179301_c = p_i46005_1_;
+       this.threshold = p_i46005_1_;
 @@ -22,6 +_,12 @@
-          packetbuffer.func_150787_b(0);
+          packetbuffer.writeVarInt(0);
           packetbuffer.writeBytes(p_encode_2_);
        } else {
 +         if (!DISABLE_PACKET_DEBUG && i > 2097152) {
@@ -21,4 +21,4 @@
 +         }
           byte[] abyte = new byte[i];
           p_encode_2_.readBytes(abyte);
-          packetbuffer.func_150787_b(abyte.length);
+          packetbuffer.writeVarInt(abyte.length);

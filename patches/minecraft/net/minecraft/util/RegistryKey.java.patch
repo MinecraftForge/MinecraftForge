@@ -6,23 +6,23 @@
  
 -public class RegistryKey<T> {
 +public class RegistryKey<T> implements Comparable<RegistryKey<?>> {
-    private static final Map<String, RegistryKey<?>> field_240898_a_ = Collections.synchronizedMap(Maps.newIdentityHashMap());
-    private final ResourceLocation field_240899_b_;
-    private final ResourceLocation field_240900_c_;
+    private static final Map<String, RegistryKey<?>> VALUES = Collections.synchronizedMap(Maps.newIdentityHashMap());
+    private final ResourceLocation registryName;
+    private final ResourceLocation location;
 @@ -47,5 +_,16 @@
        return (p_240907_1_) -> {
-          return func_240903_a_(p_240902_0_, p_240907_1_);
+          return create(p_240902_0_, p_240907_1_);
        };
 +   }
 +
 +   public ResourceLocation getRegistryName() {
-+      return this.field_240899_b_;
++      return this.registryName;
 +   }
 +
 +   @Override
 +   public int compareTo(RegistryKey<?> o) {
 +      int ret = this.getRegistryName().compareTo(o.getRegistryName());
-+      if (ret == 0) ret = this.func_240901_a_().compareTo(o.func_240901_a_());
++      if (ret == 0) ret = this.location().compareTo(o.location());
 +      return ret;
     }
  }

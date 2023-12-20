@@ -6,6 +6,6 @@
  @OnlyIn(Dist.CLIENT)
 -public interface IUnbakedModel {
 +public interface IUnbakedModel extends net.minecraftforge.client.extensions.IForgeUnbakedModel {
-    Collection<ResourceLocation> func_187965_e();
+    Collection<ResourceLocation> getDependencies();
  
-    Collection<RenderMaterial> func_225614_a_(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<Pair<String, String>> p_225614_2_);
+    Collection<RenderMaterial> getMaterials(Function<ResourceLocation, IUnbakedModel> p_225614_1_, Set<Pair<String, String>> p_225614_2_);

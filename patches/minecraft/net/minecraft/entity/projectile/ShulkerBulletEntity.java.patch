@@ -3,9 +3,9 @@
 @@ -213,7 +_,7 @@
           }
  
-          RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
--         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
-+            if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
-             this.func_70227_a(raytraceresult);
+          RayTraceResult raytraceresult = ProjectileHelper.getHitResult(this, this::canHitEntity);
+-         if (raytraceresult.getType() != RayTraceResult.Type.MISS) {
++            if (raytraceresult.getType() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+             this.onHit(raytraceresult);
           }
        }

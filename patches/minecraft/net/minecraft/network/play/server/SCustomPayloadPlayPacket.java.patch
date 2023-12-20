@@ -6,6 +6,6 @@
  
 -public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler> {
 +public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler>, net.minecraftforge.fml.network.ICustomPacket<SCustomPayloadPlayPacket> {
-    public static final ResourceLocation field_209911_b = new ResourceLocation("brand");
-    public static final ResourceLocation field_209913_d = new ResourceLocation("debug/path");
-    public static final ResourceLocation field_209914_e = new ResourceLocation("debug/neighbors_update");
+    public static final ResourceLocation BRAND = new ResourceLocation("brand");
+    public static final ResourceLocation DEBUG_PATHFINDING_PACKET = new ResourceLocation("debug/path");
+    public static final ResourceLocation DEBUG_NEIGHBORSUPDATE_PACKET = new ResourceLocation("debug/neighbors_update");

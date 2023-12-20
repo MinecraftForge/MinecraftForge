@@ -3,13 +3,13 @@
 @@ -448,6 +_,9 @@
           }
  
-          this.field_197417_j.skip();
+          this.reader.skip();
 +         EntitySelector forgeSelector = net.minecraftforge.common.command.EntitySelectorManager.parseSelector(this);
 +         if (forgeSelector != null)
 +            return forgeSelector;
-          this.func_197403_b();
+          this.parseSelector();
        } else {
-          this.func_197382_c();
+          this.parseNameOrUUID();
 @@ -463,6 +_,7 @@
        p_210326_0_.suggest("@r", new TranslationTextComponent("argument.entity.selector.randomPlayer"));
        p_210326_0_.suggest("@s", new TranslationTextComponent("argument.entity.selector.self"));
@@ -17,4 +17,4 @@
 +      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_210326_0_);
     }
  
-    private CompletableFuture<Suggestions> func_201981_b(SuggestionsBuilder p_201981_1_, Consumer<SuggestionsBuilder> p_201981_2_) {
+    private CompletableFuture<Suggestions> suggestNameOrSelector(SuggestionsBuilder p_201981_1_, Consumer<SuggestionsBuilder> p_201981_2_) {

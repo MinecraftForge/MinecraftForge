@@ -5,10 +5,10 @@
     }
  
 +   @Override
-+   public void func_231175_as__() {
-+      this.field_230706_i_.func_147108_a(this.field_146798_g);
++   public void onClose() {
++      this.minecraft.setScreen(this.lastScreen);
 +   }
 +
-    public ServerPinger func_146789_i() {
-       return this.field_146797_f;
+    public ServerPinger getPinger() {
+       return this.pinger;
     }

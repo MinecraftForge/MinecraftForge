@@ -4,7 +4,7 @@
           if (!(p_212570_2_ instanceof LivingEntity)) {
              return false;
           } else {
--            return p_212570_2_ instanceof PlayerEntity || p_212570_1_.func_82736_K().func_223586_b(GameRules.field_223599_b);
+-            return p_212570_2_ instanceof PlayerEntity || p_212570_1_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
 +            return p_212570_2_ instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_212570_1_, p_212570_2_);
           }
        } else {

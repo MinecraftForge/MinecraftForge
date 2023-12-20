@@ -7,20 +7,20 @@
 +
 +   @javax.annotation.Nullable
 +   public static TagRegistry<?> get(ResourceLocation rl) {
-+      return field_242190_a.get(rl);
++      return HELPERS.get(rl);
 +   }
 +
 +   public static Multimap<ResourceLocation, ResourceLocation> validateVanillaTags(ITagCollectionSupplier tagCollectionSupplier) {
 +      Multimap<ResourceLocation, ResourceLocation> missingTags = HashMultimap.create();
-+      for (java.util.Map.Entry<ResourceLocation, TagRegistry<?>> entry : field_242190_a.entrySet()) {
++      for (java.util.Map.Entry<ResourceLocation, TagRegistry<?>> entry : HELPERS.entrySet()) {
 +         if (!net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(entry.getKey())) {
-+            missingTags.putAll(entry.getKey(), entry.getValue().func_242189_b(tagCollectionSupplier));
++            missingTags.putAll(entry.getKey(), entry.getValue().getMissingTags(tagCollectionSupplier));
 +         }
 +      }
 +      return missingTags;
 +   }
 +
 +   public static void fetchCustomTagTypes(ITagCollectionSupplier tagCollectionSupplier) {
-+      net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().forEach(tagRegistry -> field_242190_a.get(tagRegistry).func_242188_a(tagCollectionSupplier));
++      net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().forEach(tagRegistry -> HELPERS.get(tagRegistry).reset(tagCollectionSupplier));
 +   }
  }

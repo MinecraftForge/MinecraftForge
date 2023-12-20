@@ -3,41 +3,41 @@
 @@ -66,8 +_,11 @@
     }
  
-    private void func_186012_b(int p_186012_1_) {
--      if (p_186012_1_ != this.field_186024_e) {
--         this.field_186024_e = p_186012_1_;
+    private void setBits(int p_186012_1_) {
+-      if (p_186012_1_ != this.bits) {
+-         this.bits = p_186012_1_;
 +      setBits(p_186012_1_, false);
 +   }
 +   private void setBits(int bitsIn, boolean forceBits) {
-+      if (bitsIn != this.field_186024_e) {
-+         this.field_186024_e = bitsIn;
-          if (this.field_186024_e <= 4) {
-             this.field_186024_e = 4;
-             this.field_186022_c = new ArrayPalette<>(this.field_205523_d, this.field_186024_e, this, this.field_205524_e);
++      if (bitsIn != this.bits) {
++         this.bits = bitsIn;
+          if (this.bits <= 4) {
+             this.bits = 4;
+             this.palette = new ArrayPalette<>(this.registry, this.bits, this, this.reader);
 @@ -76,6 +_,8 @@
           } else {
-             this.field_186022_c = this.field_205521_b;
-             this.field_186024_e = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
+             this.palette = this.globalPalette;
+             this.bits = MathHelper.ceillog2(this.registry.size());
 +            if (forceBits)
-+               this.field_186024_e = bitsIn;
++               this.bits = bitsIn;
           }
  
-          this.field_186022_c.func_186041_a(this.field_205526_g);
+          this.palette.idFor(this.defaultValue);
 @@ -138,12 +_,16 @@
-       this.func_210459_b();
+       this.acquire();
        int i = p_186010_1_.readByte();
-       if (this.field_186024_e != i) {
--         this.func_186012_b(i);
+       if (this.bits != i) {
+-         this.setBits(i);
 +         this.setBits(i, true); //Forge, Force bit density to fix network issues, resize below if needed.
        }
  
-       this.field_186022_c.func_186038_a(p_186010_1_);
-       p_186010_1_.func_186873_b(this.field_186021_b.func_188143_a());
-       this.func_210460_c();
+       this.palette.read(p_186010_1_);
+       p_186010_1_.readLongArray(this.storage.getRaw());
+       this.release();
 +
-+      int regSize = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
-+      if (this.field_186022_c == field_205521_b && this.field_186024_e != regSize) // Resize bits to fit registry.
-+         this.onResize(regSize, field_205526_g);
++      int regSize = MathHelper.ceillog2(this.registry.size());
++      if (this.palette == globalPalette && this.bits != regSize) // Resize bits to fit registry.
++         this.onResize(regSize, defaultValue);
     }
  
-    public void func_186009_b(PacketBuffer p_186009_1_) {
+    public void write(PacketBuffer p_186009_1_) {

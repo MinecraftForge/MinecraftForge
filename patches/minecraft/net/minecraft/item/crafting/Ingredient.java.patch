@@ -10,43 +10,43 @@
 +      INSTANCES.stream().filter(e -> e != null).forEach(i -> i.invalidate());
 +   }
 +
-    public static final Ingredient field_193370_a = new Ingredient(Stream.empty());
-    private final Ingredient.IItemList[] field_199807_b;
-    private ItemStack[] field_193371_b;
-    private IntList field_194140_c;
+    public static final Ingredient EMPTY = new Ingredient(Stream.empty());
+    private final Ingredient.IItemList[] values;
+    private ItemStack[] itemStacks;
+    private IntList stackingIds;
 +   private final boolean isSimple;
  
     protected Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
-       this.field_199807_b = p_i49381_1_.toArray((p_209360_0_) -> {
+       this.values = p_i49381_1_.toArray((p_209360_0_) -> {
           return new Ingredient.IItemList[p_209360_0_];
        });
-+      this.isSimple = !net.minecraftforge.fml.DatagenModLoader.isRunningDataGen() && !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.func_77973_b().isDamageable(stack)));
++      this.isSimple = !net.minecraftforge.fml.DatagenModLoader.isRunningDataGen() && !Arrays.stream(values).anyMatch(list -> list.getItems().stream().anyMatch(stack -> stack.getItem().isDamageable(stack)));
 +      Ingredient.INSTANCES.add(this);
     }
  
-    public ItemStack[] func_193365_a() {
+    public ItemStack[] getItems() {
 @@ -91,6 +_,10 @@
  
-    public final void func_199564_a(PacketBuffer p_199564_1_) {
-       this.func_199806_d();
+    public final void toNetwork(PacketBuffer p_199564_1_) {
+       this.dissolve();
 +      if (!this.isVanilla()) {
 +         net.minecraftforge.common.crafting.CraftingHelper.write(p_199564_1_, this);
 +         return;
 +      }
-       p_199564_1_.func_150787_b(this.field_193371_b.length);
+       p_199564_1_.writeVarInt(this.itemStacks.length);
  
-       for(int i = 0; i < this.field_193371_b.length; ++i) {
+       for(int i = 0; i < this.itemStacks.length; ++i) {
 @@ -117,6 +_,25 @@
-       return this.field_199807_b.length == 0 && (this.field_193371_b == null || this.field_193371_b.length == 0) && (this.field_194140_c == null || this.field_194140_c.isEmpty());
+       return this.values.length == 0 && (this.itemStacks == null || this.itemStacks.length == 0) && (this.stackingIds == null || this.stackingIds.isEmpty());
     }
  
 +   protected void invalidate() {
-+      this.field_193371_b = null;
-+      this.field_194140_c = null;
++      this.itemStacks = null;
++      this.stackingIds = null;
 +   }
 +
 +   public boolean isSimple() {
-+      return isSimple || this == field_193370_a;
++      return isSimple || this == EMPTY;
 +   }
 +
 +   private final boolean isVanilla = this.getClass() == Ingredient.class;
@@ -59,27 +59,27 @@
 +      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
 +   }
 +
-    public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
+    public static Ingredient fromValues(Stream<? extends Ingredient.IItemList> p_209357_0_) {
        Ingredient ingredient = new Ingredient(p_209357_0_);
-       return ingredient.field_199807_b.length == 0 ? field_193370_a : ingredient;
+       return ingredient.values.length == 0 ? EMPTY : ingredient;
 @@ -144,6 +_,9 @@
  
-    public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
-       int i = p_199566_0_.func_150792_a();
+    public static Ingredient fromNetwork(PacketBuffer p_199566_0_) {
+       int i = p_199566_0_.readVarInt();
 +      if (i == -1) {
-+         return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199566_0_.func_192575_l(), p_199566_0_);
++         return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199566_0_.readResourceLocation(), p_199566_0_);
 +      }
-       return func_209357_a(Stream.generate(() -> {
-          return new Ingredient.SingleItemList(p_199566_0_.func_150791_c());
+       return fromValues(Stream.generate(() -> {
+          return new Ingredient.SingleItemList(p_199566_0_.readItem());
        }).limit((long)i));
 @@ -151,6 +_,8 @@
  
-    public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
+    public static Ingredient fromJson(@Nullable JsonElement p_199802_0_) {
        if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
 +         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199802_0_);
 +         if (ret != null) return ret;
           if (p_199802_0_.isJsonObject()) {
-             return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
+             return fromValues(Stream.of(valueFromJson(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
 @@ -192,6 +_,12 @@
        }
@@ -88,18 +88,18 @@
 +   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
 +   //Only public for internal use, so we can access a private field in here.
 +   public static Ingredient merge(Collection<Ingredient> parts) {
-+      return func_209357_a(parts.stream().flatMap(i -> Arrays.stream(i.field_199807_b)));
++      return fromValues(parts.stream().flatMap(i -> Arrays.stream(i.values)));
 +   }
 +
     public interface IItemList {
-       Collection<ItemStack> func_199799_a();
+       Collection<ItemStack> getItems();
  
 @@ -230,6 +_,9 @@
              list.add(new ItemStack(item));
           }
  
 +         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
-+            list.add(new ItemStack(net.minecraft.block.Blocks.field_180401_cv).func_200302_a(new net.minecraft.util.text.StringTextComponent("Empty Tag: " + TagCollectionManager.func_242178_a().func_241836_b().func_232975_b_(this.field_199800_a).toString())));
++            list.add(new ItemStack(net.minecraft.block.Blocks.BARRIER).setHoverName(new net.minecraft.util.text.StringTextComponent("Empty Tag: " + TagCollectionManager.getInstance().getItems().getIdOrThrow(this.tag).toString())));
 +         }
           return list;
        }

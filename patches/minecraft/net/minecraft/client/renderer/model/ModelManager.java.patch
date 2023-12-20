@@ -4,51 +4,51 @@
  
  @OnlyIn(Dist.CLIENT)
  public class ModelManager extends ReloadListener<ModelBakery> implements AutoCloseable {
--   private Map<ResourceLocation, IBakedModel> field_174958_a;
-+   private Map<ResourceLocation, IBakedModel> field_174958_a = new java.util.HashMap<>();
+-   private Map<ResourceLocation, IBakedModel> bakedRegistry;
++   private Map<ResourceLocation, IBakedModel> bakedRegistry = new java.util.HashMap<>();
     @Nullable
-    private SpriteMap field_229352_b_;
-    private final BlockModelShapes field_174957_c;
+    private SpriteMap atlases;
+    private final BlockModelShapes blockModelShaper;
 @@ -36,6 +_,10 @@
-       this.field_174957_c = new BlockModelShapes(this);
+       this.blockModelShaper = new BlockModelShapes(this);
     }
  
 +   public IBakedModel getModel(ResourceLocation modelLocation) {
-+      return this.field_174958_a.getOrDefault(modelLocation, this.field_174955_d);
++      return this.bakedRegistry.getOrDefault(modelLocation, this.missingModel);
 +   }
 +
-    public IBakedModel func_174953_a(ModelResourceLocation p_174953_1_) {
-       return this.field_174958_a.getOrDefault(p_174953_1_, this.field_174955_d);
+    public IBakedModel getModel(ModelResourceLocation p_174953_1_) {
+       return this.bakedRegistry.getOrDefault(p_174953_1_, this.missingModel);
     }
 @@ -50,7 +_,7 @@
  
-    protected ModelBakery func_212854_a_(IResourceManager p_212854_1_, IProfiler p_212854_2_) {
-       p_212854_2_.func_219894_a();
--      ModelBakery modelbakery = new ModelBakery(p_212854_1_, this.field_224743_d, p_212854_2_, this.field_229354_f_);
-+      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_212854_1_, this.field_224743_d, p_212854_2_, this.field_229354_f_);
-       p_212854_2_.func_219897_b();
+    protected ModelBakery prepare(IResourceManager p_212854_1_, IProfiler p_212854_2_) {
+       p_212854_2_.startTick();
+-      ModelBakery modelbakery = new ModelBakery(p_212854_1_, this.blockColors, p_212854_2_, this.maxMipmapLevels);
++      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_212854_1_, this.blockColors, p_212854_2_, this.maxMipmapLevels);
+       p_212854_2_.endTick();
        return modelbakery;
     }
 @@ -66,6 +_,7 @@
-       this.field_174958_a = p_212853_1_.func_217846_a();
-       this.field_224744_f = p_212853_1_.func_225354_b();
-       this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
-+      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, (net.minecraftforge.client.model.ModelLoader) p_212853_1_);
-       p_212853_3_.func_219895_b("cache");
-       this.field_174957_c.func_178124_c();
-       p_212853_3_.func_76319_b();
+       this.bakedRegistry = p_212853_1_.getBakedTopLevelModels();
+       this.modelGroups = p_212853_1_.getModelGroups();
+       this.missingModel = this.bakedRegistry.get(ModelBakery.MISSING_MODEL_LOCATION);
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.bakedRegistry, (net.minecraftforge.client.model.ModelLoader) p_212853_1_);
+       p_212853_3_.popPush("cache");
+       this.blockModelShaper.rebuildCache();
+       p_212853_3_.pop();
 @@ -91,6 +_,7 @@
     }
  
-    public AtlasTexture func_229356_a_(ResourceLocation p_229356_1_) {
-+      if (this.field_229352_b_ == null) throw new RuntimeException("getAtlasTexture called too early!");
-       return this.field_229352_b_.func_229152_a_(p_229356_1_);
+    public AtlasTexture getAtlas(ResourceLocation p_229356_1_) {
++      if (this.atlases == null) throw new RuntimeException("getAtlasTexture called too early!");
+       return this.atlases.getAtlas(p_229356_1_);
     }
  
 @@ -103,5 +_,11 @@
  
-    public void func_229355_a_(int p_229355_1_) {
-       this.field_229354_f_ = p_229355_1_;
+    public void updateMaxMipLevel(int p_229355_1_) {
+       this.maxMipmapLevels = p_229355_1_;
 +   }
 +
 +   // TODO

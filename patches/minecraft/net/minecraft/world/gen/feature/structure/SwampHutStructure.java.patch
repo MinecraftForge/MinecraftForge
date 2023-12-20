@@ -4,15 +4,15 @@
        return SwampHutStructure.Start::new;
     }
  
--   public List<MobSpawnInfo.Spawners> func_202279_e() {
+-   public List<MobSpawnInfo.Spawners> getSpecialEnemies() {
 +   @Override
 +   public List<MobSpawnInfo.Spawners> getDefaultSpawnList() {
-       return field_202384_d;
+       return SWAMPHUT_ENEMIES;
     }
  
--   public List<MobSpawnInfo.Spawners> func_214469_f() {
+-   public List<MobSpawnInfo.Spawners> getSpecialAnimals() {
 +   @Override
 +   public List<MobSpawnInfo.Spawners> getDefaultCreatureSpawnList() {
-       return field_214559_aS;
+       return SWAMPHUT_ANIMALS;
     }
  

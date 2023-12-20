@@ -3,32 +3,32 @@
 @@ -104,6 +_,14 @@
        }
  
-       this.field_184677_bJ = new PhaseManager(this);
-+      this.func_145769_d(field_213331_b.getAndAdd(this.field_70977_g.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
+       this.phaseManager = new PhaseManager(this);
++      this.setId(ENTITY_COUNTER.getAndAdd(this.subEntities.length + 1) + 1); // Forge: Fix MC-158205: Make sure part ids are successors of parent mob id
 +   }
 +
 +   @Override
-+   public void func_145769_d(int p_145769_1_) {
-+      super.func_145769_d(p_145769_1_);
-+      for(int i = 0; i < this.field_70977_g.length; ++i) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
-+         this.field_70977_g[i].func_145769_d(p_145769_1_ + i + 1);
++   public void setId(int p_145769_1_) {
++      super.setId(p_145769_1_);
++      for(int i = 0; i < this.subEntities.length; ++i) // Forge: Fix MC-158205: Set part ids to successors of parent mob id
++         this.subEntities[i].setId(p_145769_1_ + i + 1);
     }
  
-    public static AttributeModifierMap.MutableAttribute func_234257_m_() {
+    public static AttributeModifierMap.MutableAttribute createAttributes() {
 @@ -408,8 +_,8 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
-                BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
-                Block block = blockstate.func_177230_c();
--               if (!blockstate.func_196958_f() && blockstate.func_185904_a() != Material.field_151581_o) {
--                  if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) && !BlockTags.field_219754_W.func_230235_a_(block)) {
-+               if (!blockstate.isAir(this.field_70170_p, blockpos) && blockstate.func_185904_a() != Material.field_151581_o) {
-+                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.field_70170_p, blockpos, this) && !BlockTags.field_219754_W.func_230235_a_(block)) {
-                      flag1 = this.field_70170_p.func_217377_a(blockpos, false) || flag1;
+                BlockState blockstate = this.level.getBlockState(blockpos);
+                Block block = blockstate.getBlock();
+-               if (!blockstate.isAir() && blockstate.getMaterial() != Material.FIRE) {
+-                  if (this.level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && !BlockTags.DRAGON_IMMUNE.contains(block)) {
++               if (!blockstate.isAir(this.level, blockpos) && blockstate.getMaterial() != Material.FIRE) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.level, blockpos, this) && !BlockTags.DRAGON_IMMUNE.contains(block)) {
+                      flag1 = this.level.removeBlock(blockpos, false) || flag1;
                    } else {
                       flag = true;
 @@ -841,5 +_,15 @@
  
-    public boolean func_184222_aU() {
+    public boolean canChangeDimensions() {
        return false;
 +   }
 +
@@ -39,6 +39,6 @@
 +
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
-+      return this.field_70977_g;
++      return this.subEntities;
     }
  }

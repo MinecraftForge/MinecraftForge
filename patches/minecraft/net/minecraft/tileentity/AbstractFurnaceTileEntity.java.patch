@@ -1,127 +1,127 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 @@ -91,6 +_,7 @@
-       this.field_214014_c = p_i49964_2_;
+       this.recipeType = p_i49964_2_;
     }
  
 +   @Deprecated //Forge - get burn times by calling ForgeHooks#getBurnTime(ItemStack)
-    public static Map<Item, Integer> func_214001_f() {
+    public static Map<Item, Integer> getFuel() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
-       func_213996_a(map, Items.field_151129_at, 20000);
+       add(map, Items.LAVA_BUCKET, 20000);
 @@ -184,13 +_,13 @@
-       return this.field_214018_j > 0;
+       return this.litTime > 0;
     }
  
--   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-+   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) { //TODO: MARK
-       super.func_230337_a_(p_230337_1_, p_230337_2_);
-       this.field_214012_a = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
-       ItemStackHelper.func_191283_b(p_230337_2_, this.field_214012_a);
--      this.field_214018_j = p_230337_2_.func_74765_d("BurnTime");
--      this.field_214020_l = p_230337_2_.func_74765_d("CookTime");
--      this.field_214021_m = p_230337_2_.func_74765_d("CookTimeTotal");
-+      this.field_214018_j = p_230337_2_.func_74762_e("BurnTime");
-+      this.field_214020_l = p_230337_2_.func_74762_e("CookTime");
-+      this.field_214021_m = p_230337_2_.func_74762_e("CookTimeTotal");
-       this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
-       CompoundNBT compoundnbt = p_230337_2_.func_74775_l("RecipesUsed");
+-   public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
++   public void load(BlockState p_230337_1_, CompoundNBT p_230337_2_) { //TODO: MARK
+       super.load(p_230337_1_, p_230337_2_);
+       this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+       ItemStackHelper.loadAllItems(p_230337_2_, this.items);
+-      this.litTime = p_230337_2_.getShort("BurnTime");
+-      this.cookingProgress = p_230337_2_.getShort("CookTime");
+-      this.cookingTotalTime = p_230337_2_.getShort("CookTimeTotal");
++      this.litTime = p_230337_2_.getInt("BurnTime");
++      this.cookingProgress = p_230337_2_.getInt("CookTime");
++      this.cookingTotalTime = p_230337_2_.getInt("CookTimeTotal");
+       this.litDuration = this.getBurnDuration(this.items.get(1));
+       CompoundNBT compoundnbt = p_230337_2_.getCompound("RecipesUsed");
  
 @@ -202,9 +_,9 @@
  
-    public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-       super.func_189515_b(p_189515_1_);
--      p_189515_1_.func_74777_a("BurnTime", (short)this.field_214018_j);
--      p_189515_1_.func_74777_a("CookTime", (short)this.field_214020_l);
--      p_189515_1_.func_74777_a("CookTimeTotal", (short)this.field_214021_m);
-+      p_189515_1_.func_74768_a("BurnTime", this.field_214018_j);
-+      p_189515_1_.func_74768_a("CookTime", this.field_214020_l);
-+      p_189515_1_.func_74768_a("CookTimeTotal", this.field_214021_m);
-       ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
+    public CompoundNBT save(CompoundNBT p_189515_1_) {
+       super.save(p_189515_1_);
+-      p_189515_1_.putShort("BurnTime", (short)this.litTime);
+-      p_189515_1_.putShort("CookTime", (short)this.cookingProgress);
+-      p_189515_1_.putShort("CookTimeTotal", (short)this.cookingTotalTime);
++      p_189515_1_.putInt("BurnTime", this.litTime);
++      p_189515_1_.putInt("CookTime", this.cookingProgress);
++      p_189515_1_.putInt("CookTimeTotal", this.cookingTotalTime);
+       ItemStackHelper.saveAllItems(p_189515_1_, this.items);
        CompoundNBT compoundnbt = new CompoundNBT();
-       this.field_214022_n.forEach((p_235643_1_, p_235643_2_) -> {
+       this.recipesUsed.forEach((p_235643_1_, p_235643_2_) -> {
 @@ -230,12 +_,14 @@
-                this.field_214019_k = this.field_214018_j;
-                if (this.func_214006_r()) {
+                this.litDuration = this.litTime;
+                if (this.isLit()) {
                    flag1 = true;
 +                  if (itemstack.hasContainerItem())
-+                      this.field_214012_a.set(1, itemstack.getContainerItem());
++                      this.items.set(1, itemstack.getContainerItem());
 +                  else
-                   if (!itemstack.func_190926_b()) {
-                      Item item = itemstack.func_77973_b();
-                      itemstack.func_190918_g(1);
-                      if (itemstack.func_190926_b()) {
--                        Item item1 = item.func_77668_q();
--                        this.field_214012_a.set(1, item1 == null ? ItemStack.field_190927_a : new ItemStack(item1));
-+                        this.field_214012_a.set(1, itemstack.getContainerItem());
+                   if (!itemstack.isEmpty()) {
+                      Item item = itemstack.getItem();
+                      itemstack.shrink(1);
+                      if (itemstack.isEmpty()) {
+-                        Item item1 = item.getCraftingRemainingItem();
+-                        this.items.set(1, item1 == null ? ItemStack.EMPTY : new ItemStack(item1));
++                        this.items.set(1, itemstack.getContainerItem());
                       }
                    }
                 }
 @@ -270,7 +_,7 @@
  
-    protected boolean func_214008_b(@Nullable IRecipe<?> p_214008_1_) {
-       if (!this.field_214012_a.get(0).func_190926_b() && p_214008_1_ != null) {
--         ItemStack itemstack = p_214008_1_.func_77571_b();
-+         ItemStack itemstack = ((IRecipe<ISidedInventory>) p_214008_1_).func_77572_b(this);
-          if (itemstack.func_190926_b()) {
+    protected boolean canBurn(@Nullable IRecipe<?> p_214008_1_) {
+       if (!this.items.get(0).isEmpty() && p_214008_1_ != null) {
+-         ItemStack itemstack = p_214008_1_.getResultItem();
++         ItemStack itemstack = ((IRecipe<ISidedInventory>) p_214008_1_).assemble(this);
+          if (itemstack.isEmpty()) {
              return false;
           } else {
 @@ -279,10 +_,10 @@
                 return true;
-             } else if (!itemstack1.func_77969_a(itemstack)) {
+             } else if (!itemstack1.sameItem(itemstack)) {
                 return false;
--            } else if (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d()) {
-+            } else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack1.func_77976_d()) { // Forge fix: make furnace respect stack sizes in furnace recipes
+-            } else if (itemstack1.getCount() < this.getMaxStackSize() && itemstack1.getCount() < itemstack1.getMaxStackSize()) {
++            } else if (itemstack1.getCount() + itemstack.getCount() <= this.getMaxStackSize() && itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize()) { // Forge fix: make furnace respect stack sizes in furnace recipes
                 return true;
              } else {
--               return itemstack1.func_190916_E() < itemstack.func_77976_d();
-+               return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
+-               return itemstack1.getCount() < itemstack.getMaxStackSize();
++               return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
              }
           }
        } else {
 @@ -293,12 +_,12 @@
-    private void func_214007_c(@Nullable IRecipe<?> p_214007_1_) {
-       if (p_214007_1_ != null && this.func_214008_b(p_214007_1_)) {
-          ItemStack itemstack = this.field_214012_a.get(0);
--         ItemStack itemstack1 = p_214007_1_.func_77571_b();
-+         ItemStack itemstack1 = ((IRecipe<ISidedInventory>) p_214007_1_).func_77572_b(this);
-          ItemStack itemstack2 = this.field_214012_a.get(2);
-          if (itemstack2.func_190926_b()) {
-             this.field_214012_a.set(2, itemstack1.func_77946_l());
-          } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
--            itemstack2.func_190917_f(1);
-+            itemstack2.func_190917_f(itemstack1.func_190916_E());
+    private void burn(@Nullable IRecipe<?> p_214007_1_) {
+       if (p_214007_1_ != null && this.canBurn(p_214007_1_)) {
+          ItemStack itemstack = this.items.get(0);
+-         ItemStack itemstack1 = p_214007_1_.getResultItem();
++         ItemStack itemstack1 = ((IRecipe<ISidedInventory>) p_214007_1_).assemble(this);
+          ItemStack itemstack2 = this.items.get(2);
+          if (itemstack2.isEmpty()) {
+             this.items.set(2, itemstack1.copy());
+          } else if (itemstack2.getItem() == itemstack1.getItem()) {
+-            itemstack2.grow(1);
++            itemstack2.grow(itemstack1.getCount());
           }
  
-          if (!this.field_145850_b.field_72995_K) {
+          if (!this.level.isClientSide) {
 @@ -318,7 +_,7 @@
           return 0;
        } else {
-          Item item = p_213997_1_.func_77973_b();
--         return func_214001_f().getOrDefault(item, 0);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213997_1_, this.field_214014_c);
+          Item item = p_213997_1_.getItem();
+-         return getFuel().getOrDefault(item, 0);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213997_1_, this.recipeType);
        }
     }
  
 @@ -327,7 +_,7 @@
     }
  
-    public static boolean func_213991_b(ItemStack p_213991_0_) {
--      return func_214001_f().containsKey(p_213991_0_.func_77973_b());
+    public static boolean isFuel(ItemStack p_213991_0_) {
+-      return getFuel().containsKey(p_213991_0_.getItem());
 +      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213991_0_, null) > 0;
     }
  
-    public int[] func_180463_a(Direction p_180463_1_) {
+    public int[] getSlotsForFace(Direction p_180463_1_) {
 @@ -410,7 +_,7 @@
           return true;
        } else {
-          ItemStack itemstack = this.field_214012_a.get(1);
--         return func_213991_b(p_94041_2_) || p_94041_2_.func_77973_b() == Items.field_151133_ar && itemstack.func_77973_b() != Items.field_151133_ar;
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_94041_2_, this.field_214014_c) > 0 || p_94041_2_.func_77973_b() == Items.field_151133_ar && itemstack.func_77973_b() != Items.field_151133_ar;
+          ItemStack itemstack = this.items.get(1);
+-         return isFuel(p_94041_2_) || p_94041_2_.getItem() == Items.BUCKET && itemstack.getItem() != Items.BUCKET;
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_94041_2_, this.recipeType) > 0 || p_94041_2_.getItem() == Items.BUCKET && itemstack.getItem() != Items.BUCKET;
        }
     }
  
 @@ -473,5 +_,28 @@
-          p_194018_1_.func_194112_a(itemstack);
+          p_194018_1_.accountStack(itemstack);
        }
  
 +   }
@@ -131,7 +131,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (!this.field_145846_f && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (!this.remove && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == Direction.UP)
 +            return handlers[0].cast();
 +         else if (facing == Direction.DOWN)

@@ -6,6 +6,6 @@
  
 -public class BlockState extends AbstractBlock.AbstractBlockState {
 +public class BlockState extends AbstractBlock.AbstractBlockState implements net.minecraftforge.common.extensions.IForgeBlockState {
-    public static final Codec<BlockState> field_235877_b_ = func_235897_a_(Registry.field_212618_g, Block::func_176223_P).stable();
+    public static final Codec<BlockState> CODEC = codec(Registry.BLOCK, Block::defaultBlockState).stable();
  
     public BlockState(Block p_i231876_1_, ImmutableMap<Property<?>, Comparable<?>> p_i231876_2_, MapCodec<BlockState> p_i231876_3_) {

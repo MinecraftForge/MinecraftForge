@@ -2,9 +2,9 @@
 +++ b/net/minecraft/client/gui/MapItemRenderer.java
 @@ -115,6 +_,7 @@
  
-          for(MapDecoration mapdecoration : this.field_148242_b.field_76203_h.values()) {
-             if (!p_228089_3_ || mapdecoration.func_191180_f()) {
+          for(MapDecoration mapdecoration : this.data.decorations.values()) {
+             if (!p_228089_3_ || mapdecoration.renderOnFrame()) {
 +               if (mapdecoration.render(k)) { k++; continue; }
-                p_228089_1_.func_227860_a_();
-                p_228089_1_.func_227861_a_((double)(0.0F + (float)mapdecoration.func_176112_b() / 2.0F + 64.0F), (double)(0.0F + (float)mapdecoration.func_176113_c() / 2.0F + 64.0F), (double)-0.02F);
-                p_228089_1_.func_227863_a_(Vector3f.field_229183_f_.func_229187_a_((float)(mapdecoration.func_176111_d() * 360) / 16.0F));
+                p_228089_1_.pushPose();
+                p_228089_1_.translate((double)(0.0F + (float)mapdecoration.getX() / 2.0F + 64.0F), (double)(0.0F + (float)mapdecoration.getY() / 2.0F + 64.0F), (double)-0.02F);
+                p_228089_1_.mulPose(Vector3f.ZP.rotationDegrees((float)(mapdecoration.getRot() * 360) / 16.0F));

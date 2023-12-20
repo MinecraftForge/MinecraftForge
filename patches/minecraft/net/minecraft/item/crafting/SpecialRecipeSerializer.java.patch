@@ -6,6 +6,6 @@
  
 -public class SpecialRecipeSerializer<T extends IRecipe<?>> implements IRecipeSerializer<T> {
 +public class SpecialRecipeSerializer<T extends IRecipe<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>>  implements IRecipeSerializer<T> {
-    private final Function<ResourceLocation, T> field_222176_t;
+    private final Function<ResourceLocation, T> constructor;
  
     public SpecialRecipeSerializer(Function<ResourceLocation, T> p_i50024_1_) {

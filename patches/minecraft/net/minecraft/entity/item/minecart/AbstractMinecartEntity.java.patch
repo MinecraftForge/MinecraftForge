@@ -6,28 +6,28 @@
  
 -public abstract class AbstractMinecartEntity extends Entity {
 +public abstract class AbstractMinecartEntity extends Entity implements net.minecraftforge.common.extensions.IForgeEntityMinecart {
-    private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187193_c);
+    private static final DataParameter<Integer> DATA_ID_HURT = EntityDataManager.defineId(AbstractMinecartEntity.class, DataSerializers.INT);
+    private static final DataParameter<Integer> DATA_ID_HURTDIR = EntityDataManager.defineId(AbstractMinecartEntity.class, DataSerializers.INT);
+    private static final DataParameter<Float> DATA_ID_DAMAGE = EntityDataManager.defineId(AbstractMinecartEntity.class, DataSerializers.FLOAT);
 @@ -77,6 +_,7 @@
        p_226574_0_.put(RailShape.NORTH_WEST, Pair.of(vector3i2, vector3i));
        p_226574_0_.put(RailShape.NORTH_EAST, Pair.of(vector3i2, vector3i1));
     });
 +   private static net.minecraftforge.common.IMinecartCollisionHandler COLLISIONS = null;
-    private int field_70510_h;
-    private double field_70511_i;
-    private double field_70509_j;
+    private int lSteps;
+    private double lx;
+    private double ly;
 @@ -89,6 +_,7 @@
-    private double field_70507_ar;
+    private double lyd;
     @OnlyIn(Dist.CLIENT)
-    private double field_70506_as;
+    private double lzd;
 +   private boolean canBePushed = true;
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
 @@ -103,6 +_,14 @@
-       this.field_70167_r = p_i48539_5_;
-       this.field_70166_s = p_i48539_7_;
+       this.yo = p_i48539_5_;
+       this.zo = p_i48539_7_;
     }
 +   
 +   public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() {
@@ -38,40 +38,40 @@
 +      COLLISIONS = handler;
 +   }
  
-    public static AbstractMinecartEntity func_184263_a(World p_184263_0_, double p_184263_1_, double p_184263_3_, double p_184263_5_, AbstractMinecartEntity.Type p_184263_7_) {
+    public static AbstractMinecartEntity createMinecart(World p_184263_0_, double p_184263_1_, double p_184263_3_, double p_184263_5_, AbstractMinecartEntity.Type p_184263_7_) {
        if (p_184263_7_ == AbstractMinecartEntity.Type.CHEST) {
 @@ -138,7 +_,7 @@
     }
  
-    public boolean func_70104_M() {
+    public boolean isPushable() {
 -      return true;
 +      return canBePushed;
     }
  
-    protected Vector3d func_241839_a(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
+    protected Vector3d getRelativePortalPosition(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
 @@ -307,9 +_,9 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
-          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
--         if (AbstractRailBlock.func_208487_j(blockstate)) {
-+         if (canUseRail() && AbstractRailBlock.func_208487_j(blockstate)) {
-             this.func_180460_a(blockpos, blockstate);
--            if (blockstate.func_203425_a(Blocks.field_150408_cc)) {
-+            if (blockstate.func_177230_c() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.func_177230_c()).isActivatorRail()) {
-                this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
+          BlockState blockstate = this.level.getBlockState(blockpos);
+-         if (AbstractRailBlock.isRail(blockstate)) {
++         if (canUseRail() && AbstractRailBlock.isRail(blockstate)) {
+             this.moveAlongTrack(blockpos, blockstate);
+-            if (blockstate.is(Blocks.ACTIVATOR_RAIL)) {
++            if (blockstate.getBlock() instanceof PoweredRailBlock && ((PoweredRailBlock) blockstate.getBlock()).isActivatorRail()) {
+                this.activateMinecart(i, j, k, blockstate.getValue(PoweredRailBlock.POWERED));
              }
           } else {
 @@ -334,8 +_,11 @@
           }
  
-          this.func_70101_b(this.field_70177_z, this.field_70125_A);
--         if (this.func_184264_v() == AbstractMinecartEntity.Type.RIDEABLE && func_213296_b(this.func_213322_ci()) > 0.01D) {
--            List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ().func_72314_b((double)0.2F, 0.0D, (double)0.2F), EntityPredicates.func_200823_a(this));
+          this.setRot(this.yRot, this.xRot);
+-         if (this.getMinecartType() == AbstractMinecartEntity.Type.RIDEABLE && getHorizontalDistanceSqr(this.getDeltaMovement()) > 0.01D) {
+-            List<Entity> list = this.level.getEntities(this, this.getBoundingBox().inflate((double)0.2F, 0.0D, (double)0.2F), EntityPredicates.pushableBy(this));
 +         AxisAlignedBB box;
 +         if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
-+         else                               box = this.func_174813_aQ().func_72314_b(0.2F, 0.0D, 0.2F);
-+         if (canBeRidden() && func_213296_b(this.func_213322_ci()) > 0.01D) {
-+            List<Entity> list = this.field_70170_p.func_175674_a(this, box, EntityPredicates.func_200823_a(this));
++         else                               box = this.getBoundingBox().inflate(0.2F, 0.0D, 0.2F);
++         if (canBeRidden() && getHorizontalDistanceSqr(this.getDeltaMovement()) > 0.01D) {
++            List<Entity> list = this.level.getEntities(this, box, EntityPredicates.pushableBy(this));
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
@@ -79,70 +79,70 @@
                 }
              }
           } else {
--            for(Entity entity : this.field_70170_p.func_72839_b(this, this.func_174813_aQ().func_72314_b((double)0.2F, 0.0D, (double)0.2F))) {
-+            for(Entity entity : this.field_70170_p.func_72839_b(this, box)) {
-                if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof AbstractMinecartEntity) {
-                   entity.func_70108_f(this);
+-            for(Entity entity : this.level.getEntities(this, this.getBoundingBox().inflate((double)0.2F, 0.0D, (double)0.2F))) {
++            for(Entity entity : this.level.getEntities(this, box)) {
+                if (!this.hasPassenger(entity) && entity.isPushable() && entity instanceof AbstractMinecartEntity) {
+                   entity.push(this);
                 }
 @@ -372,16 +_,23 @@
     }
  
-    protected void func_180459_n() {
--      double d0 = this.func_174898_m();
-+      double d0 = field_70122_E ? this.func_174898_m() : getMaxSpeedAirLateral();
-       Vector3d vector3d = this.func_213322_ci();
-       this.func_213293_j(MathHelper.func_151237_a(vector3d.field_72450_a, -d0, d0), vector3d.field_72448_b, MathHelper.func_151237_a(vector3d.field_72449_c, -d0, d0));
-       if (this.field_70122_E) {
-          this.func_213317_d(this.func_213322_ci().func_186678_a(0.5D));
+    protected void comeOffTrack() {
+-      double d0 = this.getMaxSpeed();
++      double d0 = onGround ? this.getMaxSpeed() : getMaxSpeedAirLateral();
+       Vector3d vector3d = this.getDeltaMovement();
+       this.setDeltaMovement(MathHelper.clamp(vector3d.x, -d0, d0), vector3d.y, MathHelper.clamp(vector3d.z, -d0, d0));
+       if (this.onGround) {
+          this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
        }
  
-+      if (getMaxSpeedAirVertical() > 0 && func_213322_ci().field_72448_b > getMaxSpeedAirVertical()) {
-+          if(Math.abs(func_213322_ci().field_72450_a) < 0.3f && Math.abs(func_213322_ci().field_72449_c) < 0.3f)
-+              func_213317_d(new Vector3d(func_213322_ci().field_72450_a, 0.15f, func_213322_ci().field_72449_c));
++      if (getMaxSpeedAirVertical() > 0 && getDeltaMovement().y > getMaxSpeedAirVertical()) {
++          if(Math.abs(getDeltaMovement().x) < 0.3f && Math.abs(getDeltaMovement().z) < 0.3f)
++              setDeltaMovement(new Vector3d(getDeltaMovement().x, 0.15f, getDeltaMovement().z));
 +          else
-+              func_213317_d(new Vector3d(func_213322_ci().field_72450_a, getMaxSpeedAirVertical(), func_213322_ci().field_72449_c));
++              setDeltaMovement(new Vector3d(getDeltaMovement().x, getMaxSpeedAirVertical(), getDeltaMovement().z));
 +      }
 +
-       this.func_213315_a(MoverType.SELF, this.func_213322_ci());
-       if (!this.field_70122_E) {
--         this.func_213317_d(this.func_213322_ci().func_186678_a(0.95D));
-+         this.func_213317_d(this.func_213322_ci().func_186678_a(getDragAir()));
+       this.move(MoverType.SELF, this.getDeltaMovement());
+       if (!this.onGround) {
+-         this.setDeltaMovement(this.getDeltaMovement().scale(0.95D));
++         this.setDeltaMovement(this.getDeltaMovement().scale(getDragAir()));
        }
  
     }
 @@ -396,29 +_,29 @@
        boolean flag = false;
        boolean flag1 = false;
-       AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.func_177230_c();
--      if (abstractrailblock == Blocks.field_196552_aC) {
+       AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.getBlock();
+-      if (abstractrailblock == Blocks.POWERED_RAIL) {
 +      if (abstractrailblock instanceof PoweredRailBlock && !((PoweredRailBlock) abstractrailblock).isActivatorRail()) {
-          flag = p_180460_2_.func_177229_b(PoweredRailBlock.field_176569_M);
+          flag = p_180460_2_.getValue(PoweredRailBlock.POWERED);
           flag1 = !flag;
        }
  
        double d3 = 0.0078125D;
-       Vector3d vector3d1 = this.func_213322_ci();
--      RailShape railshape = p_180460_2_.func_177229_b(abstractrailblock.func_176560_l());
-+      RailShape railshape = ((AbstractRailBlock)p_180460_2_.func_177230_c()).getRailDirection(p_180460_2_, this.field_70170_p, p_180460_1_, this);
+       Vector3d vector3d1 = this.getDeltaMovement();
+-      RailShape railshape = p_180460_2_.getValue(abstractrailblock.getShapeProperty());
++      RailShape railshape = ((AbstractRailBlock)p_180460_2_.getBlock()).getRailDirection(p_180460_2_, this.level, p_180460_1_, this);
        switch(railshape) {
        case ASCENDING_EAST:
--         this.func_213317_d(vector3d1.func_72441_c(-0.0078125D, 0.0D, 0.0D));
-+         this.func_213317_d(vector3d1.func_72441_c(-1 * getSlopeAdjustment(), 0.0D, 0.0D));
+-         this.setDeltaMovement(vector3d1.add(-0.0078125D, 0.0D, 0.0D));
++         this.setDeltaMovement(vector3d1.add(-1 * getSlopeAdjustment(), 0.0D, 0.0D));
           ++d1;
           break;
        case ASCENDING_WEST:
--         this.func_213317_d(vector3d1.func_72441_c(0.0078125D, 0.0D, 0.0D));
-+         this.func_213317_d(vector3d1.func_72441_c(getSlopeAdjustment(), 0.0D, 0.0D));
+-         this.setDeltaMovement(vector3d1.add(0.0078125D, 0.0D, 0.0D));
++         this.setDeltaMovement(vector3d1.add(getSlopeAdjustment(), 0.0D, 0.0D));
           ++d1;
           break;
        case ASCENDING_NORTH:
--         this.func_213317_d(vector3d1.func_72441_c(0.0D, 0.0D, 0.0078125D));
-+         this.func_213317_d(vector3d1.func_72441_c(0.0D, 0.0D, getSlopeAdjustment()));
+-         this.setDeltaMovement(vector3d1.add(0.0D, 0.0D, 0.0078125D));
++         this.setDeltaMovement(vector3d1.add(0.0D, 0.0D, getSlopeAdjustment()));
           ++d1;
           break;
        case ASCENDING_SOUTH:
--         this.func_213317_d(vector3d1.func_72441_c(0.0D, 0.0D, -0.0078125D));
-+         this.func_213317_d(vector3d1.func_72441_c(0.0D, 0.0D, -1 * getSlopeAdjustment()));
+-         this.setDeltaMovement(vector3d1.add(0.0D, 0.0D, -0.0078125D));
++         this.setDeltaMovement(vector3d1.add(0.0D, 0.0D, -1 * getSlopeAdjustment()));
           ++d1;
        }
  
@@ -152,80 +152,80 @@
  
 -      if (flag1) {
 +      if (flag1 && shouldDoRailFunctions()) {
-          double d22 = Math.sqrt(func_213296_b(this.func_213322_ci()));
+          double d22 = Math.sqrt(getHorizontalDistanceSqr(this.getDeltaMovement()));
           if (d22 < 0.03D) {
-             this.func_213317_d(Vector3d.field_186680_a);
+             this.setDeltaMovement(Vector3d.ZERO);
 @@ -478,10 +_,7 @@
        d0 = d23 + d4 * d14;
        d2 = d10 + d5 * d14;
-       this.func_70107_b(d0, d1, d2);
--      double d24 = this.func_184207_aI() ? 0.75D : 1.0D;
--      double d25 = this.func_174898_m();
--      vector3d1 = this.func_213322_ci();
--      this.func_213315_a(MoverType.SELF, new Vector3d(MathHelper.func_151237_a(d24 * vector3d1.field_72450_a, -d25, d25), 0.0D, MathHelper.func_151237_a(d24 * vector3d1.field_72449_c, -d25, d25)));
+       this.setPos(d0, d1, d2);
+-      double d24 = this.isVehicle() ? 0.75D : 1.0D;
+-      double d25 = this.getMaxSpeed();
+-      vector3d1 = this.getDeltaMovement();
+-      this.move(MoverType.SELF, new Vector3d(MathHelper.clamp(d24 * vector3d1.x, -d25, d25), 0.0D, MathHelper.clamp(d24 * vector3d1.z, -d25, d25)));
 +      this.moveMinecartOnRail(p_180460_1_);
-       if (vector3i.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i.func_177952_p()) {
-          this.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)vector3i.func_177956_o(), this.func_226281_cx_());
-       } else if (vector3i1.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i1.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i1.func_177952_p()) {
+       if (vector3i.getY() != 0 && MathHelper.floor(this.getX()) - p_180460_1_.getX() == vector3i.getX() && MathHelper.floor(this.getZ()) - p_180460_1_.getZ() == vector3i.getZ()) {
+          this.setPos(this.getX(), this.getY() + (double)vector3i.getY(), this.getZ());
+       } else if (vector3i1.getY() != 0 && MathHelper.floor(this.getX()) - p_180460_1_.getX() == vector3i1.getX() && MathHelper.floor(this.getZ()) - p_180460_1_.getZ() == vector3i1.getZ()) {
 @@ -509,7 +_,10 @@
-          this.func_213293_j(d26 * (double)(j - p_180460_1_.func_177958_n()), vector3d5.field_72448_b, d26 * (double)(i - p_180460_1_.func_177952_p()));
+          this.setDeltaMovement(d26 * (double)(j - p_180460_1_.getX()), vector3d5.y, d26 * (double)(i - p_180460_1_.getZ()));
        }
  
 -      if (flag) {
 +      if (shouldDoRailFunctions())
-+          ((AbstractRailBlock)p_180460_2_.func_177230_c()).onMinecartPass(p_180460_2_, field_70170_p, p_180460_1_, this);
++          ((AbstractRailBlock)p_180460_2_.getBlock()).onMinecartPass(p_180460_2_, level, p_180460_1_, this);
 +
 +      if (flag && shouldDoRailFunctions()) {
-          Vector3d vector3d6 = this.func_213322_ci();
-          double d27 = Math.sqrt(func_213296_b(vector3d6));
+          Vector3d vector3d6 = this.getDeltaMovement();
+          double d27 = Math.sqrt(getHorizontalDistanceSqr(vector3d6));
           if (d27 > 0.01D) {
 @@ -564,7 +_,7 @@
  
-       BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
-       if (AbstractRailBlock.func_208487_j(blockstate)) {
--         RailShape railshape = blockstate.func_177229_b(((AbstractRailBlock)blockstate.func_177230_c()).func_176560_l());
-+         RailShape railshape = ((AbstractRailBlock)blockstate.func_177230_c()).getRailDirection(blockstate, this.field_70170_p, new BlockPos(i, j, k), this);
+       BlockState blockstate = this.level.getBlockState(new BlockPos(i, j, k));
+       if (AbstractRailBlock.isRail(blockstate)) {
+-         RailShape railshape = blockstate.getValue(((AbstractRailBlock)blockstate.getBlock()).getShapeProperty());
++         RailShape railshape = ((AbstractRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level, new BlockPos(i, j, k), this);
           p_70495_3_ = (double)j;
-          if (railshape.func_208092_c()) {
+          if (railshape.isAscending()) {
              p_70495_3_ = (double)(j + 1);
 @@ -603,7 +_,7 @@
  
-       BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
-       if (AbstractRailBlock.func_208487_j(blockstate)) {
--         RailShape railshape = blockstate.func_177229_b(((AbstractRailBlock)blockstate.func_177230_c()).func_176560_l());
-+         RailShape railshape = ((AbstractRailBlock)blockstate.func_177230_c()).getRailDirection(blockstate, this.field_70170_p, new BlockPos(i, j, k), this);
-          Pair<Vector3i, Vector3i> pair = func_226573_a_(railshape);
+       BlockState blockstate = this.level.getBlockState(new BlockPos(i, j, k));
+       if (AbstractRailBlock.isRail(blockstate)) {
+-         RailShape railshape = blockstate.getValue(((AbstractRailBlock)blockstate.getBlock()).getShapeProperty());
++         RailShape railshape = ((AbstractRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level, new BlockPos(i, j, k), this);
+          Pair<Vector3i, Vector3i> pair = exits(railshape);
           Vector3i vector3i = pair.getFirst();
           Vector3i vector3i1 = pair.getSecond();
 @@ -666,6 +_,11 @@
     }
  
-    public void func_70108_f(Entity p_70108_1_) {
+    public void push(Entity p_70108_1_) {
 +      //net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartCollisionEvent(this, entityIn));
 +      if (getCollisionHandler() != null) {
 +         getCollisionHandler().onEntityCollision(this, p_70108_1_);
 +         return;
 +      }
-       if (!this.field_70170_p.field_72995_K) {
-          if (!p_70108_1_.field_70145_X && !this.field_70145_X) {
-             if (!this.func_184196_w(p_70108_1_)) {
+       if (!this.level.isClientSide) {
+          if (!p_70108_1_.noPhysics && !this.noPhysics) {
+             if (!this.hasPassenger(p_70108_1_)) {
 @@ -701,11 +_,11 @@
  
-                      Vector3d vector3d2 = this.func_213322_ci();
-                      Vector3d vector3d3 = p_70108_1_.func_213322_ci();
--                     if (((AbstractMinecartEntity)p_70108_1_).func_184264_v() == AbstractMinecartEntity.Type.FURNACE && this.func_184264_v() != AbstractMinecartEntity.Type.FURNACE) {
+                      Vector3d vector3d2 = this.getDeltaMovement();
+                      Vector3d vector3d3 = p_70108_1_.getDeltaMovement();
+-                     if (((AbstractMinecartEntity)p_70108_1_).getMinecartType() == AbstractMinecartEntity.Type.FURNACE && this.getMinecartType() != AbstractMinecartEntity.Type.FURNACE) {
 +                     if (((AbstractMinecartEntity)p_70108_1_).isPoweredCart() && !this.isPoweredCart()) {
-                         this.func_213317_d(vector3d2.func_216372_d(0.2D, 1.0D, 0.2D));
-                         this.func_70024_g(vector3d3.field_72450_a - d0, 0.0D, vector3d3.field_72449_c - d1);
-                         p_70108_1_.func_213317_d(vector3d3.func_216372_d(0.95D, 1.0D, 0.95D));
--                     } else if (((AbstractMinecartEntity)p_70108_1_).func_184264_v() != AbstractMinecartEntity.Type.FURNACE && this.func_184264_v() == AbstractMinecartEntity.Type.FURNACE) {
+                         this.setDeltaMovement(vector3d2.multiply(0.2D, 1.0D, 0.2D));
+                         this.push(vector3d3.x - d0, 0.0D, vector3d3.z - d1);
+                         p_70108_1_.setDeltaMovement(vector3d3.multiply(0.95D, 1.0D, 0.95D));
+-                     } else if (((AbstractMinecartEntity)p_70108_1_).getMinecartType() != AbstractMinecartEntity.Type.FURNACE && this.getMinecartType() == AbstractMinecartEntity.Type.FURNACE) {
 +                     } else if (!((AbstractMinecartEntity)p_70108_1_).isPoweredCart() && this.isPoweredCart()) {
-                         p_70108_1_.func_213317_d(vector3d3.func_216372_d(0.2D, 1.0D, 0.2D));
-                         p_70108_1_.func_70024_g(vector3d2.field_72450_a + d0, 0.0D, vector3d2.field_72449_c + d1);
-                         this.func_213317_d(vector3d2.func_216372_d(0.95D, 1.0D, 0.95D));
+                         p_70108_1_.setDeltaMovement(vector3d3.multiply(0.2D, 1.0D, 0.2D));
+                         p_70108_1_.push(vector3d2.x + d0, 0.0D, vector3d2.z + d1);
+                         this.setDeltaMovement(vector3d2.multiply(0.95D, 1.0D, 0.95D));
 @@ -809,6 +_,40 @@
  
-    public IPacket<?> func_213297_N() {
+    public IPacket<?> getAddEntityPacket() {
        return new SSpawnObjectPacket(this);
 +   }
 +
@@ -246,21 +246,21 @@
 +   @Override public void setDragAir(double value) { dragAir = value; }
 +   @Override
 +   public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
-+      if (!canUseRail()) return func_174898_m();
++      if (!canUseRail()) return getMaxSpeed();
 +      BlockPos pos = this.getCurrentRailPosition();
-+      BlockState state = getMinecart().field_70170_p.func_180495_p(pos);
-+      if (!state.func_235714_a_(BlockTags.field_203437_y)) return func_174898_m();
++      BlockState state = getMinecart().level.getBlockState(pos);
++      if (!state.is(BlockTags.RAILS)) return getMaxSpeed();
 +
-+      float railMaxSpeed = ((AbstractRailBlock)state.func_177230_c()).getRailMaxSpeed(state, getMinecart().field_70170_p, pos, getMinecart());
++      float railMaxSpeed = ((AbstractRailBlock)state.getBlock()).getRailMaxSpeed(state, getMinecart().level, pos, getMinecart());
 +      return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
 +   }
 +   @Override
 +   public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
 +      AbstractMinecartEntity mc = getMinecart();
-+      double d24 = mc.func_184207_aI() ? 0.75D : 1.0D;
++      double d24 = mc.isVehicle() ? 0.75D : 1.0D;
 +      double d25 = mc.getMaxSpeedWithRail();
-+      Vector3d vec3d1 = mc.func_213322_ci();
-+      mc.func_213315_a(MoverType.SELF, new Vector3d(MathHelper.func_151237_a(d24 * vec3d1.field_72450_a, -d25, d25), 0.0D, MathHelper.func_151237_a(d24 * vec3d1.field_72449_c, -d25, d25)));
++      Vector3d vec3d1 = mc.getDeltaMovement();
++      mc.move(MoverType.SELF, new Vector3d(MathHelper.clamp(d24 * vec3d1.x, -d25, d25), 0.0D, MathHelper.clamp(d24 * vec3d1.z, -d25, d25)));
     }
  
     public static enum Type {

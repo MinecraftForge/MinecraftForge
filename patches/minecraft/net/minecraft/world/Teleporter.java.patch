@@ -6,6 +6,6 @@
  
 -public class Teleporter {
 +public class Teleporter implements net.minecraftforge.common.util.ITeleporter {
-    protected final ServerWorld field_85192_a;
+    protected final ServerWorld level;
  
     public Teleporter(ServerWorld p_i1963_1_) {

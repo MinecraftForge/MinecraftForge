@@ -1,11 +1,11 @@
 --- a/net/minecraft/network/play/client/CClientSettingsPacket.java
 +++ b/net/minecraft/network/play/client/CClientSettingsPacket.java
 @@ -67,4 +_,8 @@
-    public HandSide func_186991_f() {
-       return this.field_186992_f;
+    public HandSide getMainHand() {
+       return this.mainHand;
     }
 +
-+   public String func_149524_c() {
-+      return this.field_149530_a;
++   public String getLanguage() {
++      return this.language;
 +   }
  }

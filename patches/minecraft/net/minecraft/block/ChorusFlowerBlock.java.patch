@@ -1,26 +1,26 @@
 --- a/net/minecraft/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/block/ChorusFlowerBlock.java
 @@ -40,7 +_,7 @@
-       BlockPos blockpos = p_225542_3_.func_177984_a();
-       if (p_225542_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256) {
-          int i = p_225542_1_.func_177229_b(field_185607_a);
+       BlockPos blockpos = p_225542_3_.above();
+       if (p_225542_2_.isEmptyBlock(blockpos) && blockpos.getY() < 256) {
+          int i = p_225542_1_.getValue(AGE);
 -         if (i < 5) {
 +         if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225542_2_, blockpos, p_225542_1_, true)) {
              boolean flag = false;
              boolean flag1 = false;
-             BlockState blockstate = p_225542_2_.func_180495_p(p_225542_3_.func_177977_b());
+             BlockState blockstate = p_225542_2_.getBlockState(p_225542_3_.below());
 @@ -65,7 +_,7 @@
                 if (j < 2 || j <= p_225542_4_.nextInt(flag1 ? 5 : 4)) {
                    flag = true;
                 }
--            } else if (blockstate.func_196958_f()) {
-+            } else if (blockstate.isAir(p_225542_2_, p_225542_3_.func_177977_b())) {
+-            } else if (blockstate.isAir()) {
++            } else if (blockstate.isAir(p_225542_2_, p_225542_3_.below())) {
                 flag = true;
              }
  
 @@ -97,7 +_,7 @@
              } else {
-                this.func_185605_c(p_225542_2_, p_225542_3_);
+                this.placeDeadFlower(p_225542_2_, p_225542_3_);
              }
 -
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
@@ -28,11 +28,11 @@
        }
     }
 @@ -133,7 +_,7 @@
-    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-       BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-       if (blockstate.func_177230_c() != this.field_196405_b && !blockstate.func_203425_a(Blocks.field_150377_bs)) {
--         if (!blockstate.func_196958_f()) {
-+         if (!blockstate.isAir(p_196260_2_, p_196260_3_.func_177977_b())) {
+    public boolean canSurvive(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+       BlockState blockstate = p_196260_2_.getBlockState(p_196260_3_.below());
+       if (blockstate.getBlock() != this.plant && !blockstate.is(Blocks.END_STONE)) {
+-         if (!blockstate.isAir()) {
++         if (!blockstate.isAir(p_196260_2_, p_196260_3_.below())) {
              return false;
           } else {
              boolean flag = false;
@@ -40,8 +40,8 @@
                    }
  
                    flag = true;
--               } else if (!blockstate1.func_196958_f()) {
-+               } else if (!blockstate1.isAir(p_196260_2_, p_196260_3_.func_177972_a(direction))) {
+-               } else if (!blockstate1.isAir()) {
++               } else if (!blockstate1.isAir(p_196260_2_, p_196260_3_.relative(direction))) {
                    return false;
                 }
              }

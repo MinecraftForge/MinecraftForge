@@ -6,6 +6,6 @@
  
 -public class Activity {
 +public class Activity extends net.minecraftforge.registries.ForgeRegistryEntry<Activity> {
-    public static final Activity field_221365_a = func_221363_a("core");
-    public static final Activity field_221366_b = func_221363_a("idle");
-    public static final Activity field_221367_c = func_221363_a("work");
+    public static final Activity CORE = register("core");
+    public static final Activity IDLE = register("idle");
+    public static final Activity WORK = register("work");

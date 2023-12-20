@@ -1,13 +1,13 @@
 --- a/net/minecraft/tileentity/BeaconTileEntity.java
 +++ b/net/minecraft/tileentity/BeaconTileEntity.java
 @@ -112,8 +_,8 @@
-       for(int i1 = 0; i1 < 10 && blockpos.func_177956_o() <= l; ++i1) {
-          BlockState blockstate = this.field_145850_b.func_180495_p(blockpos);
-          Block block = blockstate.func_177230_c();
+       for(int i1 = 0; i1 < 10 && blockpos.getY() <= l; ++i1) {
+          BlockState blockstate = this.level.getBlockState(blockpos);
+          Block block = blockstate.getBlock();
 -         if (block instanceof IBeaconBeamColorProvider) {
--            float[] afloat = ((IBeaconBeamColorProvider)block).func_196457_d().func_193349_f();
-+         float[] afloat = blockstate.getBeaconColorMultiplier(this.field_145850_b, blockpos, func_174877_v());
+-            float[] afloat = ((IBeaconBeamColorProvider)block).getColor().getTextureDiffuseColors();
++         float[] afloat = blockstate.getBeaconColorMultiplier(this.level, blockpos, getBlockPos());
 +         if (afloat != null) {
-             if (this.field_213934_g.size() <= 1) {
+             if (this.checkingBeamSections.size() <= 1) {
                 beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
-                this.field_213934_g.add(beacontileentity$beamsegment);
+                this.checkingBeamSections.add(beacontileentity$beamsegment);

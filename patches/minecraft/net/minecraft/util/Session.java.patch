@@ -1,9 +1,9 @@
 --- a/net/minecraft/util/Session.java
 +++ b/net/minecraft/util/Session.java
 @@ -18,8 +_,22 @@
-    private final String field_148257_b;
-    private final String field_148258_c;
-    private final Session.Type field_152429_d;
+    private final String uuid;
+    private final String accessToken;
+    private final Session.Type type;
 +   /** Forge: Cache of the local session's GameProfile properties. */
 +   private com.mojang.authlib.properties.PropertyMap properties;
  
@@ -20,19 +20,19 @@
 +         logger.log(org.apache.logging.log4j.Level.WARN, "when asking for help!");
 +         logger.log(org.apache.logging.log4j.Level.WARN, "=========================================================");
 +      }
-       this.field_74286_b = p_i1098_1_;
-       this.field_148257_b = p_i1098_2_;
-       this.field_148258_c = p_i1098_3_;
+       this.name = p_i1098_1_;
+       this.uuid = p_i1098_2_;
+       this.accessToken = p_i1098_3_;
 @@ -45,10 +_,22 @@
-    public GameProfile func_148256_e() {
+    public GameProfile getGameProfile() {
        try {
-          UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());
--         return new GameProfile(uuid, this.func_111285_a());
-+         GameProfile ret = new GameProfile(uuid, this.func_111285_a());    //Forge: Adds cached GameProfile properties to returned GameProfile.
+          UUID uuid = UUIDTypeAdapter.fromString(this.getUuid());
+-         return new GameProfile(uuid, this.getName());
++         GameProfile ret = new GameProfile(uuid, this.getName());    //Forge: Adds cached GameProfile properties to returned GameProfile.
 +         if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
 +         return ret;                                                     // which helps to fix MC-52974.
        } catch (IllegalArgumentException illegalargumentexception) {
-          return new GameProfile((UUID)null, this.func_111285_a());
+          return new GameProfile((UUID)null, this.getName());
        }
 +   }
 +

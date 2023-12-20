@@ -2,43 +2,43 @@
 +++ b/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
 @@ -276,6 +_,7 @@
  
-       this.field_110296_bG.func_110134_a(this);
-       this.func_230275_fc_();
-+      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
+       this.inventory.addListener(this);
+       this.updateContainerEquipment();
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
     }
  
-    protected void func_230275_fc_() {
+    protected void updateContainerEquipment() {
 @@ -334,9 +_,9 @@
-    protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
-       if (!p_180429_2_.func_185904_a().func_76224_d()) {
-          BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
--         SoundType soundtype = p_180429_2_.func_215695_r();
-+         SoundType soundtype = p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
-          if (blockstate.func_203425_a(Blocks.field_150433_aE)) {
--            soundtype = blockstate.func_215695_r();
-+            soundtype = blockstate.getSoundType(field_70170_p, p_180429_1_, this);
+    protected void playStepSound(BlockPos p_180429_1_, BlockState p_180429_2_) {
+       if (!p_180429_2_.getMaterial().isLiquid()) {
+          BlockState blockstate = this.level.getBlockState(p_180429_1_.above());
+-         SoundType soundtype = p_180429_2_.getSoundType();
++         SoundType soundtype = p_180429_2_.getSoundType(level, p_180429_1_, this);
+          if (blockstate.is(Blocks.SNOW)) {
+-            soundtype = blockstate.getSoundType();
++            soundtype = blockstate.getSoundType(level, p_180429_1_, this);
           }
  
-          if (this.func_184207_aI() && this.field_190688_bE) {
+          if (this.isVehicle() && this.canGallop) {
 @@ -694,6 +_,7 @@
-                this.func_213293_j(vector3d.field_72450_a, d1, vector3d.field_72449_c);
-                this.func_110255_k(true);
-                this.field_70160_al = true;
+                this.setDeltaMovement(vector3d.x, d1, vector3d.z);
+                this.setIsJumping(true);
+                this.hasImpulse = true;
 +               net.minecraftforge.common.ForgeHooks.onLivingJump(this);
                 if (f1 > 0.0F) {
-                   float f2 = MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F));
-                   float f3 = MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F));
+                   float f2 = MathHelper.sin(this.yRot * ((float)Math.PI / 180F));
+                   float f3 = MathHelper.cos(this.yRot * ((float)Math.PI / 180F));
 @@ -1009,5 +_,24 @@
  
-       this.func_230273_eI_();
-       return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
+       this.randomizeAttributes();
+       return super.finalizeSpawn(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
 +   }
 +
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.Direction facing) {
-+      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
++      if (this.isAlive() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }

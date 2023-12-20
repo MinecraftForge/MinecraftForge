@@ -6,10 +6,10 @@
  public class FluidTagsProvider extends TagsProvider<Fluid> {
 +   @Deprecated
     public FluidTagsProvider(DataGenerator p_i49156_1_) {
-       super(p_i49156_1_, Registry.field_212619_h);
+       super(p_i49156_1_, Registry.FLUID);
 +   }
 +   public FluidTagsProvider(DataGenerator p_i49156_1_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_i49156_1_, Registry.field_212619_h, modId, existingFileHelper);
++      super(p_i49156_1_, Registry.FLUID, modId, existingFileHelper);
     }
  
-    protected void func_200432_c() {
+    protected void addTags() {

@@ -3,7 +3,7 @@
 @@ -44,5 +_,6 @@
        }
  
-       this.field_75228_b = 0;
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.field_75229_a, p_75208_1_);
+       this.removeCount = 0;
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.player, p_75208_1_);
     }
  }

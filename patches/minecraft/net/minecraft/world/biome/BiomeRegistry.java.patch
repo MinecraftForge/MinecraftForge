@@ -3,8 +3,8 @@
 @@ -17,7 +_,7 @@
     }
  
-    public static RegistryKey<Biome> func_244203_a(int p_244203_0_) {
--      return field_244202_c.get(p_244203_0_);
+    public static RegistryKey<Biome> byId(int p_244203_0_) {
+-      return TO_NAME.get(p_244203_0_);
 +      return ((net.minecraftforge.registries.ForgeRegistry<Biome>)net.minecraftforge.registries.ForgeRegistries.BIOMES).getKey(p_244203_0_);
     }
  

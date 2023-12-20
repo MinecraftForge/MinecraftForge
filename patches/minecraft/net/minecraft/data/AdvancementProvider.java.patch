@@ -1,23 +1,23 @@
 --- a/net/minecraft/data/AdvancementProvider.java
 +++ b/net/minecraft/data/AdvancementProvider.java
 @@ -24,11 +_,18 @@
-    private static final Gson field_204024_b = (new GsonBuilder()).setPrettyPrinting().create();
-    private final DataGenerator field_204025_c;
-    private final List<Consumer<Consumer<Advancement>>> field_204283_d = ImmutableList.of(new EndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
+    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
+    private final DataGenerator generator;
+    private final List<Consumer<Consumer<Advancement>>> tabs = ImmutableList.of(new EndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
 +   protected net.minecraftforge.common.data.ExistingFileHelper fileHelper;
  
 +   @Deprecated
     public AdvancementProvider(DataGenerator p_i48869_1_) {
-       this.field_204025_c = p_i48869_1_;
+       this.generator = p_i48869_1_;
     }
  
 +   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
-+      this.field_204025_c = generatorIn;
++      this.generator = generatorIn;
 +      this.fileHelper = fileHelperIn;
 +   }
 +
-    public void func_200398_a(DirectoryCache p_200398_1_) throws IOException {
-       Path path = this.field_204025_c.func_200391_b();
+    public void run(DirectoryCache p_200398_1_) throws IOException {
+       Path path = this.generator.getOutputFolder();
        Set<ResourceLocation> set = Sets.newHashSet();
 @@ -47,6 +_,16 @@
           }
@@ -33,6 +33,6 @@
 +    * @param fileHelper used for the register function from {@link Advancement.Builder}
 +    */
 +   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-       for(Consumer<Consumer<Advancement>> consumer1 : this.field_204283_d) {
+       for(Consumer<Consumer<Advancement>> consumer1 : this.tabs) {
           consumer1.accept(consumer);
        }

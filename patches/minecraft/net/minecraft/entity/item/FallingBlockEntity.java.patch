@@ -1,11 +1,11 @@
 --- a/net/minecraft/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/entity/item/FallingBlockEntity.java
 @@ -153,7 +_,7 @@
-                               ((FallingBlock)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, blockstate, this);
+                               ((FallingBlock)block).onLand(this.level, blockpos1, this.blockState, blockstate, this);
                             }
  
--                           if (this.field_145810_d != null && block instanceof ITileEntityProvider) {
-+                           if (this.field_145810_d != null && this.field_175132_d.hasTileEntity()) {
-                               TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
+-                           if (this.blockData != null && block instanceof ITileEntityProvider) {
++                           if (this.blockData != null && this.blockState.hasTileEntity()) {
+                               TileEntity tileentity = this.level.getBlockEntity(blockpos1);
                                if (tileentity != null) {
-                                  CompoundNBT compoundnbt = tileentity.func_189515_b(new CompoundNBT());
+                                  CompoundNBT compoundnbt = tileentity.save(new CompoundNBT());

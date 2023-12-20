@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,5.2.0)'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[6.0.16,6.2)'
     }
 }
 
@@ -27,16 +27,17 @@ import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
 import net.minecraftforge.gradle.common.tasks.SignJar
+import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.patcher.tasks.ReobfuscateJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
-    id 'com.github.ben-manes.versions' version '0.36.0'
+    id 'com.github.ben-manes.versions' version '0.46.0'
     id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
-    id 'de.undercouch.download' version '5.1.3'
+    id 'de.undercouch.download' version '5.4.0'
 }
 
 Util.init() //Init all our extension methods
@@ -56,6 +57,7 @@ ext {
     MAPPING_VERSION = '1.16.5'
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
+    ASM_VERSION = '9.6'
     SPI_VERSION = '3.2.0'
     MIN_TAG_FOR_CHANGELOG = "36.0"
     GIT_INFO = gradleutils.gitInfo
@@ -203,7 +205,6 @@ project(':forge') {
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
-        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
         SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
@@ -218,7 +219,7 @@ project(':forge') {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
-        srgPatches = true
+        srgPatches = false
         accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 
@@ -374,6 +375,33 @@ project(':forge') {
             }
         }
     }
+
+    afterEvaluate {
+        if (!patcher.srgPatches) {
+            srg2mcpClean {
+                dependsOn = []
+                input = project(':mcp').setupMCP.output
+            }
+            userdevJar {
+                onlyIf = { t -> true }
+            }
+            def patches = project.file('build/genPatchesForUserdev/output/')
+            patches.mkdirs()
+            def genPatchesForUserdev = tasks.register('genPatchesForUserdev', GeneratePatches){
+                base = project(':mcp').setupMCP.output
+                modified = applyRangeMapBase.output
+                originalPrefix = genPatches.originalPrefix
+                modifiedPrefix = genPatches.modifiedPrefix
+                output = patches
+                autoHeader true
+                lineEnding = '\n'
+            }
+            bakePatches {
+                dependsOn = []
+                input = genPatchesForUserdev.get().output
+            }
+        }
+    }
     
     ext {
         MANIFESTS = [
@@ -441,11 +469,11 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer, implementation)
     }
     dependencies {
-        installer 'org.ow2.asm:asm:9.1'
-        installer 'org.ow2.asm:asm-commons:9.1'
-        installer 'org.ow2.asm:asm-tree:9.1'
-        installer 'org.ow2.asm:asm-util:9.1'
-        installer 'org.ow2.asm:asm-analysis:9.1'
+        installer 'org.ow2.asm:asm:' + ASM_VERSION
+        installer 'org.ow2.asm:asm-commons:' + ASM_VERSION
+        installer 'org.ow2.asm:asm-tree:' + ASM_VERSION
+        installer 'org.ow2.asm:asm-util:' + ASM_VERSION
+        installer 'org.ow2.asm:asm-analysis:' + ASM_VERSION
         installer 'cpw.mods:modlauncher:8.1.3'
         installer 'cpw.mods:grossjava9hacks:1.3.3'
         installer 'net.minecraftforge:accesstransformers:3.0.1'
@@ -900,7 +928,7 @@ project(':forge') {
     }
     
     task launcherJar(type: Jar) {
-        classifier 'launcher'
+        archiveClassifier.set('launcher')
         from sourceSets.fmllauncher.output
         doFirst {
             def classpath = new StringBuilder()
@@ -1008,7 +1036,7 @@ project(':forge') {
                     exclude it
             }
             filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
+                FORGE_VERSION: project.version.substring(MC_VERSION.length() + 1),
                 FORGE_GROUP: project.group,
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
@@ -1126,11 +1154,7 @@ project(':forge') {
     task userdevExtras(type:Jar) {
         dependsOn classes
         from sourceSets.userdev.output
-        classifier 'userdev-temp'
-    }
-
-    reobfJar {
-        tool = SPECIAL_SOURCE + ':shaded'
+        archiveClassifier.set('userdev-temp')
     }
 
     task userdevExtrasReobf(type: ReobfuscateJar) {
@@ -1138,7 +1162,6 @@ project(':forge') {
         input = tasks.userdevExtras.archiveFile
         classpath.from project.configurations.userdevCompileClasspath
         srg = tasks.createMcp2Srg.output
-        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     userdevJar {

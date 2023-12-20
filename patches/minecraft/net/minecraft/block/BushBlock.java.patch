@@ -11,23 +11,23 @@
     }
 @@ -22,6 +_,8 @@
  
-    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-       BlockPos blockpos = p_196260_3_.func_177977_b();
-+      if (p_196260_1_.func_177230_c() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-+         return p_196260_2_.func_180495_p(blockpos).canSustainPlant(p_196260_2_, blockpos, Direction.UP, this);
-       return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
+    public boolean canSurvive(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+       BlockPos blockpos = p_196260_3_.below();
++      if (p_196260_1_.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++         return p_196260_2_.getBlockState(blockpos).canSustainPlant(p_196260_2_, blockpos, Direction.UP, this);
+       return this.mayPlaceOn(p_196260_2_.getBlockState(blockpos), p_196260_2_, blockpos);
     }
  
 @@ -31,5 +_,12 @@
  
-    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
-       return p_196266_4_ == PathType.AIR && !this.field_235688_at_ ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
+    public boolean isPathfindable(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return p_196266_4_ == PathType.AIR && !this.hasCollision ? true : super.isPathfindable(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
 +   }
 +
 +   @Override
 +   public BlockState getPlant(IBlockReader world, BlockPos pos) {
-+      BlockState state = world.func_180495_p(pos);
-+      if (state.func_177230_c() != this) return func_176223_P();
++      BlockState state = world.getBlockState(pos);
++      if (state.getBlock() != this) return defaultBlockState();
 +      return state;
     }
  }

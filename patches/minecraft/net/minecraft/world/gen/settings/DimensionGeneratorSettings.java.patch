@@ -10,11 +10,11 @@
        long i = (new Random()).nextLong();
        if (!s1.isEmpty()) {
 @@ -210,6 +_,8 @@
-       Registry<Biome> registry = p_242753_0_.func_243612_b(Registry.field_239720_u_);
-       Registry<DimensionSettings> registry1 = p_242753_0_.func_243612_b(Registry.field_243549_ar);
-       SimpleRegistry<Dimension> simpleregistry = DimensionType.func_242718_a(registry2, registry, registry1, i);
+       Registry<Biome> registry = p_242753_0_.registryOrThrow(Registry.BIOME_REGISTRY);
+       Registry<DimensionSettings> registry1 = p_242753_0_.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+       SimpleRegistry<Dimension> simpleregistry = DimensionType.defaultDimensions(registry2, registry, registry1, i);
 +      net.minecraftforge.common.world.ForgeWorldType type = net.minecraftforge.registries.ForgeRegistries.WORLD_TYPES.getValue(new net.minecraft.util.ResourceLocation(s4));
 +      if (type != null) return type.createSettings(p_242753_0_, i, flag, false, s);
        switch(s4) {
        case "flat":
-          JsonObject jsonobject = !s.isEmpty() ? JSONUtils.func_212745_a(s) : new JsonObject();
+          JsonObject jsonobject = !s.isEmpty() ? JSONUtils.parse(s) : new JsonObject();

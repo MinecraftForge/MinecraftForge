@@ -6,39 +6,39 @@
  
 -public abstract class Entity implements INameable, ICommandSource {
 +public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity> implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
-    protected static final Logger field_184243_a = LogManager.getLogger();
-    protected static final AtomicInteger field_213331_b = new AtomicInteger();
-    private static final List<ItemStack> field_190535_b = Collections.emptyList();
-    private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-    private static double field_70155_l = 1.0D;
+    protected static final Logger LOGGER = LogManager.getLogger();
+    protected static final AtomicInteger ENTITY_COUNTER = new AtomicInteger();
+    private static final List<ItemStack> EMPTY_LIST = Collections.emptyList();
+    private static final AxisAlignedBB INITIAL_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+    private static double viewScale = 1.0D;
 +   @Deprecated // Forge: Use the getter to allow overriding in mods
-    private final EntityType<?> field_200606_g;
-    private int field_145783_c = field_213331_b.incrementAndGet();
-    public boolean field_70156_m;
+    private final EntityType<?> type;
+    private int id = ENTITY_COUNTER.incrementAndGet();
+    public boolean blocksBuilding;
 @@ -140,6 +_,7 @@
-    public boolean field_70124_G;
-    public boolean field_70133_I;
-    protected Vector3d field_213328_B = Vector3d.field_186680_a;
+    public boolean verticalCollision;
+    public boolean hurtMarked;
+    protected Vector3d stuckSpeedMultiplier = Vector3d.ZERO;
 +   @Deprecated //Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
-    public boolean field_70128_L;
-    public float field_70141_P;
-    public float field_70140_Q;
+    public boolean removed;
+    public float walkDistO;
+    public float walkDist;
 @@ -195,6 +_,7 @@
-    private float field_213326_aJ;
+    private float eyeHeight;
  
     public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
 +      super(Entity.class);
-       this.field_200606_g = p_i48580_1_;
-       this.field_70170_p = p_i48580_2_;
-       this.field_213325_aI = p_i48580_1_.func_220334_j();
+       this.type = p_i48580_1_;
+       this.level = p_i48580_2_;
+       this.dimensions = p_i48580_1_.getDimensions();
 @@ -211,7 +_,11 @@
-       this.field_70180_af.func_187214_a(field_189655_aD, false);
-       this.field_70180_af.func_187214_a(field_213330_X, Pose.STANDING);
-       this.func_70088_a();
--      this.field_213326_aJ = this.func_213316_a(Pose.STANDING, this.field_213325_aI);
-+      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.field_213325_aI, this.func_213316_a(Pose.STANDING, this.field_213325_aI));
-+      this.field_213325_aI = sizeEvent.getNewSize();
-+      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
+       this.entityData.define(DATA_NO_GRAVITY, false);
+       this.entityData.define(DATA_POSE, Pose.STANDING);
+       this.defineSynchedData();
+-      this.eyeHeight = this.getEyeHeight(Pose.STANDING, this.dimensions);
++      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.dimensions, this.getEyeHeight(Pose.STANDING, this.dimensions));
++      this.dimensions = sizeEvent.getNewSize();
++      this.eyeHeight = sizeEvent.getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +      this.gatherCapabilities();
     }
@@ -47,216 +47,216 @@
 @@ -317,7 +_,13 @@
     }
  
-    public void func_70106_y() {
+    public void remove() {
 +      this.remove(false);
 +   }
 +
 +   public void remove(boolean keepData) {
-       this.field_70128_L = true;
+       this.removed = true;
 +      if (!keepData)
 +         this.invalidateCaps();
     }
  
-    public void func_213301_b(Pose p_213301_1_) {
+    public void setPose(Pose p_213301_1_) {
 @@ -560,7 +_,7 @@
  
-             this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vector3d)) * 0.6D);
-             this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
--            if (this.field_82151_R > this.field_70150_b && !blockstate.func_196958_f()) {
-+            if (this.field_82151_R > this.field_70150_b && !blockstate.isAir(this.field_70170_p, blockpos)) {
-                this.field_70150_b = this.func_203009_ad();
-                if (this.func_70090_H()) {
-                   Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
+             this.walkDist = (float)((double)this.walkDist + (double)MathHelper.sqrt(getHorizontalDistanceSqr(vector3d)) * 0.6D);
+             this.moveDist = (float)((double)this.moveDist + (double)MathHelper.sqrt(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
+-            if (this.moveDist > this.nextStep && !blockstate.isAir()) {
++            if (this.moveDist > this.nextStep && !blockstate.isAir(this.level, blockpos)) {
+                this.nextStep = this.nextStep();
+                if (this.isInWater()) {
+                   Entity entity = this.isVehicle() && this.getControllingPassenger() != null ? this.getControllingPassenger() : this;
 @@ -575,7 +_,7 @@
                 } else {
-                   this.func_180429_a(blockpos, blockstate);
+                   this.playStepSound(blockpos, blockstate);
                 }
--            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.func_196958_f()) {
-+            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.isAir(this.field_70170_p, blockpos)) {
-                this.field_191959_ay = this.func_191954_d(this.field_82151_R);
+-            } else if (this.moveDist > this.nextFlap && this.makeFlySound() && blockstate.isAir()) {
++            } else if (this.moveDist > this.nextFlap && this.makeFlySound() && blockstate.isAir(this.level, blockpos)) {
+                this.nextFlap = this.playFlySound(this.moveDist);
              }
           }
 @@ -591,8 +_,9 @@
  
-          float f2 = this.func_225515_ai_();
-          this.func_213317_d(this.func_213322_ci().func_216372_d((double)f2, 1.0D, (double)f2));
--         if (this.field_70170_p.func_234939_c_(this.func_174813_aQ().func_186664_h(0.001D)).noneMatch((p_233572_0_) -> {
--            return p_233572_0_.func_235714_a_(BlockTags.field_232872_am_) || p_233572_0_.func_203425_a(Blocks.field_150353_l);
-+         if (BlockPos.func_239581_a_(this.func_174813_aQ().func_186664_h(0.001D)).noneMatch((p_233572_0_) -> {
-+            BlockState state = field_70170_p.func_180495_p(p_233572_0_);
-+            return state.func_235714_a_(BlockTags.field_232872_am_) || state.func_203425_a(Blocks.field_150353_l) || state.isBurning(field_70170_p, p_233572_0_);
-          }) && this.field_190534_ay <= 0) {
-             this.func_241209_g_(-this.func_190531_bD());
+          float f2 = this.getBlockSpeedFactor();
+          this.setDeltaMovement(this.getDeltaMovement().multiply((double)f2, 1.0D, (double)f2));
+-         if (this.level.getBlockStatesIfLoaded(this.getBoundingBox().deflate(0.001D)).noneMatch((p_233572_0_) -> {
+-            return p_233572_0_.is(BlockTags.FIRE) || p_233572_0_.is(Blocks.LAVA);
++         if (BlockPos.betweenClosedStream(this.getBoundingBox().deflate(0.001D)).noneMatch((p_233572_0_) -> {
++            BlockState state = level.getBlockState(p_233572_0_);
++            return state.is(BlockTags.FIRE) || state.is(Blocks.LAVA) || state.isBurning(level, p_233572_0_);
+          }) && this.remainingFireTicks <= 0) {
+             this.setRemainingFireTicks(-this.getFireImmuneTicks());
           }
 @@ -611,11 +_,10 @@
-       int j = MathHelper.func_76128_c(this.field_233557_ao_.field_72448_b - (double)0.2F);
-       int k = MathHelper.func_76128_c(this.field_233557_ao_.field_72449_c);
+       int j = MathHelper.floor(this.position.y - (double)0.2F);
+       int k = MathHelper.floor(this.position.z);
        BlockPos blockpos = new BlockPos(i, j, k);
--      if (this.field_70170_p.func_180495_p(blockpos).func_196958_f()) {
-+      if (this.field_70170_p.func_175623_d(blockpos)) {
-          BlockPos blockpos1 = blockpos.func_177977_b();
-          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos1);
--         Block block = blockstate.func_177230_c();
--         if (block.func_203417_a(BlockTags.field_219748_G) || block.func_203417_a(BlockTags.field_219757_z) || block instanceof FenceGateBlock) {
-+         if (blockstate.collisionExtendsVertically(this.field_70170_p, blockpos1, this)) {
+-      if (this.level.getBlockState(blockpos).isAir()) {
++      if (this.level.isEmptyBlock(blockpos)) {
+          BlockPos blockpos1 = blockpos.below();
+          BlockState blockstate = this.level.getBlockState(blockpos1);
+-         Block block = blockstate.getBlock();
+-         if (block.is(BlockTags.FENCES) || block.is(BlockTags.WALLS) || block instanceof FenceGateBlock) {
++         if (blockstate.collisionExtendsVertically(this.level, blockpos1, this)) {
              return blockpos1;
           }
        }
 @@ -801,6 +_,7 @@
-    public void func_174829_m() {
-       AxisAlignedBB axisalignedbb = this.func_174813_aQ();
-       this.func_226288_n_((axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D, axisalignedbb.field_72338_b, (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D);
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
+    public void setLocationFromBoundingbox() {
+       AxisAlignedBB axisalignedbb = this.getBoundingBox();
+       this.setPosRaw((axisalignedbb.minX + axisalignedbb.maxX) / 2.0D, axisalignedbb.minY, (axisalignedbb.minZ + axisalignedbb.maxZ) / 2.0D);
++      if (this.isAddedToWorld() && !this.level.isClientSide && level instanceof ServerWorld) ((ServerWorld)this.level).updateChunkPos(this); // Forge - Process chunk registration after moving.
     }
  
-    protected SoundEvent func_184184_Z() {
+    protected SoundEvent getSwimSound() {
 @@ -849,7 +_,7 @@
-    protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
-       if (!p_180429_2_.func_185904_a().func_76224_d()) {
-          BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
--         SoundType soundtype = blockstate.func_203425_a(Blocks.field_150433_aE) ? blockstate.func_215695_r() : p_180429_2_.func_215695_r();
-+         SoundType soundtype = blockstate.func_203425_a(Blocks.field_150433_aE) ? blockstate.getSoundType(field_70170_p, p_180429_1_, this) : p_180429_2_.getSoundType(field_70170_p, p_180429_1_, this);
-          this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
+    protected void playStepSound(BlockPos p_180429_1_, BlockState p_180429_2_) {
+       if (!p_180429_2_.getMaterial().isLiquid()) {
+          BlockState blockstate = this.level.getBlockState(p_180429_1_.above());
+-         SoundType soundtype = blockstate.is(Blocks.SNOW) ? blockstate.getSoundType() : p_180429_2_.getSoundType();
++         SoundType soundtype = blockstate.is(Blocks.SNOW) ? blockstate.getSoundType(level, p_180429_1_, this) : p_180429_2_.getSoundType(level, p_180429_1_, this);
+          this.playSound(soundtype.getStepSound(), soundtype.getVolume() * 0.15F, soundtype.getPitch());
        }
     }
 @@ -1056,9 +_,10 @@
-       int k = MathHelper.func_76128_c(this.func_226281_cx_());
+       int k = MathHelper.floor(this.getZ());
        BlockPos blockpos = new BlockPos(i, j, k);
-       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
-+      if(!blockstate.addRunningEffects(field_70170_p, blockpos, this))
-       if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
-          Vector3d vector3d = this.func_213322_ci();
--         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate), this.func_226277_ct_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vector3d.field_72450_a * -4.0D, 1.5D, vector3d.field_72449_c * -4.0D);
-+         this.field_70170_p.func_195594_a(new BlockParticleData(ParticleTypes.field_197611_d, blockstate).setPos(blockpos), this.func_226277_ct_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, this.func_226278_cu_() + 0.1D, this.func_226281_cx_() + (this.field_70146_Z.nextDouble() - 0.5D) * (double)this.field_213325_aI.field_220315_a, vector3d.field_72450_a * -4.0D, 1.5D, vector3d.field_72449_c * -4.0D);
+       BlockState blockstate = this.level.getBlockState(blockpos);
++      if(!blockstate.addRunningEffects(level, blockpos, this))
+       if (blockstate.getRenderShape() != BlockRenderType.INVISIBLE) {
+          Vector3d vector3d = this.getDeltaMovement();
+-         this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate), this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.dimensions.width, this.getY() + 0.1D, this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.dimensions.width, vector3d.x * -4.0D, 1.5D, vector3d.z * -4.0D);
++         this.level.addParticle(new BlockParticleData(ParticleTypes.BLOCK, blockstate).setPos(blockpos), this.getX() + (this.random.nextDouble() - 0.5D) * (double)this.dimensions.width, this.getY() + 0.1D, this.getZ() + (this.random.nextDouble() - 0.5D) * (double)this.dimensions.width, vector3d.x * -4.0D, 1.5D, vector3d.z * -4.0D);
        }
  
     }
 @@ -1377,6 +_,7 @@
-          if (this.field_184238_ar) {
-             p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
+          if (this.glowing) {
+             p_189511_1_.putBoolean("Glowing", this.glowing);
           }
-+         p_189511_1_.func_74757_a("CanUpdate", canUpdate);
++         p_189511_1_.putBoolean("CanUpdate", canUpdate);
  
-          if (!this.field_184236_aF.isEmpty()) {
+          if (!this.tags.isEmpty()) {
              ListNBT listnbt = new ListNBT();
 @@ -1388,6 +_,10 @@
-             p_189511_1_.func_218657_a("Tags", listnbt);
+             p_189511_1_.put("Tags", listnbt);
           }
  
 +         CompoundNBT caps = serializeCaps();
-+         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
-+         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
++         if (caps != null) p_189511_1_.put("ForgeCaps", caps);
++         if (persistentData != null) p_189511_1_.put("ForgeData", persistentData);
 +
-          this.func_213281_b(p_189511_1_);
-          if (this.func_184207_aI()) {
+          this.addAdditionalSaveData(p_189511_1_);
+          if (this.isVehicle()) {
              ListNBT listnbt1 = new ListNBT();
 @@ -1458,6 +_,9 @@
-                this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
-                this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
-                this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
-+               if (p_70020_1_.func_150297_b("ForgeData", 10)) persistentData = p_70020_1_.func_74775_l("ForgeData");
-+               if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
-+               if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
-                if (p_70020_1_.func_150297_b("Tags", 9)) {
-                   this.field_184236_aF.clear();
-                   ListNBT listnbt3 = p_70020_1_.func_150295_c("Tags", 8);
+                this.setSilent(p_70020_1_.getBoolean("Silent"));
+                this.setNoGravity(p_70020_1_.getBoolean("NoGravity"));
+                this.setGlowing(p_70020_1_.getBoolean("Glowing"));
++               if (p_70020_1_.contains("ForgeData", 10)) persistentData = p_70020_1_.getCompound("ForgeData");
++               if (p_70020_1_.contains("CanUpdate", 99)) this.canUpdate(p_70020_1_.getBoolean("CanUpdate"));
++               if (p_70020_1_.contains("ForgeCaps", 10)) deserializeCaps(p_70020_1_.getCompound("ForgeCaps"));
+                if (p_70020_1_.contains("Tags", 9)) {
+                   this.tags.clear();
+                   ListNBT listnbt3 = p_70020_1_.getList("Tags", 8);
 @@ -1546,6 +_,8 @@
        } else {
-          ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
-          itementity.func_174869_p();
+          ItemEntity itementity = new ItemEntity(this.level, this.getX(), this.getY() + (double)p_70099_2_, this.getZ(), p_70099_1_);
+          itementity.setDefaultPickUpDelay();
 +         if (captureDrops() != null) captureDrops().add(itementity);
 +         else
-          this.field_70170_p.func_217376_c(itementity);
+          this.level.addFreshEntity(itementity);
           return itementity;
        }
 @@ -1582,6 +_,7 @@
  
-    public void func_70098_U() {
-       this.func_213317_d(Vector3d.field_186680_a);
+    public void rideTick() {
+       this.setDeltaMovement(Vector3d.ZERO);
 +      if (canUpdate())
-       this.func_70071_h_();
-       if (this.func_184218_aH()) {
-          this.func_184187_bx().func_184232_k(this);
+       this.tick();
+       if (this.isPassenger()) {
+          this.getVehicle().positionRider(this);
 @@ -1627,6 +_,7 @@
           }
        }
  
 +      if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, p_184205_1_, true)) return false;
-       if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
-          if (this.func_184218_aH()) {
-             this.func_184210_p();
+       if (p_184205_2_ || this.canRide(p_184205_1_) && p_184205_1_.canAddPassenger(this)) {
+          if (this.isPassenger()) {
+             this.stopRiding();
 @@ -1659,6 +_,7 @@
-    public void func_233575_bb_() {
-       if (this.field_184239_as != null) {
-          Entity entity = this.field_184239_as;
+    public void removeVehicle() {
+       if (this.vehicle != null) {
+          Entity entity = this.vehicle;
 +         if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
-          this.field_184239_as = null;
-          entity.func_184225_p(this);
+          this.vehicle = null;
+          entity.removePassenger(this);
        }
 @@ -1816,6 +_,7 @@
-       return !this.func_184188_bt().isEmpty();
+       return !this.getPassengers().isEmpty();
     }
  
 +   @Deprecated //Forge: Use rider sensitive version
-    public boolean func_205710_ba() {
+    public boolean rideableUnderWater() {
        return true;
     }
 @@ -1948,7 +_,7 @@
-          this.func_70015_d(8);
+          this.setSecondsOnFire(8);
        }
  
--      this.func_70097_a(DamageSource.field_180137_b, 5.0F);
-+      this.func_70097_a(DamageSource.field_180137_b, p_241841_2_.getDamage());
+-      this.hurt(DamageSource.LIGHTNING_BOLT, 5.0F);
++      this.hurt(DamageSource.LIGHTNING_BOLT, p_241841_2_.getDamage());
     }
  
-    public void func_203002_i(boolean p_203002_1_) {
+    public void onAboveBubbleCol(boolean p_203002_1_) {
 @@ -2032,7 +_,7 @@
     }
  
-    protected ITextComponent func_225513_by_() {
--      return this.field_200606_g.func_212546_e();
-+      return this.func_200600_R().func_212546_e(); // Forge: Use getter to allow overriding by mods
+    protected ITextComponent getTypeName() {
+-      return this.type.getDescription();
++      return this.getType().getDescription(); // Forge: Use getter to allow overriding by mods
     }
  
-    public boolean func_70028_i(Entity p_70028_1_) {
+    public boolean is(Entity p_70028_1_) {
 @@ -2087,14 +_,19 @@
  
     @Nullable
-    public Entity func_241206_a_(ServerWorld p_241206_1_) {
-+      return this.changeDimension(p_241206_1_, p_241206_1_.func_85176_s());
+    public Entity changeDimension(ServerWorld p_241206_1_) {
++      return this.changeDimension(p_241206_1_, p_241206_1_.getPortalForcer());
 +   }
 +   @Nullable
 +   public Entity changeDimension(ServerWorld p_241206_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       if (this.field_70170_p instanceof ServerWorld && !this.field_70128_L) {
-          this.field_70170_p.func_217381_Z().func_76320_a("changeDimension");
-          this.func_213319_R();
-          this.field_70170_p.func_217381_Z().func_76320_a("reposition");
--         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a);
+       if (this.level instanceof ServerWorld && !this.removed) {
+          this.level.getProfiler().push("changeDimension");
+          this.unRide();
+          this.level.getProfiler().push("reposition");
+-         PortalInfo portalinfo = this.findDimensionEntryPoint(p_241206_1_);
++         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_241206_1_, this::findDimensionEntryPoint);
           if (portalinfo == null) {
              return null;
           } else {
-+            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
-             this.field_70170_p.func_217381_Z().func_219895_b("reloading");
-             Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
++            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.level, p_241206_1_, this.yRot, spawnPortal -> { //Forge: Start vanilla logic
+             this.level.getProfiler().popPush("reloading");
+             Entity entity = this.getType().create(p_241206_1_);
              if (entity != null) {
 @@ -2102,17 +_,19 @@
-                entity.func_70012_b(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, entity.field_70125_A);
-                entity.func_213317_d(portalinfo.field_222506_b);
-                p_241206_1_.func_217460_e(entity);
--               if (p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-+               if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-                   ServerWorld.func_241121_a_(p_241206_1_);
+                entity.moveTo(portalinfo.pos.x, portalinfo.pos.y, portalinfo.pos.z, portalinfo.yRot, entity.xRot);
+                entity.setDeltaMovement(portalinfo.speed);
+                p_241206_1_.addFromAnotherDimension(entity);
+-               if (p_241206_1_.dimension() == World.END) {
++               if (spawnPortal && p_241206_1_.dimension() == World.END) {
+                   ServerWorld.makeObsidianPlatform(p_241206_1_);
                 }
              }
 +            return entity;
 +            }); //Forge: End vanilla logic
  
-             this.func_241204_bJ_();
-             this.field_70170_p.func_217381_Z().func_76319_b();
-             ((ServerWorld)this.field_70170_p).func_82742_i();
-             p_241206_1_.func_82742_i();
-             this.field_70170_p.func_217381_Z().func_76319_b();
+             this.removeAfterChangingDimensions();
+             this.level.getProfiler().pop();
+             ((ServerWorld)this.level).resetEmptyTime();
+             p_241206_1_.resetEmptyTime();
+             this.level.getProfiler().pop();
 -            return entity;
 +            return transportedEntity;
           }
@@ -266,76 +266,76 @@
                    vector3d = new Vector3d(0.5D, 0.0D, 0.0D);
                 }
  
--               return PortalSize.func_242963_a(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.func_213305_a(this.func_213283_Z()), this.func_213322_ci(), this.field_70177_z, this.field_70125_A);
-+               return PortalSize.func_242963_a(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.getDimensionsForge(this.func_213283_Z()), this.func_213322_ci(), this.field_70177_z, this.field_70125_A);
+-               return PortalSize.createPortalInfo(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.getDimensions(this.getPose()), this.getDeltaMovement(), this.yRot, this.xRot);
++               return PortalSize.createPortalInfo(p_241829_1_, p_242275_2_, direction$axis, vector3d, this.getDimensionsForge(this.getPose()), this.getDeltaMovement(), this.yRot, this.xRot);
              }).orElse((PortalInfo)null);
           }
        } else {
 @@ -2170,7 +_,7 @@
     }
  
-    protected Vector3d func_241839_a(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
--      return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.func_213305_a(this.func_213283_Z()));
-+      return PortalSize.func_242973_a(p_241839_2_, p_241839_1_, this.func_213303_ch(), this.getDimensionsForge(this.func_213283_Z()));
+    protected Vector3d getRelativePortalPosition(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
+-      return PortalSize.getRelativePosition(p_241839_2_, p_241839_1_, this.position(), this.getDimensions(this.getPose()));
++      return PortalSize.getRelativePosition(p_241839_2_, p_241839_1_, this.position(), this.getDimensionsForge(this.getPose()));
     }
  
-    protected Optional<TeleportationRepositioner.Result> func_241830_a(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
+    protected Optional<TeleportationRepositioner.Result> getExitPortal(ServerWorld p_241830_1_, BlockPos p_241830_2_, boolean p_241830_3_) {
 @@ -2321,8 +_,10 @@
-       EntitySize entitysize = this.field_213325_aI;
-       Pose pose = this.func_213283_Z();
-       EntitySize entitysize1 = this.func_213305_a(pose);
-+      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitysize, entitysize1, this.func_213316_a(pose, entitysize1));
+       EntitySize entitysize = this.dimensions;
+       Pose pose = this.getPose();
+       EntitySize entitysize1 = this.getDimensions(pose);
++      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitysize, entitysize1, this.getEyeHeight(pose, entitysize1));
 +      entitysize1 = sizeEvent.getNewSize();
-       this.field_213325_aI = entitysize1;
--      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
-+      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
-       if (entitysize1.field_220315_a < entitysize.field_220315_a) {
-          double d0 = (double)entitysize1.field_220315_a / 2.0D;
-          this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
+       this.dimensions = entitysize1;
+-      this.eyeHeight = this.getEyeHeight(pose, entitysize1);
++      this.eyeHeight = sizeEvent.getNewEyeHeight();
+       if (entitysize1.width < entitysize.width) {
+          double d0 = (double)entitysize1.width / 2.0D;
+          this.setBoundingBox(new AxisAlignedBB(this.getX() - d0, this.getY(), this.getZ() - d0, this.getX() + d0, this.getY() + (double)entitysize1.height, this.getZ() + d0));
 @@ -2363,7 +_,7 @@
     }
  
-    protected AxisAlignedBB func_213321_d(Pose p_213321_1_) {
--      EntitySize entitysize = this.func_213305_a(p_213321_1_);
+    protected AxisAlignedBB getBoundingBoxForPose(Pose p_213321_1_) {
+-      EntitySize entitysize = this.getDimensions(p_213321_1_);
 +      EntitySize entitysize = this.getDimensionsForge(p_213321_1_);
-       float f = entitysize.field_220315_a / 2.0F;
-       Vector3d vector3d = new Vector3d(this.func_226277_ct_() - (double)f, this.func_226278_cu_(), this.func_226281_cx_() - (double)f);
-       Vector3d vector3d1 = new Vector3d(this.func_226277_ct_() + (double)f, this.func_226278_cu_() + (double)entitysize.field_220316_b, this.func_226281_cx_() + (double)f);
+       float f = entitysize.width / 2.0F;
+       Vector3d vector3d = new Vector3d(this.getX() - (double)f, this.getY(), this.getZ() - (double)f);
+       Vector3d vector3d1 = new Vector3d(this.getX() + (double)f, this.getY() + (double)entitysize.height, this.getZ() + (double)f);
 @@ -2374,13 +_,17 @@
-       this.field_70121_D = p_174826_1_;
+       this.bb = p_174826_1_;
     }
  
 +   /**
 +    * @deprecated Can be overridden but call {@link #getEyeHeightForge(Pose, EntitySize)} instead.
 +    */
 +   @Deprecated
-    protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-       return p_213316_2_.field_220316_b * 0.85F;
+    protected float getEyeHeight(Pose p_213316_1_, EntitySize p_213316_2_) {
+       return p_213316_2_.height * 0.85F;
     }
  
     @OnlyIn(Dist.CLIENT)
-    public float func_213307_e(Pose p_213307_1_) {
--      return this.func_213316_a(p_213307_1_, this.func_213305_a(p_213307_1_));
+    public float getEyeHeight(Pose p_213307_1_) {
+-      return this.getEyeHeight(p_213307_1_, this.getDimensions(p_213307_1_));
 +      return this.getEyeHeightForge(p_213307_1_, this.getDimensionsForge(p_213307_1_));
     }
  
-    public final float func_70047_e() {
+    public final float getEyeHeight() {
 @@ -2720,6 +_,10 @@
  
-    public abstract IPacket<?> func_213297_N();
+    public abstract IPacket<?> getAddEntityPacket();
  
 +   /**
 +    * @deprecated Can be overridden but call {@link #getDimensionsForge(Pose)} instead.
 +    */
 +   @Deprecated
-    public EntitySize func_213305_a(Pose p_213305_1_) {
-       return this.field_200606_g.func_220334_j();
+    public EntitySize getDimensions(Pose p_213305_1_) {
+       return this.type.getDimensions();
     }
 @@ -2796,6 +_,7 @@
  
-          this.field_233555_aA_ = true;
+          this.movedSinceLastChunkCheck = true;
        }
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded.
++      if (this.isAddedToWorld() && !this.level.isClientSide && !this.removed) this.level.getChunk((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded.
  
     }
  
@@ -376,10 +376,10 @@
 +   }
 +   @Override
 +   public boolean canTrample(BlockState state, BlockPos pos, float fallDistance) {
-+      return field_70170_p.field_73012_v.nextFloat() < fallDistance - 0.5F
++      return level.random.nextFloat() < fallDistance - 0.5F
 +              && this instanceof LivingEntity
-+              && (this instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(field_70170_p, this))
-+              && this.func_213311_cf() * this.func_213311_cf() * this.func_213302_cg() > 0.512F;
++              && (this instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this))
++              && this.getBbWidth() * this.getBbWidth() * this.getBbHeight() > 0.512F;
 +   }
 +
 +   /**
@@ -400,7 +400,7 @@
 +
 +   @Override
 +   public void revive() {
-+      this.field_70128_L = false;
++      this.removed = false;
 +      this.reviveCaps();
 +   }
 +
@@ -409,6 +409,6 @@
 +    * Accessor method for {@link #getEyeHeight(Pose, EntitySize)}
 +    */
 +   public float getEyeHeightAccess(Pose pose, EntitySize size) {
-+      return this.func_213316_a(pose, size);
++      return this.getEyeHeight(pose, size);
     }
  }
