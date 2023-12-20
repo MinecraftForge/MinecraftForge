@@ -9,6 +9,26 @@
     private final Matrix4f matrix;
     private boolean decomposed;
     @Nullable
+@@ -50,14 +_,17 @@
+       return IDENTITY;
+    }
+ 
+-   public TransformationMatrix compose(TransformationMatrix p_227985_1_) {
++   // FORGE: The methods below are not actually unused. To avoid FG6 reobfuscating the compose/inverse
++   // methods in IForgeTransformationMatrix, we rename the vanilla methods, and inject the original
++   // names at runtime via coremod (add_bouncer_method.js). The bouncers will call these methods.
++   private TransformationMatrix composeVanilla(TransformationMatrix p_227985_1_) {
+       Matrix4f matrix4f = this.getMatrix();
+       matrix4f.multiply(p_227985_1_.getMatrix());
+       return new TransformationMatrix(matrix4f);
+    }
+ 
+    @Nullable
+-   public TransformationMatrix inverse() {
++   private TransformationMatrix inverseVanilla() {
+       if (this == IDENTITY) {
+          return this;
+       } else {
 @@ -133,4 +_,32 @@
     public int hashCode() {
        return Objects.hash(this.matrix);
