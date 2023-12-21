@@ -7,7 +7,9 @@ var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode')
 
 function initializeCoreMod() {
     return {
-        "getLanguage_bouncer": addBouncer("net.minecraft.network.play.client.CClientSettingsPacket", "func_149524_c", "getLanguage", "()Ljava/lang/String;"),
+        //TODO: Remove in 1.20.5+
+        "getPosition_bouncer": addBouncer("net.minecraft.world.level.Explosion", "m_307721_", "getPosition", "()Lnet/minecraft/world/phys/Vec3;"),
+        "getExploder_bouncer": addBouncer("net.minecraft.world.level.Explosion", "m_253049_", "getExploder", "()Lnet/minecraft/world/entity/Entity;"),
     }
 }
 

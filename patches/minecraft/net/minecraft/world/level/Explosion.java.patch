@@ -8,20 +8,3 @@
        Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
        for(Entity entity : list) {
-@@ -345,6 +_,16 @@
- 
-    public List<BlockPos> getToBlow() {
-       return this.toBlow;
-+   }
-+
-+   @Deprecated(forRemoval = true, since = "1.20.4")
-+   public Vec3 getPosition() {
-+      return this.center();
-+   }
-+
-+   @Nullable
-+   public Entity getExploder() {
-+      return this.source;
-    }
- 
-    public Explosion.BlockInteraction getBlockInteraction() {
