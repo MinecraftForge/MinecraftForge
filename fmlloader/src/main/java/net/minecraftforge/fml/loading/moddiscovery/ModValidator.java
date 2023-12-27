@@ -15,11 +15,10 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ModValidator {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -29,11 +28,13 @@ public class ModValidator {
     private LoadingModList loadingModList;
     private List<IModFile> brokenFiles;
     private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
+    private final List<ModFile> gameLibraries;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<IModFileInfo> brokenFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
         this.modFiles = modFiles;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
-        this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
+        this.gameLibraries = lst(modFiles.get(IModFile.Type.GAMELIBRARY));
+        this.candidateMods.addAll(this.gameLibraries);
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
         this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
         this.discoveryErrorData = discoveryErrorData;
@@ -72,7 +73,22 @@ public class ModValidator {
     }
 
     public ITransformationService.Resource getModResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(IModFile::getSecureJar).toList());
+        Predicate<IModFile> shouldLoadResource;
+        if (FMLEnvironment.production) {
+            // In production, only allow game libraries and/or mods in the loading mod list
+            // This prevents custom mixins from loading if there is a dependency error
+            // Usually, these mixins will break due to a missing class or AT, and that
+            // will prevent our error screen from ever becoming visible.
+            Set<IModFile> validMods = new HashSet<>();
+            validMods.addAll(this.loadingModList.getModFiles().stream().map(ModFileInfo::getFile).toList());
+            validMods.addAll(this.gameLibraries);
+            shouldLoadResource = validMods::contains;
+        } else {
+            // In dev, allow any candidate mod to be loaded, as otherwise the --mixin.config argument
+            // will throw if there is a dependency error due to the mixin config being filtered.
+            shouldLoadResource = file -> true;
+        }
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().filter(shouldLoadResource).map(IModFile::getSecureJar).toList());
     }
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {
