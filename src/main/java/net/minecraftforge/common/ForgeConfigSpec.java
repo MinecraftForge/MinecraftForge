@@ -279,10 +279,23 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     {
         private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
+        private ConfigUpdateHandler<?> configUpdateHandler;
         private final Map<List<String>, String> levelComments = new HashMap<>();
         private final Map<List<String>, String> levelTranslationKeys = new HashMap<>();
         private final List<String> currentPath = new ArrayList<>();
         private final List<ConfigValue<?>> values = new ArrayList<>();
+
+        /**
+         * Attach a config update handler for the next ConfigValue
+         * Only can be attached 1 per value
+         * @param configUpdateHandler handler instance
+         * @return current builder
+         * @param <T> type of ConfigValue
+         */
+        public <T> Builder attachUpdateHandler(ConfigUpdateHandler<T> configUpdateHandler) {
+            this.configUpdateHandler = configUpdateHandler;
+            return this;
+        }
 
         //Object
         public <T> ConfigValue<T> define(String path, T defaultValue) {
@@ -308,6 +321,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             context.setClazz(clazz);
             return define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier);
         }
+        @SuppressWarnings("unchecked")
         public <T> ConfigValue<T> define(List<String> path, ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
                 List<String> tmp = new ArrayList<>(currentPath.size() + path.size());
@@ -317,7 +331,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }
             storage.set(path, value);
             context = new BuilderContext();
-            return new ConfigValue<>(this, path, defaultSupplier);
+            var attachedUpdateHandler = (ConfigUpdateHandler<T>) configUpdateHandler;
+            this.configUpdateHandler = null;
+            return new ConfigValue<>(this, path, defaultSupplier, attachedUpdateHandler == null ? (cfg, v1, v2) -> {} : attachedUpdateHandler);
         }
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultValue, min, max, clazz);
@@ -817,24 +833,34 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Object getDefault() { return supplier.get(); }
     }
 
+    @FunctionalInterface
+    public interface ConfigUpdateHandler<T> {
+        void call(ConfigValue<T> configValue, T oldValue, T newValue);
+    }
+
     public static class ConfigValue<T> implements Supplier<T>
     {
-        private static boolean USE_CACHES = true;
+        private final static boolean USE_CACHES = true;
 
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
+        private final ConfigUpdateHandler<T> updateHandler;
 
         private T cachedValue = null;
 
         private ForgeConfigSpec spec;
 
-        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
-        {
+        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier) {
+            this(parent, path, defaultSupplier, (cfg, v1, v2) -> {});
+        }
+
+        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier, ConfigUpdateHandler<T> updateHandler) {
             this.parent = parent;
             this.path = path;
             this.defaultSupplier = defaultSupplier;
             this.parent.values.add(this);
+            this.updateHandler = updateHandler;
         }
 
         public List<String> getPath()
@@ -894,6 +920,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
             spec.childConfig.set(path, value);
+            this.updateHandler.call(this, this.cachedValue, value);
             this.cachedValue = value;
         }
 
