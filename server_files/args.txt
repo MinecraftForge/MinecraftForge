@@ -1,0 +1,1 @@
+-Djava.net.preferIPv6Addresses=system -jar @SHIM_JAR_FILE@
