@@ -12,6 +12,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
 public class ModLoadingContext
@@ -48,6 +49,44 @@ public class ModLoadingContext
      */
     public <T extends Record & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
         getActiveContainer().registerExtensionPoint(point, extension);
+    }
+
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)}.</p>
+     * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
+     */
+    public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
+        getActiveContainer().registerDisplayTest(() -> displayTest);
+    }
+
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest supplier with {@link #registerExtensionPoint(Class, Supplier)}.</p>
+     * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
+     */
+    public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
+        getActiveContainer().registerDisplayTest(displayTest);
+    }
+
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
+     * creates the DisplayTest instance for you using the provided parameters.</p>
+     * @see IExtensionPoint.DisplayTest#DisplayTest(String, BiPredicate)
+     */
+    public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
+        getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
+    }
+
+    /**
+     * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
+     * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
+     * creates the DisplayTest instance for you using the provided parameters.</p>
+     * @see IExtensionPoint.DisplayTest#DisplayTest(Supplier, BiPredicate)
+     */
+    public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
+        getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
     }
 
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
