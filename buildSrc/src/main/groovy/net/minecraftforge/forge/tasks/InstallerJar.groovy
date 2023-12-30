@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks
 
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
@@ -27,7 +28,7 @@ abstract class InstallerJar extends Zip {
         from(project.rootProject.file('/src/main/resources/url.png'))
         project.afterEvaluate {
             from(project.zipTree(downloadInstaller.output)) {
-                duplicatesStrategy = 'exclude'
+                duplicatesStrategy = DuplicatesStrategy.EXCLUDE
             }
             
             if (fat.get() || offline.get()) {
