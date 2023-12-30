@@ -63,5 +63,5 @@ We require all contributors to acknowledge the [Forge Contributor
 
 [Download]: https://files.minecraftforge.net/
 [Forum]: https://www.minecraftforge.net/forum/
-[Discord]: https://discord.gg/UvedJ9m
+[Discord]: https://discord.minecraftforge.net
 [Documentation]: https://mcforge.readthedocs.io
