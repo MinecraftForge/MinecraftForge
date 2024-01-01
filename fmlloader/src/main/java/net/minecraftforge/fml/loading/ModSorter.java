@@ -54,6 +54,9 @@ public class ModSorter
             ms.buildUniqueList();
         } catch (EarlyLoadingException e) {
             // We cannot build any list with duped mods. We have to abort immediately and report it
+            // Note this will never actually throw an error because the duplicate checks are done in ModDiscovererer before we get to this phase
+            // So all this is really doing is wasting time.
+            // But i'm leaving it here until I rewrite all of cpw's mod loading code because its such a clusterfuck.
             return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
         }
         // try and validate dependencies
