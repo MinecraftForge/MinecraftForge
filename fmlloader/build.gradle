@@ -65,7 +65,7 @@ tasks.named('jar', Jar).configure {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-Xlint:unchecked'
 }
 
@@ -94,10 +94,10 @@ publishing {
 tasks.register('writeForgeVersionJson') {
     doLast {
         file('src/main/resources/forge_version.json').json = [
-            'forge': FORGE_VERSION,
-            'mc': MC_VERSION,
-            'mcp': MCP_VERSION
-        ] as LinkedHashMap
+            forge: FORGE_VERSION,
+            mc: MC_VERSION,
+            mcp: MCP_VERSION
+        ]
     }
 }
 

@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks.checks
 
+import groovy.transform.CompileStatic
 import net.minecraftforge.forge.tasks.Util
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
@@ -64,6 +65,7 @@ abstract class CheckExcs extends CheckTask {
         }
     }
 
+    @CompileStatic
     private void collectKnown(Collection<String> known) {
         binary.get().asFile.withInputStream { i ->
             new ZipInputStream(i).withCloseable { zin ->

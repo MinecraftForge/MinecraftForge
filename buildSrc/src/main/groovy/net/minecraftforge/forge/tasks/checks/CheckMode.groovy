@@ -6,4 +6,6 @@ import groovy.transform.CompileStatic
 enum CheckMode {
     CHECK,
     FIX
+
+    CheckMode() {}
 }

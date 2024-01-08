@@ -12,7 +12,7 @@ abstract class BytecodePredicateFinder extends BytecodeFinder {
     @Internal
     abstract Property<Closure<Boolean>> getPredicate()
 
-    private final Set<String> matches = new HashSet()
+    private final Set<String> matches = new HashSet<>()
 
     @Override
     protected process(ClassNode parent, MethodNode node) {
