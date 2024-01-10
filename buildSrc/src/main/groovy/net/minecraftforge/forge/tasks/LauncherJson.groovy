@@ -88,9 +88,7 @@ abstract class LauncherJson extends DefaultTask {
             ]
         ])
 
-        getArtifacts(project, project.configurations.installer).each { key, lib -> 
-            json.libraries.add(lib)
-        }
+        json.libraries.addAll(getArtifacts(project.configurations.installer).values())
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
     }
 }

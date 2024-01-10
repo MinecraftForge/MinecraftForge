@@ -20,6 +20,7 @@ import java.net.http.HttpResponse
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Semaphore
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -80,25 +81,31 @@ final class Util {
     }
 
     @CompileStatic
-    static Map getArtifacts(Project project, Configuration config) {
-        var ret = new ConcurrentHashMap()
-        config.resolvedConfiguration.resolvedArtifacts.parallelStream().forEach(dep -> {
+    static Map getArtifacts(Configuration config) {
+        var ret = [:]
+        var semaphore = new Semaphore(1, true)
+        config.resolvedConfiguration.resolvedArtifacts.parallelStream().forEachOrdered(dep -> {
             var info = getMavenInfoFromDep(dep)
-            var url = "https://libraries.minecraft.net/$info.path"
+            var domain = 'libraries.minecraft.net'
+            var url = "https://$domain/$info.path"
             if (!checkExists(url))
-                url = "https://maven.minecraftforge.net/$info.path"
+                url.values[0] = 'files.minecraftforge.net'
 
+            var sha1 = sha1(dep.file)
+
+            semaphore.acquire()
             ret[info.key] = [
                 name: info.name,
                 downloads: [
                     artifact: [
                         path: info.path,
                         url: url.toString(),
-                        sha1: sha1(dep.file),
+                        sha1: sha1,
                         size: dep.file.length()
                     ]
                 ]
             ]
+            semaphore.release()
         })
         return ret
     }
