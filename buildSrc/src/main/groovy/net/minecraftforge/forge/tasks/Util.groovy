@@ -190,7 +190,7 @@ final class Util {
         def dep = project.dependencies.create(artifact)
         cfg.dependencies.add(dep)
         def files = cfg.resolve()
-        return getArtifacts(project, cfg)
+        return getArtifacts(cfg)
     }
 
     @CompileStatic
