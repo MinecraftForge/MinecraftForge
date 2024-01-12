@@ -72,7 +72,7 @@ dependencyResolutionManagement {
             bundle('night-config', ['night-config-toml', 'night-config-core'])
 
             // Jar in Jar FileSystem
-            version('jarjar', '0.3.25')
+            version('jarjar', '0.3.26')
             library('jarjar-fs',       'net.minecraftforge', 'JarJarFileSystems').versionRef('jarjar')
             library('jarjar-meta',     'net.minecraftforge', 'JarJarMetadata'   ).versionRef('jarjar')
             library('jarjar-selector', 'net.minecraftforge', 'JarJarSelector'   ).versionRef('jarjar')
