@@ -89,7 +89,7 @@ final class Util {
             var domain = 'libraries.minecraft.net'
             var url = "https://$domain/$info.path"
             if (!checkExists(url))
-                url.values[0] = 'files.minecraftforge.net'
+                url.values[0] = 'maven.minecraftforge.net'
 
             var sha1 = sha1(dep.file)
 
