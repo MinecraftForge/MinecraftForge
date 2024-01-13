@@ -19,15 +19,21 @@
           if (p_36049_.m_41782_()) {
              itemstack.m_41751_(p_36049_.m_41783_().m_6426_());
           }
-@@ -229,7 +_,7 @@
-             }
-          }
-       }
--
-+      f_35975_.forEach(e -> e.onArmorTick(f_35978_.m_9236_(), f_35978_));
+@@ -222,11 +_,13 @@
     }
  
-    public boolean m_36054_(ItemStack p_36055_) {
+    public void m_36068_() {
++      int idx = 0;
+       for(NonNullList<ItemStack> nonnulllist : this.f_35979_) {
+          for(int i = 0; i < nonnulllist.size(); ++i) {
+             if (!nonnulllist.get(i).m_41619_()) {
+-               nonnulllist.get(i).m_41666_(this.f_35978_.m_9236_(), this.f_35978_, i, this.f_35977_ == i);
++               nonnulllist.get(i).onInventoryTick(this.f_35978_.m_9236_(), this.f_35978_, idx, this.f_35977_);
+             }
++            idx++;
+          }
+       }
+ 
 @@ -277,6 +_,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.m_127521_(throwable, "Adding item to inventory");

@@ -340,16 +340,17 @@ public interface IForgeItem
      */
     default void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex)
     {
-    	// For compatibility reasons we have to use non-local index values, I think this is a vanilla bug but lets maintain compatibility
-    	int vanillaIndex = slotIndex;
-    	if (slotIndex >= 36) {
-    		vanillaIndex -= 36;
-    		if (vanillaIndex >= 4)
-    			vanillaIndex -= 4;
-			else
-				onArmorTick(stack, level, player);
-    	}
-		stack.inventoryTick(level, player, vanillaIndex, selectedIndex == vanillaIndex);
+        // For compatibility reasons we have to use non-local index values, I think this is a vanilla bug but lets maintain compatibility
+        var inv = player.getInventory();
+        int vanillaIndex = slotIndex;
+        if (slotIndex >= inv.items.size()) {
+            vanillaIndex -= inv.items.size();
+            if (vanillaIndex >= inv.armor.size())
+                vanillaIndex -= inv.armor.size();
+            else
+                onArmorTick(stack, level, player);
+        }
+        stack.inventoryTick(level, player, vanillaIndex, selectedIndex == vanillaIndex);
     }
 
     /**
