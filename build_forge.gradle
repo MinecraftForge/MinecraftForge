@@ -724,6 +724,20 @@ tasks.register('installerJson', InstallerJson) {
                         '--task', 'EXTRACT_FILES',
                         '--archive', '{INSTALLER}',
 
+                        '--from', 'data/README.txt',
+                        '--to', '{ROOT}/README.txt',
+
+                        '--from', 'data/run.sh',
+                        '--to', '{ROOT}/run.sh',
+                        '--exec', '{ROOT}/run.sh',
+
+                        '--from', 'data/run.bat',
+                        '--to', '{ROOT}/run.bat',
+
+                        '--from', 'data/user_jvm_args.txt',
+                        '--to', '{ROOT}/user_jvm_args.txt',
+                        '--optional', '{ROOT}/user_jvm_args.txt',
+
                         '--from', 'data/unix_args.txt',
                         '--to', "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt",
 
@@ -892,6 +906,12 @@ tasks.register('installerJar', InstallerJar) {
         filter(tokens, ReplaceTokens)
         into 'data'
         rename { 'win_args.txt' }
+    }
+
+    from(rootProject.file('server_files')) {
+        filter(tokens, ReplaceTokens)
+        into 'data'
+        exclude 'args.txt'
     }
 
     jarSigner.sign(it)
