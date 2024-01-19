@@ -26,12 +26,12 @@ abstract class CheckExcs extends CheckTask {
         excs.each { f ->
             final lines = []
             f.eachLine { line ->
-                def idx = line.indexOf('#')
-                if (idx == 0 || line.isEmpty()) {
+                int idx = line.indexOf('#')
+                if (idx === 0 || line.isEmpty()) {
                     return
                 }
 
-                if (idx != -1) line = line.substring(0, idx - 1)
+                if (idx !== -1) line = line.substring(0, idx - 1)
 
                 if (!line.contains('=')) {
                     reporter.report("Invalid: $line")
@@ -58,6 +58,8 @@ abstract class CheckExcs extends CheckTask {
                     return
                 }
                 lines.add(line)
+
+                return
             }
 
             if (fix) f.text = lines.sort().join('\n')

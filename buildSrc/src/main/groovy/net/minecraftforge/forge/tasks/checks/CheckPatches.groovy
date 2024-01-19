@@ -36,13 +36,13 @@ abstract class CheckPatches extends CheckTask {
         }
     }
     
-    def accessChange(previous, current) {
+    static boolean accessChange(String previous, String current) {
         //return ACCESS_MAP[previous] < ACCESS_MAP[current]
         return previous != current
     }
 
     void verifyPatch(Path patch, Reporter reporter, boolean fix, String patchPath, boolean hasS2SArtifact) {
-        final oldFixedErrors = reporter.fixed.size()
+        int oldFixedErrors = reporter.fixed.size()
 
         final lines = Files.readAllLines(patch)
 

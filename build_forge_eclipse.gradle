@@ -3,7 +3,7 @@ apply plugin: 'eclipse'
 eclipse {
     classpath.file.whenMerged {
         def minecraft = entries.find { it.path == 'src/main/java' }
-        if (minecraft == null) throw new IllegalStateException("You must run `setup` task before importing")
+        if (minecraft === null) throw new IllegalStateException("You must run `setup` task before importing")
         // Disable optional warnings on the minecraft decompiled source code. It just muddies the warning window and hides warnings in our own codebase
         minecraft.entryAttributes['ignore_optional_problems'] = 'true'
         

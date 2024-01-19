@@ -16,7 +16,7 @@ abstract class SetupCheckJarCompatibility extends DefaultTask {
     SetupCheckJarCompatibility() {
         group = 'jar compatibility'
         onlyIf {
-            inputVersion.getOrNull() != null
+            inputVersion.getOrNull() !== null
         }
         outputs.upToDateWhen { false } // Never up to date, because this setup task should always run
 

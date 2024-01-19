@@ -94,7 +94,7 @@ abstract class CheckSAS extends CheckTask {
         }
     }
 
-    protected static isSided(Annotatable annotatable) {
+    protected static boolean isSided(Annotatable annotatable) {
         if (annotatable === null) return false
         for (ann in annotatable.annotations) {
             if ('Lnet/minecraftforge/api/distmarker/OnlyIn;' == ann.desc)
@@ -104,7 +104,7 @@ abstract class CheckSAS extends CheckTask {
     }
     
     protected static findChildMethods(Map<String, InheritanceData> json, String cls, String desc) {
-        return json.values().findAll{ it.methods != null && it.methods[desc] != null && it.methods[desc].override == cls && isSided(it.methods[desc]) }
+        return json.values().findAll{ it.methods !== null && it.methods[desc] !== null && it.methods[desc].override == cls && isSided(it.methods[desc]) }
                 .collect { it.name + ' ' + desc.replace(' ', '') } as TreeSet
     }
 }

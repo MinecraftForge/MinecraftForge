@@ -1,6 +1,7 @@
 package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonBuilder
+import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
@@ -10,6 +11,7 @@ import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.FieldNode
 import org.objectweb.asm.tree.MethodNode
 
+@CompileStatic
 abstract class BytecodeFinder extends DefaultTask {
     @InputFile abstract RegularFileProperty getJar()
     // It should be fine to mark the output as internal as we want to control when we run it anyways.
@@ -24,13 +26,13 @@ abstract class BytecodeFinder extends DefaultTask {
     protected void exec() {
         Util.init()
 
-        def outputFile = output.get().asFile
+        var outputFile = output.get().asFile
         if (outputFile.exists())
             outputFile.delete()
 
         pre()
 
-        Util.processClassNodes(jar.get().asFile, this::process)
+        Util.processClassNodes(jar.get().asFile, this.&process)
 
         post()
         outputFile.text = new JsonBuilder(getData()).toPrettyString()
@@ -38,8 +40,8 @@ abstract class BytecodeFinder extends DefaultTask {
 
 
     protected process(ClassNode node) {
-        if (node.fields != null) node.fields.each { process(node, it) }
-        if (node.methods != null) node.methods.each { process(node, it) }
+        if (node.fields !== null) node.fields.each { process(node, it) }
+        if (node.methods !== null) node.methods.each { process(node, it) }
     }
 
     protected pre() {}

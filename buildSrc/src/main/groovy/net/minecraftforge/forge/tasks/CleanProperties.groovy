@@ -1,5 +1,8 @@
 package net.minecraftforge.forge.tasks;
 
+import groovy.transform.CompileDynamic;
+import groovy.transform.CompileStatic;
+
 import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.Set;
  * This does the same thing, as well as sorting alphabetically.
  * It also ignores all comments. We can add them latter if someone cares.
  */
+@CompileStatic
 public class CleanProperties extends Properties {
     private static final long serialVersionUID = 1L;
     private static final String LINE_SEP = System.getProperty("line.separator");
@@ -58,6 +62,7 @@ public class CleanProperties extends Properties {
         return Collections.enumeration(ret);
     }
 
+    @CompileDynamic
     @Override
     public Set<Map.Entry<Object, Object>> entrySet() {
         Set<Map.Entry<Object, Object>> ret = new TreeSet<>((l, r) -> ((String)l.getKey()).compareTo((String)r.getKey()));
