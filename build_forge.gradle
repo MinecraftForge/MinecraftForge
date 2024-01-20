@@ -896,7 +896,10 @@ tasks.register('installerJar', InstallerJar) {
     }
 
     final var argsFile = rootProject.file('server_files/args.txt')
-    final Map<String, Map<String, String>> tokens = [tokens: [SHIM_JAR_FILE: serverShimJar.archiveFileName.get()]]
+    final Map<String, Map<String, String>> tokens = [tokens: [
+            SHIM_JAR_FILE: serverShimJar.archiveFileName.get(),
+            MAVEN_PATH: MAVEN_PATH
+    ]]
     from(argsFile) {
         filter(tokens, ReplaceTokens)
         into 'data'
