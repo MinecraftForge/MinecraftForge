@@ -3,7 +3,7 @@ import net.minecraftforge.gradleutils.PomUtils
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.licenser'
     id 'net.minecraftforge.gradleutils'
 }
 

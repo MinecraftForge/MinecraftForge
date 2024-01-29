@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) Forge Development LLC and contributors
+    SPDX-License-Identifier: LGPL-2.1-only
+-->
+
 <Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util,cpw.mods.modlauncher.log,net.minecraftforge.fml.loading.log4j" shutdownHook="disable">
     <filters>
         <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>

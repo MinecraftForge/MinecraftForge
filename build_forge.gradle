@@ -23,7 +23,7 @@ plugins {
     id 'eclipse'
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.licenser'
     id 'de.undercouch.download'
     id 'net.minecraftforge.gradleutils'
     id 'net.minecraftforge.gradle.patcher'

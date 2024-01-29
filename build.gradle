@@ -2,7 +2,7 @@ import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.gradleutils.PomUtils
 
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1'
+    id 'net.minecraftforge.licenser' version '1.0.1'
     id 'com.github.ben-manes.versions' version '0.46.0'
     id 'net.minecraftforge.gradleutils' version '[2.3.0,2.4.0)'
     id 'eclipse'
