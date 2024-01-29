@@ -1,14 +1,13 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -193,7 +_,7 @@
-       if (!this.level().isClientSide && this.isAlive() && !this.isNoAi()) {
-          if (this.isUnderWaterConverting()) {
-             --this.conversionTime;
--            if (this.conversionTime < 0) {
-+            if (this.conversionTime < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) {
-                this.doUnderWaterConversion();
-             }
-          } else if (this.convertsInWater()) {
+@@ -243,6 +_,7 @@
+    }
+ 
+    protected void doUnderWaterConversion() {
++      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.DROWNED, (timer) -> this.conversionTime = timer)) return;
+       this.convertToZombieType(EntityType.DROWNED);
+       if (!this.isSilent()) {
+          this.level().levelEvent((Player)null, 1040, this.blockPosition(), 0);
 @@ -255,6 +_,7 @@
        if (zombie != null) {
           zombie.handleAttributes(zombie.level().getCurrentDifficultyAt(zombie.blockPosition()).getSpecialMultiplier());
@@ -43,20 +42,21 @@
                       zombie.setTarget(livingentity);
                       zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, (SpawnGroupData)null, (CompoundTag)null);
                       serverlevel.addFreshEntityWithPassengers(zombie);
-@@ -376,7 +_,7 @@
- 
-    public boolean killedEntity(ServerLevel p_219160_, LivingEntity p_219161_) {
-       boolean flag = super.killedEntity(p_219160_, p_219161_);
--      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager) {
-+      if ((p_219160_.getDifficulty() == Difficulty.NORMAL || p_219160_.getDifficulty() == Difficulty.HARD) && p_219161_ instanceof Villager villager && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {})) {
-          if (p_219160_.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
+@@ -381,6 +_,9 @@
              return flag;
           }
+ 
++         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_219161_, EntityType.ZOMBIE_VILLAGER, (timer) -> {}))
++            return flag;
++
+          ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
+          if (zombievillager != null) {
+             zombievillager.finalizeSpawn(p_219160_, p_219160_.getCurrentDifficultyAt(zombievillager.blockPosition()), MobSpawnType.CONVERSION, new Zombie.ZombieGroupData(false, true), (CompoundTag)null);
 @@ -388,6 +_,7 @@
              zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
              zombievillager.setTradeOffers(villager.getOffers().createTag());
              zombievillager.setVillagerXp(villager.getVillagerXp());
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_219161_, zombievillager);
              if (!this.isSilent()) {
                 p_219160_.levelEvent((Player)null, 1026, this.blockPosition(), 0);
              }
