@@ -30,22 +30,22 @@
                                   p_194488_.setSelfPosition(vec3);
                                   p_194488_.setRelative(flag);
                                });
-+                           final SoundInstance soundinstance = p_120313_;
++                              final SoundInstance soundinstance = p_120313_;
                                if (!flag2) {
                                   this.soundBuffers.getCompleteBuffer(sound.getPath()).thenAccept((p_194501_) -> {
                                      channelaccess$channelhandle.execute((p_194495_) -> {
                                         p_194495_.attachStaticBuffer(p_194501_);
                                         p_194495_.play();
-+                                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, soundinstance, p_194495_));
++                                       net.minecraftforge.client.event.ForgeEventFactoryClient.onPlaySoundSource(this, soundinstance, p_194495_);
                                      });
                                   });
                                } else {
 -                                 this.soundBuffers.getStream(sound.getPath(), flag1).thenAccept((p_194504_) -> {
-+                              soundinstance.getStream(this.soundBuffers, sound, flag2).thenAccept((p_194504_) -> {
++                                 soundinstance.getStream(this.soundBuffers, sound, flag1).thenAccept((p_194504_) -> {
                                      channelaccess$channelhandle.execute((p_194498_) -> {
                                         p_194498_.attachBufferStream(p_194504_);
                                         p_194498_.play();
-+                                    net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, soundinstance, p_194498_));
++                                       net.minecraftforge.client.event.ForgeEventFactoryClient.onPlayStreamingSource(this, soundinstance, p_194498_);
                                      });
                                   });
                                }
