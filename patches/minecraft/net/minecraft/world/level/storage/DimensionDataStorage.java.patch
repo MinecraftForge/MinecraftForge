@@ -14,3 +14,12 @@
        }
  
        return (T)saveddata;
+@@ -94,7 +_,7 @@
+          }
+ 
+          int i = NbtUtils.getDataVersion(compoundtag, 1343);
+-         compoundtag1 = p_301060_.update(this.fixerUpper, compoundtag, i, p_78160_);
++         compoundtag1 = p_301060_ == null ? compoundtag : p_301060_.update(this.fixerUpper, compoundtag, i, p_78160_); // Forge: Allow the data fixer to be null, leaving the modder responsible for keeping track of their own data formats
+       }
+ 
+       return compoundtag1;

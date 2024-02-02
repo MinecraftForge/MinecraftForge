@@ -6,7 +6,6 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
@@ -58,7 +57,7 @@ public class LevelCapabilityData extends SavedData {
                 ret.read(tag);
                 return ret;
             },
-            DataFixTypes.SAVED_DATA_COMMAND_STORAGE //TODO: Hook this for our own types?
+            null
         );
 
         var ret = data.computeIfAbsent(factory, ID);
