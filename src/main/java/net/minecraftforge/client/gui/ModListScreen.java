@@ -207,7 +207,7 @@ public class ModListScreen extends Screen
             if (!isMouseOver(mouseX, mouseY))
                 return null;
 
-            double offset = (mouseY - top) + border + scrollDistance + 1;
+            double offset = (mouseY - top - PADDING - border) + scrollDistance;
             if (logoPath != null) {
                 offset -= 50;
             }
@@ -215,10 +215,10 @@ public class ModListScreen extends Screen
                 return null;
 
             int lineIdx = (int) (offset / font.lineHeight);
-            if (lineIdx >= lines.size() || lineIdx < 1)
+            if (lineIdx >= lines.size() || lineIdx < 0)
                 return null;
 
-            FormattedCharSequence line = lines.get(lineIdx-1);
+            FormattedCharSequence line = lines.get(lineIdx);
             if (line != null)
             {
                 return font.getSplitter().componentStyleAtWidth(line, mouseX - left - border);
