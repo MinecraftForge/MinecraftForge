@@ -103,7 +103,8 @@ public abstract class BakedModelWrapper<T extends BakedModel> implements BakedMo
     @Override
     public BakedModel applyTransform(ItemDisplayContext cameraTransformType, PoseStack poseStack, boolean applyLeftHandTransform)
     {
-        return originalModel.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
+        originalModel.applyTransform(cameraTransformType, poseStack, applyLeftHandTransform);
+        return this;
     }
 
     @Override
