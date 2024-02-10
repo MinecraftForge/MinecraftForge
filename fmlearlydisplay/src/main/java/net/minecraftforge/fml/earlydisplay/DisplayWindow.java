@@ -229,7 +229,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             LOGGER.error("Crash during font initialization", t);
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
         }
-        this.elements = new ArrayList<>(Arrays.asList(
+        this.elements = new ArrayList<>(List.of(
             RenderElement.anvil(font),
             RenderElement.logMessageOverlay(font),
             RenderElement.forgeVersionOverlay(font, mcVersion + "-" + forgeVersion),
