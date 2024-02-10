@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ProgressMeter {
     private final String name;
     private final int steps;
-    private AtomicInteger current;
+    private final AtomicInteger current;
     private Message label;
 
     public ProgressMeter(String name, int steps, int current, Message label) {
