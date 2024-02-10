@@ -280,7 +280,7 @@ public class RenderElement {
         if (num < min) {
             return min;
         } else {
-            return num > max ? max : num;
+            return Math.min(num, max);
         }
     }
 
@@ -288,7 +288,7 @@ public class RenderElement {
         if (num < min) {
             return min;
         } else {
-            return num > max ? max : num;
+            return Math.min(num, max);
         }
     }
 
