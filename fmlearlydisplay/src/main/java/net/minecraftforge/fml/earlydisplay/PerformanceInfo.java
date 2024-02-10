@@ -32,19 +32,19 @@ public class PerformanceInfo {
         memory = (float) heapusage.getUsed() / heapusage.getMax();
 
         if (!showCPUUsage) {
-            text = String.format("Heap: %d/%d MB (%.1f%%) OffHeap: %d MB", heapusage.getUsed() >> 20, heapusage.getMax() >> 20, memory * 100.0, memoryBean.getNonHeapMemoryUsage().getUsed() >> 20);
+            text = "Heap: %d/%d MB (%.1f%%) OffHeap: %d MB".formatted(heapusage.getUsed() >> 20, heapusage.getMax() >> 20, memory * 100.0, memoryBean.getNonHeapMemoryUsage().getUsed() >> 20);
             return;
         }
 
         var cpuLoad = osBean.getProcessCpuLoad();
         String cpuText;
         if (cpuLoad == -1) {
-            cpuText = String.format("*CPU: %.1f%%", osBean.getCpuLoad() * 100f);
+            cpuText = "*CPU: %.1f%%".formatted(osBean.getCpuLoad() * 100f);
         } else {
-            cpuText = String.format("CPU: %.1f%%", cpuLoad * 100f);
+            cpuText = "CPU: %.1f%%".formatted(cpuLoad * 100f);
         }
 
-        text = String.format("Heap: %d/%d MB (%.1f%%) OffHeap: %d MB  %s", heapusage.getUsed() >> 20, heapusage.getMax() >> 20, memory * 100.0, memoryBean.getNonHeapMemoryUsage().getUsed() >> 20, cpuText);
+        text = "Heap: %d/%d MB (%.1f%%) OffHeap: %d MB  %s".formatted(heapusage.getUsed() >> 20, heapusage.getMax() >> 20, memory * 100.0, memoryBean.getNonHeapMemoryUsage().getUsed() >> 20, cpuText);
     }
 
     String text() {
