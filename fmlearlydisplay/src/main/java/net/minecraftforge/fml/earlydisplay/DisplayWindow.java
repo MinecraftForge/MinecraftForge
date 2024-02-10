@@ -598,8 +598,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         var fm = layer.findModule("forge").orElseThrow();
         getClass().getModule().addReads(fm);
         var clz = FMLLoader.getGameLayer().findModule("forge").map(l->Class.forName(l, "net.minecraftforge.client.loading.ForgeLoadingOverlay")).orElseThrow();
-        var methods = Arrays.stream(clz.getMethods()).filter(m-> Modifier.isStatic(m.getModifiers())).collect(Collectors.toMap(Method::getName, Function.identity()));
-        loadingOverlay = methods.get("newInstance");
+        loadingOverlay = Arrays.stream(clz.getDeclaredMethods()).filter(m-> Modifier.isStatic(m.getModifiers()) && m.getName().equals("newInstance")).findFirst().orElseThrow();
     }
 
     public int getFramebufferTextureId() {
