@@ -5,11 +5,12 @@
 
 package net.minecraftforge.common.data;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistriesDatapackGenerator;
 import net.minecraft.data.registries.RegistryPatchGenerator;
+import net.minecraft.data.worldgen.features.OreFeatures;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -55,7 +56,13 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
     }
 
     /**
-     * Gets the future of the full registry lookup containing all added elements.
+     * Gets the future of the full registry lookup containing all added elements.<br>
+     * Example usage:<br>
+     * <pre>{@code
+     * HolderLookup.Provider provider = this.fullRegistries.join();
+     * Holder<?> holder = provider.lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(ResourceKey to a modded feature);
+     * // The returned holder can then be used to register a PlacedFeature
+     * }</pre>
      * @return the future of the full registry lookup
      */
     public CompletableFuture<HolderLookup.Provider> getFullRegistries()
