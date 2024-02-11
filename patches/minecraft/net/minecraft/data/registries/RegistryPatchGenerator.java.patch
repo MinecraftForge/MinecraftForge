@@ -1,13 +1,10 @@
 --- a/net/minecraft/data/registries/RegistryPatchGenerator.java
 +++ b/net/minecraft/data/registries/RegistryPatchGenerator.java
-@@ -17,9 +_,7 @@
-       return p_310881_.thenApply((p_309945_) -> {
-          RegistryAccess.Frozen registryaccess$frozen = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
-          Cloner.Factory cloner$factory = new Cloner.Factory();
--         RegistryDataLoader.WORLDGEN_REGISTRIES.forEach((p_313050_) -> {
--            p_313050_.runWithArguments(cloner$factory::addCodec);
--         });
-+         net.minecraftforge.registries.DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().forEach(registryData -> registryData.runWithArguments(cloner$factory::addCodec));
+@@ -20,6 +_,7 @@
+          RegistryDataLoader.WORLDGEN_REGISTRIES.forEach((p_313050_) -> {
+             p_313050_.runWithArguments(cloner$factory::addCodec);
+          });
++         RegistryDataLoader.DIMENSION_REGISTRIES.forEach(reg -> reg.runWithArguments(cloner$factory::addCodec);
           RegistrySetBuilder.PatchedRegistries registrysetbuilder$patchedregistries = p_310262_.buildPatch(registryaccess$frozen, p_309945_, cloner$factory);
           HolderLookup.Provider holderlookup$provider = registrysetbuilder$patchedregistries.full();
           Optional<HolderLookup.RegistryLookup<Biome>> optional = holderlookup$provider.lookup(Registries.BIOME);
