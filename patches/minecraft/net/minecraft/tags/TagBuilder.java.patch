@@ -19,7 +19,7 @@
     private final List<TagEntry> f_215897_ = new ArrayList<>();
  
     public static TagBuilder m_215899_() {
-@@ -34,5 +_,16 @@
+@@ -34,5 +_,21 @@
  
     public TagBuilder m_215909_(ResourceLocation p_215910_) {
        return this.m_215902_(TagEntry.m_215953_(p_215910_));
@@ -34,5 +34,10 @@
 +   // FORGE: Shorthand version of replace(true)
 +   public TagBuilder replace() {
 +      return replace(true);
++   }
++
++   // FORGE: Is this tag set to replace or not?
++   public boolean isReplace() {
++      return this.replace;
     }
  }
