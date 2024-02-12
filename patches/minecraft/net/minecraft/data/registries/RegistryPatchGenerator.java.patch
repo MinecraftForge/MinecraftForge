@@ -4,7 +4,7 @@
           RegistryDataLoader.WORLDGEN_REGISTRIES.forEach((p_313050_) -> {
              p_313050_.runWithArguments(cloner$factory::addCodec);
           });
-+         RegistryDataLoader.DIMENSION_REGISTRIES.forEach(reg -> reg.runWithArguments(cloner$factory::addCodec);
++         RegistryDataLoader.DIMENSION_REGISTRIES.forEach(reg -> reg.runWithArguments(cloner$factory::addCodec));
           RegistrySetBuilder.PatchedRegistries registrysetbuilder$patchedregistries = p_310262_.buildPatch(registryaccess$frozen, p_309945_, cloner$factory);
           HolderLookup.Provider holderlookup$provider = registrysetbuilder$patchedregistries.full();
           Optional<HolderLookup.RegistryLookup<Biome>> optional = holderlookup$provider.lookup(Registries.BIOME);
