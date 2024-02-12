@@ -7,10 +7,15 @@ package net.minecraftforge.common.data;
 
 import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistriesDatapackGenerator;
 import net.minecraft.data.registries.RegistryPatchGenerator;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.data.worldgen.features.OreFeatures;
+import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -57,12 +62,11 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
 
     /**
      * Gets the future of the full registry lookup containing all added elements.<br>
-     * Example usage:<br>
+     * The returned full registry lookup can also be used for other data providers.<br>
      * <pre>{@code
-     * HolderLookup.Provider provider = this.fullRegistries.join();
-     * Holder<?> holder = provider.lookupOrThrow(Registries.CONFIGURED_FEATURE).getOrThrow(ResourceKey to a modded feature);
-     * // The returned holder can then be used to register a PlacedFeature
+     * var provider = new DatapackBuiltinEntriesProvider(generator.getPackOutput(), event.getLookupProvider(), new RegistrySetBuilder(), Set.of("example_mod"));
      * }</pre>
+     * An example use case is the {@link TagsProvider}.
      * @return the future of the full registry lookup
      */
     public CompletableFuture<HolderLookup.Provider> getFullRegistries()
