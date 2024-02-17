@@ -8,6 +8,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -50,6 +51,9 @@ public abstract class AbstractModProvider implements IModProvider {
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+            if (mod.getModFileInfo().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternatives.".formatted(mod.getFileName())));
+            }
         } else if (type != null) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", JarFile.MANIFEST_NAME, type, path);
             mod = new ModFile(sj, this, this::manifestParser, type);
