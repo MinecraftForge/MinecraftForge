@@ -213,8 +213,18 @@ public class ModInfo implements IModInfo, IConfigurable {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
                     .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
-            this.mandatory = config.<Boolean>getConfigElement("mandatory")
-                    .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
+            this.mandatory = config.<Boolean>getConfigElement("mandatory").orElseGet(() -> {  
+                    Optional<String> typeOptional = config.getConfigElement("type");
+                if (typeOptional.isPresent()) {  
+                    String type = typeOptional.get();  
+                    if (type.equalsIgnoreCase("required")) {  
+                        return true;  
+                    }  
+                } else {  
+                    throw new RuntimeException("Missing required field mandatory or type in dependency.");  
+                }  
+                return false;
+            }); 
             this.versionRange = config.<String>getConfigElement("versionRange")
                     .map(MavenVersionAdapter::createFromVersionSpec)
                     .orElse(UNBOUNDED);
