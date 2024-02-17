@@ -221,7 +221,7 @@ public class ModInfo implements IModInfo, IConfigurable {
                         return true;  
                     }  
                 } else {  
-                    throw new RuntimeException("Missing required field mandatory or type in dependency.");  
+                    throw new InvalidModFileException("Missing required field mandatory or type in dependency.", getOwningFile());  
                 }  
                 return false;
             }); 
