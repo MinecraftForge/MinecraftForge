@@ -230,7 +230,7 @@ public class ModLoader
             Throwable t = e.getCause();
             final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
                     .filter(obj -> !(obj instanceof ModLoadingException))
-                    .collect(Collectors.toList());
+                    .toList();
             if (!notModLoading.isEmpty()) {
                 LOGGER.fatal("Encountered non-modloading exceptions!", e);
                 statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
@@ -257,10 +257,10 @@ public class ModLoader
                 .stream()
                 .map(e -> buildModContainerFromTOML(modFile, modInfoMap, e))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
         if (containers.size() != modInfoMap.size()) {
             var modIds = modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList());
-            var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList());
+            var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().toList();
 
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
