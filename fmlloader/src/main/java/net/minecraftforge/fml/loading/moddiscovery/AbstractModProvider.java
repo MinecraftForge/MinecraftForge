@@ -113,20 +113,20 @@ public abstract class AbstractModProvider implements IModProvider {
             };
         }
 
-        try {
-            Files.walk(root)
+        try (var files = Files.walk(root)) {
+            files
                 .filter(p -> p.toString().endsWith(".class"))
                 .forEach(consumer);
 
             file.setSecurityStatus(holder.value);
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         LOGGER.debug(LogMarkers.SCAN, "Scan finished: {}", file);
     }
 
-    private static class Holder<T> {
+    private static final class Holder<T> {
         T value;
     }
 
