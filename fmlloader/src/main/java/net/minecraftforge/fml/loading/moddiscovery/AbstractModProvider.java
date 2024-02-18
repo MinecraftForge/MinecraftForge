@@ -52,7 +52,7 @@ public abstract class AbstractModProvider implements IModProvider {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
             if (mod.getModFileInfo().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
-                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternatives.".formatted(mod.getFileName())));
+                return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternative mods.".formatted(mod.getFileName())));
             }
         } else if (type != null) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", JarFile.MANIFEST_NAME, type, path);
