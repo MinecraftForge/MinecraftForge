@@ -58,7 +58,7 @@ ext {
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '5.0.3'
+    EVENTBUS_VERSION = '5.0.7'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.54'
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
@@ -838,11 +838,13 @@ project(':forge') {
     }
 
     configurations {
+        internalProject
         installer {
             // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
             transitive = false
         }
         moduleonly
+        implementation.extendsFrom(internalProject)
         api.extendsFrom(installer)
     }
 
@@ -851,10 +853,10 @@ project(':forge') {
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
-        implementation project(':fmlcore')
-        implementation project(':fmlloader')
-        implementation project(':javafmllanguage')
-        implementation project(':mclanguage')
+        internalProject project(':fmlcore')
+        internalProject project(':fmlloader')
+        internalProject project(':javafmllanguage')
+        internalProject project(':mclanguage')
     }
     dependencies sharedDeps
 
@@ -1141,8 +1143,10 @@ project(':forge') {
 
         inputJar = project.tasks.named('reobfJar').flatMap { it.output }
 
-        commonLibraries.from(project.configurations.minecraftImplementation)
-        commonLibraries.from(project.configurations.installer)
+        commonLibraries.from(configurations.minecraftImplementation)
+        commonLibraries.from(configurations.installer)
+        commonLibraries.from(configurations.moduleonly)
+        commonLibraries.from(configurations.internalProject)
     }
 
 
