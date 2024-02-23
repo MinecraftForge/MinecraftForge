@@ -45,6 +45,20 @@ public final class DataPackRegistriesHooks {
     }
 
     /**
+     * {@return An unmodifiable view of the list of datapack registries}.
+     * These registries are loaded from per-world datapacks on server startup.
+     */
+    @Deprecated // Use RegistryDataLoader#WORLDGEN_REGISTRIES instead
+    public static List<RegistryDataLoader.RegistryData<?>> getDataPackRegistries() {
+        return Collections.unmodifiableList(WORLDGEN_REGISTRIES);
+    }
+
+    @Deprecated // Use RegistryDataLoader#WORLDGEN_REGISTRIES instead
+    public static Stream<RegistryDataLoader.RegistryData<?>> getDataPackRegistriesWithDimensions() {
+        return WORLDGEN_REGISTRIES.stream();
+    }
+
+    /**
      * Captures a mutable view of {@link RegistryDataLoader#WORLDGEN_REGISTRIES} so that we can register modded entries during the registry event.
      * All uses should use that field instead of this class.
      * @param vanilla The vanilla worldgen registries
