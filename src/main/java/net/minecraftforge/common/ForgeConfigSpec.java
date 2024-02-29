@@ -840,16 +840,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class ConfigValue<T> implements Supplier<T>
     {
-        private final static boolean USE_CACHES = true;
+        protected final static boolean USE_CACHES = true;
 
-        private final Builder parent;
-        private final List<String> path;
-        private final Supplier<T> defaultSupplier;
-        private final ConfigUpdateHandler<T> updateHandler;
+        protected final Builder parent;
+        protected final List<String> path;
+        protected final Supplier<T> defaultSupplier;
+        protected final ConfigUpdateHandler<T> updateHandler;
 
         private T cachedValue = null;
 
-        private ForgeConfigSpec spec;
+        protected ForgeConfigSpec spec;
 
         ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier) {
             this(parent, path, defaultSupplier, (cfg, v1, v2) -> {});
@@ -971,7 +971,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         @Override
         protected Float getRaw(Config config, List<String> path, Supplier<Float> defaultSupplier) {
-            Number n = config.<Number>get(path);
+            Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.floatValue();
         }
     }
@@ -986,7 +986,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         protected Double getRaw(Config config, List<String> path, Supplier<Double> defaultSupplier)
         {
-            Number n = config.<Number>get(path);
+            Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.doubleValue();
         }
     }
@@ -1017,8 +1017,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         @Override
         protected Map<K, V> getRaw(Config config, List<String> path, Supplier<Map<K, V>> defaultSupplier) {
-            Map<K, V> m = config.getRaw(path);
-            return m;
+            return config.getRaw(path);
         }
     }
 
