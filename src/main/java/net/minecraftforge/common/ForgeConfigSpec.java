@@ -175,9 +175,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
             parentPath.addLast(key);
 
-            if (specValue instanceof Config) {
-                if (configValue instanceof CommentedConfig) {
-                    count += correct((Config)specValue, (CommentedConfig)configValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
+            if (specValue instanceof Config specConfigValue) {
+                if (configValue instanceof CommentedConfig commentedConfig) {
+                    count += correct(specConfigValue, commentedConfig, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
                     if (count > 0 && dryRun)
                         return count;
                 } else if (dryRun) {
