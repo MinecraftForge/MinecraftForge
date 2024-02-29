@@ -831,6 +831,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected final ConfigUpdateHandler<T> updateHandler;
 
         private T cachedValue = null;
+        protected boolean updateCasted = true;
 
         protected ForgeConfigSpec spec;
 
@@ -850,7 +851,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return new ArrayList<>(path);
         }
 
-        protected boolean cacheIsNull() {
+        protected boolean updateCasted() {
+            return cachedValue == null || updateCasted;
+        }
+
+        public boolean cacheIsNull() {
             return cachedValue == null;
         }
 
@@ -906,6 +911,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public void clearCache() {
             this.cachedValue = null;
+            this.updateCasted = true;
         }
     }
 
@@ -917,7 +923,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public boolean getBoolean() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -935,7 +944,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public byte getByte() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -953,7 +965,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public short getShort() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -971,7 +986,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public int getInt() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -989,7 +1007,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public long getLong() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -1007,7 +1028,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public float getFloat() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -1026,7 +1050,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public double getDouble() {
-            if (cacheIsNull()) castedValue = this.get();
+            if (this.updateCasted()) {
+                castedValue = this.get();
+                updateCasted = false;
+            }
             return castedValue;
         }
     }
@@ -1048,17 +1075,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public int getOrdinal() {
             return get().ordinal();
-        }
-    }
-
-    public static class MapValue<K, V> extends ConfigValue<Map<K, V>> {
-        MapValue(Builder parent, List<String> path, Supplier<Map<K, V>> defaultSupplier) {
-            super(parent, path, defaultSupplier);
-        }
-
-        @Override
-        protected Map<K, V> getRaw(Config config, List<String> path, Supplier<Map<K, V>> defaultSupplier) {
-            return config.getRaw(path);
         }
     }
 
