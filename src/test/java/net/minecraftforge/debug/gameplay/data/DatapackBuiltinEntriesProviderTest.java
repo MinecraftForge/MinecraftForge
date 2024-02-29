@@ -59,17 +59,24 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     public void onDataGen(GatherDataEvent event) {
         var gen = event.getGenerator();
         var packOutput = gen.getPackOutput();
+        /* Adds the DataPackBuiltinEntriesProvider to the data generator
+         * If the registry is not correctly patched (it does only include the vanilla registries), the provider will fail with an exception
+         * Reason: The RegistrySetBuilder creates a full patched registry including a lookup for all registries
+         *         For the lookup a cloner is needed, which is not available for forge registries
+         */
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), this.createProvider(), Set.of(MOD_ID)));
     }
 
+    // Creates the registry builder for 2 vanilla and 1 forge registry
     private RegistrySetBuilder createProvider() {
         var builder = new RegistrySetBuilder();
-        builder.add(Registries.CONFIGURED_FEATURE, this::createFeature);
+        builder.add(Registries.CONFIGURED_FEATURE, c -> this.createFeature(c));
         builder.add(Registries.PLACED_FEATURE, this::createPlacement);
         builder.add(ForgeRegistries.Keys.BIOME_MODIFIERS, this::createModifier);
         return builder;
     }
 
+    // Registers the mossy stone feature
     private void createFeature(BootstapContext<ConfiguredFeature<?, ?>> context) {
         context.register(MOSSY_STONE_FEATURE, new ConfiguredFeature<>(
             Feature.ORE,
@@ -77,6 +84,7 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
         ));
     }
 
+    // Registers the mossy stone placement
     private void createPlacement(BootstapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> featureRegistry = context.lookup(Registries.CONFIGURED_FEATURE);
         context.register(MOSSY_STONE_PLACEMENT, new PlacedFeature(
@@ -85,6 +93,7 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
         ));
     }
 
+    // Registers the mossy stone biome modifier
     private void createModifier(BootstapContext<BiomeModifier> context) {
         HolderGetter<Biome> biomeRegistry = context.lookup(Registries.BIOME);
         HolderGetter<PlacedFeature> placementRegistry = context.lookup(Registries.PLACED_FEATURE);
