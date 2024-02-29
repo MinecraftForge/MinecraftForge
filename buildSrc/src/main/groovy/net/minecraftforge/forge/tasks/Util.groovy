@@ -2,35 +2,47 @@ package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvedArtifact
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 
-import java.io.File
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Semaphore
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-public class Util {
-    static final ASM_LEVEL = Opcodes.ASM9
+final class Util {
+    public static final int ASM_LEVEL = Opcodes.ASM9
+    private static final HttpClient HTTP = HttpClient.newBuilder().build()
 
     static void init() {
         File.metaClass.sha1 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA-1')
-            delegate.eachByte 4096, {bytes, size ->
+            delegate.eachByte(4096) { byte[] bytes, int size ->
                 md.update(bytes, 0, size)
             }
-            return md.digest().collect {String.format "%02x", it}.join()
+            return md.digest().collect(this.&toHex).join('')
         }
         File.metaClass.getSha1 = { !delegate.exists() ? null : delegate.sha1() }
         File.metaClass.sha256 = { ->
             MessageDigest md = MessageDigest.getInstance('SHA-256')
-            delegate.eachByte 4096, {bytes, size ->
+            delegate.eachByte(4096) { byte[] bytes, int size ->
                 md.update(bytes, 0, size)
             }
-            return md.digest().collect {String.format "%02x", it}.join()
+            return md.digest().collect(this.&toHex).join('')
         }
         File.metaClass.getSha256 = { !delegate.exists() ? null : delegate.sha256() }
 
@@ -39,16 +51,17 @@ public class Util {
         File.metaClass.setJson = { json -> delegate.text = new JsonBuilder(json).toPrettyString() }
 
         Date.metaClass.iso8601 = { ->
-            def format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            def result = format.format(delegate)
+            var format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+            var result = format.format(delegate)
             return result[0..21] + ':' + result[22..-1]
         }
 
         String.metaClass.rsplit = { String del, int limit = -1 ->
-            def lst = new ArrayList()
-            def x = 0, idx
-            def tmp = delegate
-            while ((idx = tmp.lastIndexOf(del)) != -1 && (limit == -1 || x++ < limit)) {
+            var lst = new ArrayList<String>()
+            int x = 0
+            int idx
+            String tmp = delegate
+            while ((idx = tmp.lastIndexOf(del)) != -1 && (limit === -1 || x++ < limit)) {
                 lst.add(0, tmp.substring(idx + del.length(), tmp.length()))
                 tmp = tmp.substring(0, idx)
             }
@@ -57,7 +70,7 @@ public class Util {
         }
     }
 
-    public static String[] getClasspath(project, libs, artifact) {
+    static String[] getClasspath(Project project, Map libs, String artifact) {
         def ret = []
         artifactTree(project, artifact).each { key, lib ->
             libs[lib.name] = lib
@@ -67,30 +80,38 @@ public class Util {
         return ret
     }
 
-    public static def getArtifacts(project, config) {
-        def ret = [:]
-        config.resolvedConfiguration.resolvedArtifacts.each { dep ->
-            def info = getMavenInfoFromDep(dep)
-            def url = "https://libraries.minecraft.net/$info.path"
+    @CompileStatic
+    static Map getArtifacts(Configuration config) {
+        var ret = [:]
+        var semaphore = new Semaphore(1, true)
+        config.resolvedConfiguration.resolvedArtifacts.parallelStream().forEachOrdered(dep -> {
+            var info = getMavenInfoFromDep(dep)
+            var domain = 'libraries.minecraft.net'
+            var url = "https://$domain/$info.path"
             if (!checkExists(url))
-                url = "https://maven.minecraftforge.net/$info.path"
-                
+                url.values[0] = 'maven.minecraftforge.net'
+
+            var sha1 = sha1(dep.file)
+
+            semaphore.acquire()
             ret[info.key] = [
                 name: info.name,
                 downloads: [
                     artifact: [
                         path: info.path,
-                        url: url,
-                        sha1: dep.file.sha1(),
+                        url: url.toString(),
+                        sha1: sha1,
                         size: dep.file.length()
                     ]
                 ]
             ]
-        }
+            semaphore.release()
+        })
         return ret
     }
-    
-    public static Map getMavenInfoFromDep(dep) {
+
+    @CompileStatic
+    static Map getMavenInfoFromDep(ResolvedArtifact dep) {
         return getMavenInfoFromMap([
             group: dep.moduleVersion.id.group,
             name: dep.moduleVersion.id.name,
@@ -99,58 +120,69 @@ public class Util {
             extension: dep.extension
         ])
     }
-    public static Map getMavenInfoFromTask(task) {
+
+    @CompileStatic
+    static Map getMavenInfoFromTask(AbstractArchiveTask task) {
         return getMavenInfoFromMap([
-            group: task.project.group,
+            group: task.project.group.toString(),
             name: task.project.name,
-            version: task.project.version,
+            version: task.project.version.toString(),
             classifier: task.archiveClassifier.get(),
             extension: task.archiveExtension.get()
         ])
     }
-    public static Map getMavenInfoFromTask(task,classifier) {
+
+    @CompileStatic
+    static Map getMavenInfoFromTask(Task task, String classifier) {
         return getMavenInfoFromMap([
-            group: task.project.group,
+            group: task.project.group.toString(),
             name: task.project.name,
-            version: task.project.version,
+            version: task.project.version.toString(),
             classifier: classifier,
             extension: 'jar'
         ])
     }
-    
-    private static Map getMavenInfoFromMap(art) {
-        def key = "$art.group:$art.name"
-        def name = "$art.group:$art.name:$art.version"
-        def path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"
-        if (art.classifier != null) {
+
+    @CompileStatic
+    private static Map getMavenInfoFromMap(Map<String, String> art) {
+        var key = "$art.group:$art.name"
+        var name = "$art.group:$art.name:$art.version"
+        var path = "${art.group.replace('.', '/')}/$art.name/$art.version/$art.name-$art.version"
+        if (art.classifier !== null) {
             name += ":$art.classifier"
             path += "-$art.classifier"
         }
-        if (!'jar'.equals(art.extension)) {
+        if ('jar' != art.extension) {
             name += "@$art.extension"
             path += ".$art.extension"
         } else {
             path += ".jar"
         }
         return [
-            key: key,
-            name: name,
-            path: path,
+            key: key.toString(),
+            name: name.toString(),
+            path: path.toString(),
             art: art
         ]
     }
 
-    public static def iso8601Now() { new Date().iso8601() }
+    static String iso8601Now() { new Date().iso8601() }
 
-    public static def sha1(file) {
+    @CompileStatic
+    static String sha1(File file) {
         MessageDigest md = MessageDigest.getInstance('SHA-1')
-        file.eachByte 4096, {bytes, size ->
+        file.eachByte(4096) { byte[] bytes, int size ->
             md.update(bytes, 0, size)
         }
-        return md.digest().collect {String.format "%02x", it}.join()
+        return md.digest().collect(this.&toHex).join('')
     }
 
-    private static def artifactTree(project, artifact, transitive = true) {
+    @CompileStatic
+    private static String toHex(byte bite) {
+        return String.format('%02x', bite)
+    }
+
+    private static Map artifactTree(Project project, String artifact, boolean transitive = true) {
         if (!project.ext.has('tree_resolver'))
             project.ext.tree_resolver = 1
         def cfg = project.configurations.create('tree_resolver_' + project.ext.tree_resolver++)
@@ -158,37 +190,36 @@ public class Util {
         def dep = project.dependencies.create(artifact)
         cfg.dependencies.add(dep)
         def files = cfg.resolve()
-        return getArtifacts(project, cfg)
+        return getArtifacts(cfg)
     }
 
-    static boolean checkExists(url) {
+    @CompileStatic
+    static boolean checkExists(String url) {
         try {
-            def code = new URL(url).openConnection().with {
-                requestMethod = 'HEAD'
-                connect()
-                responseCode
-            }
-            return code == 200
+            return HTTP.send(HttpRequest.newBuilder(new URI(url))
+                    .method('HEAD', HttpRequest.BodyPublishers.noBody()).build(), HttpResponse.BodyHandlers.discarding()
+            ).statusCode() === 200
         } catch (Exception e) {
             if (e.toString().contains('unable to find valid certification path to requested target'))
-                throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+                throw new RuntimeException("Failed to connect to $url: Missing certificate root authority, try updating Java")
             throw e
         }
     }
 
-    static String getLatestForgeVersion(mcVersion) {
+    static String getLatestForgeVersion(String mcVersion) {
         final json = new JsonSlurper().parseText(new URL('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json').getText('UTF-8'))
         final ver = json.promos["$mcVersion-latest"]
         ver === null ? null : (mcVersion + '-' + ver)
     }
 
-    static void processClassNodes(File file, Closure process) {
+    @CompileStatic
+    static void processClassNodes(File file, @ClosureParams(value = SimpleType, options = 'org.objectweb.asm.tree.ClassNode') Closure process) {
         file.withInputStream { i ->
             new ZipInputStream(i).withCloseable { zin ->
                 ZipEntry zein
-                while ((zein = zin.nextEntry) != null) {
+                while ((zein = zin.nextEntry) !== null) {
                     if (zein.name.endsWith('.class')) {
-                        def node = new ClassNode(ASM_LEVEL)
+                        var node = new ClassNode(ASM_LEVEL)
                         new ClassReader(zin).accept(node, 0)
                         process(node)
                     }

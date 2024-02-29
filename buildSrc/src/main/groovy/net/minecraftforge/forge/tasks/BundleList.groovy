@@ -4,6 +4,9 @@ import org.gradle.api.tasks.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+
+import java.util.zip.ZipFile
 
 abstract class BundleList extends DefaultTask {
     @InputFiles abstract ConfigurableFileCollection getConfig()
@@ -23,28 +26,24 @@ abstract class BundleList extends DefaultTask {
     void run() {
         def entries = [:] as TreeMap
         def resolved = project.configurations.installer.resolvedConfiguration.resolvedArtifacts
-        for (var dep : resolved) {
+        for (def dep : resolved) {
             def info = Util.getMavenInfoFromDep(dep)
             //println("$dep.file.sha1\t$info.name\t$info.path")
             entries.put("$info.art.group:$info.art.name", "$dep.file.sha256\t$info.name\t$info.path")
         }
+
+        var packed = (AbstractArchiveTask) project.tasks.universalJar
+        var info = Util.getMavenInfoFromTask(packed)
+        def file = packed.archiveFile.get().asFile
+        entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
+
+        var classifier = 'server'
+        var genned = project.tasks.applyServerBinPatches
+        info = Util.getMavenInfoFromTask(genned, classifier)
+        file = genned.output.get().asFile
+        entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
         
-        [
-            project.tasks.universalJar
-        ].forEach{ packed -> 
-            def info = Util.getMavenInfoFromTask(packed)
-            def file = packed.archiveFile.get().asFile
-            entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
-        }
-        [
-            'server': project.tasks.applyServerBinPatches
-        ].forEach { classifier, genned ->
-            def info = Util.getMavenInfoFromTask(genned, classifier)
-            def file = genned.output.get().asFile
-            entries.put("$info.art.group:$info.art.name:$info.art.classifier", "$file.sha256\t$info.name\t$info.path")
-        }
-        
-        try (def zip = new java.util.zip.ZipFile(serverBundle.get().asFile)) {
+        try (def zip = new ZipFile(serverBundle.get().asFile)) {
             def entry = zip.getEntry('META-INF/libraries.list')
             def data = zip.getInputStream(entry).text.split('\n')
             for (def line : data) {

@@ -11,10 +11,22 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 import java.util.function.Consumer;
 
-public class LivingConversionEvent extends LivingEvent
-{
-    public LivingConversionEvent(LivingEntity entity)
-    {
+/**
+ * Currently known conversions:
+ *   Pig -> Zombie Piglin when struck by lightning
+ *   Villager -> Zombie Villager when killed by a zombie
+ *   Zombie -> Drowned when under water
+ *   Husk -> Zombie when under water
+ *   Zombie Villager -> Villager
+ *   Hoglin -> Zogline when in overworld
+ *   Piglin/Piglin Brute -> Zombie Pigman when in overworld
+ *   Villager -> Witch when struck by lightning
+ *   Skeleton -> Stray when sitting in snow
+ *   Tadpole -> Frog when it grows up
+ *   Mushroom Cow -> Cow when sheared
+ */
+public class LivingConversionEvent extends LivingEvent {
+    public LivingConversionEvent(LivingEntity entity) {
         super(entity);
     }
 
@@ -30,13 +42,11 @@ public class LivingConversionEvent extends LivingEvent
      * If cancelled, the replacement will not occur
      */
     @Cancelable
-    public static class Pre extends LivingConversionEvent
-    {
+    public static class Pre extends LivingConversionEvent {
         private final EntityType<? extends LivingEntity> outcome;
         private final Consumer<Integer> timer;
 
-        public Pre(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
-        {
+        public Pre(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer) {
             super(entity);
             this.outcome = outcome;
             this.timer = timer;
@@ -47,8 +57,7 @@ public class LivingConversionEvent extends LivingEvent
          * converting to
          * @return the entity type of the new entity
          */
-        public EntityType<? extends LivingEntity> getOutcome()
-        {
+        public EntityType<? extends LivingEntity> getOutcome() {
             return outcome;
         }
 
@@ -60,8 +69,7 @@ public class LivingConversionEvent extends LivingEvent
          * Not every conversion is applicable for this
          * @param ticks timer ticks
          */
-        public void setConversionTimer(int ticks)
-        {
+        public void setConversionTimer(int ticks) {
             timer.accept(ticks);
         }
     }
@@ -71,12 +79,10 @@ public class LivingConversionEvent extends LivingEvent
      * itself with another entity.
      * The old living entity is likely to be removed right after this event.
      */
-    public static class Post extends LivingConversionEvent
-    {
+    public static class Post extends LivingConversionEvent {
         private final LivingEntity outcome;
 
-        public Post(LivingEntity entity, LivingEntity outcome)
-        {
+        public Post(LivingEntity entity, LivingEntity outcome) {
             super(entity);
             this.outcome = outcome;
         }
@@ -86,8 +92,7 @@ public class LivingConversionEvent extends LivingEvent
          * effect and equipments set)
          * @return the finalized new entity
          */
-        public LivingEntity getOutcome()
-        {
+        public LivingEntity getOutcome() {
             return outcome;
         }
     }

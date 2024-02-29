@@ -3,7 +3,7 @@ import net.minecraftforge.gradleutils.PomUtils
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'org.cadixdev.licenser'
+    id 'net.minecraftforge.licenser'
     id 'net.minecraftforge.gradleutils'
 }
 
@@ -44,11 +44,11 @@ dependencies {
     testRuntimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
 }
 
-test {
+tasks.named('test', Test).configure {
     useJUnitPlatform()
 }
 
-jar {
+tasks.named('jar', Jar).configure {
     manifest {
         attributes([
             'Automatic-Module-Name': 'net.minecraftforge.earlydisplay',
@@ -65,7 +65,7 @@ jar {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-Xlint:unchecked'
 }
 

@@ -2,7 +2,7 @@ import net.minecraftforge.forge.tasks.*
 import net.minecraftforge.gradleutils.PomUtils
 
 plugins {
-    id 'org.cadixdev.licenser' version '0.6.1'
+    id 'net.minecraftforge.licenser' version '1.0.1'
     id 'com.github.ben-manes.versions' version '0.46.0'
     id 'net.minecraftforge.gradleutils' version '[2.3.0,2.4.0)'
     id 'eclipse'
@@ -19,10 +19,6 @@ ext {
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
-
-    BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.2.0:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.0'
-    FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.6'
 }
 
 changelog {
@@ -50,7 +46,7 @@ project(':mcp') {
 
 if (System.env.TEAMCITY_VERSION) {
     //Only setup the CI environment if and only if the environment variables are set.
-    tasks.configureTeamCity {
+    tasks.named('configureTeamCity').configure {
         doLast {
             println "##teamcity[buildNumber '${project(':forge').version}']"
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"

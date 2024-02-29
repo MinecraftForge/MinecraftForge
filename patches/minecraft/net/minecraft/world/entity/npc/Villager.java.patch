@@ -32,7 +32,7 @@
              }
  
              witch.setPersistenceRequired();
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
              p_35409_.addFreshEntityWithPassengers(witch);
              this.releaseAllPois();
              this.discard();

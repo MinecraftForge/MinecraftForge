@@ -9,13 +9,19 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.blaze3d.audio.Channel;
+
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.resources.PlayerSkin.Model;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
+import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
@@ -90,5 +96,13 @@ public class ForgeEventFactoryClient {
 
     public static void onScreenClose(Screen screen) {
         post(new ScreenEvent.Closing(screen));
+    }
+
+    public static void onPlaySoundSource(SoundEngine engine, SoundInstance sound, Channel channel) {
+        post(new PlaySoundSourceEvent(engine, sound, channel));
+    }
+
+    public static void onPlayStreamingSource(SoundEngine engine, SoundInstance sound, Channel channel) {
+        post(new PlayStreamingSourceEvent(engine, sound, channel));
     }
 }

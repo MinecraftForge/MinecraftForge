@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/monster/Husk.java
++++ b/net/minecraft/world/entity/monster/Husk.java
+@@ -62,6 +_,7 @@
+    }
+ 
+    protected void doUnderWaterConversion() {
++      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIE, (timer) -> this.conversionTime = timer)) return;
+       this.convertToZombieType(EntityType.ZOMBIE);
+       if (!this.isSilent()) {
+          this.level().levelEvent((Player)null, 1041, this.blockPosition(), 0);

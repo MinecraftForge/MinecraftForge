@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/animal/frog/Tadpole.java
++++ b/net/minecraft/world/entity/animal/frog/Tadpole.java
+@@ -197,6 +_,7 @@
+    private void ageUp() {
+       Level $$1 = this.level();
+       if ($$1 instanceof ServerLevel serverlevel) {
++         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.FROG, timer -> this.ticksToBeFrog = this.age + timer)) return;
+          Frog frog = EntityType.FROG.create(this.level());
+          if (frog != null) {
+             frog.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+@@ -210,6 +_,7 @@
+             frog.setPersistenceRequired();
+             this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
+             serverlevel.addFreshEntityWithPassengers(frog);
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, frog);
+             this.discard();
+          }
+       }

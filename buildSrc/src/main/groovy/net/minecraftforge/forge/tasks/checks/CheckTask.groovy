@@ -1,6 +1,8 @@
 package net.minecraftforge.forge.tasks.checks
 
 import groovy.transform.CompileStatic
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.ThirdParam
 import net.minecraftforge.forge.tasks.Util
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
@@ -33,7 +35,7 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
     void run() {
         Util.init()
 
-        final doFix = getMode().get() === CheckMode.FIX
+        boolean doFix = getMode().get() === CheckMode.FIX
         final Reporter reporter = new Reporter(doFix)
         check(reporter, doFix)
 
@@ -88,7 +90,8 @@ abstract class CheckTask extends DefaultTask implements VerificationTask {
     }
 
     static <T extends CheckTask> void registerTask(TaskContainer tasks, String taskName, @DelegatesTo.Target('type') Class<T> clazz,
-                                                   @DelegatesTo(genericTypeIndex = 0, target = 'type') Closure configuration) {
+                                                   @DelegatesTo(genericTypeIndex = 0, target = 'type')
+                                                   @ClosureParams(ThirdParam.FirstGenericType) Closure configuration) {
         taskName = taskName.capitalize()
         tasks.register("check$taskName", clazz) { CheckTask task ->
             def castedTask = task as T

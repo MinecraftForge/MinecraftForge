@@ -40,8 +40,8 @@ tasks.register('generateResources') {
 
 // Make sure out manifests get written before compiling the code, IDEA calls this task if you tell it to use the gradle build.
 tasks.withType(JavaCompile).configureEach {
-    dependsOn(generateResources)
-    dependsOn(processResources) // Needed because we merge the output of this with the output of the compile task. And gradle detects downstream tasks using the output without a hard dep
+    dependsOn 'generateResources'
+    dependsOn 'processResources' // Needed because we merge the output of this with the output of the compile task. And gradle detects downstream tasks using the output without a hard dep
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.warnings = false // Shutup deprecated for removal warnings
 }
@@ -61,7 +61,7 @@ tasks.register('copyEclipseSettings') {
             def temp = new CleanProperties().load(file)
             def exst = new CleanProperties().load(target)
             exst.put('eclipse.preferences.version', '1')
-            temp.forEach(exst::put)
+            exst.putAll(temp)
             exst.store(target)
         }
     }

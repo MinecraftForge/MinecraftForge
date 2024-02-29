@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:story/root",
+  "criteria": {
+    "break_glass_with_fish": {
+      "conditions": {
+        "allowOffhand": true,
+        "breakingBlock": {
+          "tag": "forge:glass"
+        },
+        "holdingItem": {
+          "tag": "criterion_test:fish"
+        }
+      },
+      "trigger": "criterion_test:criterion"
+    }
+  },
+  "display": {
+    "description": "Fish wins!",
+    "icon": {
+      "item": "minecraft:cod"
+    },
+    "title": "Fish vs Glass"
+  },
+  "requirements": [
+    [
+      "break_glass_with_fish"
+    ]
+  ]
+}

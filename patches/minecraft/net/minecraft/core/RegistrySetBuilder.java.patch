@@ -11,6 +11,31 @@
     private RegistrySetBuilder.BuildState createState(RegistryAccess p_256400_) {
        RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.create(p_256400_, this.entries.stream().map(RegistrySetBuilder.RegistryStub::key));
        this.entries.forEach((p_255629_) -> {
+@@ -121,18 +_,21 @@
+             };
+             map.put(resourcekey, lazyholder);
+          });
+-         HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookupOrThrow(p_313093_);
++         HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookup(p_313093_).orElse(null);
++         Lifecycle lifecycle = registrylookup.registryLifecycle();
++         if (registrylookup1 != null) {
+          registrylookup1.listElements().forEach((p_308430_) -> {
+             ResourceKey<T> resourcekey = p_308430_.key();
+             map.computeIfAbsent(resourcekey, (p_308437_) -> {
+                RegistrySetBuilder.LazyHolder<T> lazyholder = new RegistrySetBuilder.LazyHolder<>(p_312548_, resourcekey);
+                lazyholder.supplier = () -> {
+-                  return cloner.clone((T)p_308430_.value(), p_313198_, p_311605_.getValue());
++                  return cloner.clone((T) p_308430_.value(), p_313198_, p_311605_.getValue());
+                };
+                return lazyholder;
+             });
+          });
+-         Lifecycle lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
++         lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
++         }
+          return lookupFromMap(p_313093_, lifecycle, map);
+       }
+    }
 @@ -168,7 +_,7 @@
           RegistrySetBuilder.UniversalLookup registrysetbuilder$universallookup = new RegistrySetBuilder.UniversalLookup(registrysetbuilder$compositeowner);
           ImmutableMap.Builder<ResourceLocation, HolderGetter<?>> builder = ImmutableMap.builder();

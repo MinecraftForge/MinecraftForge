@@ -1,0 +1,10 @@
+# Note: Not all server panels support this file. You may need to set these options in the panel itself.
+
+# Xmx and Xms set the maximum and minimum RAM usage, respectively.
+# They can take any number, followed by an M (for megabyte) or a G (for gigabyte).
+# For example, to set the maximum to 3GB: -Xmx3G
+# To set the minimum to 2.5GB: -Xms2500M
+
+# A good default for a modded server is 4GB. Do not allocate excessive amounts of RAM as too much may cause lag or crashes.
+# Uncomment the next line to set it. To uncomment, remove the # at the beginning of the line.
+# -Xmx4G

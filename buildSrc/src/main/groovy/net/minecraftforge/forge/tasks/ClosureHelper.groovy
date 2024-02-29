@@ -1,5 +1,7 @@
 package net.minecraftforge.forge.tasks
 
+import groovy.transform.stc.FirstParam
+
 import java.util.function.BiConsumer
 
 public class ClosureHelper {
@@ -22,7 +24,7 @@ public class ClosureHelper {
         }
     }
     
-    static <T> T apply(T obj, Closure cl) {
+    static <T> T apply(T obj, @DelegatesTo(value = FirstParam, strategy = Closure.DELEGATE_FIRST) Closure cl) {
         cl.delegate = obj
         cl.resolveStrategy = Closure.DELEGATE_FIRST
         cl()

@@ -81,6 +81,7 @@ import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import net.minecraftforge.server.permission.nodes.PermissionTypes;
+import net.minecraftforge.unsafe.UnsafeHacks;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -117,6 +118,7 @@ import org.apache.logging.log4j.MarkerManager;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -397,6 +399,8 @@ public class ForgeMod {
             return uuid.toString();
         });
 
+        hackDNSResolver();
+
         NetworkInitialization.init();
 
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
@@ -557,5 +561,28 @@ public class ForgeMod {
     private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to) {
         ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;
         fReg.addAlias(from, to);
+    }
+
+    // net.minecraft.client.multiplayer.resolver.ServerRedirectHandler.createDnsSrvRedirectHandler uses DNSContextFactory
+    // to resolve DNS records, and that is initialized reflectively by NamingManager. Which in module land isn't allowed.
+    // So hack it so it is. this is equivalent to doing --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming
+    private void hackDNSResolver() {
+        try {
+            var target = Class.forName("com.sun.jndi.dns.DnsContextFactory");
+            var reader = Class.forName("javax.naming.spi.NamingManager");
+            addOpen(target, reader);
+        } catch (Exception e) {
+            LOGGER.error(FORGEMOD, "Failed to hack DnsContextFactory, some servers might not work", e);
+        }
+    }
+
+    private static Method implAddExportsOrOpens;
+    private static void addOpen(Class<?> target, Class<?> reader) throws Exception {
+        if (implAddExportsOrOpens == null) {
+            implAddExportsOrOpens = Module.class.getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class);
+            UnsafeHacks.setAccessible(implAddExportsOrOpens);
+        }
+        LOGGER.info(FORGEMOD, "Opening {}/{} to {}", target.getModule().getName(), target.getPackageName(), reader.getModule().getName());
+        implAddExportsOrOpens.invoke(target.getModule(), target.getPackageName(), reader.getModule(), /*open*/true, /*syncVM*/true);
     }
 }

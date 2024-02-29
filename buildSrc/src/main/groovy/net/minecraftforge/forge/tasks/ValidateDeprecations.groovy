@@ -5,6 +5,7 @@
 
 package net.minecraftforge.forge.tasks
 
+import groovy.transform.CompileStatic
 import net.minecraftforge.srgutils.MinecraftVersion
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -28,8 +29,8 @@ abstract class ValidateDeprecations extends DefaultTask {
 
     @TaskAction
     protected void exec() {
-        def mcVer = MinecraftVersion.from(mcVersion.get())
-        def errors = []
+        var mcVer = MinecraftVersion.from(mcVersion.get())
+        List<String> errors = []
 
         Util.processClassNodes(input.get().asFile) {
             processNode(mcVer, errors, it)
@@ -65,7 +66,7 @@ abstract class ValidateDeprecations extends DefaultTask {
         }
     }
 
-    private static void processAnnotations(AnnotationNode annotation, MinecraftVersion mcVer, List<String> errors, Closure context) {
+    private static void processAnnotations(AnnotationNode annotation, MinecraftVersion mcVer, List<String> errors, Closure<String> context) {
         def values = annotation.values
         if (values === null)
             return
@@ -73,7 +74,7 @@ abstract class ValidateDeprecations extends DefaultTask {
         int since = values.indexOf('since')
         if (annotation.desc == 'Ljava/lang/Deprecated;' && forRemoval !== -1 && since !== -1 && values.size() >= 4 && values[forRemoval + 1] === true) {
             def oldVersion = MinecraftVersion.from(values[since + 1])
-            def split = ValidateDeprecations.splitDots(oldVersion.toString())
+            int[] split = ValidateDeprecations.splitDots(oldVersion.toString())
             if (split.length < 2)
                 return
             def removeVersion = MinecraftVersion.from("${split[0]}.${split[1] + 1}")
@@ -82,6 +83,7 @@ abstract class ValidateDeprecations extends DefaultTask {
         }
     }
 
+    @CompileStatic
     private static int[] splitDots(String version) {
         String[] pts = version.split('\\.')
         int[] values = new int[pts.length]
