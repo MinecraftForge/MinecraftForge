@@ -819,15 +819,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class ConfigValue<T> implements Supplier<T>
     {
-        private static boolean USE_CACHES = true;
+        private final static boolean USE_CACHES = true;
 
-        private final Builder parent;
-        private final List<String> path;
-        private final Supplier<T> defaultSupplier;
+        protected final Builder parent;
+        protected final List<String> path;
+        protected final Supplier<T> defaultSupplier;
 
         private T cachedValue = null;
 
-        private ForgeConfigSpec spec;
+        protected ForgeConfigSpec spec;
 
         ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
         {
@@ -944,7 +944,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         @Override
         protected Float getRaw(Config config, List<String> path, Supplier<Float> defaultSupplier) {
-            Number n = config.<Number>get(path);
+            Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.floatValue();
         }
     }
@@ -959,7 +959,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         protected Double getRaw(Config config, List<String> path, Supplier<Double> defaultSupplier)
         {
-            Number n = config.<Number>get(path);
+            Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.doubleValue();
         }
     }
