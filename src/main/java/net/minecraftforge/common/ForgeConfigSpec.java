@@ -487,7 +487,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return define(split(path), defaultValue);
         }
         public BooleanValue define(List<String> path, boolean defaultValue) {
-            return define(path, (Supplier<Boolean>)() -> defaultValue);
+            return define(path, () -> defaultValue);
         }
         public BooleanValue define(String path, Supplier<Boolean> defaultSupplier) {
             return define(split(path), defaultSupplier);
@@ -527,12 +527,40 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
 
+        //Bytes
+        public ByteValue defineInRange(String path, byte defaultValue, byte min, byte max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public ByteValue defineInRange(List<String> path, byte defaultValue, byte min, byte max) {
+            return defineInRange(path, () -> defaultValue, min, max);
+        }
+        public ByteValue defineInRange(String path, Supplier<Byte> defaultSupplier, byte min, byte max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public ByteValue defineInRange(List<String> path, Supplier<Byte> defaultSupplier, byte min, byte max) {
+            return new ByteValue(this, defineInRange(path, defaultSupplier, min, max, Byte.class).getPath(), defaultSupplier);
+        }
+
+        //Shorts
+        public ShortValue defineInRange(String path, short defaultValue, short min, short max) {
+            return defineInRange(split(path), defaultValue, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, short defaultValue, short min, short max) {
+            return defineInRange(path, () -> defaultValue, min, max);
+        }
+        public ShortValue defineInRange(String path, Supplier<Short> defaultSupplier, short min, short max) {
+            return defineInRange(split(path), defaultSupplier, min, max);
+        }
+        public ShortValue defineInRange(List<String> path, Supplier<Short> defaultSupplier, short min, short max) {
+            return new ShortValue(this, defineInRange(path, defaultSupplier, min, max, Short.class).getPath(), defaultSupplier);
+        }
+
         //Ints
         public IntValue defineInRange(String path, int defaultValue, int min, int max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
         public IntValue defineInRange(List<String> path, int defaultValue, int min, int max) {
-            return defineInRange(path, (Supplier<Integer>)() -> defaultValue, min, max);
+            return defineInRange(path, () -> defaultValue, min, max);
         }
         public IntValue defineInRange(String path, Supplier<Integer> defaultSupplier, int min, int max) {
             return defineInRange(split(path), defaultSupplier, min, max);
@@ -546,7 +574,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return defineInRange(split(path), defaultValue, min, max);
         }
         public LongValue defineInRange(List<String> path, long defaultValue, long min, long max) {
-            return defineInRange(path, (Supplier<Long>)() -> defaultValue, min, max);
+            return defineInRange(path, () -> defaultValue, min, max);
         }
         public LongValue defineInRange(String path, Supplier<Long> defaultSupplier, long min, long max) {
             return defineInRange(split(path), defaultSupplier, min, max);
@@ -592,7 +620,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 context.clearComment(); // Set to empty
             }
             if (context.getTranslationKey() != null) {
-                levelTranslationKeys.put(new ArrayList<String>(currentPath), context.getTranslationKey());
+                levelTranslationKeys.put(new ArrayList<>(currentPath), context.getTranslationKey());
                 context.setTranslationKey(null);
             }
             context.ensureEmpty();
@@ -646,7 +674,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public void clearComment() { comment.clear(); }
-        public boolean hasComment() { return this.comment.size() > 0; }
+        public boolean hasComment() { return !this.comment.isEmpty(); }
         public String buildComment() { return buildComment(List.of("unknown", "unknown")); }
         public String buildComment(final List<String> path) {
             if (comment.stream().allMatch(String::isBlank)) {
@@ -889,7 +917,43 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public boolean getBoolean() {
-            if (cacheIsNull()) castedValue = get();
+            if (cacheIsNull()) castedValue = this.get();
+            return castedValue;
+        }
+    }
+
+    public static class ByteValue extends ConfigValue<Byte> {
+        private byte castedValue;
+
+        ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier) {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Byte getRaw(Config config, List<String> path, Supplier<Byte> defaultSupplier) {
+            return config.getByteOrElse(path, defaultSupplier.get());
+        }
+
+        public byte getByte() {
+            if (cacheIsNull()) castedValue = this.get();
+            return castedValue;
+        }
+    }
+
+    public static class ShortValue extends ConfigValue<Short> {
+        private short castedValue;
+
+        ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier) {
+            super(parent, path, defaultSupplier);
+        }
+
+        @Override
+        protected Short getRaw(Config config, List<String> path, Supplier<Short> defaultSupplier) {
+            return config.getShortOrElse(path, defaultSupplier.get());
+        }
+
+        public short getShort() {
+            if (cacheIsNull()) castedValue = this.get();
             return castedValue;
         }
     }
@@ -907,7 +971,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public int getInt() {
-            if (cacheIsNull()) castedValue = get();
+            if (cacheIsNull()) castedValue = this.get();
             return castedValue;
         }
     }
@@ -925,7 +989,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public long getLong() {
-            if (cacheIsNull()) castedValue = get();
+            if (cacheIsNull()) castedValue = this.get();
             return castedValue;
         }
     }
@@ -943,7 +1007,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public float getFloat() {
-            if (cacheIsNull()) castedValue = get();
+            if (cacheIsNull()) castedValue = this.get();
             return castedValue;
         }
     }
@@ -962,7 +1026,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public double getDouble() {
-            if (cacheIsNull()) castedValue = get();
+            if (cacheIsNull()) castedValue = this.get();
             return castedValue;
         }
     }
