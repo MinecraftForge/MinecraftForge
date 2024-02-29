@@ -1045,6 +1045,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier) {
             return config.getEnumOrElse(path, clazz, converter, defaultSupplier);
         }
+
+        public int getOrdinal() {
+            return get().ordinal();
+        }
     }
 
     public static class MapValue<K, V> extends ConfigValue<Map<K, V>> {
