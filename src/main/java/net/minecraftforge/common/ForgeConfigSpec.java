@@ -822,6 +822,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return new ArrayList<>(path);
         }
 
+        protected boolean cacheIsNull() {
+            return cachedValue == null;
+        }
+
         /**
          * Returns the actual value for the configuration setting, throwing if the config has not yet been loaded.
          *
@@ -835,10 +839,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             Preconditions.checkState(spec.childConfig != null, "Cannot get config value before config is loaded");
 
-            if (USE_CACHES && cachedValue == null)
-                cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
-            else if (!USE_CACHES)
+            if (!USE_CACHES)
                 return getRaw(spec.childConfig, path, defaultSupplier);
+            if (cachedValue == null)
+                return cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
 
             return cachedValue;
         }
@@ -878,12 +882,21 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class BooleanValue extends ConfigValue<Boolean> {
+        private boolean castedValue;
+
         BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier) {
             super(parent, path, defaultSupplier);
+        }
+
+        public boolean getBoolean() {
+            if (cacheIsNull()) castedValue = get();
+            return castedValue;
         }
     }
 
     public static class IntValue extends ConfigValue<Integer> {
+        private int castedValue;
+
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -892,9 +905,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Integer getRaw(Config config, List<String> path, Supplier<Integer> defaultSupplier) {
             return config.getIntOrElse(path, defaultSupplier::get);
         }
+
+        public int getInt() {
+            if (cacheIsNull()) castedValue = get();
+            return castedValue;
+        }
     }
 
     public static class LongValue extends ConfigValue<Long> {
+        private long castedValue;
+
         LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -903,8 +923,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier) {
             return config.getLongOrElse(path, defaultSupplier::get);
         }
+
+        public long getLong() {
+            if (cacheIsNull()) castedValue = get();
+            return castedValue;
+        }
     }
     public static class FloatValue extends ConfigValue<Float> {
+        private float castedValue;
+
         FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -914,9 +941,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.floatValue();
         }
+
+        public float getFloat() {
+            if (cacheIsNull()) castedValue = get();
+            return castedValue;
+        }
     }
 
     public static class DoubleValue extends ConfigValue<Double> {
+        private double castedValue;
+
         DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -925,6 +959,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Double getRaw(Config config, List<String> path, Supplier<Double> defaultSupplier) {
             Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.doubleValue();
+        }
+
+        public double getDouble() {
+            if (cacheIsNull()) castedValue = get();
+            return castedValue;
         }
     }
 
@@ -958,8 +997,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     private static final Joiner LINE_JOINER = Joiner.on("\n");
     private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Splitter DOT_SPLITTER = Splitter.on(".");
-    private static List<String> split(String path)
-    {
+    private static List<String> split(String path) {
         return Lists.newArrayList(DOT_SPLITTER.split(path));
     }
 }
