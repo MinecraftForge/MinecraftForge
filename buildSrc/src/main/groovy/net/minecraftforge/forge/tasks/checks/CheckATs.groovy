@@ -171,7 +171,7 @@ abstract class CheckATs extends CheckTask {
     }
 
     private static List<String> joinBack(TreeMap<String, ATParser.Entry> lines, Map<String, InheritanceData> inheritance, IMappingFile mappings) {
-        final data = []
+        final List<String> data = []
         final remapComment = { ATParser.Entry entry ->
             if (!mappings || !entry || !entry.desc) return null
             final comment = entry.comment?.substring(1)?.trim()
