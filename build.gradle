@@ -56,15 +56,15 @@ ext {
     MC_VERSION = '1.17.1'
     MCP_VERSION = '20210706.113038'
     SPI_VERSION = '4.0.10'
-    ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
+    ACCESSTRANSFORMERS_VERSION = '8.1.1'
+    COREMODS_VERSION = '5.0.3'
     EVENTBUS_VERSION = '5.0.7'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.54'
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
-    ASM_VERSION = '9.1'
+    ASM_VERSION = '9.6'
     INSTALLER_VERSION = '2.2.+'
-    MIXIN_VERSION = '0.8.4'
+    MIXIN_VERSION = '0.8.5'
 
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
     GIT_INFO = gradleutils.gitInfo
@@ -76,7 +76,7 @@ ext {
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     VIGNETTE = 'net.minecraftforge.lex:vignette:0.2.0.16'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
 }
 
