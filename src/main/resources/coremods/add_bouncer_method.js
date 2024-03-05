@@ -62,6 +62,7 @@ function addRedirect(className, oldName, expectedName, descriptor, numArgs) {
             for(var i = 0; i < names.length; i++) {
                 var name = names[i];
 
+                // Skip generating stub if method name exists in this class
                 var exists = false;
                 for(var j = 0; j < node.methods.length; j++) {
                     if(node.methods[i].name == name) {
@@ -73,6 +74,8 @@ function addRedirect(className, oldName, expectedName, descriptor, numArgs) {
                 if(exists) {
                     continue;
                 }
+
+                // Generate stub
 
                 var method = new MethodNode(
                     /* access = */ Opcodes.ACC_PUBLIC,
