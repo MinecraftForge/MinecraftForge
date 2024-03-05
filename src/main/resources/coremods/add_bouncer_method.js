@@ -45,7 +45,9 @@ function addBouncer(className, conflictedName, expectedName, descriptor, signatu
    }
 }
 
-// Generate a method with name oldName that redirects to expectedName. oldName is remapped, expectedName isn't.
+// Generate a method with name oldName that redirects to expectedName. expectedName is not remapped.
+// A redirect will be generated for oldName and whatever deobfuscated name it maps to,
+// provided these methods do not exist already.
 function addRedirect(className, oldName, expectedName, descriptor, numArgs) {
     return {
        'target': {
@@ -55,21 +57,42 @@ function addRedirect(className, oldName, expectedName, descriptor, numArgs) {
        'transformer': function(node) {
             var mappedName = ASMAPI.mapMethod(oldName);
 
-            var method = new MethodNode(
-                /* access = */ Opcodes.ACC_PUBLIC,
-                /* name = */ mappedName,
-                /* descriptor = */ descriptor,
-                /* signature = */ descriptor,
-                /* exceptions = */ null
-            );
+            var names = [oldName, mappedName];
 
-            for(var i = 0; i < numArgs; i++) {
-                 method.instructions.add(new VarInsnNode(Opcodes.ALOAD, i));
+            for(var i = 0; i < names.length; i++) {
+                var name = names[i];
+
+                // Skip generating stub if method name exists in this class
+                var exists = false;
+                for(var j = 0; j < node.methods.length; j++) {
+                    if(node.methods[i].name == name) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if(exists) {
+                    continue;
+                }
+
+                // Generate stub
+
+                var method = new MethodNode(
+                    /* access = */ Opcodes.ACC_PUBLIC,
+                    /* name = */ name,
+                    /* descriptor = */ descriptor,
+                    /* signature = */ descriptor,
+                    /* exceptions = */ null
+                );
+
+                for(var i = 0; i < numArgs; i++) {
+                     method.instructions.add(new VarInsnNode(Opcodes.ALOAD, i));
+                }
+                method.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, className.replaceAll("\\.","/"), expectedName, descriptor));
+                method.instructions.add(new InsnNode(Opcodes.ARETURN));
+
+                node.methods.add(method);
             }
-            method.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, className.replaceAll("\\.","/"), expectedName, descriptor));
-            method.instructions.add(new InsnNode(Opcodes.ARETURN));
-
-            node.methods.add(method);
 
             return node;
        }

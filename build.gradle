@@ -960,7 +960,7 @@ project(':forge') {
     }
     
     task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
+        artifact = 'net.minecraftforge:installer:2.2.+:fatjar'
         changing = true
     }
     
