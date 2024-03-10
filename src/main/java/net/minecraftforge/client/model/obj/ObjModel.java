@@ -108,6 +108,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     {
         var modelLocation = settings.modelLocation;
         var materialLibraryOverrideLocation = settings.mtlOverride;
+        var allowHomonymObjectName = settings.allowHomonymObjectName;
+        var hasHomonymObjectNameAppeared = false;
         var model = new ObjModel(settings, deprecationWarnings);
 
         // for relative references to material libraries
@@ -280,6 +282,21 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                 case "o":
                 {
                     String name = line[1];
+                    if (model.parts.containsKey(name))
+                    {
+                        hasHomonymObjectNameAppeared = true;
+                        if (allowHomonymObjectName)
+                        {
+                            int suffixNum = 0;
+                            String renamed;
+                            do
+                            {
+                                renamed = name + '_' + (suffixNum++);
+                            }
+                            while (model.parts.containsKey(renamed));
+                            name = renamed;
+                        }
+                    }
                     if (objAboveGroup || currentGroup == null)
                     {
                         objAboveGroup = true;
@@ -298,6 +315,10 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     break;
                 }
             }
+        }
+        if (!allowHomonymObjectName && hasHomonymObjectNameAppeared)
+        {
+            LOGGER.error("find homonym object in obj model:" + settings.modelLocation + ", use allow_homonym_object_name=true can rename them for you");
         }
         return model;
     }
@@ -679,6 +700,6 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
     public record ModelSettings(@NotNull ResourceLocation modelLocation,
                                 boolean automaticCulling, boolean shadeQuads, boolean flipV,
-                                boolean emissiveAmbient, @Nullable String mtlOverride)
+                                boolean emissiveAmbient, @Nullable String mtlOverride, boolean allowHomonymObjectName)
     { }
 }
