@@ -125,6 +125,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftforge.common.extensions.IForgeEntity;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
 import net.minecraftforge.common.util.Lazy;
@@ -979,8 +980,7 @@ public class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static void readAdditionalLevelSaveData(Dynamic<?> data, LevelStorageSource.LevelDirectory levelDirectory) {
-        CompoundTag rootTag = (CompoundTag)data.convert(NbtOps.INSTANCE).getValue();
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag, LevelStorageSource.LevelDirectory levelDirectory) {
         CompoundTag tag = rootTag.getCompound("fml");
         if (tag.contains("LoadingModList")) {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);

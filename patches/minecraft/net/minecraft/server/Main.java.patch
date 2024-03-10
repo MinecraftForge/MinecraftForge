@@ -59,15 +59,14 @@
           LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
           Dynamic<?> dynamic;
-@@ -165,6 +_,8 @@
+@@ -167,6 +_,7 @@
  
-          PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
- 
-+         if (dynamic != null)
-+             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(dynamic, levelstoragesource$levelstorageaccess.getLevelDirectory());
           WorldStem worldstem;
           try {
++            net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(levelstoragesource$levelstorageaccess.getDataTagRaw(), levelstoragesource$levelstorageaccess.getLevelDirectory());
              WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
+             worldstem = Util.blockUntilDone((p_248086_) -> {
+                return WorldLoader.load(worldloader$initconfig, (p_308589_) -> {
 @@ -190,6 +_,9 @@
                          worlddimensions = dedicatedserverproperties.createDimensions(p_308589_.datapackWorldgen());
                       }

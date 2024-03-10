@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -280,12 +_,19 @@
+@@ -280,12 +_,18 @@
     }
  
     private void loadLevel(LevelStorageSource.LevelStorageAccess p_309733_, Dynamic<?> p_312455_, boolean p_310657_, boolean p_309504_, Runnable p_309915_) {
@@ -11,10 +11,9 @@
        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("selectWorld.resource_load")));
        PackRepository packrepository = ServerPacksSource.createPackRepository(p_309733_);
  
-+      net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_312455_, p_309733_.getLevelDirectory());
-+
        WorldStem worldstem;
        try {
++         net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_309733_.getDataTagRaw(), p_309733_.getLevelDirectory());
           worldstem = this.loadWorldStem(p_312455_, p_310657_, packrepository);
 +         if (confirmExperimentalWarning && worldstem.worldData() instanceof PrimaryLevelData pld) pld.withConfirmedWarning(true);
        } catch (Exception exception) {
