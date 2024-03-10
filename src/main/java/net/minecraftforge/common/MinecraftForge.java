@@ -67,10 +67,7 @@ public class MinecraftForge
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
      */
     public static void registerConfigScreen(Function<Screen, Screen> screenFunction) {
-        ModLoadingContext.get().registerExtensionPoint(
-                ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(screenFunction)
-        );
+        registerConfigScreen((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
     }
 
     /**
