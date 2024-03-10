@@ -25,7 +25,7 @@ public record VersionInfo(String forgeVersion, String mcVersion, String mcpVersi
     /*==========================================================================*
      *                        INTERNAL SHIT                                     *
      *==========================================================================*/
-    private static Gson GSON = new GsonBuilder().create();
+    private static final Gson GSON = new GsonBuilder().create();
     private static <T> T readJson(String path, Class<T> type) {
         try (var is = VersionInfo.class.getResourceAsStream(path)) {
             if (is == null)
