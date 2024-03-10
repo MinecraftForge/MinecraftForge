@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Shearable.java
 +++ b/net/minecraft/world/entity/Shearable.java
-@@ -2,8 +_,11 @@
+@@ -2,8 +_,13 @@
  
  import net.minecraft.sounds.SoundSource;
  
@@ -11,4 +11,6 @@
  
 +   @Deprecated // Forge: Use IForgeShearable
     boolean m_6220_();
++
++   default void shear(SoundSource pSoundSource, net.minecraft.world.item.ItemStack shears) { m_5851_(pSoundSource); }
  }

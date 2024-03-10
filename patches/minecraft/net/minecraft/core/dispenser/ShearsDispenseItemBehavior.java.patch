@@ -1,0 +1,25 @@
+--- a/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/ShearsDispenseItemBehavior.java
+@@ -26,7 +_,7 @@
+       Level level = p_123580_.m_7727_();
+       if (!level.m_5776_()) {
+          BlockPos blockpos = p_123580_.m_7961_().m_121945_(p_123580_.m_6414_().m_61143_(DispenserBlock.f_52659_));
+-         this.m_123573_(m_123576_((ServerLevel)level, blockpos) || m_123582_((ServerLevel)level, blockpos));
++         this.m_123573_(m_123576_((ServerLevel)level, blockpos) || tryShearLivingEntity((ServerLevel)level, blockpos, p_123581_));
+          if (this.m_123570_() && p_123581_.m_220157_(1, level.m_213780_(), (ServerPlayer)null)) {
+             p_123581_.m_41764_(0);
+          }
+@@ -53,11 +_,11 @@
+       return false;
+    }
+ 
+-   private static boolean m_123582_(ServerLevel p_123583_, BlockPos p_123584_) {
++   private static boolean tryShearLivingEntity(ServerLevel p_123583_, BlockPos p_123584_, ItemStack pItemStack) {
+       for(LivingEntity livingentity : p_123583_.m_6443_(LivingEntity.class, new AABB(p_123584_), EntitySelector.f_20408_)) {
+          if (livingentity instanceof Shearable shearable) {
+             if (shearable.m_6220_()) {
+-               shearable.m_5851_(SoundSource.BLOCKS);
++               shearable.shear(SoundSource.BLOCKS, pItemStack);
+                p_123583_.m_142346_((Entity)null, GameEvent.f_157781_, p_123584_);
+                return true;
+             }
