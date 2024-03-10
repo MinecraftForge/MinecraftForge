@@ -56,13 +56,13 @@ ext {
     MCP_VERSION = '20220404.173914'
     SPI_VERSION = '4.0.15-4.x'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
+    COREMODS_VERSION = '5.1.2'
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.1.3'
     SECUREJARHANDLER_VERSION = '1.0.8'
     BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
-    ASM_VERSION = '9.5'
-    INSTALLER_VERSION = '2.1.+'
+    ASM_VERSION = '9.6'
+    INSTALLER_VERSION = '2.2.+'
     MIXIN_VERSION = '0.8.5'
     JARJAR_VERSION = '0.3.19'
 
@@ -72,7 +72,7 @@ ext {
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.3.0'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.25:all'
     MIN_TAG_FOR_CHANGELOG = "39.0"
@@ -333,7 +333,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:fatjar"
         changing = true
     }
 
