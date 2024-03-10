@@ -85,8 +85,10 @@ public class ModListScreen extends Screen
     }
 
     private static final int PADDING = 6;
+    private static final int BUTTON_MARGIN = 1;
+    private static final int NUM_BUTTONS = SortType.values().length;
 
-    private Screen parentScreen;
+    private final Screen parentScreen;
 
     private ModListWidget modList;
     private InfoPanel modInfo;
@@ -96,8 +98,6 @@ public class ModListScreen extends Screen
     private final List<IModInfo> unsortedMods;
     private Button configButton, openModsFolderButton, doneButton;
 
-    private int buttonMargin = 1;
-    private int numButtons = SortType.values().length;
     private String lastFilterText = "";
 
     private EditBox search;
@@ -109,8 +109,8 @@ public class ModListScreen extends Screen
     {
         super(Component.translatable("fml.menu.mods.title"));
         this.parentScreen = parentScreen;
-        this.mods = Collections.unmodifiableList(ModList.get().getMods());
-        this.unsortedMods = Collections.unmodifiableList(this.mods);
+        this.mods = ModList.get().getMods();
+        this.unsortedMods = List.copyOf(this.mods);
     }
 
     class InfoPanel extends ScrollPanel {
@@ -207,7 +207,7 @@ public class ModListScreen extends Screen
             if (!isMouseOver(mouseX, mouseY))
                 return null;
 
-            double offset = (mouseY - top) + border + scrollDistance + 1;
+            double offset = (mouseY - top - PADDING - border) + scrollDistance;
             if (logoPath != null) {
                 offset -= 50;
             }
@@ -215,10 +215,10 @@ public class ModListScreen extends Screen
                 return null;
 
             int lineIdx = (int) (offset / font.lineHeight);
-            if (lineIdx >= lines.size() || lineIdx < 1)
+            if (lineIdx >= lines.size() || lineIdx < 0)
                 return null;
 
-            FormattedCharSequence line = lines.get(lineIdx-1);
+            FormattedCharSequence line = lines.get(lineIdx);
             if (line != null)
             {
                 return font.getSplitter().componentStyleAtWidth(line, mouseX - left - border);
@@ -255,7 +255,7 @@ public class ModListScreen extends Screen
             listWidth = Math.max(listWidth,getFontRenderer().width(MavenVersionStringHelper.artifactVersionToString(mod.getVersion())) + 5);
         }
         listWidth = Math.max(Math.min(listWidth, width/3), 100);
-        listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
+        listWidth += listWidth % NUM_BUTTONS != 0 ? (NUM_BUTTONS - listWidth % NUM_BUTTONS) : 0;
 
         int modInfoWidth = this.width - this.listWidth - (PADDING * 3);
         int doneButtonWidth = Math.min(modInfoWidth, 200);
@@ -284,13 +284,13 @@ public class ModListScreen extends Screen
         search.setCanLoseFocus(true);
         configButton.active = false;
 
-        final int width = listWidth / numButtons;
+        final int width = listWidth / NUM_BUTTONS;
         int x = PADDING;
-        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)).bounds(x, PADDING, width - buttonMargin, 20).build());
-        x += width + buttonMargin;
-        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)).bounds(x, PADDING, width - buttonMargin, 20).build());
-        x += width + buttonMargin;
-        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)).bounds(x, PADDING, width - buttonMargin, 20).build());
+        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
+        x += width + BUTTON_MARGIN;
+        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
+        x += width + BUTTON_MARGIN;
+        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
         resortMods(SortType.NORMAL);
         updateCache();
     }
@@ -341,8 +341,12 @@ public class ModListScreen extends Screen
 
     private void reloadMods()
     {
-        this.mods = this.unsortedMods.stream().
-                filter(mi->StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName())).contains(StringUtils.toLowerCase(search.getValue()))).collect(Collectors.toList());
+        this.mods = this.unsortedMods
+                .stream()
+                .filter(mi ->
+                    StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName()))
+                        .contains(StringUtils.toLowerCase(search.getValue()))
+                ).collect(Collectors.toList());
         lastFilterText = search.getValue();
     }
 
@@ -464,7 +468,7 @@ public class ModListScreen extends Screen
         }
         */
 
-        if ((vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED) && vercheck.changes().size() > 0)
+        if ((vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED) && !vercheck.changes().isEmpty())
         {
             lines.add(null);
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.changelogheader"));
