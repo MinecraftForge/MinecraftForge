@@ -532,7 +532,7 @@ public class ForgeEventFactory {
     @Nullable
     private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent) {
         post(event);
-        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
+        return !event.getCapabilities().isEmpty() || parent != null ? new CapabilityDispatcher(event.getCapabilities(), event.getListeners(), parent) : null;
     }
 
     public static boolean fireSleepingLocationCheck(LivingEntity player, BlockPos sleepingLocation) {

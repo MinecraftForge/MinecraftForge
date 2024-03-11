@@ -452,7 +452,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (this.isAlive() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive()) {
 +         if (facing == null) return playerJoinedHandler.cast();
 +         else if (facing.getAxis().isVertical()) return playerMainHandler.cast();
 +         else if (facing.getAxis().isHorizontal()) return playerEquipmentHandler.cast();
