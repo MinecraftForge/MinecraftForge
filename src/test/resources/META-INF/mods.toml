@@ -177,6 +177,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="part_entity_test"
 [[mods]]
+    modId="network_capability_test"
+[[mods]]
     modId="capabilities_test"
 [[mods]]
     modId="audio_stream_test"

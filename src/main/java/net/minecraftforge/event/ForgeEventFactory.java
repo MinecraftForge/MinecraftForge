@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -144,6 +145,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.ForgeNetwork;
 
 public class ForgeEventFactory
 {
@@ -826,6 +828,8 @@ public class ForgeEventFactory
     public static void firePlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
+        // Re-send data to the player's client as its caps will be cleared
+        ForgeNetwork.sendEntityCapabilities(player, true, true, Stream.empty());
     }
 
     public static void firePlayerLoggedIn(Player player)
@@ -841,6 +845,8 @@ public class ForgeEventFactory
     public static void firePlayerRespawnEvent(Player player, boolean endConquered)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
+        // Re-send data to the player's client as its caps will be cleared
+        ForgeNetwork.sendEntityCapabilities(player, true, true, Stream.empty()); 
     }
 
     public static void firePlayerItemPickupEvent(Player player, ItemEntity item, ItemStack clone)
