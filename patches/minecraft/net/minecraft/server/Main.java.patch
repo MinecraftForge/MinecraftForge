@@ -64,7 +64,7 @@
           PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
 +         if (dynamic != null)
-+             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(dynamic, levelstoragesource$levelstorageaccess.getLevelDirectory());
++             net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(levelstoragesource$levelstorageaccess, levelstoragesource$levelstorageaccess.getLevelDirectory());
           WorldStem worldstem;
           try {
              WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
