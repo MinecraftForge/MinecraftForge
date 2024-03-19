@@ -129,7 +129,7 @@ public class NotHolderSet<T> implements ICustomHolderSet<T>
     @Override
     public boolean canSerializeIn(HolderOwner<T> holderOwner)
     {
-        return this.registryLookup.canSerializeIn(holderOwner);
+        return this.value.canSerializeIn(holderOwner);
     }
 
     @Override
