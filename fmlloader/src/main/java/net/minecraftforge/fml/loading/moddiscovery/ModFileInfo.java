@@ -14,6 +14,8 @@ import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
 import javax.security.auth.x500.X500Principal;
 import java.net.URL;
@@ -34,12 +36,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ModFileInfo implements IModFileInfo, IConfigurable
 {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final ArtifactVersion NOT_JAVAFML_VER = new DefaultArtifactVersion("2");
+    private static final String JAVAFML = "javafml";
+    public static final String NOT_A_FORGE_MOD_PROP = "__FORGE__not_a_forge_mod";
+
     private final IConfigurable config;
     private final ModFile modFile;
     private final URL issueURL;
@@ -65,7 +72,18 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
+
         // the remaining properties are optional with sensible defaults
+        boolean notAForgeMod = false;
+        if (modLoader.equals(JAVAFML) && modLoaderVersion.containsVersion(NOT_JAVAFML_VER)) {
+            notAForgeMod = true;
+            this.properties = Map.of(NOT_A_FORGE_MOD_PROP, true);
+        } else {
+            this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                    .orElse(Collections.emptyMap());
+        }
+        this.modFile.setFileProperties(this.properties);
+
         this.license = config.<String>getConfigElement("license")
                 .orElse("");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack")
@@ -76,12 +94,14 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .orElse(false);
         this.usesServices = config.<List<String>>getConfigElement("services")
                 .orElse(List.of());
-        this.properties = config.<Map<String, Object>>getConfigElement("properties")
-                .orElse(Collections.emptyMap());
-        this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL")
                 .map(StringUtils::toURL)
                 .orElse(null);
+
+        if (notAForgeMod) {
+            this.mods = List.of();
+            return;
+        }
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs.isEmpty())
         {

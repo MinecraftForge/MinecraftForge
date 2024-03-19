@@ -17,6 +17,7 @@ import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.ModSorter;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -33,15 +34,21 @@ public class ModValidator {
     private LoadingModList loadingModList;
     private final List<IModFile> brokenFiles = new ArrayList<>();
     private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
+    private final List<ModFileLoadingException> modFileLoadingExceptions;
 
-    public ModValidator(Map<IModFile.Type, List<ModFile>> modFiles, List<IModFileInfo> brokenFiles, List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
+    public ModValidator(Map<IModFile.Type, List<ModFile>> modFiles, List<IModFileInfo> brokenFiles, List<EarlyLoadingException.ExceptionData> discoveryErrorData, List<ModFileLoadingException> modFileLoadingExceptions) {
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.gameLibraries = lst(modFiles.get(IModFile.Type.GAMELIBRARY));
         this.candidateMods.addAll(this.gameLibraries);
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
         this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
         this.discoveryErrorData = discoveryErrorData;
-        brokenFiles.stream().map(IModFileInfo::getFile).forEach(this.brokenFiles::add);
+        this.brokenFiles.addAll(brokenFiles.stream().map(IModFileInfo::getFile).toList());
+        this.modFileLoadingExceptions = modFileLoadingExceptions;
+    }
+
+    public ModValidator(Map<IModFile.Type, List<ModFile>> modFiles, List<IModFileInfo> brokenFiles, List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
+        this(modFiles, brokenFiles, discoveryErrorData, List.of());
     }
 
     private static List<ModFile> lst(List<ModFile> files) {

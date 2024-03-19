@@ -23,6 +23,7 @@ import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
+import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
@@ -71,6 +72,7 @@ public class ModDiscoverer {
         List<EarlyLoadingException.ExceptionData> discoveryErrorData = new ArrayList<>();
         boolean successfullyLoadedMods = true;
         List<IModFileInfo> brokenFiles = new ArrayList<>();
+        List<ModFileLoadingException> modFileLoadingExceptions = new ArrayList<>();
         boolean distIsDedicatedServer = FMLLoader.getDist().isDedicatedServer();
         ImmediateWindowHandler.updateProgress("Discovering mod files");
         //Loop all mod locators to get the prime mods to load from.
@@ -82,7 +84,17 @@ public class ModDiscoverer {
                 var exceptions = candidates.stream().map(IModLocator.ModFileOrException::ex).filter(Objects::nonNull).toList();
                 if (!exceptions.isEmpty()) {
                     LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} invalid mod files", locator, exceptions.size());
-                    brokenFiles.addAll(exceptions.stream().map(e->e instanceof InvalidModFileException ime ? ime.getBrokenFile() : null).filter(Objects::nonNull).toList());
+                    for (ModFileLoadingException ex : exceptions) {
+                        // pipe exception messages through the discoveryErrorData to avoid swallowing some exceptions and improve error messages
+                        // (no longer a generic "Invalid mod file" for all InvalidModExceptions - it actually shows the exception message now)
+                        if (ex instanceof InvalidModFileException invalidModFileEx) {
+                            var modInfo = invalidModFileEx.getBrokenFile();
+                            brokenFiles.add(modInfo);
+                            discoveryErrorData.add(new EarlyLoadingException.ExceptionData(ex.getMessage(), modInfo));
+                        } else {
+                            discoveryErrorData.add(new EarlyLoadingException.ExceptionData(ex.getMessage()));
+                        }
+                    }
                 }
                 var locatedFiles = candidates.stream().map(IModLocator.ModFileOrException::file).filter(Objects::nonNull).collect(Collectors.toList());
 
@@ -173,7 +185,7 @@ public class ModDiscoverer {
 
         //Validate the loading. With a deduplicated list, we can now successfully process the artifacts and load
         //transformer plugins.
-        var validator = new ModValidator(modFilesMap, brokenFiles, discoveryErrorData);
+        var validator = new ModValidator(modFilesMap, brokenFiles, discoveryErrorData, modFileLoadingExceptions);
         validator.stage1Validation();
         return validator;
     }
