@@ -76,7 +76,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
         if (!isTest)
             return ret;
 
-        var test = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/test/BaseTestMod.class");
+        var test = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/test/BaseTestMod.class", ClassLoader.getSystemClassLoader());
         // Explode our test mods into a framework that treats them all as separate jars.
         var tests = explodeTestMods(test);
         ret.addAll(tests);

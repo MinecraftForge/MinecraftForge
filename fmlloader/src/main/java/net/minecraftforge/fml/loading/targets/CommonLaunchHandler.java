@@ -92,7 +92,10 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     }
 
     protected static Path getPathFromResource(String resource) {
-        var cl = ForgeDevLaunchHandler.class.getClassLoader();
+        return getPathFromResource(resource, ForgeDevLaunchHandler.class.getClassLoader());
+    }
+
+    protected static Path getPathFromResource(String resource, ClassLoader cl) {
         var url = cl.getResource(resource);
         if (url == null)
             throw new IllegalStateException("Could not find " + resource + " in classloader " + cl);

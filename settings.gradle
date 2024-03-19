@@ -26,9 +26,6 @@ dependencyResolutionManagement {
     versionCatalogs {
         libs {
             library('forgespi', 'net.minecraftforge:forgespi:7.1.3') // Needs modlauncher
-            library('bootstrap', 'net.minecraftforge:bootstrap:2.0.0') // Needs modlauncher
-            library('bootstrap-api', 'net.minecraftforge:bootstrap-api:2.0.0')
-            library('bootstrap-shim', 'net.minecraftforge:bootstrap-shim:2.0.2')
             library('modlauncher', 'net.minecraftforge:modlauncher:10.1.2') // Needs securemodules
             library('securemodules', 'net.minecraftforge:securemodules:2.2.10') // Needs unsafe
             library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
@@ -48,6 +45,12 @@ dependencyResolutionManagement {
             // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
             library('jimfs', 'com.google.jimfs:jimfs:1.3.0')
             bundle('jimfs', ['guava', 'failureaccess'])
+            
+            version('bootstrap', '2.0.4')
+            library('bootstrap',      'net.minecraftforge', 'bootstrap'     ).versionRef('bootstrap') // Needs modlauncher
+            library('bootstrap-api',  'net.minecraftforge', 'bootstrap-api' ).versionRef('bootstrap')
+            library('bootstrap-dev',  'net.minecraftforge', 'bootstrap-dev' ).versionRef('bootstrap')
+            library('bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim').versionRef('bootstrap')
 
             // ASM it's used for so many of our hacks
             version('asm', '9.6')
@@ -61,9 +64,10 @@ dependencyResolutionManagement {
             // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
             library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
             version('jline', '3.12.1')
-            library('jline-reader',   'org.jline', 'jline-reader'  ).versionRef('jline')
-            library('jline-terminal', 'org.jline', 'jline-terminal').versionRef('jline')
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal'])
+            library('jline-reader',       'org.jline', 'jline-reader'      ).versionRef('jline')
+            library('jline-terminal',     'org.jline', 'jline-terminal'    ).versionRef('jline')
+            library('jline-terminal-jna', 'org.jline', 'jline-terminal-jna').versionRef('jline') // Colors and tab completeion
+            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jna'])
 
             // The core of our configuration system, it has many flaws, but it works for the most part
             version('night-config', '3.6.4')
