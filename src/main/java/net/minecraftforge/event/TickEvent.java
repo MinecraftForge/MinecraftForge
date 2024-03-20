@@ -21,26 +21,22 @@ public class TickEvent extends Event
         LEVEL, PLAYER, CLIENT, SERVER, RENDER;
     }
 
-    public enum Phase {
-        START, END;
-    }
     public final Type type;
     public final LogicalSide side;
-    public final Phase phase;
-    public TickEvent(Type type, LogicalSide side, Phase phase)
+
+    public TickEvent(Type type, LogicalSide side)
     {
         this.type = type;
         this.side = side;
-        this.phase = phase;
     }
 
     public static class ServerTickEvent extends TickEvent {
         private final BooleanSupplier haveTime;
         private final MinecraftServer server;
 
-        public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server)
+        protected ServerTickEvent(BooleanSupplier haveTime, MinecraftServer server)
         {
-            super(Type.SERVER, LogicalSide.SERVER, phase);
+            super(Type.SERVER, LogicalSide.SERVER);
             this.haveTime = haveTime;
             this.server = server;
         }
@@ -54,7 +50,7 @@ public class TickEvent extends Event
         {
             return this.haveTime.getAsBoolean();
         }
-        
+
         /**
          * {@return the server instance}
          */
@@ -62,12 +58,58 @@ public class TickEvent extends Event
         {
             return server;
         }
+
+        public static class Pre extends ServerTickEvent {
+
+            public Pre(BooleanSupplier haveTime, MinecraftServer server)
+            {
+                super(haveTime, server);
+            }
+        }
+
+        public static class Post extends ServerTickEvent {
+
+            public Post(BooleanSupplier haveTime, MinecraftServer server)
+            {
+                super(haveTime, server);
+            }
+        }
     }
 
     public static class ClientTickEvent extends TickEvent {
-        public ClientTickEvent(Phase phase)
+        protected ClientTickEvent()
         {
-            super(Type.CLIENT, LogicalSide.CLIENT, phase);
+            super(Type.CLIENT, LogicalSide.CLIENT);
+        }
+
+        public static class Pre extends ClientTickEvent {
+
+            private static final Pre INSTANCE = new Pre();
+
+            private Pre()
+            {
+                super();
+            }
+
+            public static Pre get()
+            {
+                return INSTANCE;
+            }
+        }
+
+        public static class Post extends ClientTickEvent {
+
+            private static final Post INSTANCE = new Post();
+
+            private Post()
+            {
+                super();
+            }
+
+            public static Post get()
+            {
+                return INSTANCE;
+            }
         }
     }
 
@@ -75,9 +117,9 @@ public class TickEvent extends Event
         public final Level level;
         private final BooleanSupplier haveTime;
 
-        public LevelTickEvent(LogicalSide side, Phase phase, Level level, BooleanSupplier haveTime)
+        protected LevelTickEvent(LogicalSide side, Level level, BooleanSupplier haveTime)
         {
-            super(Type.LEVEL, side, phase);
+            super(Type.LEVEL, side);
             this.level = level;
             this.haveTime = haveTime;
         }
@@ -93,23 +135,65 @@ public class TickEvent extends Event
         {
             return this.haveTime.getAsBoolean();
         }
+
+        public static class Pre extends LevelTickEvent {
+            public Pre(LogicalSide side, Level level, BooleanSupplier haveTime)
+            {
+                super(side, level, haveTime);
+            }
+        }
+
+        public static class Post extends LevelTickEvent {
+            public Post(LogicalSide side, Level level, BooleanSupplier haveTime)
+            {
+                super(side, level, haveTime);
+            }
+        }
     }
     public static class PlayerTickEvent extends TickEvent {
         public final Player player;
 
-        public PlayerTickEvent(Phase phase, Player player)
+        protected PlayerTickEvent(Player player)
         {
-            super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT);
             this.player = player;
+        }
+
+        public static class Pre extends PlayerTickEvent {
+            public Pre(Player player)
+            {
+                super(player);
+            }
+        }
+
+        public static class Post extends PlayerTickEvent {
+            public Post(Player player)
+            {
+                super(player);
+            }
         }
     }
 
     public static class RenderTickEvent extends TickEvent {
         public final float renderTickTime;
-        public RenderTickEvent(Phase phase, float renderTickTime)
+        protected RenderTickEvent(float renderTickTime)
         {
-            super(Type.RENDER, LogicalSide.CLIENT, phase);
+            super(Type.RENDER, LogicalSide.CLIENT);
             this.renderTickTime = renderTickTime;
+        }
+
+        public static class Pre extends RenderTickEvent {
+            public Pre(float renderTickTime)
+            {
+                super(renderTickTime);
+            }
+        }
+
+        public static class Post extends RenderTickEvent {
+            public Post(float renderTickTime)
+            {
+                super(renderTickTime);
+            }
         }
     }
 }
