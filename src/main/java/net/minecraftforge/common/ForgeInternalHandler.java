@@ -51,8 +51,13 @@ public class ForgeInternalHandler {
     }
 
     @SubscribeEvent
-    public void onServerTick(ServerTickEvent event) {
-        WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
+    public void onServerTick(ServerTickEvent.Pre event) {
+        WorldWorkerManager.tick(true);
+    }
+
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Post event) {
+        WorldWorkerManager.tick(false);
     }
 
     @SubscribeEvent
