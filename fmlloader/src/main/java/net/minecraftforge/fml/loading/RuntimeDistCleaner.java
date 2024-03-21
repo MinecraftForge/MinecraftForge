@@ -57,6 +57,12 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 
+        if (!FMLEnvironment.production && hasOnlyInWithModAnnotation(classNode.visibleAnnotations))
+        {
+            LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
+            throw new RuntimeException("Attempted to load class "+ classNode.name  + " with @Mod and @OnlyIn/@OnlyIns annotations you should instead use the side setting in the mods.toml");
+        }
+
         if (classNode.interfaces != null )
         {
             unpack(classNode.visibleAnnotations).stream()
@@ -138,21 +144,71 @@ public class RuntimeDistCleaner implements ILaunchPluginService
 
     @SuppressWarnings("unchecked")
     private static List<AnnotationNode> unpack(final List<AnnotationNode> anns) {
-        if (anns == null) return Collections.emptyList();
-        List<AnnotationNode> ret = anns.stream().filter(ann->Objects.equals(ann.desc, ONLYIN)).collect(Collectors.toList());
-        anns.stream().filter(ann->Objects.equals(ann.desc, ONLYINS) && ann.values != null)
-            .map( ann -> (List<AnnotationNode>)ann.values.get(ann.values.indexOf("value") + 1))
-            .filter(v -> v != null)
-            .forEach(v -> v.forEach(ret::add));
-        return ret;
+        if (anns == null) {
+            return Collections.emptyList();
+        }
+
+        List<AnnotationNode> unpacked = new ArrayList<>();
+
+        for (var annotationNode : anns) {
+            if (Objects.equals(annotationNode.desc, ONLYINS)) {
+                unpacked.add(annotationNode);
+
+                if (annotationNode.values != null) {
+                    List<AnnotationNode> subNodes = (List<AnnotationNode>) annotationNode.values.get(annotationNode.values.indexOf("value") + 1);
+
+                    if (subNodes != null) {
+                        unpacked.addAll(subNodes);
+                    }
+                }
+            }
+        }
+
+        return unpacked;
     }
 
     private boolean remove(final List<AnnotationNode> anns, final String side)
     {
-        return unpack(anns).stream().
-                filter(ann->Objects.equals(ann.desc, ONLYIN)).
-                filter(ann->ann.values.indexOf("_interface") == -1).
-                anyMatch(ann -> !Objects.equals(((String[])ann.values.get(ann.values.indexOf("value")+1))[1], side));
+        var onlyIns = unpack(anns);
+
+        for (var onlyIn : onlyIns)
+        {
+            if (!Objects.equals(onlyIn.desc, ONLYINS) || onlyIn.values.contains("_interface"))
+            {
+                continue;
+            }
+
+            if (!Objects.equals(((String[])onlyIn.values.get(onlyIn.values.indexOf("value") + 1))[1], side))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean hasOnlyInWithModAnnotation(final List<AnnotationNode> anns)
+    {
+        if (anns == null)
+        {
+            return false;
+        }
+
+        var foundModAnnotation = false;
+        var foundOnlyIn = false;
+
+        for (var ann : anns)
+        {
+            if (ann.desc.equals("Lnet/minecraftforge/fml/common/Mod;"))
+            {
+                foundModAnnotation = true;
+            } else if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS))
+            {
+                foundOnlyIn = true;
+            }
+        }
+
+        return foundModAnnotation && foundOnlyIn;
     }
 
     @SuppressWarnings("unchecked")
