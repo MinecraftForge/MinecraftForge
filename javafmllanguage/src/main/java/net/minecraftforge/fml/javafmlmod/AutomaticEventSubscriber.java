@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod;
@@ -32,6 +33,7 @@ public class AutomaticEventSubscriber {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type AUTO_SUBSCRIBER = Type.getType(EventBusSubscriber.class);
     private static final Type MOD_TYPE = Type.getType(Mod.class);
+    private static final Type ONLY_IN_TYPE = Type.getType(OnlyIn.class);
 
     public static void inject(ModContainer mod, ModFileScanData scanData, ClassLoader loader) {
         if (scanData == null) return;
@@ -41,6 +43,11 @@ public class AutomaticEventSubscriber {
             .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
             .toList();
 
+        var onlyIns = scanData.getAnnotations().stream()
+                .filter(data -> ONLY_IN_TYPE.equals(data.annotationType()))
+                .map(data -> data.clazz().getClassName())
+                .collect(Collectors.toSet());
+
         var modids = scanData.getAnnotations().stream()
             .filter(data -> MOD_TYPE.equals(data.annotationType()))
             .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
@@ -49,6 +56,10 @@ public class AutomaticEventSubscriber {
         var defaultBus = new EnumData(null, "FORGE");
 
         for (var data : targets) {
+            if (!FMLEnvironment.production && onlyIns.contains(data.clazz().getClassName())) {
+                throw new RuntimeException("Found @OnlyIn on @EventBusSubscriber class " + data.clazz().getClassName() + " - this is not allowed you should instead use the dist parameter on EventBusSubscriber annotation");
+            }
+
             var modId = modids.getOrDefault(data.clazz().getClassName(), mod.getModId());
             modId = value(data, "modid", modId);
 
