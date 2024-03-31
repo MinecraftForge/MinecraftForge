@@ -122,7 +122,9 @@ public class TierSortingRegistry {
             return isCorrectTierVanilla(tier, state);
 
         for (int x = sortedTiers.indexOf(tier) + 1; x < sortedTiers.size(); x++) {
-            TagKey<Block> tag = sortedTiers.get(x).getTag();
+            var sortedTier = sortedTiers.get(x);
+            if (sortedTier == null) continue;
+            TagKey<Block> tag = sortedTier.getTag();
             if (tag != null && state.is(tag))
                 return false;
         }
