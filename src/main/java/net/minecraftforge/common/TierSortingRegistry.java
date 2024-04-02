@@ -64,6 +64,8 @@ public class TierSortingRegistry {
      * @param before List of tiers to place this tier before (the tiers in the list will be considered better tiers)
      */
     public static synchronized Tier registerTier(Tier tier, ResourceLocation name, List<Object> after, List<Object> before) {
+        if (tier == null)
+            throw new NullPointerException("Registering a new Tier requires a nonnull tier! ResourceLocation name: " + name);
         if (tiers.containsKey(name))
             throw new IllegalStateException("Duplicate tier name " + name);
 
@@ -122,9 +124,7 @@ public class TierSortingRegistry {
             return isCorrectTierVanilla(tier, state);
 
         for (int x = sortedTiers.indexOf(tier) + 1; x < sortedTiers.size(); x++) {
-            var sortedTier = sortedTiers.get(x);
-            if (sortedTier == null) continue;
-            TagKey<Block> tag = sortedTier.getTag();
+            TagKey<Block> tag = sortedTiers.get(x).getTag();
             if (tag != null && state.is(tag))
                 return false;
         }
