@@ -40,7 +40,7 @@ https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
 
 Additional Resources: 
 =========================
-Community Documentation: https://docs.minecraftforge.net/en/1.19.x/gettingstarted/
+Community Documentation: https://docs.minecraftforge.net/en/1.19.2/gettingstarted/
 LexManos' Install Video: https://youtu.be/8VEdtQLuLO0
 Forge Forums: https://forums.minecraftforge.net/
 Forge Discord: https://discord.minecraftforge.net/
