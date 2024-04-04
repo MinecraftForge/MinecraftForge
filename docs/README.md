@@ -69,9 +69,9 @@ Please ensure you have a valid email address associated with your GitHub account
 
 [Discord]: https://discord.minecraftforge.net/
 
-[Documentation]: https://docs.minecraftforge.net/
-[Getting-Started]: https://docs.minecraftforge.net/en/latest/gettingstarted/
-[ForgeDev]: https://docs.minecraftforge.net/en/latest/forgedev/
-[Pull-Requests]: https://docs.minecraftforge.net/en/latest/forgedev/#making-changes-and-pull-requests
+[Documentation]: https://docs.minecraftforge.net/en/1.19.x/
+[Getting-Started]: https://docs.minecraftforge.net/en/1.19.x/gettingstarted/
+[ForgeDev]: https://docs.minecraftforge.net/en/1.19.x/forgedev/
+[Pull-Requests]: https://docs.minecraftforge.net/en/1.19.x/forgedev/#making-changes-and-pull-requests
 
 [Patreon]: https://www.patreon.com/LexManos
