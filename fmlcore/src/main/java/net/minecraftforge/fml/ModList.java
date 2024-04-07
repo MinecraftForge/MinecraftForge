@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  */
 public class ModList
 {
-    private static Logger LOGGER = LogManager.getLogger();
+    //private static final Logger LOGGER = LogManager.getLogger();
     private static ModList INSTANCE;
     private final List<IModFileInfo> modFiles;
     private final List<IModInfo> sortedList;
@@ -120,14 +120,14 @@ public class ModList
         return executor -> gather(
                 this.mods.stream()
                 .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, progressBar, stateChange, executor))
-                .collect(Collectors.toList()))
-            .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
+                .toList()
+        ).thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }
     static CompletionStage<Void> completableFutureFromExceptionList(List<? extends Map.Entry<?, Throwable>> t) {
         if (t.stream().noneMatch(e->e.getValue()!=null)) {
             return CompletableFuture.completedFuture(null);
         } else {
-            final List<Throwable> throwables = t.stream().filter(e -> e.getValue() != null).map(Map.Entry::getValue).collect(Collectors.toList());
+            final List<Throwable> throwables = t.stream().filter(e -> e.getValue() != null).map(Map.Entry::getValue).toList();
             CompletableFuture<Void> cf = new CompletableFuture<>();
             final RuntimeException accumulator = new RuntimeException();
             cf.completeExceptionally(accumulator);

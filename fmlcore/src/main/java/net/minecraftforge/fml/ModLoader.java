@@ -230,10 +230,9 @@ public class ModLoader
         } catch (CompletionException e) {
             loadingStateValid = false;
             Throwable t = e.getCause();
-            final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
-                    .filter(obj -> !(obj instanceof ModLoadingException))
-                    .toList();
-            if (!notModLoading.isEmpty()) {
+            boolean hasNotModLoadingEx = Arrays.stream(t.getSuppressed())
+                    .anyMatch(obj -> !(obj instanceof ModLoadingException));
+            if (hasNotModLoadingEx) {
                 LOGGER.fatal("Encountered non-modloading exceptions!", e);
                 statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
                 throw e;
@@ -280,7 +279,7 @@ public class ModLoader
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
-        return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).collect(Collectors.toList());
+        return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).toList();
     }
 
     private ModContainer buildModContainerFromTOML(final IModFile modFile, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
