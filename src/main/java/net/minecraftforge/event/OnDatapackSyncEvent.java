@@ -15,14 +15,13 @@ import org.jetbrains.annotations.Nullable;
  * before tags and crafting recipes are sent to the client. Send datapack data
  * to clients when this event fires.
  */
-public class OnDatapackSyncEvent extends Event
-{
+public class OnDatapackSyncEvent extends Event {
     private final PlayerList playerList;
+
     @Nullable
     private final ServerPlayer player;
 
-    public OnDatapackSyncEvent(PlayerList playerList, @Nullable ServerPlayer player)
-    {
+    public OnDatapackSyncEvent(PlayerList playerList, @Nullable ServerPlayer player) {
         this.playerList = playerList;
         this.player = player;
     }
@@ -30,8 +29,7 @@ public class OnDatapackSyncEvent extends Event
     /**
      * @return The server's player list to get a view of all players.
      */
-    public PlayerList getPlayerList()
-    {
+    public PlayerList getPlayerList() {
         return this.playerList;
     }
 
@@ -40,8 +38,7 @@ public class OnDatapackSyncEvent extends Event
      *         such as when the reload command runs.
      */
     @Nullable
-    public ServerPlayer getPlayer()
-    {
+    public ServerPlayer getPlayer() {
         return this.player;
     }
 }
