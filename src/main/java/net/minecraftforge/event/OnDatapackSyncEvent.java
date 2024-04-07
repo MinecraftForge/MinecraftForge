@@ -10,6 +10,8 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Fires when a player joins the server or when the reload command is ran,
  * before tags and crafting recipes are sent to the client. Send datapack data
@@ -40,5 +42,13 @@ public class OnDatapackSyncEvent extends Event {
     @Nullable
     public ServerPlayer getPlayer() {
         return this.player;
+    }
+
+    /**
+     * @return A list of players that should receive data during this event, which is the specified player (if not null)
+     *         or all players otherwise.
+     */
+    public List<ServerPlayer> getRelevantPlayers() {
+        return this.player == null ? this.playerList.getPlayers() : List.of(this.player);
     }
 }
