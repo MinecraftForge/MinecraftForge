@@ -835,7 +835,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         @Override
         public T get() {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
-            Preconditions.checkState(spec.childConfig != null, "Cannot get config value before config is loaded");
+            // TODO: Remove this dev-time check so this errors out on both production and dev
+            // This is dev-time-only in 1.19.x, to avoid breaking already published mods while forcing devs to fix their errors
+            if (!FMLEnvironment.production) {
+                // When the above if-check is removed, change message to "Cannot get config value before config is loaded"
+                Preconditions.checkState(spec.childConfig != null, """
+                        Cannot get config value before config is loaded.
+                        This error is currently only thrown in the development environment, to avoid breaking published mods.
+                        In a future version, this will also throw in the production environment.
+                        """);
+            }
+
+            if (spec.childConfig == null)
+                return defaultSupplier.get();
 
             if (USE_CACHES && cachedValue == null)
                 cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
