@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Fired when pause is changed
+ * Fired when pause is about to change
  *
  * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -29,7 +29,7 @@ public abstract class ClientPauseChangeEvent extends Event {
     }
 
     /**
-     * Fired when {@linkplain Minecraft#pause pause} is about to change
+     * Fired when {@linkplain Minecraft#pause pause} is going to change
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
      * Cancelling this event will prevent the game change pause state even if the conditions match
