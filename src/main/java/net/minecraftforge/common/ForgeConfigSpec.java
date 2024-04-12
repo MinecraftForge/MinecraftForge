@@ -375,12 +375,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
                         return getDefault();
                     }
-                    list.removeIf(elementValidator.negate());
-                    if (list.isEmpty()) {
+                    List<?> copy = new ArrayList<>(list);
+                    copy.removeIf(elementValidator.negate());
+                    if (copy.isEmpty()) {
                         LOGGER.debug(Logging.CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
-                    return list;
+                    return copy;
                 }
             }, defaultSupplier);
         }
