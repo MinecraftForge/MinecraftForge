@@ -15,7 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 /**
  * Fired when pause is changed
  *
- * <p>These event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ClientPauseChangeEvent.Pre
