@@ -25,7 +25,7 @@
        return this.registries.thenCompose((p_256533_) -> {
           DynamicOps<JsonElement> dynamicops = RegistryOps.create(JsonOps.INSTANCE, p_256533_);
 -         return CompletableFuture.allOf(RegistryDataLoader.WORLDGEN_REGISTRIES.stream().flatMap((p_256552_) -> {
-+         return CompletableFuture.allOf(net.minecraftforge.registries.DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().flatMap((p_256552_) -> {
++         return CompletableFuture.allOf(RegistryDataLoader.getWorldGenAndDimensionStream().flatMap((p_256552_) -> {
              return this.dumpRegistryCap(p_255785_, p_256533_, dynamicops, p_256552_).stream();
           }).toArray((p_255809_) -> {
              return new CompletableFuture[p_255809_];

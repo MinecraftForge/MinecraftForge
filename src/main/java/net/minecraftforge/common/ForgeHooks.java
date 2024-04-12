@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -103,7 +104,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -157,7 +157,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
@@ -979,9 +978,20 @@ public class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static void readAdditionalLevelSaveData(Dynamic<?> data, LevelStorageSource.LevelDirectory levelDirectory) {
-        CompoundTag rootTag = (CompoundTag)data.convert(NbtOps.INSTANCE).getValue();
-        CompoundTag tag = rootTag.getCompound("fml");
+    public static void readAdditionalLevelSaveData(LevelStorageSource.LevelStorageAccess access, LevelStorageSource.LevelDirectory levelDirectory) {
+        CompoundTag tag = null;
+        try {
+            CompoundTag rootTag = access.getDataTagRaw(false);
+            tag = rootTag.getCompound("fml");
+        } catch (IOException e) {
+            try {
+                CompoundTag rootTag = access.getDataTagRaw(true);
+                tag = rootTag.getCompound("fml");
+            } catch (IOException e2) {
+                LOGGER.error(WORLDPERSISTENCE, "Failed to read level data.. ", e2);
+                return;
+            }
+        }
         if (tag.contains("LoadingModList")) {
             ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
             Map<String, ArtifactVersion> mismatchedVersions = new HashMap<>(modList.size());

@@ -11,7 +11,7 @@
        this.minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("selectWorld.resource_load")));
        PackRepository packrepository = ServerPacksSource.createPackRepository(p_309733_);
  
-+      net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_312455_, p_309733_.getLevelDirectory());
++      net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_309733_, p_309733_.getLevelDirectory());
 +
        WorldStem worldstem;
        try {

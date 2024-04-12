@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "datapack_builtin_entries_provider_test:mossy_stone",
+  "step": "underground_ores"
+}

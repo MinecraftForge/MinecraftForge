@@ -1,0 +1,2 @@
+# Ignore the test module as we find it and load individual mods.
+net.minecraftforge.forge.test

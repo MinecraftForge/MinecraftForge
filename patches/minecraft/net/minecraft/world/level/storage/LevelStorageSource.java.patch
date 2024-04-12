@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -470,6 +_,12 @@
+          return this.getDataTag(true);
+       }
+ 
++      public CompoundTag getDataTagRaw(boolean fallback) throws IOException {
++          this.checkLock();
++          return LevelStorageSource.readLevelDataTagRaw(fallback ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile());
++
++      }
++
+       private Dynamic<?> getDataTag(boolean p_310699_) throws IOException {
+          this.checkLock();
+          return LevelStorageSource.readLevelDataTagFixed(p_310699_ ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile(), LevelStorageSource.this.fixerUpper);
 @@ -483,6 +_,7 @@
           CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
           CompoundTag compoundtag1 = new CompoundTag();

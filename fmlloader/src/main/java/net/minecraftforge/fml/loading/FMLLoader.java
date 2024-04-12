@@ -44,7 +44,7 @@ public class FMLLoader {
     private static LoadingModList loadingModList;
     private static RuntimeDistCleaner runtimeDistCleaner;
     private static Path gamePath;
-    private static VersionInfo versionInfo = VersionInfo.detect();
+    private static final VersionInfo versionInfo = VersionInfo.detect();
     private static String launchHandlerName;
     private static CommonLaunchHandler commonLaunchHandler;
     public static Runnable progressWindowTick;
