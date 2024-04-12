@@ -190,7 +190,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
                 }
 
-                String newComment = levelComments.get(parentPath);
+                @Nullable String newComment = levelComments.get(parentPath);
                 String oldComment = config.getComment(key);
                 if (!stringsMatchIgnoringNewlines(oldComment, newComment)) {
                     if(commentListener != null)
