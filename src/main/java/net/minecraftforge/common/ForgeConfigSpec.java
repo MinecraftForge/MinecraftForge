@@ -425,8 +425,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
-                if (obj instanceof Enum<?> enumObj) {
-                    return acceptableValues.contains(enumObj);
+                if (obj instanceof Enum) {
+                    return acceptableValues.contains(obj);
                 }
                 if (obj == null) {
                     return false;
