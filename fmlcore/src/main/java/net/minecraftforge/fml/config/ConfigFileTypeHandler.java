@@ -11,8 +11,6 @@ import com.electronwill.nightconfig.core.file.FileWatcher;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.FMLConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
@@ -25,8 +23,7 @@ import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
-    private static final Path defaultConfigPath = FMLPaths.GAMEDIR.get().resolve(FMLConfig.getConfigValue(FMLConfig.ConfigValue.DEFAULT_CONFIG_PATH));
+    final static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
 
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
         return (c) -> {
@@ -67,15 +64,8 @@ public class ConfigFileTypeHandler {
     }
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
-        Files.createDirectories(file.getParent());
-        Path p = defaultConfigPath.resolve(modConfig.getFileName());
-        if (Files.exists(p)) {
-            LOGGER.info(CONFIG, "Loading default config file from path {}", p);
-            Files.copy(p, file);
-        } else {
-            Files.createFile(file);
-            conf.initEmptyFile(file);
-        }
+        Files.createFile(file);
+        conf.initEmptyFile(file);
         return true;
     }
 
