@@ -205,7 +205,7 @@
        ++this.frames;
        boolean flag1 = this.hasSingleplayerServer() && (this.screen != null && this.screen.isPauseScreen() || this.overlay != null && this.overlay.isPauseScreen()) && !this.singleplayerServer.isPublished();
 -      if (this.pause != flag1) {
-+      if (this.pause != flag1 && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ClientPauseChangeEvent.Pre(flag1))) {
++      if (this.pause != flag1 && !net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePre(flag1)) {
 +
           if (flag1) {
              this.pausePartialTick = this.timer.partialTick;
@@ -214,7 +214,7 @@
           }
  
           this.pause = flag1;
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ClientPauseChangeEvent.Post(flag1));
++         net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePost(flag1);
        }
  
        long l = Util.getNanos();
