@@ -897,7 +897,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ByteValue extends ConfigValue<Byte> {
-        private byte castedValue;
 
         ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier) {
             super(parent, path, defaultSupplier);
@@ -910,7 +909,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ShortValue extends ConfigValue<Short> {
-        private short castedValue;
 
         ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier) {
             super(parent, path, defaultSupplier);
