@@ -32,8 +32,7 @@ public abstract class ClientPauseChangeEvent extends Event {
      * Fired when {@linkplain Minecraft#pause pause} is about to change
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     * Cancelling this event will prevent the game being paused even if the conditions match,
-     * and is fired before the change
+     * Cancelling this event will prevent the game change pause state even if the conditions match
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
