@@ -804,13 +804,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     public static class ConfigValue<T> implements Supplier<T> {
         private static final boolean USE_CACHES = true;
 
-        protected final Builder parent;
-        protected final List<String> path;
-        protected final Supplier<T> defaultSupplier;
+        private final Builder parent;
+        private final List<String> path;
+        private final Supplier<T> defaultSupplier;
 
         private T cachedValue = null;
 
-        protected ForgeConfigSpec spec;
+        private ForgeConfigSpec spec;
 
         ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
         {
