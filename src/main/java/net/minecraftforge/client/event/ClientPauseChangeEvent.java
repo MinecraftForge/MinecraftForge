@@ -63,7 +63,7 @@ public abstract class ClientPauseChangeEvent extends Event {
     /**
      * {@return game is paused}
      */
-    public boolean pause() {
+    public boolean isPaused() {
         return pause;
     }
 }
