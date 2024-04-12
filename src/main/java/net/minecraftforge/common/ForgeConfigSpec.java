@@ -802,7 +802,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ConfigValue<T> implements Supplier<T> {
-        private final static boolean USE_CACHES = true;
+        private static final boolean USE_CACHES = true;
 
         protected final Builder parent;
         protected final List<String> path;
