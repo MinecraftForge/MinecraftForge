@@ -244,8 +244,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return count;
     }
 
-    private boolean stringsMatchIgnoringNewlines(@Nullable Object obj1, @Nullable Object obj2) {
-        if (obj1 instanceof String string1 && obj2 instanceof String string2) {
+    private boolean stringsMatchIgnoringNewlines(@Nullable String string1, @Nullable String string2) {
+        if (string1 != null && string2 != null) {
             if (!string1.isEmpty() && !string2.isEmpty()) {
                 return WINDOWS_NEWLINE.matcher(string1).replaceAll("\n")
                         .equals(WINDOWS_NEWLINE.matcher(string2).replaceAll("\n"));
