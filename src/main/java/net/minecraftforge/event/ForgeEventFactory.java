@@ -716,43 +716,43 @@ public class ForgeEventFactory {
     }
 
     public static void onRenderTickStart(float timer) {
-        post(new TickEvent.RenderTickEvent(TickEvent.Phase.START, timer));
+        post(new TickEvent.RenderTickEvent.Pre(timer));
     }
 
     public static void onRenderTickEnd(float timer) {
-        post(new TickEvent.RenderTickEvent(TickEvent.Phase.END, timer));
+        post(new TickEvent.RenderTickEvent.Post(timer));
     }
 
     public static void onPlayerPreTick(Player player) {
-        post(new TickEvent.PlayerTickEvent(TickEvent.Phase.START, player));
+        post(new TickEvent.PlayerTickEvent.Pre(player));
     }
 
     public static void onPlayerPostTick(Player player) {
-        post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
+        post(new TickEvent.PlayerTickEvent.Post(player));
     }
 
     public static void onPreLevelTick(Level level, BooleanSupplier haveTime) {
-        post(new TickEvent.LevelTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.START, level, haveTime));
+        post(new TickEvent.LevelTickEvent.Pre(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, level, haveTime));
     }
 
     public static void onPostLevelTick(Level level, BooleanSupplier haveTime) {
-        post(new TickEvent.LevelTickEvent(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, TickEvent.Phase.END, level, haveTime));
+        post(new TickEvent.LevelTickEvent.Post(level.isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER, level, haveTime));
     }
 
     public static void onPreClientTick() {
-        post(new TickEvent.ClientTickEvent(TickEvent.Phase.START));
+        post(new TickEvent.ClientTickEvent.Pre());
     }
 
     public static void onPostClientTick() {
-        post(new TickEvent.ClientTickEvent(TickEvent.Phase.END));
+        post(new TickEvent.ClientTickEvent.Post());
     }
 
     public static void onPreServerTick(BooleanSupplier haveTime, MinecraftServer server) {
-        post(new TickEvent.ServerTickEvent(TickEvent.Phase.START, haveTime, server));
+        post(new TickEvent.ServerTickEvent.Pre(haveTime, server));
     }
 
     public static void onPostServerTick(BooleanSupplier haveTime, MinecraftServer server) {
-        post(new TickEvent.ServerTickEvent(TickEvent.Phase.END, haveTime, server));
+        post(new TickEvent.ServerTickEvent.Post(haveTime, server));
     }
 
     public static WeightedRandomList<MobSpawnSettings.SpawnerData> getPotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList) {
