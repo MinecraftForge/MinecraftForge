@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
+import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.*;
@@ -26,14 +27,17 @@ public class ModValidator {
     private final Map<IModFile.Type, List<ModFile>> modFiles;
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
+    private final List<ModFile> gameLibraries;
     private LoadingModList loadingModList;
-    private List<IModFile> brokenFiles;
+    private final List<IModFile> brokenFiles;
     private final List<EarlyLoadingException.ExceptionData> discoveryErrorData;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final List<IModFileInfo> brokenFiles, final List<EarlyLoadingException.ExceptionData> discoveryErrorData) {
         this.modFiles = modFiles;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
+        this.gameLibraries = lst(modFiles.get(IModFile.Type.GAMELIBRARY));
+        this.candidateMods.addAll(this.gameLibraries);
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
         this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
         this.discoveryErrorData = discoveryErrorData;
@@ -55,8 +59,7 @@ public class ModValidator {
     @NotNull
     private List<ModFile> validateFiles(final List<ModFile> mods) {
         final List<ModFile> brokenFiles = new ArrayList<>();
-        for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
-        {
+        for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext();) {
             ModFile modFile = iterator.next();
             if (!modFile.getProvider().isValid(modFile) || !modFile.identifyMods()) {
                 LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", modFile.getFilePath());
@@ -72,7 +75,26 @@ public class ModValidator {
     }
 
     public ITransformationService.Resource getModResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(IModFile::getSecureJar).toList());
+        var mods = new ArrayList<SecureJar>();
+        // Add only the valid mods that we will be attempting to load.
+        // If any detectable error happens during the sorting process {missing deps, duplicates,
+        // This helps prevent coremods/mixins from screwing up us displaying the error screens that the sorting/validation is trying to display.
+        // This won't fix them all as they are still loaded and will still apply but it might help
+        for (var info : this.loadingModList.getModFiles())
+            mods.add(info.getFile().getSecureJar());
+
+        // Add any game libraries, this *may* be duplicates, depending on the state of the sorting. But until I get around to re-writing
+        // that clusterfuck of a system, have this simple de-duplication. Order of resource is important, but i'm unsure if duplication is
+        // so might as well waste a few cycles on checking. Still faster then converting from a set to a list.
+        // Ideally we would explicitly list out which mods to load {forge and MC being the only ones} but some coremods could require extra things.
+        // So try game libraries as well
+        for (var lib : this.gameLibraries) {
+            var jar = lib.getSecureJar();
+            if (!mods.contains(jar))
+                mods.add(jar);
+        }
+
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, mods);
     }
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {

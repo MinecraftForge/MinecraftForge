@@ -158,6 +158,16 @@ public class ForgeConfig {
 
             builder.pop();
         }
+
+        // Allow these to be called before the config is loaded because its used before loading the error screens.
+        // Prevents a ton of spam when an error screen is displayed.
+        public final boolean calculateAllNormals() {
+            return clientSpec.isLoaded() ? calculateAllNormals.get() : calculateAllNormals.getDefault();
+        }
+
+        public final boolean showLoadWarnings() {
+            return clientSpec.isLoaded() ? showLoadWarnings.get() : showLoadWarnings.getDefault();
+        }
     }
 
     static final ForgeConfigSpec clientSpec;
