@@ -14,9 +14,7 @@ import net.minecraftforge.fml.loading.ImmediateWindowProvider;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -30,7 +28,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -50,7 +47,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -394,7 +390,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }, 10, TimeUnit.SECONDS);
         int versidx = 0;
         var skipVersions = FMLConfig.<String>getListConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SKIP_GL_VERSIONS);
-        final String[] lastGLError=new String[GL_VERSIONS.length];
+        boolean showHelpLog = FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SHOW_HELP_LOG);
+        final String[] lastGLError = new String[GL_VERSIONS.length];
         do {
             final var glVersionToTry = GL_VERSIONS[versidx][0] + "." + GL_VERSIONS[versidx][1];
             if (skipVersions.contains(glVersionToTry)) {
@@ -403,6 +400,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 continue;
             }
             LOGGER.info("Trying GL version " + glVersionToTry);
+            if (showHelpLog && versidx == 0) {
+                LOGGER.info("""
+                If this message is the only thing at the bottom of your log before a crash, you probably have a driver issue.
+                
+                Possible solutions:
+                A) Make sure Minecraft is set to prefer high performance graphics in the OS and/or driver control panel
+                B) Check for driver updates on the graphics brand's website
+                C) Try reinstalling your graphics drivers
+                D) If still not working after trying all of the above, ask for further help on the Forge forums or Discord
+                
+                You can safely ignore this message if the game starts up successfully.
+                """);
+            }
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSIONS[versidx][0]); // we try our versions one at a time
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSIONS[versidx][1]);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -434,6 +444,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         LOGGER.info("Requested GL version "+requestedVersion+" got version "+gotVersion);
         this.glVersion = gotVersion;
         this.window = window;
+
+        if (showHelpLog)
+            FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_SHOW_HELP_LOG, false);
 
         int[] x = new int[1];
         int[] y = new int[1];
