@@ -390,7 +390,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }, 10, TimeUnit.SECONDS);
         int versidx = 0;
         var skipVersions = FMLConfig.<String>getListConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SKIP_GL_VERSIONS);
-        boolean showHelpLog = FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SHOW_HELP_LOG);
+        boolean showHelpLog = FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_LOG_HELP_MSG);
         final String[] lastGLError = new String[GL_VERSIONS.length];
         do {
             final var glVersionToTry = GL_VERSIONS[versidx][0] + "." + GL_VERSIONS[versidx][1];
@@ -410,8 +410,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 C) Try reinstalling your graphics drivers
                 D) If still not working after trying all of the above, ask for further help on the Forge forums or Discord
                 
-                You can safely ignore this message if the game starts up successfully.
-                """);
+                You can safely ignore this message if the game starts up successfully.""");
             }
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSIONS[versidx][0]); // we try our versions one at a time
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSIONS[versidx][1]);
@@ -446,7 +445,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.window = window;
 
         if (showHelpLog)
-            FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_SHOW_HELP_LOG, false);
+            FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_LOG_HELP_MSG, false);
 
         int[] x = new int[1];
         int[] y = new int[1];
