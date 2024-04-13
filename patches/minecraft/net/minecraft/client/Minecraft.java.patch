@@ -96,7 +96,7 @@
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
        if (checkModStatus().shouldReportAsModified()) {
 -         stringbuilder.append("*");
-+         stringbuilder.append(" Forge").append('*');
++         stringbuilder.append('*').append(" Forge");
        }
  
        stringbuilder.append(" ");
