@@ -39,7 +39,6 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +60,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\r\n");
     private static final Joiner LINE_JOINER = Joiner.on("\n");
     private static final Joiner DOT_JOINER = Joiner.on(".");
-    private static final Splitter DOT_SPLITTER = Splitter.on(".");
+    private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
@@ -101,6 +100,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         setConfig(data);
     }
 
+    @Override
     public boolean isCorrecting() {
         return isCorrecting;
     }
@@ -117,6 +117,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         return this.values;
     }
 
+    @Override
     public void afterReload() {
         this.resetCaches(getValues().valueMap().values());
     }
@@ -138,11 +139,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
+    @Override
     public synchronized boolean isCorrect(CommentedConfig config) {
         LinkedList<String> parentPath = new LinkedList<>();
         return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (a, b, c, d) -> {}, null, true) == 0;
     }
 
+    @Override
     public int correct(CommentedConfig config) {
         return correct(config, (action, path, incorrectValue, correctedValue) -> {}, null);
     }
@@ -292,8 +295,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public <T> ConfigValue<T> define(List<String> path, ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
-                List<String> tmp = new ArrayList<>(currentPath.size() + path.size());
-                tmp.addAll(currentPath);
+                List<String> tmp = new ArrayList<>(currentPath);
                 tmp.addAll(path);
                 path = tmp;
             }
@@ -953,6 +955,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return config.getLongOrElse(path, defaultSupplier::get);
         }
     }
+
     public static class FloatValue extends ConfigValue<Float> {
         FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier) {
             super(parent, path, defaultSupplier);
@@ -994,6 +997,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     private static List<String> split(String path) {
-        return Lists.newArrayList(DOT_SPLITTER.split(path));
+        return DOT_SPLITTER.splitToStream(path).toList();
     }
 }
