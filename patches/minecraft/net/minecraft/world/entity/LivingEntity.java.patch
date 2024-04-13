@@ -721,7 +721,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
-+      if (this.m_6084_() && capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.m_6084_()) {
 +         if (facing == null) return handlers[2].cast();
 +         else if (facing.m_122434_().m_122478_()) return handlers[0].cast();
 +         else if (facing.m_122434_().m_122479_()) return handlers[1].cast();
