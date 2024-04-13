@@ -228,7 +228,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             LOGGER.error("Crash during font initialization", t);
             crashElegantly("An error occurred initializing a font for rendering. "+t.getMessage());
         }
-        this.elements = new ArrayList<>(Arrays.asList(
+        this.elements = new ArrayList<>(List.of(
                 RenderElement.anvil(font),
                 RenderElement.logMessageOverlay(font),
                 RenderElement.forgeVersionOverlay(font, mcVersion+"-"+forgeVersion.split("-")[0]),
@@ -596,8 +596,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         var fm = layer.findModule("forge").orElseThrow();
         getClass().getModule().addReads(fm);
         var clz = FMLLoader.getGameLayer().findModule("forge").map(l->Class.forName(l, "net.minecraftforge.client.loading.ForgeLoadingOverlay")).orElseThrow();
-        var methods = Arrays.stream(clz.getMethods()).filter(m-> Modifier.isStatic(m.getModifiers())).collect(Collectors.toMap(Method::getName, Function.identity()));
-        loadingOverlay = methods.get("newInstance");
+        loadingOverlay = Arrays.stream(clz.getMethods()).filter(m-> Modifier.isStatic(m.getModifiers()) && m.getName().equals("newInstance")).findFirst().orElseThrow();
     }
 
     public int getFramebufferTextureId() {
