@@ -364,14 +364,15 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        if (mcVersion != null) {
-            // this emulates what we would get without early progress window
-            // as vanilla never sets these, so GLFW uses the first window title
-            // set them explicitly to avoid it using "FML early loading progress" as the class
-            String vanillaWindowTitle = "Minecraft* " + mcVersion;
-            glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
-            glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
-        }
+
+        String vanillaWindowTitle = "Minecraft* ";
+        if (mcVersion != null) vanillaWindowTitle += mcVersion;
+
+        // this emulates what we would get without early progress window
+        // as vanilla never sets these, so GLFW uses the first window title
+        // set them explicitly to avoid it using "FML early loading progress" as the class
+        glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
+        glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
 
         long primaryMonitor = glfwGetPrimaryMonitor();
         if (primaryMonitor == 0) {
@@ -406,7 +407,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSIONS[versidx][1]);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            window = glfwCreateWindow(winWidth, winHeight, "Minecraft: Forge Loading...", 0L, 0L);
+            window = glfwCreateWindow(winWidth, winHeight, vanillaWindowTitle, 0L, 0L);
             var erridx = versidx;
             handleLastGLFWError((error, description) -> lastGLError[erridx] = String.format("Trying %d.%d: GLFW error: [0x%X]%s", GL_VERSIONS[erridx][0], GL_VERSIONS[erridx][1], error, description));
             if (lastGLError[versidx] != null) {
