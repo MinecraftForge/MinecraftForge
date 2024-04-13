@@ -452,19 +452,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwSetWindowPos(window, (vidmode.width() - this.winWidth) / 2 + monitorX, (vidmode.height() - this.winHeight) / 2 + monitorY);
 
         // Attempt setting the icon
-        int[] channels = new int[1];
-        try (var glfwImgBuffer = GLFWImage.create(MemoryUtil.getAllocator().malloc(GLFWImage.SIZEOF), 1)) {
-            final ByteBuffer imgBuffer;
-            try (GLFWImage glfwImages = GLFWImage.malloc()) {
-                imgBuffer = STBHelper.loadImageFromClasspath("forge_logo.png", 20000, x, y, channels);
-                glfwImgBuffer.put(glfwImages.set(x[0], y[0], imgBuffer));
-                glfwSetWindowIcon(window, glfwImgBuffer);
-                STBImage.stbi_image_free(imgBuffer);
-            }
-        } catch (NullPointerException e) {
-            System.err.println("Failed to load forge logo");
-        }
-        handleLastGLFWError((error, description) -> LOGGER.debug(String.format("Suppressing GLFW icon error: [0x%X]%s", error, description)));
+//        int[] channels = new int[1];
+//        try (var glfwImgBuffer = GLFWImage.create(MemoryUtil.getAllocator().malloc(GLFWImage.SIZEOF), 1)) {
+//            final ByteBuffer imgBuffer;
+//            try (GLFWImage glfwImages = GLFWImage.malloc()) {
+//                imgBuffer = STBHelper.loadImageFromClasspath("forge_logo.png", 20000, x, y, channels);
+//                glfwImgBuffer.put(glfwImages.set(x[0], y[0], imgBuffer));
+//                glfwSetWindowIcon(window, glfwImgBuffer);
+//                STBImage.stbi_image_free(imgBuffer);
+//            }
+//        } catch (NullPointerException e) {
+//            System.err.println("Failed to load forge logo");
+//        }
+//        handleLastGLFWError((error, description) -> LOGGER.debug(String.format("Suppressing GLFW icon error: [0x%X]%s", error, description)));
 
         glfwSetFramebufferSizeCallback(window, this::fbResize);
         glfwSetWindowPosCallback(window, this::winMove);
