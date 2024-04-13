@@ -38,7 +38,6 @@ import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.logging.log4j.Logger;
@@ -130,7 +129,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public void save() {
-        Preconditions.checkNotNull(childConfig, "Cannot save config value without assigned Config object present");
+        Objects.requireNonNull(childConfig, "Cannot save config value without assigned Config object present");
         if (childConfig instanceof FileConfig fileConfig) {
             fileConfig.save();
         }
@@ -577,7 +576,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             // Iterate list first, to throw meaningful errors
             // Don't add any comments until we make sure there is no nulls
             for (int i = 0; i < comment.length; i++)
-                Preconditions.checkNotNull(comment[i], "Comment string at " + i + " is null.");
+                Objects.requireNonNull(comment[i], "Comment string at " + i + " is null.");
 
             for (String s : comment)
                 context.addComment(s);
@@ -653,8 +652,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private Class<?> clazz;
 
         public void addComment(String value) {
-            // Don't use `validate` because it throws IllegalStateException, not NullPointerException
-            Preconditions.checkNotNull(value, "Passed in null value for comment");
+            Objects.requireNonNull(value, "Passed in null value for comment");
 
             comment.add(value);
         }
@@ -836,16 +834,18 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
          */
         @Override
         public T get() {
-            Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
+            Objects.requireNonNull(spec, "Cannot get config value before spec is built");
             // TODO: Remove this dev-time check so this errors out on both production and dev
             // This is dev-time-only in 1.19.x, to avoid breaking already published mods while forcing devs to fix their errors
             if (!FMLEnvironment.production) {
                 // When the above if-check is removed, change message to "Cannot get config value before config is loaded"
-                Preconditions.checkState(spec.childConfig != null, """
+                if (spec.childConfig == null) {
+                    throw new IllegalStateException("""
                         Cannot get config value before config is loaded.
                         This error is currently only thrown in the development environment, to avoid breaking published mods.
                         In a future version, this will also throw in the production environment.
                         """);
+                }
             }
 
             if (spec.childConfig == null)
@@ -875,14 +875,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
 
         public void save() {
-            Preconditions.checkNotNull(spec, "Cannot save config value before spec is built");
-            Preconditions.checkNotNull(spec.childConfig, "Cannot save config value without assigned Config object present");
+            Objects.requireNonNull(spec, "Cannot save config value before spec is built");
+            Objects.requireNonNull(spec.childConfig, "Cannot save config value without assigned Config object present");
             spec.save();
         }
 
         public void set(T value) {
-            Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
-            Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
+            Objects.requireNonNull(spec, "Cannot set config value before spec is built");
+            Objects.requireNonNull(spec.childConfig, "Cannot set config value without assigned Config object present");
             spec.childConfig.set(path, value);
             this.cachedValue = value;
         }
