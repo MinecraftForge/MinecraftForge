@@ -59,6 +59,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\r\n");
+    private static final Joiner LINE_JOINER = Joiner.on("\n");
+    private static final Joiner DOT_JOINER = Joiner.on(".");
+    private static final Splitter DOT_SPLITTER = Splitter.on(".");
 
     private ForgeConfigSpec(UnmodifiableConfig storage, UnmodifiableConfig values, Map<List<String>, String> levelComments, Map<List<String>, String> levelTranslationKeys) {
         super(storage);
@@ -263,7 +266,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final List<String> currentPath = new ArrayList<>();
         private final List<ConfigValue<?>> values = new ArrayList<>();
 
-        //Object
+        //region Objects
         public <T> ConfigValue<T> define(String path, T defaultValue) {
             return define(split(path), defaultValue);
         }
@@ -327,8 +330,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
             return define(path, defaultSupplier, acceptableValues::contains);
         }
+        //endregion
 
-        //Collections
+        //region Collections
         public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
@@ -385,8 +389,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 }
             }, defaultSupplier);
         }
+        //endregion
 
-        //Enum
+        //region Enums
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue) {
             return defineEnum(split(path), defaultValue);
         }
@@ -466,8 +471,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             comment("Allowed Values: " + Arrays.stream(allowedValues).filter(validator).map(Enum::name).collect(Collectors.joining(", ")));
             return new EnumValue<>(this, define(path, new ValueSpec(defaultSupplier, validator, context, path), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
+        //endregion
 
-        //boolean
+        //region booleans
         public BooleanValue define(String path, boolean defaultValue) {
             return define(split(path), defaultValue);
         }
@@ -483,8 +489,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 return o instanceof Boolean;
             }, Boolean.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Floats
+        //region floats
         public FloatValue defineInRange(String path, float defaultValue, float min, float max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -497,8 +504,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public FloatValue defineInRange(List<String> path, Supplier<Float> defaultSupplier, float min, float max) {
             return new FloatValue(this, defineInRange(path, defaultSupplier, min, max, Float.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Double
+        //region doubles
         public DoubleValue defineInRange(String path, double defaultValue, double min, double max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -511,8 +519,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
             return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Bytes
+        //region bytes
         public ByteValue defineInRange(String path, byte defaultValue, byte min, byte max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -525,8 +534,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public ByteValue defineInRange(List<String> path, Supplier<Byte> defaultSupplier, byte min, byte max) {
             return new ByteValue(this, defineInRange(path, defaultSupplier, min, max, Byte.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Shorts
+        //region shorts
         public ShortValue defineInRange(String path, short defaultValue, short min, short max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -539,8 +549,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public ShortValue defineInRange(List<String> path, Supplier<Short> defaultSupplier, short min, short max) {
             return new ShortValue(this, defineInRange(path, defaultSupplier, min, max, Short.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Ints
+        //region ints
         public IntValue defineInRange(String path, int defaultValue, int min, int max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -553,8 +564,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public IntValue defineInRange(List<String> path, Supplier<Integer> defaultSupplier, int min, int max) {
             return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
         }
+        //endregion
 
-        //Longs
+        //region longs
         public LongValue defineInRange(String path, long defaultValue, long min, long max) {
             return defineInRange(split(path), defaultValue, min, max);
         }
@@ -567,6 +579,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public LongValue defineInRange(List<String> path, Supplier<Long> defaultSupplier, long min, long max) {
             return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier);
         }
+        //endregion
 
         public Builder comment(String comment) {
             context.addComment(comment);
@@ -767,7 +780,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ValueSpec {
-
         private final String comment;
         private final String langKey;
         private final Range<?> range;
@@ -899,7 +911,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ByteValue extends ConfigValue<Byte> {
-
         ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -911,7 +922,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     }
 
     public static class ShortValue extends ConfigValue<Short> {
-
         ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -983,11 +993,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
-    private static final Joiner LINE_JOINER = Joiner.on("\n");
-    private static final Joiner DOT_JOINER = Joiner.on(".");
-    private static final Splitter DOT_SPLITTER = Splitter.on(".");
-    private static List<String> split(String path)
-    {
+    private static List<String> split(String path) {
         return Lists.newArrayList(DOT_SPLITTER.split(path));
     }
 }
