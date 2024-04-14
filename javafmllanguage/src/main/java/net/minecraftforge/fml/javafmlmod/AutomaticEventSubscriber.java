@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class AutomaticEventSubscriber {
             .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
             .toList();
 
-        var onlyIns = scanData.getAnnotations().stream()
+        var onlyIns = FMLEnvironment.production ? Collections.emptyList() : scanData.getAnnotations().stream()
                 .filter(data -> ONLY_IN_TYPE.equals(data.annotationType()))
                 .map(data -> data.clazz().getClassName())
                 .collect(Collectors.toSet());
