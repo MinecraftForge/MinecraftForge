@@ -143,21 +143,27 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     }
 
     @SuppressWarnings("unchecked")
-    private static List<AnnotationNode> unpack(final List<AnnotationNode> anns) {
-        if (anns == null) {
+    private static List<AnnotationNode> unpack(final List<AnnotationNode> anns)
+    {
+        if (anns == null)
+        {
             return Collections.emptyList();
         }
 
         List<AnnotationNode> unpacked = new ArrayList<>();
 
-        for (var annotationNode : anns) {
-            if (Objects.equals(annotationNode.desc, ONLYINS)) {
+        for (var annotationNode : anns)
+        {
+            if (Objects.equals(annotationNode.desc, ONLYINS))
+            {
                 unpacked.add(annotationNode);
 
-                if (annotationNode.values != null) {
+                if (annotationNode.values != null)
+                {
                     List<AnnotationNode> subNodes = (List<AnnotationNode>) annotationNode.values.get(annotationNode.values.indexOf("value") + 1);
 
-                    if (subNodes != null) {
+                    if (subNodes != null)
+                    {
                         unpacked.addAll(subNodes);
                     }
                 }
