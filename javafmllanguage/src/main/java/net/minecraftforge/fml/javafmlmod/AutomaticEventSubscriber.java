@@ -57,7 +57,7 @@ public class AutomaticEventSubscriber {
 
         for (var data : targets) {
             if (!FMLEnvironment.production && onlyIns.contains(data.clazz().getClassName())) {
-                throw new RuntimeException("Found @OnlyIn on @EventBusSubscriber class " + data.clazz().getClassName() + " - this is not allowed you should instead use the dist parameter on EventBusSubscriber annotation");
+                throw new RuntimeException("Found @OnlyIn on @EventBusSubscriber class " + data.clazz().getClassName() + " - this is not allowed as it causes crashes. Remove the OnlyIn and set value=Dist.CLIENT in the EventBusSubscriber annotation instead");
             }
 
             var modId = modids.getOrDefault(data.clazz().getClassName(), mod.getModId());
