@@ -48,7 +48,7 @@ public class OnDatapackSyncEvent extends Event {
      * @return A list of players that should receive data during this event, which is the specified player (if not null)
      *         or all players otherwise.
      */
-    public List<ServerPlayer> getRelevantPlayers() {
+    public List<ServerPlayer> getPlayers() {
         return this.player == null ? this.playerList.getPlayers() : List.of(this.player);
     }
 }
