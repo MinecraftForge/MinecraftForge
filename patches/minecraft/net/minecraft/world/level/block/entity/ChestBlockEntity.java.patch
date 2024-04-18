@@ -17,7 +17,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-+       if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++       if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.f_58859_) {
 +          if (this.chestHandler == null)
 +             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 +          return this.chestHandler.cast();
