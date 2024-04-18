@@ -17,7 +17,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-+       if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER) {
++       if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.f_58859_) {
 +          if (this.chestHandler == null)
 +             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 +          return this.chestHandler.cast();
@@ -27,10 +27,10 @@
 +
 +   private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
 +      BlockState state = this.m_58900_();
-+      if (!(state.m_60734_() instanceof ChestBlock)) {
++      if (!(state.m_60734_() instanceof ChestBlock chestBlock)) {
 +         return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +      }
-+      Container inv = ChestBlock.m_51511_((ChestBlock) state.m_60734_(), state, m_58904_(), m_58899_(), true);
++      Container inv = ChestBlock.m_51511_(chestBlock, state, m_58904_(), m_58899_(), true);
 +      return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
 +   }
 +

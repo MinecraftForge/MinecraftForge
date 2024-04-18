@@ -48,7 +48,7 @@ public class LazyOptional<T> {
     // non-null and contains non-null value -> resolved
     // non-null and contains null -> resolved, but supplier returned null (contract violation)
     private Mutable<T> resolved;
-    private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
+    private final Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
     private static final @NotNull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
