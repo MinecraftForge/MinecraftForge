@@ -25,7 +25,7 @@ import net.minecraftforge.fml.LogicalSide;
  * @see ClientPauseChangeEvent.Pre
  * @see ClientPauseChangeEvent.Post
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since="1.20.4")
 public class ClientPauseEvent extends Event
 {
     private final boolean paused;
