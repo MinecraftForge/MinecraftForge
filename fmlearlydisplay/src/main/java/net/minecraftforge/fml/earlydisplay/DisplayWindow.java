@@ -14,9 +14,7 @@ import net.minecraftforge.fml.loading.ImmediateWindowProvider;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
@@ -30,7 +28,6 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -50,7 +47,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -364,14 +360,15 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        if (mcVersion != null) {
-            // this emulates what we would get without early progress window
-            // as vanilla never sets these, so GLFW uses the first window title
-            // set them explicitly to avoid it using "FML early loading progress" as the class
-            String vanillaWindowTitle = "Minecraft* " + mcVersion;
-            glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
-            glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
-        }
+
+        String vanillaWindowTitle = "Minecraft* ";
+        if (mcVersion != null) vanillaWindowTitle += mcVersion;
+
+        // this emulates what we would get without early progress window
+        // as vanilla never sets these, so GLFW uses the first window title
+        // set them explicitly to avoid it using "FML early loading progress" as the class
+        glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
+        glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
 
         long primaryMonitor = glfwGetPrimaryMonitor();
         if (primaryMonitor == 0) {
@@ -393,7 +390,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }, 10, TimeUnit.SECONDS);
         int versidx = 0;
         var skipVersions = FMLConfig.<String>getListConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SKIP_GL_VERSIONS);
-        final String[] lastGLError=new String[GL_VERSIONS.length];
+        boolean showHelpLog = FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_LOG_HELP_MSG);
+        final String[] lastGLError = new String[GL_VERSIONS.length];
         do {
             final var glVersionToTry = GL_VERSIONS[versidx][0] + "." + GL_VERSIONS[versidx][1];
             if (skipVersions.contains(glVersionToTry)) {
@@ -402,11 +400,23 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 continue;
             }
             LOGGER.info("Trying GL version " + glVersionToTry);
+            if (showHelpLog && versidx == 0) {
+                LOGGER.info("""
+                If this message is the only thing at the bottom of your log before a crash, you probably have a driver issue.
+                
+                Possible solutions:
+                A) Make sure Minecraft is set to prefer high performance graphics in the OS and/or driver control panel
+                B) Check for driver updates on the graphics brand's website
+                C) Try reinstalling your graphics drivers
+                D) If still not working after trying all of the above, ask for further help on the Forge forums or Discord
+                
+                You can safely ignore this message if the game starts up successfully.""");
+            }
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSIONS[versidx][0]); // we try our versions one at a time
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSIONS[versidx][1]);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            window = glfwCreateWindow(winWidth, winHeight, "Minecraft: Forge Loading...", 0L, 0L);
+            window = glfwCreateWindow(winWidth, winHeight, vanillaWindowTitle, 0L, 0L);
             var erridx = versidx;
             handleLastGLFWError((error, description) -> lastGLError[erridx] = String.format("Trying %d.%d: GLFW error: [0x%X]%s", GL_VERSIONS[erridx][0], GL_VERSIONS[erridx][1], error, description));
             if (lastGLError[versidx] != null) {
@@ -434,6 +444,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.glVersion = gotVersion;
         this.window = window;
 
+        if (showHelpLog)
+            FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_LOG_HELP_MSG, false);
+
         int[] x = new int[1];
         int[] y = new int[1];
         glfwGetMonitorPos(primaryMonitor, x, y);
@@ -451,19 +464,19 @@ public class DisplayWindow implements ImmediateWindowProvider {
         glfwSetWindowPos(window, (vidmode.width() - this.winWidth) / 2 + monitorX, (vidmode.height() - this.winHeight) / 2 + monitorY);
 
         // Attempt setting the icon
-        int[] channels = new int[1];
-        try (var glfwImgBuffer = GLFWImage.create(MemoryUtil.getAllocator().malloc(GLFWImage.SIZEOF), 1)) {
-            final ByteBuffer imgBuffer;
-            try (GLFWImage glfwImages = GLFWImage.malloc()) {
-                imgBuffer = STBHelper.loadImageFromClasspath("forge_logo.png", 20000, x, y, channels);
-                glfwImgBuffer.put(glfwImages.set(x[0], y[0], imgBuffer));
-                glfwSetWindowIcon(window, glfwImgBuffer);
-                STBImage.stbi_image_free(imgBuffer);
-            }
-        } catch (NullPointerException e) {
-            System.err.println("Failed to load forge logo");
-        }
-        handleLastGLFWError((error, description) -> LOGGER.debug(String.format("Suppressing GLFW icon error: [0x%X]%s", error, description)));
+//        int[] channels = new int[1];
+//        try (var glfwImgBuffer = GLFWImage.create(MemoryUtil.getAllocator().malloc(GLFWImage.SIZEOF), 1)) {
+//            final ByteBuffer imgBuffer;
+//            try (GLFWImage glfwImages = GLFWImage.malloc()) {
+//                imgBuffer = STBHelper.loadImageFromClasspath("forge_logo.png", 20000, x, y, channels);
+//                glfwImgBuffer.put(glfwImages.set(x[0], y[0], imgBuffer));
+//                glfwSetWindowIcon(window, glfwImgBuffer);
+//                STBImage.stbi_image_free(imgBuffer);
+//            }
+//        } catch (NullPointerException e) {
+//            System.err.println("Failed to load forge logo");
+//        }
+//        handleLastGLFWError((error, description) -> LOGGER.debug(String.format("Suppressing GLFW icon error: [0x%X]%s", error, description)));
 
         glfwSetFramebufferSizeCallback(window, this::fbResize);
         glfwSetWindowPosCallback(window, this::winMove);
