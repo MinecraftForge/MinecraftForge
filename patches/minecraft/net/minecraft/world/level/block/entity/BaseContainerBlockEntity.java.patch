@@ -11,7 +11,7 @@
 +   }
 +
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (!this.f_58859_ && cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER)
++      if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.f_58859_)
 +         return itemHandler.cast();
 +      return super.getCapability(cap, side);
 +   }
