@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class BackgroundWaiter {
-    private static ExecutorService runner = Executors.newSingleThreadExecutor();
+    private static final ExecutorService runner = Executors.newSingleThreadExecutor();
 
     public static void runAndTick(Runnable r, Runnable tick) {
         ImmediateWindowHandler.updateProgress("Loading bootstrap resources");

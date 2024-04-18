@@ -6,6 +6,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Streams;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -32,6 +33,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.LOADING;
@@ -91,13 +93,13 @@ public class ModLoader
     {
         INSTANCE = this;
         this.loadingModList = FMLLoader.getLoadingModList();
-        this.loadingExceptions = FMLLoader.getLoadingModList().getErrors().stream()
+        this.loadingExceptions = this.loadingModList.getErrors().stream()
                 .flatMap(ModLoadingException::fromEarlyException)
                 .collect(Collectors.toList());
-        this.loadingWarnings = FMLLoader.getLoadingModList().getBrokenFiles().stream()
+        this.loadingWarnings = this.loadingModList.getBrokenFiles().stream()
                 .map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE, InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName()))
                 .collect(Collectors.toList());
-        FMLLoader.getLoadingModList().getModFiles().stream()
+        this.loadingModList.getModFiles().stream()
                 .filter(ModFileInfo::missingLicense)
                 .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
                 .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
@@ -228,10 +230,9 @@ public class ModLoader
         } catch (CompletionException e) {
             loadingStateValid = false;
             Throwable t = e.getCause();
-            final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
-                    .filter(obj -> !(obj instanceof ModLoadingException))
-                    .collect(Collectors.toList());
-            if (!notModLoading.isEmpty()) {
+            boolean hasNotModLoadingEx = Arrays.stream(t.getSuppressed())
+                    .anyMatch(obj -> !(obj instanceof ModLoadingException));
+            if (hasNotModLoadingEx) {
                 LOGGER.fatal("Encountered non-modloading exceptions!", e);
                 statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
                 throw e;
@@ -257,10 +258,10 @@ public class ModLoader
                 .stream()
                 .map(e -> buildModContainerFromTOML(modFile, modInfoMap, e))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
         if (containers.size() != modInfoMap.size()) {
-            var modIds = modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList());
-            var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList());
+            var modIds = modInfoMap.values().stream().map(IModInfo::getModId).sorted().toList();
+            var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().toList();
 
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
@@ -278,7 +279,7 @@ public class ModLoader
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
-        return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).collect(Collectors.toList());
+        return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).toList();
     }
 
     private ModContainer buildModContainerFromTOML(final IModFile modFile, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {

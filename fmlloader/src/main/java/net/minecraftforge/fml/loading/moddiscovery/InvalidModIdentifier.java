@@ -12,10 +12,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.*;
 
+// TODO: [FML][Loader] By the time this is reached, most stuff this checks for is already filtered out - needs fixing.
 public enum InvalidModIdentifier {
 
     OLDFORGE(filePresent("mcmod.info")),
@@ -23,9 +25,9 @@ public enum InvalidModIdentifier {
     LITELOADER(filePresent("litemod.json")),
     OPTIFINE(filePresent("optifine/Installer.class")),
     BUKKIT(filePresent("plugin.yml")),
-    INVALIDZIP((f,zf) -> !zf.isPresent());
+    INVALIDZIP((f,zf) -> zf.isEmpty()); // note: only this one INVALIDZIP check is ran until the todo on this class is fixed
 
-    private BiPredicate<Path, Optional<ZipFile>> ident;
+    private final BiPredicate<Path, Optional<ZipFile>> ident;
 
     InvalidModIdentifier(BiPredicate<Path, Optional<ZipFile>> identifier)
     {
@@ -40,7 +42,7 @@ public enum InvalidModIdentifier {
     public static Optional<String> identifyJarProblem(Path path)
     {
         Optional<ZipFile> zfo = optionalFromException(() -> new ZipFile(path.toFile()));
-        Optional<String> result = Arrays.stream(values()).
+        Optional<String> result = Stream.of(INVALIDZIP).
                                          filter(i -> i.ident.test(path, zfo)).
                                          map(InvalidModIdentifier::getReason).
                                          findAny();
