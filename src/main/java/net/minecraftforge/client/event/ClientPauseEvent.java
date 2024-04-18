@@ -20,7 +20,12 @@ import net.minecraftforge.fml.LogicalSide;
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @deprecated use {@linkplain ClientPauseChangeEvent.Post ClientPauseChangeEvent.Post} instead
+ * @see ClientPauseChangeEvent.Pre
+ * @see ClientPauseChangeEvent.Post
  */
+@Deprecated(forRemoval = true, since="1.20.4")
 public class ClientPauseEvent extends Event
 {
     private final boolean paused;
