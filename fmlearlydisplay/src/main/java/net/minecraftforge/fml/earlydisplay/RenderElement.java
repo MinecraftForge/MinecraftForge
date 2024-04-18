@@ -34,11 +34,14 @@ public class RenderElement {
             };
         }
     }
+    @FunctionalInterface
     interface TextureRenderer {
         void accept(SimpleBufferBuilder bb, DisplayContext context, int[] size, int frame);
     }
+    @FunctionalInterface
     interface Initializer extends Supplier<Renderer> {}
 
+    @FunctionalInterface
     interface TextGenerator {
         void accept(SimpleBufferBuilder bb, SimpleFont fh, DisplayContext ctx);
     }
@@ -201,14 +204,17 @@ public class RenderElement {
         bar.then(label).accept(buffer, context, frameNumber);
     }
 
+    @FunctionalInterface
     interface ColourFunction {
         int colour(int frame);
     }
 
+    @FunctionalInterface
     interface ProgressDisplay {
         float[] progress(int frame);
     }
 
+    @FunctionalInterface
     interface BarPosition {
         int[] location(DisplayContext context);
     }
@@ -280,7 +286,7 @@ public class RenderElement {
         if (num < min) {
             return min;
         } else {
-            return num > max ? max : num;
+            return Math.min(num, max);
         }
     }
 
@@ -288,7 +294,7 @@ public class RenderElement {
         if (num < min) {
             return min;
         } else {
-            return num > max ? max : num;
+            return Math.min(num, max);
         }
     }
 
