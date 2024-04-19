@@ -75,7 +75,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
 
         // the remaining properties are optional with sensible defaults
         boolean notAForgeMod = false;
-        if (modLoader.equals(JAVAFML) && modLoaderVersion.containsVersion(NOT_JAVAFML_VER)) {
+        if (modLoader.equals(JAVAFML) && modLoaderVersion.hasRestrictions() && modLoaderVersion.containsVersion(NOT_JAVAFML_VER)) {
             notAForgeMod = true;
             this.properties = Map.of(NOT_A_FORGE_MOD_PROP, true);
         } else {
