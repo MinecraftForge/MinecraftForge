@@ -137,9 +137,10 @@ public class DisplayWindow implements ImmediateWindowProvider {
             try {
                 // check the options file for the colour scheme
                 var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Path.of("options.txt")));
+                var keyName = "darkMojangStudiosBackground:";
                 for (String line : optionLines) {
-                    if (line.startsWith("darkMojangStudiosBackground:")) {
-                        this.colourScheme = line.endsWith("true") ? ColourScheme.BLACK : ColourScheme.RED;
+                    if (line.startsWith(keyName)) {
+                        this.colourScheme = line.startsWith("true", keyName.length()) ? ColourScheme.BLACK : ColourScheme.RED;
                         break;
                     }
                 }
