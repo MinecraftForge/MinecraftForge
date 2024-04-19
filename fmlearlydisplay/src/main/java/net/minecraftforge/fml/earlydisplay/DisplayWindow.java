@@ -32,7 +32,7 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -50,7 +50,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -80,7 +79,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger("EARLYDISPLAY");
     private final AtomicBoolean animationTimerTrigger = new AtomicBoolean(true);
 
-    private ColourScheme colourScheme;
+    private ColourScheme colourScheme = ColourScheme.RED;
     private ElementShader elementShader;
 
     private RenderElement.DisplayContext context;
@@ -137,13 +136,17 @@ public class DisplayWindow implements ImmediateWindowProvider {
             this.colourScheme = ColourScheme.BLACK;
         } else {
             try {
-                var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Paths.get("options.txt")));
-                var options = optionLines.stream().map(l -> l.split(":")).filter(a -> a.length == 2).collect(Collectors.toMap(a -> a[0], a -> a[1]));
-                var colourScheme = Boolean.parseBoolean(options.getOrDefault("darkMojangStudiosBackground", "false"));
-                this.colourScheme = colourScheme ? ColourScheme.BLACK : ColourScheme.RED;
-            } catch (IOException ioe) {
-                // No options
-                this.colourScheme = ColourScheme.RED; // default to red colourscheme
+                // check the options file for the colour scheme
+                var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Path.of("options.txt")));
+                var keyName = "darkMojangStudiosBackground:";
+                for (String line : optionLines) {
+                    if (line.startsWith(keyName)) {
+                        this.colourScheme = line.startsWith("true", keyName.length()) ? ColourScheme.BLACK : ColourScheme.RED;
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                this.colourScheme = ColourScheme.RED; // fallback to red colourScheme
             }
         }
         this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
