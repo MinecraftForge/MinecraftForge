@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 @ApiStatus.Internal
@@ -222,8 +223,14 @@ public class ModInfo implements IModInfo, IConfigurable {
                     fileProps.remove(ModFileInfo.NOT_A_FORGE_MOD_PROP);
                 }
             }
-            this.mandatory = config.<Boolean>getConfigElement("mandatory")
-                    .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
+            var mandatory = config.<Boolean>getConfigElement("mandatory");
+            if (mandatory.isPresent()) {
+                this.mandatory = mandatory.get();
+            } else if (owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                this.mandatory = true;
+            } else {
+                throw new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile());
+            }
             this.versionRange = config.<String>getConfigElement("versionRange")
                     .map(MavenVersionAdapter::createFromVersionSpec)
                     .orElse(UNBOUNDED);
