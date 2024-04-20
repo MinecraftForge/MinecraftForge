@@ -213,6 +213,15 @@ public class ModInfo implements IModInfo, IConfigurable {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
                     .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
+            if (this.modId.equals("forge")) {
+                var fileProps = owner.getOwningFile().getFileProperties();
+                // Checking containsKey to avoid a possible exception if the property is not present (due to Collections.emptyMap())
+                if (fileProps.containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                    // if the mod has a dependency on Forge, but we thought it wasn't a Forge mod earlier, we were wrong
+                    // so remove the flag.
+                    fileProps.remove(ModFileInfo.NOT_A_FORGE_MOD_PROP);
+                }
+            }
             this.mandatory = config.<Boolean>getConfigElement("mandatory")
                     .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
             this.versionRange = config.<String>getConfigElement("versionRange")

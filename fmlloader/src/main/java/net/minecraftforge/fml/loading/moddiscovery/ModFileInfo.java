@@ -14,8 +14,7 @@ import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import javax.security.auth.x500.X500Principal;
 import java.net.URL;
@@ -31,20 +30,22 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ModFileInfo implements IModFileInfo, IConfigurable
 {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final ArtifactVersion NOT_JAVAFML_VER = new DefaultArtifactVersion("2");
+    private static final String MAYBE_NOT_JAVAFML_VER = "[2,)";
     private static final String JAVAFML = "javafml";
+
+    @ApiStatus.Internal
     public static final String NOT_A_FORGE_MOD_PROP = "__FORGE__not_a_forge_mod";
 
     private final IConfigurable config;
@@ -68,28 +69,27 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         var modLoader = config.<String>getConfigElement("modLoader")
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
         // as is modloader version
-        var modLoaderVersion = config.<String>getConfigElement("loaderVersion")
-                .map(MavenVersionAdapter::createFromVersionSpec)
+        var modLoaderVerStr = config.<String>getConfigElement("modLoaderVersion")
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+        var modLoaderVersion = MavenVersionAdapter.createFromVersionSpec(modLoaderVerStr);
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
 
-        // the remaining properties are optional with sensible defaults
-        boolean notAForgeMod = false;
-        if (modLoader.equals(JAVAFML) && modLoaderVersion.hasRestrictions() && modLoaderVersion.containsVersion(NOT_JAVAFML_VER)) {
-            notAForgeMod = true;
-            this.properties = Map.of(NOT_A_FORGE_MOD_PROP, true);
-        } else {
-            this.properties = config.<Map<String, Object>>getConfigElement("properties")
-                    .orElse(Collections.emptyMap());
-        }
-        this.modFile.setFileProperties(this.properties);
+        // if true, this might not be a Forge mod
+        boolean maybeNotAForgeMod = modLoader.equals(JAVAFML)
+                && modLoaderVersion.hasRestrictions() // if loaderVersion is not "*"
+                && modLoaderVerStr.equals(MAYBE_NOT_JAVAFML_VER); // if loaderVersion is exactly "[2,)"
 
+        // the remaining properties are optional with sensible defaults
         this.license = config.<String>getConfigElement("license")
                 .orElse("");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack")
                 .orElse(false);
         this.clientSideOnly = config.<Boolean>getConfigElement("clientSideOnly")
                 .orElse(false);
+        if (this.clientSideOnly) {
+            // if clientSideOnly, then this is definitely a Forge mod
+            maybeNotAForgeMod = false;
+        }
         this.showAsDataPack = config.<Boolean>getConfigElement("showAsDataPack")
                 .orElse(false);
         this.usesServices = config.<List<String>>getConfigElement("services")
@@ -98,10 +98,17 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(StringUtils::toURL)
                 .orElse(null);
 
-        if (notAForgeMod) {
-            this.mods = List.of();
-            return;
+        if (maybeNotAForgeMod) {
+            // mark this file as not a Forge mod. Note: this marker may be removed later based on the mod dependencies
+            this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                    .orElse(new LinkedHashMap<>());
+            this.properties.put(NOT_A_FORGE_MOD_PROP, true);
+        } else {
+            this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                    .orElse(Collections.emptyMap());
         }
+        this.modFile.setFileProperties(this.properties);
+
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs.isEmpty())
         {
