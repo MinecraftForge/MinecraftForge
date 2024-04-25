@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 @ApiStatus.Internal
@@ -213,8 +214,23 @@ public class ModInfo implements IModInfo, IConfigurable {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
                     .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
-            this.mandatory = config.<Boolean>getConfigElement("mandatory")
-                    .orElseThrow(()->new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile()));
+            if (this.modId.equals("forge")) {
+                var fileProps = owner.getOwningFile().getFileProperties();
+                // Checking containsKey to avoid a possible exception if the property is not present (due to Collections.emptyMap())
+                if (!fileProps.isEmpty() && fileProps.containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                    // if the mod has a dependency on Forge, but we thought it wasn't a Forge mod earlier, we were wrong
+                    // so remove the flag.
+                    fileProps.remove(ModFileInfo.NOT_A_FORGE_MOD_PROP);
+                }
+            }
+            var mandatory = config.<Boolean>getConfigElement("mandatory");
+            if (mandatory.isPresent()) {
+                this.mandatory = mandatory.get();
+            } else if (owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+                this.mandatory = true;
+            } else {
+                throw new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile());
+            }
             this.versionRange = config.<String>getConfigElement("versionRange")
                     .map(MavenVersionAdapter::createFromVersionSpec)
                     .orElse(UNBOUNDED);
