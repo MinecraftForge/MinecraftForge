@@ -23,26 +23,7 @@
      }
  
      @Deprecated
-@@ -100,17 +_,25 @@
-         return this.builtInRegistryHolder;
-     }
- 
-+    @Nullable
-+    private DataComponentMap builtComponents = null;
-+
-     public DataComponentMap components() {
--        return this.components;
-+        if (builtComponents == null) {
-+            builtComponents = net.minecraftforge.common.ForgeHooks.gatherItemComponents(this, components);
-+        }
-+        return builtComponents;
-     }
- 
-     public int getDefaultMaxStackSize() {
-+        if (builtComponents != null) return this.builtComponents.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
-         return this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
-     }
- 
+@@ -111,6 +_,7 @@
      public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
      }
  

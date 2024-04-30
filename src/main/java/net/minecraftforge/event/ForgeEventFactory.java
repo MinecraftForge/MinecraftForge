@@ -13,8 +13,6 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1061,9 +1059,5 @@ public final class ForgeEventFactory {
 
     public static void onPlayerTradeWithVillager(Player player, MerchantOffer offer, AbstractVillager villager) {
         post(new TradeWithVillagerEvent(player, offer, villager));
-    }
-
-    public static GatherComponentsEvent.GatherItemComponentsEvent gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
-        return fire(new GatherComponentsEvent.GatherItemComponentsEvent(item, dataComponents));
     }
 }
