@@ -214,7 +214,7 @@ public class ModInfo implements IModInfo, IConfigurable {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
                     .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
-            if (this.modId.equals("forge")) {
+            if (ModFileInfo.DETECT_NON_FORGE_MODS_TOML && this.modId.equals("forge")) {
                 var fileProps = owner.getOwningFile().getFileProperties();
                 // Checking containsKey to avoid a possible exception if the property is not present (due to Collections.emptyMap())
                 if (!fileProps.isEmpty() && fileProps.containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
@@ -226,7 +226,7 @@ public class ModInfo implements IModInfo, IConfigurable {
             var mandatory = config.<Boolean>getConfigElement("mandatory");
             if (mandatory.isPresent()) {
                 this.mandatory = mandatory.get();
-            } else if (owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+            } else if (ModFileInfo.DETECT_NON_FORGE_MODS_TOML && owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
                 this.mandatory = true;
             } else {
                 throw new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile());

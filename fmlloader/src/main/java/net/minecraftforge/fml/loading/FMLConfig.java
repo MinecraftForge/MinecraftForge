@@ -39,6 +39,7 @@ public class FMLConfig
         EARLY_WINDOW_SQUIR("earlyWindowSquir", Boolean.FALSE, "Squir?"),
         EARLY_WINDOW_SHOW_CPU("earlyWindowShowCPU", Boolean.FALSE, "Whether to show CPU usage stats in early window"),
         EARLY_WINDOW_LOG_HELP_MSG("earlyWindowLogHelpMessage", Boolean.TRUE, "Whether to log a help message on first attempt, to aid troubleshooting. This setting should automatically disable itself after a successful launch"),
+        DETECT_NON_FORGE_MODS_TOML("detectNonForgeModsToml", Boolean.TRUE, "Attempt to detect non-Forge mods from their mods.toml to show a friendlier error message. This is a best-effort feature - disable if it causes issues."),
         ;
 
         private final String entry;
