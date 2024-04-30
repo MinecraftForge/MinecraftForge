@@ -1,18 +1,18 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -157,6 +_,7 @@
-    public void onDisconnect(Component p_104543_) {
-       if (this.serverData != null && this.serverData.isRealm()) {
-          this.minecraft.setScreen(new DisconnectedRealmsScreen(this.parent, CommonComponents.CONNECT_FAILED, p_104543_));
-+      } else if (net.minecraftforge.client.ForgeHooksClient.onClientDisconnect(this.connection, this.minecraft, this.parent, p_104543_)) {
-       } else {
-          this.minecraft.setScreen(new DisconnectedScreen(this.parent, CommonComponents.CONNECT_FAILED, p_104543_));
-       }
-@@ -179,6 +_,7 @@
-    }
+@@ -205,6 +_,7 @@
+         Component component = this.wasTransferredTo ? CommonComponents.TRANSFER_CONNECT_FAILED : CommonComponents.CONNECT_FAILED;
+         if (this.serverData != null && this.serverData.isRealm()) {
+             this.minecraft.setScreen(new DisconnectedRealmsScreen(this.parent, component, p_104543_));
++        } else if (net.minecraftforge.client.ForgeHooksClient.onClientDisconnect(this.connection, this.minecraft, this.parent, p_104543_)) {
+         } else {
+             this.minecraft.setScreen(new DisconnectedScreen(this.parent, component, p_104543_));
+         }
+@@ -229,6 +_,7 @@
  
-    public void handleCustomQuery(ClientboundCustomQueryPacket p_104545_) {
-+      if (net.minecraftforge.common.ForgeHooks.onCustomPayload(p_104545_, this.connection)) return;
-       this.updateStatus.accept(Component.translatable("connect.negotiating"));
-       this.connection.send(new ServerboundCustomQueryAnswerPacket(p_104545_.transactionId(), (CustomQueryAnswerPayload)null));
-    }
+     @Override
+     public void handleCustomQuery(ClientboundCustomQueryPacket p_104545_) {
++        if (net.minecraftforge.common.ForgeHooks.onCustomPayload(p_104545_, this.connection)) return;
+         this.updateStatus.accept(Component.translatable("connect.negotiating"));
+         this.connection.send(new ServerboundCustomQueryAnswerPacket(p_104545_.transactionId(), null));
+     }

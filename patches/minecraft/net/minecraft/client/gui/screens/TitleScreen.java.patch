@@ -1,67 +1,64 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -63,6 +_,7 @@
-    @Nullable
-    private TitleScreen.WarningLabel warningLabel;
-    private final LogoRenderer logoRenderer;
-+   private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
+@@ -61,6 +_,7 @@
+     @Nullable
+     private TitleScreen.WarningLabel warningLabel;
+     private final LogoRenderer logoRenderer;
++    private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
  
-    public TitleScreen() {
-       this(false);
-@@ -113,11 +_,15 @@
-       int j = this.width - i - 2;
-       int k = 24;
-       int l = this.height / 4 + 48;
-+      Button modButton = null;
-       if (this.minecraft.isDemo()) {
-          this.createDemoMenuOptions(l, 24);
-       } else {
-          this.createNormalMenuOptions(l, 24);
-+         modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
-+            .pos(this.width / 2 - 100, l + 24 * 2).size(98, 20).build());
-       }
-+      modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
+     public TitleScreen() {
+         this(false);
+@@ -116,11 +_,15 @@
+         int j = this.width - i - 2;
+         int k = 24;
+         int l = this.height / 4 + 48;
++        Button modButton = null;
+         if (this.minecraft.isDemo()) {
+             this.createDemoMenuOptions(l, 24);
+         } else {
+             this.createNormalMenuOptions(l, 24);
++            modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
++                    .pos(this.width / 2 - 100, l + 24 * 2).size(98, 20).build());
+         }
++        modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-       SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (p_280830_) -> {
-          this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-@@ -163,7 +_,7 @@
-       }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build())).active = flag;
-       (this.addRenderableWidget(Button.builder(Component.translatable("menu.online"), (p_210872_) -> {
-          this.realmsButtonClicked();
--      }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20).tooltip(tooltip).build())).active = flag;
-+      }).bounds(this.width / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20).tooltip(tooltip).build())).active = flag;
-    }
+         SpriteIconButton spriteiconbutton = this.addRenderableWidget(
+             CommonButtons.language(
+@@ -171,7 +_,7 @@
+         }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build()).active = flag;
+         this.addRenderableWidget(
+                 Button.builder(Component.translatable("menu.online"), p_325369_ -> this.minecraft.setScreen(new RealmsMainScreen(this)))
+-                    .bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 2, 200, 20)
++                    .bounds(this.width / 2 + 2, p_96764_ + p_96765_ * 2, 98, 20)
+                     .tooltip(tooltip)
+                     .build()
+             )
+@@ -281,6 +_,7 @@
+                 this.warningLabel.render(p_282860_, i);
+             }
  
-    @Nullable
-@@ -243,6 +_,7 @@
-             this.warningLabel.render(p_282860_, i);
-          }
++            net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.font, this.width, this.height, i);
+             if (this.splash != null && !this.minecraft.options.hideSplashTexts().get()) {
+                 this.splash.render(p_282860_, this.width, this.font, i);
+             }
+@@ -296,11 +_,19 @@
+                 s = s + I18n.get("menu.modded");
+             }
  
-+         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.font, this.width, this.height, i);
-          if (this.splash != null && !this.minecraft.options.hideSplashTexts().get()) {
-             this.splash.render(p_282860_, this.width, this.font, i);
-          }
-@@ -258,7 +_,14 @@
-             s = s + I18n.get("menu.modded");
-          }
- 
--         p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
-+         net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brdline, brd) ->
-+            p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
-+         );
+-            p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
++            net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brdline, brd) ->
++                    p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
++            );
 +
-+         net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
-+            p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
-+         );
++            net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
++                    p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
++            );
 +
+             if (this.realmsNotificationsEnabled() && f >= 1.0F) {
+                 RenderSystem.enableDepthTest();
+                 this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
+             }
++            if (f >= 1.0f) this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
+         }
+     }
  
-          for(GuiEventListener guieventlistener : this.children()) {
-             if (guieventlistener instanceof AbstractWidget) {
-@@ -271,6 +_,7 @@
-             RenderSystem.enableDepthTest();
-             this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
-          }
-+         if (f1 >= 1.0f) modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
- 
-       }
-    }

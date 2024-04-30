@@ -1,38 +1,37 @@
 --- a/net/minecraft/CrashReportCategory.java
 +++ b/net/minecraft/CrashReportCategory.java
-@@ -102,8 +_,10 @@
-       if (astacktraceelement.length <= 0) {
-          return 0;
-       } else {
--         this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - p_128149_];
--         System.arraycopy(astacktraceelement, 3 + p_128149_, this.stackTrace, 0, this.stackTrace.length);
-+         int len = astacktraceelement.length - 3 - p_128149_;
-+         if (len <= 0) len = astacktraceelement.length;
-+         this.stackTrace = new StackTraceElement[len];
-+         System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
-          return this.stackTrace.length;
-       }
-    }
-@@ -147,17 +_,17 @@
+@@ -112,8 +_,10 @@
+         if (astacktraceelement.length <= 0) {
+             return 0;
+         } else {
+-            this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - p_128149_];
+-            System.arraycopy(astacktraceelement, 3 + p_128149_, this.stackTrace, 0, this.stackTrace.length);
++            int len = astacktraceelement.length - 3 - p_128149_;
++            if (len <= 0) len = astacktraceelement.length;
++            this.stackTrace = new StackTraceElement[len];
++            System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.stackTrace, 0, this.stackTrace.length);
+             return this.stackTrace.length;
+         }
+     }
+@@ -160,16 +_,16 @@
  
-       if (this.stackTrace != null && this.stackTrace.length > 0) {
-          p_128169_.append("\nStacktrace:");
+         if (this.stackTrace != null && this.stackTrace.length > 0) {
+             p_128169_.append("\nStacktrace:");
 -
--         for(StackTraceElement stacktraceelement : this.stackTrace) {
--            p_128169_.append("\n\tat ");
--            p_128169_.append((Object)stacktraceelement);
--         }
-+         p_128169_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.stackTrace));
-       }
+-            for (StackTraceElement stacktraceelement : this.stackTrace) {
+-                p_128169_.append("\n\tat ");
+-                p_128169_.append(stacktraceelement);
+-            }
++            p_128169_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.stackTrace));
+         }
+     }
  
-    }
- 
-    public StackTraceElement[] getStacktrace() {
-       return this.stackTrace;
-+   }
+     public StackTraceElement[] getStacktrace() {
+         return this.stackTrace;
++    }
 +
-+   public void applyStackTrace(Throwable t) {
-+      this.stackTrace = t.getStackTrace();
-    }
++    public void applyStackTrace(Throwable t) {
++        this.stackTrace = t.getStackTrace();
+     }
  
-    public static void populateBlockDetails(CrashReportCategory p_178951_, LevelHeightAccessor p_178952_, BlockPos p_178953_, @Nullable BlockState p_178954_) {
+     public static void populateBlockDetails(CrashReportCategory p_178951_, LevelHeightAccessor p_178952_, BlockPos p_178953_, @Nullable BlockState p_178954_) {

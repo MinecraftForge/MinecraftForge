@@ -8,18 +8,19 @@ package net.minecraftforge.common.crafting.conditions;
 import java.util.List;
 
 import com.google.common.base.Joiner;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record AndCondition(List<ICondition> children) implements ICondition {
-    public static final Codec<AndCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<AndCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ICondition.CODEC.listOf().fieldOf("values").forGetter(AndCondition::children)
     ).apply(b, AndCondition::new));
 
     @Override
-    public boolean test(IContext context) {
+    public boolean test(IContext context, DynamicOps<?> ops) {
         for (ICondition child : children) {
-            if (!child.test(context))
+            if (!child.test(context, ops))
                 return false;
         }
         return true;
@@ -31,7 +32,7 @@ public record AndCondition(List<ICondition> children) implements ICondition {
     }
 
     @Override
-    public Codec<? extends ICondition> codec() {
+    public MapCodec<? extends ICondition> codec() {
         return CODEC;
     }
 }

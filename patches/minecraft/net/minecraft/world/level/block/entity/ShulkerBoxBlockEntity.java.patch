@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -217,7 +_,7 @@
-    }
+@@ -229,7 +_,7 @@
  
-    public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
--      return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock);
-+      return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock) && p_59664_.getItem().canFitInsideContainerItems(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
-    }
+     @Override
+     public boolean canPlaceItemThroughFace(int p_59663_, ItemStack p_59664_, @Nullable Direction p_59665_) {
+-        return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock);
++        return !(Block.byItem(p_59664_.getItem()) instanceof ShulkerBoxBlock) && p_59664_.getItem().canFitInsideContainerItems(); // FORGE: Make shulker boxes respect Item#canFitInsideContainerItems
+     }
  
-    public boolean canTakeItemThroughFace(int p_59682_, ItemStack p_59683_, Direction p_59684_) {
-@@ -239,6 +_,11 @@
+     @Override
+@@ -253,6 +_,11 @@
  
-    public boolean isClosed() {
-       return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
-+   }
+     public boolean isClosed() {
+         return this.animationStatus == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
++    }
 +
-+   @Override
-+   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
-+      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
-    }
++    @Override
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++       return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
+     }
  
-    public static enum AnimationStatus {
+     public static enum AnimationStatus {

@@ -1,26 +1,29 @@
 --- a/net/minecraft/world/level/biome/BiomeGenerationSettings.java
 +++ b/net/minecraft/world/level/biome/BiomeGenerationSettings.java
-@@ -39,6 +_,7 @@
-       })).apply(p_186655_, BiomeGenerationSettings::new);
-    });
-    private final Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carvers;
-+   private final java.util.Set<GenerationStep.Carving> carversView;
-    private final List<HolderSet<PlacedFeature>> features;
-    private final Supplier<List<ConfiguredFeature<?, ?>>> flowerFeatures;
-    private final Supplier<Set<PlacedFeature>> featureSet;
-@@ -54,10 +_,15 @@
-       this.featureSet = Suppliers.memoize(() -> {
-          return p_186651_.stream().flatMap(HolderSet::stream).map(Holder::value).collect(Collectors.toSet());
-       });
-+      this.carversView = java.util.Collections.unmodifiableSet(carvers.keySet());
-    }
+@@ -50,6 +_,7 @@
+                 .apply(p_186655_, BiomeGenerationSettings::new)
+     );
+     private final Map<GenerationStep.Carving, HolderSet<ConfiguredWorldCarver<?>>> carvers;
++    private final java.util.Set<GenerationStep.Carving> carversView;
+     private final List<HolderSet<PlacedFeature>> features;
+     private final Supplier<List<ConfiguredFeature<?, ?>>> flowerFeatures;
+     private final Supplier<Set<PlacedFeature>> featureSet;
+@@ -66,6 +_,7 @@
+                     .collect(ImmutableList.toImmutableList())
+         );
+         this.featureSet = Suppliers.memoize(() -> p_186651_.stream().flatMap(HolderSet::stream).map(Holder::value).collect(Collectors.toSet()));
++        this.carversView = java.util.Collections.unmodifiableSet(carvers.keySet());
+     }
  
-    public Iterable<Holder<ConfiguredWorldCarver<?>>> getCarvers(GenerationStep.Carving p_204188_) {
-       return Objects.requireNonNullElseGet(this.carvers.get(p_204188_), List::of);
-+   }
+     public Iterable<Holder<ConfiguredWorldCarver<?>>> getCarvers(GenerationStep.Carving p_204188_) {
+@@ -82,6 +_,10 @@
+ 
+     public boolean hasFeature(PlacedFeature p_186659_) {
+         return this.featureSet.get().contains(p_186659_);
++    }
 +
-+   public java.util.Set<GenerationStep.Carving> getCarvingStages() {
-+       return this.carversView;
-    }
++    public java.util.Set<GenerationStep.Carving> getCarvingStages() {
++        return this.carversView;
+     }
  
-    public List<ConfiguredFeature<?, ?>> getFlowerFeatures() {
+     public static class Builder extends BiomeGenerationSettings.PlainBuilder {

@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
 +++ b/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
-@@ -40,7 +_,7 @@
-    }
+@@ -47,7 +_,7 @@
+     }
  
-    protected boolean checkExtraStartConditions(ServerLevel p_23174_, Villager p_23175_) {
--      if (!p_23174_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_23174_, p_23175_)) {
-          return false;
-       } else if (p_23175_.getVillagerData().getProfession() != VillagerProfession.FARMER) {
-          return false;
-@@ -115,6 +_,11 @@
-                         p_23196_.setBlockAndUpdate(this.aboveFarmlandPos, blockstate1);
-                         p_23196_.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(p_23197_, blockstate1));
-                         flag = true;
-+                     } else if (itemstack.getItem() instanceof net.minecraftforge.common.IPlantable) {
-+                        if (((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlantType(p_23196_, aboveFarmlandPos) == net.minecraftforge.common.PlantType.CROP) {
-+                           p_23196_.setBlock(aboveFarmlandPos, ((net.minecraftforge.common.IPlantable)itemstack.getItem()).getPlant(p_23196_, aboveFarmlandPos), 3);
-+                           flag = true;
-+                        }
-                      }
-                   }
+     protected boolean checkExtraStartConditions(ServerLevel p_23174_, Villager p_23175_) {
+-        if (!p_23174_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_23174_, p_23175_)) {
+             return false;
+         } else if (p_23175_.getVillagerData().getProfession() != VillagerProfession.FARMER) {
+             return false;
+@@ -118,6 +_,11 @@
+                             p_23196_.setBlockAndUpdate(this.aboveFarmlandPos, blockstate1);
+                             p_23196_.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(p_23197_, blockstate1));
+                             flag = true;
++                        } else if (itemstack.getItem() instanceof net.minecraftforge.common.IPlantable) {
++                            if (((net.minecraftforge.common.IPlantable) itemstack.getItem()).getPlantType(p_23196_, aboveFarmlandPos) == net.minecraftforge.common.PlantType.CROP) {
++                                p_23196_.setBlock(aboveFarmlandPos, ((net.minecraftforge.common.IPlantable) itemstack.getItem()).getPlant(p_23196_, aboveFarmlandPos), 3);
++                                flag = true;
++                            }
+                         }
  
+                         if (flag) {

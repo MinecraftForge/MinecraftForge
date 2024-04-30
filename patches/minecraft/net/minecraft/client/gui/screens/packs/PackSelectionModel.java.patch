@@ -1,23 +1,25 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
-@@ -110,6 +_,8 @@
-       boolean canMoveUp();
+@@ -106,6 +_,10 @@
+         boolean canMoveUp();
  
-       boolean canMoveDown();
+         boolean canMoveDown();
 +
-+      default boolean notHidden() { return true; }
-    }
++        default boolean notHidden() {
++            return true;
++        }
+     }
  
-    @OnlyIn(Dist.CLIENT)
-@@ -198,6 +_,11 @@
- 
-       public void moveDown() {
-          this.move(1);
-+      }
+     @OnlyIn(Dist.CLIENT)
+@@ -205,6 +_,11 @@
+         @Override
+         public void moveDown() {
+             this.move(1);
++        }
 +
-+      @Override
-+      public boolean notHidden() {
-+          return !pack.isHidden();
-       }
-    }
++        @Override
++        public boolean notHidden() {
++            return !this.pack.isHidden();
+         }
+     }
  

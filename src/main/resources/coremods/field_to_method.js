@@ -8,18 +8,8 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.level.biome.Biome'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_47437_'), 'getModifiedClimateSettings')
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_47443_'), 'getModifiedSpecialEffects')
-                return classNode;
-            }
-        },
-        'structure': {
-            'target': {
-                'type': 'CLASS',
-                'name': 'net.minecraft.world.level.levelgen.structure.Structure'
-            },
-            'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_226555_'), 'getModifiedStructureSettings')
+                ASMAPI.redirectFieldToMethod(classNode, 'climateSettings', 'getModifiedClimateSettings')
+                ASMAPI.redirectFieldToMethod(classNode, 'specialEffects', 'getModifiedSpecialEffects')
                 return classNode;
             }
         },
@@ -29,7 +19,7 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.effect.MobEffectInstance'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_19502_'), ASMAPI.mapMethod('m_19544_')) // potion
+                ASMAPI.redirectFieldToMethod(classNode, 'effect', 'getEffect')
                 return classNode;
             }
         },
@@ -39,7 +29,7 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.level.block.LiquidBlock'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_54689_'), 'getFluid')
+                ASMAPI.redirectFieldToMethod(classNode, 'fluid', 'getFluid')
                 return classNode;
             }
         },
@@ -49,7 +39,7 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.item.BucketItem'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_40687_'), 'getFluid')
+                ASMAPI.redirectFieldToMethod(classNode, 'content', 'getFluid')
                 return classNode;
             }
         },
@@ -59,17 +49,7 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.level.block.FlowerPotBlock'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_302266_'), ASMAPI.mapMethod('m_304918_')) // potted
-                return classNode;
-            }
-        },
-        'itemstack': {
-            'target': {
-                'type': 'CLASS',
-                'name': 'net.minecraft.world.item.ItemStack'
-            },
-            'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_41589_'), ASMAPI.mapMethod('m_41720_')) // item
+                ASMAPI.redirectFieldToMethod(classNode, 'potted', 'getPotted')
                 return classNode;
             }
         }

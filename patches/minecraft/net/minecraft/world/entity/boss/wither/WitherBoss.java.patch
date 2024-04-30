@@ -1,31 +1,31 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -279,7 +_,7 @@
+@@ -315,7 +_,7 @@
  
-          if (this.destroyBlocksTick > 0) {
-             --this.destroyBlocksTick;
--            if (this.destroyBlocksTick == 0 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+            if (this.destroyBlocksTick == 0 && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
-                int j1 = Mth.floor(this.getY());
-                int i2 = Mth.floor(this.getX());
-                int j2 = Mth.floor(this.getZ());
-@@ -293,7 +_,7 @@
-                         int i1 = j2 + k2;
-                         BlockPos blockpos = new BlockPos(l2, l, i1);
+             if (this.destroyBlocksTick > 0) {
+                 this.destroyBlocksTick--;
+-                if (this.destroyBlocksTick == 0 && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (this.destroyBlocksTick == 0 && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
+                     boolean flag = false;
+                     int l = Mth.floor(this.getBbWidth() / 2.0F + 1.0F);
+                     int i1 = Mth.floor(this.getBbHeight());
+@@ -324,7 +_,7 @@
+                         this.getBlockX() - l, this.getBlockY(), this.getBlockZ() - l, this.getBlockX() + l, this.getBlockY() + i1, this.getBlockZ() + l
+                     )) {
                          BlockState blockstate = this.level().getBlockState(blockpos);
 -                        if (canDestroy(blockstate)) {
 +                        if (blockstate.canEntityDestroy(this.level(), blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, blockstate)) {
-                            flag = this.level().destroyBlock(blockpos, true, this) || flag;
+                             flag = this.level().destroyBlock(blockpos, true, this) || flag;
                          }
-                      }
-@@ -314,6 +_,10 @@
-       }
-    }
+                     }
+@@ -343,6 +_,10 @@
+         }
+     }
  
-+   /**
-+    * @deprecated Forge: Use {@link BlockState#canEntityDestroy(net.minecraft.world.level.BlockGetter, BlockPos, Entity)} instead.
-+    */
-+   @Deprecated
-    public static boolean canDestroy(BlockState p_31492_) {
-       return !p_31492_.isAir() && !p_31492_.is(BlockTags.WITHER_IMMUNE);
-    }
++    /**
++     * @deprecated Forge: Use {@link BlockState#canEntityDestroy(net.minecraft.world.level.BlockGetter, BlockPos, Entity)} instead.
++     */
++    @Deprecated
+     public static boolean canDestroy(BlockState p_31492_) {
+         return !p_31492_.isAir() && !p_31492_.is(BlockTags.WITHER_IMMUNE);
+     }

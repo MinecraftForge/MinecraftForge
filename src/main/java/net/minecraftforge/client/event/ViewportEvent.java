@@ -30,15 +30,13 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ComputeCameraAngles
  * @see ComputeFov
  */
-public abstract class ViewportEvent extends Event
-{
+public abstract class ViewportEvent extends Event {
     private final GameRenderer renderer;
     private final Camera camera;
     private final double partialTick;
 
     @ApiStatus.Internal
-    public ViewportEvent(GameRenderer renderer, Camera camera, double partialTick)
-    {
+    public ViewportEvent(GameRenderer renderer, Camera camera, double partialTick) {
         this.renderer = renderer;
         this.camera = camera;
         this.partialTick = partialTick;
@@ -47,24 +45,21 @@ public abstract class ViewportEvent extends Event
     /**
      * {@return the game renderer}
      */
-    public GameRenderer getRenderer()
-    {
+    public GameRenderer getRenderer() {
         return renderer;
     }
 
     /**
      * {@return the camera information}
      */
-    public Camera getCamera()
-    {
+    public Camera getCamera() {
         return camera;
     }
 
     /**
      * {@return the partial tick}
      */
-    public double getPartialTick()
-    {
+    public double getPartialTick() {
         return partialTick;
     }
 
@@ -78,8 +73,7 @@ public abstract class ViewportEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class RenderFog extends ViewportEvent
-    {
+    public static class RenderFog extends ViewportEvent {
         private final FogMode mode;
         private final FogType type;
         private float farPlaneDistance;
@@ -87,8 +81,7 @@ public abstract class ViewportEvent extends Event
         private FogShape fogShape;
 
         @ApiStatus.Internal
-        public RenderFog(FogMode mode, FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape)
-        {
+        public RenderFog(FogMode mode, FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape) {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
             this.mode = mode;
             this.type = type;
@@ -100,40 +93,35 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the mode of fog being rendered}
          */
-        public FogMode getMode()
-        {
+        public FogMode getMode() {
             return mode;
         }
 
         /**
          * {@return the type of fog being rendered}
          */
-        public FogType getType()
-        {
+        public FogType getType() {
             return type;
         }
 
         /**
          * {@return the distance to the far plane where the fog ends}
          */
-        public float getFarPlaneDistance()
-        {
+        public float getFarPlaneDistance() {
             return farPlaneDistance;
         }
 
         /**
          * {@return the distance to the near plane where the fog starts}
          */
-        public float getNearPlaneDistance()
-        {
+        public float getNearPlaneDistance() {
             return nearPlaneDistance;
         }
 
         /**
          * {@return the shape of the fog being rendered}
          */
-        public FogShape getFogShape()
-        {
+        public FogShape getFogShape() {
             return fogShape;
         }
 
@@ -143,8 +131,7 @@ public abstract class ViewportEvent extends Event
          * @param distance the new distance to the far place
          * @see #scaleFarPlaneDistance(float)
          */
-        public void setFarPlaneDistance(float distance)
-        {
+        public void setFarPlaneDistance(float distance) {
             farPlaneDistance = distance;
         }
 
@@ -154,8 +141,7 @@ public abstract class ViewportEvent extends Event
          * @param distance the new distance to the near plane
          * @see #scaleNearPlaneDistance(float)
          */
-        public void setNearPlaneDistance(float distance)
-        {
+        public void setNearPlaneDistance(float distance) {
             nearPlaneDistance = distance;
         }
 
@@ -164,8 +150,7 @@ public abstract class ViewportEvent extends Event
          *
          * @param shape the new shape of the fog
          */
-        public void setFogShape(FogShape shape)
-        {
+        public void setFogShape(FogShape shape) {
             fogShape = shape;
         }
 
@@ -174,8 +159,7 @@ public abstract class ViewportEvent extends Event
          *
          * @param factor the factor to scale the far plane distance by
          */
-        public void scaleFarPlaneDistance(float factor)
-        {
+        public void scaleFarPlaneDistance(float factor) {
             farPlaneDistance *= factor;
         }
 
@@ -184,8 +168,7 @@ public abstract class ViewportEvent extends Event
          *
          * @param factor the factor to scale the near plane distance by
          */
-        public void scaleNearPlaneDistance(float factor)
-        {
+        public void scaleNearPlaneDistance(float factor) {
             nearPlaneDistance *= factor;
         }
     }
@@ -198,15 +181,13 @@ public abstract class ViewportEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeFogColor extends ViewportEvent
-    {
+    public static class ComputeFogColor extends ViewportEvent {
         private float red;
         private float green;
         private float blue;
 
         @ApiStatus.Internal
-        public ComputeFogColor(Camera camera, float partialTicks, float red, float green, float blue)
-        {
+        public ComputeFogColor(Camera camera, float partialTicks, float red, float green, float blue) {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
             this.setRed(red);
             this.setGreen(green);
@@ -216,8 +197,7 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the red color value of the fog}
          */
-        public float getRed()
-        {
+        public float getRed() {
             return red;
         }
 
@@ -226,16 +206,14 @@ public abstract class ViewportEvent extends Event
          *
          * @param red the new red color value
          */
-        public void setRed(float red)
-        {
+        public void setRed(float red) {
             this.red = red;
         }
 
         /**
          * {@return the green color value of the fog}
          */
-        public float getGreen()
-        {
+        public float getGreen() {
             return green;
         }
 
@@ -244,16 +222,14 @@ public abstract class ViewportEvent extends Event
          *
          * @param green the new blue color value
          */
-        public void setGreen(float green)
-        {
+        public void setGreen(float green) {
             this.green = green;
         }
 
         /**
          * {@return the blue color value of the fog}
          */
-        public float getBlue()
-        {
+        public float getBlue() {
             return blue;
         }
 
@@ -262,8 +238,7 @@ public abstract class ViewportEvent extends Event
          *
          * @param blue the new blue color value
          */
-        public void setBlue(float blue)
-        {
+        public void setBlue(float blue) {
             this.blue = blue;
         }
     }
@@ -277,15 +252,13 @@ public abstract class ViewportEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeCameraAngles extends ViewportEvent
-    {
+    public static class ComputeCameraAngles extends ViewportEvent {
         private float yaw;
         private float pitch;
         private float roll;
 
         @ApiStatus.Internal
-        public ComputeCameraAngles(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll)
-        {
+        public ComputeCameraAngles(GameRenderer renderer, Camera camera, double renderPartialTicks, float yaw, float pitch, float roll) {
             super(renderer, camera, renderPartialTicks);
             this.setYaw(yaw);
             this.setPitch(pitch);
@@ -295,8 +268,7 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the yaw of the player's camera}
          */
-        public float getYaw()
-        {
+        public float getYaw() {
             return yaw;
         }
 
@@ -305,16 +277,14 @@ public abstract class ViewportEvent extends Event
          *
          * @param yaw the new yaw
          */
-        public void setYaw(float yaw)
-        {
+        public void setYaw(float yaw) {
             this.yaw = yaw;
         }
 
         /**
          * {@return the pitch of the player's camera}
          */
-        public float getPitch()
-        {
+        public float getPitch() {
             return pitch;
         }
 
@@ -323,16 +293,14 @@ public abstract class ViewportEvent extends Event
          *
          * @param pitch the new pitch
          */
-        public void setPitch(float pitch)
-        {
+        public void setPitch(float pitch) {
             this.pitch = pitch;
         }
 
         /**
          * {@return the roll of the player's camera}
          */
-        public float getRoll()
-        {
+        public float getRoll() {
             return roll;
         }
 
@@ -341,8 +309,7 @@ public abstract class ViewportEvent extends Event
          *
          * @param roll the new roll
          */
-        public void setRoll(float roll)
-        {
+        public void setRoll(float roll) {
             this.roll = roll;
         }
     }
@@ -358,14 +325,12 @@ public abstract class ViewportEvent extends Event
      *
      * @see ComputeFovModifierEvent
      */
-    public static class ComputeFov extends ViewportEvent
-    {
+    public static class ComputeFov extends ViewportEvent {
         private final boolean usedConfiguredFov;
         private double fov;
 
         @ApiStatus.Internal
-        public ComputeFov(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov, boolean usedConfiguredFov)
-        {
+        public ComputeFov(GameRenderer renderer, Camera camera, double renderPartialTicks, double fov, boolean usedConfiguredFov) {
             super(renderer, camera, renderPartialTicks);
             this.usedConfiguredFov = usedConfiguredFov;
             this.setFOV(fov);
@@ -374,8 +339,7 @@ public abstract class ViewportEvent extends Event
         /**
          * {@return the raw field of view value}
          */
-        public double getFOV()
-        {
+        public double getFOV() {
             return fov;
         }
 
@@ -384,16 +348,14 @@ public abstract class ViewportEvent extends Event
          *
          * @param fov the new FOV value
          */
-        public void setFOV(double fov)
-        {
+        public void setFOV(double fov) {
             this.fov = fov;
         }
 
         /**
          * {@return whether the base fov value started with a constant or was sourced from the fov set in the options}
          */
-        public boolean usedConfiguredFov()
-        {
+        public boolean usedConfiguredFov() {
             return usedConfiguredFov;
         }
     }

@@ -15,6 +15,7 @@
     "# X"
   ],
   "result": {
-    "item": "minecraft:fishing_rod"
+    "count": 1,
+    "id": "minecraft:fishing_rod"
   }
 }

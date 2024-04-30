@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/level/block/SculkCatalystBlock.java
 +++ b/net/minecraft/world/level/block/SculkCatalystBlock.java
-@@ -60,9 +_,11 @@
- 
-    public void spawnAfterBreak(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
-       super.spawnAfterBreak(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
--      if (p_222113_) {
--         this.tryDropExperience(p_222110_, p_222111_, p_222112_, this.xpRange);
--      }
--
+@@ -66,8 +_,13 @@
+     @Override
+     protected void spawnAfterBreak(BlockState p_222109_, ServerLevel p_222110_, BlockPos p_222111_, ItemStack p_222112_, boolean p_222113_) {
+         super.spawnAfterBreak(p_222109_, p_222110_, p_222111_, p_222112_, p_222113_);
+-        if (p_222113_) {
++        if (false && p_222113_) { // Forge Moved to getExpDrop
+             this.tryDropExperience(p_222110_, p_222111_, p_222112_, this.xpRange);
+         }
++    }
 +
-+   }
-+
-+   @Override
-+   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
-+      return silkTouchLevel == 0 ? this.xpRange.sample(randomSource) : 0;
-    }
++    @Override
++    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++       return silkTouchLevel == 0 ? this.xpRange.sample(randomSource) : 0;
+     }
  }

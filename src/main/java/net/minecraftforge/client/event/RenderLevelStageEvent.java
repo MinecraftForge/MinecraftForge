@@ -43,14 +43,14 @@ import org.joml.Matrix4f;
 public class RenderLevelStageEvent extends Event {
     private final Stage stage;
     private final LevelRenderer levelRenderer;
-    private final PoseStack poseStack;
+    private final Matrix4f poseStack;
     private final Matrix4f projectionMatrix;
     private final int renderTick;
     private final float partialTick;
     private final Camera camera;
     private final Frustum frustum;
 
-    public RenderLevelStageEvent(Stage stage, LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, float partialTick, Camera camera, Frustum frustum) {
+    public RenderLevelStageEvent(Stage stage, LevelRenderer levelRenderer, Matrix4f poseStack, Matrix4f projectionMatrix, int renderTick, float partialTick, Camera camera, Frustum frustum) {
         this.stage = stage;
         this.levelRenderer = levelRenderer;
         this.poseStack = poseStack;
@@ -79,7 +79,7 @@ public class RenderLevelStageEvent extends Event {
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() {
+    public Matrix4f getPoseStack() {
         return poseStack;
     }
 
@@ -235,7 +235,7 @@ public class RenderLevelStageEvent extends Event {
 
         /** Internal just to make our patch smaller, it just fires the event. If you have good reason for this to be external, ask.  */
         @ApiStatus.Internal
-        public void dispatch(LevelRenderer levelRenderer, PoseStack poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
+        public void dispatch(LevelRenderer levelRenderer, Matrix4f poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
             var mc = Minecraft.getInstance();
             var profiler = mc.getProfiler();
             profiler.push(this.toString());

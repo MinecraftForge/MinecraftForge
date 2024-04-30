@@ -6,28 +6,28 @@
  
 -public abstract class BushBlock extends Block {
 +public abstract class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
-    protected BushBlock(BlockBehaviour.Properties p_51021_) {
-       super(p_51021_);
-    }
-@@ -28,6 +_,8 @@
+     protected BushBlock(BlockBehaviour.Properties p_51021_) {
+         super(p_51021_);
+     }
+@@ -31,6 +_,9 @@
+     @Override
+     protected boolean canSurvive(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {
+         BlockPos blockpos = p_51030_.below();
++        if (p_51028_.getBlock() == this) { //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++            return p_51029_.getBlockState(blockpos).canSustainPlant(p_51029_, blockpos, Direction.UP, this);
++        }
+         return this.mayPlaceOn(p_51029_.getBlockState(blockpos), p_51029_, blockpos);
+     }
  
-    public boolean canSurvive(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {
-       BlockPos blockpos = p_51030_.below();
-+      if (p_51028_.getBlock() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-+         return p_51029_.getBlockState(blockpos).canSustainPlant(p_51029_, blockpos, Direction.UP, this);
-       return this.mayPlaceOn(p_51029_.getBlockState(blockpos), p_51029_, blockpos);
-    }
- 
-@@ -37,5 +_,12 @@
- 
-    public boolean isPathfindable(BlockState p_51023_, BlockGetter p_51024_, BlockPos p_51025_, PathComputationType p_51026_) {
-       return p_51026_ == PathComputationType.AIR && !this.hasCollision ? true : super.isPathfindable(p_51023_, p_51024_, p_51025_, p_51026_);
-+   }
+@@ -42,5 +_,11 @@
+     @Override
+     protected boolean isPathfindable(BlockState p_51023_, PathComputationType p_51026_) {
+         return p_51026_ == PathComputationType.AIR && !this.hasCollision ? true : super.isPathfindable(p_51023_, p_51026_);
++    }
 +
-+   @Override
-+   public BlockState getPlant(BlockGetter world, BlockPos pos) {
-+      BlockState state = world.getBlockState(pos);
-+      if (state.getBlock() != this) return defaultBlockState();
-+      return state;
-    }
++    @Override
++    public BlockState getPlant(BlockGetter world, BlockPos pos) {
++        BlockState state = world.getBlockState(pos);
++        return state.getBlock() == this ? state : defaultBlockState();
+     }
  }

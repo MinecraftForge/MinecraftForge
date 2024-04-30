@@ -4,14 +4,16 @@
     {
       "condition": "minecraft:match_tool",
       "predicate": {
-        "enchantments": [
-          {
-            "enchantment": "global_loot_test:smelt",
-            "levels": {
-              "min": 1
+        "predicates": {
+          "minecraft:enchantments": [
+            {
+              "enchantment": "global_loot_test:smelt",
+              "levels": {
+                "min": 1
+              }
             }
-          }
-        ]
+          ]
+        }
       }
     }
   ]

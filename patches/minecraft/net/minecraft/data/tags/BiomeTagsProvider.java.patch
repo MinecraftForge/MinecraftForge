@@ -1,16 +1,13 @@
 --- a/net/minecraft/data/tags/BiomeTagsProvider.java
 +++ b/net/minecraft/data/tags/BiomeTagsProvider.java
-@@ -10,8 +_,13 @@
- import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
+@@ -14,6 +_,10 @@
+         super(p_255800_, Registries.BIOME, p_256205_);
+     }
  
- public class BiomeTagsProvider extends TagsProvider<Biome> {
-+   /** @deprecated Forge: Use the {@linkplain #BiomeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public BiomeTagsProvider(PackOutput p_255800_, CompletableFuture<HolderLookup.Provider> p_256205_) {
-       super(p_255800_, Registries.BIOME, p_256205_);
-+   }
-+   public BiomeTagsProvider(PackOutput p_255800_, CompletableFuture<HolderLookup.Provider> p_256205_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_255800_, Registries.BIOME, p_256205_, modId, existingFileHelper);
-    }
- 
-    protected void addTags(HolderLookup.Provider p_256485_) {
++    public BiomeTagsProvider(PackOutput p_255800_, CompletableFuture<HolderLookup.Provider> p_256205_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_255800_, Registries.BIOME, p_256205_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_256485_) {
+         this.tag(BiomeTags.IS_DEEP_OCEAN).add(Biomes.DEEP_FROZEN_OCEAN).add(Biomes.DEEP_COLD_OCEAN).add(Biomes.DEEP_OCEAN).add(Biomes.DEEP_LUKEWARM_OCEAN);

@@ -2,9 +2,9 @@
 +++ b/net/minecraft/client/ClientBrandRetriever.java
 @@ -10,6 +_,6 @@
  
-    @DontObfuscate
-    public static String getClientModName() {
--      return "vanilla";
-+      return net.minecraftforge.internal.BrandingControl.getClientBranding();
-    }
+     @DontObfuscate
+     public static String getClientModName() {
+-        return "vanilla";
++        return net.minecraftforge.internal.BrandingControl.getClientBranding();
+     }
  }

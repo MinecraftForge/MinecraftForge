@@ -20,6 +20,6 @@
   ],
   "result": {
     "count": 4,
-    "item": "minecraft:torch"
+    "id": "minecraft:torch"
   }
 }

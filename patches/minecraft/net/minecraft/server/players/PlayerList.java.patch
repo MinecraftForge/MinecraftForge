@@ -1,105 +1,97 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -126,6 +_,7 @@
-    private boolean allowCheatsForAllPlayers;
-    private static final boolean ALLOW_LOGOUTIVATOR = false;
-    private int sendAllPlayerInfoIn;
-+   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
+@@ -128,6 +_,7 @@
+     private boolean allowCommandsForAllPlayers;
+     private static final boolean ALLOW_LOGOUTIVATOR = false;
+     private int sendAllPlayerInfoIn;
++    private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
  
-    public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
-       this.server = p_203842_;
-@@ -171,6 +_,7 @@
-       servergamepacketlistenerimpl.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
-       servergamepacketlistenerimpl.send(new ClientboundPlayerAbilitiesPacket(p_11263_.getAbilities()));
-       servergamepacketlistenerimpl.send(new ClientboundSetCarriedItemPacket(p_11263_.getInventory().selected));
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
-       servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes()));
-       this.sendPlayerPermissionLevel(p_11263_);
-       p_11263_.getStats().markAllDirty();
-@@ -239,6 +_,7 @@
-       }
+     public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
+         this.server = p_203842_;
+@@ -267,6 +_,7 @@
+         }
  
-       p_11263_.initInventoryMenu();
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
-    }
+         p_11263_.initInventoryMenu();
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn(p_11263_);
+     }
  
-    protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -299,6 +_,7 @@
-          compoundtag1 = compoundtag;
-          p_11225_.load(compoundtag);
-          LOGGER.debug("loading single player");
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_11225_, this.playerIo, p_11225_.getUUID().toString());
-       } else {
-          compoundtag1 = this.playerIo.load(p_11225_);
-       }
-@@ -307,6 +_,7 @@
-    }
+     protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+@@ -332,6 +_,7 @@
+             optional = Optional.of(compoundtag);
+             p_11225_.load(compoundtag);
+             LOGGER.debug("loading single player");
++            net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_11225_, this.playerIo, p_11225_.getUUID().toString());
+         } else {
+             optional = this.playerIo.load(p_11225_);
+         }
+@@ -340,6 +_,7 @@
+     }
  
-    protected void save(ServerPlayer p_11277_) {
-+      if (p_11277_.connection == null) return;
-       this.playerIo.save(p_11277_);
-       ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
-       if (serverstatscounter != null) {
-@@ -321,6 +_,7 @@
-    }
+     protected void save(ServerPlayer p_11277_) {
++        if (p_11277_.connection == null) return; // Not sure if still needed -Paint_Ninja
+         this.playerIo.save(p_11277_);
+         ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
+         if (serverstatscounter != null) {
+@@ -353,6 +_,7 @@
+     }
  
-    public void remove(ServerPlayer p_11287_) {
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
-       ServerLevel serverlevel = p_11287_.serverLevel();
-       p_11287_.awardStat(Stats.LEAVE_GAME);
-       this.save(p_11287_);
-@@ -466,6 +_,7 @@
-       this.playersByUUID.put(serverplayer.getUUID(), serverplayer);
-       serverplayer.initInventoryMenu();
-       serverplayer.setHealth(serverplayer.getHealth());
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
-       if (flag2) {
-          serverplayer.connection.send(new ClientboundSoundPacket(SoundEvents.RESPAWN_ANCHOR_DEPLETE, SoundSource.BLOCKS, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), 1.0F, 1.0F, serverlevel1.getRandom().nextLong()));
-       }
-@@ -550,6 +_,7 @@
-    }
+     public void remove(ServerPlayer p_11287_) {
++        net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
+         ServerLevel serverlevel = p_11287_.serverLevel();
+         p_11287_.awardStat(Stats.LEAVE_GAME);
+         this.save(p_11287_);
+@@ -497,6 +_,7 @@
+         this.playersByUUID.put(serverplayer.getUUID(), serverplayer);
+         serverplayer.initInventoryMenu();
+         serverplayer.setHealth(serverplayer.getHealth());
++        net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
+         if (flag2) {
+             serverplayer.connection
+                 .send(
+@@ -588,6 +_,7 @@
+     }
  
-    public void op(GameProfile p_11254_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.server.getOperatorUserPermissionLevel(), this)) return;
-       this.ops.add(new ServerOpListEntry(p_11254_, this.server.getOperatorUserPermissionLevel(), this.ops.canBypassPlayerLimit(p_11254_)));
-       ServerPlayer serverplayer = this.getPlayer(p_11254_.getId());
-       if (serverplayer != null) {
-@@ -559,6 +_,7 @@
-    }
+     public void op(GameProfile p_11254_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.server.getOperatorUserPermissionLevel(), this)) return;
+         this.ops.add(new ServerOpListEntry(p_11254_, this.server.getOperatorUserPermissionLevel(), this.ops.canBypassPlayerLimit(p_11254_)));
+         ServerPlayer serverplayer = this.getPlayer(p_11254_.getId());
+         if (serverplayer != null) {
+@@ -596,6 +_,7 @@
+     }
  
-    public void deop(GameProfile p_11281_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11281_, 0, this)) return;
-       this.ops.remove(p_11281_);
-       ServerPlayer serverplayer = this.getPlayer(p_11281_.getId());
-       if (serverplayer != null) {
-@@ -778,13 +_,6 @@
-       if (serverstatscounter == null) {
-          File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
-          File file2 = new File(file1, uuid + ".json");
--         if (!file2.exists()) {
--            File file3 = new File(file1, p_11240_.getName().getString() + ".json");
--            Path path = file3.toPath();
--            if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
--               file3.renameTo(file2);
+     public void deop(GameProfile p_11281_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11281_, 0, this)) return;
+         this.ops.remove(p_11281_);
+         ServerPlayer serverplayer = this.getPlayer(p_11281_.getId());
+         if (serverplayer != null) {
+@@ -809,13 +_,6 @@
+         if (serverstatscounter == null) {
+             File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
+             File file2 = new File(file1, uuid + ".json");
+-            if (!file2.exists()) {
+-                File file3 = new File(file1, p_11240_.getName().getString() + ".json");
+-                Path path = file3.toPath();
+-                if (FileUtil.isPathNormalized(path) && FileUtil.isPathPortable(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
+-                    file3.renameTo(file2);
+-                }
 -            }
--         }
  
-          serverstatscounter = new ServerStatsCounter(this.server, file2);
-          this.stats.put(uuid, serverstatscounter);
-@@ -831,7 +_,7 @@
-    }
+             serverstatscounter = new ServerStatsCounter(this.server, file2);
+             this.stats.put(uuid, serverstatscounter);
+@@ -860,7 +_,7 @@
+     }
  
-    public List<ServerPlayer> getPlayers() {
--      return this.players;
-+      return this.playersView; //Unmodifiable view, we don't want people removing things without us knowing.
-    }
+     public List<ServerPlayer> getPlayers() {
+-        return this.players;
++        return this.playersView; //Unmodifiable view, we don't want people removing things without us knowing.
+     }
  
-    @Nullable
-@@ -848,6 +_,7 @@
-          playeradvancements.reload(this.server.getAdvancements());
-       }
+     @Nullable
+@@ -877,6 +_,7 @@
+             playeradvancements.reload(this.server.getAdvancements());
+         }
  
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
-       this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
-       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getRecipes());
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
+         this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
+         ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.server.getRecipeManager().getOrderedRecipes());
  

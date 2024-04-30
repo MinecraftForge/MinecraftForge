@@ -1,55 +1,69 @@
 --- a/net/minecraft/world/level/levelgen/structure/Structure.java
 +++ b/net/minecraft/world/level/levelgen/structure/Structure.java
-@@ -41,11 +_,12 @@
+@@ -42,10 +_,13 @@
  public abstract class Structure {
-    public static final Codec<Structure> DIRECT_CODEC = BuiltInRegistries.STRUCTURE_TYPE.byNameCodec().dispatch(Structure::type, StructureType::codec);
-    public static final Codec<Holder<Structure>> CODEC = RegistryFileCodec.create(Registries.STRUCTURE, DIRECT_CODEC);
--   protected final Structure.StructureSettings settings;
-+   //Forge: Make this field private so that the redirect coremod can target it
-+   private final Structure.StructureSettings settings;
+     public static final Codec<Structure> DIRECT_CODEC = BuiltInRegistries.STRUCTURE_TYPE.byNameCodec().dispatch(Structure::type, StructureType::codec);
+     public static final Codec<Holder<Structure>> CODEC = RegistryFileCodec.create(Registries.STRUCTURE, DIRECT_CODEC);
+-    protected final Structure.StructureSettings settings;
++    //Forge: Make this field private so that the redirect coremod can target it
++    @Deprecated
++    private final Structure.StructureSettings settings;
++    private final net.minecraftforge.common.world.ModifiableStructureInfo modifiableStructureInfo;
  
-    public static <S extends Structure> RecordCodecBuilder<S, Structure.StructureSettings> settingsCodec(RecordCodecBuilder.Instance<S> p_226568_) {
-       return Structure.StructureSettings.CODEC.forGetter((p_226595_) -> {
--         return p_226595_.settings;
-+         return p_226595_.modifiableStructureInfo().getOriginalStructureInfo().structureSettings(); // FORGE: Patch codec to ignore field redirect coremods.
-       });
-    }
+     public static <S extends Structure> RecordCodecBuilder<S, Structure.StructureSettings> settingsCodec(Instance<S> p_226568_) {
+-        return Structure.StructureSettings.CODEC.forGetter(p_226595_ -> p_226595_.settings);
++        return Structure.StructureSettings.CODEC.forGetter(p_226595_ -> p_226595_.modifiableStructureInfo().getOriginalStructureInfo().structureSettings()); // FORGE: Patch codec to ignore field redirect coremods.
+     }
  
-@@ -57,6 +_,7 @@
+     public static <S extends Structure> MapCodec<S> simpleCodec(Function<Structure.StructureSettings, S> p_226608_) {
+@@ -54,22 +_,23 @@
  
-    protected Structure(Structure.StructureSettings p_226558_) {
-       this.settings = p_226558_;
-+      this.modifiableStructureInfo = new net.minecraftforge.common.world.ModifiableStructureInfo(new net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo(p_226558_)); // FORGE: cache original structure info on construction so we can bypass our field read coremods where necessary
-    }
+     protected Structure(Structure.StructureSettings p_226558_) {
+         this.settings = p_226558_;
++        this.modifiableStructureInfo = new net.minecraftforge.common.world.ModifiableStructureInfo(new net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo(p_226558_)); // FORGE: cache original structure info on construction so we can bypass our field read coremods where necessary
+     }
  
-    public HolderSet<Biome> biomes() {
-@@ -157,6 +_,29 @@
-    }
+     public HolderSet<Biome> biomes() {
+-        return this.settings.biomes;
++        return this.getModifiedStructureSettings().biomes;
+     }
  
-    public abstract StructureType<?> type();
+     public Map<MobCategory, StructureSpawnOverride> spawnOverrides() {
+-        return this.settings.spawnOverrides;
++        return this.getModifiedStructureSettings().spawnOverrides;
+     }
+ 
+     public GenerationStep.Decoration step() {
+-        return this.settings.step;
++        return this.getModifiedStructureSettings().step;
+     }
+ 
+     public TerrainAdjustment terrainAdaptation() {
+-        return this.settings.terrainAdaptation;
++        return this.getModifiedStructureSettings().terrainAdaptation;
+     }
+ 
+     public BoundingBox adjustBoundingBox(BoundingBox p_226570_) {
+@@ -194,6 +_,22 @@
+     }
+ 
+     public abstract StructureType<?> type();
 +
-+   // FORGE START
++    /**
++     * {@return Cache of original structure data and structure data modified by structure modifiers}
++     * Modified structure data is set by server after datapacks and serverconfigs load.
++     * Settings field reads are coremodded to redirect to this.
++     **/
++    public net.minecraftforge.common.world.ModifiableStructureInfo modifiableStructureInfo() {
++       return this.modifiableStructureInfo;
++    }
 +
-+   private final net.minecraftforge.common.world.ModifiableStructureInfo modifiableStructureInfo;
-+
-+   /**
-+    * {@return Cache of original structure data and structure data modified by structure modifiers}
-+    * Modified structure data is set by server after datapacks and serverconfigs load.
-+    * Settings field reads are coremodded to redirect to this.
-+    **/
-+   public net.minecraftforge.common.world.ModifiableStructureInfo modifiableStructureInfo()
-+   {
-+      return this.modifiableStructureInfo;
-+   }
-+
-+   /**
-+    * {@return The structure's settings, with modifications if called after modifiers are applied in server init.}
-+    */
-+   public StructureSettings getModifiedStructureSettings() {
-+      return this.modifiableStructureInfo().get().structureSettings();
-+   }
-+
-+   // FORGE END
++    /**
++     * {@return The structure's settings, with modifications if called after modifiers are applied in server init.}
++     */
++    public StructureSettings getModifiedStructureSettings() {
++        return this.modifiableStructureInfo().get().structureSettings();
++    }
  
-    public static record GenerationContext(RegistryAccess registryAccess, ChunkGenerator chunkGenerator, BiomeSource biomeSource, RandomState randomState, StructureTemplateManager structureTemplateManager, WorldgenRandom random, long seed, ChunkPos chunkPos, LevelHeightAccessor heightAccessor, Predicate<Holder<Biome>> validBiome) {
-       public GenerationContext(RegistryAccess p_226632_, ChunkGenerator p_226633_, BiomeSource p_226634_, RandomState p_226635_, StructureTemplateManager p_226636_, long p_226637_, ChunkPos p_226638_, LevelHeightAccessor p_226639_, Predicate<Holder<Biome>> p_226640_) {
+     public static record GenerationContext(
+         RegistryAccess registryAccess,

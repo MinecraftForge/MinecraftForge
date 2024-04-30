@@ -175,6 +175,7 @@ public final class RegistryObject<T> implements Supplier<T>
                     if (!registryExists(registryName))
                     {
                         invalidRegistry = true;
+                        registryExists(registryName);
                         throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
                     }
                     registryExists = true;

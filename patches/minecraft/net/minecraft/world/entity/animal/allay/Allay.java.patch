@@ -1,11 +1,14 @@
 --- a/net/minecraft/world/entity/animal/allay/Allay.java
 +++ b/net/minecraft/world/entity/animal/allay/Allay.java
-@@ -324,7 +_,7 @@
+@@ -363,10 +_,7 @@
+     @Override
+     public boolean wantsToPickUp(ItemStack p_218387_) {
+         ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
+-        return !itemstack.isEmpty()
+-            && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
+-            && this.inventory.canAddItem(p_218387_)
+-            && this.allayConsidersItemEqual(itemstack, p_218387_);
++        return !itemstack.isEmpty() && this.inventory.canAddItem(p_218387_) && this.allayConsidersItemEqual(itemstack, p_218387_) && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this);
+     }
  
-    public boolean wantsToPickUp(ItemStack p_218387_) {
-       ItemStack itemstack = this.getItemInHand(InteractionHand.MAIN_HAND);
--      return !itemstack.isEmpty() && this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && this.inventory.canAddItem(p_218387_) && this.allayConsidersItemEqual(itemstack, p_218387_);
-+      return !itemstack.isEmpty() && this.inventory.canAddItem(p_218387_) && this.allayConsidersItemEqual(itemstack, p_218387_) && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this);
-    }
- 
-    private boolean allayConsidersItemEqual(ItemStack p_252278_, ItemStack p_250405_) {
+     private boolean allayConsidersItemEqual(ItemStack p_252278_, ItemStack p_250405_) {

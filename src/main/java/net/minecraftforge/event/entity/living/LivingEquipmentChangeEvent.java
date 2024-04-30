@@ -28,23 +28,29 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingEquipmentChangeEvent extends LivingEvent
-{
+public class LivingEquipmentChangeEvent extends LivingEvent {
     private final EquipmentSlot slot;
     private final ItemStack from;
     private final ItemStack to;
 
-    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlot slot, @NotNull ItemStack from, @NotNull ItemStack to)
-    {
+    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlot slot, @NotNull ItemStack from, @NotNull ItemStack to) {
         super(entity);
         this.slot = slot;
         this.from = from;
         this.to = to;
     }
 
-    public EquipmentSlot getSlot() { return this.slot; }
+    public EquipmentSlot getSlot() {
+        return this.slot;
+    }
+
     @NotNull
-    public ItemStack getFrom() { return this.from; }
+    public ItemStack getFrom() {
+        return this.from;
+    }
+
     @NotNull
-    public ItemStack getTo() { return this.to; }
+    public ItemStack getTo() {
+        return this.to;
+    }
 }

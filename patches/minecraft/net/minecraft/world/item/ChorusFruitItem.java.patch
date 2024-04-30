@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/item/ChorusFruitItem.java
 +++ b/net/minecraft/world/item/ChorusFruitItem.java
-@@ -29,7 +_,9 @@
-             }
+@@ -34,7 +_,9 @@
+                 }
  
-             Vec3 vec3 = p_40714_.position();
--            if (p_40714_.randomTeleport(d0, d1, d2, true)) {
-+            var event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(p_40714_, d0, d1, d2);
-+            if (event.isCanceled()) return itemstack;
-+            if (p_40714_.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
-                p_40713_.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(p_40714_));
-                SoundSource soundsource;
-                SoundEvent soundevent;
+                 Vec3 vec3 = p_40714_.position();
+-                if (p_40714_.randomTeleport(d0, d1, d2, true)) {
++                var event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(p_40714_, d0, d1, d2);
++                if (event.isCanceled()) return itemstack;
++                if (p_40714_.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true)) {
+                     p_40713_.gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(p_40714_));
+                     SoundSource soundsource;
+                     SoundEvent soundevent;

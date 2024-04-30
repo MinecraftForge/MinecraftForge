@@ -1,182 +1,183 @@
 --- a/net/minecraft/client/KeyMapping.java
 +++ b/net/minecraft/client/KeyMapping.java
-@@ -13,9 +_,9 @@
+@@ -14,9 +_,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public class KeyMapping implements Comparable<KeyMapping> {
 +public class KeyMapping implements Comparable<KeyMapping>, net.minecraftforge.client.extensions.IForgeKeyMapping {
-    private static final Map<String, KeyMapping> ALL = Maps.newHashMap();
--   private static final Map<InputConstants.Key, KeyMapping> MAP = Maps.newHashMap();
-+   private static final net.minecraftforge.client.settings.KeyMappingLookup MAP = new net.minecraftforge.client.settings.KeyMappingLookup();
-    private static final Set<String> CATEGORIES = Sets.newHashSet();
-    public static final String CATEGORY_MOVEMENT = "key.categories.movement";
-    public static final String CATEGORY_MISC = "key.categories.misc";
-@@ -41,7 +_,7 @@
-    private int clickCount;
+     private static final Map<String, KeyMapping> ALL = Maps.newHashMap();
+-    private static final Map<InputConstants.Key, KeyMapping> MAP = Maps.newHashMap();
++    private static final net.minecraftforge.client.settings.KeyMappingLookup MAP = new net.minecraftforge.client.settings.KeyMappingLookup();
+     private static final Set<String> CATEGORIES = Sets.newHashSet();
+     public static final String CATEGORY_MOVEMENT = "key.categories.movement";
+     public static final String CATEGORY_MISC = "key.categories.misc";
+@@ -42,14 +_,14 @@
+     private int clickCount;
  
-    public static void click(InputConstants.Key p_90836_) {
--      KeyMapping keymapping = MAP.get(p_90836_);
-+      for (KeyMapping keymapping : MAP.getAll(p_90836_))
-       if (keymapping != null) {
-          ++keymapping.clickCount;
-       }
-@@ -49,7 +_,7 @@
-    }
+     public static void click(InputConstants.Key p_90836_) {
+-        KeyMapping keymapping = MAP.get(p_90836_);
++        for (KeyMapping keymapping : MAP.getAll(p_90836_))
+         if (keymapping != null) {
+             keymapping.clickCount++;
+         }
+     }
  
-    public static void set(InputConstants.Key p_90838_, boolean p_90839_) {
--      KeyMapping keymapping = MAP.get(p_90838_);
-+      for (KeyMapping keymapping : MAP.getAll(p_90838_))
-       if (keymapping != null) {
-          keymapping.setDown(p_90839_);
-       }
-@@ -105,7 +_,7 @@
-    }
+     public static void set(InputConstants.Key p_90838_, boolean p_90839_) {
+-        KeyMapping keymapping = MAP.get(p_90838_);
++        for (KeyMapping keymapping : MAP.getAll(p_90838_))
+         if (keymapping != null) {
+             keymapping.setDown(p_90839_);
+         }
+@@ -100,7 +_,7 @@
+     }
  
-    public boolean isDown() {
--      return this.isDown;
-+      return this.isDown && isConflictContextAndModifierActive();
-    }
+     public boolean isDown() {
+-        return this.isDown;
++        return this.isDown && isConflictContextAndModifierActive();
+     }
  
-    public String getCategory() {
-@@ -139,7 +_,13 @@
-    }
+     public String getCategory() {
+@@ -136,7 +_,16 @@
+     public int compareTo(KeyMapping p_90841_) {
+         return this.category.equals(p_90841_.category)
+             ? I18n.get(this.name).compareTo(I18n.get(p_90841_.name))
+-            : CATEGORY_SORT_ORDER.get(this.category).compareTo(CATEGORY_SORT_ORDER.get(p_90841_.category));
++            : compareSort(this.category, p_90841_.category);
++    }
++
++    private static int compareSort(String c1, String c2) {
++        Integer o1 = CATEGORY_SORT_ORDER.get(c1);
++        Integer o2 = CATEGORY_SORT_ORDER.get(c2);
++        if (o1 == null && o2 != null) return 1;
++        if (o1 != null && o2 == null) return -1;
++        if (o1 == null && o2 == null) return I18n.get(c1).compareTo(I18n.get(c2));
++        return  o1.compareTo(o2);
+     }
  
-    public int compareTo(KeyMapping p_90841_) {
--      return this.category.equals(p_90841_.category) ? I18n.get(this.name).compareTo(I18n.get(p_90841_.name)) : CATEGORY_SORT_ORDER.get(this.category).compareTo(CATEGORY_SORT_ORDER.get(p_90841_.category));
-+      if (this.category.equals(p_90841_.category)) return I18n.get(this.name).compareTo(I18n.get(p_90841_.name));
-+      Integer tCat = CATEGORY_SORT_ORDER.get(this.category);
-+      Integer oCat = CATEGORY_SORT_ORDER.get(p_90841_.category);
-+      if (tCat == null && oCat != null) return 1;
-+      if (tCat != null && oCat == null) return -1;
-+      if (tCat == null && oCat == null) return I18n.get(this.category).compareTo(I18n.get(p_90841_.category));
-+      return  tCat.compareTo(oCat);
-    }
+     public static Supplier<Component> createNameSupplier(String p_90843_) {
+@@ -145,6 +_,20 @@
+     }
  
-    public static Supplier<Component> createNameSupplier(String p_90843_) {
-@@ -150,6 +_,20 @@
-    }
- 
-    public boolean same(KeyMapping p_90851_) {
-+      if (getKeyConflictContext().conflicts(p_90851_.getKeyConflictContext()) || p_90851_.getKeyConflictContext().conflicts(getKeyConflictContext())) {
-+         net.minecraftforge.client.settings.KeyModifier keyModifier = getKeyModifier();
-+         net.minecraftforge.client.settings.KeyModifier otherKeyModifier = p_90851_.getKeyModifier();
-+         if (keyModifier.matches(p_90851_.getKey()) || otherKeyModifier.matches(getKey())) {
-+            return true;
-+         } else if (getKey().equals(p_90851_.getKey())) {
-+            // IN_GAME key contexts have a conflict when at least one modifier is NONE.
-+            // For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
-+            // GUI and other key contexts do not have this limitation.
-+            return keyModifier == otherKeyModifier ||
-+               (getKeyConflictContext().conflicts(net.minecraftforge.client.settings.KeyConflictContext.IN_GAME) &&
-+               (keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE));
+     public boolean same(KeyMapping p_90851_) {
++        if (getKeyConflictContext().conflicts(p_90851_.getKeyConflictContext()) || p_90851_.getKeyConflictContext().conflicts(getKeyConflictContext())) {
++            var keyModifier = getKeyModifier();
++            var otherKeyModifier = p_90851_.getKeyModifier();
++            if (keyModifier.matches(p_90851_.getKey()) || otherKeyModifier.matches(getKey())) {
++               return true;
++            } else if (getKey().equals(p_90851_.getKey())) {
++               // IN_GAME key contexts have a conflict when at least one modifier is NONE.
++               // For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
++               // GUI and other key contexts do not have this limitation.
++               return keyModifier == otherKeyModifier ||
++                  (getKeyConflictContext().conflicts(net.minecraftforge.client.settings.KeyConflictContext.IN_GAME) &&
++                  (keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE));
++            }
 +         }
-+      }
-       return this.key.equals(p_90851_.key);
-    }
+         return this.key.equals(p_90851_.key);
+     }
  
-@@ -170,11 +_,13 @@
-    }
+@@ -163,11 +_,13 @@
+     }
  
-    public Component getTranslatedKeyMessage() {
-+      return getKeyModifier().getCombinedName(key, () -> {
-       return this.key.getDisplayName();
-+      });
-    }
+     public Component getTranslatedKeyMessage() {
++        return getKeyModifier().getCombinedName(key, () -> {
+         return this.key.getDisplayName();
++        });
+     }
  
-    public boolean isDefault() {
--      return this.key.equals(this.defaultKey);
-+      return this.key.equals(this.defaultKey) && getKeyModifier() == getDefaultKeyModifier();
-    }
+     public boolean isDefault() {
+-        return this.key.equals(this.defaultKey);
++        return this.key.equals(this.defaultKey) && getKeyModifier() == getDefaultKeyModifier();
+     }
  
-    public String saveString() {
-@@ -183,5 +_,89 @@
+     public String saveString() {
+@@ -176,5 +_,88 @@
  
-    public void setDown(boolean p_90846_) {
-       this.isDown = p_90846_;
-+   }
+     public void setDown(boolean p_90846_) {
+         this.isDown = p_90846_;
++    }
 +
-+   /****************** Forge Start *****************************/
-+   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
-+   private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+   private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
++    private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
++    private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++    private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
 +
-+   /**
-+    * Convenience constructor for creating KeyBindings with keyConflictContext set.
-+    */
-+   public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int keyCode, String category) {
-+       this(description, keyConflictContext, inputType.getOrCreate(keyCode), category);
-+   }
++    /**
++     * Convenience constructor for creating KeyBindings with keyConflictContext set.
++     */
++    public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, final InputConstants.Type inputType, final int keyCode, String category) {
++        this(description, keyConflictContext, inputType.getOrCreate(keyCode), category);
++    }
 +
-+   /**
-+    * Convenience constructor for creating KeyBindings with keyConflictContext set.
-+    */
-+   public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, InputConstants.Key keyCode, String category) {
-+       this(description, keyConflictContext, net.minecraftforge.client.settings.KeyModifier.NONE, keyCode, category);
-+   }
++    /**
++     * Convenience constructor for creating KeyBindings with keyConflictContext set.
++     */
++    public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, InputConstants.Key keyCode, String category) {
++        this(description, keyConflictContext, net.minecraftforge.client.settings.KeyModifier.NONE, keyCode, category);
++    }
 +
-+   /**
-+    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
-+    */
-+   public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, final InputConstants.Type inputType, final int keyCode, String category) {
-+       this(description, keyConflictContext, keyModifier, inputType.getOrCreate(keyCode), category);
-+   }
++    /**
++     * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
++     */
++    public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, final InputConstants.Type inputType, final int keyCode, String category) {
++        this(description, keyConflictContext, keyModifier, inputType.getOrCreate(keyCode), category);
++    }
 +
-+   /**
-+    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
-+    */
-+   public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode, String category) {
-+      this.name = description;
-+      this.key = keyCode;
-+      this.defaultKey = keyCode;
-+      this.category = category;
-+      this.keyConflictContext = keyConflictContext;
-+      this.keyModifier = keyModifier;
-+      this.keyModifierDefault = keyModifier;
-+      if (this.keyModifier.matches(keyCode))
-+         this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+      ALL.put(description, this);
-+      MAP.put(keyCode, this);
-+      CATEGORIES.add(category);
-+   }
-+
-+   @Override
-+   public InputConstants.Key getKey() {
-+       return this.key;
-+   }
-+
-+   @Override
-+   public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext) {
-+       this.keyConflictContext = keyConflictContext;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.client.settings.IKeyConflictContext getKeyConflictContext() {
-+       return keyConflictContext;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.client.settings.KeyModifier getDefaultKeyModifier() {
-+       return keyModifierDefault;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.client.settings.KeyModifier getKeyModifier() {
-+       return keyModifier;
-+   }
-+
-+   @Override
-+   public void setKeyModifierAndCode(@org.jetbrains.annotations.Nullable net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
-+       MAP.remove(this);
-+
-+       if (keyModifier == null)
-+           keyModifier = net.minecraftforge.client.settings.KeyModifier.getModifier(this.key);
-+       if (keyModifier == null || keyCode == InputConstants.UNKNOWN || net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(keyCode))
-+           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+
++    /**
++     * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
++     */
++    public KeyMapping(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode, String category) {
++       this.name = description;
 +       this.key = keyCode;
++       this.defaultKey = keyCode;
++       this.category = category;
++       this.keyConflictContext = keyConflictContext;
 +       this.keyModifier = keyModifier;
-+
++       this.keyModifierDefault = keyModifier;
++       if (this.keyModifier.matches(keyCode))
++          this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++       ALL.put(description, this);
 +       MAP.put(keyCode, this);
-    }
++       CATEGORIES.add(category);
++    }
++
++    @Override
++    public InputConstants.Key getKey() {
++        return this.key;
++    }
++
++    @Override
++    public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext) {
++        this.keyConflictContext = keyConflictContext;
++    }
++
++    @Override
++    public net.minecraftforge.client.settings.IKeyConflictContext getKeyConflictContext() {
++        return keyConflictContext;
++    }
++
++    @Override
++    public net.minecraftforge.client.settings.KeyModifier getDefaultKeyModifier() {
++        return keyModifierDefault;
++    }
++
++    @Override
++    public net.minecraftforge.client.settings.KeyModifier getKeyModifier() {
++        return keyModifier;
++    }
++
++    @Override
++    public void setKeyModifierAndCode(@org.jetbrains.annotations.Nullable net.minecraftforge.client.settings.KeyModifier keyModifier, InputConstants.Key keyCode) {
++        MAP.remove(this);
++
++        if (keyModifier == null)
++            keyModifier = net.minecraftforge.client.settings.KeyModifier.getModifier(this.key);
++        if (keyModifier == null || keyCode == InputConstants.UNKNOWN || net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(keyCode))
++            keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++
++        this.key = keyCode;
++        this.keyModifier = keyModifier;
++
++        MAP.put(keyCode, this);
+     }
  }

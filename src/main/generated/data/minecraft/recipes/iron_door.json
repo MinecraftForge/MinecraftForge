@@ -13,6 +13,6 @@
   ],
   "result": {
     "count": 3,
-    "item": "minecraft:iron_door"
+    "id": "minecraft:iron_door"
   }
 }

@@ -1,16 +1,13 @@
 --- a/net/minecraft/data/tags/FlatLevelGeneratorPresetTagsProvider.java
 +++ b/net/minecraft/data/tags/FlatLevelGeneratorPresetTagsProvider.java
-@@ -9,8 +_,13 @@
- import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorPresets;
+@@ -13,6 +_,10 @@
+         super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_);
+     }
  
- public class FlatLevelGeneratorPresetTagsProvider extends TagsProvider<FlatLevelGeneratorPreset> {
-+   /** @deprecated Forge: Use the {@linkplain #FlatLevelGeneratorPresetTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public FlatLevelGeneratorPresetTagsProvider(PackOutput p_256604_, CompletableFuture<HolderLookup.Provider> p_255962_) {
-       super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_);
-+   }
-+   public FlatLevelGeneratorPresetTagsProvider(PackOutput p_256604_, CompletableFuture<HolderLookup.Provider> p_255962_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_, modId, existingFileHelper);
-    }
- 
-    protected void addTags(HolderLookup.Provider p_255741_) {
++    public FlatLevelGeneratorPresetTagsProvider(PackOutput p_256604_, CompletableFuture<HolderLookup.Provider> p_255962_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_256604_, Registries.FLAT_LEVEL_GENERATOR_PRESET, p_255962_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_255741_) {
+         this.tag(FlatLevelGeneratorPresetTags.VISIBLE)

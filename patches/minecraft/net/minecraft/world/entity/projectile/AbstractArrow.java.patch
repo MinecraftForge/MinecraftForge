@@ -1,71 +1,71 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -68,6 +_,8 @@
-    private List<Entity> piercedAndKilledEntities;
-    private ItemStack pickupItemStack;
+@@ -68,6 +_,7 @@
+     @Nullable
+     private List<Entity> piercedAndKilledEntities;
+     private ItemStack pickupItemStack = this.getDefaultPickupItem();
++    private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
  
-+   private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
-+
-    protected AbstractArrow(EntityType<? extends AbstractArrow> p_36717_, Level p_36719_, ItemStack p_312639_) {
-       super(p_36717_, p_36719_);
-       this.pickupItemStack = p_312639_.copy();
-@@ -157,7 +_,7 @@
-          --this.shakeTime;
-       }
+     protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {
+         super(p_332730_, p_335646_);
+@@ -167,7 +_,7 @@
+             this.shakeTime--;
+         }
  
--      if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW)) {
-+      if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
-          this.clearFire();
-       }
+-        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW)) {
++        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+             this.clearFire();
+         }
  
-@@ -193,9 +_,28 @@
-                }
+@@ -203,11 +_,27 @@
+                     }
+                 }
+ 
+-                if (hitresult != null && !flag) {
+-                    ProjectileDeflection projectiledeflection = this.hitTargetOrDeflectSelf(hitresult);
+-                    this.hasImpulse = true;
+-                    if (projectiledeflection != ProjectileDeflection.NONE) {
+-                        break;
++                if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
++                    switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
++                        case SKIP_ENTITY:
++                            if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
++                                this.onHit(hitresult);
++                                this.hasImpulse = true;
++                                break;
++                            }
++                            ignoredEntities.add(entityhitresult.getEntity().getId());
++                            entityhitresult = null; // Don't process any further
++                            break;
++                        case STOP_AT_CURRENT_NO_DAMAGE:
++                            this.discard();
++                            entityhitresult = null; // Don't process any further
++                            break;
++                        case STOP_AT_CURRENT:
++                            this.setPierceLevel((byte) 0);
++                        case DEFAULT:
++                            this.onHit(hitresult);
++                            this.hasImpulse = true;
++                            break;
+                     }
+                 }
+ 
+@@ -218,6 +_,9 @@
+                 hitresult = null;
              }
  
--            if (hitresult != null && !flag) {
--               this.onHit(hitresult);
--               this.hasImpulse = true;
-+            if (hitresult != null && hitresult.getType() != HitResult.Type.MISS && !flag) {
-+               switch (net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, hitresult)) {
-+                  case SKIP_ENTITY:
-+                     if (hitresult.getType() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
-+                        this.onHit(hitresult);
-+                        this.hasImpulse = true;
-+                        break;
-+                     }
-+                     ignoredEntities.add(entityhitresult.getEntity().getId());
-+                     entityhitresult = null; // Don't process any further
-+                     break;
-+                  case STOP_AT_CURRENT_NO_DAMAGE:
-+                     this.discard();
-+                     entityhitresult = null; // Don't process any further
-+                     break;
-+                  case STOP_AT_CURRENT:
-+                     this.setPierceLevel((byte) 0);
-+                  case DEFAULT:
-+                     this.onHit(hitresult);
-+                     this.hasImpulse = true;
-+                     break;
-+               }
-             }
- 
-             if (entityhitresult == null || this.getPierceLevel() <= 0) {
-@@ -205,6 +_,9 @@
-             hitresult = null;
-          }
- 
-+         if (this.isRemoved())
-+            return;
++            if (this.isRemoved())
++                return;
 +
-          vec3 = this.getDeltaMovement();
-          double d5 = vec3.x;
-          double d6 = vec3.y;
-@@ -439,7 +_,7 @@
-    }
+             vec3 = this.getDeltaMovement();
+             double d5 = vec3.x;
+             double d6 = vec3.y;
+@@ -453,7 +_,7 @@
  
-    protected boolean canHitEntity(Entity p_36743_) {
--      return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId()));
-+      return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId())) && !this.ignoredEntities.contains(p_36743_.getId());
-    }
+     @Override
+     protected boolean canHitEntity(Entity p_36743_) {
+-        return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId()));
++        return super.canHitEntity(p_36743_) && (this.piercingIgnoreEntityIds == null || !this.piercingIgnoreEntityIds.contains(p_36743_.getId())) && !this.ignoredEntities.contains(p_36743_.getId());
+     }
  
-    public void addAdditionalSaveData(CompoundTag p_36772_) {
+     @Override

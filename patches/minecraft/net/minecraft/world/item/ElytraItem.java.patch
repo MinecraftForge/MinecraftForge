@@ -1,28 +1,26 @@
 --- a/net/minecraft/world/item/ElytraItem.java
 +++ b/net/minecraft/world/item/ElytraItem.java
-@@ -27,6 +_,25 @@
-       return this.swapWithEquipmentSlot(this, p_41137_, p_41138_, p_41139_);
-    }
- 
-+   @Override
-+   public boolean canElytraFly(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
-+      return ElytraItem.isFlyEnabled(stack);
-+   }
+@@ -39,4 +_,23 @@
+     public EquipmentSlot getEquipmentSlot() {
+         return EquipmentSlot.CHEST;
+     }
 +
-+   @Override
-+   public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
-+      if (!entity.level().isClientSide) {
-+         int nextFlightTick = flightTicks + 1;
-+         if (nextFlightTick % 10 == 0) {
-+            if (nextFlightTick % 20 == 0) {
-+               stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(net.minecraft.world.entity.EquipmentSlot.CHEST));
-+            }
-+            entity.gameEvent(net.minecraft.world.level.gameevent.GameEvent.ELYTRA_GLIDE);
-+         }
-+      }
-+      return true;
-+   }
++    @Override
++    public boolean canElytraFly(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
++       return ElytraItem.isFlyEnabled(stack);
++    }
 +
-    public SoundEvent getEquipSound() {
-       return SoundEvents.ARMOR_EQUIP_ELYTRA;
-    }
++    @Override
++    public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
++       if (!entity.level().isClientSide) {
++          int nextFlightTick = flightTicks + 1;
++          if (nextFlightTick % 10 == 0) {
++             if (nextFlightTick % 20 == 0) {
++                stack.hurtAndBreak(1, entity, net.minecraft.world.entity.EquipmentSlot.CHEST);
++             }
++             entity.gameEvent(net.minecraft.world.level.gameevent.GameEvent.ELYTRA_GLIDE);
++          }
++       }
++       return true;
++    }
+ }

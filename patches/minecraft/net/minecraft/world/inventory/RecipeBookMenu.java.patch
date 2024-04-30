@@ -1,13 +1,11 @@
 --- a/net/minecraft/world/inventory/RecipeBookMenu.java
 +++ b/net/minecraft/world/inventory/RecipeBookMenu.java
-@@ -30,6 +_,10 @@
+@@ -33,4 +_,8 @@
+     public abstract RecipeBookType getRecipeBookType();
  
-    public abstract int getSize();
- 
-+   public java.util.List<net.minecraft.client.RecipeBookCategories> getRecipeBookCategories() {
-+       return net.minecraft.client.RecipeBookCategories.getCategories(this.getRecipeBookType());
-+   }
+     public abstract boolean shouldMoveToInventory(int p_150635_);
 +
-    public abstract RecipeBookType getRecipeBookType();
- 
-    public abstract boolean shouldMoveToInventory(int p_150635_);
++    public java.util.List<net.minecraft.client.RecipeBookCategories> getRecipeBookCategories() {
++        return net.minecraft.client.RecipeBookCategories.getCategories(this.getRecipeBookType());
++    }
+ }

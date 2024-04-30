@@ -1,10 +1,9 @@
 --- a/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
 +++ b/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
-@@ -61,6 +_,15 @@
-       return Component.empty().append(this.lines.title).append(": ").append(this.lines.detail);
-    }
+@@ -71,6 +_,15 @@
+     }
  
-+    @Override
+     @Override
 +    public boolean keyPressed(int key, int scanCode, int modifiers) {
 +       if (key == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
 +          minecraft.setScreen(this.nextScreen);
@@ -13,6 +12,7 @@
 +       return super.keyPressed(key, scanCode, modifiers);
 +    }
 +
-    public void render(GuiGraphics p_283497_, int p_88680_, int p_88681_, float p_88682_) {
-       super.render(p_283497_, p_88680_, p_88681_, p_88682_);
-       p_283497_.drawCenteredString(this.font, this.lines.title, this.width / 2, 80, -1);
++    @Override
+     public void render(GuiGraphics p_283497_, int p_88680_, int p_88681_, float p_88682_) {
+         super.render(p_283497_, p_88680_, p_88681_, p_88682_);
+         p_283497_.drawCenteredString(this.font, this.lines.title, this.width / 2, 80, -1);

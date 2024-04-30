@@ -6,23 +6,23 @@
  @OnlyIn(Dist.CLIENT)
 -public interface BakedModel {
 +public interface BakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, RandomSource, net.minecraftforge.client.model.data.ModelData, net.minecraft.client.renderer.RenderType)}*/
-+   @Deprecated
-    List<BakedQuad> getQuads(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_);
++    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, RandomSource, net.minecraftforge.client.model.data.ModelData, net.minecraft.client.renderer.RenderType)}*/
++    @Deprecated
+     List<BakedQuad> getQuads(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_);
  
-    boolean useAmbientOcclusion();
+     boolean useAmbientOcclusion();
 @@ -24,9 +_,13 @@
  
-    boolean isCustomRenderer();
+     boolean isCustomRenderer();
  
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.ModelData)}*/
-+   @Deprecated
-    TextureAtlasSprite getParticleIcon();
++    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.ModelData)}*/
++    @Deprecated
+     TextureAtlasSprite getParticleIcon();
  
--   ItemTransforms getTransforms();
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#applyTransform(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack, boolean)} instead */
-+   @Deprecated
-+   default ItemTransforms getTransforms() { return ItemTransforms.NO_TRANSFORMS; }
+-    ItemTransforms getTransforms();
++    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#applyTransform(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack, boolean)} instead */
++    @Deprecated
++    default ItemTransforms getTransforms() { return ItemTransforms.NO_TRANSFORMS; }
  
-    ItemOverrides getOverrides();
+     ItemOverrides getOverrides();
  }

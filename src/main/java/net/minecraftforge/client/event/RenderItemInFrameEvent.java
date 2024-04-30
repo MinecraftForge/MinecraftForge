@@ -30,8 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ItemFrameRenderer
  */
 @Cancelable
-public class RenderItemInFrameEvent extends Event
-{
+public class RenderItemInFrameEvent extends Event {
     private final ItemStack itemStack;
     private final ItemFrame itemFrameEntity;
     private final ItemFrameRenderer<?> renderer;
@@ -40,9 +39,7 @@ public class RenderItemInFrameEvent extends Event
     private final int packedLight;
 
     @ApiStatus.Internal
-    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack,
-                                  MultiBufferSource multiBufferSource, int packedLight)
-    {
+    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
         itemStack = itemFrame.getItem();
         itemFrameEntity = itemFrame;
         renderer = renderItemFrame;
@@ -54,40 +51,35 @@ public class RenderItemInFrameEvent extends Event
     /**
      * {@return the item stack being rendered}
      */
-    public ItemStack getItemStack()
-    {
+    public ItemStack getItemStack() {
         return itemStack;
     }
 
     /**
      * {@return the item frame entity}
      */
-    public ItemFrame getItemFrameEntity()
-    {
+    public ItemFrame getItemFrameEntity() {
         return itemFrameEntity;
     }
 
     /**
      * {@return the renderer for the item frame entity}
      */
-    public ItemFrameRenderer<?> getRenderer()
-    {
+    public ItemFrameRenderer<?> getRenderer() {
         return renderer;
     }
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack()
-    {
+    public PoseStack getPoseStack() {
         return poseStack;
     }
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource()
-    {
+    public MultiBufferSource getMultiBufferSource() {
         return multiBufferSource;
     }
 
@@ -96,8 +88,7 @@ public class RenderItemInFrameEvent extends Event
      *
      * @see LightTexture
      */
-    public int getPackedLight()
-    {
+    public int getPackedLight() {
         return packedLight;
     }
 }

@@ -5,7 +5,8 @@
 
 package net.minecraftforge.common.world;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Builder;
@@ -16,13 +17,13 @@ import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Bui
  */
 public class NoneStructureModifier implements StructureModifier {
     public static final NoneStructureModifier INSTANCE = new NoneStructureModifier();
-    public static final Codec<NoneStructureModifier> CODEC = Codec.unit(NoneStructureModifier.INSTANCE);
+    public static final MapCodec<NoneStructureModifier> CODEC = MapCodec.unit(NoneStructureModifier.INSTANCE);
 
     @Override
     public void modify(Holder<Structure> structure, Phase phase, Builder builder) {}
 
     @Override
-    public Codec<? extends StructureModifier> codec() {
+    public MapCodec<? extends StructureModifier> codec() {
         return CODEC;
     }
 }

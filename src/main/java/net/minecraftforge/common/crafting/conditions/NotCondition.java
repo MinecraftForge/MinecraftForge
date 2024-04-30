@@ -5,17 +5,18 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record NotCondition(ICondition child) implements ICondition {
-    public static final Codec<NotCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<NotCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ICondition.CODEC.fieldOf("value").forGetter(NotCondition::child)
     ).apply(b, NotCondition::new));
 
     @Override
-    public boolean test(IContext context) {
-        return !child.test(context);
+    public boolean test(IContext context, DynamicOps<?> ops) {
+        return !child.test(context, ops);
     }
 
     @Override
@@ -24,7 +25,7 @@ public record NotCondition(ICondition child) implements ICondition {
     }
 
     @Override
-    public Codec<? extends ICondition> codec() {
+    public MapCodec<? extends ICondition> codec() {
         return CODEC;
     }
 }

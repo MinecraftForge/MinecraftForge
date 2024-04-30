@@ -1,16 +1,17 @@
 --- a/net/minecraft/data/tags/WorldPresetTagsProvider.java
 +++ b/net/minecraft/data/tags/WorldPresetTagsProvider.java
-@@ -9,8 +_,13 @@
+@@ -9,8 +_,14 @@
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
  
  public class WorldPresetTagsProvider extends TagsProvider<WorldPreset> {
-+   /** @deprecated Forge: Use the {@linkplain #WorldPresetTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public WorldPresetTagsProvider(PackOutput p_255701_, CompletableFuture<HolderLookup.Provider> p_255974_) {
-       super(p_255701_, Registries.WORLD_PRESET, p_255974_);
-+   }
-+   public WorldPresetTagsProvider(PackOutput p_255701_, CompletableFuture<HolderLookup.Provider> p_255974_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_255701_, Registries.WORLD_PRESET, p_255974_, modId, existingFileHelper);
-    }
++    /** @deprecated Forge: Use the {@linkplain #WorldPresetTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++    @Deprecated
+     public WorldPresetTagsProvider(PackOutput p_255701_, CompletableFuture<HolderLookup.Provider> p_255974_) {
+         super(p_255701_, Registries.WORLD_PRESET, p_255974_);
++    }
++
++    public WorldPresetTagsProvider(PackOutput p_255701_, CompletableFuture<HolderLookup.Provider> p_255974_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++       super(p_255701_, Registries.WORLD_PRESET, p_255974_, modId, existingFileHelper);
+     }
  
-    protected void addTags(HolderLookup.Provider p_255734_) {
+     @Override

@@ -1,49 +1,51 @@
 --- a/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
 +++ b/net/minecraft/client/renderer/entity/player/PlayerRenderer.java
-@@ -61,7 +_,9 @@
+@@ -68,7 +_,9 @@
  
-    public void render(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_) {
-       this.setModelProperties(p_117788_);
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_117788_, this, p_117790_, p_117791_, p_117792_, p_117793_))) return;
-       super.render(p_117788_, p_117789_, p_117790_, p_117791_, p_117792_, p_117793_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_117788_, this, p_117790_, p_117791_, p_117792_, p_117793_));
-    }
+     public void render(AbstractClientPlayer p_117788_, float p_117789_, float p_117790_, PoseStack p_117791_, MultiBufferSource p_117792_, int p_117793_) {
+         this.setModelProperties(p_117788_);
++        if (net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderPlayerPre(p_117788_, this, p_117790_, p_117791_, p_117792_, p_117793_)) return;
+         super.render(p_117788_, p_117789_, p_117790_, p_117791_, p_117792_, p_117793_);
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderPlayerPost(p_117788_, this, p_117790_, p_117791_, p_117792_, p_117793_);
+     }
  
-    public Vec3 getRenderOffset(AbstractClientPlayer p_117785_, float p_117786_) {
-@@ -134,10 +_,13 @@
-             if (useanim == UseAnim.BRUSH) {
-                return HumanoidModel.ArmPose.BRUSH;
+     public Vec3 getRenderOffset(AbstractClientPlayer p_117785_, float p_117786_) {
+@@ -140,10 +_,15 @@
+                 if (useanim == UseAnim.BRUSH) {
+                     return HumanoidModel.ArmPose.BRUSH;
+                 }
+-            } else if (!p_117795_.swinging && itemstack.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemstack)) {
++            } else if (!p_117795_.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
+                 return HumanoidModel.ArmPose.CROSSBOW_HOLD;
              }
--         } else if (!p_117795_.swinging && itemstack.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemstack)) {
-+         } else if (!p_117795_.swinging && itemstack.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemstack)) {
-             return HumanoidModel.ArmPose.CROSSBOW_HOLD;
-          }
  
-+         HumanoidModel.ArmPose forgeArmPose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(p_117795_, p_117796_, itemstack);
-+         if (forgeArmPose != null) return forgeArmPose;
++            var forgeArmPose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemstack).getArmPose(p_117795_, p_117796_, itemstack);
++            if (forgeArmPose != null) {
++                return forgeArmPose;
++            }
 +
-          return HumanoidModel.ArmPose.ITEM;
-       }
-    }
-@@ -170,10 +_,12 @@
-    }
+             return HumanoidModel.ArmPose.ITEM;
+         }
+     }
+@@ -185,10 +_,12 @@
+     }
  
-    public void renderRightHand(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_) {
-+      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_117771_, p_117772_, p_117773_, p_117774_, HumanoidArm.RIGHT))
-       this.renderHand(p_117771_, p_117772_, p_117773_, p_117774_, (this.model).rightArm, (this.model).rightSleeve);
-    }
+     public void renderRightHand(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_) {
++        if (!net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderArm(p_117771_, p_117772_, p_117773_, p_117774_, HumanoidArm.RIGHT))
+         this.renderHand(p_117771_, p_117772_, p_117773_, p_117774_, this.model.rightArm, this.model.rightSleeve);
+     }
  
-    public void renderLeftHand(PoseStack p_117814_, MultiBufferSource p_117815_, int p_117816_, AbstractClientPlayer p_117817_) {
-+      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_117814_, p_117815_, p_117816_, p_117817_, HumanoidArm.LEFT))
-       this.renderHand(p_117814_, p_117815_, p_117816_, p_117817_, (this.model).leftArm, (this.model).leftSleeve);
-    }
+     public void renderLeftHand(PoseStack p_117814_, MultiBufferSource p_117815_, int p_117816_, AbstractClientPlayer p_117817_) {
++        if (!net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderArm(p_117814_, p_117815_, p_117816_, p_117817_, HumanoidArm.LEFT))
+         this.renderHand(p_117814_, p_117815_, p_117816_, p_117817_, this.model.leftArm, this.model.leftSleeve);
+     }
  
-@@ -213,7 +_,7 @@
-          }
-       } else if (f > 0.0F) {
-          super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_);
--         float f4 = p_117802_.isInWater() ? -90.0F - f1 : -90.0F;
-+         float f4 = p_117802_.isInWater() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - p_117802_.getXRot() : -90.0F;
-          float f5 = Mth.lerp(f, 0.0F, f4);
-          p_117803_.mulPose(Axis.XP.rotationDegrees(f5));
-          if (p_117802_.isVisuallySwimming()) {
+@@ -230,7 +_,7 @@
+             }
+         } else if (f > 0.0F) {
+             super.setupRotations(p_117802_, p_117803_, p_117804_, p_117805_, p_117806_, p_335509_);
+-            float f4 = p_117802_.isInWater() ? -90.0F - f1 : -90.0F;
++            float f4 = p_117802_.isInWater() || p_117802_.isInFluidType((fluidType, height) -> p_117802_.canSwimInFluidType(fluidType)) ? -90.0F - f1 : -90.0F;
+             float f5 = Mth.lerp(f, 0.0F, f4);
+             p_117803_.mulPose(Axis.XP.rotationDegrees(f5));
+             if (p_117802_.isVisuallySwimming()) {

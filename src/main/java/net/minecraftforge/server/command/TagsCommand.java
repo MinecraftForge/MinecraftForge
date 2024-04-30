@@ -158,7 +158,7 @@ class TagsCommand
         return tag.size();
     }
 
-    private static int queryElementTags(final CommandContext<CommandSourceStack> ctx, final int page) throws CommandSyntaxException
+    private static <T> int queryElementTags(final CommandContext<CommandSourceStack> ctx, final int page) throws CommandSyntaxException
     {
         final ResourceKey<? extends Registry<?>> registryKey = getResourceKey(ctx, "registry", ROOT_REGISTRY_KEY)
                 .orElseThrow(); // Expect to be always retrieve a resource key for the root registry (registry key)
@@ -168,7 +168,7 @@ class TagsCommand
         final ResourceLocation elementLocation = ResourceLocationArgument.getId(ctx, "element");
         final ResourceKey<?> elementKey = ResourceKey.create(cast(registryKey), elementLocation);
 
-        final Holder<?> elementHolder = registry.getHolder(cast(elementKey))
+        final Holder<?> elementHolder = ((Registry<Object>)registry).getHolder((ResourceKey<Object>)elementKey)
                 .orElseThrow(() -> UNKNOWN_ELEMENT.create(elementLocation, registryKey.location()));
 
         final long containingTagsCount = elementHolder.tags().count();

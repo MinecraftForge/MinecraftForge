@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/MerchantScreen.java
-@@ -236,7 +_,12 @@
-          p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_, p_283601_);
-       } else {
-          p_281357_.renderItemDecorations(this.font, p_282046_, p_282403_, p_283601_, p_282046_.getCount() == 1 ? "1" : null);
--         p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_ + 14, p_283601_, p_283466_.getCount() == 1 ? "1" : null);
-+         // Forge: fixes Forge-8806, code for count rendering taken from GuiGraphics#renderGuiItemDecorations
-+         p_281357_.pose().pushPose();
-+         p_281357_.pose().translate(0.0F, 0.0F, 200.0F);
-+         String count = p_283466_.getCount() == 1 ? "1" : String.valueOf(p_283466_.getCount());
-+         font.drawInBatch(count, (float) (p_282403_ + 14) + 19 - 2 - font.width(count), (float)p_283601_ + 6 + 3, 0xFFFFFF, true, p_281357_.pose().last().pose(), p_281357_.bufferSource(), net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
-+         p_281357_.pose().popPose();
-          p_281357_.pose().pushPose();
-          p_281357_.pose().translate(0.0F, 0.0F, 300.0F);
-          p_281357_.blitSprite(DISCOUNT_STRIKETHRUOGH_SPRITE, p_282403_ + 7, p_283601_ + 12, 0, 9, 2);
+@@ -234,7 +_,12 @@
+             p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_, p_283601_);
+         } else {
+             p_281357_.renderItemDecorations(this.font, p_282046_, p_282403_, p_283601_, p_282046_.getCount() == 1 ? "1" : null);
+-            p_281357_.renderItemDecorations(this.font, p_283466_, p_282403_ + 14, p_283601_, p_283466_.getCount() == 1 ? "1" : null);
++            // Forge: fixes Forge-8806, code for count rendering taken from GuiGraphics#renderGuiItemDecorations
++            p_281357_.pose().pushPose();
++            p_281357_.pose().translate(0.0F, 0.0F, 200.0F);
++            String count = p_283466_.getCount() == 1 ? "1" : String.valueOf(p_283466_.getCount());
++            font.drawInBatch(count, (float) (p_282403_ + 14) + 19 - 2 - font.width(count), (float)p_283601_ + 6 + 3, 0xFFFFFF, true, p_281357_.pose().last().pose(), p_281357_.bufferSource(), net.minecraft.client.gui.Font.DisplayMode.NORMAL, 0, 15728880, false);
++            p_281357_.pose().popPose();
+             p_281357_.pose().pushPose();
+             p_281357_.pose().translate(0.0F, 0.0F, 300.0F);
+             p_281357_.blitSprite(DISCOUNT_STRIKETHRUOGH_SPRITE, p_282403_ + 7, p_283601_ + 12, 0, 9, 2);

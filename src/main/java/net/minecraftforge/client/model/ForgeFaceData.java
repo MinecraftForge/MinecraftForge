@@ -39,7 +39,7 @@ public record ForgeFaceData(int color, int blockLight, int skyLight, boolean amb
 
     public static final ForgeFaceData DEFAULT = new ForgeFaceData(0xFFFFFFFF, 0, 0, true, false);
 
-    public static final Codec<Integer> COLOR = ExtraCodecs.either(Codec.INT, Codec.STRING).xmap(
+    public static final Codec<Integer> COLOR = Codec.either(Codec.INT, Codec.STRING).xmap(
             either -> either.map(Function.identity(), str -> (int) Long.parseLong(str, 16)),
             color -> Either.right(Integer.toHexString(color)));
 
@@ -65,6 +65,6 @@ public record ForgeFaceData(int color, int blockLight, int skyLight, boolean amb
         {
             return fallback;
         }
-        return CODEC.parse(JsonOps.INSTANCE, obj).getOrThrow(false, JsonParseException::new);
+        return CODEC.parse(JsonOps.INSTANCE, obj).getOrThrow(JsonParseException::new);
     }
 }

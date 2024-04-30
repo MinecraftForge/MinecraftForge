@@ -80,7 +80,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         @Override
         public BakedModel build()
         {
-            return builder.build(renderTypes);
+            return builder.renderTypes(renderTypes).build();
         }
     }
 

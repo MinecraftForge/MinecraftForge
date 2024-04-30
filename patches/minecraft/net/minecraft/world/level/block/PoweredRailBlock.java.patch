@@ -1,85 +1,90 @@
 --- a/net/minecraft/world/level/block/PoweredRailBlock.java
 +++ b/net/minecraft/world/level/block/PoweredRailBlock.java
-@@ -16,13 +_,23 @@
-    public static final MapCodec<PoweredRailBlock> CODEC = simpleCodec(PoweredRailBlock::new);
-    public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
-    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-+   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
+@@ -16,6 +_,7 @@
+     public static final MapCodec<PoweredRailBlock> CODEC = simpleCodec(PoweredRailBlock::new);
+     public static final EnumProperty<RailShape> SHAPE = BlockStateProperties.RAIL_SHAPE_STRAIGHT;
+     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
++    private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
  
-    public MapCodec<PoweredRailBlock> codec() {
-       return CODEC;
-    }
+     @Override
+     public MapCodec<PoweredRailBlock> codec() {
+@@ -23,7 +_,16 @@
+     }
  
-    public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
-+      this(p_55218_, false);
-+   }
+     public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
++        this(p_55218_, false);
++    }
 +
-+   protected PoweredRailBlock(BlockBehaviour.Properties p_55218_, boolean isPoweredRail) {
-       super(true, p_55218_);
-+      this.isActivator = !isPoweredRail;
-+      this.registerDefaultState();
-+   }
++    protected PoweredRailBlock(BlockBehaviour.Properties p_55218_, boolean isPoweredRail) {
+         super(true, p_55218_);
++        this.isActivator = !isPoweredRail;
++        this.registerDefaultState();
++    }
 +
-+   protected void registerDefaultState() {
-       this.registerDefaultState(this.stateDefinition.any().setValue(SHAPE, RailShape.NORTH_SOUTH).setValue(POWERED, Boolean.valueOf(false)).setValue(WATERLOGGED, Boolean.valueOf(false)));
-    }
++    protected void registerDefaultState() {
+         this.registerDefaultState(
+             this.stateDefinition
+                 .any()
+@@ -41,7 +_,7 @@
+             int j = p_55221_.getY();
+             int k = p_55221_.getZ();
+             boolean flag = true;
+-            RailShape railshape = p_55222_.getValue(SHAPE);
++            RailShape railshape = p_55222_.getValue(getShapeProperty());
+             switch (railshape) {
+                 case NORTH_SOUTH:
+                     if (p_55223_) {
+@@ -110,18 +_,18 @@
  
-@@ -34,7 +_,7 @@
-          int j = p_55221_.getY();
-          int k = p_55221_.getZ();
-          boolean flag = true;
--         RailShape railshape = p_55222_.getValue(SHAPE);
-+         RailShape railshape = p_55222_.getValue(getShapeProperty());
-          switch (railshape) {
-             case NORTH_SOUTH:
-                if (p_55223_) {
-@@ -105,14 +_,14 @@
- 
-    protected boolean isSameRailWithPower(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
-       BlockState blockstate = p_55226_.getBlockState(p_55227_);
--      if (!blockstate.is(this)) {
-+      if (!(blockstate.getBlock() instanceof PoweredRailBlock other)) {
-          return false;
-       } else {
--         RailShape railshape = blockstate.getValue(SHAPE);
-+         RailShape railshape = other.getRailDirection(blockstate, p_55226_, p_55227_, null);
-          if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
-             if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
--               if (blockstate.getValue(POWERED)) {
--                  return p_55226_.hasNeighborSignal(p_55227_) ? true : this.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
-+               if (isActivatorRail() == other.isActivatorRail()) {
-+                  return p_55226_.hasNeighborSignal(p_55227_) ? true : other.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
-                } else {
-                   return false;
-                }
-@@ -131,7 +_,7 @@
-       if (flag1 != flag) {
-          p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
-          p_55233_.updateNeighborsAt(p_55234_.below(), this);
--         if (p_55232_.getValue(SHAPE).isAscending()) {
-+         if (p_55232_.getValue(getShapeProperty()).isAscending()) {
-             p_55233_.updateNeighborsAt(p_55234_.above(), this);
-          }
-       }
-@@ -162,6 +_,9 @@
-                   return p_55240_.setValue(SHAPE, RailShape.SOUTH_EAST);
-                case NORTH_EAST:
-                   return p_55240_.setValue(SHAPE, RailShape.SOUTH_WEST);
-+               case NORTH_SOUTH: //Forge fix: MC-196102
-+               case EAST_WEST:
-+                  return p_55240_;
+     protected boolean isSameRailWithPower(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
+         BlockState blockstate = p_55226_.getBlockState(p_55227_);
+-        if (!blockstate.is(this)) {
++        if (!(blockstate.getBlock() instanceof PoweredRailBlock other)) {
+             return false;
+         } else {
+-            RailShape railshape = blockstate.getValue(SHAPE);
++            RailShape railshape = other.getRailDirection(blockstate, p_55226_, p_55227_, null);
+             if (p_55230_ != RailShape.EAST_WEST
+                 || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
+                 if (p_55230_ != RailShape.NORTH_SOUTH
+                     || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
+-                    if (!blockstate.getValue(POWERED)) {
++                    if (isActivatorRail() == other.isActivatorRail()) {
+                         return false;
+                     } else {
+-                        return p_55226_.hasNeighborSignal(p_55227_) ? true : this.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
++                        return p_55226_.hasNeighborSignal(p_55227_) ? true : other.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
+                     }
+                 } else {
+                     return false;
+@@ -141,7 +_,7 @@
+         if (flag1 != flag) {
+             p_55233_.setBlock(p_55234_, p_55232_.setValue(POWERED, Boolean.valueOf(flag1)), 3);
+             p_55233_.updateNeighborsAt(p_55234_.below(), this);
+-            if (p_55232_.getValue(SHAPE).isAscending()) {
++            if (p_55232_.getValue(getShapeProperty()).isAscending()) {
+                 p_55233_.updateNeighborsAt(p_55234_.above(), this);
              }
-          case COUNTERCLOCKWISE_90:
-             switch ((RailShape)p_55240_.getValue(SHAPE)) {
-@@ -259,6 +_,10 @@
-    }
+         }
+@@ -173,6 +_,9 @@
+                         return p_55240_.setValue(SHAPE, RailShape.SOUTH_EAST);
+                     case NORTH_EAST:
+                         return p_55240_.setValue(SHAPE, RailShape.SOUTH_WEST);
++                    case NORTH_SOUTH: //Forge fix: MC-196102
++                    case EAST_WEST:
++                       return p_55240_;
+                 }
+             case COUNTERCLOCKWISE_90:
+                 switch ((RailShape)p_55240_.getValue(SHAPE)) {
+@@ -272,6 +_,10 @@
  
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55243_) {
--      p_55243_.add(SHAPE, POWERED, WATERLOGGED);
-+      p_55243_.add(getShapeProperty(), POWERED, WATERLOGGED);
-+   }
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55243_) {
+-        p_55243_.add(SHAPE, POWERED, WATERLOGGED);
++        p_55243_.add(getShapeProperty(), POWERED, WATERLOGGED);
++    }
 +
-+   public boolean isActivatorRail() {
-+      return isActivator;
-    }
++    public boolean isActivatorRail() {
++        return isActivator;
+     }
  }

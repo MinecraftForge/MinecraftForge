@@ -18,11 +18,9 @@ import java.nio.ByteBuffer;
 /**
  * Extension interface for {@link VertexConsumer}.
  */
-public interface IForgeVertexConsumer
-{
-    private VertexConsumer self()
-    {
-        return (VertexConsumer) this;
+public interface IForgeVertexConsumer {
+    private VertexConsumer self() {
+        return (VertexConsumer)this;
     }
 
     /**
@@ -30,21 +28,18 @@ public interface IForgeVertexConsumer
      * <p>
      * If the consumer needs to store the data for later use, it must copy it. There are no guarantees on immutability.
      */
-    default VertexConsumer misc(VertexFormatElement element, int... rawData)
-    {
+    default VertexConsumer misc(VertexFormatElement element, int... rawData) {
         return self();
     }
 
     /**
      * Variant with no per-vertex shading.
      */
-    default void putBulkData(PoseStack.Pose pose, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay, boolean readExistingColor)
-    {
+    default void putBulkData(PoseStack.Pose pose, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay, boolean readExistingColor) {
         self().putBulkData(pose, bakedQuad, new float[] { 1.0F, 1.0F, 1.0F, 1.0F }, red, green, blue, alpha, new int[] { packedLight, packedLight, packedLight, packedLight }, packedOverlay, readExistingColor);
     }
 
-    default int applyBakedLighting(int packedLight, ByteBuffer data)
-    {
+    default int applyBakedLighting(int packedLight, ByteBuffer data) {
         int bl = packedLight & 0xFFFF;
         int sl = (packedLight >> 16) & 0xFFFF;
         int offset = IQuadTransformer.UV2 * 4; // int offset for vertex 0 * 4 bytes per int
@@ -55,13 +50,11 @@ public interface IForgeVertexConsumer
         return bl | (sl << 16);
     }
 
-    default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform)
-    {
+    default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
         byte nx = data.get(28);
         byte ny = data.get(29);
         byte nz = data.get(30);
-        if (nx != 0 || ny != 0 || nz != 0)
-        {
+        if (nx != 0 || ny != 0 || nz != 0) {
             generated.set(nx / 127f, ny / 127f, nz / 127f);
             generated.mul(normalTransform);
         }

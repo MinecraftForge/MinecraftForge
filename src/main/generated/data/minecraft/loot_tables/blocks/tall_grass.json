@@ -16,9 +16,7 @@
           "offsetY": 1,
           "predicate": {
             "block": {
-              "blocks": [
-                "minecraft:tall_grass"
-              ],
+              "blocks": "minecraft:tall_grass",
               "state": {
                 "half": "upper"
               }
@@ -80,9 +78,7 @@
           "offsetY": -1,
           "predicate": {
             "block": {
-              "blocks": [
-                "minecraft:tall_grass"
-              ],
+              "blocks": "minecraft:tall_grass",
               "state": {
                 "half": "lower"
               }

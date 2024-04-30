@@ -1,30 +1,30 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-@@ -81,4 +_,27 @@
-    }
- 
-    protected abstract AbstractContainerMenu createMenu(int p_58627_, Inventory p_58628_);
+@@ -166,4 +_,27 @@
+         p_329140_.remove("Lock");
+         p_329140_.remove("Items");
+     }
 +
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
-+   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
-+      return new net.minecraftforge.items.wrapper.InvWrapper(this);
-+   }
++    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++        return new net.minecraftforge.items.wrapper.InvWrapper(this);
++    }
 +
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
-+      if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.remove)
-+         return itemHandler.cast();
-+      return super.getCapability(cap, side);
-+   }
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
++        if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.remove)
++            return itemHandler.cast();
++        return super.getCapability(cap, side);
++    }
 +
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      itemHandler.invalidate();
-+   }
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        itemHandler.invalidate();
++    }
 +
-+   @Override
-+   public void reviveCaps() {
-+      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
-+   }
++    @Override
++    public void reviveCaps() {
++        super.reviveCaps();
++        itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++    }
  }

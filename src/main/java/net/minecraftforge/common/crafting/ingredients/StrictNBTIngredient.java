@@ -7,12 +7,13 @@ package net.minecraftforge.common.crafting.ingredients;
 
 import java.util.stream.Stream;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 /** Ingredient that matches the given stack, performing an exact NBT match. Use {@link PartialNBTIngredient} if you need partial match. */
@@ -32,7 +33,12 @@ public class StrictNBTIngredient extends AbstractIngredient {
         if (input == null)
             return false;
         //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
-        return this.stack.getItem() == input.getItem() && this.stack.getDamageValue() == input.getDamageValue() && this.stack.areShareTagsEqual(input);
+        var inbt = input.get(DataComponents.CUSTOM_DATA);
+        var tnbt = this.stack.get(DataComponents.CUSTOM_DATA);
+        if(inbt == null || tnbt == null)
+            return false;
+
+        return this.stack.getItem() == input.getItem() && tnbt.matchedBy(inbt.copyTag());
     }
 
     @Override
@@ -45,24 +51,25 @@ public class StrictNBTIngredient extends AbstractIngredient {
         return SERIALIZER;
     }
 
-    public static final Codec<StrictNBTIngredient> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<StrictNBTIngredient> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ItemStack.CODEC.fieldOf("stack").forGetter(i -> i.stack)
     ).apply(b, StrictNBTIngredient::new));
 
     public static final IIngredientSerializer<StrictNBTIngredient> SERIALIZER = new IIngredientSerializer<>() {
         @Override
-        public Codec<? extends StrictNBTIngredient> codec() {
+        public MapCodec<? extends StrictNBTIngredient> codec() {
             return CODEC;
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, StrictNBTIngredient value) {
-            buffer.writeItem(value.stack);
+        public void write(RegistryFriendlyByteBuf buffer, StrictNBTIngredient value) {
+            ItemStack.STREAM_CODEC.encode(buffer, value.stack);
         }
 
         @Override
-        public StrictNBTIngredient read(FriendlyByteBuf buffer) {
-            return new StrictNBTIngredient(buffer.readItem());
+        public StrictNBTIngredient read(RegistryFriendlyByteBuf buffer) {
+            var stack = ItemStack.STREAM_CODEC.decode(buffer);
+            return new StrictNBTIngredient(stack);
         }
     };
 }

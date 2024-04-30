@@ -1,46 +1,46 @@
 --- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
 @@ -21,6 +_,8 @@
-    private final int attackInterval = 20;
-    private long lastCanUseCheck;
-    private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
-+   private int failedPathFindingPenalty = 0;
-+   private boolean canPenalize = false;
+     private final int attackInterval = 20;
+     private long lastCanUseCheck;
+     private static final long COOLDOWN_BETWEEN_CAN_USE_CHECKS = 20L;
++    private int failedPathFindingPenalty = 0;
++    private boolean canPenalize = false;
  
-    public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
-       this.mob = p_25552_;
-@@ -41,6 +_,15 @@
-          } else if (!livingentity.isAlive()) {
-             return false;
-          } else {
-+           if (canPenalize) {
-+               if (--this.ticksUntilNextPathRecalculation <= 0) {
-+                  this.path = this.mob.getNavigation().createPath(livingentity, 0);
-+                  this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-+                  return this.path != null;
-+               } else {
-+                  return true;
-+               }
-+            }
-             this.path = this.mob.getNavigation().createPath(livingentity, 0);
-             if (this.path != null) {
-                return true;
-@@ -98,6 +_,18 @@
-             this.pathedTargetZ = livingentity.getZ();
-             this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-             double d0 = this.mob.distanceToSqr(livingentity);
-+         if (this.canPenalize) {
-+            this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
-+            if (this.mob.getNavigation().getPath() != null) {
-+               net.minecraft.world.level.pathfinder.Node finalPathPoint = this.mob.getNavigation().getPath().getEndNode();
-+               if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
-+                  failedPathFindingPenalty = 0;
-+               else
-+                  failedPathFindingPenalty += 10;
-+            } else {
-+               failedPathFindingPenalty += 10;
-+            }
-+         }
-             if (d0 > 1024.0D) {
-                this.ticksUntilNextPathRecalculation += 10;
-             } else if (d0 > 256.0D) {
+     public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
+         this.mob = p_25552_;
+@@ -42,6 +_,15 @@
+             } else if (!livingentity.isAlive()) {
+                 return false;
+             } else {
++                if (canPenalize) {
++                    if (--this.ticksUntilNextPathRecalculation <= 0) {
++                        this.path = this.mob.getNavigation().createPath(livingentity, 0);
++                        this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
++                        return this.path != null;
++                    } else {
++                        return true;
++                    }
++                }
+                 this.path = this.mob.getNavigation().createPath(livingentity, 0);
+                 return this.path != null ? true : this.mob.isWithinMeleeAttackRange(livingentity);
+             }
+@@ -106,6 +_,18 @@
+                 this.pathedTargetZ = livingentity.getZ();
+                 this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
+                 double d0 = this.mob.distanceToSqr(livingentity);
++                if (this.canPenalize) {
++                    this.ticksUntilNextPathRecalculation += failedPathFindingPenalty;
++                    if (this.mob.getNavigation().getPath() != null) {
++                        net.minecraft.world.level.pathfinder.Node finalPathPoint = this.mob.getNavigation().getPath().getEndNode();
++                        if (finalPathPoint != null && livingentity.distanceToSqr(finalPathPoint.x, finalPathPoint.y, finalPathPoint.z) < 1)
++                            failedPathFindingPenalty = 0;
++                        else
++                            failedPathFindingPenalty += 10;
++                    } else {
++                        failedPathFindingPenalty += 10;
++                    }
++                }
+                 if (d0 > 1024.0) {
+                     this.ticksUntilNextPathRecalculation += 10;
+                 } else if (d0 > 256.0) {

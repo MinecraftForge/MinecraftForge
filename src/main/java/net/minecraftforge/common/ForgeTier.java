@@ -17,9 +17,7 @@ import java.util.function.Supplier;
  * Helper class to define a custom tier
  */
 @SuppressWarnings("ClassCanBeRecord") // can't make it a record because the method names will be obfuscated
-public final class ForgeTier implements Tier
-{
-    private final int level;
+public final class ForgeTier implements Tier {
     private final int uses;
     private final float speed;
     private final float attackDamageBonus;
@@ -28,72 +26,66 @@ public final class ForgeTier implements Tier
     private final TagKey<Block> tag;
     @NotNull
     private final Supplier<Ingredient> repairIngredient;
+    @NotNull
+    public final TagKey<Block> incorrectBlocks;
 
-    public ForgeTier(int level, int uses, float speed, float attackDamageBonus, int enchantmentValue,
-                     @NotNull TagKey<Block> tag, @NotNull Supplier<Ingredient> repairIngredient)
-    {
-        this.level = level;
+    public ForgeTier(int uses, float speed, float attackDamageBonus, int enchantmentValue,
+                     @NotNull TagKey<Block> tag, @NotNull Supplier<Ingredient> repairIngredient,
+                     @NotNull TagKey<Block> incorrectBlocks) {
         this.uses = uses;
         this.speed = speed;
         this.attackDamageBonus = attackDamageBonus;
         this.enchantmentValue = enchantmentValue;
         this.tag = tag;
         this.repairIngredient = repairIngredient;
+        this.incorrectBlocks = incorrectBlocks;
     }
 
     @Override
-    public int getUses()
-    {
+    public int getUses() {
         return this.uses;
     }
 
     @Override
-    public float getSpeed()
-    {
+    public float getSpeed() {
         return this.speed;
     }
 
     @Override
-    public float getAttackDamageBonus()
-    {
+    public float getAttackDamageBonus() {
         return this.attackDamageBonus;
     }
 
     @Override
-    public int getLevel()
-    {
-        return this.level;
-    }
-
-    @Override
-    public int getEnchantmentValue()
-    {
+    public int getEnchantmentValue() {
         return this.enchantmentValue;
     }
 
     @NotNull
-    public TagKey<Block> getTag()
-    {
+    public TagKey<Block> getTag() {
         return this.tag;
+    }
+
+    @Override
+    public TagKey<Block> getIncorrectBlocksForDrops() {
+        return this.incorrectBlocks;
     }
 
     @NotNull
     @Override
-    public Ingredient getRepairIngredient()
-    {
+    public Ingredient getRepairIngredient() {
         return this.repairIngredient.get();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ForgeTier[" +
-                "level=" + level + ", " +
                 "uses=" + uses + ", " +
                 "speed=" + speed + ", " +
                 "attackDamageBonus=" + attackDamageBonus + ", " +
                 "enchantmentValue=" + enchantmentValue + ", " +
                 "tag=" + tag + ", " +
+                "incorrect=" + incorrectBlocks+ ", " +
                 "repairIngredient=" + repairIngredient + ']';
     }
 }

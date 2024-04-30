@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge: TODO: Forge ItemStack capabilities - Lex 042724
 package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
- */
+ * /
 public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
@@ -37,7 +38,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     /**
      * @param container  The container itemStack, data is stored on it directly as NBT.
      * @param capacity   The maximum capacity of this fluid tank.
-     */
+     * /
     public FluidHandlerItemStackSimple(@NotNull ItemStack container, int capacity)
     {
         this.container = container;
@@ -179,7 +180,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
      * Override this method for special handling.
      * Can be used to swap out the container's item for a different one with "container.setItem".
      * Can be used to destroy the container with "container.stackSize--"
-     */
+     * /
     protected void setContainerToEmpty()
     {
         container.removeTagKey(FLUID_NBT_KEY);
@@ -194,7 +195,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
     /**
      * Destroys the container item when it's emptied.
-     */
+     * /
     public static class Consumable extends FluidHandlerItemStackSimple
     {
         public Consumable(ItemStack container, int capacity)
@@ -212,7 +213,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
     /**
      * Swaps the container item for a different one when it's emptied.
-     */
+     * /
     public static class SwapEmpty extends FluidHandlerItemStackSimple
     {
         protected final ItemStack emptyContainer;
@@ -231,3 +232,4 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
         }
     }
 }
+*/

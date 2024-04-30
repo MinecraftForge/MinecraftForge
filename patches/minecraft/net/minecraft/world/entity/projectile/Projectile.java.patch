@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -229,7 +_,7 @@
-       if (entity instanceof Player) {
-          return entity.mayInteract(p_150167_, p_150168_);
-       } else {
--         return entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+         return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
-       }
-    }
+@@ -265,7 +_,7 @@
+     @Override
+     public boolean mayInteract(Level p_150167_, BlockPos p_150168_) {
+         Entity entity = this.getOwner();
+-        return entity instanceof Player ? entity.mayInteract(p_150167_, p_150168_) : entity == null || p_150167_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++        return entity instanceof Player ? entity.mayInteract(p_150167_, p_150168_) : entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
+     }
  
+     public boolean mayBreak(Level p_313184_) {

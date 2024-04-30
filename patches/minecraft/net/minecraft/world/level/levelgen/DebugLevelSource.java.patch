@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
-@@ -104,6 +_,12 @@
-       return blockstate;
-    }
- 
-+   public static void initValidStates() {
-+      ALL_BLOCKS = StreamSupport.stream(BuiltInRegistries.BLOCK.spliterator(), false).flatMap(block -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toList());
-+      GRID_WIDTH = Mth.ceil(Mth.sqrt(ALL_BLOCKS.size()));
-+      GRID_HEIGHT = Mth.ceil((float) (ALL_BLOCKS.size() / GRID_WIDTH));
-+   }
+@@ -144,4 +_,10 @@
+     public int getSeaLevel() {
+         return 63;
+     }
 +
-    public void applyCarvers(WorldGenRegion p_223970_, long p_223971_, RandomState p_223972_, BiomeManager p_223973_, StructureManager p_223974_, ChunkAccess p_223975_, GenerationStep.Carving p_223976_) {
-    }
- 
++    public static void initValidStates() {
++        ALL_BLOCKS = StreamSupport.stream(BuiltInRegistries.BLOCK.spliterator(), false).flatMap(block -> block.getStateDefinition().getPossibleStates().stream()).collect(Collectors.toList());
++        GRID_WIDTH = Mth.ceil(Mth.sqrt(ALL_BLOCKS.size()));
++        GRID_HEIGHT = Mth.ceil((float) (ALL_BLOCKS.size() / GRID_WIDTH));
++    }
+ }

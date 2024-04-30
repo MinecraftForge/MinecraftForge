@@ -1,16 +1,20 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -120,11 +_,11 @@
-          if (!this.level().isClientSide) {
-             BlockPos blockpos = this.blockPosition();
-             boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
--            boolean flag1 = flag && this.level().getFluidState(blockpos).is(FluidTags.WATER);
-+            boolean flag1 = flag && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockpos), blockpos);
-             double d0 = this.getDeltaMovement().lengthSqr();
-             if (flag && d0 > 1.0D) {
-                BlockHitResult blockhitresult = this.level().clip(new ClipContext(new Vec3(this.xo, this.yo, this.zo), this.position(), ClipContext.Block.COLLIDER, ClipContext.Fluid.SOURCE_ONLY, this));
--               if (blockhitresult.getType() != HitResult.Type.MISS && this.level().getFluidState(blockhitresult.getBlockPos()).is(FluidTags.WATER)) {
-+               if (blockhitresult.getType() != HitResult.Type.MISS && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockhitresult.getBlockPos()), blockhitresult.getBlockPos())) {
-                   blockpos = blockhitresult.getBlockPos();
-                   flag1 = true;
-                }
+@@ -133,7 +_,7 @@
+             if (!this.level().isClientSide) {
+                 BlockPos blockpos = this.blockPosition();
+                 boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
+-                boolean flag1 = flag && this.level().getFluidState(blockpos).is(FluidTags.WATER);
++                boolean flag1 = flag && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockpos), blockpos);
+                 double d0 = this.getDeltaMovement().lengthSqr();
+                 if (flag && d0 > 1.0) {
+                     BlockHitResult blockhitresult = this.level()
+@@ -146,7 +_,7 @@
+                                 this
+                             )
+                         );
+-                    if (blockhitresult.getType() != HitResult.Type.MISS && this.level().getFluidState(blockhitresult.getBlockPos()).is(FluidTags.WATER)) {
++                    if (blockhitresult.getType() != HitResult.Type.MISS && this.blockState.canBeHydrated(this.level(), blockpos, this.level().getFluidState(blockhitresult.getBlockPos()), blockhitresult.getBlockPos())) {
+                         blockpos = blockhitresult.getBlockPos();
+                         flag1 = true;
+                     }

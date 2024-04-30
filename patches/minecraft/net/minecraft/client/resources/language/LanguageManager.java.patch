@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/resources/language/LanguageManager.java
 +++ b/net/minecraft/client/resources/language/LanguageManager.java
 @@ -28,7 +_,7 @@
-    private String currentCode;
+     private String currentCode;
  
-    public LanguageManager(String p_118971_) {
--      this.currentCode = p_118971_;
-+      setSelected(p_118971_);
-    }
+     public LanguageManager(String p_118971_) {
+-        this.currentCode = p_118971_;
++        setSelected(p_118971_);
+     }
  
-    private static Map<String, LanguageInfo> extractLanguages(Stream<PackResources> p_118982_) {
+     private static Map<String, LanguageInfo> extractLanguages(Stream<PackResources> p_118982_) {
 @@ -65,8 +_,12 @@
-       Language.inject(clientlanguage);
-    }
+         Language.inject(clientlanguage);
+     }
  
-+   private java.util.Locale javaLocale; // Forge: add locale information for modders
-+   public java.util.Locale getJavaLocale() { return javaLocale; }
-    public void setSelected(String p_265224_) {
-       this.currentCode = p_265224_;
-+      final String[] langSplit = p_265224_.split("_", 2);
-+      this.javaLocale = langSplit.length == 1 ? new java.util.Locale(langSplit[0]) : new java.util.Locale(langSplit[0], langSplit[1]);
-    }
++    private java.util.Locale javaLocale; // Forge: add locale information for modders
++    public java.util.Locale getJavaLocale() { return javaLocale; }
+     public void setSelected(String p_265224_) {
+         this.currentCode = p_265224_;
++        final String[] langSplit = p_265224_.split("_", 2);
++        this.javaLocale = langSplit.length == 1 ? new java.util.Locale(langSplit[0]) : new java.util.Locale(langSplit[0], langSplit[1]);
+     }
  
-    public String getSelected() {
+     public String getSelected() {

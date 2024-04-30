@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 +++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
 @@ -49,4 +_,8 @@
-       }
- 
-    }
+             }
+         }
+     }
 +
-+   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
-+      return rl.withPath(this.directory + "/" + rl.getPath() + ".json");
-+   }
++    protected ResourceLocation getPreparedPath(ResourceLocation rl) {
++        return rl.withPath(this.directory + "/" + rl.getPath() + ".json");
++    }
  }

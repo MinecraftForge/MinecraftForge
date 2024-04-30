@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -24,7 +_,8 @@
-    protected void onHit(HitResult p_37218_) {
-       super.onHit(p_37218_);
-       if (!this.level().isClientSide) {
--         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+         // TODO 1.19.3: The creation of Level.ExplosionInteraction means this code path will fire EntityMobGriefingEvent twice. Should we try and fix it? -SS
-+         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
-          this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
-          this.discard();
-       }
+@@ -25,7 +_,8 @@
+     protected void onHit(HitResult p_37218_) {
+         super.onHit(p_37218_);
+         if (!this.level().isClientSide) {
+-            boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++            // TODO 1.19.3: The creation of Level.ExplosionInteraction means this code path will fire EntityMobGriefingEvent twice. Should we try and fix it? -SS
++            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this.getOwner());
+             this.level().explode(this, this.getX(), this.getY(), this.getZ(), (float)this.explosionPower, flag, Level.ExplosionInteraction.MOB);
+             this.discard();
+         }

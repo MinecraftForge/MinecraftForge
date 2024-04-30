@@ -1,88 +1,87 @@
 --- a/net/minecraft/world/level/block/FlowerPotBlock.java
 +++ b/net/minecraft/world/level/block/FlowerPotBlock.java
-@@ -41,10 +_,33 @@
-       return CODEC;
-    }
+@@ -43,9 +_,31 @@
+     }
  
-+   @Deprecated // Mods should use the constructor below
-    public FlowerPotBlock(Block p_53528_, BlockBehaviour.Properties p_53529_) {
--      super(p_53529_);
--      this.potted = p_53528_;
--      POTTED_BY_CONTENT.put(p_53528_, this);
-+       this(Blocks.FLOWER_POT == null ? null : () -> (FlowerPotBlock) net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_53528_).get(), p_53529_);
-+       if (Blocks.FLOWER_POT != null) {
-+           ((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(p_53528_), () -> this);
-+       }
-+   }
+     public FlowerPotBlock(Block p_53528_, BlockBehaviour.Properties p_53529_) {
+-        super(p_53529_);
+-        this.potted = p_53528_;
+-        POTTED_BY_CONTENT.put(p_53528_, this);
++        this(Blocks.FLOWER_POT == null ? null : () -> (FlowerPotBlock) net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.FLOWER_POT).get(), () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_53528_).get(), p_53529_);
++        if (Blocks.FLOWER_POT != null) {
++            ((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(p_53528_), () -> this);
++        }
++    }
 +
-+   /**
-+    * For mod use, eliminates the need to extend this class, and prevents modded
-+    * flower pots from altering vanilla behavior.
-+    *
-+    * @param emptyPot    The empty pot for this pot, or null for self.
-+    * @param p_53528_ The flower block.
-+    * @param properties
-+    */
-+   public FlowerPotBlock(@org.jetbrains.annotations.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
-+      super(properties);
-+      this.potted = null; // Unused, redirected by coremod
-+      this.flowerDelegate = p_53528_;
-+      if (emptyPot == null) {
-+         this.fullPots = Maps.newHashMap();
-+         this.emptyPot = null;
-+      } else {
-+         this.fullPots = java.util.Collections.emptyMap();
-+         this.emptyPot = emptyPot;
-+      }
-    }
++    /**
++     * For mod use, eliminates the need to extend this class, and prevents modded
++     * flower pots from altering vanilla behavior.
++     *
++     * @param emptyPot    The empty pot for this pot, or null for self.
++     * @param p_53528_ The flower block.
++     * @param properties
++     */
++    public FlowerPotBlock(@org.jetbrains.annotations.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
++        super(properties);
++        this.potted = null; // Unused, redirected by coremod
++        this.flowerDelegate = p_53528_;
++        if (emptyPot == null) {
++            this.fullPots = Maps.newHashMap();
++            this.emptyPot = null;
++        } else {
++            this.fullPots = java.util.Collections.emptyMap();
++            this.emptyPot = emptyPot;
++        }
+     }
  
-    public VoxelShape getShape(BlockState p_53556_, BlockGetter p_53557_, BlockPos p_53558_, CollisionContext p_53559_) {
+     @Override
 @@ -58,7 +_,7 @@
-    public InteractionResult use(BlockState p_53540_, Level p_53541_, BlockPos p_53542_, Player p_53543_, InteractionHand p_53544_, BlockHitResult p_53545_) {
-       ItemStack itemstack = p_53543_.getItemInHand(p_53544_);
-       Item item = itemstack.getItem();
--      BlockState blockstate = (item instanceof BlockItem ? POTTED_BY_CONTENT.getOrDefault(((BlockItem)item).getBlock(), Blocks.AIR) : Blocks.AIR).defaultBlockState();
-+      BlockState blockstate = (item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(((BlockItem)item).getBlock()), net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.AIR)).get() : Blocks.AIR).defaultBlockState();
-       boolean flag = blockstate.is(Blocks.AIR);
-       boolean flag1 = this.isEmpty();
-       if (flag != flag1) {
-@@ -76,7 +_,7 @@
-                p_53543_.drop(itemstack1, false);
+         ItemStack p_329639_, BlockState p_328047_, Level p_328816_, BlockPos p_334572_, Player p_329206_, InteractionHand p_329142_, BlockHitResult p_330607_
+     ) {
+         BlockState blockstate = (p_329639_.getItem() instanceof BlockItem blockitem
+-                ? POTTED_BY_CONTENT.getOrDefault(blockitem.getBlock(), Blocks.AIR)
++                ? getEmptyPot().fullPots.getOrDefault(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey(blockitem.getBlock()), net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(Blocks.AIR)).get()
+                 : Blocks.AIR)
+             .defaultBlockState();
+         if (blockstate.isAir()) {
+@@ -84,7 +_,7 @@
+                 p_333787_.drop(itemstack, false);
              }
  
--            p_53541_.setBlock(p_53542_, Blocks.FLOWER_POT.defaultBlockState(), 3);
-+            p_53541_.setBlock(p_53542_, getEmptyPot().defaultBlockState(), 3);
-          }
+-            p_334489_.setBlock(p_330334_, Blocks.FLOWER_POT.defaultBlockState(), 3);
++            p_334489_.setBlock(p_330334_, getEmptyPot().defaultBlockState(), 3);
+             p_334489_.gameEvent(p_333787_, GameEvent.BLOCK_CHANGE, p_330334_);
+             return InteractionResult.sidedSuccess(p_334489_.isClientSide);
+         }
+@@ -107,11 +_,30 @@
+     }
  
-          p_53541_.gameEvent(p_53543_, GameEvent.BLOCK_CHANGE, p_53542_);
-@@ -99,10 +_,29 @@
-    }
+     public Block getPotted() {
+-        return this.potted;
++        return flowerDelegate.get();
+     }
  
-    public Block getPotted() {
--      return this.potted;
-+      return flowerDelegate.get();
-    }
- 
-    public boolean isPathfindable(BlockState p_53535_, BlockGetter p_53536_, BlockPos p_53537_, PathComputationType p_53538_) {
-       return false;
-+   }
+     @Override
+     protected boolean isPathfindable(BlockState p_53535_, PathComputationType p_53538_) {
+         return false;
++    }
 +
-+   private final Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
-+   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
-+   private final java.util.function.Supplier<? extends Block> flowerDelegate;
++    private final Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
++    private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
++    private final java.util.function.Supplier<? extends Block> flowerDelegate;
 +
-+   public FlowerPotBlock getEmptyPot() {
-+       return emptyPot == null ? this : emptyPot.get();
-+   }
++    public FlowerPotBlock getEmptyPot() {
++        return emptyPot == null ? this : emptyPot.get();
++    }
 +
-+   public void addPlant(net.minecraft.resources.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
-+       if (getEmptyPot() != this) {
-+           throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
-+       }
-+       fullPots.put(flower, fullPot);
-+   }
++    public void addPlant(net.minecraft.resources.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
++        if (getEmptyPot() != this) {
++            throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
++        }
++        fullPots.put(flower, fullPot);
++    }
 +
-+   public Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> getFullPotsView() {
-+      return java.util.Collections.unmodifiableMap(fullPots);
-    }
++    public Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> getFullPotsView() {
++        return java.util.Collections.unmodifiableMap(fullPots);
+     }
  }

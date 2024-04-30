@@ -15,6 +15,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 
 import com.mojang.serialization.Lifecycle;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
@@ -127,7 +128,7 @@ public class RegistryManager {
         WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) rootRegistry;
         Registry<V> wrapper = forgeReg.getWrapper();
         if (wrapper != null)
-            registry.register(forgeReg.getRegistryKey(), wrapper, Lifecycle.experimental());
+            registry.register(forgeReg.getRegistryKey(), wrapper, RegistrationInfo.BUILT_IN);
     }
 
     public static void postNewRegistryEvent() {

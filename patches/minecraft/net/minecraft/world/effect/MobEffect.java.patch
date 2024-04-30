@@ -1,51 +1,55 @@
 --- a/net/minecraft/world/effect/MobEffect.java
 +++ b/net/minecraft/world/effect/MobEffect.java
-@@ -17,7 +_,7 @@
- import net.minecraft.world.entity.ai.attributes.AttributeMap;
- import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+@@ -30,7 +_,7 @@
+ import net.minecraft.world.flag.FeatureFlagSet;
+ import net.minecraft.world.flag.FeatureFlags;
  
--public class MobEffect {
-+public class MobEffect implements net.minecraftforge.common.extensions.IForgeMobEffect {
-    private final Map<Attribute, AttributeModifierTemplate> attributeModifiers = Maps.newHashMap();
-    private final MobEffectCategory category;
-    private final int color;
-@@ -31,6 +_,7 @@
-    protected MobEffect(MobEffectCategory p_19451_, int p_19452_) {
-       this.category = p_19451_;
-       this.color = p_19452_;
-+      initClient();
-    }
+-public class MobEffect implements FeatureElement {
++public class MobEffect implements FeatureElement, net.minecraftforge.common.extensions.IForgeMobEffect {
+     private static final int AMBIENT_ALPHA = Mth.floor(38.25F);
+     private final Map<Holder<Attribute>, MobEffect.AttributeTemplate> attributeModifiers = new Object2ObjectOpenHashMap<>();
+     private final MobEffectCategory category;
+@@ -49,12 +_,14 @@
+             int i = p_326747_.isAmbient() ? AMBIENT_ALPHA : 255;
+             return ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, FastColor.ARGB32.color(i, p_19452_));
+         };
++        initClient();
+     }
  
-    public Optional<MobEffectInstance.FactorData> createFactorData() {
-@@ -117,6 +_,31 @@
-    public boolean isBeneficial() {
-       return this.category == MobEffectCategory.BENEFICIAL;
-    }
-+
-+   // FORGE START
-+   private Object effectRenderer;
-+
-+   /*
-+      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
-+      Call RenderProperties.getEffectRenderer instead
-+    */
-+   public Object getEffectRendererInternal() {
-+      return effectRenderer;
-+   }
-+
-+   private void initClient() {
-+      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
-+         initializeClient(properties -> {
-+            this.effectRenderer = properties;
-+         });
-+      }
-+   }
-+
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientMobEffectExtensions> consumer) {
-+   }
-+   // END FORGE
-+
+     protected MobEffect(MobEffectCategory p_335432_, int p_334901_, ParticleOptions p_331136_) {
+         this.category = p_335432_;
+         this.color = p_334901_;
+         this.particleFactory = p_326745_ -> p_331136_;
++        initClient();
+     }
  
-    /** @deprecated */
-    @Deprecated
+     public int getBlendDurationTicks() {
+@@ -179,4 +_,28 @@
+             return new AttributeModifier(this.id, p_331481_ + " " + p_332230_, this.amount * (double)(p_332230_ + 1), this.operation);
+         }
+     }
++
++    // FORGE START
++    private Object effectRenderer;
++
++    /*
++       DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++       Call RenderProperties.getEffectRenderer instead
++     */
++    public Object getEffectRendererInternal() {
++        return effectRenderer;
++    }
++
++    private void initClient() {
++        // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
++            initializeClient(properties -> {
++                this.effectRenderer = properties;
++            });
++        }
++    }
++
++    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientMobEffectExtensions> consumer) {
++    }
++    // END FORGE
+ }

@@ -60,7 +60,7 @@ public class CompositeRenderable implements IRenderable<CompositeRenderable.Tran
             if (matrix != null)
             {
                 poseStack.pushPose();
-                poseStack.mulPoseMatrix(matrix);
+                poseStack.mulPose(matrix);
             }
 
             for (var part : children)

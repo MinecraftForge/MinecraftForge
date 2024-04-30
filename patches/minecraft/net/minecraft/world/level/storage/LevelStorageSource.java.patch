@@ -1,34 +1,33 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -470,6 +_,12 @@
-          return this.getDataTag(true);
-       }
+@@ -481,6 +_,11 @@
+             return this.getDataTag(true);
+         }
  
-+      public CompoundTag getDataTagRaw(boolean fallback) throws IOException {
-+          this.checkLock();
-+          return LevelStorageSource.readLevelDataTagRaw(fallback ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile());
++        public CompoundTag getDataTagRaw(boolean fallback) throws IOException {
++            this.checkLock();
++            return LevelStorageSource.readLevelDataTagRaw(fallback ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile());
++        }
 +
-+      }
+         private Dynamic<?> getDataTag(boolean p_310699_) throws IOException {
+             this.checkLock();
+             return LevelStorageSource.readLevelDataTagFixed(p_310699_ ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile(), LevelStorageSource.this.fixerUpper);
+@@ -494,6 +_,7 @@
+             CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
+             CompoundTag compoundtag1 = new CompoundTag();
+             compoundtag1.put("Data", compoundtag);
++            net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
+             this.saveLevelData(compoundtag1);
+         }
+ 
+@@ -513,6 +_,10 @@
+ 
+         public Optional<Path> getIconFile() {
+             return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
++        }
 +
-       private Dynamic<?> getDataTag(boolean p_310699_) throws IOException {
-          this.checkLock();
-          return LevelStorageSource.readLevelDataTagFixed(p_310699_ ? this.levelDirectory.oldDataFile() : this.levelDirectory.dataFile(), LevelStorageSource.this.fixerUpper);
-@@ -483,6 +_,7 @@
-          CompoundTag compoundtag = p_78292_.createTag(p_78291_, p_78293_);
-          CompoundTag compoundtag1 = new CompoundTag();
-          compoundtag1.put("Data", compoundtag);
-+         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
-          this.saveLevelData(compoundtag1);
-       }
++        public Path getWorldDir() {
++            return baseDir;
+         }
  
-@@ -503,6 +_,10 @@
- 
-       public Optional<Path> getIconFile() {
-          return !this.lock.isValid() ? Optional.empty() : Optional.of(this.levelDirectory.iconFile());
-+      }
-+
-+      public Path getWorldDir() {
-+         return baseDir;
-       }
- 
-       public void deleteLevel() throws IOException {
+         public void deleteLevel() throws IOException {

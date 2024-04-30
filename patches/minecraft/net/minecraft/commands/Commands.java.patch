@@ -1,48 +1,49 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -210,7 +_,7 @@
-          JfrCommand.register(this.dispatcher);
-       }
+@@ -215,7 +_,7 @@
+             JfrCommand.register(this.dispatcher);
+         }
  
--      if (SharedConstants.IS_RUNNING_IN_IDE) {
-+      if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
-          TestCommand.register(this.dispatcher);
-          ResetChunksCommand.register(this.dispatcher);
-          RaidCommand.register(this.dispatcher);
-@@ -244,6 +_,7 @@
-       if (p_230943_.includeIntegrated) {
-          PublishCommand.register(this.dispatcher);
-       }
-+      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
+-        if (SharedConstants.IS_RUNNING_IN_IDE) {
++        if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
+             TestCommand.register(this.dispatcher);
+             ResetChunksCommand.register(this.dispatcher);
+             RaidCommand.register(this.dispatcher, p_230944_);
+@@ -250,6 +_,7 @@
+         if (p_230943_.includeIntegrated) {
+             PublishCommand.register(this.dispatcher);
+         }
++        net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, p_230943_, p_230944_);
  
-       this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
-    }
-@@ -264,9 +_,17 @@
-       commandsourcestack.getServer().getProfiler().push(() -> {
-          return "/" + p_242841_;
-       });
--      ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
+         this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
+     }
+@@ -268,9 +_,18 @@
+     public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
+         CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
+         commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
+-        ContextChain<CommandSourceStack> contextchain = finishParsing(p_242844_, p_242841_, commandsourcestack);
  
-       try {
-+         var event = new net.minecraftforge.event.CommandEvent(p_242844_);
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
-+            if (event.getException() instanceof Exception exception)
-+               throw exception;
-+            else if (event.getException() != null)
-+               com.google.common.base.Throwables.throwIfUnchecked(event.getException());
-+            return;
-+         }
-+         ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
-          if (contextchain != null) {
-             executeCommandInContext(commandsourcestack, (p_308343_) -> {
-                ExecutionContext.queueInitialCommandExecution(p_308343_, p_242841_, contextchain, commandsourcestack, CommandResultCallback.EMPTY);
-@@ -353,7 +_,8 @@
-       Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
-       RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
-       map.put(this.dispatcher.getRoot(), rootcommandnode);
--      this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
-+      // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
-+      net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
-       p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode));
-    }
+         try {
++            var event = new net.minecraftforge.event.CommandEvent(p_242844_);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++                if (event.getException() instanceof Exception exception) {
++                    throw exception;
++                } else if (event.getException() != null) {
++                    com.google.common.base.Throwables.throwIfUnchecked(event.getException());
++                }
++                return;
++            }
++            ContextChain<CommandSourceStack> contextchain = finishParsing(event.getParseResults(), p_242841_, commandsourcestack);
+             if (contextchain != null) {
+                 executeCommandInContext(
+                     commandsourcestack,
+@@ -361,7 +_,8 @@
+         Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
+         RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
+         map.put(this.dispatcher.getRoot(), rootcommandnode);
+-        this.fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
++        // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
++        net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> SuggestionProviders.safelySwap((com.mojang.brigadier.suggestion.SuggestionProvider<SharedSuggestionProvider>) (com.mojang.brigadier.suggestion.SuggestionProvider<?>) suggest));
+         p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode));
+     }
  

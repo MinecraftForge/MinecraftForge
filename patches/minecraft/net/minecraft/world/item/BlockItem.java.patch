@@ -1,50 +1,42 @@
 --- a/net/minecraft/world/item/BlockItem.java
 +++ b/net/minecraft/world/item/BlockItem.java
-@@ -82,8 +_,8 @@
-                   }
-                }
+@@ -82,9 +_,9 @@
+                         }
+                     }
  
--               SoundType soundtype = blockstate1.getSoundType();
--               level.playSound(player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-+               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.getPlayer());
-+               level.playSound(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-                level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
-                if (player == null || !player.getAbilities().instabuild) {
-                   itemstack.shrink(1);
-@@ -95,10 +_,16 @@
-       }
-    }
+-                    SoundType soundtype = blockstate1.getSoundType();
++                    SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.getPlayer());
+                     level.playSound(
+-                        player, blockpos, this.getPlaceSound(blockstate1), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F
++                        player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.getPlayer()), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F
+                     );
+                     level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(player, blockstate1));
+                     itemstack.consume(1, player);
+@@ -94,10 +_,16 @@
+         }
+     }
  
-+   @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
-    protected SoundEvent getPlaceSound(BlockState p_40588_) {
-       return p_40588_.getSoundType().getPlaceSound();
-    }
++    @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
+     protected SoundEvent getPlaceSound(BlockState p_40588_) {
+         return p_40588_.getSoundType().getPlaceSound();
+     }
  
-+   //Forge: Sensitive version of BlockItem#getPlaceSound
-+   protected SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
-+      return state.getSoundType(world, pos, entity).getPlaceSound();
-+   }
++    //Forge: Sensitive version of BlockItem#getPlaceSound
++    protected SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
++        return state.getSoundType(world, pos, entity).getPlaceSound();
++    }
 +
-    @Nullable
-    public BlockPlaceContext updatePlacementContext(BlockPlaceContext p_40609_) {
-       return p_40609_;
-@@ -195,11 +_,19 @@
-    }
+     @Nullable
+     public BlockPlaceContext updatePlacementContext(BlockPlaceContext p_40609_) {
+         return p_40609_;
+@@ -188,6 +_,10 @@
  
-    public Block getBlock() {
-+      return this.getBlockRaw() == null ? null : net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(this.getBlockRaw()).get();
-+   }
+     public void registerBlocks(Map<Block, Item> p_40607_, Item p_40608_) {
+         p_40607_.put(this.getBlock(), p_40608_);
++    }
 +
-+   private Block getBlockRaw() {
-       return this.block;
-    }
++    public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++        blockToItemMap.remove(this.getBlock());
+     }
  
-    public void registerBlocks(Map<Block, Item> p_40607_, Item p_40608_) {
-       p_40607_.put(this.getBlock(), p_40608_);
-+   }
-+
-+   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-+      blockToItemMap.remove(this.getBlock());
-    }
- 
-    public boolean canFitInsideContainerItems() {
+     @Override

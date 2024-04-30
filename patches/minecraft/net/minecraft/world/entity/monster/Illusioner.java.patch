@@ -1,14 +1,15 @@
 --- a/net/minecraft/world/entity/monster/Illusioner.java
 +++ b/net/minecraft/world/entity/monster/Illusioner.java
-@@ -178,8 +_,10 @@
-    }
+@@ -172,8 +_,11 @@
  
-    public void performRangedAttack(LivingEntity p_32918_, float p_32919_) {
--      ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
-+      ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
-       AbstractArrow abstractarrow = ProjectileUtil.getMobArrow(this, itemstack, p_32919_);
-+      if (this.getMainHandItem().getItem() instanceof net.minecraft.world.item.BowItem)
-+         abstractarrow = ((net.minecraft.world.item.BowItem)this.getMainHandItem().getItem()).customArrow(abstractarrow);
-       double d0 = p_32918_.getX() - this.getX();
-       double d1 = p_32918_.getY(0.3333333333333333D) - abstractarrow.getY();
-       double d2 = p_32918_.getZ() - this.getZ();
+     @Override
+     public void performRangedAttack(LivingEntity p_32918_, float p_32919_) {
+-        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
++        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
+         AbstractArrow abstractarrow = ProjectileUtil.getMobArrow(this, itemstack, p_32919_);
++        if (this.getMainHandItem().getItem() instanceof net.minecraft.world.item.BowItem bow) {
++           abstractarrow = bow.customArrow(abstractarrow);
++        }
+         double d0 = p_32918_.getX() - this.getX();
+         double d1 = p_32918_.getY(0.3333333333333333) - abstractarrow.getY();
+         double d2 = p_32918_.getZ() - this.getZ();

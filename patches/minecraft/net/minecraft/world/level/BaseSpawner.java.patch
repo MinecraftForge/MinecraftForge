@@ -1,33 +1,36 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -133,12 +_,14 @@
-                   entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
-                   if (entity instanceof Mob) {
-                      Mob mob = (Mob)entity;
--                     if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, MobSpawnType.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
-+                     if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
-                         continue;
-                      }
+@@ -149,13 +_,15 @@
  
--                     if (spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
--                        ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
-+                     // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
-+                     var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
-+                     if (event != null && spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8)) {
-+                        ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
-                      }
-                   }
+                         entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
+                         if (entity instanceof Mob mob) {
+-                            if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, MobSpawnType.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
++                            if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, MobSpawnType.SPAWNER, spawndata, this)) {
+                                 continue;
+                             }
  
-@@ -285,4 +_,12 @@
-    public double getoSpin() {
-       return this.oSpin;
-    }
+                             boolean flag1 = spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8);
++                            // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
++                            var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
+                             if (flag1) {
+-                                ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, null);
++                                ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), MobSpawnType.SPAWNER, null);
+                             }
+ 
+                             spawndata.getEquipment().ifPresent(mob::equip);
+@@ -305,5 +_,15 @@
+ 
+     public double getoSpin() {
+         return this.oSpin;
++    }
 +
-+   @Nullable
-+   public Entity getSpawnerEntity() {
-+      return null;
-+   }
++    @Nullable
++    public Entity getSpawnerEntity() {
++       return null;
++    }
 +
-+   @Nullable
-+   public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return null; }
++    @Nullable
++    public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity() {
++        return null;
+     }
  }

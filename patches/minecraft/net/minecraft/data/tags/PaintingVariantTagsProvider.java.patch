@@ -4,13 +4,13 @@
  import net.minecraft.world.entity.decoration.PaintingVariants;
  
  public class PaintingVariantTagsProvider extends TagsProvider<PaintingVariant> {
-+   /** @deprecated Forge: Use the {@linkplain #PaintingVariantTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_) {
-       super(p_255750_, Registries.PAINTING_VARIANT, p_256184_);
-+   }
-+   public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_255750_, Registries.PAINTING_VARIANT, p_256184_, modId, existingFileHelper);
-    }
++    /** @deprecated Forge: Use the {@linkplain #PaintingVariantTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
+     public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_) {
+         super(p_255750_, Registries.PAINTING_VARIANT, p_256184_);
++    }
++
++    public PaintingVariantTagsProvider(PackOutput p_255750_, CompletableFuture<HolderLookup.Provider> p_256184_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_255750_, Registries.PAINTING_VARIANT, p_256184_, modId, existingFileHelper);
+     }
  
-    protected void addTags(HolderLookup.Provider p_256017_) {
+     @Override

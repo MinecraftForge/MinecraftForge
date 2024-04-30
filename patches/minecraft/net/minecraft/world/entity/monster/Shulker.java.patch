@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -354,6 +_,12 @@
-             if (blockpos1.getY() > this.level().getMinBuildHeight() && this.level().isEmptyBlock(blockpos1) && this.level().getWorldBorder().isWithinBounds(blockpos1) && this.level().noCollision(this, (new AABB(blockpos1)).deflate(1.0E-6D))) {
-                Direction direction = this.findAttachableSurface(blockpos1);
-                if (direction != null) {
-+                  net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
-+                  if (event.isCanceled()) direction = null;
-+                  blockpos1 = BlockPos.containing(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-+               }
+@@ -390,6 +_,12 @@
+                     && this.level().noCollision(this, new AABB(blockpos1).deflate(1.0E-6))) {
+                     Direction direction = this.findAttachableSurface(blockpos1);
+                     if (direction != null) {
++                        net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
++                        if (event.isCanceled()) direction = null;
++                        blockpos1 = BlockPos.containing(event.getTargetX(), event.getTargetY(), event.getTargetZ());
++                    }
 +
-+               if (direction != null) {
-                   this.unRide();
-                   this.setAttachFace(direction);
-                   this.playSound(SoundEvents.SHULKER_TELEPORT, 1.0F, 1.0F);
++                    if (direction != null) {
+                         this.unRide();
+                         this.setAttachFace(direction);
+                         this.playSound(SoundEvents.SHULKER_TELEPORT, 1.0F, 1.0F);

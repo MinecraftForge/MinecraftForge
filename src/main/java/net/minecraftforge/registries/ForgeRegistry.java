@@ -72,7 +72,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
     private final BiMap<ResourceKey<V>, V> keys = HashBiMap.create();
     private final Map<ResourceLocation, ResourceLocation> aliases = new HashMap<>();
-    final Map<ResourceLocation, ?> slaves = new HashMap<>();
+    final Map<SlaveKey<?>, ?> slaves = new HashMap<>();
     private final ResourceLocation defaultKey;
     //private final ResourceKey<V> defaultResourceKey;
     private final CreateCallback<V> create;
@@ -230,9 +230,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         if (!this.hasWrapper)
             return null;
 
-        return this.defaultKey != null
-                ? this.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class)
-                : this.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+        return (NamespacedWrapper<V>)this.getSlaveMap(GameData.WrapperFactory.WRAPPER);
     }
 
     @NotNull
@@ -299,14 +297,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getSlaveMap(ResourceLocation name, Class<T> type) {
-        return (T)this.slaves.get(name);
+    public <T> T getSlaveMap(SlaveKey<T> key) {
+        return (T)this.slaves.get(key);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void setSlaveMap(ResourceLocation name, Object obj) {
-        ((Map<ResourceLocation, Object>)this.slaves).put(name, obj);
+    public <T> void setSlaveMap(SlaveKey<T> name, T obj) {
+        ((Map)this.slaves).put(name, obj);
     }
 
     public int getID(V value) {

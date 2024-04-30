@@ -10,5 +10,5 @@
 + */
 +@Deprecated
  public class AdvancementProvider implements DataProvider {
-    private final PackOutput.PathProvider pathProvider;
-    private final List<AdvancementSubProvider> subProviders;
+     private final PackOutput.PathProvider pathProvider;
+     private final List<AdvancementSubProvider> subProviders;

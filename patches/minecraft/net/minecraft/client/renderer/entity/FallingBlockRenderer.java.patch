@@ -1,13 +1,31 @@
 --- a/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
 +++ b/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
-@@ -34,7 +_,9 @@
-             p_114637_.pushPose();
-             BlockPos blockpos = BlockPos.containing(p_114634_.getX(), p_114634_.getBoundingBox().maxY, p_114634_.getZ());
-             p_114637_.translate(-0.5D, 0.0D, -0.5D);
--            this.dispatcher.getModelRenderer().tesselateBlock(level, this.dispatcher.getBlockModel(blockstate), blockstate, blockpos, p_114637_, p_114638_.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockstate)), false, RandomSource.create(), blockstate.getSeed(p_114634_.getStartPos()), OverlayTexture.NO_OVERLAY);
-+            var model = this.dispatcher.getBlockModel(blockstate);
-+            for (var renderType : model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(p_114634_.getStartPos())), net.minecraftforge.client.model.data.ModelData.EMPTY))
-+               this.dispatcher.getModelRenderer().tesselateBlock(level, model, blockstate, blockpos, p_114637_, p_114638_.getBuffer(renderType), false, RandomSource.create(), blockstate.getSeed(p_114634_.getStartPos()), OverlayTexture.NO_OVERLAY, net.minecraftforge.client.model.data.ModelData.EMPTY, renderType);
-             p_114637_.popPose();
-             super.render(p_114634_, p_114635_, p_114636_, p_114637_, p_114638_, p_114639_);
-          }
+@@ -34,20 +_,25 @@
+                 p_114637_.pushPose();
+                 BlockPos blockpos = BlockPos.containing(p_114634_.getX(), p_114634_.getBoundingBox().maxY, p_114634_.getZ());
+                 p_114637_.translate(-0.5, 0.0, -0.5);
++                var model = this.dispatcher.getBlockModel(blockstate);
++                for (var renderType : model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(p_114634_.getStartPos())), net.minecraftforge.client.model.data.ModelData.EMPTY)) {
+                 this.dispatcher
+                     .getModelRenderer()
+                     .tesselateBlock(
+                         level,
+-                        this.dispatcher.getBlockModel(blockstate),
++                        model,
+                         blockstate,
+                         blockpos,
+                         p_114637_,
+-                        p_114638_.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(blockstate)),
++                        p_114638_.getBuffer(renderType),
+                         false,
+                         RandomSource.create(),
+                         blockstate.getSeed(p_114634_.getStartPos()),
+-                        OverlayTexture.NO_OVERLAY
++                        OverlayTexture.NO_OVERLAY,
++                        net.minecraftforge.client.model.data.ModelData.EMPTY,
++                        renderType
+                     );
++                }
+                 p_114637_.popPose();
+                 super.render(p_114634_, p_114635_, p_114636_, p_114637_, p_114638_, p_114639_);
+             }

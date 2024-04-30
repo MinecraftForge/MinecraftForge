@@ -18,12 +18,13 @@ import java.util.Map;
 import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.AbstractPackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.Pack.Info;
+import net.minecraft.server.packs.repository.Pack.Metadata;
 import net.minecraft.server.packs.resources.IoSupplier;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -36,8 +37,8 @@ public class DelegatingPackResources extends AbstractPackResources {
     private final Map<String, List<PackResources>> namespacesAssets;
     private final Map<String, List<PackResources>> namespacesData;
 
-    public DelegatingPackResources(String packId,  boolean isBuiltin, PackMetadataSection packMeta, List<? extends PackResources> packs) {
-        super(packId, isBuiltin);
+    public DelegatingPackResources(PackLocationInfo info, PackMetadataSection packMeta, List<? extends PackResources> packs) {
+        super(info);
         this.packMeta = packMeta;
         this.delegates = ImmutableList.copyOf(packs);
         this.namespacesAssets = this.buildNamespaceMap(PackType.CLIENT_RESOURCES, delegates);
@@ -114,12 +115,12 @@ public class DelegatingPackResources extends AbstractPackResources {
 
     private class Supplier implements Pack.ResourcesSupplier {
         @Override
-        public PackResources openPrimary(String path) {
+        public PackResources openPrimary(PackLocationInfo p_332103_) {
             return DelegatingPackResources.this;
         }
 
         @Override
-        public PackResources openFull(String path, Info info) {
+        public PackResources openFull(PackLocationInfo p_330351_, Metadata p_333429_) {
             return DelegatingPackResources.this;
         }
     }

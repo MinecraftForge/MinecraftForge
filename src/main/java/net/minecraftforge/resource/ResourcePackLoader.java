@@ -16,12 +16,16 @@ import java.util.stream.Collectors;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.server.packs.repository.Pack.Info;
+import net.minecraft.server.packs.repository.Pack.Metadata;
+import net.minecraft.server.packs.repository.Pack.Position;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.CompositePackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -45,60 +49,6 @@ public class ResourcePackLoader {
 
     public static void loadResourcePacks(PackRepository resourcePacks, boolean client) {
         resourcePacks.addPackFinder(repo -> findPacks(repo, client));
-    }
-
-    @NotNull
-    public static PathPackResources createPackForMod(IModFileInfo mf) {
-        return new ModPathPackResources(mf.getFile());
-    }
-
-    private static class ModPathPackResources extends PathPackResources {
-        private final IModFile mod;
-        private final String[] prefix;
-
-        private ModPathPackResources(IModFile mod, String... prefix) {
-            super(mod.getFileName(), true, mod.getFilePath());
-            this.mod = mod;
-            this.prefix = prefix;
-        }
-
-        @NotNull
-        @Override
-        protected Path resolve(@NotNull String... paths) {
-            if (prefix != null && prefix.length > 0) {
-                var tmp = new String[prefix.length + paths.length];
-                System.arraycopy(prefix, 0, tmp, 0, prefix.length);
-                System.arraycopy(paths, 0, tmp, prefix.length, paths.length);
-                return this.mod.findResource(tmp);
-            }
-            return this.mod.findResource(paths);
-        }
-
-        private static class Supplier implements Pack.ResourcesSupplier {
-            private final IModFile mod;
-
-            private Supplier(IModFile mod) {
-                this.mod = mod;
-            }
-
-            @Override
-            public PackResources openPrimary(String packId) {
-                return new ModPathPackResources(mod);
-            }
-
-            @Override
-            public PackResources openFull(String packId, Info info) {
-                var primary = openPrimary(packId);
-                if (info.overlays().isEmpty())
-                    return primary;
-
-                var lst = new ArrayList<PackResources>(info.overlays().size());
-                for (var overlay : info.overlays())
-                    lst.add(new ModPathPackResources(mod, overlay));
-
-                return new CompositePackResources(primary, lst);
-            }
-        }
     }
 
     public static List<String> getPackNames() {
@@ -145,14 +95,16 @@ public class ResourcePackLoader {
 
             var file = mod.getFile();
 
-            var supplier = new ModPathPackResources.Supplier(file);
+            var root = file.findResource("");
+            var supplier = new PathPackResources.PathResourcesSupplier(root);
 
             var modinfo = file.getModInfos().get(0);
             var name = "mod:" + modinfo.getModId();
-            var meta = Pack.readPackInfo(name, supplier, version);
+            var info = new PackLocationInfo(name, Component.literal(file.getFileName()), PackSource.DEFAULT, Optional.empty());
+            var meta = Pack.readPackMetadata(info, supplier, version);
             Pack pack = null;
             if (meta != null)
-                pack = Pack.create(name, Component.literal(file.getFileName()), false, supplier, meta, Pack.Position.BOTTOM, false, PackSource.DEFAULT);
+                pack = new Pack(info, supplier, meta, new PackSelectionConfig(false, Position.BOTTOM, false));
 
             if (pack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
@@ -168,8 +120,9 @@ public class ResourcePackLoader {
         }
 
         if (!hiddenPacks.isEmpty()) {
+            var info = new PackLocationInfo("mod_resources", Component.translatable("fml.resources.modresources", hiddenPacks.size()), PackSource.DEFAULT, Optional.empty());
             @SuppressWarnings("resource")
-            var delegating = new DelegatingPackResources("mod_resources", false,
+            var delegating = new DelegatingPackResources(info,
                 new PackMetadataSection(
                     Component.translatable("fml.resources.modresources", hiddenPacks.size()),
                     version,
@@ -181,7 +134,9 @@ public class ResourcePackLoader {
             var supplier = delegating.supplier();
 
             // Create a resource pack merging all mod resources that should be hidden
-            var modResourcesPack = Pack.readMetaAndCreate("mod_resources", Component.literal("Mod Resources"), true, supplier, type, Pack.Position.BOTTOM, PackSource.DEFAULT);
+            var wrapper = new PackLocationInfo("mod_resources", Component.literal("Mod Resources"), PackSource.DEFAULT, Optional.empty());
+            var wrapperCfg = new PackSelectionConfig(true, Position.BOTTOM, false);
+            var modResourcesPack = Pack.readMetaAndCreate(wrapper, supplier, type, wrapperCfg);
             packAcceptor.accept(modResourcesPack);
         }
     }

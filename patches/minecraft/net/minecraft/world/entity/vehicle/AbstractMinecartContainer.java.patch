@@ -1,40 +1,39 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -82,6 +_,8 @@
-    }
+@@ -95,6 +_,8 @@
  
-    public InteractionResult interact(Player p_38232_, InteractionHand p_38233_) {
-+      InteractionResult ret = super.interact(p_38232_, p_38233_);
-+      if (ret.consumesAction()) return ret;
-       return this.interactWithContainerVehicle(p_38232_);
-    }
+     @Override
+     public InteractionResult interact(Player p_38232_, InteractionHand p_38233_) {
++        var ret = super.interact(p_38232_, p_38233_);
++        if (ret.consumesAction()) return ret;
+         return this.interactWithContainerVehicle(p_38232_);
+     }
  
-@@ -119,6 +_,28 @@
-    }
- 
-    protected abstract AbstractContainerMenu createMenu(int p_38222_, Inventory p_38223_);
+@@ -165,5 +_,27 @@
+     @Override
+     public void clearItemStacks() {
+         this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
++    }
 +
-+   // Forge Start
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive())
-+         return itemHandler.cast();
-+      return super.getCapability(capability, facing);
-+   }
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive()) {
++            return itemHandler.cast();
++        }
++        return super.getCapability(capability, facing);
++    }
 +
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      itemHandler.invalidate();
-+   }
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        itemHandler.invalidate();
++    }
 +
-+   @Override
-+   public void reviveCaps() {
-+      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+   }
- 
-    @Nullable
-    public ResourceLocation getLootTable() {
++    @Override
++    public void reviveCaps() {
++        super.reviveCaps();
++        itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
+     }
+ }

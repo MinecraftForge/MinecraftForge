@@ -5,13 +5,13 @@
 
 package net.minecraftforge.common.crafting.ingredients;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -93,7 +93,7 @@ public class DifferenceIngredient extends AbstractIngredient {
         return SERIALIZER;
     }
 
-    public static final Codec<DifferenceIngredient> CODEC = RecordCodecBuilder.create(builder ->
+    public static final MapCodec<DifferenceIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
             Ingredient.CODEC.fieldOf("base").forGetter(i -> i.base),
             Ingredient.CODEC.fieldOf("subtracted").forGetter(i -> i.subtracted)
@@ -102,21 +102,21 @@ public class DifferenceIngredient extends AbstractIngredient {
 
     public static final IIngredientSerializer<DifferenceIngredient> SERIALIZER = new IIngredientSerializer<>() {
         @Override
-        public Codec<? extends DifferenceIngredient> codec() {
+        public MapCodec<? extends DifferenceIngredient> codec() {
             return CODEC;
         }
 
         @Override
-        public DifferenceIngredient read(FriendlyByteBuf buffer) {
-            Ingredient base = Ingredient.fromNetwork(buffer);
-            Ingredient without = Ingredient.fromNetwork(buffer);
+        public DifferenceIngredient read(RegistryFriendlyByteBuf buffer) {
+            Ingredient base = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+            Ingredient without = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
             return new DifferenceIngredient(base, without);
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, DifferenceIngredient ingredient) {
-            ingredient.base.toNetwork(buffer);
-            ingredient.subtracted.toNetwork(buffer);
+        public void write(RegistryFriendlyByteBuf buffer, DifferenceIngredient ingredient) {
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient.base);
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, ingredient.subtracted);
         }
     };
 }

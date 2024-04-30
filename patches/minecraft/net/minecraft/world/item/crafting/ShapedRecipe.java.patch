@@ -1,54 +1,44 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -10,7 +_,20 @@
+@@ -12,7 +_,19 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  
 -public class ShapedRecipe implements CraftingRecipe {
 +public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
-+   static int MAX_WIDTH = 3;
-+   static int MAX_HEIGHT = 3;
-+   /**
-+    * Expand the max width and height allowed in the deserializer.
-+    * This should be called by modders who add custom crafting tables that are larger than the vanilla 3x3.
-+    * @param width your max recipe width
-+    * @param height your max recipe height
-+    */
-+   public static void setCraftingSize(int width, int height) {
-+      if (MAX_WIDTH < width) MAX_WIDTH = width;
-+      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
-+   }
-+
-    final ShapedRecipePattern pattern;
-    final ItemStack result;
-    final String group;
-@@ -37,10 +_,20 @@
-       return this.group;
-    }
++    static int MAX_WIDTH = 3;
++    static int MAX_HEIGHT = 3;
++    /**
++     * Expand the max width and height allowed in the deserializer.
++     * This should be called by modders who add custom crafting tables that are larger than the vanilla 3x3.
++     * @param width your max recipe width
++     * @param height your max recipe height
++     */
++    public static void setCraftingSize(int width, int height) {
++        if (MAX_WIDTH < width) MAX_WIDTH = width;
++        if (MAX_HEIGHT < height) MAX_HEIGHT = height;
++    }
+     final ShapedRecipePattern pattern;
+     final ItemStack result;
+     final String group;
+@@ -83,9 +_,19 @@
+     }
  
-+   @Override
-+   public int getRecipeWidth() {
-+      return getWidth();
-+   }
+     @Override
++    public int getRecipeWidth() {
++        return getWidth();
++    }
 +
-    public CraftingBookCategory category() {
-       return this.category;
-    }
- 
-+   @Override
-+   public int getRecipeHeight() {
-+      return getHeight();
-+   }
++    @Override
++    public int getRecipeHeight() {
++        return getHeight();
++    }
 +
-    public ItemStack getResultItem(RegistryAccess p_266881_) {
-       return this.result;
-    }
-@@ -78,7 +_,7 @@
-       return nonnulllist.isEmpty() || nonnulllist.stream().filter((p_151277_) -> {
-          return !p_151277_.isEmpty();
-       }).anyMatch((p_151273_) -> {
--         return p_151273_.getItems().length == 0;
-+         return net.minecraftforge.common.ForgeHooks.hasNoElements(p_151273_);
-       });
-    }
++    @Override
+     public boolean isIncomplete() {
+         NonNullList<Ingredient> nonnulllist = this.getIngredients();
+-        return nonnulllist.isEmpty() || nonnulllist.stream().filter(p_151277_ -> !p_151277_.isEmpty()).anyMatch(p_151273_ -> p_151273_.getItems().length == 0);
++        return nonnulllist.isEmpty() || nonnulllist.stream().filter(p_151277_ -> !p_151277_.isEmpty()).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
+     }
  
+     public static class Serializer implements RecipeSerializer<ShapedRecipe> {

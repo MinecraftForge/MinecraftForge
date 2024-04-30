@@ -1,44 +1,43 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsList.java
-@@ -64,7 +_,7 @@
-    }
+@@ -69,6 +_,11 @@
+         return 340;
+     }
  
-    protected int getScrollbarPosition() {
--      return super.getScrollbarPosition() + 15;
-+      return super.getScrollbarPosition() + 15 + 20;
-    }
- 
-    public int getRowWidth() {
-@@ -128,11 +_,13 @@
-          this.name = p_193917_;
-          this.changeButton = Button.builder(p_193917_, (p_269618_) -> {
-             KeyBindsList.this.keyBindsScreen.selectedKey = p_193916_;
-+            p_193916_.setKeyModifierAndCode(null, com.mojang.blaze3d.platform.InputConstants.UNKNOWN);
-             KeyBindsList.this.resetMappingAndUpdateButtons();
--         }).bounds(0, 0, 75, 20).createNarration((p_253311_) -> {
-+         }).bounds(0, 0, 75 + 20 /* Forge: Add space */, 20).createNarration((p_253311_) -> {
-             return p_193916_.isUnbound() ? Component.translatable("narrator.controls.unbound", p_193917_) : Component.translatable("narrator.controls.bound", p_193917_, p_253311_.get());
-          }).build();
-          this.resetButton = Button.builder(Component.translatable("controls.reset"), (p_269616_) -> {
-+            this.key.setToDefault();
-             KeyBindsList.this.minecraft.options.setKey(p_193916_, p_193916_.getDefaultKey());
-             KeyBindsList.this.resetMappingAndUpdateButtons();
-          }).bounds(0, 0, 50, 20).createNarration((p_253313_) -> {
-@@ -144,7 +_,7 @@
-       public void render(GuiGraphics p_281805_, int p_281298_, int p_282357_, int p_281373_, int p_283433_, int p_281932_, int p_282224_, int p_282053_, boolean p_282605_, float p_281432_) {
-          int k = p_281373_ + 90 - KeyBindsList.this.maxNameWidth;
-          p_281805_.drawString(KeyBindsList.this.minecraft.font, this.name, k, p_282357_ + p_281932_ / 2 - 9 / 2, 16777215, false);
--         this.resetButton.setX(p_281373_ + 190);
-+         this.resetButton.setX(p_281373_ + 190 + 20);
-          this.resetButton.setY(p_282357_);
-          this.resetButton.render(p_281805_, p_282224_, p_282053_, p_281432_);
-          this.changeButton.setX(p_281373_ + 105);
-@@ -173,7 +_,7 @@
-          MutableComponent mutablecomponent = Component.empty();
-          if (!this.key.isUnbound()) {
-             for(KeyMapping keymapping : KeyBindsList.this.minecraft.options.keyMappings) {
--               if (keymapping != this.key && this.key.same(keymapping)) {
-+               if ((keymapping != this.key && this.key.same(keymapping)) || keymapping.hasKeyModifierConflict(this.key)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
-                   if (this.hasCollision) {
-                      mutablecomponent.append(", ");
-                   }
++    @Override
++    protected int getScrollbarPosition() {
++      return super.getScrollbarPosition() + 20;
++    }
++
+     @OnlyIn(Dist.CLIENT)
+     public class CategoryEntry extends KeyBindsList.Entry {
+         final Component name;
+@@ -153,9 +_,10 @@
+             this.name = p_193917_;
+             this.changeButton = Button.builder(p_193917_, p_269618_ -> {
+                     KeyBindsList.this.keyBindsScreen.selectedKey = p_193916_;
++                    p_193916_.setKeyModifierAndCode(null, com.mojang.blaze3d.platform.InputConstants.UNKNOWN);
+                     KeyBindsList.this.resetMappingAndUpdateButtons();
+                 })
+-                .bounds(0, 0, 75, 20)
++                .bounds(0, 0, 75 + 20 /* Forge: Add space */, 20)
+                 .createNarration(
+                     p_253311_ -> p_193916_.isUnbound()
+                             ? Component.translatable("narrator.controls.unbound", p_193917_)
+@@ -163,6 +_,7 @@
+                 )
+                 .build();
+             this.resetButton = Button.builder(RESET_BUTTON_TITLE, p_325376_ -> {
++                this.key.setToDefault();
+                 KeyBindsList.this.minecraft.options.setKey(p_193916_, p_193916_.getDefaultKey());
+                 KeyBindsList.this.resetMappingAndUpdateButtons();
+             }).bounds(0, 0, 50, 20).createNarration(p_253313_ -> Component.translatable("narrator.controls.reset", p_193917_)).build();
+@@ -215,7 +_,7 @@
+             MutableComponent mutablecomponent = Component.empty();
+             if (!this.key.isUnbound()) {
+                 for (KeyMapping keymapping : KeyBindsList.this.minecraft.options.keyMappings) {
+-                    if (keymapping != this.key && this.key.same(keymapping)) {
++                    if ((keymapping != this.key && this.key.same(keymapping)) || keymapping.hasKeyModifierConflict(this.key)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
+                         if (this.hasCollision) {
+                             mutablecomponent.append(", ");
+                         }

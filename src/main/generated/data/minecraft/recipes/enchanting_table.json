@@ -18,6 +18,7 @@
     "###"
   ],
   "result": {
-    "item": "minecraft:enchanting_table"
+    "count": 1,
+    "id": "minecraft:enchanting_table"
   }
 }

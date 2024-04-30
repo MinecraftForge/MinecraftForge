@@ -7,9 +7,7 @@
           "conditions": {
             "items": [
               {
-                "items": [
-                  "minecraft:oak_log"
-                ]
+                "items": "minecraft:oak_log"
               }
             ]
           },
@@ -23,8 +21,7 @@
         }
       },
       "forge:condition": {
-        "type": "forge:true",
-        "value": {}
+        "type": "forge:true"
       },
       "requirements": [
         [

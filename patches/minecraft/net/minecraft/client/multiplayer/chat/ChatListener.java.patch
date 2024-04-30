@@ -1,41 +1,41 @@
 --- a/net/minecraft/client/multiplayer/chat/ChatListener.java
 +++ b/net/minecraft/client/multiplayer/chat/ChatListener.java
-@@ -119,7 +_,9 @@
-       Instant instant = Instant.now();
-       this.handleMessage((MessageSignature)null, () -> {
-          Component component = p_251256_.decorate(p_250375_);
--         this.minecraft.gui.getChat().addMessage(component);
-+         Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_251256_, component, Util.NIL_UUID);
-+         if (forgeComponent == null) return false;
-+         this.minecraft.gui.getChat().addMessage(forgeComponent);
-          this.narrateChatMessage(p_251256_, p_250375_);
-          this.logSystemMessage(component, instant);
-          this.previousMessageTime = Util.getMillis();
-@@ -136,12 +_,16 @@
-          MessageSignature messagesignature = p_249430_.signature();
-          FilterMask filtermask = p_249430_.filterMask();
-          if (filtermask.isEmpty()) {
--            this.minecraft.gui.getChat().addMessage(p_249231_, messagesignature, guimessagetag);
-+            Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(p_251766_, p_249231_, p_249430_, p_249430_.sender());
+@@ -118,7 +_,9 @@
+         Instant instant = Instant.now();
+         this.handleMessage(null, () -> {
+             Component component = p_251256_.decorate(p_250375_);
+-            this.minecraft.gui.getChat().addMessage(component);
++            Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientChat(p_251256_, component, Util.NIL_UUID);
 +            if (forgeComponent == null) return false;
-+            this.minecraft.gui.getChat().addMessage(forgeComponent, messagesignature, guimessagetag);
-             this.narrateChatMessage(p_251766_, p_249430_.decoratedContent());
-          } else {
-             Component component = filtermask.applyWithFormatting(p_249430_.signedContent());
-             if (component != null) {
--               this.minecraft.gui.getChat().addMessage(p_251766_.decorate(component), messagesignature, guimessagetag);
-+               Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(p_251766_, p_251766_.decorate(component), p_249430_, p_249430_.sender());
-+               if (forgeComponent == null) return false;
-+               this.minecraft.gui.getChat().addMessage(forgeComponent, messagesignature, guimessagetag);
-                this.narrateChatMessage(p_251766_, component);
++            this.minecraft.gui.getChat().addMessage(forgeComponent);
+             this.narrateChatMessage(p_251256_, p_250375_);
+             this.logSystemMessage(component, instant);
+             this.previousMessageTime = Util.getMillis();
+@@ -137,12 +_,16 @@
+             MessageSignature messagesignature = p_249430_.signature();
+             FilterMask filtermask = p_249430_.filterMask();
+             if (filtermask.isEmpty()) {
+-                this.minecraft.gui.getChat().addMessage(p_249231_, messagesignature, guimessagetag);
++                Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(p_251766_, p_249231_, p_249430_, p_249430_.sender());
++                if (forgeComponent == null) return false;
++                this.minecraft.gui.getChat().addMessage(forgeComponent, messagesignature, guimessagetag);
+                 this.narrateChatMessage(p_251766_, p_249430_.decoratedContent());
+             } else {
+                 Component component = filtermask.applyWithFormatting(p_249430_.signedContent());
+                 if (component != null) {
+-                    this.minecraft.gui.getChat().addMessage(p_251766_.decorate(component), messagesignature, guimessagetag);
++                    Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(p_251766_, p_251766_.decorate(component), p_249430_, p_249430_.sender());
++                    if (forgeComponent == null) return false;
++                    this.minecraft.gui.getChat().addMessage(forgeComponent, messagesignature, guimessagetag);
+                     this.narrateChatMessage(p_251766_, component);
+                 }
              }
-          }
-@@ -174,6 +_,8 @@
+@@ -175,6 +_,8 @@
  
-    public void handleSystemMessage(Component p_240522_, boolean p_240642_) {
-       if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(this.guessChatUUID(p_240522_))) {
-+         p_240522_ = net.minecraftforge.client.ForgeHooksClient.onClientSystemChat(p_240522_, p_240642_);
-+         if (p_240522_ == null) return;
-          if (p_240642_) {
-             this.minecraft.gui.setOverlayMessage(p_240522_, false);
-          } else {
+     public void handleSystemMessage(Component p_240522_, boolean p_240642_) {
+         if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(this.guessChatUUID(p_240522_))) {
++            p_240522_ = net.minecraftforge.client.ForgeHooksClient.onClientSystemChat(p_240522_, p_240642_, this.minecraft.level.registryAccess());
++            if (p_240522_ == null) return;
+             if (p_240642_) {
+                 this.minecraft.gui.setOverlayMessage(p_240522_, false);
+             } else {

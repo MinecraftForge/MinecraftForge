@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/dedicated/ServerWatchdog.java
 +++ b/net/minecraft/server/dedicated/ServerWatchdog.java
-@@ -41,7 +_,7 @@
-             ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
-             ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
-             StringBuilder stringbuilder = new StringBuilder();
--            Error error = new Error("Watchdog");
-+            Error error = new Error(String.format(java.util.Locale.ENGLISH, "ServerHangWatchdog detected that a single server tick took %.2f seconds (should be max 0.05)", k / 1000F)); // Forge: don't just make a crash report with a seemingly-inexplicable Error
+@@ -48,7 +_,7 @@
+                 ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
+                 ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
+                 StringBuilder stringbuilder = new StringBuilder();
+-                Error error = new Error("Watchdog");
++                Error error = new Error(String.format(java.util.Locale.ENGLISH, "ServerHangWatchdog detected that a single server tick took %.2f seconds (should be max 0.05)", k / 1000F)); // Forge: don't just make a crash report with a seemingly-inexplicable Error
  
-             for(ThreadInfo threadinfo : athreadinfo) {
-                if (threadinfo.getThreadId() == this.server.getRunningThread().getId()) {
+                 for (ThreadInfo threadinfo : athreadinfo) {
+                     if (threadinfo.getThreadId() == this.server.getRunningThread().getId()) {

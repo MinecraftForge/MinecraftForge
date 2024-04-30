@@ -1,20 +1,20 @@
 --- a/net/minecraft/commands/arguments/ResourceLocationArgument.java
 +++ b/net/minecraft/commands/arguments/ResourceLocationArgument.java
-@@ -39,7 +_,7 @@
+@@ -27,7 +_,7 @@
  
-    public static AdvancementHolder getAdvancement(CommandContext<CommandSourceStack> p_106988_, String p_106989_) throws CommandSyntaxException {
-       ResourceLocation resourcelocation = getId(p_106988_, p_106989_);
--      AdvancementHolder advancementholder = p_106988_.getSource().getServer().getAdvancements().get(resourcelocation);
-+      AdvancementHolder advancementholder = p_106988_.getSource().getAdvancement(resourcelocation);
-       if (advancementholder == null) {
-          throw ERROR_UNKNOWN_ADVANCEMENT.create(resourcelocation);
-       } else {
-@@ -48,7 +_,7 @@
-    }
+     public static AdvancementHolder getAdvancement(CommandContext<CommandSourceStack> p_106988_, String p_106989_) throws CommandSyntaxException {
+         ResourceLocation resourcelocation = getId(p_106988_, p_106989_);
+-        AdvancementHolder advancementholder = p_106988_.getSource().getServer().getAdvancements().get(resourcelocation);
++        AdvancementHolder advancementholder = p_106988_.getSource().getAdvancement(resourcelocation);
+         if (advancementholder == null) {
+             throw ERROR_UNKNOWN_ADVANCEMENT.create(resourcelocation);
+         } else {
+@@ -36,7 +_,7 @@
+     }
  
-    public static RecipeHolder<?> getRecipe(CommandContext<CommandSourceStack> p_106995_, String p_106996_) throws CommandSyntaxException {
--      RecipeManager recipemanager = p_106995_.getSource().getServer().getRecipeManager();
-+      RecipeManager recipemanager = p_106995_.getSource().getRecipeManager();
-       ResourceLocation resourcelocation = getId(p_106995_, p_106996_);
-       return recipemanager.byKey(resourcelocation).orElseThrow(() -> {
-          return ERROR_UNKNOWN_RECIPE.create(resourcelocation);
+     public static RecipeHolder<?> getRecipe(CommandContext<CommandSourceStack> p_106995_, String p_106996_) throws CommandSyntaxException {
+-        RecipeManager recipemanager = p_106995_.getSource().getServer().getRecipeManager();
++        RecipeManager recipemanager = p_106995_.getSource().getRecipeManager();
+         ResourceLocation resourcelocation = getId(p_106995_, p_106996_);
+         return recipemanager.byKey(resourcelocation).orElseThrow(() -> ERROR_UNKNOWN_RECIPE.create(resourcelocation));
+     }

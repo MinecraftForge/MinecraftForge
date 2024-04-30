@@ -6,7 +6,7 @@
 package net.minecraftforge.common.loot;
 
 import com.google.common.collect.ImmutableSet;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ import java.util.Set;
  * This LootItemCondition "forge:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
  */
 public record CanToolPerformAction(ToolAction action) implements LootItemCondition {
-    public static final Codec<CanToolPerformAction> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<CanToolPerformAction> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ToolAction.CODEC.fieldOf("action").forGetter(CanToolPerformAction::action)
     ).apply(b, CanToolPerformAction::new));
     public static final LootItemConditionType TYPE = new LootItemConditionType(CODEC);

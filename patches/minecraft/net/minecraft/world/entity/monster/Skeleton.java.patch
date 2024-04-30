@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/entity/monster/Skeleton.java
 +++ b/net/minecraft/world/entity/monster/Skeleton.java
-@@ -83,10 +_,12 @@
-    }
+@@ -85,10 +_,12 @@
+     }
  
-    protected void doFreezeConversion() {
--      this.convertTo(EntityType.STRAY, true);
-+      if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.STRAY, (timer) -> this.conversionTime = timer)) return;
-+      var result = this.convertTo(EntityType.STRAY, true);
-       if (!this.isSilent()) {
-          this.level().levelEvent((Player)null, 1048, this.blockPosition(), 0);
-       }
-+      net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, result);
+     protected void doFreezeConversion() {
+-        this.convertTo(EntityType.STRAY, true);
++        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.STRAY, (timer) -> this.conversionTime = timer)) return;
++        var result = this.convertTo(EntityType.STRAY, true);
+         if (!this.isSilent()) {
+             this.level().levelEvent(null, 1048, this.blockPosition(), 0);
+         }
++        net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, result);
+     }
  
-    }
- 
+     @Override

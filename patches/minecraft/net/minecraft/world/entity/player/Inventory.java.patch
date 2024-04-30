@@ -2,44 +2,34 @@
 +++ b/net/minecraft/world/entity/player/Inventory.java
 @@ -130,7 +_,7 @@
  
-       for(int k = 0; k < 9; ++k) {
-          int l = (this.selected + k) % 9;
--         if (!this.items.get(l).isEnchanted()) {
-+         if (!this.items.get(l).isNotReplaceableByPickAction(this.player, l)) {
-             return l;
-          }
-       }
-@@ -178,7 +_,8 @@
-       int i = p_36049_.getCount();
-       ItemStack itemstack = this.getItem(p_36048_);
-       if (itemstack.isEmpty()) {
--         itemstack = new ItemStack(item, 0);
-+         itemstack = p_36049_.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
-+         itemstack.setCount(0);
-          if (p_36049_.hasTag()) {
-             itemstack.setTag(p_36049_.getTag().copy());
-          }
-@@ -222,11 +_,13 @@
-    }
- 
-    public void tick() {
-+      int idx = 0;
-       for(NonNullList<ItemStack> nonnulllist : this.compartments) {
-          for(int i = 0; i < nonnulllist.size(); ++i) {
-             if (!nonnulllist.get(i).isEmpty()) {
--               nonnulllist.get(i).inventoryTick(this.player.level(), this.player, i, this.selected == i);
-+               nonnulllist.get(i).onInventoryTick(this.player.level(), this.player, idx, this.selected);
+         for (int k = 0; k < 9; k++) {
+             int l = (this.selected + k) % 9;
+-            if (!this.items.get(l).isEnchanted()) {
++            if (!this.items.get(l).isNotReplaceableByPickAction(this.player, l)) {
+                 return l;
              }
-+            idx++;
-          }
-       }
+         }
+@@ -211,11 +_,13 @@
+     }
  
-@@ -277,6 +_,8 @@
-          } catch (Throwable throwable) {
-             CrashReport crashreport = CrashReport.forThrowable(throwable, "Adding item to inventory");
-             CrashReportCategory crashreportcategory = crashreport.addCategory("Item being added");
-+            crashreportcategory.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_36042_.getItem())));
-+            crashreportcategory.setDetail("Item Class", () -> p_36042_.getItem().getClass().getName());
-             crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
-             crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
-             crashreportcategory.setDetail("Item name", () -> {
+     public void tick() {
++        int idx = 0;
+         for (NonNullList<ItemStack> nonnulllist : this.compartments) {
+             for (int i = 0; i < nonnulllist.size(); i++) {
+                 if (!nonnulllist.get(i).isEmpty()) {
+-                    nonnulllist.get(i).inventoryTick(this.player.level(), this.player, i, this.selected == i);
++                    nonnulllist.get(i).onInventoryTick(this.player.level(), this.player, idx, this.selected);
+                 }
++                idx++;
+             }
+         }
+     }
+@@ -265,6 +_,8 @@
+             } catch (Throwable throwable) {
+                 CrashReport crashreport = CrashReport.forThrowable(throwable, "Adding item to inventory");
+                 CrashReportCategory crashreportcategory = crashreport.addCategory("Item being added");
++                crashreportcategory.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(p_36042_.getItem())));
++                crashreportcategory.setDetail("Item Class", () -> p_36042_.getItem().getClass().getName());
+                 crashreportcategory.setDetail("Item ID", Item.getId(p_36042_.getItem()));
+                 crashreportcategory.setDetail("Item data", p_36042_.getDamageValue());
+                 crashreportcategory.setDetail("Item name", () -> p_36042_.getHoverName().getString());

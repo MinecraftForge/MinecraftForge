@@ -47,14 +47,14 @@ public interface IExtensibleEnum {
     static <E extends Enum<E> & StringRepresentable> Codec<E> createCodecForExtensibleEnum(Supplier<E[]> valuesSupplier, Function<? super String, ? extends E> enumValueFromNameFunction) {
         return Codec.either(Codec.STRING, Codec.INT).comapFlatMap(
                 either -> either.map(
-                        str -> {
-                            var val = enumValueFromNameFunction.apply(str);
-                            return val != null ? DataResult.success(val) : DataResult.error(() -> "Unknown enum value name: " + str);
-                        },
-                        num -> {
-                            var values = valuesSupplier.get();
-                            return num >= 0 && num < values.length ? DataResult.success(values[num]) : DataResult.error(() -> "Unknown enum id: " + num);
-                        }
+                    str -> {
+                        var val = enumValueFromNameFunction.apply(str);
+                        return val != null ? DataResult.success(val) : DataResult.error(() -> "Unknown enum value name: " + str);
+                    },
+                    num -> {
+                        var values = valuesSupplier.get();
+                        return num >= 0 && num < values.length ? DataResult.success(values[num]) : DataResult.error(() -> "Unknown enum id: " + num);
+                    }
                 ),
                 value -> Either.left(value.getSerializedName())
         );

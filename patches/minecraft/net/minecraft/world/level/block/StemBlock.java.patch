@@ -1,44 +1,35 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -65,17 +_,18 @@
-    }
+@@ -79,9 +_,11 @@
  
-    public void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
-+      if (!p_222539_.isAreaLoaded(p_222540_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_222539_.getRawBrightness(p_222540_, 0) >= 9) {
-          float f = CropBlock.getGrowthSpeed(this, p_222539_, p_222540_);
--         if (p_222541_.nextInt((int)(25.0F / f) + 1) == 0) {
-+         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, p_222541_.nextInt((int)(25.0F / f) + 1) == 0)) {
-             int i = p_222538_.getValue(AGE);
-             if (i < 7) {
--               p_222538_ = p_222538_.setValue(AGE, Integer.valueOf(i + 1));
--               p_222539_.setBlock(p_222540_, p_222538_, 2);
-+               p_222539_.setBlock(p_222540_, p_222538_.setValue(AGE, Integer.valueOf(i + 1)), 2);
-             } else {
-                Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
-                BlockPos blockpos = p_222540_.relative(direction);
-                BlockState blockstate = p_222539_.getBlockState(blockpos.below());
-+               // Forge: TODO: Soil blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this.fruit)
-                if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-                   Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
-                   Optional<Block> optional = registry.getOptional(this.fruit);
-@@ -86,6 +_,7 @@
-                   }
-                }
-             }
-+            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
-          }
- 
-       }
-@@ -115,5 +_,11 @@
- 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57040_) {
-       p_57040_.add(AGE);
-+   }
+     @Override
+     protected void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
++        if (!p_222539_.isAreaLoaded(p_222540_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+         if (p_222539_.getRawBrightness(p_222540_, 0) >= 9) {
+             float f = CropBlock.getGrowthSpeed(this, p_222539_, p_222540_);
+-            if (p_222541_.nextInt((int)(25.0F / f) + 1) == 0) {
++            var vanilla = p_222541_.nextInt((int)(25.0F / f) + 1) == 0;
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222539_, p_222540_, p_222538_, vanilla)) {
+                 int i = p_222538_.getValue(AGE);
+                 if (i < 7) {
+                     p_222538_ = p_222538_.setValue(AGE, Integer.valueOf(i + 1));
+@@ -90,7 +_,7 @@
+                     Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
+                     BlockPos blockpos = p_222540_.relative(direction);
+                     BlockState blockstate = p_222539_.getBlockState(blockpos.below());
+-                    if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
++                    if (p_222539_.getBlockState(blockpos).isAir() && blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this)) {
+                         Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
+                         Optional<Block> optional = registry.getOptional(this.fruit);
+                         Optional<Block> optional1 = registry.getOptional(this.attachedStem);
+@@ -132,5 +_,10 @@
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57040_) {
+         p_57040_.add(AGE);
++    }
 +
-+   //FORGE START
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.CROP;
-    }
++    @Override
++    public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++        return net.minecraftforge.common.PlantType.CROP;
+     }
  }

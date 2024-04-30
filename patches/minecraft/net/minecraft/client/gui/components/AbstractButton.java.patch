@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/components/AbstractButton.java
 +++ b/net/minecraft/client/gui/components/AbstractButton.java
-@@ -29,7 +_,7 @@
-       RenderSystem.enableDepthTest();
-       p_281670_.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-       p_281670_.setColor(1.0F, 1.0F, 1.0F, 1.0F);
--      int i = this.active ? 16777215 : 10526880;
-+      int i = getFGColor();
-       this.renderString(p_281670_, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
-    }
+@@ -32,7 +_,7 @@
+         RenderSystem.enableDepthTest();
+         p_281670_.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+         p_281670_.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+-        int i = this.active ? 16777215 : 10526880;
++        int i = getFGColor();
+         this.renderString(p_281670_, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
+     }
  

@@ -24,8 +24,7 @@ import java.util.Set;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V> extends Iterable<V>
-{
+public interface IForgeRegistry<V> extends Iterable<V> {
     ResourceKey<Registry<V>> getRegistryKey();
     ResourceLocation getRegistryName();
 
@@ -92,15 +91,14 @@ public interface IForgeRegistry<V> extends Iterable<V>
      * @param <T> Type to return
      * @return The slavemap if present
      */
-    <T> T getSlaveMap(ResourceLocation slaveMapName, Class<T> type);
+    <T> T getSlaveMap(SlaveKey<T> key);
 
     /**
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.
      */
     @FunctionalInterface
-    interface AddCallback<V>
-    {
+    interface AddCallback<V> {
         void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V obj, @Nullable V oldObj);
     }
 
@@ -109,8 +107,7 @@ public interface IForgeRegistry<V> extends Iterable<V>
      * or server.
      */
     @FunctionalInterface
-    interface ClearCallback<V>
-    {
+    interface ClearCallback<V> {
         void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
@@ -118,8 +115,7 @@ public interface IForgeRegistry<V> extends Iterable<V>
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
     @FunctionalInterface
-    interface CreateCallback<V>
-    {
+    interface CreateCallback<V> {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
@@ -127,8 +123,7 @@ public interface IForgeRegistry<V> extends Iterable<V>
      * Callback fired when the registry contents are validated.
      */
     @FunctionalInterface
-    interface ValidateCallback<V>
-    {
+    interface ValidateCallback<V> {
         void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceLocation key, V obj);
     }
 
@@ -136,14 +131,22 @@ public interface IForgeRegistry<V> extends Iterable<V>
      * Callback fired when the registry is done processing. Used to calculate state ID maps.
      */
     @FunctionalInterface
-    interface BakeCallback<V>
-    {
+    interface BakeCallback<V> {
         void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
     @FunctionalInterface
-    interface MissingFactory<V>
-    {
+    interface MissingFactory<V> {
         V createMissing(ResourceLocation key, boolean isNetwork);
+    }
+
+    public record SlaveKey<T>(ResourceLocation name) {
+        public static <X> SlaveKey<X> create(String name) {
+            return create(new ResourceLocation(name));
+        }
+
+        public static <X> SlaveKey<X> create(ResourceLocation name) {
+            return new SlaveKey<X>(name);
+        }
     }
 }

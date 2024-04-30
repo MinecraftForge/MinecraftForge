@@ -1,23 +1,23 @@
 --- a/net/minecraft/world/level/block/NoteBlock.java
 +++ b/net/minecraft/world/level/block/NoteBlock.java
-@@ -95,7 +_,9 @@
-       } else if (p_55035_.isClientSide) {
-          return InteractionResult.SUCCESS;
-       } else {
--         p_55034_ = p_55034_.cycle(NOTE);
-+         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_55035_, p_55036_, p_55034_, p_55034_.getValue(NOTE), p_55034_.cycle(NOTE).getValue(NOTE));
-+         if (_new == -1) return InteractionResult.FAIL;
-+         p_55034_ = p_55034_.setValue(NOTE, _new);
-          p_55035_.setBlock(p_55036_, p_55034_, 3);
-          this.playNote(p_55037_, p_55034_, p_55035_, p_55036_);
-          p_55037_.awardStat(Stats.TUNE_NOTEBLOCK);
-@@ -115,6 +_,9 @@
-    }
+@@ -110,7 +_,9 @@
+         if (p_332131_.isClientSide) {
+             return InteractionResult.SUCCESS;
+         } else {
+-            p_331116_ = p_331116_.cycle(NOTE);
++            int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_332131_, p_333586_, p_331116_, p_331116_.getValue(NOTE), p_331116_.cycle(NOTE).getValue(NOTE));
++            if (_new == -1) return InteractionResult.FAIL;
++            p_331116_ = p_331116_.setValue(NOTE, _new);
+             p_332131_.setBlock(p_333586_, p_331116_, 3);
+             this.playNote(p_329332_, p_331116_, p_332131_, p_333586_);
+             p_329332_.awardStat(Stats.TUNE_NOTEBLOCK);
+@@ -132,6 +_,9 @@
  
-    public boolean triggerEvent(BlockState p_55023_, Level p_55024_, BlockPos p_55025_, int p_55026_, int p_55027_) {
-+      net.minecraftforge.event.level.NoteBlockEvent.Play e = new net.minecraftforge.event.level.NoteBlockEvent.Play(p_55024_, p_55025_, p_55023_, p_55023_.getValue(NOTE), p_55023_.getValue(INSTRUMENT));
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
-+      p_55023_ = p_55023_.setValue(NOTE, e.getVanillaNoteId()).setValue(INSTRUMENT, e.getInstrument());
-       NoteBlockInstrument noteblockinstrument = p_55023_.getValue(INSTRUMENT);
-       float f;
-       if (noteblockinstrument.isTunable()) {
+     @Override
+     protected boolean triggerEvent(BlockState p_55023_, Level p_55024_, BlockPos p_55025_, int p_55026_, int p_55027_) {
++        var event = net.minecraftforge.event.ForgeEventFactory.onNotePlay(p_55024_, p_55025_, p_55023_, p_55023_.getValue(NOTE), p_55023_.getValue(INSTRUMENT));
++        if (event.isCanceled()) return false;
++        p_55023_ = p_55023_.setValue(NOTE, event.getVanillaNoteId()).setValue(INSTRUMENT, event.getInstrument());
+         NoteBlockInstrument noteblockinstrument = p_55023_.getValue(INSTRUMENT);
+         float f;
+         if (noteblockinstrument.isTunable()) {

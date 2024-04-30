@@ -5,15 +5,17 @@
 
 package net.minecraftforge.common.crafting.ingredients;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -39,7 +41,7 @@ public class PartialNBTIngredient extends AbstractIngredient {
         super(items.stream().map(item -> {
             var stack = new ItemStack(item);
             // copy NBT to prevent the stack from modifying the original, as capabilities or vanilla item durability will modify the tag
-            stack.setTag(nbt.copy());
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt.copy()));
             return new Ingredient.ItemValue(stack);
         }));
 
@@ -65,7 +67,8 @@ public class PartialNBTIngredient extends AbstractIngredient {
     public boolean test(@Nullable ItemStack input) {
         if (input == null)
             return false;
-        return items.contains(input.getItem()) && predicate.matches(input.getShareTag());
+        var nbt = input.get(DataComponents.CUSTOM_DATA);
+        return nbt != null && items.contains(input.getItem()) && predicate.matches(nbt.copyTag());
     }
 
     @Override
@@ -78,7 +81,7 @@ public class PartialNBTIngredient extends AbstractIngredient {
         return SERIALIZER;
     }
 
-    public static final Codec<PartialNBTIngredient> CODEC = RecordCodecBuilder.create(builder ->
+    public static final MapCodec<PartialNBTIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
             ForgeRegistries.ITEMS.getCodec().listOf().fieldOf("items").forGetter(i -> i.items),
             TagParser.AS_CODEC.fieldOf("nbt").forGetter(i -> i.nbt)
@@ -87,20 +90,20 @@ public class PartialNBTIngredient extends AbstractIngredient {
 
     public static final IIngredientSerializer<PartialNBTIngredient> SERIALIZER = new IIngredientSerializer<>() {
         @Override
-        public Codec<? extends PartialNBTIngredient> codec() {
+        public MapCodec<? extends PartialNBTIngredient> codec() {
             return CODEC;
         }
 
         @Override
-        public PartialNBTIngredient read(FriendlyByteBuf buffer) {
-            var items = buffer.readList(b -> b.readRegistryIdUnsafe(ForgeRegistries.ITEMS));
+        public PartialNBTIngredient read(RegistryFriendlyByteBuf buffer) {
+            var items = buffer.readList(b -> Item.STREAM_CODEC.decode(buffer).get());
             var nbt = buffer.readNbt();
             return new PartialNBTIngredient(items, Objects.requireNonNull(nbt));
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, PartialNBTIngredient value) {
-            buffer.writeCollection(value.items, (b, item) -> b.writeRegistryIdUnsafe(ForgeRegistries.ITEMS, item));
+        public void write(RegistryFriendlyByteBuf buffer, PartialNBTIngredient value) {
+            buffer.writeCollection(value.items, (b, item) -> Item.STREAM_CODEC.encode(buffer, item.builtInRegistryHolder()));
             buffer.writeNbt(value.nbt);
         }
     };

@@ -7,9 +7,7 @@
           "conditions": {
             "items": [
               {
-                "items": [
-                  "minecraft:dirt"
-                ]
+                "items": "minecraft:dirt"
               }
             ]
           },
@@ -23,8 +21,7 @@
         }
       },
       "forge:condition": {
-        "type": "forge:false",
-        "value": {}
+        "type": "forge:false"
       },
       "requirements": [
         [
@@ -45,9 +42,7 @@
           "conditions": {
             "items": [
               {
-                "items": [
-                  "minecraft:oak_log"
-                ]
+                "items": "minecraft:oak_log"
               }
             ]
           },
@@ -61,8 +56,7 @@
         }
       },
       "forge:condition": {
-        "type": "forge:true",
-        "value": {}
+        "type": "forge:true"
       },
       "requirements": [
         [

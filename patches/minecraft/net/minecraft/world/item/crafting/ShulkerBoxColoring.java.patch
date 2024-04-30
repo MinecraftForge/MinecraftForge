@@ -1,38 +1,38 @@
 --- a/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
 +++ b/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
 @@ -25,7 +_,7 @@
-             if (Block.byItem(itemstack.getItem()) instanceof ShulkerBoxBlock) {
-                ++i;
-             } else {
--               if (!(itemstack.getItem() instanceof DyeItem)) {
-+               if (!itemstack.is(net.minecraftforge.common.Tags.Items.DYES)) {
-                   return false;
-                }
+                 if (Block.byItem(itemstack.getItem()) instanceof ShulkerBoxBlock) {
+                     i++;
+                 } else {
+-                    if (!(itemstack.getItem() instanceof DyeItem)) {
++                    if (!itemstack.is(net.minecraftforge.common.Tags.Items.DYES)) {
+                         return false;
+                     }
  
 @@ -43,7 +_,7 @@
  
-    public ItemStack assemble(CraftingContainer p_44322_, RegistryAccess p_266985_) {
-       ItemStack itemstack = ItemStack.EMPTY;
--      DyeItem dyeitem = (DyeItem)Items.WHITE_DYE;
-+      net.minecraft.world.item.DyeColor dyecolor = net.minecraft.world.item.DyeColor.WHITE;
+     public ItemStack assemble(CraftingContainer p_44322_, HolderLookup.Provider p_336251_) {
+         ItemStack itemstack = ItemStack.EMPTY;
+-        DyeItem dyeitem = (DyeItem)Items.WHITE_DYE;
++        var dyecolor = net.minecraft.world.item.DyeColor.WHITE;
  
-       for(int i = 0; i < p_44322_.getContainerSize(); ++i) {
-          ItemStack itemstack1 = p_44322_.getItem(i);
-@@ -51,13 +_,14 @@
-             Item item = itemstack1.getItem();
-             if (Block.byItem(item) instanceof ShulkerBoxBlock) {
-                itemstack = itemstack1;
--            } else if (item instanceof DyeItem) {
--               dyeitem = (DyeItem)item;
-+            } else {
-+               net.minecraft.world.item.DyeColor tmp = net.minecraft.world.item.DyeColor.getColor(itemstack1);
-+               if (tmp != null) dyecolor = tmp;
+         for (int i = 0; i < p_44322_.getContainerSize(); i++) {
+             ItemStack itemstack1 = p_44322_.getItem(i);
+@@ -52,12 +_,15 @@
+                 if (Block.byItem(item) instanceof ShulkerBoxBlock) {
+                     itemstack = itemstack1;
+                 } else if (item instanceof DyeItem) {
+-                    dyeitem = (DyeItem)item;
++                    var tmp = net.minecraft.world.item.DyeColor.getColor(itemstack1);
++                    if (tmp != null) {
++                        dyecolor = tmp;
++                    }
+                 }
              }
-          }
-       }
+         }
  
--      ItemStack itemstack2 = ShulkerBoxBlock.getColoredItemStack(dyeitem.getDyeColor());
-+      ItemStack itemstack2 = ShulkerBoxBlock.getColoredItemStack(dyecolor);
-       if (itemstack.hasTag()) {
-          itemstack2.setTag(itemstack.getTag().copy());
-       }
+-        Block block = ShulkerBoxBlock.getBlockByColor(dyeitem.getDyeColor());
++        Block block = ShulkerBoxBlock.getBlockByColor(dyecolor);
+         return itemstack.transmuteCopy(block, 1);
+     }
+ 

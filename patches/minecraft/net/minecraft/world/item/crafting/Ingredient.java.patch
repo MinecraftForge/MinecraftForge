@@ -1,140 +1,122 @@
 --- a/net/minecraft/world/item/crafting/Ingredient.java
 +++ b/net/minecraft/world/item/crafting/Ingredient.java
-@@ -27,14 +_,24 @@
+@@ -28,16 +_,25 @@
  import net.minecraft.world.level.ItemLike;
  
  public class Ingredient implements Predicate<ItemStack> {
-+   //Because Mojang caches things... we need to invalidate them.. so... here we go..
-+   private static final java.util.concurrent.atomic.AtomicInteger INVALIDATION_COUNTER = new java.util.concurrent.atomic.AtomicInteger();
-+   public static void invalidateAll() {
-+      INVALIDATION_COUNTER.incrementAndGet();
-+   }
++    //Because Mojang caches things... we need to invalidate them.. so... here we go..
++    private static final java.util.concurrent.atomic.AtomicInteger INVALIDATION_COUNTER = new java.util.concurrent.atomic.AtomicInteger();
++    public static void invalidateAll() {
++        INVALIDATION_COUNTER.incrementAndGet();
++    }
+     public static final Ingredient EMPTY = new Ingredient(Stream.empty());
+-    public static final StreamCodec<RegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = ItemStack.LIST_STREAM_CODEC
+-        .map(p_327193_ -> fromValues(p_327193_.stream().map(Ingredient.ItemValue::new)), p_327192_ -> Arrays.asList(p_327192_.getItems()));
++    public static final StreamCodec<RegistryFriendlyByteBuf, Ingredient> CONTENTS_STREAM_CODEC = net.minecraftforge.common.ForgeHooks.ingredientStreamCodec();
+     private final Ingredient.Value[] values;
+     @Nullable
+     private ItemStack[] itemStacks;
+     @Nullable
+     private IntList stackingIds;
+-    public static final Codec<Ingredient> CODEC = codec(true);
+-    public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
++    /** The vanilla codec that doesn't support custom Ingredient types. */
++    public static final Codec<Ingredient> VANILLA_CODEC = codec(true);
++    public static final com.mojang.serialization.MapCodec<Ingredient> VANILLA_MAP_CODEC = com.mojang.serialization.MapCodec.assumeMapUnsafe(VANILLA_CODEC);
++    public static final Codec<Ingredient> CODEC = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC);
++    private static final Codec<Ingredient> VANILLA_CODEC_NONEMPTY = codec(false);
++    public static final Codec<Ingredient> CODEC_NONEMPTY = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC_NONEMPTY);
++    private int invalidationCounter;
+ 
+     protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
+         this.values = p_43907_.toArray(Ingredient.Value[]::new);
+@@ -48,7 +_,7 @@
+     }
+ 
+     public ItemStack[] getItems() {
+-        if (this.itemStacks == null) {
++        if (this.itemStacks == null || checkInvalidation()) {
+             this.itemStacks = Arrays.stream(this.values).flatMap(p_43916_ -> p_43916_.getItems().stream()).distinct().toArray(ItemStack[]::new);
+         }
+ 
+@@ -72,7 +_,8 @@
+     }
+ 
+     public IntList getStackingIds() {
+-        if (this.stackingIds == null) {
++        if (this.stackingIds == null || checkInvalidation()) {
++            this.markValid();
+             ItemStack[] aitemstack = this.getItems();
+             this.stackingIds = new IntArrayList(aitemstack.length);
+ 
+@@ -120,6 +_,56 @@
+         return fromValues(Stream.of(new Ingredient.TagValue(p_204133_)));
+     }
+ 
++    public final boolean checkInvalidation() {
++        int currentInvalidationCounter = INVALIDATION_COUNTER.get();
++        if (this.invalidationCounter != currentInvalidationCounter) {
++            invalidate();
++            return true;
++        }
++        return false;
++    }
 +
-    public static final Ingredient EMPTY = new Ingredient(Stream.empty());
-    private final Ingredient.Value[] values;
-    @Nullable
-    private ItemStack[] itemStacks;
-    @Nullable
-    private IntList stackingIds;
--   public static final Codec<Ingredient> CODEC = codec(true);
--   public static final Codec<Ingredient> CODEC_NONEMPTY = codec(false);
-+   /** The vanilla codec that doesn't support custom Ingredient types. */
-+   public static final Codec<Ingredient> VANILLA_CODEC = codec(true);
-+   public static final Codec<Ingredient> CODEC = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC);
-+   private static final Codec<Ingredient> VANILLA_CODEC_NONEMPTY = codec(false);
-+   public static final Codec<Ingredient> CODEC_NONEMPTY = net.minecraftforge.common.ForgeHooks.enhanceIngredientCodec(VANILLA_CODEC_NONEMPTY);
-+   private int invalidationCounter;
- 
-    protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
-       this.values = p_43907_.toArray((p_43933_) -> {
-@@ -47,7 +_,7 @@
-    }
- 
-    public ItemStack[] getItems() {
--      if (this.itemStacks == null) {
-+      if (this.itemStacks == null || checkInvalidation()) {
-          this.itemStacks = Arrays.stream(this.values).flatMap((p_43916_) -> {
-             return p_43916_.getItems().stream();
-          }).distinct().toArray((p_43910_) -> {
-@@ -75,7 +_,8 @@
-    }
- 
-    public IntList getStackingIds() {
--      if (this.stackingIds == null) {
-+      if (this.stackingIds == null || checkInvalidation()) {
-+         this.markValid();
-          ItemStack[] aitemstack = this.getItems();
-          this.stackingIds = new IntArrayList(aitemstack.length);
- 
-@@ -90,6 +_,7 @@
-    }
- 
-    public final void toNetwork(FriendlyByteBuf p_43924_) {
-+      if (net.minecraftforge.common.ForgeHooks.ingredientToNetwork(p_43924_, this))
-       p_43924_.writeCollection(Arrays.asList(this.getItems()), FriendlyByteBuf::writeItem);
-    }
- 
-@@ -105,6 +_,38 @@
-       }
-    }
- 
-+   public final boolean checkInvalidation() {
-+      int currentInvalidationCounter = INVALIDATION_COUNTER.get();
-+      if (this.invalidationCounter != currentInvalidationCounter) {
-+         invalidate();
-+         return true;
-+      }
-+      return false;
-+   }
++    protected final void markValid() {
++        this.invalidationCounter = INVALIDATION_COUNTER.get();
++    }
 +
-+   protected final void markValid() {
-+      this.invalidationCounter = INVALIDATION_COUNTER.get();
-+   }
++    protected void invalidate() {
++        this.itemStacks = null;
++        this.stackingIds = null;
++    }
 +
-+   protected void invalidate() {
-+      this.itemStacks = null;
-+      this.stackingIds = null;
-+   }
++    public boolean isSimple() {
++        return true;
++    }
 +
-+   public boolean isSimple() {
-+      return true;
-+   }
++    private final boolean isVanilla = this.getClass() == Ingredient.class;
++    public final boolean isVanilla() {
++        return isVanilla;
++    }
 +
-+   private final boolean isVanilla = this.getClass() == Ingredient.class;
-+   public final boolean isVanilla() {
-+      return isVanilla;
-+   }
++    public net.minecraftforge.common.crafting.ingredients.IIngredientSerializer<? extends Ingredient> serializer() {
++        if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.codec in their custom Ingredients: " + getClass());
++        return net.minecraftforge.common.crafting.ingredients.IIngredientSerializer.VANILLA;
++    }
 +
-+   public net.minecraftforge.common.crafting.ingredients.IIngredientSerializer<? extends Ingredient> serializer() {
-+      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.codec in their custom Ingredients: " + getClass());
-+      return net.minecraftforge.common.crafting.ingredients.IIngredientSerializer.VANILLA;
-+   }
++    @Override
++    public String toString() {
++        var buf = new StringBuilder();
++        buf.append("Ingredient[");
++        for (int x = 0; x < values.length; x++) {
++            if (x != 0)
++                buf.append(", ");
++            if (values[x] instanceof TagValue tag)
++                buf.append('#').append(tag.tag().location());
++            else if (values[x] instanceof ItemValue item)
++                buf.append(item.item());
++            else
++                buf.append(values[x]);
++        }
++        buf.append(']');
++        return buf.toString();
++     }
 +
-    public static Ingredient fromValues(Stream<? extends Ingredient.Value> p_43939_) {
-       Ingredient ingredient = new Ingredient(p_43939_);
-       return ingredient.isEmpty() ? EMPTY : ingredient;
-@@ -133,7 +_,9 @@
-    }
+     private static Codec<Ingredient> codec(boolean p_298496_) {
+         Codec<Ingredient.Value[]> codec = Codec.list(Ingredient.Value.CODEC)
+             .comapFlatMap(
+@@ -182,6 +_,13 @@
  
-    public static Ingredient fromNetwork(FriendlyByteBuf p_43941_) {
--      return fromValues(p_43941_.<ItemStack>readList(FriendlyByteBuf::readItem).stream().map(Ingredient.ItemValue::new));
-+      var size = p_43941_.readVarInt();
-+      if (size == -1) return net.minecraftforge.common.ForgeHooks.ingredientFromNetwork(p_43941_);
-+      return fromValues(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.readItem())).limit(size));
-    }
- 
-    private static Codec<Ingredient> codec(boolean p_298496_) {
-@@ -199,6 +_,9 @@
-             list.add(new ItemStack(holder));
-          }
- 
-+         if (list.size() == 0) {
-+            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.BARRIER).setHoverName(net.minecraft.network.chat.Component.literal("Empty Tag: " + this.tag.location())));
-+         }
-          return list;
-       }
-    }
-@@ -221,5 +_,23 @@
-       });
- 
-       Collection<ItemStack> getItems();
-+   }
+             for (Holder<Item> holder : BuiltInRegistries.ITEM.getTagOrEmpty(this.tag)) {
+                 list.add(new ItemStack(holder));
++            }
 +
-+   @Override
-+   public String toString() {
-+       var buf = new StringBuilder();
-+       buf.append("Ingredient[");
-+       for (int x = 0; x < values.length; x++) {
-+           if (x != 0)
-+               buf.append(", ");
-+           if (values[x] instanceof TagValue tag)
-+               buf.append('#').append(tag.tag().location());
-+           else if (values[x] instanceof ItemValue item)
-+               buf.append(item.item());
-+           else
-+               buf.append(values[x]);
-+       }
-+       buf.append(']');
-+       return buf.toString();
-    }
- }
++            if (list.size() == 0) {
++                 var marker = new ItemStack(net.minecraft.world.level.block.Blocks.BARRIER);
++                 marker.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,
++                     net.minecraft.network.chat.Component.literal("Empty Tag: " + this.tag.location()));
++                 list.add(marker);
+             }
+ 
+             return list;

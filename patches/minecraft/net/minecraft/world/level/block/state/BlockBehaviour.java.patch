@@ -1,159 +1,170 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -107,6 +_,17 @@
-       this.dynamicShape = p_60452_.dynamicShape;
-       this.requiredFeatures = p_60452_.requiredFeatures;
-       this.properties = p_60452_;
-+      final ResourceLocation lootTableCache = p_60452_.drops;
-+      if (lootTableCache != null) {
-+         this.lootTableSupplier = () -> lootTableCache;
-+      } else if (p_60452_.lootTableSupplier != null) {
-+         this.lootTableSupplier = p_60452_.lootTableSupplier;
-+      } else {
-+         this.lootTableSupplier = () -> {
-+            ResourceLocation registryName = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getKey((Block) this);
-+            return new ResourceLocation(registryName.getNamespace(), "blocks/" + registryName.getPath());
-+         };
-+      }
-    }
+@@ -97,6 +_,7 @@
+     protected final boolean dynamicShape;
+     protected final FeatureFlagSet requiredFeatures;
+     protected final BlockBehaviour.Properties properties;
++    private final java.util.function.Supplier<ResourceKey<LootTable>> lootTableSupplier;
+     @Nullable
+     protected ResourceKey<LootTable> drops;
  
-    public BlockBehaviour.Properties properties() {
-@@ -171,7 +_,7 @@
-    /** @deprecated */
-    @Deprecated
-    public void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
--      if (p_60515_.hasBlockEntity() && !p_60515_.is(p_60518_.getBlock())) {
-+      if (p_60515_.hasBlockEntity() && (!p_60515_.is(p_60518_.getBlock()) || !p_60518_.hasBlockEntity())) {
-          p_60516_.removeBlockEntity(p_60517_);
-       }
- 
-@@ -183,7 +_,8 @@
-       if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
-          Block block = p_310712_.getBlock();
-          boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
--         if (block.dropFromExplosion(p_312709_) && p_311693_ instanceof ServerLevel) {
-+         if (p_310712_.canDropFromExplosion(p_311693_, p_311490_, p_312709_) && p_311693_ instanceof ServerLevel) {
+@@ -112,6 +_,18 @@
+         this.dynamicShape = p_60452_.dynamicShape;
+         this.requiredFeatures = p_60452_.requiredFeatures;
+         this.properties = p_60452_;
 +
-             ServerLevel serverlevel = (ServerLevel)p_311693_;
-             BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
-             LootParams.Builder lootparams$builder = (new LootParams.Builder(serverlevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockentity).withOptionalParameter(LootContextParams.THIS_ENTITY, p_312709_.getDirectSourceEntity());
-@@ -196,9 +_,7 @@
-                p_311277_.accept(p_309419_, p_311490_);
-             });
-          }
--
--         p_311693_.setBlock(p_311490_, Blocks.AIR.defaultBlockState(), 3);
--         block.wasExploded(p_311693_, p_311490_, p_312709_);
-+         p_310712_.onBlockExploded(p_311693_, p_311490_, p_312709_);
-       }
-    }
++        final ResourceKey<LootTable> lootTableCache = p_60452_.drops;
++        if (lootTableCache != null) {
++            this.lootTableSupplier = () -> lootTableCache;
++        } else if (p_60452_.lootTableSupplier != null) {
++            this.lootTableSupplier = p_60452_.lootTableSupplier;
++        } else {
++            this.lootTableSupplier = () -> {
++                ResourceLocation resourcelocation = BuiltInRegistries.BLOCK.getKey(this.asBlock());
++                return ResourceKey.create(Registries.LOOT_TABLE, resourcelocation.withPrefix("blocks/"));
++            };
++        }
+     }
  
-@@ -400,14 +_,15 @@
-       if (f == -1.0F) {
-          return 0.0F;
-       } else {
--         int i = p_60467_.hasCorrectToolForDrops(p_60466_) ? 30 : 100;
--         return p_60467_.getDestroySpeed(p_60466_) / f / (float)i;
-+         int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(p_60466_, p_60467_) ? 30 : 100;
-+         return p_60467_.getDigSpeed(p_60466_, p_60469_) / f / (float)i;
-       }
-    }
+     public BlockBehaviour.Properties properties() {
+@@ -160,7 +_,7 @@
+     }
  
-    /** @deprecated */
-    @Deprecated
-    public void spawnAfterBreak(BlockState p_222949_, ServerLevel p_222950_, BlockPos p_222951_, ItemStack p_222952_, boolean p_222953_) {
-+      if (p_222953_) net.minecraftforge.common.ForgeHooks.dropXpForBlock(p_222949_, p_222950_, p_222951_, p_222952_);
-    }
+     protected void onRemove(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
+-        if (p_60515_.hasBlockEntity() && !p_60515_.is(p_60518_.getBlock())) {
++        if (p_60515_.hasBlockEntity() && (!p_60515_.is(p_60518_.getBlock()) || !p_60518_.hasBlockEntity())) {
+             p_60516_.removeBlockEntity(p_60517_);
+         }
+     }
+@@ -169,7 +_,7 @@
+         if (!p_310712_.isAir() && p_312709_.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
+             Block block = p_310712_.getBlock();
+             boolean flag = p_312709_.getIndirectSourceEntity() instanceof Player;
+-            if (block.dropFromExplosion(p_312709_) && p_311693_ instanceof ServerLevel serverlevel) {
++            if (p_310712_.canDropFromExplosion(p_311693_, p_311490_, p_312709_) && p_311693_ instanceof ServerLevel serverlevel) {
+                 BlockEntity blockentity = p_310712_.hasBlockEntity() ? p_311693_.getBlockEntity(p_311490_) : null;
+                 LootParams.Builder lootparams$builder = new LootParams.Builder(serverlevel)
+                     .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(p_311490_))
+@@ -184,8 +_,7 @@
+                 p_310712_.getDrops(lootparams$builder).forEach(p_309419_ -> p_311277_.accept(p_309419_, p_311490_));
+             }
  
-    /** @deprecated */
-@@ -434,8 +_,7 @@
+-            p_311693_.setBlock(p_311490_, Blocks.AIR.defaultBlockState(), 3);
+-            block.wasExploded(p_311693_, p_311490_, p_312709_);
++            p_310712_.onBlockExploded(p_311693_, p_311490_, p_312709_);
+         }
+     }
  
-    public final ResourceLocation getLootTable() {
-       if (this.drops == null) {
--         ResourceLocation resourcelocation = BuiltInRegistries.BLOCK.getKey(this.asBlock());
--         this.drops = resourcelocation.withPrefix("blocks/");
-+         this.drops = this.lootTableSupplier.get();
-       }
+@@ -336,12 +_,15 @@
+         if (f == -1.0F) {
+             return 0.0F;
+         } else {
+-            int i = p_60467_.hasCorrectToolForDrops(p_60466_) ? 30 : 100;
+-            return p_60467_.getDestroySpeed(p_60466_) / f / (float)i;
++            int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(p_60466_, p_60467_) ? 30 : 100;
++            return p_60467_.getDestroySpeed(p_60466_, p_60469_) / f / (float)i;
+         }
+     }
  
-       return this.drops;
-@@ -458,6 +_,14 @@
-       return this.properties.destroyTime;
-    }
+     protected void spawnAfterBreak(BlockState p_222949_, ServerLevel p_222950_, BlockPos p_222951_, ItemStack p_222952_, boolean p_222953_) {
++        if (p_222953_) {
++            net.minecraftforge.common.ForgeHooks.dropXpForBlock(p_222949_, p_222950_, p_222951_, p_222952_);
++        }
+     }
  
-+   protected boolean isAir(BlockState state) {
-+      return ((BlockStateBase)state).isAir;
-+   }
+     protected void attack(BlockState p_60499_, Level p_60500_, BlockPos p_60501_, Player p_60502_) {
+@@ -360,8 +_,7 @@
+ 
+     public final ResourceKey<LootTable> getLootTable() {
+         if (this.drops == null) {
+-            ResourceLocation resourcelocation = BuiltInRegistries.BLOCK.getKey(this.asBlock());
+-            this.drops = ResourceKey.create(Registries.LOOT_TABLE, resourcelocation.withPrefix("blocks/"));
++            this.drops = this.lootTableSupplier.get();
+         }
+ 
+         return this.drops;
+@@ -378,6 +_,7 @@
+         return this.isRandomlyTicking;
+     }
+ 
++    /** @deprecated Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) } */
+     protected SoundType getSoundType(BlockState p_328629_) {
+         return this.soundType;
+     }
+@@ -394,6 +_,10 @@
+         return this.properties.destroyTime;
+     }
+ 
++    protected boolean isAir(BlockState state) {
++       return ((BlockStateBase)state).isAir;
++    }
 +
-+   /* ======================================== FORGE START ===================================== */
-+   private final java.util.function.Supplier<ResourceLocation> lootTableSupplier;
-+   /* ========================================= FORGE END ====================================== */
+     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
+         private final int lightEmission;
+         private final boolean useShapeForLightOcclusion;
+@@ -523,12 +_,14 @@
+             return this.useShapeForLightOcclusion;
+         }
+ 
++        /** @deprecated Forge: Use {@link BlockState#getLightEmission(BlockGetter, BlockPos)} instead */
++        @Deprecated
+         public int getLightEmission() {
+             return this.lightEmission;
+         }
+ 
+         public boolean isAir() {
+-            return this.isAir;
++            return this.getBlock().isAir((BlockState)this);
+         }
+ 
+         public boolean ignitedByLava() {
+@@ -541,9 +_,11 @@
+         }
+ 
+         public MapColor getMapColor(BlockGetter p_285002_, BlockPos p_285293_) {
+-            return this.mapColor;
++            return getBlock().getMapColor(this.asState(), p_285002_, p_285293_, this.mapColor);
+         }
+ 
++        /** @deprecated use {@link BlockState#rotate(LevelAccessor, BlockPos, Rotation)} */
++        @Deprecated
+         public BlockState rotate(Rotation p_60718_) {
+             return this.getBlock().rotate(this.asState(), p_60718_);
+         }
+@@ -597,6 +_,8 @@
+         }
+ 
+         public PushReaction getPistonPushReaction() {
++            PushReaction reaction = getBlock().getPistonPushReaction(asState());
++            if (reaction != null) return reaction;
+             return this.pushReaction;
+         }
+ 
+@@ -959,10 +_,11 @@
+         boolean spawnTerrainParticles = true;
+         NoteBlockInstrument instrument = NoteBlockInstrument.HARP;
+         boolean replaceable;
++        private java.util.function.Supplier<ResourceKey<LootTable>> lootTableSupplier;
+         BlockBehaviour.StateArgumentPredicate<EntityType<?>> isValidSpawn = (p_284893_, p_284894_, p_284895_, p_284896_) -> p_284893_.isFaceSturdy(
+                     p_284894_, p_284895_, Direction.UP
+                 )
+-                && p_284893_.getLightEmission() < 14;
++                && p_284893_.getLightEmission(p_284894_, p_284895_) < 14;
+         BlockBehaviour.StatePredicate isRedstoneConductor = (p_284888_, p_284889_, p_284890_) -> p_284888_.isCollisionShapeFullBlock(p_284889_, p_284890_);
+         BlockBehaviour.StatePredicate isSuffocating = (p_284885_, p_284886_, p_284887_) -> p_284885_.blocksMotion() && p_284885_.isCollisionShapeFullBlock(p_284886_, p_284887_);
+         BlockBehaviour.StatePredicate isViewBlocking = this.isSuffocating;
+@@ -1102,8 +_,14 @@
+             return this;
+         }
+ 
++        @Deprecated // FORGE: Use the variant that takes a Supplier below
+         public BlockBehaviour.Properties dropsLike(Block p_60917_) {
+             this.drops = p_60917_.getLootTable();
++            return this;
++        }
 +
-    public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
-       private final int lightEmission;
-       private final boolean useShapeForLightOcclusion;
-@@ -593,12 +_,14 @@
-          return this.useShapeForLightOcclusion;
-       }
++        public BlockBehaviour.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
++            this.lootTableSupplier = () -> blockIn.get().getLootTable();
+             return this;
+         }
  
-+      /** @deprecated Forge: Use {@link BlockState#getLightEmission(BlockGetter, BlockPos)} instead */
-+      @Deprecated
-       public int getLightEmission() {
-          return this.lightEmission;
-       }
- 
-       public boolean isAir() {
--         return this.isAir;
-+         return this.getBlock().isAir((BlockState)this);
-       }
- 
-       public boolean ignitedByLava() {
-@@ -612,9 +_,11 @@
-       }
- 
-       public MapColor getMapColor(BlockGetter p_285002_, BlockPos p_285293_) {
--         return this.mapColor;
-+         return getBlock().getMapColor(this.asState(), p_285002_, p_285293_, this.mapColor);
-       }
- 
-+      /** @deprecated use {@link BlockState#rotate(LevelAccessor, BlockPos, Rotation)} */
-+      @Deprecated
-       public BlockState rotate(Rotation p_60718_) {
-          return this.getBlock().rotate(this.asState(), p_60718_);
-       }
-@@ -668,6 +_,8 @@
-       }
- 
-       public PushReaction getPistonPushReaction() {
-+         PushReaction reaction = getBlock().getPistonPushReaction(asState());
-+         if (reaction != null) return reaction;
-          return this.pushReaction;
-       }
- 
-@@ -1032,8 +_,9 @@
-       boolean spawnTerrainParticles = true;
-       NoteBlockInstrument instrument = NoteBlockInstrument.HARP;
-       boolean replaceable;
-+      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
-       BlockBehaviour.StateArgumentPredicate<EntityType<?>> isValidSpawn = (p_284893_, p_284894_, p_284895_, p_284896_) -> {
--         return p_284893_.isFaceSturdy(p_284894_, p_284895_, Direction.UP) && p_284893_.getLightEmission() < 14;
-+         return p_284893_.isFaceSturdy(p_284894_, p_284895_, Direction.UP) && p_284893_.getLightEmission(p_284894_, p_284895_) < 14;
-       };
-       BlockBehaviour.StatePredicate isRedstoneConductor = (p_284888_, p_284889_, p_284890_) -> {
-          return p_284888_.isCollisionShapeFullBlock(p_284889_, p_284890_);
-@@ -1187,9 +_,15 @@
-          return this;
-       }
- 
-+      @Deprecated // FORGE: Use the variant that takes a Supplier below
-       public BlockBehaviour.Properties dropsLike(Block p_60917_) {
--         this.drops = p_60917_.getLootTable();
-+         this.lootTableSupplier = () -> net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(p_60917_).get().getLootTable();
-          return this;
-+      }
-+
-+      public BlockBehaviour.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
-+          this.lootTableSupplier = () -> blockIn.get().getLootTable();
-+          return this;
-       }
- 
-       public BlockBehaviour.Properties ignitedByLava() {

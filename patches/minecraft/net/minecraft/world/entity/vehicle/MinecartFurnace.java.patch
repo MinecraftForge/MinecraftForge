@@ -1,23 +1,22 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartFurnace.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartFurnace.java
-@@ -110,6 +_,8 @@
-    }
+@@ -116,6 +_,8 @@
  
-    public InteractionResult interact(Player p_38562_, InteractionHand p_38563_) {
-+      InteractionResult ret = super.interact(p_38562_, p_38563_);
-+      if (ret.consumesAction()) return ret;
-       ItemStack itemstack = p_38562_.getItemInHand(p_38563_);
-       if (INGREDIENT.test(itemstack) && this.fuel + 3600 <= 32000) {
-          if (!p_38562_.getAbilities().instabuild) {
-@@ -125,6 +_,11 @@
-       }
- 
-       return InteractionResult.sidedSuccess(this.level().isClientSide);
-+   }
+     @Override
+     public InteractionResult interact(Player p_38562_, InteractionHand p_38563_) {
++        var ret = super.interact(p_38562_, p_38563_);
++        if (ret.consumesAction()) return ret;
+         ItemStack itemstack = p_38562_.getItemInHand(p_38563_);
+         if (INGREDIENT.test(itemstack) && this.fuel + 3600 <= 32000) {
+             itemstack.consume(1, p_38562_);
+@@ -157,5 +_,10 @@
+     @Override
+     public BlockState getDefaultDisplayBlockState() {
+         return Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.NORTH).setValue(FurnaceBlock.LIT, Boolean.valueOf(this.hasFuel()));
++    }
 +
-+   @Override
-+   public float getMaxCartSpeedOnRail() {
-+      return 0.2f;
-    }
- 
-    protected void addAdditionalSaveData(CompoundTag p_38567_) {
++    @Override
++    public float getMaxCartSpeedOnRail() {
++        return 0.2f;
+     }
+ }

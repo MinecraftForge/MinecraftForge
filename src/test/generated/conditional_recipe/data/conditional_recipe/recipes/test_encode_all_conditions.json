@@ -18,8 +18,7 @@
             "item": "minecraft:dirt"
           },
           {
-            "type": "forge:true",
-            "value": {}
+            "type": "forge:true"
           },
           {
             "type": "forge:tag_empty",
@@ -28,28 +27,29 @@
         ]
       },
       {
-        "type": "forge:false",
-        "value": {}
+        "type": "forge:false"
       }
     ]
   },
   "recipes": [
     {
-      "type": "minecraft:crafting_shaped",
-      "category": "misc",
-      "key": {
-        "X": {
-          "item": "minecraft:dirt"
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "X": {
+            "item": "minecraft:dirt"
+          }
+        },
+        "pattern": [
+          "XXX",
+          "XXX",
+          "XXX"
+        ],
+        "result": {
+          "count": 64,
+          "id": "minecraft:diamond_block"
         }
-      },
-      "pattern": [
-        "XXX",
-        "XXX",
-        "XXX"
-      ],
-      "result": {
-        "count": 64,
-        "item": "minecraft:diamond_block"
       }
     }
   ]

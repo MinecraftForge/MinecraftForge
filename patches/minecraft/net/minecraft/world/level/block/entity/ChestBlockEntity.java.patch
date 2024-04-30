@@ -1,48 +1,46 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -160,6 +_,45 @@
-       return ChestMenu.threeRows(p_59082_, p_59083_, this);
-    }
- 
-+   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
-+   @Override
-+   public void setBlockState(BlockState p_155251_) {
-+      super.setBlockState(p_155251_);
-+      if (this.chestHandler != null) {
-+         net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
-+         this.chestHandler = null;
-+         oldHandler.invalidate();
-+      }
-+   }
+@@ -183,4 +_,43 @@
+         Block block = p_155335_.getBlock();
+         p_155333_.blockEvent(p_155334_, block, 1, p_155337_);
+     }
 +
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
-+       if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.remove) {
-+          if (this.chestHandler == null)
-+             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
-+          return this.chestHandler.cast();
-+       }
-+       return super.getCapability(cap, side);
-+   }
++    private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
++    @Override
++    public void setBlockState(BlockState p_155251_) {
++        super.setBlockState(p_155251_);
++        if (this.chestHandler != null) {
++            var oldHandler = this.chestHandler;
++            this.chestHandler = null;
++            oldHandler.invalidate();
++        }
++    }
 +
-+   private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
-+      BlockState state = this.getBlockState();
-+      if (!(state.getBlock() instanceof ChestBlock chestBlock)) {
-+         return new net.minecraftforge.items.wrapper.InvWrapper(this);
-+      }
-+      Container inv = ChestBlock.getContainer(chestBlock, state, getLevel(), getBlockPos(), true);
-+      return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
-+   }
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
++        if (cap == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && !this.remove) {
++            if (this.chestHandler == null)
++               this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
++            return this.chestHandler.cast();
++        }
++        return super.getCapability(cap, side);
++    }
 +
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      if (chestHandler != null) {
-+         chestHandler.invalidate();
-+         chestHandler = null;
-+      }
-+   }
++    private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
++        BlockState state = this.getBlockState();
++        if (!(state.getBlock() instanceof ChestBlock chestBlock)) {
++            return new net.minecraftforge.items.wrapper.InvWrapper(this);
++        }
++        Container inv = ChestBlock.getContainer(chestBlock, state, getLevel(), getBlockPos(), true);
++        return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
++    }
 +
-    public void recheckOpen() {
-       if (!this.remove) {
-          this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        if (chestHandler != null) {
++            chestHandler.invalidate();
++            chestHandler = null;
++        }
++    }
+ }

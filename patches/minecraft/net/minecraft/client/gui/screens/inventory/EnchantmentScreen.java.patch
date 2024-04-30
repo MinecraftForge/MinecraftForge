@@ -1,28 +1,28 @@
 --- a/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
-@@ -93,7 +_,7 @@
-             int l1 = 86 - this.font.width(s);
-             FormattedText formattedtext = EnchantmentNames.getInstance().getRandomName(this.font, l1);
-             int i2 = 6839882;
--            if ((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.getAbilities().instabuild) {
-+            if (((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.getAbilities().instabuild) || this.menu.enchantClue[l] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
-                p_282430_.blitSprite(ENCHANTMENT_SLOT_DISABLED_SPRITE, i1, j + 14 + 19 * l, 108, 19);
-                p_282430_.blitSprite(DISABLED_LEVEL_SPRITES[l], i1 + 1, j + 15 + 19 * l, 16, 16);
-                p_282430_.drawWordWrap(this.font, formattedtext, j1, j + 16 + 19 * l, l1, (i2 & 16711422) >> 1);
-@@ -154,10 +_,13 @@
-          Enchantment enchantment = Enchantment.byId((this.menu).enchantClue[j]);
-          int l = (this.menu).levelClue[j];
-          int i1 = j + 1;
--         if (this.isHovering(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0 && l >= 0 && enchantment != null) {
-+         if (this.isHovering(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0) {
-             List<Component> list = Lists.newArrayList();
--            list.add(Component.translatable("container.enchant.clue", enchantment.getFullname(l)).withStyle(ChatFormatting.WHITE));
--            if (!flag) {
-+            list.add((Component.translatable("container.enchant.clue", enchantment == null ? "" : enchantment.getFullname(l))).withStyle(ChatFormatting.WHITE));
-+            if (enchantment == null) {
-+               list.add(Component.literal(""));
-+               list.add(Component.translatable("forge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
-+            } else if (!flag) {
-                list.add(CommonComponents.EMPTY);
-                if (this.minecraft.player.experienceLevel < k) {
-                   list.add(Component.translatable("container.enchant.level.requirement", (this.menu).costs[j]).withStyle(ChatFormatting.RED));
+@@ -108,7 +_,7 @@
+                 int l1 = 86 - this.font.width(s);
+                 FormattedText formattedtext = EnchantmentNames.getInstance().getRandomName(this.font, l1);
+                 int i2 = 6839882;
+-                if ((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.getAbilities().instabuild) {
++                if (((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.getAbilities().instabuild)  || this.menu.enchantClue[l] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels{
+                     RenderSystem.enableBlend();
+                     p_282430_.blitSprite(ENCHANTMENT_SLOT_DISABLED_SPRITE, i1, j + 14 + 19 * l, 108, 19);
+                     p_282430_.blitSprite(DISABLED_LEVEL_SPRITES[l], i1 + 1, j + 15 + 19 * l, 16, 16);
+@@ -173,10 +_,13 @@
+             Enchantment enchantment = Enchantment.byId(this.menu.enchantClue[j]);
+             int l = this.menu.levelClue[j];
+             int i1 = j + 1;
+-            if (this.isHovering(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0 && l >= 0 && enchantment != null) {
++            if (this.isHovering(60, 14 + 19 * j, 108, 17, (double)p_282491_, (double)p_281953_) && k > 0) {
+                 List<Component> list = Lists.newArrayList();
+-                list.add(Component.translatable("container.enchant.clue", enchantment.getFullname(l)).withStyle(ChatFormatting.WHITE));
+-                if (!flag) {
++                list.add((Component.translatable("container.enchant.clue", enchantment == null ? "" : enchantment.getFullname(l))).withStyle(ChatFormatting.WHITE));
++                if (enchantment == null) {
++                   list.add(Component.literal(""));
++                   list.add(Component.translatable("forge.container.enchant.limitedEnchantability").withStyle(ChatFormatting.RED));
++                } else if (!flag) {
+                     list.add(CommonComponents.EMPTY);
+                     if (this.minecraft.player.experienceLevel < k) {
+                         list.add(Component.translatable("container.enchant.level.requirement", this.menu.costs[j]).withStyle(ChatFormatting.RED));

@@ -6,56 +6,56 @@
  
 -public class SugarCaneBlock extends Block {
 +public class SugarCaneBlock extends Block implements net.minecraftforge.common.IPlantable {
-    public static final MapCodec<SugarCaneBlock> CODEC = simpleCodec(SugarCaneBlock::new);
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
-    protected static final float AABB_OFFSET = 6.0F;
-@@ -53,12 +_,15 @@
+     public static final MapCodec<SugarCaneBlock> CODEC = simpleCodec(SugarCaneBlock::new);
+     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
+     protected static final float AABB_OFFSET = 6.0F;
+@@ -58,12 +_,15 @@
  
-          if (i < 3) {
-             int j = p_222548_.getValue(AGE);
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
-             if (j == 15) {
-                p_222549_.setBlockAndUpdate(p_222550_.above(), this.defaultBlockState());
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222549_, p_222550_.above(), this.defaultBlockState());
-                p_222549_.setBlock(p_222550_, p_222548_.setValue(AGE, Integer.valueOf(0)), 4);
-             } else {
-                p_222549_.setBlock(p_222550_, p_222548_.setValue(AGE, Integer.valueOf(j + 1)), 4);
+             if (i < 3) {
+                 int j = p_222548_.getValue(AGE);
++                if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_222549_, p_222550_, p_222548_, true)) {
+                 if (j == 15) {
+                     p_222549_.setBlockAndUpdate(p_222550_.above(), this.defaultBlockState());
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222549_, p_222550_.above(), this.defaultBlockState());
+                     p_222549_.setBlock(p_222550_, p_222548_.setValue(AGE, Integer.valueOf(0)), 4);
+                 } else {
+                     p_222549_.setBlock(p_222550_, p_222548_.setValue(AGE, Integer.valueOf(j + 1)), 4);
+                 }
++                }
              }
-+            }
-          }
-       }
+         }
+     }
+@@ -79,6 +_,8 @@
  
-@@ -73,6 +_,8 @@
-    }
- 
-    public boolean canSurvive(BlockState p_57175_, LevelReader p_57176_, BlockPos p_57177_) {
-+      BlockState soil = p_57176_.getBlockState(p_57177_.below());
-+      if (soil.canSustainPlant(p_57176_, p_57177_.below(), Direction.UP, this)) return true;
-       BlockState blockstate = p_57176_.getBlockState(p_57177_.below());
-       if (blockstate.is(this)) {
-          return true;
-@@ -83,7 +_,7 @@
-             for(Direction direction : Direction.Plane.HORIZONTAL) {
-                BlockState blockstate1 = p_57176_.getBlockState(blockpos.relative(direction));
-                FluidState fluidstate = p_57176_.getFluidState(blockpos.relative(direction));
--               if (fluidstate.is(FluidTags.WATER) || blockstate1.is(Blocks.FROSTED_ICE)) {
-+               if (p_57175_.canBeHydrated(p_57176_, p_57177_, fluidstate, blockpos.relative(direction)) || blockstate1.is(Blocks.FROSTED_ICE)) {
-                   return true;
-                }
-             }
-@@ -95,5 +_,15 @@
- 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57186_) {
-       p_57186_.add(AGE);
-+   }
+     @Override
+     protected boolean canSurvive(BlockState p_57175_, LevelReader p_57176_, BlockPos p_57177_) {
++        BlockState soil = p_57176_.getBlockState(p_57177_.below());
++        if (soil.canSustainPlant(p_57176_, p_57177_.below(), Direction.UP, this)) return true;
+         BlockState blockstate = p_57176_.getBlockState(p_57177_.below());
+         if (blockstate.is(this)) {
+             return true;
+@@ -89,7 +_,7 @@
+                 for (Direction direction : Direction.Plane.HORIZONTAL) {
+                     BlockState blockstate1 = p_57176_.getBlockState(blockpos.relative(direction));
+                     FluidState fluidstate = p_57176_.getFluidState(blockpos.relative(direction));
+-                    if (fluidstate.is(FluidTags.WATER) || blockstate1.is(Blocks.FROSTED_ICE)) {
++                    if (p_57175_.canBeHydrated(p_57176_, p_57177_, fluidstate, blockpos.relative(direction)) || blockstate1.is(Blocks.FROSTED_ICE)) {
+                         return true;
+                     }
+                 }
+@@ -102,5 +_,15 @@
+     @Override
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57186_) {
+         p_57186_.add(AGE);
++    }
 +
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
-+       return net.minecraftforge.common.PlantType.BEACH;
-+   }
++    @Override
++    public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++        return net.minecraftforge.common.PlantType.BEACH;
++    }
 +
-+   @Override
-+   public BlockState getPlant(BlockGetter world, BlockPos pos) {
-+      return defaultBlockState();
-    }
++    @Override
++    public BlockState getPlant(BlockGetter world, BlockPos pos) {
++       return defaultBlockState();
+     }
  }

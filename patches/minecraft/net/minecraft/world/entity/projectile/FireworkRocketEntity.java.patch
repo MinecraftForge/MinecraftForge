@@ -1,16 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
-@@ -150,6 +_,13 @@
- 
-    }
- 
-+   @Override
-+   protected void onHit(HitResult result) {
-+      if (result.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
-+         super.onHit(result);
-+      }
-+   }
+@@ -301,4 +_,11 @@
+     private static ItemStack getDefaultItem() {
+         return new ItemStack(Items.FIREWORK_ROCKET);
+     }
 +
-    private void explode() {
-       this.level().broadcastEntityEvent(this, (byte)17);
-       this.gameEvent(GameEvent.EXPLODE, this.getOwner());
++    @Override
++    protected void onHit(HitResult result) {
++        if (result.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
++            super.onHit(result);
++        }
++    }
+ }

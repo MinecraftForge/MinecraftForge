@@ -1,11 +1,10 @@
 --- a/net/minecraft/client/gui/screens/ChatScreen.java
 +++ b/net/minecraft/client/gui/screens/ChatScreen.java
-@@ -225,7 +_,7 @@
-             this.minecraft.player.connection.sendChat(p_242400_);
-          }
- 
--         return true;
-+         return minecraft.screen == this; // FORGE: Prevent closing the screen if another screen has been opened.
-       }
-    }
- 
+@@ -89,6 +_,7 @@
+             return true;
+         } else if (p_95591_ == 257 || p_95591_ == 335) {
+             this.handleChatInput(this.input.getValue(), true);
++            if (this.minecraft.screen == this) // FORGE: Prevent closing the screen if another screen has been opened.
+             this.minecraft.setScreen(null);
+             return true;
+         } else if (p_95591_ == 265) {

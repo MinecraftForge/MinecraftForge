@@ -1,82 +1,82 @@
 --- a/net/minecraft/world/entity/vehicle/Boat.java
 +++ b/net/minecraft/world/entity/vehicle/Boat.java
-@@ -52,7 +_,7 @@
+@@ -51,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
- import org.joml.Vector3f;
  
 -public class Boat extends VehicleEntity implements VariantHolder<Boat.Type> {
-+public class Boat extends VehicleEntity implements net.minecraftforge.common.extensions.IForgeBoat {
-    private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
-@@ -450,7 +_,7 @@
-             for(int i2 = i1; i2 < j1; ++i2) {
-                blockpos$mutableblockpos.set(l1, k1, i2);
-                FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--               if (fluidstate.is(FluidTags.WATER)) {
-+               if (this.canBoatInFluid(fluidstate)) {
-                   f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
-                }
++public class Boat extends VehicleEntity implements VariantHolder<Boat.Type>, net.minecraftforge.common.extensions.IForgeBoat {
+     private static final EntityDataAccessor<Integer> DATA_ID_TYPE = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.INT);
+     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+     private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(Boat.class, EntityDataSerializers.BOOLEAN);
+@@ -471,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(l1, k1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)) {
++                    if (this.canBoatInFluid(fluidstate)) {
+                         f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
+                     }
  
-@@ -491,7 +_,7 @@
-                      blockpos$mutableblockpos.set(l1, k2, i2);
-                      BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-                      if (!(blockstate.getBlock() instanceof WaterlilyBlock) && Shapes.joinIsNotEmpty(blockstate.getCollisionShape(this.level(), blockpos$mutableblockpos).move((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.AND)) {
--                        f += blockstate.getBlock().getFriction();
-+                        f += blockstate.getFriction(this.level(), blockpos$mutableblockpos, this);
-                         ++k1;
-                      }
-                   }
-@@ -520,7 +_,7 @@
-             for(int i2 = i1; i2 < j1; ++i2) {
-                blockpos$mutableblockpos.set(k1, l1, i2);
-                FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--               if (fluidstate.is(FluidTags.WATER)) {
-+               if (this.canBoatInFluid(fluidstate)) {
-                   float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
-                   this.waterLevel = Math.max((double)f, this.waterLevel);
-                   flag |= aabb.minY < (double)f;
-@@ -550,7 +_,7 @@
-             for(int i2 = i1; i2 < j1; ++i2) {
-                blockpos$mutableblockpos.set(k1, l1, i2);
-                FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
--               if (fluidstate.is(FluidTags.WATER) && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
-+               if (this.canBoatInFluid(fluidstate) && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
-                   if (!fluidstate.isSource()) {
-                      return Boat.Status.UNDER_FLOWING_WATER;
-                   }
-@@ -752,7 +_,7 @@
+@@ -517,7 +_,7 @@
+                                     voxelshape,
+                                     BooleanOp.AND
+                                 )) {
+-                                f += blockstate.getBlock().getFriction();
++                                f += blockstate.getFriction(this.level(), blockpos$mutableblockpos, this);
+                                 k1++;
+                             }
+                         }
+@@ -546,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(k1, l1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)) {
++                    if (this.canBoatInFluid(fluidstate)) {
+                         float f = (float)l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
+                         this.waterLevel = Math.max((double)f, this.waterLevel);
+                         flag |= aabb.minY < (double)f;
+@@ -576,7 +_,7 @@
+                 for (int i2 = i1; i2 < j1; i2++) {
+                     blockpos$mutableblockpos.set(k1, l1, i2);
+                     FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
+-                    if (fluidstate.is(FluidTags.WATER)
++                    if (this.canBoatInFluid(fluidstate)
+                         && d0 < (double)((float)blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos))) {
+                         if (!fluidstate.isSource()) {
+                             return Boat.Status.UNDER_FLOWING_WATER;
+@@ -794,7 +_,7 @@
+                 }
+ 
+                 this.resetFallDistance();
+-            } else if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && p_38307_ < 0.0) {
++            } else if (!this.canBoatInFluid(this.level().getFluidState(this.blockPosition().below())) && p_38307_ < 0.0) {
+                 this.fallDistance -= (float)p_38307_;
              }
+         }
+@@ -826,7 +_,7 @@
  
-             this.resetFallDistance();
--         } else if (!this.level().getFluidState(this.blockPosition().below()).is(FluidTags.WATER) && p_38307_ < 0.0D) {
-+         } else if (!this.canBoatInFluid(this.level().getFluidState(this.blockPosition().below())) && p_38307_ < 0.0D) {
-             this.fallDistance -= (float)p_38307_;
-          }
+     @Override
+     protected boolean canAddPassenger(Entity p_38390_) {
+-        return this.getPassengers().size() < this.getMaxPassengers() && !this.isEyeInFluid(FluidTags.WATER);
++        return this.getPassengers().size() < this.getMaxPassengers() && !this.canBoatInFluid(this.getEyeInFluidType());
+     }
  
-@@ -784,7 +_,7 @@
-    }
- 
-    protected boolean canAddPassenger(Entity p_38390_) {
--      return this.getPassengers().size() < this.getMaxPassengers() && !this.isEyeInFluid(FluidTags.WATER);
-+      return this.getPassengers().size() < this.getMaxPassengers() && !this.canBoatInFluid(this.getEyeInFluidType());
-    }
- 
-    protected int getMaxPassengers() {
-@@ -817,6 +_,16 @@
- 
-    public boolean isUnderWater() {
-       return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;
-+   }
+     protected int getMaxPassengers() {
+@@ -859,6 +_,16 @@
+     @Override
+     public ItemStack getPickResult() {
+         return new ItemStack(this.getDropItem());
++    }
 +
-+   // Forge: Fix MC-119811 by instantly completing lerp on board
-+   @Override
-+   protected void addPassenger(Entity passenger) {
-+      super.addPassenger(passenger);
-+      if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
-+         this.lerpSteps = 0;
-+         this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
-+      }
-    }
++    // Forge: Fix MC-119811 by instantly completing lerp on board
++    @Override
++    protected void addPassenger(Entity passenger) {
++        super.addPassenger(passenger);
++        if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
++            this.lerpSteps = 0;
++            this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
++        }
+     }
  
-    public ItemStack getPickResult() {
+     public static enum Status {

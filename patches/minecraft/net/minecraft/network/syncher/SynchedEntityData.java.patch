@@ -1,18 +1,18 @@
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
-@@ -36,11 +_,13 @@
-    }
+@@ -27,11 +_,13 @@
+     }
  
-    public static <T> EntityDataAccessor<T> defineId(Class<? extends Entity> p_135354_, EntityDataSerializer<T> p_135355_) {
--      if (LOGGER.isDebugEnabled()) {
-+      if (true || LOGGER.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
-          try {
-             Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
-             if (!oclass.equals(p_135354_)) {
--               LOGGER.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
-+               // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
-+               if (LOGGER.isDebugEnabled()) LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
-+               else LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass);
+     public static <T> EntityDataAccessor<T> defineId(Class<? extends SyncedDataHolder> p_135354_, EntityDataSerializer<T> p_135355_) {
+-        if (LOGGER.isDebugEnabled()) {
++        if (true) { // Forge: This is very useful for mods that register keys on classes that are not their own
+             try {
+                 Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
+                 if (!oclass.equals(p_135354_)) {
+-                    LOGGER.debug("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
++                    // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
++                    if (LOGGER.isDebugEnabled()) LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass, new RuntimeException());
++                    else LOGGER.warn("defineId called for: {} from {}", p_135354_, oclass);
+                 }
+             } catch (ClassNotFoundException classnotfoundexception) {
              }
-          } catch (ClassNotFoundException classnotfoundexception) {
-          }

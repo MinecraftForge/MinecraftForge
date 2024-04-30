@@ -1,17 +1,16 @@
 --- a/net/minecraft/world/level/block/CocoaBlock.java
 +++ b/net/minecraft/world/level/block/CocoaBlock.java
-@@ -53,10 +_,11 @@
-    }
+@@ -64,10 +_,11 @@
  
-    public void randomTick(BlockState p_221000_, ServerLevel p_221001_, BlockPos p_221002_, RandomSource p_221003_) {
--      if (p_221001_.random.nextInt(5) == 0) {
-+      if (true) {
-          int i = p_221000_.getValue(AGE);
--         if (i < 2) {
--            p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, Integer.valueOf(i + 1)), 2);
-+         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221001_, p_221002_, p_221000_, p_221001_.random.nextInt(5) == 0)) {
-+            p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, i + 1), 2);
-+            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221001_, p_221002_, p_221000_);
-          }
-       }
- 
+     @Override
+     protected void randomTick(BlockState p_221000_, ServerLevel p_221001_, BlockPos p_221002_, RandomSource p_221003_) {
+-        if (p_221001_.random.nextInt(5) == 0) {
++        {
+             int i = p_221000_.getValue(AGE);
+-            if (i < 2) {
++            if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221001_, p_221002_, p_221000_, p_221001_.random.nextInt(5) == 0)) {
+                 p_221001_.setBlock(p_221002_, p_221000_.setValue(AGE, Integer.valueOf(i + 1)), 2);
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221001_, p_221002_, p_221000_);
+             }
+         }
+     }

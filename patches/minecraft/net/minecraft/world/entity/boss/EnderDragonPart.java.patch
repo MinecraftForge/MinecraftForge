@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/entity/boss/EnderDragonPart.java
 +++ b/net/minecraft/world/entity/boss/EnderDragonPart.java
-@@ -11,13 +_,13 @@
+@@ -12,13 +_,13 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.item.ItemStack;
  
 -public class EnderDragonPart extends Entity {
 +public class EnderDragonPart extends net.minecraftforge.entity.PartEntity<EnderDragon> {
-    public final EnderDragon parentMob;
-    public final String name;
-    private final EntityDimensions size;
+     public final EnderDragon parentMob;
+     public final String name;
+     private final EntityDimensions size;
  
-    public EnderDragonPart(EnderDragon p_31014_, String p_31015_, float p_31016_, float p_31017_) {
--      super(p_31014_.getType(), p_31014_.level());
-+      super(p_31014_);
-       this.size = EntityDimensions.scalable(p_31016_, p_31017_);
-       this.refreshDimensions();
-       this.parentMob = p_31014_;
+     public EnderDragonPart(EnderDragon p_31014_, String p_31015_, float p_31016_, float p_31017_) {
+-        super(p_31014_.getType(), p_31014_.level());
++        super(p_31014_);
+         this.size = EntityDimensions.scalable(p_31016_, p_31017_);
+         this.refreshDimensions();
+         this.parentMob = p_31014_;

@@ -1,34 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -325,11 +_,12 @@
-          return flag ? InteractionResult.CONSUME : InteractionResult.PASS;
-       } else if (this.isTame()) {
-          if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
-+            this.heal((float)itemstack.getFoodProperties(this).getNutrition());
-             if (!p_30412_.getAbilities().instabuild) {
-                itemstack.shrink(1);
-             }
+@@ -498,7 +_,7 @@
+     }
  
--            this.heal((float)item.getFoodProperties().getNutrition());
-+            this.gameEvent(GameEvent.EAT, this);
-             return InteractionResult.SUCCESS;
-          } else {
-             if (item instanceof DyeItem) {
-@@ -365,7 +_,7 @@
-             itemstack.shrink(1);
-          }
- 
--         if (this.random.nextInt(3) == 0) {
-+         if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
-             this.tame(p_30412_);
+     private void tryToTame(Player p_336244_) {
+-        if (this.random.nextInt(3) == 0) {
++        if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_336244_)) {
+             this.tame(p_336244_);
              this.navigation.stop();
-             this.setTarget((LivingEntity)null);
-@@ -404,7 +_,7 @@
- 
-    public boolean isFood(ItemStack p_30440_) {
-       Item item = p_30440_.getItem();
--      return item.isEdible() && item.getFoodProperties().isMeat();
-+      return item.isEdible() && p_30440_.getFoodProperties(this).isMeat();
-    }
- 
-    public int getMaxSpawnClusterSize() {
+             this.setTarget(null);

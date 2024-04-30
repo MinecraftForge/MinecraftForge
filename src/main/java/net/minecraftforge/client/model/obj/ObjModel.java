@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.math.Transformation;
-import joptsimple.internal.Strings;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -145,7 +144,8 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
                 case "usemtl": // Sets the current material (starts new mesh)
                 {
-                    String mat = Strings.join(Arrays.copyOfRange(line, 1, line.length), " ");
+
+                    String mat = Arrays.asList(Arrays.copyOfRange(line, 1, line.length)).stream().collect(Collectors.joining(" "));
                     ObjMaterialLibrary.Material newMat = mtllib.getMaterial(mat);
                     if (!Objects.equals(newMat, currentMat))
                     {
@@ -201,7 +201,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     {
                         String vertexData = line[i + 1];
                         String[] vertexParts = vertexData.split("/");
-                        int[] vertex = Arrays.stream(vertexParts).mapToInt(num -> Strings.isNullOrEmpty(num) ? 0 : Integer.parseInt(num)).toArray();
+                        int[] vertex = Arrays.stream(vertexParts).mapToInt(num -> num == null || num.isEmpty() ? 0 : Integer.parseInt(num)).toArray();
                         if (vertex[0] < 0) vertex[0] = model.positions.size() + vertex[0];
                         else vertex[0]--;
                         if (vertex.length > 1)

@@ -5,7 +5,8 @@
 
 package net.minecraftforge.common.world;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
@@ -15,14 +16,14 @@ import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
  */
 public class NoneBiomeModifier implements BiomeModifier {
     public static final NoneBiomeModifier INSTANCE = new NoneBiomeModifier();
-    public static final Codec<NoneBiomeModifier> CODEC = Codec.unit(NoneBiomeModifier.INSTANCE);
+    public static final MapCodec<NoneBiomeModifier> CODEC = MapCodec.unit(NoneBiomeModifier.INSTANCE);
 
     @Override
     public void modify(Holder<Biome> biome, Phase phase, Builder builder) {
     }
 
     @Override
-    public Codec<? extends BiomeModifier> codec() {
+    public MapCodec<? extends BiomeModifier> codec() {
         return CODEC;
     }
 }

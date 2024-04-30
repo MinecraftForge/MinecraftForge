@@ -1,11 +1,14 @@
 --- a/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
 +++ b/net/minecraft/world/item/enchantment/FrostWalkerEnchantment.java
-@@ -43,7 +_,7 @@
-                BlockState blockstate1 = p_45020_.getBlockState(blockpos$mutableblockpos);
-                if (blockstate1.isAir()) {
-                   BlockState blockstate2 = p_45020_.getBlockState(blockpos);
--                  if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(p_45020_, blockpos) && p_45020_.isUnobstructed(blockstate, blockpos, CollisionContext.empty())) {
-+                  if (blockstate2 == FrostedIceBlock.meltsInto() && blockstate.canSurvive(p_45020_, blockpos) && p_45020_.isUnobstructed(blockstate, blockpos, CollisionContext.empty()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_45019_, net.minecraftforge.common.util.BlockSnapshot.create(p_45020_.dimension(), p_45020_, blockpos), net.minecraft.core.Direction.UP)) {
-                      p_45020_.setBlockAndUpdate(blockpos, blockstate);
-                      p_45020_.scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p_45019_.getRandom(), 60, 120));
-                   }
+@@ -32,8 +_,9 @@
+                     if (blockstate1.isAir()) {
+                         BlockState blockstate2 = p_45020_.getBlockState(blockpos);
+                         if (blockstate2 == FrostedIceBlock.meltsInto()
+-                            && blockstate.canSurvive(p_45020_, blockpos)
+-                            && p_45020_.isUnobstructed(blockstate, blockpos, CollisionContext.empty())) {
++                                && blockstate.canSurvive(p_45020_, blockpos)
++                                && p_45020_.isUnobstructed(blockstate, blockpos, CollisionContext.empty())
++                                && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_45019_, net.minecraftforge.common.util.BlockSnapshot.create(p_45020_.dimension(), p_45020_, blockpos), net.minecraft.core.Direction.UP)) {
+                             p_45020_.setBlockAndUpdate(blockpos, blockstate);
+                             p_45020_.scheduleTick(blockpos, Blocks.FROSTED_ICE, Mth.nextInt(p_45019_.getRandom(), 60, 120));
+                         }

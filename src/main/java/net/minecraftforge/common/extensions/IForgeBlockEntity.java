@@ -19,26 +19,16 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
-public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
-{
-    private BlockEntity self() { return (BlockEntity) this; }
-
-    @Override
-    default void deserializeNBT(CompoundTag nbt)
-    {
-        self().load(nbt);
-    }
-
-    @Override
-    default CompoundTag serializeNBT()
-    {
-        return self().saveWithFullMetadata();
+public interface IForgeBlockEntity extends ICapabilityProvider {
+    private BlockEntity self() {
+        return (BlockEntity)this;
     }
 
     /**
@@ -50,33 +40,23 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * @param net The NetworkManager the packet originated from
      * @param pkt The data packet
      */
-    default void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
-    {
+    default void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookup) {
         CompoundTag compoundtag = pkt.getTag();
         if (compoundtag != null) {
-            self().load(compoundtag);
+            self().loadWithComponents(compoundtag, lookup);
         }
     }
 
     /**
      * Called when the chunk's TE update tag, gotten from {@link BlockEntity#getUpdateTag()}, is received on the client.
      * <p>
-     * Used to handle this tag in a special way. By default this simply calls {@link BlockEntity#load(CompoundTag)}.
+     * Used to handle this tag in a special way. By default this simply calls {@link BlockEntity#loadWithComponents(CompoundTag, HolderLookup.Provider)}.
      *
      * @param tag The {@link CompoundTag} sent from {@link BlockEntity#getUpdateTag()}
      */
-     default void handleUpdateTag(CompoundTag tag)
-     {
-         self().load(tag);
+     default void handleUpdateTag(CompoundTag tag, HolderLookup.Provider holders) {
+         self().loadWithComponents(tag, holders);
      }
-
-    /**
-     * Gets a {@link CompoundTag} that can be used to store custom data for this block entity.
-     * It will be written, and read from disc, so it persists over world saves.
-     *
-     * @return A compound tag for custom persistent data
-     */
-     CompoundTag getPersistentData();
 
      default void onChunkUnloaded(){}
 
@@ -85,8 +65,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * or right before the first tick when the chunk is generated or loaded from disk.
      * Override instead of adding {@code if (firstTick)} stuff in update.
      */
-     default void onLoad()
-     {
+     default void onLoad() {
          requestModelDataUpdate();
      }
 
@@ -137,15 +116,12 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * Requests a refresh for the model data of your TE
      * Call this every time your {@link #getModelData()} changes
      */
-     default void requestModelDataUpdate()
-     {
+     default void requestModelDataUpdate() {
          BlockEntity te = self();
          Level level = te.getLevel();
-         if (level != null && level.isClientSide)
-         {
+         if (level != null && level.isClientSide) {
              var modelDataManager = level.getModelDataManager();
-             if (modelDataManager != null)
-             {
+             if (modelDataManager != null) {
                  modelDataManager.requestRefresh(te);
              }
          }
@@ -158,8 +134,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
      * @return Your model data
      */
-     default @NotNull ModelData getModelData()
-     {
+     default @NotNull ModelData getModelData() {
          return ModelData.EMPTY;
      }
 
@@ -169,8 +144,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * @param player the local player currently viewing this {@code BlockEntity}
      * @return {@code true} to enable outline processing
      */
-    default boolean hasCustomOutlineRendering(Player player)
-    {
+    default boolean hasCustomOutlineRendering(Player player) {
         return false;
     }
 }

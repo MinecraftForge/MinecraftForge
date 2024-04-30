@@ -1,11 +1,10 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -27,7 +_,7 @@
+@@ -40,6 +_,7 @@
+         LootParams lootparams = new LootParams.Builder(p_9990_.serverLevel())
+             .withParameter(LootContextParams.THIS_ENTITY, p_9990_)
+             .withParameter(LootContextParams.ORIGIN, p_9990_.position())
++            .withLuck(p_9990_.getLuck())
+             .create(LootContextParamSets.ADVANCEMENT_REWARD);
+         boolean flag = false;
  
-    public void grant(ServerPlayer p_9990_) {
-       p_9990_.giveExperiencePoints(this.experience);
--      LootParams lootparams = (new LootParams.Builder(p_9990_.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, p_9990_).withParameter(LootContextParams.ORIGIN, p_9990_.position()).create(LootContextParamSets.ADVANCEMENT_REWARD);
-+      LootParams lootparams = (new LootParams.Builder(p_9990_.serverLevel())).withParameter(LootContextParams.THIS_ENTITY, p_9990_).withParameter(LootContextParams.ORIGIN, p_9990_.position()).withLuck(p_9990_.getLuck()).create(LootContextParamSets.ADVANCEMENT_REWARD); // Forge: Add luck to LootContext
-       boolean flag = false;
- 
-       for(ResourceLocation resourcelocation : this.loot) {

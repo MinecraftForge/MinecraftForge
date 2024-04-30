@@ -1,10 +1,9 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
-@@ -226,4 +_,16 @@
-    public Optional<ParticleGroup> getParticleGroup() {
-       return Optional.empty();
-    }
-+
+@@ -243,6 +_,18 @@
+         return Optional.empty();
+     }
+ 
 +    /**
 +     * Forge added method that controls if a particle should be culled to it's bounding box.
 +     * Default behaviour is culling enabled
@@ -16,4 +15,7 @@
 +    public net.minecraft.world.phys.Vec3 getPos() {
 +       return new net.minecraft.world.phys.Vec3(this.x, this.y, this.z);
 +    }
- }
++
+     @OnlyIn(Dist.CLIENT)
+     public static record LifetimeAlpha(float startAlpha, float endAlpha, float startAtNormalizedAge, float endAtNormalizedAge) {
+         public static final Particle.LifetimeAlpha ALWAYS_OPAQUE = new Particle.LifetimeAlpha(1.0F, 1.0F, 0.0F, 1.0F);

@@ -33,8 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see EntityRenderer
  */
 @Event.HasResult
-public class RenderNameTagEvent extends EntityEvent
-{
+public class RenderNameTagEvent extends EntityEvent {
     private Component nameplateContent;
     private final Component originalContent;
     private final EntityRenderer<?> entityRenderer;
@@ -44,8 +43,7 @@ public class RenderNameTagEvent extends EntityEvent
     private final float partialTick;
 
     @ApiStatus.Internal
-    public RenderNameTagEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick)
-    {
+    public RenderNameTagEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick) {
         super(entity);
         this.originalContent = content;
         this.setContent(this.originalContent);
@@ -61,48 +59,42 @@ public class RenderNameTagEvent extends EntityEvent
      *
      * @param contents the new text
      */
-    public void setContent(Component contents)
-    {
+    public void setContent(Component contents) {
         this.nameplateContent = contents;
     }
 
     /**
      * {@return the text on the nameplate that will be rendered, if the event is not {@link Result#DENY DENIED}}
      */
-    public Component getContent()
-    {
+    public Component getContent() {
         return this.nameplateContent;
     }
 
     /**
      * {@return the original text on the nameplate}
      */
-    public Component getOriginalContent()
-    {
+    public Component getOriginalContent() {
         return this.originalContent;
     }
 
     /**
      * {@return the entity renderer rendering the nameplate}
      */
-    public EntityRenderer<?> getEntityRenderer()
-    {
+    public EntityRenderer<?> getEntityRenderer() {
         return this.entityRenderer;
     }
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack()
-    {
+    public PoseStack getPoseStack() {
         return this.poseStack;
     }
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource()
-    {
+    public MultiBufferSource getMultiBufferSource() {
         return this.multiBufferSource;
     }
 
@@ -111,16 +103,14 @@ public class RenderNameTagEvent extends EntityEvent
      *
      * @see net.minecraft.client.renderer.LightTexture
      */
-    public int getPackedLight()
-    {
+    public int getPackedLight() {
         return this.packedLight;
     }
 
     /**
      * {@return the partial tick}
      */
-    public float getPartialTick()
-    {
+    public float getPartialTick() {
         return this.partialTick;
     }
 }

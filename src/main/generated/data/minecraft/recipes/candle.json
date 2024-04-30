@@ -14,6 +14,7 @@
     "H"
   ],
   "result": {
-    "item": "minecraft:candle"
+    "count": 1,
+    "id": "minecraft:candle"
   }
 }

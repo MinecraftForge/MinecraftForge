@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/renderer/entity/FishingHookRenderer.java
 +++ b/net/minecraft/client/renderer/entity/FishingHookRenderer.java
-@@ -49,7 +_,7 @@
-          p_114708_.popPose();
-          int i = player.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
-          ItemStack itemstack = player.getMainHandItem();
--         if (!itemstack.is(Items.FISHING_ROD)) {
-+         if (!itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST)) {
+@@ -66,7 +_,7 @@
+     private Vec3 getPlayerHandPos(Player p_328037_, float p_328369_, float p_332926_) {
+         int i = p_328037_.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
+         ItemStack itemstack = p_328037_.getMainHandItem();
+-        if (!itemstack.is(Items.FISHING_ROD)) {
++        if (!itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST)) {
              i = -i;
-          }
+         }
  

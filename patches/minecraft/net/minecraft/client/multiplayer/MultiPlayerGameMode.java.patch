@@ -1,170 +1,170 @@
 --- a/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
 +++ b/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
-@@ -105,6 +_,7 @@
-    }
+@@ -106,6 +_,7 @@
+     }
  
-    public boolean destroyBlock(BlockPos p_105268_) {
-+      if (minecraft.player.getMainHandItem().onBlockStartBreak(p_105268_, minecraft.player)) return false;
-       if (this.minecraft.player.blockActionRestricted(this.minecraft.level, p_105268_, this.localPlayerMode)) {
-          return false;
-       } else {
-@@ -119,9 +_,8 @@
-             } else if (blockstate.isAir()) {
-                return false;
-             } else {
--               block.playerWillDestroy(level, p_105268_, blockstate, this.minecraft.player);
-                FluidState fluidstate = level.getFluidState(p_105268_);
--               boolean flag = level.setBlock(p_105268_, fluidstate.createLegacyBlock(), 11);
-+               boolean flag = blockstate.onDestroyedByPlayer(level, p_105268_, minecraft.player, false, fluidstate);
-                if (flag) {
-                   block.destroy(level, p_105268_, blockstate);
-                }
-@@ -142,6 +_,7 @@
-             BlockState blockstate = this.minecraft.level.getBlockState(p_105270_);
-             this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105270_, blockstate, 1.0F);
-             this.startPrediction(this.minecraft.level, (p_233757_) -> {
-+               if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.minecraft.player, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
-                this.destroyBlock(p_105270_);
-                return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
+     public boolean destroyBlock(BlockPos p_105268_) {
++        if (minecraft.player.getMainHandItem().onBlockStartBreak(p_105268_, minecraft.player)) return false;
+         if (this.minecraft.player.blockActionRestricted(this.minecraft.level, p_105268_, this.localPlayerMode)) {
+             return false;
+         } else {
+@@ -120,9 +_,8 @@
+                 } else if (blockstate.isAir()) {
+                     return false;
+                 } else {
+-                    block.playerWillDestroy(level, p_105268_, blockstate, this.minecraft.player);
+                     FluidState fluidstate = level.getFluidState(p_105268_);
+-                    boolean flag = level.setBlock(p_105268_, fluidstate.createLegacyBlock(), 11);
++                    boolean flag = blockstate.onDestroyedByPlayer(level, p_105268_, minecraft.player, false, fluidstate);
+                     if (flag) {
+                         block.destroy(level, p_105268_, blockstate);
+                     }
+@@ -143,6 +_,7 @@
+                 BlockState blockstate = this.minecraft.level.getBlockState(p_105270_);
+                 this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105270_, blockstate, 1.0F);
+                 this.startPrediction(this.minecraft.level, p_233757_ -> {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(this.minecraft.player, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
+                     this.destroyBlock(p_105270_);
+                     return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233757_);
+                 });
+@@ -152,15 +_,18 @@
+                     this.connection
+                         .send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, p_105271_));
+                 }
++                var event = net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(this.minecraft.player, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK);
+ 
+                 BlockState blockstate1 = this.minecraft.level.getBlockState(p_105270_);
+                 this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105270_, blockstate1, 0.0F);
+                 this.startPrediction(this.minecraft.level, p_233728_ -> {
+                     boolean flag = !blockstate1.isAir();
+                     if (flag && this.destroyProgress == 0.0F) {
++                        if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
+                         blockstate1.attack(this.minecraft.level, p_105270_, this.minecraft.player);
+                     }
+ 
++                    if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
+                     if (flag && blockstate1.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105270_) >= 1.0F) {
+                         this.destroyBlock(p_105270_);
+                     } else {
+@@ -171,6 +_,7 @@
+                         this.destroyTicks = 0.0F;
+                         this.minecraft.level.destroyBlockProgress(this.minecraft.player.getId(), this.destroyBlockPos, this.getDestroyStage());
+                     }
++                    }
+ 
+                     return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233728_);
+                 });
+@@ -203,6 +_,7 @@
+             BlockState blockstate1 = this.minecraft.level.getBlockState(p_105284_);
+             this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105284_, blockstate1, 1.0F);
+             this.startPrediction(this.minecraft.level, p_233753_ -> {
++                if (!net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(this.minecraft.player, p_105284_, p_105285_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
+                 this.destroyBlock(p_105284_);
+                 return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105284_, p_105285_, p_233753_);
              });
-@@ -150,15 +_,19 @@
-             if (this.isDestroying) {
-                this.connection.send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.destroyBlockPos, p_105271_));
-             }
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.minecraft.player, p_105270_, p_105271_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK);
- 
-             BlockState blockstate1 = this.minecraft.level.getBlockState(p_105270_);
-             this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105270_, blockstate1, 0.0F);
-             this.startPrediction(this.minecraft.level, (p_233728_) -> {
-                boolean flag = !blockstate1.isAir();
-                if (flag && this.destroyProgress == 0.0F) {
-+                  if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
-                   blockstate1.attack(this.minecraft.level, p_105270_, this.minecraft.player);
-                }
- 
-+               ServerboundPlayerActionPacket packet = new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233728_);
-+               if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return packet;
-                if (flag && blockstate1.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105270_) >= 1.0F) {
-                   this.destroyBlock(p_105270_);
-                } else {
-@@ -170,7 +_,7 @@
-                   this.minecraft.level.destroyBlockProgress(this.minecraft.player.getId(), this.destroyBlockPos, this.getDestroyStage());
-                }
- 
--               return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_, p_233728_);
-+               return packet;
-             });
-          }
- 
-@@ -201,6 +_,7 @@
-          BlockState blockstate1 = this.minecraft.level.getBlockState(p_105284_);
-          this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105284_, blockstate1, 1.0F);
-          this.startPrediction(this.minecraft.level, (p_233753_) -> {
-+            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.minecraft.player, p_105284_, p_105285_, ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK).isCanceled())
-             this.destroyBlock(p_105284_);
-             return new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105284_, p_105285_, p_233753_);
-          });
-@@ -213,12 +_,13 @@
-          } else {
-             this.destroyProgress += blockstate.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105284_);
-             if (this.destroyTicks % 4.0F == 0.0F) {
--               SoundType soundtype = blockstate.getSoundType();
-+               SoundType soundtype = blockstate.getSoundType(this.minecraft.level, p_105284_, this.minecraft.player);
-                this.minecraft.getSoundManager().play(new SimpleSoundInstance(soundtype.getHitSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 8.0F, soundtype.getPitch() * 0.5F, SoundInstance.createUnseededRandom(), p_105284_));
-             }
- 
-             ++this.destroyTicks;
-             this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105284_, blockstate, Mth.clamp(this.destroyProgress, 0.0F, 1.0F));
-+            if (net.minecraftforge.common.ForgeHooks.onClientMineHold(this.minecraft.player, p_105284_, p_105285_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
-             if (this.destroyProgress >= 1.0F) {
-                this.isDestroying = false;
-                this.startPrediction(this.minecraft.level, (p_233739_) -> {
-@@ -248,7 +_,7 @@
-    }
- 
-    public float getPickRange() {
--      return Player.getPickRange(this.localPlayerMode.isCreative());
-+      return (float) this.minecraft.player.getBlockReach();
-    }
- 
-    public void tick() {
-@@ -263,7 +_,7 @@
- 
-    private boolean sameDestroyTarget(BlockPos p_105282_) {
-       ItemStack itemstack = this.minecraft.player.getMainHandItem();
--      return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameTags(itemstack, this.destroyingItem);
-+      return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameTags(itemstack, this.destroyingItem) && !destroyingItem.shouldCauseBlockBreakReset(itemstack);
-    }
- 
-    private void ensureHasSentCarriedItem() {
-@@ -292,25 +_,38 @@
-    private InteractionResult performUseItemOn(LocalPlayer p_233747_, InteractionHand p_233748_, BlockHitResult p_233749_) {
-       BlockPos blockpos = p_233749_.getBlockPos();
-       ItemStack itemstack = p_233747_.getItemInHand(p_233748_);
-+      net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks.onRightClickBlock(p_233747_, p_233748_, blockpos, p_233749_);
-+      if (event.isCanceled()) {
-+         return event.getCancellationResult();
-+      }
-       if (this.localPlayerMode == GameType.SPECTATOR) {
-          return InteractionResult.SUCCESS;
-       } else {
--         boolean flag = !p_233747_.getMainHandItem().isEmpty() || !p_233747_.getOffhandItem().isEmpty();
-+         UseOnContext useoncontext = new UseOnContext(p_233747_, p_233748_, p_233749_);
-+         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+            InteractionResult result = itemstack.onItemUseFirst(useoncontext);
-+            if (result != InteractionResult.PASS) {
-+               return result;
-+            }
-+         }
-+         boolean flag = !p_233747_.getMainHandItem().doesSneakBypassUse(p_233747_.level(), blockpos, p_233747_) || !p_233747_.getOffhandItem().doesSneakBypassUse(p_233747_.level(), blockpos, p_233747_);
-          boolean flag1 = p_233747_.isSecondaryUseActive() && flag;
--         if (!flag1) {
-             BlockState blockstate = this.minecraft.level.getBlockState(blockpos);
-             if (!this.connection.isFeatureEnabled(blockstate.getBlock().requiredFeatures())) {
-                return InteractionResult.FAIL;
-             }
- 
-+         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
-             InteractionResult interactionresult = blockstate.use(this.minecraft.level, p_233747_, p_233748_, p_233749_);
-             if (interactionresult.consumesAction()) {
-                return interactionresult;
-             }
-          }
- 
--         if (!itemstack.isEmpty() && !p_233747_.getCooldowns().isOnCooldown(itemstack.getItem())) {
--            UseOnContext useoncontext = new UseOnContext(p_233747_, p_233748_, p_233749_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) {
-+            return InteractionResult.PASS;
-+         }
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!itemstack.isEmpty() && !p_233747_.getCooldowns().isOnCooldown(itemstack.getItem()))) {
-             InteractionResult interactionresult1;
-             if (this.localPlayerMode.isCreative()) {
-                int i = itemstack.getCount();
-@@ -341,10 +_,17 @@
-                mutableobject.setValue(InteractionResult.PASS);
-                return serverbounduseitempacket;
+@@ -215,7 +_,7 @@
              } else {
-+               InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_233722_, p_233723_);
-+               if (cancelResult != null) {
-+                  mutableobject.setValue(cancelResult);
-+                  return serverbounduseitempacket;
+                 this.destroyProgress = this.destroyProgress + blockstate.getDestroyProgress(this.minecraft.player, this.minecraft.player.level(), p_105284_);
+                 if (this.destroyTicks % 4.0F == 0.0F) {
+-                    SoundType soundtype = blockstate.getSoundType();
++                    SoundType soundtype = blockstate.getSoundType(this.minecraft.level, p_105284_, this.minecraft.player);
+                     this.minecraft
+                         .getSoundManager()
+                         .play(
+@@ -232,6 +_,7 @@
+ 
+                 this.destroyTicks++;
+                 this.minecraft.getTutorial().onDestroyBlock(this.minecraft.level, p_105284_, blockstate, Mth.clamp(this.destroyProgress, 0.0F, 1.0F));
++                if (net.minecraftforge.event.ForgeEventFactory.onLeftClickBlockHold(this.minecraft.player, p_105284_, p_105285_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
+                 if (this.destroyProgress >= 1.0F) {
+                     this.isDestroying = false;
+                     this.startPrediction(this.minecraft.level, p_233739_ -> {
+@@ -270,7 +_,7 @@
+ 
+     private boolean sameDestroyTarget(BlockPos p_105282_) {
+         ItemStack itemstack = this.minecraft.player.getMainHandItem();
+-        return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameComponents(itemstack, this.destroyingItem);
++        return p_105282_.equals(this.destroyBlockPos) && !destroyingItem.shouldCauseBlockBreakReset(itemstack);
+     }
+ 
+     private void ensureHasSentCarriedItem() {
+@@ -298,12 +_,23 @@
+     private InteractionResult performUseItemOn(LocalPlayer p_233747_, InteractionHand p_233748_, BlockHitResult p_233749_) {
+         BlockPos blockpos = p_233749_.getBlockPos();
+         ItemStack itemstack = p_233747_.getItemInHand(p_233748_);
++        var event = net.minecraftforge.event.ForgeEventFactory.onRightClickBlock(p_233747_, p_233748_, blockpos, p_233749_);
++        if (event.isCanceled()) {
++            return event.getCancellationResult();
++        }
+         if (this.localPlayerMode == GameType.SPECTATOR) {
+             return InteractionResult.SUCCESS;
+         } else {
+-            boolean flag = !p_233747_.getMainHandItem().isEmpty() || !p_233747_.getOffhandItem().isEmpty();
++            UseOnContext useoncontext = new UseOnContext(p_233747_, p_233748_, p_233749_);
++            if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++               InteractionResult result = itemstack.onItemUseFirst(useoncontext);
++               if (result != InteractionResult.PASS) {
++                  return result;
 +               }
-                InteractionResultHolder<ItemStack> interactionresultholder = itemstack.use(this.minecraft.level, p_233722_, p_233723_);
-                ItemStack itemstack1 = interactionresultholder.getObject();
-                if (itemstack1 != itemstack) {
-                   p_233722_.setItemInHand(p_233723_, itemstack1);
-+                  if (itemstack1.isEmpty())
-+                     net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_233722_, itemstack, p_233723_);
-                }
++            }
++            boolean flag = !p_233747_.getMainHandItem().doesSneakBypassUse(p_233747_.level(), blockpos, p_233747_) || !p_233747_.getOffhandItem().doesSneakBypassUse(p_233747_.level(), blockpos, p_233747_);
+             boolean flag1 = p_233747_.isSecondaryUseActive() && flag;
+-            if (!flag1) {
++            if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
+                 BlockState blockstate = this.minecraft.level.getBlockState(blockpos);
+                 if (!this.connection.isFeatureEnabled(blockstate.getBlock().requiredFeatures())) {
+                     return InteractionResult.FAIL;
+@@ -324,8 +_,10 @@
+                 }
+             }
  
-                mutableobject.setValue(interactionresultholder.getResult());
-@@ -383,6 +_,9 @@
-       this.ensureHasSentCarriedItem();
-       Vec3 vec3 = p_105233_.getLocation().subtract(p_105232_.getX(), p_105232_.getY(), p_105232_.getZ());
-       this.connection.send(ServerboundInteractPacket.createInteractionPacket(p_105232_, p_105231_.isShiftKeyDown(), p_105234_, vec3));
-+      if (this.localPlayerMode == GameType.SPECTATOR) return InteractionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
-+      InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_105231_, p_105232_, p_105233_, p_105234_);
-+      if(cancelResult != null) return cancelResult;
-       return this.localPlayerMode == GameType.SPECTATOR ? InteractionResult.PASS : p_105232_.interactAt(p_105231_, vec3, p_105234_);
-    }
+-            if (!itemstack.isEmpty() && !p_233747_.getCooldowns().isOnCooldown(itemstack.getItem())) {
+-                UseOnContext useoncontext = new UseOnContext(p_233747_, p_233748_, p_233749_);
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) {
++               return InteractionResult.PASS;
++            }
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!itemstack.isEmpty() && !p_233747_.getCooldowns().isOnCooldown(itemstack.getItem()))) {
+                 InteractionResult interactionresult1;
+                 if (this.localPlayerMode.isCreative()) {
+                     int i = itemstack.getCount();
+@@ -361,10 +_,18 @@
+                     mutableobject.setValue(InteractionResult.PASS);
+                     return serverbounduseitempacket;
+                 } else {
++                    var event = net.minecraftforge.event.ForgeEventFactory.onRightClickItem(p_233722_, p_233723_);
++                    if (event.isCanceled()) {
++                       mutableobject.setValue(event.getCancellationResult());
++                       return serverbounduseitempacket;
++                    }
+                     InteractionResultHolder<ItemStack> interactionresultholder = itemstack.use(this.minecraft.level, p_233722_, p_233723_);
+                     ItemStack itemstack1 = interactionresultholder.getObject();
+                     if (itemstack1 != itemstack) {
+                         p_233722_.setItemInHand(p_233723_, itemstack1);
++                        if (itemstack1.isEmpty()) {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_233722_, itemstack, p_233723_);
++                        }
+                     }
+ 
+                     mutableobject.setValue(interactionresultholder.getResult());
+@@ -395,6 +_,10 @@
+     public InteractionResult interact(Player p_105227_, Entity p_105228_, InteractionHand p_105229_) {
+         this.ensureHasSentCarriedItem();
+         this.connection.send(ServerboundInteractPacket.createInteractionPacket(p_105228_, p_105227_.isShiftKeyDown(), p_105229_));
++        if (this.localPlayerMode != GameType.SPECTATOR) {
++            var event = net.minecraftforge.event.ForgeEventFactory.onEntityInteract(p_105227_, p_105228_, p_105229_);
++            if (event.isCanceled()) return event.getCancellationResult();
++        }
+         return this.localPlayerMode == GameType.SPECTATOR ? InteractionResult.PASS : p_105227_.interactOn(p_105228_, p_105229_);
+     }
+ 
+@@ -402,6 +_,10 @@
+         this.ensureHasSentCarriedItem();
+         Vec3 vec3 = p_105233_.getLocation().subtract(p_105232_.getX(), p_105232_.getY(), p_105232_.getZ());
+         this.connection.send(ServerboundInteractPacket.createInteractionPacket(p_105232_, p_105231_.isShiftKeyDown(), p_105234_, vec3));
++        if (this.localPlayerMode != GameType.SPECTATOR) {
++            var event = net.minecraftforge.event.ForgeEventFactory.onEntityInteractSpecific(p_105231_, p_105232_, p_105234_, vec3);
++            if (event.isCanceled()) return event.getCancellationResult();
++        }
+         return this.localPlayerMode == GameType.SPECTATOR ? InteractionResult.PASS : p_105232_.interactAt(p_105231_, vec3, p_105234_);
+     }
  

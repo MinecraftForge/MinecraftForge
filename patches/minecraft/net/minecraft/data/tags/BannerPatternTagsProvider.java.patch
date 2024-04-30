@@ -1,16 +1,17 @@
 --- a/net/minecraft/data/tags/BannerPatternTagsProvider.java
 +++ b/net/minecraft/data/tags/BannerPatternTagsProvider.java
-@@ -9,8 +_,13 @@
+@@ -9,8 +_,14 @@
  import net.minecraft.world.level.block.entity.BannerPatterns;
  
  public class BannerPatternTagsProvider extends TagsProvider<BannerPattern> {
-+   /** @deprecated Forge: Use the {@linkplain #BannerPatternTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_) {
-       super(p_256451_, Registries.BANNER_PATTERN, p_256420_);
-+   }
-+   public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256451_, Registries.BANNER_PATTERN, p_256420_, modId, existingFileHelper);
-    }
++    /** @deprecated Forge: Use the {@linkplain #BannerPatternTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
++    @Deprecated
+     public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_) {
+         super(p_256451_, Registries.BANNER_PATTERN, p_256420_);
++    }
++
++    public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_256451_, Registries.BANNER_PATTERN, p_256420_, modId, existingFileHelper);
+     }
  
-    protected void addTags(HolderLookup.Provider p_255819_) {
+     @Override

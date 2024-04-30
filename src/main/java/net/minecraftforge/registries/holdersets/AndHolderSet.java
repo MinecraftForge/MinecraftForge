@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -30,38 +31,31 @@ import net.minecraftforge.common.ForgeMod;
  * }
  * </pre>
  */
-public class AndHolderSet<T> extends CompositeHolderSet<T>
-{
-    public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
-    {
+public class AndHolderSet<T> extends CompositeHolderSet<T> {
+    public static <T> MapCodec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList) {
         return HolderSetCodec.create(registryKey, holderCodec, forceList)
             .listOf()
             .xmap(AndHolderSet::new, CompositeHolderSet::homogenize)
-            .fieldOf("values")
-            .codec();
+            .fieldOf("values");
     }
-    
-    public AndHolderSet(List<HolderSet<T>> values)
-    {
+
+    public AndHolderSet(List<HolderSet<T>> values) {
         super(values);
     }
 
     @Override
-    public HolderSetType type()
-    {
+    public HolderSetType type() {
         return ForgeMod.AND_HOLDER_SET.get();
     }
 
     @Override
-    protected Set<Holder<T>> createSet()
-    {
+    protected Set<Holder<T>> createSet() {
         List<HolderSet<T>> components = this.getComponents();
-        if (components.size() < 1)
-        {
+        if (components.size() < 1) {
             return Set.of();
         }
-        if (components.size() == 1)
-        {
+
+        if (components.size() == 1) {
             return components.get(0).stream().collect(Collectors.toSet());
         }
 
@@ -73,8 +67,7 @@ public class AndHolderSet<T> extends CompositeHolderSet<T>
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AndSet[" + this.getComponents() + "]";
     }
 }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/TurtleEggBlock.java
 +++ b/net/minecraft/world/level/block/TurtleEggBlock.java
-@@ -166,7 +_,7 @@
-          if (!(p_57769_ instanceof LivingEntity)) {
+@@ -177,7 +_,7 @@
+         if (p_57769_ instanceof Turtle || p_57769_ instanceof Bat) {
              return false;
-          } else {
--            return p_57769_ instanceof Player || p_57768_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-+            return p_57769_ instanceof Player || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_57768_, p_57769_);
-          }
-       } else {
-          return false;
+         } else {
+-            return !(p_57769_ instanceof LivingEntity) ? false : p_57769_ instanceof Player || p_57768_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
++            return !(p_57769_ instanceof LivingEntity) ? false : p_57769_ instanceof Player || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_57768_, p_57769_);
+         }
+     }
+ }

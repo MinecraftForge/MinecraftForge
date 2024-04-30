@@ -6,29 +6,27 @@
  
 -public interface HolderSet<T> extends Iterable<Holder<T>> {
 +public interface HolderSet<T> extends Iterable<Holder<T>>, net.minecraftforge.common.extensions.IForgeHolderSet<T> {
-    Stream<Holder<T>> stream();
+     Stream<Holder<T>> stream();
  
-    int size();
-@@ -135,6 +_,9 @@
+     int size();
+@@ -174,6 +_,7 @@
  
-       public void bind(List<Holder<T>> p_205836_) {
-          this.contents = List.copyOf(p_205836_);
-+         for (Runnable runnable : this.invalidationCallbacks) {
-+            runnable.run(); // FORGE: invalidate listeners when tags rebind
-+         }
-       }
+         public void bind(List<Holder<T>> p_205836_) {
+             this.contents = List.copyOf(p_205836_);
++            this.invalidationCallbacks.forEach(Runnable::run); // FORGE: invalidate listeners when tags rebind
+         }
  
-       public TagKey<T> key() {
-@@ -163,6 +_,12 @@
- 
-       public boolean canSerializeIn(HolderOwner<T> p_256542_) {
-          return this.owner.canSerializeIn(p_256542_);
-+      }
+         public TagKey<T> key() {
+@@ -208,6 +_,12 @@
+         @Override
+         public boolean canSerializeIn(HolderOwner<T> p_256542_) {
+             return this.owner.canSerializeIn(p_256542_);
++        }
 +
-+      // FORGE: Keep a list of invalidation callbacks so they can be run when tags rebind
-+      private List<Runnable> invalidationCallbacks = new java.util.ArrayList<>();
-+      public void addInvalidationListener(Runnable runnable) {
-+         invalidationCallbacks.add(runnable);
-       }
-    }
++        // FORGE: Keep a list of invalidation callbacks so they can be run when tags rebind
++        private List<Runnable> invalidationCallbacks = new java.util.ArrayList<>();
++        public void addInvalidationListener(Runnable runnable) {
++           invalidationCallbacks.add(runnable);
+         }
+     }
  }

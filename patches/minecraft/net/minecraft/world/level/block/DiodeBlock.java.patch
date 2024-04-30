@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/level/block/DiodeBlock.java
 +++ b/net/minecraft/world/level/block/DiodeBlock.java
-@@ -162,6 +_,8 @@
-    protected void updateNeighborsInFront(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
-       Direction direction = p_52583_.getValue(FACING);
-       BlockPos blockpos = p_52582_.relative(direction.getOpposite());
-+      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_52581_, p_52582_, p_52581_.getBlockState(p_52582_), java.util.EnumSet.of(direction.getOpposite()), false).isCanceled())
-+         return;
-       p_52581_.neighborChanged(blockpos, this, p_52582_);
-       p_52581_.updateNeighborsAtExceptFromFacing(blockpos, this, direction);
-    }
+@@ -172,6 +_,9 @@
+     protected void updateNeighborsInFront(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
+         Direction direction = p_52583_.getValue(FACING);
+         BlockPos blockpos = p_52582_.relative(direction.getOpposite());
++        if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_52581_, p_52582_, p_52581_.getBlockState(p_52582_), java.util.EnumSet.of(direction.getOpposite()), false).isCanceled()) {
++            return;
++        }
+         p_52581_.neighborChanged(blockpos, this, p_52582_);
+         p_52581_.updateNeighborsAtExceptFromFacing(blockpos, this, direction);
+     }

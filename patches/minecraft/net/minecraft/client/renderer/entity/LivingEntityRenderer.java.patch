@@ -1,39 +1,38 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -50,14 +_,17 @@
-    }
+@@ -50,14 +_,16 @@
+     }
  
-    public void render(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_))) return;
-       p_115311_.pushPose();
-       this.model.attackTime = this.getAttackAnim(p_115308_, p_115310_);
--      this.model.riding = p_115308_.isPassenger();
-+
-+      boolean shouldSit = p_115308_.isPassenger() && (p_115308_.getVehicle() != null && p_115308_.getVehicle().shouldRiderSit());
-+      this.model.riding = shouldSit;
-       this.model.young = p_115308_.isBaby();
-       float f = Mth.rotLerp(p_115310_, p_115308_.yBodyRotO, p_115308_.yBodyRot);
-       float f1 = Mth.rotLerp(p_115310_, p_115308_.yHeadRotO, p_115308_.yHeadRot);
-       float f2 = f1 - f;
--      if (p_115308_.isPassenger()) {
-+      if (shouldSit && p_115308_.getVehicle() instanceof LivingEntity) {
-          Entity $$14 = p_115308_.getVehicle();
-          if ($$14 instanceof LivingEntity) {
-             LivingEntity livingentity = (LivingEntity)$$14;
-@@ -102,7 +_,7 @@
-       p_115311_.translate(0.0F, -1.501F, 0.0F);
-       float f8 = 0.0F;
-       float f4 = 0.0F;
--      if (!p_115308_.isPassenger() && p_115308_.isAlive()) {
-+      if (!shouldSit && p_115308_.isAlive()) {
-          f8 = p_115308_.walkAnimation.speed(p_115310_);
-          f4 = p_115308_.walkAnimation.position(p_115310_);
-          if (p_115308_.isBaby()) {
-@@ -135,6 +_,7 @@
+     public void render(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
++        if (net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderLivingPre(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_)) return;
+         p_115311_.pushPose();
+         this.model.attackTime = this.getAttackAnim(p_115308_, p_115310_);
+-        this.model.riding = p_115308_.isPassenger();
++        boolean shouldSit = p_115308_.isPassenger() && (p_115308_.getVehicle() != null && p_115308_.getVehicle().shouldRiderSit());
++        this.model.riding = shouldSit;
+         this.model.young = p_115308_.isBaby();
+         float f = Mth.rotLerp(p_115310_, p_115308_.yBodyRotO, p_115308_.yBodyRot);
+         float f1 = Mth.rotLerp(p_115310_, p_115308_.yHeadRotO, p_115308_.yHeadRot);
+         float f2 = f1 - f;
+-        if (p_115308_.isPassenger() && p_115308_.getVehicle() instanceof LivingEntity livingentity) {
++        if (shouldSit && p_115308_.getVehicle() instanceof LivingEntity livingentity) {
+             f = Mth.rotLerp(p_115310_, livingentity.yBodyRotO, livingentity.yBodyRot);
+             f2 = f1 - f;
+             float f7 = Mth.wrapDegrees(f2);
+@@ -101,7 +_,7 @@
+         p_115311_.translate(0.0F, -1.501F, 0.0F);
+         float f4 = 0.0F;
+         float f5 = 0.0F;
+-        if (!p_115308_.isPassenger() && p_115308_.isAlive()) {
++        if (!shouldSit && p_115308_.isAlive()) {
+             f4 = p_115308_.walkAnimation.speed(p_115310_);
+             f5 = p_115308_.walkAnimation.position(p_115310_);
+             if (p_115308_.isBaby()) {
+@@ -134,6 +_,7 @@
  
-       p_115311_.popPose();
-       super.render(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_));
-    }
+         p_115311_.popPose();
+         super.render(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderLivingPost(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_);
+     }
  
-    @Nullable
+     @Nullable

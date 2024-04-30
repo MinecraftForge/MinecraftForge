@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge: TODO: Forge ItemStack capabilities - Lex 042724
 package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
- */
+ * /
 public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
@@ -40,7 +41,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     /**
      * @param container  The container itemStack, data is stored on it directly as NBT.
      * @param capacity   The maximum capacity of this fluid tank.
-     */
+     * /
     public FluidHandlerItemStack(@NotNull ItemStack container, int capacity)
     {
         this.container = container;
@@ -202,7 +203,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     /**
      * Override this method for special handling.
      * Can be used to swap out or destroy the container.
-     */
+     * /
     protected void setContainerToEmpty()
     {
         container.removeTagKey(FLUID_NBT_KEY);
@@ -217,7 +218,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
 
     /**
      * Destroys the container item when it's emptied.
-     */
+     * /
     public static class Consumable extends FluidHandlerItemStack
     {
         public Consumable(ItemStack container, int capacity)
@@ -235,7 +236,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
 
     /**
      * Swaps the container item for a different one when it's emptied.
-     */
+     * /
     public static class SwapEmpty extends FluidHandlerItemStack
     {
         protected final ItemStack emptyContainer;
@@ -254,3 +255,4 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
         }
     }
 }
+*/

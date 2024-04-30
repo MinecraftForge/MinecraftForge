@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
 package net.minecraftforge.client.gui.overlay;
 
 import com.mojang.blaze3d.platform.Window;
@@ -47,7 +48,7 @@ import java.util.List;
 
 /**
  * Forge wrapper around {@link Gui} to be able to render {@link IGuiOverlay HUD overlays}.
- */
+ * /
 public class ForgeGui extends Gui {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -55,14 +56,14 @@ public class ForgeGui extends Gui {
 
     /*
      * If the Euclidean distance to the moused-over block in meters is less than this value, the "Looking at" text will appear on the debug overlay.
-     */
+     * /
     public static double rayTraceDistance = 20.0D;
 
     public int leftHeight = 39;
     public int rightHeight = 39;
 
     public ForgeGui(Minecraft mc) {
-        super(mc, mc.getItemRenderer());
+        super(mc);
         this.debugOverlay = new OverlayAccess(mc);
     }
 
@@ -457,7 +458,7 @@ public class ForgeGui extends Gui {
         guiGraphics.pose().translate(event.getPosX(), (event.getPosY() - height + 40) / chat.getScale(), 0.0D);
         int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth());
         int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight());
-        chat.render(guiGraphics, tickCount, mouseX, mouseY);
+        chat.render(guiGraphics, tickCount, mouseX, mouseY, false);
         guiGraphics.pose().popPose();
 
         minecraft.getProfiler().pop();
@@ -533,3 +534,4 @@ public class ForgeGui extends Gui {
         @Override protected void renderLines(GuiGraphics gfx, List<String> lines, boolean leftAlign) { super.renderLines(gfx, lines, leftAlign); }
     }
 }
+*/

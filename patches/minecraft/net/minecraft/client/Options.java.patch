@@ -1,95 +1,97 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -509,7 +_,8 @@
-    }, new OptionInstance.LazyEnum<>(() -> {
-       return Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList();
-    }, (p_232011_) -> {
--      return Minecraft.getInstance().isRunning() && p_232011_ != "" && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
-+      // FORGE: fix incorrect string comparison - PR #8767
-+      return Minecraft.getInstance().isRunning() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_) ? Optional.empty() : Optional.of(p_232011_);
-    }, Codec.STRING), "", (p_299350_) -> {
-       SoundManager soundmanager = Minecraft.getInstance().getSoundManager();
-       soundmanager.reload();
-@@ -841,6 +_,7 @@
-    }
+@@ -680,7 +_,8 @@
+         },
+         new OptionInstance.LazyEnum<>(
+             () -> Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList(),
+-            p_232011_ -> Minecraft.getInstance().isRunning() && p_232011_ != "" && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_)
++            // FORGE: fix incorrect string comparison - PR #8767
++            p_232011_ -> Minecraft.getInstance().isRunning() && (p_232011_ == null || !p_232011_.isEmpty()) && !Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().contains(p_232011_)
+                     ? Optional.empty()
+                     : Optional.of(p_232011_),
+             Codec.STRING
+@@ -1044,6 +_,7 @@
+     }
  
-    public Options(Minecraft p_92138_, File p_92139_) {
-+      setForgeKeybindProperties();
-       this.minecraft = p_92138_;
-       this.optionsFile = new File(p_92139_, "options.txt");
-       boolean flag = p_92138_.is64Bit();
-@@ -964,11 +_,20 @@
-       p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
-       this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
+     public Options(Minecraft p_92138_, File p_92139_) {
++        setForgeKeybindProperties();
+         this.minecraft = p_92138_;
+         this.optionsFile = new File(p_92139_, "options.txt");
+         boolean flag = Runtime.getRuntime().maxMemory() >= 1000000000L;
+@@ -1178,12 +_,22 @@
+         p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
+         this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
+         p_168428_.process("menuBackgroundBlurriness", this.menuBackgroundBlurriness);
++        processOptionsForge(p_168428_);
++    }
  
-+      processOptionsForge(p_168428_);
-+   }
-+   // FORGE: split off to allow reloading options after mod loading is done
-+   private void processOptionsForge(Options.FieldAccess p_168428_)
-+   {
-       for(KeyMapping keymapping : this.keyMappings) {
--         String s = keymapping.saveString();
-+         String s = keymapping.saveString() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
-          String s1 = p_168428_.process("key_" + keymapping.getName(), s);
-          if (!s.equals(s1)) {
--            keymapping.setKey(InputConstants.getKey(s1));
-+            if (s1.indexOf(':') != -1) {
-+               String[] pts = s1.split(":");
-+               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputConstants.getKey(pts[0]));
-+            } else
-+               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.getKey(s1));
-          }
-       }
- 
-@@ -987,6 +_,9 @@
-    }
- 
-    public void load() {
-+      this.load(false);
-+   }
-+   public void load(boolean limited) {
-       try {
-          if (!this.optionsFile.exists()) {
-             return;
-@@ -1015,7 +_,8 @@
++    // FORGE: split off to allow reloading options after mod loading is done
++    private void processOptionsForge(Options.FieldAccess p_168428_) {
+         for (KeyMapping keymapping : this.keyMappings) {
+-            String s = keymapping.saveString();
++            String s = keymapping.saveString() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
+             String s1 = p_168428_.process("key_" + keymapping.getName(), s);
+             if (!s.equals(s1)) {
+                 keymapping.setKey(InputConstants.getKey(s1));
++                if (s1.indexOf(':') != -1) {
++                    String[] pts = s1.split(":");
++                    keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputConstants.getKey(pts[0]));
++                } else {
++                    keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.getKey(s1));
++                }
              }
-          }
+         }
  
--         this.processOptions(new Options.FieldAccess() {
-+         java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsForge : this::processOptions;
-+         processor.accept(new Options.FieldAccess() {
-             @Nullable
-             private String getValueOrNull(String p_168459_) {
-                return compoundtag1.contains(p_168459_) ? compoundtag1.getString(p_168459_) : null;
-@@ -1188,6 +_,7 @@
-    }
+@@ -1201,6 +_,10 @@
+     }
  
-    public void broadcastOptions() {
-+      if (net.minecraftforge.client.loading.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
-       if (this.minecraft.player != null) {
-          this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
-       }
-@@ -1246,6 +_,23 @@
-       }
- 
-       p_92146_.setSelected(set);
-+   }
+     public void load() {
++        load(false);
++    }
 +
-+   private void setForgeKeybindProperties() {
-+      net.minecraftforge.client.settings.KeyConflictContext inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
-+      keyUp.setKeyConflictContext(inGame);
-+      keyLeft.setKeyConflictContext(inGame);
-+      keyDown.setKeyConflictContext(inGame);
-+      keyRight.setKeyConflictContext(inGame);
-+      keyJump.setKeyConflictContext(inGame);
-+      keyShift.setKeyConflictContext(inGame);
-+      keySprint.setKeyConflictContext(inGame);
-+      keyAttack.setKeyConflictContext(inGame);
-+      keyChat.setKeyConflictContext(inGame);
-+      keyPlayerList.setKeyConflictContext(inGame);
-+      keyCommand.setKeyConflictContext(inGame);
-+      keyTogglePerspective.setKeyConflictContext(inGame);
-+      keySmoothCamera.setKeyConflictContext(inGame);
-    }
++    public void load(boolean limited) {
+         try {
+             if (!this.optionsFile.exists()) {
+                 return;
+@@ -1228,7 +_,8 @@
+                 }
+             }
  
-    public CameraType getCameraType() {
+-            this.processOptions(
++            java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsForge : this::processOptions;
++            processor.accept(
+                 new Options.FieldAccess() {
+                     @Nullable
+                     private String getValueOrNull(String p_168459_) {
+@@ -1422,6 +_,7 @@
+     }
+ 
+     public void broadcastOptions() {
++        if (net.minecraftforge.client.loading.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
+         if (this.minecraft.player != null) {
+             this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
+         }
+@@ -1544,6 +_,23 @@
+ 
+     public static Component genericValueLabel(Component p_231901_, int p_231902_) {
+         return genericValueLabel(p_231901_, Component.literal(Integer.toString(p_231902_)));
++    }
++
++    private void setForgeKeybindProperties() {
++        var inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
++        keyUp.setKeyConflictContext(inGame);
++        keyLeft.setKeyConflictContext(inGame);
++        keyDown.setKeyConflictContext(inGame);
++        keyRight.setKeyConflictContext(inGame);
++        keyJump.setKeyConflictContext(inGame);
++        keyShift.setKeyConflictContext(inGame);
++        keySprint.setKeyConflictContext(inGame);
++        keyAttack.setKeyConflictContext(inGame);
++        keyChat.setKeyConflictContext(inGame);
++        keyPlayerList.setKeyConflictContext(inGame);
++        keyCommand.setKeyConflictContext(inGame);
++        keyTogglePerspective.setKeyConflictContext(inGame);
++        keySmoothCamera.setKeyConflictContext(inGame);
+     }
+ 
+     @OnlyIn(Dist.CLIENT)

@@ -1,21 +1,21 @@
 --- a/net/minecraft/world/level/DataPackConfig.java
 +++ b/net/minecraft/world/level/DataPackConfig.java
-@@ -18,7 +_,7 @@
-    private final List<String> disabled;
+@@ -19,7 +_,7 @@
+     private final List<String> disabled;
  
-    public DataPackConfig(List<String> p_45848_, List<String> p_45849_) {
--      this.enabled = ImmutableList.copyOf(p_45848_);
-+      this.enabled = com.google.common.collect.Lists.newArrayList(p_45848_);
-       this.disabled = ImmutableList.copyOf(p_45849_);
-    }
+     public DataPackConfig(List<String> p_45848_, List<String> p_45849_) {
+-        this.enabled = ImmutableList.copyOf(p_45848_);
++        this.enabled = new java.util.ArrayList<>(p_45848_);
+         this.disabled = ImmutableList.copyOf(p_45849_);
+     }
  
-@@ -28,5 +_,9 @@
+@@ -29,5 +_,9 @@
  
-    public List<String> getDisabled() {
-       return this.disabled;
-+   }
+     public List<String> getDisabled() {
+         return this.disabled;
++    }
 +
-+   public void addModPacks(List<String> modPacks) {
-+      enabled.addAll(modPacks.stream().filter(p->!enabled.contains(p)).collect(java.util.stream.Collectors.toList()));
-    }
++    public void addModPacks(List<String> modPacks) {
++        enabled.addAll(modPacks.stream().filter(p -> !enabled.contains(p)).toList());
+     }
  }

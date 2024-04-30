@@ -24,6 +24,7 @@ abstract class LauncherJson extends DefaultTask {
         dependsOn(project.tasks.universalJar)
         input.from(project.tasks.universalJar.archiveFile)
         input.from(project.configurations.installer)
+        input.from(project.configurations.installerextra)
         configure {
             def mc    = project.rootProject.ext.MC_VERSION
             def forge = project.rootProject.ext.FORGE_VERSION
@@ -88,6 +89,7 @@ abstract class LauncherJson extends DefaultTask {
             ]
         ])
 
+        json.libraries.addAll(getArtifacts(project.configurations.installerextra).values())
         json.libraries.addAll(getArtifacts(project.configurations.installer).values())
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
     }

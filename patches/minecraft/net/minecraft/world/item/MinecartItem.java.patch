@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/item/MinecartItem.java
 +++ b/net/minecraft/world/item/MinecartItem.java
-@@ -32,7 +_,7 @@
-          double d2 = vec3.z() + (double)direction.getStepZ() * 1.125D;
-          BlockPos blockpos = p_42949_.pos().relative(direction);
-          BlockState blockstate = serverlevel.getBlockState(blockpos);
--         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
-+         RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, serverlevel, blockpos, null) : RailShape.NORTH_SOUTH;
-          double d3;
-          if (blockstate.is(BlockTags.RAILS)) {
-             if (railshape.isAscending()) {
-@@ -82,7 +_,7 @@
-          ItemStack itemstack = p_42943_.getItemInHand();
-          if (level instanceof ServerLevel) {
-             ServerLevel serverlevel = (ServerLevel)level;
--            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty()) : RailShape.NORTH_SOUTH;
-+            RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
-             double d0 = 0.0D;
-             if (railshape.isAscending()) {
-                d0 = 0.5D;
+@@ -33,7 +_,7 @@
+             BlockPos blockpos = p_42949_.pos().relative(direction);
+             BlockState blockstate = serverlevel.getBlockState(blockpos);
+             RailShape railshape = blockstate.getBlock() instanceof BaseRailBlock
+-                ? blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty())
++                ? ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, serverlevel, blockpos, null)
+                 : RailShape.NORTH_SOUTH;
+             double d3;
+             if (blockstate.is(BlockTags.RAILS)) {
+@@ -49,7 +_,7 @@
+ 
+                 BlockState blockstate1 = serverlevel.getBlockState(blockpos.below());
+                 RailShape railshape1 = blockstate1.getBlock() instanceof BaseRailBlock
+-                    ? blockstate1.getValue(((BaseRailBlock)blockstate1.getBlock()).getShapeProperty())
++                    ? ((BaseRailBlock)blockstate1.getBlock()).getRailDirection(blockstate, serverlevel, blockpos, null)
+                     : RailShape.NORTH_SOUTH;
+                 if (direction != Direction.DOWN && railshape1.isAscending()) {
+                     d3 = -0.4;

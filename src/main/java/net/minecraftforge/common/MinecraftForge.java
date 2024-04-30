@@ -52,7 +52,6 @@ public class MinecraftForge
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
-       TierSortingRegistry.init();
        if (FMLEnvironment.dist == Dist.CLIENT) ClientCommandHandler.init();
        DualStackUtils.initialise();
    }

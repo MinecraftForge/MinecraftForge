@@ -6,6 +6,6 @@
  
 -public class SeagrassBlock extends BushBlock implements BonemealableBlock, LiquidBlockContainer {
 +public class SeagrassBlock extends BushBlock implements BonemealableBlock, LiquidBlockContainer, net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<SeagrassBlock> CODEC = simpleCodec(SeagrassBlock::new);
-    protected static final float AABB_OFFSET = 6.0F;
-    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+     public static final MapCodec<SeagrassBlock> CODEC = simpleCodec(SeagrassBlock::new);
+     protected static final float AABB_OFFSET = 6.0F;
+     protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 12.0, 14.0);

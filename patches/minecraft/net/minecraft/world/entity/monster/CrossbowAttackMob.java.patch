@@ -1,14 +1,15 @@
 --- a/net/minecraft/world/entity/monster/CrossbowAttackMob.java
 +++ b/net/minecraft/world/entity/monster/CrossbowAttackMob.java
-@@ -24,9 +_,9 @@
-    void onCrossbowAttackPerformed();
+@@ -17,9 +_,10 @@
+     void onCrossbowAttackPerformed();
  
-    default void performCrossbowAttack(LivingEntity p_32337_, float p_32338_) {
--      InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, Items.CROSSBOW);
-+      InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, item -> item instanceof CrossbowItem);
-       ItemStack itemstack = p_32337_.getItemInHand(interactionhand);
--      if (p_32337_.isHolding(Items.CROSSBOW)) {
-+      if (p_32337_.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
-          CrossbowItem.performShooting(p_32337_.level(), p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.level().getDifficulty().getId() * 4));
-       }
- 
+     default void performCrossbowAttack(LivingEntity p_32337_, float p_32338_) {
+-        InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, Items.CROSSBOW);
++        InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, item -> item instanceof CrossbowItem);
+         ItemStack itemstack = p_32337_.getItemInHand(interactionhand);
+-        if (itemstack.getItem() instanceof CrossbowItem crossbowitem) {
++        if (p_32337_.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
++            var crossbowitem = (CrossbowItem) itemstack.getItem();
+             crossbowitem.performShooting(
+                 p_32337_.level(), p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.level().getDifficulty().getId() * 4), this.getTarget()
+             );

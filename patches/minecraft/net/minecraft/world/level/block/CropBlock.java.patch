@@ -1,39 +1,34 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
-@@ -70,12 +_,14 @@
-    }
- 
-    public void randomTick(BlockState p_221050_, ServerLevel p_221051_, BlockPos p_221052_, RandomSource p_221053_) {
-+      if (!p_221051_.isAreaLoaded(p_221052_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_221051_.getRawBrightness(p_221052_, 0) >= 9) {
-          int i = this.getAge(p_221050_);
-          if (i < this.getMaxAge()) {
-             float f = getGrowthSpeed(this, p_221051_, p_221052_);
--            if (p_221053_.nextInt((int)(25.0F / f) + 1) == 0) {
-+            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextInt((int)(25.0F / f) + 1) == 0)) {
-                p_221051_.setBlock(p_221052_, this.getStateForAge(i + 1), 2);
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
+@@ -88,8 +_,9 @@
+             int i = this.getAge(p_221050_);
+             if (i < this.getMaxAge()) {
+                 float f = getGrowthSpeed(this, p_221051_, p_221052_);
+-                if (p_221053_.nextInt((int)(25.0F / f) + 1) == 0) {
++                if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_221051_, p_221052_, p_221050_, p_221053_.nextInt((int)(25.0F / f) + 1) == 0)) {
+                     p_221051_.setBlock(p_221052_, this.getStateForAge(i + 1), 2);
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_221051_, p_221052_, p_221050_);
+                 }
              }
-          }
-       }
-@@ -104,9 +_,9 @@
-          for(int j = -1; j <= 1; ++j) {
-             float f1 = 0.0F;
-             BlockState blockstate = p_52274_.getBlockState(blockpos.offset(i, 0, j));
--            if (blockstate.is(Blocks.FARMLAND)) {
-+            if (blockstate.canSustainPlant(p_52274_, blockpos.offset(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
-                f1 = 1.0F;
--               if (blockstate.getValue(FarmBlock.MOISTURE) > 0) {
-+               if (blockstate.isFertile(p_52274_, p_52275_.offset(i, 0, j))) {
-                   f1 = 3.0F;
-                }
-             }
-@@ -146,7 +_,7 @@
-    }
+         }
+@@ -117,9 +_,9 @@
+             for (int j = -1; j <= 1; j++) {
+                 float f1 = 0.0F;
+                 BlockState blockstate = p_52274_.getBlockState(blockpos.offset(i, 0, j));
+-                if (blockstate.is(Blocks.FARMLAND)) {
++                if (blockstate.canSustainPlant(p_52274_, blockpos.offset(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
+                     f1 = 1.0F;
+-                    if (blockstate.getValue(FarmBlock.MOISTURE) > 0) {
++                    if (blockstate.isFertile(p_52274_, p_52275_.offset(i, 0, j))) {
+                         f1 = 3.0F;
+                     }
+                 }
+@@ -164,7 +_,7 @@
  
-    public void entityInside(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
--      if (p_52280_ instanceof Ravager && p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_)) {
-          p_52278_.destroyBlock(p_52279_, true, p_52280_);
-       }
+     @Override
+     protected void entityInside(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
+-        if (p_52280_ instanceof Ravager && p_52278_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_)) {
+             p_52278_.destroyBlock(p_52279_, true, p_52280_);
+         }
  

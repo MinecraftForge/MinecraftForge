@@ -1,31 +1,29 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -204,6 +_,28 @@
-       this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-    }
- 
-+   // Forge Start
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
+@@ -213,4 +_,26 @@
+     public void stopOpen(Player p_270286_) {
+         this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
+     }
 +
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive())
-+         return itemHandler.cast();
-+      return super.getCapability(capability, facing);
-+   }
++    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      itemHandler.invalidate();
-+   }
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && this.isAlive()) {
++             return itemHandler.cast();
++        }
++        return super.getCapability(capability, facing);
++    }
 +
-+   @Override
-+   public void reviveCaps() {
-+      super.reviveCaps();
-+      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
-+   }
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        itemHandler.invalidate();
++    }
 +
-    public void stopOpen(Player p_270286_) {
-       this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
-    }
++    @Override
++    public void reviveCaps() {
++        super.reviveCaps();
++        itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++    }
+ }

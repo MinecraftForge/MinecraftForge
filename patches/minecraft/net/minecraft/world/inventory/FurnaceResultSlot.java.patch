@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/inventory/FurnaceResultSlot.java
 +++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
-@@ -48,5 +_,6 @@
-       }
+@@ -49,5 +_,6 @@
+         }
  
-       this.removeCount = 0;
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, p_39558_);
-    }
+         this.removeCount = 0;
++        net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.player, p_39558_);
+     }
  }

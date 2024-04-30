@@ -1,40 +1,33 @@
 --- a/net/minecraft/resources/DelegatingOps.java
 +++ b/net/minecraft/resources/DelegatingOps.java
-@@ -160,4 +_,37 @@
-    public RecordBuilder<T> mapBuilder() {
-       return new RecordBuilder.MapBuilder<>(this);
-    }
+@@ -216,11 +_,29 @@
+ 
+     @Override
+     public ListBuilder<T> listBuilder() {
+-        return new Builder<>(this);
++        return new ListBuilder.Builder<>(this);
+     }
+ 
+     @Override
+     public RecordBuilder<T> mapBuilder() {
+         return new MapBuilder<>(this);
++    }
 +
-+   java.util.Map<ResourceLocation, Object> ctx;
-+   public <R> R getContext(ResourceLocation rl) {
-+       return (R)this.ctx.get(rl);
-+   }
++    // Forge start
++    java.util.Map<ResourceLocation, Object> ctx = new java.util.HashMap<>();
 +
-+   public static <T, R extends DelegatingOps<T>> Builder<R> builder(java.util.function.Supplier<R> root) {
-+       return new Builder(root);
-+   }
++    @SuppressWarnings("unchecked")
++    public <R> R getContext(ResourceLocation rl) {
++        var ret = (R)this.ctx.get(rl);
++        if (ret == null && this.delegate instanceof DelegatingOps parent) {
++            return (R)parent.getContext(rl);
++        }
++        return ret;
++    }
 +
-+   public static <T> Builder<DelegatingOps<T>> builder(DynamicOps<T> ops) {
-+       return builder(() -> new DelegatingOps<>(ops) {});
-+   }
-+
-+   public static class Builder<R extends DelegatingOps<?>> {
-+      private final java.util.function.Supplier<R> func;
-+      private final java.util.Map<ResourceLocation, Object> ctx = new java.util.HashMap<>();
-+
-+      private Builder(java.util.function.Supplier<R> func) {
-+          this.func = func;
-+      }
-+
-+      public Builder<R> with(ResourceLocation key, Object ctx) {
-+         this.ctx.put(key, ctx);
-+         return this;
-+      }
-+
-+      public R build() {
-+         var ret = this.func.get();
-+         ret.ctx = this.ctx;
-+         return ret;
-+      }
-+   }
++    @SuppressWarnings("unchecked")
++    public <R> R withContext(ResourceLocation key, Object ctx) {
++        this.ctx.put(key, ctx);
++        return (R)this;
+     }
  }

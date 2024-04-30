@@ -30,23 +30,20 @@ import java.util.function.Consumer;
  *
  * @see Block#initializeClient(Consumer)
  */
-public interface IClientBlockExtensions
-{
+public interface IClientBlockExtensions {
     IClientBlockExtensions DEFAULT = new IClientBlockExtensions() { };
 
-    static IClientBlockExtensions of(BlockState state)
-    {
+    static IClientBlockExtensions of(BlockState state) {
         return of(state.getBlock());
     }
 
-    static IClientBlockExtensions of(Block block)
-    {
+    static IClientBlockExtensions of(Block block) {
         return block.getRenderPropertiesInternal() instanceof IClientBlockExtensions e ? e : DEFAULT;
     }
 
     /**
      * Spawn a digging particle effect in the level, this is a wrapper
-     * around EffectRenderer.addBlockHitEffects to allow the block more
+     * around EffectRenderer.crack to allow the block more
      * control over the particles. Useful when you have entirely different
      * texture sheets for different sides/locations in the level.
      *
@@ -56,8 +53,7 @@ public interface IClientBlockExtensions
      * @param manager A reference to the current particle manager.
      * @return True to prevent vanilla digging particles form spawning.
      */
-    default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager)
-    {
+    default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager) {
         return false;
     }
 
@@ -72,8 +68,7 @@ public interface IClientBlockExtensions
      * @param manager A reference to the current particle manager.
      * @return True to prevent vanilla break particles from spawning.
      */
-    default boolean addDestroyEffects(BlockState state, Level Level, BlockPos pos, ParticleEngine manager)
-    {
+    default boolean addDestroyEffects(BlockState state, Level Level, BlockPos pos, ParticleEngine manager) {
         return !state.shouldSpawnTerrainParticles();
     }
 
@@ -90,27 +85,20 @@ public interface IClientBlockExtensions
      * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
      * @return The new fog color.
      */
-    default Vector3d getFogColor(BlockState state, LevelReader level, BlockPos pos, Entity entity, Vector3d originalColor, float partialTick)
-    {
+    default Vector3d getFogColor(BlockState state, LevelReader level, BlockPos pos, Entity entity, Vector3d originalColor, float partialTick) {
         FluidState fluidState = level.getFluidState(pos);
-        if (fluidState.is(FluidTags.WATER))
-        {
+        if (fluidState.is(FluidTags.WATER)) {
             float f12 = 0.0F;
 
-            if (entity instanceof LivingEntity)
-            {
-                LivingEntity ent = (LivingEntity) entity;
+            if (entity instanceof LivingEntity ent) {
                 f12 = (float) EnchantmentHelper.getRespiration(ent) * 0.2F;
 
-                if (ent.hasEffect(MobEffects.WATER_BREATHING))
-                {
+                if (ent.hasEffect(MobEffects.WATER_BREATHING)) {
                     f12 = f12 * 0.3F + 0.6F;
                 }
             }
             return new Vector3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
-        }
-        else if (fluidState.is(FluidTags.LAVA))
-        {
+        } else if (fluidState.is(FluidTags.LAVA)) {
             return new Vector3d(0.6F, 0.1F, 0.0F);
         }
         return originalColor;
@@ -124,8 +112,7 @@ public interface IClientBlockExtensions
      * @param pos The position of the block
      * @return {@code true} if the particles should be tinted.
      */
-    default boolean areBreakingParticlesTinted(BlockState state, ClientLevel level, BlockPos pos)
-    {
+    default boolean areBreakingParticlesTinted(BlockState state, ClientLevel level, BlockPos pos) {
         return !state.is(Blocks.GRASS_BLOCK);
     }
 }

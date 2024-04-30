@@ -1,48 +1,48 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -18,12 +_,14 @@
-    final CraftingBookCategory category;
-    final ItemStack result;
-    final NonNullList<Ingredient> ingredients;
-+   private final boolean isSimple;
+@@ -20,12 +_,14 @@
+     final CraftingBookCategory category;
+     final ItemStack result;
+     final NonNullList<Ingredient> ingredients;
++    private final boolean isSimple;
  
-    public ShapelessRecipe(String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
-       this.group = p_249640_;
-       this.category = p_249390_;
-       this.result = p_252071_;
-       this.ingredients = p_250689_;
-+      this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
-    }
+     public ShapelessRecipe(String p_249640_, CraftingBookCategory p_249390_, ItemStack p_252071_, NonNullList<Ingredient> p_250689_) {
+         this.group = p_249640_;
+         this.category = p_249390_;
+         this.result = p_252071_;
+         this.ingredients = p_250689_;
++        this.isSimple = p_250689_.stream().allMatch(Ingredient::isSimple);
+     }
  
-    public RecipeSerializer<?> getSerializer() {
-@@ -48,17 +_,20 @@
+     @Override
+@@ -55,17 +_,20 @@
  
-    public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
-       StackedContents stackedcontents = new StackedContents();
-+      java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
-       int i = 0;
+     public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
+         StackedContents stackedcontents = new StackedContents();
++        var inputs = new java.util.ArrayList<ItemStack>();
+         int i = 0;
  
-       for(int j = 0; j < p_44262_.getContainerSize(); ++j) {
-          ItemStack itemstack = p_44262_.getItem(j);
-          if (!itemstack.isEmpty()) {
-             ++i;
-+            if (isSimple)
-             stackedcontents.accountStack(itemstack, 1);
-+            else inputs.add(itemstack);
-          }
-       }
- 
--      return i == this.ingredients.size() && stackedcontents.canCraft(this, (IntList)null);
-+      return i == this.ingredients.size() && (isSimple ? stackedcontents.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.ingredients) != null);
-    }
- 
-    public ItemStack assemble(CraftingContainer p_44260_, RegistryAccess p_266797_) {
-@@ -88,7 +_,7 @@
-                   return "No ingredients for shapeless recipe";
-                });
-             } else {
--               return aingredient.length > 9 ? DataResult.error(() -> {
-+               return aingredient.length > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT ? DataResult.error(() -> {
-                   return "Too many ingredients for shapeless recipe";
-                }) : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
+         for (int j = 0; j < p_44262_.getContainerSize(); j++) {
+             ItemStack itemstack = p_44262_.getItem(j);
+             if (!itemstack.isEmpty()) {
+                 i++;
++                if (isSimple)
+                 stackedcontents.accountStack(itemstack, 1);
++                else inputs.add(itemstack);
              }
+         }
+ 
+-        return i == this.ingredients.size() && stackedcontents.canCraft(this, null);
++        return i == this.ingredients.size() && (isSimple ? stackedcontents.canCraft(this, null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.ingredients) != null);
+     }
+ 
+     public ItemStack assemble(CraftingContainer p_44260_, HolderLookup.Provider p_334364_) {
+@@ -92,7 +_,7 @@
+                                     if (aingredient.length == 0) {
+                                         return DataResult.error(() -> "No ingredients for shapeless recipe");
+                                     } else {
+-                                        return aingredient.length > 9
++                                        return aingredient.length > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT
+                                             ? DataResult.error(() -> "Too many ingredients for shapeless recipe")
+                                             : DataResult.success(NonNullList.of(Ingredient.EMPTY, aingredient));
+                                     }

@@ -131,22 +131,6 @@ public class FluidStack
         return nbt;
     }
 
-    public void writeToPacket(FriendlyByteBuf buf)
-    {
-        buf.writeRegistryId(ForgeRegistries.FLUIDS, getFluid());
-        buf.writeVarInt(getAmount());
-        buf.writeNbt(tag);
-    }
-
-    public static FluidStack readFromPacket(FriendlyByteBuf buf)
-    {
-        Fluid fluid = buf.readRegistryId();
-        int amount = buf.readVarInt();
-        CompoundTag tag = buf.readNbt();
-        if (fluid == Fluids.EMPTY) return EMPTY;
-        return new FluidStack(fluid, amount, tag);
-    }
-
     public final Fluid getFluid()
     {
         return isEmpty ? Fluids.EMPTY : fluidDelegate.get();

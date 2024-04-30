@@ -12,12 +12,12 @@ import java.util.function.Function;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
@@ -47,7 +47,7 @@ public final class ForgeBiomeModifiers {
      * @param step Decoration step to run features in.
      */
     public static record AddFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features, Decoration step) implements BiomeModifier {
-        public static final Codec<AddFeaturesBiomeModifier> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+        public static final MapCodec<AddFeaturesBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddFeaturesBiomeModifier::biomes),
             PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(AddFeaturesBiomeModifier::features),
             Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
@@ -62,7 +62,7 @@ public final class ForgeBiomeModifiers {
         }
 
         @Override
-        public Codec<? extends BiomeModifier> codec() {
+        public MapCodec<? extends BiomeModifier> codec() {
             return CODEC;
         }
     }
@@ -83,11 +83,11 @@ public final class ForgeBiomeModifiers {
      * @param steps Decoration steps to remove features from.
      */
     public static record RemoveFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features, Set<Decoration> steps) implements BiomeModifier {
-        public static final Codec<RemoveFeaturesBiomeModifier> CODEC = RecordCodecBuilder.create(builder ->
+        public static final MapCodec<RemoveFeaturesBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
                 Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveFeaturesBiomeModifier::biomes),
                 PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(RemoveFeaturesBiomeModifier::features),
-                ExtraCodecs.either(Decoration.CODEC.listOf(), Decoration.CODEC).<Set<Decoration>>xmap(
+                Codec.either(Decoration.CODEC.listOf(), Decoration.CODEC).<Set<Decoration>>xmap(
                     either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
                     set -> set.size() == 1 ? Either.right(set.toArray(Decoration[]::new)[0]) : Either.left(List.copyOf(set))
                 ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
@@ -112,7 +112,7 @@ public final class ForgeBiomeModifiers {
         }
 
         @Override
-        public Codec<? extends BiomeModifier> codec() {
+        public MapCodec<? extends BiomeModifier> codec() {
             return CODEC;
         }
     }
@@ -156,11 +156,11 @@ public final class ForgeBiomeModifiers {
      * @param spawners List of SpawnerDatas specifying EntityType, weight, and pack size.
      */
     public record AddSpawnsBiomeModifier(HolderSet<Biome> biomes, List<SpawnerData> spawners) implements BiomeModifier {
-        public static final Codec<AddSpawnsBiomeModifier> CODEC = RecordCodecBuilder.create(builder ->
+        public static final MapCodec<AddSpawnsBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
                 Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnsBiomeModifier::biomes),
                 // Allow either a list or single spawner, attempting to decode the list format first.
-                ExtraCodecs.either(SpawnerData.CODEC.listOf(), SpawnerData.CODEC).xmap(
+                Codec.either(SpawnerData.CODEC.listOf(), SpawnerData.CODEC).xmap(
                     either -> either.map(Function.identity(), List::of), // convert list/singleton to list when decoding
                     list -> list.size() == 1 ? Either.right(list.get(0)) : Either.left(list) // convert list to singleton/list when encoding
                 ).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
@@ -186,7 +186,7 @@ public final class ForgeBiomeModifiers {
         }
 
         @Override
-        public Codec<? extends BiomeModifier> codec() {
+        public MapCodec<? extends BiomeModifier> codec() {
             return CODEC;
         }
     }
@@ -205,7 +205,7 @@ public final class ForgeBiomeModifiers {
      * @param entityTypes EntityTypes to remove from spawn lists.
      */
     public record RemoveSpawnsBiomeModifier(HolderSet<Biome> biomes, HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
-        public static final Codec<RemoveSpawnsBiomeModifier> CODEC = RecordCodecBuilder.create(builder ->
+        public static final MapCodec<RemoveSpawnsBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
                 Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveSpawnsBiomeModifier::biomes),
                 RegistryCodecs.homogeneousList(ForgeRegistries.Keys.ENTITY_TYPES).fieldOf("entity_types").forGetter(RemoveSpawnsBiomeModifier::entityTypes)
@@ -221,7 +221,7 @@ public final class ForgeBiomeModifiers {
         }
 
         @Override
-        public Codec<? extends BiomeModifier> codec() {
+        public MapCodec<? extends BiomeModifier> codec() {
             return CODEC;
         }
     }

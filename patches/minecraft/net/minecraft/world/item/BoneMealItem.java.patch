@@ -1,29 +1,30 @@
 --- a/net/minecraft/world/item/BoneMealItem.java
 +++ b/net/minecraft/world/item/BoneMealItem.java
-@@ -35,7 +_,7 @@
-       Level level = p_40637_.getLevel();
-       BlockPos blockpos = p_40637_.getClickedPos();
-       BlockPos blockpos1 = blockpos.relative(p_40637_.getClickedFace());
--      if (growCrop(p_40637_.getItemInHand(), level, blockpos)) {
-+      if (applyBonemeal(p_40637_.getItemInHand(), level, blockpos, p_40637_.getPlayer())) {
-          if (!level.isClientSide) {
-             p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
-             level.levelEvent(1505, blockpos, 0);
-@@ -58,8 +_,17 @@
-       }
-    }
+@@ -37,7 +_,7 @@
+         Level level = p_40637_.getLevel();
+         BlockPos blockpos = p_40637_.getClickedPos();
+         BlockPos blockpos1 = blockpos.relative(p_40637_.getClickedFace());
+-        if (growCrop(p_40637_.getItemInHand(), level, blockpos)) {
++        if (applyBonemeal(p_40637_.getItemInHand(), level, blockpos, p_40637_.getPlayer())) {
+             if (!level.isClientSide) {
+                 p_40637_.getPlayer().gameEvent(GameEvent.ITEM_INTERACT_FINISH);
+                 level.levelEvent(1505, blockpos, 15);
+@@ -60,8 +_,18 @@
+         }
+     }
  
-+   @Deprecated //Forge: Use Player/Hand version
-    public static boolean growCrop(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_) {
-+      if (p_40629_ instanceof net.minecraft.server.level.ServerLevel)
-+         return applyBonemeal(p_40628_, p_40629_, p_40630_, null);
-+      return false;
-+   }
++    @Deprecated //Forge: Use Player/Hand version
+     public static boolean growCrop(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_) {
++        if (p_40629_ instanceof net.minecraft.server.level.ServerLevel) {
++            return applyBonemeal(p_40628_, p_40629_, p_40630_, null);
++        }
++        return false;
++    }
 +
-+   public static boolean applyBonemeal(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_, net.minecraft.world.entity.player.Player player) {
-       BlockState blockstate = p_40629_.getBlockState(p_40630_);
-+      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_40629_, p_40630_, blockstate, p_40628_);
-+      if (hook != 0) return hook > 0;
-       Block block = blockstate.getBlock();
-       if (block instanceof BonemealableBlock bonemealableblock) {
-          if (bonemealableblock.isValidBonemealTarget(p_40629_, p_40630_, blockstate)) {
++    public static boolean applyBonemeal(ItemStack p_40628_, Level p_40629_, BlockPos p_40630_, net.minecraft.world.entity.player.Player player) {
+         BlockState blockstate = p_40629_.getBlockState(p_40630_);
++        int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_40629_, p_40630_, blockstate, p_40628_);
++        if (hook != 0) return hook > 0;
+         if (blockstate.getBlock() instanceof BonemealableBlock bonemealableblock && bonemealableblock.isValidBonemealTarget(p_40629_, p_40630_, blockstate)) {
+             if (p_40629_ instanceof ServerLevel) {
+                 if (bonemealableblock.isBonemealSuccess(p_40629_, p_40629_.random, p_40630_, blockstate)) {

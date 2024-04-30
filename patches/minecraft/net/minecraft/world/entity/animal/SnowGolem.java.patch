@@ -1,61 +1,60 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -40,7 +_,7 @@
+@@ -38,7 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  
 -public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob {
 +public class SnowGolem extends AbstractGolem implements Shearable, RangedAttackMob, net.minecraftforge.common.IForgeShearable {
-    private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
-    private static final byte PUMPKIN_FLAG = 16;
-    private static final float EYE_HEIGHT = 1.7F;
-@@ -92,7 +_,7 @@
-             this.hurt(this.damageSources().onFire(), 1.0F);
-          }
+     private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
+     private static final byte PUMPKIN_FLAG = 16;
  
--         if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
-             return;
-          }
+@@ -92,7 +_,7 @@
+                 this.hurt(this.damageSources().onFire(), 1.0F);
+             }
+ 
+-            if (!this.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.level(), this)) {
+                 return;
+             }
  
 @@ -103,7 +_,7 @@
-             int k = Mth.floor(this.getY());
-             int l = Mth.floor(this.getZ() + (double)((float)(i / 2 % 2 * 2 - 1) * 0.25F));
-             BlockPos blockpos = new BlockPos(j, k, l);
--            if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
-+            if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
-                this.level().setBlockAndUpdate(blockpos, blockstate);
-                this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
-             }
-@@ -130,7 +_,7 @@
- 
-    protected InteractionResult mobInteract(Player p_29920_, InteractionHand p_29921_) {
-       ItemStack itemstack = p_29920_.getItemInHand(p_29921_);
--      if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
-+      if (false && itemstack.getItem() == Items.SHEARS && this.readyForShearing()) { //Forge: Moved to onSheared
-          this.shear(SoundSource.PLAYERS);
-          this.gameEvent(GameEvent.SHEAR, p_29920_);
-          if (!this.level().isClientSide) {
-@@ -189,5 +_,22 @@
- 
-    public Vec3 getLeashOffset() {
-       return new Vec3(0.0D, (double)(0.75F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));
-+   }
+                 int k = Mth.floor(this.getY());
+                 int l = Mth.floor(this.getZ() + (double)((float)(i / 2 % 2 * 2 - 1) * 0.25F));
+                 BlockPos blockpos = new BlockPos(j, k, l);
+-                if (this.level().getBlockState(blockpos).isAir() && blockstate.canSurvive(this.level(), blockpos)) {
++                if (this.level().isEmptyBlock(blockpos) && blockstate.canSurvive(this.level(), blockpos)) {
+                     this.level().setBlockAndUpdate(blockpos, blockstate);
+                     this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
+                 }
+@@ -127,7 +_,7 @@
+     @Override
+     protected InteractionResult mobInteract(Player p_29920_, InteractionHand p_29921_) {
+         ItemStack itemstack = p_29920_.getItemInHand(p_29921_);
+-        if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
++        if (false && itemstack.is(Items.SHEARS) && this.readyForShearing()) { //Forge: Moved to onSheared
+             this.shear(SoundSource.PLAYERS);
+             this.gameEvent(GameEvent.SHEAR, p_29920_);
+             if (!this.level().isClientSide) {
+@@ -189,4 +_,21 @@
+     public Vec3 getLeashOffset() {
+         return new Vec3(0.0, (double)(0.75F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));
+     }
 +
-+   @Override
-+   public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
-+      return readyForShearing();
-+   }
++    @Override
++    public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
++         return readyForShearing();
++    }
 +
-+   @org.jetbrains.annotations.NotNull
-+   @Override
-+   public java.util.List<ItemStack> onSheared(@Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
-+      world.playSound(null, this, SoundEvents.SNOW_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
-+      this.gameEvent(GameEvent.SHEAR, player);
-+      if (!world.isClientSide()) {
-+         setPumpkin(false);
-+         return java.util.Collections.singletonList(new ItemStack(Items.CARVED_PUMPKIN));
-+      }
-+      return java.util.Collections.emptyList();
-    }
++    @org.jetbrains.annotations.NotNull
++    @Override
++    public java.util.List<ItemStack> onSheared(@Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
++        world.playSound(null, this, SoundEvents.SNOW_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++        this.gameEvent(GameEvent.SHEAR, player);
++        if (!world.isClientSide()) {
++            setPumpkin(false);
++            return java.util.Collections.singletonList(new ItemStack(Items.CARVED_PUMPKIN));
++        }
++        return java.util.Collections.emptyList();
++     }
  }

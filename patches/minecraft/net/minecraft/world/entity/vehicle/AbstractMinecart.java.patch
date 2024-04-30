@@ -1,247 +1,251 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecart.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecart.java
-@@ -46,7 +_,7 @@
+@@ -45,7 +_,7 @@
+ import net.minecraft.world.phys.AABB;
  import net.minecraft.world.phys.Vec3;
- import org.joml.Vector3f;
  
 -public abstract class AbstractMinecart extends VehicleEntity {
 +public abstract class AbstractMinecart extends VehicleEntity implements net.minecraftforge.common.extensions.IForgeAbstractMinecart {
-    private static final float LOWERED_PASSENGER_ATTACHMENT_Y = 0.0F;
-    private static final float PASSENGER_ATTACHMENT_Y = 0.1875F;
-    private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
-@@ -83,6 +_,8 @@
-       p_38135_.put(RailShape.NORTH_WEST, Pair.of(vec3i2, vec3i));
-       p_38135_.put(RailShape.NORTH_EAST, Pair.of(vec3i2, vec3i1));
-    });
-+   private static net.minecraftforge.common.IMinecartCollisionHandler COLLISIONS = null;
-+   private boolean canBePushed = true;
+     private static final Vec3 LOWERED_PASSENGER_ATTACHMENT = new Vec3(0.0, 0.0, 0.0);
+     private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_BLOCK = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
+     private static final EntityDataAccessor<Integer> DATA_ID_DISPLAY_OFFSET = SynchedEntityData.defineId(AbstractMinecart.class, EntityDataSerializers.INT);
+@@ -83,6 +_,7 @@
+         p_38135_.put(RailShape.NORTH_WEST, Pair.of(vec3i2, vec3i));
+         p_38135_.put(RailShape.NORTH_EAST, Pair.of(vec3i2, vec3i1));
+     });
++    private boolean canBePushed = true;
  
-    protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
-       super(p_38087_, p_38088_);
-@@ -97,6 +_,14 @@
-       this.zo = p_38094_;
-    }
+     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
+         super(p_38087_, p_38088_);
+@@ -139,7 +_,7 @@
  
-+   public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() {
-+      return COLLISIONS;
-+   }
-+
-+   public static void registerCollisionHandler(@Nullable net.minecraftforge.common.IMinecartCollisionHandler handler) {
-+      COLLISIONS = handler;
-+   }
-+
-    public static AbstractMinecart createMinecart(ServerLevel p_310486_, double p_38121_, double p_38122_, double p_38123_, AbstractMinecart.Type p_38124_, ItemStack p_311363_, @Nullable Player p_310754_) {
-       Object object;
-       switch (p_38124_) {
-@@ -143,7 +_,7 @@
-    }
+     @Override
+     public boolean isPushable() {
+-        return true;
++        return canBePushed;
+     }
  
-    public boolean isPushable() {
--      return true;
-+      return canBePushed;
-    }
- 
-    protected Vec3 getRelativePortalPosition(Direction.Axis p_38132_, BlockUtil.FoundRectangle p_38133_) {
-@@ -265,9 +_,9 @@
-          BlockPos blockpos = new BlockPos(k, i, j);
-          BlockState blockstate = this.level().getBlockState(blockpos);
-          this.onRails = BaseRailBlock.isRail(blockstate);
--         if (this.onRails) {
-+         if (canUseRail() && this.onRails) {
-             this.moveAlongTrack(blockpos, blockstate);
--            if (blockstate.is(Blocks.ACTIVATOR_RAIL)) {
-+            if (blockstate.getBlock() instanceof PoweredRailBlock power && power.isActivatorRail()) {
-                this.activateMinecart(k, i, j, blockstate.getValue(PoweredRailBlock.POWERED));
+     @Override
+@@ -271,9 +_,9 @@
+             BlockPos blockpos = new BlockPos(i, j, k);
+             BlockState blockstate = this.level().getBlockState(blockpos);
+             this.onRails = BaseRailBlock.isRail(blockstate);
+-            if (this.onRails) {
++            if (canUseRail() && this.onRails) {
+                 this.moveAlongTrack(blockpos, blockstate);
+-                if (blockstate.is(Blocks.ACTIVATOR_RAIL)) {
++                if (blockstate.getBlock() instanceof PoweredRailBlock power && power.isActivatorRail()) {
+                     this.activateMinecart(i, j, k, blockstate.getValue(PoweredRailBlock.POWERED));
+                 }
+             } else {
+@@ -298,8 +_,11 @@
              }
-          } else {
-@@ -292,8 +_,11 @@
-          }
  
-          this.setRot(this.getYRot(), this.getXRot());
--         if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
--            List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate((double)0.2F, 0.0D, (double)0.2F), EntitySelector.pushableBy(this));
-+         AABB box;
-+         if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
-+         else                               box = this.getBoundingBox().inflate(0.2F, 0.0D, 0.2F);
-+         if (canBeRidden() && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
-+            List<Entity> list = this.level().getEntities(this, box, EntitySelector.pushableBy(this));
-             if (!list.isEmpty()) {
-                for(Entity entity1 : list) {
-                   if (!(entity1 instanceof Player) && !(entity1 instanceof IronGolem) && !(entity1 instanceof AbstractMinecart) && !this.isVehicle() && !entity1.isPassenger()) {
-@@ -304,7 +_,7 @@
-                }
+             this.setRot(this.getYRot(), this.getXRot());
+-            if (this.getMinecartType() == AbstractMinecart.Type.RIDEABLE && this.getDeltaMovement().horizontalDistanceSqr() > 0.01) {
+-                List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0.2F, 0.0, 0.2F), EntitySelector.pushableBy(this));
++            AABB box;
++            if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
++            else                               box = this.getBoundingBox().inflate(0.2F, 0.0D, 0.2F);
++            if (canBeRidden() && this.getDeltaMovement().horizontalDistanceSqr() > 0.01D) {
++                List<Entity> list = this.level().getEntities(this, box, EntitySelector.pushableBy(this));
+                 if (!list.isEmpty()) {
+                     for (Entity entity1 : list) {
+                         if (!(entity1 instanceof Player)
+@@ -314,7 +_,7 @@
+                     }
+                 }
+             } else {
+-                for (Entity entity : this.level().getEntities(this, this.getBoundingBox().inflate(0.2F, 0.0, 0.2F))) {
++                for (Entity entity : this.level().getEntities(this, box)) {
+                     if (!this.hasPassenger(entity) && entity.isPushable() && entity instanceof AbstractMinecart) {
+                         entity.push(this);
+                     }
+@@ -339,16 +_,24 @@
+     }
+ 
+     protected void comeOffTrack() {
+-        double d0 = this.getMaxSpeed();
++        double d0 = this.onGround() ? this.getMaxSpeed() : getMaxSpeedAirLateral();
+         Vec3 vec3 = this.getDeltaMovement();
+         this.setDeltaMovement(Mth.clamp(vec3.x, -d0, d0), vec3.y, Mth.clamp(vec3.z, -d0, d0));
+         if (this.onGround()) {
+             this.setDeltaMovement(this.getDeltaMovement().scale(0.5));
+         }
+ 
++        if (getMaxSpeedAirVertical() > 0 && getDeltaMovement().y > getMaxSpeedAirVertical()) {
++            if (Math.abs(getDeltaMovement().x) < 0.3f && Math.abs(getDeltaMovement().z) < 0.3f) {
++                setDeltaMovement(new Vec3(getDeltaMovement().x, 0.15f, getDeltaMovement().z));
++            } else {
++                setDeltaMovement(new Vec3(getDeltaMovement().x, getMaxSpeedAirVertical(), getDeltaMovement().z));
++            }
++        }
++
+         this.move(MoverType.SELF, this.getDeltaMovement());
+         if (!this.onGround()) {
+-            this.setDeltaMovement(this.getDeltaMovement().scale(0.95));
++            this.setDeltaMovement(this.getDeltaMovement().scale(getDragAir()));
+         }
+     }
+ 
+@@ -361,18 +_,19 @@
+         d1 = (double)p_38156_.getY();
+         boolean flag = false;
+         boolean flag1 = false;
+-        if (p_38157_.is(Blocks.POWERED_RAIL)) {
++        BaseRailBlock baserailblock = (BaseRailBlock) p_38157_.getBlock();
++        if (baserailblock instanceof PoweredRailBlock power && !power.isActivatorRail()) {
+             flag = p_38157_.getValue(PoweredRailBlock.POWERED);
+             flag1 = !flag;
+         }
+ 
+-        double d3 = 0.0078125;
++        double d3 = getSlopeAdjustment();
+         if (this.isInWater()) {
+             d3 *= 0.2;
+         }
+ 
+         Vec3 vec31 = this.getDeltaMovement();
+-        RailShape railshape = p_38157_.getValue(((BaseRailBlock)p_38157_.getBlock()).getShapeProperty());
++        RailShape railshape = baserailblock.getRailDirection(p_38157_, this.level(), p_38156_, this);
+         switch (railshape) {
+             case ASCENDING_EAST:
+                 this.setDeltaMovement(vec31.add(-d3, 0.0, 0.0));
+@@ -418,7 +_,7 @@
              }
-          } else {
--            for(Entity entity : this.level().getEntities(this, this.getBoundingBox().inflate((double)0.2F, 0.0D, (double)0.2F))) {
-+            for(Entity entity : this.level().getEntities(this, box)) {
-                if (!this.hasPassenger(entity) && entity.isPushable() && entity instanceof AbstractMinecart) {
-                   entity.push(this);
-                }
-@@ -329,16 +_,23 @@
-    }
+         }
  
-    protected void comeOffTrack() {
--      double d0 = this.getMaxSpeed();
-+      double d0 = this.onGround() ? this.getMaxSpeed() : getMaxSpeedAirLateral();
-       Vec3 vec3 = this.getDeltaMovement();
-       this.setDeltaMovement(Mth.clamp(vec3.x, -d0, d0), vec3.y, Mth.clamp(vec3.z, -d0, d0));
-       if (this.onGround()) {
-          this.setDeltaMovement(this.getDeltaMovement().scale(0.5D));
-       }
+-        if (flag1) {
++        if (flag1 && shouldDoRailFunctions()) {
+             double d22 = this.getDeltaMovement().horizontalDistance();
+             if (d22 < 0.03) {
+                 this.setDeltaMovement(Vec3.ZERO);
+@@ -447,10 +_,7 @@
+         d0 = d23 + d4 * d14;
+         d2 = d10 + d5 * d14;
+         this.setPos(d0, d1, d2);
+-        double d24 = this.isVehicle() ? 0.75 : 1.0;
+-        double d25 = this.getMaxSpeed();
+-        vec31 = this.getDeltaMovement();
+-        this.move(MoverType.SELF, new Vec3(Mth.clamp(d24 * vec31.x, -d25, d25), 0.0, Mth.clamp(d24 * vec31.z, -d25, d25)));
++        this.moveMinecartOnRail(p_38156_);
+         if (vec3i.getY() != 0
+             && Mth.floor(this.getX()) - p_38156_.getX() == vec3i.getX()
+             && Mth.floor(this.getZ()) - p_38156_.getZ() == vec3i.getZ()) {
+@@ -482,7 +_,11 @@
+             this.setDeltaMovement(d26 * (double)(j - p_38156_.getX()), vec35.y, d26 * (double)(i - p_38156_.getZ()));
+         }
  
-+      if (getMaxSpeedAirVertical() > 0 && getDeltaMovement().y > getMaxSpeedAirVertical()) {
-+          if(Math.abs(getDeltaMovement().x) < 0.3f && Math.abs(getDeltaMovement().z) < 0.3f)
-+              setDeltaMovement(new Vec3(getDeltaMovement().x, 0.15f, getDeltaMovement().z));
-+          else
-+              setDeltaMovement(new Vec3(getDeltaMovement().x, getMaxSpeedAirVertical(), getDeltaMovement().z));
-+      }
+-        if (flag) {
++        if (shouldDoRailFunctions()) {
++            baserailblock.onMinecartPass(p_38157_, level(), p_38156_, this);
++        }
 +
-       this.move(MoverType.SELF, this.getDeltaMovement());
-       if (!this.onGround()) {
--         this.setDeltaMovement(this.getDeltaMovement().scale(0.95D));
-+         this.setDeltaMovement(this.getDeltaMovement().scale(getDragAir()));
-       }
++        if (flag && shouldDoRailFunctions()) {
+             Vec3 vec36 = this.getDeltaMovement();
+             double d27 = vec36.horizontalDistance();
+             if (d27 > 0.01) {
+@@ -546,7 +_,7 @@
  
-    }
-@@ -352,18 +_,19 @@
-       d1 = (double)p_38156_.getY();
-       boolean flag = false;
-       boolean flag1 = false;
--      if (p_38157_.is(Blocks.POWERED_RAIL)) {
-+      BaseRailBlock baserailblock = (BaseRailBlock) p_38157_.getBlock();
-+      if (baserailblock instanceof PoweredRailBlock && !((PoweredRailBlock) baserailblock).isActivatorRail()) {
-          flag = p_38157_.getValue(PoweredRailBlock.POWERED);
-          flag1 = !flag;
-       }
+         BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
+         if (BaseRailBlock.isRail(blockstate)) {
+-            RailShape railshape = blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty());
++            RailShape railshape = ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level(), new BlockPos(i, j, k), this);
+             p_38098_ = (double)j;
+             if (railshape.isAscending()) {
+                 p_38098_ = (double)(j + 1);
+@@ -585,7 +_,7 @@
  
--      double d3 = 0.0078125D;
-+      double d3 = getSlopeAdjustment();
-       if (this.isInWater()) {
-          d3 *= 0.2D;
-       }
+         BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
+         if (BaseRailBlock.isRail(blockstate)) {
+-            RailShape railshape = blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty());
++            RailShape railshape = ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level(), new BlockPos(i, j, k), this);
+             Pair<Vec3i, Vec3i> pair = exits(railshape);
+             Vec3i vec3i = pair.getFirst();
+             Vec3i vec3i1 = pair.getSecond();
+@@ -649,6 +_,10 @@
  
-       Vec3 vec31 = this.getDeltaMovement();
--      RailShape railshape = p_38157_.getValue(((BaseRailBlock)p_38157_.getBlock()).getShapeProperty());
-+      RailShape railshape = ((BaseRailBlock)p_38157_.getBlock()).getRailDirection(p_38157_, this.level(), p_38156_, this);
-       switch (railshape) {
-          case ASCENDING_EAST:
-             this.setDeltaMovement(vec31.add(-d3, 0.0D, 0.0D));
-@@ -409,7 +_,7 @@
-          }
-       }
+     @Override
+     public void push(Entity p_38165_) {
++        if (getCollisionHandler() != null) {
++            getCollisionHandler().onEntityCollision(this, p_38165_);
++            return;
++        }
+         if (!this.level().isClientSide) {
+             if (!p_38165_.noPhysics && !this.noPhysics) {
+                 if (!this.hasPassenger(p_38165_)) {
+@@ -670,7 +_,7 @@
+                         d1 *= 0.1F;
+                         d0 *= 0.5;
+                         d1 *= 0.5;
+-                        if (p_38165_ instanceof AbstractMinecart) {
++                        if (p_38165_ instanceof AbstractMinecart oMinecart) {
+                             double d4 = p_38165_.getX() - this.getX();
+                             double d5 = p_38165_.getZ() - this.getZ();
+                             Vec3 vec3 = new Vec3(d4, 0.0, d5).normalize();
+@@ -687,12 +_,11 @@
  
--      if (flag1) {
-+      if (flag1 && shouldDoRailFunctions()) {
-          double d22 = this.getDeltaMovement().horizontalDistance();
-          if (d22 < 0.03D) {
-             this.setDeltaMovement(Vec3.ZERO);
-@@ -438,10 +_,7 @@
-       d0 = d23 + d4 * d14;
-       d2 = d10 + d5 * d14;
-       this.setPos(d0, d1, d2);
--      double d24 = this.isVehicle() ? 0.75D : 1.0D;
--      double d25 = this.getMaxSpeed();
--      vec31 = this.getDeltaMovement();
--      this.move(MoverType.SELF, new Vec3(Mth.clamp(d24 * vec31.x, -d25, d25), 0.0D, Mth.clamp(d24 * vec31.z, -d25, d25)));
-+      this.moveMinecartOnRail(p_38156_);
-       if (vec3i.getY() != 0 && Mth.floor(this.getX()) - p_38156_.getX() == vec3i.getX() && Mth.floor(this.getZ()) - p_38156_.getZ() == vec3i.getZ()) {
-          this.setPos(this.getX(), this.getY() + (double)vec3i.getY(), this.getZ());
-       } else if (vec3i1.getY() != 0 && Mth.floor(this.getX()) - p_38156_.getX() == vec3i1.getX() && Mth.floor(this.getZ()) - p_38156_.getZ() == vec3i1.getZ()) {
-@@ -469,7 +_,10 @@
-          this.setDeltaMovement(d26 * (double)(j - p_38156_.getX()), vec35.y, d26 * (double)(i - p_38156_.getZ()));
-       }
- 
--      if (flag) {
-+      if (shouldDoRailFunctions())
-+          baserailblock.onMinecartPass(p_38157_, level(), p_38156_, this);
+                             Vec3 vec32 = this.getDeltaMovement();
+                             Vec3 vec33 = p_38165_.getDeltaMovement();
+-                            if (((AbstractMinecart)p_38165_).getMinecartType() == AbstractMinecart.Type.FURNACE && this.getMinecartType() != AbstractMinecart.Type.FURNACE) {
++                            if (oMinecart.isPoweredCart() && !this.isPoweredCart()) {
+                                 this.setDeltaMovement(vec32.multiply(0.2, 1.0, 0.2));
+                                 this.push(vec33.x - d0, 0.0, vec33.z - d1);
+                                 p_38165_.setDeltaMovement(vec33.multiply(0.95, 1.0, 0.95));
+-                            } else if (((AbstractMinecart)p_38165_).getMinecartType() != AbstractMinecart.Type.FURNACE
+-                                && this.getMinecartType() == AbstractMinecart.Type.FURNACE) {
++                            } else if (!oMinecart.isPoweredCart() && this.isPoweredCart()) {
+                                 p_38165_.setDeltaMovement(vec33.multiply(0.2, 1.0, 0.2));
+                                 p_38165_.push(vec32.x + d0, 0.0, vec32.z + d1);
+                                 this.setDeltaMovement(vec32.multiply(0.95, 1.0, 0.95));
+@@ -802,6 +_,50 @@
+             case HOPPER -> Items.HOPPER_MINECART;
+             case COMMAND_BLOCK -> Items.COMMAND_BLOCK_MINECART;
+         });
++    }
 +
-+      if (flag && shouldDoRailFunctions()) {
-          Vec3 vec36 = this.getDeltaMovement();
-          double d27 = vec36.horizontalDistance();
-          if (d27 > 0.01D) {
-@@ -533,7 +_,7 @@
- 
-       BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
-       if (BaseRailBlock.isRail(blockstate)) {
--         RailShape railshape = blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty());
-+         RailShape railshape = ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level(), new BlockPos(i, j, k), this);
-          p_38098_ = (double)j;
-          if (railshape.isAscending()) {
-             p_38098_ = (double)(j + 1);
-@@ -572,7 +_,7 @@
- 
-       BlockState blockstate = this.level().getBlockState(new BlockPos(i, j, k));
-       if (BaseRailBlock.isRail(blockstate)) {
--         RailShape railshape = blockstate.getValue(((BaseRailBlock)blockstate.getBlock()).getShapeProperty());
-+         RailShape railshape = ((BaseRailBlock)blockstate.getBlock()).getRailDirection(blockstate, this.level(), new BlockPos(i, j, k), this);
-          Pair<Vec3i, Vec3i> pair = exits(railshape);
-          Vec3i vec3i = pair.getFirst();
-          Vec3i vec3i1 = pair.getSecond();
-@@ -634,6 +_,10 @@
-    }
- 
-    public void push(Entity p_38165_) {
-+      if (getCollisionHandler() != null) {
-+         getCollisionHandler().onEntityCollision(this, p_38165_);
-+         return;
-+      }
-       if (!this.level().isClientSide) {
-          if (!p_38165_.noPhysics && !this.noPhysics) {
-             if (!this.hasPassenger(p_38165_)) {
-@@ -667,11 +_,11 @@
- 
-                      Vec3 vec32 = this.getDeltaMovement();
-                      Vec3 vec33 = p_38165_.getDeltaMovement();
--                     if (((AbstractMinecart)p_38165_).getMinecartType() == AbstractMinecart.Type.FURNACE && this.getMinecartType() != AbstractMinecart.Type.FURNACE) {
-+                     if (((AbstractMinecart)p_38165_).isPoweredCart() && !this.isPoweredCart()) {
-                         this.setDeltaMovement(vec32.multiply(0.2D, 1.0D, 0.2D));
-                         this.push(vec33.x - d0, 0.0D, vec33.z - d1);
-                         p_38165_.setDeltaMovement(vec33.multiply(0.95D, 1.0D, 0.95D));
--                     } else if (((AbstractMinecart)p_38165_).getMinecartType() != AbstractMinecart.Type.FURNACE && this.getMinecartType() == AbstractMinecart.Type.FURNACE) {
-+                     } else if (!((AbstractMinecart)p_38165_).isPoweredCart() && this.isPoweredCart()) {
-                         p_38165_.setDeltaMovement(vec33.multiply(0.2D, 1.0D, 0.2D));
-                         p_38165_.push(vec32.x + d0, 0.0D, vec32.z + d1);
-                         this.setDeltaMovement(vec32.multiply(0.95D, 1.0D, 0.95D));
-@@ -764,6 +_,42 @@
-    public void setCustomDisplay(boolean p_38139_) {
-       this.getEntityData().set(DATA_ID_CUSTOM_DISPLAY, p_38139_);
-    }
 +
-+   // Forge Start
-+   private boolean canUseRail = true;
-+   @Override public boolean canUseRail() { return canUseRail; }
-+   @Override public void setCanUseRail(boolean value) { this.canUseRail = value; }
-+   private float currentSpeedCapOnRail = getMaxCartSpeedOnRail();
-+   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
-+   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
-+   @org.jetbrains.annotations.Nullable private Float maxSpeedAirLateral = null;
-+   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral == null ? (float) this.getMaxSpeed() : maxSpeedAirLateral; }
-+   @Override public void setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }
-+   private float maxSpeedAirVertical = DEFAULT_MAX_SPEED_AIR_VERTICAL;
-+   @Override public float getMaxSpeedAirVertical() { return maxSpeedAirVertical; }
-+   @Override public void setMaxSpeedAirVertical(float value) { maxSpeedAirVertical = value; }
-+   private double dragAir = DEFAULT_AIR_DRAG;
-+   @Override public double getDragAir() { return dragAir; }
-+   @Override public void setDragAir(double value) { dragAir = value; }
-+   @Override
-+   public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
-+      if (!canUseRail()) return getMaxSpeed();
-+      BlockPos pos = this.getCurrentRailPosition();
-+      BlockState state = this.level().getBlockState(pos);
-+      if (!state.is(BlockTags.RAILS)) return getMaxSpeed();
++    private static net.minecraftforge.common.IMinecartCollisionHandler COLLISIONS = null;
++    public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() { return COLLISIONS; }
++    public static void registerCollisionHandler(@Nullable net.minecraftforge.common.IMinecartCollisionHandler handler) { COLLISIONS = handler; }
++              private boolean canUseRail = true;
++    @Override public  boolean canUseRail() { return canUseRail; }
++    @Override public  void    setCanUseRail(boolean value) { this.canUseRail = value; }
++              private float    currentSpeedCapOnRail = getMaxCartSpeedOnRail();
++    @Override public  float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
++    @Override public  void  setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
++              private Float    maxSpeedAirLateral = null;
++    @Override public  float getMaxSpeedAirLateral() { return maxSpeedAirLateral == null ? (float)this.getMaxSpeed() : maxSpeedAirLateral; }
++    @Override public  void  setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }
++              private float    maxSpeedAirVertical = DEFAULT_MAX_SPEED_AIR_VERTICAL;
++    @Override public  float getMaxSpeedAirVertical() { return maxSpeedAirVertical; }
++    @Override public  void  setMaxSpeedAirVertical(float value) { maxSpeedAirVertical = value; }
++              private double    dragAir = DEFAULT_AIR_DRAG;
++    @Override public  double getDragAir() { return dragAir; }
++    @Override public  void   setDragAir(double value) { dragAir = value; }
++    @Override
++    public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
++        if (!canUseRail()) {
++            return getMaxSpeed();
++        }
++        BlockPos pos = this.getCurrentRailPosition();
++        BlockState state = this.level().getBlockState(pos);
 +
-+      float railMaxSpeed = ((BaseRailBlock)state.getBlock()).getRailMaxSpeed(state, this.level(), pos, this);
-+      return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
-+   }
-+   @Override
-+   public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
-+      AbstractMinecart mc = this;
-+      double d24 = mc.isVehicle() ? 0.75D : 1.0D;
-+      double d25 = mc.getMaxSpeedWithRail();
-+      Vec3 vec3d1 = mc.getDeltaMovement();
-+      mc.move(MoverType.SELF, new Vec3(Mth.clamp(d24 * vec3d1.x, -d25, d25), 0.0D, Mth.clamp(d24 * vec3d1.z, -d25, d25)));
-+   }
-+   // Forge end
++        if (!state.is(BlockTags.RAILS)) {
++            return getMaxSpeed();
++        }
++
++        float railMaxSpeed = ((BaseRailBlock)state.getBlock()).getRailMaxSpeed(state, this.level(), pos, this);
++        return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
++    }
++
++    @Override
++    public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
++        AbstractMinecart mc = this;
++        double d24 = mc.isVehicle() ? 0.75D : 1.0D;
++        double d25 = mc.getMaxSpeedWithRail();
++        Vec3 vec3d1 = mc.getDeltaMovement();
++        mc.move(MoverType.SELF, new Vec3(Mth.clamp(d24 * vec3d1.x, -d25, d25), 0.0D, Mth.clamp(d24 * vec3d1.z, -d25, d25)));
+     }
  
-    public ItemStack getPickResult() {
-       Item item;
+     public static enum Type {

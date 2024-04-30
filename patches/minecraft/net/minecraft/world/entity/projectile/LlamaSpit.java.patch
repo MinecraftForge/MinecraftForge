@@ -1,10 +1,12 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -29,6 +_,7 @@
-       super.tick();
-       Vec3 vec3 = this.getDeltaMovement();
-       HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-+      if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-       this.onHit(hitresult);
-       double d0 = this.getX() + vec3.x;
-       double d1 = this.getY() + vec3.y;
+@@ -39,7 +_,8 @@
+         super.tick();
+         Vec3 vec3 = this.getDeltaMovement();
+         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+-        this.hitTargetOrDeflectSelf(hitresult);
++        if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
++            this.hitTargetOrDeflectSelf(hitresult);
+         double d0 = this.getX() + vec3.x;
+         double d1 = this.getY() + vec3.y;
+         double d2 = this.getZ() + vec3.z;

@@ -26,15 +26,13 @@ import org.jetbrains.annotations.Nullable;
  * @see LoggingOut
  * @see Clone
  **/
-public abstract class ClientPlayerNetworkEvent extends Event
-{
+public abstract class ClientPlayerNetworkEvent extends Event {
     private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;
     private final Connection connection;
 
     @ApiStatus.Internal
-    protected ClientPlayerNetworkEvent(final MultiPlayerGameMode multiPlayerGameMode, final LocalPlayer player, final Connection connection)
-    {
+    protected ClientPlayerNetworkEvent(final MultiPlayerGameMode multiPlayerGameMode, final LocalPlayer player, final Connection connection) {
         this.multiPlayerGameMode = multiPlayerGameMode;
         this.player = player;
         this.connection = connection;
@@ -43,24 +41,21 @@ public abstract class ClientPlayerNetworkEvent extends Event
     /**
      * {@return the multiplayer game mode controller for the player}
      */
-    public MultiPlayerGameMode getMultiPlayerGameMode()
-    {
+    public MultiPlayerGameMode getMultiPlayerGameMode() {
         return multiPlayerGameMode;
     }
 
     /**
      * {@return the player instance}
      */
-    public LocalPlayer getPlayer()
-    {
+    public LocalPlayer getPlayer() {
         return player;
     }
 
     /**
      * {@return the network connection for the player}
      */
-    public Connection getConnection()
-    {
+    public Connection getConnection() {
         return connection;
     }
 
@@ -72,11 +67,9 @@ public abstract class ClientPlayerNetworkEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class LoggingIn extends ClientPlayerNetworkEvent
-    {
+    public static class LoggingIn extends ClientPlayerNetworkEvent {
         @ApiStatus.Internal
-        public LoggingIn(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
-        {
+        public LoggingIn(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
             super(controller, player, networkManager);
         }
     }
@@ -91,11 +84,9 @@ public abstract class ClientPlayerNetworkEvent extends Event
      */
     @SuppressWarnings("NullableProblems")
     // Shush IntelliJ, we override non-nullables as nullables in this specific event; see later comment
-    public static class LoggingOut extends ClientPlayerNetworkEvent
-    {
+    public static class LoggingOut extends ClientPlayerNetworkEvent {
         @ApiStatus.Internal
-        public LoggingOut(@Nullable final MultiPlayerGameMode controller, @Nullable final LocalPlayer player, @Nullable final Connection networkManager)
-        {
+        public LoggingOut(@Nullable final MultiPlayerGameMode controller, @Nullable final LocalPlayer player, @Nullable final Connection networkManager) {
             //noinspection ConstantConditions we know these are nullable, but we don't want to annotate the super as nullable since this is the only event with nullables
             super(controller, player, networkManager);
         }
@@ -107,8 +98,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
          */
         @Nullable
         @Override
-        public MultiPlayerGameMode getMultiPlayerGameMode()
-        {
+        public MultiPlayerGameMode getMultiPlayerGameMode() {
             return super.getMultiPlayerGameMode();
         }
 
@@ -119,8 +109,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
          */
         @Nullable
         @Override
-        public LocalPlayer getPlayer()
-        {
+        public LocalPlayer getPlayer() {
             return super.getPlayer();
         }
 
@@ -131,8 +120,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
          */
         @Nullable
         @Override
-        public Connection getConnection()
-        {
+        public Connection getConnection() {
             return super.getConnection();
         }
     }
@@ -145,13 +133,11 @@ public abstract class ClientPlayerNetworkEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Clone extends ClientPlayerNetworkEvent
-    {
+    public static class Clone extends ClientPlayerNetworkEvent {
         private final LocalPlayer oldPlayer;
 
         @ApiStatus.Internal
-        public Clone(final MultiPlayerGameMode pc, final LocalPlayer oldPlayer, final LocalPlayer newPlayer, final Connection networkManager)
-        {
+        public Clone(final MultiPlayerGameMode pc, final LocalPlayer oldPlayer, final LocalPlayer newPlayer, final Connection networkManager) {
             super(pc, newPlayer, networkManager);
             this.oldPlayer = oldPlayer;
         }
@@ -159,16 +145,14 @@ public abstract class ClientPlayerNetworkEvent extends Event
         /**
          * {@return the previous player instance}
          */
-        public LocalPlayer getOldPlayer()
-        {
+        public LocalPlayer getOldPlayer() {
             return oldPlayer;
         }
 
         /**
          * {@return the newly created player instance}
          */
-        public LocalPlayer getNewPlayer()
-        {
+        public LocalPlayer getNewPlayer() {
             return super.getPlayer();
         }
 
@@ -178,8 +162,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
          * @see #getNewPlayer()
          */
         @Override
-        public LocalPlayer getPlayer()
-        {
+        public LocalPlayer getPlayer() {
             return super.getPlayer();
         }
     }

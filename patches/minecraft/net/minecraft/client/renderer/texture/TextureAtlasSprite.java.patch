@@ -1,17 +1,16 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -123,4 +_,14 @@
- 
-       void close();
-    }
+@@ -137,4 +_,13 @@
+         @Override
+         void close();
+     }
 +
-+   // Forge Start
-+   public int getPixelRGBA(int frameIndex, int x, int y) {
-+       if (this.contents.animatedTexture != null) {
-+           x += this.contents.animatedTexture.getFrameX(frameIndex) * this.contents.width;
-+           y += this.contents.animatedTexture.getFrameY(frameIndex) * this.contents.height;
-+       }
++    public int getPixelRGBA(int frameIndex, int x, int y) {
++        if (this.contents.animatedTexture != null) {
++            x += this.contents.animatedTexture.getFrameX(frameIndex) * this.contents.width;
++            y += this.contents.animatedTexture.getFrameY(frameIndex) * this.contents.height;
++        }
 +
-+       return this.contents.getOriginalImage().getPixelRGBA(x, y);
-+   }
++        return this.contents.getOriginalImage().getPixelRGBA(x, y);
++    }
  }

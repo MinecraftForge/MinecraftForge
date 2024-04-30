@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/item/AnimalArmorItem.java
++++ b/net/minecraft/world/item/AnimalArmorItem.java
+@@ -48,7 +_,7 @@
+         return false;
+     }
+ 
+-    public static enum BodyType {
++    public static enum BodyType implements net.minecraftforge.common.IExtensibleEnum {
+         EQUESTRIAN(p_331659_ -> p_331659_.withPath(p_329177_ -> "textures/entity/horse/armor/horse_armor_" + p_329177_), SoundEvents.ITEM_BREAK),
+         CANINE(p_333424_ -> p_333424_.withPath("textures/entity/wolf/wolf_armor"), SoundEvents.WOLF_ARMOR_BREAK);
+ 
+@@ -58,6 +_,10 @@
+         private BodyType(final Function<ResourceLocation, ResourceLocation> p_332420_, final SoundEvent p_335661_) {
+             this.textureLocator = p_332420_;
+             this.breakingSound = p_335661_;
++        }
++
++        public static BodyType create(String name, final Function<ResourceLocation, ResourceLocation> path, SoundEvent sound) {
++            throw new IllegalStateException("Enum not extended");
+         }
+     }
+ }

@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -28,6 +29,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
@@ -47,7 +49,9 @@ import net.minecraftforge.test.BaseTestMod;
 @Mod(CustomIngredientsTest.MODID)
 public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     static final String MODID = "custom_ingredients";
+    private static final String TAG_DAMAGE = "damage";
     private static final int TEST_DAMAGE = 3;
+    private static final String TAG_DISPLAY_NAME = "display_name";
     private static final String TEST_DISPLAY_NAME = "{\"text\":\"Test Item\"}";
     private static final TagKey<Item> LEFT = tag("left");
     private static final TagKey<Item> RIGHT = tag("right");
@@ -62,7 +66,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
         var blockTags = new BlockTagsGen(out, look, exist);
         gen.addProvider(event.includeServer(), blockTags);
         gen.addProvider(event.includeServer(), new ItemTagsGen(out, look, blockTags, exist));
-        gen.addProvider(event.includeServer(), new Recipes(out));
+        gen.addProvider(event.includeServer(), new Recipes(out, event.getLookupProvider()));
     }
 
     private static ResourceLocation rl(String path) {
@@ -90,13 +94,13 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     private static CompoundTag named() {
         return CompoundTag.builder()
-            .put(ItemStack.TAG_DISPLAY_NAME, TEST_DISPLAY_NAME)
+            .put(TAG_DISPLAY_NAME, TEST_DISPLAY_NAME)
             .build();
     }
 
     private static CompoundTag damaged() {
         return CompoundTag.builder()
-            .putInt(ItemStack.TAG_DAMAGE, TEST_DAMAGE)
+            .putInt(TAG_DAMAGE, TEST_DAMAGE)
             .build();
     }
 
@@ -114,7 +118,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     private static ItemStack tagged(ItemLike item, CompoundTag tag) {
         var ret = stack(item);
-        ret.setTag(tag.copy());
+        ret.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
         return ret;
     }
 
@@ -185,9 +189,9 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
                 .define('X', stack)
                 .build();
 
-        assertRecipeMiss(helper, RecipeType.CRAFTING, container.apply(stack(Items.IRON_PICKAXE)));
-        assertRecipeMatch(helper, RecipeType.CRAFTING, container.apply(damaged(Items.IRON_PICKAXE)), "strict_nbt_ingredient");
-        assertRecipeMiss(helper, RecipeType.CRAFTING, container.apply(damaged(Items.STONE_PICKAXE)));
+        assertRecipeMiss(helper, RecipeType.CRAFTING, container.apply(stack(Items.DIAMOND_PICKAXE)));
+        assertRecipeMatch(helper, RecipeType.CRAFTING, container.apply(named(Items.DIAMOND_PICKAXE)), "strict_nbt_ingredient");
+        assertRecipeMiss(helper, RecipeType.CRAFTING, container.apply(named(Items.NETHERITE_PICKAXE)));
     }
 
     @GameTest(template = "forge:empty3x3x3")
@@ -242,8 +246,8 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     }
 
     private static class Recipes extends RecipeProvider implements IConditionBuilder, IIngredientBuilder, INBTBuilder{
-        public Recipes(PackOutput gen) {
-            super(gen);
+        public Recipes(PackOutput gen, CompletableFuture<HolderLookup.Provider> lookup) {
+            super(gen, lookup);
         }
 
         private static ShapedRecipeBuilder shaped() {
@@ -294,7 +298,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
             // strict NBT match - should match an unnamed pickaxe that lost 3 durability
             shaped()
                 .pattern("XXX")
-                .define('X', strictNbt(damaged(Items.IRON_PICKAXE)))
+                .define('X', strictNbt(named(Items.DIAMOND_PICKAXE)))
                 .unlockedBy(hasName, has)
                 .save(out, rl("strict_nbt_ingredient"));
 

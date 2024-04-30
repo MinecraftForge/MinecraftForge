@@ -47,13 +47,6 @@ public class LivingDrownEvent extends LivingEvent {
         this.bubbleCount = bubbleCount;
     }
 
-
-    @ApiStatus.Internal
-    @Deprecated(forRemoval = true, since = "1.20.1")
-    public LivingDrownEvent(LivingEntity entity, boolean isDrowning) {
-    	this(entity, isDrowning, 2.0F, 8);
-    }
-
     /**
      * This method returns true if the entity is "actively" drowning.<br>
      * For most entities, this happens when their air supply reaches -20.<br>

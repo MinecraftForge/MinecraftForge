@@ -66,7 +66,7 @@ public class TitleScreenModUpdateIndicator extends Screen
     public static TitleScreenModUpdateIndicator init(TitleScreen guiMainMenu, Button modButton)
     {
         TitleScreenModUpdateIndicator titleScreenModUpdateIndicator = new TitleScreenModUpdateIndicator(modButton);
-        titleScreenModUpdateIndicator.resize(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
+        //titleScreenModUpdateIndicator.resize(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
         titleScreenModUpdateIndicator.init();
         return titleScreenModUpdateIndicator;
     }

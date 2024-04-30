@@ -1,75 +1,71 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -307,8 +_,11 @@
-          this.loadEffect(new ResourceLocation("shaders/post/creeper.json"));
-       } else if (p_109107_ instanceof Spider) {
-          this.loadEffect(new ResourceLocation("shaders/post/spider.json"));
-+         this.loadEffect(new ResourceLocation("shaders/post/spider.json"));
-       } else if (p_109107_ instanceof EnderMan) {
-          this.loadEffect(new ResourceLocation("shaders/post/invert.json"));
-+      } else {
-+         net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_109107_, this);
-       }
+@@ -310,6 +_,8 @@
+             this.loadEffect(new ResourceLocation("shaders/post/spider.json"));
+         } else if (p_109107_ instanceof EnderMan) {
+             this.loadEffect(new ResourceLocation("shaders/post/invert.json"));
++        } else {
++            net.minecraftforge.client.ForgeHooksClient.loadEntityShader(p_109107_, this);
+         }
+     }
  
-    }
-@@ -610,6 +_,7 @@
-          list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_breeze_wind", DefaultVertexFormat.NEW_ENTITY), (p_308287_) -> {
-             rendertypeBreezeWindShader = p_308287_;
-          }));
-+         net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterShadersEvent(p_250719_, list1));
-       } catch (IOException ioexception) {
-          list1.forEach((p_172729_) -> {
-             p_172729_.getFirst().close();
-@@ -757,7 +_,7 @@
-             d0 *= Mth.lerp(this.minecraft.options.fovEffectScale().get(), 1.0D, (double)0.85714287F);
-          }
- 
--         return d0;
-+         return net.minecraftforge.client.ForgeHooksClient.getFieldOfView(this, p_109142_, p_109143_, d0, p_109144_);
-       }
-    }
- 
-@@ -894,12 +_,12 @@
- 
-          Window window = this.minecraft.getWindow();
-          RenderSystem.clear(256, Minecraft.ON_OSX);
--         Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, 21000.0F);
-+         Matrix4f matrix4f = (new Matrix4f()).setOrtho(0.0F, (float)((double)window.getWidth() / window.getGuiScale()), (float)((double)window.getHeight() / window.getGuiScale()), 0.0F, 1000.0F, net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
-          RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
-          PoseStack posestack = RenderSystem.getModelViewStack();
-          posestack.pushPose();
-          posestack.setIdentity();
--         posestack.translate(0.0F, 0.0F, -11000.0F);
-+         posestack.translate(0.0D, 0.0D, 1000F-net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
-          RenderSystem.applyModelViewMatrix();
-          Lighting.setupFor3DItems();
-          GuiGraphics guigraphics = new GuiGraphics(this.minecraft, this.renderBuffers.bufferSource());
-@@ -935,7 +_,7 @@
+@@ -532,6 +_,7 @@
+                 Pair.of(new ShaderInstance(p_250719_, "rendertype_gui_ghost_recipe_overlay", DefaultVertexFormat.POSITION_COLOR), p_286147_ -> rendertypeGuiGhostRecipeOverlayShader = p_286147_)
+             );
+             list1.add(Pair.of(new ShaderInstance(p_250719_, "rendertype_breeze_wind", DefaultVertexFormat.NEW_ENTITY), p_308287_ -> rendertypeBreezeWindShader = p_308287_));
++            net.minecraftforge.client.event.ForgeEventFactoryClient.onRegisterShaders(p_250719_, list1);
+             this.loadBlurEffect(p_250719_);
+         } catch (IOException ioexception) {
+             list1.forEach(p_172729_ -> p_172729_.getFirst().close());
+@@ -691,7 +_,7 @@
+                 d0 *= Mth.lerp(this.minecraft.options.fovEffectScale().get(), 1.0, 0.85714287F);
              }
-          } else if (flag && this.minecraft.screen != null) {
-             try {
--               this.minecraft.screen.renderWithTooltip(guigraphics, i, j, this.minecraft.getDeltaFrameTime());
-+               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.minecraft.screen, guigraphics, i, j, this.minecraft.getDeltaFrameTime());
-             } catch (Throwable throwable1) {
-                CrashReport crashreport1 = CrashReport.forThrowable(throwable1, "Rendering screen");
-                CrashReportCategory crashreportcategory1 = crashreport1.addCategory("Screen render details");
-@@ -1090,12 +_,19 @@
  
-       Matrix4f matrix4f = posestack.last().pose();
-       this.resetProjectionMatrix(matrix4f);
+-            return d0;
++            return net.minecraftforge.client.event.ForgeEventFactoryClient.fireComputeFov(this, p_109142_, p_109143_, d0, p_109144_).getFOV();
+         }
+     }
+ 
+@@ -850,12 +_,12 @@
+                     (float)((double)window.getHeight() / window.getGuiScale()),
+                     0.0F,
+                     1000.0F,
+-                    21000.0F
++                    21000.0f
+                 );
+             RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
+             Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
+             matrix4fstack.pushMatrix();
+-            matrix4fstack.translation(0.0F, 0.0F, -11000.0F);
++            matrix4fstack.translation(0.0F, 0.0F, 1000F - net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
+             RenderSystem.applyModelViewMatrix();
+             Lighting.setupFor3DItems();
+             GuiGraphics guigraphics = new GuiGraphics(this.minecraft, this.renderBuffers.bufferSource());
+@@ -889,7 +_,7 @@
+                 }
+             } else if (flag && this.minecraft.screen != null) {
+                 try {
+-                    this.minecraft.screen.renderWithTooltip(guigraphics, i, j, this.minecraft.getDeltaFrameTime());
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.minecraft.screen, guigraphics, i, j, this.minecraft.getDeltaFrameTime());
+                 } catch (Throwable throwable1) {
+                     CrashReport crashreport1 = CrashReport.forThrowable(throwable1, "Rendering screen");
+                     CrashReportCategory crashreportcategory1 = crashreport1.addCategory("Screen render details");
+@@ -1064,12 +_,17 @@
+         }
+ 
+         this.resetProjectionMatrix(matrix4f);
 +
-+      net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, camera, p_109090_);
-+      camera.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
-+      p_109092_.mulPose(Axis.ZP.rotationDegrees(cameraSetup.getRoll()));
-+
-       p_109092_.mulPose(Axis.XP.rotationDegrees(camera.getXRot()));
-       p_109092_.mulPose(Axis.YP.rotationDegrees(camera.getYRot() + 180.0F));
-       Matrix3f matrix3f = (new Matrix3f(p_109092_.last().normal())).invert();
-       RenderSystem.setInverseViewRotationMatrix(matrix3f);
-       this.minecraft.levelRenderer.prepareCullFrustum(p_109092_, camera.getPosition(), this.getProjectionMatrix(Math.max(d0, (double)this.minecraft.options.fov().get().intValue())));
-       this.minecraft.levelRenderer.renderLevel(p_109092_, p_109090_, p_109091_, flag, camera, this, this.lightTexture, matrix4f);
-+      this.minecraft.getProfiler().popPush("forge_render_last");
-+      net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL.dispatch(this.minecraft.levelRenderer, posestack, matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
-       this.minecraft.getProfiler().popPush("hand");
-       if (this.renderHand) {
-          RenderSystem.clear(256, Minecraft.ON_OSX);
++        var cameraSetup = net.minecraftforge.client.event.ForgeEventFactoryClient.fireComputeCameraAngles(this, camera, p_109090_);
++        camera.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
+         Matrix4f matrix4f1 = new Matrix4f()
+-            .rotationXYZ(camera.getXRot() * (float) (Math.PI / 180.0), camera.getYRot() * (float) (Math.PI / 180.0) + (float) Math.PI, 0.0F);
++            .rotationXYZ(camera.getXRot() * (float) (Math.PI / 180.0), camera.getYRot() * (float) (Math.PI / 180.0) + (float) Math.PI, cameraSetup.getRoll() * (float) (Math.PI / 180.0));
+         this.minecraft
+             .levelRenderer
+             .prepareCullFrustum(camera.getPosition(), matrix4f1, this.getProjectionMatrix(Math.max(d0, (double)this.minecraft.options.fov().get().intValue())));
+         this.minecraft.levelRenderer.renderLevel(p_109090_, p_109091_, flag, camera, this, this.lightTexture, matrix4f1, matrix4f);
++        this.minecraft.getProfiler().popPush("forge_render_last");
++        net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_LEVEL.dispatch(this.minecraft.levelRenderer, posestack.last().pose(), matrix4f, this.minecraft.levelRenderer.getTicks(), camera, this.minecraft.levelRenderer.getFrustum());
+         this.minecraft.getProfiler().popPush("hand");
+         if (this.renderHand) {
+             RenderSystem.clear(256, Minecraft.ON_OSX);

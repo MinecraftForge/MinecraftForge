@@ -1,50 +1,21 @@
 --- a/net/minecraft/world/item/BowItem.java
 +++ b/net/minecraft/world/item/BowItem.java
-@@ -25,18 +_,23 @@
-       if (p_40669_ instanceof Player player) {
-          boolean flag = player.getAbilities().instabuild || EnchantmentHelper.getItemEnchantmentLevel(Enchantments.INFINITY_ARROWS, p_40667_) > 0;
-          ItemStack itemstack = player.getProjectile(p_40667_);
+@@ -27,6 +_,9 @@
+             ItemStack itemstack = player.getProjectile(p_40667_);
+             if (!itemstack.isEmpty()) {
+                 int i = this.getUseDuration(p_40667_) - p_40670_;
++                i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40667_, p_40668_, player, i, true);
++                if (i < 0) return;
 +
-+         int i = this.getUseDuration(p_40667_) - p_40670_;
-+         i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40667_, p_40668_, player, i, !itemstack.isEmpty() || flag);
-+         if (i < 0) return;
-+
-          if (!itemstack.isEmpty() || flag) {
-             if (itemstack.isEmpty()) {
-                itemstack = new ItemStack(Items.ARROW);
-             }
- 
--            int i = this.getUseDuration(p_40667_) - p_40670_;
-             float f = getPowerForTime(i);
-             if (!((double)f < 0.1D)) {
--               boolean flag1 = flag && itemstack.is(Items.ARROW);
-+               boolean flag1 = player.getAbilities().instabuild || (itemstack.getItem() instanceof ArrowItem && ((ArrowItem)itemstack.getItem()).isInfinite(itemstack, p_40667_, player));
-                if (!p_40668_.isClientSide) {
-                   ArrowItem arrowitem = (ArrowItem)(itemstack.getItem() instanceof ArrowItem ? itemstack.getItem() : Items.ARROW);
-                   AbstractArrow abstractarrow = arrowitem.createArrow(p_40668_, itemstack, player);
-+                  abstractarrow = customArrow(abstractarrow);
-                   abstractarrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, f * 3.0F, 1.0F);
-                   if (f == 1.0F) {
-                      abstractarrow.setCritArrow(true);
-@@ -101,6 +_,10 @@
-    public InteractionResultHolder<ItemStack> use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
-       ItemStack itemstack = p_40673_.getItemInHand(p_40674_);
-       boolean flag = !p_40673_.getProjectile(itemstack).isEmpty();
-+
-+      InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_40672_, p_40673_, p_40674_, flag);
-+      if (ret != null) return ret;
-+
-       if (!p_40673_.getAbilities().instabuild && !flag) {
-          return InteractionResultHolder.fail(itemstack);
-       } else {
-@@ -111,6 +_,10 @@
- 
-    public Predicate<ItemStack> getAllSupportedProjectiles() {
-       return ARROW_ONLY;
-+   }
-+
-+   public AbstractArrow customArrow(AbstractArrow arrow) {
-+      return arrow;
-    }
- 
-    public int getDefaultProjectileRange() {
+                 float f = getPowerForTime(i);
+                 if (!((double)f < 0.1)) {
+                     List<ItemStack> list = draw(p_40667_, itemstack, player);
+@@ -81,6 +_,8 @@
+     public InteractionResultHolder<ItemStack> use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
+         ItemStack itemstack = p_40673_.getItemInHand(p_40674_);
+         boolean flag = !p_40673_.getProjectile(itemstack).isEmpty();
++        var ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_40672_, p_40673_, p_40674_, flag);
++        if (ret != null) return ret;
+         if (!p_40673_.hasInfiniteMaterials() && !flag) {
+             return InteractionResultHolder.fail(itemstack);
+         } else {

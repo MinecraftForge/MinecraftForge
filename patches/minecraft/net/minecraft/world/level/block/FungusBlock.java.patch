@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/level/block/FungusBlock.java
 +++ b/net/minecraft/world/level/block/FungusBlock.java
-@@ -66,7 +_,9 @@
+@@ -76,6 +_,10 @@
  
-    public void performBonemeal(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {
-       this.getFeature(p_221243_).ifPresent((p_256352_) -> {
--         p_256352_.value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_);
-+         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221243_, p_221244_, p_221245_, p_256352_);
-+         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return;
-+         event.getFeature().value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_);
-       });
-    }
+     @Override
+     public void performBonemeal(ServerLevel p_221243_, RandomSource p_221244_, BlockPos p_221245_, BlockState p_221246_) {
+-        this.getFeature(p_221243_).ifPresent(p_256352_ -> p_256352_.value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_));
++        this.getFeature(p_221243_).ifPresent(p_256352_ -> {
++            var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221243_, p_221244_, p_221245_, p_256352_);
++            if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return;
++            event.getFeature().value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_);
++        });
+     }
  }

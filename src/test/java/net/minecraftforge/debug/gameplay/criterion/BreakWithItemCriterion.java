@@ -44,8 +44,8 @@ public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWi
     public void trigger(ServerPlayer player, BlockPos block) {
         this.trigger(player, it ->
             it.breakingBlock.matches((ServerLevel) player.level(), block) && (
-                it.holdingItem.matches(player.getItemInHand(InteractionHand.MAIN_HAND)) ||
-                    it.allowOffHand && it.holdingItem.matches(player.getItemInHand(InteractionHand.OFF_HAND))
+                it.holdingItem.test(player.getItemInHand(InteractionHand.MAIN_HAND)) ||
+                    it.allowOffHand && it.holdingItem.test(player.getItemInHand(InteractionHand.OFF_HAND))
             ));
     }
 

@@ -1,17 +1,20 @@
 {
   "type": "forge:conditional",
   "forge:condition": {
-    "type": "forge:false",
-    "value": {}
+    "type": "forge:false"
   },
   "recipes": [
     {
-      "type": "minecraft:stonecutting",
-      "count": 1,
-      "ingredient": {
-        "item": "minecraft:dirt"
-      },
-      "result": "minecraft:diamond_block"
+      "recipe": {
+        "type": "minecraft:stonecutting",
+        "ingredient": {
+          "item": "minecraft:dirt"
+        },
+        "result": {
+          "count": 1,
+          "id": "minecraft:diamond_block"
+        }
+      }
     }
   ]
 }

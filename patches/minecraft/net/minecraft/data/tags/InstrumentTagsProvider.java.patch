@@ -1,16 +1,13 @@
 --- a/net/minecraft/data/tags/InstrumentTagsProvider.java
 +++ b/net/minecraft/data/tags/InstrumentTagsProvider.java
-@@ -9,8 +_,13 @@
- import net.minecraft.world.item.Instruments;
+@@ -13,6 +_,10 @@
+         super(p_256418_, Registries.INSTRUMENT, p_256038_);
+     }
  
- public class InstrumentTagsProvider extends TagsProvider<Instrument> {
-+   /** @deprecated Forge: Use the {@linkplain #InstrumentTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public InstrumentTagsProvider(PackOutput p_256418_, CompletableFuture<HolderLookup.Provider> p_256038_) {
-       super(p_256418_, Registries.INSTRUMENT, p_256038_);
-+   }
-+   public InstrumentTagsProvider(PackOutput p_256418_, CompletableFuture<HolderLookup.Provider> p_256038_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256418_, Registries.INSTRUMENT, p_256038_, modId, existingFileHelper);
-    }
- 
-    protected void addTags(HolderLookup.Provider p_256291_) {
++    public InstrumentTagsProvider(PackOutput p_256418_, CompletableFuture<HolderLookup.Provider> p_256038_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_256418_, Registries.INSTRUMENT, p_256038_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_256291_) {
+         this.tag(InstrumentTags.REGULAR_GOAT_HORNS)

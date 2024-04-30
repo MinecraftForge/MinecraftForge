@@ -23,32 +23,6 @@ public class KeyMappingLookup {
             map.put(modifier, new HashMap<>());
     }
 
-    /** Replaced by {@link #getAll(InputConstants.Key) getAll} */
-    @Deprecated(forRemoval = true, since = "1.20.1")
-    @Nullable
-    public KeyMapping get(InputConstants.Key keyCode) {
-        var activeModifier = KeyModifier.getActiveModifier();
-        if (!activeModifier.matches(keyCode)) {
-            var binding = get(keyCode, activeModifier);
-            if (binding != null)
-                return binding;
-        }
-        return get(keyCode, KeyModifier.NONE);
-    }
-
-    @Nullable
-    @Deprecated(forRemoval = true, since = "1.20.1")
-    private KeyMapping get(InputConstants.Key keyCode, KeyModifier keyModifier) {
-        var bindings = map.get(keyModifier).get(keyCode);
-        if (bindings != null) {
-            for (var binding : bindings) {
-                if (binding.isActiveAndMatches(keyCode))
-                    return binding;
-            }
-        }
-        return null;
-    }
-
     /**
      * Returns all active keys associated with the given key code and the active
      * modifiers and conflict context.

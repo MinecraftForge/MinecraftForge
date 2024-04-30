@@ -13,90 +13,116 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ConfigurationTask;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.RepositorySource;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Container;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownEnderpearl;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.LevelSimulatedReader;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.world.level.portal.PortalShape;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.SpawnGroupData;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Zombie;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ConfigurationTask;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SlotAccess;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickAction;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.PotionBrewing.Builder;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.SpawnData;
-import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkType;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.storage.PlayerDataStorage;
+import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.brewing.BrewingRecipeRegisterEvent;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -105,37 +131,51 @@ import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.PositionCheck;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
+import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.ItemFishedEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
@@ -150,29 +190,35 @@ import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.level.ChunkTicketLevelUpdatedEvent;
 import net.minecraftforge.event.level.ChunkWatchEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
+import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.event.level.PistonEvent;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
 import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 @ApiStatus.Internal
-public class ForgeEventFactory {
+public final class ForgeEventFactory {
+    private ForgeEventFactory() {}
+
     private static boolean post(Event e) {
         return MinecraftForge.EVENT_BUS.post(e);
     }
 
     private static <E extends Event> E fire(E e) {
-        MinecraftForge.EVENT_BUS.post(e);
+        post(e);
         return e;
+    }
+
+    private static <T extends Event & IModBusEvent> void postModBus(T e) {
+        ModLoader.get().postEvent(e);
     }
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction) {
@@ -202,7 +248,11 @@ public class ForgeEventFactory {
     }
 
     public static void onPlayerDestroyItem(Player player, @NotNull ItemStack stack, @Nullable InteractionHand hand) {
-        post(new PlayerDestroyItemEvent(player, stack, hand));
+        onPlayerDestroyItem(player, stack, LivingEntity.getSlotForHand(hand));
+    }
+
+    public static void onPlayerDestroyItem(Player player, @NotNull ItemStack stack, @Nullable EquipmentSlot slot) {
+        post(new PlayerDestroyItemEvent(player, stack, slot));
     }
 
     public static boolean checkSpawnPlacements(EntityType<?> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random, boolean defaultResult) {
@@ -272,12 +322,12 @@ public class ForgeEventFactory {
      */
     @Nullable
     @SuppressWarnings("deprecation") // Call to deprecated Mob#finalizeSpawn is expected.
-    public static SpawnGroupData onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag spawnTag) {
-        var event = new MobSpawnEvent.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, spawnType, spawnData, spawnTag, null);
+    public static SpawnGroupData onFinalizeSpawn(Mob mob, ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData) {
+        var event = new MobSpawnEvent.FinalizeSpawn(mob, level, mob.getX(), mob.getY(), mob.getZ(), difficulty, spawnType, spawnData, null, null);
         boolean cancel = post(event);
 
         if (!cancel)
-            mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData(), event.getSpawnTag());
+            mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData());
 
         return cancel ? null : event.getSpawnData();
     }
@@ -454,6 +504,10 @@ public class ForgeEventFactory {
         return post(new AnimalTameEvent(animal, tamer));
     }
 
+    public static boolean onPlayerPickupXp(Player player, ExperienceOrb orb) {
+        return post(new PlayerXpEvent.PickupXp(player, orb));
+    }
+
     public static Player.BedSleepingProblem onPlayerSleepInBed(Player player, Optional<BlockPos> pos) {
         return fire(new PlayerSleepInBedEvent(player, pos)).getResultStatus();
     }
@@ -468,6 +522,10 @@ public class ForgeEventFactory {
 
     public static boolean onPlayerSpawnSet(Player player, ResourceKey<Level> levelKey, BlockPos pos, boolean forced) {
         return post(new PlayerSetSpawnEvent(player, levelKey, pos, forced));
+    }
+
+    public static PlayerSpawnPhantomsEvent onPlayerSpawnPhantom(Player player, int phantomsToSpawn) {
+        return fire(new PlayerSpawnPhantomsEvent(player, phantomsToSpawn));
     }
 
     public static void onPlayerClone(Player player, Player oldPlayer, boolean wasDeath) {
@@ -659,6 +717,11 @@ public class ForgeEventFactory {
         post(new LivingConversionEvent.Post(entity, outcome));
     }
 
+    public static BabyEntitySpawnEvent onBabySpawn(Mob parentA, Mob parentB, @Nullable AgeableMob proposedChild) {
+        return fire(new BabyEntitySpawnEvent(parentA, parentB, proposedChild));
+
+    }
+
     public static EntityTeleportEvent.TeleportCommand onEntityTeleportCommand(Entity entity, double targetX, double targetY, double targetZ) {
         return fire(new EntityTeleportEvent.TeleportCommand(entity, targetX, targetY, targetZ));
     }
@@ -806,9 +869,18 @@ public class ForgeEventFactory {
          post(new LevelEvent.Load(level));
     }
 
+    public static void onLevelSave(Level level) {
+        post(new LevelEvent.Save(level));
+    }
+
     public static void onChunkDataSave(ChunkAccess chunk, LevelAccessor world, CompoundTag data) {
         post(new ChunkDataEvent.Save(chunk, world, data));
     }
+
+    public static void onChunkDataLoad(ChunkAccess chunk, CompoundTag data, ChunkType status) {
+        post(new ChunkDataEvent.Load(chunk, data, status));
+    }
+
     public static void onGameShuttingDown() {
         post(new GameShuttingDownEvent());
     }
@@ -839,5 +911,146 @@ public class ForgeEventFactory {
 
     public static LivingFallEvent onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
         return fire(new LivingFallEvent(entity, distance, damageMultiplier));
+    }
+
+    public static LivingBreatheEvent onLivingBreathe(LivingEntity entity, boolean canBreathe, int consumeAirAmount, int refillAirAmount, boolean canRefillAir) {
+        return fire(new LivingBreatheEvent(entity, canBreathe, consumeAirAmount, refillAirAmount, canRefillAir));
+    }
+
+    public static LivingDrownEvent onLivingDrown(LivingEntity entity, boolean isDrowning, float damageAmount, int bubbleCount) {
+        return fire(new LivingDrownEvent(entity, isDrowning, damageAmount, bubbleCount));
+    }
+
+    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ) {
+        return fire(new LivingKnockBackEvent(target, strength, ratioX, ratioZ));
+    }
+
+    public static void onLeftClickEmpty(Player player) {
+        post(new PlayerInteractEvent.LeftClickEmpty(player));
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(Player player, BlockPos pos, Direction face, ServerboundPlayerActionPacket.Action action) {
+        return fire(new PlayerInteractEvent.LeftClickBlock(player, pos, face, PlayerInteractEvent.LeftClickBlock.Action.convert(action)));
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlockHold(Player player, BlockPos pos, Direction face) {
+        return fire(new PlayerInteractEvent.LeftClickBlock(player, pos, face, PlayerInteractEvent.LeftClickBlock.Action.CLIENT_HOLD));
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
+        return fire(new PlayerInteractEvent.RightClickBlock(player, hand, pos, hitVec));
+    }
+
+    public static PlayerInteractEvent.RightClickItem onRightClickItem(Player player, InteractionHand hand) {
+        return fire(new PlayerInteractEvent.RightClickItem(player, hand));
+    }
+
+    public static PlayerInteractEvent.EntityInteract onEntityInteract(Player player, Entity entity, InteractionHand hand) {
+        return fire(new PlayerInteractEvent.EntityInteract(player, hand, entity));
+    }
+
+    public static PlayerInteractEvent.EntityInteractSpecific onEntityInteractSpecific(Player player, Entity entity, InteractionHand hand, Vec3 vec3d) {
+        return fire(new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d));
+    }
+
+    public static void onRightClickEmpty(Player player, InteractionHand hand) {
+        post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+    }
+
+    // TODO: Remove from mod bus - Lex 04222024
+    public static void addPackFindersServer(Consumer<RepositorySource> consumer) {
+        postModBus(new AddPackFindersEvent(PackType.SERVER_DATA, consumer));
+    }
+
+    public static boolean onEntityJoinLevel(Entity entity, Level level) {
+        return post(new EntityJoinLevelEvent(entity, level));
+    }
+    public static boolean onEntityJoinLevel(Entity entity, Level level, boolean loadedFromDisk) {
+        return post(new EntityJoinLevelEvent(entity, level, loadedFromDisk));
+    }
+
+    public static boolean onEntityLeaveLevel(Entity entity, Level level) {
+        return post(new EntityLeaveLevelEvent(entity, level));
+    }
+
+    public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
+        post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+    }
+
+    public static void onTagsUpdated(RegistryAccess registryAccess, boolean fromClientPacket, boolean isIntegratedServerConnection) {
+        post(new TagsUpdatedEvent(registryAccess, fromClientPacket, isIntegratedServerConnection));
+    }
+
+    public static boolean onLivingAttackEntity(LivingEntity entity, DamageSource src, float amount) {
+        return post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static boolean onVanillaGameEvent(Level level, Holder<GameEvent> vanillaEvent, Vec3 pos, GameEvent.Context context) {
+        return post(new VanillaGameEvent(level, vanillaEvent.get(), pos, context));
+    }
+
+    public static boolean onLivingEffectExpire(LivingEntity entity, MobEffectInstance effect) {
+        return post(new MobEffectEvent.Expired(entity, effect));
+    }
+
+    public static boolean onLivingEffectAdd(LivingEntity entity, MobEffectInstance oldEffect, MobEffectInstance newEffect, Entity source) {
+        return post(new MobEffectEvent.Added(entity, oldEffect, newEffect, source));
+    }
+
+    public static boolean onLivingEffectRemove(LivingEntity entity, MobEffect effect) {
+        return post(new MobEffectEvent.Remove(entity, effect));
+    }
+
+    public static boolean onLivingEffectRemove(LivingEntity entity, MobEffectInstance effect) {
+        return post(new MobEffectEvent.Remove(entity, effect));
+    }
+
+    public static MobEffectEvent.Applicable onLivingEffectCanApply(LivingEntity entity, MobEffectInstance effect) {
+        return fire(new MobEffectEvent.Applicable(entity, effect));
+    }
+
+    public static void onLivingEquipmentChange(LivingEntity entity, EquipmentSlot slot, ItemStack from, ItemStack to) {
+        fire(new LivingEquipmentChangeEvent(entity, slot, from, to));
+    }
+
+    public static LivingChangeTargetEvent onLivingChangeTargetMob(LivingEntity entity, LivingEntity originalTarget) {
+        return fire(new LivingChangeTargetEvent(entity, originalTarget, LivingChangeTargetEvent.LivingTargetType.MOB_TARGET));
+    }
+
+    public static LivingChangeTargetEvent onLivingChangeTargetBehavior(LivingEntity entity, LivingEntity originalTarget) {
+        return fire(new LivingChangeTargetEvent(entity, originalTarget, LivingChangeTargetEvent.LivingTargetType.BEHAVIOR_TARGET));
+    }
+
+    public static ItemFishedEvent onPlayerFishedItem(List<ItemStack> stacks, int rodDamage, FishingHook hook) {
+        return fire(new ItemFishedEvent(stacks, rodDamage, hook));
+    }
+
+    public static PlayerXpEvent.XpChange onPlayerXpChange(Player player, int xp) {
+        return fire(new PlayerXpEvent.XpChange(player, xp));
+    }
+
+    public static PlayerXpEvent.LevelChange onPlayerLevelChange(Player player, int levels) {
+        return fire(new PlayerXpEvent.LevelChange(player, levels));
+    }
+
+
+    public static GrindstoneEvent.OnPlaceItem onGrindstoneChange(@NotNull ItemStack top, @NotNull ItemStack bottom, Container outputSlot, int xp) {
+        return fire(new GrindstoneEvent.OnPlaceItem(top, bottom, xp));
+    }
+
+    public static void onBrewingRecipeRegister(Builder builder, FeatureFlagSet features) {
+        fire(new BrewingRecipeRegisterEvent(builder, features));
+    }
+
+    public static boolean onItemStackedOn(ItemStack carriedItem, ItemStack stackedOnItem, Slot slot, ClickAction action, Player player, SlotAccess carriedSlotAccess) {
+        return post(new ItemStackedOnOtherEvent(carriedItem, stackedOnItem, slot, action, player, carriedSlotAccess));
+    }
+
+    public static NoteBlockEvent.Play onNotePlay(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument) {
+        return fire(new NoteBlockEvent.Play(world, pos, state, note, instrument));
+    }
+
+    public static AnvilRepairEvent onAnvilRepair(Player player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right) {
+        return fire(new AnvilRepairEvent(player, left, right, output));
     }
 }

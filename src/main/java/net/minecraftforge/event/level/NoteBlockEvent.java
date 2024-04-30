@@ -17,12 +17,10 @@ import com.google.common.base.Preconditions;
  * Base class for Noteblock Events
  *
  */
-public class NoteBlockEvent extends BlockEvent
-{
+public class NoteBlockEvent extends BlockEvent {
     private int noteId;
 
-    protected NoteBlockEvent(Level world, BlockPos pos, BlockState state, int note)
-    {
+    protected NoteBlockEvent(Level world, BlockPos pos, BlockState state, int note) {
         super(world, pos, state);
         this.noteId = note;
     }
@@ -31,8 +29,7 @@ public class NoteBlockEvent extends BlockEvent
      * Get the Note the Noteblock is tuned to
      * @return the Note
      */
-    public Note getNote()
-    {
+    public Note getNote() {
         return Note.fromId(noteId);
     }
 
@@ -40,8 +37,7 @@ public class NoteBlockEvent extends BlockEvent
      * Get the Octave of the note this Noteblock is tuned to
      * @return the Octave
      */
-    public Octave getOctave()
-    {
+    public Octave getOctave() {
         return Octave.fromId(noteId);
     }
 
@@ -49,8 +45,7 @@ public class NoteBlockEvent extends BlockEvent
      * get the vanilla note-id, which contains information about both Note and Octave. Most modders should not need this.
      * @return an ID for the note
      */
-    public int getVanillaNoteId()
-    {
+    public int getVanillaNoteId() {
         return noteId;
     }
 
@@ -60,8 +55,7 @@ public class NoteBlockEvent extends BlockEvent
      * @param note the Note
      * @param octave the Octave
      */
-    public void setNote(Note note, Octave octave)
-    {
+    public void setNote(Note note, Octave octave) {
         Preconditions.checkArgument(octave != Octave.HIGH || note == Note.F_SHARP, "Octave.HIGH is only valid for Note.F_SHARP!");
         this.noteId = note.ordinal() + octave.ordinal() * 12;
     }
@@ -71,23 +65,19 @@ public class NoteBlockEvent extends BlockEvent
      * Canceling this event will stop the note from playing.
      */
     @Cancelable
-    public static class Play extends NoteBlockEvent
-    {
+    public static class Play extends NoteBlockEvent {
         private NoteBlockInstrument instrument;
 
-        public Play(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument)
-        {
+        public Play(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument) {
             super(world, pos, state, note);
             this.instrument = instrument;
         }
 
-        public NoteBlockInstrument getInstrument()
-        {
+        public NoteBlockInstrument getInstrument() {
             return instrument;
         }
 
-        public void setInstrument(NoteBlockInstrument instrument)
-        {
+        public void setInstrument(NoteBlockInstrument instrument) {
             this.instrument = instrument;
         }
     }
@@ -97,25 +87,21 @@ public class NoteBlockEvent extends BlockEvent
      * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
      */
     @Cancelable
-    public static class Change extends NoteBlockEvent
-    {
+    public static class Change extends NoteBlockEvent {
         private final Note oldNote;
         private final Octave oldOctave;
 
-        public Change(Level world, BlockPos pos, BlockState state, int oldNote, int newNote)
-        {
+        public Change(Level world, BlockPos pos, BlockState state, int oldNote, int newNote) {
             super(world, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
         }
 
-        public Note getOldNote()
-        {
+        public Note getOldNote() {
             return oldNote;
         }
 
-        public Octave getOldOctave()
-        {
+        public Octave getOldOctave() {
             return oldOctave;
         }
     }
@@ -125,8 +111,7 @@ public class NoteBlockEvent extends BlockEvent
      * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
-    public static enum Note
-    {
+    public static enum Note {
         F_SHARP,
         G,
         G_SHARP,
@@ -142,8 +127,7 @@ public class NoteBlockEvent extends BlockEvent
 
         private static final Note[] values = values();
 
-        static Note fromId(int id)
-        {
+        static Note fromId(int id) {
             return values[id % 12];
         }
     }
@@ -153,16 +137,13 @@ public class NoteBlockEvent extends BlockEvent
      * Together with {@link Note} it fully describes the note.
      *
      */
-    public static enum Octave
-    {
+    public static enum Octave {
         LOW,
         MID,
         HIGH; // only valid for F_SHARP
 
-        static Octave fromId(int id)
-        {
+        static Octave fromId(int id) {
             return id < 12 ? LOW : id == 24 ? HIGH : MID;
         }
     }
-
 }

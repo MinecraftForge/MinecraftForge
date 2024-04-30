@@ -6,6 +6,6 @@
  
 -public interface BlockAndTintGetter extends BlockGetter {
 +public interface BlockAndTintGetter extends BlockGetter, net.minecraftforge.client.extensions.IForgeBlockAndTintGetter {
-    float getShade(Direction p_45522_, boolean p_45523_);
+     float getShade(Direction p_45522_, boolean p_45523_);
  
-    LevelLightEngine getLightEngine();
+     LevelLightEngine getLightEngine();

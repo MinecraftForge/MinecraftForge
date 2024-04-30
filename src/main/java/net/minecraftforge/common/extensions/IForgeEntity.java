@@ -9,24 +9,19 @@ import java.util.Collection;
 import java.util.function.BiPredicate;
 
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
@@ -187,23 +182,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
     @Nullable
     default PartEntity<?>[] getParts() {
         return null;
-    }
-
-    /**
-     * @return Return the height in blocks the Entity can step up without needing to jump
-     * This is the sum of vanilla's {@link Entity#maxUpStep()} method and the current value
-     * of the {@link net.minecraftforge.common.ForgeMod#STEP_HEIGHT_ADDITION} attribute
-     * (if this Entity is a {@link LivingEntity} and has the attribute), clamped at 0.
-     */
-    default float getStepHeight() {
-        @SuppressWarnings("deprecation")
-        float vanillaStep = self().maxUpStep();
-        if (self() instanceof LivingEntity living) {
-            AttributeInstance stepHeightAttribute = living.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
-            if (stepHeightAttribute != null)
-                return (float) Math.max(0, vanillaStep + stepHeightAttribute.getValue());
-        }
-        return vanillaStep;
     }
 
     /**
@@ -396,11 +374,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
      */
     default boolean hasCustomOutlineRendering(Player player) {
         return false;
-    }
-
-    @Deprecated(forRemoval = true, since = "1.20.1") // Remove Entity Eye/Size hooks, as they need to be redesigned
-    default float getEyeHeightForge(Pose pose, EntityDimensions size) {
-        return self().getEyeHeightAccess(pose, size);
     }
 
     /**

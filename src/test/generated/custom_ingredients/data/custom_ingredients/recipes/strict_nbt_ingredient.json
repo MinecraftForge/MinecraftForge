@@ -5,11 +5,13 @@
     "X": {
       "type": "forge:nbt",
       "stack": {
-        "Count": 1,
-        "id": "minecraft:iron_pickaxe",
-        "tag": {
-          "Damage": 3
-        }
+        "components": {
+          "minecraft:custom_data": {
+            "display_name": "{\"text\":\"Test Item\"}"
+          }
+        },
+        "count": 1,
+        "id": "minecraft:diamond_pickaxe"
       }
     }
   },
@@ -17,6 +19,7 @@
     "XXX"
   ],
   "result": {
-    "item": "minecraft:dirt"
+    "count": 1,
+    "id": "minecraft:dirt"
   }
 }

@@ -21,11 +21,9 @@ import java.util.List;
 /**
  * Convenience interface with default implementation of {@link IForgeBakedModel#getQuads(BlockState, Direction, RandomSource, ModelData, RenderType)}.
  */
-public interface IDynamicBakedModel extends BakedModel
-{
+public interface IDynamicBakedModel extends BakedModel {
     @Override
-    default @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand)
-    {
+    default @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand) {
         return getQuads(state, side, rand, ModelData.EMPTY, null);
     }
 

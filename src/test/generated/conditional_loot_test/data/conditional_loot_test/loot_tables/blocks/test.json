@@ -10,8 +10,7 @@
         }
       ],
       "forge:condition": {
-        "type": "forge:false",
-        "value": {}
+        "type": "forge:false"
       },
       "rolls": 1.0
     },
@@ -24,8 +23,7 @@
         }
       ],
       "forge:condition": {
-        "type": "forge:true",
-        "value": {}
+        "type": "forge:true"
       },
       "rolls": 1.0
     }

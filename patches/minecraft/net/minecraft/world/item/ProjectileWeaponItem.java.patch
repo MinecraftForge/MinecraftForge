@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/item/ProjectileWeaponItem.java
++++ b/net/minecraft/world/item/ProjectileWeaponItem.java
+@@ -85,6 +_,7 @@
+     protected Projectile createProjectile(Level p_333069_, LivingEntity p_334736_, ItemStack p_333680_, ItemStack p_329118_, boolean p_336242_) {
+         ArrowItem arrowitem = p_329118_.getItem() instanceof ArrowItem arrowitem1 ? arrowitem1 : (ArrowItem)Items.ARROW;
+         AbstractArrow abstractarrow = arrowitem.createArrow(p_333069_, p_329118_, p_334736_);
++        abstractarrow = customArrow(abstractarrow);
+         if (p_336242_) {
+             abstractarrow.setCritArrow(true);
+         }
+@@ -123,9 +_,10 @@
+             int j = i == 0 ? 1 : 3;
+             List<ItemStack> list = new ArrayList<>(j);
+             ItemStack itemstack = p_328618_.copy();
++            boolean infinite = p_328618_.getItem() instanceof ArrowItem arrow && arrow.isInfinite(p_328618_, p_329054_, p_335616_);
+ 
+             for (int k = 0; k < j; k++) {
+-                list.add(useAmmo(p_329054_, k == 0 ? p_328618_ : itemstack, p_335616_, k > 0));
++                list.add(useAmmo(p_329054_, k == 0 ? p_328618_ : itemstack, p_335616_, k > 0 || infinite));
+             }
+ 
+             return list;
+@@ -146,5 +_,9 @@
+ 
+             return itemstack;
+         }
++    }
++
++    public AbstractArrow customArrow(AbstractArrow arrow) {
++        return arrow;
+     }
+ }

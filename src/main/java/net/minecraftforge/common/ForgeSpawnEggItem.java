@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
@@ -42,12 +41,6 @@ public class ForgeSpawnEggItem extends SpawnEggItem {
         MOD_EGGS.add(this);
     }
 
-    @Override
-    public EntityType<?> getType(@Nullable CompoundTag tag) {
-        EntityType<?> type = super.getType(tag);
-        return type != null ? type : typeSupplier.get();
-    }
-
     @Nullable
     protected DispenseItemBehavior createDispenseBehavior() {
         return DEFAULT_DISPENSE_BEHAVIOR;
@@ -66,7 +59,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem {
 
     private static final DispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = (source, stack) -> {
         Direction face = source.state().getValue(DispenserBlock.FACING);
-        EntityType<?> type = ((SpawnEggItem)stack.getItem()).getType(stack.getTag());
+        EntityType<?> type = ((SpawnEggItem)stack.getItem()).getType(stack);
 
         try {
             type.spawn(source.level(), stack, null, source.pos().relative(face), MobSpawnType.DISPENSER, face != Direction.UP, false);

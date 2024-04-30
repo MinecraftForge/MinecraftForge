@@ -1,71 +1,75 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -41,7 +_,7 @@
+@@ -42,7 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.gameevent.GameEvent;
  
 -public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
-+public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
-    private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
-    private static final int MUTATE_CHANCE = 1024;
-    private static final String TAG_STEW_EFFECTS = "stew_effects";
-@@ -102,7 +_,7 @@
++public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType>, net.minecraftforge.common.IForgeShearable {
+     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
+     private static final int MUTATE_CHANCE = 1024;
+     private static final String TAG_STEW_EFFECTS = "stew_effects";
+@@ -108,7 +_,7 @@
  
-          this.playSound(soundevent, 1.0F, 1.0F);
-          return InteractionResult.sidedSuccess(this.level().isClientSide);
--      } else if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
-+      } else if (false && itemstack.getItem() == Items.SHEARS && this.readyForShearing()) { //Forge: Moved to onSheared
-          this.shear(SoundSource.PLAYERS);
-          this.gameEvent(GameEvent.SHEAR, p_28941_);
-          if (!this.level().isClientSide) {
-@@ -141,9 +_,20 @@
-       }
-    }
+             this.playSound(soundevent, 1.0F, 1.0F);
+             return InteractionResult.sidedSuccess(this.level().isClientSide);
+-        } else if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
++        } else if (false && itemstack.is(Items.SHEARS) && this.readyForShearing()) { //Forge: Moved to onSheared
+             this.shear(SoundSource.PLAYERS);
+             this.gameEvent(GameEvent.SHEAR, p_28941_);
+             if (!this.level().isClientSide) {
+@@ -163,8 +_,13 @@
  
-+   @Override
-+   public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
-+      this.gameEvent(GameEvent.SHEAR, player);
-+      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
-+   }
+     @Override
+     public void shear(SoundSource p_28924_) {
++        shearInternal(p_28924_).forEach(s -> this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), s)));
++    }
 +
-    public void shear(SoundSource p_28924_) {
-+      shearInternal(p_28924_).forEach(s -> this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), s)));
-+   }
-+
-+   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
-       this.level().playSound((Player)null, this, SoundEvents.MOOSHROOM_SHEAR, p_28924_, 1.0F, 1.0F);
-       if (!this.level().isClientSide()) {
-+         if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.COW, time -> {})) return java.util.Collections.emptyList();
-          Cow cow = EntityType.COW.create(this.level());
-          if (cow != null) {
-             ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5D), this.getZ(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
-@@ -162,12 +_,16 @@
++    private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
+         this.level().playSound(null, this, SoundEvents.MOOSHROOM_SHEAR, p_28924_, 1.0F, 1.0F);
+         if (!this.level().isClientSide()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.COW, time -> {})) return java.util.Collections.emptyList();
+             Cow cow = EntityType.COW.create(this.level());
+             if (cow != null) {
+                 ((ServerLevel)this.level()).sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5), this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+@@ -183,17 +_,16 @@
  
-             cow.setInvulnerable(this.isInvulnerable());
-             this.level().addFreshEntity(cow);
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
+                 cow.setInvulnerable(this.isInvulnerable());
+                 this.level().addFreshEntity(cow);
++                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
  
-+            java.util.List<ItemStack> items = new java.util.ArrayList<>();
-             for(int i = 0; i < 5; ++i) {
--               this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), new ItemStack(this.getVariant().blockState.getBlock())));
-+               items.add(new ItemStack(this.getVariant().blockState.getBlock()));
++                var items = new java.util.ArrayList<ItemStack>();
+                 for (int i = 0; i < 5; i++) {
+-                    this.level()
+-                        .addFreshEntity(
+-                            new ItemEntity(
+-                                this.level(), this.getX(), this.getY(1.0), this.getZ(), new ItemStack(this.getVariant().blockState.getBlock())
+-                            )
+-                        );
++                    items.add(new ItemStack(this.getVariant().blockState.getBlock()));
+                 }
++                return items;
              }
-+            return items;
-          }
-       }
-+      return java.util.Collections.emptyList();
+         }
++        return java.util.Collections.emptyList();
+     }
  
-    }
+     @Override
+@@ -255,6 +_,17 @@
+         }
  
-@@ -231,6 +_,11 @@
-       }
- 
-       return mushroomcow$mushroomtype2;
-+   }
+         return mushroomcow$mushroomtype2;
++    }
 +
-+   @Override
-+   public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
-+      return readyForShearing();
-    }
++    @Override
++    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
++        this.gameEvent(GameEvent.SHEAR, player);
++        return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++    }
++
++    @Override
++    public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
++       return readyForShearing();
+     }
  
-    public static enum MushroomType implements StringRepresentable {
+     public static enum MushroomType implements StringRepresentable {

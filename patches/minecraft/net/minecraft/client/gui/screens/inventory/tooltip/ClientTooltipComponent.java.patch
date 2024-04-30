@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
 +++ b/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
 @@ -20,6 +_,8 @@
-       if (p_169951_ instanceof BundleTooltip) {
-          return new ClientBundleTooltip((BundleTooltip)p_169951_);
-       } else {
-+         ClientTooltipComponent result = net.minecraftforge.client.gui.ClientTooltipComponentManager.createClientTooltipComponent(p_169951_);
-+         if (result != null) return result;
-          throw new IllegalArgumentException("Unknown TooltipComponent");
-       }
-    }
+         if (p_169951_ instanceof BundleTooltip bundletooltip) {
+             return new ClientBundleTooltip(bundletooltip.contents());
+         } else {
++            ClientTooltipComponent result = net.minecraftforge.client.gui.ClientTooltipComponentManager.createClientTooltipComponent(p_169951_);
++            if (result != null) return result;
+             throw new IllegalArgumentException("Unknown TooltipComponent");
+         }
+     }

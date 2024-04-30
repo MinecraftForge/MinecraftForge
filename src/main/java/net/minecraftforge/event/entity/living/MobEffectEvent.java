@@ -5,6 +5,7 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -19,20 +20,17 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class MobEffectEvent extends LivingEvent
-{
+public class MobEffectEvent extends LivingEvent {
     @Nullable
     protected final MobEffectInstance effectInstance;
 
-    public MobEffectEvent(LivingEntity living, MobEffectInstance effectInstance)
-    {
+    public MobEffectEvent(LivingEntity living, MobEffectInstance effectInstance) {
         super(living);
         this.effectInstance = effectInstance;
     }
 
     @Nullable
-    public MobEffectInstance getEffectInstance()
-    {
+    public MobEffectInstance getEffectInstance() {
         return effectInstance;
     }
 
@@ -42,27 +40,23 @@ public class MobEffectEvent extends LivingEvent
      * This Event does not have a result.
      */
     @Cancelable
-    public static class Remove extends MobEffectEvent
-    {
+    public static class Remove extends MobEffectEvent {
         private final MobEffect effect;
 
-        public Remove(LivingEntity living, MobEffect effect)
-        {
-            super(living, living.getEffect(effect));
+        public Remove(LivingEntity living, MobEffect effect) {
+            super(living, living.getEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect)));
             this.effect = effect;
         }
 
-        public Remove(LivingEntity living, MobEffectInstance effectInstance)
-        {
+        public Remove(LivingEntity living, MobEffectInstance effectInstance) {
             super(living, effectInstance);
-            this.effect = effectInstance.getEffect();
+            this.effect = effectInstance.getEffect().get();
         }
 
         /**
          * @return the {@link MobEffectEvent} which is being removed from the entity
          */
-        public MobEffect getEffect()
-        {
+        public MobEffect getEffect() {
             return this.effect;
         }
 
@@ -71,8 +65,7 @@ public class MobEffectEvent extends LivingEvent
          */
         @Override
         @Nullable
-        public MobEffectInstance getEffectInstance()
-        {
+        public MobEffectInstance getEffectInstance() {
             return super.getEffectInstance();
         }
     }
@@ -87,17 +80,14 @@ public class MobEffectEvent extends LivingEvent
      * {@link Result#DEFAULT DEFAULT} will run vanilla logic to determine if this mob effect is applicable in {@link LivingEntity#canBeAffected}.
      */
     @HasResult
-    public static class Applicable extends MobEffectEvent
-    {
-        public Applicable(LivingEntity living, @NotNull MobEffectInstance effectInstance)
-        {
+    public static class Applicable extends MobEffectEvent {
+        public Applicable(LivingEntity living, @NotNull MobEffectInstance effectInstance) {
             super(living, effectInstance);
         }
 
         @Override
         @NotNull
-        public MobEffectInstance getEffectInstance()
-        {
+        public MobEffectInstance getEffectInstance() {
             return super.getEffectInstance();
         }
     }
@@ -108,13 +98,11 @@ public class MobEffectEvent extends LivingEvent
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Added extends MobEffectEvent
-    {
+    public static class Added extends MobEffectEvent {
         private final MobEffectInstance oldEffectInstance;
         private final Entity source;
 
-        public Added(LivingEntity living, MobEffectInstance oldEffectInstance, MobEffectInstance newEffectInstance, Entity source)
-        {
+        public Added(LivingEntity living, MobEffectInstance oldEffectInstance, MobEffectInstance newEffectInstance, Entity source) {
             super(living, newEffectInstance);
             this.oldEffectInstance = oldEffectInstance;
             this.source = source;
@@ -125,8 +113,7 @@ public class MobEffectEvent extends LivingEvent
          */
         @Override
         @NotNull
-        public MobEffectInstance getEffectInstance()
-        {
+        public MobEffectInstance getEffectInstance() {
             return super.getEffectInstance();
         }
 
@@ -134,8 +121,7 @@ public class MobEffectEvent extends LivingEvent
          * @return the old {@link MobEffectInstance}. This can be null if the entity did not have an effect of this kind before.
          */
         @Nullable
-        public MobEffectInstance getOldEffectInstance()
-        {
+        public MobEffectInstance getOldEffectInstance() {
             return oldEffectInstance;
         }
 
@@ -143,8 +129,7 @@ public class MobEffectEvent extends LivingEvent
          * @return the entity source of the effect, or {@code null} if none exists
          */
         @Nullable
-        public Entity getEffectSource()
-        {
+        public Entity getEffectSource() {
             return source;
         }
     }
@@ -154,11 +139,9 @@ public class MobEffectEvent extends LivingEvent
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Expired extends MobEffectEvent
-    {
-        public Expired(LivingEntity living, MobEffectInstance effectInstance)
-        {
-            super(living, effectInstance);
+    public static class Expired extends MobEffectEvent {
+        public Expired(LivingEntity living, MobEffectInstance effect) {
+            super(living, effect);
         }
     }
 }

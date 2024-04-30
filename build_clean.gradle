@@ -62,3 +62,12 @@ eclipse.classpath.file.whenMerged {
     if (src == null) throw new IllegalStateException("You must run `setup` task before importing")
     src.entryAttributes['ignore_optional_problems'] = 'true'
 }
+
+tasks.named('genPatches').configure {
+    onlyIf { false }
+}
+
+tasks.named('extractRangeMap').configure {
+    onlyIf { false }
+    tool = 'net.minecraftforge:Srg2Source:8.1.0:fatjar'
+}

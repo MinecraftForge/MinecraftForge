@@ -23,43 +23,36 @@ import java.util.Map;
 /**
  * Wrapper around {@link ItemModelShaper} that cleans up the internal maps to respect ID remapping.
  */
-public class ForgeItemModelShaper extends ItemModelShaper
-{
+public class ForgeItemModelShaper extends ItemModelShaper {
     private final Map<Holder.Reference<Item>, ModelResourceLocation> locations = Maps.newHashMap();
     private final Map<Holder.Reference<Item>, BakedModel> models = Maps.newHashMap();
 
-    public ForgeItemModelShaper(ModelManager manager)
-    {
+    public ForgeItemModelShaper(ModelManager manager) {
         super(manager);
     }
 
     @Override
     @Nullable
-    public BakedModel getItemModel(Item item)
-    {
+    public BakedModel getItemModel(Item item) {
         return models.get(ForgeRegistries.ITEMS.getDelegateOrThrow(item));
     }
 
     @Override
-    public void register(Item item, ModelResourceLocation location)
-    {
+    public void register(Item item, ModelResourceLocation location) {
         Holder.Reference<Item> key = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
         locations.put(key, location);
         models.put(key, getModelManager().getModel(location));
     }
 
     @Override
-    public void rebuildCache()
-    {
+    public void rebuildCache() {
         final ModelManager manager = this.getModelManager();
-        for (Map.Entry<Holder.Reference<Item>, ModelResourceLocation> e : locations.entrySet())
-        {
+        for (Map.Entry<Holder.Reference<Item>, ModelResourceLocation> e : locations.entrySet()) {
             models.put(e.getKey(), manager.getModel(e.getValue()));
         }
     }
 
-    public ModelResourceLocation getLocation(@NotNull ItemStack stack)
-    {
+    public ModelResourceLocation getLocation(@NotNull ItemStack stack) {
         ModelResourceLocation location = locations.get(ForgeRegistries.ITEMS.getDelegateOrThrow(stack.getItem()));
         return location == null ? ModelBakery.MISSING_MODEL_LOCATION : location;
     }

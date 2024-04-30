@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/PumpkinBlock.java
 +++ b/net/minecraft/world/level/block/PumpkinBlock.java
-@@ -31,7 +_,7 @@
- 
-    public InteractionResult use(BlockState p_55289_, Level p_55290_, BlockPos p_55291_, Player p_55292_, InteractionHand p_55293_, BlockHitResult p_55294_) {
-       ItemStack itemstack = p_55292_.getItemInHand(p_55293_);
--      if (itemstack.is(Items.SHEARS)) {
-+      if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_CARVE)) {
-          if (!p_55290_.isClientSide) {
-             Direction direction = p_55294_.getDirection();
-             Direction direction1 = direction.getAxis() == Direction.Axis.Y ? p_55292_.getDirection().getOpposite() : direction;
+@@ -35,7 +_,7 @@
+     protected ItemInteractionResult useItemOn(
+         ItemStack p_330568_, BlockState p_330263_, Level p_327756_, BlockPos p_328675_, Player p_334049_, InteractionHand p_331851_, BlockHitResult p_329008_
+     ) {
+-        if (!p_330568_.is(Items.SHEARS)) {
++        if (p_330568_.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_CARVE)) {
+             return super.useItemOn(p_330568_, p_330263_, p_327756_, p_328675_, p_334049_, p_331851_, p_329008_);
+         } else if (p_327756_.isClientSide) {
+             return ItemInteractionResult.sidedSuccess(p_327756_.isClientSide);

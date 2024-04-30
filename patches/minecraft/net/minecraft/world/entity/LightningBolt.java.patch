@@ -1,33 +1,33 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -37,6 +_,7 @@
-    private ServerPlayer cause;
-    private final Set<Entity> hitEntities = Sets.newHashSet();
-    private int blocksSetOnFire;
-+   private float damage = 5.0F;
+@@ -38,6 +_,7 @@
+     private ServerPlayer cause;
+     private final Set<Entity> hitEntities = Sets.newHashSet();
+     private int blocksSetOnFire;
++    private float damage = 5.0F;
  
-    public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
-       super(p_20865_, p_20866_);
-@@ -72,6 +_,14 @@
+     public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
+         super(p_20865_, p_20866_);
+@@ -65,6 +_,14 @@
+         this.cause = p_20880_;
+     }
  
-    }
- 
-+   public void setDamage(float damage) {
-+      this.damage = damage;
-+   }
++    public void setDamage(float damage) {
++        this.damage = damage;
++    }
 +
-+   public float getDamage() {
-+      return this.damage;
-+   }
++    public float getDamage() {
++        return this.damage;
++    }
 +
-    public void tick() {
-       super.tick();
-       if (this.life == 2) {
-@@ -121,6 +_,7 @@
-             List<Entity> list1 = this.level().getEntities(this, new AABB(this.getX() - 3.0D, this.getY() - 3.0D, this.getZ() - 3.0D, this.getX() + 3.0D, this.getY() + 6.0D + 3.0D, this.getZ() + 3.0D), Entity::isAlive);
+     private void powerLightningRod() {
+         BlockPos blockpos = this.getStrikePosition();
+         BlockState blockstate = this.level().getBlockState(blockpos);
+@@ -163,6 +_,7 @@
+                     );
  
-             for(Entity entity : list1) {
-+               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
-                entity.thunderHit((ServerLevel)this.level(), this);
-             }
+                 for (Entity entity : list1) {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
+                     entity.thunderHit((ServerLevel)this.level(), this);
+                 }
  

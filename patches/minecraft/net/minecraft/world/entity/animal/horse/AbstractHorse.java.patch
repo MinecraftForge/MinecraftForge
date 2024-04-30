@@ -1,68 +1,68 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -283,6 +_,11 @@
-    }
+@@ -299,6 +_,11 @@
  
-    public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
-+      var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149499_, p_149500_);
-+      if (event.isCanceled()) return false;
-+      p_149499_ = event.getDistance();
-+      p_149500_ = event.getDamageMultiplier();
+     @Override
+     public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
++        var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_149499_, p_149500_);
++        if (event.isCanceled()) return false;
++        p_149499_ = event.getDistance();
++        p_149500_ = event.getDamageMultiplier();
 +
-       if (p_149499_ > 1.0F) {
-          this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
-       }
-@@ -328,6 +_,7 @@
+         if (p_149499_ > 1.0F) {
+             this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
+         }
+@@ -340,6 +_,7 @@
  
-       this.inventory.addListener(this);
-       this.updateContainerEquipment();
-+      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
-    }
+         this.inventory.addListener(this);
+         this.syncSaddleToClients();
++        this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.inventory));
+     }
  
-    protected void updateContainerEquipment() {
-@@ -375,9 +_,9 @@
-    protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
-       if (!p_30585_.liquid()) {
-          BlockState blockstate = this.level().getBlockState(p_30584_.above());
--         SoundType soundtype = p_30585_.getSoundType();
-+         SoundType soundtype = p_30585_.getSoundType(level(), p_30584_, this);
-          if (blockstate.is(Blocks.SNOW)) {
--            soundtype = blockstate.getSoundType();
-+            soundtype = blockstate.getSoundType(level(), p_30584_, this);
-          }
+     protected void syncSaddleToClients() {
+@@ -385,9 +_,9 @@
+     protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
+         if (!p_30585_.liquid()) {
+             BlockState blockstate = this.level().getBlockState(p_30584_.above());
+-            SoundType soundtype = p_30585_.getSoundType();
++            SoundType soundtype = p_30585_.getSoundType(level(), p_30584_, this);
+             if (blockstate.is(Blocks.SNOW)) {
+-                soundtype = blockstate.getSoundType();
++                soundtype = blockstate.getSoundType(level(), p_30584_.above(), this);
+             }
  
-          if (this.isVehicle() && this.canGallop) {
-@@ -784,6 +_,7 @@
-       this.setDeltaMovement(vec3.x, d1, vec3.z);
-       this.setIsJumping(true);
-       this.hasImpulse = true;
-+               net.minecraftforge.common.ForgeHooks.onLivingJump(this);
-       if (p_275435_.z > 0.0D) {
-          float f = Mth.sin(this.getYRot() * ((float)Math.PI / 180F));
-          float f1 = Mth.cos(this.getYRot() * ((float)Math.PI / 180F));
-@@ -1106,6 +_,25 @@
+             if (this.isVehicle() && this.canGallop) {
+@@ -810,6 +_,7 @@
+             float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
+             this.setDeltaMovement(this.getDeltaMovement().add((double)(-0.4F * f * p_248808_), 0.0, (double)(0.4F * f1 * p_248808_)));
+         }
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
  
-       this.randomizeAttributes(p_30555_.getRandom());
-       return super.finalizeSpawn(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);
-+   }
+     protected void playJumpSound() {
+@@ -1126,5 +_,25 @@
+ 
+     public final Container getBodyArmorAccess() {
+         return this.bodyArmorAccess;
++    }
 +
-+   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
++    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 +
-+   @Override
-+   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
-+      if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && itemHandler != null && this.isAlive())
-+         return itemHandler.cast();
-+      return super.getCapability(capability, facing);
-+   }
++    @Override
++    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER && itemHandler != null && this.isAlive()) {
++            return itemHandler.cast();
++        }
++        return super.getCapability(capability, facing);
++    }
 +
-+   @Override
-+   public void invalidateCaps() {
-+      super.invalidateCaps();
-+      if (itemHandler != null) {
-+         net.minecraftforge.common.util.LazyOptional<?> oldHandler = itemHandler;
-+         itemHandler = null;
-+         oldHandler.invalidate();
-+      }
-    }
- 
-    public boolean hasInventoryChanged(Container p_149512_) {
++    @Override
++    public void invalidateCaps() {
++        super.invalidateCaps();
++        if (itemHandler != null) {
++           var oldHandler = itemHandler;
++           itemHandler = null;
++           oldHandler.invalidate();
++        }
+     }
+ }

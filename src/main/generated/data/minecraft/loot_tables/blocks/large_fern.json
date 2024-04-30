@@ -16,9 +16,7 @@
           "offsetY": 1,
           "predicate": {
             "block": {
-              "blocks": [
-                "minecraft:large_fern"
-              ],
+              "blocks": "minecraft:large_fern",
               "state": {
                 "half": "upper"
               }
@@ -80,9 +78,7 @@
           "offsetY": -1,
           "predicate": {
             "block": {
-              "blocks": [
-                "minecraft:large_fern"
-              ],
+              "blocks": "minecraft:large_fern",
               "state": {
                 "half": "lower"
               }

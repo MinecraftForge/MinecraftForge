@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.gameplay.loot;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
@@ -32,6 +33,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Mod(ConditionalLootPools.MODID)
 @GameTestHolder("forge." + ConditionalLootPools.MODID)
@@ -43,7 +45,7 @@ public class ConditionalLootPools extends BaseTestMod {
 
     @SubscribeEvent
     public void runData(GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
     }
 
     @GameTest(template = "forge:empty3x3x3")
@@ -61,10 +63,10 @@ public class ConditionalLootPools extends BaseTestMod {
     }
 
     private static class LootProvider extends LootTableProvider {
-        public LootProvider(PackOutput out) {
+        public LootProvider(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
             super(out, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)
-            ));
+            ), lookup);
         }
     }
 

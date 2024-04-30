@@ -1,40 +1,40 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
-@@ -66,6 +_,20 @@
+@@ -68,6 +_,20 @@
  public class ArgumentTypeInfos {
-    private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> BY_CLASS = Maps.newHashMap();
+     private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> BY_CLASS = Maps.newHashMap();
  
-+   /**
-+    * Forge: Use this in conjunction with a
-+    * {@link net.minecraftforge.registries.DeferredRegister#register(String, java.util.function.Supplier) DeferredRegister#register(String, Supplier)}
-+    * call to both populate the {@code BY_CLASS} map and register the argument type info so it can be used in commands.
-+    *
-+    * @param infoClass the class type of the argument type info
-+    * @param argumentTypeInfo the argument type info instance
-+    * @return the provided argument type info instance for chaining
-+    */
-+   public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
-+      BY_CLASS.put(infoClass, argumentTypeInfo);
-+      return argumentTypeInfo;
-+   }
++    /**
++     * Forge: Use this in conjunction with a
++     * {@link net.minecraftforge.registries.DeferredRegister#register(String, java.util.function.Supplier) DeferredRegister#register(String, Supplier)}
++     * call to both populate the {@code BY_CLASS} map and register the argument type info so it can be used in commands.
++     *
++     * @param infoClass the class type of the argument type info
++     * @param argumentTypeInfo the argument type info instance
++     * @return the provided argument type info instance for chaining
++     */
++    public static synchronized <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> I registerByClass(Class<A> infoClass, I argumentTypeInfo) {
++       BY_CLASS.put(infoClass, argumentTypeInfo);
++       return argumentTypeInfo;
++    }
 +
-    private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> register(Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_) {
-       BY_CLASS.put(p_235389_, p_235390_);
-       return Registry.register(p_235387_, p_235388_, p_235390_);
-@@ -121,12 +_,14 @@
-       register(p_235385_, "template_mirror", TemplateMirrorArgument.class, SingletonArgumentInfo.contextFree(TemplateMirrorArgument::templateMirror));
-       register(p_235385_, "template_rotation", TemplateRotationArgument.class, SingletonArgumentInfo.contextFree(TemplateRotationArgument::templateRotation));
-       register(p_235385_, "heightmap", HeightmapTypeArgument.class, SingletonArgumentInfo.contextFree(HeightmapTypeArgument::heightmap));
--      if (SharedConstants.IS_RUNNING_IN_IDE) {
-+      // Forge: Register before gametest arguments to provide forge server <-> vanilla client interop and matching int ids
-+      var uuidInfo = register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
-+      if (true) { // Forge: Always register gametest arguments to prevent issues when connecting from gametest-enabled client/server to non-gametest-enabled client/server
-          register(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.contextFree(TestFunctionArgument::testFunctionArgument));
-          register(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.contextFree(TestClassNameArgument::testClassName));
-       }
+     private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>> ArgumentTypeInfo<A, T> register(
+         Registry<ArgumentTypeInfo<?, ?>> p_235387_, String p_235388_, Class<? extends A> p_235389_, ArgumentTypeInfo<A, T> p_235390_
+     ) {
+@@ -131,12 +_,14 @@
+             p_235385_, "loot_predicate", ResourceOrIdArgument.LootPredicateArgument.class, SingletonArgumentInfo.contextAware(ResourceOrIdArgument::lootPredicate)
+         );
+         register(p_235385_, "loot_modifier", ResourceOrIdArgument.LootModifierArgument.class, SingletonArgumentInfo.contextAware(ResourceOrIdArgument::lootModifier));
+-        if (SharedConstants.IS_RUNNING_IN_IDE) {
++        // Forge: Register before gametest arguments to provide forge server <-> vanilla client interop and matching int ids
++        var uuidInfo = register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
++        if (true) { // Forge: Always register gametest arguments to prevent issues when connecting from gametest-enabled client/server to non-gametest-enabled client/server
+             register(p_235385_, "test_argument", TestFunctionArgument.class, SingletonArgumentInfo.contextFree(TestFunctionArgument::testFunctionArgument));
+             register(p_235385_, "test_class", TestClassNameArgument.class, SingletonArgumentInfo.contextFree(TestClassNameArgument::testClassName));
+         }
  
--      return register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
-+      return uuidInfo;
-    }
+-        return register(p_235385_, "uuid", UuidArgument.class, SingletonArgumentInfo.contextFree(UuidArgument::uuid));
++        return uuidInfo;
+     }
  
-    private static <T extends ArgumentType<?>> Class<T> fixClassType(Class<? super T> p_235396_) {
+     private static <T extends ArgumentType<?>> Class<T> fixClassType(Class<? super T> p_235396_) {

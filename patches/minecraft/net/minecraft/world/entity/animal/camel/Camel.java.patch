@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -302,7 +_,7 @@
-    }
+@@ -329,7 +_,7 @@
  
-    protected void playStepSound(BlockPos p_252056_, BlockState p_251457_) {
--      if (p_251457_.is(BlockTags.CAMEL_SAND_STEP_SOUND_BLOCKS)) {
-+      if (p_251457_.getSoundType(level(), p_252056_, this) == net.minecraft.world.level.block.SoundType.SAND) {
-          this.playSound(SoundEvents.CAMEL_STEP_SAND, 1.0F, 1.0F);
-       } else {
-          this.playSound(SoundEvents.CAMEL_STEP, 1.0F, 1.0F);
+     @Override
+     protected void playStepSound(BlockPos p_252056_, BlockState p_251457_) {
+-        if (p_251457_.is(BlockTags.CAMEL_SAND_STEP_SOUND_BLOCKS)) {
++        if (p_251457_.getSoundType(level(), p_252056_, this) == net.minecraft.world.level.block.SoundType.SAND) {
+             this.playSound(SoundEvents.CAMEL_STEP_SAND, 1.0F, 1.0F);
+         } else {
+             this.playSound(SoundEvents.CAMEL_STEP, 1.0F, 1.0F);

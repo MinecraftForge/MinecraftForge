@@ -1,36 +1,34 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -130,7 +_,8 @@
-       return true;
-    }
+@@ -137,6 +_,7 @@
+     }
  
--   private static boolean ejectItems(Level p_155563_, BlockPos p_155564_, BlockState p_155565_, Container p_155566_) {
-+   private static boolean ejectItems(Level p_155563_, BlockPos p_155564_, BlockState p_155565_, HopperBlockEntity p_155566_) {
-+      if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(p_155566_)) return true;
-       Container container = getAttachedContainer(p_155563_, p_155564_, p_155565_);
-       if (container == null) {
-          return false;
-@@ -175,6 +_,8 @@
-    }
+     private static boolean ejectItems(Level p_155563_, BlockPos p_155564_, HopperBlockEntity p_329427_) {
++        if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(p_329427_)) return true;
+         Container container = getAttachedContainer(p_155563_, p_155564_, p_329427_);
+         if (container == null) {
+             return false;
+@@ -212,6 +_,8 @@
+     }
  
-    public static boolean suckInItems(Level p_155553_, Hopper p_155554_) {
-+      Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_155553_, p_155554_);
-+      if (ret != null) return ret;
-       Container container = getSourceContainer(p_155553_, p_155554_);
-       if (container != null) {
-          Direction direction = Direction.DOWN;
-@@ -414,5 +_,14 @@
- 
-    protected AbstractContainerMenu createMenu(int p_59312_, Inventory p_59313_) {
-       return new HopperMenu(p_59312_, p_59313_, this);
-+   }
+     public static boolean suckInItems(Level p_155553_, Hopper p_155554_) {
++        Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_155553_, p_155554_);
++        if (ret != null) return ret;
+         BlockPos blockpos = BlockPos.containing(p_155554_.getLevelX(), p_155554_.getLevelY() + 1.0, p_155554_.getLevelZ());
+         BlockState blockstate = p_155553_.getBlockState(blockpos);
+         Container container = getSourceContainer(p_155553_, p_155554_, blockpos, blockstate);
+@@ -473,5 +_,14 @@
+     @Override
+     protected AbstractContainerMenu createMenu(int p_59312_, Inventory p_59313_) {
+         return new HopperMenu(p_59312_, p_59313_, this);
++    }
 +
-+   @Override
-+   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
-+      return new net.minecraftforge.items.VanillaHopperItemHandler(this);
-+   }
++    @Override
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++       return new net.minecraftforge.items.VanillaHopperItemHandler(this);
++    }
 +
-+   public long getLastUpdateTime() {
-+      return this.tickedGameTime;
-    }
++    public long getLastUpdateTime() {
++       return this.tickedGameTime;
+     }
  }

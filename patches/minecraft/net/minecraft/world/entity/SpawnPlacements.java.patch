@@ -1,57 +1,34 @@
 --- a/net/minecraft/world/entity/SpawnPlacements.java
 +++ b/net/minecraft/world/entity/SpawnPlacements.java
-@@ -44,6 +_,7 @@
+@@ -46,6 +_,7 @@
  public class SpawnPlacements {
-    private static final Map<EntityType<?>, SpawnPlacements.Data> DATA_BY_TYPE = Maps.newHashMap();
+     private static final Map<EntityType<?>, SpawnPlacements.Data> DATA_BY_TYPE = Maps.newHashMap();
  
-+   @Deprecated // FORGE: use SpawnPlacementRegisterEvent to register and modify spawn placements
-    public static <T extends Mob> void register(EntityType<T> p_21755_, SpawnPlacements.Type p_21756_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_) {
-       SpawnPlacements.Data spawnplacements$data = DATA_BY_TYPE.put(p_21755_, new SpawnPlacements.Data(p_21757_, p_21756_, p_21758_));
-       if (spawnplacements$data != null) {
-@@ -63,7 +_,8 @@
++    /** @deprecated FORGE: use SpawnPlacementRegisterEvent to register and modify spawn placements */
+     private static <T extends Mob> void register(
+         EntityType<T> p_21755_, SpawnPlacementType p_331557_, Heightmap.Types p_21757_, SpawnPlacements.SpawnPredicate<T> p_21758_
+     ) {
+@@ -73,7 +_,8 @@
+         EntityType<T> p_217075_, ServerLevelAccessor p_217076_, MobSpawnType p_217077_, BlockPos p_217078_, RandomSource p_217079_
+     ) {
+         SpawnPlacements.Data spawnplacements$data = DATA_BY_TYPE.get(p_217075_);
+-        return spawnplacements$data == null || spawnplacements$data.predicate.test((EntityType)p_217075_, p_217076_, p_217077_, p_217078_, p_217079_);
++        boolean vanillaResult = spawnplacements$data == null || spawnplacements$data.predicate.test((EntityType)p_217075_, p_217076_, p_217077_, p_217078_, p_217079_);
++        return net.minecraftforge.event.ForgeEventFactory.checkSpawnPlacements(p_217075_, p_217076_, p_217077_, p_217078_, p_217079_, vanillaResult);
+     }
  
-    public static <T extends Entity> boolean checkSpawnRules(EntityType<T> p_217075_, ServerLevelAccessor p_217076_, MobSpawnType p_217077_, BlockPos p_217078_, RandomSource p_217079_) {
-       SpawnPlacements.Data spawnplacements$data = DATA_BY_TYPE.get(p_217075_);
--      return spawnplacements$data == null || spawnplacements$data.predicate.test((EntityType)p_217075_, p_217076_, p_217077_, p_217078_, p_217079_);
-+      boolean vanillaResult = spawnplacements$data == null || spawnplacements$data.predicate.test((EntityType)p_217075_, p_217076_, p_217077_, p_217078_, p_217079_);
-+      return net.minecraftforge.event.ForgeEventFactory.checkSpawnPlacements(p_217075_, p_217076_, p_217077_, p_217078_, p_217079_, vanillaResult);
-    }
- 
-    static {
-@@ -158,10 +_,35 @@
-       boolean test(EntityType<T> p_217081_, ServerLevelAccessor p_217082_, MobSpawnType p_217083_, BlockPos p_217084_, RandomSource p_217085_);
-    }
- 
--   public static enum Type {
-+   public static enum Type implements net.minecraftforge.common.IExtensibleEnum {
-       ON_GROUND,
-       IN_WATER,
-       NO_RESTRICTIONS,
-       IN_LAVA;
+     static {
+@@ -159,5 +_,13 @@
+     @FunctionalInterface
+     public interface SpawnPredicate<T extends Entity> {
+         boolean test(EntityType<T> p_217081_, ServerLevelAccessor p_217082_, MobSpawnType p_217083_, BlockPos p_217084_, RandomSource p_217085_);
++    }
 +
-+      public static Type create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<? extends Mob>> predicate) {
-+          throw new IllegalStateException("Enum not extended");
-+      }
-+
-+      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<?>> predicate;
-+      private Type() { this(null); }
-+      private Type(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<?>> predicate) {
-+          this.predicate = predicate;
-+      }
-+
-+      public boolean canSpawnAt(net.minecraft.world.level.LevelReader world, BlockPos pos, EntityType<?> type) {
-+          if (this == NO_RESTRICTIONS) return true;
-+          if (predicate == null) return net.minecraft.world.level.NaturalSpawner.canSpawnAtBody(this, world, pos, type);
-+          return predicate.test(world, pos, type);
-+      }
-+   }
-+
-+   // ******* FORGE START. INTERNAL USE ONLY! ****** //
-+   public static void fireSpawnPlacementEvent()
-+   {
-+       Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<?>> map = Maps.newHashMap();
-+       DATA_BY_TYPE.forEach((type, data) -> map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<>(data.predicate, data.placement, data.heightMap)));
-+       net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent(map));
-+       map.forEach(((entityType, merged) -> DATA_BY_TYPE.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()))));
-    }
++    // ******* FORGE START. INTERNAL USE ONLY! ****** //
++    public static void fireSpawnPlacementEvent() {
++        Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<?>> map = Maps.newHashMap();
++        DATA_BY_TYPE.forEach((type, data) -> map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<>(data.predicate, data.placement, data.heightMap)));
++        net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent(map));
++        map.forEach(((entityType, merged) -> DATA_BY_TYPE.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()))));
+     }
  }

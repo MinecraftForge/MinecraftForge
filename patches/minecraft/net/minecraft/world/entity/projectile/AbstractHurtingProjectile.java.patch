@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
 +++ b/net/minecraft/world/entity/projectile/AbstractHurtingProjectile.java
-@@ -76,7 +_,7 @@
-          }
+@@ -89,7 +_,7 @@
+             }
  
-          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, this.getClipType());
--         if (hitresult.getType() != HitResult.Type.MISS) {
-+         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-             this.onHit(hitresult);
-          }
+             HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity, this.getClipType());
+-            if (hitresult.getType() != HitResult.Type.MISS) {
++            if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+                 this.hitTargetOrDeflectSelf(hitresult);
+             }
  

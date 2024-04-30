@@ -7,12 +7,17 @@ package net.minecraftforge.debug.gameplay.loot;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
+import net.minecraft.advancements.critereon.ItemEnchantmentsPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.ItemSubPredicates;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -22,11 +27,11 @@ import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantment.Rarity;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.SimpleContainer;
@@ -59,8 +64,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -69,7 +74,7 @@ import java.util.stream.Collectors;
 public class GlobalLootModifiersTest extends BaseTestMod {
     public static final String MODID = "global_loot_test";
 
-    private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     static {
         GLM.register("multiply_loot", MultiplyDropsModifier.CODEC);
         GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
@@ -78,7 +83,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     }
 
     private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
-    private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new SmelterEnchantment(Rarity.UNCOMMON, EnchantmentCategory.DIGGER, EquipmentSlot.MAINHAND));
+    private static final RegistryObject<Enchantment> SMELT = ENCHANTS.register("smelt", () -> new Enchantment(Enchantment.definition(ItemTags.MINING_LOOT_ENCHANTABLE, 1, 1, Enchantment.constantCost(15), Enchantment.constantCost(15), 5, EquipmentSlot.MAINHAND)));
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(BlockBehaviour.Properties.of()));
@@ -86,17 +91,21 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
     public GlobalLootModifiersTest() {
-        testItem(() -> {
-            var smelt = new ItemStack(Items.IRON_AXE);
-            EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
-            return smelt;
-        });
+        testItem(() -> getTestItem());
+    }
+
+    private static ItemStack getTestItem() {
+        var smelt = new ItemStack(Items.IRON_AXE);
+        var enchants = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(smelt));
+        enchants.set(SMELT.get(), 1);
+        smelt.set(DataComponents.ENCHANTMENTS, enchants.toImmutable());
+        return smelt;
     }
 
     @SubscribeEvent
     public void runData(GatherDataEvent event) {
-        event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator().getPackOutput(), MODID));
-        event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput()));
+        event.getGenerator().addProvider(event.includeServer(), new DataProvider(event.getGenerator().getPackOutput(), MODID, event.getLookupProvider()));
+        event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
     }
 
     @GameTest(template = "forge:empty3x3x3")
@@ -104,8 +113,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         var center = new BlockPos(1, 1, 1);
         helper.setBlock(center, Blocks.OAK_LOG);
 
-        var smelt = new ItemStack(Items.IRON_AXE);
-        EnchantmentHelper.setEnchantments(Map.of(SMELT.get(), 1), smelt);
+        var smelt = getTestItem();
 
         var player = helper.makeMockServerPlayer();
         player.setItemSlot(EquipmentSlot.MAINHAND, smelt);
@@ -135,8 +143,8 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     }
 
     private static class DataProvider extends GlobalLootModifierProvider {
-        public DataProvider(PackOutput output, String modid) {
-            super(output, modid);
+        public DataProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
+            super(output, modid, registries);
         }
 
         @Override
@@ -144,9 +152,13 @@ public class GlobalLootModifiersTest extends BaseTestMod {
             add("smelting", new SmeltingEnchantmentModifier(
                 new LootItemCondition[]{
                     MatchTool.toolMatches(
-                        ItemPredicate.Builder.item().hasEnchantment(
-                            new EnchantmentPredicate(SMELT.get(), MinMaxBounds.Ints.atLeast(1))
-                        )
+                        ItemPredicate.Builder.item()
+                            .withSubPredicate(
+                                ItemSubPredicates.ENCHANTMENTS,
+                                ItemEnchantmentsPredicate.enchantments(List.of(
+                                    new EnchantmentPredicate(SMELT.getHolder(), MinMaxBounds.Ints.atLeast(1))
+                                ))
+                            )
                     ).build()
                 })
             );
@@ -161,7 +173,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
             add("multiply_loot", new MultiplyDropsModifier(
                 new LootItemCondition[] {
-                    LootTableIdCondition.builder(TEST_BLOCK.get().getLootTable()).build()
+                    LootTableIdCondition.builder(TEST_BLOCK.get().getLootTable().location()).build()
                 }, 2)
             );
 
@@ -175,10 +187,10 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     }
 
     private static class LootProvider extends LootTableProvider {
-        public LootProvider(PackOutput out) {
+        public LootProvider(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
             super(out, Set.of(), List.of(
                 new LootTableProvider.SubProviderEntry(BlockLoot::new, LootContextParamSets.BLOCK)
-            ));
+            ), lookup);
         }
 
         private static class BlockLoot extends BlockLootSubProvider implements IConditionBuilder {
@@ -198,18 +210,12 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         }
     }
 
-    private static class SmelterEnchantment extends Enchantment {
-        protected SmelterEnchantment(Rarity rarityIn, EnchantmentCategory typeIn, EquipmentSlot... slots) {
-            super(rarityIn, typeIn, slots);
-        }
-    }
-
     /**
      * The smelting enchantment causes this modifier to be invoked, via the smelting loot_modifier json
      */
     private static class SmeltingEnchantmentModifier extends LootModifier {
-        public static final Supplier<Codec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() ->
-            RecordCodecBuilder.create(inst ->
+        public static final Supplier<MapCodec<SmeltingEnchantmentModifier>> CODEC = Suppliers.memoize(() ->
+            RecordCodecBuilder.mapCodec(inst ->
                 codecStart(inst)
                 .apply(inst, SmeltingEnchantmentModifier::new)
             )
@@ -240,7 +246,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         }
 
         @Override
-        public Codec<? extends IGlobalLootModifier> codec() {
+        public MapCodec<? extends IGlobalLootModifier> codec() {
             return CODEC.get();
         }
     }
@@ -250,8 +256,8 @@ public class GlobalLootModifiersTest extends BaseTestMod {
      *
      */
     private static class SilkTouchTestModifier extends LootModifier {
-        public static final Supplier<Codec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() ->
-            RecordCodecBuilder.create(inst ->
+        public static final Supplier<MapCodec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() ->
+            RecordCodecBuilder.mapCodec(inst ->
                 codecStart(inst)
                 .apply(inst, SilkTouchTestModifier::new)
             )
@@ -266,20 +272,20 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         public ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
             var ctxTool = context.getParamOrNull(LootContextParams.TOOL);
             //return early if silk-touch is already applied (otherwise we'll get stuck in an infinite loop).
-            if (ctxTool == null || ctxTool.getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0) return generatedLoot;
+            if (ctxTool == null || ctxTool.isEmpty() || ctxTool.getEnchantmentLevel(Enchantments.SILK_TOUCH) > 0) return generatedLoot;
             var fakeTool = ctxTool.copy();
             fakeTool.enchant(Enchantments.SILK_TOUCH, 1);
             var params = new LootParams.Builder(context.getLevel())
                 .withParameter(LootContextParams.TOOL, fakeTool)
                 .create(LootContextParamSets.EMPTY);
 
-            return context.getLevel().getServer().getLootData()
+            return context.getLevel().getServer().reloadableRegistries()
                 .getLootTable(context.getParamOrNull(LootContextParams.BLOCK_STATE).getBlock().getLootTable())
                 .getRandomItems(params);
         }
 
         @Override
-        public Codec<? extends IGlobalLootModifier> codec() {
+        public MapCodec<? extends IGlobalLootModifier> codec() {
             return CODEC.get();
         }
     }
@@ -290,7 +296,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
      *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
-        public static final Supplier<Codec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).and(
+        public static final Supplier<MapCodec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).and(
             inst.group(
                 Codec.INT.fieldOf("numSeeds").forGetter(m -> m.numSeedsToConvert),
                 ForgeRegistries.ITEMS.getCodec().fieldOf("seedItem").forGetter(m -> m.itemToCheck),
@@ -331,13 +337,13 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         }
 
         @Override
-        public Codec<? extends IGlobalLootModifier> codec() {
+        public MapCodec<? extends IGlobalLootModifier> codec() {
             return CODEC.get();
         }
     }
 
     private static class MultiplyDropsModifier extends LootModifier {
-        public static final Supplier<Codec<MultiplyDropsModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst)
+        public static final Supplier<MapCodec<MultiplyDropsModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst)
             .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).forGetter(m -> m.multiplicationFactor))
             .apply(inst, MultiplyDropsModifier::new)
         ));
@@ -358,7 +364,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         }
 
         @Override
-        public Codec<? extends IGlobalLootModifier> codec() {
+        public MapCodec<? extends IGlobalLootModifier> codec() {
             return CODEC.get();
         }
     }

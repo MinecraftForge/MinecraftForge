@@ -10,6 +10,7 @@
     }
   ],
   "result": {
-    "item": "minecraft:chest_minecart"
+    "count": 1,
+    "id": "minecraft:chest_minecart"
   }
 }

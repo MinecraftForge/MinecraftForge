@@ -1,53 +1,19 @@
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
-@@ -17,7 +_,7 @@
- import net.minecraft.world.entity.MobType;
+@@ -23,7 +_,7 @@
+ import net.minecraft.world.item.Item;
  import net.minecraft.world.item.ItemStack;
  
--public abstract class Enchantment {
-+public abstract class Enchantment implements net.minecraftforge.common.extensions.IForgeEnchantment {
-    private final EquipmentSlot[] slots;
-    private final Enchantment.Rarity rarity;
-    public final EnchantmentCategory category;
-@@ -73,6 +_,7 @@
-       return 0;
-    }
+-public class Enchantment implements FeatureElement {
++public class Enchantment implements FeatureElement, net.minecraftforge.common.extensions.IForgeEnchantment {
+     private final Enchantment.EnchantmentDefinition definition;
+     @Nullable
+     protected String descriptionId;
+@@ -131,6 +_,7 @@
+         return 0;
+     }
  
-+   @Deprecated // Forge: Use ItemStack aware version in IForgeEnchantment
-    public float getDamageBonus(int p_44682_, MobType p_44683_) {
-       return 0.0F;
-    }
-@@ -113,7 +_,7 @@
-    }
- 
-    public boolean canEnchant(ItemStack p_44689_) {
--      return this.category.canEnchant(p_44689_.getItem());
-+      return canApplyAtEnchantingTable(p_44689_);
-    }
- 
-    public void doPostAttack(LivingEntity p_44686_, Entity p_44687_, int p_44688_) {
-@@ -135,6 +_,24 @@
-    }
- 
-    public boolean isDiscoverable() {
-+      return true;
-+   }
-+
-+   /**
-+    * This applies specifically to applying at the enchanting table. The other method {@link #canEnchant(ItemStack)}
-+    * applies for <i>all possible</i> enchantments.
-+    * @param stack
-+    * @return
-+    */
-+   public boolean canApplyAtEnchantingTable(ItemStack stack) {
-+      return stack.canApplyAtEnchantingTable(this);
-+   }
-+
-+   /**
-+    * Is this enchantment allowed to be enchanted on books via Enchantment Table
-+    * @return false to disable the vanilla feature
-+    */
-+   public boolean isAllowedOnBooks() {
-       return true;
-    }
- 
++    @Deprecated // Forge: Use ItemStack aware version in IForgeEnchantment
+     public float getDamageBonus(int p_44682_, @Nullable EntityType<?> p_331633_) {
+         return 0.0F;
+     }

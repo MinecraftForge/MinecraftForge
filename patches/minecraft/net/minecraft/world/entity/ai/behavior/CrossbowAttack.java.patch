@@ -1,38 +1,29 @@
 --- a/net/minecraft/world/entity/ai/behavior/CrossbowAttack.java
 +++ b/net/minecraft/world/entity/ai/behavior/CrossbowAttack.java
-@@ -23,7 +_,7 @@
+@@ -25,7 +_,7 @@
  
-    protected boolean checkExtraStartConditions(ServerLevel p_22778_, E p_22779_) {
-       LivingEntity livingentity = getAttackTarget(p_22779_);
--      return p_22779_.isHolding(Items.CROSSBOW) && BehaviorUtils.canSee(p_22779_, livingentity) && BehaviorUtils.isWithinAttackRange(p_22779_, livingentity, 0);
-+      return p_22779_.isHolding(is -> is.getItem() instanceof CrossbowItem) && BehaviorUtils.canSee(p_22779_, livingentity) && BehaviorUtils.isWithinAttackRange(p_22779_, livingentity, 0);
-    }
+     protected boolean checkExtraStartConditions(ServerLevel p_22778_, E p_22779_) {
+         LivingEntity livingentity = getAttackTarget(p_22779_);
+-        return p_22779_.isHolding(Items.CROSSBOW) && BehaviorUtils.canSee(p_22779_, livingentity) && BehaviorUtils.isWithinAttackRange(p_22779_, livingentity, 0);
++        return p_22779_.isHolding(is -> is.getItem() instanceof CrossbowItem) && BehaviorUtils.canSee(p_22779_, livingentity) && BehaviorUtils.isWithinAttackRange(p_22779_, livingentity, 0);
+     }
  
-    protected boolean canStillUse(ServerLevel p_22781_, E p_22782_, long p_22783_) {
-@@ -41,7 +_,7 @@
-          p_22806_.stopUsingItem();
-       }
+     protected boolean canStillUse(ServerLevel p_22781_, E p_22782_, long p_22783_) {
+@@ -43,7 +_,7 @@
+             p_22806_.stopUsingItem();
+         }
  
--      if (p_22806_.isHolding(Items.CROSSBOW)) {
-+      if (p_22806_.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
-          p_22806_.setChargingCrossbow(false);
-          CrossbowItem.setCharged(p_22806_.getUseItem(), false);
-       }
-@@ -50,7 +_,7 @@
+-        if (p_22806_.isHolding(Items.CROSSBOW)) {
++        if (p_22806_.isHolding(is -> is.getItem() instanceof CrossbowItem)) {
+             p_22806_.setChargingCrossbow(false);
+             p_22806_.getUseItem().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
+         }
+@@ -51,7 +_,7 @@
  
-    private void crossbowAttack(E p_22787_, LivingEntity p_22788_) {
-       if (this.crossbowState == CrossbowAttack.CrossbowState.UNCHARGED) {
--         p_22787_.startUsingItem(ProjectileUtil.getWeaponHoldingHand(p_22787_, Items.CROSSBOW));
-+         p_22787_.startUsingItem(ProjectileUtil.getWeaponHoldingHand(p_22787_, item -> item instanceof CrossbowItem));
-          this.crossbowState = CrossbowAttack.CrossbowState.CHARGING;
-          p_22787_.setChargingCrossbow(true);
-       } else if (this.crossbowState == CrossbowAttack.CrossbowState.CHARGING) {
-@@ -73,7 +_,7 @@
-          }
-       } else if (this.crossbowState == CrossbowAttack.CrossbowState.READY_TO_ATTACK) {
-          p_22787_.performRangedAttack(p_22788_, 1.0F);
--         ItemStack itemstack1 = p_22787_.getItemInHand(ProjectileUtil.getWeaponHoldingHand(p_22787_, Items.CROSSBOW));
-+         ItemStack itemstack1 = p_22787_.getItemInHand(ProjectileUtil.getWeaponHoldingHand(p_22787_, item -> item instanceof CrossbowItem));
-          CrossbowItem.setCharged(itemstack1, false);
-          this.crossbowState = CrossbowAttack.CrossbowState.UNCHARGED;
-       }
+     private void crossbowAttack(E p_22787_, LivingEntity p_22788_) {
+         if (this.crossbowState == CrossbowAttack.CrossbowState.UNCHARGED) {
+-            p_22787_.startUsingItem(ProjectileUtil.getWeaponHoldingHand(p_22787_, Items.CROSSBOW));
++            p_22787_.startUsingItem(ProjectileUtil.getWeaponHoldingHand(p_22787_, item -> item instanceof CrossbowItem));
+             this.crossbowState = CrossbowAttack.CrossbowState.CHARGING;
+             p_22787_.setChargingCrossbow(true);
+         } else if (this.crossbowState == CrossbowAttack.CrossbowState.CHARGING) {

@@ -1,53 +1,54 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
 @@ -21,6 +_,7 @@
-    final Map<String, DataProvider> providersToRun = new LinkedHashMap<>();
-    private final WorldVersion version;
-    private final boolean alwaysGenerate;
-+   private final Map<String, DataProvider> providersView = java.util.Collections.unmodifiableMap(this.providersToRun);
+     final Map<String, DataProvider> providersToRun = new LinkedHashMap<>();
+     private final WorldVersion version;
+     private final boolean alwaysGenerate;
++    private final Map<String, DataProvider> providersView = java.util.Collections.unmodifiableMap(this.providersToRun);
  
-    public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
-       this.rootOutputFolder = p_251724_;
+     public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
+         this.rootOutputFolder = p_251724_;
 @@ -38,6 +_,7 @@
-             LOGGER.debug("Generator {} already run for version {}", p_254418_, this.version.getName());
-          } else {
-             LOGGER.info("Starting provider: {}", (Object)p_254418_);
-+            net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);
-             stopwatch1.start();
-             hashcache.applyUpdate(hashcache.generateUpdate(p_254418_, p_253750_::run).join());
-             stopwatch1.stop();
-@@ -56,6 +_,34 @@
-    public DataGenerator.PackGenerator getBuiltinDatapack(boolean p_253826_, String p_254134_) {
-       Path path = this.vanillaPackOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
-       return new DataGenerator.PackGenerator(p_253826_, p_254134_, new PackOutput(path));
-+   }
+                 LOGGER.debug("Generator {} already run for version {}", p_254418_, this.version.getName());
+             } else {
+                 LOGGER.info("Starting provider: {}", p_254418_);
++                net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);
+                 stopwatch1.start();
+                 hashcache.applyUpdate(hashcache.generateUpdate(p_254418_, p_253750_::run).join());
+                 stopwatch1.stop();
+@@ -56,6 +_,35 @@
+     public DataGenerator.PackGenerator getBuiltinDatapack(boolean p_253826_, String p_254134_) {
+         Path path = this.vanillaPackOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(p_254134_);
+         return new DataGenerator.PackGenerator(p_253826_, p_254134_, new PackOutput(path));
++    }
++    public Map<String, DataProvider> getProvidersView() {
++        return this.providersView;
++    }
 +
-+   public Map<String, DataProvider> getProvidersView() {
-+       return this.providersView;
-+   }
++    public PackOutput getPackOutput() {
++        return this.vanillaPackOutput;
++    }
 +
-+   public PackOutput getPackOutput() {
-+      return this.vanillaPackOutput;
-+   }
++    public PackOutput getPackOutput(String path) {
++        return new PackOutput(rootOutputFolder.resolve(path));
++    }
 +
-+   public PackOutput getPackOutput(String path) {
-+      return new PackOutput(rootOutputFolder.resolve(path));
-+   }
++    public <T extends DataProvider> T addProvider(boolean run, DataProvider.Factory<T> factory) {
++        return addProvider(run, factory.create(this.vanillaPackOutput));
++    }
 +
-+   public <T extends DataProvider> T addProvider(boolean run, DataProvider.Factory<T> factory) {
-+      return addProvider(run, factory.create(this.vanillaPackOutput));
-+   }
++    public <T extends DataProvider> T addProvider(boolean run, T provider) {
++        String id = provider.getName();
 +
-+   public <T extends DataProvider> T addProvider(boolean run, T provider) {
-+      String id = provider.getName();
++        if (!DataGenerator.this.allProviderIds.add(id)) {
++            throw new IllegalStateException("Duplicate provider: " + id);
++        }
 +
-+      if (!DataGenerator.this.allProviderIds.add(id))
-+         throw new IllegalStateException("Duplicate provider: " + id);
++        if (run) {
++            DataGenerator.this.providersToRun.put(id, provider);
++        }
 +
-+      if (run)
-+         DataGenerator.this.providersToRun.put(id, provider);
-+
-+      return provider;
-    }
++        return provider;
+     }
  
-    static {
+     static {

@@ -1,87 +1,39 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -181,6 +_,12 @@
+@@ -437,9 +_,11 @@
+                 }
  
- public class ServerGamePacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener {
-    static final Logger LOGGER = LogUtils.getLogger();
-+   /**
-+    * Forge: Deprecated in favor of range/reach attributes.
-+    * @see net.minecraftforge.common.ForgeMod#BLOCK_REACH
-+    * @see net.minecraftforge.common.ForgeMod#ENTITY_REACH
-+    */
-+   @Deprecated
-    public static final double MAX_INTERACTION_DISTANCE = Mth.square(6.0D);
-    private static final int NO_BLOCK_UPDATES_TO_ACK = -1;
-    private static final int TRACKED_MESSAGE_DISCONNECT_THRESHOLD = 4096;
-@@ -414,9 +_,11 @@
-             }
+                 entity.absMoveTo(d3, d4, d5, f, f1);
++                this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
+                 boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
+                 if (flag && (flag2 || !flag3)) {
+                     entity.absMoveTo(d0, d1, d2, f, f1);
++                    this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
+                     this.send(new ClientboundMoveVehiclePacket(entity));
+                     return;
+                 }
+@@ -1005,9 +_,10 @@
+         switch (serverboundplayeractionpacket$action) {
+             case SWAP_ITEM_WITH_OFFHAND:
+                 if (!this.player.isSpectator()) {
+-                    ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
+-                    this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
+-                    this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
++                    var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
++                    if (event.isCanceled()) return;
++                    this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
++                    this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
+                     this.player.stopUsingItem();
+                 }
  
-             entity.absMoveTo(d3, d4, d5, f, f1);
-+            this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-             boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625D));
-             if (flag && (flag2 || !flag3)) {
-                entity.absMoveTo(d0, d1, d2, f, f1);
-+               this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-                this.send(new ClientboundMoveVehiclePacket(entity));
-                return;
-             }
-@@ -981,8 +_,10 @@
-          case SWAP_ITEM_WITH_OFFHAND:
-             if (!this.player.isSpectator()) {
-                ItemStack itemstack = this.player.getItemInHand(InteractionHand.OFF_HAND);
--               this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
--               this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
-+               var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
-+               if (event.isCanceled()) return;
-+               this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
-+               this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
-                this.player.stopUsingItem();
-             }
+@@ -1192,8 +_,9 @@
+                 }
  
-@@ -1033,7 +_,7 @@
-          Vec3 vec3 = blockhitresult.getLocation();
-          BlockPos blockpos = blockhitresult.getBlockPos();
-          Vec3 vec31 = Vec3.atCenterOf(blockpos);
--         if (!(this.player.getEyePosition().distanceToSqr(vec31) > MAX_INTERACTION_DISTANCE)) {
-+         if (this.player.canReach(blockpos, 1.5)) { // Vanilla uses eye-to-center distance < 6, which implies a padding of 1.5
-             Vec3 vec32 = vec3.subtract(vec31);
-             double d0 = 1.0000001D;
-             if (Math.abs(vec32.x()) < 1.0000001D && Math.abs(vec32.y()) < 1.0000001D && Math.abs(vec32.z()) < 1.0000001D) {
-@@ -1041,7 +_,7 @@
-                this.player.resetLastActionTime();
-                int i = this.player.level().getMaxBuildHeight();
-                if (blockpos.getY() < i) {
--                  if (this.awaitingPositionFromClient == null && this.player.distanceToSqr((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < 64.0D && serverlevel.mayInteract(this.player, blockpos)) {
-+                  if (this.awaitingPositionFromClient == null && serverlevel.mayInteract(this.player, blockpos)) {
-                      InteractionResult interactionresult = this.player.gameMode.useItemOn(this.player, serverlevel, itemstack, interactionhand, blockhitresult);
-                      if (direction == Direction.UP && !interactionresult.consumesAction() && blockpos.getY() >= i - 1 && wasBlockPlacementAttempt(this.player, itemstack)) {
-                         Component component = Component.translatable("build.tooHigh", i - 1).withStyle(ChatFormatting.RED);
-@@ -1156,8 +_,9 @@
-                }
- 
-                CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
--               Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
-+               Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
-                this.chatMessageChain.append(completablefuture, (p_296589_) -> {
-+                     if (component == null) return;
-                   PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
-                   this.broadcastChatMessage(playerchatmessage1);
-                });
-@@ -1400,7 +_,7 @@
-          }
- 
-          AABB aabb = entity.getBoundingBox();
--         if (aabb.distanceToSqr(this.player.getEyePosition()) < MAX_INTERACTION_DISTANCE) {
-+         if (this.player.canReach(entity, 3)) { // Vanilla padding is 3.0 (distSq < 6.0 * 6.0)
-             p_9866_.dispatch(new ServerboundInteractPacket.Handler() {
-                private void performInteraction(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
-                   ItemStack itemstack = ServerGamePacketListenerImpl.this.player.getItemInHand(p_143679_);
-@@ -1423,6 +_,8 @@
- 
-                public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
-                   this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> {
-+                     InteractionResult onInteractEntityAtResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(player, entity, p_143683_, p_143682_);
-+                     if (onInteractEntityAtResult != null) return onInteractEntityAtResult;
-                      return p_143687_.interactAt(p_143686_, p_143683_, p_143688_);
-                   });
-                }
+                 CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
+-                Component component = this.server.getChatDecorator().decorate(this.player, playerchatmessage.decoratedContent());
++                Component component = net.minecraftforge.common.ForgeHooks.onServerChatSubmittedEvent(this.player, playerchatmessage.decoratedContent());
+                 this.chatMessageChain.append(completablefuture, p_296589_ -> {
++                    if (component == null) return;
+                     PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
+                     this.broadcastChatMessage(playerchatmessage1);
+                 });

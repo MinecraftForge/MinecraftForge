@@ -1,59 +1,48 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
-@@ -112,7 +_,7 @@
-       BlockPathTypes blockpathtypes = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y + 1, p_77641_.z);
-       BlockPathTypes blockpathtypes1 = this.getCachedBlockType(this.mob, p_77641_.x, p_77641_.y, p_77641_.z);
-       if (this.mob.getPathfindingMalus(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
--         j = Mth.floor(Math.max(1.0F, this.mob.maxUpStep()));
-+         j = Mth.floor(Math.max(1.0F, this.mob.getStepHeight()));
-       }
- 
-       double d0 = this.getFloorLevel(new BlockPos(p_77641_.x, p_77641_.y, p_77641_.z));
-@@ -306,7 +_,7 @@
-    }
- 
-    private double getMobJumpHeight() {
--      return Math.max(1.125D, (double)this.mob.maxUpStep());
-+      return Math.max(1.125D, (double)this.mob.getStepHeight());
-    }
- 
-    private Node getNodeAndUpdateCostToMax(int p_230620_, int p_230621_, int p_230622_, BlockPathTypes p_230623_, float p_230624_) {
-@@ -459,6 +_,11 @@
-                if (l != 0 || j1 != 0) {
-                   p_77609_.set(i + l, j + i1, k + j1);
-                   BlockState blockstate = p_77608_.getBlockState(p_77609_);
-+                  BlockPathTypes blockPathType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
-+                  if (blockPathType != null) return blockPathType;
-+                  FluidState fluidState = blockstate.getFluidState();
-+                  BlockPathTypes fluidPathType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, null, p_77610_);
-+                  if (fluidPathType != null) return fluidPathType;
-                   if (blockstate.is(Blocks.CACTUS) || blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
-                      return BlockPathTypes.DANGER_OTHER;
-                   }
-@@ -484,6 +_,8 @@
- 
-    protected static BlockPathTypes getBlockPathTypeRaw(BlockGetter p_77644_, BlockPos p_77645_) {
-       BlockState blockstate = p_77644_.getBlockState(p_77645_);
-+      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_, null);
-+      if (type != null) return type;
-       Block block = blockstate.getBlock();
-       if (blockstate.isAir()) {
-          return BlockPathTypes.OPEN;
-@@ -497,6 +_,8 @@
-                return BlockPathTypes.COCOA;
-             } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
-                FluidState fluidstate = p_77644_.getFluidState(p_77645_);
-+               BlockPathTypes nonLoggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, false);
-+               if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
-                if (fluidstate.is(FluidTags.LAVA)) {
-                   return BlockPathTypes.LAVA;
-                } else if (isBurningBlock(blockstate)) {
-@@ -516,6 +_,8 @@
-                   if (!blockstate.isPathfindable(p_77644_, p_77645_, PathComputationType.LAND)) {
-                      return BlockPathTypes.BLOCKED;
-                   } else {
-+                     BlockPathTypes loggableFluidPathType = fluidstate.getBlockPathType(p_77644_, p_77645_, null, true);
-+                     if (loggableFluidPathType != null) return loggableFluidPathType;
-                      return fluidstate.is(FluidTags.WATER) ? BlockPathTypes.WATER : BlockPathTypes.OPEN;
-                   }
-                } else {
+@@ -477,6 +_,16 @@
+                 for (int k = -1; k <= 1; k++) {
+                     if (i != 0 || k != 0) {
+                         PathType pathtype = p_334221_.getPathTypeFromState(p_336062_ + i, p_335259_ + j, p_336315_ + k);
++
++                        var pos = new BlockPos(p_336062_ + i, p_335259_ + j, p_336315_ + k);
++                        var blockstate = p_334221_.level().getBlockState(pos);
++
++                        var blockPathType = blockstate.getAdjacentBlockPathType(p_334221_.level(), pos, null, p_333971_);
++                        if (blockPathType != null) return blockPathType;
++
++                        var fluidPathType = blockstate.getFluidState().getAdjacentBlockPathType(p_334221_.level(), pos, null, p_333971_);
++                        if (fluidPathType != null) return fluidPathType;
++
+                         if (pathtype == PathType.DAMAGE_OTHER) {
+                             return PathType.DANGER_OTHER;
+                         }
+@@ -503,6 +_,10 @@
+     protected static PathType getPathTypeFromState(BlockGetter p_335222_, BlockPos p_331935_) {
+         BlockState blockstate = p_335222_.getBlockState(p_331935_);
+         Block block = blockstate.getBlock();
++
++        var type = blockstate.getBlockPathType(p_335222_, p_331935_, null);
++        if (type != null) return type;
++
+         if (blockstate.isAir()) {
+             return PathType.OPEN;
+         } else if (blockstate.is(BlockTags.TRAPDOORS) || blockstate.is(Blocks.LILY_PAD) || blockstate.is(Blocks.BIG_DRIPLEAF)) {
+@@ -517,6 +_,8 @@
+             return PathType.COCOA;
+         } else if (!blockstate.is(Blocks.WITHER_ROSE) && !blockstate.is(Blocks.POINTED_DRIPSTONE)) {
+             FluidState fluidstate = blockstate.getFluidState();
++            var nonLoggableFluidPathType = fluidstate.getBlockPathType(p_335222_, p_331935_, null, false);
++            if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
+             if (fluidstate.is(FluidTags.LAVA)) {
+                 return PathType.LAVA;
+             } else if (isBurningBlock(blockstate)) {
+@@ -537,6 +_,8 @@
+                 if (!blockstate.isPathfindable(PathComputationType.LAND)) {
+                     return PathType.BLOCKED;
+                 } else {
++                    var loggableFluidPathType = fluidstate.getBlockPathType(p_335222_, p_331935_, null, true);
++                    if (loggableFluidPathType != null) return loggableFluidPathType;
+                     return fluidstate.is(FluidTags.WATER) ? PathType.WATER : PathType.OPEN;
+                 }
+             } else {

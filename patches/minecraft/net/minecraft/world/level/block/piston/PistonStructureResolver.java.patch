@@ -1,70 +1,67 @@
 --- a/net/minecraft/world/level/block/piston/PistonStructureResolver.java
 +++ b/net/minecraft/world/level/block/piston/PistonStructureResolver.java
-@@ -51,7 +_,7 @@
-       } else {
-          for(int i = 0; i < this.toPush.size(); ++i) {
-             BlockPos blockpos = this.toPush.get(i);
--            if (isSticky(this.level.getBlockState(blockpos)) && !this.addBranchingBlocks(blockpos)) {
-+            if (this.level.getBlockState(blockpos).isStickyBlock() && !this.addBranchingBlocks(blockpos)) {
-                return false;
+@@ -50,7 +_,7 @@
+         } else {
+             for (int i = 0; i < this.toPush.size(); i++) {
+                 BlockPos blockpos = this.toPush.get(i);
+-                if (isSticky(this.level.getBlockState(blockpos)) && !this.addBranchingBlocks(blockpos)) {
++                if (this.level.getBlockState(blockpos).isStickyBlock() && !this.addBranchingBlocks(blockpos)) {
+                     return false;
+                 }
              }
-          }
-@@ -60,23 +_,9 @@
-       }
-    }
+@@ -59,21 +_,9 @@
+         }
+     }
  
--   private static boolean isSticky(BlockState p_155938_) {
--      return p_155938_.is(Blocks.SLIME_BLOCK) || p_155938_.is(Blocks.HONEY_BLOCK);
--   }
+-    private static boolean isSticky(BlockState p_155938_) {
+-        return p_155938_.is(Blocks.SLIME_BLOCK) || p_155938_.is(Blocks.HONEY_BLOCK);
+-    }
 -
--   private static boolean canStickToEachOther(BlockState p_155940_, BlockState p_155941_) {
--      if (p_155940_.is(Blocks.HONEY_BLOCK) && p_155941_.is(Blocks.SLIME_BLOCK)) {
--         return false;
--      } else if (p_155940_.is(Blocks.SLIME_BLOCK) && p_155941_.is(Blocks.HONEY_BLOCK)) {
--         return false;
--      } else {
--         return isSticky(p_155940_) || isSticky(p_155941_);
--      }
--   }
+-    private static boolean canStickToEachOther(BlockState p_155940_, BlockState p_155941_) {
+-        if (p_155940_.is(Blocks.HONEY_BLOCK) && p_155941_.is(Blocks.SLIME_BLOCK)) {
+-            return false;
+-        } else {
+-            return p_155940_.is(Blocks.SLIME_BLOCK) && p_155941_.is(Blocks.HONEY_BLOCK) ? false : isSticky(p_155940_) || isSticky(p_155941_);
+-        }
+-    }
 -
-    private boolean addBlockLine(BlockPos p_60434_, Direction p_60435_) {
-       BlockState blockstate = this.level.getBlockState(p_60434_);
--      if (blockstate.isAir()) {
-+      if (level.isEmptyBlock(p_60434_)) {
-          return true;
-       } else if (!PistonBaseBlock.isPushable(blockstate, this.level, p_60434_, this.pushDirection, false, p_60435_)) {
-          return true;
-@@ -89,11 +_,12 @@
-          if (i + this.toPush.size() > 12) {
-             return false;
-          } else {
--            while(isSticky(blockstate)) {
-+            BlockState oldState;
-+            while(blockstate.isStickyBlock()) {
-                BlockPos blockpos = p_60434_.relative(this.pushDirection.getOpposite(), i);
--               BlockState blockstate1 = blockstate;
-+               oldState = blockstate;
-                blockstate = this.level.getBlockState(blockpos);
--               if (blockstate.isAir() || !canStickToEachOther(blockstate1, blockstate) || !PistonBaseBlock.isPushable(blockstate, this.level, blockpos, this.pushDirection, false, this.pushDirection.getOpposite()) || blockpos.equals(this.pistonPos)) {
-+               if (blockstate.isAir() || !(oldState.canStickTo(blockstate) && blockstate.canStickTo(oldState)) || !PistonBaseBlock.isPushable(blockstate, this.level, blockpos, this.pushDirection, false, this.pushDirection.getOpposite()) || blockpos.equals(this.pistonPos)) {
-                   break;
-                }
+     private boolean addBlockLine(BlockPos p_60434_, Direction p_60435_) {
+         BlockState blockstate = this.level.getBlockState(p_60434_);
+-        if (blockstate.isAir()) {
++        if (level.isEmptyBlock(p_60434_)) {
+             return true;
+         } else if (!PistonBaseBlock.isPushable(blockstate, this.level, p_60434_, this.pushDirection, false, p_60435_)) {
+             return true;
+@@ -86,12 +_,12 @@
+             if (i + this.toPush.size() > 12) {
+                 return false;
+             } else {
+-                while (isSticky(blockstate)) {
++                while (blockstate.isStickyBlock()) {
+                     BlockPos blockpos = p_60434_.relative(this.pushDirection.getOpposite(), i);
+                     BlockState blockstate1 = blockstate;
+                     blockstate = this.level.getBlockState(blockpos);
+                     if (blockstate.isAir()
+-                        || !canStickToEachOther(blockstate1, blockstate)
++                        || !(blockstate1.canStickTo(blockstate) && blockstate.canStickTo(blockstate1))
+                         || !PistonBaseBlock.isPushable(blockstate, this.level, blockpos, this.pushDirection, false, this.pushDirection.getOpposite())
+                         || blockpos.equals(this.pistonPos)) {
+                         break;
+@@ -119,7 +_,7 @@
  
-@@ -120,7 +_,7 @@
- 
-                   for(int k = 0; k <= j + l; ++k) {
-                      BlockPos blockpos2 = this.toPush.get(k);
--                     if (isSticky(this.level.getBlockState(blockpos2)) && !this.addBranchingBlocks(blockpos2)) {
-+                     if (this.level.getBlockState(blockpos2).isStickyBlock() && !this.addBranchingBlocks(blockpos2)) {
-                         return false;
-                      }
-                   }
-@@ -174,7 +_,7 @@
-          if (direction.getAxis() != this.pushDirection.getAxis()) {
-             BlockPos blockpos = p_60432_.relative(direction);
-             BlockState blockstate1 = this.level.getBlockState(blockpos);
--            if (canStickToEachOther(blockstate1, blockstate) && !this.addBlockLine(blockpos, direction)) {
-+            if (blockstate1.canStickTo(blockstate) && blockstate.canStickTo(blockstate1) && !this.addBlockLine(blockpos, direction)) {
-                return false;
+                         for (int k = 0; k <= j + l; k++) {
+                             BlockPos blockpos2 = this.toPush.get(k);
+-                            if (isSticky(this.level.getBlockState(blockpos2)) && !this.addBranchingBlocks(blockpos2)) {
++                            if (this.level.getBlockState(blockpos2).isStickyBlock() && !this.addBranchingBlocks(blockpos2)) {
+                                 return false;
+                             }
+                         }
+@@ -173,7 +_,7 @@
+             if (direction.getAxis() != this.pushDirection.getAxis()) {
+                 BlockPos blockpos = p_60432_.relative(direction);
+                 BlockState blockstate1 = this.level.getBlockState(blockpos);
+-                if (canStickToEachOther(blockstate1, blockstate) && !this.addBlockLine(blockpos, direction)) {
++                if (blockstate1.canStickTo(blockstate) && blockstate.canStickTo(blockstate1) && !this.addBlockLine(blockpos, direction)) {
+                     return false;
+                 }
              }
-          }

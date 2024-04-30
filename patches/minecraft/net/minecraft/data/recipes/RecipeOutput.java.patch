@@ -1,20 +1,23 @@
 --- a/net/minecraft/data/recipes/RecipeOutput.java
 +++ b/net/minecraft/data/recipes/RecipeOutput.java
-@@ -7,7 +_,16 @@
+@@ -7,7 +_,19 @@
  import net.minecraft.world.item.crafting.Recipe;
  
  public interface RecipeOutput {
--   void accept(ResourceLocation p_310578_, Recipe<?> p_312265_, @Nullable AdvancementHolder p_310407_);
-+   default void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement) {
-+       if (advancement == null)
-+           accept(id, recipe, null, null);
-+       else {
-+           var json = net.minecraft.Util.getOrThrow(Advancement.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, advancement.value()), IllegalStateException::new);
-+           accept(id, recipe, advancement.id(), json);
-+       }
-+   }
+-    void accept(ResourceLocation p_310578_, Recipe<?> p_312265_, @Nullable AdvancementHolder p_310407_);
++    default void accept(ResourceLocation id, Recipe<?> recipe, @Nullable AdvancementHolder advancement) {
++        if (advancement == null) {
++            accept(id, recipe, null, null);
++        } else {
++            var ops = registry().createSerializationContext(com.mojang.serialization.JsonOps.INSTANCE);
++            var json = Advancement.CODEC.encodeStart(ops, advancement.value()).getOrThrow(IllegalStateException::new);
++            accept(id, recipe, advancement.id(), json);
++        }
++    }
 +
-+   void accept(ResourceLocation id, Recipe<?> recipe, @Nullable ResourceLocation advancementId, @Nullable com.google.gson.JsonElement advancement);
++    void accept(ResourceLocation id, Recipe<?> recipe, @Nullable ResourceLocation advancementId, @Nullable com.google.gson.JsonElement advancement);
++
++    net.minecraft.core.HolderLookup.Provider registry();
  
-    Advancement.Builder advancement();
+     Advancement.Builder advancement();
  }

@@ -1,150 +1,143 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -44,6 +_,10 @@
-    @Nullable
-    private UUID target;
-    public final float bobOffs;
-+   /**
-+    * The maximum age of this EntityItem.  The item is expired once this is reached.
-+    */
-+   public int lifespan = ItemEntity.LIFETIME;
+@@ -48,6 +_,10 @@
+     @Nullable
+     private UUID target;
+     public final float bobOffs;
++    /**
++     * The maximum age of this EntityItem.  The item is expired once this is reached.
++     */
++    public int lifespan = ItemEntity.LIFETIME;
  
-    public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
-       super(p_31991_, p_31992_);
-@@ -60,6 +_,7 @@
-       this.setPos(p_149664_, p_149665_, p_149666_);
-       this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
-       this.setItem(p_149667_);
-+      this.lifespan = (p_149667_.getItem() == null ? ItemEntity.LIFETIME : p_149667_.getEntityLifespan(p_149663_));
-    }
+     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
+         super(p_31991_, p_31992_);
+@@ -66,6 +_,7 @@
+         this.setPos(p_149664_, p_149665_, p_149666_);
+         this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
+         this.setItem(p_149667_);
++        this.lifespan = (p_149667_.getItem() == null ? ItemEntity.LIFETIME : p_149667_.getEntityLifespan(p_149663_));
+     }
  
-    private ItemEntity(ItemEntity p_31994_) {
-@@ -68,6 +_,7 @@
-       this.copyPosition(p_31994_);
-       this.age = p_31994_.age;
-       this.bobOffs = p_31994_.bobOffs;
-+      this.lifespan = p_31994_.lifespan;
-    }
+     private ItemEntity(ItemEntity p_31994_) {
+@@ -74,6 +_,7 @@
+         this.copyPosition(p_31994_);
+         this.age = p_31994_.age;
+         this.bobOffs = p_31994_.bobOffs;
++        this.lifespan = p_31994_.lifespan;
+     }
  
-    public boolean dampensVibrations() {
-@@ -109,6 +_,7 @@
-    }
+     @Override
+@@ -119,6 +_,7 @@
  
-    public void tick() {
-+      if (getItem().onEntityItemUpdate(this)) return;
-       if (this.getItem().isEmpty()) {
-          this.discard();
-       } else {
-@@ -122,6 +_,9 @@
-          this.zo = this.getZ();
-          Vec3 vec3 = this.getDeltaMovement();
-          float f = this.getEyeHeight() - 0.11111111F;
-+         net.minecraftforge.fluids.FluidType fluidType = this.getMaxHeightFluidType();
-+         if (!fluidType.isAir() && !fluidType.isVanilla() && this.getFluidTypeHeight(fluidType) > (double)f) fluidType.setItemMovement(this);
-+         else
-          if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > (double)f) {
-             this.setUnderwaterMovement();
-          } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > (double)f) {
-@@ -143,7 +_,8 @@
-             this.move(MoverType.SELF, this.getDeltaMovement());
-             float f1 = 0.98F;
-             if (this.onGround()) {
--               f1 = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
-+               BlockPos groundPos = getBlockPosBelowThatAffectsMyMovement();
-+               f1 = this.level().getBlockState(groundPos).getFriction(level(), groundPos, this) * 0.98F;
+     @Override
+     public void tick() {
++        if (getItem().onEntityItemUpdate(this)) return;
+         if (this.getItem().isEmpty()) {
+             this.discard();
+         } else {
+@@ -131,6 +_,10 @@
+             this.yo = this.getY();
+             this.zo = this.getZ();
+             Vec3 vec3 = this.getDeltaMovement();
++            var fluidType = this.getMaxHeightFluidType();
++            if (!fluidType.isAir() && !fluidType.isVanilla() && this.getFluidTypeHeight(fluidType) > 0.1F) {
++                fluidType.setItemMovement(this);
++            } else
+             if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
+                 this.setUnderwaterMovement();
+             } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
+@@ -152,7 +_,8 @@
+                 this.move(MoverType.SELF, this.getDeltaMovement());
+                 float f = 0.98F;
+                 if (this.onGround()) {
+-                    f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
++                    BlockPos groundPos = getBlockPosBelowThatAffectsMyMovement();
++                    f = this.level().getBlockState(groundPos).getFriction(level(), groundPos, this) * 0.98F;
+                 }
+ 
+                 this.setDeltaMovement(this.getDeltaMovement().multiply((double)f, 0.98, (double)f));
+@@ -184,7 +_,16 @@
+                 }
              }
  
-             this.setDeltaMovement(this.getDeltaMovement().multiply((double)f1, 0.98D, (double)f1));
-@@ -173,7 +_,16 @@
+-            if (!this.level().isClientSide && this.age >= 6000) {
++            ItemStack item = this.getItem();
++            if (!this.level().isClientSide && this.age >= lifespan) {
++                int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
++                if (hook < 0) {
++                   this.discard();
++                } else {
++                   this.lifespan += hook;
++                }
++            }
++            if (item.isEmpty() && !this.isRemoved()) {
+                 this.discard();
              }
-          }
+         }
+@@ -281,7 +_,7 @@
+             this.health = (int)((float)this.health - p_32014_);
+             this.gameEvent(GameEvent.ENTITY_DAMAGE, p_32013_.getEntity());
+             if (this.health <= 0) {
+-                this.getItem().onDestroyed(this);
++                this.getItem().onDestroyed(this, p_32013_);
+                 this.discard();
+             }
  
--         if (!this.level().isClientSide && this.age >= 6000) {
-+         ItemStack item = this.getItem();
-+         if (!this.level().isClientSide && this.age >= lifespan) {
-+             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
-+             if (hook < 0) {
-+                this.discard();
-+             } else {
-+                this.lifespan += hook;
-+             }
-+         }
-+         if (item.isEmpty() && !this.isRemoved()) {
-             this.discard();
-          }
+@@ -294,6 +_,7 @@
+         p_32050_.putShort("Health", (short)this.health);
+         p_32050_.putShort("Age", (short)this.age);
+         p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
++        p_32050_.putInt("Lifespan", this.lifespan);
+         if (this.thrower != null) {
+             p_32050_.putUUID("Thrower", this.thrower);
+         }
+@@ -315,6 +_,10 @@
+             this.pickupDelay = p_32034_.getShort("PickupDelay");
+         }
  
-@@ -235,6 +_,8 @@
-          return false;
-       } else if (p_32028_.hasTag() ^ p_32027_.hasTag()) {
-          return false;
-+      } else if (!p_32027_.areCapsCompatible(p_32028_)) {
-+         return false;
-       } else {
-          return !p_32028_.hasTag() || p_32028_.getTag().equals(p_32027_.getTag());
-       }
-@@ -280,7 +_,7 @@
-          this.health = (int)((float)this.health - p_32014_);
-          this.gameEvent(GameEvent.ENTITY_DAMAGE, p_32013_.getEntity());
-          if (this.health <= 0) {
--            this.getItem().onDestroyed(this);
-+            this.getItem().onDestroyed(this, p_32013_);
-             this.discard();
-          }
++        if (p_32034_.contains("Lifespan")) {
++            this.lifespan = p_32034_.getInt("Lifespan");
++        }
++
+         if (p_32034_.hasUUID("Owner")) {
+             this.target = p_32034_.getUUID("Owner");
+         }
+@@ -339,10 +_,17 @@
+     @Override
+     public void playerTouch(Player p_32040_) {
+         if (!this.level().isClientSide) {
++            if (this.pickupDelay > 0) return;
+             ItemStack itemstack = this.getItem();
+             Item item = itemstack.getItem();
+             int i = itemstack.getCount();
+-            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && p_32040_.getInventory().add(itemstack)) {
++            int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
++            if (hook < 0) return;
++            ItemStack copy = itemstack.copy();
++            if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && (hook == 1 || i <= 0 || p_32040_.getInventory().add(itemstack))) {
++                i = copy.getCount() - itemstack.getCount();
++                copy.setCount(i);
++                net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
+                 p_32040_.take(this, i);
+                 if (itemstack.isEmpty()) {
+                     this.discard();
+@@ -368,8 +_,8 @@
  
-@@ -292,6 +_,7 @@
-       p_32050_.putShort("Health", (short)this.health);
-       p_32050_.putShort("Age", (short)this.age);
-       p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
-+      p_32050_.putInt("Lifespan", this.lifespan);
-       if (this.thrower != null) {
-          p_32050_.putUUID("Thrower", this.thrower);
-       }
-@@ -312,6 +_,9 @@
-       if (p_32034_.contains("PickupDelay")) {
-          this.pickupDelay = p_32034_.getShort("PickupDelay");
-       }
-+      if (p_32034_.contains("Lifespan")) {
-+         this.lifespan = p_32034_.getInt("Lifespan");
-+      }
+     @Nullable
+     @Override
+-    public Entity changeDimension(ServerLevel p_32042_) {
+-        Entity entity = super.changeDimension(p_32042_);
++    public Entity changeDimension(ServerLevel p_32042_, net.minecraftforge.common.util.ITeleporter teleporter) {
++        Entity entity = super.changeDimension(p_32042_, teleporter);
+         if (!this.level().isClientSide && entity instanceof ItemEntity) {
+             ((ItemEntity)entity).mergeWithNeighbours();
+         }
+@@ -436,7 +_,7 @@
  
-       if (p_32034_.hasUUID("Owner")) {
-          this.target = p_32034_.getUUID("Owner");
-@@ -332,10 +_,17 @@
+     public void makeFakeItem() {
+         this.setNeverPickUp();
+-        this.age = 5999;
++        this.age = getItem().getEntityLifespan(this.level()) - 1;
+     }
  
-    public void playerTouch(Player p_32040_) {
-       if (!this.level().isClientSide) {
-+         if (this.pickupDelay > 0) return;
-          ItemStack itemstack = this.getItem();
-          Item item = itemstack.getItem();
-          int i = itemstack.getCount();
--         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && p_32040_.getInventory().add(itemstack)) {
-+         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_32040_);
-+         if (hook < 0) return;
-+         ItemStack copy = itemstack.copy();
-+         if (this.pickupDelay == 0 && (this.target == null || this.target.equals(p_32040_.getUUID())) && (hook == 1 || i <= 0 || p_32040_.getInventory().add(itemstack))) {
-+            i = copy.getCount() - itemstack.getCount();
-+            copy.setCount(i);
-+            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
-             p_32040_.take(this, i);
-             if (itemstack.isEmpty()) {
-                this.discard();
-@@ -359,8 +_,8 @@
-    }
- 
-    @Nullable
--   public Entity changeDimension(ServerLevel p_32042_) {
--      Entity entity = super.changeDimension(p_32042_);
-+   public Entity changeDimension(ServerLevel p_32042_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      Entity entity = super.changeDimension(p_32042_, teleporter);
-       if (!this.level().isClientSide && entity instanceof ItemEntity) {
-          ((ItemEntity)entity).mergeWithNeighbours();
-       }
-@@ -427,7 +_,7 @@
- 
-    public void makeFakeItem() {
-       this.setNeverPickUp();
--      this.age = 5999;
-+      this.age = getItem().getEntityLifespan(this.level()) - 1;
-    }
- 
-    public float getSpin(float p_32009_) {
+     public float getSpin(float p_32009_) {

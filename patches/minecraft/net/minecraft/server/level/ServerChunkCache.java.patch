@@ -1,39 +1,44 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -160,6 +_,7 @@
-          if (chunkholder == null) {
-             return null;
-          } else {
-+            if (chunkholder.currentlyLoading != null) return chunkholder.currentlyLoading; // Forge: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
-             Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
-             if (either == null) {
-                return null;
-@@ -347,7 +_,7 @@
-             for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
-                LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
-                ChunkPos chunkpos = levelchunk1.getPos();
--               if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
-+               if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
-                   levelchunk1.incrementInhabitedTime(j);
-                   if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
-                      NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag);
-@@ -428,11 +_,17 @@
-    }
+@@ -171,6 +_,10 @@
+             if (chunkholder == null) {
+                 return null;
+             } else {
++                // Forge: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
++                if (chunkholder.currentlyLoading != null) {
++                    return chunkholder.currentlyLoading;
++                }
+                 ChunkResult<ChunkAccess> chunkresult = chunkholder.getFutureIfPresent(ChunkStatus.FULL).getNow(null);
+                 if (chunkresult == null) {
+                     return null;
+@@ -363,7 +_,7 @@
+                 for (ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
+                     LevelChunk levelchunk1 = serverchunkcache$chunkandholder.chunk;
+                     ChunkPos chunkpos = levelchunk1.getPos();
+-                    if (this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) {
++                    if ((this.level.isNaturalSpawningAllowed(chunkpos) && this.chunkMap.anyPlayerCloseEnoughForSpawning(chunkpos)) || this.distanceManager.shouldForceTicks(chunkpos.toLong())) {
+                         levelchunk1.incrementInhabitedTime(j);
+                         if (flag1 && (this.spawnEnemies || this.spawnFriendlies) && this.level.getWorldBorder().isWithinBounds(chunkpos)) {
+                             NaturalSpawner.spawnForChunk(this.level, levelchunk1, naturalspawner$spawnstate, this.spawnFriendlies, this.spawnEnemies, flag);
+@@ -442,11 +_,19 @@
+     }
  
-    public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
--      this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_);
-+      addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, false);
-+   }
-+   public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_, boolean forceTicks) {
-+      this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
-    }
+     public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_) {
+-        this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_);
++        addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, false);
++    }
++
++    public <T> void addRegionTicket(TicketType<T> p_8388_, ChunkPos p_8389_, int p_8390_, T p_8391_, boolean forceTicks) {
++       this.distanceManager.addRegionTicket(p_8388_, p_8389_, p_8390_, p_8391_, forceTicks);
+     }
  
-    public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
--      this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_);
-+      removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, false);
-+   }
-+   public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
-+      this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
-    }
+     public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
+-        this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_);
++        removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, false);
++    }
++
++    public <T> void removeRegionTicket(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_, boolean forceTicks) {
++       this.distanceManager.removeRegionTicket(p_8439_, p_8440_, p_8441_, p_8442_, forceTicks);
+     }
  
-    public void updateChunkForced(ChunkPos p_8400_, boolean p_8401_) {
+     @Override

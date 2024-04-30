@@ -1,73 +1,77 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
-@@ -26,22 +_,31 @@
-    private static final Map<String, Consumer<ServerLevel>> AFTER_BATCH_FUNCTIONS = Maps.newHashMap();
-    private static final Collection<TestFunction> LAST_FAILED_TESTS = Sets.newHashSet();
+@@ -25,22 +_,33 @@
+     private static final Map<String, Consumer<ServerLevel>> AFTER_BATCH_FUNCTIONS = Maps.newHashMap();
+     private static final Set<TestFunction> LAST_FAILED_TESTS = Sets.newHashSet();
  
-+   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
-+   @Deprecated
-    public static void register(Class<?> p_177502_) {
-       Arrays.stream(p_177502_.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(GameTestRegistry::register);
-    }
- 
-+   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
-+   @Deprecated
-    public static void register(Method p_177504_) {
-+       register(p_177504_, java.util.Set.of());
-+   }
 +
-+   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
-+   @Deprecated
-+   public static void register(Method p_177504_, java.util.Set<String> allowed) {
-       String s = p_177504_.getDeclaringClass().getSimpleName();
-       GameTest gametest = p_177504_.getAnnotation(GameTest.class);
-       if (gametest != null) {
--         TEST_FUNCTIONS.add(turnMethodIntoTestFunction(p_177504_));
--         TEST_CLASS_NAMES.add(s);
-+         net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
-       }
++    /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++    @Deprecated
+     public static void register(Class<?> p_177502_) {
+         Arrays.stream(p_177502_.getDeclaredMethods()).sorted(Comparator.comparing(Method::getName)).forEach(GameTestRegistry::register);
+     }
  
-       GameTestGenerator gametestgenerator = p_177504_.getAnnotation(GameTestGenerator.class);
-       if (gametestgenerator != null) {
--         TEST_FUNCTIONS.addAll(useTestGeneratorMethod(p_177504_));
--         TEST_CLASS_NAMES.add(s);
-+          for (var func : useTestGeneratorMethod(p_177504_))
-+             net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, func);
-       }
++    /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++    @Deprecated
+     public static void register(Method p_177504_) {
++        register(p_177504_, java.util.Set.of());
++    }
++
++    /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++    @Deprecated
++    public static void register(Method p_177504_, java.util.Set<String> allowed) {
+         String s = p_177504_.getDeclaringClass().getSimpleName();
+         GameTest gametest = p_177504_.getAnnotation(GameTest.class);
+         if (gametest != null) {
+-            TEST_FUNCTIONS.add(turnMethodIntoTestFunction(p_177504_));
+-            TEST_CLASS_NAMES.add(s);
++            net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, turnMethodIntoTestFunction(p_177504_));
+         }
  
-       registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
-@@ -105,7 +_,9 @@
+         GameTestGenerator gametestgenerator = p_177504_.getAnnotation(GameTestGenerator.class);
+         if (gametestgenerator != null) {
+-            TEST_FUNCTIONS.addAll(useTestGeneratorMethod(p_177504_));
+-            TEST_CLASS_NAMES.add(s);
++            for (var func : useTestGeneratorMethod(p_177504_)) {
++                net.minecraftforge.gametest.ForgeGameTestHooks.addTest(TEST_FUNCTIONS, TEST_CLASS_NAMES, allowed, func);
++            }
+         }
  
-    private static Collection<TestFunction> useTestGeneratorMethod(Method p_177514_) {
-       try {
--         Object object = p_177514_.getDeclaringClass().newInstance();
-+         Object object = null;
-+         if (!java.lang.reflect.Modifier.isStatic(p_177514_.getModifiers()))
-+             object = p_177514_.getDeclaringClass().newInstance();
-          return (Collection)p_177514_.invoke(object);
-       } catch (ReflectiveOperationException reflectiveoperationexception) {
-          throw new RuntimeException(reflectiveoperationexception);
-@@ -116,9 +_,9 @@
-       GameTest gametest = p_177516_.getAnnotation(GameTest.class);
-       String s = p_177516_.getDeclaringClass().getSimpleName();
-       String s1 = s.toLowerCase();
--      String s2 = s1 + "." + p_177516_.getName().toLowerCase();
--      String s3 = gametest.template().isEmpty() ? s2 : s1 + "." + gametest.template();
--      String s4 = gametest.batch();
-+      String s2 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestName(p_177516_, gametest);
-+      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestTemplate(p_177516_, gametest, s2);
-+      String s4 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestBatch(p_177516_, gametest);
-       Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
-       return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
-    }
-@@ -126,7 +_,9 @@
-    private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
-       return (p_177512_) -> {
-          try {
--            Object object = p_177520_.getDeclaringClass().newInstance();
+         registerBatchFunction(p_177504_, BeforeBatch.class, BeforeBatch::batch, BEFORE_BATCH_FUNCTIONS);
+@@ -101,7 +_,10 @@
+ 
+     private static Collection<TestFunction> useTestGeneratorMethod(Method p_177514_) {
+         try {
+-            Object object = p_177514_.getDeclaringClass().newInstance();
 +            Object object = null;
-+            if (!java.lang.reflect.Modifier.isStatic(p_177520_.getModifiers()))
-+                object = p_177520_.getDeclaringClass().newInstance();
-             p_177520_.invoke(object, p_177512_);
-          } catch (InvocationTargetException invocationtargetexception) {
-             if (invocationtargetexception.getCause() instanceof RuntimeException) {
++            if (!java.lang.reflect.Modifier.isStatic(p_177514_.getModifiers())) {
++                object = p_177514_.getDeclaringClass().newInstance();
++            }
+             return (Collection<TestFunction>)p_177514_.invoke(object);
+         } catch (ReflectiveOperationException reflectiveoperationexception) {
+             throw new RuntimeException(reflectiveoperationexception);
+@@ -112,9 +_,9 @@
+         GameTest gametest = p_177516_.getAnnotation(GameTest.class);
+         String s = p_177516_.getDeclaringClass().getSimpleName();
+         String s1 = s.toLowerCase();
+-        String s2 = s1 + "." + p_177516_.getName().toLowerCase();
+-        String s3 = gametest.template().isEmpty() ? s2 : s1 + "." + gametest.template();
+-        String s4 = gametest.batch();
++        String s2 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestName(p_177516_, gametest);
++        String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestTemplate(p_177516_, gametest, s2);
++        String s4 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestBatch(p_177516_, gametest);
+         Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
+         return new TestFunction(
+             s4,
+@@ -135,7 +_,10 @@
+     private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
+         return p_177512_ -> {
+             try {
+-                Object object = p_177520_.getDeclaringClass().newInstance();
++                Object object = null;
++                if (!java.lang.reflect.Modifier.isStatic(p_177520_.getModifiers())) {
++                    object = p_177520_.getDeclaringClass().newInstance();
++                }
+                 p_177520_.invoke(object, p_177512_);
+             } catch (InvocationTargetException invocationtargetexception) {
+                 if (invocationtargetexception.getCause() instanceof RuntimeException) {

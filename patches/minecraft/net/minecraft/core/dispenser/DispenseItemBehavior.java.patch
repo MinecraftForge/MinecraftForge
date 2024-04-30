@@ -1,25 +1,26 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -351,7 +_,7 @@
-             DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_123562_.getItem();
-             BlockPos blockpos = p_123561_.pos().relative(p_123561_.state().getValue(DispenserBlock.FACING));
-             Level level = p_123561_.level();
--            if (dispensiblecontaineritem.emptyContents((Player)null, level, blockpos, (BlockHitResult)null)) {
-+            if (dispensiblecontaineritem.emptyContents((Player)null, level, blockpos, (BlockHitResult)null, p_123562_)) {
-                dispensiblecontaineritem.checkExtraContent((Player)null, level, p_123562_, blockpos);
-                return new ItemStack(Items.BUCKET);
-             } else {
-@@ -410,9 +_,10 @@
-                level.setBlockAndUpdate(blockpos, BaseFireBlock.getState(level, blockpos));
-                level.gameEvent((Entity)null, GameEvent.BLOCK_PLACE, blockpos);
-             } else if (!CampfireBlock.canLight(blockstate) && !CandleBlock.canLight(blockstate) && !CandleCakeBlock.canLight(blockstate)) {
--               if (blockstate.getBlock() instanceof TntBlock) {
--                  TntBlock.explode(level, blockpos);
--                  level.removeBlock(blockpos, false);
-+               if (blockstate.isFlammable(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite())) {
-+                  blockstate.onCaughtFire(level, blockpos, p_123412_.state().getValue(DispenserBlock.FACING).getOpposite(), null);
-+                  if (blockstate.getBlock() instanceof TntBlock)
-+                     level.removeBlock(blockpos, false);
-                } else {
-                   this.setSuccess(false);
-                }
+@@ -232,7 +_,7 @@
+                 DispensibleContainerItem dispensiblecontaineritem = (DispensibleContainerItem)p_333855_.getItem();
+                 BlockPos blockpos = p_333645_.pos().relative(p_333645_.state().getValue(DispenserBlock.FACING));
+                 Level level = p_333645_.level();
+-                if (dispensiblecontaineritem.emptyContents(null, level, blockpos, null)) {
++                if (dispensiblecontaineritem.emptyContents(null, level, blockpos, null, p_333855_)) {
+                     dispensiblecontaineritem.checkExtraContent(null, level, p_333855_, blockpos);
+                     return new ItemStack(Items.BUCKET);
+                 } else {
+@@ -294,9 +_,11 @@
+                 } else if (CampfireBlock.canLight(blockstate) || CandleBlock.canLight(blockstate) || CandleCakeBlock.canLight(blockstate)) {
+                     level.setBlockAndUpdate(blockpos, blockstate.setValue(BlockStateProperties.LIT, Boolean.valueOf(true)));
+                     level.gameEvent(null, GameEvent.BLOCK_CHANGE, blockpos);
+-                } else if (blockstate.getBlock() instanceof TntBlock) {
+-                    TntBlock.explode(level, blockpos);
+-                    level.removeBlock(blockpos, false);
++                } else if (blockstate.isFlammable(level, blockpos, p_333039_.state().getValue(DispenserBlock.FACING).getOpposite())) {
++                    blockstate.onCaughtFire(level, blockpos, p_333039_.state().getValue(DispenserBlock.FACING).getOpposite(), null);
++                    if (blockstate.getBlock() instanceof TntBlock) {
++                        level.removeBlock(blockpos, false);
++                    }
+                 } else {
+                     this.setSuccess(false);
+                 }

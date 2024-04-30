@@ -24,8 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
  */
-public abstract class RenderPlayerEvent extends PlayerEvent
-{
+public abstract class RenderPlayerEvent extends PlayerEvent {
     private final PlayerRenderer renderer;
     private final float partialTick;
     private final PoseStack poseStack;
@@ -33,8 +32,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     private final int packedLight;
 
     @ApiStatus.Internal
-    protected RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
-    {
+    protected RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
         super(player);
         this.renderer = renderer;
         this.partialTick = partialTick;
@@ -46,32 +44,28 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     /**
      * {@return the player entity renderer}
      */
-    public PlayerRenderer getRenderer()
-    {
+    public PlayerRenderer getRenderer() {
         return renderer;
     }
 
     /**
      * {@return the partial tick}
      */
-    public float getPartialTick()
-    {
+    public float getPartialTick() {
         return partialTick;
     }
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack()
-    {
+    public PoseStack getPoseStack() {
         return poseStack;
     }
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource()
-    {
+    public MultiBufferSource getMultiBufferSource() {
         return multiBufferSource;
     }
 
@@ -80,8 +74,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
      *
      * @see LightTexture
      */
-    public int getPackedLight()
-    {
+    public int getPackedLight() {
         return packedLight;
     }
 
@@ -97,11 +90,9 @@ public abstract class RenderPlayerEvent extends PlayerEvent
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class Pre extends RenderPlayerEvent
-    {
+    public static class Pre extends RenderPlayerEvent {
         @ApiStatus.Internal
-        public Pre(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
-        {
+        public Pre(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
@@ -114,11 +105,9 @@ public abstract class RenderPlayerEvent extends PlayerEvent
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderPlayerEvent
-    {
+    public static class Post extends RenderPlayerEvent {
         @ApiStatus.Internal
-        public Post(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
-        {
+        public Post(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }

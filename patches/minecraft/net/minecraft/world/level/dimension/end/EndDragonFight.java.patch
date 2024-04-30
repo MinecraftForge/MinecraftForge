@@ -1,18 +1,17 @@
 --- a/net/minecraft/world/level/dimension/end/EndDragonFight.java
 +++ b/net/minecraft/world/level/dimension/end/EndDragonFight.java
-@@ -517,7 +_,14 @@
-             endcrystal.setBeamTarget((BlockPos)null);
-          }
-       }
--
-+   }
-+
-+   public void addPlayer(ServerPlayer player) {
-+      this.dragonEvent.addPlayer(player);
-+   }
-+
-+   public void removePlayer(ServerPlayer player) {
-+      this.dragonEvent.removePlayer(player);
-    }
+@@ -545,6 +_,14 @@
+         }
+     }
  
-    @Nullable
++    public void addPlayer(ServerPlayer player) {
++        this.dragonEvent.addPlayer(player);
++    }
++
++    public void removePlayer(ServerPlayer player) {
++        this.dragonEvent.removePlayer(player);
++    }
++
+     @Nullable
+     public UUID getDragonUUID() {
+         return this.dragonUUID;

@@ -1,40 +1,40 @@
 --- a/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
-@@ -10,7 +_,7 @@
+@@ -9,7 +_,7 @@
  import net.minecraft.world.item.BowItem;
  import net.minecraft.world.item.Items;
  
 -public class RangedBowAttackGoal<T extends Monster & RangedAttackMob> extends Goal {
 +public class RangedBowAttackGoal<T extends net.minecraft.world.entity.Mob & RangedAttackMob> extends Goal {
-    private final T mob;
-    private final double speedModifier;
-    private int attackIntervalMin;
-@@ -21,6 +_,10 @@
-    private boolean strafingBackwards;
-    private int strafingTime = -1;
+     private final T mob;
+     private final double speedModifier;
+     private int attackIntervalMin;
+@@ -20,6 +_,10 @@
+     private boolean strafingBackwards;
+     private int strafingTime = -1;
  
-+   public <M extends Monster & RangedAttackMob> RangedBowAttackGoal(M p_25792_, double p_25793_, int p_25794_, float p_25795_){
-+      this((T) p_25792_, p_25793_, p_25794_, p_25795_);
-+   }
++    public <M extends Monster & RangedAttackMob> RangedBowAttackGoal(M p_25792_, double p_25793_, int p_25794_, float p_25795_){
++       this((T)p_25792_, p_25793_, p_25794_, p_25795_);
++    }
 +
-    public RangedBowAttackGoal(T p_25792_, double p_25793_, int p_25794_, float p_25795_) {
-       this.mob = p_25792_;
-       this.speedModifier = p_25793_;
+     public RangedBowAttackGoal(T p_25792_, double p_25793_, int p_25794_, float p_25795_) {
+         this.mob = p_25792_;
+         this.speedModifier = p_25793_;
 @@ -38,7 +_,7 @@
-    }
+     }
  
-    protected boolean isHoldingBow() {
--      return this.mob.isHolding(Items.BOW);
-+      return this.mob.isHolding(is -> is.getItem() instanceof BowItem);
-    }
+     protected boolean isHoldingBow() {
+-        return this.mob.isHolding(Items.BOW);
++        return this.mob.isHolding(is -> is.getItem() instanceof BowItem);
+     }
  
-    public boolean canContinueToUse() {
-@@ -129,7 +_,7 @@
-                }
+     @Override
+@@ -132,7 +_,7 @@
+                     }
+                 }
+             } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
+-                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.BOW));
++                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof BowItem));
              }
-          } else if (--this.attackTime <= 0 && this.seeTime >= -60) {
--            this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, Items.BOW));
-+            this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.mob, item -> item instanceof BowItem));
-          }
- 
-       }
+         }
+     }

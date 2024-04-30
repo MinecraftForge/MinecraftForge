@@ -1,37 +1,37 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -90,7 +_,8 @@
-       this.move(MoverType.SELF, this.getDeltaMovement());
-       float f = 0.98F;
-       if (this.onGround()) {
--         f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
-+         BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
-+         f = this.level().getBlockState(pos).getFriction(this.level(), pos, this) * 0.98F;
-       }
+@@ -107,7 +_,8 @@
+         this.move(MoverType.SELF, this.getDeltaMovement());
+         float f = 0.98F;
+         if (this.onGround()) {
+-            f = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
++            BlockPos pos = getBlockPosBelowThatAffectsMyMovement();
++            f = this.level().getBlockState(pos).getFriction(this.level(), pos, this) * 0.98F;
+         }
  
-       this.setDeltaMovement(this.getDeltaMovement().multiply((double)f, 0.98D, (double)f));
-@@ -172,6 +_,7 @@
-    }
+         this.setDeltaMovement(this.getDeltaMovement().multiply((double)f, 0.98, (double)f));
+@@ -188,6 +_,7 @@
  
-    public boolean hurt(DamageSource p_20785_, float p_20786_) {
-+      if (this.level().isClientSide || this.isRemoved()) return false; //Forge: Fixes MC-53850
-       if (this.isInvulnerableTo(p_20785_)) {
-          return false;
-       } else if (this.level().isClientSide) {
-@@ -204,6 +_,7 @@
-    public void playerTouch(Player p_20792_) {
-       if (!this.level().isClientSide) {
-          if (p_20792_.takeXpDelay == 0) {
-+            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp(p_20792_, this))) return;
-             p_20792_.takeXpDelay = 2;
-             p_20792_.take(this, 1);
-             int i = this.repairPlayerItems(p_20792_, this.value);
-@@ -224,7 +_,7 @@
-       Map.Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
-       if (entry != null) {
-          ItemStack itemstack = entry.getValue();
--         int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
-+         int i = Math.min((int) (p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
-          itemstack.setDamageValue(itemstack.getDamageValue() - i);
-          int j = p_147094_ - this.durabilityToXp(i);
-          return j > 0 ? this.repairPlayerItems(p_147093_, j) : 0;
+     @Override
+     public boolean hurt(DamageSource p_20785_, float p_20786_) {
++        if (this.level().isClientSide || this.isRemoved()) return false; //Forge: Fixes MC-53850
+         if (this.isInvulnerableTo(p_20785_)) {
+             return false;
+         } else if (this.level().isClientSide) {
+@@ -223,6 +_,7 @@
+     public void playerTouch(Player p_20792_) {
+         if (!this.level().isClientSide) {
+             if (p_20792_.takeXpDelay == 0) {
++                if (net.minecraftforge.event.ForgeEventFactory.onPlayerPickupXp(p_20792_, this)) return;
+                 p_20792_.takeXpDelay = 2;
+                 p_20792_.take(this, 1);
+                 int i = this.repairPlayerItems(p_20792_, this.value);
+@@ -242,7 +_,7 @@
+         Entry<EquipmentSlot, ItemStack> entry = EnchantmentHelper.getRandomItemWith(Enchantments.MENDING, p_147093_, ItemStack::isDamaged);
+         if (entry != null) {
+             ItemStack itemstack = entry.getValue();
+-            int i = Math.min(this.xpToDurability(p_147094_), itemstack.getDamageValue());
++            int i = Math.min((int)(p_147094_ * itemstack.getXpRepairRatio()), itemstack.getDamageValue());
+             itemstack.setDamageValue(itemstack.getDamageValue() - i);
+             int j = p_147094_ - this.durabilityToXp(i);
+             return j > 0 ? this.repairPlayerItems(p_147093_, j) : 0;

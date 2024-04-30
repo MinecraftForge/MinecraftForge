@@ -2,45 +2,47 @@
   "type": "forge:conditional",
   "recipes": [
     {
-      "type": "minecraft:crafting_shaped",
-      "category": "misc",
       "forge:condition": {
-        "type": "forge:false",
-        "value": {}
+        "type": "forge:false"
       },
-      "key": {
-        "X": {
-          "item": "minecraft:dirt"
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "X": {
+            "item": "minecraft:dirt"
+          }
+        },
+        "pattern": [
+          "XXX",
+          "XX "
+        ],
+        "result": {
+          "count": 64,
+          "id": "minecraft:diamond_block"
         }
-      },
-      "pattern": [
-        "XXX",
-        "XX "
-      ],
-      "result": {
-        "count": 64,
-        "item": "minecraft:diamond_block"
       }
     },
     {
-      "type": "minecraft:crafting_shaped",
-      "category": "misc",
       "forge:condition": {
-        "type": "forge:true",
-        "value": {}
+        "type": "forge:true"
       },
-      "key": {
-        "X": {
-          "item": "minecraft:oak_log"
+      "recipe": {
+        "type": "minecraft:crafting_shaped",
+        "category": "misc",
+        "key": {
+          "X": {
+            "item": "minecraft:oak_log"
+          }
+        },
+        "pattern": [
+          "XXX",
+          "XX "
+        ],
+        "result": {
+          "count": 64,
+          "id": "minecraft:diamond_block"
         }
-      },
-      "pattern": [
-        "XXX",
-        "XX "
-      ],
-      "result": {
-        "count": 64,
-        "item": "minecraft:diamond_block"
       }
     }
   ]

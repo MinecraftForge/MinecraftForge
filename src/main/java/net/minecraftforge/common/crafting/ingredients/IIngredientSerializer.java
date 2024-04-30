@@ -5,30 +5,35 @@
 
 package net.minecraftforge.common.crafting.ingredients;
 
-import com.mojang.serialization.Codec;
+import java.util.Arrays;
 
+import com.mojang.serialization.MapCodec;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
 
 public interface IIngredientSerializer<T extends Ingredient> {
-    Codec<? extends T> codec();
-    void write(FriendlyByteBuf buffer, T value);
-    T read(FriendlyByteBuf buffer);
+    MapCodec<? extends T> codec();
+
+    void write(RegistryFriendlyByteBuf buffer, T value);
+    T read(RegistryFriendlyByteBuf buffer);
+
 
     IIngredientSerializer<Ingredient> VANILLA = new IIngredientSerializer<>() {
         @Override
-        public Codec<? extends Ingredient> codec() {
-            return Ingredient.VANILLA_CODEC;
+        public MapCodec<? extends Ingredient> codec() {
+            return Ingredient.VANILLA_MAP_CODEC;
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, Ingredient value) {
-            value.toNetwork(buffer);
+        public void write(RegistryFriendlyByteBuf buffer, Ingredient value) {
+            ItemStack.LIST_STREAM_CODEC.encode(buffer, Arrays.asList(value.getItems()));
         }
 
         @Override
-        public Ingredient read(FriendlyByteBuf buffer) {
-            return Ingredient.fromNetwork(buffer);
+        public Ingredient read(RegistryFriendlyByteBuf buffer) {
+            return Ingredient.of(ItemStack.LIST_STREAM_CODEC.decode(buffer).stream());
         }
     };
 }

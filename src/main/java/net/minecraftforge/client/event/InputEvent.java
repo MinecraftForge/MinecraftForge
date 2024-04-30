@@ -295,6 +295,7 @@ public abstract class InputEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
+    // TODO: Change the 'button' to sub events. - Lex 0422202
     @Cancelable
     public static class InteractionKeyMappingTriggered extends InputEvent {
         private final int button;

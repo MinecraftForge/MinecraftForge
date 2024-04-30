@@ -1,61 +1,101 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -51,9 +_,13 @@
+@@ -66,7 +_,7 @@
+         Lifecycle lifecycle = p_326161_.map(KnownPack::isVanilla).map(p_326166_ -> Lifecycle.stable()).orElse(Lifecycle.experimental());
+         return new RegistrationInfo(p_326161_, lifecycle);
+     });
+-    public static final List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES = List.of(
++    public static final List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES = net.minecraftforge.registries.DataPackRegistriesHooks.grabWorldgenRegistries(
+         new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC),
+         new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
+         new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
+@@ -103,6 +_,10 @@
+         new RegistryDataLoader.RegistryData<>(Registries.BANNER_PATTERN, BannerPattern.DIRECT_CODEC)
+     );
  
- public class RegistryDataLoader {
-    private static final Logger LOGGER = LogUtils.getLogger();
--   public static final List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES = List.of(new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.CODEC), new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_CARVER, ConfiguredWorldCarver.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE, Structure.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE_SET, StructureSet.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.PROCESSOR_LIST, StructureProcessorType.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TEMPLATE_POOL, StructureTemplatePool.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.NOISE_SETTINGS, NoiseGeneratorSettings.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.DENSITY_FUNCTION, DensityFunction.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.FLAT_LEVEL_GENERATOR_PRESET, FlatLevelGeneratorPreset.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TRIM_PATTERN, TrimPattern.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TRIM_MATERIAL, TrimMaterial.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.DAMAGE_TYPE, DamageType.CODEC), new RegistryDataLoader.RegistryData<>(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST, MultiNoiseBiomeSourceParameterList.DIRECT_CODEC));
-+   public static final List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES = net.minecraftforge.registries.DataPackRegistriesHooks.grabWorldgenRegistries(new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.CODEC), new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_CARVER, ConfiguredWorldCarver.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE, Structure.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.STRUCTURE_SET, StructureSet.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.PROCESSOR_LIST, StructureProcessorType.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TEMPLATE_POOL, StructureTemplatePool.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.NOISE_SETTINGS, NoiseGeneratorSettings.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.DENSITY_FUNCTION, DensityFunction.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.WORLD_PRESET, WorldPreset.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.FLAT_LEVEL_GENERATOR_PRESET, FlatLevelGeneratorPreset.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TRIM_PATTERN, TrimPattern.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.TRIM_MATERIAL, TrimMaterial.DIRECT_CODEC), new RegistryDataLoader.RegistryData<>(Registries.DAMAGE_TYPE, DamageType.CODEC), new RegistryDataLoader.RegistryData<>(Registries.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST, MultiNoiseBiomeSourceParameterList.DIRECT_CODEC));
-    public static final List<RegistryDataLoader.RegistryData<?>> DIMENSION_REGISTRIES = List.of(new RegistryDataLoader.RegistryData<>(Registries.LEVEL_STEM, LevelStem.CODEC));
- 
-+   public static java.util.stream.Stream<RegistryDataLoader.RegistryData<?>> getWorldGenAndDimensionStream() {
-+      return java.util.stream.Stream.concat(RegistryDataLoader.WORLDGEN_REGISTRIES.stream(), RegistryDataLoader.DIMENSION_REGISTRIES.stream());
-+   }
++    public static java.util.stream.Stream<RegistryDataLoader.RegistryData<?>> getWorldGenAndDimensionStream() {
++        return java.util.stream.Stream.concat(RegistryDataLoader.WORLDGEN_REGISTRIES.stream(), RegistryDataLoader.DIMENSION_REGISTRIES.stream());
++    }
 +
-    public static RegistryAccess.Frozen load(ResourceManager p_252046_, RegistryAccess p_249916_, List<RegistryDataLoader.RegistryData<?>> p_250344_) {
-       Map<ResourceKey<?>, Exception> map = new HashMap<>();
-       List<Pair<WritableRegistry<?>, RegistryDataLoader.Loader>> list = p_250344_.stream().map((p_250249_) -> {
-@@ -75,7 +_,9 @@
-       });
-       if (!map.isEmpty()) {
-          logErrors(map);
--         throw new IllegalStateException("Failed to load registries due to above errors");
-+         var buf = new StringBuilder("Failed to load registries, see debug.log for more details:");
-+         map.forEach((k,v) -> buf.append("\n\t").append(k.toString()).append(": ").append(v.getMessage()));
-+         throw new IllegalStateException(buf.toString());
-       } else {
-          return (new RegistryAccess.ImmutableRegistryAccess(list.stream().map(Pair::getFirst).toList())).freeze();
-       }
-@@ -124,13 +_,16 @@
-    }
+     public static RegistryAccess.Frozen load(ResourceManager p_252046_, RegistryAccess p_249916_, List<RegistryDataLoader.RegistryData<?>> p_250344_) {
+         return load((p_326156_, p_326157_) -> p_326156_.loadFromResources(p_252046_, p_326157_), p_249916_, p_250344_);
+     }
+@@ -136,7 +_,9 @@
+         });
+         if (!map.isEmpty()) {
+             logErrors(map);
+-            throw new IllegalStateException("Failed to load registries due to above errors");
++            var buf = new StringBuilder("Failed to load registries, see debug.log for more details:");
++            map.forEach((k,v) -> buf.append("\n\t").append(k.toString()).append(": ").append(v.getMessage()));
++            throw new IllegalStateException(buf.toString());
+         } else {
+             return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
+         }
+@@ -184,12 +_,12 @@
+     }
  
-    private static String registryDirPath(ResourceLocation p_252033_) {
--      return p_252033_.getPath();
-+      return net.minecraftforge.common.ForgeHooks.prefixNamespace(p_252033_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
-    }
+     private static String registryDirPath(ResourceLocation p_252033_) {
+-        return p_252033_.getPath();
++        return net.minecraftforge.common.ForgeHooks.prefixNamespace(p_252033_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
+     }
  
-    static <E> void loadRegistryContents(RegistryOps.RegistryInfoLookup p_256369_, ResourceManager p_256349_, ResourceKey<? extends Registry<E>> p_255792_, WritableRegistry<E> p_256211_, Decoder<E> p_256232_, Map<ResourceKey<?>, Exception> p_255884_) {
-       String s = registryDirPath(p_255792_.location());
-       FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
--      RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, p_256369_);
-+      RegistryOps<JsonElement> registryops = RegistryOps.builder(JsonOps.INSTANCE, p_256369_)
-+          .with(net.minecraftforge.common.crafting.conditions.ICondition.IContext.KEY, net.minecraftforge.common.crafting.conditions.ICondition.IContext.TAGS_INVALID)
-+          .build();
-+      Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_256232_);
- 
-       for(Map.Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_256349_).entrySet()) {
-          ResourceLocation resourcelocation = entry.getKey();
-@@ -139,7 +_,12 @@
- 
-          try (Reader reader = resource.openAsReader()) {
+     private static <E> void loadElementFromResource(
+         WritableRegistry<E> p_330991_,
+-        Decoder<E> p_333909_,
++        Decoder<Optional<E>> p_333909_,
+         RegistryOps<JsonElement> p_332135_,
+         ResourceKey<E> p_332850_,
+         Resource p_335244_,
+@@ -197,7 +_,14 @@
+     ) throws IOException {
+         try (Reader reader = p_335244_.openAsReader()) {
              JsonElement jsonelement = JsonParser.parseReader(reader);
--            DataResult<E> dataresult = p_256232_.parse(registryops, jsonelement);
-+            var result = conditional.decode(registryops, jsonelement);
+-            DataResult<E> dataresult = p_333909_.parse(p_332135_, jsonelement);
++
++            var result = p_333909_.decode(p_332135_, jsonelement);
 +            if (result.result().map(p -> p.getFirst()).isEmpty()) {
-+               LOGGER.debug("Skipping {} conditions not met", resourcelocation);
-+               continue;
++               LOGGER.debug("Skipping {} conditions not met", p_332850_);
++               return;
 +            }
 +            DataResult<E> dataresult = result.map(p -> p.mapFirst(Optional::get)).map(p -> p.getFirst());
-             E e = dataresult.getOrThrow(false, (p_248715_) -> {
-             });
-             p_256211_.register(resourcekey, e, resource.isBuiltin() ? Lifecycle.stable() : dataresult.lifecycle());
++
+             E e = dataresult.getOrThrow();
+             p_330991_.register(p_332850_, e, p_332222_);
+         }
+@@ -213,6 +_,7 @@
+         String s = registryDirPath(p_331358_.key().location());
+         FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
+         RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, p_333035_);
++        Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_329404_);
+ 
+         for (Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_335634_).entrySet()) {
+             ResourceLocation resourcelocation = entry.getKey();
+@@ -221,7 +_,7 @@
+             RegistrationInfo registrationinfo = REGISTRATION_INFO_CACHE.apply(resource.knownPackInfo());
+ 
+             try {
+-                loadElementFromResource(p_331358_, p_329404_, registryops, resourcekey, resource, registrationinfo);
++                loadElementFromResource(p_331358_, conditional, registryops, resourcekey, resource, registrationinfo);
+             } catch (Exception exception) {
+                 p_335074_.put(
+                     resourcekey,
+@@ -242,7 +_,9 @@
+         List<RegistrySynchronization.PackedRegistryEntry> list = p_331925_.get(p_332518_.key());
+         if (list != null) {
+             RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, p_329253_);
+-            RegistryOps<JsonElement> registryops1 = RegistryOps.create(JsonOps.INSTANCE, p_329253_);
++            RegistryOps<JsonElement> registryops1 = RegistryOps.create(JsonOps.INSTANCE, p_329253_)
++                .withContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext.KEY, net.minecraftforge.common.crafting.conditions.ICondition.IContext.TAGS_INVALID);
++            Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_328898_);
+             String s = registryDirPath(p_332518_.key().location());
+             FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
+ 
+@@ -265,7 +_,7 @@
+ 
+                     try {
+                         Resource resource = p_332010_.getResourceOrThrow(resourcelocation);
+-                        loadElementFromResource(p_332518_, p_328898_, registryops1, resourcekey, resource, NETWORK_REGISTRATION_INFO);
++                        loadElementFromResource(p_332518_, conditional, registryops1, resourcekey, resource, NETWORK_REGISTRATION_INFO);
+                     } catch (Exception exception1) {
+                         p_335768_.put(resourcekey, new IllegalStateException("Failed to parse local data", exception1));
+                     }

@@ -1,30 +1,30 @@
 --- a/net/minecraft/world/item/ShovelItem.java
 +++ b/net/minecraft/world/item/ShovelItem.java
-@@ -33,9 +_,9 @@
-          return InteractionResult.PASS;
-       } else {
-          Player player = p_43119_.getPlayer();
--         BlockState blockstate1 = FLATTENABLES.get(blockstate.getBlock());
-+         BlockState blockstate1 = blockstate.getToolModifiedState(p_43119_, net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN, false);
-          BlockState blockstate2 = null;
--         if (blockstate1 != null && level.getBlockState(blockpos.above()).isAir()) {
-+         if (blockstate1 != null && level.isEmptyBlock(blockpos.above())) {
-             level.playSound(player, blockpos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
-             blockstate2 = blockstate1;
-          } else if (blockstate.getBlock() instanceof CampfireBlock && blockstate.getValue(CampfireBlock.LIT)) {
-@@ -63,5 +_,15 @@
+@@ -44,9 +_,9 @@
              return InteractionResult.PASS;
-          }
-       }
-+   }
+         } else {
+             Player player = p_43119_.getPlayer();
+-            BlockState blockstate1 = FLATTENABLES.get(blockstate.getBlock());
++            BlockState blockstate1 = blockstate.getToolModifiedState(p_43119_, net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN, false);
+             BlockState blockstate2 = null;
+-            if (blockstate1 != null && level.getBlockState(blockpos.above()).isAir()) {
++            if (blockstate1 != null && level.isEmptyBlock(blockpos.above())) {
+                 level.playSound(player, blockpos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
+                 blockstate2 = blockstate1;
+             } else if (blockstate.getBlock() instanceof CampfireBlock && blockstate.getValue(CampfireBlock.LIT)) {
+@@ -72,5 +_,15 @@
+                 return InteractionResult.PASS;
+             }
+         }
++    }
 +
-+   @org.jetbrains.annotations.Nullable
-+   public static BlockState getShovelPathingState(BlockState originalState) {
-+      return FLATTENABLES.get(originalState.getBlock());
-+   }
++    @org.jetbrains.annotations.Nullable
++    public static BlockState getShovelPathingState(BlockState originalState) {
++        return FLATTENABLES.get(originalState.getBlock());
++    }
 +
-+   @Override
-+   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
-+      return net.minecraftforge.common.ToolActions.DEFAULT_SHOVEL_ACTIONS.contains(toolAction);
-    }
++    @Override
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++        return net.minecraftforge.common.ToolActions.DEFAULT_SHOVEL_ACTIONS.contains(toolAction);
+     }
  }

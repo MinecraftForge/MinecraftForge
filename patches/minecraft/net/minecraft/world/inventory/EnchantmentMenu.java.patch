@@ -1,48 +1,48 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -54,7 +_,7 @@
-       });
-       this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
-          public boolean mayPlace(ItemStack p_39517_) {
--            return p_39517_.is(Items.LAPIS_LAZULI);
-+            return p_39517_.is(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
-          }
- 
-          public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-@@ -89,23 +_,24 @@
-          ItemStack itemstack = p_39461_.getItem(0);
-          if (!itemstack.isEmpty() && itemstack.isEnchantable()) {
-             this.access.execute((p_39485_, p_39486_) -> {
--               int j = 0;
-+               float j = 0;
- 
-                for(BlockPos blockpos : EnchantmentTableBlock.BOOKSHELF_OFFSETS) {
-                   if (EnchantmentTableBlock.isValidBookShelf(p_39485_, p_39486_, blockpos)) {
--                     ++j;
-+                     j += p_39485_.getBlockState(p_39486_.offset(blockpos)).getEnchantPowerBonus(p_39485_, p_39486_.offset(blockpos));
-                   }
-                }
- 
-                this.random.setSeed((long)this.enchantmentSeed.get());
- 
-                for(int k = 0; k < 3; ++k) {
--                  this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, j, itemstack);
-+                  this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, (int)j, itemstack);
-                   this.enchantClue[k] = -1;
-                   this.levelClue[k] = -1;
-                   if (this.costs[k] < k + 1) {
-                      this.costs[k] = 0;
-                   }
-+                  this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_39485_, p_39486_, k, (int)j, itemstack, costs[k]);
-                }
- 
-                for(int l = 0; l < 3; ++l) {
-@@ -237,7 +_,7 @@
-             if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
-                return ItemStack.EMPTY;
+@@ -57,7 +_,7 @@
+         this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
+             @Override
+             public boolean mayPlace(ItemStack p_39517_) {
+-                return p_39517_.is(Items.LAPIS_LAZULI);
++                return p_39517_.is(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
              }
--         } else if (itemstack1.is(Items.LAPIS_LAZULI)) {
-+         } else if (itemstack1.is(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS)) {
-             if (!this.moveItemStackTo(itemstack1, 1, 2, true)) {
-                return ItemStack.EMPTY;
-             }
+ 
+             @Override
+@@ -94,23 +_,25 @@
+             ItemStack itemstack = p_39461_.getItem(0);
+             if (!itemstack.isEmpty() && itemstack.isEnchantable()) {
+                 this.access.execute((p_327074_, p_327075_) -> {
+-                    int j = 0;
++                    float j = 0;
+ 
+                     for (BlockPos blockpos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
+                         if (EnchantingTableBlock.isValidBookShelf(p_327074_, p_327075_, blockpos)) {
+                             j++;
++                            j += p_327074_.getBlockState(p_327075_.offset(blockpos)).getEnchantPowerBonus(p_327074_, p_327075_.offset(blockpos));
+                         }
+                     }
+ 
+                     this.random.setSeed((long)this.enchantmentSeed.get());
+ 
+                     for (int k = 0; k < 3; k++) {
+-                        this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, j, itemstack);
++                        this.costs[k] = EnchantmentHelper.getEnchantmentCost(this.random, k, (int)j, itemstack);
+                         this.enchantClue[k] = -1;
+                         this.levelClue[k] = -1;
+                         if (this.costs[k] < k + 1) {
+                             this.costs[k] = 0;
+                         }
++                        this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_327074_, p_327075_, k, (int)j, itemstack, costs[k]);
+                     }
+ 
+                     for (int l = 0; l < 3; l++) {
+@@ -234,7 +_,7 @@
+                 if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
+                     return ItemStack.EMPTY;
+                 }
+-            } else if (itemstack1.is(Items.LAPIS_LAZULI)) {
++            } else if (itemstack1.is(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS)) {
+                 if (!this.moveItemStackTo(itemstack1, 1, 2, true)) {
+                     return ItemStack.EMPTY;
+                 }

@@ -1,44 +1,45 @@
 --- a/net/minecraft/world/level/storage/PrimaryLevelData.java
 +++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
-@@ -77,6 +_,7 @@
-    private boolean wasModded;
-    private final Set<String> removedFeatureFlags;
-    private final TimerQueue<MinecraftServer> scheduledEvents;
-+   private boolean confirmedExperimentalWarning = false;
+@@ -74,6 +_,7 @@
+     private boolean wasModded;
+     private final Set<String> removedFeatureFlags;
+     private final TimerQueue<MinecraftServer> scheduledEvents;
++    private boolean confirmedExperimentalWarning = false;
  
-    private PrimaryLevelData(@Nullable CompoundTag p_277888_, boolean p_278109_, int p_277672_, int p_277714_, int p_278088_, float p_277542_, long p_277414_, long p_277635_, int p_278037_, int p_277595_, int p_277794_, boolean p_277943_, int p_278007_, boolean p_277644_, boolean p_277749_, boolean p_278004_, WorldBorder.Settings p_277729_, int p_277674_, int p_277856_, @Nullable UUID p_277341_, Set<String> p_277989_, Set<String> p_277399_, TimerQueue<MinecraftServer> p_277860_, @Nullable CompoundTag p_277936_, EndDragonFight.Data p_289764_, LevelSettings p_278064_, WorldOptions p_278072_, PrimaryLevelData.SpecialWorldProperty p_277548_, Lifecycle p_277915_) {
-       this.wasModded = p_278109_;
-@@ -120,7 +_,7 @@
-          return p_78529_.asString().result().stream();
-       }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), p_78531_.get("removed_features").asStream().flatMap((p_277335_) -> {
-          return p_277335_.asString().result().stream();
--      }).collect(Collectors.toSet()), new TimerQueue<>(TimerCallbacks.SERVER_CALLBACKS, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), p_78531_.get("DragonFight").read(EndDragonFight.Data.CODEC).resultOrPartial(LOGGER::error).orElse(EndDragonFight.Data.DEFAULT), p_78535_, p_251864_, p_250651_, p_78538_);
-+      }).collect(Collectors.toSet()), new TimerQueue<>(TimerCallbacks.SERVER_CALLBACKS, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), p_78531_.get("DragonFight").read(EndDragonFight.Data.CODEC).resultOrPartial(LOGGER::error).orElse(EndDragonFight.Data.DEFAULT), p_78535_, p_251864_, p_250651_, p_78538_).withConfirmedWarning(p_78538_ != Lifecycle.stable() && p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
-    }
+     private PrimaryLevelData(
+         @Nullable CompoundTag p_277888_,
+@@ -200,7 +_,7 @@
+             p_251864_,
+             p_250651_,
+             p_78538_
+-        );
++        ).withConfirmedWarning(p_78538_ != Lifecycle.stable() && p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
+     }
  
-    public CompoundTag createTag(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
-@@ -195,6 +_,8 @@
-          p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
-       }
+     @Override
+@@ -273,6 +_,8 @@
+         if (this.wanderingTraderId != null) {
+             p_78547_.putUUID("WanderingTraderId", this.wanderingTraderId);
+         }
++        p_78547_.putString("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.settings.getLifecycle()));
++        p_78547_.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
+     }
  
-+      p_78547_.putString("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.settings.getLifecycle()));
-+      p_78547_.putBoolean("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
-    }
- 
-    private static ListTag stringCollectionToTag(Set<String> p_277880_) {
-@@ -461,6 +_,15 @@
- 
-    public LevelSettings getLevelSettings() {
-       return this.settings.copy();
-+   }
+     private static ListTag stringCollectionToTag(Set<String> p_277880_) {
+@@ -571,6 +_,16 @@
+     public LevelSettings getLevelSettings() {
+         return this.settings.copy();
+     }
 +
-+   public boolean hasConfirmedExperimentalWarning() {
-+      return this.confirmedExperimentalWarning;
-+   }
++    public boolean hasConfirmedExperimentalWarning() {
++        return this.confirmedExperimentalWarning;
++    }
 +
-+   public PrimaryLevelData withConfirmedWarning(boolean confirmedWarning) { // Builder-like to not patch ctor
-+      this.confirmedExperimentalWarning = confirmedWarning;
-+      return this;
-    }
++    public PrimaryLevelData withConfirmedWarning(boolean confirmedWarning) { // Builder-like to not patch ctor
++        this.confirmedExperimentalWarning = confirmedWarning;
++        return this;
++    }
++
  
-    /** @deprecated */
+     @Deprecated
+     public static enum SpecialWorldProperty {

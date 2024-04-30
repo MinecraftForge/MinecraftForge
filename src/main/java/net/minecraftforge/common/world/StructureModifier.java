@@ -6,13 +6,14 @@
 package net.minecraftforge.common.world;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import java.util.function.Function;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,14 +32,12 @@ import net.minecraftforge.registries.ForgeRegistries;
  * <p>
  * Datapacks can also disable a structure modifier by overriding the json and using {@code "type": "forge:none"}.</p>
  */
-public interface StructureModifier
-{
+public interface StructureModifier {
     /**
      * Codec for (de)serializing structure modifiers inline.
      * Mods can use this for data generation.
      */
-    Codec<StructureModifier> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.STRUCTURE_MODIFIER_SERIALIZERS.get().getCodec())
-            .dispatch(StructureModifier::codec, Function.identity());
+    Codec<StructureModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.STRUCTURE_MODIFIER_SERIALIZERS.get().getCodec().dispatch(StructureModifier::codec, Function.identity()));
 
     /**
      * Codec for referring to structure modifiers by id in other datapack registry files.
@@ -66,10 +65,9 @@ public interface StructureModifier
     /**
      * @return the codec which serializes and deserializes this structure modifier
      */
-    Codec<? extends StructureModifier> codec();
+    MapCodec<? extends StructureModifier> codec();
 
-    enum Phase
-    {
+    enum Phase {
         /**
          * Catch-all for anything that needs to run before standard phases.
          */

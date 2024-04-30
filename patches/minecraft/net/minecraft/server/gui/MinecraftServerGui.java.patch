@@ -1,23 +1,23 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -139,8 +_,10 @@
-       return jpanel;
-    }
+@@ -137,8 +_,10 @@
+         return jpanel;
+     }
  
-+   private java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-    public void start() {
-       this.logAppenderThread.start();
-+      latch.countDown();
-    }
++    private final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+     public void start() {
+         this.logAppenderThread.start();
++        this.latch.countDown();
+     }
  
-    public void close() {
-@@ -155,6 +_,9 @@
-    }
+     public void close() {
+@@ -152,6 +_,9 @@
+     }
  
-    public void print(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
-+      try {
-+         latch.await();
-+      } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
-       if (!SwingUtilities.isEventDispatchThread()) {
-          SwingUtilities.invokeLater(() -> {
-             this.print(p_139915_, p_139916_, p_139917_);
+     public void print(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
++        try {
++            this.latch.await();
++        } catch (InterruptedException ignored) {} // Prevent logging until after constructor has ended
+         if (!SwingUtilities.isEventDispatchThread()) {
+             SwingUtilities.invokeLater(() -> this.print(p_139915_, p_139916_, p_139917_));
+         } else {

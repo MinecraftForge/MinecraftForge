@@ -1,13 +1,12 @@
 --- a/net/minecraft/server/packs/AbstractPackResources.java
 +++ b/net/minecraft/server/packs/AbstractPackResources.java
-@@ -64,4 +_,10 @@
-    public boolean isBuiltin() {
-       return this.isBuiltin;
-    }
+@@ -63,4 +_,9 @@
+     public PackLocationInfo location() {
+         return this.location;
+     }
 +
-+   @Override
-+   public String toString()
-+   {
-+      return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), this.name);
-+   }
++    @Override
++    public String toString() {
++       return String.format(java.util.Locale.ROOT, "%s: %s", getClass().getName(), this.location());
++    }
  }

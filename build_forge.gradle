@@ -12,9 +12,9 @@ import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
 import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
+import net.minecraftforge.gradle.patcher.tasks.FilterNewJar
 import net.minecraftforge.gradle.patcher.tasks.GeneratePatches
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
-import net.minecraftforge.gradleutils.PomUtils
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.objectweb.asm.Opcodes
 
@@ -46,6 +46,7 @@ jarSigner.autoDetect('forge')
 
 applyPatches {
     level 'WARNING'
+    failOnError = UPDATING != 'true'
 }
 
 sourceSets {
@@ -88,13 +89,18 @@ ext {
 final String MAVEN_PATH = ext.MAVEN_PATH
 
 final String BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.2.0:fatjar'
-final String INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.0'
+final String INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.3'
 final String FART = 'net.minecraftforge:ForgeAutoRenamingTool:1.0.6'
+final String S2S_TOOL = 'net.minecraftforge:Srg2Source:8.1.0:fatjar'
 
 configurations {
     // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
-    bootstrap  { transitive = false }        
+    bootstrap  { transitive = false }
     installer { 
+        extendsFrom(bootstrap)
+        transitive = false 
+    }
+    installerextra { 
         extendsFrom(bootstrap)
         transitive = false 
     }
@@ -111,10 +117,11 @@ dependencies {
     bootstrap(libs.unsafe)        // Needed by securemodules
     bootstrap(libs.bundles.asm)   // Needed by securemodules
     
+    implementation(libs.jopt.simple) { version { strictly '5.0.4' } }
+    
     installer(libs.bootstrap)
     installer(libs.bootstrap.api) // Needed by securemodules
     installer(libs.accesstransformers)
-    installer(libs.antlr.runtime) // Dep of AccessTransformer
     installer(libs.eventbus)
     installer(libs.typetools) // Dep of EventBus
     installer(libs.forgespi)
@@ -135,8 +142,14 @@ dependencies {
     installer(project(':lowcodelanguage'))
     installer(project(':mclanguage'))
 
+    installerextra("${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:srg2off")
+
     runtimeOnly(libs.bootstrap)
     runtimeOnly(libs.bootstrap.dev)
+}
+
+tasks.named('extractRangeMap').configure {
+    tool = S2S_TOOL
 }
 
 patcher {
@@ -362,33 +375,15 @@ tasks.register('extractInheritance', ExtractInheritance) {
         Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).toList()
     }
 }
-tasks.register("findFieldInstanceChecks", FieldCompareFinder) {
-    jar = createJoinedSRG.output
-    output = rootProject.file('src/main/resources/coremods/field_to_instanceof.json')
-    fields {
-        /* 1.17 changed most things to use Tags. So this isn't nessasary anymore so just make an empty list
-        bows {
-            cls = 'net/minecraft/world/item/Items'
-            name = 'f_42411_'
-            replacement = 'net/minecraft/world/item/BowItem'
-        }
-        crossbows {
-            cls = 'net/minecraft/world/item/Items'
-            name = 'f_42717_'
-            replacement = 'net/minecraft/world/item/CrossbowItem'
-        }
-        */
-    }
-}
 tasks.register("findFinalizeSpawnTargets", BytecodePredicateFinder) {
     jar = createJoinedSRG.output
     output = rootProject.file('src/main/resources/coremods/finalize_spawn_targets.json')
     predicate = {
         parent, node, insn ->
-            'net/minecraft/world/level/BaseSpawner' != parent.name // Ignore this class as we special case it.
-            && insn.getOpcode() === Opcodes.INVOKEVIRTUAL
+            return 'net/minecraft/world/level/BaseSpawner' != parent.name // Ignore this class as we special case it.
+            && insn.getOpcode().equals(Opcodes.INVOKEVIRTUAL)
             && insn.name == 'm_6518_'
-            && insn.desc == '(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;Lnet/minecraft/nbt/CompoundTag;)Lnet/minecraft/world/entity/SpawnGroupData;'
+            && insn.desc == '(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/MobSpawnType;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;';
     }
 }
 tasks.register('validateDeprecations', ValidateDeprecations) {
@@ -428,43 +423,34 @@ tasks.register('downloadServerMappings', net.minecraftforge.gradle.common.tasks.
     args = ['--task', 'DOWNLOAD_MOJMAPS', '--sanitize', '--version', MC_VERSION, '--side', 'server', '--output', output.absolutePath]
     outputs.file(output)
 }
-tasks.register('mergeClientMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
-    ext.output = file('build/client_mappings_merged.tsrg')
-    tool = INSTALLER_TOOLS + ':fatjar'
-    args = ['--task', 'MERGE_MAPPING', '--classes', '--reverse-right', '--left', extractMCPConfigMappings.output.absolutePath, '--right', downloadClientMappings.output.absolutePath, '--output', output.absolutePath]
-    outputs.file(output)
-}
-tasks.register('mergeServerMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
-    ext.output = file('build/server_mappings_merged.tsrg')
-    tool = INSTALLER_TOOLS + ':fatjar'
-    args = ['--task', 'MERGE_MAPPING', '--classes', '--reverse-right', '--left', extractMCPConfigMappings.output.absolutePath, '--right', downloadServerMappings.output.absolutePath, '--output', output.absolutePath]
-    outputs.file(output)
-}
 tasks.register("createJoinedSRG", DownloadMavenArtifact) {
     artifact = "net.minecraft:joined:${MC_VERSION}-${MCP_VERSION}:srg"
 }
-tasks.register("createClientSRG", RenameJar) {
+tasks.register("createClientOfficial", RenameJar) {
     tool = FART + ':all'
-    args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs']
-    mappings = createMcp2Srg.srg
-    dependsOn(downloadClientRaw)
+    args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs', '--reverse']
+    mappings = downloadClientMappings.output
+    dependsOn(downloadClientRaw, downloadClientMappings)
     input = downloadClientRaw.dest
-    output = file("build/createClientSRG/output.jar")
+    output = file("build/createClientOfficial/output.jar")
 }
-tasks.register("createServerSRG", RenameJar) {
+tasks.register("createServerOfficial", RenameJar) {
     tool = FART + ':all'
-    args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs']
-    mappings = createMcp2Srg.srg
+    args = ['--input', '{input}', '--output', '{output}', '--names', '{mappings}', '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs', '--reverse']
+    mappings = downloadServerMappings.output
+    dependsOn(downloadServerMappings)
     input = extractServer.output
-    output = file("build/createServerSRG/output.jar")
+    output = file("build/createServerOfficial/output.jar")
 }
 tasks.named('genClientBinPatches').configure {
     tool = BINPATCH_TOOL
-    cleanJar = createClientSRG.output
+    cleanJar = createClientOfficial.output
+    dirtyJar = jar.archiveFile
 }
 tasks.named('genServerBinPatches').configure {
     tool = BINPATCH_TOOL
-    cleanJar = createServerSRG.output
+    cleanJar = createServerOfficial.output
+    dirtyJar = jar.archiveFile
 }
 tasks.named('genJoinedBinPatches').configure {
     tool = BINPATCH_TOOL
@@ -472,13 +458,13 @@ tasks.named('genJoinedBinPatches').configure {
 }
 tasks.register('applyClientBinPatches', ApplyBinPatches) {
     tool = BINPATCH_TOOL
-    clean = createClientSRG.output
+    clean = createClientOfficial.output
     patch = genClientBinPatches.output
     args.addAll(['--data', '--unpatched'])
 }
 tasks.register('applyServerBinPatches', ApplyBinPatches) {
     tool = BINPATCH_TOOL
-    clean = createServerSRG.output
+    clean = createServerOfficial.output
     patch = genServerBinPatches.output
     args.addAll(['--data', '--unpatched'])
 }
@@ -523,7 +509,7 @@ tasks.register('checkAll') {
     group = 'checks'
 }
 tasks.register('checkAllAndFix') {
-    dependsOn 'findFinalizeSpawnTargets', 'findFieldInstanceChecks', 'checkLicenses'
+    dependsOn 'findFinalizeSpawnTargets', 'checkLicenses'
     group = 'checks'
 }
 
@@ -637,15 +623,12 @@ tasks.register('installerJson', InstallerJson) {
     // Download Official Mappings
     dependsOn(downloadClientMappings, downloadServerMappings)
     input.from(downloadClientMappings.output, downloadServerMappings.output)
-    // Merge MCP and Official Mappings
-    dependsOn(mergeClientMappings, mergeServerMappings)
-    input.from(mergeClientMappings.output, mergeServerMappings.output)
     // Get 'base' MC jar, Client is straight download, server is extracted from the bundle
     dependsOn(downloadClientRaw, extractServer)
     input.from(downloadClientRaw.dest, extractServer.output)
     // Rename MC Jar
-    dependsOn(createClientSRG, createServerSRG)
-    input.from(createClientSRG.output, createServerSRG.output)
+    dependsOn(createClientOfficial, createServerOfficial)
+    input.from(createClientOfficial.output, createServerOfficial.output)
     // Apply Binary patches to vanilla jar
     dependsOn(applyClientBinPatches, applyServerBinPatches)
     input.from(applyClientBinPatches.output, applyServerBinPatches.output, genClientBinPatches.toolJar)
@@ -672,20 +655,12 @@ tasks.register('installerJson', InstallerJson) {
                     server: "'${extractMCPConfigMappings.output.sha1}'"
                 ],
                 MOJMAPS: [
-                    client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:mappings@tsrg]",
-                    server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:mappings@tsrg]"
+                    client: "[net.minecraft:client:${MC_VERSION}:mappings@tsrg]",
+                    server: "[net.minecraft:server:${MC_VERSION}:mappings@tsrg]"
                 ],
                 MOJMAPS_SHA: [
                     client: "'${downloadClientMappings.output.sha1}'",
                     server: "'${downloadServerMappings.output.sha1}'"
-                ],
-                MERGED_MAPPINGS: [
-                    client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@tsrg]",
-                    server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@tsrg]"
-                ],
-                MERGED_MAPPINGS_SHA: [
-                    client: "'${mergeClientMappings.output.sha1}'",
-                    server: "'${mergeServerMappings.output.sha1}'"
                 ],
                 MC_UNPACKED: [
                     client: "[net.minecraft:client:${MC_VERSION}]",
@@ -695,13 +670,13 @@ tasks.register('installerJson', InstallerJson) {
                     client: "'${downloadClientRaw.dest.sha1}'",
                     server: "'${extractServer.output.get().asFile.sha1}'"
                 ],
-                MC_SRG: [
-                    client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
-                    server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:srg]"
+                MC_OFF: [
+                    client: "[net.minecraft:client:${MC_VERSION}:official]",
+                    server: "[net.minecraft:server:${MC_VERSION}:official]"
                 ],
-                MC_SRG_SHA: [
-                    client: "'${createClientSRG.output.get().asFile.sha1}'",
-                    server: "'${createServerSRG.output.get().asFile.sha1}'"
+                MC_OFF_SHA: [
+                    client: "'${createClientOfficial.output.get().asFile.sha1}'",
+                    server: "'${createServerOfficial.output.get().asFile.sha1}'"
                 ],
                 BINPATCH: [
                     client: '/data/client.lzma',
@@ -794,30 +769,17 @@ tasks.register('installerJson', InstallerJson) {
                         '{MOJMAPS}': '{MOJMAPS_SHA}'
                     ]
                 ], [
-                    jar: INSTALLER_TOOLS,
-                    classpath: INSTALLER_TOOLS_CLASSPATH,
-                    args: [
-                        '--task', 'MERGE_MAPPING',
-                        '--left', '{MAPPINGS}',
-                        '--right', '{MOJMAPS}',
-                        '--output', '{MERGED_MAPPINGS}',
-                        '--classes', '--reverse-right'
-                    ],
-                    outputs: [
-                        '{MERGED_MAPPINGS}': '{MERGED_MAPPINGS_SHA}'
-                    ]
-                ], [
                     sides: ['server'],
                     jar: FART,
                     classpath: getClasspath(project, libs, FART),
                     args: [
                         '--input', '{MC_UNPACKED}',
-                        '--output', '{MC_SRG}',
-                        '--names', '{MERGED_MAPPINGS}',
-                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs'
+                        '--output', '{MC_OFF}',
+                        '--names', '{MOJMAPS}',
+                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs', '--reverse'
                     ],
                     outputs: [
-                        '{MC_SRG}': '{MC_SRG_SHA}'
+                        '{MC_OFF}': '{MC_OFF_SHA}'
                     ]
                 ], [
                     sides: ['client'],
@@ -825,18 +787,18 @@ tasks.register('installerJson', InstallerJson) {
                     classpath: getClasspath(project, libs, FART),
                     args: [
                         '--input', '{MINECRAFT_JAR}',
-                        '--output', '{MC_SRG}',
-                        '--names', '{MERGED_MAPPINGS}',
-                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs'
+                        '--output', '{MC_OFF}',
+                        '--names', '{MOJMAPS}',
+                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix', '--strip-sigs', '--reverse'
                     ],
                     outputs: [
-                        '{MC_SRG}': '{MC_SRG_SHA}'
+                        '{MC_OFF}': '{MC_OFF_SHA}'
                     ]
                 ], [
                     jar: BINPATCH_TOOL.rsplit(':', 1)[0], // remove :fatjar
                     classpath: getClasspath(project, libs, BINPATCH_TOOL.rsplit(':', 1)[0]),
                     args: [
-                        '--clean', '{MC_SRG}',
+                        '--clean', '{MC_OFF}',
                         '--output', '{PATCHED}',
                         '--apply', '{BINPATCH}',
                         '--data', '--unpatched'
@@ -849,6 +811,27 @@ tasks.register('installerJson', InstallerJson) {
         ] as LinkedHashMap)
         getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
     }
+}
+
+tasks.register('officialClassesOnly', Zip).configure {
+    dependsOn(jar)
+    destinationDirectory = file('build/libs')
+    archiveClassifier = 'official-classes'
+    from zipTree(jar.archiveFile).matching {
+        include '**/*.class'
+        exclude 'mcp/**'
+    }
+}
+
+tasks.named('filterJarNew').configure {
+    dependsOn('officialClassesOnly')
+    input = officialClassesOnly.archiveFile
+}
+
+tasks.register('filterJarNewSRG', FilterNewJar).configure {
+    input = reobfJar.output
+    srg = filterJarNew.srg
+    blacklist = filterJarNew.blacklist
 }
 
 tasks.named('universalJar').configure {
@@ -880,6 +863,20 @@ tasks.named('universalJar').configure {
         ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
     }
     jarSigner.sign(it)
+}
+
+tasks.register('universalJarSrg', Jar).configure {
+    from zipTree(filterJarNewSRG.output)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from zipTree(universalJar.archiveFile)
+    destinationDirectory = file('build/libs')
+    archiveClassifier = 'universal-srg'
+    manifest.from(universalJar.manifest)
+    jarSigner.sign(it)
+}
+
+tasks.named('userdevConfig').configure {
+    universal = "$project.group:$project.name:$project.version:universal-srg@jar"
 }
 
 tasks.register('installerJar', InstallerJar) {
@@ -1068,6 +1065,7 @@ tasks.named('javadoc', Javadoc).configure {
 publishing {
     publications.register('mavenJava', MavenPublication).configure {
         artifact universalJar
+        artifact universalJarSrg
         artifact installerJar
         artifact mdkZip
         artifact userdevJar
@@ -1079,8 +1077,8 @@ publishing {
             name = project.name
             description = 'Modifactions to Minecraft to enable mod developers.'
             url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
+            gradleutils.pom.setGitHubDetails(pom, 'MinecraftForge')
+            license gradleutils.pom.Licenses.LGPLv2_1
         }
     }
     
@@ -1090,5 +1088,5 @@ publishing {
 }
 
 // Make sure we run bin compat checking during local testing.
-if (!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD)
+if ((!System.env.MAVEN_USER || !System.env.MAVEN_PASSWORD) && CHECK_COMPATIBILITY == "true")
     tasks.named('publish').configure { dependsOn(':forge:checkJarCompatibility') }

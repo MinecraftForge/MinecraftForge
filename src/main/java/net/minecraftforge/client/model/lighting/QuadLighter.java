@@ -131,7 +131,7 @@ public abstract class QuadLighter
         }
 
         var color = quad.isTinted() ? getColorFast(quad.getTintIndex()) : WHITE;
-        consumer.putBulkData(pose, quad, brightness, color[0], color[1], color[2], lightmap, overlay, true);
+        consumer.putBulkData(pose, quad, brightness, color[0], color[1], color[2], 1.0f, lightmap, overlay, true);
     }
 
     private float[] getColorFast(int tintIndex)

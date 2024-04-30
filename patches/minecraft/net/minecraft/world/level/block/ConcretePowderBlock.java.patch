@@ -1,49 +1,49 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -32,7 +_,7 @@
-    }
+@@ -34,7 +_,7 @@
  
-    public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
--      if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
-+      if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
-          p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
-       }
+     @Override
+     public void onLand(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
+-        if (shouldSolidify(p_52068_, p_52069_, p_52071_)) {
++        if (shouldSolidify(p_52068_, p_52069_, p_52070_, p_52071_.getFluidState())) { // Forge: Use block of falling entity instead of block at replaced position, and check if shouldSolidify with the FluidState of the replaced block
+             p_52068_.setBlock(p_52069_, this.concrete.defaultBlockState(), 3);
+         }
+     }
+@@ -47,20 +_,24 @@
+         return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete.defaultBlockState() : super.getStateForPlacement(p_52063_);
+     }
  
-@@ -45,20 +_,24 @@
-       return shouldSolidify(blockgetter, blockpos, blockstate) ? this.concrete.defaultBlockState() : super.getStateForPlacement(p_52063_);
-    }
- 
-+   private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_, net.minecraft.world.level.material.FluidState fluidState) {
-+      return p_52083_.canBeHydrated(p_52081_, p_52082_, fluidState, p_52082_) || touchesLiquid(p_52081_, p_52082_, p_52083_);
-+   }
++    private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_, net.minecraft.world.level.material.FluidState fluidState) {
++        return p_52083_.canBeHydrated(p_52081_, p_52082_, fluidState, p_52082_) || touchesLiquid(p_52081_, p_52082_, p_52083_);
++    }
 +
-    private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_) {
--      return canSolidify(p_52083_) || touchesLiquid(p_52081_, p_52082_);
-+      return shouldSolidify(p_52081_, p_52082_, p_52083_, p_52081_.getFluidState(p_52082_));
-    }
+     private static boolean shouldSolidify(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_) {
+-        return canSolidify(p_52083_) || touchesLiquid(p_52081_, p_52082_);
++        return shouldSolidify(p_52081_, p_52082_, p_52083_, p_52081_.getFluidState(p_52082_));
+     }
  
--   private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_) {
-+   private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_, BlockState state) {
-       boolean flag = false;
-       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_52066_.mutable();
+-    private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_) {
++    private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_, BlockState state) {
+         boolean flag = false;
+         BlockPos.MutableBlockPos blockpos$mutableblockpos = p_52066_.mutable();
  
-       for(Direction direction : Direction.values()) {
-          BlockState blockstate = p_52065_.getBlockState(blockpos$mutableblockpos);
--         if (direction != Direction.DOWN || canSolidify(blockstate)) {
-+         if (direction != Direction.DOWN || state.canBeHydrated(p_52065_, p_52066_, blockstate.getFluidState(), blockpos$mutableblockpos)) {
-             blockpos$mutableblockpos.setWithOffset(p_52066_, direction);
-             blockstate = p_52065_.getBlockState(blockpos$mutableblockpos);
--            if (canSolidify(blockstate) && !blockstate.isFaceSturdy(p_52065_, p_52066_, direction.getOpposite())) {
-+            if (state.canBeHydrated(p_52065_, p_52066_, blockstate.getFluidState(), blockpos$mutableblockpos) && !blockstate.isFaceSturdy(p_52065_, p_52066_, direction.getOpposite())) {
-                flag = true;
-                break;
-             }
-@@ -73,7 +_,7 @@
-    }
+         for (Direction direction : Direction.values()) {
+             BlockState blockstate = p_52065_.getBlockState(blockpos$mutableblockpos);
+-            if (direction != Direction.DOWN || canSolidify(blockstate)) {
++            if (direction != Direction.DOWN || state.canBeHydrated(p_52065_, p_52066_, blockstate.getFluidState(), blockpos$mutableblockpos)) {
+                 blockpos$mutableblockpos.setWithOffset(p_52066_, direction);
+                 blockstate = p_52065_.getBlockState(blockpos$mutableblockpos);
+-                if (canSolidify(blockstate) && !blockstate.isFaceSturdy(p_52065_, p_52066_, direction.getOpposite())) {
++                if (state.canBeHydrated(p_52065_, p_52066_, blockstate.getFluidState(), blockpos$mutableblockpos) && !blockstate.isFaceSturdy(p_52065_, p_52066_, direction.getOpposite())) {
+                     flag = true;
+                     break;
+                 }
+@@ -76,7 +_,7 @@
  
-    public BlockState updateShape(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
--      return touchesLiquid(p_52077_, p_52078_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
-+      return touchesLiquid(p_52077_, p_52078_, p_52074_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
-    }
+     @Override
+     protected BlockState updateShape(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {
+-        return touchesLiquid(p_52077_, p_52078_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
++        return touchesLiquid(p_52077_, p_52078_, p_52074_) ? this.concrete.defaultBlockState() : super.updateShape(p_52074_, p_52075_, p_52076_, p_52077_, p_52078_, p_52079_);
+     }
  
-    public int getDustColor(BlockState p_52085_, BlockGetter p_52086_, BlockPos p_52087_) {
+     @Override

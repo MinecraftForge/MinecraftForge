@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/packs/resources/ReloadableResourceManager.java
 +++ b/net/minecraft/server/packs/resources/ReloadableResourceManager.java
-@@ -68,4 +_,10 @@
-    public Stream<PackResources> listPacks() {
-       return this.resources.listPacks();
-    }
+@@ -73,4 +_,10 @@
+     public Stream<PackResources> listPacks() {
+         return this.resources.listPacks();
+     }
 +
-+   public void registerReloadListenerIfNotPresent(PreparableReloadListener listener) {
-+      if (!this.listeners.contains(listener)) {
-+         this.registerReloadListener(listener);
-+      }
-+   }
++    public void registerReloadListenerIfNotPresent(PreparableReloadListener listener) {
++        if (!this.listeners.contains(listener)) {
++            this.registerReloadListener(listener);
++        }
++    }
  }

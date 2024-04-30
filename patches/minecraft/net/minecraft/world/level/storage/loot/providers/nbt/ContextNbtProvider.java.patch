@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/storage/loot/providers/nbt/ContextNbtProvider.java
 +++ b/net/minecraft/world/level/storage/loot/providers/nbt/ContextNbtProvider.java
-@@ -57,7 +_,7 @@
-          }
+@@ -60,7 +_,7 @@
  
-          public String getId() {
--            return p_165578_.name();
-+            return p_165578_.getName();
-          }
+             @Override
+             public String getId() {
+-                return p_165578_.name();
++                return p_165578_.getSerializedName();
+             }
  
-          public Set<LootContextParam<?>> getReferencedContextParams() {
+             @Override

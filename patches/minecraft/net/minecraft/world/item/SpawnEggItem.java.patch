@@ -1,55 +1,49 @@
 --- a/net/minecraft/world/item/SpawnEggItem.java
 +++ b/net/minecraft/world/item/SpawnEggItem.java
-@@ -39,11 +_,14 @@
-    private final int highlightColor;
-    private final EntityType<?> defaultType;
+@@ -42,11 +_,13 @@
+     private final int highlightColor;
+     private final EntityType<?> defaultType;
  
-+   /** @deprecated Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
-+   @Deprecated
-    public SpawnEggItem(EntityType<? extends Mob> p_43207_, int p_43208_, int p_43209_, Item.Properties p_43210_) {
-       super(p_43210_);
-       this.defaultType = p_43207_;
-       this.backgroundColor = p_43208_;
-       this.highlightColor = p_43209_;
-+      if (p_43207_ != null)
-       BY_ID.put(p_43207_, this);
-    }
++    /** @deprecated Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
+     public SpawnEggItem(EntityType<? extends Mob> p_43207_, int p_43208_, int p_43209_, Item.Properties p_43210_) {
+         super(p_43210_);
+         this.defaultType = p_43207_;
+         this.backgroundColor = p_43208_;
+         this.highlightColor = p_43209_;
++        if (p_43207_ != null)
+         BY_ID.put(p_43207_, this);
+     }
  
-@@ -123,6 +_,8 @@
-       return p_43212_ == 0 ? this.backgroundColor : this.highlightColor;
-    }
+@@ -132,6 +_,7 @@
+         return p_43212_ == 0 ? this.backgroundColor : this.highlightColor;
+     }
  
-+   /** @deprecated Forge: call {@link net.minecraftforge.common.ForgeSpawnEggItem#fromEntityType(EntityType)} instead */
-+   @Deprecated
-    @Nullable
-    public static SpawnEggItem byId(@Nullable EntityType<?> p_43214_) {
-       return BY_ID.get(p_43214_);
-@@ -136,15 +_,15 @@
-       if (p_43229_ != null && p_43229_.contains("EntityTag", 10)) {
-          CompoundTag compoundtag = p_43229_.getCompound("EntityTag");
-          if (compoundtag.contains("id", 8)) {
--            return EntityType.byString(compoundtag.getString("id")).orElse(this.defaultType);
-+            return EntityType.byString(compoundtag.getString("id")).orElse(this.getDefaultType());
-          }
-       }
++    /** @deprecated Forge: call {@link net.minecraftforge.common.ForgeSpawnEggItem#fromEntityType(EntityType)} instead */
+     @Nullable
+     public static SpawnEggItem byId(@Nullable EntityType<?> p_43214_) {
+         return BY_ID.get(p_43214_);
+@@ -143,12 +_,12 @@
  
--      return this.defaultType;
-+      return this.getDefaultType();
-    }
+     public EntityType<?> getType(ItemStack p_334231_) {
+         CustomData customdata = p_334231_.getOrDefault(DataComponents.ENTITY_DATA, CustomData.EMPTY);
+-        return !customdata.isEmpty() ? customdata.read(ENTITY_TYPE_FIELD_CODEC).result().orElse(this.defaultType) : this.defaultType;
++        return !customdata.isEmpty() ? customdata.read(ENTITY_TYPE_FIELD_CODEC).result().orElse(this.getDefaultType()) : this.getDefaultType();
+     }
  
-    public FeatureFlagSet requiredFeatures() {
--      return this.defaultType.requiredFeatures();
-+      return this.getDefaultType().requiredFeatures();
-    }
+     @Override
+     public FeatureFlagSet requiredFeatures() {
+-        return this.defaultType.requiredFeatures();
++        return this.getDefaultType().requiredFeatures();
+     }
  
-    public Optional<Mob> spawnOffspringFromSpawnEgg(Player p_43216_, Mob p_43217_, EntityType<? extends Mob> p_43218_, ServerLevel p_43219_, Vec3 p_43220_, ItemStack p_43221_) {
-@@ -179,5 +_,9 @@
+     public Optional<Mob> spawnOffspringFromSpawnEgg(Player p_43216_, Mob p_43217_, EntityType<? extends Mob> p_43218_, ServerLevel p_43219_, Vec3 p_43220_, ItemStack p_43221_) {
+@@ -177,5 +_,9 @@
+                 }
              }
-          }
-       }
-+   }
+         }
++    }
 +
-+   protected EntityType<?> getDefaultType() {
-+      return defaultType;
-    }
++    protected EntityType<?> getDefaultType() {
++        return defaultType;
+     }
  }

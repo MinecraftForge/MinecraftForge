@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
 @@ -14,4 +_,8 @@
-    private static TagKey<Fluid> create(String p_203851_) {
-       return TagKey.create(Registries.FLUID, new ResourceLocation(p_203851_));
-    }
+     private static TagKey<Fluid> create(String p_203851_) {
+         return TagKey.create(Registries.FLUID, new ResourceLocation(p_203851_));
+     }
 +
-+   public static TagKey<Fluid> create(ResourceLocation name) {
-+      return TagKey.create(Registries.FLUID, name);
-+   }
++    public static TagKey<Fluid> create(ResourceLocation name) {
++        return TagKey.create(Registries.FLUID, name);
++    }
  }

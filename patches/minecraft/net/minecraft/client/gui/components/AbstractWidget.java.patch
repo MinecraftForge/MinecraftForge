@@ -1,22 +1,28 @@
 --- a/net/minecraft/client/gui/components/AbstractWidget.java
 +++ b/net/minecraft/client/gui/components/AbstractWidget.java
-@@ -233,6 +_,19 @@
-       this.focused = p_93693_;
-    }
+@@ -255,6 +_,25 @@
+         this.focused = p_93693_;
+     }
  
-+   public static final int UNSET_FG_COLOR = -1;
-+   protected int packedFGColor = UNSET_FG_COLOR;
-+   public int getFGColor() {
-+      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
-+      return this.active ? 16777215 : 10526880; // White : Light Grey
-+   }
-+   public void setFGColor(int color) {
-+      this.packedFGColor = color;
-+   }
-+   public void clearFGColor() {
-+      this.packedFGColor = UNSET_FG_COLOR;
-+   }
++    // Forge start
++    public static final int UNSET_FG_COLOR = -1;
 +
-    public NarratableEntry.NarrationPriority narrationPriority() {
-       if (this.isFocused()) {
-          return NarratableEntry.NarrationPriority.FOCUSED;
++    protected int packedFGColor = UNSET_FG_COLOR;
++
++    public int getFGColor() {
++        if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
++        return this.active ? 16777215 : 10526880; // White : Light Grey
++    }
++
++    public void setFGColor(int color) {
++        this.packedFGColor = color;
++    }
++
++    public void clearFGColor() {
++        this.packedFGColor = UNSET_FG_COLOR;
++    }
++    // Forge end
++
+     @Override
+     public NarratableEntry.NarrationPriority narrationPriority() {
+         if (this.isFocused()) {

@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/renderer/block/model/MultiVariant.java
 +++ b/net/minecraft/client/renderer/block/model/MultiVariant.java
 @@ -68,7 +_,7 @@
-          WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
+             WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
  
-          for(Variant variant : this.getVariants()) {
--            BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant);
-+            BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant, p_111851_);
-             weightedbakedmodel$builder.add(bakedmodel, variant.getWeight());
-          }
+             for (Variant variant : this.getVariants()) {
+-                BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant);
++                BakedModel bakedmodel = p_249016_.bake(variant.getModelLocation(), variant, p_111851_);
+                 weightedbakedmodel$builder.add(bakedmodel, variant.getWeight());
+             }
  

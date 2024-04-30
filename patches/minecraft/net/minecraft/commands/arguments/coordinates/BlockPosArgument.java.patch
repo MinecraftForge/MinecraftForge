@@ -2,13 +2,13 @@
 +++ b/net/minecraft/commands/arguments/coordinates/BlockPosArgument.java
 @@ -36,9 +_,9 @@
  
-    public static BlockPos getLoadedBlockPos(CommandContext<CommandSourceStack> p_265283_, ServerLevel p_265219_, String p_265677_) throws CommandSyntaxException {
-       BlockPos blockpos = getBlockPos(p_265283_, p_265677_);
--      if (!p_265219_.hasChunkAt(blockpos)) {
-+      if (!p_265283_.getSource().getUnsidedLevel().hasChunkAt(blockpos)) {
-          throw ERROR_NOT_LOADED.create();
--      } else if (!p_265219_.isInWorldBounds(blockpos)) {
-+      } else if (!p_265283_.getSource().getUnsidedLevel().isInWorldBounds(blockpos)) {
-          throw ERROR_OUT_OF_WORLD.create();
-       } else {
-          return blockpos;
+     public static BlockPos getLoadedBlockPos(CommandContext<CommandSourceStack> p_265283_, ServerLevel p_265219_, String p_265677_) throws CommandSyntaxException {
+         BlockPos blockpos = getBlockPos(p_265283_, p_265677_);
+-        if (!p_265219_.hasChunkAt(blockpos)) {
++        if (!p_265283_.getSource().getUnsidedLevel().hasChunkAt(blockpos)) {
+             throw ERROR_NOT_LOADED.create();
+-        } else if (!p_265219_.isInWorldBounds(blockpos)) {
++        } else if (!p_265283_.getSource().getUnsidedLevel().isInWorldBounds(blockpos)) {
+             throw ERROR_OUT_OF_WORLD.create();
+         } else {
+             return blockpos;

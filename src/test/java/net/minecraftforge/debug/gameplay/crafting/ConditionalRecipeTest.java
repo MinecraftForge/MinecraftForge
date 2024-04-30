@@ -5,6 +5,9 @@
 
 package net.minecraftforge.debug.gameplay.crafting;
 
+import java.util.concurrent.CompletableFuture;
+
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -39,7 +42,7 @@ public class ConditionalRecipeTest extends BaseTestMod {
     @SubscribeEvent
     public void gatherData(GatherDataEvent event) {
         var gen = event.getGenerator();
-        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput()));
+        gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput(), event.getLookupProvider()));
     }
 
     private static ResourceLocation rl(String path) {
@@ -156,8 +159,8 @@ public class ConditionalRecipeTest extends BaseTestMod {
     }
 
     public static class Recipes extends RecipeProvider implements IConditionBuilder {
-        public Recipes(PackOutput gen) {
-            super(gen);
+        public Recipes(PackOutput gen, CompletableFuture<HolderLookup.Provider> lookup) {
+            super(gen, lookup);
         }
 
         @Override

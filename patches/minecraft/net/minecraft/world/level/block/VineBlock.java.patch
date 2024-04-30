@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/block/VineBlock.java
 +++ b/net/minecraft/world/level/block/VineBlock.java
-@@ -24,7 +_,7 @@
+@@ -25,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public class VineBlock extends Block {
 +public class VineBlock extends Block implements net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<VineBlock> CODEC = simpleCodec(VineBlock::new);
-    public static final BooleanProperty UP = PipeBlock.UP;
-    public static final BooleanProperty NORTH = PipeBlock.NORTH;
-@@ -164,7 +_,7 @@
- 
-    public void randomTick(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
-       if (p_222656_.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
--         if (p_222658_.nextInt(4) == 0) {
-+      if (p_222656_.random.nextInt(4) == 0 && p_222656_.isAreaLoaded(p_222657_, 4)) { // Forge: check area to prevent loading unloaded chunks
-             Direction direction = Direction.getRandom(p_222658_);
-             BlockPos blockpos = p_222657_.above();
-             if (direction.getAxis().isHorizontal() && !p_222655_.getValue(getPropertyForFace(direction))) {
+     public static final MapCodec<VineBlock> CODEC = simpleCodec(VineBlock::new);
+     public static final BooleanProperty UP = PipeBlock.UP;
+     public static final BooleanProperty NORTH = PipeBlock.NORTH;
+@@ -181,7 +_,7 @@
+     @Override
+     protected void randomTick(BlockState p_222655_, ServerLevel p_222656_, BlockPos p_222657_, RandomSource p_222658_) {
+         if (p_222656_.getGameRules().getBoolean(GameRules.RULE_DO_VINES_SPREAD)) {
+-            if (p_222658_.nextInt(4) == 0) {
++            if (p_222656_.random.nextInt(4) == 0 && p_222656_.isAreaLoaded(p_222657_, 4)) { // Forge: check area to prevent loading unloaded chunks
+                 Direction direction = Direction.getRandom(p_222658_);
+                 BlockPos blockpos = p_222657_.above();
+                 if (direction.getAxis().isHorizontal() && !p_222655_.getValue(getPropertyForFace(direction))) {

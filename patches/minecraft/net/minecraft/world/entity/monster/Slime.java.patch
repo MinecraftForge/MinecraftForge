@@ -1,24 +1,38 @@
 --- a/net/minecraft/world/entity/monster/Slime.java
 +++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -130,6 +_,8 @@
-       if (this.onGround() && !this.wasOnGround) {
-          int i = this.getSize();
+@@ -139,13 +_,15 @@
+             float f = this.getDimensions(this.getPose()).width() * 2.0F;
+             float f1 = f / 2.0F;
  
-+         // Forge: Don't spawn particles if it's handled by the implementation itself
-+         if (!spawnCustomParticles())
-          for(int j = 0; j < i * 8; ++j) {
-             float f = this.random.nextFloat() * ((float)Math.PI * 2F);
-             float f1 = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -337,6 +_,12 @@
-    public EntityDimensions getDimensions(Pose p_33597_) {
-       return super.getDimensions(p_33597_).scale(0.255F * (float)this.getSize());
-    }
+-            for (int i = 0; (float)i < f * 16.0F; i++) {
+-                float f2 = this.random.nextFloat() * (float) (Math.PI * 2);
+-                float f3 = this.random.nextFloat() * 0.5F + 0.5F;
+-                float f4 = Mth.sin(f2) * f1 * f3;
+-                float f5 = Mth.cos(f2) * f1 * f3;
+-                this.level().addParticle(this.getParticleType(), this.getX() + (double)f4, this.getY(), this.getZ() + (double)f5, 0.0, 0.0, 0.0);
+-            }
++            // Forge: Don't spawn particles if it's handled by the implementation itself
++            if (!spawnCustomParticles())
++                for (int i = 0; (float)i < f * 16.0F; i++) {
++                    float f2 = this.random.nextFloat() * (float) (Math.PI * 2);
++                    float f3 = this.random.nextFloat() * 0.5F + 0.5F;
++                    float f4 = Mth.sin(f2) * f1 * f3;
++                    float f5 = Mth.cos(f2) * f1 * f3;
++                    this.level().addParticle(this.getParticleType(), this.getX() + (double)f4, this.getY(), this.getZ() + (double)f5, 0.0, 0.0, 0.0);
++                }
+ 
+             this.playSound(this.getSquishSound(), this.getSoundVolume(), ((this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F) / 0.8F);
+             this.targetSquish = -0.5F;
+@@ -156,6 +_,12 @@
+         this.wasOnGround = this.onGround();
+         this.decreaseSquish();
+     }
 +
-+   /**
-+    * Called when the slime spawns particles on landing, see onUpdate.
-+    * Return true to prevent the spawning of the default particles.
-+    */
-+   protected boolean spawnCustomParticles() { return false; }
++    /**
++     * Called when the slime spawns particles on landing, see onUpdate.
++     * Return true to prevent the spawning of the default particles.
++     */
++    protected boolean spawnCustomParticles() { return false; }
  
-    static class SlimeAttackGoal extends Goal {
-       private final Slime slime;
+     protected void decreaseSquish() {
+         this.targetSquish *= 0.6F;

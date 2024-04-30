@@ -2,19 +2,19 @@
 +++ b/net/minecraft/client/server/LanServerPinger.java
 @@ -13,7 +_,7 @@
  public class LanServerPinger extends Thread {
-    private static final AtomicInteger UNIQUE_THREAD_ID = new AtomicInteger(0);
-    private static final Logger LOGGER = LogUtils.getLogger();
--   public static final String MULTICAST_GROUP = "224.0.2.60";
-+   public static final String MULTICAST_GROUP = net.minecraftforge.network.DualStackUtils.getMulticastGroup();
-    public static final int PING_PORT = 4445;
-    private static final long PING_INTERVAL = 1500L;
-    private final String motd;
-@@ -36,7 +_,7 @@
+     private static final AtomicInteger UNIQUE_THREAD_ID = new AtomicInteger(0);
+     private static final Logger LOGGER = LogUtils.getLogger();
+-    public static final String MULTICAST_GROUP = "224.0.2.60";
++    public static final String MULTICAST_GROUP = net.minecraftforge.network.DualStackUtils.getMulticastGroup();
+     public static final int PING_PORT = 4445;
+     private static final long PING_INTERVAL = 1500L;
+     private final String motd;
+@@ -37,7 +_,7 @@
  
-       while(!this.isInterrupted() && this.isRunning) {
-          try {
--            InetAddress inetaddress = InetAddress.getByName("224.0.2.60");
-+            InetAddress inetaddress = InetAddress.getByName(MULTICAST_GROUP);
-             DatagramPacket datagrampacket = new DatagramPacket(abyte, abyte.length, inetaddress, 4445);
-             this.socket.send(datagrampacket);
-          } catch (IOException ioexception) {
+         while (!this.isInterrupted() && this.isRunning) {
+             try {
+-                InetAddress inetaddress = InetAddress.getByName("224.0.2.60");
++                InetAddress inetaddress = InetAddress.getByName(MULTICAST_GROUP);
+                 DatagramPacket datagrampacket = new DatagramPacket(abyte, abyte.length, inetaddress, 4445);
+                 this.socket.send(datagrampacket);
+             } catch (IOException ioexception) {

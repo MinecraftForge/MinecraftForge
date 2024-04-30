@@ -1,35 +1,34 @@
 --- a/net/minecraft/client/renderer/texture/Stitcher.java
 +++ b/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -12,6 +_,8 @@
+@@ -12,6 +_,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class Stitcher<T extends Stitcher.Entry> {
-+   private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
-+
-    private static final Comparator<Stitcher.Holder<?>> HOLDER_COMPARATOR = Comparator.<Stitcher.Holder<?>, Integer>comparing((p_118201_) -> {
-       return -p_118201_.height;
-    }).thenComparing((p_118199_) -> {
-@@ -52,6 +_,14 @@
++    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+     private static final Comparator<Stitcher.Holder<?>> HOLDER_COMPARATOR = Comparator.<Stitcher.Holder<?>, Integer>comparing(p_118201_ -> -p_118201_.height)
+         .thenComparing(p_118199_ -> -p_118199_.width)
+         .thenComparing(p_247945_ -> p_247945_.entry.name());
+@@ -48,6 +_,14 @@
  
-       for(Stitcher.Holder<T> holder : list) {
-          if (!this.addToStorage(holder)) {
-+            if (LOGGER.isInfoEnabled()) {
-+               StringBuilder sb = new StringBuilder();
-+               sb.append("Unable to fit: ").append(holder.entry().name());
-+               sb.append(" - size: ").append(holder.entry.width()).append("x").append(holder.entry.height());
-+               sb.append(" - Maybe try a lower resolution resourcepack?\n");
-+               list.forEach(h -> sb.append("\t").append(h).append("\n"));
-+               LOGGER.info(sb.toString());
-+            }
-             throw new StitcherException(holder.entry, list.stream().map((p_247946_) -> {
-                return p_247946_.entry;
-             }).collect(ImmutableList.toImmutableList()));
-@@ -95,7 +_,7 @@
-          boolean flag4 = flag2 && j != l;
-          boolean flag;
-          if (flag3 ^ flag4) {
--            flag = flag3;
-+            flag = !flag3 && flag1; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
-          } else {
-             flag = flag1 && i <= j;
-          }
+         for (Stitcher.Holder<T> holder : list) {
+             if (!this.addToStorage(holder)) {
++               if (LOGGER.isInfoEnabled()) {
++                    StringBuilder sb = new StringBuilder();
++                    sb.append("Unable to fit: ").append(holder.entry().name());
++                    sb.append(" - size: ").append(holder.entry.width()).append("x").append(holder.entry.height());
++                    sb.append(" - Maybe try a lower resolution resourcepack?\n");
++                    list.forEach(h -> sb.append("\t").append(h).append("\n"));
++                    LOGGER.info(sb.toString());
++                }
+                 throw new StitcherException(holder.entry, list.stream().map(p_247946_ -> p_247946_.entry).collect(ImmutableList.toImmutableList()));
+             }
+         }
+@@ -87,7 +_,7 @@
+             boolean flag4 = flag2 && j != l;
+             boolean flag;
+             if (flag3 ^ flag4) {
+-                flag = flag3;
++                flag = !flag3 && flag1; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
+             } else {
+                 flag = flag1 && i <= j;
+             }

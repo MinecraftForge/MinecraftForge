@@ -1,35 +1,35 @@
 --- a/net/minecraft/client/color/item/ItemColors.java
 +++ b/net/minecraft/client/color/item/ItemColors.java
-@@ -25,7 +_,8 @@
+@@ -26,7 +_,8 @@
  @OnlyIn(Dist.CLIENT)
  public class ItemColors {
-    private static final int DEFAULT = -1;
--   private final IdMapper<ItemColor> itemColors = new IdMapper<>(32);
-+   // FORGE: Use registry delegate as non-Vanilla item ids are not constant
-+   private final java.util.Map<net.minecraft.core.Holder.Reference<Item>, ItemColor> itemColors = new java.util.HashMap<>();
+     private static final int DEFAULT = -1;
+-    private final IdMapper<ItemColor> itemColors = new IdMapper<>(32);
++    // Forge: Use registry delegate as non-Vanilla item ids are not constant
++    private final java.util.Map<net.minecraft.core.Holder.Reference<Item>, ItemColor> itemColors = new java.util.HashMap<>(32);
  
-    public static ItemColors createDefault(BlockColors p_92684_) {
-       ItemColors itemcolors = new ItemColors();
-@@ -88,17 +_,20 @@
-       itemcolors.register((p_232352_, p_232353_) -> {
-          return p_232353_ == 0 ? -1 : MapItem.getColor(p_232352_);
-       }, Items.FILLED_MAP);
-+      net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_92684_);
-       return itemcolors;
-    }
+     public static ItemColors createDefault(BlockColors p_92684_) {
+         ItemColors itemcolors = new ItemColors();
+@@ -105,17 +_,20 @@
+                     : FastColor.ARGB32.opaque(p_325310_.getOrDefault(DataComponents.MAP_COLOR, MapItemColor.DEFAULT).rgb()),
+             Items.FILLED_MAP
+         );
++        net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_92684_);
+         return itemcolors;
+     }
  
-    public int getColor(ItemStack p_92677_, int p_92678_) {
--      ItemColor itemcolor = this.itemColors.byId(BuiltInRegistries.ITEM.getId(p_92677_.getItem()));
-+      ItemColor itemcolor = this.itemColors.get(net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_92677_.getItem()));
-       return itemcolor == null ? -1 : itemcolor.getColor(p_92677_, p_92678_);
-    }
+     public int getColor(ItemStack p_92677_, int p_92678_) {
+-        ItemColor itemcolor = this.itemColors.byId(BuiltInRegistries.ITEM.getId(p_92677_.getItem()));
++        ItemColor itemcolor = this.itemColors.get(net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_92677_.getItem()));
+         return itemcolor == null ? -1 : itemcolor.getColor(p_92677_, p_92678_);
+     }
  
-+   /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterColorHandlersEvent.Item} */
-+   @Deprecated
-    public void register(ItemColor p_92690_, ItemLike... p_92691_) {
-       for(ItemLike itemlike : p_92691_) {
--         this.itemColors.addMapping(p_92690_, Item.getId(itemlike.asItem()));
-+         this.itemColors.put(net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(itemlike.asItem()), p_92690_);
-       }
- 
-    }
++    /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterColorHandlersEvent.Item} */
++    @Deprecated
+     public void register(ItemColor p_92690_, ItemLike... p_92691_) {
+         for (ItemLike itemlike : p_92691_) {
+-            this.itemColors.addMapping(p_92690_, Item.getId(itemlike.asItem()));
++            this.itemColors.put(net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(itemlike.asItem()), p_92690_);
+         }
+     }
+ }

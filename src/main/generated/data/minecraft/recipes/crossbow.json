@@ -21,6 +21,7 @@
     " # "
   ],
   "result": {
-    "item": "minecraft:crossbow"
+    "count": 1,
+    "id": "minecraft:crossbow"
   }
 }

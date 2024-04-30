@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/BeehiveBlock.java
 +++ b/net/minecraft/world/level/block/BeehiveBlock.java
-@@ -121,7 +_,7 @@
-       boolean flag = false;
-       if (i >= 5) {
-          Item item = itemstack.getItem();
--         if (itemstack.is(Items.SHEARS)) {
-+         if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)) {
-             p_49625_.playSound(p_49627_, p_49627_.getX(), p_49627_.getY(), p_49627_.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F);
-             dropHoneycomb(p_49625_, p_49626_);
-             itemstack.hurtAndBreak(1, p_49627_, (p_49571_) -> {
+@@ -126,7 +_,7 @@
+         boolean flag = false;
+         if (i >= 5) {
+             Item item = p_331014_.getItem();
+-            if (p_331014_.is(Items.SHEARS)) {
++            if (p_331014_.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)) {
+                 p_329187_.playSound(
+                     p_336201_, p_336201_.getX(), p_336201_.getY(), p_336201_.getZ(), SoundEvents.BEEHIVE_SHEAR, SoundSource.BLOCKS, 1.0F, 1.0F
+                 );

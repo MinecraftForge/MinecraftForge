@@ -1,17 +1,18 @@
 --- a/com/mojang/blaze3d/vertex/BufferBuilder.java
 +++ b/com/mojang/blaze3d/vertex/BufferBuilder.java
-@@ -477,4 +_,14 @@
-          this.sorting = p_277855_;
-       }
-    }
+@@ -389,6 +_,15 @@
+         return MemoryUtil.memSlice(this.buffer, p_231170_, p_231171_ - p_231170_);
+     }
+ 
++    public void putBulkData(ByteBuffer buffer) {
++        ensureCapacity(buffer.limit() + this.format.getVertexSize());
++        this.buffer.position(this.nextElementByte);
++        this.buffer.put(buffer);
++        this.buffer.position(0);
++        this.vertices += buffer.limit() / this.format.getVertexSize();
++        this.nextElementByte += buffer.limit();
++    }
 +
-+   // Forge start
-+   public void putBulkData(ByteBuffer buffer) {
-+      ensureCapacity(buffer.limit() + this.format.getVertexSize());
-+      this.buffer.position(this.nextElementByte);
-+      this.buffer.put(buffer);
-+      this.buffer.position(0);
-+      this.vertices += buffer.limit() / this.format.getVertexSize();
-+      this.nextElementByte += buffer.limit();
-+   }
- }
+     @OnlyIn(Dist.CLIENT)
+     public static record DrawState(
+         VertexFormat format, int vertexCount, int indexCount, VertexFormat.Mode mode, VertexFormat.IndexType indexType, boolean indexOnly, boolean sequentialIndex

@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionScreen.java
-@@ -136,7 +_,7 @@
-       TransferableSelectionList.PackEntry transferableselectionlist$packentry = p_100014_.getSelected();
-       String s = transferableselectionlist$packentry == null ? "" : transferableselectionlist$packentry.getPackId();
-       p_100014_.setSelected((TransferableSelectionList.PackEntry)null);
--      p_100015_.forEach((p_308207_) -> {
-+      p_100015_.filter(PackSelectionModel.Entry::notHidden).forEach((p_308207_) -> {
-          TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(this.minecraft, p_100014_, p_308207_);
-          p_100014_.children().add(transferableselectionlist$packentry1);
-          if (p_308207_.getId().equals(s)) {
+@@ -159,7 +_,7 @@
+         TransferableSelectionList.PackEntry transferableselectionlist$packentry = p_100014_.getSelected();
+         String s = transferableselectionlist$packentry == null ? "" : transferableselectionlist$packentry.getPackId();
+         p_100014_.setSelected(null);
+-        p_100015_.forEach(
++        p_100015_.filter(PackSelectionModel.Entry::notHidden).forEach(
+             p_325390_ -> {
+                 TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(
+                     this.minecraft, p_100014_, p_325390_

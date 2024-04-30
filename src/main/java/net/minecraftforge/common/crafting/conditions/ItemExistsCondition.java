@@ -5,19 +5,36 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.mojang.serialization.Codec;
+import java.util.Optional;
+
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public record ItemExistsCondition(ResourceLocation item) implements ICondition {
-    public static final Codec<ItemExistsCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<ItemExistsCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ResourceLocation.CODEC.fieldOf("item").forGetter(ItemExistsCondition::item)
     ).apply(b, ItemExistsCondition::new));
 
     @Override
-    public boolean test(IContext context) {
+    public boolean test(IContext context, DynamicOps<?> ops) {
+        // Check the actual deserialization context if possible
+        if (ops instanceof RegistryOps<?> reg) {
+            Optional<HolderGetter<Item>> items = reg.getter(Registries.ITEM);
+            if (items.isPresent()) {
+                var key = ResourceKey.create(Registries.ITEM, this.item);
+                return items.get().get(key).isPresent();
+            }
+        }
+        // Default to the active registry if its missing
         return ForgeRegistries.ITEMS.containsKey(item);
     }
 
@@ -27,7 +44,7 @@ public record ItemExistsCondition(ResourceLocation item) implements ICondition {
     }
 
     @Override
-    public Codec<? extends ICondition> codec() {
+    public  MapCodec<? extends ICondition> codec() {
         return CODEC;
     }
 }

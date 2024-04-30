@@ -1,19 +1,22 @@
 --- a/net/minecraft/world/level/block/SculkShriekerBlock.java
 +++ b/net/minecraft/world/level/block/SculkShriekerBlock.java
-@@ -127,10 +_,12 @@
- 
-    public void spawnAfterBreak(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
-       super.spawnAfterBreak(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);
--      if (p_222196_) {
--         this.tryDropExperience(p_222193_, p_222194_, p_222195_, ConstantInt.of(5));
--      }
--
+@@ -140,7 +_,7 @@
+     @Override
+     protected void spawnAfterBreak(BlockState p_222192_, ServerLevel p_222193_, BlockPos p_222194_, ItemStack p_222195_, boolean p_222196_) {
+         super.spawnAfterBreak(p_222192_, p_222193_, p_222194_, p_222195_, p_222196_);
+-        if (p_222196_) {
++        if (false && p_222196_) { // Forge: Moved to getExpDrop
+             this.tryDropExperience(p_222193_, p_222194_, p_222195_, ConstantInt.of(5));
+         }
+     }
+@@ -155,5 +_,10 @@
+                 (p_281134_, p_281135_, p_281136_, p_281137_) -> VibrationSystem.Ticker.tick(p_281134_, p_281137_.getVibrationData(), p_281137_.getVibrationUser())
+             )
+             : null;
++    }
 +
-+   }
-+
-+   @Override
-+   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
-+      return silkTouchLevel == 0 ? 5 : 0;
-    }
- 
-    @Nullable
++    @Override
++    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader level, RandomSource randomSource, BlockPos pos, int fortuneLevel, int silkTouchLevel) {
++       return silkTouchLevel == 0 ? 5 : 0;
+     }
+ }

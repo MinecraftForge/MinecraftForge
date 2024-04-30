@@ -9,8 +9,9 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -28,10 +29,9 @@ import java.util.function.Function;
  * Individual instances of modifiers must be registered via json, see forge:loot_modifiers/global_loot_modifiers
  */
 public interface IGlobalLootModifier {
-    Codec<IGlobalLootModifier> DIRECT_CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getCodec())
-            .dispatch(IGlobalLootModifier::codec, Function.identity());
+    Codec<IGlobalLootModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getCodec().dispatch(IGlobalLootModifier::codec, Function.identity()));
 
-    Codec<LootItemCondition[]> LOOT_CONDITIONS_CODEC = LootItemConditions.CODEC.listOf().xmap(list -> list.toArray(LootItemCondition[]::new), List::of);
+    Codec<LootItemCondition[]> LOOT_CONDITIONS_CODEC = LootItemConditions.DIRECT_CODEC.listOf().xmap(list -> list.toArray(LootItemCondition[]::new), List::of);
 
     @SuppressWarnings("unchecked")
     static <U> JsonElement getJson(Dynamic<?> dynamic) {
@@ -54,5 +54,5 @@ public interface IGlobalLootModifier {
     /**
      * Returns the registered codec for this modifier
      */
-    Codec<? extends IGlobalLootModifier> codec();
+    MapCodec<? extends IGlobalLootModifier> codec();
 }

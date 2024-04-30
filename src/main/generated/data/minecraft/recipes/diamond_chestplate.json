@@ -12,6 +12,7 @@
     "XXX"
   ],
   "result": {
-    "item": "minecraft:diamond_chestplate"
+    "count": 1,
+    "id": "minecraft:diamond_chestplate"
   }
 }

@@ -6,6 +6,7 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.Holder;
@@ -13,7 +14,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
@@ -26,14 +26,14 @@ import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
 public interface ICondition {
-    Codec<ICondition> CODEC = ExtraCodecs.lazyInitializedCodec(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec().dispatch(ICondition::codec, Function.identity()));
+    Codec<ICondition> CODEC = Codec.lazyInitialized(() -> ForgeRegistries.CONDITION_SERIALIZERS.get().getCodec().dispatch(ICondition::codec, Function.identity()));
     String DEFAULT_FIELD = "forge:condition";
     MapCodec<Optional<ICondition>> OPTIONAL_FEILD_CODEC = CODEC.optionalFieldOf(DEFAULT_FIELD);
     Codec<ICondition> SAFE_CODEC = CODEC.orElse(FalseCondition.INSTANCE);
 
-    boolean test(IContext context);
+    boolean test(IContext context, DynamicOps<?> ops);
 
-    Codec<? extends ICondition> codec();
+    MapCodec<? extends ICondition> codec();
 
     interface IContext {
         /* Key used to attach this context option to a DynamicOps instance */

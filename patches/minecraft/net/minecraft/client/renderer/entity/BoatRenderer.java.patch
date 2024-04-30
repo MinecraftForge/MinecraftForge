@@ -1,23 +1,24 @@
 --- a/net/minecraft/client/renderer/entity/BoatRenderer.java
 +++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
-@@ -73,7 +_,7 @@
-          p_113932_.mulPose((new Quaternionf()).setAngleAxis(p_113929_.getBubbleAngle(p_113931_) * ((float)Math.PI / 180F), 1.0F, 0.0F, 1.0F));
-       }
+@@ -75,7 +_,7 @@
+             p_113932_.mulPose(new Quaternionf().setAngleAxis(p_113929_.getBubbleAngle(p_113931_) * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
+         }
  
--      Pair<ResourceLocation, ListModel<Boat>> pair = this.boatResources.get(p_113929_.getVariant());
-+      Pair<ResourceLocation, ListModel<Boat>> pair = getModelWithLocation(p_113929_);
-       ResourceLocation resourcelocation = pair.getFirst();
-       ListModel<Boat> listmodel = pair.getSecond();
-       p_113932_.scale(-1.0F, -1.0F, 1.0F);
-@@ -93,7 +_,10 @@
-       super.render(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
-    }
+-        Pair<ResourceLocation, ListModel<Boat>> pair = this.boatResources.get(p_113929_.getVariant());
++        Pair<ResourceLocation, ListModel<Boat>> pair = getModelWithLocation(p_113929_);
+         ResourceLocation resourcelocation = pair.getFirst();
+         ListModel<Boat> listmodel = pair.getSecond();
+         p_113932_.scale(-1.0F, -1.0F, 1.0F);
+@@ -94,7 +_,12 @@
+         super.render(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
+     }
  
-+   @Deprecated // forge: override getModelWithLocation to change the texture / model
-    public ResourceLocation getTextureLocation(Boat p_113927_) {
--      return this.boatResources.get(p_113927_.getVariant()).getFirst();
-+      return getModelWithLocation(p_113927_).getFirst();
-    }
++    @Deprecated // forge: override getModelWithLocation to change the texture / model
+     public ResourceLocation getTextureLocation(Boat p_113927_) {
+         return this.boatResources.get(p_113927_.getVariant()).getFirst();
++    }
 +
-+   public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) { return this.boatResources.get(boat.getVariant()); }
++    public Pair<ResourceLocation, ListModel<Boat>> getModelWithLocation(Boat boat) {
++        return this.boatResources.get(boat.getVariant());
+     }
  }

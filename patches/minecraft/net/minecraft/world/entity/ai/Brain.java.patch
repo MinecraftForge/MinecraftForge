@@ -1,33 +1,33 @@
 --- a/net/minecraft/world/entity/ai/Brain.java
 +++ b/net/minecraft/world/entity/ai/Brain.java
-@@ -478,6 +_,30 @@
-       return builder.build();
-    }
+@@ -485,6 +_,30 @@
+         return builder.build();
+     }
  
-+   public net.minecraftforge.common.util.BrainBuilder<E> createBuilder(){
-+      var builder = new net.minecraftforge.common.util.BrainBuilder<>(this);
-+      builder.getMemoryTypes().addAll(this.memories.keySet());
-+      builder.getSensorTypes().addAll(this.sensors.keySet());
-+      builder.addAvailableBehaviorsByPriorityFrom(this.availableBehaviorsByPriority);
-+      builder.setSchedule(this.getSchedule());
-+      builder.addActivityRequirementsFrom(this.activityRequirements);
-+      builder.addActivityMemoriesToEraseWhenStoppedFrom(this.activityMemoriesToEraseWhenStopped);
-+      builder.getCoreActivities().addAll(this.coreActivities);
-+      builder.setDefaultActivity(this.defaultActivity);
-+      builder.setActiveActivites(this.activeActivities);
-+      return builder;
-+   }
++    public net.minecraftforge.common.util.BrainBuilder<E> createBuilder() {
++        var builder = new net.minecraftforge.common.util.BrainBuilder<>(this);
++        builder.getMemoryTypes().addAll(this.memories.keySet());
++        builder.getSensorTypes().addAll(this.sensors.keySet());
++        builder.addAvailableBehaviorsByPriorityFrom(this.availableBehaviorsByPriority);
++        builder.setSchedule(this.getSchedule());
++        builder.addActivityRequirementsFrom(this.activityRequirements);
++        builder.addActivityMemoriesToEraseWhenStoppedFrom(this.activityMemoriesToEraseWhenStopped);
++        builder.getCoreActivities().addAll(this.coreActivities);
++        builder.setDefaultActivity(this.defaultActivity);
++        builder.setActiveActivites(this.activeActivities);
++        return builder;
++    }
 +
-+   public void copyFromBuilder(net.minecraftforge.common.util.BrainBuilder<E> builder){
-+      builder.addAvailableBehaviorsByPriorityTo(this.availableBehaviorsByPriority);
-+      this.setSchedule(builder.getSchedule());
-+      builder.addActivityRequirementsTo(this.activityRequirements);
-+      builder.addActivityMemoriesToEraseWhenStoppedTo(this.activityMemoriesToEraseWhenStopped);
-+      this.setCoreActivities(builder.getCoreActivities());
-+      this.setDefaultActivity(builder.getDefaultActivity());
-+      this.activeActivities.addAll(builder.getActiveActivites());
-+   }
++    public void copyFromBuilder(net.minecraftforge.common.util.BrainBuilder<E> builder) {
++        builder.addAvailableBehaviorsByPriorityTo(this.availableBehaviorsByPriority);
++        this.setSchedule(builder.getSchedule());
++        builder.addActivityRequirementsTo(this.activityRequirements);
++        builder.addActivityMemoriesToEraseWhenStoppedTo(this.activityMemoriesToEraseWhenStopped);
++        this.setCoreActivities(builder.getCoreActivities());
++        this.setDefaultActivity(builder.getDefaultActivity());
++        this.activeActivities.addAll(builder.getActiveActivites());
++    }
 +
-    static final class MemoryValue<U> {
-       private final MemoryModuleType<U> type;
-       private final Optional<? extends ExpirableValue<U>> value;
+     static final class MemoryValue<U> {
+         private final MemoryModuleType<U> type;
+         private final Optional<? extends ExpirableValue<U>> value;

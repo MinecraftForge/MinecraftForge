@@ -1,51 +1,62 @@
 --- a/net/minecraft/world/level/biome/BiomeSpecialEffects.java
 +++ b/net/minecraft/world/level/biome/BiomeSpecialEffects.java
-@@ -201,7 +_,7 @@
-       }
-    }
+@@ -212,7 +_,7 @@
+         }
+     }
  
--   public static enum GrassColorModifier implements StringRepresentable {
-+   public static enum GrassColorModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
-       NONE("none") {
-          public int modifyColor(double p_48081_, double p_48082_, int p_48083_) {
-             return p_48083_;
-@@ -220,14 +_,37 @@
-       };
+-    public static enum GrassColorModifier implements StringRepresentable {
++    public static enum GrassColorModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+         NONE("none") {
+             @Override
+             public int modifyColor(double p_48081_, double p_48082_, int p_48083_) {
+@@ -234,11 +_,16 @@
+         };
  
-       private final String name;
--      public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = StringRepresentable.fromEnum(BiomeSpecialEffects.GrassColorModifier::values);
-+      public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeSpecialEffects.GrassColorModifier::values, BiomeSpecialEffects.GrassColorModifier::byName);
-+      private static final java.util.Map<String, GrassColorModifier> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(BiomeSpecialEffects.GrassColorModifier::getName, grassColorModifier -> grassColorModifier));
+         private final String name;
+-        public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = StringRepresentable.fromEnum(
+-            BiomeSpecialEffects.GrassColorModifier::values
++        public static final Codec<BiomeSpecialEffects.GrassColorModifier> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(
++            BiomeSpecialEffects.GrassColorModifier::values,
++            BiomeSpecialEffects.GrassColorModifier::byName
+         );
++        private static final java.util.Map<String, GrassColorModifier> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(BiomeSpecialEffects.GrassColorModifier::getName, grassColorModifier -> grassColorModifier));
++        private ColorModifier delegate;
  
--      public abstract int modifyColor(double p_48065_, double p_48066_, int p_48067_);
-+      public int modifyColor(double p_48065_, double p_48066_, int p_48067_) {
-+         return delegate.modifyGrassColor(p_48065_, p_48066_, p_48067_);
-+      }
+-        public abstract int modifyColor(double p_48065_, double p_48066_, int p_48067_);
++        public int modifyColor(double p_48065_, double p_48066_, int p_48067_) {
++            return delegate.modifyGrassColor(p_48065_, p_48066_, p_48067_);
++        }
  
-       GrassColorModifier(String p_48058_) {
-          this.name = p_48058_;
-       }
- 
-+      private ColorModifier delegate;
-+      private GrassColorModifier(String name, ColorModifier delegate) {
-+         this(name);
-+         this.delegate = delegate;
-+      }
-+      public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
-+         throw new IllegalStateException("Enum not extended");
-+      }
-+      @Override
-+      public void init() {
-+         BY_NAME.put(this.getName(), this);
-+      }
-+      // Forge: Access enum members by name
-+      public static BiomeSpecialEffects.GrassColorModifier byName(String name) {
-+         return BY_NAME.get(name);
-+      }
-+      @FunctionalInterface
-+      public interface ColorModifier {
-+         int modifyGrassColor(double x, double z, int color);
-+      }
-       public String getName() {
-          return this.name;
-       }
+         GrassColorModifier(final String p_48058_) {
+             this.name = p_48058_;
+@@ -251,6 +_,30 @@
+         @Override
+         public String getSerializedName() {
+             return this.name;
++        }
++
++        private GrassColorModifier(String name, ColorModifier delegate) {
++            this(name);
++            this.delegate = delegate;
++        }
++
++        public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
++            throw new IllegalStateException("Enum not extended");
++        }
++
++        @Override
++        public void init() {
++            BY_NAME.put(this.getName(), this);
++        }
++
++        // Forge: Access enum members by name
++        public static BiomeSpecialEffects.GrassColorModifier byName(String name) {
++            return BY_NAME.get(name);
++        }
++
++        @FunctionalInterface
++        public interface ColorModifier {
++            int modifyGrassColor(double x, double z, int color);
+         }
+     }
+ }

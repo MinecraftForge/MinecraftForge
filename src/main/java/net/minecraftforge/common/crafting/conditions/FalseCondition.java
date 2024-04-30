@@ -5,16 +5,17 @@
 
 package net.minecraftforge.common.crafting.conditions;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.MapCodec;
 
 public final class FalseCondition implements ICondition {
     public static final FalseCondition INSTANCE = new FalseCondition();
-    public static final Codec<FalseCondition> CODEC = Codec.unit(INSTANCE).stable();
+    public static final MapCodec<FalseCondition> CODEC = MapCodec.unit(INSTANCE).stable();
 
     private FalseCondition() { }
 
     @Override
-    public boolean test(IContext condition) {
+    public boolean test(IContext condition, DynamicOps<?> ops) {
         return false;
     }
 
@@ -24,7 +25,7 @@ public final class FalseCondition implements ICondition {
     }
 
     @Override
-    public Codec<? extends ICondition> codec() {
+    public MapCodec<? extends ICondition> codec() {
         return CODEC;
     }
 }

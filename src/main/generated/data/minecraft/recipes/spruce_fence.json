@@ -16,6 +16,6 @@
   ],
   "result": {
     "count": 3,
-    "item": "minecraft:spruce_fence"
+    "id": "minecraft:spruce_fence"
   }
 }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/util/SpawnUtil.java
 +++ b/net/minecraft/util/SpawnUtil.java
-@@ -27,7 +_,7 @@
-          if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
-             T t = p_216404_.create(p_216406_, (CompoundTag)null, (Consumer<T>)null, blockpos$mutableblockpos, p_216405_, false, false);
-             if (t != null) {
--               if (t.checkSpawnRules(p_216406_, p_216405_) && t.checkSpawnObstruction(p_216406_)) {
-+               if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, p_216406_, p_216405_)) {
-                   p_216406_.addFreshEntityWithPassengers(t);
-                   return Optional.of(t);
-                }
+@@ -34,7 +_,7 @@
+             if (p_216406_.getWorldBorder().isWithinBounds(blockpos$mutableblockpos) && moveToPossibleSpawnPosition(p_216406_, p_216410_, blockpos$mutableblockpos, p_216411_)) {
+                 T t = (T)p_216404_.create(p_216406_, null, blockpos$mutableblockpos, p_216405_, false, false);
+                 if (t != null) {
+-                    if (t.checkSpawnRules(p_216406_, p_216405_) && t.checkSpawnObstruction(p_216406_)) {
++                    if (net.minecraftforge.event.ForgeEventFactory.checkSpawnPosition(t, p_216406_, p_216405_)) {
+                         p_216406_.addFreshEntityWithPassengers(t);
+                         return Optional.of(t);
+                     }

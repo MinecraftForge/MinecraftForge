@@ -1,37 +1,56 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
-@@ -75,7 +_,7 @@
-                if (!this.moveItemStackTo(itemstack1, 3, 4, false)) {
-                   return ItemStack.EMPTY;
-                }
--            } else if (BrewingStandMenu.PotionSlot.mayPlaceItem(itemstack) && itemstack.getCount() == 1) {
-+            } else if (BrewingStandMenu.PotionSlot.mayPlaceItem(itemstack)) {
-                if (!this.moveItemStackTo(itemstack1, 0, 3, false)) {
-                   return ItemStack.EMPTY;
-                }
-@@ -146,7 +_,7 @@
-       }
+@@ -41,9 +_,9 @@
+         this.brewingStand = p_39095_;
+         this.brewingStandData = p_39096_;
+         PotionBrewing potionbrewing = p_39094_.player.level().potionBrewing();
+-        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 0, 56, 51));
+-        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 1, 79, 58));
+-        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 2, 102, 51));
++        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 0, 56, 51, potionbrewing));
++        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 1, 79, 58, potionbrewing));
++        this.addSlot(new BrewingStandMenu.PotionSlot(p_39095_, 2, 102, 51, potionbrewing));
+         this.ingredientSlot = this.addSlot(new BrewingStandMenu.IngredientsSlot(potionbrewing, p_39095_, 3, 79, 17));
+         this.addSlot(new BrewingStandMenu.FuelSlot(p_39095_, 4, 17, 17));
+         this.addDataSlots(p_39096_);
+@@ -80,7 +_,7 @@
+                     if (!this.moveItemStackTo(itemstack1, 3, 4, false)) {
+                         return ItemStack.EMPTY;
+                     }
+-                } else if (BrewingStandMenu.PotionSlot.mayPlaceItem(itemstack)) {
++                } else if (this.slots.get(0).mayPlace(itemstack)) { // Forge: Use the slot's place which goes through custom recipes.
+                     if (!this.moveItemStackTo(itemstack1, 0, 3, false)) {
+                         return ItemStack.EMPTY;
+                     }
+@@ -157,12 +_,23 @@
+     }
  
-       public boolean mayPlace(ItemStack p_39121_) {
--         return PotionBrewing.isIngredient(p_39121_);
-+         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_39121_);
-       }
+     public static class PotionSlot extends Slot {
++        private final PotionBrewing potionBrewing;
++
++        /** @deprecated Use the one that specifes a PotionBrewing */
+         public PotionSlot(Container p_39123_, int p_39124_, int p_39125_, int p_39126_) {
++            this(p_39123_, p_39124_, p_39125_, p_39126_, null);
++        }
++
++        public PotionSlot(Container p_39123_, int p_39124_, int p_39125_, int p_39126_, PotionBrewing potionBrewing) {
+             super(p_39123_, p_39124_, p_39125_, p_39126_);
++            this.potionBrewing = potionBrewing;
+         }
  
-       public int getMaxStackSize() {
-@@ -170,6 +_,7 @@
-       public void onTake(Player p_150499_, ItemStack p_150500_) {
-          Potion potion = PotionUtils.getPotion(p_150500_);
-          if (p_150499_ instanceof ServerPlayer) {
-+            net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_150499_, p_150500_);
-             CriteriaTriggers.BREWED_POTION.trigger((ServerPlayer)p_150499_, potion.builtInRegistryHolder());
-          }
+         @Override
+         public boolean mayPlace(ItemStack p_39132_) {
++            if (this.potionBrewing != null) {
++                return this.potionBrewing.isValidInput(p_39132_);
++            }
+             return mayPlaceItem(p_39132_);
+         }
  
-@@ -177,7 +_,7 @@
-       }
+@@ -175,6 +_,7 @@
+         public void onTake(Player p_150499_, ItemStack p_150500_) {
+             Optional<Holder<Potion>> optional = p_150500_.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).potion();
+             if (optional.isPresent() && p_150499_ instanceof ServerPlayer serverplayer) {
++                net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(p_150499_, p_150500_);
+                 CriteriaTriggers.BREWED_POTION.trigger(serverplayer, optional.get());
+             }
  
-       public static boolean mayPlaceItem(ItemStack p_39134_) {
--         return p_39134_.is(Items.POTION) || p_39134_.is(Items.SPLASH_POTION) || p_39134_.is(Items.LINGERING_POTION) || p_39134_.is(Items.GLASS_BOTTLE);
-+         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_39134_);
-       }
-    }
- }

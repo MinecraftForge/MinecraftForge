@@ -30,29 +30,24 @@ import java.util.List;
 /**
  * Extension interface for {@link IForgeBakedModel}.
  */
-public interface IForgeBakedModel
-{
-    private BakedModel self()
-    {
-        return (BakedModel) this;
+public interface IForgeBakedModel {
+    private BakedModel self() {
+        return (BakedModel)this;
     }
 
     /**
      * A null {@link RenderType} is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
      */
     @NotNull
-    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType)
-    {
+    default List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData data, @Nullable RenderType renderType) {
         return self().getQuads(state, side, rand);
     }
 
-    default boolean useAmbientOcclusion(BlockState state)
-    {
+    default boolean useAmbientOcclusion(BlockState state) {
         return self().useAmbientOcclusion();
     }
 
-    default boolean useAmbientOcclusion(BlockState state, RenderType renderType)
-    {
+    default boolean useAmbientOcclusion(BlockState state, RenderType renderType) {
         return self().useAmbientOcclusion(state);
     }
 
@@ -60,19 +55,16 @@ public interface IForgeBakedModel
      * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
      * returns the model to be rendered.
      */
-    default BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform)
-    {
+    default BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
         self().getTransforms().getTransform(transformType).apply(applyLeftHandTransform, poseStack);
         return self();
     }
 
-    default @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData)
-    {
+    default @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
         return modelData;
     }
 
-    default TextureAtlasSprite getParticleIcon(@NotNull ModelData data)
-    {
+    default TextureAtlasSprite getParticleIcon(@NotNull ModelData data) {
         return self().getParticleIcon();
     }
 
@@ -82,8 +74,7 @@ public interface IForgeBakedModel
      * <p>
      * By default, defers query to {@link ItemBlockRenderTypes}.
      */
-    default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data)
-    {
+    default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
         return ItemBlockRenderTypes.getRenderLayers(state);
     }
 
@@ -97,8 +88,7 @@ public interface IForgeBakedModel
      *
      * @see #getRenderPasses(ItemStack, boolean)
      */
-    default List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous)
-    {
+    default List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous) {
         return List.of(RenderTypeHelper.getFallbackItemRenderType(itemStack, self(), fabulous));
     }
 
@@ -110,8 +100,7 @@ public interface IForgeBakedModel
      *
      * @see #getRenderTypes(ItemStack, boolean)
      */
-    default List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous)
-    {
+    default List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous) {
         return List.of(self());
     }
 }

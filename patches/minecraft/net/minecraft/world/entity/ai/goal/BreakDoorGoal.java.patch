@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/BreakDoorGoal.java
-@@ -30,7 +_,7 @@
-    public boolean canUse() {
-       if (!super.canUse()) {
-          return false;
--      } else if (!this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+      } else if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.mob.level(), this.doorPos, this.mob)) {
-          return false;
-       } else {
-          return this.isValidDifficulty(this.mob.level().getDifficulty()) && !this.isOpen();
+@@ -32,9 +_,7 @@
+         if (!super.canUse()) {
+             return false;
+         } else {
+-            return !this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)
+-                ? false
+-                : this.isValidDifficulty(this.mob.level().getDifficulty()) && !this.isOpen();
++            return !net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.mob.level(), this.doorPos, this.mob) ? false : this.isValidDifficulty(this.mob.level().getDifficulty()) && !this.isOpen();
+         }
+     }
+ 

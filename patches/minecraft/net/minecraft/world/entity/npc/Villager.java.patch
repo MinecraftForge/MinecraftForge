@@ -1,38 +1,38 @@
 --- a/net/minecraft/world/entity/npc/Villager.java
 +++ b/net/minecraft/world/entity/npc/Villager.java
-@@ -256,7 +_,7 @@
- 
-    public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
-       ItemStack itemstack = p_35472_.getItemInHand(p_35473_);
--      if (!itemstack.is(Items.VILLAGER_SPAWN_EGG) && this.isAlive() && !this.isTrading() && !this.isSleeping()) {
-+      if (itemstack.getItem() != Items.VILLAGER_SPAWN_EGG && this.isAlive() && !this.isTrading() && !this.isSleeping() && !p_35472_.isSecondaryUseActive()) {
-          if (this.isBaby()) {
+@@ -314,7 +_,7 @@
+     @Override
+     public InteractionResult mobInteract(Player p_35472_, InteractionHand p_35473_) {
+         ItemStack itemstack = p_35472_.getItemInHand(p_35473_);
+-        if (itemstack.is(Items.VILLAGER_SPAWN_EGG) || !this.isAlive() || this.isTrading() || this.isSleeping()) {
++        if (itemstack.getItem() != Items.VILLAGER_SPAWN_EGG && this.isAlive() && !this.isTrading() && !this.isSleeping() && !p_35472_.isSecondaryUseActive()) {
+             return super.mobInteract(p_35472_, p_35473_);
+         } else if (this.isBaby()) {
              this.setUnhappy();
-             return InteractionResult.sidedSuccess(this.level().isClientSide);
-@@ -670,7 +_,8 @@
-    }
+@@ -725,7 +_,8 @@
  
-    protected Component getTypeName() {
--      return Component.translatable(this.getType().getDescriptionId() + "." + BuiltInRegistries.VILLAGER_PROFESSION.getKey(this.getVillagerData().getProfession()).getPath());
-+      net.minecraft.resources.ResourceLocation profName = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getKey(this.getVillagerData().getProfession());
-+      return Component.translatable(this.getType().getDescriptionId() + '.' + (!"minecraft".equals(profName.getNamespace()) ? profName.getNamespace() + '.' : "") + profName.getPath());
-    }
+     @Override
+     protected Component getTypeName() {
+-        return Component.translatable(this.getType().getDescriptionId() + "." + BuiltInRegistries.VILLAGER_PROFESSION.getKey(this.getVillagerData().getProfession()).getPath());
++        var profName = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getKey(this.getVillagerData().getProfession());
++        return Component.translatable(this.getType().getDescriptionId() + '.' + (!"minecraft".equals(profName.getNamespace()) ? profName.getNamespace() + '.' : "") + profName.getPath());
+     }
  
-    public void handleEntityEvent(byte p_35391_) {
-@@ -723,7 +_,7 @@
-    }
+     @Override
+@@ -780,7 +_,7 @@
  
-    public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
--      if (p_35409_.getDifficulty() != Difficulty.PEACEFUL) {
-+      if (p_35409_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.WITCH, (timer) -> {})) {
-          LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
-          Witch witch = EntityType.WITCH.create(p_35409_);
-          if (witch != null) {
-@@ -736,6 +_,7 @@
-             }
+     @Override
+     public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
+-        if (p_35409_.getDifficulty() != Difficulty.PEACEFUL) {
++        if (p_35409_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.WITCH, (timer) -> {})) {
+             LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
+             Witch witch = EntityType.WITCH.create(p_35409_);
+             if (witch != null) {
+@@ -793,6 +_,7 @@
+                 }
  
-             witch.setPersistenceRequired();
-+            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
-             p_35409_.addFreshEntityWithPassengers(witch);
-             this.releaseAllPois();
-             this.discard();
+                 witch.setPersistenceRequired();
++                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
+                 p_35409_.addFreshEntityWithPassengers(witch);
+                 this.releaseAllPois();
+                 this.discard();

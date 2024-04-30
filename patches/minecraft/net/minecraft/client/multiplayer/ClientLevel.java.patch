@@ -1,127 +1,132 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -118,12 +_,15 @@
-       p_194170_.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache((p_194168_) -> {
-          return this.calculateBlockTint(p_194168_, BiomeColors.WATER_COLOR_RESOLVER);
-       }));
-+      net.minecraftforge.client.ColorResolverManager.registerBlockTintCaches(ClientLevel.this, p_194170_);
-    });
-    private final ClientChunkCache chunkSource;
-    private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
-    private int serverSimulationDistance;
-    private final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
-    private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
-+   private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
-+   private final net.minecraftforge.client.model.data.ModelDataManager modelDataManager = new net.minecraftforge.client.model.data.ModelDataManager(this);
+@@ -113,12 +_,15 @@
+         p_194170_.put(BiomeColors.GRASS_COLOR_RESOLVER, new BlockTintCache(p_194181_ -> this.calculateBlockTint(p_194181_, BiomeColors.GRASS_COLOR_RESOLVER)));
+         p_194170_.put(BiomeColors.FOLIAGE_COLOR_RESOLVER, new BlockTintCache(p_194177_ -> this.calculateBlockTint(p_194177_, BiomeColors.FOLIAGE_COLOR_RESOLVER)));
+         p_194170_.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache(p_194168_ -> this.calculateBlockTint(p_194168_, BiomeColors.WATER_COLOR_RESOLVER)));
++        net.minecraftforge.client.ColorResolverManager.registerBlockTintCaches(ClientLevel.this, p_194170_);
+     });
+     private final ClientChunkCache chunkSource;
+     private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
+     private int serverSimulationDistance;
+     private final BlockStatePredictionHandler blockStatePredictionHandler = new BlockStatePredictionHandler();
+     private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
++    private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
++    private final net.minecraftforge.client.model.data.ModelDataManager modelDataManager = new net.minecraftforge.client.model.data.ModelDataManager(this);
  
-    public void handleBlockChangedAck(int p_233652_) {
-       this.blockStatePredictionHandler.endPredictionsUpTo(p_233652_, this);
-@@ -178,6 +_,8 @@
-       this.serverSimulationDistance = p_205510_;
-       this.updateSkyBrightness();
-       this.prepareWeather();
-+      this.gatherCapabilities();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(this));
-    }
+     public void handleBlockChangedAck(int p_233652_) {
+         this.blockStatePredictionHandler.endPredictionsUpTo(p_233652_, this);
+@@ -183,6 +_,8 @@
+         this.serverSimulationDistance = p_205510_;
+         this.updateSkyBrightness();
+         this.prepareWeather();
++        this.gatherCapabilities();
++        net.minecraftforge.event.ForgeEventFactory.onLevelLoad(this);
+     }
  
-    public void queueLightUpdate(Runnable p_194172_) {
-@@ -271,6 +_,7 @@
-       this.getProfiler().push(() -> {
-          return BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString();
-       });
-+      if (p_104640_.canUpdate())
-       p_104640_.tick();
-       this.getProfiler().pop();
+     public void queueLightUpdate(Runnable p_194172_) {
+@@ -273,6 +_,7 @@
+         p_104640_.setOldPosAndRot();
+         p_104640_.tickCount++;
+         this.getProfiler().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString());
++        if (p_104640_.canUpdate())
+         p_104640_.tick();
+         this.getProfiler().pop();
  
-@@ -326,8 +_,10 @@
-    }
+@@ -321,8 +_,10 @@
+     }
  
-    public void addEntity(Entity p_104741_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_104741_, this))) return;
-       this.removeEntity(p_104741_.getId(), Entity.RemovalReason.DISCARDED);
-       this.entityStorage.addEntity(p_104741_);
-+      p_104741_.onAddedToWorld();
-    }
+     public void addEntity(Entity p_104741_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onEntityJoinLevel(p_104741_, this)) return;
+         this.removeEntity(p_104741_.getId(), Entity.RemovalReason.DISCARDED);
+         this.entityStorage.addEntity(p_104741_);
++        p_104741_.onAddedToWorld();
+     }
  
-    public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -457,6 +_,12 @@
-    }
+     public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
+@@ -493,6 +_,12 @@
+         float p_263349_,
+         long p_263408_
+     ) {
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263372_, p_263404_, p_263365_, p_263335_, p_263417_, p_263416_, p_263349_);
++        if (event.isCanceled() || event.getSound() == null) return;
++        p_263335_ = event.getSound();
++        p_263417_ = event.getSource();
++        p_263416_ = event.getNewVolume();
++        p_263349_ = event.getNewPitch();
+         if (p_263381_ == this.minecraft.player) {
+             this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
+         }
+@@ -502,6 +_,12 @@
+     public void playSeededSound(
+         @Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_
+     ) {
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_263536_, p_263518_, p_263487_, p_263538_, p_263524_);
++        if (event.isCanceled() || event.getSound() == null) return;
++        p_263518_ = event.getSound();
++        p_263487_ = event.getSource();
++        p_263538_ = event.getNewVolume();
++        p_263524_ = event.getNewPitch();
+         if (p_263514_ == this.minecraft.player) {
+             this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
+         }
+@@ -927,6 +_,24 @@
+         return this.connection.potionBrewing();
+     }
  
-    public void playSeededSound(@Nullable Player p_263381_, double p_263372_, double p_263404_, double p_263365_, Holder<SoundEvent> p_263335_, SoundSource p_263417_, float p_263416_, float p_263349_, long p_263408_) {
-+      net.minecraftforge.event.PlayLevelSoundEvent.AtPosition event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263372_, p_263404_, p_263365_, p_263335_, p_263417_, p_263416_, p_263349_);
-+      if (event.isCanceled() || event.getSound() == null) return;
-+      p_263335_ = event.getSound();
-+      p_263417_ = event.getSource();
-+      p_263416_ = event.getNewVolume();
-+      p_263349_ = event.getNewPitch();
-       if (p_263381_ == this.minecraft.player) {
-          this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
-       }
-@@ -464,6 +_,12 @@
-    }
++    @Override
++    public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
++       return this.partEntities.values();
++    }
++
++    @Override
++    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
++       return modelDataManager;
++    }
++
++    @Override
++    public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
++       boolean constantAmbientLight = this.effects().constantAmbientLight();
++       if (!shade)
++          return constantAmbientLight ? 0.9F : 1.0F;
++       return net.minecraftforge.client.model.lighting.QuadLighter.calculateShade(normalX, normalY, normalZ, constantAmbientLight);
++    }
++
+     @OnlyIn(Dist.CLIENT)
+     public static class ClientLevelData implements WritableLevelData {
+         private final boolean hardcore;
+@@ -1022,6 +_,7 @@
+         }
  
-    public void playSeededSound(@Nullable Player p_263514_, Entity p_263536_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_) {
-+      net.minecraftforge.event.PlayLevelSoundEvent.AtEntity event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_263536_, p_263518_, p_263487_, p_263538_, p_263524_);
-+      if (event.isCanceled() || event.getSound() == null) return;
-+      p_263518_ = event.getSound();
-+      p_263487_ = event.getSource();
-+      p_263538_ = event.getNewVolume();
-+      p_263524_ = event.getNewPitch();
-       if (p_263514_ == this.minecraft.player) {
-          this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_263536_, p_263509_));
-       }
-@@ -909,6 +_,7 @@
-       }
+         public void setDifficulty(Difficulty p_104852_) {
++            net.minecraftforge.event.ForgeEventFactory.onDifficultyChange(p_104852_, this.difficulty);
+             this.difficulty = p_104852_;
+         }
  
-       public void setDifficulty(Difficulty p_104852_) {
-+         net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_104852_, this.difficulty);
-          this.difficulty = p_104852_;
-       }
- 
-@@ -946,14 +_,46 @@
-             ClientLevel.this.players.add((AbstractClientPlayer)p_171712_);
-          }
- 
-+         if (p_171712_.isMultipartEntity()) {
-+            for (net.minecraftforge.entity.PartEntity<?> part : p_171712_.getParts()) {
-+               ClientLevel.this.partEntities.put(part.getId(), part);
+@@ -1058,11 +_,26 @@
+             if (p_171712_ instanceof AbstractClientPlayer) {
+                 ClientLevel.this.players.add((AbstractClientPlayer)p_171712_);
+             }
++
++            if (p_171712_.isMultipartEntity()) {
++               for (var part : p_171712_.getParts()) {
++                  ClientLevel.this.partEntities.put(part.getId(), part);
++               }
 +            }
-+         }
-       }
+         }
  
-       public void onTrackingEnd(Entity p_171716_) {
-          p_171716_.unRide();
-          ClientLevel.this.players.remove(p_171716_);
+         public void onTrackingEnd(Entity p_171716_) {
+             p_171716_.unRide();
+             ClientLevel.this.players.remove(p_171716_);
 +
-+         p_171716_.onRemovedFromWorld();
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_171716_, ClientLevel.this));
++            p_171716_.onRemovedFromWorld();
++            net.minecraftforge.event.ForgeEventFactory.onEntityLeaveLevel(p_171716_, ClientLevel.this);
 +
-+         if (p_171716_.isMultipartEntity()) {
-+            for (net.minecraftforge.entity.PartEntity<?> part : p_171716_.getParts()) {
-+               ClientLevel.this.partEntities.remove(part.getId());
++            if (p_171716_.isMultipartEntity()) {
++               for (var part : p_171716_.getParts()) {
++                  ClientLevel.this.partEntities.remove(part.getId());
++               }
 +            }
-+         }
-       }
+         }
  
-       public void onSectionChange(Entity p_233660_) {
-       }
-+   }
-+
-+   @Override
-+   public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
-+      return this.partEntities.values();
-+   }
-+
-+   @Override
-+   public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
-+      return modelDataManager;
-+   }
-+
-+   @Override
-+   public float getShade(float normalX, float normalY, float normalZ, boolean shade) {
-+      boolean constantAmbientLight = this.effects().constantAmbientLight();
-+      if (!shade)
-+         return constantAmbientLight ? 0.9F : 1.0F;
-+      return net.minecraftforge.client.model.lighting.QuadLighter.calculateShade(normalX, normalY, normalZ, constantAmbientLight);
-    }
- }
+         public void onSectionChange(Entity p_233660_) {

@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,14 +55,14 @@ public class ChunkDataEvent extends ChunkEvent {
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     public static class Load extends ChunkDataEvent {
-        private ChunkStatus.ChunkType status;
+        private ChunkType status;
 
-        public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status) {
+        public Load(ChunkAccess chunk, CompoundTag data, ChunkType status) {
             super(chunk, data);
             this.status = status;
         }
 
-        public ChunkStatus.ChunkType getStatus() {
+        public ChunkType getStatus() {
             return this.status;
         }
     }

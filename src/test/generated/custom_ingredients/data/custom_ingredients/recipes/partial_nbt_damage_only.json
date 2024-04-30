@@ -9,7 +9,7 @@
         "minecraft:stone_pickaxe",
         "minecraft:iron_pickaxe"
       ],
-      "nbt": "{Damage:3}"
+      "nbt": "{damage:3}"
     }
   },
   "pattern": [
@@ -17,6 +17,7 @@
     "XXX"
   ],
   "result": {
-    "item": "minecraft:dirt"
+    "count": 1,
+    "id": "minecraft:dirt"
   }
 }

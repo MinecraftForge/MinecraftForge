@@ -1,32 +1,32 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -816,7 +_,7 @@
-       }
-    }
+@@ -836,7 +_,7 @@
+         }
+     }
  
--   static enum RaiderType {
-+   public static enum RaiderType implements net.minecraftforge.common.IExtensibleEnum {
-       VINDICATOR(EntityType.VINDICATOR, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
-       EVOKER(EntityType.EVOKER, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
-       PILLAGER(EntityType.PILLAGER, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -830,6 +_,20 @@
-       private RaiderType(EntityType<? extends Raider> p_37821_, int[] p_37822_) {
-          this.entityType = p_37821_;
-          this.spawnsPerWaveBeforeBonus = p_37822_;
-+      }
-+      
-+      /**
-+       * The waveCountsIn integer decides how many entities of the EntityType defined in typeIn will spawn in each wave.
-+       * For example, one ravager will always spawn in wave 3.
-+       */
-+      public static RaiderType create(String name, EntityType<? extends Raider> typeIn, int[] waveCountsIn) {
-+         throw new IllegalStateException("Enum not extended");
-+      }
-+      
-+      @Override
-+      @Deprecated
-+      public void init() {
-+         VALUES = values();
-       }
-    }
+-    static enum RaiderType {
++    static enum RaiderType implements net.minecraftforge.common.IExtensibleEnum {
+         VINDICATOR(EntityType.VINDICATOR, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
+         EVOKER(EntityType.EVOKER, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
+         PILLAGER(EntityType.PILLAGER, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
+@@ -850,6 +_,20 @@
+         private RaiderType(final EntityType<? extends Raider> p_37821_, final int[] p_37822_) {
+             this.entityType = p_37821_;
+             this.spawnsPerWaveBeforeBonus = p_37822_;
++        }
++
++        /**
++         * The waveCountsIn integer decides how many entities of the EntityType defined in typeIn will spawn in each wave.
++         * For example, one ravager will always spawn in wave 3.
++         */
++        public static RaiderType create(String name, EntityType<? extends Raider> typeIn, int[] waveCountsIn) {
++            throw new IllegalStateException("Enum not extended");
++        }
++
++        @Override
++        @Deprecated
++        public void init() {
++            VALUES = values();
+         }
+     }
  }

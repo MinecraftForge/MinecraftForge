@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -41,29 +42,25 @@ import org.jetbrains.annotations.ApiStatus;
  *
  *  Fired on the Mod bus {@link IModBusEvent}.<br>
  */
-public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
-{
+public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent {
     private final Map<EntityType<?>, MergedSpawnPredicate<?>> map;
 
     @ApiStatus.Internal
-    public SpawnPlacementRegisterEvent(Map<EntityType<?>, MergedSpawnPredicate<?>> map)
-    {
+    public SpawnPlacementRegisterEvent(Map<EntityType<?>, MergedSpawnPredicate<?>> map) {
         this.map = map;
     }
 
     /**
      * Register an optional spawn placement {@code predicate} for a given {@code entityType}
      */
-    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate)
-    {
+    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate) {
         register(entityType, null, null, predicate, Operation.OR);
     }
 
     /**
      * Register a {@code predicate} for a given {@code entityType} with a given {@code operation} for handling
      */
-    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation)
-    {
+    public <T extends Entity> void register(EntityType<T> entityType, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation) {
         register(entityType, null, null, predicate, operation);
     }
 
@@ -73,32 +70,27 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
      * Use {@code null} for the placement or heightmap to leave them as is (which should be done in almost every case)
      */
     @SuppressWarnings("unchecked")
-    public <T extends Entity> void register(EntityType<T> entityType, @Nullable SpawnPlacements.Type placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation)
-    {
-        if (!map.containsKey(entityType))
-        {
-            if (placementType == null)
-            {
+    public <T extends Entity> void register(EntityType<T> entityType, @Nullable SpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation) {
+        if (!map.containsKey(entityType)) {
+            if (placementType == null) {
                 throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull placement type! Entity Type: " + ForgeRegistries.ENTITY_TYPES.getKey(entityType));
             }
-            if (heightmap == null)
-            {
+
+            if (heightmap == null) {
                 throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull heightmap type! Entity Type: "+ ForgeRegistries.ENTITY_TYPES.getKey(entityType));
             }
+
             map.put(entityType, new MergedSpawnPredicate<>(predicate, placementType, heightmap));
-        }
-        else
-        {
-            if (operation != Operation.REPLACE && (heightmap != null || placementType != null))
-            {
+        } else {
+            if (operation != Operation.REPLACE && (heightmap != null || placementType != null)) {
                 throw new IllegalStateException("Nonnull heightmap types or spawn placement types may only be used with the REPLACE operation. Entity Type: "+ ForgeRegistries.ENTITY_TYPES.getKey(entityType));
             }
+
             ((MergedSpawnPredicate<T>) map.get(entityType)).merge(operation, predicate, placementType, heightmap);
         }
     }
 
-    public enum Operation
-    {
+    public enum Operation {
         /**
          * Checked third, these predicates must all pass along with the original predicate
          */
@@ -113,17 +105,15 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
         REPLACE
     }
 
-    public static class MergedSpawnPredicate<T extends Entity>
-    {
+    public static class MergedSpawnPredicate<T extends Entity> {
         private final SpawnPlacements.SpawnPredicate<T> originalPredicate;
         private final List<SpawnPlacements.SpawnPredicate<T>> orPredicates;
         private final List<SpawnPlacements.SpawnPredicate<T>> andPredicates;
         @Nullable private SpawnPlacements.SpawnPredicate<T> replacementPredicate;
-        private SpawnPlacements.Type spawnType;
+        private SpawnPlacementType spawnType;
         private Heightmap.Types heightmapType;
 
-        public MergedSpawnPredicate(SpawnPlacements.SpawnPredicate<T> originalPredicate, SpawnPlacements.Type spawnType, Heightmap.Types heightmapType)
-        {
+        public MergedSpawnPredicate(SpawnPlacements.SpawnPredicate<T> originalPredicate, SpawnPlacementType spawnType, Heightmap.Types heightmapType) {
             this.originalPredicate = originalPredicate;
             this.orPredicates = new ArrayList<>();
             this.andPredicates = new ArrayList<>();
@@ -132,58 +122,46 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
             this.heightmapType = heightmapType;
         }
 
-        public SpawnPlacements.Type getSpawnType()
-        {
+        public SpawnPlacementType getSpawnType() {
             return spawnType;
         }
 
-        public Heightmap.Types getHeightmapType()
-        {
+        public Heightmap.Types getHeightmapType() {
             return heightmapType;
         }
 
-        private void merge(Operation operation, SpawnPlacements.SpawnPredicate<T> predicate, @Nullable SpawnPlacements.Type spawnType, @Nullable Heightmap.Types heightmapType)
-        {
-            if (operation == Operation.AND)
-            {
+        private void merge(Operation operation, SpawnPlacements.SpawnPredicate<T> predicate, @Nullable SpawnPlacementType spawnType, @Nullable Heightmap.Types heightmapType) {
+            if (operation == Operation.AND) {
                 andPredicates.add(predicate);
-            }
-            else if (operation == Operation.OR)
-            {
+            } else if (operation == Operation.OR) {
                 orPredicates.add(predicate);
-            }
-            else if (operation == Operation.REPLACE)
-            {
+            } else if (operation == Operation.REPLACE) {
                 replacementPredicate = predicate;
-                if (spawnType != null)
-                {
+                if (spawnType != null) {
                     this.spawnType = spawnType;
                 }
-                if (heightmapType != null)
-                {
+
+                if (heightmapType != null) {
                     this.heightmapType = heightmapType;
                 }
             }
         }
 
         @ApiStatus.Internal
-        public SpawnPlacements.SpawnPredicate<T> build()
-        {
-            if (replacementPredicate != null)
-            {
+        public SpawnPlacements.SpawnPredicate<T> build() {
+            if (replacementPredicate != null) {
                 return replacementPredicate;
             }
+
             final var original = originalPredicate;
 
             final SpawnPlacements.SpawnPredicate<T> compiledOrPredicate = (entityType, level, spawnType, pos, random) -> {
-                if (original.test(entityType, level, spawnType, pos, random))
-                {
+                if (original.test(entityType, level, spawnType, pos, random)) {
                     return true;
                 }
-                for (SpawnPlacements.SpawnPredicate<T> predicate : orPredicates)
-                {
-                    if (predicate.test(entityType, level, spawnType, pos, random))
-                    {
+
+                for (SpawnPlacements.SpawnPredicate<T> predicate : orPredicates) {
+                    if (predicate.test(entityType, level, spawnType, pos, random)) {
                         return true;
                     }
                 }
@@ -191,14 +169,12 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
             };
 
             final SpawnPlacements.SpawnPredicate<T> compiledAndPredicate = (entityType, level, spawnType, pos, random) -> {
-                if (!compiledOrPredicate.test(entityType, level, spawnType, pos, random))
-                {
+                if (!compiledOrPredicate.test(entityType, level, spawnType, pos, random)) {
                     return false;
                 }
-                for (SpawnPlacements.SpawnPredicate<T> predicate : andPredicates)
-                {
-                    if (!predicate.test(entityType, level, spawnType, pos, random))
-                    {
+
+                for (SpawnPlacements.SpawnPredicate<T> predicate : andPredicates) {
+                    if (!predicate.test(entityType, level, spawnType, pos, random)) {
                         return false;
                     }
                 }
@@ -208,5 +184,4 @@ public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent
             return compiledAndPredicate;
         }
     }
-
 }

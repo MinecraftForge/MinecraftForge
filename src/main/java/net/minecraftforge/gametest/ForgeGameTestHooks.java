@@ -173,13 +173,13 @@ public class ForgeGameTestHooks {
     }
 
     public static void addTest(Collection<TestFunction> functions, Set<String> classes, Set<String> filters, TestFunction func) {
-        boolean allowed = filters.isEmpty() || filters.stream().anyMatch(f -> f.equals(func.getBatchName()) || func.getBatchName().startsWith(f + '.'));
+        boolean allowed = filters.isEmpty() || filters.stream().anyMatch(f -> f.equals(func.batchName()) || func.batchName().startsWith(f + '.'));
         if (!allowed)
             return;
 
         functions.add(func);
 
-        var batch = func.getBatchName();
+        var batch = func.batchName();
         classes.add(batch);
 
         int idx = batch.indexOf('.');

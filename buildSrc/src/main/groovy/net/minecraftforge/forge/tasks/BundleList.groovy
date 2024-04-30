@@ -10,11 +10,13 @@ import java.util.zip.ZipFile
 
 abstract class BundleList extends DefaultTask {
     @InputFiles abstract ConfigurableFileCollection getConfig()
+    @InputFiles abstract ConfigurableFileCollection getConfigExtra()
     @InputFile abstract RegularFileProperty getServerBundle()
     @OutputFile abstract RegularFileProperty getOutput()
 
     BundleList() {
         config.setFrom(project.configurations.installer)
+        configExtra.setFrom(project.configurations.installerextra)
         output.convention(project.layout.buildDirectory.file("$name/output.list"))
         configure {
             dependsOn(project.tasks.universalJar)
@@ -26,6 +28,13 @@ abstract class BundleList extends DefaultTask {
     void run() {
         def entries = [:] as TreeMap
         def resolved = project.configurations.installer.resolvedConfiguration.resolvedArtifacts
+        for (def dep : resolved) {
+            def info = Util.getMavenInfoFromDep(dep)
+            //println("$dep.file.sha1\t$info.name\t$info.path")
+            entries.put("$info.art.group:$info.art.name", "$dep.file.sha256\t$info.name\t$info.path")
+        }
+
+        resolved = project.configurations.installerextra.resolvedConfiguration.resolvedArtifacts
         for (def dep : resolved) {
             def info = Util.getMavenInfoFromDep(dep)
             //println("$dep.file.sha1\t$info.name\t$info.path")

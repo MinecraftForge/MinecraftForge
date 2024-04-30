@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
-@@ -78,6 +_,8 @@
-    }
+@@ -85,6 +_,8 @@
  
-    public InteractionResult interact(Player p_38522_, InteractionHand p_38523_) {
-+      InteractionResult ret = super.interact(p_38522_, p_38523_);
-+      if (ret.consumesAction()) return ret;
-       return this.commandBlock.usedBy(p_38522_);
-    }
+     @Override
+     public InteractionResult interact(Player p_38522_, InteractionHand p_38523_) {
++        InteractionResult ret = super.interact(p_38522_, p_38523_);
++        if (ret.consumesAction()) return ret;
+         return this.commandBlock.usedBy(p_38522_);
+     }
  

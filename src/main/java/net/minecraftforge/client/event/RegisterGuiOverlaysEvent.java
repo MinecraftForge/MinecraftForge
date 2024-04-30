@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
 package net.minecraftforge.client.event;
 
 import com.google.common.base.Preconditions;
@@ -29,7 +30,7 @@ import java.util.Map;
  *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
- */
+ * /
 public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
 {
     private final Map<ResourceLocation, IGuiOverlay> overlays;
@@ -47,7 +48,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
      *
      * @param id      A unique resource id for this overlay
      * @param overlay The overlay
-     */
+     * /
     public void registerBelowAll(@NotNull String id, @NotNull IGuiOverlay overlay)
     {
         register(Ordering.BEFORE, null, id, overlay);
@@ -60,7 +61,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
      *                {@link VanillaGuiOverlay vanilla overlay}. Do not use other mods' overlays.
      * @param id      A unique resource id for this overlay
      * @param overlay The overlay
-     */
+     * /
     public void registerBelow(@NotNull ResourceLocation other, @NotNull String id, @NotNull IGuiOverlay overlay)
     {
         register(Ordering.BEFORE, other, id, overlay);
@@ -73,7 +74,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
      *                {@link VanillaGuiOverlay vanilla overlay}. Do not use other mods' overlays.
      * @param id      A unique resource id for this overlay
      * @param overlay The overlay
-     */
+     * /
     public void registerAbove(@NotNull ResourceLocation other, @NotNull String id, @NotNull IGuiOverlay overlay)
     {
         register(Ordering.AFTER, other, id, overlay);
@@ -84,7 +85,7 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
      *
      * @param id      A unique resource id for this overlay
      * @param overlay The overlay
-     */
+     * /
     public void registerAboveAll(@NotNull String id, @NotNull IGuiOverlay overlay)
     {
         register(Ordering.AFTER, null, id, overlay);
@@ -116,3 +117,4 @@ public class RegisterGuiOverlaysEvent extends Event implements IModBusEvent
         BEFORE, AFTER
     }
 }
+*/

@@ -8,6 +8,8 @@ package net.minecraftforge.common.data;
 import com.google.gson.JsonElement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.Advancement.Builder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -44,8 +46,8 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     private final Map<Item, TagKey<Item>> replacements = new HashMap<>();
     private final Set<ResourceLocation> excludes = new HashSet<>();
 
-    public ForgeRecipeProvider(PackOutput packOutput) {
-        super(packOutput);
+    public ForgeRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookup) {
+        super(packOutput, lookup);
     }
 
     private void exclude(ItemLike item) {
@@ -110,6 +112,11 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
             @Override
             public void accept(ResourceLocation id, Recipe<?> recipe, ResourceLocation advancementId, JsonElement advancement) {
             }
+
+            @Override
+            public Provider registry() {
+                return consumer.registry();
+            }
         });
     }
 
@@ -144,7 +151,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     }
 
     @Override
-    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, AdvancementHolder p_297687_) {
+    protected CompletableFuture<?> buildAdvancement(CachedOutput p_253674_, HolderLookup.Provider p_335995_, AdvancementHolder p_297687_) {
         // NOOP - We don't replace any of the advancement things yet...
         return CompletableFuture.allOf();
     }
@@ -172,7 +179,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
         boolean modified = false;
         List<Value> items = new ArrayList<>();
-        Value[] vanillaItems = getField(Ingredient.class, vanilla, 2); //This will probably crash between versions, if null fix index
+        Value[] vanillaItems = getField(Ingredient.class, vanilla, 3); //This will probably crash between versions, if null fix index
         for (Value entry : vanillaItems) {
             if (entry instanceof ItemValue) {
                 ItemStack stack = entry.getItems().stream().findFirst().orElse(ItemStack.EMPTY);

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.Window;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see Pre
  * @see Post
- */
+ * /
 public abstract class RenderGuiOverlayEvent extends Event
 {
     private final Window window;
@@ -70,7 +71,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see Post
-     */
+     * /
     @Cancelable
     public static class Pre extends RenderGuiOverlayEvent
     {
@@ -88,7 +89,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
-     */
+     * /
     public static class Post extends RenderGuiOverlayEvent
     {
         @ApiStatus.Internal
@@ -98,3 +99,4 @@ public abstract class RenderGuiOverlayEvent extends Event
         }
     }
 }
+*/

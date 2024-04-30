@@ -28,8 +28,7 @@ import java.util.function.Function;
  * <p>
  * Provides a recipe category lookup.
  */
-public final class RecipeBookManager
-{
+public final class RecipeBookManager {
     // Not using ConcurrentHashMap here because it's slower for lookups, so we only use it during init
     private static final Map<RecipeBookCategories, List<RecipeBookCategories>> AGGREGATE_CATEGORIES = new HashMap<>();
     private static final Map<RecipeBookType, List<RecipeBookCategories>> TYPE_CATEGORIES = new HashMap<>();
@@ -40,27 +39,23 @@ public final class RecipeBookManager
      * Finds the category the specified recipe should display in, or null if none.
      */
     @Nullable
-    public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, RecipeHolder<T> recipe)
-    {
+    public static <T extends Recipe<?>> RecipeBookCategories findCategories(RecipeType<T> type, RecipeHolder<T> recipe) {
         var lookup = RECIPE_CATEGORY_LOOKUPS.get(type);
         return lookup != null ? lookup.apply(recipe.value()) : null;
     }
 
     @ApiStatus.Internal
-    public static Map<RecipeBookCategories, List<RecipeBookCategories>> getAggregateCategories()
-    {
+    public static Map<RecipeBookCategories, List<RecipeBookCategories>> getAggregateCategories(Map<RecipeBookCategories, List<RecipeBookCategories>> vanilla) {
         return AGGREGATE_CATEGORIES_VIEW;
     }
 
     @ApiStatus.Internal
-    public static List<RecipeBookCategories> getCustomCategoriesOrEmpty(RecipeBookType recipeBookType)
-    {
+    public static List<RecipeBookCategories> getCustomCategoriesOrEmpty(RecipeBookType recipeBookType) {
         return TYPE_CATEGORIES.getOrDefault(recipeBookType, List.of());
     }
 
     @ApiStatus.Internal
-    public static void init()
-    {
+    public static void init() {
         // The ImmutableMap is the patched out value of AGGREGATE_CATEGORIES
         var aggregateCategories = new HashMap<>(ImmutableMap.of(
             RecipeBookCategories.CRAFTING_SEARCH, ImmutableList.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE),

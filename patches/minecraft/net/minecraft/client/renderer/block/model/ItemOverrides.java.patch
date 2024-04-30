@@ -1,50 +1,50 @@
 --- a/net/minecraft/client/renderer/block/model/ItemOverrides.java
 +++ b/net/minecraft/client/renderer/block/model/ItemOverrides.java
-@@ -32,7 +_,15 @@
-       this.properties = new ResourceLocation[0];
-    }
+@@ -31,7 +_,15 @@
+         this.properties = new ResourceLocation[0];
+     }
  
-+   /**
-+    * @deprecated Forge: Use {@link #ItemOverrides(ModelBaker, UnbakedModel, List, java.util.function.Function)}
-+    */
-+   @Deprecated
-    public ItemOverrides(ModelBaker p_251211_, BlockModel p_111741_, List<ItemOverride> p_111743_) {
-+      this(p_251211_, p_111741_, p_111743_, p_251211_.getModelTextureGetter());
-+   }
++    /**
++     * @deprecated Forge: Use {@link #ItemOverrides(ModelBaker, UnbakedModel, List, java.util.function.Function)}
++     */
++    @Deprecated
+     public ItemOverrides(ModelBaker p_251211_, BlockModel p_111741_, List<ItemOverride> p_111743_) {
++        this(p_251211_, p_111741_, p_111743_, p_251211_.getModelTextureGetter());
++    }
 +
-+   public ItemOverrides(ModelBaker p_251211_, UnbakedModel p_111741_, List<ItemOverride> p_111743_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
-       this.properties = p_111743_.stream().flatMap(ItemOverride::getPredicates).map(ItemOverride.Predicate::getProperty).distinct().toArray((p_173479_) -> {
-          return new ResourceLocation[p_173479_];
-       });
-@@ -46,7 +_,7 @@
++    public ItemOverrides(ModelBaker p_251211_, UnbakedModel p_111741_, List<ItemOverride> p_111743_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
+         this.properties = p_111743_.stream().flatMap(ItemOverride::getPredicates).map(ItemOverride.Predicate::getProperty).distinct().toArray(ResourceLocation[]::new);
+         Object2IntMap<ResourceLocation> object2intmap = new Object2IntOpenHashMap<>();
  
-       for(int j = p_111743_.size() - 1; j >= 0; --j) {
-          ItemOverride itemoverride = p_111743_.get(j);
--         BakedModel bakedmodel = this.bakeModel(p_251211_, p_111741_, itemoverride);
-+         BakedModel bakedmodel = this.bakeModel(p_251211_, p_111741_, itemoverride, spriteGetter);
-          ItemOverrides.PropertyMatcher[] aitemoverrides$propertymatcher = itemoverride.getPredicates().map((p_173477_) -> {
-             int k = object2intmap.getInt(p_173477_.getProperty());
-             return new ItemOverrides.PropertyMatcher(k, p_173477_.getValue());
-@@ -60,9 +_,9 @@
-    }
+@@ -43,7 +_,7 @@
  
-    @Nullable
--   private BakedModel bakeModel(ModelBaker p_249483_, BlockModel p_251965_, ItemOverride p_250816_) {
-+   private BakedModel bakeModel(ModelBaker p_249483_, UnbakedModel p_251965_, ItemOverride p_250816_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
-       UnbakedModel unbakedmodel = p_249483_.getModel(p_250816_.getModel());
--      return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.bake(p_250816_.getModel(), BlockModelRotation.X0_Y0);
-+      return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.bake(p_250816_.getModel(), BlockModelRotation.X0_Y0, spriteGetter);
-    }
+         for (int j = p_111743_.size() - 1; j >= 0; j--) {
+             ItemOverride itemoverride = p_111743_.get(j);
+-            BakedModel bakedmodel = this.bakeModel(p_251211_, p_111741_, itemoverride);
++            BakedModel bakedmodel = this.bakeModel(p_251211_, p_111741_, itemoverride, spriteGetter);
+             ItemOverrides.PropertyMatcher[] aitemoverrides$propertymatcher = itemoverride.getPredicates().map(p_173477_ -> {
+                 int k = object2intmap.getInt(p_173477_.getProperty());
+                 return new ItemOverrides.PropertyMatcher(k, p_173477_.getValue());
+@@ -55,9 +_,9 @@
+     }
  
-    @Nullable
-@@ -95,6 +_,10 @@
-       }
+     @Nullable
+-    private BakedModel bakeModel(ModelBaker p_249483_, BlockModel p_251965_, ItemOverride p_250816_) {
++    private BakedModel bakeModel(ModelBaker p_249483_, UnbakedModel p_251965_, ItemOverride p_250816_, java.util.function.Function<net.minecraft.client.resources.model.Material, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
+         UnbakedModel unbakedmodel = p_249483_.getModel(p_250816_.getModel());
+-        return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.bake(p_250816_.getModel(), BlockModelRotation.X0_Y0);
++        return Objects.equals(unbakedmodel, p_251965_) ? null : p_249483_.bake(p_250816_.getModel(), BlockModelRotation.X0_Y0, spriteGetter);
+     }
  
-       return p_173465_;
-+   }
+     @Nullable
+@@ -89,6 +_,10 @@
+         }
+ 
+         return p_173465_;
++    }
 +
-+   public com.google.common.collect.ImmutableList<BakedOverride> getOverrides() {
-+      return com.google.common.collect.ImmutableList.copyOf(overrides);
-    }
++    public com.google.common.collect.ImmutableList<BakedOverride> getOverrides() {
++        return com.google.common.collect.ImmutableList.copyOf(overrides);
+     }
  
-    @OnlyIn(Dist.CLIENT)
+     @OnlyIn(Dist.CLIENT)

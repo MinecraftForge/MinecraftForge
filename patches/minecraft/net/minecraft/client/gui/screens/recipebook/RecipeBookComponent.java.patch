@@ -1,20 +1,20 @@
 --- a/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
 +++ b/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
-@@ -107,7 +_,7 @@
-       this.initFilterButtonTextures();
-       this.tabButtons.clear();
+@@ -116,7 +_,7 @@
+         this.initFilterButtonTextures();
+         this.tabButtons.clear();
  
--      for(RecipeBookCategories recipebookcategories : RecipeBookCategories.getCategories(this.menu.getRecipeBookType())) {
-+      for(RecipeBookCategories recipebookcategories : this.menu.getRecipeBookCategories()) {
-          this.tabButtons.add(new RecipeBookTabButton(recipebookcategories));
-       }
+-        for (RecipeBookCategories recipebookcategories : RecipeBookCategories.getCategories(this.menu.getRecipeBookType())) {
++        for (RecipeBookCategories recipebookcategories : this.menu.getRecipeBookCategories()) {
+             this.tabButtons.add(new RecipeBookTabButton(recipebookcategories));
+         }
  
-@@ -296,7 +_,7 @@
-       }
+@@ -291,7 +_,7 @@
+         }
  
-       if (itemstack != null && this.minecraft.screen != null) {
--         p_282776_.renderComponentTooltip(this.minecraft.font, Screen.getTooltipFromItem(this.minecraft, itemstack), p_282948_, p_283050_);
-+         p_282776_.renderComponentTooltip(this.minecraft.font, Screen.getTooltipFromItem(this.minecraft, itemstack), p_282948_, p_283050_, itemstack);
-       }
+         if (itemstack != null && this.minecraft.screen != null) {
+-            p_282776_.renderComponentTooltip(this.minecraft.font, Screen.getTooltipFromItem(this.minecraft, itemstack), p_282948_, p_283050_);
++            p_282776_.renderComponentTooltip(this.minecraft.font, Screen.getTooltipFromItem(this.minecraft, itemstack), p_282948_, p_283050_, itemstack);
+         }
+     }
  
-    }

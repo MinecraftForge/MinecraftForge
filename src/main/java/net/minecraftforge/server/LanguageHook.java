@@ -8,7 +8,6 @@ package net.minecraftforge.server;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.locale.Language;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +18,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,16 +30,16 @@ public class LanguageHook
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
     private static final Pattern PATTERN = Pattern.compile("%(\\d+\\$)?[\\d\\.]*[df]");
-    private static List<Map<String, String>> capturedTables = new ArrayList<>(2);
+    private static final List<Map<String, String>> CAPTURED_TABLES = new ArrayList<>();
     private static Map<String, String> modTable;
     /**
      * Loads lang files on the server
      */
     public static void captureLanguageMap(Map<String, String> table)
     {
-        capturedTables.add(table);
+        CAPTURED_TABLES.add(table);
         if (modTable != null) {
-            capturedTables.forEach(t->t.putAll(modTable));
+            CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         }
     }
 
@@ -91,7 +89,7 @@ public class LanguageHook
         final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
         loadLocaleData(mc);
         loadLocaleData(forge);
-        capturedTables.forEach(t->t.putAll(modTable));
+        CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         ForgeI18n.loadLanguageData(modTable);
     }
 
@@ -101,7 +99,7 @@ public class LanguageHook
         for (String lang : Arrays.asList("en_us")) {
             loadLanguage(lang, server);
         }
-        capturedTables.forEach(t->t.putAll(modTable));
+        CAPTURED_TABLES.forEach(t->t.putAll(modTable));
         ForgeI18n.loadLanguageData(modTable);
     }
 }

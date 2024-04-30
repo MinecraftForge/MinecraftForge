@@ -1,19 +1,19 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -21,6 +_,7 @@
-    }
+@@ -23,6 +_,7 @@
  
-    public void handleIntention(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
-       switch (p_9975_.intention()) {
-          case LOGIN:
-             this.connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
-@@ -42,7 +_,7 @@
-             ServerStatus serverstatus = this.server.getStatus();
-             if (this.server.repliesToStatus() && serverstatus != null) {
-                this.connection.setClientboundProtocolAfterHandshake(ClientIntent.STATUS);
--               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection));
-+               this.connection.setListener(new ServerStatusPacketListenerImpl(serverstatus, this.connection, this.server.getStatusJson()));
-             } else {
-                this.connection.disconnect(IGNORE_STATUS_REASON);
-             }
+     @Override
+     public void handleIntention(ClientIntentionPacket p_9975_) {
++        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.connection)) return;
+         switch (p_9975_.intention()) {
+             case LOGIN:
+                 this.beginLogin(p_9975_, false);
+@@ -31,7 +_,7 @@
+                 ServerStatus serverstatus = this.server.getStatus();
+                 this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
+                 if (this.server.repliesToStatus() && serverstatus != null) {
+-                    this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverstatus, this.connection));
++                    this.connection.setupInboundProtocol(StatusProtocols.SERVERBOUND, new ServerStatusPacketListenerImpl(serverstatus, this.connection, this.server.getStatusJson()));
+                 } else {
+                     this.connection.disconnect(IGNORE_STATUS_REASON);
+                 }

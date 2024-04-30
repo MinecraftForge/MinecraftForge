@@ -37,16 +37,14 @@ import org.jetbrains.annotations.Nullable;
  * All subclasses are fired on {@link MinecraftForge#EVENT_BUS}.
  * See the individual documentation on each subevent for more details.
  **/
-public class PlayerInteractEvent extends PlayerEvent
-{
+public class PlayerInteractEvent extends PlayerEvent {
     private final InteractionHand hand;
     private final BlockPos pos;
     @Nullable
     private final Direction face;
     private InteractionResult cancellationResult = InteractionResult.PASS;
 
-    private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face)
-    {
+    private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face) {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
         this.pos = Preconditions.checkNotNull(pos, "Null position in PlayerInteractEvent!");
@@ -56,20 +54,18 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * This event is fired on both sides whenever a player right clicks an entity.
      *
-     * "Interact at" is an interact where the local vector (which part of the entity you clicked) is known.
+     * "Specific" is an interact where the local vector (which part of the entity you clicked) is known.
      * The state of this event affects whether {@link Entity#interactAt(Player, Vec3, InteractionHand)} is called.
      *
      * Let result be the return value of {@link Entity#interactAt(Player, Vec3, InteractionHand)}, or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link EntityInteract}.
      */
     @Cancelable
-    public static class EntityInteractSpecific extends PlayerInteractEvent
-    {
+    public static class EntityInteractSpecific extends PlayerInteractEvent {
         private final Vec3 localPos;
         private final Entity target;
 
-        public EntityInteractSpecific(Player player, InteractionHand hand, Entity target, Vec3 localPos)
-        {
+        public EntityInteractSpecific(Player player, InteractionHand hand, Entity target, Vec3 localPos) {
             super(player, hand, target.blockPosition(), null);
             this.localPos = localPos;
             this.target = target;
@@ -81,13 +77,11 @@ public class PlayerInteractEvent extends PlayerEvent
          * [-width / 2, width / 2] while Y values will be in the range [0, height]
          * @return The local position
          */
-        public Vec3 getLocalPos()
-        {
+        public Vec3 getLocalPos() {
             return localPos;
         }
 
-        public Entity getTarget()
-        {
+        public Entity getTarget() {
             return target;
         }
     }
@@ -106,18 +100,15 @@ public class PlayerInteractEvent extends PlayerEvent
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link RightClickItem}.
      */
     @Cancelable
-    public static class EntityInteract extends PlayerInteractEvent
-    {
+    public static class EntityInteract extends PlayerInteractEvent {
         private final Entity target;
 
-        public EntityInteract(Player player, InteractionHand hand, Entity target)
-        {
+        public EntityInteract(Player player, InteractionHand hand, Entity target) {
             super(player, hand, target.blockPosition(), null);
             this.target = target;
         }
 
-        public Entity getTarget()
-        {
+        public Entity getTarget() {
             return target;
         }
     }
@@ -136,8 +127,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Note that handling things differently on the client vs server may cause desynchronizations!
      */
     @Cancelable
-    public static class RightClickBlock extends PlayerInteractEvent
-    {
+    public static class RightClickBlock extends PlayerInteractEvent {
         private Result useBlock = Result.DEFAULT;
         private Result useItem = Result.DEFAULT;
         private BlockHitResult hitVec;
@@ -150,24 +140,21 @@ public class PlayerInteractEvent extends PlayerEvent
         /**
          * @return If {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} should be called
          */
-        public Result getUseBlock()
-        {
+        public Result getUseBlock() {
             return useBlock;
         }
 
         /**
          * @return If {@link Item#onItemUseFirst} and {@link Item#useOn(UseOnContext)} should be called
          */
-        public Result getUseItem()
-        {
+        public Result getUseItem() {
             return useItem;
         }
 
         /**
          * @return The ray trace result targeting the block.
          */
-        public BlockHitResult getHitVec()
-        {
+        public BlockHitResult getHitVec() {
             return hitVec;
         }
 
@@ -177,8 +164,7 @@ public class PlayerInteractEvent extends PlayerEvent
          * Note that default activation can be blocked if the user is sneaking and holding an item that does not return true to {@link Item#doesSneakBypassUse}. <br>
          * ALLOW: {@link Block#updateOrDestroy(BlockState, BlockState, LevelAccessor, BlockPos, int, int)} will always be called, unless {@link Item#onItemUseFirst} does not pass. <br>
          */
-        public void setUseBlock(Result triggerBlock)
-        {
+        public void setUseBlock(Result triggerBlock) {
             this.useBlock = triggerBlock;
         }
 
@@ -187,17 +173,14 @@ public class PlayerInteractEvent extends PlayerEvent
          * DEFAULT: {@link Item#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes. <br>
          * ALLOW: {@link Item#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes, regardless of cooldowns or emptiness. <br>
          */
-        public void setUseItem(Result triggerItem)
-        {
+        public void setUseItem(Result triggerItem) {
             this.useItem = triggerItem;
         }
 
         @Override
-        public void setCanceled(boolean canceled)
-        {
+        public void setCanceled(boolean canceled) {
             super.setCanceled(canceled);
-            if (canceled)
-            {
+            if (canceled) {
                 useBlock = Result.DENY;
                 useItem = Result.DENY;
             }
@@ -212,10 +195,8 @@ public class PlayerInteractEvent extends PlayerEvent
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then continue to other hands.
      */
     @Cancelable
-    public static class RightClickItem extends PlayerInteractEvent
-    {
-        public RightClickItem(Player player, InteractionHand hand)
-        {
+    public static class RightClickItem extends PlayerInteractEvent {
+        public RightClickItem(Player player, InteractionHand hand) {
             super(player, hand, player.blockPosition(), null);
         }
     }
@@ -225,10 +206,8 @@ public class PlayerInteractEvent extends PlayerEvent
      * The server is not aware of when the client right clicks empty space with an empty hand, you will need to tell the server yourself.
      * This event cannot be canceled.
      */
-    public static class RightClickEmpty extends PlayerInteractEvent
-    {
-        public RightClickEmpty(Player player, InteractionHand hand)
-        {
+    public static class RightClickEmpty extends PlayerInteractEvent {
+        public RightClickEmpty(Player player, InteractionHand hand) {
             super(player, hand, player.blockPosition(), null);
         }
     }
@@ -249,21 +228,13 @@ public class PlayerInteractEvent extends PlayerEvent
      * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
     @Cancelable
-    public static class LeftClickBlock extends PlayerInteractEvent
-    {
+    public static class LeftClickBlock extends PlayerInteractEvent {
         private Result useBlock = Result.DEFAULT;
         private Result useItem = Result.DEFAULT;
         private final Action action;
 
-        @Deprecated(since = "1.20.1", forRemoval = true)
-        public LeftClickBlock(Player player, BlockPos pos, Direction face)
-        {
-            this(player, pos, face, Action.START);
-        }
-
         @ApiStatus.Internal
-        public LeftClickBlock(Player player, BlockPos pos, Direction face, Action action)
-        {
+        public LeftClickBlock(Player player, BlockPos pos, Direction face, Action action) {
             super(player, InteractionHand.MAIN_HAND, pos, face);
             this.action = action;
         }
@@ -271,16 +242,14 @@ public class PlayerInteractEvent extends PlayerEvent
         /**
          * @return If {@link Block#attack(BlockState, Level, BlockPos, Player)} should be called. Changing this has no effect in creative mode
          */
-        public Result getUseBlock()
-        {
+        public Result getUseBlock() {
             return useBlock;
         }
 
         /**
          * @return If the block should be attempted to be mined with the current item. Changing this has no effect in creative mode
          */
-        public Result getUseItem()
-        {
+        public Result getUseItem() {
             return useItem;
         }
 
@@ -292,22 +261,18 @@ public class PlayerInteractEvent extends PlayerEvent
             return this.action;
         }
 
-        public void setUseBlock(Result triggerBlock)
-        {
+        public void setUseBlock(Result triggerBlock) {
             this.useBlock = triggerBlock;
         }
 
-        public void setUseItem(Result triggerItem)
-        {
+        public void setUseItem(Result triggerItem) {
             this.useItem = triggerItem;
         }
 
         @Override
-        public void setCanceled(boolean canceled)
-        {
+        public void setCanceled(boolean canceled) {
             super.setCanceled(canceled);
-            if (canceled)
-            {
+            if (canceled) {
                 useBlock = Result.DENY;
                 useItem = Result.DENY;
             }
@@ -334,10 +299,10 @@ public class PlayerInteractEvent extends PlayerEvent
 
             public static Action convert(ServerboundPlayerActionPacket.Action action) {
                 return switch (action) {
-                default -> START;
-                case START_DESTROY_BLOCK -> START;
-                case STOP_DESTROY_BLOCK -> STOP;
-                case ABORT_DESTROY_BLOCK -> ABORT;
+                    default -> START;
+                    case START_DESTROY_BLOCK -> START;
+                    case STOP_DESTROY_BLOCK -> STOP;
+                    case ABORT_DESTROY_BLOCK -> ABORT;
                 };
             }
         }
@@ -348,10 +313,8 @@ public class PlayerInteractEvent extends PlayerEvent
      * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
      * This event cannot be canceled.
      */
-    public static class LeftClickEmpty extends PlayerInteractEvent
-    {
-        public LeftClickEmpty(Player player)
-        {
+    public static class LeftClickEmpty extends PlayerInteractEvent {
+        public LeftClickEmpty(Player player) {
             super(player, InteractionHand.MAIN_HAND, player.blockPosition(), null);
         }
     }
@@ -360,8 +323,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The hand involved in this interaction. Will never be null.
      */
     @NotNull
-    public InteractionHand getHand()
-    {
+    public InteractionHand getHand() {
         return hand;
     }
 
@@ -369,8 +331,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
     @NotNull
-    public ItemStack getItemStack()
-    {
+    public ItemStack getItemStack() {
         return getEntity().getItemInHand(hand);
     }
 
@@ -382,8 +343,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The position involved in this interaction.
      */
     @NotNull
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 
@@ -391,24 +351,21 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The face involved in this interaction. For all non-block interactions, this will return null.
      */
     @Nullable
-    public Direction getFace()
-    {
+    public Direction getFace() {
         return face;
     }
 
     /**
      * @return Convenience method to get the level of this interaction.
      */
-    public Level getLevel()
-    {
+    public Level getLevel() {
         return getEntity().level();
     }
 
     /**
      * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
      */
-    public LogicalSide getSide()
-    {
+    public LogicalSide getSide() {
         return getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
@@ -417,8 +374,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * method of the event. By default, this is {@link InteractionResult#PASS}, meaning cancelled events will cause
      * the client to keep trying more interactions until something works.
      */
-    public InteractionResult getCancellationResult()
-    {
+    public InteractionResult getCancellationResult() {
         return cancellationResult;
     }
 
@@ -427,9 +383,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * method of the event.
      * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
      */
-    public void setCancellationResult(InteractionResult result)
-    {
+    public void setCancellationResult(InteractionResult result) {
         this.cancellationResult = result;
     }
-
 }

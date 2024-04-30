@@ -1,62 +1,59 @@
 --- a/net/minecraft/server/ReloadableServerResources.java
 +++ b/net/minecraft/server/ReloadableServerResources.java
-@@ -29,10 +_,10 @@
-    private static final CompletableFuture<Unit> DATA_RELOAD_INITIAL_TASK = CompletableFuture.completedFuture(Unit.INSTANCE);
-    private final CommandBuildContext.Configurable commandBuildContext;
-    private final Commands commands;
--   private final RecipeManager recipes = new RecipeManager();
-+   private final RecipeManager recipes;
-    private final TagManager tagManager;
-    private final LootDataManager lootData = new LootDataManager();
--   private final ServerAdvancementManager advancements = new ServerAdvancementManager(this.lootData);
-+   private final ServerAdvancementManager advancements;
-    private final ServerFunctionLibrary functionLibrary;
+@@ -39,15 +_,18 @@
+     private final TagManager tagManager;
+     private final ServerAdvancementManager advancements;
+     private final ServerFunctionLibrary functionLibrary;
++    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context;
  
-    public ReloadableServerResources(RegistryAccess.Frozen p_206857_, FeatureFlagSet p_250695_, Commands.CommandSelection p_206858_, int p_206859_) {
-@@ -41,6 +_,10 @@
-       this.commands = new Commands(p_206858_, this.commandBuildContext);
-       this.commandBuildContext.missingTagAccessPolicy(CommandBuildContext.MissingTagAccessPolicy.CREATE_NEW);
-       this.functionLibrary = new ServerFunctionLibrary(p_206859_, this.commands.getDispatcher());
-+      // Forge: Create context object and pass it to the recipe manager.
-+      this.context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.tagManager);
-+      this.recipes = new RecipeManager(context);
-+      this.advancements = new ServerAdvancementManager(this.lootData, context);
-    }
+     private ReloadableServerResources(RegistryAccess.Frozen p_206857_, FeatureFlagSet p_250695_, Commands.CommandSelection p_206858_, int p_206859_) {
+         this.fullRegistryHolder = new ReloadableServerRegistries.Holder(p_206857_);
+         this.registryLookup = new ReloadableServerResources.ConfigurableRegistryLookup(p_206857_);
+         this.registryLookup.missingTagAccessPolicy(ReloadableServerResources.MissingTagAccessPolicy.CREATE_NEW);
+-        this.recipes = new RecipeManager(this.registryLookup);
+         this.tagManager = new TagManager(p_206857_);
+         this.commands = new Commands(p_206858_, CommandBuildContext.simple(this.registryLookup, p_250695_));
+-        this.advancements = new ServerAdvancementManager(this.registryLookup);
++        // Forge: Create context object and pass it to the recipe manager.
++        this.context = new net.minecraftforge.common.crafting.conditions.ConditionContext(this.tagManager);
++        this.recipes = new RecipeManager(this.registryLookup, this.context);
++        this.advancements = new ServerAdvancementManager(this.registryLookup, this.context);
+         this.functionLibrary = new ServerFunctionLibrary(p_206859_, this.commands.getDispatcher());
+     }
  
-    public ServerFunctionLibrary getFunctionLibrary() {
-@@ -69,7 +_,9 @@
+@@ -88,8 +_,10 @@
+             .thenCompose(
+                 p_326196_ -> {
+                     ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_326196_.compositeAccess(), p_250212_, p_249301_, p_251126_);
++                    var listeners = new java.util.ArrayList<>(reloadableserverresources.listeners());
++                    listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, p_330376_.compositeAccess()));
+                     return SimpleReloadInstance.create(
+-                            p_248588_, reloadableserverresources.listeners(), p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
++                            p_248588_, listeners, p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
+                         )
+                         .done()
+                         .whenComplete(
+@@ -104,6 +_,7 @@
+         this.tagManager.getResult().forEach(p_326197_ -> updateRegistryTags(this.fullRegistryHolder.get(), (TagManager.LoadResult<?>)p_326197_));
+         AbstractFurnaceBlockEntity.invalidateCache();
+         Blocks.rebuildCache();
++        net.minecraftforge.event.ForgeEventFactory.onTagsUpdated(this.fullRegistryHolder.get(), false, false);
+     }
  
-    public static CompletableFuture<ReloadableServerResources> loadResources(ResourceManager p_248588_, RegistryAccess.Frozen p_251163_, FeatureFlagSet p_250212_, Commands.CommandSelection p_249301_, int p_251126_, Executor p_249136_, Executor p_249601_) {
-       ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_251163_, p_250212_, p_249301_, p_251126_);
--      return SimpleReloadInstance.create(p_248588_, reloadableserverresources.listeners(), p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()).done().whenComplete((p_255534_, p_255535_) -> {
-+      List<PreparableReloadListener> listeners = new java.util.ArrayList<>(reloadableserverresources.listeners());
-+      listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, p_251163_));
-+      return SimpleReloadInstance.create(p_248588_, listeners, p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()).done().whenComplete((p_214309_, p_214310_) -> {
-          reloadableserverresources.commandBuildContext.missingTagAccessPolicy(CommandBuildContext.MissingTagAccessPolicy.FAIL);
-       }).thenApply((p_214306_) -> {
-          return reloadableserverresources;
-@@ -81,6 +_,7 @@
-          updateRegistryTags(p_206869_, p_214315_);
-       });
-       Blocks.rebuildCache();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(p_206869_, false, false));
-    }
- 
-    private static <T> void updateRegistryTags(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
-@@ -91,5 +_,16 @@
-          return List.copyOf(p_214312_.getValue());
-       }));
-       p_206871_.registryOrThrow(resourcekey).bindTags(map);
-+   }
+     private static <T> void updateRegistryTags(RegistryAccess p_206871_, TagManager.LoadResult<T> p_206872_) {
+@@ -115,6 +_,15 @@
+                 Collectors.toUnmodifiableMap(p_214303_ -> TagKey.create(resourcekey, p_214303_.getKey()), p_214312_ -> List.copyOf(p_214312_.getValue()))
+             );
+         p_206871_.registryOrThrow(resourcekey).bindTags(map);
++    }
 +
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context;
-+
-+   /**
-+    * Exposes the current condition context for usage in other reload listeners.<br>
-+    * This is not useful outside the reloading stage.
-+    * @return The condition context for the currently active reload.
-+    */
-+   public net.minecraftforge.common.crafting.conditions.ICondition.IContext getConditionContext() {
-+      return this.context;
-    }
- }
++    /**
++     * Exposes the current condition context for usage in other reload listeners.<br>
++     * This is not useful outside the reloading stage.
++     * @return The condition context for the currently active reload.
++     */
++    public net.minecraftforge.common.crafting.conditions.ICondition.IContext getConditionContext() {
++        return this.context;
+     }
+ 
+     static class ConfigurableRegistryLookup implements HolderLookup.Provider {

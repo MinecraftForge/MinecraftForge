@@ -9,13 +9,14 @@
         "minecraft:stone_pickaxe",
         "minecraft:iron_pickaxe"
       ],
-      "nbt": "{Name:'{\"text\":\"Test Item\"}'}"
+      "nbt": "{display_name:'{\"text\":\"Test Item\"}'}"
     }
   },
   "pattern": [
     "XXX"
   ],
   "result": {
-    "item": "minecraft:dirt"
+    "count": 1,
+    "id": "minecraft:dirt"
   }
 }

@@ -1,21 +1,22 @@
 {
   "type": "forge:conditional",
   "forge:condition": {
-    "type": "forge:false",
-    "value": {}
+    "type": "forge:false"
   },
   "recipes": [
     {
-      "type": "minecraft:crafting_shapeless",
-      "category": "misc",
-      "ingredients": [
-        {
-          "item": "minecraft:dirt"
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "minecraft:dirt"
+          }
+        ],
+        "result": {
+          "count": 64,
+          "id": "minecraft:diamond_block"
         }
-      ],
-      "result": {
-        "count": 64,
-        "item": "minecraft:diamond_block"
       }
     }
   ]

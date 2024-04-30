@@ -1,20 +1,22 @@
 --- a/net/minecraft/world/level/block/SpawnerBlock.java
 +++ b/net/minecraft/world/level/block/SpawnerBlock.java
-@@ -40,11 +_,12 @@
- 
-    public void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
-       super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
--      if (p_222481_) {
--         int i = 15 + p_222478_.random.nextInt(15) + p_222478_.random.nextInt(15);
--         this.popExperience(p_222478_, p_222479_, i);
--      }
--
+@@ -44,7 +_,7 @@
+     @Override
+     protected void spawnAfterBreak(BlockState p_222477_, ServerLevel p_222478_, BlockPos p_222479_, ItemStack p_222480_, boolean p_222481_) {
+         super.spawnAfterBreak(p_222477_, p_222478_, p_222479_, p_222480_, p_222481_);
+-        if (p_222481_) {
++        if (false && p_222481_) { // Forge: moved to getExpDrop
+             int i = 15 + p_222478_.random.nextInt(15) + p_222478_.random.nextInt(15);
+             this.popExperience(p_222478_, p_222479_, i);
+         }
+@@ -59,5 +_,10 @@
+     public void appendHoverText(ItemStack p_255714_, Item.TooltipContext p_331610_, List<Component> p_255708_, TooltipFlag p_255667_) {
+         super.appendHoverText(p_255714_, p_331610_, p_255708_, p_255667_);
+         Spawner.appendHoverText(p_255714_, p_255708_, "SpawnData");
++    }
 +
-+   }
-+
-+   @Override
-+   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
-+      return 15 + randomSource.nextInt(15) + randomSource.nextInt(15);
-    }
- 
-    public RenderShape getRenderShape(BlockState p_56794_) {
++    @Override
++    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, net.minecraft.util.RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
++        return 15 + randomSource.nextInt(15) + randomSource.nextInt(15);
+     }
+ }

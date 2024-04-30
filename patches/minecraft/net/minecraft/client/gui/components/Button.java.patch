@@ -1,29 +1,31 @@
 --- a/net/minecraft/client/gui/components/Button.java
 +++ b/net/minecraft/client/gui/components/Button.java
-@@ -30,6 +_,11 @@
-       this.createNarration = p_259552_;
-    }
+@@ -31,6 +_,12 @@
+         this.createNarration = p_259552_;
+     }
  
-+   protected Button(Builder builder) {
-+      this(builder.x, builder.y, builder.width, builder.height, builder.message, builder.onPress, builder.createNarration);
-+      setTooltip(builder.tooltip); // Forge: Make use of the Builder tooltip
-+   }
++    // Forge (GH-9238)
++    protected Button(Builder builder) {
++        this(builder.x, builder.y, builder.width, builder.height, builder.message, builder.onPress, builder.createNarration);
++        this.setTooltip(builder.tooltip);
++    }
 +
-    public void onPress() {
-       this.onPress.onPress(this);
-    }
-@@ -93,9 +_,11 @@
-       }
+     @Override
+     public void onPress() {
+         this.onPress.onPress(this);
+@@ -95,9 +_,12 @@
+         }
  
-       public Button build() {
--         Button button = new Button(this.x, this.y, this.width, this.height, this.message, this.onPress, this.createNarration);
--         button.setTooltip(this.tooltip);
--         return button;
-+         return build(Button::new);
-+      }
+         public Button build() {
+-            Button button = new Button(this.x, this.y, this.width, this.height, this.message, this.onPress, this.createNarration);
+-            button.setTooltip(this.tooltip);
+-            return button;
++            return build(Button::new);
++        }
 +
-+      public Button build(java.util.function.Function<Builder, Button> builder) {
-+         return builder.apply(this);
-       }
-    }
++        // Forge (GH-9238)
++        public Button build(java.util.function.Function<Builder, Button> builder) {
++            return builder.apply(this);
+         }
+     }
  

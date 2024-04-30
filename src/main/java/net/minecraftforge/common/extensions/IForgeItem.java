@@ -5,28 +5,19 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
-
-import com.google.common.collect.Multimap;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -34,7 +25,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -42,8 +32,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.items.wrapper.ShulkerItemStackInvWrapper;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,8 +46,8 @@ public interface IForgeItem {
      * ItemStack sensitive version of getItemAttributeModifiers
      */
     @SuppressWarnings("deprecation")
-    default Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        return self().getDefaultAttributeModifiers(slot);
+    default ItemAttributeModifiers getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        return self().getDefaultAttributeModifiers();
     }
 
     /**
@@ -118,50 +106,11 @@ public interface IForgeItem {
     }
 
     /**
-     * Called by CraftingManager to determine if an item is reparable.
-     *
-     * @return True if reparable
-     */
-    boolean isRepairable(ItemStack stack);
-
-    /**
     * Determines the amount of durability the mending enchantment
     * will repair, on average, per point of experience.
     */
     default float getXpRepairRatio(ItemStack stack) {
         return 2f;
-    }
-
-    /**
-     * Override this method to change the NBT data being sent to the client. You
-     * should ONLY override this when you have no other choice, as this might change
-     * behavior client side!
-     *
-     * Note that this will sometimes be applied multiple times, the following MUST
-     * be supported:
-     *   Item item = stack.getItem();
-     *   NBTTagCompound nbtShare1 = item.getNBTShareTag(stack);
-     *   stack.setTagCompound(nbtShare1);
-     *   NBTTagCompound nbtShare2 = item.getNBTShareTag(stack);
-     *   assert nbtShare1.equals(nbtShare2);
-     *
-     * @param stack The stack to send the NBT tag for
-     * @return The NBT tag
-     */
-    @Nullable
-    default CompoundTag getShareTag(ItemStack stack) {
-        return stack.getTag();
-    }
-
-    /**
-     * Override this method to decide what to do with the NBT data received from
-     * getNBTShareTag().
-     *
-     * @param stack The stack that received NBT
-     * @param nbt   Received NBT, can be null
-     */
-    default void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        stack.setTag(nbt);
     }
 
     /**
@@ -396,51 +345,6 @@ public interface IForgeItem {
     }
 
     /**
-     * Return the itemDamage represented by this ItemStack. Defaults to the Damage
-     * entry in the stack NBT, but can be overridden here for other sources.
-     *
-     * @param stack The itemstack that is damaged
-     * @return the damage value
-     */
-    default int getDamage(ItemStack stack) {
-        return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
-    }
-
-    /**
-     * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in
-     * this item, but can be overridden here for other sources such as NBT.
-     *
-     * @param stack The itemstack that is damaged
-     * @return the damage value
-     */
-    @SuppressWarnings("deprecation")
-    default int getMaxDamage(ItemStack stack) {
-        return self().getMaxDamage();
-    }
-
-    /**
-     * Return if this itemstack is damaged. Note only called if
-     * {@link ItemStack#isDamageableItem()} is true.
-     *
-     * @param stack the stack
-     * @return if the stack is damaged
-     */
-    default boolean isDamaged(ItemStack stack) {
-        return stack.getDamageValue() > 0;
-    }
-
-    /**
-     * Set the damage for this itemstack. Note, this method is responsible for zero
-     * checking.
-     *
-     * @param stack  the stack
-     * @param damage the new damage value
-     */
-    default void setDamage(ItemStack stack, int damage) {
-        stack.getOrCreateTag().putInt(ItemStack.TAG_DAMAGE, Math.max(0, damage));
-    }
-
-    /**
      * Queries if an item can perform the given action.
      * See {@link ToolActions} for a description of each stock action
      * @param stack The stack being used
@@ -449,29 +353,6 @@ public interface IForgeItem {
      */
     default boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
         return false;
-    }
-
-    /**
-     * ItemStack sensitive version of {@link Item#isCorrectToolForDrops(BlockState)}
-     *
-     * @param stack The itemstack used to harvest the block
-     * @param state The block trying to harvest
-     * @return true if the stack can harvest the block
-     */
-    default boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-        return self().isCorrectToolForDrops(state);
-    }
-
-    /**
-     * Gets the maximum number of items that this stack should be able to hold. This
-     * is a ItemStack (and thus NBT) sensitive version of {@link Item#getMaxStackSize()}.
-     *
-     * @param stack The ItemStack
-     * @return The maximum size this item can be stacked to
-     */
-    @SuppressWarnings("deprecation")
-    default int getMaxStackSize(ItemStack stack) {
-        return self().getMaxStackSize();
     }
 
     /**
@@ -499,7 +380,7 @@ public interface IForgeItem {
      * @return true if the enchantment can be applied to this item
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment.category.canEnchant(stack.getItem());
+        return  self().builtInRegistryHolder().is(enchantment.getSupportedItems()) && enchantment.isPrimaryItem(stack);
     }
 
     /**
@@ -513,20 +394,7 @@ public interface IForgeItem {
      * @see #getAllEnchantments(ItemStack)
      */
     default int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
-        return EnchantmentHelper.getTagEnchantmentLevel(enchantment, stack);
-    }
-
-    /**
-     * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT.
-     * Used in several places in code including armor enchantment hooks.
-     * For consistency, any enchantments in the returned map should include the same level in {@link #getEnchantmentLevel(ItemStack, Enchantment)}
-     *
-     * @param stack        the item stack being checked
-     * @return  Map of all enchantments on the stack, empty if no enchantments are present
-     * @see #getEnchantmentLevel(ItemStack, Enchantment)
-     */
-    default Map<Enchantment, Integer> getAllEnchantments(ItemStack stack) {
-        return EnchantmentHelper.deserializeEnchantments(stack.getEnchantmentTags());
+        return EnchantmentHelper.getEnchantmentsForCrafting(stack).getLevel(enchantment);
     }
 
     /**
@@ -553,31 +421,12 @@ public interface IForgeItem {
      * @return True to reset block break progress
      */
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
-        // Fix MC-176559 mending resets mining progress / breaking animation
         if (!newStack.is(oldStack.getItem()))
             return true;
 
-        if (!newStack.isDamageableItem() || !oldStack.isDamageableItem())
-            return !ItemStack.isSameItemSameTags(newStack, oldStack);
+        // TODO: Fix MC-176559 mending resets mining progress / breaking animation by removing damange component
 
-        CompoundTag newTag = newStack.getTag();
-        CompoundTag oldTag = oldStack.getTag();
-
-        if (newTag == null || oldTag == null)
-            return !(newTag == null && oldTag == null);
-
-        Set<String> newKeys = new HashSet<>(newTag.getAllKeys());
-        Set<String> oldKeys = new HashSet<>(oldTag.getAllKeys());
-
-        newKeys.remove(ItemStack.TAG_DAMAGE);
-        oldKeys.remove(ItemStack.TAG_DAMAGE);
-
-        if (!newKeys.equals(oldKeys))
-            return true;
-
-        return !newKeys.stream().allMatch(key -> Objects.equals(newTag.get(key), oldTag.get(key)));
-        // return !(newStack.is(oldStack.getItem()) && ItemStack.tagMatches(newStack, oldStack)
-        //         && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
+        return !ItemStack.isSameItemSameComponents(oldStack, newStack);
     }
 
     /**
@@ -628,11 +477,15 @@ public interface IForgeItem {
      * @param nbt   NBT of this item serialized, or null.
      * @return A holder instance associated with this ItemStack where you can hold
      *         capabilities for the life of this item.
-     */
+     *
+     *
+     * Forge: TODO: Forge ItemStack capabilities - Lex 042724
+     * /
     @Nullable
     default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return ShulkerItemStackInvWrapper.createDefaultProvider(stack);
     }
+    */
 
     /**
      * Can this Item disable a shield
@@ -665,20 +518,6 @@ public interface IForgeItem {
      * @param horse the horse wearing this armor
      */
     default void onHorseArmorTick(ItemStack stack, Level level, Mob horse) { }
-
-    /**
-     * Reduce the durability of this item by the amount given.
-     * This can be used to e.g. consume power from NBT before durability.
-     *
-     * @param stack The itemstack to damage
-     * @param amount The amount to damage
-     * @param entity The entity damaging the item
-     * @param onBroken The on-broken callback from vanilla
-     * @return The amount of damage to pass to the vanilla logic
-     */
-    default <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return amount;
-    }
 
     /**
      * Called when an item entity for this stack is destroyed. Note: The {@link ItemStack} can be retrieved from the item entity.
@@ -745,16 +584,6 @@ public interface IForgeItem {
     }
 
     /**
-     * Used to test if this item can be damaged, but with the ItemStack in question.
-     * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
-     *
-     * @param stack       ItemStack in the Chest slot of the entity.
-     */
-    default boolean isDamageable(ItemStack stack) {
-        return self().canBeDepleted();
-    }
-
-    /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
      *
      * @param stack the stack held by the player.
@@ -775,23 +604,6 @@ public interface IForgeItem {
      */
     default int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
         return 0;
-    }
-
-    /**
-     * Get the food properties for this item.
-     * Use this instead of the {@link Item#getFoodProperties()} method, for ItemStack sensitivity.
-     *
-     * The @Nullable annotation was only added, due to the default method, also being @Nullable.
-     * Use this with a grain of salt, as if you return null here and true at {@link Item#isEdible()}, NPEs will occur!
-     *
-     * @param stack The ItemStack the entity wants to eat.
-     * @param entity The entity which wants to eat the food. Be aware that this can be null!
-     * @return The current FoodProperties for the item.
-     */
-    @SuppressWarnings("deprecation")
-    @Nullable // read javadoc to find a potential problem
-    default FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
-        return self().getFoodProperties();
     }
 
     /**

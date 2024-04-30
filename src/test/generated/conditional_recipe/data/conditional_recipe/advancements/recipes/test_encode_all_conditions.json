@@ -7,9 +7,7 @@
           "conditions": {
             "items": [
               {
-                "items": [
-                  "minecraft:dirt"
-                ]
+                "items": "minecraft:dirt"
               }
             ]
           },
@@ -40,8 +38,7 @@
                 "item": "minecraft:dirt"
               },
               {
-                "type": "forge:true",
-                "value": {}
+                "type": "forge:true"
               },
               {
                 "type": "forge:tag_empty",
@@ -50,8 +47,7 @@
             ]
           },
           {
-            "type": "forge:false",
-            "value": {}
+            "type": "forge:false"
           }
         ]
       },

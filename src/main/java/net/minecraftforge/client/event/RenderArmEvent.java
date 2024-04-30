@@ -28,8 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
-public class RenderArmEvent extends Event
-{
+public class RenderArmEvent extends Event {
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;
@@ -37,8 +36,7 @@ public class RenderArmEvent extends Event
     private final HumanoidArm arm;
 
     @ApiStatus.Internal
-    public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
-    {
+    public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm) {
         this.poseStack = poseStack;
         this.multiBufferSource = multiBufferSource;
         this.packedLight = packedLight;
@@ -49,24 +47,21 @@ public class RenderArmEvent extends Event
     /**
      * {@return the arm being rendered}
      */
-    public HumanoidArm getArm()
-    {
+    public HumanoidArm getArm() {
         return arm;
     }
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack()
-    {
+    public PoseStack getPoseStack() {
         return poseStack;
     }
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource()
-    {
+    public MultiBufferSource getMultiBufferSource() {
         return multiBufferSource;
     }
 
@@ -75,8 +70,7 @@ public class RenderArmEvent extends Event
      *
      * @see LightTexture
      */
-    public int getPackedLight()
-    {
+    public int getPackedLight() {
         return packedLight;
     }
 
@@ -84,8 +78,7 @@ public class RenderArmEvent extends Event
      * {@return the client player that is having their arm rendered} In general, this will be the same as
      * {@link net.minecraft.client.Minecraft#player}.
      */
-    public AbstractClientPlayer getPlayer()
-    {
+    public AbstractClientPlayer getPlayer() {
         return player;
     }
 }

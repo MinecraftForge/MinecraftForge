@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/monster/Monster.java
 +++ b/net/minecraft/world/entity/monster/Monster.java
-@@ -121,9 +_,9 @@
-       if (p_33038_.getItem() instanceof ProjectileWeaponItem) {
-          Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_33038_.getItem()).getSupportedHeldProjectiles();
-          ItemStack itemstack = ProjectileWeaponItem.getHeldProjectile(this, predicate);
--         return itemstack.isEmpty() ? new ItemStack(Items.ARROW) : itemstack;
-+         return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, itemstack.isEmpty() ? new ItemStack(Items.ARROW) : itemstack);
-       } else {
--         return ItemStack.EMPTY;
-+         return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, ItemStack.EMPTY);
-       }
-    }
+@@ -138,9 +_,9 @@
+         if (p_33038_.getItem() instanceof ProjectileWeaponItem) {
+             Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_33038_.getItem()).getSupportedHeldProjectiles();
+             ItemStack itemstack = ProjectileWeaponItem.getHeldProjectile(this, predicate);
+-            return itemstack.isEmpty() ? new ItemStack(Items.ARROW) : itemstack;
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, itemstack.isEmpty() ? new ItemStack(Items.ARROW) : itemstack);
+         } else {
+-            return ItemStack.EMPTY;
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, p_33038_, ItemStack.EMPTY);
+         }
+     }
  }

@@ -1,34 +1,35 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -32,17 +_,30 @@
-    private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
-    private AdvancementTree tree = new AdvancementTree();
-    private final LootDataManager lootData;
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+@@ -34,10 +_,18 @@
+     private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
+     private AdvancementTree tree = new AdvancementTree();
+     private final HolderLookup.Provider registries;
++    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
-+   /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(LootDataManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
-+   @Deprecated
-    public ServerAdvancementManager(LootDataManager p_279237_) {
-+      this(p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
-+   }
++    /** @deprecated Forge: use {@linkplain ServerAdvancementManager#ServerAdvancementManager(LootDataManager, net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
++    @Deprecated
+     public ServerAdvancementManager(HolderLookup.Provider p_336198_) {
++        this(p_336198_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++    }
 +
-+   public ServerAdvancementManager(LootDataManager p_279237_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-       super(GSON, "advancements");
-       this.lootData = p_279237_;
-+      this.context = context;
-    }
++    public ServerAdvancementManager(HolderLookup.Provider p_336198_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+         super(GSON, "advancements");
+         this.registries = p_336198_;
++        this.context = context;
+     }
  
-    protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
-       ImmutableMap.Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
-       p_136034_.forEach((p_308595_, p_308596_) -> {
-          try {
--            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, p_308596_), JsonParseException::new);
-+            var json = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(null, (com.google.gson.JsonObject)p_308596_);
-+            if (json == null) {
-+                LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_308595_);
-+                return;
-+            }
-+            Advancement advancement = Util.getOrThrow(Advancement.CODEC.parse(JsonOps.INSTANCE, json), JsonParseException::new);
-             this.validate(p_308595_, advancement);
-             builder.put(p_308595_, new AdvancementHolder(p_308595_, advancement));
-          } catch (Exception exception) {
+     protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
+@@ -45,7 +_,12 @@
+         Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
+         p_136034_.forEach((p_326203_, p_326204_) -> {
+             try {
+-                Advancement advancement = Advancement.CODEC.parse(registryops, p_326204_).getOrThrow(JsonParseException::new);
++                var json = net.minecraftforge.common.ForgeHooks.readConditionalAdvancement(registryops, (com.google.gson.JsonObject)p_326204_);
++                if (json == null) {
++                    LOGGER.debug("Skipping loading advancement {} as its conditions were not met", p_326204_);
++                    return;
++                }
++                Advancement advancement = Advancement.CODEC.parse(registryops, json).getOrThrow(JsonParseException::new);
+                 this.validate(p_326203_, advancement);
+                 builder.put(p_326203_, new AdvancementHolder(p_326203_, advancement));
+             } catch (Exception exception) {

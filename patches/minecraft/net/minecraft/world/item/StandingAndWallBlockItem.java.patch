@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/item/StandingAndWallBlockItem.java
 +++ b/net/minecraft/world/item/StandingAndWallBlockItem.java
-@@ -48,4 +_,9 @@
-       super.registerBlocks(p_43252_, p_43253_);
-       p_43252_.put(this.wallBlock, p_43253_);
-    }
+@@ -50,4 +_,9 @@
+         super.registerBlocks(p_43252_, p_43253_);
+         p_43252_.put(this.wallBlock, p_43253_);
+     }
 +
-+   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
-+      super.removeFromBlockToItemMap(blockToItemMap, itemIn);
-+      blockToItemMap.remove(this.wallBlock);
-+   }
++    public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++        super.removeFromBlockToItemMap(blockToItemMap, itemIn);
++        blockToItemMap.remove(this.wallBlock);
++    }
  }

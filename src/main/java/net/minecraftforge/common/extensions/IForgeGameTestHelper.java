@@ -15,7 +15,9 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.GameProtocols;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -37,7 +39,7 @@ public interface IForgeGameTestHelper {
 
     default ServerPlayer makeMockServerPlayer() {
         var level = self().getLevel();
-        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"));
+        var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
         var player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation()) {
            public boolean isSpectator() {
               return false;
@@ -49,9 +51,11 @@ public interface IForgeGameTestHelper {
         };
         var connection = new Connection(PacketFlow.SERVERBOUND);
         var channel = new EmbeddedChannel(connection);
-        channel.attr(Connection.ATTRIBUTE_SERVERBOUND_PROTOCOL).set(ConnectionProtocol.PLAY.codec(PacketFlow.SERVERBOUND));
-        // This sets the connection/listener in the player
-        new ServerGamePacketListenerImpl(level.getServer(), connection, player, cookie);
+        var server = level.getServer();
+
+        var listener = new ServerGamePacketListenerImpl(server, connection, player, cookie);
+        var info = GameProtocols.SERVERBOUND.bind(RegistryFriendlyByteBuf.decorator(server.registryAccess()));
+        connection.setupInboundProtocol(info, listener);
         return player;
     }
 }

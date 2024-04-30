@@ -7,7 +7,6 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -28,18 +27,15 @@ import net.minecraftforge.fml.LogicalSide;
  * on both logical sides.
  **/
 @Cancelable
-public class EntityJoinLevelEvent extends EntityEvent
-{
+public class EntityJoinLevelEvent extends EntityEvent {
     private final Level level;
     private final boolean loadedFromDisk;
 
-    public EntityJoinLevelEvent(Entity entity, Level level)
-    {
+    public EntityJoinLevelEvent(Entity entity, Level level) {
         this(entity, level, false);
     }
 
-    public EntityJoinLevelEvent(Entity entity, Level level, boolean loadedFromDisk)
-    {
+    public EntityJoinLevelEvent(Entity entity, Level level, boolean loadedFromDisk) {
         super(entity);
         this.level = level;
         this.loadedFromDisk = loadedFromDisk;
@@ -48,8 +44,7 @@ public class EntityJoinLevelEvent extends EntityEvent
     /**
      * {@return the level that the entity is set to join}
      */
-    public Level getLevel()
-    {
+    public Level getLevel() {
         return level;
     }
 
@@ -57,8 +52,7 @@ public class EntityJoinLevelEvent extends EntityEvent
      * @return {@code true} if the entity was loaded from disk, {@code false} otherwise.
      * On the {@linkplain LogicalSide#CLIENT logical client}, this will always return {@code false}.
      */
-    public boolean loadedFromDisk()
-    {
+    public boolean loadedFromDisk() {
         return loadedFromDisk;
     }
 }

@@ -3,6 +3,6 @@
     "description": {
       "translate": "pack.forge.description"
     },
-    "pack_format": 22
+    "pack_format": 32
   }
 }

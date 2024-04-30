@@ -16,11 +16,9 @@ import org.joml.Vector3f;
 /**
  * Extension interface for {@link DimensionSpecialEffects}.
  */
-public interface IForgeDimensionSpecialEffects
-{
-    private DimensionSpecialEffects self()
-    {
-        return (DimensionSpecialEffects) this;
+public interface IForgeDimensionSpecialEffects {
+    private DimensionSpecialEffects self() {
+        return (DimensionSpecialEffects)this;
     }
 
     /**
@@ -28,8 +26,7 @@ public interface IForgeDimensionSpecialEffects
      *
      * @return true to prevent vanilla cloud rendering
      */
-    default boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix)
-    {
+    default boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix) {
         return false;
     }
 
@@ -38,8 +35,7 @@ public interface IForgeDimensionSpecialEffects
      *
      * @return true to prevent vanilla sky rendering
      */
-    default boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog)
-    {
+    default boolean renderSky(ClientLevel level, int ticks, float partialTick, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         return false;
     }
 
@@ -48,8 +44,7 @@ public interface IForgeDimensionSpecialEffects
      *
      * @return true to prevent vanilla snow and rain rendering
      */
-    default boolean renderSnowAndRain(ClientLevel level, int ticks, float partialTick, LightTexture lightTexture, double camX, double camY, double camZ)
-    {
+    default boolean renderSnowAndRain(ClientLevel level, int ticks, float partialTick, LightTexture lightTexture, double camX, double camY, double camZ) {
         return false;
     }
 
@@ -58,8 +53,7 @@ public interface IForgeDimensionSpecialEffects
      *
      * @return true to prevent vanilla rain ticking
      */
-    default boolean tickRain(ClientLevel level, int ticks, Camera camera)
-    {
+    default boolean tickRain(ClientLevel level, int ticks, Camera camera) {
         return false;
     }
 

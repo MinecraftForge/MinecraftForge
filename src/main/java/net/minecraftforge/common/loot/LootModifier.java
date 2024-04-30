@@ -11,11 +11,11 @@ import java.util.function.Predicate;
 import com.mojang.datafixers.Products;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.BendingTrunkPlacer;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,7 +46,7 @@ public abstract class LootModifier implements IGlobalLootModifier {
      */
     protected LootModifier(LootItemCondition[] conditionsIn) {
         this.conditions = conditionsIn;
-        this.combinedConditions = LootItemConditions.andConditions(Arrays.asList(conditionsIn));
+        this.combinedConditions = Util.allOf(Arrays.asList(conditionsIn));
     }
 
     @NotNull

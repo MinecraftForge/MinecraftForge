@@ -1,31 +1,31 @@
 --- a/net/minecraft/resources/ResourceKey.java
 +++ b/net/minecraft/resources/ResourceKey.java
-@@ -7,7 +_,7 @@
- import net.minecraft.core.Registry;
+@@ -9,7 +_,7 @@
  import net.minecraft.core.registries.Registries;
+ import net.minecraft.network.codec.StreamCodec;
  
 -public class ResourceKey<T> {
 +public class ResourceKey<T> implements Comparable<ResourceKey<?>> {
-    private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = (new MapMaker()).weakValues().makeMap();
-    private final ResourceLocation registryName;
-    private final ResourceLocation location;
-@@ -55,6 +_,19 @@
+     private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = new MapMaker().weakValues().makeMap();
+     private final ResourceLocation registryName;
+     private final ResourceLocation location;
+@@ -67,5 +_,19 @@
+     }
  
-    public ResourceLocation registry() {
-       return this.registryName;
-+   }
+     static record InternKey(ResourceLocation registry, ResourceLocation location) {
++    }
 +
-+   public boolean equals(Object o) {
-+      if (this == o) return true;
-+      if (o == null || getClass() != o.getClass()) return false;
-+      return location.equals(((ResourceKey<?>) o).location) && registryName.equals(((ResourceKey<?>) o).registryName);
-+   }
++    // Forge start
++    @Override
++    public boolean equals(Object obj) {
++        if (this == obj) return true;
++        if (!(obj instanceof ResourceKey<?> resourceKey)) return false;
++        return location.equals(resourceKey.location) && registryName.equals(resourceKey.registryName);
++    }
 +
-+   @Override
-+   public int compareTo(ResourceKey<?> o) {
-+      int ret = this.registry().compareTo(o.registry());
-+      if (ret == 0) ret = this.location().compareTo(o.location());
-+      return ret;
-    }
- 
-    static record InternKey(ResourceLocation registry, ResourceLocation location) {
++    @Override
++    public int compareTo(ResourceKey<?> resourceKey) {
++        int ret = this.registryName.compareTo(resourceKey.registryName);
++        return ret == 0 ? this.location.compareTo(resourceKey.location) : ret;
+     }
+ }

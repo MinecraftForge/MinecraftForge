@@ -1,70 +1,70 @@
 --- a/net/minecraft/client/renderer/texture/SpriteContents.java
 +++ b/net/minecraft/client/renderer/texture/SpriteContents.java
 @@ -34,8 +_,18 @@
-    @Nullable
-    final SpriteContents.AnimatedTexture animatedTexture;
-    private final ResourceMetadata metadata;
-+   @Nullable
-+   public final net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta;
+     @Nullable
+     final SpriteContents.AnimatedTexture animatedTexture;
+     private final ResourceMetadata metadata;
++    @Nullable
++    public final net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta;
  
-+   /**
-+    * @deprecated Forge: Use the {@linkplain SpriteContents#SpriteContents(ResourceLocation, FrameSize, NativeImage, AnimationMetadataSection, net.minecraftforge.client.textures.ForgeTextureMetadata) overload with Forge metadata parameter} to properly forward custom loaders.
-+    */
-+   @Deprecated
-    public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, ResourceMetadata p_299427_) {
-+      this(p_249787_, p_251031_, p_252131_, p_299427_, null);
-+   }
++    /**
++     * @deprecated Forge: Use the {@linkplain SpriteContents#SpriteContents(ResourceLocation, FrameSize, NativeImage, AnimationMetadataSection, net.minecraftforge.client.textures.ForgeTextureMetadata) overload with Forge metadata parameter} to properly forward custom loaders.
++     */
++    @Deprecated
+     public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, ResourceMetadata p_299427_) {
++        this(p_249787_, p_251031_, p_252131_, p_299427_, null);
++    }
 +
-+   public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, ResourceMetadata p_299427_, @Nullable net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta) {
-       this.name = p_249787_;
-       this.width = p_251031_.width();
-       this.height = p_251031_.height();
++    public SpriteContents(ResourceLocation p_249787_, FrameSize p_251031_, NativeImage p_252131_, ResourceMetadata p_299427_, @Nullable net.minecraftforge.client.textures.ForgeTextureMetadata forgeMeta) {
+         this.name = p_249787_;
+         this.width = p_251031_.width();
+         this.height = p_251031_.height();
 @@ -44,6 +_,7 @@
-       this.animatedTexture = this.createAnimatedTexture(p_251031_, p_252131_.getWidth(), p_252131_.getHeight(), animationmetadatasection);
-       this.originalImage = p_252131_;
-       this.byMipLevel = new NativeImage[]{this.originalImage};
-+      this.forgeMeta = forgeMeta;
-    }
+         this.animatedTexture = this.createAnimatedTexture(p_251031_, p_252131_.getWidth(), p_252131_.getHeight(), animationmetadatasection);
+         this.originalImage = p_252131_;
+         this.byMipLevel = new NativeImage[]{this.originalImage};
++        this.forgeMeta = forgeMeta;
+     }
  
-    public void increaseMipLevel(int p_248864_) {
-@@ -128,6 +_,9 @@
+     public void increaseMipLevel(int p_248864_) {
+@@ -120,6 +_,9 @@
  
-    void upload(int p_248895_, int p_250245_, int p_250458_, int p_251337_, NativeImage[] p_248825_) {
-       for(int i = 0; i < this.byMipLevel.length; ++i) {
-+         // Forge: Skip uploading if the texture would be made invalid by mip level
-+         if ((this.width >> i) <= 0 || (this.height >> i) <= 0)
-+            break;
-          p_248825_[i].upload(i, p_248895_ >> i, p_250245_ >> i, p_250458_ >> i, p_251337_ >> i, this.width >> i, this.height >> i, this.byMipLevel.length > 1, false);
-       }
+     void upload(int p_248895_, int p_250245_, int p_250458_, int p_251337_, NativeImage[] p_248825_) {
+         for (int i = 0; i < this.byMipLevel.length; i++) {
++            // Forge: Skip uploading if the texture would be made invalid by mip level
++            if ((this.width >> i) <= 0 || (this.height >> i) <= 0)
++               break;
+             p_248825_[i]
+                 .upload(
+                     i,
+@@ -150,6 +_,10 @@
+         return this.name;
+     }
  
-@@ -145,6 +_,10 @@
-       return this.name;
-    }
- 
-+   public NativeImage getOriginalImage() {
-+      return this.originalImage;
-+   }
++    public NativeImage getOriginalImage() {
++        return this.originalImage;
++    }
 +
-    public IntStream getUniqueFrames() {
-       return this.animatedTexture != null ? this.animatedTexture.getUniqueFrames() : IntStream.of(1);
-    }
-@@ -249,7 +_,8 @@
-          for(int i = 0; i < this.activeFrame.length; ++i) {
-             int j = SpriteContents.this.width >> i;
-             int k = SpriteContents.this.height >> i;
--            this.activeFrame[i] = new NativeImage(j, k, false);
-+            // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
-+            this.activeFrame[i] = new NativeImage(Math.max(1, j), Math.max(1, k), false);
-          }
+     public IntStream getUniqueFrames() {
+         return this.animatedTexture != null ? this.animatedTexture.getUniqueFrames() : IntStream.of(1);
+     }
+@@ -252,7 +_,8 @@
+             for (int i = 0; i < this.activeFrame.length; i++) {
+                 int j = SpriteContents.this.width >> i;
+                 int k = SpriteContents.this.height >> i;
+-                this.activeFrame[i] = new NativeImage(j, k, false);
++                // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++                this.activeFrame[i] = new NativeImage(Math.max(1, j), Math.max(1, k), false);
+             }
+         }
  
-       }
-@@ -265,6 +_,9 @@
-             for(int k = 0; k < this.activeFrame.length; ++k) {
-                int l = SpriteContents.this.width >> k;
-                int i1 = SpriteContents.this.height >> k;
-+               // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
-+               if (l < 1 || i1 < 1)
-+                  continue;
+@@ -267,6 +_,9 @@
+                 for (int k = 0; k < this.activeFrame.length; k++) {
+                     int l = SpriteContents.this.width >> k;
+                     int i1 = SpriteContents.this.height >> k;
++                    // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++                    if (l < 1 || i1 < 1)
++                        continue;
  
-                for(int j1 = 0; j1 < i1; ++j1) {
-                   for(int k1 = 0; k1 < l; ++k1) {
+                     for (int j1 = 0; j1 < i1; j1++) {
+                         for (int k1 = 0; k1 < l; k1++) {

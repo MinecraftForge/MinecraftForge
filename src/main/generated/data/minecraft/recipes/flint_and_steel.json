@@ -10,6 +10,7 @@
     }
   ],
   "result": {
-    "item": "minecraft:flint_and_steel"
+    "count": 1,
+    "id": "minecraft:flint_and_steel"
   }
 }

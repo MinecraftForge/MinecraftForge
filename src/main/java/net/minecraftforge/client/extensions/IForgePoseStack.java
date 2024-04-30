@@ -12,11 +12,9 @@ import org.joml.Vector3f;
 /**
  * Extension interface for {@link com.mojang.blaze3d.vertex.PoseStack}.
  */
-public interface IForgePoseStack
-{
-    private PoseStack self()
-    {
-        return (PoseStack) this;
+public interface IForgePoseStack {
+    private PoseStack self() {
+        return (PoseStack)this;
     }
 
     /**
@@ -25,8 +23,7 @@ public interface IForgePoseStack
      *
      * @param transformation the transformation to push
      */
-    default void pushTransformation(Transformation transformation)
-    {
+    default void pushTransformation(Transformation transformation) {
         final PoseStack self = self();
         self.pushPose();
 

@@ -1,19 +1,20 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -501,9 +_,16 @@
+@@ -493,9 +_,17 @@
+         }
+     }
  
-    }
++    /* Stores the last values sent into glMultiTexCoord2f */
++    public static float lastBrightnessX = 0.0f;
++    public static float lastBrightnessY = 0.0f;
++
+     public static void _texParameter(int p_84161_, int p_84162_, float p_84163_) {
+         RenderSystem.assertOnRenderThreadOrInit();
+         GL11.glTexParameterf(p_84161_, p_84162_, p_84163_);
++        if (p_84161_ == GL13.GL_TEXTURE1) {
++            lastBrightnessX = p_84162_;
++            lastBrightnessY = p_84163_;
++        }
+     }
  
-+   /* Stores the last values sent into glMultiTexCoord2f */
-+   public static float lastBrightnessX = 0.0f;
-+   public static float lastBrightnessY = 0.0f;
-    public static void _texParameter(int p_84161_, int p_84162_, float p_84163_) {
-       RenderSystem.assertOnRenderThreadOrInit();
-       GL11.glTexParameterf(p_84161_, p_84162_, p_84163_);
-+      if (p_84161_ == GL13.GL_TEXTURE1) {
-+          lastBrightnessX = p_84162_;
-+          lastBrightnessY = p_84163_;
-+       }
-    }
- 
-    public static void _texParameter(int p_84332_, int p_84333_, int p_84334_) {
+     public static void _texParameter(int p_84332_, int p_84333_, int p_84334_) {

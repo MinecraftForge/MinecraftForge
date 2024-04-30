@@ -1,31 +1,31 @@
 --- a/com/mojang/math/Transformation.java
 +++ b/com/mojang/math/Transformation.java
 @@ -13,7 +_,7 @@
+ import org.joml.Quaternionf;
  import org.joml.Vector3f;
- import org.joml.Vector3fc;
  
 -public final class Transformation {
 +public final class Transformation implements net.minecraftforge.common.extensions.IForgeTransformation {
-    private final Matrix4f matrix;
-    public static final Codec<Transformation> CODEC = RecordCodecBuilder.create((p_269604_) -> {
-       return p_269604_.group(ExtraCodecs.VECTOR3F.fieldOf("translation").forGetter((p_269599_) -> {
-@@ -156,6 +_,19 @@
-    public int hashCode() {
-       return Objects.hash(this.matrix);
-    }
+     private final Matrix4f matrix;
+     public static final Codec<Transformation> CODEC = RecordCodecBuilder.create(
+         p_269604_ -> p_269604_.group(
+@@ -169,5 +_,19 @@
+         vector3f1.lerp(p_175938_.getScale(), p_175939_);
+         quaternionf1.slerp(p_175938_.getRightRotation(), p_175939_);
+         return new Transformation(vector3f, quaternionf, vector3f1, quaternionf1);
++    }
 +
 +    private Matrix3f normalTransform = null;
 +    public Matrix3f getNormalMatrix() {
 +        checkNormalTransform();
 +        return normalTransform;
 +    }
++
 +    private void checkNormalTransform() {
 +        if (normalTransform == null) {
 +            normalTransform = new Matrix3f(matrix);
 +            normalTransform.invert();
 +            normalTransform.transpose();
 +        }
-+    }
- 
-    public Transformation slerp(Transformation p_175938_, float p_175939_) {
-       Vector3f vector3f = this.getTranslation();
+     }
+ }

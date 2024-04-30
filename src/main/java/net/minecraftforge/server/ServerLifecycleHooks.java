@@ -162,7 +162,7 @@ public class ServerLifecycleHooks {
         if (!allowLogins.get())
             return rejectConnection(connection, ctx.getType(), "Server is still starting! Please wait before reconnecting.");
 
-        if (packet.nextProtocol() != ConnectionProtocol.LOGIN)
+        if (packet.intention() != ClientIntent.LOGIN)
             return true;
 
         if (ctx.getType() == ConnectionType.MODDED && ctx.getNetVersion() != NetworkContext.NET_VERSION)
@@ -176,7 +176,7 @@ public class ServerLifecycleHooks {
     }
 
     private static boolean rejectConnection(final Connection connection, ConnectionType type, String message) {
-        connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
+        //connection.setClientboundProtocolAfterHandshake(ClientIntent.LOGIN);
         LOGGER.info(SERVERHOOKS, "[{}] Disconnecting {} connection attempt: {}", connection.getLoggableAddress(true), type, message); // TODO: Respect logIP setting
         var text = Component.literal(message);
         connection.send(new ClientboundLoginDisconnectPacket(text));

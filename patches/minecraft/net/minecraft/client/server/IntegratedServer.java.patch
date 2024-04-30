@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -59,11 +_,12 @@
-       this.setPvpAllowed(true);
-       this.setFlightAllowed(true);
-       this.initializeKeyPair();
-+      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-       this.loadLevel();
-       GameProfile gameprofile = this.getSingleplayerProfile();
-       String s = this.getWorldData().getLevelName();
-       this.setMotd(gameprofile != null ? gameprofile.getName() + " - " + s : s);
--      return true;
-+      return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
-    }
+@@ -72,11 +_,12 @@
+         this.setPvpAllowed(true);
+         this.setFlightAllowed(true);
+         this.initializeKeyPair();
++        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+         this.loadLevel();
+         GameProfile gameprofile = this.getSingleplayerProfile();
+         String s = this.getWorldData().getLevelName();
+         this.setMotd(gameprofile != null ? gameprofile.getName() + " - " + s : s);
+-        return true;
++        return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
+     }
  
-    public boolean isPaused() {
-@@ -200,6 +_,7 @@
-    }
+     @Override
+@@ -224,6 +_,7 @@
  
-    public void halt(boolean p_120053_) {
-+      if (isRunning())
-       this.executeBlocking(() -> {
-          for(ServerPlayer serverplayer : Lists.newArrayList(this.getPlayerList().getPlayers())) {
-             if (!serverplayer.getUUID().equals(this.uuid)) {
+     @Override
+     public void halt(boolean p_120053_) {
++        if (isRunning())
+         this.executeBlocking(() -> {
+             for (ServerPlayer serverplayer : Lists.newArrayList(this.getPlayerList().getPlayers())) {
+                 if (!serverplayer.getUUID().equals(this.uuid)) {

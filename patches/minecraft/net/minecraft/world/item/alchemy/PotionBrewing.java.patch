@@ -1,82 +1,132 @@
 --- a/net/minecraft/world/item/alchemy/PotionBrewing.java
 +++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
-@@ -51,7 +_,7 @@
+@@ -19,15 +_,35 @@
+     private final List<Ingredient> containers;
+     private final List<PotionBrewing.Mix<Potion>> potionMixes;
+     private final List<PotionBrewing.Mix<Item>> containerMixes;
++    private final List<net.minecraftforge.common.brewing.IBrewingRecipe> recipes;
  
-    public static boolean isBrewablePotion(Potion p_43512_) {
-       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
--         if (mix.to == p_43512_) {
-+         if (mix.to.get() == p_43512_) {
-             return true;
-          }
-       }
-@@ -71,7 +_,7 @@
-       Item item = p_43520_.getItem();
+     PotionBrewing(List<Ingredient> p_331253_, List<PotionBrewing.Mix<Potion>> p_333814_, List<PotionBrewing.Mix<Item>> p_332419_) {
++        this(p_331253_, p_333814_, p_332419_, null);
++    }
++
++    PotionBrewing(List<Ingredient> p_331253_, List<PotionBrewing.Mix<Potion>> p_333814_, List<PotionBrewing.Mix<Item>> p_332419_, Builder builder) {
+         this.containers = p_331253_;
+         this.potionMixes = p_333814_;
+         this.containerMixes = p_332419_;
++        var tmp = new ArrayList<net.minecraftforge.common.brewing.IBrewingRecipe>();
++        tmp.add(new net.minecraftforge.common.brewing.VanillaBrewingRecipe(this, this::mixVanilla));
++        if (builder != null) {
++            tmp.addAll(builder.recipes);
++        }
++        this.recipes = java.util.Collections.unmodifiableList(tmp);
+     }
  
-       for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
--         if (mix.from == item && mix.ingredient.test(p_43521_)) {
-+         if (mix.from.get() == item && mix.ingredient.test(p_43521_)) {
-             return true;
-          }
-       }
-@@ -83,7 +_,7 @@
-       Potion potion = PotionUtils.getPotion(p_43525_);
+     public boolean isIngredient(ItemStack p_43507_) {
+-        return this.isContainerIngredient(p_43507_) || this.isPotionIngredient(p_43507_);
++        if (p_43507_.isEmpty()) {
++            return false;
++        }
++
++        for (var recipe : recipes) {
++            if (recipe.isIngredient(p_43507_)) {
++                return true;
++            }
++        }
++        return false;
+     }
  
-       for(PotionBrewing.Mix<Potion> mix : POTION_MIXES) {
--         if (mix.from == potion && mix.ingredient.test(p_43526_)) {
-+         if (mix.from.get() == potion && mix.ingredient.test(p_43526_)) {
-             return true;
-          }
-       }
-@@ -97,14 +_,14 @@
-          Item item = p_43531_.getItem();
+     private boolean isContainer(ItemStack p_328293_) {
+@@ -71,9 +_,10 @@
+     }
  
-          for(PotionBrewing.Mix<Item> mix : CONTAINER_MIXES) {
--            if (mix.from == item && mix.ingredient.test(p_43530_)) {
--               return PotionUtils.setPotion(new ItemStack(mix.to), potion);
-+            if (mix.from.get() == item && mix.ingredient.test(p_43530_)) {
-+               return PotionUtils.setPotion(new ItemStack(mix.to.get()), potion);
+     public boolean hasMix(ItemStack p_43509_, ItemStack p_43510_) {
+-        return !this.isContainer(p_43509_) ? false : this.hasContainerMix(p_43509_, p_43510_) || this.hasPotionMix(p_43509_, p_43510_);
++        return !mix(p_43509_, p_43510_).isEmpty();
+     }
+ 
++    /** @deprecated Forge: use hasMix(ItemStack, ItemStack)*/
+     public boolean hasContainerMix(ItemStack p_43520_, ItemStack p_43521_) {
+         for (PotionBrewing.Mix<Item> mix : this.containerMixes) {
+             if (p_43520_.is(mix.from) && mix.ingredient.test(p_43521_)) {
+@@ -84,6 +_,7 @@
+         return false;
+     }
+ 
++    /** @deprecated Forge: use hasMix(ItemStack, ItemStack)*/
+     public boolean hasPotionMix(ItemStack p_43525_, ItemStack p_43526_) {
+         Optional<Holder<Potion>> optional = p_43525_.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).potion();
+         if (optional.isEmpty()) {
+@@ -100,6 +_,19 @@
+     }
+ 
+     public ItemStack mix(ItemStack p_43530_, ItemStack p_43531_) {
++        if (p_43530_.isEmpty() || p_43530_.getCount() != 1) return ItemStack.EMPTY;
++        if (p_43531_.isEmpty()) return ItemStack.EMPTY;
++
++        for (var recipe : recipes) {
++            ItemStack output = recipe.getOutput(p_43530_, p_43531_);
++            if (!output.isEmpty()) {
++                return output;
++            }
++        }
++        return ItemStack.EMPTY;
++    }
++
++    private ItemStack mixVanilla(ItemStack p_43530_, ItemStack p_43531_) {
+         if (p_43531_.isEmpty()) {
+             return p_43531_;
+         } else {
+@@ -124,9 +_,29 @@
+         }
+     }
+ 
++    /**
++     * Returns true if the passed ItemStack is a valid input for the start of a recipe
++     */
++    public boolean isValidInput(ItemStack stack) {
++        for (var recipe : recipes) {
++            if (recipe.isInput(stack)) {
++                return true;
++            }
++        }
++        return false;
++    }
++
++    /**
++     * Returns an unmodifiable list containing all the recipes in the registry
++     */
++    public List<net.minecraftforge.common.brewing.IBrewingRecipe> getRecipes() {
++        return this.recipes;
++    }
++
+     public static PotionBrewing bootstrap(FeatureFlagSet p_329176_) {
+         PotionBrewing.Builder potionbrewing$builder = new PotionBrewing.Builder(p_329176_);
+         addVanillaMixes(potionbrewing$builder);
++        net.minecraftforge.event.ForgeEventFactory.onBrewingRecipeRegister(potionbrewing$builder, p_329176_);
+         return potionbrewing$builder.build();
+     }
+ 
+@@ -195,6 +_,7 @@
+         private final List<PotionBrewing.Mix<Potion>> potionMixes = new ArrayList<>();
+         private final List<PotionBrewing.Mix<Item>> containerMixes = new ArrayList<>();
+         private final FeatureFlagSet enabledFeatures;
++        private final List<net.minecraftforge.common.brewing.IBrewingRecipe> recipes = new ArrayList<>();
+ 
+         public Builder(FeatureFlagSet p_332559_) {
+             this.enabledFeatures = p_332559_;
+@@ -234,8 +_,13 @@
              }
-          }
+         }
  
-          for(PotionBrewing.Mix<Potion> mix1 : POTION_MIXES) {
--            if (mix1.from == potion && mix1.ingredient.test(p_43530_)) {
--               return PotionUtils.setPotion(new ItemStack(item), mix1.to);
-+            if (mix1.from.get() == potion && mix1.ingredient.test(p_43530_)) {
-+               return PotionUtils.setPotion(new ItemStack(item), mix1.to.get());
-             }
-          }
-       }
-@@ -181,7 +_,7 @@
-       } else if (!(p_43505_ instanceof PotionItem)) {
-          throw new IllegalArgumentException("Expected a potion, got: " + BuiltInRegistries.ITEM.getKey(p_43505_));
-       } else {
--         CONTAINER_MIXES.add(new PotionBrewing.Mix<>(p_43503_, Ingredient.of(p_43504_), p_43505_));
-+         CONTAINER_MIXES.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.ITEMS, p_43503_, Ingredient.of(p_43504_), p_43505_));
-       }
-    }
++        public Builder add(net.minecraftforge.common.brewing.IBrewingRecipe recipe) {
++            this.recipes.add(recipe);
++            return this;
++        }
++
+         public PotionBrewing build() {
+-            return new PotionBrewing(List.copyOf(this.containers), List.copyOf(this.potionMixes), List.copyOf(this.containerMixes));
++            return new PotionBrewing(List.copyOf(this.containers), List.copyOf(this.potionMixes), List.copyOf(this.containerMixes), this);
+         }
+     }
  
-@@ -194,18 +_,18 @@
-    }
- 
-    private static void addMix(Potion p_43514_, Item p_43515_, Potion p_43516_) {
--      POTION_MIXES.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.of(p_43515_), p_43516_));
-+      POTION_MIXES.add(new PotionBrewing.Mix<>(net.minecraftforge.registries.ForgeRegistries.POTIONS, p_43514_, Ingredient.of(p_43515_), p_43516_));
-    }
- 
-    public static class Mix<T> {
--      final T from;
-+      public final net.minecraft.core.Holder.Reference<T> from;
-       public final Ingredient ingredient;
--      final T to;
-+      public final net.minecraft.core.Holder.Reference<T> to;
- 
--      public Mix(T p_43536_, Ingredient p_43537_, T p_43538_) {
--         this.from = p_43536_;
-+      public Mix(net.minecraftforge.registries.IForgeRegistry<T> registry, T p_43536_, Ingredient p_43537_, T p_43538_) {
-+         this.from = registry.getDelegateOrThrow(p_43536_);
-          this.ingredient = p_43537_;
--         this.to = p_43538_;
-+         this.to = registry.getDelegateOrThrow(p_43538_);
-       }
-    }
- }

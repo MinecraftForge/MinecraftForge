@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
@@ -47,22 +48,26 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired from {@link ForgeEventFactory#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerDestroyItemEvent extends PlayerEvent
-{
+public class PlayerDestroyItemEvent extends PlayerEvent {
     @NotNull
     private final ItemStack original;
     @Nullable
-    private final InteractionHand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(Player player, @NotNull ItemStack original, @Nullable InteractionHand hand)
-    {
+    private final EquipmentSlot slot; // May be null if this player destroys the item by any use besides holding it.
+
+    public PlayerDestroyItemEvent(Player player, @NotNull ItemStack original, @Nullable EquipmentSlot slot) {
         super(player);
         this.original = original;
-        this.hand = hand;
+        this.slot = slot;
     }
 
     @NotNull
-    public ItemStack getOriginal() { return this.original; }
+    public ItemStack getOriginal() {
+        return this.original;
+    }
+
     @Nullable
-    public InteractionHand getHand() { return this.hand; }
+    public EquipmentSlot getSlot() {
+        return this.slot;
+    }
 
 }

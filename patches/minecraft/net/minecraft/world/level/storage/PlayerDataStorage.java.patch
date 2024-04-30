@@ -1,28 +1,31 @@
 --- a/net/minecraft/world/level/storage/PlayerDataStorage.java
 +++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
-@@ -35,6 +_,7 @@
-          Path path2 = path.resolve(p_78434_.getStringUUID() + ".dat");
-          Path path3 = path.resolve(p_78434_.getStringUUID() + ".dat_old");
-          Util.safeReplaceFile(path2, path1, path3);
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_78434_, playerDir, p_78434_.getStringUUID());
-       } catch (Exception exception) {
-          LOGGER.warn("Failed to save player data for {}", (Object)p_78434_.getName().getString());
-       }
-@@ -59,6 +_,7 @@
-          compoundtag = DataFixTypes.PLAYER.updateToCurrentVersion(this.fixerUpper, compoundtag, i);
-          p_78436_.load(compoundtag);
-       }
-+      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_78436_, playerDir, p_78436_.getStringUUID());
- 
-       return compoundtag;
-    }
-@@ -76,5 +_,9 @@
-       }
- 
-       return astring;
-+   }
+@@ -39,6 +_,7 @@
+             Path path2 = path.resolve(p_78434_.getStringUUID() + ".dat");
+             Path path3 = path.resolve(p_78434_.getStringUUID() + ".dat_old");
+             Util.safeReplaceFile(path2, path1, path3);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_78434_, playerDir, p_78434_.getStringUUID());
+         } catch (Exception exception) {
+             LOGGER.warn("Failed to save player data for {}", p_78434_.getName().getString());
+         }
+@@ -61,7 +_,9 @@
+         File file1 = new File(this.playerDir, p_329651_.getStringUUID() + p_330353_);
+         if (file1.exists() && file1.isFile()) {
+             try {
+-                return Optional.of(NbtIo.readCompressed(file1.toPath(), NbtAccounter.unlimitedHeap()));
++                var ret = Optional.of(NbtIo.readCompressed(file1.toPath(), NbtAccounter.unlimitedHeap()));
++                net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_329651_, playerDir, p_329651_.getStringUUID());
++                return ret;
+             } catch (Exception exception) {
+                 LOGGER.warn("Failed to load player data for {}", p_329651_.getName().getString());
+             }
+@@ -82,5 +_,9 @@
+             p_78436_.load(p_328937_);
+             return p_328937_;
+         });
++    }
 +
-+   public File getPlayerDataFolder() {
-+      return playerDir;
-    }
++    public File getPlayerDataFolder() {
++        return playerDir;
+     }
  }

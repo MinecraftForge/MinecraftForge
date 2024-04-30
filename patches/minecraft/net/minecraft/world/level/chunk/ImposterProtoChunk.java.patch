@@ -1,14 +1,12 @@
 --- a/net/minecraft/world/level/chunk/ImposterProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ImposterProtoChunk.java
-@@ -181,6 +_,11 @@
-       this.wrapped.findBlocks(p_285465_, p_285061_);
-    }
- 
-+   @Override
-+   public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
-+      this.wrapped.findBlocks(p_285343_, p_285030_);
-+   }
+@@ -292,4 +_,9 @@
+     public ChunkSkyLightSources getSkyLightSources() {
+         return this.wrapped.getSkyLightSources();
+     }
 +
-    public TickContainerAccess<Block> getBlockTicks() {
-       return this.allowWrites ? this.wrapped.getBlockTicks() : BlackholeTickAccess.emptyContainer();
-    }
++    @Override
++    public void findBlocks(java.util.function.BiPredicate<BlockState, BlockPos> p_285343_, BiConsumer<BlockPos, BlockState> p_285030_) {
++       this.wrapped.findBlocks(p_285343_, p_285030_);
++    }
+ }

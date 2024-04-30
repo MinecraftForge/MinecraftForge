@@ -17,11 +17,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class PlayerXpEvent extends PlayerEvent
-{
-
-    public PlayerXpEvent(Player player)
-    {
+public class PlayerXpEvent extends PlayerEvent {
+    public PlayerXpEvent(Player player) {
         super(player);
     }
 
@@ -30,22 +27,17 @@ public class PlayerXpEvent extends PlayerEvent
      * It can be cancelled, and no further processing will be done.
      */
     @Cancelable
-    public static class PickupXp extends PlayerXpEvent
-    {
-
+    public static class PickupXp extends PlayerXpEvent {
         private final ExperienceOrb orb;
 
-        public PickupXp(Player player, ExperienceOrb orb)
-        {
+        public PickupXp(Player player, ExperienceOrb orb) {
             super(player);
             this.orb = orb;
         }
 
-        public ExperienceOrb getOrb()
-        {
+        public ExperienceOrb getOrb() {
             return orb;
         }
-
     }
 
     /**
@@ -53,27 +45,21 @@ public class PlayerXpEvent extends PlayerEvent
      * It can be cancelled, and no further processing will be done.
      */
     @Cancelable
-    public static class XpChange extends PlayerXpEvent
-    {
-
+    public static class XpChange extends PlayerXpEvent {
         private int amount;
 
-        public XpChange(Player player, int amount)
-        {
+        public XpChange(Player player, int amount) {
             super(player);
             this.amount = amount;
         }
 
-        public int getAmount()
-        {
+        public int getAmount() {
             return this.amount;
         }
 
-        public void setAmount(int amount)
-        {
+        public void setAmount(int amount) {
             this.amount = amount;
         }
-
     }
 
     /**
@@ -81,27 +67,20 @@ public class PlayerXpEvent extends PlayerEvent
      * It can be cancelled, and no further processing will be done.
      */
     @Cancelable
-    public static class LevelChange extends PlayerXpEvent
-    {
-
+    public static class LevelChange extends PlayerXpEvent {
         private int levels;
 
-        public LevelChange(Player player, int levels)
-        {
+        public LevelChange(Player player, int levels) {
             super(player);
             this.levels = levels;
         }
 
-        public int getLevels()
-        {
+        public int getLevels() {
             return this.levels;
         }
 
-        public void setLevels(int levels)
-        {
+        public void setLevels(int levels) {
             this.levels = levels;
         }
-
     }
-
 }

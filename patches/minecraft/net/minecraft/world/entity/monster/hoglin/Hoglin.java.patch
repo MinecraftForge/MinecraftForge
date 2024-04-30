@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-@@ -128,7 +_,7 @@
-       HoglinAi.updateActivity(this);
-       if (this.isConverting()) {
-          ++this.timeInOverworld;
--         if (this.timeInOverworld > 300) {
-+         if (this.timeInOverworld > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOGLIN, (timer) -> this.timeInOverworld = timer)) {
-             this.playSoundEvent(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED);
-             this.finishConversion((ServerLevel)this.level());
-          }
-@@ -221,6 +_,7 @@
-       Zoglin zoglin = this.convertTo(EntityType.ZOGLIN, true);
-       if (zoglin != null) {
-          zoglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zoglin);
-       }
+@@ -161,7 +_,7 @@
+         HoglinAi.updateActivity(this);
+         if (this.isConverting()) {
+             this.timeInOverworld++;
+-            if (this.timeInOverworld > 300) {
++            if (this.timeInOverworld > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOGLIN, (timer) -> this.timeInOverworld = timer)) {
+                 this.makeSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED);
+                 this.finishConversion((ServerLevel)this.level());
+             }
+@@ -257,6 +_,7 @@
+         Zoglin zoglin = this.convertTo(EntityType.ZOGLIN, true);
+         if (zoglin != null) {
+             zoglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zoglin);
+         }
+     }
  
-    }

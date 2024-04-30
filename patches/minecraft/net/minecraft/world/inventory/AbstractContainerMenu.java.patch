@@ -1,48 +1,19 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -229,6 +_,8 @@
-             ItemStack itemstack1 = p_150438_.get();
-             this.remoteSlots.set(p_150436_, itemstack1);
-             if (this.synchronizer != null) {
-+               // Forge: Only synchronize a slot change if the itemstack actually changed in a way that is relevant to the client (i.e. share tag changed)
-+               if (!p_150437_.equals(itemstack, true))
-                this.synchronizer.sendSlotChange(this, p_150436_, itemstack1);
-             }
-          }
 @@ -401,6 +_,7 @@
-             ItemStack itemstack10 = this.getCarried();
-             p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
-             if (!this.tryItemClickBehaviourOverride(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
-+            if (!net.minecraftforge.common.ForgeHooks.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, createCarriedSlotAccess()))
-                if (itemstack9.isEmpty()) {
-                   if (!itemstack10.isEmpty()) {
-                      int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
-@@ -610,14 +_,15 @@
-             ItemStack itemstack = slot.getItem();
-             if (!itemstack.isEmpty() && ItemStack.isSameItemSameTags(p_38904_, itemstack)) {
-                int j = itemstack.getCount() + p_38904_.getCount();
--               if (j <= p_38904_.getMaxStackSize()) {
-+               int maxSize = Math.min(slot.getMaxStackSize(), p_38904_.getMaxStackSize());
-+               if (j <= maxSize) {
-                   p_38904_.setCount(0);
-                   itemstack.setCount(j);
-                   slot.setChanged();
-                   flag = true;
--               } else if (itemstack.getCount() < p_38904_.getMaxStackSize()) {
--                  p_38904_.shrink(p_38904_.getMaxStackSize() - itemstack.getCount());
--                  itemstack.setCount(p_38904_.getMaxStackSize());
-+               } else if (itemstack.getCount() < maxSize) {
-+                  p_38904_.shrink(maxSize - itemstack.getCount());
-+                  itemstack.setCount(maxSize);
-                   slot.setChanged();
-                   flag = true;
-                }
-@@ -718,7 +_,7 @@
-             i = 1;
-             break;
-          case 2:
--            i = p_279172_.getItem().getMaxStackSize();
-+            i = p_279172_.getMaxStackSize();
-             break;
-          default:
-             i = p_279172_.getCount();
+                 ItemStack itemstack10 = this.getCarried();
+                 p_150434_.updateTutorialInventoryAction(itemstack10, slot7.getItem(), clickaction);
+                 if (!this.tryItemClickBehaviourOverride(p_150434_, clickaction, slot7, itemstack9, itemstack10)) {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(itemstack9, itemstack10, slot7, clickaction, p_150434_, createCarriedSlotAccess()))
+                     if (itemstack9.isEmpty()) {
+                         if (!itemstack10.isEmpty()) {
+                             int i3 = clickaction == ClickAction.PRIMARY ? itemstack10.getCount() : 1;
+@@ -598,7 +_,7 @@
+                 ItemStack itemstack = slot.getItem();
+                 if (!itemstack.isEmpty() && ItemStack.isSameItemSameComponents(p_38904_, itemstack)) {
+                     int j = itemstack.getCount() + p_38904_.getCount();
+-                    int k = slot.getMaxStackSize(itemstack);
++                    int k = Math.min(slot.getMaxStackSize(itemstack), itemstack.getMaxStackSize());
+                     if (j <= k) {
+                         p_38904_.setCount(0);
+                         itemstack.setCount(j);

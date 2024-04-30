@@ -1,64 +1,63 @@
 --- a/net/minecraft/world/item/MobBucketItem.java
 +++ b/net/minecraft/world/item/MobBucketItem.java
-@@ -22,13 +_,18 @@
- import net.minecraft.world.level.material.Fluid;
+@@ -25,13 +_,18 @@
  
  public class MobBucketItem extends BucketItem {
--   private final EntityType<?> type;
--   private final SoundEvent emptySound;
-+   private final java.util.function.Supplier<? extends EntityType<?>> entityTypeSupplier;
-+   private final java.util.function.Supplier<? extends SoundEvent> emptySoundSupplier;
+     private static final MapCodec<TropicalFish.Variant> VARIANT_FIELD_CODEC = TropicalFish.Variant.CODEC.fieldOf("BucketVariantTag");
+-    private final EntityType<?> type;
+-    private final SoundEvent emptySound;
++    private final java.util.function.Supplier<? extends EntityType<?>> entityTypeSupplier;
++    private final java.util.function.Supplier<? extends SoundEvent> emptySoundSupplier;
  
-+   @Deprecated
-    public MobBucketItem(EntityType<?> p_151137_, Fluid p_151138_, SoundEvent p_151139_, Item.Properties p_151140_) {
--      super(p_151138_, p_151140_);
--      this.type = p_151137_;
--      this.emptySound = p_151139_;
-+      this(() -> p_151137_, () -> p_151138_, () -> p_151139_, p_151140_);
-+   }
++    @Deprecated
+     public MobBucketItem(EntityType<?> p_151137_, Fluid p_151138_, SoundEvent p_151139_, Item.Properties p_151140_) {
+-        super(p_151138_, p_151140_);
+-        this.type = p_151137_;
+-        this.emptySound = p_151139_;
++        this(() -> p_151137_, () -> p_151138_, () -> p_151139_, p_151140_);
++    }
 +
-+   public MobBucketItem(java.util.function.Supplier<? extends EntityType<?>> entitySupplier, java.util.function.Supplier<? extends Fluid> fluidSupplier, java.util.function.Supplier<? extends SoundEvent> soundSupplier, Item.Properties properties) {
-+      super(fluidSupplier, properties);
-+      this.emptySoundSupplier = soundSupplier;
-+      this.entityTypeSupplier = entitySupplier;
-    }
++    public MobBucketItem(java.util.function.Supplier<? extends EntityType<?>> entitySupplier, java.util.function.Supplier<? extends Fluid> fluidSupplier, java.util.function.Supplier<? extends SoundEvent> soundSupplier, Item.Properties properties) {
++        super(fluidSupplier, properties);
++        this.emptySoundSupplier = soundSupplier;
++        this.entityTypeSupplier = entitySupplier;
+     }
  
-    public void checkExtraContent(@Nullable Player p_151146_, Level p_151147_, ItemStack p_151148_, BlockPos p_151149_) {
-@@ -40,11 +_,11 @@
-    }
+     @Override
+@@ -44,11 +_,11 @@
  
-    protected void playEmptySound(@Nullable Player p_151151_, LevelAccessor p_151152_, BlockPos p_151153_) {
--      p_151152_.playSound(p_151151_, p_151153_, this.emptySound, SoundSource.NEUTRAL, 1.0F, 1.0F);
-+      p_151152_.playSound(p_151151_, p_151153_, getEmptySound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
-    }
+     @Override
+     protected void playEmptySound(@Nullable Player p_151151_, LevelAccessor p_151152_, BlockPos p_151153_) {
+-        p_151152_.playSound(p_151151_, p_151153_, this.emptySound, SoundSource.NEUTRAL, 1.0F, 1.0F);
++        p_151152_.playSound(p_151151_, p_151153_, this.getEmptySound(), SoundSource.NEUTRAL, 1.0F, 1.0F);
+     }
  
-    private void spawn(ServerLevel p_151142_, ItemStack p_151143_, BlockPos p_151144_) {
--      Entity entity = this.type.spawn(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
-+      Entity entity = getFishType().spawn(p_151142_, p_151143_, (Player)null, p_151144_, MobSpawnType.BUCKET, true, false);
-       if (entity instanceof Bucketable bucketable) {
-          bucketable.loadFromBucketTag(p_151143_.getOrCreateTag());
-          bucketable.setFromBucket(true);
-@@ -53,7 +_,7 @@
-    }
+     private void spawn(ServerLevel p_151142_, ItemStack p_151143_, BlockPos p_151144_) {
+-        if (this.type.spawn(p_151142_, p_151143_, null, p_151144_, MobSpawnType.BUCKET, true, false) instanceof Bucketable bucketable) {
++        if (this.getFishType().spawn(p_151142_, p_151143_, null, p_151144_, MobSpawnType.BUCKET, true, false) instanceof Bucketable bucketable) {
+             CustomData customdata = p_151143_.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY);
+             bucketable.loadFromBucketTag(customdata.copyTag());
+             bucketable.setFromBucket(true);
+@@ -57,7 +_,7 @@
  
-    public void appendHoverText(ItemStack p_151155_, @Nullable Level p_151156_, List<Component> p_151157_, TooltipFlag p_151158_) {
--      if (this.type == EntityType.TROPICAL_FISH) {
-+      if (getFishType() == EntityType.TROPICAL_FISH) {
-          CompoundTag compoundtag = p_151155_.getTag();
-          if (compoundtag != null && compoundtag.contains("BucketVariantTag", 3)) {
-             int i = compoundtag.getInt("BucketVariantTag");
-@@ -79,5 +_,14 @@
-          }
-       }
- 
-+   }
+     @Override
+     public void appendHoverText(ItemStack p_151155_, Item.TooltipContext p_329546_, List<Component> p_151157_, TooltipFlag p_151158_) {
+-        if (this.type == EntityType.TROPICAL_FISH) {
++        if (this.getFishType() == EntityType.TROPICAL_FISH) {
+             CustomData customdata = p_151155_.getOrDefault(DataComponents.BUCKET_ENTITY_DATA, CustomData.EMPTY);
+             if (customdata.isEmpty()) {
+                 return;
+@@ -85,5 +_,13 @@
+                 p_151157_.add(mutablecomponent);
+             }
+         }
++    }
 +
-+   // Forge Start
-+   protected EntityType<?> getFishType() {
-+      return entityTypeSupplier.get();
-+   }
++    protected EntityType<?> getFishType() {
++        return entityTypeSupplier.get();
++    }
 +
-+   protected SoundEvent getEmptySound() {
-+      return emptySoundSupplier.get();
-    }
++    protected SoundEvent getEmptySound() {
++        return emptySoundSupplier.get();
+     }
  }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/server/dedicated/Settings.java
 +++ b/net/minecraft/server/dedicated/Settings.java
-@@ -55,7 +_,7 @@
+@@ -66,7 +_,7 @@
  
-    public void store(Path p_139877_) {
-       try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {
--         this.properties.store(writer, "Minecraft server properties");
-+         net.minecraftforge.common.util.SortedProperties.store(this.properties, writer, "Minecraft server properties");
-       } catch (IOException ioexception) {
-          LOGGER.error("Failed to store properties to file: {}", (Object)p_139877_);
-       }
+     public void store(Path p_139877_) {
+         try (Writer writer = Files.newBufferedWriter(p_139877_, StandardCharsets.UTF_8)) {
+-            this.properties.store(writer, "Minecraft server properties");
++            net.minecraftforge.common.util.SortedProperties.store(this.properties, writer, "Minecraft server properties");
+         } catch (IOException ioexception) {
+             LOGGER.error("Failed to store properties to file: {}", p_139877_);
+         }

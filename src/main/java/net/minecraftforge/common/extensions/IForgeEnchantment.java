@@ -5,12 +5,10 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.world.entity.MobType;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import java.util.Set;
+import javax.annotation.Nullable;
 
 public interface IForgeEnchantment {
     private Enchantment self() {
@@ -25,18 +23,23 @@ public interface IForgeEnchantment {
      * @return the damage bonus
      */
     @SuppressWarnings("deprecation")
-    default float getDamageBonus(int level, MobType mobType, ItemStack enchantedItem) {
+    default float getDamageBonus(int level, @Nullable EntityType<?> mobType, ItemStack enchantedItem) {
         return self().getDamageBonus(level, mobType);
     }
 
    /**
-    * Determines whether item variants of this enchantment can be added to a given creative tab with the allowed categories.
-    *
-    * @param book the item being added to the creative tab
-    * @param allowedCategories the enchantment categories allowed in the creative tab
-    * @return whether item variants of this enchantment can be added to a given creative tab with the allowed categories
+    * Is this enchantment allowed to be enchanted on books via Enchantment Table
+    * @return false to disable the vanilla feature
     */
-   default boolean allowedInCreativeTab(Item book, Set<EnchantmentCategory> allowedCategories) {
-       return self().isAllowedOnBooks() && allowedCategories.contains(self().category);
+   default boolean isAllowedOnBooks() {
+       return true;
+   }
+
+   /**
+    * This applies specifically to applying at the enchanting table. The other method {@link #canEnchant(ItemStack)}
+    * applies for <i>all possible</i> enchantments.
+    */
+   default boolean canApplyAtEnchatingTable(ItemStack stack) {
+       return stack.canApplyAtEnchantingTable(null);
    }
 }

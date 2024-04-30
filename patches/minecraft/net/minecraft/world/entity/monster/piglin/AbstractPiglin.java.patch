@@ -1,22 +1,19 @@
 --- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
-@@ -93,9 +_,10 @@
-          ++this.timeInOverworld;
-       } else {
-          this.timeInOverworld = 0;
-+         this.timeInOverworld = 0;
-       }
+@@ -80,7 +_,7 @@
+             this.timeInOverworld = 0;
+         }
  
--      if (this.timeInOverworld > 300) {
-+      if (this.timeInOverworld > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> this.timeInOverworld = timer)) {
-          this.playConvertedSound();
-          this.finishConversion((ServerLevel)this.level());
-       }
-@@ -110,6 +_,7 @@
-       ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
-       if (zombifiedpiglin != null) {
-          zombifiedpiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
-       }
+-        if (this.timeInOverworld > 300) {
++        if (this.timeInOverworld > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> this.timeInOverworld = timer)) {
+             this.playConvertedSound();
+             this.finishConversion((ServerLevel)this.level());
+         }
+@@ -94,6 +_,7 @@
+         ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, true);
+         if (zombifiedpiglin != null) {
+             zombifiedpiglin.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
+         }
+     }
  
-    }

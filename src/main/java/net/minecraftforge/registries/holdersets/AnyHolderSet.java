@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
@@ -34,54 +35,44 @@ import net.minecraftforge.common.ForgeMod;
  * }
  * </pre>
  */
-public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) implements ICustomHolderSet<T>
-{
-    public static <T> Codec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList)
-    {
+public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) implements ICustomHolderSet<T> {
+    public static <T> MapCodec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList) {
         return RegistryOps.retrieveRegistryLookup(registryKey)
-            .xmap(AnyHolderSet::new, AnyHolderSet::registryLookup)
-            .codec();
+            .xmap(AnyHolderSet::new, AnyHolderSet::registryLookup);
     }
 
     @Override
-    public HolderSetType type()
-    {
+    public HolderSetType type() {
         return ForgeMod.ANY_HOLDER_SET.get();
     }
 
     @Override
-    public Iterator<Holder<T>> iterator()
-    {
+    public Iterator<Holder<T>> iterator() {
         return this.stream().iterator();
     }
 
     @Override
-    public Stream<Holder<T>> stream()
-    {
+    public Stream<Holder<T>> stream() {
         return this.registryLookup.listElements().map(Function.identity());
     }
 
     @Override
-    public int size()
-    {
-        return (int) this.stream().count();
+    public int size() {
+        return (int)this.stream().count();
     }
 
     @Override
-    public Either<TagKey<T>, List<Holder<T>>> unwrap()
-    {
+    public Either<TagKey<T>, List<Holder<T>>> unwrap() {
         return Either.right(this.stream().toList());
     }
 
     @Override
-    public Optional<Holder<T>> getRandomElement(RandomSource random)
-    {
+    public Optional<Holder<T>> getRandomElement(RandomSource random) {
         return Util.getRandomSafe(this.stream().toList(), random);
     }
 
     @Override
-    public Holder<T> get(int i)
-    {
+    public Holder<T> get(int i) {
         List<Holder<T>> holders = this.stream().toList();
         Holder<T> holder = i >= holders.size() ? null : holders.get(i);
         if (holder == null)
@@ -91,26 +82,22 @@ public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) imp
     }
 
     @Override
-    public boolean contains(Holder<T> holder)
-    {
+    public boolean contains(Holder<T> holder) {
         return holder.unwrapKey().map(key -> this.registryLookup.listElementIds().anyMatch(key::equals)).orElse(false);
     }
 
     @Override
-    public boolean canSerializeIn(HolderOwner<T> holderOwner)
-    {
+    public boolean canSerializeIn(HolderOwner<T> holderOwner) {
         return this.registryLookup.canSerializeIn(holderOwner);
     }
 
     @Override
-    public Optional<TagKey<T>> unwrapKey()
-    {
+    public Optional<TagKey<T>> unwrapKey() {
         return Optional.empty();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "AnySet(" + this.registryLookup.key() + ")";
     }
 }

@@ -1,16 +1,13 @@
 --- a/net/minecraft/data/tags/DamageTypeTagsProvider.java
 +++ b/net/minecraft/data/tags/DamageTypeTagsProvider.java
-@@ -9,8 +_,13 @@
- import net.minecraft.world.damagesource.DamageTypes;
+@@ -13,6 +_,10 @@
+         super(p_270719_, Registries.DAMAGE_TYPE, p_270256_);
+     }
  
- public class DamageTypeTagsProvider extends TagsProvider<DamageType> {
-+   /** @deprecated Forge: Use the {@linkplain #DamageTypeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public DamageTypeTagsProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_) {
-       super(p_270719_, Registries.DAMAGE_TYPE, p_270256_);
-+   }
-+   public DamageTypeTagsProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_270719_, Registries.DAMAGE_TYPE, p_270256_, modId, existingFileHelper);
-    }
- 
-    protected void addTags(HolderLookup.Provider p_270108_) {
++    public DamageTypeTagsProvider(PackOutput p_270719_, CompletableFuture<HolderLookup.Provider> p_270256_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_270719_, Registries.DAMAGE_TYPE, p_270256_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_270108_) {
+         this.tag(DamageTypeTags.DAMAGES_HELMET).add(DamageTypes.FALLING_ANVIL, DamageTypes.FALLING_BLOCK, DamageTypes.FALLING_STALACTITE);

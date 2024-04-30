@@ -1,24 +1,23 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
-@@ -63,8 +_,10 @@
-    }
+@@ -71,8 +_,9 @@
+     }
  
-    public void render(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
--      if (this.shouldShowName(p_114485_)) {
--         this.renderNameTag(p_114485_, p_114485_.getDisplayName(), p_114488_, p_114489_, p_114490_);
-+      var renderNameTagEvent = new net.minecraftforge.client.event.RenderNameTagEvent(p_114485_, p_114485_.getDisplayName(), this, p_114488_, p_114489_, p_114490_, p_114487_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameTagEvent);
-+      if (renderNameTagEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameTagEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.shouldShowName(p_114485_))) {
-+         this.renderNameTag(p_114485_, renderNameTagEvent.getContent(), p_114488_, p_114489_, p_114490_);
-       }
-    }
+     public void render(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
+-        if (this.shouldShowName(p_114485_)) {
+-            this.renderNameTag(p_114485_, p_114485_.getDisplayName(), p_114488_, p_114489_, p_114490_, p_114487_);
++        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.fireRenderNameTagEvent(p_114485_, p_114485_.getDisplayName(), this, p_114488_, p_114489_, p_114490_, p_114487_);
++        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.shouldShowName(p_114485_))) {
++           this.renderNameTag(p_114485_, event.getContent(), p_114488_, p_114489_, p_114490_, p_114487_);
+         }
+     }
  
-@@ -80,7 +_,7 @@
+@@ -88,7 +_,7 @@
  
-    protected void renderNameTag(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_) {
-       double d0 = this.entityRenderDispatcher.distanceToSqr(p_114498_);
--      if (!(d0 > 4096.0D)) {
-+      if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_114498_, d0)) {
-          boolean flag = !p_114498_.isDiscrete();
-          float f = p_114498_.getNameTagOffsetY();
-          int i = "deadmau5".equals(p_114499_.getString()) ? -10 : 0;
+     protected void renderNameTag(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_, float p_334448_) {
+         double d0 = this.entityRenderDispatcher.distanceToSqr(p_114498_);
+-        if (!(d0 > 4096.0)) {
++        if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_114498_, d0)) {
+             Vec3 vec3 = p_114498_.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, p_114498_.getViewYRot(p_334448_));
+             if (vec3 != null) {
+                 boolean flag = !p_114498_.isDiscrete();

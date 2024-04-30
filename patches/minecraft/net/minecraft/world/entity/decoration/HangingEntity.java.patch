@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/decoration/HangingEntity.java
 +++ b/net/minecraft/world/entity/decoration/HangingEntity.java
 @@ -121,6 +_,8 @@
-                int j1 = (j - 1) / -2;
-                blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
-                BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
-+               if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
-+                  continue;
-                if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
-                   return false;
-                }
+                     int j1 = (j - 1) / -2;
+                     blockpos$mutableblockpos.set(blockpos).move(direction, k + i1).move(Direction.UP, l + j1);
+                     BlockState blockstate = this.level().getBlockState(blockpos$mutableblockpos);
++                    if (net.minecraft.world.level.block.Block.canSupportCenter(this.level(), blockpos$mutableblockpos, this.direction))
++                        continue;
+                     if (!blockstate.isSolid() && !DiodeBlock.isDiode(blockstate)) {
+                         return false;
+                     }

@@ -1,56 +1,50 @@
 --- a/com/mojang/blaze3d/pipeline/RenderTarget.java
 +++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
-@@ -113,7 +_,10 @@
-             GlStateManager._texParameter(3553, 34892, 0);
+@@ -113,11 +_,19 @@
+             GlStateManager._bindTexture(this.colorTextureId);
              GlStateManager._texParameter(3553, 10242, 33071);
              GlStateManager._texParameter(3553, 10243, 33071);
-+         if (!stencilEnabled)
-             GlStateManager._texImage2D(3553, 0, 6402, this.width, this.height, 0, 6402, 5126, (IntBuffer)null);
-+         else
++            if (!stencilEnabled)
+             GlStateManager._texImage2D(3553, 0, 32856, this.width, this.height, 0, 6408, 5121, null);
++            else
 +            GlStateManager._texImage2D(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.width, this.height, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
-          }
+             GlStateManager._glBindFramebuffer(36160, this.frameBufferId);
+             GlStateManager._glFramebufferTexture2D(36160, 36064, 3553, this.colorTextureId, 0);
+-            if (this.useDepth) {
++            if (this.useDepth && !stencilEnabled) {
+                 GlStateManager._glFramebufferTexture2D(36160, 36096, 3553, this.depthBufferId, 0);
++            } else if(this.useDepth && net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
++                GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
++            } else if (this.useDepth) {
++                GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.depthBufferId, 0);
++                GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
+             }
  
-          this.setFilterMode(9728);
-@@ -124,7 +_,14 @@
-          GlStateManager._glBindFramebuffer(36160, this.frameBufferId);
-          GlStateManager._glFramebufferTexture2D(36160, 36064, 3553, this.colorTextureId, 0);
-          if (this.useDepth) {
-+         if(!stencilEnabled)
-             GlStateManager._glFramebufferTexture2D(36160, 36096, 3553, this.depthBufferId, 0);
-+         else if(net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
-+            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
-+         } else {
-+            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.depthBufferId, 0);
-+            GlStateManager._glFramebufferTexture2D(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.depthBufferId, 0);
-+         }
-          }
+             this.checkStatus();
+@@ -280,5 +_,26 @@
  
-          this.checkStatus();
-@@ -292,4 +_,27 @@
-    public int getDepthTextureId() {
-       return this.depthBufferId;
-    }
+     public int getDepthTextureId() {
+         return this.depthBufferId;
++    }
 +
-+   /*================================ FORGE START ================================================*/
-+   private boolean stencilEnabled = false;
-+   /**
-+    * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
-+    * Modders must call this directly to set things up.
-+    * This is to prevent the default cause where graphics cards do not support stencil bits.
-+    * <b>Make sure to call this on the main render thread!</b>
-+    */
-+   public void enableStencil() {
-+      if(stencilEnabled) return;
-+      stencilEnabled = true;
-+      this.resize(viewWidth, viewHeight, net.minecraft.client.Minecraft.ON_OSX);
-+   }
++    private boolean stencilEnabled = false;
++    /**
++     * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
++     * Modders must call this directly to set things up.
++     * This is to prevent the default cause where graphics cards do not support stencil bits.
++     * <b>Make sure to call this on the main render thread!</b>
++     */
++    public void enableStencil() {
++        if (stencilEnabled) return;
++        stencilEnabled = true;
++        this.resize(viewWidth, viewHeight, net.minecraft.client.Minecraft.ON_OSX);
++    }
 +
-+   /**
-+    * Returns wither or not this FBO has been successfully initialized with stencil bits.
-+    * If not, and a modder wishes it to be, they must call enableStencil.
-+    */
-+   public boolean isStencilEnabled() {
-+      return this.stencilEnabled;
-+   }
-+   /*================================ FORGE END   ================================================*/
++    /**
++     * Returns wither or not this FBO has been successfully initialized with stencil bits.
++     * If not, and a modder wishes it to be, they must call enableStencil.
++     */
++    public boolean isStencilEnabled() {
++        return this.stencilEnabled;
+     }
  }

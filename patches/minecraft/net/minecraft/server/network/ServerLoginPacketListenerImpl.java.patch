@@ -1,31 +1,31 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -175,7 +_,7 @@
-          throw new IllegalStateException("Protocol error", cryptexception);
-       }
+@@ -181,7 +_,7 @@
+             throw new IllegalStateException("Protocol error", cryptexception);
+         }
  
--      Thread thread = new Thread("User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
-+      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
-          public void run() {
-             String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
+-        Thread thread = new Thread("User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
++        Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
+             @Override
+             public void run() {
+                 String s1 = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
+@@ -224,6 +_,7 @@
  
-@@ -215,6 +_,7 @@
-    }
+     @Override
+     public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
++        if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
+         this.disconnect(ServerCommonPacketListenerImpl.DISCONNECT_UNEXPECTED_QUERY);
+     }
  
-    public void handleCustomQueryPacket(ServerboundCustomQueryAnswerPacket p_297965_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onCustomPayload(p_297965_, this.connection))
-       this.disconnect(DISCONNECT_UNEXPECTED_QUERY);
-    }
- 
-@@ -225,6 +_,11 @@
-       this.connection.setListener(serverconfigurationpacketlistenerimpl);
-       serverconfigurationpacketlistenerimpl.startConfiguration();
-       this.state = ServerLoginPacketListenerImpl.State.ACCEPTED;
-+   }
+@@ -248,6 +_,11 @@
+     @Override
+     public void handleCookieResponse(ServerboundCookieResponsePacket p_333672_) {
+         this.disconnect(ServerCommonPacketListenerImpl.DISCONNECT_UNEXPECTED_QUERY);
++    }
 +
-+   @Nullable
-+   public GameProfile getAuthenticatedProfile() {
-+       return this.authenticatedProfile;
-    }
++    @Nullable
++    public GameProfile getAuthenticatedProfile() {
++        return this.authenticatedProfile;
+     }
  
-    public void fillListenerSpecificCrashDetails(CrashReportCategory p_310682_) {
+     static enum State {

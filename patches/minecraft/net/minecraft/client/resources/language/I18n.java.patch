@@ -2,9 +2,9 @@
 +++ b/net/minecraft/client/resources/language/I18n.java
 @@ -14,6 +_,7 @@
  
-    static void setLanguage(Language p_118942_) {
-       language = p_118942_;
-+      net.minecraftforge.common.ForgeI18n.loadLanguageData(p_118942_.getLanguageData());
-    }
+     static void setLanguage(Language p_118942_) {
+         language = p_118942_;
++        net.minecraftforge.common.ForgeI18n.loadLanguageData(p_118942_.getLanguageData());
+     }
  
-    public static String get(String p_118939_, Object... p_118940_) {
+     public static String get(String p_118939_, Object... p_118940_) {

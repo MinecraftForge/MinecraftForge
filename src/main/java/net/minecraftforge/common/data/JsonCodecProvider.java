@@ -87,7 +87,7 @@ public class JsonCodecProvider<T> implements DataProvider
         gather(LamdbaExceptionUtils.rethrowBiConsumer((id, value) -> {
             final Path path = outputFolder.resolve(id.getNamespace()).resolve(this.directory).resolve(id.getPath() + ".json");
             JsonElement encoded = this.codec.encodeStart(this.dynamicOps, value)
-                  .getOrThrow(false, msg -> LOGGER.error("Failed to encode {}: {}", path, msg));
+                  .getOrThrow( msg -> new IllegalStateException(String.format("Failed to encode {}: {}", path, msg)));
             /* TODO: Conditional JSONS
             ICondition[] conditions = this.conditions.get(id);
             if (conditions != null && conditions.length > 0)

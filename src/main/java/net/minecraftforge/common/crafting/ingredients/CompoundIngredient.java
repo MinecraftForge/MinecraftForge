@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import com.google.common.collect.Lists;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -18,7 +18,8 @@ import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +98,7 @@ public class CompoundIngredient extends AbstractIngredient {
         return SERIALIZER;
     }
 
-    public static final Codec<CompoundIngredient> CODEC = RecordCodecBuilder.create(builder ->
+    public static final MapCodec<CompoundIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
             Ingredient.CODEC_NONEMPTY.listOf().fieldOf("children").forGetter(i -> i.children)
         ).apply(builder, CompoundIngredient::new)
@@ -105,23 +106,18 @@ public class CompoundIngredient extends AbstractIngredient {
 
     public static final IIngredientSerializer<CompoundIngredient> SERIALIZER = new IIngredientSerializer<>() {
         @Override
-        public Codec<CompoundIngredient> codec() {
+        public MapCodec<CompoundIngredient> codec() {
             return CODEC;
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, CompoundIngredient value) {
-            buffer.writeVarInt(value.children.size());
-            for (var child : value.children)
-                child.toNetwork(buffer);
+        public void write(RegistryFriendlyByteBuf buffer, CompoundIngredient value) {
+            buffer.writeCollection(value.children, (buf, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
         }
 
         @Override
-        public CompoundIngredient read(FriendlyByteBuf buffer) {
-            int size = buffer.readVarInt();
-            var children = new ArrayList<Ingredient>(size);
-            for (int x = 0; x < size; x++)
-                children.add(Ingredient.fromNetwork(buffer));
+        public CompoundIngredient read(RegistryFriendlyByteBuf buffer) {
+            var children = buffer.readCollection(ArrayList::new, buf -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
             return new CompoundIngredient(children);
         }
     };

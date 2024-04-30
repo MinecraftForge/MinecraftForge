@@ -1,18 +1,18 @@
 --- a/net/minecraft/server/network/PlayerChunkSender.java
 +++ b/net/minecraft/server/network/PlayerChunkSender.java
-@@ -45,6 +_,7 @@
-    public void dropChunk(ServerPlayer p_298166_, ChunkPos p_300687_) {
-       if (!this.pendingChunks.remove(p_300687_.toLong()) && p_298166_.isAlive()) {
-          p_298166_.connection.send(new ClientboundForgetLevelChunkPacket(p_300687_));
-+         net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_298166_, p_300687_, (ServerLevel) p_298166_.level());
-       }
+@@ -44,6 +_,7 @@
+     public void dropChunk(ServerPlayer p_298166_, ChunkPos p_300687_) {
+         if (!this.pendingChunks.remove(p_300687_.toLong()) && p_298166_.isAlive()) {
+             p_298166_.connection.send(new ClientboundForgetLevelChunkPacket(p_300687_));
++            net.minecraftforge.event.ForgeEventFactory.fireChunkUnWatch(p_298166_, p_300687_, (ServerLevel) p_298166_.level());
+         }
+     }
  
-    }
-@@ -79,6 +_,7 @@
-       p_299748_.send(new ClientboundLevelChunkWithLightPacket(p_297712_, p_298120_.getLightEngine(), (BitSet)null, (BitSet)null));
-       ChunkPos chunkpos = p_297712_.getPos();
-       DebugPackets.sendPoiPacketsForChunk(p_298120_, chunkpos);
-+      net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_299748_.player, p_297712_, p_298120_);
-    }
+@@ -77,6 +_,7 @@
+         p_299748_.send(new ClientboundLevelChunkWithLightPacket(p_297712_, p_298120_.getLightEngine(), null, null));
+         ChunkPos chunkpos = p_297712_.getPos();
+         DebugPackets.sendPoiPacketsForChunk(p_298120_, chunkpos);
++        net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_299748_.player, p_297712_, p_298120_);
+     }
  
-    private List<LevelChunk> collectChunksToSend(ChunkMap p_298180_, ChunkPos p_298514_) {
+     private List<LevelChunk> collectChunksToSend(ChunkMap p_298180_, ChunkPos p_298514_) {

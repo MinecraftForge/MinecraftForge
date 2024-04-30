@@ -1,52 +1,30 @@
 --- a/net/minecraft/data/loot/EntityLootSubProvider.java
 +++ b/net/minecraft/data/loot/EntityLootSubProvider.java
-@@ -51,23 +_,27 @@
+@@ -58,12 +_,16 @@
  
-    public abstract void generate();
+     public abstract void generate();
  
-+   protected java.util.stream.Stream<EntityType<?>> getKnownEntityTypes() {
-+      return BuiltInRegistries.ENTITY_TYPE.stream();
-+   }
++    protected java.util.stream.Stream<EntityType<?>> getKnownEntityTypes() {
++       return BuiltInRegistries.ENTITY_TYPE.stream();
++    }
 +
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> p_251751_) {
-       this.generate();
-       Set<ResourceLocation> set = Sets.newHashSet();
--      BuiltInRegistries.ENTITY_TYPE.holders().forEach((p_266624_) -> {
--         EntityType<?> entitytype = p_266624_.value();
-+      this.getKnownEntityTypes().map(EntityType::builtInRegistryHolder).forEach((p_249003_) -> {
-+         EntityType<?> entitytype = p_249003_.value();
-          if (entitytype.isEnabled(this.allowed)) {
-             if (canHaveLootTable(entitytype)) {
-                Map<ResourceLocation, LootTable.Builder> map = this.map.remove(entitytype);
-                ResourceLocation resourcelocation = entitytype.getDefaultLootTable();
-                if (!resourcelocation.equals(BuiltInLootTables.EMPTY) && entitytype.isEnabled(this.required) && (map == null || !map.containsKey(resourcelocation))) {
--                  throw new IllegalStateException(String.format(Locale.ROOT, "Missing loottable '%s' for '%s'", resourcelocation, p_266624_.key().location()));
-+                  throw new IllegalStateException(String.format(Locale.ROOT, "Missing loottable '%s' for '%s'", resourcelocation, p_249003_.key().location()));
-                }
+     @Override
+     public void generate(HolderLookup.Provider p_327798_, BiConsumer<ResourceKey<LootTable>, LootTable.Builder> p_251751_) {
+         this.generate();
+         Set<ResourceKey<LootTable>> set = new HashSet<>();
+-        BuiltInRegistries.ENTITY_TYPE
+-            .holders()
++        this.getKnownEntityTypes()
++            .map(EntityType::builtInRegistryHolder)
+             .forEach(
+                 p_266624_ -> {
+                     EntityType<?> entitytype = p_266624_.value();
+@@ -113,7 +_,7 @@
+         }
+     }
  
-                if (map != null) {
-                   map.forEach((p_250376_, p_250972_) -> {
-                      if (!set.add(p_250376_)) {
--                        throw new IllegalStateException(String.format(Locale.ROOT, "Duplicate loottable '%s' for '%s'", p_250376_, p_266624_.key().location()));
-+                        throw new IllegalStateException(String.format(Locale.ROOT, "Duplicate loottable '%s' for '%s'", p_250376_, p_249003_.key().location()));
-                      } else {
-                         p_251751_.accept(p_250376_, p_250972_);
-                      }
-@@ -76,7 +_,7 @@
-             } else {
-                Map<ResourceLocation, LootTable.Builder> map1 = this.map.remove(entitytype);
-                if (map1 != null) {
--                  throw new IllegalStateException(String.format(Locale.ROOT, "Weird loottables '%s' for '%s', not a LivingEntity so should not have loot", map1.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(",")), p_266624_.key().location()));
-+                  throw new IllegalStateException(String.format(Locale.ROOT, "Weird loottables '%s' for '%s', not a LivingEntity so should not have loot", map1.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(",")), p_249003_.key().location()));
-                }
-             }
- 
-@@ -87,7 +_,7 @@
-       }
-    }
- 
--   protected static boolean canHaveLootTable(EntityType<?> p_249029_) {
-+   protected boolean canHaveLootTable(EntityType<?> p_249029_) {
-       return SPECIAL_LOOT_TABLE_TYPES.contains(p_249029_) || p_249029_.getCategory() != MobCategory.MISC;
-    }
+-    protected static boolean canHaveLootTable(EntityType<?> p_249029_) {
++    protected boolean canHaveLootTable(EntityType<?> p_249029_) {
+         return SPECIAL_LOOT_TABLE_TYPES.contains(p_249029_) || p_249029_.getCategory() != MobCategory.MISC;
+     }
  

@@ -62,7 +62,7 @@ public class ConditionCodec {
                 return DataResult.error(() -> conditionDecoded.error().get().message());
 
             var condition = conditionDecoded.result().get();
-            if (!condition.test(getContext(ops)))
+            if (!condition.test(getContext(ops), ops))
                 return DataResult.success(Pair.of(Optional.empty(), ops.empty()));
 
             return normal.decode(ops, input).map(p -> p.mapFirst(Optional::of));

@@ -5,19 +5,14 @@
 
 package net.minecraftforge.debug.gameplay.data;
 
-import net.minecraft.DetectedVersion;
-import net.minecraft.core.*;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.metadata.PackMetadataGenerator;
-import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.network.chat.Component;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
@@ -77,7 +72,7 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     }
 
     // Registers the mossy stone feature
-    private void createFeature(BootstapContext<ConfiguredFeature<?, ?>> context) {
+    private void createFeature(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         context.register(MOSSY_STONE_FEATURE, new ConfiguredFeature<>(
             Feature.ORE,
             new OreConfiguration(MOSSY_STONE_TARGETS.get(), 5)
@@ -85,8 +80,8 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     }
 
     // Registers the mossy stone placement
-    private void createPlacement(BootstapContext<PlacedFeature> context) {
-        HolderGetter<ConfiguredFeature<?, ?>> featureRegistry = context.lookup(Registries.CONFIGURED_FEATURE);
+    private void createPlacement(BootstrapContext<PlacedFeature> context) {
+        var featureRegistry = context.lookup(Registries.CONFIGURED_FEATURE);
         context.register(MOSSY_STONE_PLACEMENT, new PlacedFeature(
             featureRegistry.getOrThrow(MOSSY_STONE_FEATURE),
             List.of(CountPlacement.of(8), InSquarePlacement.spread(), HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(64)), BiomeFilter.biome())
@@ -94,9 +89,9 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     }
 
     // Registers the mossy stone biome modifier
-    private void createModifier(BootstapContext<BiomeModifier> context) {
-        HolderGetter<Biome> biomeRegistry = context.lookup(Registries.BIOME);
-        HolderGetter<PlacedFeature> placementRegistry = context.lookup(Registries.PLACED_FEATURE);
+    private void createModifier(BootstrapContext<BiomeModifier> context) {
+        var biomeRegistry = context.lookup(Registries.BIOME);
+        var placementRegistry = context.lookup(Registries.PLACED_FEATURE);
         context.register(MOSSY_STONE_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
             biomeRegistry.getOrThrow(BiomeTags.IS_OVERWORLD),
             HolderSet.direct(placementRegistry.getOrThrow(MOSSY_STONE_PLACEMENT)),

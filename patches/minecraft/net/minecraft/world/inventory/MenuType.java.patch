@@ -6,21 +6,21 @@
  
 -public class MenuType<T extends AbstractContainerMenu> implements FeatureElement {
 +public class MenuType<T extends AbstractContainerMenu> implements FeatureElement, net.minecraftforge.common.extensions.IForgeMenuType<T> {
-    public static final MenuType<ChestMenu> GENERIC_9x1 = register("generic_9x1", ChestMenu::oneRow);
-    public static final MenuType<ChestMenu> GENERIC_9x2 = register("generic_9x2", ChestMenu::twoRows);
-    public static final MenuType<ChestMenu> GENERIC_9x3 = register("generic_9x3", ChestMenu::threeRows);
-@@ -54,6 +_,14 @@
- 
-    public T create(int p_39986_, Inventory p_39987_) {
-       return this.constructor.create(p_39986_, p_39987_);
-+   }
+     public static final MenuType<ChestMenu> GENERIC_9x1 = register("generic_9x1", ChestMenu::oneRow);
+     public static final MenuType<ChestMenu> GENERIC_9x2 = register("generic_9x2", ChestMenu::twoRows);
+     public static final MenuType<ChestMenu> GENERIC_9x3 = register("generic_9x3", ChestMenu::threeRows);
+@@ -57,6 +_,14 @@
+     @Override
+     public FeatureFlagSet requiredFeatures() {
+         return this.requiredFeatures;
++    }
 +
-+   @Override
-+   public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
-+      if (this.constructor instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
-+         return ctr.create(windowId, playerInv, extraData);
-+      }
-+      return create(windowId, playerInv);
-    }
++    @Override
++    public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
++        if (this.constructor instanceof net.minecraftforge.network.IContainerFactory<T> ctr) {
++            return ctr.create(windowId, playerInv, extraData);
++        }
++        return create(windowId, playerInv);
+     }
  
-    public FeatureFlagSet requiredFeatures() {
+     public interface MenuSupplier<T extends AbstractContainerMenu> {

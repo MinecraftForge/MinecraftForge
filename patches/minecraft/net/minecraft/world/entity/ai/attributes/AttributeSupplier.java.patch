@@ -1,33 +1,38 @@
 --- a/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
 +++ b/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
-@@ -69,6 +_,22 @@
-    public static class Builder {
-       private final Map<Attribute, AttributeInstance> builder = Maps.newHashMap();
-       private boolean instanceFrozen;
-+      private final java.util.List<AttributeSupplier.Builder> others = new java.util.ArrayList<>();
-+
-+      public Builder() { }
-+
-+      public Builder(AttributeSupplier attributeMap) {
-+         this.builder.putAll(attributeMap.instances);
-+      }
-+
-+      public void combine(Builder other) {
-+         this.builder.putAll(other.builder);
-+         others.add(other);
-+      }
-+
-+      public boolean hasAttribute(Attribute attribute) {
-+         return this.builder.containsKey(attribute);
-+      }
+@@ -66,8 +_,24 @@
+     }
  
-       private AttributeInstance create(Attribute p_22275_) {
-          AttributeInstance attributeinstance = new AttributeInstance(p_22275_, (p_258260_) -> {
-@@ -93,6 +_,7 @@
+     public static class Builder {
+-        private final ImmutableMap.Builder<Holder<Attribute>, AttributeInstance> builder = ImmutableMap.builder();
++        private final java.util.Map<Holder<Attribute>, AttributeInstance> builder = new java.util.HashMap<>();
+         private boolean instanceFrozen;
++        private final java.util.List<AttributeSupplier.Builder> others = new java.util.ArrayList<>();
++
++        public Builder() {}
++
++        public Builder(AttributeSupplier attributeMap) {
++            this.builder.putAll(attributeMap.instances);
++        }
++
++        public void combine(Builder other) {
++            this.builder.putAll(other.builder);
++            this.others.add(other);
++        }
++
++        public boolean hasAttribute(Holder<Attribute> attribute) {
++            return this.builder.containsKey(attribute);
++        }
  
-       public AttributeSupplier build() {
-          this.instanceFrozen = true;
-+         others.forEach(p_70141_ -> p_70141_.instanceFrozen = true);
-          return new AttributeSupplier(this.builder);
-       }
-    }
+         private AttributeInstance create(Holder<Attribute> p_334904_) {
+             AttributeInstance attributeinstance = new AttributeInstance(p_334904_, p_326800_ -> {
+@@ -92,7 +_,8 @@
+ 
+         public AttributeSupplier build() {
+             this.instanceFrozen = true;
+-            return new AttributeSupplier(this.builder.buildKeepingLast());
++            others.forEach(b -> b.instanceFrozen = true);
++            return new AttributeSupplier(ImmutableMap.copyOf(this.builder));
+         }
+     }
+ }

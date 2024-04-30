@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
-@@ -38,8 +_,10 @@
- 
-    public void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
-       if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
-+         if (!p_222509_.isAreaLoaded(p_222510_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-          p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
-       } else {
-+         if (!p_222509_.isAreaLoaded(p_222510_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-          if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
-             BlockState blockstate = this.defaultBlockState();
+@@ -40,8 +_,10 @@
+     @Override
+     protected void randomTick(BlockState p_222508_, ServerLevel p_222509_, BlockPos p_222510_, RandomSource p_222511_) {
+         if (!canBeGrass(p_222508_, p_222509_, p_222510_)) {
++            if (!p_222509_.isAreaLoaded(p_222510_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
+             p_222509_.setBlockAndUpdate(p_222510_, Blocks.DIRT.defaultBlockState());
+         } else {
++            if (!p_222509_.isAreaLoaded(p_222510_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
+             if (p_222509_.getMaxLocalRawBrightness(p_222510_.above()) >= 9) {
+                 BlockState blockstate = this.defaultBlockState();
  

@@ -1,59 +1,58 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -117,7 +_,16 @@
-       }
-    }
+@@ -114,6 +_,7 @@
  
-+   private static final Set<ResourceLocation> KNOWN = new java.util.LinkedHashSet<>();
-+   public static Set<ResourceLocation> getKnownRegistries() {
-+      return java.util.Collections.unmodifiableSet(KNOWN);
-+   }
-+   protected final void markKnown() {
-+      KNOWN.add(key().location());
-+   }
-+
-    public Holder.Reference<T> registerMapping(int p_256563_, ResourceKey<T> p_256594_, T p_256374_, Lifecycle p_256469_) {
-+      markKnown();
-       this.validateWrite(p_256594_);
-       Validate.notNull(p_256594_);
-       Validate.notNull(p_256374_);
-@@ -141,6 +_,8 @@
-          reference = this.byKey.computeIfAbsent(p_256594_, (p_258168_) -> {
-             return Holder.Reference.createStandAlone(this.holderOwner(), p_258168_);
-          });
-+         // Forge: Bind the value immediately so it can be queried while the registry is not frozen
-+         reference.bindValue(p_256374_);
-       }
+     @Override
+     public Holder.Reference<T> register(ResourceKey<T> p_256252_, T p_256591_, RegistrationInfo p_329661_) {
++        markKnown();
+         this.validateWrite(p_256252_);
+         Objects.requireNonNull(p_256252_);
+         Objects.requireNonNull(p_256591_);
+@@ -135,6 +_,8 @@
+             reference.bindKey(p_256252_);
+         } else {
+             reference = this.byKey.computeIfAbsent(p_256252_, p_258168_ -> Holder.Reference.createStandAlone(this.holderOwner(), (ResourceKey<T>)p_258168_));
++            // Forge: Bind the value immediately so it can be queried while the registry is not frozen
++            reference.bindValue(p_256591_);
+         }
  
-       this.byKey.put(p_256594_, reference);
-@@ -296,14 +_,17 @@
-       return this.byKey.containsKey(p_175392_);
-    }
- 
-+   /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
-+   @Deprecated
-+   public void unfreeze() {
-+      this.frozen = false;
-+   }
-+
-    public Registry<T> freeze() {
-       if (this.frozen) {
-          return this;
-       } else {
-          this.frozen = true;
--         this.byValue.forEach((p_247989_, p_247990_) -> {
--            p_247990_.bindValue(p_247989_);
--         });
-          List<ResourceLocation> list = this.byKey.entrySet().stream().filter((p_211055_) -> {
-             return !p_211055_.getValue().isBound();
-          }).map((p_211794_) -> {
-@@ -317,7 +_,8 @@
-                   throw new IllegalStateException("Some intrusive holders were not registered: " + this.unregisteredIntrusiveHolders.values());
-                }
- 
--               this.unregisteredIntrusiveHolders = null;
-+               // Forge: We freeze/unfreeze vanilla registries more than once, so we need to keep the unregistered intrusive holders map around.
-+               // this.unregisteredIntrusiveHolders = null;
-             }
- 
+         this.byKey.put(p_256252_, reference);
+@@ -322,7 +_,6 @@
              return this;
+         } else {
+             this.frozen = true;
+-            this.byValue.forEach((p_247989_, p_247990_) -> p_247990_.bindValue((T)p_247989_));
+             List<ResourceLocation> list = this.byKey
+                 .entrySet()
+                 .stream()
+@@ -338,7 +_,8 @@
+                         throw new IllegalStateException("Some intrusive holders were not registered: " + this.unregisteredIntrusiveHolders.values());
+                     }
+ 
+-                    this.unregisteredIntrusiveHolders = null;
++                    // Forge: We freeze/unfreeze vanilla registries more than once, so we need to keep the unregistered intrusive holders map around.
++                    //this.unregisteredIntrusiveHolders = null;
+                 }
+ 
+                 return this;
+@@ -435,5 +_,20 @@
+     @Override
+     public HolderLookup.RegistryLookup<T> asLookup() {
+         return this.lookup;
++    }
++
++    private static final Set<ResourceLocation> KNOWN = new java.util.LinkedHashSet<>();
++    public static Set<ResourceLocation> getKnownRegistries() {
++        return java.util.Collections.unmodifiableSet(KNOWN);
++    }
++
++    protected final void markKnown() {
++        KNOWN.add(key().location());
++    }
++
++    /** @deprecated Forge: For internal use only. Use the Register events when registering values. */
++    @Deprecated
++    public void unfreeze() {
++        this.frozen = false;
+     }
+ }

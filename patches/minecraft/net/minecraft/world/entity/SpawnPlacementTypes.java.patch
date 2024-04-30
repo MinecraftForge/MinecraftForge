@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/SpawnPlacementTypes.java
++++ b/net/minecraft/world/entity/SpawnPlacementTypes.java
+@@ -28,7 +_,7 @@
+                 BlockPos blockpos = p_332749_.above();
+                 BlockPos blockpos1 = p_332749_.below();
+                 BlockState blockstate = p_328923_.getBlockState(blockpos1);
+-                return !blockstate.isValidSpawn(p_328923_, blockpos1, p_334188_)
++                return !blockstate.isValidSpawn(p_328923_, blockpos1, this, p_334188_)
+                     ? false
+                     : this.isValidEmptySpawnBlock(p_328923_, p_332749_, p_334188_) && this.isValidEmptySpawnBlock(p_328923_, blockpos, p_334188_);
+             } else {

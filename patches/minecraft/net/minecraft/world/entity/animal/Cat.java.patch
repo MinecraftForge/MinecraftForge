@@ -1,21 +1,22 @@
 --- a/net/minecraft/world/entity/animal/Cat.java
 +++ b/net/minecraft/world/entity/animal/Cat.java
-@@ -366,8 +_,8 @@
-             if (this.isOwnedBy(p_28153_)) {
-                if (!(item instanceof DyeItem)) {
-                   if (item.isEdible() && this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
-+                     this.heal((float)itemstack.getFoodProperties(this).getNutrition());
-                      this.usePlayerItem(p_28153_, p_28154_, itemstack);
--                     this.heal((float)item.getFoodProperties().getNutrition());
-                      return InteractionResult.CONSUME;
-                   }
+@@ -379,9 +_,9 @@
+                     }
+                 } else if (this.isFood(itemstack) && this.getHealth() < this.getMaxHealth()) {
+                     if (!this.level().isClientSide()) {
+-                        this.usePlayerItem(p_28153_, p_28154_, itemstack);
+                         FoodProperties foodproperties = itemstack.get(DataComponents.FOOD);
+                         this.heal(foodproperties != null ? (float)foodproperties.nutrition() : 1.0F);
++                        this.usePlayerItem(p_28153_, p_28154_, itemstack);
+                     }
  
-@@ -392,7 +_,7 @@
-             }
-          } else if (this.isFood(itemstack)) {
-             this.usePlayerItem(p_28153_, p_28154_, itemstack);
--            if (this.random.nextInt(3) == 0) {
-+            if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_)) {
-                this.tame(p_28153_);
-                this.setOrderedToSit(true);
-                this.level().broadcastEntityEvent(this, (byte)7);
+                     return InteractionResult.sidedSuccess(this.level().isClientSide());
+@@ -441,7 +_,7 @@
+     }
+ 
+     private void tryToTame(Player p_333297_) {
+-        if (this.random.nextInt(3) == 0) {
++        if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_333297_)) {
+             this.tame(p_333297_);
+             this.setOrderedToSit(true);
+             this.level().broadcastEntityEvent(this, (byte)7);

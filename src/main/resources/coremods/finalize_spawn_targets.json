@@ -14,6 +14,7 @@
     "net/minecraft/world/entity/npc/Villager",
     "net/minecraft/world/entity/raid/Raid",
     "net/minecraft/world/level/NaturalSpawner",
+    "net/minecraft/world/level/block/entity/trialspawner/TrialSpawner",
     "net/minecraft/world/level/levelgen/PatrolSpawner",
     "net/minecraft/world/level/levelgen/PhantomSpawner",
     "net/minecraft/world/level/levelgen/structure/structures/OceanMonumentPieces$OceanMonumentPiece",

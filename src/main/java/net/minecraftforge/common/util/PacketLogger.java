@@ -47,11 +47,8 @@ public class PacketLogger {
         if (packet instanceof ClientboundFinishConfigurationPacket)
             enabled = false;
 
-        if (packet instanceof ICustomPacket) {
-            var data = new FriendlyByteBuf(Unpooled.buffer());
-
-            packet.write(data);
-            LOGGER.info(MARKER, "{} {} {}\n{}", side(side), dir(flow), packet.getClass().getName(), HexDumper.dump(data));
+        if (packet instanceof ICustomPacket custom && custom.getInternalData() != null) {
+            LOGGER.info(MARKER, "{} {} {}\n{}", side(side), dir(flow), packet.getClass().getName(), HexDumper.dump(custom.getInternalData()));
         } else {
             LOGGER.info(MARKER, "{} {} {}", side(side), dir(flow), packet.getClass().getName());
         }

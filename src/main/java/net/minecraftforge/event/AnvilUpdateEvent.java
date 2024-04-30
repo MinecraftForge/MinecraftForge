@@ -21,19 +21,16 @@ import org.jetbrains.annotations.Nullable;
  * if the output is empty, and the event is not canceled, vanilla behavior will execute. <br>
  */
 @Cancelable
-public class AnvilUpdateEvent extends Event
-{
-
+public class AnvilUpdateEvent extends Event {
     private final ItemStack left;
     private final ItemStack right;
     private final String name;
     private ItemStack output;
-    private int cost;
+    private long cost;
     private int materialCost;
     private final Player player;
 
-    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost, Player player)
-    {
+    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, long cost, Player player) {
         this.left = left;
         this.right = right;
         this.output = ItemStack.EMPTY;
@@ -46,16 +43,14 @@ public class AnvilUpdateEvent extends Event
     /**
      * @return The item in the left input (leftmost) anvil slot.
      */
-    public ItemStack getLeft()
-    {
+    public ItemStack getLeft() {
         return left;
     }
 
     /**
      * @return The item in the right input (center) anvil slot.
      */
-    public ItemStack getRight()
-    {
+    public ItemStack getRight() {
         return right;
     }
 
@@ -65,8 +60,7 @@ public class AnvilUpdateEvent extends Event
      * @return The name that the output item will be set to, if applicable.
      */
     @Nullable
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -77,8 +71,7 @@ public class AnvilUpdateEvent extends Event
      * If this event is cancelled, this output stack is discarded.
      * @return The item to set in the output (rightmost) anvil slot.
      */
-    public ItemStack getOutput()
-    {
+    public ItemStack getOutput() {
         return output;
     }
 
@@ -86,8 +79,7 @@ public class AnvilUpdateEvent extends Event
      * Sets the output slot to a specific itemstack.
      * @param output The stack to change the output to.
      */
-    public void setOutput(ItemStack output)
-    {
+    public void setOutput(ItemStack output) {
         this.output = output;
     }
 
@@ -96,8 +88,7 @@ public class AnvilUpdateEvent extends Event
      * When unchanged, it is guaranteed to be left.getRepairCost() + right.getRepairCost().
      * @return The level cost of this anvil operation.
      */
-    public int getCost()
-    {
+    public long getCost() {
         return cost;
     }
 
@@ -107,8 +98,7 @@ public class AnvilUpdateEvent extends Event
      * That is, a player without enough experience may not take the output.
      * @param cost The new level cost.
      */
-    public void setCost(int cost)
-    {
+    public void setCost(long cost) {
         this.cost = cost;
     }
 
@@ -116,8 +106,7 @@ public class AnvilUpdateEvent extends Event
      * The material cost is how many units of the right input stack are consumed.
      * @return The material cost of this anvil operation.
      */
-    public int getMaterialCost()
-    {
+    public int getMaterialCost() {
         return materialCost;
     }
 
@@ -129,16 +118,14 @@ public class AnvilUpdateEvent extends Event
      * The material cost does not prevent the output from being available.
      * @param materialCost The new material cost.
      */
-    public void setMaterialCost(int materialCost)
-    {
+    public void setMaterialCost(int materialCost) {
         this.materialCost = materialCost;
     }
 
     /**
      * @return The player using this anvil container.
      */
-    public Player getPlayer()
-    {
+    public Player getPlayer() {
         return this.player;
     }
 }

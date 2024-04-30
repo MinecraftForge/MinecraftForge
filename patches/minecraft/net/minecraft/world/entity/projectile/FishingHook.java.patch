@@ -1,55 +1,56 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -229,8 +_,8 @@
-    private boolean shouldStopFishing(Player p_37137_) {
-       ItemStack itemstack = p_37137_.getMainHandItem();
-       ItemStack itemstack1 = p_37137_.getOffhandItem();
--      boolean flag = itemstack.is(Items.FISHING_ROD);
--      boolean flag1 = itemstack1.is(Items.FISHING_ROD);
-+      boolean flag = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
-+      boolean flag1 = itemstack1.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
-       if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0D)) {
-          return false;
-       } else {
-@@ -241,7 +_,7 @@
+@@ -238,8 +_,8 @@
+     private boolean shouldStopFishing(Player p_37137_) {
+         ItemStack itemstack = p_37137_.getMainHandItem();
+         ItemStack itemstack1 = p_37137_.getOffhandItem();
+-        boolean flag = itemstack.is(Items.FISHING_ROD);
+-        boolean flag1 = itemstack1.is(Items.FISHING_ROD);
++        boolean flag = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
++        boolean flag1 = itemstack1.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
+         if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0)) {
+             return false;
+         } else {
+@@ -250,6 +_,7 @@
  
-    private void checkCollision() {
-       HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
--      this.onHit(hitresult);
-+      if (hitresult.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) this.onHit(hitresult);
-    }
+     private void checkCollision() {
+         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
++        if (hitresult.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
+         this.hitTargetOrDeflectSelf(hitresult);
+     }
  
-    protected boolean canHitEntity(Entity p_37135_) {
-@@ -403,15 +_,22 @@
-       Player player = this.getPlayerOwner();
-       if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {
-          int i = 0;
-+         net.minecraftforge.event.entity.player.ItemFishedEvent event = null;
-          if (this.hookedIn != null) {
-             this.pullEntity(this.hookedIn);
-             CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, Collections.emptyList());
-             this.level().broadcastEntityEvent(this, (byte)31);
-             i = this.hookedIn instanceof ItemEntity ? 3 : 5;
-          } else if (this.nibble > 0) {
--            LootParams lootparams = (new LootParams.Builder((ServerLevel)this.level())).withParameter(LootContextParams.ORIGIN, this.position()).withParameter(LootContextParams.TOOL, p_37157_).withParameter(LootContextParams.THIS_ENTITY, this).withLuck((float)this.luck + player.getLuck()).create(LootContextParamSets.FISHING);
-+            LootParams lootparams = (new LootParams.Builder((ServerLevel)this.level())).withParameter(LootContextParams.ORIGIN, this.position()).withParameter(LootContextParams.TOOL, p_37157_).withParameter(LootContextParams.THIS_ENTITY, this).withParameter(LootContextParams.KILLER_ENTITY, this.getOwner()).withParameter(LootContextParams.THIS_ENTITY, this).withLuck((float)this.luck + player.getLuck()).create(LootContextParamSets.FISHING);
-             LootTable loottable = this.level().getServer().getLootData().getLootTable(BuiltInLootTables.FISHING);
-             List<ItemStack> list = loottable.getRandomItems(lootparams);
-+            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.onGround() ? 2 : 1, this);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+            if (event.isCanceled()) {
-+               this.discard();
-+               return event.getRodDamage();
-+            }
-             CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, list);
+@@ -439,6 +_,7 @@
+         Player player = this.getPlayerOwner();
+         if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {
+             int i = 0;
++            net.minecraftforge.event.entity.player.ItemFishedEvent event = null;
+             if (this.hookedIn != null) {
+                 this.pullEntity(this.hookedIn);
+                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, Collections.emptyList());
+@@ -449,10 +_,17 @@
+                     .withParameter(LootContextParams.ORIGIN, this.position())
+                     .withParameter(LootContextParams.TOOL, p_37157_)
+                     .withParameter(LootContextParams.THIS_ENTITY, this)
++                    .withParameter(LootContextParams.KILLER_ENTITY, this.getOwner())
++                    .withParameter(LootContextParams.THIS_ENTITY, this)
+                     .withLuck((float)this.luck + player.getLuck())
+                     .create(LootContextParamSets.FISHING);
+                 LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
+                 List<ItemStack> list = loottable.getRandomItems(lootparams);
++                event = net.minecraftforge.event.ForgeEventFactory.onPlayerFishedItem(list, this.onGround() ? 2 : 1, this);
++                if (event.isCanceled()) {
++                    this.discard();
++                    return event.getRodDamage();
++                }
+                 CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, list);
  
-             for(ItemStack itemstack : list) {
-@@ -436,7 +_,7 @@
-          }
+                 for (ItemStack itemstack : list) {
+@@ -482,7 +_,7 @@
+             }
  
-          this.discard();
--         return i;
-+         return event == null ? i : event.getRodDamage();
-       } else {
-          return 0;
-       }
+             this.discard();
+-            return i;
++            return event == null ? i : event.getRodDamage();
+         } else {
+             return 0;
+         }

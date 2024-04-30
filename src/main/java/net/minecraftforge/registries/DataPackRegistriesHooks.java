@@ -19,13 +19,13 @@ import java.util.stream.Stream;
 public final class DataPackRegistriesHooks {
     private DataPackRegistriesHooks() {} // utility class
 
-    private static final Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
+    private static final Map<ResourceKey<? extends Registry<?>>, RegistryDataLoader.RegistryData<?>> NETWORKABLE_REGISTRIES = new LinkedHashMap<>();
     private static final List<RegistryDataLoader.RegistryData<?>> WORLDGEN_REGISTRIES = new ArrayList<>();
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES = new HashSet<>();
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCED_CUSTOM_REGISTRIES_VIEW = Collections.unmodifiableSet(SYNCED_CUSTOM_REGISTRIES);
 
     /* Internal forge hook for retaining mutable access to RegistryAccess's codec registry when it bootstraps. */
-    public static Map<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> grabNetworkableRegistries(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> builder) {
+    public static Map<ResourceKey<? extends Registry<?>>, RegistryDataLoader.RegistryData<?>> grabNetworkableRegistries(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryDataLoader.RegistryData<?>> builder) {
         if (!StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(RegistrySynchronization.class))
             throw new IllegalCallerException("Attempted to call DataPackRegistriesHooks#grabNetworkableRegistries!");
         NETWORKABLE_REGISTRIES.forEach(builder::put);
@@ -40,7 +40,7 @@ public final class DataPackRegistriesHooks {
         WORLDGEN_REGISTRIES.add(loaderData);
         if (data.networkCodec() != null) {
             SYNCED_CUSTOM_REGISTRIES.add(loaderData.key());
-            NETWORKABLE_REGISTRIES.put(loaderData.key(), new RegistrySynchronization.NetworkedRegistryData<>(loaderData.key(), data.networkCodec()));
+            NETWORKABLE_REGISTRIES.put(loaderData.key(), new RegistryDataLoader.RegistryData<>(loaderData.key(), data.networkCodec()));
         }
     }
 

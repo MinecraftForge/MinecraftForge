@@ -1,48 +1,48 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
 @@ -59,14 +_,9 @@
-       if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
-          p_127520_.append("-- Head --\n");
-          p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
--         p_127520_.append("Stacktrace:\n");
+         if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
+             p_127520_.append("-- Head --\n");
+             p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-            p_127520_.append("Stacktrace:\n");
 -
--         for(StackTraceElement stacktraceelement : this.uncategorizedStackTrace) {
--            p_127520_.append("\t").append("at ").append((Object)stacktraceelement);
+-            for (StackTraceElement stacktraceelement : this.uncategorizedStackTrace) {
+-                p_127520_.append("\t").append("at ").append(stacktraceelement);
+-                p_127520_.append("\n");
+-            }
+-
 -            p_127520_.append("\n");
--         }
--
--         p_127520_.append("\n");
-+         p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods(this.exception, this.uncategorizedStackTrace));
-+         p_127520_.append("Stacktrace:");
-+         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.uncategorizedStackTrace));
-       }
++            p_127520_.append(net.minecraftforge.logging.CrashReportAnalyser.appendSuspectedMods(this.exception, this.uncategorizedStackTrace));
++            p_127520_.append("Stacktrace:");
++            p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.uncategorizedStackTrace));
+         }
  
-       for(CrashReportCategory crashreportcategory : this.details) {
+         for (CrashReportCategory crashreportcategory : this.details) {
 @@ -74,6 +_,7 @@
-          p_127520_.append("\n\n");
-       }
+             p_127520_.append("\n\n");
+         }
  
-+      net.minecraftforge.logging.CrashReportExtender.extendSystemReport(systemReport);
-       this.systemReport.appendToCrashReportString(p_127520_);
-    }
++        net.minecraftforge.logging.CrashReportExtender.extendSystemReport(systemReport);
+         this.systemReport.appendToCrashReportString(p_127520_);
+     }
  
 @@ -93,18 +_,7 @@
-          throwable.setStackTrace(this.exception.getStackTrace());
-       }
+             throwable.setStackTrace(this.exception.getStackTrace());
+         }
  
--      String s;
--      try {
--         stringwriter = new StringWriter();
--         printwriter = new PrintWriter(stringwriter);
--         throwable.printStackTrace(printwriter);
--         s = stringwriter.toString();
--      } finally {
--         IOUtils.closeQuietly((Writer)stringwriter);
--         IOUtils.closeQuietly((Writer)printwriter);
--      }
+-        String s;
+-        try {
+-            stringwriter = new StringWriter();
+-            printwriter = new PrintWriter(stringwriter);
+-            throwable.printStackTrace(printwriter);
+-            s = stringwriter.toString();
+-        } finally {
+-            IOUtils.closeQuietly((Writer)stringwriter);
+-            IOUtils.closeQuietly((Writer)printwriter);
+-        }
 -
--      return s;
-+      return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(throwable);
-    }
+-        return s;
++        return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(throwable);
+     }
  
-    public String getFriendlyReport() {
+     public String getFriendlyReport() {

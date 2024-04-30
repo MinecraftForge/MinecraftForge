@@ -6,42 +6,42 @@
  
 -public class BambooStalkBlock extends Block implements BonemealableBlock {
 +public class BambooStalkBlock extends Block implements BonemealableBlock, net.minecraftforge.common.IPlantable {
-    public static final MapCodec<BambooStalkBlock> CODEC = simpleCodec(BambooStalkBlock::new);
-    protected static final float SMALL_LEAVES_AABB_OFFSET = 3.0F;
-    protected static final float LARGE_LEAVES_AABB_OFFSET = 5.0F;
-@@ -116,10 +_,11 @@
- 
-    public void randomTick(BlockState p_261931_, ServerLevel p_261751_, BlockPos p_261616_, RandomSource p_261766_) {
-       if (p_261931_.getValue(STAGE) == 0) {
--         if (p_261766_.nextInt(3) == 0 && p_261751_.isEmptyBlock(p_261616_.above()) && p_261751_.getRawBrightness(p_261616_.above(), 0) >= 9) {
-+         if (p_261751_.isEmptyBlock(p_261616_.above()) && p_261751_.getRawBrightness(p_261616_.above(), 0) >= 9) {
-             int i = this.getHeightBelowUpToMax(p_261751_, p_261616_) + 1;
--            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_261751_, p_261616_, p_261931_, p_261766_.nextInt(3) == 0)) {
-                this.growBamboo(p_261931_, p_261751_, p_261616_, p_261766_, i);
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_261751_, p_261616_, p_261931_);
+     public static final MapCodec<BambooStalkBlock> CODEC = simpleCodec(BambooStalkBlock::new);
+     protected static final float SMALL_LEAVES_AABB_OFFSET = 3.0F;
+     protected static final float LARGE_LEAVES_AABB_OFFSET = 5.0F;
+@@ -130,10 +_,12 @@
+     @Override
+     protected void randomTick(BlockState p_261931_, ServerLevel p_261751_, BlockPos p_261616_, RandomSource p_261766_) {
+         if (p_261931_.getValue(STAGE) == 0) {
+-            if (p_261766_.nextInt(3) == 0 && p_261751_.isEmptyBlock(p_261616_.above()) && p_261751_.getRawBrightness(p_261616_.above(), 0) >= 9) {
++            boolean vanilla = p_261766_.nextInt(3) == 0;
++            if (p_261751_.isEmptyBlock(p_261616_.above()) && p_261751_.getRawBrightness(p_261616_.above(), 0) >= 9) {
+                 int i = this.getHeightBelowUpToMax(p_261751_, p_261616_) + 1;
+-                if (i < 16) {
++                if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_261751_, p_261616_, p_261931_, vanilla)) {
+                     this.growBamboo(p_261931_, p_261751_, p_261616_, p_261766_, i);
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_261751_, p_261616_, p_261931_);
+                 }
              }
-          }
+         }
+@@ -193,7 +_,7 @@
  
-@@ -173,7 +_,7 @@
-    }
+     @Override
+     protected float getDestroyProgress(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
+-        return p_262171_.getMainHandItem().getItem() instanceof SwordItem ? 1.0F : super.getDestroyProgress(p_261691_, p_262171_, p_261621_, p_261500_);
++        return p_262171_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.getDestroyProgress(p_261691_, p_262171_, p_261621_, p_261500_);
+     }
  
-    public float getDestroyProgress(BlockState p_261691_, Player p_262171_, BlockGetter p_261621_, BlockPos p_261500_) {
--      return p_262171_.getMainHandItem().getItem() instanceof SwordItem ? 1.0F : super.getDestroyProgress(p_261691_, p_262171_, p_261621_, p_261500_);
-+      return p_262171_.getMainHandItem().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.getDestroyProgress(p_261691_, p_262171_, p_261621_, p_261500_);
-    }
+     protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
+@@ -240,5 +_,11 @@
+         }
  
-    protected void growBamboo(BlockState p_261855_, Level p_262076_, BlockPos p_262109_, RandomSource p_261633_, int p_261759_) {
-@@ -214,5 +_,12 @@
-       }
- 
-       return i;
-+   }
+         return i;
++    }
 +
-+   @Override
-+   public BlockState getPlant(BlockGetter world, BlockPos pos) {
-+      BlockState state = world.getBlockState(pos);
-+      if (state.getBlock() != this) return defaultBlockState();
-+      return state;
-    }
++    @Override
++    public BlockState getPlant(BlockGetter world, BlockPos pos) {
++        BlockState state = world.getBlockState(pos);
++        return state.getBlock() == this ? state : defaultBlockState();
+     }
  }

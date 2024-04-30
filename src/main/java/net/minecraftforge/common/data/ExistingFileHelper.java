@@ -7,10 +7,12 @@ package net.minecraftforge.common.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -19,15 +21,22 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.resources.ClientPackSource;
 import net.minecraft.client.resources.IndexedAssetSource;
 import net.minecraft.data.DataProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.FilePackResources.FileResourcesSupplier;
 import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.FolderRepositorySource;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.validation.DirectoryValidator;
+import net.minecraft.world.level.validation.ForbiddenSymlinkInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources.PathResourcesSupplier;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -102,16 +111,29 @@ public class ExistingFileHelper {
             candidateClientResources.add(ClientPackSource.createVanillaPackSource(IndexedAssetSource.createIndexFs(assetsDir.toPath(), assetIndex)));
         }
         candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
+
+        var symlinks = new ArrayList<ForbiddenSymlinkInfo>();
+        var folder = new FolderRepositorySource.FolderPackDetector(new DirectoryValidator(p  -> true));
+
         for (Path existing : existingPacks) {
-            File file = existing.toFile();
-            PackResources pack = file.isDirectory() ? new PathPackResources(file.getName(), file.toPath(), false) : new FileResourcesSupplier(file, false).openPrimary(file.getName()); // FilePackResources(file.getName(), file, false, "");
-            candidateClientResources.add(pack);
-            candidateServerResources.add(pack);
+            try {
+                var info = new PackLocationInfo(existing.getFileName().toString(), Component.literal("data_gen"), PackSource.DEFAULT, Optional.empty());
+                var supplier = folder.detectPackResources(existing, symlinks, false);
+                PackResources pack = supplier.openPrimary(info);
+                candidateClientResources.add(pack);
+                candidateServerResources.add(pack);
+            }catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         for (String existingMod : existingMods) {
             IModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
-                PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo);
+                var root = modFileInfo.getFile().findResource("/");
+                var supplier = new PathResourcesSupplier(root);
+                var info = new PackLocationInfo("mod:" + existingMod, Component.literal("data_gen:" + existingMod), PackSource.DEFAULT, Optional.empty());
+                var pack = supplier.openPrimary(info);
                 candidateClientResources.add(pack);
                 candidateServerResources.add(pack);
             }

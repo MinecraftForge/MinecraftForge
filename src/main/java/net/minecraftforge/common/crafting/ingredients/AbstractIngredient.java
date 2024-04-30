@@ -5,7 +5,6 @@
 
 package net.minecraftforge.common.crafting.ingredients;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -71,11 +70,5 @@ public abstract class AbstractIngredient extends Ingredient {
     @Deprecated
     public static Ingredient of(TagKey<Item> tag) {
         throw new UnsupportedOperationException("Use Ingredient.of()");
-    }
-
-    /** @deprecated use {@link Ingredient#fromNetwork(FriendlyByteBuf)} */
-    @Deprecated
-    public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
-        throw new UnsupportedOperationException("Use Ingredient.fromNetwork()");
     }
 }

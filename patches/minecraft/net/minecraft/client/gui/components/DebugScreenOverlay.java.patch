@@ -1,92 +1,93 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -95,9 +_,9 @@
-    @Nullable
-    private CompletableFuture<LevelChunk> serverChunk;
-    private boolean renderDebug;
--   private boolean renderProfilerChart;
--   private boolean renderFpsCharts;
--   private boolean renderNetworkCharts;
-+   protected boolean renderProfilerChart;
-+   protected boolean renderFpsCharts;
-+   protected boolean renderNetworkCharts;
-    private final SampleLogger frameTimeLogger = new SampleLogger();
-    private final SampleLogger tickTimeLogger = new SampleLogger();
-    private final SampleLogger pingLogger = new SampleLogger();
-@@ -124,14 +_,18 @@
-       this.clientChunk = null;
-    }
+@@ -101,9 +_,9 @@
+     @Nullable
+     private CompletableFuture<LevelChunk> serverChunk;
+     private boolean renderDebug;
+-    private boolean renderProfilerChart;
+-    private boolean renderFpsCharts;
+-    private boolean renderNetworkCharts;
++    protected boolean renderProfilerChart;
++    protected boolean renderFpsCharts;
++    protected boolean renderNetworkCharts;
+     private final LocalSampleLogger frameTimeLogger = new LocalSampleLogger(1);
+     private final LocalSampleLogger tickTimeLogger = new LocalSampleLogger(TpsDebugDimensions.values().length);
+     private final LocalSampleLogger pingLogger = new LocalSampleLogger(1);
+@@ -129,14 +_,18 @@
+         this.clientChunk = null;
+     }
  
--   public void render(GuiGraphics p_281427_) {
--      this.minecraft.getProfiler().push("debug");
-+   protected void update() {
-       Entity entity = this.minecraft.getCameraEntity();
-       this.block = entity.pick(20.0D, 0.0F, false);
-       this.liquid = entity.pick(20.0D, 0.0F, true);
--      p_281427_.drawManaged(() -> {
--         this.drawGameInformation(p_281427_);
--         this.drawSystemInformation(p_281427_);
-+   }
+-    public void render(GuiGraphics p_281427_) {
+-        this.minecraft.getProfiler().push("debug");
++    protected void update() {
+         Entity entity = this.minecraft.getCameraEntity();
+         this.block = entity.pick(20.0, 0.0F, false);
+         this.liquid = entity.pick(20.0, 0.0F, true);
+-        p_281427_.drawManaged(() -> {
++    }
 +
-+   protected void drawText(GuiGraphics p_281427_) {
-+       this.drawGameInformation(p_281427_);
-+       this.drawSystemInformation(p_281427_);
-+   }
++    protected void drawText(GuiGraphics p_281427_) {
+             this.drawGameInformation(p_281427_);
+             this.drawSystemInformation(p_281427_);
++    }
 +
-+   protected void drawFPSCharts(GuiGraphics p_281427_) {
-          if (this.renderFpsCharts) {
-             int i = p_281427_.guiWidth();
-             int j = i / 2;
-@@ -141,7 +_,9 @@
-                this.tpsChart.drawChart(p_281427_, i - k, k);
++    protected void drawFPSCharts(GuiGraphics p_281427_) {
+             if (this.renderFpsCharts) {
+                 int i = p_281427_.guiWidth();
+                 int j = i / 2;
+@@ -146,7 +_,9 @@
+                     this.tpsChart.drawChart(p_281427_, i - k, k);
+                 }
              }
-          }
-+   }
++    }
  
-+   protected void drawNetworkCharts(GuiGraphics p_281427_) {
-          if (this.renderNetworkCharts) {
-             int l = p_281427_.guiWidth();
-             int i1 = l / 2;
-@@ -152,17 +_,32 @@
-             int j1 = this.pingChart.getWidth(i1);
-             this.pingChart.drawChart(p_281427_, l - j1, j1);
-          }
-+   }
++    protected void drawNetworkCharts(GuiGraphics p_281427_) {
+             if (this.renderNetworkCharts) {
+                 int l = p_281427_.guiWidth();
+                 int i1 = l / 2;
+@@ -157,12 +_,21 @@
+                 int j1 = this.pingChart.getWidth(i1);
+                 this.pingChart.drawChart(p_281427_, l - j1, j1);
+             }
++    }
 +
-+   public void render(GuiGraphics p_281427_) {
-+      this.minecraft.getProfiler().push("debug");
-+      this.update();
-+      p_281427_.drawManaged(() -> {
-+         this.drawText(p_281427_);
-+         this.drawFPSCharts(p_281427_);
-+         this.drawNetworkCharts(p_281427_);
++    public void render(GuiGraphics p_281427_) {
++        this.minecraft.getProfiler().push("debug");
++        this.update();
++        p_281427_.drawManaged(() -> {
++           this.drawText(p_281427_);
++           this.drawFPSCharts(p_281427_);
++           this.drawNetworkCharts(p_281427_);
+         });
+         this.minecraft.getProfiler().pop();
+     }
  
-       });
-       this.minecraft.getProfiler().pop();
-    }
- 
--   protected void drawGameInformation(GuiGraphics p_281525_) {
--      List<String> list = this.getGameInformation();
-+   protected List<String> getOverlayHelp() {
-+      List<String> list = Lists.newArrayList();
-       list.add("");
-       boolean flag = this.minecraft.getSingleplayerServer() != null;
-       list.add("Debug charts: [F3+1] Profiler " + (this.renderProfilerChart ? "visible" : "hidden") + "; [F3+2] " + (flag ? "FPS + TPS " : "FPS ") + (this.renderFpsCharts ? "visible" : "hidden") + "; [F3+3] " + (!this.minecraft.isLocalServer() ? "Bandwidth + Ping" : "Ping") + (this.renderNetworkCharts ? " visible" : " hidden"));
-       list.add("For help: press F3 + Q");
-+      return list;
-+   }
-+
+-    protected void drawGameInformation(GuiGraphics p_281525_) {
+-        List<String> list = this.getGameInformation();
++    protected List<String> getOverlayHelp() {
++        List<String> list = Lists.newArrayList();
+         list.add("");
+         boolean flag = this.minecraft.getSingleplayerServer() != null;
+         list.add(
+@@ -176,7 +_,12 @@
+                 + (this.renderNetworkCharts ? " visible" : " hidden")
+         );
+         list.add("For help: press F3 + Q");
+-        this.renderLines(p_281525_, list, true);
++        return list;
++    }
 +   protected void drawGameInformation(GuiGraphics p_281525_) {
 +      List<String> list = this.getGameInformation();
 +      list.addAll(this.getOverlayHelp());
-       this.renderLines(p_281525_, list, true);
-    }
++      this.renderLines(p_281525_, list, true);
+     }
  
-@@ -451,6 +_,7 @@
-             list.add("");
-             list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
-             list.add(String.valueOf((Object)BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())));
-+            entity.getType().builtInRegistryHolder().tags().forEach(t -> list.add("#" + t.location()));
-          }
+     protected void drawSystemInformation(GuiGraphics p_281261_) {
+@@ -529,6 +_,7 @@
+                 list.add("");
+                 list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
+                 list.add(String.valueOf(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())));
++                entity.getType().builtInRegistryHolder().tags().forEach(t -> list.add("#" + t.location()));
+             }
  
-          return list;
+             return list;

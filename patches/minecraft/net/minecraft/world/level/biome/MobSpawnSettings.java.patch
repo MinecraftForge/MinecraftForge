@@ -1,35 +1,35 @@
 --- a/net/minecraft/world/level/biome/MobSpawnSettings.java
 +++ b/net/minecraft/world/level/biome/MobSpawnSettings.java
-@@ -40,20 +_,32 @@
-    private final float creatureGenerationProbability;
-    private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners;
-    private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> mobSpawnCosts;
-+   private final java.util.Set<MobCategory> typesView;
-+   private final java.util.Set<EntityType<?>> costView;
+@@ -49,6 +_,8 @@
+     private final float creatureGenerationProbability;
+     private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawners;
+     private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> mobSpawnCosts;
++    private final java.util.Set<MobCategory> typesView;
++    private final java.util.Set<EntityType<?>> costView;
  
-    MobSpawnSettings(float p_196689_, Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> p_196690_, Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> p_196691_) {
-       this.creatureGenerationProbability = p_196689_;
-       this.spawners = ImmutableMap.copyOf(p_196690_);
-       this.mobSpawnCosts = ImmutableMap.copyOf(p_196691_);
-+      this.typesView = java.util.Collections.unmodifiableSet(this.spawners.keySet());
-+      this.costView = java.util.Collections.unmodifiableSet(this.mobSpawnCosts.keySet());
-    }
+     MobSpawnSettings(
+         float p_196689_,
+@@ -58,6 +_,8 @@
+         this.creatureGenerationProbability = p_196689_;
+         this.spawners = ImmutableMap.copyOf(p_196690_);
+         this.mobSpawnCosts = ImmutableMap.copyOf(p_196691_);
++        this.typesView = java.util.Collections.unmodifiableSet(this.spawners.keySet());
++        this.costView = java.util.Collections.unmodifiableSet(this.mobSpawnCosts.keySet());
+     }
  
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobs(MobCategory p_151799_) {
-       return this.spawners.getOrDefault(p_151799_, EMPTY_MOB_LIST);
-    }
+     public WeightedRandomList<MobSpawnSettings.SpawnerData> getMobs(MobCategory p_151799_) {
+@@ -71,6 +_,14 @@
  
-+   public java.util.Set<MobCategory> getSpawnerTypes() {
-+       return this.typesView;
-+   }
+     public float getCreatureProbability() {
+         return this.creatureGenerationProbability;
++    }
 +
-    @Nullable
-    public MobSpawnSettings.MobSpawnCost getMobSpawnCost(EntityType<?> p_48346_) {
-       return this.mobSpawnCosts.get(p_48346_);
-+   }
++    public java.util.Set<MobCategory> getSpawnerTypes() {
++        return this.typesView;
++    }
 +
-+   public java.util.Set<EntityType<?>> getEntityTypes() {
-+       return this.costView;
-    }
++    public java.util.Set<EntityType<?>> getEntityTypes() {
++        return this.costView;
+     }
  
-    public float getCreatureProbability() {
+     public static class Builder {

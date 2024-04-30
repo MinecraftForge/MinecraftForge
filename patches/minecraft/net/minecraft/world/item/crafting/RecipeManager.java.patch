@@ -1,34 +1,39 @@
 --- a/net/minecraft/world/item/crafting/RecipeManager.java
 +++ b/net/minecraft/world/item/crafting/RecipeManager.java
-@@ -37,9 +_,17 @@
-    private Map<RecipeType<?>, Map<ResourceLocation, RecipeHolder<?>>> recipes = ImmutableMap.of();
-    private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
-    private boolean hasErrors;
-+   private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
+@@ -40,22 +_,35 @@
+     private Multimap<RecipeType<?>, RecipeHolder<?>> byType = ImmutableMultimap.of();
+     private Map<ResourceLocation, RecipeHolder<?>> byName = ImmutableMap.of();
+     private boolean hasErrors;
++    private final net.minecraftforge.common.crafting.conditions.ICondition.IContext context; //Forge: add context
  
-+   /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
-+   @Deprecated
-    public RecipeManager() {
-+      this(net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
-+   }
++    /** @deprecated Forge: use {@linkplain RecipeManager#RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext) constructor with context}. */
+     public RecipeManager(HolderLookup.Provider p_330459_) {
++        this(p_330459_, net.minecraftforge.common.crafting.conditions.ICondition.IContext.EMPTY);
++    }
 +
-+   public RecipeManager(net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-       super(GSON, "recipes");
-+      this.context = context;
-    }
++    public RecipeManager(HolderLookup.Provider p_330459_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
+         super(GSON, "recipes");
+         this.registries = p_330459_;
++        this.context = context;
+     }
  
-    protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
-@@ -49,8 +_,13 @@
+     protected void apply(Map<ResourceLocation, JsonElement> p_44037_, ResourceManager p_44038_, ProfilerFiller p_44039_) {
+         this.hasErrors = false;
+         Builder<RecipeType<?>, RecipeHolder<?>> builder = ImmutableMultimap.builder();
+         com.google.common.collect.ImmutableMap.Builder<ResourceLocation, RecipeHolder<?>> builder1 = ImmutableMap.builder();
+-        RegistryOps<JsonElement> registryops = this.registries.createSerializationContext(JsonOps.INSTANCE);
++        RegistryOps<JsonElement> registryops = this.registries.createSerializationContext(JsonOps.INSTANCE)
++            .withContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext.KEY, this.context);
  
-       for(Map.Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
-          ResourceLocation resourcelocation = entry.getKey();
-+         if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
+         for (Entry<ResourceLocation, JsonElement> entry : p_44037_.entrySet()) {
+             ResourceLocation resourcelocation = entry.getKey();
++            if (resourcelocation.getPath().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
  
-          try {
-+            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.ForgeHooks.readAndTestCondition(this.context, entry.getValue().getAsJsonObject())) {
-+               LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
-+               continue;
-+            }
-             RecipeHolder<?> recipeholder = fromJson(resourcelocation, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));
-             map.computeIfAbsent(recipeholder.value().getType(), (p_44075_) -> {
-                return ImmutableMap.builder();
+             try {
++                if (entry.getValue().isJsonObject() && !net.minecraftforge.common.ForgeHooks.readAndTestCondition(registryops, entry.getValue().getAsJsonObject())) {
++                    LOGGER.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++                    continue;
++                }
+                 Recipe<?> recipe = Recipe.CODEC.parse(registryops, entry.getValue()).getOrThrow(JsonParseException::new);
+                 RecipeHolder<?> recipeholder = new RecipeHolder<>(resourcelocation, recipe);
+                 builder.put(recipe.getType(), recipeholder);

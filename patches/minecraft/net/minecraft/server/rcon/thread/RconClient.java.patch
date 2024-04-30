@@ -1,22 +1,22 @@
 --- a/net/minecraft/server/rcon/thread/RconClient.java
 +++ b/net/minecraft/server/rcon/thread/RconClient.java
-@@ -123,13 +_,14 @@
-    }
+@@ -123,14 +_,11 @@
+     }
  
-    private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
--      int i = p_11596_.length();
+     private void sendCmdResponse(int p_11595_, String p_11596_) throws IOException {
+-        int i = p_11596_.length();
 -
-+      byte[] whole = p_11596_.getBytes(StandardCharsets.UTF_8);
-+      int i = whole.length;
-+      int start = 0;
-       do {
-          int j = 4096 <= i ? 4096 : i;
--         this.send(p_11595_, 0, p_11596_.substring(0, j));
--         p_11596_ = p_11596_.substring(j);
--         i = p_11596_.length();
-+         this.send(p_11595_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
-+         i -= j;
-+         start += j;
-       } while(0 != i);
+-        do {
+-            int j = 4096 <= i ? 4096 : i;
+-            this.send(p_11595_, 0, p_11596_.substring(0, j));
+-            p_11596_ = p_11596_.substring(j);
+-            i = p_11596_.length();
+-        } while (0 != i);
++        // Forge: Actually convert to UTF8 and process bytes accordingly. Why do we do this? UTF8 should be single byte per character
++        byte[] data = p_11596_.getBytes(StandardCharsets.UTF_8);
++        for (int x = 0; x < data.length; x += 4096) {
++            this.send(p_11595_, 0, new String(data, x, Math.min(4096, data.length - x), StandardCharsets.UTF_8));
++        }
+     }
  
-    }
+     @Override

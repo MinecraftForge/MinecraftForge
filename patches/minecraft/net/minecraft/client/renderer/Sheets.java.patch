@@ -1,42 +1,42 @@
 --- a/net/minecraft/client/renderer/Sheets.java
 +++ b/net/minecraft/client/renderer/Sheets.java
-@@ -146,11 +_,13 @@
-    }
+@@ -144,11 +_,13 @@
+     }
  
-    private static Material createSignMaterial(WoodType p_173386_) {
--      return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/" + p_173386_.name()));
-+      ResourceLocation location = new ResourceLocation(p_173386_.name());
-+      return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/" + location.getPath()));
-    }
+     private static Material createSignMaterial(WoodType p_173386_) {
+-        return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/" + p_173386_.name()));
++        ResourceLocation location = new ResourceLocation(p_173386_.name());
++        return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/" + location.getPath()));
+     }
  
-    private static Material createHangingSignMaterial(WoodType p_251735_) {
--      return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/hanging/" + p_251735_.name()));
-+      ResourceLocation location = new ResourceLocation(p_251735_.name());
-+      return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/hanging/" + location.getPath()));
-    }
+     private static Material createHangingSignMaterial(WoodType p_251735_) {
+-        return new Material(SIGN_SHEET, new ResourceLocation("entity/signs/hanging/" + p_251735_.name()));
++        ResourceLocation location = new ResourceLocation(p_251735_.name());
++        return new Material(SIGN_SHEET, new ResourceLocation(location.getNamespace(), "entity/signs/hanging/" + location.getPath()));
+     }
  
-    public static Material getSignMaterial(WoodType p_173382_) {
-@@ -209,6 +_,23 @@
-          case SINGLE:
-          default:
-             return p_110773_;
-+      }
-+   }
+     public static Material getSignMaterial(WoodType p_173382_) {
+@@ -207,6 +_,23 @@
+             case SINGLE:
+             default:
+                 return p_110773_;
++        }
++    }
 +
-+   /**
-+    * Not threadsafe. Enqueue it in client setup.
-+    */
-+   public static void addWoodType(WoodType woodType) {
-+      SIGN_MATERIALS.put(woodType, createSignMaterial(woodType));
-+      HANGING_SIGN_MATERIALS.put(woodType, createHangingSignMaterial(woodType));
-+   }
++    /**
++     * Not thread-safe. Enqueue it in client setup.
++     */
++    public static void addWoodType(WoodType woodType) {
++        SIGN_MATERIALS.put(woodType, createSignMaterial(woodType));
++        HANGING_SIGN_MATERIALS.put(woodType, createHangingSignMaterial(woodType));
++    }
 +
-+   static {
-+      if (net.minecraftforge.fml.ModLoader.isLoadingStateValid() && !net.minecraftforge.fml.ModLoader.get().hasCompletedState("LOAD_REGISTRIES")) {
-+         com.mojang.logging.LogUtils.getLogger().error(
-+                 "net.minecraft.client.renderer.Sheets loaded too early, modded registry-based materials may not work correctly",
-+                 new IllegalStateException("net.minecraft.client.renderer.Sheets loaded too early")
-+         );
-       }
-    }
++    static {
++        if (net.minecraftforge.fml.ModLoader.isLoadingStateValid() && !net.minecraftforge.fml.ModLoader.get().hasCompletedState("LOAD_REGISTRIES")) {
++            com.mojang.logging.LogUtils.getLogger().error(
++                    "net.minecraft.client.renderer.Sheets loaded too early, modded registry-based materials may not work correctly",
++                    new IllegalStateException("net.minecraft.client.renderer.Sheets loaded too early")
++            );
+         }
+     }
  }

@@ -1,59 +1,54 @@
 --- a/net/minecraft/core/RegistrySetBuilder.java
 +++ b/net/minecraft/core/RegistrySetBuilder.java
-@@ -68,6 +_,10 @@
-       return this.add(p_256261_, Lifecycle.stable(), p_256010_);
-    }
+@@ -74,6 +_,10 @@
+         return this.add(p_256261_, Lifecycle.stable(), p_256010_);
+     }
  
-+   public List<? extends ResourceKey<? extends Registry<?>>> getEntryKeys() {
-+      return this.entries.stream().map(RegistrySetBuilder.RegistryStub::key).toList();
-+   }
++    public List<? extends ResourceKey<? extends Registry<?>>> getEntryKeys() {
++        return this.entries.stream().map(RegistrySetBuilder.RegistryStub::key).toList();
++    }
 +
-    private RegistrySetBuilder.BuildState createState(RegistryAccess p_256400_) {
-       RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.create(p_256400_, this.entries.stream().map(RegistrySetBuilder.RegistryStub::key));
-       this.entries.forEach((p_255629_) -> {
-@@ -121,18 +_,21 @@
-             };
-             map.put(resourcekey, lazyholder);
-          });
--         HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookupOrThrow(p_313093_);
-+         HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookup(p_313093_).orElse(null);
-+         Lifecycle lifecycle = registrylookup.registryLifecycle();
-+         if (registrylookup1 != null) {
-          registrylookup1.listElements().forEach((p_308430_) -> {
-             ResourceKey<T> resourcekey = p_308430_.key();
-             map.computeIfAbsent(resourcekey, (p_308437_) -> {
-                RegistrySetBuilder.LazyHolder<T> lazyholder = new RegistrySetBuilder.LazyHolder<>(p_312548_, resourcekey);
-                lazyholder.supplier = () -> {
--                  return cloner.clone((T)p_308430_.value(), p_313198_, p_311605_.getValue());
-+                  return cloner.clone((T) p_308430_.value(), p_313198_, p_311605_.getValue());
-                };
-                return lazyholder;
+     private RegistrySetBuilder.BuildState createState(RegistryAccess p_256400_) {
+         RegistrySetBuilder.BuildState registrysetbuilder$buildstate = RegistrySetBuilder.BuildState.create(
+             p_256400_, this.entries.stream().map(RegistrySetBuilder.RegistryStub::key)
+@@ -180,14 +_,16 @@
+             throw new NullPointerException("No cloner for " + p_313093_.location());
+         } else {
+             Map<ResourceKey<T>, Holder.Reference<T>> map = new HashMap<>();
+-            HolderLookup.RegistryLookup<T> registrylookup = p_311682_.lookupOrThrow(p_313093_);
++            HolderLookup.RegistryLookup<T> registrylookup = p_311682_.lookup(p_313093_).orElse(null);
+             registrylookup.listElements().forEach(p_308453_ -> {
+                 ResourceKey<T> resourcekey = p_308453_.key();
+                 RegistrySetBuilder.LazyHolder<T> lazyholder = new RegistrySetBuilder.LazyHolder<>(p_312548_, resourcekey);
+                 lazyholder.supplier = () -> cloner.clone((T)p_308453_.value(), p_311682_, p_311605_.getValue());
+                 map.put(resourcekey, lazyholder);
              });
-          });
--         Lifecycle lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
-+         lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
-+         }
-          return lookupFromMap(p_313093_, lifecycle, map);
-       }
-    }
-@@ -168,7 +_,7 @@
-          RegistrySetBuilder.UniversalLookup registrysetbuilder$universallookup = new RegistrySetBuilder.UniversalLookup(registrysetbuilder$compositeowner);
-          ImmutableMap.Builder<ResourceLocation, HolderGetter<?>> builder = ImmutableMap.builder();
-          p_255995_.registries().forEach((p_258197_) -> {
--            builder.put(p_258197_.key().location(), RegistrySetBuilder.wrapContextLookup(p_258197_.value().asLookup()));
-+            builder.put(p_258197_.key().location(), net.minecraftforge.common.ForgeHooks.wrapRegistryLookup(p_258197_.value().asLookup()));
-          });
-          p_256495_.forEach((p_256603_) -> {
-             builder.put(p_256603_.location(), registrysetbuilder$universallookup);
-@@ -189,6 +_,11 @@
- 
-             public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> p_255961_) {
-                return (HolderGetter<S>) BuildState.this.registries.getOrDefault(p_255961_.location(), BuildState.this.lookup);
+-            HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookupOrThrow(p_313093_);
++            HolderLookup.RegistryLookup<T> registrylookup1 = p_313198_.lookup(p_313093_).orElse(null);
++            Lifecycle lifecycle = registrylookup.registryLifecycle();
++            if (registrylookup1 != null) {
+             registrylookup1.listElements().forEach(p_308430_ -> {
+                 ResourceKey<T> resourcekey = p_308430_.key();
+                 map.computeIfAbsent(resourcekey, p_308437_ -> {
+@@ -196,7 +_,8 @@
+                     return lazyholder;
+                 });
+             });
+-            Lifecycle lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
++            lifecycle = registrylookup.registryLifecycle().add(registrylookup1.registryLifecycle());
 +            }
+             return lookupFromMap(p_313093_, lifecycle, p_312548_, map);
+         }
+     }
+@@ -266,6 +_,11 @@
+                 @Override
+                 public <S> HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> p_255961_) {
+                     return (HolderGetter<S>)BuildState.this.registries.getOrDefault(p_255961_.location(), BuildState.this.lookup);
++                }
 +
-+            @Override
-+            public <S> Optional<HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
-+               return Optional.ofNullable((HolderLookup.RegistryLookup<S>) BuildState.this.registries.get(registry.location()));
-             }
-          };
-       }
++                @Override
++                public <S> Optional<HolderLookup.RegistryLookup<S>> registryLookup(ResourceKey<? extends Registry<? extends S>> registry) {
++                   return Optional.ofNullable((HolderLookup.RegistryLookup<S>) BuildState.this.registries.get(registry.location()));
+                 }
+             };
+         }

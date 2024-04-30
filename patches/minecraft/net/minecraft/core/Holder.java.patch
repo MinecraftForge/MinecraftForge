@@ -6,32 +6,32 @@
  
 -public interface Holder<T> {
 +public interface Holder<T> extends java.util.function.Supplier<T>, net.minecraftforge.registries.tags.IReverseTag<T> {
-+   @Override
-+   default boolean containsTag(TagKey<T> key) {
-+      return this.is(key);
-+   }
++    @Override
++    default boolean containsTag(TagKey<T> key) {
++        return this.is(key);
++    }
 +
-+   @Override
-+   default Stream<TagKey<T>> getTagKeys() {
-+      return this.tags();
-+   }
++    @Override
++    default Stream<TagKey<T>> getTagKeys() {
++        return this.tags();
++    }
 +
-+   @Override
-+   default T get() {
-+      return this.value();
-+   }
++    @Override
++    default T get() {
++        return this.value();
++    }
 +
-    T value();
+     T value();
  
-    boolean isBound();
-@@ -193,6 +_,10 @@
- 
-       public Stream<TagKey<T>> tags() {
-          return this.tags.stream();
-+      }
+     boolean isBound();
+@@ -232,6 +_,10 @@
+         @Override
+         public Stream<TagKey<T>> tags() {
+             return this.tags.stream();
++        }
 +
-+      public Type getType() {
-+         return this.type;
-       }
++        public Type getType() {
++            return this.type;
+         }
  
-       public String toString() {
+         @Override

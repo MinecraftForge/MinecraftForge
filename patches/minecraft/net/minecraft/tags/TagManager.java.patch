@@ -1,11 +1,11 @@
 --- a/net/minecraft/tags/TagManager.java
 +++ b/net/minecraft/tags/TagManager.java
-@@ -31,7 +_,7 @@
+@@ -42,7 +_,7 @@
  
-    public static String getTagDir(ResourceKey<? extends Registry<?>> p_203919_) {
-       String s = CUSTOM_REGISTRY_DIRECTORIES.get(p_203919_);
--      return s != null ? s : "tags/" + p_203919_.location().getPath();
-+      return s != null ? s : "tags/" + net.minecraftforge.common.ForgeHooks.prefixNamespace(p_203919_.location());
-    }
+     public static String getTagDir(ResourceKey<? extends Registry<?>> p_203919_) {
+         String s = CUSTOM_REGISTRY_DIRECTORIES.get(p_203919_);
+-        return s != null ? s : "tags/" + p_203919_.location().getPath();
++        return s != null ? s : "tags/" + net.minecraftforge.common.ForgeHooks.prefixNamespace(p_203919_.location());
+     }
  
-    public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_13482_, ResourceManager p_13483_, ProfilerFiller p_13484_, ProfilerFiller p_13485_, Executor p_13486_, Executor p_13487_) {
+     @Override

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
-@@ -212,7 +_,7 @@
-          }
+@@ -219,7 +_,7 @@
+             }
  
-          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
--         if (hitresult.getType() != HitResult.Type.MISS) {
-+         if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
-             this.onHit(hitresult);
-          }
-       }
+             HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+-            if (hitresult.getType() != HitResult.Type.MISS) {
++            if (hitresult.getType() != HitResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+                 this.hitTargetOrDeflectSelf(hitresult);
+             }
+         }

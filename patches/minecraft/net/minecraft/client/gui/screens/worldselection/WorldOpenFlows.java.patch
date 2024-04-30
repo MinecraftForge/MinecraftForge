@@ -1,47 +1,11 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -280,12 +_,19 @@
-    }
+@@ -321,6 +_,8 @@
+         this.minecraft.forceSetScreen(new GenericMessageScreen(Component.translatable("selectWorld.resource_load")));
+         PackRepository packrepository = ServerPacksSource.createPackRepository(p_333651_);
  
-    private void loadLevel(LevelStorageSource.LevelStorageAccess p_309733_, Dynamic<?> p_312455_, boolean p_310657_, boolean p_309504_, Runnable p_309915_) {
-+      loadLevel(p_309733_, p_312455_, p_310657_, p_309504_, p_309915_, false);
-+   }
++        net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_333651_, p_333651_.getLevelDirectory());
 +
-+   private void loadLevel(LevelStorageSource.LevelStorageAccess p_309733_, Dynamic<?> p_312455_, boolean p_310657_, boolean p_309504_, Runnable p_309915_, boolean confirmExperimentalWarning) {
-       this.minecraft.forceSetScreen(new GenericDirtMessageScreen(Component.translatable("selectWorld.resource_load")));
-       PackRepository packrepository = ServerPacksSource.createPackRepository(p_309733_);
- 
-+      net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(p_309733_, p_309733_.getLevelDirectory());
-+
-       WorldStem worldstem;
-       try {
-          worldstem = this.loadWorldStem(p_312455_, p_310657_, packrepository);
-+         if (confirmExperimentalWarning && worldstem.worldData() instanceof PrimaryLevelData pld) pld.withConfirmedWarning(true);
-       } catch (Exception exception) {
-          LOGGER.warn("Failed to load level data or datapacks, can't proceed with server load", (Throwable)exception);
-          if (!p_310657_) {
-@@ -305,7 +_,8 @@
- 
-       WorldData worlddata = worldstem.worldData();
-       boolean flag = worlddata.worldGenOptions().isOldCustomizedWorld();
--      boolean flag1 = worlddata.worldGenSettingsLifecycle() != Lifecycle.stable();
-+      boolean skipConfirmation = worlddata instanceof PrimaryLevelData pld && pld.hasConfirmedExperimentalWarning();
-+      boolean flag1 = worlddata.worldGenSettingsLifecycle() != Lifecycle.stable() && !skipConfirmation;
-       if (!p_309504_ || !flag && !flag1) {
-          DownloadedPackSource downloadedpacksource = this.minecraft.getDownloadedPackSource();
-          this.loadBundledResourcePack(downloadedpacksource, p_309733_).thenApply((p_233177_) -> {
-@@ -328,12 +_,14 @@
-             return null;
-          });
-       } else {
-+         if (flag) // Forge: For legacy world options, let vanilla handle it.
-          this.askForBackup(p_309733_, flag, () -> {
-             this.loadLevel(p_309733_, p_312455_, p_310657_, false, p_309915_);
-          }, () -> {
-             p_309733_.safeClose();
-             p_309915_.run();
-          });
-+         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(() -> this.loadLevel(p_309733_, p_312455_, p_310657_, false, p_309915_, true));
-          worldstem.close();
-       }
-    }
+         WorldStem worldstem;
+         try {
+             worldstem = this.loadWorldStem(p_332568_, p_334192_, packrepository);

@@ -18,7 +18,7 @@ import java.util.Objects;
 
 /**
  * Extension-Interface providing methods for writing registry-id's instead of their registry-names.
- */
+ * /
 public interface IForgeFriendlyByteBuf {
     private FriendlyByteBuf self() {
         return (FriendlyByteBuf)this;
@@ -30,7 +30,7 @@ public interface IForgeFriendlyByteBuf {
      * @param registry The registry containing the given entry
      * @param entry The entry who's registryName is to be written
      * @param <T> The type of the entry.
-     */
+     * /
     default <T> void writeRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry, @NotNull T entry) {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = forgeRegistry.getID(entry);
@@ -42,7 +42,7 @@ public interface IForgeFriendlyByteBuf {
      * in the given registry. Therefore no safety checks can be performed whilst reading it and if the entry is not in the registry a default value will be written.
      * @param registry The registry containing the entry represented by this key
      * @param entryKey The registry-name of an entry in this {@link IForgeRegistry}
-     */
+     * /
     default void writeRegistryIdUnsafe(@NotNull IForgeRegistry<?> registry, @NotNull ResourceLocation entryKey) {
         ForgeRegistry<?> forgeRegistry = (ForgeRegistry<?>) registry;
         int id = forgeRegistry.getID(entryKey);
@@ -53,7 +53,7 @@ public interface IForgeFriendlyByteBuf {
      * Reads an integer value from the buffer, which will be interpreted as an registry-id in the given registry. Notice that if there is no value in the specified registry for the
      * read id, that the registry's default value will be returned.
      * @param registry The registry containing the entry
-     */
+     * /
     default <T> T readRegistryIdUnsafe(@NotNull IForgeRegistry<T> registry) {
         ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registry;
         int id = self().readVarInt();
@@ -71,7 +71,7 @@ public interface IForgeFriendlyByteBuf {
      * @param <T> The type of the registry-entry
      * @throws NullPointerException if the registry or entry was null
      * @throws IllegalArgumentException if the registry does not contain the specified value
-     */
+     * /
     default <T> void writeRegistryId(@NotNull IForgeRegistry<T> registry, @NotNull T entry) {
         Objects.requireNonNull(registry, "Cannot write a null registry key!");
         Objects.requireNonNull(entry,"Cannot write a null registry entry!");
@@ -87,7 +87,7 @@ public interface IForgeFriendlyByteBuf {
      * - see {@link #readRegistryIdSafe(Class)} for an safe version.
      * @param <T> The type of the registry-entry. Notice that this should match the actual type written to the buffer.
      * @throws NullPointerException if the registry could not be found.
-     */
+     * /
     default <T> T readRegistryId() {
         ResourceLocation location = self().readResourceLocation(); //TODO change to reading a varInt once registries use id's
         ForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(location);
@@ -99,7 +99,7 @@ public interface IForgeFriendlyByteBuf {
      * @param <T> The type of the registry-entry.
      * @throws IllegalArgumentException if the retrieved entries registryType doesn't match the one passed in.
      * @throws NullPointerException if the registry could not be found.
-     */
+     * /
     default <T> T readRegistryIdSafe(Class<? super T> registrySuperType) {
         T value = readRegistryId();
         if (!registrySuperType.isAssignableFrom(value.getClass()))
@@ -112,7 +112,7 @@ public interface IForgeFriendlyByteBuf {
      * This behavior provides parity with the ItemStack method in PacketBuffer.
      *
      * @param stack FluidStack to be written to the packet buffer.
-     */
+     * /
     default void writeFluidStack(FluidStack stack) {
         if (stack.isEmpty())
             self().writeBoolean(false);
@@ -124,8 +124,9 @@ public interface IForgeFriendlyByteBuf {
 
     /**
      * Reads a FluidStack from this buffer.
-     */
+     * /
     default FluidStack readFluidStack() {
         return !self().readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(self());
     }
 }
+*/

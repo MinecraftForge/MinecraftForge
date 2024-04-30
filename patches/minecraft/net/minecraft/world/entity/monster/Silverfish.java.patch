@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/entity/monster/Silverfish.java
 +++ b/net/minecraft/world/entity/monster/Silverfish.java
-@@ -141,7 +_,7 @@
-             return false;
-          } else {
-             RandomSource randomsource = this.mob.getRandom();
--            if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.mob.level(), this.mob) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
-                this.selectedDirection = Direction.getRandom(randomsource);
-                BlockPos blockpos = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5D, this.mob.getZ()).relative(this.selectedDirection);
-                BlockState blockstate = this.mob.level().getBlockState(blockpos);
-@@ -210,7 +_,7 @@
-                      BlockState blockstate = level.getBlockState(blockpos1);
-                      Block block = blockstate.getBlock();
-                      if (block instanceof InfestedBlock) {
--                        if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+                        if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this.silverfish)) {
-                            level.destroyBlock(blockpos1, true, this.silverfish);
-                         } else {
-                            level.setBlock(blockpos1, ((InfestedBlock)block).hostStateByInfested(level.getBlockState(blockpos1)), 3);
+@@ -140,7 +_,7 @@
+                 return false;
+             } else {
+                 RandomSource randomsource = this.mob.getRandom();
+-                if (this.mob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
++                if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.mob.level(), this.mob) && randomsource.nextInt(reducedTickDelay(10)) == 0) {
+                     this.selectedDirection = Direction.getRandom(randomsource);
+                     BlockPos blockpos = BlockPos.containing(this.mob.getX(), this.mob.getY() + 0.5, this.mob.getZ())
+                         .relative(this.selectedDirection);
+@@ -213,7 +_,7 @@
+                             BlockState blockstate = level.getBlockState(blockpos1);
+                             Block block = blockstate.getBlock();
+                             if (block instanceof InfestedBlock) {
+-                                if (level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                                if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, this.silverfish)) {
+                                     level.destroyBlock(blockpos1, true, this.silverfish);
+                                 } else {
+                                     level.setBlock(blockpos1, ((InfestedBlock)block).hostStateByInfested(level.getBlockState(blockpos1)), 3);

@@ -1,22 +1,23 @@
 --- a/net/minecraft/world/entity/npc/AbstractVillager.java
 +++ b/net/minecraft/world/entity/npc/AbstractVillager.java
-@@ -116,6 +_,7 @@
-          CriteriaTriggers.TRADE.trigger((ServerPlayer)this.tradingPlayer, this, p_35274_.getResult());
-       }
+@@ -123,6 +_,8 @@
+         if (this.tradingPlayer instanceof ServerPlayer) {
+             CriteriaTriggers.TRADE.trigger((ServerPlayer)this.tradingPlayer, this, p_35274_.getResult());
+         }
++
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.tradingPlayer, p_35274_, this));
+     }
  
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.tradingPlayer, p_35274_, this));
-    }
+     protected abstract void rewardTradeXp(MerchantOffer p_35299_);
+@@ -179,9 +_,9 @@
  
-    protected abstract void rewardTradeXp(MerchantOffer p_35299_);
-@@ -164,9 +_,9 @@
-    }
+     @Nullable
+     @Override
+-    public Entity changeDimension(ServerLevel p_35295_) {
++    public Entity changeDimension(ServerLevel p_35295_, net.minecraftforge.common.util.ITeleporter teleporter) {
+         this.stopTrading();
+-        return super.changeDimension(p_35295_);
++        return super.changeDimension(p_35295_, teleporter);
+     }
  
-    @Nullable
--   public Entity changeDimension(ServerLevel p_35295_) {
-+   public Entity changeDimension(ServerLevel p_35295_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       this.stopTrading();
--      return super.changeDimension(p_35295_);
-+      return super.changeDimension(p_35295_, teleporter);
-    }
- 
-    protected void stopTrading() {
+     protected void stopTrading() {

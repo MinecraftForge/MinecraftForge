@@ -1,30 +1,38 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -1337,11 +_,23 @@
-    }
+@@ -1807,7 +_,23 @@
+     }
  
-    public static Item registerBlock(Block p_252092_, Block... p_248886_) {
--      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties());
-+      BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties()) {
-+         @Override
-+         public void registerBlocks(java.util.Map<Block, Item> map, Item self) {
-+            super.registerBlocks(map, self);
-+            for (Block b : p_248886_) {
-+               map.put(b, self);
+     public static Item registerBlock(Block p_252092_, Block... p_248886_) {
+-        BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties());
++        BlockItem blockitem = new BlockItem(p_252092_, new Item.Properties()) {
++            @Override
++            public void registerBlocks(java.util.Map<Block, Item> map, Item self) {
++                super.registerBlocks(map, self);
++                for (Block b : p_248886_) {
++                    map.put(b, self);
++                }
 +            }
-+         }
- 
--      for(Block block : p_248886_) {
--         Item.BY_BLOCK.put(block, blockitem);
--      }
-+         @Override
-+         public void removeFromBlockToItemMap(java.util.Map<Block, Item> map, Item self) {
-+            super.removeFromBlockToItemMap(map, self);
-+            for (Block b : p_248886_) {
-+               map.remove(b);
++
++            @Override
++            public void removeFromBlockToItemMap(java.util.Map<Block, Item> map, Item self) {
++                super.removeFromBlockToItemMap(map, self);
++                for (Block b : p_248886_) {
++                    map.remove(b);
++                }
 +            }
-+         }
-+      };
++        };
  
-       return registerBlock(blockitem);
-    }
+         for (Block block : p_248886_) {
+             Item.BY_BLOCK.put(block, blockitem);
+@@ -1833,10 +_,6 @@
+     }
+ 
+     public static Item registerItem(ResourceKey<Item> p_281502_, Item p_283159_) {
+-        if (p_283159_ instanceof BlockItem) {
+-            ((BlockItem)p_283159_).registerBlocks(Item.BY_BLOCK, p_283159_);
+-        }
+-
+         return Registry.register(BuiltInRegistries.ITEM, p_281502_, p_283159_);
+     }
+ }

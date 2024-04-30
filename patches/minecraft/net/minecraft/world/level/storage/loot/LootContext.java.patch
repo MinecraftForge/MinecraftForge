@@ -1,79 +1,76 @@
 --- a/net/minecraft/world/level/storage/loot/LootContext.java
 +++ b/net/minecraft/world/level/storage/loot/LootContext.java
-@@ -86,15 +_,43 @@
-       return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
-    }
+@@ -23,11 +_,17 @@
+     private final RandomSource random;
+     private final HolderGetter.Provider lootDataResolver;
+     private final Set<LootContext.VisitedEntry<?>> visitedElements = Sets.newLinkedHashSet();
++    private ResourceLocation queriedLootTableId;
  
-+   // ============================== FORGE START ==============================
-+   public int getLootingModifier() {
-+      return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
-+   }
+     LootContext(LootParams p_287722_, RandomSource p_287702_, HolderGetter.Provider p_330439_) {
++        this(p_287722_, p_287702_, p_330439_, null);
++    }
 +
-+   private ResourceLocation queriedLootTableId;
-+
-+   private LootContext(LootParams p_287722_, RandomSource p_287702_, LootDataResolver p_287619_, ResourceLocation queriedLootTableId) {
-+      this(p_287722_, p_287702_, p_287619_);
-+      this.queriedLootTableId = queriedLootTableId;
-+   }
-+
-+   public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
-+      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
-+   }
-+
-+   public ResourceLocation getQueriedLootTableId() {
-+      return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
-+   }
-+   // =============================== FORGE END ===============================
-+
-    public static class Builder {
-       private final LootParams params;
-       @Nullable
-       private RandomSource random;
-+      private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
++    LootContext(LootParams p_287722_, RandomSource p_287702_, HolderGetter.Provider p_330439_, ResourceLocation queriedLootTableId) {
+         this.params = p_287722_;
+         this.random = p_287702_;
+         this.lootDataResolver = p_330439_;
++        this.queriedLootTableId = queriedLootTableId;
+     }
  
-       public Builder(LootParams p_287628_) {
-          this.params = p_287628_;
-       }
+     public boolean hasParam(LootContextParam<?> p_78937_) {
+@@ -87,15 +_,34 @@
+         return new LootContext.VisitedEntry<>(LootDataType.MODIFIER, p_279163_);
+     }
  
-+      public Builder(LootContext context) {
-+         this.params = context.params;
-+         this.random = context.random;
-+         this.queriedLootTableId = context.queriedLootTableId;
-+      }
++    public int getLootingModifier() {
++        return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
++    }
 +
-       public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
-          if (p_78966_ != 0L) {
-             this.random = RandomSource.create(p_78966_);
-@@ -103,6 +_,11 @@
-          return this;
-       }
- 
-+      public LootContext.Builder withQueriedLootTableId(ResourceLocation queriedLootTableId) {
-+         this.queriedLootTableId = queriedLootTableId;
-+         return this;
-+      }
++    public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
++        if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
++    }
 +
-       public ServerLevel getLevel() {
-          return this.params.getLevel();
-       }
-@@ -113,7 +_,7 @@
-          RandomSource randomsource = Optional.ofNullable(this.random).or(() -> {
-             return p_299315_.map(serverlevel::getRandomSequence);
-          }).orElseGet(serverlevel::getRandom);
--         return new LootContext(this.params, randomsource, minecraftserver.getLootData());
-+         return new LootContext(this.params, randomsource, minecraftserver.getLootData(), queriedLootTableId);
-       }
-    }
- 
-@@ -134,6 +_,11 @@
- 
-       public LootContextParam<? extends Entity> getParam() {
-          return this.param;
-+      }
++    public ResourceLocation getQueriedLootTableId() {
++        return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
++    }
 +
-+      // Forge: This method is patched in to expose the same name used in getByName so that ContextNbtProvider#forEntity serializes it properly
-+      public String getName() {
-+         return this.name;
-       }
+     public static class Builder {
+         private final LootParams params;
+         @Nullable
+         private RandomSource random;
++        private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
  
-       public static LootContext.EntityTarget getByName(String p_79007_) {
+         public Builder(LootParams p_287628_) {
+             this.params = p_287628_;
+         }
+ 
++        public Builder(LootContext context) {
++            this.params = context.params;
++            this.random = context.random;
++            this.queriedLootTableId = context.queriedLootTableId;
++        }
++
+         public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
+             if (p_78966_ != 0L) {
+                 this.random = RandomSource.create(p_78966_);
+@@ -104,6 +_,11 @@
+             return this;
+         }
+ 
++        public LootContext.Builder withQueriedLootTableId(ResourceLocation queriedLootTableId) {
++            this.queriedLootTableId = queriedLootTableId;
++            return this;
++        }
++
+         public ServerLevel getLevel() {
+             return this.params.getLevel();
+         }
+@@ -112,7 +_,7 @@
+             ServerLevel serverlevel = this.getLevel();
+             MinecraftServer minecraftserver = serverlevel.getServer();
+             RandomSource randomsource = Optional.ofNullable(this.random).or(() -> p_299315_.map(serverlevel::getRandomSequence)).orElseGet(serverlevel::getRandom);
+-            return new LootContext(this.params, randomsource, minecraftserver.reloadableRegistries().lookup());
++            return new LootContext(this.params, randomsource, minecraftserver.reloadableRegistries().lookup(), queriedLootTableId);
+         }
+     }
+ 

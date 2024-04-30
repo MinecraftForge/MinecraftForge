@@ -1,19 +1,21 @@
 --- a/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
-@@ -34,7 +_,7 @@
-    }
+@@ -35,7 +_,7 @@
  
-    public boolean canUse() {
--      if (!this.removerMob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.removerMob.level(), this.removerMob)) {
-          return false;
-       } else if (this.nextStartTick > 0) {
-          --this.nextStartTick;
-@@ -129,6 +_,7 @@
-       if (chunkaccess == null) {
-          return false;
-       } else {
-+         if (!chunkaccess.getBlockState(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.removerMob)) return false;
-          return chunkaccess.getBlockState(p_25851_).is(this.blockToRemove) && chunkaccess.getBlockState(p_25851_.above()).isAir() && chunkaccess.getBlockState(p_25851_.above(2)).isAir();
-       }
-    }
+     @Override
+     public boolean canUse() {
+-        if (!this.removerMob.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++        if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.removerMob.level(), this.removerMob)) {
+             return false;
+         } else if (this.nextStartTick > 0) {
+             this.nextStartTick--;
+@@ -158,7 +_,8 @@
+         );
+         return chunkaccess == null
+             ? false
+-            : chunkaccess.getBlockState(p_25851_).is(this.blockToRemove)
++            : !chunkaccess.getBlockState(p_25851_).canEntityDestroy(p_25850_, p_25851_, this.removerMob) ? false
++                : chunkaccess.getBlockState(p_25851_).is(this.blockToRemove)
+                 && chunkaccess.getBlockState(p_25851_.above()).isAir()
+                 && chunkaccess.getBlockState(p_25851_.above(2)).isAir();
+     }

@@ -1,34 +1,34 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -49,6 +_,31 @@
-       }
-    }
+@@ -79,4 +_,31 @@
  
-+   @Override
-+   public net.minecraft.world.InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
-+      if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
-+         if (entity.level().isClientSide) return net.minecraft.world.InteractionResult.SUCCESS;
-+         BlockPos pos = BlockPos.containing(entity.position());
-+         if (target.isShearable(stack, entity.level(), pos)) {
-+            java.util.List<ItemStack> drops = target.onSheared(playerIn, stack, entity.level(), pos,
-+                    net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.BLOCK_FORTUNE, stack));
-+            java.util.Random rand = new java.util.Random();
-+            drops.forEach(d -> {
-+               net.minecraft.world.entity.item.ItemEntity ent = entity.spawnAtLocation(d, 1.0F);
-+               ent.setDeltaMovement(ent.getDeltaMovement().add((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
-+            });
-+            stack.hurtAndBreak(1, playerIn, e -> e.broadcastBreakEvent(hand));
-+         }
-+         return net.minecraft.world.InteractionResult.SUCCESS;
-+      }
-+      return net.minecraft.world.InteractionResult.PASS;
-+   }
+         return super.useOn(p_186371_);
+     }
 +
-+   @Override
-+   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
-+      return net.minecraftforge.common.ToolActions.DEFAULT_SHEARS_ACTIONS.contains(toolAction);
-+   }
++    @Override
++    public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
++        if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
++            if (entity.level().isClientSide) {
++                return InteractionResult.SUCCESS;
++            }
 +
-    public InteractionResult useOn(UseOnContext p_186371_) {
-       Level level = p_186371_.getLevel();
-       BlockPos blockpos = p_186371_.getClickedPos();
++            BlockPos pos = BlockPos.containing(entity.position());
++            if (target.isShearable(stack, entity.level(), pos)) {
++                var drops = target.onSheared(playerIn, stack, entity.level(), pos, stack.getEnchantments().getLevel(net.minecraft.world.item.enchantment.Enchantments.FORTUNE));
++                var rand = new java.util.Random();
++                drops.forEach(d -> {
++                    var ent = entity.spawnAtLocation(d, 1.0F);
++                    ent.setDeltaMovement(ent.getDeltaMovement().add((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
++                });
++                stack.hurtAndBreak(1, playerIn, LivingEntity.getSlotForHand(hand));
++            }
++            return InteractionResult.SUCCESS;
++        }
++        return InteractionResult.PASS;
++     }
++
++    @Override
++    public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++        return net.minecraftforge.common.ToolActions.DEFAULT_SHEARS_ACTIONS.contains(toolAction);
++    }
+ }

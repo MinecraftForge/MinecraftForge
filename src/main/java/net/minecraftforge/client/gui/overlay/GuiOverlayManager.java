@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/** Forge 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
 package net.minecraftforge.client.gui.overlay;
 
 import com.google.common.collect.ImmutableList;
@@ -21,7 +22,7 @@ import java.util.function.Function;
  * Manager for {@linkplain IGuiOverlay HUD overlays}.
  * <p>
  * Provides a lookup by ID, as well as all registered {@link IGuiOverlay overlays}.
- */
+ * /
 public final class GuiOverlayManager
 {
     private static ImmutableList<NamedGuiOverlay> OVERLAYS;
@@ -29,7 +30,7 @@ public final class GuiOverlayManager
 
     /**
      * Retrieves an ordered list of all registered overlays.
-     */
+     * /
     public static ImmutableList<NamedGuiOverlay> getOverlays()
     {
         return OVERLAYS;
@@ -38,7 +39,7 @@ public final class GuiOverlayManager
     /**
      * Finds the overlay corresponding to a given ID.
      * Do not call this before {@link RegisterGuiOverlaysEvent} has finished firing.
-     */
+     * /
     @Nullable
     public static NamedGuiOverlay findOverlay(ResourceLocation id)
     {
@@ -63,7 +64,7 @@ public final class GuiOverlayManager
 
     /**
      * Pre-registers vanilla overlays so they are available for ordering.
-     */
+     * /
     private static void preRegisterVanillaOverlays(HashMap<ResourceLocation, IGuiOverlay> overlays, ArrayList<ResourceLocation> orderedOverlays)
     {
         for (var entry : VanillaGuiOverlay.values())
@@ -83,3 +84,4 @@ public final class GuiOverlayManager
     {
     }
 }
+*/

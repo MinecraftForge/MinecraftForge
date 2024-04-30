@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/block/WebBlock.java
 +++ b/net/minecraft/world/level/block/WebBlock.java
-@@ -8,7 +_,7 @@
+@@ -10,7 +_,7 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.phys.Vec3;
  
 -public class WebBlock extends Block {
 +public class WebBlock extends Block implements net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<WebBlock> CODEC = simpleCodec(WebBlock::new);
+     public static final MapCodec<WebBlock> CODEC = simpleCodec(WebBlock::new);
  
-    public MapCodec<WebBlock> codec() {
+     @Override

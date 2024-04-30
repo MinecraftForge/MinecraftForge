@@ -5,6 +5,8 @@
 
 package net.minecraftforge.common.util;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -30,7 +32,7 @@ public class LevelCapabilityData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         if (serializable != null)
             nbt = serializable.serializeNBT();
         return nbt;
@@ -52,7 +54,7 @@ public class LevelCapabilityData extends SavedData {
     public static LevelCapabilityData compute(DimensionDataStorage data, @Nullable INBTSerializable<CompoundTag> caps) {
         var factory = new Factory<>(
             () -> new LevelCapabilityData(caps),
-            (tag) -> {
+            (tag, lookup) -> {
                 var ret = new LevelCapabilityData(caps);
                 ret.read(tag);
                 return ret;

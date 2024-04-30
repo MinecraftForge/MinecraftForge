@@ -21,6 +21,7 @@
     "#R#"
   ],
   "result": {
-    "item": "minecraft:piston"
+    "count": 1,
+    "id": "minecraft:piston"
   }
 }

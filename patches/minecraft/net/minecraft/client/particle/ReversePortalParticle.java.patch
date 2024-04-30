@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/particle/ReversePortalParticle.java
 +++ b/net/minecraft/client/particle/ReversePortalParticle.java
-@@ -29,6 +_,7 @@
-          this.x += this.xd * (double)f;
-          this.y += this.yd * (double)f;
-          this.z += this.zd * (double)f;
-+         this.setPos(this.x, this.y, this.z); // FORGE: update the particle's bounding box
-       }
-    }
+@@ -31,6 +_,7 @@
+             this.x = this.x + this.xd * (double)f;
+             this.y = this.y + this.yd * (double)f;
+             this.z = this.z + this.zd * (double)f;
++            this.setPos(this.x, this.y, this.z); // FORGE: update the particle's bounding box
+         }
+     }
  

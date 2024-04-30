@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
-@@ -342,6 +_,8 @@
-             this.screen.setToolTip(list1);
-          }
+@@ -372,6 +_,8 @@
+                 this.screen.setTooltipForNextRenderPass(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText));
+             }
  
-+         net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.screen, serverData, p_281406_, p_281363_, p_282921_, p_283596_, l, i1);
++            net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.screen, serverData, p_281406_, p_281363_, p_282921_, p_283596_, p_283567_ - p_281363_, p_282864_ - p_282921_);
 +
-          if (this.minecraft.options.touchscreen().get() || p_282999_) {
-             p_281406_.fill(p_281363_, p_282921_, p_281363_ + 32, p_282921_ + 32, -1601138544);
-             int j1 = p_283567_ - p_281363_;
+             if (this.minecraft.options.touchscreen().get() || p_282999_) {
+                 p_281406_.fill(p_281363_, p_282921_, p_281363_ + 32, p_282921_ + 32, -1601138544);
+                 int l = p_283567_ - p_281363_;

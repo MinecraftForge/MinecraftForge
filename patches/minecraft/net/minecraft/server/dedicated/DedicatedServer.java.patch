@@ -1,71 +1,72 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -68,6 +_,8 @@
-    private MinecraftServerGui gui;
-    @Nullable
-    private final TextFilterClient textFilterClient;
-+   @Nullable
-+   private net.minecraft.client.server.LanServerPinger dediLanPinger;
+@@ -77,6 +_,8 @@
+     private RemoteSampleLogger tickTimeLogger;
+     @Nullable
+     private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
++    @Nullable
++    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
-    public DedicatedServer(Thread p_214789_, LevelStorageSource.LevelStorageAccess p_214790_, PackRepository p_214791_, WorldStem p_214792_, DedicatedServerSettings p_214793_, DataFixer p_214794_, Services p_214795_, ChunkProgressListenerFactory p_214796_) {
-       super(p_214789_, p_214790_, p_214791_, p_214792_, Proxy.NO_PROXY, p_214794_, p_214795_, p_214796_);
-@@ -79,6 +_,7 @@
-    public boolean initServer() throws IOException {
-       Thread thread = new Thread("Server console handler") {
-          public void run() {
-+            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+     public DedicatedServer(
+         Thread p_214789_,
+@@ -99,6 +_,7 @@
+         Thread thread = new Thread("Server console handler") {
+             @Override
+             public void run() {
++                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
-             String s1;
-@@ -156,11 +_,13 @@
-          long i = Util.getNanos();
-          SkullBlockEntity.setup(this.services, this);
-          GameProfileCache.setUsesAuthentication(this.usesAuthentication());
-+         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-          LOGGER.info("Preparing level \"{}\"", (Object)this.getLevelIdName());
-          this.loadLevel();
-          long j = Util.getNanos() - i;
-          String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-          LOGGER.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
-          if (dedicatedserverproperties.announcePlayerAchievements != null) {
-             this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
-          }
-@@ -188,7 +_,12 @@
-             LOGGER.info("JMX monitoring enabled");
-          }
+                 String s1;
+@@ -179,11 +_,13 @@
+             long i = Util.getNanos();
+             SkullBlockEntity.setup(this.services, this);
+             GameProfileCache.setUsesAuthentication(this.usesAuthentication());
++            if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+             LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
+             this.loadLevel();
+             long j = Util.getNanos() - i;
+             String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9);
+             LOGGER.info("Done ({})! For help, type \"help\"", s);
++            this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
+             if (dedicatedserverproperties.announcePlayerAchievements != null) {
+                 this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
+             }
+@@ -211,7 +_,12 @@
+                 LOGGER.info("JMX monitoring enabled");
+             }
  
--         return true;
-+         if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
-+            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
-+            this.dediLanPinger.start();
-+         }
+-            return true;
++            if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
++                this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
++                this.dediLanPinger.start();
++            }
 +
-+         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
-       }
-    }
++            return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
+         }
+     }
  
-@@ -263,6 +_,10 @@
-          this.queryThreadGs4.stop();
-       }
+@@ -289,6 +_,11 @@
+         if (this.queryThreadGs4 != null) {
+             this.queryThreadGs4.stop();
+         }
++
++        if (this.dediLanPinger != null) {
++            this.dediLanPinger.interrupt();
++            this.dediLanPinger = null;
++        }
+     }
  
-+      if (this.dediLanPinger != null) {
-+         this.dediLanPinger.interrupt();
-+         this.dediLanPinger = null;
-+      }
-    }
+     @Override
+@@ -542,7 +_,12 @@
  
-    public void tickChildren(BooleanSupplier p_139661_) {
-@@ -496,7 +_,12 @@
-    }
- 
-    public void stopServer() {
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
-       super.stopServer();
-+      if (this.dediLanPinger != null) {
-+         this.dediLanPinger.interrupt();
-+         this.dediLanPinger = null;
-+      }
-       Util.shutdownExecutors();
-       SkullBlockEntity.clear();
-    }
+     @Override
+     public void stopServer() {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
+         super.stopServer();
++        if (this.dediLanPinger != null) {
++            this.dediLanPinger.interrupt();
++            this.dediLanPinger = null;
++        }
+         Util.shutdownExecutors();
+         SkullBlockEntity.clear();
+     }

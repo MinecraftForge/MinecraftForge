@@ -1,50 +1,54 @@
 --- a/net/minecraft/server/level/Ticket.java
 +++ b/net/minecraft/server/level/Ticket.java
-@@ -9,9 +_,14 @@
-    private long createdTick;
+@@ -6,12 +_,18 @@
+     private final TicketType<T> type;
+     private final int ticketLevel;
+     private final T key;
++    private final boolean forceTicks;
+     private long createdTick;
  
-    protected Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_) {
-+      this(p_9425_, p_9426_, p_9427_, false);
-+   }
+     protected Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_) {
++        this(p_9425_, p_9426_, p_9427_, false);
++    }
 +
-+   public Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_, boolean forceTicks) {
-       this.type = p_9425_;
-       this.ticketLevel = p_9426_;
-       this.key = p_9427_;
-+      this.forceTicks = forceTicks;
-    }
++    public Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_, boolean forceTicks) {
+         this.type = p_9425_;
+         this.ticketLevel = p_9426_;
+         this.key = p_9427_;
++        this.forceTicks = forceTicks;
+     }
  
-    public int compareTo(Ticket<?> p_9432_) {
-@@ -31,16 +_,16 @@
-          return false;
-       } else {
-          Ticket<?> ticket = (Ticket)p_9439_;
--         return this.ticketLevel == ticket.ticketLevel && Objects.equals(this.type, ticket.type) && Objects.equals(this.key, ticket.key);
-+         return this.ticketLevel == ticket.ticketLevel && Objects.equals(this.type, ticket.type) && Objects.equals(this.key, ticket.key) && this.forceTicks == ticket.forceTicks;
-       }
-    }
+     public int compareTo(Ticket<?> p_9432_) {
+@@ -31,18 +_,18 @@
+         } else {
+             return !(p_9439_ instanceof Ticket<?> ticket)
+                 ? false
+-                : this.ticketLevel == ticket.ticketLevel && Objects.equals(this.type, ticket.type) && Objects.equals(this.key, ticket.key);
++                : this.ticketLevel == ticket.ticketLevel && Objects.equals(this.type, ticket.type) && Objects.equals(this.key, ticket.key) && this.forceTicks == ticket.forceTicks;
+         }
+     }
  
-    public int hashCode() {
--      return Objects.hash(this.type, this.ticketLevel, this.key);
-+      return Objects.hash(this.type, this.ticketLevel, this.key, forceTicks);
-    }
+     @Override
+     public int hashCode() {
+-        return Objects.hash(this.type, this.ticketLevel, this.key);
++        return Objects.hash(this.type, this.ticketLevel, this.key, this.forceTicks);
+     }
  
-    public String toString() {
--      return "Ticket[" + this.type + " " + this.ticketLevel + " (" + this.key + ")] at " + this.createdTick;
-+      return "Ticket[" + this.type + " " + this.ticketLevel + " (" + this.key + ")] at " + this.createdTick + " force ticks " + forceTicks;
-    }
+     @Override
+     public String toString() {
+-        return "Ticket[" + this.type + " " + this.ticketLevel + " (" + this.key + ")] at " + this.createdTick;
++        return "Ticket[" + this.type + " " + this.ticketLevel + " (" + this.key + ")] at " + this.createdTick + " force ticks " + forceTicks;
+     }
  
-    public TicketType<T> getType() {
-@@ -58,5 +_,12 @@
-    protected boolean timedOut(long p_9435_) {
-       long i = this.type.timeout();
-       return i != 0L && p_9435_ - this.createdTick > i;
-+   }
+     public TicketType<T> getType() {
+@@ -51,6 +_,10 @@
+ 
+     public int getTicketLevel() {
+         return this.ticketLevel;
++    }
 +
-+   /* ======================================== FORGE START =====================================*/
-+   private final boolean forceTicks;
-+
-+   public boolean isForceTicks() {
-+      return forceTicks;
-    }
- }
++    public boolean isForceTicks() {
++        return this.forceTicks;
+     }
+ 
+     protected void setCreatedTick(long p_9430_) {

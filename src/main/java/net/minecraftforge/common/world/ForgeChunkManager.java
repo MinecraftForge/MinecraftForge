@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -324,10 +325,12 @@ public class ForgeChunkManager
      */
     private static void readBlockForcedChunks(String modId, long chunkPos, CompoundTag modEntry, String key, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks)
     {
-        ListTag forcedBlocks = modEntry.getList(key, Tag.TAG_COMPOUND);
+        ListTag forcedBlocks = modEntry.getList(key, Tag.TAG_INT_ARRAY);
         for (int k = 0; k < forcedBlocks.size(); k++)
         {
-            blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NbtUtils.readBlockPos(forcedBlocks.getCompound(k))), owner -> new LongOpenHashSet()).add(chunkPos);
+            var aint = forcedBlocks.getIntArray(k);
+            var pos = aint.length == 3 ? new BlockPos(aint[0], aint[1], aint[2]) : BlockPos.ZERO;
+            blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, pos), owner -> new LongOpenHashSet()).add(chunkPos);
         }
     }
 

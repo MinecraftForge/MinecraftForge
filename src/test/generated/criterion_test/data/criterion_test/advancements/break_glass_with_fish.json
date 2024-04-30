@@ -5,10 +5,10 @@
       "conditions": {
         "allowOffhand": true,
         "breakingBlock": {
-          "tag": "forge:glass"
+          "blocks": "#forge:glass"
         },
         "holdingItem": {
-          "tag": "criterion_test:fish"
+          "items": "#criterion_test:fish"
         }
       },
       "trigger": "criterion_test:criterion"
@@ -17,7 +17,8 @@
   "display": {
     "description": "Fish wins!",
     "icon": {
-      "item": "minecraft:cod"
+      "count": 1,
+      "id": "minecraft:cod"
     },
     "title": "Fish vs Glass"
   },

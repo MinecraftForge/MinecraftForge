@@ -5,7 +5,7 @@
 
 package net.minecraftforge.common.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.resources.ResourceLocation;
 
 public record LootTableIdCondition(ResourceLocation id) implements LootItemCondition {
-    public static final Codec<LootTableIdCondition> CODEC = RecordCodecBuilder.create(b -> b.group(
+    public static final MapCodec<LootTableIdCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
         ResourceLocation.CODEC.fieldOf("loot_table_id").forGetter(LootTableIdCondition::id)
     ).apply(b, LootTableIdCondition::new));
 

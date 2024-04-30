@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -277,6 +_,11 @@
+@@ -286,6 +_,11 @@
+         }
+     }
  
-    }
- 
-+   @Override
-+   public net.minecraft.world.phys.AABB getRenderBoundingBox() {
-+      return new net.minecraft.world.phys.AABB(this.getBlockPos());
-+   }
++    @Override
++    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
++        return new net.minecraft.world.phys.AABB(this.getBlockPos());
++    }
 +
-    public SoundEvent getSignInteractionFailedSoundEvent() {
-       return SoundEvents.WAXED_SIGN_INTERACT_FAIL;
-    }
+     public SoundEvent getSignInteractionFailedSoundEvent() {
+         return SoundEvents.WAXED_SIGN_INTERACT_FAIL;
+     }

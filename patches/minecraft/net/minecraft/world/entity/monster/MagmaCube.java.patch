@@ -1,33 +1,33 @@
 --- a/net/minecraft/world/entity/monster/MagmaCube.java
 +++ b/net/minecraft/world/entity/monster/MagmaCube.java
-@@ -67,17 +_,28 @@
-       float f = (float)this.getSize() * 0.1F;
-       this.setDeltaMovement(vec3.x, (double)(this.getJumpPower() + f), vec3.z);
-       this.hasImpulse = true;
-+      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
-    }
+@@ -71,17 +_,28 @@
+         float f = (float)this.getSize() * 0.1F;
+         this.setDeltaMovement(vec3.x, (double)(this.getJumpPower() + f), vec3.z);
+         this.hasImpulse = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
  
-+   @Deprecated // FORGE: use jumpInFluid instead
-    protected void jumpInLiquid(TagKey<Fluid> p_204065_) {
--      if (p_204065_ == FluidTags.LAVA) {
-+      this.jumpInLiquidInternal(() -> p_204065_ == FluidTags.LAVA, () -> super.jumpInLiquid(p_204065_));
-+   }
++    /** @deprecated Forge - Use {@link #jumpInFluid(net.minecraftforge.fluids.FluidType)} */
+     @Override
+     protected void jumpInLiquid(TagKey<Fluid> p_204065_) {
+-        if (p_204065_ == FluidTags.LAVA) {
++        this.jumpInLiquidInternal(() -> p_204065_ == FluidTags.LAVA, () -> super.jumpInLiquid(p_204065_));
++    }
 +
-+   private void jumpInLiquidInternal(java.util.function.BooleanSupplier isLava, Runnable onSuper) {
-+      if (isLava.getAsBoolean()) {
-          Vec3 vec3 = this.getDeltaMovement();
-          this.setDeltaMovement(vec3.x, (double)(0.22F + (float)this.getSize() * 0.05F), vec3.z);
-          this.hasImpulse = true;
-       } else {
--         super.jumpInLiquid(p_204065_);
-+         onSuper.run();
-       }
- 
-+   }
++    private void jumpInLiquidInternal(java.util.function.BooleanSupplier isLava, Runnable onSuper) {
++        if (isLava.getAsBoolean()) {
+             Vec3 vec3 = this.getDeltaMovement();
+             this.setDeltaMovement(vec3.x, (double)(0.22F + (float)this.getSize() * 0.05F), vec3.z);
+             this.hasImpulse = true;
+         } else {
+-            super.jumpInLiquid(p_204065_);
++            onSuper.run();
+         }
++    }
 +
-+   @Override
-+   public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
-+      this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
-    }
++    @Override
++    public void jumpInFluid(net.minecraftforge.fluids.FluidType type) {
++        this.jumpInLiquidInternal(() -> type == net.minecraftforge.common.ForgeMod.LAVA_TYPE.get(), () -> super.jumpInFluid(type));
+     }
  
-    protected boolean isDealsDamage() {
+     @Override

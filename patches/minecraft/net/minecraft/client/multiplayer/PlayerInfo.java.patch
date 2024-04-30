@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/multiplayer/PlayerInfo.java
 +++ b/net/minecraft/client/multiplayer/PlayerInfo.java
-@@ -89,6 +_,7 @@
-    }
+@@ -85,6 +_,7 @@
+     }
  
-    protected void setGameMode(GameType p_105318_) {
-+      net.minecraftforge.client.ForgeHooksClient.onClientChangeGameType(this, this.gameMode, p_105318_);
-       this.gameMode = p_105318_;
-    }
+     protected void setGameMode(GameType p_105318_) {
++        net.minecraftforge.client.ForgeHooksClient.onClientChangeGameType(this, this.gameMode, p_105318_);
+         this.gameMode = p_105318_;
+     }
  

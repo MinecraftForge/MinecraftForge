@@ -6,6 +6,8 @@
 package net.minecraftforge.registries;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.decoration.PaintingVariant;
@@ -32,11 +34,11 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.stats.StatType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -112,13 +114,13 @@ public class ForgeRegistries {
 
     // Custom forge registries
     public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = registry(Keys.ENTITY_DATA_SERIALIZERS, GameData::getDataSerializersRegistryBuilder);
-    public static final Supplier<IForgeRegistry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = registry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, GameData::getGLMSerializersRegistryBuilder);
-    public static final Supplier<IForgeRegistry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = registry(Keys.BIOME_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
-    public static final Supplier<IForgeRegistry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = registry(Keys.STRUCTURE_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = registry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, GameData::getGLMSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = registry(Keys.BIOME_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<MapCodec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = registry(Keys.STRUCTURE_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
     public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = registry(Keys.FLUID_TYPES, GameData::getFluidTypeRegistryBuilder);
     public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = registry(Keys.HOLDER_SET_TYPES, GameData::makeUnsavedAndUnsynced);
     public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = registry(Keys.DISPLAY_CONTEXTS, GameData::getItemDisplayContextRegistryBuilder);
-    public static final Supplier<IForgeRegistry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
     public static final Supplier<IForgeRegistry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = registry(Keys.INGREDIENT_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
 
     public static final class Keys {
@@ -158,13 +160,13 @@ public class ForgeRegistries {
 
         // Forge
         public static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = key("forge:entity_data_serializers");
-        public static final ResourceKey<Registry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("forge:global_loot_modifier_serializers");
-        public static final ResourceKey<Registry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
-        public static final ResourceKey<Registry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("forge:global_loot_modifier_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
         public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");
         public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("forge:holder_set_type");
         public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("forge:display_contexts");
-        public static final ResourceKey<Registry<Codec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
+        public static final ResourceKey<Registry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
         public static final ResourceKey<Registry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = key("forge:ingredient_serializers");
 
         // Forge Dynamic

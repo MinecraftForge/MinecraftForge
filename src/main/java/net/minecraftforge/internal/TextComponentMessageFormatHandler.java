@@ -13,7 +13,7 @@ import net.minecraftforge.common.ForgeI18n;
 
 import java.util.function.Consumer;
 
-public class TextComponentMessageFormatHandler {
+public final class TextComponentMessageFormatHandler {
     public static int handle(final TranslatableContents parent, final Consumer<FormattedText> addChild, final Object[] formatArgs, final String format) {
         try {
             final String formattedString = ForgeI18n.parseFormat(format, formatArgs);

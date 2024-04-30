@@ -155,7 +155,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
         if (this.client.level != null) {
             this.drawGradientRect(guiGraphics, this.left, this.top, this.right, this.bottom, bgColorFrom, bgColorTo);
-        } else { // Draw dark dirt background
+         } /* else { // Draw dark dirt background
             RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
             RenderSystem.setShaderTexture(0, Screen.BACKGROUND_LOCATION);
             final float texScale = 32.0F;
@@ -166,6 +166,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             worldr.vertex(this.left,  this.top,    0.0D).uv(this.left  / texScale, (this.top    + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
             tess.end();
         }
+        */
     }
 
     /**

@@ -13,8 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
-public interface IForgeModelBaker
-{
+public interface IForgeModelBaker {
     @Nullable
     BakedModel bake(ResourceLocation location, ModelState state, Function<Material, TextureAtlasSprite> sprites);
 

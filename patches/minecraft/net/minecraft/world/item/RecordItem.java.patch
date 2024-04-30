@@ -1,54 +1,53 @@
 --- a/net/minecraft/world/item/RecordItem.java
 +++ b/net/minecraft/world/item/RecordItem.java
-@@ -22,17 +_,42 @@
+@@ -21,17 +_,41 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  
  public class RecordItem extends Item {
-+   @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
-    private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
-    private final int analogOutput;
-+   @Deprecated // Forge: refer to soundSupplier
-    private final SoundEvent sound;
-    private final int lengthInTicks;
-+   private final java.util.function.Supplier<SoundEvent> soundSupplier;
++    @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
+     private static final Map<SoundEvent, RecordItem> BY_NAME = Maps.newHashMap();
+     private final int analogOutput;
++    @Deprecated // Forge: refer to soundSupplier
+     private final SoundEvent sound;
+     private final int lengthInTicks;
++    private final java.util.function.Supplier<SoundEvent> soundSupplier;
  
-+   @Deprecated // Forge: Use the constructor that takes a supplier instead
-    public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
-       super(p_239616_);
-       this.analogOutput = p_239614_;
-       this.sound = p_239615_;
-       this.lengthInTicks = p_239617_ * 20;
-       BY_NAME.put(this.sound, this);
-+      this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.sound);
-+   }
++    /** @deprecated Forge: Use the constructor that takes a supplier instead */
+     public RecordItem(int p_239614_, SoundEvent p_239615_, Item.Properties p_239616_, int p_239617_) {
+         super(p_239616_);
+         this.analogOutput = p_239614_;
+         this.sound = p_239615_;
+         this.lengthInTicks = p_239617_ * 20;
+         BY_NAME.put(this.sound, this);
++        this.soundSupplier = net.minecraftforge.registries.ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(this.sound);
++    }
 +
-+   /**
-+    * For mod use, allows to create a music disc without having to create a new
-+    * SoundEvent before their registry event is fired.
-+    *
-+    * @param comparatorValue The value this music disc should output on the comparator. Must be between 0 and 15.
-+    * @param soundSupplier A supplier that provides the sound that should be played. Use a
-+    *                      {@link net.minecraftforge.registries.RegistryObject<SoundEvent>} or a
-+    *                      {@link net.minecraft.core.Holder<SoundEvent>} for this parameter.
-+    * @param builder A set of {@link Item.Properties} that describe this item.
-+    * @param lengthInTicks The length of the music disc track in ticks.
-+    */
-+   public RecordItem(int comparatorValue, java.util.function.Supplier<SoundEvent> soundSupplier, Item.Properties builder, int lengthInTicks)
-+   {
-+      super(builder);
-+      this.analogOutput = comparatorValue;
-+      this.sound = null;
-+      this.soundSupplier = soundSupplier;
-+      this.lengthInTicks = lengthInTicks;
-    }
++    /**
++     * For mod use, allows to create a music disc without having to create a new
++     * SoundEvent before their registry event is fired.
++     *
++     * @param comparatorValue The value this music disc should output on the comparator. Must be between 0 and 15.
++     * @param soundSupplier A supplier that provides the sound that should be played. Use a
++     *                      {@link net.minecraftforge.registries.RegistryObject<SoundEvent>} or a
++     *                      {@link net.minecraft.core.Holder<SoundEvent>} for this parameter.
++     * @param builder A set of {@link Item.Properties} that describe this item.
++     * @param lengthInTicks The length of the music disc track in ticks.
++     */
++    public RecordItem(int comparatorValue, java.util.function.Supplier<SoundEvent> soundSupplier, Item.Properties builder, int lengthInTicks) {
++        super(builder);
++        this.analogOutput = comparatorValue;
++        this.sound = null;
++        this.soundSupplier = soundSupplier;
++        this.lengthInTicks = lengthInTicks;
+     }
  
-    public InteractionResult useOn(UseOnContext p_43048_) {
-@@ -80,7 +_,7 @@
-    }
+     @Override
+@@ -79,7 +_,7 @@
+     }
  
-    public SoundEvent getSound() {
--      return this.sound;
-+      return this.soundSupplier.get();
-    }
+     public SoundEvent getSound() {
+-        return this.sound;
++        return this.soundSupplier.get();
+     }
  
-    public int getLengthInTicks() {
+     public int getLengthInTicks() {

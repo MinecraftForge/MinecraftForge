@@ -1,282 +1,63 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -80,12 +_,16 @@
- import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+@@ -92,7 +_,7 @@
+ import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.slf4j.Logger;
  
--public final class ItemStack {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
-    public static final Codec<ItemStack> CODEC = RecordCodecBuilder.create((p_309238_) -> {
-       return p_309238_.group(BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder), Codec.INT.fieldOf("Count").forGetter(ItemStack::getCount), CompoundTag.CODEC.optionalFieldOf("tag").forGetter((p_281115_) -> {
-          return Optional.ofNullable(p_281115_.getTag());
-       })).apply(p_309238_, ItemStack::new);
-    });
-+   @org.jetbrains.annotations.Nullable
-+   private final net.minecraft.core.Holder.Reference<Item> delegate;
-+   private CompoundTag capNBT;
+-public final class ItemStack implements DataComponentHolder {
++public final class ItemStack implements DataComponentHolder, net.minecraftforge.common.extensions.IForgeItemStack {
+     public static final Codec<Holder<Item>> ITEM_NON_AIR_CODEC = BuiltInRegistries.ITEM
+         .holderByNameCodec()
+         .validate(
+@@ -335,13 +_,22 @@
+     }
+ 
+     public InteractionResult useOn(UseOnContext p_41662_) {
++        if (!p_41662_.getLevel().isClientSide) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
++        return onItemUse(p_41662_, (c) -> getItem().useOn(p_41662_));
++    }
 +
-    private static final Codec<Item> ITEM_NON_AIR_CODEC = ExtraCodecs.validate(BuiltInRegistries.ITEM.byNameCodec(), (p_309237_) -> {
-       return p_309237_ == Items.AIR ? DataResult.error(() -> {
-          return "Item must not be minecraft:air";
-@@ -160,28 +_,40 @@
-       this(p_220155_.value(), p_220156_);
-    }
- 
--   public ItemStack(ItemLike p_41601_, int p_41602_) {
--      this.item = p_41601_.asItem();
--      this.count = p_41602_;
--      if (this.item.canBeDepleted()) {
-+   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
-+   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class, true);
-+      this.capNBT = p_41606_;
-+      this.item = p_41604_.asItem();
-+      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(p_41604_.asItem());
-+      this.count = p_41605_;
-+      this.forgeInit();
-+      if (this.item.isDamageable(this)) {
-          this.setDamageValue(this.getDamageValue());
-       }
- 
-    }
- 
-    private ItemStack(@Nullable Void p_282703_) {
-+      super(ItemStack.class, true);
-       this.item = null;
-+      this.delegate = null;
-    }
- 
-    private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class, true);
-+      this.capNBT = p_41608_.contains("ForgeCaps") ? p_41608_.getCompound("ForgeCaps") : null;
-+      Item rawItem =
-       this.item = BuiltInRegistries.ITEM.get(new ResourceLocation(p_41608_.getString("id")));
-+      this.delegate = net.minecraftforge.registries.ForgeRegistries.ITEMS.getDelegateOrThrow(rawItem);
-       this.count = p_41608_.getByte("Count");
-       if (p_41608_.contains("tag", 10)) {
-          this.tag = p_41608_.getCompound("tag").copy();
-          this.getItem().verifyTagAfterLoad(this.tag);
-       }
-+      this.forgeInit();
- 
--      if (this.getItem().canBeDepleted()) {
-+      if (this.getItem().isDamageable(this)) {
-          this.setDamageValue(this.getDamageValue());
-       }
- 
-@@ -197,7 +_,7 @@
-    }
- 
-    public boolean isEmpty() {
--      return this == EMPTY || this.item == Items.AIR || this.count <= 0;
-+      return this == EMPTY || this.count <= 0 || this.delegate.get() == Items.AIR;
-    }
- 
-    public boolean isItemEnabled(FeatureFlagSet p_250869_) {
-@@ -222,7 +_,7 @@
-    }
- 
-    public Item getItem() {
--      return this.isEmpty() ? Items.AIR : this.item;
-+      return this.isEmpty() ? Items.AIR : this.delegate.get();
-    }
- 
-    public Holder<Item> getItemHolder() {
-@@ -254,6 +_,15 @@
-    }
- 
-    public InteractionResult useOn(UseOnContext p_41662_) {
-+      if (!p_41662_.getLevel().isClientSide) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
-+      return onItemUse(p_41662_, (c) -> getItem().useOn(p_41662_));
-+   }
++    public InteractionResult onItemUseFirst(UseOnContext p_41662_) {
++        return onItemUse(p_41662_, (c) -> getItem().onItemUseFirst(this, p_41662_));
++    }
 +
-+   public InteractionResult onItemUseFirst(UseOnContext p_41662_) {
-+      return onItemUse(p_41662_, (c) -> getItem().onItemUseFirst(this, p_41662_));
-+   }
-+
-+   private InteractionResult onItemUse(UseOnContext p_41662_, java.util.function.Function<UseOnContext, InteractionResult> callback) {
-       Player player = p_41662_.getPlayer();
-       BlockPos blockpos = p_41662_.getClickedPos();
-       BlockInWorld blockinworld = new BlockInWorld(p_41662_.getLevel(), blockpos, false);
-@@ -261,7 +_,7 @@
-          return InteractionResult.PASS;
-       } else {
-          Item item = this.getItem();
--         InteractionResult interactionresult = item.useOn(p_41662_);
-+         InteractionResult interactionresult = callback.apply(p_41662_);
-          if (player != null && interactionresult.shouldAwardStats()) {
-             player.awardStat(Stats.ITEM_USED.get(item));
-          }
-@@ -290,11 +_,15 @@
-          p_41740_.put("tag", this.tag.copy());
-       }
- 
-+      CompoundTag cnbt = this.serializeCaps();
-+      if (cnbt != null && !cnbt.isEmpty()) {
-+         p_41740_.put("ForgeCaps", cnbt);
-+      }
-       return p_41740_;
-    }
- 
-    public int getMaxStackSize() {
--      return this.getItem().getMaxStackSize();
-+      return this.getItem().getMaxStackSize(this);
-    }
- 
-    public boolean isStackable() {
-@@ -302,7 +_,7 @@
-    }
- 
-    public boolean isDamageableItem() {
--      if (!this.isEmpty() && this.getItem().getMaxDamage() > 0) {
-+      if (!this.isEmpty() && this.getItem().isDamageable(this)) {
-          CompoundTag compoundtag = this.getTag();
-          return compoundtag == null || !compoundtag.getBoolean("Unbreakable");
-       } else {
-@@ -311,19 +_,19 @@
-    }
- 
-    public boolean isDamaged() {
--      return this.isDamageableItem() && this.getDamageValue() > 0;
-+      return this.isDamageableItem() && getItem().isDamaged(this);
-    }
- 
-    public int getDamageValue() {
--      return this.tag == null ? 0 : this.tag.getInt("Damage");
-+      return this.getItem().getDamage(this);
-    }
- 
-    public void setDamageValue(int p_41722_) {
--      this.getOrCreateTag().putInt("Damage", Math.max(0, p_41722_));
-+      this.getItem().setDamage(this, p_41722_);
-    }
- 
-    public int getMaxDamage() {
--      return this.getItem().getMaxDamage();
-+      return this.getItem().getMaxDamage(this);
-    }
- 
-    public boolean hurt(int p_220158_, RandomSource p_220159_, @Nullable ServerPlayer p_220160_) {
-@@ -359,6 +_,7 @@
-    public <T extends LivingEntity> void hurtAndBreak(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
-       if (!p_41624_.level().isClientSide && (!(p_41624_ instanceof Player) || !((Player)p_41624_).getAbilities().instabuild)) {
-          if (this.isDamageableItem()) {
-+            p_41623_ = this.getItem().damageItem(this, p_41623_, p_41624_, p_41625_);
-             if (this.hurt(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer ? (ServerPlayer)p_41624_ : null)) {
-                p_41625_.accept(p_41624_);
-                Item item = this.getItem();
-@@ -411,7 +_,7 @@
-    }
- 
-    public boolean isCorrectToolForDrops(BlockState p_41736_) {
--      return this.getItem().isCorrectToolForDrops(p_41736_);
-+      return this.getItem().isCorrectToolForDrops(this, p_41736_);
-    }
- 
-    public InteractionResult interactLivingEntity(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
-@@ -422,7 +_,7 @@
-       if (this.isEmpty()) {
-          return EMPTY;
-       } else {
--         ItemStack itemstack = new ItemStack(this.getItem(), this.count);
-+         ItemStack itemstack = new ItemStack(this.getItem(), this.count, this.serializeCaps());
-          itemstack.setPopTime(this.getPopTime());
-          if (this.tag != null) {
-             itemstack.tag = this.tag.copy();
-@@ -458,7 +_,7 @@
-       if (!p_150943_.is(p_150944_.getItem())) {
-          return false;
-       } else {
--         return p_150943_.isEmpty() && p_150944_.isEmpty() ? true : Objects.equals(p_150943_.tag, p_150944_.tag);
-+         return p_150943_.isEmpty() && p_150944_.isEmpty() ? true : Objects.equals(p_150943_.tag, p_150944_.tag) && p_150943_.areCapsCompatible(p_150944_);
-       }
-    }
- 
-@@ -554,7 +_,7 @@
- 
-    public void setTag(@Nullable CompoundTag p_41752_) {
-       this.tag = p_41752_;
--      if (this.getItem().canBeDepleted()) {
-+      if (this.getItem().isDamageable(this)) {
-          this.setDamageValue(this.getDamageValue());
-       }
- 
-@@ -615,7 +_,7 @@
- 
-    public List<Component> getTooltipLines(@Nullable Player p_41652_, TooltipFlag p_41653_) {
-       List<Component> list = Lists.newArrayList();
--      MutableComponent mutablecomponent = Component.empty().append(this.getHoverName()).withStyle(this.getRarity().color);
-+      MutableComponent mutablecomponent = Component.empty().append(this.getHoverName()).withStyle(this.getRarity().getStyleModifier());
-       if (this.hasCustomHoverName()) {
-          mutablecomponent.withStyle(ChatFormatting.ITALIC);
-       }
-@@ -762,6 +_,7 @@
-          list.add(DISABLED_ITEM_TOOLTIP);
-       }
- 
-+      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_41652_, list, p_41653_);
-       return list;
-    }
- 
-@@ -770,7 +_,7 @@
-    }
- 
-    private int getHideFlags() {
--      return this.hasTag() && this.tag.contains("HideFlags", 99) ? this.tag.getInt("HideFlags") : 0;
-+      return this.hasTag() && this.tag.contains("HideFlags", 99) ? this.tag.getInt("HideFlags") : this.getItem().getDefaultTooltipHideFlags(this);
-    }
- 
-    public void hideTooltipPart(ItemStack.TooltipPart p_41655_) {
-@@ -890,9 +_,10 @@
++    private InteractionResult onItemUse(UseOnContext p_41662_, java.util.function.Function<UseOnContext, InteractionResult> callback) {
+         Player player = p_41662_.getPlayer();
+         BlockPos blockpos = p_41662_.getClickedPos();
+         if (player != null && !player.getAbilities().mayBuild && !this.canPlaceOnBlockInAdventureMode(new BlockInWorld(p_41662_.getLevel(), blockpos, false))) {
+             return InteractionResult.PASS;
+         } else {
+             Item item = this.getItem();
+-            InteractionResult interactionresult = item.useOn(p_41662_);
++            InteractionResult interactionresult = callback.apply(p_41662_);
+             if (player != null && interactionresult.indicateItemUse()) {
+                 player.awardStat(Stats.ITEM_USED.get(item));
              }
-          }
-       } else {
--         multimap = this.getItem().getDefaultAttributeModifiers(p_41639_);
-+         multimap = this.getItem().getAttributeModifiers(p_41639_, this);
-       }
+@@ -447,6 +_,10 @@
+             }
  
-+      multimap = net.minecraftforge.common.ForgeHooks.getAttributeModifiers(this, p_41639_, multimap);
-       return multimap;
-    }
+             this.hurtAndBreak(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null, () -> {
++                if (p_41624_ instanceof Player player) {
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
++                    player.stopUsingItem(); // Forge: fix MC-168573
++                }
+                 p_41624_.broadcastBreakEvent(p_335324_);
+                 Item item = this.getItem();
+                 this.shrink(1);
+@@ -757,6 +_,8 @@
+                 list.add(DISABLED_ITEM_TOOLTIP);
+             }
  
-@@ -920,7 +_,7 @@
- 
-       MutableComponent mutablecomponent1 = ComponentUtils.wrapInSquareBrackets(mutablecomponent);
-       if (!this.isEmpty()) {
--         mutablecomponent1.withStyle(this.getRarity().color).withStyle((p_220170_) -> {
-+         mutablecomponent1.withStyle(this.getRarity().getStyleModifier()).withStyle((p_220170_) -> {
-             return p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this)));
-          });
-       }
-@@ -972,12 +_,31 @@
-       this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
-    }
- 
-+   /** @deprecated Forge: Use {@linkplain net.minecraftforge.common.extensions.IForgeItemStack#onDestroyed(ItemEntity, net.minecraft.world.damagesource.DamageSource) damage source sensitive version} */
-+   @Deprecated
-    public void onDestroyed(ItemEntity p_150925_) {
-       this.getItem().onDestroyed(p_150925_);
-    }
- 
-    public boolean isEdible() {
-       return this.getItem().isEdible();
-+   }
++            net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_41652_, list, p_41653_);
 +
-+   // FORGE START
-+   public void deserializeNBT(CompoundTag nbt) {
-+      final ItemStack itemStack = ItemStack.of(nbt);
-+      this.setTag(itemStack.getTag());
-+      if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
-+   }
-+
-+   /**
-+    * Set up forge's ItemStack additions.
-+    */
-+   private void forgeInit() {
-+      if (this.delegate != null) {
-+         this.gatherCapabilities(() -> item.initCapabilities(this, this.capNBT));
-+         if (this.capNBT != null) deserializeCaps(this.capNBT);
-+      }
-    }
+             return list;
+         }
+     }
+@@ -970,6 +_,7 @@
+         this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
+     }
  
-    public SoundEvent getDrinkingSound() {
++    /** @deprecated Forge: Use {@linkplain net.minecraftforge.common.extensions.IForgeItemStack#onDestroyed(ItemEntity, net.minecraft.world.damagesource.DamageSource) damage source sensitive version} */
+     public void onDestroyed(ItemEntity p_150925_) {
+         this.getItem().onDestroyed(p_150925_);
+     }

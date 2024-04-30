@@ -23,12 +23,10 @@ import org.jetbrains.annotations.NotNull;
  * @see PlayerSpawnPhantomsEvent#setResult for the effects of each result.
  */
 @Event.HasResult
-public class PlayerSpawnPhantomsEvent extends PlayerEvent
-{
+public class PlayerSpawnPhantomsEvent extends PlayerEvent {
     private int phantomsToSpawn;
 
-    public PlayerSpawnPhantomsEvent(Player player, int phantomsToSpawn)
-    {
+    public PlayerSpawnPhantomsEvent(Player player, int phantomsToSpawn) {
         super(player);
         this.phantomsToSpawn = phantomsToSpawn;
     }
@@ -36,8 +34,7 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
     /**
      * @return How many phantoms will be spawned, if spawning is successful. The default value is randomly generated.
      */
-    public int getPhantomsToSpawn()
-    {
+    public int getPhantomsToSpawn() {
         return phantomsToSpawn;
     }
 
@@ -45,8 +42,7 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
      * Sets the number of phantoms to be spawned.
      * @param phantomsToSpawn How many phantoms should spawn, given checks are passed.
      */
-    public void setPhantomsToSpawn(int phantomsToSpawn)
-    {
+    public void setPhantomsToSpawn(int phantomsToSpawn) {
         this.phantomsToSpawn = phantomsToSpawn;
     }
 
@@ -59,8 +55,7 @@ public class PlayerSpawnPhantomsEvent extends PlayerEvent
      * </ul>
      */
     @Override
-    public void setResult(@NotNull Result result)
-    {
+    public void setResult(@NotNull Result result) {
         super.setResult(result);
     }
 }

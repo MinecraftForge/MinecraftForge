@@ -15,6 +15,7 @@
     " #X"
   ],
   "result": {
-    "item": "minecraft:bow"
+    "count": 1,
+    "id": "minecraft:bow"
   }
 }

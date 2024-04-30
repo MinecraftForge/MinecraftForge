@@ -9,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
-import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.crafting.conditions.ICondition;
@@ -37,7 +39,7 @@ public class ConditionalAdvancement {
     public static class Builder {
         private static final ResourceLocation DOESNT_MATTER = new ResourceLocation("doesnt", "matter");
 
-        private List<Pair> advancements = new ArrayList<>();
+        private List<Adv> advancements = new ArrayList<>();
         private ICondition condition;
 
         public Builder condition(ICondition value) {
@@ -58,26 +60,41 @@ public class ConditionalAdvancement {
             return advancement(holder.value());
         }
 
+        public Builder advancement(JsonObject value) {
+            return advancement(null, value);
+        }
+
         private Builder advancement(Advancement value) {
+            return advancement(value, null);
+        }
+
+        private Builder advancement(Advancement value, JsonObject json) {
             if (condition == null)
                 throw new IllegalStateException("Can not add a advancement with no conditions.");
 
             if (value == null)
                 throw new IllegalStateException("Can not add a null advancement");
 
-            this.advancements.add(new Pair(this.condition, value));
+            this.advancements.add(new Adv(this.condition, value, json));
             this.condition = null;
 
             return this;
         }
 
-        public JsonObject build() {
+        public JsonObject build(HolderLookup.Provider lookup) {
             var json = new JsonObject();
             var array = new JsonArray();
             json.add("advancements", array);
 
+            var ops = lookup.createSerializationContext(JsonOps.INSTANCE);
+
             for (var pair : advancements) {
-                JsonObject holder = (JsonObject)Util.getOrThrow(Advancement.CODEC.encodeStart(JsonOps.INSTANCE, pair.adv()), IllegalStateException::new);
+                JsonObject holder = null;
+                if (pair.json != null)
+                    holder = pair.json;
+                else
+                    holder = (JsonObject)Advancement.CODEC.encodeStart(ops, pair.adv()).getOrThrow(IllegalStateException::new);
+
                 if (holder.has(ICondition.DEFAULT_FIELD))
                     throw new IllegalStateException("Recipe already serialized conditions!");
                 ForgeHooks.writeCondition(pair.condition(), holder);
@@ -88,5 +105,5 @@ public class ConditionalAdvancement {
         }
     }
 
-    private record Pair(ICondition condition, Advancement adv) {}
+    private record Adv(ICondition condition, Advancement adv, JsonObject json) {}
 }

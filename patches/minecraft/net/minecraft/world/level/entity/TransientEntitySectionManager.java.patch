@@ -1,32 +1,34 @@
 --- a/net/minecraft/world/level/entity/TransientEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/TransientEntitySectionManager.java
-@@ -92,11 +_,13 @@
+@@ -82,11 +_,13 @@
  
-    class Callback implements EntityInLevelCallback {
-       private final T entity;
-+      private final Entity realEntity;
-       private long currentSectionKey;
-       private EntitySection<T> currentSection;
+     class Callback implements EntityInLevelCallback {
+         private final T entity;
++        private final Entity realEntity;
+         private long currentSectionKey;
+         private EntitySection<T> currentSection;
  
-       Callback(T p_157673_, long p_157674_, EntitySection<T> p_157675_) {
-          this.entity = p_157673_;
-+         this.realEntity = p_157673_ instanceof Entity ? (Entity) p_157673_ : null;
-          this.currentSectionKey = p_157674_;
-          this.currentSection = p_157675_;
-       }
-@@ -113,6 +_,7 @@
-             TransientEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
-             EntitySection<T> entitysection = TransientEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
-             entitysection.add(this.entity);
-+            long oldSectionKey = currentSectionKey;
-             this.currentSection = entitysection;
-             this.currentSectionKey = i;
-             TransientEntitySectionManager.this.callbacks.onSectionChange(this.entity);
-@@ -125,6 +_,7 @@
-                   TransientEntitySectionManager.this.callbacks.onTickingStart(this.entity);
-                }
+         Callback(final T p_157673_, final long p_157674_, final EntitySection<T> p_157675_) {
+             this.entity = p_157673_;
++            this.realEntity = p_157673_ instanceof Entity ? (Entity) p_157673_ : null;
+             this.currentSectionKey = p_157674_;
+             this.currentSection = p_157675_;
+         }
+@@ -105,6 +_,7 @@
+                 TransientEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
+                 EntitySection<T> entitysection = TransientEntitySectionManager.this.sectionStorage.getOrCreateSection(i);
+                 entitysection.add(this.entity);
++                long oldSectionKey = currentSectionKey;
+                 this.currentSection = entitysection;
+                 this.currentSectionKey = i;
+                 TransientEntitySectionManager.this.callbacks.onSectionChange(this.entity);
+@@ -116,6 +_,9 @@
+                     } else if (!flag && flag1) {
+                         TransientEntitySectionManager.this.callbacks.onTickingStart(this.entity);
+                     }
++                }
++                if (this.realEntity != null) {
++                    net.minecraftforge.event.ForgeEventFactory.onEntityEnterSection(this.realEntity, oldSectionKey, i);
+                 }
              }
-+            if (this.realEntity != null) net.minecraftforge.event.ForgeEventFactory.onEntityEnterSection(this.realEntity, oldSectionKey, i);
-          }
- 
-       }
+         }

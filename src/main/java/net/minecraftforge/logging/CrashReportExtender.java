@@ -6,7 +6,6 @@
 package net.minecraftforge.logging;
 
 import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
-import joptsimple.internal.Strings;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.SystemReport;
@@ -22,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CrashReportExtender {
+    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
     public static void extendSystemReport(final SystemReport systemReport) {
         for (final ISystemReportExtender call : CrashReportCallables.allCrashCallables()) {
             if (call.isActive())
@@ -41,7 +41,7 @@ public class CrashReportExtender {
 
     public static String generateEnhancedStackTrace(final Throwable throwable, boolean header) {
         final String s = TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
-        return header ? s : s.substring(s.indexOf(Strings.LINE_SEPARATOR));
+        return header ? s : s.substring(s.indexOf(LINE_SEPARATOR));
     }
 
     public static File dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
@@ -52,7 +52,7 @@ public class CrashReportExtender {
             Throwable cause = mle.getCause();
             int depth = 0;
             while (cause != null && cause.getCause() != null && cause.getCause()!=cause) {
-                category.setDetail("Caused by "+(depth++), cause + generateEnhancedStackTrace(cause.getStackTrace()).replaceAll(Strings.LINE_SEPARATOR+"\t", "\n\t\t"));
+                category.setDetail("Caused by "+(depth++), cause + generateEnhancedStackTrace(cause.getStackTrace()).replaceAll(LINE_SEPARATOR+"\t", "\n\t\t"));
                 cause = cause.getCause();
             }
             if (cause != null)

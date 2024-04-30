@@ -1,25 +1,27 @@
 --- a/net/minecraft/world/level/storage/DimensionDataStorage.java
 +++ b/net/minecraft/world/level/storage/DimensionDataStorage.java
-@@ -49,9 +_,13 @@
-    @Nullable
-    public <T extends SavedData> T get(SavedData.Factory<T> p_297465_, String p_164860_) {
-       SavedData saveddata = this.cache.get(p_164860_);
-+      if (saveddata == net.minecraftforge.common.util.DummySavedData.DUMMY) return null;
-       if (saveddata == null && !this.cache.containsKey(p_164860_)) {
-          saveddata = this.readSavedData(p_297465_.deserializer(), p_297465_.type(), p_164860_);
-          this.cache.put(p_164860_, saveddata);
-+      } else if (saveddata == null) {
-+         this.cache.put(p_164860_, net.minecraftforge.common.util.DummySavedData.DUMMY);
-+         return null;
-       }
+@@ -54,9 +_,13 @@
+     @Nullable
+     public <T extends SavedData> T get(SavedData.Factory<T> p_297465_, String p_164860_) {
+         SavedData saveddata = this.cache.get(p_164860_);
++        if (saveddata == net.minecraftforge.common.util.DummySavedData.DUMMY) return null;
+         if (saveddata == null && !this.cache.containsKey(p_164860_)) {
+             saveddata = this.readSavedData(p_297465_.deserializer(), p_297465_.type(), p_164860_);
+             this.cache.put(p_164860_, saveddata);
++        } else if (saveddata == null) {
++            this.cache.put(p_164860_, net.minecraftforge.common.util.DummySavedData.DUMMY);
++            return null;
+         }
  
-       return (T)saveddata;
-@@ -94,7 +_,7 @@
-          }
+         return (T)saveddata;
+@@ -99,6 +_,10 @@
+             }
  
-          int i = NbtUtils.getDataVersion(compoundtag, 1343);
--         compoundtag1 = p_301060_.update(this.fixerUpper, compoundtag, i, p_78160_);
-+         compoundtag1 = p_301060_ == null ? compoundtag : p_301060_.update(this.fixerUpper, compoundtag, i, p_78160_); // Forge: Allow the data fixer to be null, leaving the modder responsible for keeping track of their own data formats
-       }
+             int i = NbtUtils.getDataVersion(compoundtag, 1343);
++            // Forge: Allow the data fixer to be null, leaving the modder responsible for keeping track of their own data formats
++            if (p_301060_ == null)
++                compoundtag1 = compoundtag;
++            else
+             compoundtag1 = p_301060_.update(this.fixerUpper, compoundtag, i, p_78160_);
+         }
  
-       return compoundtag1;

@@ -1,11 +1,11 @@
 --- a/com/mojang/blaze3d/vertex/SheetedDecalTextureGenerator.java
 +++ b/com/mojang/blaze3d/vertex/SheetedDecalTextureGenerator.java
-@@ -46,7 +_,7 @@
- 
-    public void endVertex() {
-       Vector3f vector3f = this.normalInversePose.transform(new Vector3f(this.nx, this.ny, this.nz));
--      Direction direction = Direction.getNearest(vector3f.x(), vector3f.y(), vector3f.z());
-+      Direction direction = net.minecraftforge.client.ForgeHooksClient.getNearestStable(vector3f.x(), vector3f.y(), vector3f.z());
-       Vector4f vector4f = this.cameraInversePose.transform(new Vector4f(this.x, this.y, this.z, 1.0F));
-       vector4f.rotateY((float)Math.PI);
-       vector4f.rotateX((-(float)Math.PI / 2F));
+@@ -47,7 +_,7 @@
+     @Override
+     public void endVertex() {
+         Vector3f vector3f = this.normalInversePose.transform(new Vector3f(this.nx, this.ny, this.nz));
+-        Direction direction = Direction.getNearest(vector3f.x(), vector3f.y(), vector3f.z());
++        Direction direction = net.minecraftforge.client.ForgeHooksClient.getNearestStable(vector3f.x(), vector3f.y(), vector3f.z());
+         Vector4f vector4f = this.cameraInversePose.transform(new Vector4f(this.x, this.y, this.z, 1.0F));
+         vector4f.rotateY((float) Math.PI);
+         vector4f.rotateX((float) (-Math.PI / 2));

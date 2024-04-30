@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -247,7 +_,7 @@
-          }
+@@ -253,7 +_,7 @@
+             }
  
-          if (!this.level().isClientSide) {
--            if (this.random.nextInt(10) == 0) {
-+            if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
-                this.tame(p_29414_);
-                this.level().broadcastEntityEvent(this, (byte)7);
-             } else {
+             if (!this.level().isClientSide) {
+-                if (this.random.nextInt(10) == 0) {
++                if (this.random.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
+                     this.tame(p_29414_);
+                     this.level().broadcastEntityEvent(this, (byte)7);
+                 } else {

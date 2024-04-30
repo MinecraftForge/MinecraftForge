@@ -15,6 +15,7 @@
     "###"
   ],
   "result": {
-    "item": "minecraft:item_frame"
+    "count": 1,
+    "id": "minecraft:item_frame"
   }
 }

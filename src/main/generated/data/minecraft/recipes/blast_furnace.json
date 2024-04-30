@@ -18,6 +18,7 @@
     "###"
   ],
   "result": {
-    "item": "minecraft:blast_furnace"
+    "count": 1,
+    "id": "minecraft:blast_furnace"
   }
 }

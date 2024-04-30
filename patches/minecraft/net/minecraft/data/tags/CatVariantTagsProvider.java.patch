@@ -1,16 +1,13 @@
 --- a/net/minecraft/data/tags/CatVariantTagsProvider.java
 +++ b/net/minecraft/data/tags/CatVariantTagsProvider.java
-@@ -8,8 +_,13 @@
- import net.minecraft.world.entity.animal.CatVariant;
+@@ -12,6 +_,10 @@
+         super(p_256547_, Registries.CAT_VARIANT, p_256090_);
+     }
  
- public class CatVariantTagsProvider extends TagsProvider<CatVariant> {
-+   /** @deprecated Forge: Use the {@linkplain #CatVariantTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
-+   @Deprecated
-    public CatVariantTagsProvider(PackOutput p_256547_, CompletableFuture<HolderLookup.Provider> p_256090_) {
-       super(p_256547_, Registries.CAT_VARIANT, p_256090_);
-+   }
-+   public CatVariantTagsProvider(PackOutput p_256547_, CompletableFuture<HolderLookup.Provider> p_256090_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+      super(p_256547_, Registries.CAT_VARIANT, p_256090_, modId, existingFileHelper);
-    }
- 
-    protected void addTags(HolderLookup.Provider p_256078_) {
++    public CatVariantTagsProvider(PackOutput p_256547_, CompletableFuture<HolderLookup.Provider> p_256090_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_256547_, Registries.CAT_VARIANT, p_256090_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_256078_) {
+         this.tag(CatVariantTags.DEFAULT_SPAWNS)

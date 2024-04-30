@@ -1,46 +1,46 @@
 --- a/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
 +++ b/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
-@@ -30,7 +_,7 @@
-       this.keyBindsList = this.addRenderableWidget(new KeyBindsList(this, this.minecraft));
-       this.resetButton = this.addRenderableWidget(Button.builder(Component.translatable("controls.resetAll"), (p_269619_) -> {
-          for(KeyMapping keymapping : this.options.keyMappings) {
--            keymapping.setKey(keymapping.getDefaultKey());
-+            keymapping.setToDefault();
-          }
+@@ -33,7 +_,7 @@
+         this.keyBindsList = this.addRenderableWidget(new KeyBindsList(this, this.minecraft));
+         this.resetButton = Button.builder(Component.translatable("controls.resetAll"), p_269619_ -> {
+             for (KeyMapping keymapping : this.options.keyMappings) {
+-                keymapping.setKey(keymapping.getDefaultKey());
++                keymapping.setToDefault();
+             }
  
-          this.keyBindsList.resetMappingAndUpdateButtons();
-@@ -54,11 +_,13 @@
-    public boolean keyPressed(int p_193987_, int p_193988_, int p_193989_) {
-       if (this.selectedKey != null) {
-          if (p_193987_ == 256) {
-+            this.selectedKey.setKeyModifierAndCode(null, InputConstants.UNKNOWN);
-             this.options.setKey(this.selectedKey, InputConstants.UNKNOWN);
-          } else {
-+            this.selectedKey.setKeyModifierAndCode(null, InputConstants.getKey(p_193987_, p_193988_));
-             this.options.setKey(this.selectedKey, InputConstants.getKey(p_193987_, p_193988_));
-          }
--
-+         if (p_193987_ == 256 || !net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.selectedKey.getKey()))
-          this.selectedKey = null;
-          this.lastKeySelection = Util.getMillis();
-          this.keyBindsList.resetMappingAndUpdateButtons();
-@@ -66,6 +_,19 @@
-       } else {
-          return super.keyPressed(p_193987_, p_193988_, p_193989_);
-       }
-+   }
+             this.keyBindsList.resetMappingAndUpdateButtons();
+@@ -70,11 +_,14 @@
+     public boolean keyPressed(int p_193987_, int p_193988_, int p_193989_) {
+         if (this.selectedKey != null) {
+             if (p_193987_ == 256) {
++                this.selectedKey.setKeyModifierAndCode(null, InputConstants.UNKNOWN);
+                 this.options.setKey(this.selectedKey, InputConstants.UNKNOWN);
+             } else {
++                this.selectedKey.setKeyModifierAndCode(null, InputConstants.getKey(p_193987_, p_193988_));
+                 this.options.setKey(this.selectedKey, InputConstants.getKey(p_193987_, p_193988_));
+             }
+ 
++            if (p_193987_ == 256 || !net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.selectedKey.getKey()))
+             this.selectedKey = null;
+             this.lastKeySelection = Util.getMillis();
+             this.keyBindsList.resetMappingAndUpdateButtons();
+@@ -82,6 +_,19 @@
+         } else {
+             return super.keyPressed(p_193987_, p_193988_, p_193989_);
+         }
++    }
 +
-+   @Override
-+   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-+      // Forge: We wait for a second key above if the first press is a modifier
-+      // but if they release the modifier then set it explicitly.
-+      var key = InputConstants.getKey(keyCode, scanCode);
-+      if (this.selectedKey != null && this.selectedKey.getKey() == key) {
-+         this.selectedKey = null;
-+         this.lastKeySelection = Util.getMillis();
-+         this.keyBindsList.resetMappingAndUpdateButtons();
-+      }
-+      return super.keyReleased(keyCode, scanCode, modifiers);
-    }
++    @Override
++    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
++       // Forge: We wait for a second key above if the first press is a modifier
++       // but if they release the modifier then set it explicitly.
++       var key = InputConstants.getKey(keyCode, scanCode);
++       if (this.selectedKey != null && this.selectedKey.getKey() == key) {
++          this.selectedKey = null;
++          this.lastKeySelection = Util.getMillis();
++          this.keyBindsList.resetMappingAndUpdateButtons();
++       }
++       return super.keyReleased(keyCode, scanCode, modifiers);
+     }
  
-    public void render(GuiGraphics p_282556_, int p_193992_, int p_193993_, float p_193994_) {
+     @Override

@@ -1,15 +1,34 @@
 --- a/net/minecraft/client/renderer/blockentity/PistonHeadRenderer.java
 +++ b/net/minecraft/client/renderer/blockentity/PistonHeadRenderer.java
-@@ -60,9 +_,12 @@
-    }
+@@ -65,13 +_,15 @@
+     private void renderBlock(
+         BlockPos p_112459_, BlockState p_112460_, PoseStack p_112461_, MultiBufferSource p_112462_, Level p_112463_, boolean p_112464_, int p_112465_
+     ) {
+-        RenderType rendertype = ItemBlockRenderTypes.getMovingBlockRenderType(p_112460_);
+-        VertexConsumer vertexconsumer = p_112462_.getBuffer(rendertype);
++        var model = blockRenderer.getBlockModel(p_112460_);
++        var data = net.minecraftforge.client.model.data.ModelData.EMPTY;
++        for (var rendertype : model.getRenderTypes(p_112460_, RandomSource.create(p_112460_.getSeed(p_112459_)), data)) {
++        VertexConsumer vertexconsumer = p_112462_.getBuffer(net.minecraftforge.client.RenderTypeHelper.getMovingBlockRenderType(rendertype));
+         this.blockRenderer
+             .getModelRenderer()
+             .tesselateBlock(
+                 p_112463_,
+-                this.blockRenderer.getBlockModel(p_112460_),
++                model,
+                 p_112460_,
+                 p_112459_,
+                 p_112461_,
+@@ -79,8 +_,11 @@
+                 p_112464_,
+                 RandomSource.create(),
+                 p_112460_.getSeed(p_112459_),
+-                p_112465_
++                p_112465_,
++                data,
++                rendertype
+             );
++        }
+     }
  
-    private void renderBlock(BlockPos p_112459_, BlockState p_112460_, PoseStack p_112461_, MultiBufferSource p_112462_, Level p_112463_, boolean p_112464_, int p_112465_) {
-+      net.minecraftforge.client.ForgeHooksClient.renderPistonMovedBlocks(p_112459_, p_112460_, p_112461_, p_112462_, p_112463_, p_112464_, p_112465_, blockRenderer == null ? blockRenderer = net.minecraft.client.Minecraft.getInstance().getBlockRenderer() : blockRenderer);
-+      if(false) {
-       RenderType rendertype = ItemBlockRenderTypes.getMovingBlockRenderType(p_112460_);
-       VertexConsumer vertexconsumer = p_112462_.getBuffer(rendertype);
-       this.blockRenderer.getModelRenderer().tesselateBlock(p_112463_, this.blockRenderer.getBlockModel(p_112460_), p_112460_, p_112459_, p_112461_, vertexconsumer, p_112464_, RandomSource.create(), p_112460_.getSeed(p_112459_), p_112465_);
-+      }
-    }
- 
-    public int getViewDistance() {
+     @Override

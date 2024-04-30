@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
 +++ b/net/minecraft/world/item/crafting/BannerDuplicateRecipe.java
-@@ -79,8 +_,8 @@
-       for(int i = 0; i < nonnulllist.size(); ++i) {
-          ItemStack itemstack = p_43791_.getItem(i);
-          if (!itemstack.isEmpty()) {
--            if (itemstack.getItem().hasCraftingRemainingItem()) {
--               nonnulllist.set(i, new ItemStack(itemstack.getItem().getCraftingRemainingItem()));
-+            if (itemstack.hasCraftingRemainingItem()) {
-+               nonnulllist.set(i, itemstack.getCraftingRemainingItem());
-             } else if (itemstack.hasTag() && BannerBlockEntity.getPatternCount(itemstack) > 0) {
-                nonnulllist.set(i, itemstack.copyWithCount(1));
-             }
+@@ -80,8 +_,8 @@
+         for (int i = 0; i < nonnulllist.size(); i++) {
+             ItemStack itemstack = p_43791_.getItem(i);
+             if (!itemstack.isEmpty()) {
+-                if (itemstack.getItem().hasCraftingRemainingItem()) {
+-                    nonnulllist.set(i, new ItemStack(itemstack.getItem().getCraftingRemainingItem()));
++                if (itemstack.hasCraftingRemainingItem()) {
++                    nonnulllist.set(i, itemstack.getCraftingRemainingItem());
+                 } else if (!itemstack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY).layers().isEmpty()) {
+                     nonnulllist.set(i, itemstack.copyWithCount(1));
+                 }

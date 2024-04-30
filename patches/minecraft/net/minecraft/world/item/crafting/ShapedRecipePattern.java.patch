@@ -1,26 +1,23 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipePattern.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipePattern.java
-@@ -178,9 +_,9 @@
+@@ -179,16 +_,16 @@
  
-    public static record Data(Map<Character, Ingredient> key, List<String> pattern) {
-       private static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().comapFlatMap((p_311191_) -> {
--         if (p_311191_.size() > 3) {
-+         if (p_311191_.size() > ShapedRecipe.MAX_HEIGHT) {
-             return DataResult.error(() -> {
--               return "Invalid pattern: too many rows, 3 is maximum";
-+               return "Invalid pattern: too many rows, " + ShapedRecipe.MAX_HEIGHT + " is maximum";
-             });
-          } else if (p_311191_.isEmpty()) {
-             return DataResult.error(() -> {
-@@ -190,9 +_,9 @@
-             int i = p_311191_.get(0).length();
+     public static record Data(Map<Character, Ingredient> key, List<String> pattern) {
+         private static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().comapFlatMap(p_311191_ -> {
+-            if (p_311191_.size() > 3) {
+-                return DataResult.error(() -> "Invalid pattern: too many rows, 3 is maximum");
++            if (p_311191_.size() > ShapedRecipe.MAX_HEIGHT) {
++                return DataResult.error(() -> "Invalid pattern: too many rows, " + ShapedRecipe.MAX_HEIGHT + " is maximum");
+             } else if (p_311191_.isEmpty()) {
+                 return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
+             } else {
+                 int i = p_311191_.get(0).length();
  
-             for(String s : p_311191_) {
--               if (s.length() > 3) {
-+               if (s.length() > ShapedRecipe.MAX_WIDTH) {
-                   return DataResult.error(() -> {
--                     return "Invalid pattern: too many columns, 3 is maximum";
-+                     return "Invalid pattern: too many columns, " + ShapedRecipe.MAX_WIDTH + " is maximum";
-                   });
-                }
+                 for (String s : p_311191_) {
+-                    if (s.length() > 3) {
+-                        return DataResult.error(() -> "Invalid pattern: too many columns, 3 is maximum");
++                    if (s.length() > ShapedRecipe.MAX_HEIGHT) {
++                        return DataResult.error(() -> "Invalid pattern: too many columns, " + ShapedRecipe.MAX_HEIGHT + " is maximum");
+                     }
  
+                     if (i != s.length()) {

@@ -11,10 +11,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.serialization.Codec;
+import org.jetbrains.annotations.ApiStatus;
 
-public final class ToolAction {
+public record ToolAction(String name) {
     public static final Codec<ToolAction> CODEC = Codec.STRING.xmap(ToolAction::get, ToolAction::name).stable();
-    private static final Map<String, ToolAction> actions = new ConcurrentHashMap<>();
+    private static final Map<String, ToolAction> ACTIONS = new ConcurrentHashMap<>();
 
     /**
      * Returns all registered actions.
@@ -22,14 +23,14 @@ public final class ToolAction {
      * See {@link ConcurrentHashMap#values()} for details.
      */
     public static Collection<ToolAction> getActions() {
-        return Collections.unmodifiableCollection(actions.values());
+        return Collections.unmodifiableCollection(ACTIONS.values());
     }
 
     /**
      * Gets or creates a new ToolAction for the given name.
      */
     public static ToolAction get(String name) {
-        return actions.computeIfAbsent(name, ToolAction::new);
+        return ACTIONS.computeIfAbsent(name, ToolAction::new);
     }
 
     /**
@@ -39,17 +40,7 @@ public final class ToolAction {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return "ToolAction[" + name + "]";
-    }
-
-    private final String name;
-
-    /**
-     * Use {@link #get(String)} to get or create a ToolAction
-     */
-    private ToolAction(String name) {
-        this.name = name;
-    }
+    /** Use {@link #get(String)} to get or create a ToolAction */
+    @ApiStatus.Internal
+    public ToolAction {}
 }

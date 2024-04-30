@@ -6,20 +6,19 @@
  
 -public abstract class Fluid {
 +public abstract class Fluid implements net.minecraftforge.common.extensions.IForgeFluid {
-    public static final IdMapper<FluidState> FLUID_STATE_REGISTRY = new IdMapper<>();
-    protected final StateDefinition<Fluid, FluidState> stateDefinition;
-    private FluidState defaultFluidState;
-@@ -101,6 +_,13 @@
-    }
- 
-    public abstract VoxelShape getShape(FluidState p_76137_, BlockGetter p_76138_, BlockPos p_76139_);
+     public static final IdMapper<FluidState> FLUID_STATE_REGISTRY = new IdMapper<>();
+     protected final StateDefinition<Fluid, FluidState> stateDefinition;
+     private FluidState defaultFluidState;
+@@ -108,5 +_,12 @@
+     @Deprecated
+     public Holder.Reference<Fluid> builtInRegistryHolder() {
+         return this.builtInRegistryHolder;
++    }
 +
-+   private net.minecraftforge.fluids.FluidType forgeFluidType;
-+   @Override
-+   public net.minecraftforge.fluids.FluidType getFluidType() {
-+      if (forgeFluidType == null) forgeFluidType = net.minecraftforge.common.ForgeHooks.getVanillaFluidType(this);
-+      return forgeFluidType;
-+   }
- 
-    public Optional<SoundEvent> getPickupSound() {
-       return Optional.empty();
++    private net.minecraftforge.fluids.FluidType forgeFluidType;
++    @Override
++    public net.minecraftforge.fluids.FluidType getFluidType() {
++       if (forgeFluidType == null) forgeFluidType = net.minecraftforge.common.ForgeHooks.getVanillaFluidType(this);
++       return forgeFluidType;
+     }
+ }

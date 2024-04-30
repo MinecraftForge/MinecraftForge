@@ -1,27 +1,27 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -121,6 +_,7 @@
-    public static void openFresh(Minecraft p_232897_, @Nullable Screen p_232898_) {
-       queueLoadScreen(p_232897_, PREPARING_WORLD_DATA);
-       PackRepository packrepository = new PackRepository(new ServerPacksSource(p_232897_.directoryValidator()));
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(net.minecraft.server.packs.PackType.SERVER_DATA, packrepository::addPackFinder));
-       WorldLoader.InitConfig worldloader$initconfig = createDefaultLoadConfig(packrepository, WorldDataConfiguration.DEFAULT);
-       CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.load(worldloader$initconfig, (p_247792_) -> {
-          return new WorldLoader.DataLoadOutput<>(new CreateWorldScreen.DataPackReloadCookie(new WorldGenSettings(WorldOptions.defaultWithRandomSeed(), WorldPresets.createNormalWorldDimensions(p_247792_.datapackWorldgen())), p_247792_.dataConfiguration()), p_247792_.datapackDimensions());
-@@ -364,7 +_,7 @@
-                if (p_269627_) {
-                   p_270552_.accept(this.uiState.getSettings().dataConfiguration());
-                } else {
--                  p_270552_.accept(WorldDataConfiguration.DEFAULT);
-+                  p_270552_.accept(new WorldDataConfiguration(new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()), FeatureFlags.DEFAULT_FLAGS)); // FORGE: Revert to *actual* vanilla data
-                }
- 
-             }, Component.translatable("dataPack.validation.failed"), CommonComponents.EMPTY, Component.translatable("dataPack.validation.back"), Component.translatable("dataPack.validation.reset")));
-@@ -478,6 +_,7 @@
-       if (path != null) {
-          if (this.tempDataPackRepository == null) {
-             this.tempDataPackRepository = ServerPacksSource.createPackRepository(path, this.packValidator);
-+            net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(this.tempDataPackRepository, false);
-             this.tempDataPackRepository.reload();
-          }
+@@ -119,6 +_,7 @@
+     public static void openFresh(Minecraft p_232897_, @Nullable Screen p_232898_) {
+         queueLoadScreen(p_232897_, PREPARING_WORLD_DATA);
+         PackRepository packrepository = new PackRepository(new ServerPacksSource(p_232897_.directoryValidator()));
++        net.minecraftforge.event.ForgeEventFactory.addPackFindersServer(packrepository::addPackFinder);
+         WorldLoader.InitConfig worldloader$initconfig = createDefaultLoadConfig(packrepository, WorldDataConfiguration.DEFAULT);
+         CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.load(
+             worldloader$initconfig,
+@@ -419,7 +_,7 @@
+                                         if (p_269627_) {
+                                             p_270552_.accept(this.uiState.getSettings().dataConfiguration());
+                                         } else {
+-                                            p_270552_.accept(WorldDataConfiguration.DEFAULT);
++                                            p_270552_.accept(new WorldDataConfiguration(new DataPackConfig(ImmutableList.of("vanilla"), ImmutableList.of()), FeatureFlags.DEFAULT_FLAGS)); // FORGE: Revert to *actual* vanilla data
+                                         }
+                                     },
+                                     Component.translatable("dataPack.validation.failed"),
+@@ -537,6 +_,7 @@
+         if (path != null) {
+             if (this.tempDataPackRepository == null) {
+                 this.tempDataPackRepository = ServerPacksSource.createPackRepository(path, this.packValidator);
++                net.minecraftforge.resource.ResourcePackLoader.loadResourcePacks(this.tempDataPackRepository, false);
+                 this.tempDataPackRepository.reload();
+             }
  

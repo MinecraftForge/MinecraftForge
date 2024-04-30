@@ -1,35 +1,38 @@
 --- a/net/minecraft/world/level/block/FarmBlock.java
 +++ b/net/minecraft/world/level/block/FarmBlock.java
-@@ -90,7 +_,7 @@
-    }
+@@ -98,10 +_,7 @@
+     @Override
+     public void fallOn(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
+         if (!p_153227_.isClientSide
+-            && p_153227_.random.nextFloat() < p_153231_ - 0.5F
+-            && p_153230_ instanceof LivingEntity
+-            && (p_153230_ instanceof Player || p_153227_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING))
+-            && p_153230_.getBbWidth() * p_153230_.getBbWidth() * p_153230_.getBbHeight() > 0.512F) {
++            && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_153227_, p_153229_, Blocks.DIRT.defaultBlockState(), p_153231_, p_153230_)) { // Forge: Move logic to Entity#canTrample
+             turnToDirt(p_153230_, p_153228_, p_153227_, p_153229_);
+         }
  
-    public void fallOn(Level p_153227_, BlockState p_153228_, BlockPos p_153229_, Entity p_153230_, float p_153231_) {
--      if (!p_153227_.isClientSide && p_153227_.random.nextFloat() < p_153231_ - 0.5F && p_153230_ instanceof LivingEntity && (p_153230_ instanceof Player || p_153227_.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) && p_153230_.getBbWidth() * p_153230_.getBbWidth() * p_153230_.getBbHeight() > 0.512F) {
-+      if (!p_153227_.isClientSide && net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_153227_, p_153229_, Blocks.DIRT.defaultBlockState(), p_153231_, p_153230_)) { // Forge: Move logic to Entity#canTrample
-          turnToDirt(p_153230_, p_153228_, p_153227_, p_153229_);
-       }
+@@ -115,17 +_,20 @@
+     }
  
-@@ -104,17 +_,20 @@
-    }
+     private static boolean shouldMaintainFarmland(BlockGetter p_279219_, BlockPos p_279209_) {
+-        return p_279219_.getBlockState(p_279209_.above()).is(BlockTags.MAINTAINS_FARMLAND);
++        BlockState plant = p_279219_.getBlockState(p_279209_.above());
++        BlockState state = p_279219_.getBlockState(p_279209_);
++        return plant.getBlock() instanceof net.minecraftforge.common.IPlantable plantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, plantable);
+     }
  
-    private static boolean shouldMaintainFarmland(BlockGetter p_279219_, BlockPos p_279209_) {
--      return p_279219_.getBlockState(p_279209_.above()).is(BlockTags.MAINTAINS_FARMLAND);
-+      BlockState plant = p_279219_.getBlockState(p_279209_.above());
-+      BlockState state = p_279219_.getBlockState(p_279209_);
-+      return plant.getBlock() instanceof net.minecraftforge.common.IPlantable && state.canSustainPlant(p_279219_, p_279209_, Direction.UP, (net.minecraftforge.common.IPlantable)plant.getBlock());
-    }
+     private static boolean isNearWater(LevelReader p_53259_, BlockPos p_53260_) {
++        BlockState state = p_53259_.getBlockState(p_53260_);
+         for (BlockPos blockpos : BlockPos.betweenClosed(p_53260_.offset(-4, 0, -4), p_53260_.offset(4, 1, 4))) {
+-            if (p_53259_.getFluidState(blockpos).is(FluidTags.WATER)) {
++            if (state.canBeHydrated(p_53259_, p_53260_, p_53259_.getFluidState(blockpos), blockpos)) {
+                 return true;
+             }
+         }
  
-    private static boolean isNearWater(LevelReader p_53259_, BlockPos p_53260_) {
-+      BlockState state = p_53259_.getBlockState(p_53260_);
-       for(BlockPos blockpos : BlockPos.betweenClosed(p_53260_.offset(-4, 0, -4), p_53260_.offset(4, 1, 4))) {
--         if (p_53259_.getFluidState(blockpos).is(FluidTags.WATER)) {
-+         if (state.canBeHydrated(p_53259_, p_53260_, p_53259_.getFluidState(blockpos), blockpos)) {
-             return true;
-          }
-       }
+-        return false;
++        return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_53259_, p_53260_);
+     }
  
--      return false;
-+      return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_53259_, p_53260_);
-    }
- 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_53283_) {
+     @Override

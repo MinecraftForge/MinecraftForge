@@ -19,24 +19,20 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class DifficultyChangeEvent extends Event
-{
+public class DifficultyChangeEvent extends Event {
     private final Difficulty difficulty;
     private final Difficulty oldDifficulty;
 
-    public DifficultyChangeEvent(Difficulty difficulty, Difficulty oldDifficulty)
-    {
+    public DifficultyChangeEvent(Difficulty difficulty, Difficulty oldDifficulty) {
         this.difficulty = difficulty;
         this.oldDifficulty = oldDifficulty;
     }
 
-    public Difficulty getDifficulty()
-    {
+    public Difficulty getDifficulty() {
         return difficulty;
     }
 
-    public Difficulty getOldDifficulty()
-    {
+    public Difficulty getOldDifficulty() {
         return oldDifficulty;
     }
 }

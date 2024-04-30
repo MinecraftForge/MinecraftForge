@@ -1,21 +1,63 @@
 --- a/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
 +++ b/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
-@@ -28,6 +_,10 @@
+@@ -31,33 +_,38 @@
+     @Override
+     public void tick() {
+         ServerLevel serverlevel = (ServerLevel)this.horse.level();
+-        DifficultyInstance difficultyinstance = serverlevel.getCurrentDifficultyAt(this.horse.blockPosition());
+-        this.horse.setTrap(false);
+-        this.horse.setTamed(true);
+-        this.horse.setAge(0);
+-        LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(serverlevel);
+-        if (lightningbolt != null) {
+-            lightningbolt.moveTo(this.horse.getX(), this.horse.getY(), this.horse.getZ());
+-            lightningbolt.setVisualOnly(true);
+-            serverlevel.addFreshEntity(lightningbolt);
+-            Skeleton skeleton = this.createSkeleton(difficultyinstance, this.horse);
+-            if (skeleton != null) {
+-                skeleton.startRiding(this.horse);
+-                serverlevel.addFreshEntityWithPassengers(skeleton);
++        // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
++        // (MC-206338/Forge PR #7509)
++        serverlevel.getServer().tell(new net.minecraft.server.TickTask(serverlevel.getServer().getTickCount(), () -> {
++            if (!this.horse.isAlive()) return;
++            DifficultyInstance difficultyinstance = serverlevel.getCurrentDifficultyAt(this.horse.blockPosition());
++            this.horse.setTrap(false);
++            this.horse.setTamed(true);
++            this.horse.setAge(0);
++            LightningBolt lightningbolt = EntityType.LIGHTNING_BOLT.create(serverlevel);
++            if (lightningbolt != null) {
++                lightningbolt.moveTo(this.horse.getX(), this.horse.getY(), this.horse.getZ());
++                lightningbolt.setVisualOnly(true);
++                serverlevel.addFreshEntity(lightningbolt);
++                Skeleton skeleton = this.createSkeleton(difficultyinstance, this.horse);
++                if (skeleton != null) {
++                    skeleton.startRiding(this.horse);
++                    serverlevel.addFreshEntityWithPassengers(skeleton);
  
-    public void tick() {
-       ServerLevel serverlevel = (ServerLevel)this.horse.level();
-+      // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
-+      // (MC-206338/Forge PR #7509)
-+      serverlevel.getServer().tell(new net.minecraft.server.TickTask(serverlevel.getServer().getTickCount(), () -> {
-+      if (!this.horse.isAlive()) return;
-       DifficultyInstance difficultyinstance = serverlevel.getCurrentDifficultyAt(this.horse.blockPosition());
-       this.horse.setTrap(false);
-       this.horse.setTamed(true);
-@@ -56,6 +_,7 @@
+-                for (int i = 0; i < 3; i++) {
+-                    AbstractHorse abstracthorse = this.createHorse(difficultyinstance);
+-                    if (abstracthorse != null) {
+-                        Skeleton skeleton1 = this.createSkeleton(difficultyinstance, abstracthorse);
+-                        if (skeleton1 != null) {
+-                            skeleton1.startRiding(abstracthorse);
+-                            abstracthorse.push(this.horse.getRandom().triangle(0.0, 1.1485), 0.0, this.horse.getRandom().triangle(0.0, 1.1485));
+-                            serverlevel.addFreshEntityWithPassengers(abstracthorse);
++                    for (int i = 0; i < 3; i++) {
++                        AbstractHorse abstracthorse = this.createHorse(difficultyinstance);
++                        if (abstracthorse != null) {
++                            Skeleton skeleton1 = this.createSkeleton(difficultyinstance, abstracthorse);
++                            if (skeleton1 != null) {
++                                skeleton1.startRiding(abstracthorse);
++                                abstracthorse.push(this.horse.getRandom().triangle(0.0, 1.1485), 0.0, this.horse.getRandom().triangle(0.0, 1.1485));
++                                serverlevel.addFreshEntityWithPassengers(abstracthorse);
++                            }
+                         }
+                     }
+                 }
+             }
+-        }
++        }));
+     }
  
-          }
-       }
-+      }));
-    }
- 
-    @Nullable
+     @Nullable

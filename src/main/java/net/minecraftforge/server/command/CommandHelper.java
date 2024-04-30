@@ -25,11 +25,8 @@ import java.util.function.Function;
  *
  * @hidden
  */
-public final class CommandHelper
-{
-    private CommandHelper()
-    {
-    }
+public final class CommandHelper {
+    private CommandHelper() { }
 
     /**
      * Deep copies the children of a command node and stores a link between the source and the copy
@@ -42,13 +39,10 @@ public final class CommandHelper
      * @param sourceToResultSuggestion a function to convert from the {@link SuggestionProvider} with the original source stack to the {@link SuggestionProvider} with the result source stack
      */
     public static <S, T> void mergeCommandNode(CommandNode<S> sourceNode, CommandNode<T> resultNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult,
-                                               S canUse, Command<T> execute, Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion)
-    {
+                                               S canUse, Command<T> execute, Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion) {
         sourceToResult.put(sourceNode, resultNode);
-        for (CommandNode<S> sourceChild : sourceNode.getChildren())
-        {
-            if (sourceChild.canUse(canUse))
-            {
+        for (CommandNode<S> sourceChild : sourceNode.getChildren()) {
+            if (sourceChild.canUse(canUse)) {
                 resultNode.addChild(toResult(sourceChild, sourceToResult, canUse, execute, sourceToResultSuggestion));
             }
         }
@@ -65,42 +59,33 @@ public final class CommandHelper
      * @return the deep copied command node with the new source stack
      */
     private static <S, T> CommandNode<T> toResult(CommandNode<S> sourceNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult, S canUse, Command<T> execute,
-                                                  Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion)
-    {
-        if (sourceToResult.containsKey(sourceNode))
+                                                  Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion) {
+        if (sourceToResult.containsKey(sourceNode)) {
             return sourceToResult.get(sourceNode);
+        }
 
         ArgumentBuilder<T, ?> resultBuilder;
-        if (sourceNode instanceof ArgumentCommandNode<?, ?>)
-        {
-            ArgumentCommandNode<S, ?> sourceArgument = (ArgumentCommandNode<S, ?>) sourceNode;
+        if (sourceNode instanceof ArgumentCommandNode<S, ?> sourceArgument) {
             RequiredArgumentBuilder<T, ?> resultArgumentBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
-            if (sourceArgument.getCustomSuggestions() != null)
-            {
+            if (sourceArgument.getCustomSuggestions() != null) {
                 resultArgumentBuilder.suggests(sourceToResultSuggestion.apply(sourceArgument.getCustomSuggestions()));
             }
             resultBuilder = resultArgumentBuilder;
-        } else if (sourceNode instanceof LiteralCommandNode<?>)
-        {
-            LiteralCommandNode<S> sourceLiteral = (LiteralCommandNode<S>) sourceNode;
+        } else if (sourceNode instanceof LiteralCommandNode<S> sourceLiteral) {
             resultBuilder = LiteralArgumentBuilder.literal(sourceLiteral.getLiteral());
-        } else if (sourceNode instanceof RootCommandNode<?>)
-        {
+        } else if (sourceNode instanceof RootCommandNode<?>) {
             CommandNode<T> resultNode = new RootCommandNode<>();
             mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
             return resultNode;
-        } else
-        {
+        } else {
             throw new IllegalStateException("Node type " + sourceNode + " is not a standard node type");
         }
 
-        if (sourceNode.getCommand() != null)
-        {
+        if (sourceNode.getCommand() != null) {
             resultBuilder.executes(execute);
         }
 
-        if (sourceNode.getRedirect() != null)
-        {
+        if (sourceNode.getRedirect() != null) {
             resultBuilder.redirect(toResult(sourceNode.getRedirect(), sourceToResult, canUse, execute, sourceToResultSuggestion));
         }
 

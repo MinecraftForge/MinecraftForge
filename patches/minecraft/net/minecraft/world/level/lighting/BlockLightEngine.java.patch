@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/lighting/BlockLightEngine.java
 +++ b/net/minecraft/world/level/lighting/BlockLightEngine.java
-@@ -105,7 +_,7 @@
-    }
+@@ -107,7 +_,7 @@
+     }
  
-    private int getEmission(long p_285243_, BlockState p_284973_) {
--      int i = p_284973_.getLightEmission();
-+      int i = p_284973_.getLightEmission(chunkSource.getLevel(), mutablePos);
-       return i > 0 && this.storage.lightOnInSection(SectionPos.blockToSection(p_285243_)) ? i : 0;
-    }
+     private int getEmission(long p_285243_, BlockState p_284973_) {
+-        int i = p_284973_.getLightEmission();
++        int i = p_284973_.getLightEmission(chunkSource.getLevel(), mutablePos);
+         return i > 0 && this.storage.lightOnInSection(SectionPos.blockToSection(p_285243_)) ? i : 0;
+     }
  
-@@ -114,7 +_,7 @@
-       LightChunk lightchunk = this.chunkSource.getChunkForLighting(p_285274_.x, p_285274_.z);
-       if (lightchunk != null) {
-          lightchunk.findBlockLightSources((p_285266_, p_285452_) -> {
--            int i = p_285452_.getLightEmission();
-+            int i = p_285452_.getLightEmission(chunkSource.getLevel(), p_285266_);
-             this.enqueueIncrease(p_285266_.asLong(), LightEngine.QueueEntry.increaseLightFromEmission(i, isEmptyShape(p_285452_)));
-          });
-       }
+@@ -117,7 +_,7 @@
+         LightChunk lightchunk = this.chunkSource.getChunkForLighting(p_285274_.x, p_285274_.z);
+         if (lightchunk != null) {
+             lightchunk.findBlockLightSources((p_285266_, p_285452_) -> {
+-                int i = p_285452_.getLightEmission();
++                int i = p_285452_.getLightEmission(chunkSource.getLevel(), p_285266_);
+                 this.enqueueIncrease(p_285266_.asLong(), LightEngine.QueueEntry.increaseLightFromEmission(i, isEmptyShape(p_285452_)));
+             });
+         }

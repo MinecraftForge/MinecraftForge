@@ -77,7 +77,7 @@ public class MCPNamingService implements INameMappingService {
     }
 
     private static void loadMappings(final String mappingFileName, BiConsumer<String, String> mapStore) {
-        URL path = ClassLoader.getSystemResource(mappingFileName); //We EXPLICITLY go through the SystemClassLoader here because this is dev-time only. And will be on the root classpath.
+        URL path = MCPNamingService.class.getClassLoader().getResource(mappingFileName);
         if (path == null)
             return;
 

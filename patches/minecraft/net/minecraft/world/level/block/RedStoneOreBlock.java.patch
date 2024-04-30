@@ -1,18 +1,22 @@
 --- a/net/minecraft/world/level/block/RedStoneOreBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
-@@ -80,11 +_,11 @@
- 
-    public void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
-       super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
--      if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
--         int i = 1 + p_221908_.random.nextInt(5);
--         this.popExperience(p_221908_, p_221909_, i);
--      }
-+   }
- 
-+   @Override
-+   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
-+      return silktouch == 0 ? 1 + randomSource.nextInt(5) : 0;
-    }
- 
-    public void animateTick(BlockState p_221913_, Level p_221914_, BlockPos p_221915_, RandomSource p_221916_) {
+@@ -88,7 +_,7 @@
+     @Override
+     protected void spawnAfterBreak(BlockState p_221907_, ServerLevel p_221908_, BlockPos p_221909_, ItemStack p_221910_, boolean p_221911_) {
+         super.spawnAfterBreak(p_221907_, p_221908_, p_221909_, p_221910_, p_221911_);
+-        if (p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) {
++        if (false && p_221911_ && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, p_221910_) == 0) { // Forge: moved to getExpDrop
+             int i = 1 + p_221908_.random.nextInt(5);
+             this.popExperience(p_221908_, p_221909_, i);
+         }
+@@ -129,4 +_,10 @@
+     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_55484_) {
+         p_55484_.add(LIT);
+     }
++
++    @Override
++    public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, RandomSource randomSource, BlockPos pos, int fortune, int silktouch) {
++       return silktouch == 0 ? 1 + randomSource.nextInt(5) : 0;
++    }
++
+ }

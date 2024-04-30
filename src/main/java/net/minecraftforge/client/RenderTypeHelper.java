@@ -21,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Provides helper functions replacing those in {@link ItemBlockRenderTypes}.
  */
-public final class RenderTypeHelper
-{
+public final class RenderTypeHelper {
     /**
      * Provides a {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY} for the given {@link DefaultVertexFormat#BLOCK} format.
      * This should be called for each {@link RenderType} returned by {@link BakedModel#getRenderTypes(BlockState, RandomSource, ModelData)}.
@@ -30,8 +29,7 @@ public final class RenderTypeHelper
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(BlockState, boolean)}.
      */
     @NotNull
-    public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean cull)
-    {
+    public static RenderType getEntityRenderType(RenderType chunkRenderType, boolean cull) {
         if (chunkRenderType != RenderType.translucent())
             return Sheets.cutoutBlockSheet();
         return cull || !Minecraft.useShaderTransparency() ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet();
@@ -44,8 +42,7 @@ public final class RenderTypeHelper
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getMovingBlockRenderType(BlockState)}.
      */
     @NotNull
-    public static RenderType getMovingBlockRenderType(RenderType renderType)
-    {
+    public static RenderType getMovingBlockRenderType(RenderType renderType) {
         if (renderType == RenderType.translucent())
             return RenderType.translucentMovingBlock();
         return renderType;
@@ -58,10 +55,8 @@ public final class RenderTypeHelper
      * but removes the need to query the model again if the item is a {@link BlockItem}.
      */
     @NotNull
-    public static RenderType getFallbackItemRenderType(ItemStack stack, BakedModel model, boolean cull)
-    {
-        if (stack.getItem() instanceof BlockItem blockItem)
-        {
+    public static RenderType getFallbackItemRenderType(ItemStack stack, BakedModel model, boolean cull) {
+        if (stack.getItem() instanceof BlockItem blockItem) {
             var renderTypes = model.getRenderTypes(blockItem.getBlock().defaultBlockState(), RandomSource.create(42), ModelData.EMPTY);
             if (renderTypes.contains(RenderType.translucent()))
                 return getEntityRenderType(RenderType.translucent(), cull);
@@ -70,7 +65,5 @@ public final class RenderTypeHelper
         return cull ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet();
     }
 
-    private RenderTypeHelper()
-    {
-    }
+    private RenderTypeHelper() {}
 }

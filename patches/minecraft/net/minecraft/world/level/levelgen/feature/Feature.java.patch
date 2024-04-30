@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -156,7 +_,7 @@
-    }
+@@ -186,7 +_,7 @@
+     }
  
-    protected static boolean isStone(BlockState p_159748_) {
--      return p_159748_.is(BlockTags.BASE_STONE_OVERWORLD);
-+      return p_159748_.is(net.minecraftforge.common.Tags.Blocks.STONE);
-    }
+     protected static boolean isStone(BlockState p_159748_) {
+-        return p_159748_.is(BlockTags.BASE_STONE_OVERWORLD);
++        return p_159748_.is(net.minecraftforge.common.Tags.Blocks.STONE);
+     }
  
-    public static boolean isDirt(BlockState p_159760_) {
+     public static boolean isDirt(BlockState p_159760_) {

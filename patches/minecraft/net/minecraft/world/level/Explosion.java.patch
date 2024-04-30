@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -193,6 +_,7 @@
-       int j2 = Mth.floor(this.z - (double)f2 - 1.0D);
-       int j1 = Mth.floor(this.z + (double)f2 + 1.0D);
-       List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
-+      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
-       Vec3 vec3 = new Vec3(this.x, this.y, this.z);
+@@ -256,6 +_,7 @@
+         int j2 = Mth.floor(this.z - (double)f2 - 1.0);
+         int j1 = Mth.floor(this.z + (double)f2 + 1.0);
+         List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.level, this, list, f2);
+         Vec3 vec3 = new Vec3(this.x, this.y, this.z);
  
-       for(Entity entity : list) {
+         for (Entity entity : list) {

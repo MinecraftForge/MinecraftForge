@@ -1,12 +1,23 @@
 --- a/net/minecraft/server/commands/SpreadPlayersCommand.java
 +++ b/net/minecraft/server/commands/SpreadPlayersCommand.java
-@@ -175,7 +_,8 @@
-             spreadplayerscommand$position = p_138732_[i++];
-          }
+@@ -257,11 +_,17 @@
+                 spreadplayerscommand$position = p_138732_[i++];
+             }
  
--         entity.teleportTo(p_138731_, (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D, (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_), (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D, Set.of(), entity.getYRot(), entity.getXRot());
-+         net.minecraftforge.event.entity.EntityTeleportEvent.SpreadPlayersCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity, (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D, (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_), (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D);
-+         if (!event.isCanceled()) entity.teleportToWithTicket(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-          double d2 = Double.MAX_VALUE;
- 
-          for(SpreadPlayersCommand.Position spreadplayerscommand$position1 : p_138732_) {
++            var event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity,
++                (double)Mth.floor(spreadplayerscommand$position.x) + 0.5D,
++                (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_),
++                (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D
++            );
++            if (!event.isCanceled())
+             entity.teleportTo(
+                 p_138731_,
+-                (double)Mth.floor(spreadplayerscommand$position.x) + 0.5,
+-                (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_),
+-                (double)Mth.floor(spreadplayerscommand$position.z) + 0.5,
++                event.getTargetX(),
++                event.getTargetY(),
++                event.getTargetZ(),
+                 Set.of(),
+                 entity.getYRot(),
+                 entity.getXRot()

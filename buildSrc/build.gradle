@@ -4,9 +4,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.ow2.asm:asm:9.6'
-    implementation 'org.ow2.asm:asm-tree:9.6'
-    implementation 'net.minecraftforge:srgutils:0.5.+'
+    implementation 'org.ow2.asm:asm:9.7'
+    implementation 'org.ow2.asm:asm-tree:9.7'
+    implementation 'net.minecraftforge:srgutils:0.5.10'
     implementation 'commons-io:commons-io:2.13.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'

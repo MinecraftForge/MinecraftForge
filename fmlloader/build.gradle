@@ -37,7 +37,7 @@ dependencies {
     implementation(libs.jimfs)
 
     implementation(libs.log4j.core)
-    annotationProcessor(libs.log4j.core)
+    annotationProcessor(libs.bundles.log4j)
 
     testCompileOnly(libs.nulls)
     testRuntimeOnly(libs.bootstrap)

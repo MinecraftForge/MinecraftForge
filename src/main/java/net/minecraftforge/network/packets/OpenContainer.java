@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -41,14 +42,19 @@ public class OpenContainer {
     public static void encode(OpenContainer msg, FriendlyByteBuf buf) {
         buf.writeVarInt(msg.id);
         buf.writeVarInt(msg.windowId);
-        buf.writeComponent(msg.name);
+        ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.encode(buf, msg.name);
         msg.additionalData.markReaderIndex();
         buf.writeByteArray(msg.additionalData.readByteArray());
         msg.additionalData.resetReaderIndex();
     }
 
     public static OpenContainer decode(FriendlyByteBuf buf) {
-        return new OpenContainer(buf.readVarInt(), buf.readVarInt(), buf.readComponent(), new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
+        return new OpenContainer(
+            buf.readVarInt(),
+            buf.readVarInt(),
+            ComponentSerialization.TRUSTED_CONTEXT_FREE_STREAM_CODEC.decode(buf),
+            new FriendlyByteBuf(Unpooled.wrappedBuffer(buf.readByteArray(32600)))
+        );
     }
 
     @SuppressWarnings("unchecked")

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
-@@ -58,7 +_,7 @@
-    }
+@@ -63,7 +_,7 @@
  
-    public boolean isIncomplete() {
--      return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
-+      return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
-    }
+     @Override
+     public boolean isIncomplete() {
+-        return Stream.of(this.template, this.base, this.addition).anyMatch(Ingredient::isEmpty);
++        return Stream.of(this.template, this.base, this.addition).anyMatch(net.minecraftforge.common.ForgeHooks::hasNoElements);
+     }
  
-    public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {
+     public static class Serializer implements RecipeSerializer<SmithingTransformRecipe> {

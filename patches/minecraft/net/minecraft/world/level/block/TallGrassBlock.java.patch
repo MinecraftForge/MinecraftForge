@@ -6,6 +6,6 @@
  
 -public class TallGrassBlock extends BushBlock implements BonemealableBlock {
 +public class TallGrassBlock extends BushBlock implements BonemealableBlock, net.minecraftforge.common.IForgeShearable {
-    public static final MapCodec<TallGrassBlock> CODEC = simpleCodec(TallGrassBlock::new);
-    protected static final float AABB_OFFSET = 6.0F;
-    protected static final VoxelShape SHAPE = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+     public static final MapCodec<TallGrassBlock> CODEC = simpleCodec(TallGrassBlock::new);
+     protected static final float AABB_OFFSET = 6.0F;
+     protected static final VoxelShape SHAPE = Block.box(2.0, 0.0, 2.0, 14.0, 13.0, 14.0);

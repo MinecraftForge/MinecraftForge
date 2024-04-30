@@ -1,25 +1,20 @@
 --- a/net/minecraft/client/gui/screens/MenuScreens.java
 +++ b/net/minecraft/client/gui/screens/MenuScreens.java
-@@ -41,6 +_,10 @@
-    private static final Map<MenuType<?>, MenuScreens.ScreenConstructor<?, ?>> SCREENS = Maps.newHashMap();
+@@ -41,11 +_,16 @@
+     private static final Map<MenuType<?>, MenuScreens.ScreenConstructor<?, ?>> SCREENS = Maps.newHashMap();
  
-    public static <T extends AbstractContainerMenu> void create(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
-+      getScreenFactory(p_96202_, p_96203_, p_96204_, p_96205_).ifPresent(f -> f.fromPacket(p_96205_, p_96202_, p_96203_, p_96204_));
-+   }
+     public static <T extends AbstractContainerMenu> void create(MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
++        getScreenFactory(p_96202_, p_96203_, p_96204_, p_96205_).ifPresent(f -> f.fromPacket(p_96205_, p_96202_, p_96203_, p_96204_));
++    }
 +
-+   public static <T extends AbstractContainerMenu> java.util.Optional<ScreenConstructor<T, ?>> getScreenFactory(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
-       if (p_96202_ == null) {
-          LOGGER.warn("Trying to open invalid screen with name: {}", (Object)p_96205_.getString());
-       } else {
-@@ -48,9 +_,10 @@
-          if (screenconstructor == null) {
-             LOGGER.warn("Failed to create screen for menu type: {}", (Object)BuiltInRegistries.MENU.getKey(p_96202_));
-          } else {
++    public static <T extends AbstractContainerMenu> java.util.Optional<ScreenConstructor<T, ?>> getScreenFactory(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
+         MenuScreens.ScreenConstructor<T, ?> screenconstructor = getConstructor(p_96202_);
+         if (screenconstructor == null) {
+             LOGGER.warn("Failed to create screen for menu type: {}", BuiltInRegistries.MENU.getKey(p_96202_));
++            return java.util.Optional.empty();
+         } else {
 -            screenconstructor.fromPacket(p_96205_, p_96202_, p_96203_, p_96204_);
 +            return java.util.Optional.of(screenconstructor);
-          }
-       }
-+      return java.util.Optional.empty();
-    }
+         }
+     }
  
-    @Nullable

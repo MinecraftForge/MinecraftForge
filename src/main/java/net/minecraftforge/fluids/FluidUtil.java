@@ -430,7 +430,8 @@ public class FluidUtil
      */
     public static LazyOptional<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
     {
-        return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
+        return LazyOptional.empty(); // TEMP FIX - MangoRage
+        // return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
     }
 
     /**

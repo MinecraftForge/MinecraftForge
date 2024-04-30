@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -35,6 +_,7 @@
-    private byte[] iconBytes;
-    private ServerData.Type type;
-    private boolean enforcesSecureChat;
-+   public net.minecraftforge.client.ExtendedServerListData forgeData = null;
+@@ -34,6 +_,7 @@
+     private byte[] iconBytes;
+     private ServerData.Type type;
+     private ServerData.State state = ServerData.State.INITIAL;
++    public net.minecraftforge.client.ExtendedServerListData forgeData = null;
  
-    public ServerData(String p_105375_, String p_105376_, ServerData.Type p_297678_) {
-       this.name = p_105375_;
+     public ServerData(String p_105375_, String p_105376_, ServerData.Type p_297678_) {
+         this.name = p_105375_;

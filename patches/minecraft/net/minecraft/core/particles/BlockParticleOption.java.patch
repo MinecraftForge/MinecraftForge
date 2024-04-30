@@ -1,18 +1,18 @@
 --- a/net/minecraft/core/particles/BlockParticleOption.java
 +++ b/net/minecraft/core/particles/BlockParticleOption.java
-@@ -51,4 +_,15 @@
-    public BlockState getState() {
-       return this.state;
-    }
+@@ -35,4 +_,15 @@
+     public BlockState getState() {
+         return this.state;
+     }
 +
-+   //FORGE: Add a source pos property, so we can provide models with additional model data
-+   private net.minecraft.core.BlockPos pos;
-+   public BlockParticleOption setPos(net.minecraft.core.BlockPos pos) {
-+      this.pos = pos;
-+      return this;
-+   }
++    //FORGE: Add a source pos property, so we can provide models with additional model data
++    private net.minecraft.core.BlockPos pos;
++    public BlockParticleOption setPos(net.minecraft.core.BlockPos pos) {
++        this.pos = pos;
++        return this;
++    }
 +
-+   public net.minecraft.core.BlockPos getPos() {
-+      return pos;
-+   }
++    public net.minecraft.core.BlockPos getPos() { // should this be annotated with @Nullable? -Paint_Ninja
++        return pos;
++    }
  }

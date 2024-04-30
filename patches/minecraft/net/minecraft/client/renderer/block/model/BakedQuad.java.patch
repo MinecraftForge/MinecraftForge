@@ -1,32 +1,32 @@
 --- a/net/minecraft/client/renderer/block/model/BakedQuad.java
 +++ b/net/minecraft/client/renderer/block/model/BakedQuad.java
 @@ -12,13 +_,19 @@
-    protected final Direction direction;
-    protected final TextureAtlasSprite sprite;
-    private final boolean shade;
-+   private final boolean hasAmbientOcclusion;
+     protected final Direction direction;
+     protected final TextureAtlasSprite sprite;
+     private final boolean shade;
++    private final boolean hasAmbientOcclusion;
  
-    public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_) {
-+      this(p_111298_, p_111299_, p_111300_, p_111301_, p_111302_, true);
-+   }
+     public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_) {
++        this(p_111298_, p_111299_, p_111300_, p_111301_, p_111302_, true);
++    }
 +
-+   public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_, boolean hasAmbientOcclusion) {
-       this.vertices = p_111298_;
-       this.tintIndex = p_111299_;
-       this.direction = p_111300_;
-       this.sprite = p_111301_;
-       this.shade = p_111302_;
-+      this.hasAmbientOcclusion = hasAmbientOcclusion;
-    }
++    public BakedQuad(int[] p_111298_, int p_111299_, Direction p_111300_, TextureAtlasSprite p_111301_, boolean p_111302_, boolean hasAmbientOcclusion) {
+         this.vertices = p_111298_;
+         this.tintIndex = p_111299_;
+         this.direction = p_111300_;
+         this.sprite = p_111301_;
+         this.shade = p_111302_;
++        this.hasAmbientOcclusion = hasAmbientOcclusion;
+     }
  
-    public TextureAtlasSprite getSprite() {
+     public TextureAtlasSprite getSprite() {
 @@ -43,5 +_,9 @@
  
-    public boolean isShade() {
-       return this.shade;
-+   }
+     public boolean isShade() {
+         return this.shade;
++    }
 +
-+   public boolean hasAmbientOcclusion() {
-+      return this.hasAmbientOcclusion;
-    }
++    public boolean hasAmbientOcclusion() {
++        return this.hasAmbientOcclusion;
+     }
  }

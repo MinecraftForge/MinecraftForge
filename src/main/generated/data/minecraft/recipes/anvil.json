@@ -15,6 +15,7 @@
     "iii"
   ],
   "result": {
-    "item": "minecraft:anvil"
+    "count": 1,
+    "id": "minecraft:anvil"
   }
 }

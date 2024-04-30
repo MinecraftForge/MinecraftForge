@@ -1,17 +1,22 @@
 --- a/net/minecraft/tags/TagFile.java
 +++ b/net/minecraft/tags/TagFile.java
-@@ -4,8 +_,12 @@
- import com.mojang.serialization.codecs.RecordCodecBuilder;
+@@ -5,12 +_,17 @@
+ import com.mojang.serialization.codecs.RecordCodecBuilder.Instance;
  import java.util.List;
  
 -public record TagFile(List<TagEntry> entries, boolean replace) {
 +public record TagFile(List<TagEntry> entries, boolean replace, List<TagEntry> remove) {
-    public static final Codec<TagFile> CODEC = RecordCodecBuilder.create((p_215967_) -> {
--      return p_215967_.group(TagEntry.CODEC.listOf().fieldOf("values").forGetter(TagFile::entries), Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::replace)).apply(p_215967_, TagFile::new);
-+      return p_215967_.group(TagEntry.CODEC.listOf().fieldOf("values").forGetter(TagFile::entries), Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::replace), TagEntry.CODEC.listOf().optionalFieldOf("remove", List.of()).forGetter(TagFile::remove)).apply(p_215967_, TagFile::new);
-    });
+     public static final Codec<TagFile> CODEC = RecordCodecBuilder.create(
+         p_215967_ -> p_215967_.group(
+                     TagEntry.CODEC.listOf().fieldOf("values").forGetter(TagFile::entries),
+-                    Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::replace)
++                    Codec.BOOL.optionalFieldOf("replace", Boolean.valueOf(false)).forGetter(TagFile::replace),
++                    TagEntry.CODEC.listOf().optionalFieldOf("remove", List.of()).forGetter(TagFile::remove)
+                 )
+                 .apply(p_215967_, TagFile::new)
+     );
 +
-+   public TagFile(List<TagEntry> entries, boolean replace) {
-+      this(entries, replace, List.of());
-+   }
++    public TagFile(List<TagEntry> entries, boolean replace) {
++       this(entries, replace, List.of());
++    }
  }

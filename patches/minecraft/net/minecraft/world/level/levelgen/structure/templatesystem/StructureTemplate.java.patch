@@ -1,106 +1,122 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -201,6 +_,10 @@
-       return transform(p_74565_, p_74564_.getMirror(), p_74564_.getRotation(), p_74564_.getRotationPivot());
-    }
+@@ -226,6 +_,10 @@
+         return transform(p_74565_, p_74564_.getMirror(), p_74564_.getRotation(), p_74564_.getRotationPivot());
+     }
  
-+   public static Vec3 transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
-+      return transform(pos, placementIn.getMirror(), placementIn.getRotation(), placementIn.getRotationPivot());
-+   }
++    public static Vec3 transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
++        return transform(pos, placementIn.getMirror(), placementIn.getRotation(), placementIn.getRotationPivot());
++    }
 +
-    public boolean placeInWorld(ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_) {
-       if (this.palettes.isEmpty()) {
-          return false;
-@@ -218,7 +_,7 @@
-             int i1 = Integer.MIN_VALUE;
-             int j1 = Integer.MIN_VALUE;
+     public boolean placeInWorld(
+         ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_
+     ) {
+@@ -248,7 +_,7 @@
+                 int i1 = Integer.MIN_VALUE;
+                 int j1 = Integer.MIN_VALUE;
  
--            for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list)) {
-+            for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this)) {
-                BlockPos blockpos = structuretemplate$structureblockinfo.pos;
-                if (boundingbox == null || boundingbox.isInside(blockpos)) {
-                   FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
-@@ -330,7 +_,7 @@
+-                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list)) {
++                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this)) {
+                     BlockPos blockpos = structuretemplate$structureblockinfo.pos;
+                     if (boundingbox == null || boundingbox.isInside(blockpos)) {
+                         FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
+@@ -360,7 +_,7 @@
+                 }
+ 
+                 if (!p_230332_.isIgnoreEntities()) {
+-                    this.placeEntities(p_230329_, p_230330_, p_230332_.getMirror(), p_230332_.getRotation(), p_230332_.getRotationPivot(), boundingbox, p_230332_.shouldFinalizeEntities());
++                    this.addEntitiesToWorld(p_230329_, p_230330_, p_230332_);
+                 }
+ 
+                 return true;
+@@ -394,12 +_,21 @@
+         });
+     }
+ 
++    /**
++     * @deprecated Forge: Use {@link #processBlockInfos(ServerLevelAccessor, BlockPos, BlockPos, StructurePlaceSettings, List, StructureTemplate)} instead.
++     */
++    @Deprecated
++    public static List<StructureTemplate.StructureBlockInfo> processBlockInfos(ServerLevelAccessor p_278297_, BlockPos p_74519_, BlockPos p_74520_, StructurePlaceSettings p_74521_, List<StructureTemplate.StructureBlockInfo> p_74522_) {
++        return processBlockInfos(p_278297_, p_74519_, p_74520_, p_74521_, p_74522_, null);
++    }
++
+     public static List<StructureTemplate.StructureBlockInfo> processBlockInfos(
+         ServerLevelAccessor p_278297_,
+         BlockPos p_74519_,
+         BlockPos p_74520_,
+         StructurePlaceSettings p_74521_,
+-        List<StructureTemplate.StructureBlockInfo> p_74522_
++        List<StructureTemplate.StructureBlockInfo> p_74522_,
++        @Nullable StructureTemplate template
+     ) {
+         List<StructureTemplate.StructureBlockInfo> list = new ArrayList<>();
+         List<StructureTemplate.StructureBlockInfo> list1 = new ArrayList<>();
+@@ -415,7 +_,7 @@
+ 
+             while (structuretemplate$structureblockinfo1 != null && iterator.hasNext()) {
+                 structuretemplate$structureblockinfo1 = iterator.next()
+-                    .processBlock(p_278297_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_);
++                    .process(p_278297_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_, template);
              }
  
-             if (!p_230332_.isIgnoreEntities()) {
--               this.placeEntities(p_230329_, p_230330_, p_230332_.getMirror(), p_230332_.getRotation(), p_230332_.getRotationPivot(), boundingbox, p_230332_.shouldFinalizeEntities());
-+               this.addEntitiesToWorld(p_230329_, p_230330_, p_230332_);
+             if (structuretemplate$structureblockinfo1 != null) {
+@@ -431,21 +_,27 @@
+         return list1;
+     }
+ 
++    private void addEntitiesToWorld(ServerLevelAccessor p_74524_, BlockPos p_74525_, StructurePlaceSettings placementIn) {
++        placeEntities(p_74524_, p_74525_, placementIn.getMirror(), placementIn.getRotation(), placementIn.getBoundingBox(), placementIn.shouldFinalizeEntities(), placementIn);
++    }
++
+     private void placeEntities(
+         ServerLevelAccessor p_74524_,
+         BlockPos p_74525_,
+         Mirror p_74526_,
+         Rotation p_74527_,
+-        BlockPos p_74528_,
+         @Nullable BoundingBox p_74529_,
+-        boolean p_74530_
++        boolean p_74530_,
++        StructurePlaceSettings placementIn
+     ) {
+-        for (StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : this.entityInfoList) {
+-            BlockPos blockpos = transform(structuretemplate$structureentityinfo.blockPos, p_74526_, p_74527_, p_74528_).offset(p_74525_);
++        var entities = processEntityInfos(this, p_74524_, p_74525_, placementIn, this.entityInfoList);
++        for (StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : entities) {
++            BlockPos blockpos = structuretemplate$structureentityinfo.blockPos; // FORGE: Position will have already been transformed by processEntityInfos
+             if (p_74529_ == null || p_74529_.isInside(blockpos)) {
+                 CompoundTag compoundtag = structuretemplate$structureentityinfo.nbt.copy();
+-                Vec3 vec3 = transform(structuretemplate$structureentityinfo.pos, p_74526_, p_74527_, p_74528_);
+-                Vec3 vec31 = vec3.add((double)p_74525_.getX(), (double)p_74525_.getY(), (double)p_74525_.getZ());
++                //Vec3 vec3 = transform(structuretemplate$structureentityinfo.pos, p_74526_, p_74527_, p_74528_);
++                //Vec3 vec31 = vec3.add((double)p_74525_.getX(), (double)p_74525_.getY(), (double)p_74525_.getZ());
++                Vec3 vec31 = structuretemplate$structureentityinfo.pos; // FORGE: Position will have already been transformed by processEntityInfos
+                 ListTag listtag = new ListTag();
+                 listtag.add(DoubleTag.valueOf(vec31.x));
+                 listtag.add(DoubleTag.valueOf(vec31.y));
+@@ -465,6 +_,24 @@
              }
- 
-             return true;
-@@ -359,7 +_,15 @@
-       });
-    }
- 
-+   /**
-+    * @deprecated Forge: Use {@link #processBlockInfos(ServerLevelAccessor, BlockPos, BlockPos, StructurePlaceSettings, List, StructureTemplate)} instead.
-+    */
-+   @Deprecated
-    public static List<StructureTemplate.StructureBlockInfo> processBlockInfos(ServerLevelAccessor p_278297_, BlockPos p_74519_, BlockPos p_74520_, StructurePlaceSettings p_74521_, List<StructureTemplate.StructureBlockInfo> p_74522_) {
-+      return processBlockInfos(p_278297_, p_74519_, p_74520_, p_74521_, p_74522_, null);
-+   }
+         }
+     }
 +
-+   public static List<StructureTemplate.StructureBlockInfo> processBlockInfos(ServerLevelAccessor p_278297_, BlockPos p_74519_, BlockPos p_74520_, StructurePlaceSettings p_74521_, List<StructureTemplate.StructureBlockInfo> p_74522_, @Nullable StructureTemplate template) {
-       List<StructureTemplate.StructureBlockInfo> list = new ArrayList<>();
-       List<StructureTemplate.StructureBlockInfo> list1 = new ArrayList<>();
- 
-@@ -367,7 +_,7 @@
-          BlockPos blockpos = calculateRelativePosition(p_74521_, structuretemplate$structureblockinfo.pos).offset(p_74519_);
-          StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo1 = new StructureTemplate.StructureBlockInfo(blockpos, structuretemplate$structureblockinfo.state, structuretemplate$structureblockinfo.nbt != null ? structuretemplate$structureblockinfo.nbt.copy() : null);
- 
--         for(Iterator<StructureProcessor> iterator = p_74521_.getProcessors().iterator(); structuretemplate$structureblockinfo1 != null && iterator.hasNext(); structuretemplate$structureblockinfo1 = iterator.next().processBlock(p_278297_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_)) {
-+         for(Iterator<StructureProcessor> iterator = p_74521_.getProcessors().iterator(); structuretemplate$structureblockinfo1 != null && iterator.hasNext(); structuretemplate$structureblockinfo1 = iterator.next().process(p_278297_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_, template)) {
-          }
- 
-          if (structuretemplate$structureblockinfo1 != null) {
-@@ -383,13 +_,29 @@
-       return list1;
-    }
- 
--   private void placeEntities(ServerLevelAccessor p_74524_, BlockPos p_74525_, Mirror p_74526_, Rotation p_74527_, BlockPos p_74528_, @Nullable BoundingBox p_74529_, boolean p_74530_) {
--      for(StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : this.entityInfoList) {
--         BlockPos blockpos = transform(structuretemplate$structureentityinfo.blockPos, p_74526_, p_74527_, p_74528_).offset(p_74525_);
--         if (p_74529_ == null || p_74529_.isInside(blockpos)) {
-+   public static List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor p_215387_0_, BlockPos p_215387_1_, StructurePlaceSettings p_215387_2_, List<StructureTemplate.StructureEntityInfo> p_215387_3_) {
-+      List<StructureTemplate.StructureEntityInfo> list = Lists.newArrayList();
-+      for(StructureTemplate.StructureEntityInfo entityInfo : p_215387_3_) {
-+         Vec3 pos = transformedVec3d(p_215387_2_, entityInfo.pos).add(Vec3.atLowerCornerOf(p_215387_1_));
-+         BlockPos blockpos = calculateRelativePosition(p_215387_2_, entityInfo.blockPos).offset(p_215387_1_);
-+         StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
-+         for (StructureProcessor proc : p_215387_2_.getProcessors()) {
-+            info = proc.processEntity(p_215387_0_, p_215387_1_, entityInfo, info, p_215387_2_, template);
-+            if (info == null)
-+               break;
-+         }
-+         if (info != null)
-+            list.add(info);
-+      }
-+      return list;
-+   }
++    public static List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor level, BlockPos seedPos, StructurePlaceSettings settings, List<StructureTemplate.StructureEntityInfo> entities) {
++        var list = new ArrayList<StructureTemplate.StructureEntityInfo>();
++        for (var entityInfo : entities) {
++           var pos = transformedVec3d(settings, entityInfo.pos).add(Vec3.atLowerCornerOf(seedPos));
++           var blockpos = calculateRelativePosition(settings, entityInfo.blockPos).offset(seedPos);
++           var info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.nbt);
++           for (var proc : settings.getProcessors()) {
++              info = proc.processEntity(level, seedPos, entityInfo, info, settings, template);
++              if (info == null)
++                 break;
++           }
++           if (info != null)
++              list.add(info);
++        }
++        return list;
++     }
 +
-+   private void addEntitiesToWorld(ServerLevelAccessor p_74524_, BlockPos p_74525_, StructurePlaceSettings placementIn) {
-+      for(StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : processEntityInfos(this, p_74524_, p_74525_, placementIn, this.entityInfoList)) {
-+         BlockPos blockpos = structuretemplate$structureentityinfo.blockPos; // FORGE: Position will have already been transformed by processEntityInfos
-+         if (placementIn.getBoundingBox() == null || placementIn.getBoundingBox().isInside(blockpos)) {
-             CompoundTag compoundtag = structuretemplate$structureentityinfo.nbt.copy();
--            Vec3 vec3 = transform(structuretemplate$structureentityinfo.pos, p_74526_, p_74527_, p_74528_);
--            Vec3 vec31 = vec3.add((double)p_74525_.getX(), (double)p_74525_.getY(), (double)p_74525_.getZ());
-+            Vec3 vec31 = structuretemplate$structureentityinfo.pos; // FORGE: Position will have already been transformed by processEntityInfos
-             ListTag listtag = new ListTag();
-             listtag.add(DoubleTag.valueOf(vec31.x));
-             listtag.add(DoubleTag.valueOf(vec31.y));
-@@ -397,10 +_,10 @@
-             compoundtag.put("Pos", listtag);
-             compoundtag.remove("UUID");
-             createEntityIgnoreException(p_74524_, compoundtag).ifPresent((p_275190_) -> {
--               float f = p_275190_.rotate(p_74527_);
--               f += p_275190_.mirror(p_74526_) - p_275190_.getYRot();
-+               float f = p_275190_.rotate(placementIn.getRotation());
-+               f += p_275190_.mirror(placementIn.getMirror()) - p_275190_.getYRot();
-                p_275190_.moveTo(vec31.x, vec31.y, vec31.z, f, p_275190_.getXRot());
--               if (p_74530_ && p_275190_ instanceof Mob) {
-+               if (placementIn.shouldFinalizeEntities() && p_275190_ instanceof Mob) {
-                   ((Mob)p_275190_).finalizeSpawn(p_74524_, p_74524_.getCurrentDifficultyAt(BlockPos.containing(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
-                }
  
+     private static Optional<Entity> createEntityIgnoreException(ServerLevelAccessor p_74544_, CompoundTag p_74545_) {
+         try {

@@ -1,42 +1,46 @@
 --- a/net/minecraft/data/registries/RegistriesDatapackGenerator.java
 +++ b/net/minecraft/data/registries/RegistriesDatapackGenerator.java
-@@ -22,16 +_,27 @@
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private final PackOutput output;
-    private final CompletableFuture<HolderLookup.Provider> registries;
-+   private final java.util.function.Predicate<String> namespacePredicate;
+@@ -22,10 +_,21 @@
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final PackOutput output;
+     private final CompletableFuture<HolderLookup.Provider> registries;
++    private final java.util.function.Predicate<String> namespacePredicate;
  
-    public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_) {
-+      this(p_256643_, p_255780_, null);
-+   }
+     public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_) {
++        this(p_256643_, p_255780_, null);
++    }
 +
-+   public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_, @org.jetbrains.annotations.Nullable java.util.Set<String> modIds) {
-+      this.namespacePredicate = modIds == null ? namespace -> true : modIds::contains;
-       this.registries = p_255780_;
-       this.output = p_256643_;
-    }
++    public RegistriesDatapackGenerator(PackOutput p_256643_, CompletableFuture<HolderLookup.Provider> p_255780_, @org.jetbrains.annotations.Nullable java.util.Set<String> modIds) {
+         this.registries = p_255780_;
+         this.output = p_256643_;
++        this.namespacePredicate = modIds == null ? namespace -> true : modIds::contains;
++    }
++
++    /** Forge: Call this to get the registry holder lookup provider that includes elements added via {@link net.minecraftforge.common.data.DatapackBuiltinEntriesProvider} */
++    public CompletableFuture<HolderLookup.Provider> getRegistryProvider() {
++       return registries;
+     }
  
-+   /** Forge: Call this to get the registry holder lookup provider that includes elements added via {@link net.minecraftforge.common.data.DatapackBuiltinEntriesProvider} */
-+   public CompletableFuture<HolderLookup.Provider> getRegistryProvider() {
-+      return registries;
-+   }
-+
-    public CompletableFuture<?> run(CachedOutput p_255785_) {
-       return this.registries.thenCompose((p_256533_) -> {
-          DynamicOps<JsonElement> dynamicops = RegistryOps.create(JsonOps.INSTANCE, p_256533_);
--         return CompletableFuture.allOf(RegistryDataLoader.WORLDGEN_REGISTRIES.stream().flatMap((p_256552_) -> {
-+         return CompletableFuture.allOf(RegistryDataLoader.getWorldGenAndDimensionStream().flatMap((p_256552_) -> {
-             return this.dumpRegistryCap(p_255785_, p_256533_, dynamicops, p_256552_).stream();
-          }).toArray((p_255809_) -> {
-             return new CompletableFuture[p_255809_];
-@@ -42,8 +_,8 @@
-    private <T> Optional<CompletableFuture<?>> dumpRegistryCap(CachedOutput p_256502_, HolderLookup.Provider p_256492_, DynamicOps<JsonElement> p_256000_, RegistryDataLoader.RegistryData<T> p_256449_) {
-       ResourceKey<? extends Registry<T>> resourcekey = p_256449_.key();
-       return p_256492_.lookup(resourcekey).map((p_255847_) -> {
--         PackOutput.PathProvider packoutput$pathprovider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, resourcekey.location().getPath());
--         return CompletableFuture.allOf(p_255847_.listElements().map((p_256105_) -> {
-+         PackOutput.PathProvider packoutput$pathprovider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.location()));
-+         return CompletableFuture.allOf(p_255847_.listElements().filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace())).map((p_256105_) -> {
-             return dumpValue(packoutput$pathprovider.json(p_256105_.key().location()), p_256502_, p_256000_, p_256449_.elementCodec(), p_256105_.value());
-          }).toArray((p_256279_) -> {
-             return new CompletableFuture[p_256279_];
+     @Override
+@@ -35,8 +_,7 @@
+                 p_325918_ -> {
+                     DynamicOps<JsonElement> dynamicops = p_325918_.createSerializationContext(JsonOps.INSTANCE);
+                     return CompletableFuture.allOf(
+-                        RegistryDataLoader.WORLDGEN_REGISTRIES
+-                            .stream()
++                        RegistryDataLoader.getWorldGenAndDimensionStream()
+                             .flatMap(p_256552_ -> this.dumpRegistryCap(p_255785_, p_325918_, dynamicops, (RegistryDataLoader.RegistryData<?>)p_256552_).stream())
+                             .toArray(CompletableFuture[]::new)
+                     );
+@@ -52,9 +_,10 @@
+             .map(
+                 p_255847_ -> {
+                     PackOutput.PathProvider packoutput$pathprovider = this.output
+-                        .createPathProvider(PackOutput.Target.DATA_PACK, resourcekey.location().getPath());
++                        .createPathProvider(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.location()));
+                     return CompletableFuture.allOf(
+                         p_255847_.listElements()
++                            .filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace()))
+                             .map(
+                                 p_256105_ -> dumpValue(
+                                         packoutput$pathprovider.json(p_256105_.key().location()),

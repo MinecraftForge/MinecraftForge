@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/renderer/EffectInstance.java
 +++ b/net/minecraft/client/renderer/EffectInstance.java
 @@ -58,7 +_,8 @@
-    private final EffectProgram fragmentProgram;
+     private final EffectProgram fragmentProgram;
  
-    public EffectInstance(ResourceManager p_108941_, String p_108942_) throws IOException {
--      ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_108942_ + ".json");
-+      ResourceLocation rl = ResourceLocation.tryParse(p_108942_);
-+      ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "shaders/program/" + rl.getPath() + ".json");
-       this.name = p_108942_;
-       Resource resource = p_108941_.getResourceOrThrow(resourcelocation);
+     public EffectInstance(ResourceProvider p_334130_, String p_108942_) throws IOException {
+-        ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_108942_ + ".json");
++        ResourceLocation rl = ResourceLocation.tryParse(p_108942_);
++        ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "shaders/program/" + rl.getPath() + ".json");
+         this.name = p_108942_;
+         Resource resource = p_334130_.getResourceOrThrow(resourcelocation);
  
 @@ -150,7 +_,8 @@
-       } else {
-          EffectProgram effectprogram;
-          if (program == null) {
--            ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_172569_ + p_172568_.getExtension());
-+            ResourceLocation rl = ResourceLocation.tryParse(p_172569_);
-+            ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "shaders/program/" + rl.getPath() + p_172568_.getExtension());
-             Resource resource = p_172567_.getResourceOrThrow(resourcelocation);
+         } else {
+             EffectProgram effectprogram;
+             if (program == null) {
+-                ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_172569_ + p_172568_.getExtension());
++                ResourceLocation rl = ResourceLocation.tryParse(p_172569_);
++                ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "shaders/program/" + rl.getPath() + p_172568_.getExtension());
+                 Resource resource = p_331503_.getResourceOrThrow(resourcelocation);
  
-             try (InputStream inputstream = resource.open()) {
+                 try (InputStream inputstream = resource.open()) {

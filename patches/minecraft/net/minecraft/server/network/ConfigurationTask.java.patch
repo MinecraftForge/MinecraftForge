@@ -4,10 +4,10 @@
  import net.minecraft.network.protocol.Packet;
  
  public interface ConfigurationTask {
-+   default void start(net.minecraftforge.network.config.ConfigurationTaskContext ctx) {
-+       start(ctx::send);
-+   }
++    default void start(net.minecraftforge.network.config.ConfigurationTaskContext ctx) {
++        start(ctx::send);
++    }
 +
-    void start(Consumer<Packet<?>> p_299398_);
+     void start(Consumer<Packet<?>> p_299398_);
  
-    ConfigurationTask.Type type();
+     ConfigurationTask.Type type();

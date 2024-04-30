@@ -154,7 +154,9 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 
         for(Int2ObjectMap.Entry<ForgeFaceData> entry : this.faceData.int2ObjectEntrySet())
         {
-            layerObj.add(String.valueOf(entry.getIntKey()), ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow(false, s -> {}));
+            layerObj.add(String.valueOf(entry.getIntKey()), ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).getOrThrow(s -> {
+                return new RuntimeException(); // Perhaps not the best way to deal with this? - MangoRage
+            }));
         }
 
         forgeData.add("layers", layerObj);

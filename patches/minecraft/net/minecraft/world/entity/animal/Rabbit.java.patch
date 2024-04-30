@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Rabbit.java
 +++ b/net/minecraft/world/entity/animal/Rabbit.java
-@@ -515,7 +_,7 @@
- 
-       public boolean canUse() {
-          if (this.nextStartTick <= 0) {
--            if (!this.rabbit.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.rabbit.level(), this.rabbit)) {
-                return false;
-             }
+@@ -525,7 +_,7 @@
+         @Override
+         public boolean canUse() {
+             if (this.nextStartTick <= 0) {
+-                if (!this.rabbit.level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING)) {
++                if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.rabbit.level(), this.rabbit)) {
+                     return false;
+                 }
  

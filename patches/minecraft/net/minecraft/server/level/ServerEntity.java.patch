@@ -1,46 +1,18 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -95,10 +_,9 @@
-       if ($$11 instanceof ItemFrame itemframe) {
-          if (this.tickCount % 10 == 0) {
-             ItemStack itemstack = itemframe.getItem();
--            if (itemstack.getItem() instanceof MapItem) {
--               Integer integer = MapItem.getMapId(itemstack);
--               MapItemSavedData mapitemsaveddata = MapItem.getSavedData(integer, this.level);
--               if (mapitemsaveddata != null) {
-+         Integer integer = MapItem.getMapId(itemstack);
-+         MapItemSavedData mapitemsaveddata = MapItem.getSavedData(itemstack, this.level);
-+         if (mapitemsaveddata != null) {
-                   for(ServerPlayer serverplayer : this.level.players()) {
-                      mapitemsaveddata.tickCarriedBy(serverplayer, itemstack);
-                      Packet<?> packet = mapitemsaveddata.getUpdatePacket(integer, serverplayer);
-@@ -107,11 +_,12 @@
-                      }
-                   }
-                }
--            }
+@@ -239,6 +_,7 @@
+     public void removePairing(ServerPlayer p_8535_) {
+         this.entity.stopSeenByPlayer(p_8535_);
+         p_8535_.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
++        net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.entity, p_8535_);
+     }
  
-             this.sendDirtyEntityData();
-          }
-       }
-+
-+
+     public void addPairing(ServerPlayer p_8542_) {
+@@ -246,6 +_,7 @@
+         this.sendPairingData(p_8542_, list::add);
+         p_8542_.connection.send(new ClientboundBundlePacket(list));
+         this.entity.startSeenByPlayer(p_8542_);
++        net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.entity, p_8542_);
+     }
  
-       if (this.tickCount % this.updateInterval == 0 || this.entity.hasImpulse || this.entity.getEntityData().isDirty()) {
-          if (this.entity.isPassenger()) {
-@@ -218,6 +_,7 @@
-    public void removePairing(ServerPlayer p_8535_) {
-       this.entity.stopSeenByPlayer(p_8535_);
-       p_8535_.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
-+      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.entity, p_8535_);
-    }
- 
-    public void addPairing(ServerPlayer p_8542_) {
-@@ -225,6 +_,7 @@
-       this.sendPairingData(p_8542_, list::add);
-       p_8542_.connection.send(new ClientboundBundlePacket(list));
-       this.entity.startSeenByPlayer(p_8542_);
-+      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.entity, p_8542_);
-    }
- 
-    public void sendPairingData(ServerPlayer p_289562_, Consumer<Packet<ClientGamePacketListener>> p_289563_) {
+     public void sendPairingData(ServerPlayer p_289562_, Consumer<Packet<ClientGamePacketListener>> p_289563_) {

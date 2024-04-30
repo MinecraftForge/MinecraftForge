@@ -1,11 +1,11 @@
 --- a/net/minecraft/core/particles/ItemParticleOption.java
 +++ b/net/minecraft/core/particles/ItemParticleOption.java
-@@ -35,7 +_,7 @@
+@@ -24,7 +_,7 @@
+             throw new IllegalArgumentException("Empty stacks are not allowed");
+         } else {
+             this.type = p_123705_;
+-            this.itemStack = p_123706_;
++            this.itemStack = p_123706_.copy(); // Forge: Fix stack updating after the fact causing particle changes.
+         }
+     }
  
-    public ItemParticleOption(ParticleType<ItemParticleOption> p_123705_, ItemStack p_123706_) {
-       this.type = p_123705_;
--      this.itemStack = p_123706_;
-+      this.itemStack = p_123706_.copy(); //Forge: Fix stack updating after the fact causing particle changes.
-    }
- 
-    public void writeToNetwork(FriendlyByteBuf p_123716_) {

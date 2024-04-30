@@ -7,9 +7,7 @@
           "conditions": {
             "items": [
               {
-                "items": [
-                  "minecraft:redstone_ore"
-                ]
+                "items": "minecraft:redstone_ore"
               }
             ]
           },
@@ -23,8 +21,7 @@
         }
       },
       "forge:condition": {
-        "type": "forge:false",
-        "value": {}
+        "type": "forge:false"
       },
       "requirements": [
         [

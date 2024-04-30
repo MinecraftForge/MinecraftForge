@@ -26,7 +26,7 @@ import java.util.Collection;
  * ignored when attributes are overridden, you can check for the presence of the {@code AttributeModifiers} tag.
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
- */
+ * /
 public class ItemAttributeModifierEvent extends Event
 {
     private final ItemStack stack;
@@ -47,7 +47,7 @@ public class ItemAttributeModifierEvent extends Event
      * Returns an unmodifiable view of the attribute multimap. Use other methods from this event to modify the attributes map.
      * Note that adding attributes based on existing attributes may lead to inconsistent results between the tooltip (client)
      * and the actual attributes (server) if the listener order is different. Using {@link #getOriginalModifiers()} instead will give more consistent results.
-     */
+     * /
     public Multimap<Attribute, AttributeModifier> getModifiers()
     {
         return this.unmodifiableModifiers;
@@ -55,7 +55,7 @@ public class ItemAttributeModifierEvent extends Event
 
     /**
      * Returns the attribute map before any changes from other event listeners was made.
-     */
+     * /
     public Multimap<Attribute, AttributeModifier> getOriginalModifiers()
     {
         return this.originalModifiers;
@@ -63,7 +63,7 @@ public class ItemAttributeModifierEvent extends Event
 
     /**
      * Gets a modifiable map instance, creating it if the current map is currently unmodifiable
-     */
+     * /
     private Multimap<Attribute, AttributeModifier> getModifiableMap()
     {
         if (this.modifiableModifiers == null)
@@ -81,7 +81,7 @@ public class ItemAttributeModifierEvent extends Event
      * @param attribute  Attribute
      * @param modifier   Modifier instance.
      * @return  True if the attribute was added, false if it was already present
-     */
+     * /
     public boolean addModifier(Attribute attribute, AttributeModifier modifier)
     {
         return getModifiableMap().put(attribute, modifier);
@@ -92,7 +92,7 @@ public class ItemAttributeModifierEvent extends Event
      * @param attribute  Attribute
      * @param modifier   Modifier instance
      * @return  True if an attribute was removed, false if no change
-     */
+     * /
     public boolean removeModifier(Attribute attribute, AttributeModifier modifier)
     {
         return getModifiableMap().remove(attribute, modifier);
@@ -102,7 +102,7 @@ public class ItemAttributeModifierEvent extends Event
      * Removes all modifiers for the given attribute
      * @param attribute  Attribute
      * @return  Collection of removed modifiers
-     */
+     * /
     public Collection<AttributeModifier> removeAttribute(Attribute attribute)
     {
         return getModifiableMap().removeAll(attribute);
@@ -110,21 +110,22 @@ public class ItemAttributeModifierEvent extends Event
 
     /**
      * Removes all modifiers for all attributes
-     */
+     * /
     public void clearModifiers()
     {
         getModifiableMap().clear();
     }
 
-    /** Gets the slot containing this stack */
+    /** Gets the slot containing this stack * /
     public EquipmentSlot getSlotType()
     {
         return this.slotType;
     }
 
-    /** Gets the item stack instance */
+    /** Gets the item stack instance * /
     public ItemStack getItemStack()
     {
         return this.stack;
     }
 }
+*/

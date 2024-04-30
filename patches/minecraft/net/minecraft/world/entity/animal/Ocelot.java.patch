@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/Ocelot.java
 +++ b/net/minecraft/world/entity/animal/Ocelot.java
-@@ -162,7 +_,7 @@
-       if ((this.temptGoal == null || this.temptGoal.isRunning()) && !this.isTrusting() && this.isFood(itemstack) && p_29021_.distanceToSqr(this) < 9.0D) {
-          this.usePlayerItem(p_29021_, p_29022_, itemstack);
-          if (!this.level().isClientSide) {
--            if (this.random.nextInt(3) == 0) {
-+            if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_)) {
-                this.setTrusting(true);
-                this.spawnTrustingParticles(true);
-                this.level().broadcastEntityEvent(this, (byte)41);
+@@ -170,7 +_,7 @@
+         if ((this.temptGoal == null || this.temptGoal.isRunning()) && !this.isTrusting() && this.isFood(itemstack) && p_29021_.distanceToSqr(this) < 9.0) {
+             this.usePlayerItem(p_29021_, p_29022_, itemstack);
+             if (!this.level().isClientSide) {
+-                if (this.random.nextInt(3) == 0) {
++                if (this.random.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_)) {
+                     this.setTrusting(true);
+                     this.spawnTrustingParticles(true);
+                     this.level().broadcastEntityEvent(this, (byte)41);

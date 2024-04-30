@@ -15,6 +15,7 @@
     "##"
   ],
   "result": {
-    "item": "minecraft:smithing_table"
+    "count": 1,
+    "id": "minecraft:smithing_table"
   }
 }

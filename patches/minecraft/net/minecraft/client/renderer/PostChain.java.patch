@@ -1,20 +1,20 @@
 --- a/net/minecraft/client/renderer/PostChain.java
 +++ b/net/minecraft/client/renderer/PostChain.java
-@@ -157,7 +_,8 @@
-                         throw new ChainedJsonException("Render target '" + s4 + "' can't be used as depth buffer");
-                      }
+@@ -156,7 +_,8 @@
+                                 throw new ChainedJsonException("Render target '" + s4 + "' can't be used as depth buffer");
+                             }
  
--                     ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s4 + ".png");
-+                     ResourceLocation rl = ResourceLocation.tryParse(s4);
-+                     ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "textures/effect/" + rl.getPath() + ".png");
-                      this.resourceManager.getResource(resourcelocation).orElseThrow(() -> {
-                         return new ChainedJsonException("Render target or texture '" + s4 + "' does not exist");
-                      });
-@@ -260,6 +_,7 @@
-    public void addTempTarget(String p_110039_, int p_110040_, int p_110041_) {
-       RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.ON_OSX);
-       rendertarget.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-+      if (screenTarget.isStencilEnabled()) { rendertarget.enableStencil(); }
-       this.customRenderTargets.put(p_110039_, rendertarget);
-       if (p_110040_ == this.screenWidth && p_110041_ == this.screenHeight) {
-          this.fullSizedTargets.add(rendertarget);
+-                            ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s4 + ".png");
++                            ResourceLocation rl = ResourceLocation.tryParse(s4);
++                            ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "textures/effect/" + rl.getPath() + ".png");
+                             this.resourceProvider
+                                 .getResource(resourcelocation)
+                                 .orElseThrow(() -> new ChainedJsonException("Render target or texture '" + s4 + "' does not exist"));
+@@ -257,6 +_,7 @@
+     public void addTempTarget(String p_110039_, int p_110040_, int p_110041_) {
+         RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.ON_OSX);
+         rendertarget.setClearColor(0.0F, 0.0F, 0.0F, 0.0F);
++        if (screenTarget.isStencilEnabled()) rendertarget.enableStencil();
+         this.customRenderTargets.put(p_110039_, rendertarget);
+         if (p_110040_ == this.screenWidth && p_110041_ == this.screenHeight) {
+             this.fullSizedTargets.add(rendertarget);

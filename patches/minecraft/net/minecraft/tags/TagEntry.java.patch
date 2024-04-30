@@ -1,21 +1,21 @@
 --- a/net/minecraft/tags/TagEntry.java
 +++ b/net/minecraft/tags/TagEntry.java
-@@ -113,6 +_,18 @@
-       return stringbuilder.toString();
-    }
+@@ -111,6 +_,18 @@
+         return stringbuilder.toString();
+     }
  
-+   public ResourceLocation getId() {
-+      return id;
-+   }
++    public ResourceLocation getId() {
++        return id;
++    }
 +
-+   public boolean isRequired() {
-+      return required;
-+   }
++    public boolean isRequired() {
++        return required;
++    }
 +
-+   public boolean isTag() {
-+      return tag;
-+   }
++    public boolean isTag() {
++        return tag;
++    }
 +
-    public interface Lookup<T> {
-       @Nullable
-       T element(ResourceLocation p_215956_);
+     public interface Lookup<T> {
+         @Nullable
+         T element(ResourceLocation p_215956_);

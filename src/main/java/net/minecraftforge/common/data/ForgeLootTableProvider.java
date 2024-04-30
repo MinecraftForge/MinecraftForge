@@ -6,13 +6,15 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.data.loot.packs.VanillaLootTableProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
@@ -24,8 +26,8 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -47,12 +49,12 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     private static final String ENTRY_CONDITION = "f_7963" + "6_"; // LootPoolEntryContainer.conditions
     private static final String TERMS = "f_28560" + "9_"; // CompositeLootItemCondition.terms
 
-    public ForgeLootTableProvider(PackOutput packOutput) {
-        super(packOutput, Set.of(), VanillaLootTableProvider.create(packOutput).getTables());
+    public ForgeLootTableProvider(PackOutput pack, CompletableFuture<HolderLookup.Provider> lookup) {
+        super(pack, Set.of(), VanillaLootTableProvider.create(pack, lookup).getTables(), lookup);
     }
 
     @Override
-    protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationcontext) {
+    protected void validate(Registry<LootTable> map, ValidationContext validationcontext, ProblemReporter report) {
         // Do not validate against all registered loot tables
     }
 
@@ -65,7 +67,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     }
 
     private LootTableSubProvider replaceAndFilterChangesOnly(LootTableSubProvider subProvider) {
-        return newConsumer -> subProvider.generate((resourceLocation, builder) -> {
+        return (provider, newConsumer) -> subProvider.generate(provider, (resourceLocation, builder) -> {
             if (findAndReplaceInLootTableBuilder(builder, Items.SHEARS, ToolActions.SHEARS_DIG)) {
                 newConsumer.accept(resourceLocation, builder);
             }

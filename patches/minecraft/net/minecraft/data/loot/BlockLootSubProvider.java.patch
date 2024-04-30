@@ -1,19 +1,20 @@
 --- a/net/minecraft/data/loot/BlockLootSubProvider.java
 +++ b/net/minecraft/data/loot/BlockLootSubProvider.java
-@@ -265,11 +_,15 @@
+@@ -605,12 +_,16 @@
  
-    protected abstract void generate();
+     protected abstract void generate();
  
-+   protected Iterable<Block> getKnownBlocks() {
-+      return BuiltInRegistries.BLOCK;
-+   }
++    protected Iterable<Block> getKnownBlocks() {
++        return BuiltInRegistries.BLOCK;
++    }
 +
-    public void generate(BiConsumer<ResourceLocation, LootTable.Builder> p_249322_) {
-       this.generate();
-       Set<ResourceLocation> set = new HashSet<>();
+     @Override
+     public void generate(HolderLookup.Provider p_331289_, BiConsumer<ResourceKey<LootTable>, LootTable.Builder> p_249322_) {
+         this.generate();
+         Set<ResourceKey<LootTable>> set = new HashSet<>();
  
--      for(Block block : BuiltInRegistries.BLOCK) {
-+      for(Block block : getKnownBlocks()) {
-          if (block.isEnabled(this.enabledFeatures)) {
-             ResourceLocation resourcelocation = block.getLootTable();
-             if (resourcelocation != BuiltInLootTables.EMPTY && set.add(resourcelocation)) {
+-        for (Block block : BuiltInRegistries.BLOCK) {
++        for (Block block : getKnownBlocks()) {
+             if (block.isEnabled(this.enabledFeatures)) {
+                 ResourceKey<LootTable> resourcekey = block.getLootTable();
+                 if (resourcekey != BuiltInLootTables.EMPTY && set.add(resourcekey)) {

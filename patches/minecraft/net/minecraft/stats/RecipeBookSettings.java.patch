@@ -1,21 +1,31 @@
 --- a/net/minecraft/stats/RecipeBookSettings.java
 +++ b/net/minecraft/stats/RecipeBookSettings.java
-@@ -10,7 +_,7 @@
+@@ -11,7 +_,7 @@
  import net.minecraft.world.inventory.RecipeBookType;
  
  public final class RecipeBookSettings {
--   private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = ImmutableMap.of(RecipeBookType.CRAFTING, Pair.of("isGuiOpen", "isFilteringCraftable"), RecipeBookType.FURNACE, Pair.of("isFurnaceGuiOpen", "isFurnaceFilteringCraftable"), RecipeBookType.BLAST_FURNACE, Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"), RecipeBookType.SMOKER, Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable"));
-+   private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = new java.util.HashMap<>(ImmutableMap.of(RecipeBookType.CRAFTING, Pair.of("isGuiOpen", "isFilteringCraftable"), RecipeBookType.FURNACE, Pair.of("isFurnaceGuiOpen", "isFurnaceFilteringCraftable"), RecipeBookType.BLAST_FURNACE, Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"), RecipeBookType.SMOKER, Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable")));
-    private final Map<RecipeBookType, RecipeBookSettings.TypeSettings> states;
+-    private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = ImmutableMap.of(
++    private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = new java.util.HashMap<>(ImmutableMap.of(
+         RecipeBookType.CRAFTING,
+         Pair.of("isGuiOpen", "isFilteringCraftable"),
+         RecipeBookType.FURNACE,
+@@ -20,7 +_,7 @@
+         Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"),
+         RecipeBookType.SMOKER,
+         Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable")
+-    );
++    ));
+     private final Map<RecipeBookType, RecipeBookSettings.TypeSettings> states;
  
-    private RecipeBookSettings(Map<RecipeBookType, RecipeBookSettings.TypeSettings> p_12730_) {
-@@ -147,5 +_,9 @@
-       public String toString() {
-          return "[open=" + this.open + ", filtering=" + this.filtering + "]";
-       }
-+   }
-+   //FORGE -- called automatically on Enum creation - used for serialization
-+   public static void addTagsForType(RecipeBookType type, String openTag, String filteringTag) {
-+      TAG_FIELDS.put(type, Pair.of(openTag, filteringTag));
-    }
+     private RecipeBookSettings(Map<RecipeBookType, RecipeBookSettings.TypeSettings> p_12730_) {
+@@ -158,5 +_,10 @@
+         public String toString() {
+             return "[open=" + this.open + ", filtering=" + this.filtering + "]";
+         }
++    }
++
++    // FORGE -- called automatically on Enum creation - used for serialization
++    public static void addTagsForType(RecipeBookType type, String openTag, String filteringTag) {
++        TAG_FIELDS.put(type, Pair.of(openTag, filteringTag));
+     }
  }

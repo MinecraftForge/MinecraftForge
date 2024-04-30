@@ -1,41 +1,43 @@
 --- a/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
 +++ b/net/minecraft/world/level/chunk/storage/ChunkSerializer.java
-@@ -159,6 +_,7 @@
-             return BuiltInRegistries.FLUID.getOptional(ResourceLocation.tryParse(p_258990_));
-          }, p_188233_);
-          chunkaccess = new LevelChunk(p_188231_.getLevel(), p_188233_, upgradedata, levelchunkticks, levelchunkticks1, k1, alevelchunksection, postLoadChunk(p_188231_, p_188234_), blendingdata);
-+         if (p_188234_.contains("ForgeCaps")) ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.getCompound("ForgeCaps"));
-       } else {
-          ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.load(p_188234_.getList("block_ticks", 10), (p_258992_) -> {
-             return BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(p_258992_));
-@@ -212,6 +_,7 @@
-       }
+@@ -182,6 +_,9 @@
+                 postLoadChunk(p_188231_, p_188234_),
+                 blendingdata
+             );
++            if (p_188234_.contains("ForgeCaps")) {
++                ((LevelChunk)chunkaccess).readCapsFromNBT(p_188234_.getCompound("ForgeCaps"));
++            }
+         } else {
+             ProtoChunkTicks<Block> protochunkticks = ProtoChunkTicks.load(
+                 p_188234_.getList("block_ticks", 10), p_258992_ -> BuiltInRegistries.BLOCK.getOptional(ResourceLocation.tryParse(p_258992_)), p_188233_
+@@ -240,6 +_,7 @@
+         }
  
-       if (chunkstatus$chunktype == ChunkStatus.ChunkType.LEVELCHUNK) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
-          return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
-       } else {
-          ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
-@@ -235,6 +_,7 @@
-             protochunk1.setCarvingMask(generationstep$carving, new CarvingMask(compoundtag4.getLongArray(s1), chunkaccess.getMinBuildHeight()));
-          }
+         if (chunktype == ChunkType.LEVELCHUNK) {
++            net.minecraftforge.event.ForgeEventFactory.onChunkDataLoad(chunkaccess, p_188234_, chunktype);
+             return new ImposterProtoChunk((LevelChunk)chunkaccess, false);
+         } else {
+             ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
+@@ -263,6 +_,7 @@
+                 protochunk1.setCarvingMask(generationstep$carving, new CarvingMask(compoundtag4.getLongArray(s1), chunkaccess.getMinBuildHeight()));
+             }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_188234_, chunkstatus$chunktype));
-          return protochunk1;
-       }
-    }
-@@ -340,6 +_,14 @@
-          }
++            net.minecraftforge.event.ForgeEventFactory.onChunkDataLoad(chunkaccess, p_188234_, chunktype);
+             return protochunk1;
+         }
+     }
+@@ -372,6 +_,14 @@
+             }
  
-          compoundtag.put("CarvingMasks", compoundtag4);
-+      }
-+      else if (p_63456_ instanceof LevelChunk levelChunk){
-+          try {
-+              final CompoundTag capTag = levelChunk.writeCapsToNBT();
-+              if (capTag != null) compoundtag.put("ForgeCaps", capTag);
-+          } catch (Exception exception) {
-+              LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
-+          }
-       }
+             compoundtag.put("CarvingMasks", compoundtag4);
++        }
++        else if (p_63456_ instanceof LevelChunk levelChunk){
++            try {
++                final CompoundTag capTag = levelChunk.writeCapsToNBT();
++                if (capTag != null) compoundtag.put("ForgeCaps", capTag);
++            } catch (Exception exception) {
++                LOGGER.error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++            }
+         }
  
-       saveTicks(p_63455_, compoundtag, p_63456_.getTicksForSerialization());
+         saveTicks(p_63455_, compoundtag, p_63456_.getTicksForSerialization());

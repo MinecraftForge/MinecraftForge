@@ -5,18 +5,19 @@
 
 package net.minecraftforge.common.crafting.ingredients;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -113,7 +114,7 @@ public class IntersectionIngredient extends AbstractIngredient {
         return SERIALIZER;
     }
 
-    public static final Codec<IntersectionIngredient> CODEC = RecordCodecBuilder.create(builder ->
+    public static final MapCodec<IntersectionIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
             Ingredient.CODEC.listOf().fieldOf("children").forGetter(i -> i.children)
         )
@@ -122,18 +123,19 @@ public class IntersectionIngredient extends AbstractIngredient {
 
     public static final IIngredientSerializer<IntersectionIngredient> SERIALIZER = new IIngredientSerializer<>() {
         @Override
-        public Codec<? extends IntersectionIngredient> codec() {
+        public MapCodec<? extends IntersectionIngredient> codec() {
             return CODEC;
         }
 
         @Override
-        public IntersectionIngredient read(FriendlyByteBuf buffer) {
-            return new IntersectionIngredient(buffer.readList(Ingredient::fromNetwork));
+        public IntersectionIngredient read(RegistryFriendlyByteBuf buffer) {
+            var children = buffer.readCollection(ArrayList::new, buf -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
+            return new IntersectionIngredient(children);
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, IntersectionIngredient value) {
-            buffer.writeCollection(value.children, (b, i) -> i.toNetwork(b));
+        public void write(RegistryFriendlyByteBuf buffer, IntersectionIngredient value) {
+            buffer.writeCollection(value.children, (b, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
         }
     };
 }

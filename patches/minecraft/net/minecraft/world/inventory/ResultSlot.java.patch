@@ -1,21 +1,20 @@
 --- a/net/minecraft/world/inventory/ResultSlot.java
 +++ b/net/minecraft/world/inventory/ResultSlot.java
-@@ -41,6 +_,7 @@
-    protected void checkTakeAchievements(ItemStack p_40185_) {
-       if (this.removeCount > 0) {
-          p_40185_.onCraftedBy(this.player.level(), this.player, this.removeCount);
-+         net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(this.player, p_40185_, this.craftSlots);
-       }
+@@ -46,6 +_,7 @@
+     protected void checkTakeAchievements(ItemStack p_40185_) {
+         if (this.removeCount > 0) {
+             p_40185_.onCraftedBy(this.player.level(), this.player, this.removeCount);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(this.player, p_40185_, this.craftSlots);
+         }
  
-       Container container = this.container;
-@@ -53,8 +_,9 @@
+         if (this.container instanceof RecipeCraftingHolder recipecraftingholder) {
+@@ -58,7 +_,9 @@
+     @Override
+     public void onTake(Player p_150638_, ItemStack p_150639_) {
+         this.checkTakeAchievements(p_150639_);
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_150638_);
+         NonNullList<ItemStack> nonnulllist = p_150638_.level().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, this.craftSlots, p_150638_.level());
++        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
  
-    public void onTake(Player p_150638_, ItemStack p_150639_) {
-       this.checkTakeAchievements(p_150639_);
-+      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_150638_);
-       NonNullList<ItemStack> nonnulllist = p_150638_.level().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, this.craftSlots, p_150638_.level());
--
-+      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
-       for(int i = 0; i < nonnulllist.size(); ++i) {
-          ItemStack itemstack = this.craftSlots.getItem(i);
-          ItemStack itemstack1 = nonnulllist.get(i);
+         for (int i = 0; i < nonnulllist.size(); i++) {
+             ItemStack itemstack = this.craftSlots.getItem(i);

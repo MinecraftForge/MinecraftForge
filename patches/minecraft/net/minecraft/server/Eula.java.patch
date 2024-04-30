@@ -2,10 +2,10 @@
 +++ b/net/minecraft/server/Eula.java
 @@ -16,7 +_,7 @@
  
-    public Eula(Path p_135943_) {
-       this.file = p_135943_;
--      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || this.readFile();
-+      this.agreed = SharedConstants.IS_RUNNING_IN_IDE || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(); // Forge: Automatically agree to EULA for gametest servers to aid CI
-    }
+     public Eula(Path p_135943_) {
+         this.file = p_135943_;
+-        this.agreed = SharedConstants.IS_RUNNING_IN_IDE || this.readFile();
++        this.agreed = SharedConstants.IS_RUNNING_IN_IDE || net.minecraftforge.gametest.ForgeGameTestHooks.isGametestServer() || this.readFile(); // Forge: Automatically agree to EULA for gametest servers to aid CI
+     }
  
-    private boolean readFile() {
+     private boolean readFile() {

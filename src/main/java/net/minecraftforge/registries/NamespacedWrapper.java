@@ -18,12 +18,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -42,8 +42,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistry
-{
+class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistry {
     static final Logger LOGGER = LogUtils.getLogger();
     private final ForgeRegistry<T> delegate;
     @Nullable
@@ -59,9 +58,9 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     private Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
     private RegistryManager stage;
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
+    private final Map<ResourceKey<T>, RegistrationInfo> registrationInfos = new IdentityHashMap<>();
 
-    NamespacedWrapper(ForgeRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage)
-    {
+    NamespacedWrapper(ForgeRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage) {
         super(fowner.getRegistryKey(), Lifecycle.stable(), intrusiveHolderCallback != null);
         this.delegate = fowner;
         this.intrusiveHolderCallback = intrusiveHolderCallback;
@@ -69,132 +68,103 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public Holder.Reference<T> registerMapping(int id, ResourceKey<T> key, T value, Lifecycle lifecycle)
-    {
+    public Holder.Reference<T> register(ResourceKey<T> key, T value, RegistrationInfo info) {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
 
-        Validate.notNull(value);
+        Objects.requireNonNull(value);
         markKnown();
-        this.registryLifecycle = this.registryLifecycle.add(lifecycle);
 
-        int realId = this.delegate.add(id, key.location(), value);
-        if (realId != id && id != -1)
-            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Expected: {} Got: {}", key, id, realId);
+        this.registrationInfos.put(key, info);
+        this.registryLifecycle = this.registryLifecycle.add(info.lifecycle());
+
+        this.delegate.add(-1, key.location(), value);
 
         return getHolder(key, value);
-    }
-
-    @Override
-    public Holder.Reference<T> register(ResourceKey<T> key, T value, Lifecycle lifecycle)
-    {
-        return registerMapping(-1, key, value, lifecycle);
     }
 
     // Reading Functions
     @Override
     @Nullable
-    public T get(@Nullable ResourceLocation name)
-    {
+    public T get(@Nullable ResourceLocation name) {
         return this.delegate.getRaw(name); //get without default
     }
 
     @Override
-    public Optional<T> getOptional(@Nullable ResourceLocation name)
-    {
+    public Optional<T> getOptional(@Nullable ResourceLocation name) {
         return Optional.ofNullable(this.delegate.getRaw(name)); //get without default
     }
 
     @Override
     @Nullable
-    public T get(@Nullable ResourceKey<T> name)
-    {
+    public T get(@Nullable ResourceKey<T> name) {
         return name == null ? null : this.delegate.getRaw(name.location()); //get without default
     }
 
     @Override
     @Nullable
-    public ResourceLocation getKey(T value)
-    {
+    public ResourceLocation getKey(T value) {
         return this.delegate.getKey(value);
     }
 
     @Override
-    public Optional<ResourceKey<T>> getResourceKey(T p_122755_)
-    {
-        return this.delegate.getResourceKey(p_122755_);
+    public Optional<ResourceKey<T>> getResourceKey(T value) {
+        return this.delegate.getResourceKey(value);
     }
 
     @Override
-    public boolean containsKey(ResourceLocation key)
-    {
+    public boolean containsKey(ResourceLocation key) {
         return this.delegate.containsKey(key);
     }
 
     @Override
-    public boolean containsKey(ResourceKey<T> key)
-    {
+    public boolean containsKey(ResourceKey<T> key) {
         return this.delegate.getRegistryName().equals(key.registry()) && containsKey(key.location());
     }
 
     @Override
-    public int getId(@Nullable T value)
-    {
+    public int getId(@Nullable T value) {
         return this.delegate.getID(value);
     }
 
     @Override
     @Nullable
-    public T byId(int id)
-    {
+    public T byId(int id) {
         return this.delegate.getValue(id);
     }
 
     @Override
-    public Lifecycle lifecycle(T value)
-    {
-        return Lifecycle.stable();
-    }
-
-    @Override
-    public Lifecycle registryLifecycle()
-    {
+    public Lifecycle registryLifecycle() {
         return this.registryLifecycle;
     }
 
     @Override
-    public Iterator<T> iterator()
-    {
+    public Iterator<T> iterator() {
         return this.delegate.iterator();
     }
 
     @Override
-    public Set<ResourceLocation> keySet()
-    {
+    public Set<ResourceLocation> keySet() {
         return this.delegate.getKeys();
     }
 
     @Override
-    public Set<ResourceKey<T>> registryKeySet()
-    {
+    public Set<ResourceKey<T>> registryKeySet() {
         return this.delegate.getResourceKeys();
     }
 
     @Override
-    public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
-    {
+    public Set<Map.Entry<ResourceKey<T>, T>> entrySet() {
         return this.delegate.getEntries();
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.delegate.isEmpty();
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
         return this.delegate.size();
     }
 
@@ -203,89 +173,76 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
      */
     @Deprecated
     @Override
-    public void lock()
-    {
+    public void lock() {
         this.locked = true;
     }
 
     @Override
-    public Optional<Holder.Reference<T>> getHolder(int id)
-    {
+    public Optional<Holder.Reference<T>> getHolder(int id) {
         return id >= 0 && id < this.holdersById.size() ? Optional.ofNullable(this.holdersById.get(id)) : Optional.empty();
     }
 
     @Override
-    public Optional<Holder.Reference<T>> getHolder(ResourceKey<T> key)
-    {
+    public Optional<Holder.Reference<T>> getHolder(ResourceKey<T> key) {
         return Optional.ofNullable(this.holdersByName.get(key.location()));
     }
 
     @Override
-    public @NotNull Holder<T> wrapAsHolder(@NotNull T value)
-    {
+    public @NotNull Holder<T> wrapAsHolder(@NotNull T value) {
         final Holder<T> holder = this.holders.get(value);
         return holder == null ? Holder.direct(value) : holder;
     }
 
-    Optional<Holder<T>> getHolder(ResourceLocation location)
-    {
+    @Override
+    public Optional<RegistrationInfo> registrationInfo(ResourceKey<T> p_331530_) {
+        return Optional.ofNullable(this.registrationInfos.get(p_331530_));
+    }
+
+    public Optional<Holder.Reference<T>> getHolder(ResourceLocation location) {
         return Optional.ofNullable(this.holdersByName.get(location));
     }
 
-    Optional<Holder<T>> getHolder(T value)
-    {
+    Optional<Holder<T>> getHolder(T value) {
         return Optional.ofNullable(this.holders.get(value));
     }
 
     @Override
-    public HolderGetter<T> createRegistrationLookup()
-    {
+    public HolderGetter<T> createRegistrationLookup() {
         this.validateWrite();
-        return new HolderGetter<T>()
-        {
-            public Optional<Holder.Reference<T>> get(ResourceKey<T> p_259097_)
-            {
-                return Optional.of(this.getOrThrow(p_259097_));
+        return new HolderGetter<T>() {
+            public Optional<Holder.Reference<T>> get(ResourceKey<T> key) {
+                return Optional.of(this.getOrThrow(key));
             }
 
-            public Holder.Reference<T> getOrThrow(ResourceKey<T> p_259750_)
-            {
-                return NamespacedWrapper.this.getOrCreateHolderOrThrow(p_259750_);
+            public Holder.Reference<T> getOrThrow(ResourceKey<T> key) {
+                return NamespacedWrapper.this.getOrCreateHolderOrThrow(key);
             }
 
-            public Optional<HolderSet.Named<T>> get(TagKey<T> p_259486_)
-            {
-                return Optional.of(this.getOrThrow(p_259486_));
+            public Optional<HolderSet.Named<T>> get(TagKey<T> key) {
+                return Optional.of(this.getOrThrow(key));
             }
 
-            public HolderSet.Named<T> getOrThrow(TagKey<T> p_260298_)
-            {
-                return NamespacedWrapper.this.getOrCreateTag(p_260298_);
+            public HolderSet.Named<T> getOrThrow(TagKey<T> key) {
+                return NamespacedWrapper.this.getOrCreateTag(key);
             }
         };
     }
 
-    void validateWrite()
-    {
+    void validateWrite() {
         if (this.frozen)
             throw new IllegalStateException("Registry is already frozen");
     }
 
-    void validateWrite(ResourceKey<T> key)
-    {
+    void validateWrite(ResourceKey<T> key) {
         if (this.frozen)
             throw new IllegalStateException("Registry is already frozen (trying to add key " + key + ")");
     }
 
-    Holder.Reference<T> getOrCreateHolderOrThrow(ResourceKey<T> key)
-    {
+    protected Holder.Reference<T> getOrCreateHolderOrThrow(ResourceKey<T> key) {
         return this.holdersByName.computeIfAbsent(key.location(), k -> {
-            if (this.intrusiveHolderCallback != null)
-            {
+            if (this.isIntrusive()) {
                 throw new IllegalStateException("This registry can't create new holders without value");
-            }
-            else
-            {
+            } else {
                 this.validateWrite(key);
                 return Holder.Reference.createStandAlone(this.holderOwner(), key);
             }
@@ -293,29 +250,24 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public Optional<Holder.Reference<T>> getRandom(RandomSource rand)
-    {
+    public Optional<Holder.Reference<T>> getRandom(RandomSource rand) {
         return Util.getRandomSafe(this.getSortedHolders(), rand);
     }
 
     @Override
-    public Stream<Holder.Reference<T>> holders()
-    {
+    public Stream<Holder.Reference<T>> holders() {
         return this.getSortedHolders().stream();
     }
 
     @Override
-    public Stream<Pair<TagKey<T>, HolderSet.Named<T>>> getTags()
-    {
+    public Stream<Pair<TagKey<T>, HolderSet.Named<T>>> getTags() {
         return this.tags.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue()));
     }
 
     @Override
-    public HolderSet.Named<T> getOrCreateTag(TagKey<T> name)
-    {
+    public HolderSet.Named<T> getOrCreateTag(TagKey<T> name) {
         HolderSet.Named<T> named = this.tags.get(name);
-        if (named == null)
-        {
+        if (named == null) {
             named = createTag(name);
             // They use volatile and set it this way to not have the performance penalties of synced read access. But this makes a lot of new maps.. We need to look into performance alternatives.
             Map<TagKey<T>, HolderSet.Named<T>> map = new IdentityHashMap<>(this.tags);
@@ -326,21 +278,18 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         return named;
     }
 
-    void addOptionalTag(TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults)
-    {
+    void addOptionalTag(TagKey<T> name, @NotNull Set<? extends Supplier<T>> defaults) {
         this.optionalTags.putAll(name, defaults);
     }
 
     @Override
-    public Stream<TagKey<T>> getTagNames()
-    {
+    public Stream<TagKey<T>> getTagNames() {
         return this.tags.keySet().stream();
     }
 
     //TODO: Move this to ValidateCallback?
     @Override
-    public Registry<T> freeze()
-    {
+    public Registry<T> freeze() {
         this.frozen = true;
         List<ResourceLocation> unregistered = this.holdersByName.entrySet().stream()
                 .filter(e -> !e.getValue().isBound())
@@ -357,9 +306,8 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public Holder.Reference<T> createIntrusiveHolder(T value)
-    {
-        if (this.intrusiveHolderCallback == null)
+    public Holder.Reference<T> createIntrusiveHolder(T value) {
+        if (!this.isIntrusive())
             throw new IllegalStateException("This registry can't create intrusive holders");
 
         this.validateWrite();
@@ -368,14 +316,12 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public Optional<HolderSet.Named<T>> getTag(TagKey<T> name)
-    {
+    public Optional<HolderSet.Named<T>> getTag(TagKey<T> name) {
         return Optional.ofNullable(this.tags.get(name));
     }
 
     @Override
-    public void bindTags(Map<TagKey<T>, List<Holder<T>>> newTags)
-    {
+    public void bindTags(Map<TagKey<T>, List<Holder<T>>> newTags) {
         Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag = new IdentityHashMap<>();
         this.holdersByName.values().forEach(v -> holderToTag.put(v, new ArrayList<>()));
         newTags.forEach((name, values) -> values.forEach(holder -> addTagToHolder(holderToTag, name, holder)));
@@ -406,8 +352,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         this.delegate.onBindTags(this.tags, defaultedTags);
     }
 
-    private void addTagToHolder(Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag, TagKey<T> name, Holder<T> holder)
-    {
+    private void addTagToHolder(Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag, TagKey<T> name, Holder<T> holder) {
         if (!holder.canSerializeIn(this.holderOwner()))
             throw new IllegalStateException("Can't create named set " + name + " containing value " + holder + " from outside registry " + this);
 
@@ -418,34 +363,26 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     @Override
-    public void resetTags()
-    {
+    public void resetTags() {
         this.tags.values().forEach(t -> t.bind(List.of()));
         this.holders.values().forEach(v -> v.bindTags(Set.of()));
     }
 
     @Override
-    public void unfreeze()
-    {
+    public void unfreeze() {
         this.frozen = false;
     }
 
-    boolean isFrozen()
-    {
+    boolean isFrozen() {
         return this.frozen;
     }
 
-    boolean isIntrusive()
-    {
-        return this.intrusiveHolderCallback != null;
+    boolean isIntrusive() {
+        return this.intrusiveHolderCallback != null && this.stage == RegistryManager.ACTIVE;
     }
 
     @Nullable
-    Holder.Reference<T> onAdded(RegistryManager stage, int id, ResourceKey<T> key, T newValue, T oldValue)
-    {
-        if (stage != RegistryManager.ACTIVE && (this.intrusiveHolderCallback == null || !stage.isStaging()))  // Intrusive handlers need updating in staging.
-            return null; // Only do holder shit on the active registries, not pending or snapshots.
-
+    Holder.Reference<T> onAdded(RegistryManager stage, int id, ResourceKey<T> key, T newValue, T oldValue)  {
         //Holder.Reference<T> oldHolder = oldValue == null ? null : getHolder(key, oldValue);
         // Do we need to do anything with the old holder? We cant update its pointer unless its non-intrusive...
         // And if thats the case, then we *should* get its reference in newHolder
@@ -456,8 +393,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         this.holdersById.set(id, newHolder);
         this.holdersByName.put(key.location(), newHolder);
         this.holders.put(newValue, newHolder);
-        if (this.unregisteredIntrusiveHolders != null)
-        {
+        if (this.unregisteredIntrusiveHolders != null) {
             this.unregisteredIntrusiveHolders.remove(newValue);
             newHolder.bindKey(key);
         }
@@ -467,44 +403,21 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         return newHolder;
     }
 
-    @SuppressWarnings("deprecation")
-    private HolderSet.Named<T> createTag(TagKey<T> name)
-    {
-        return HolderSet.emptyNamed(this.holderOwner(), name);
+    private HolderSet.Named<T> createTag(TagKey<T> name) {
+        return new HolderSet.Named<>(this.holderOwner(), name);
     }
 
-    private Holder.Reference<T> getHolder(ResourceKey<T> key, T value)
-    {
-        if (this.intrusiveHolderCallback != null)
+    private Holder.Reference<T> getHolder(ResourceKey<T> key, T value) {
+        if (this.isIntrusive())
             return this.intrusiveHolderCallback.apply(value);
 
         return this.holdersByName.computeIfAbsent(key.location(), k -> Holder.Reference.createStandAlone(this.holderOwner(), key));
     }
 
-    private List<Holder.Reference<T>> getSortedHolders()
-    {
+    private List<Holder.Reference<T>> getSortedHolders() {
         if (this.holdersSorted == null)
             this.holdersSorted = this.holdersById.stream().filter(Objects::nonNull).toList();
 
         return this.holdersSorted;
-    }
-
-    public static class Factory<V> implements IForgeRegistry.CreateCallback<V>, IForgeRegistry.AddCallback<V>
-    {
-        public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
-
-        @Override
-        public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage)
-        {
-            ForgeRegistry<V> fowner = (ForgeRegistry<V>) owner;
-            owner.setSlaveMap(ID, new NamespacedWrapper<V>(fowner, fowner.getBuilder().getIntrusiveHolderCallback(), stage));
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceKey<V> key, V value, V oldValue)
-        {
-            owner.getSlaveMap(ID, NamespacedWrapper.class).onAdded(stage, id, key, value, oldValue);
-        }
     }
 }

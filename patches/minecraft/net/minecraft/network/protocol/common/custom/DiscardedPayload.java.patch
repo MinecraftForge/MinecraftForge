@@ -1,18 +1,30 @@
 --- a/net/minecraft/network/protocol/common/custom/DiscardedPayload.java
 +++ b/net/minecraft/network/protocol/common/custom/DiscardedPayload.java
-@@ -3,8 +_,14 @@
- import net.minecraft.network.FriendlyByteBuf;
+@@ -4,18 +_,24 @@
+ import net.minecraft.network.codec.StreamCodec;
  import net.minecraft.resources.ResourceLocation;
  
 -public record DiscardedPayload(ResourceLocation id) implements CustomPacketPayload {
 +public record DiscardedPayload(ResourceLocation id, @org.jetbrains.annotations.Nullable FriendlyByteBuf data) implements CustomPacketPayload {
-+   public DiscardedPayload(ResourceLocation id) {
-+      this(id, null);
-+   }
+     public static <T extends FriendlyByteBuf> StreamCodec<T, DiscardedPayload> codec(ResourceLocation p_328904_, int p_334650_) {
+         return CustomPacketPayload.codec((p_330619_, p_329210_) -> {
++            if (p_330619_.data != null) {
++                p_329210_.writeBytes(p_330619_.data.slice());
++            }
+         }, p_333509_ -> {
+             int i = p_333509_.readableBytes();
+             if (i >= 0 && i <= p_334650_) {
+-                p_333509_.skipBytes(i);
+-                return new DiscardedPayload(p_328904_);
++                return new DiscardedPayload(p_328904_, new FriendlyByteBuf(p_333509_.readBytes(i)));
+             } else {
+                 throw new IllegalArgumentException("Payload may not be larger than " + p_334650_ + " bytes");
+             }
+         });
++    }
 +
-    public void write(FriendlyByteBuf p_301050_) {
-+       if (data != null)
-+          p_301050_.writeBytes(data.slice());
-    }
++    public DiscardedPayload(ResourceLocation id) {
++        this(id, null);
+     }
  
-    public ResourceLocation id() {
+     @Override

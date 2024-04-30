@@ -15,7 +15,7 @@ abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
         super(type, "forge_");
     }
 
-    @Override public String getNaming() { return "srg"; }
+    @Override public String getNaming() { return "mcp"; }
     @Override public boolean isProduction() { return true; }
 
     public static class Client extends ForgeProdLaunchHandler {
