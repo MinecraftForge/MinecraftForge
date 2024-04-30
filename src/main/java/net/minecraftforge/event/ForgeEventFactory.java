@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1052,5 +1053,9 @@ public final class ForgeEventFactory {
 
     public static AnvilRepairEvent onAnvilRepair(Player player, @NotNull ItemStack output, @NotNull ItemStack left, @NotNull ItemStack right) {
         return fire(new AnvilRepairEvent(player, left, right, output));
+    }
+
+    public static GatherItemComponentsEvent gatherItemComponents(Item item) {
+        return fire(new GatherItemComponentsEvent(item));
     }
 }

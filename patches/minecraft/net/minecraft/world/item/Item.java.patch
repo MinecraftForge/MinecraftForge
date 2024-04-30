@@ -23,7 +23,30 @@
      }
  
      @Deprecated
-@@ -111,6 +_,7 @@
+@@ -100,17 +_,28 @@
+         return this.builtInRegistryHolder;
+     }
+ 
++    @Nullable
++    private DataComponentMap builtComponents = null;
++
+     public DataComponentMap components() {
+-        return this.components;
++        if (builtComponents == null) {
++            builtComponents = DataComponentMap.builder()
++                    .addAll(components)
++                    .addAll(net.minecraftforge.event.ForgeEventFactory.gatherItemComponents(this).getDataComponentMap())
++                    .build();
++        }
++
++        return builtComponents;
+     }
+ 
+     public int getDefaultMaxStackSize() {
+-        return this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
++        return builtComponents == null ? this.components.getOrDefault(DataComponents.MAX_STACK_SIZE, 1) : this.builtComponents.getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
+     }
+ 
      public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
      }
  
