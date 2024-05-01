@@ -12,7 +12,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 
 public class ForgeConfig {
@@ -22,9 +21,6 @@ public class ForgeConfig {
         public final BooleanValue removeErroringEntities;
 
         public final BooleanValue fullBoundingBoxLadders;
-
-        public final DoubleValue zombieBaseSummonChance;
-        public final DoubleValue zombieBabyChance;
 
         public final ConfigValue<String> permissionHandler;
 
@@ -51,18 +47,6 @@ public class ForgeConfig {
                     .translation("forge.configgui.fullBoundingBoxLadders")
                     .worldRestart()
                     .define("fullBoundingBoxLadders", false);
-
-            zombieBaseSummonChance = builder
-                    .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
-                    .translation("forge.configgui.zombieBaseSummonChance")
-                    .worldRestart()
-                    .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D);
-
-            zombieBabyChance = builder
-                    .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
-                    .translation("forge.configgui.zombieBabyChance")
-                    .worldRestart()
-                    .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
 
             permissionHandler = builder
                     .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")

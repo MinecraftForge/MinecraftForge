@@ -73,21 +73,3 @@
                  if (!this.isSilent()) {
                      p_219160_.levelEvent(null, 1026, this.blockPosition(), 0);
                  }
-@@ -487,7 +_,7 @@
-     }
- 
-     public static boolean getSpawnAsBabyOdds(RandomSource p_219163_) {
--        return p_219163_.nextFloat() < 0.05F;
-+        return p_219163_.nextFloat() < net.minecraftforge.common.ForgeConfig.SERVER.zombieBabyChance.get();
-     }
- 
-     protected void handleAttributes(float p_34340_) {
-@@ -510,7 +_,7 @@
-     }
- 
-     protected void randomizeReinforcementsChance() {
--        this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(this.random.nextDouble() * 0.1F);
-+        this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(this.random.nextDouble() * net.minecraftforge.common.ForgeConfig.SERVER.zombieBaseSummonChance.get());
-     }
- 
-     @Override
