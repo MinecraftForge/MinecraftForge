@@ -37,18 +37,18 @@ For support and questions, visit [the Support Forum][Support-Forum] or [the Forg
 
 # Creating Mods
 
-[See the "Getting Started" section in the Forge Documentation](https://mcforge.readthedocs.io/en/latest/gettingstarted/).
+[See the "Getting Started" section in the Forge Documentation](https://docs.minecraftforge.net/en/1.18.x/gettingstarted/).
 
 # Contribute to Forge
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place!
  
- [See the guide to setting up a Forge workspace](http://mcforge.readthedocs.io/en/latest/forgedev/).
+ [See the guide to setting up a Forge workspace](https://docs.minecraftforge.net/en/1.18.x/forgedev/).
 
 ### Pull requests
 
-[See the "Making Changes and Pull Requests" section in the Forge documentation](https://mcforge.readthedocs.io/en/latest/forgedev/#making-changes-and-pull-requests).
+[See the "Making Changes and Pull Requests" section in the Forge documentation](https://docs.minecraftforge.net/en/1.18.x/forgedev/#making-changes-and-pull-requests).
 
 Please read the contributing guidelines found [here](CONTRIBUTING.md) before making a pull request.
 
