@@ -5,17 +5,26 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.39,5.2.0)'
     }
 }
 
 import groovy.json.JsonBuilder
+import de.undercouch.gradle.tasks.download.Download
+import net.minecraftforge.forge.tasks.checks.CheckATs
+import net.minecraftforge.forge.tasks.checks.CheckExcs
+import net.minecraftforge.forge.tasks.checks.CheckPatches
+import net.minecraftforge.forge.tasks.checks.CheckSAS
+import net.minecraftforge.forge.tasks.checks.CheckTask
+import net.minecraftforge.forge.tasks.checks.CheckMode
 
 import java.nio.file.Files
 import java.util.Date
 import java.util.LinkedHashMap
 import net.minecraftforge.forge.tasks.*
 import static net.minecraftforge.forge.tasks.Util.*
+import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
+import net.minecraftforge.gradle.common.tasks.CheckJarCompatibility
 import net.minecraftforge.gradle.common.tasks.ApplyBinPatches
 import net.minecraftforge.gradle.common.tasks.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.tasks.ExtractInheritance
@@ -27,8 +36,9 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
+    id 'de.undercouch.download' version '5.1.3'
 }
 
 Util.init() //Init all our extension methods!
@@ -48,24 +58,26 @@ ext {
     MCP_VERSION = '20210706.113038'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
-    EVENTBUS_VERSION = '5.0.3'
+    COREMODS_VERSION = '5.0.3'
+    EVENTBUS_VERSION = '5.0.7'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.54'
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
-    ASM_VERSION = '9.1'
-    INSTALLER_VERSION = '2.1.+'
-    MIXIN_VERSION = '0.8.4'
+    ASM_VERSION = '9.6'
+    INSTALLER_VERSION = '2.2.+'
+    MIXIN_VERSION = '0.8.5'
 
-    GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
+    GIT_INFO = gradleutils.gitInfo
+    LAST_RB = GIT_INFO.tag.rsplit('.', 1)[1] as int >= 1 ? GIT_INFO.tag + '.0' : null
     // FML_VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, 'FML', MC_VERSION)
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
+    MIN_TAG_FOR_CHANGELOG = "37.0"
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
     VIGNETTE = 'net.minecraftforge.lex:vignette:0.2.0.16'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.7'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.4.1'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
 }
 
@@ -73,6 +85,10 @@ println('Version: ' + VERSION +
         ' Java: ' + System.getProperty('java.version') +
         ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ')' +
         ' Arch: ' + System.getProperty('os.arch'))
+
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
+}
 
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
@@ -315,7 +331,7 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     prj.task([type: DownloadMavenArtifact], 'downloadInstaller') {
-        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:shrunk"
+        artifact = "net.minecraftforge:installer:${INSTALLER_VERSION}:fatjar"
         changing = true
     }
 
@@ -823,11 +839,13 @@ project(':forge') {
     }
 
     configurations {
+        internalProject
         installer {
             // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
             transitive = false
         }
         moduleonly
+        implementation.extendsFrom(internalProject)
         api.extendsFrom(installer)
     }
 
@@ -836,10 +854,10 @@ project(':forge') {
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
-        implementation project(':fmlcore')
-        implementation project(':fmlloader')
-        implementation project(':javafmllanguage')
-        implementation project(':mclanguage')
+        internalProject project(':fmlcore')
+        internalProject project(':fmlloader')
+        internalProject project(':javafmllanguage')
+        internalProject project(':mclanguage')
     }
     dependencies sharedDeps
 
@@ -1000,9 +1018,12 @@ project(':forge') {
         ]
     }
 
-    task crowdin(type: Crowdin) {
-        key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
-        //TODO: Merge our english.json?
+    tasks.register('downloadCrowdin', Download) {
+        src 'https://files.minecraftforge.net/crowdin.zip'
+        dest file('build/crowdin.zip')
+        useETag 'all'
+        onlyIfModified true
+        quiet true
     }
 
     sharedFmlonlyForge.call(project)
@@ -1014,6 +1035,7 @@ project(':forge') {
 
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         tool = INSTALLER_TOOLS + ':fatjar'
+        args.add '--annotations'
         input = genJoinedBinPatches.cleanJar
         libraries.addAll downloadLibraries.librariesOutput.map { rf -> Files.readAllLines(rf.asFile.toPath()).stream().map(File::new).collect(java.util.stream.Collectors.toList()) }
     }
@@ -1037,39 +1059,100 @@ project(':forge') {
         }
     }
 
-    task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
-        inheritance = extractInheritance.output
+    tasks.register('checkAll') {
+        dependsOn 'checkLicenses'
+        group = 'checks'
+    }
+    tasks.register('checkAllAndFix') {
+        dependsOn 'findFieldInstanceChecks', 'checkLicenses'
+        group = 'checks'
+    }
+
+    CheckTask.registerTask(tasks, 'ATs', CheckATs) {
+        dependsOn extractInheritance, createSrg2Mcp
         ats.from patcher.accessTransformers
+        inheritance = extractInheritance.output
         mappings = createSrg2Mcp.output
     }
 
-    task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
-        inheritance = extractInheritance.output
+    CheckTask.registerTask(tasks, 'SAS', CheckSAS) {
+        dependsOn extractInheritance
         sass.from patcher.sideAnnotationStrippers
+        inheritance = extractInheritance.output
     }
 
-    task checkExcs(type: CheckExcs, dependsOn: jar) {
+    CheckTask.registerTask(tasks, 'Excs', CheckExcs) {
+        dependsOn jar
         binary = jar.archiveFile.get().asFile
         excs.from patcher.excs
     }
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
-
-    task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
+    CheckTask.registerTask(tasks, 'Patches', CheckPatches) {
+        dependsOn genPatches
         patchDir = file("$rootDir/patches")
-        autoFix = true
-    }
-
-    task checkPatches(type: CheckPatches, dependsOn: genPatches) {
-        patchDir = file("$rootDir/patches")
-        autoFix = false
+        patchesWithS2SArtifact = [
+                'minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch',
+                'minecraft/net/minecraft/data/BlockModelDefinition.java.patch',
+        ]
     }
 
     genPatches {
-        finalizedBy checkPatches
+        finalizedBy checkAndFixPatches
         autoHeader true
         lineEnding = '\n'
     }
+
+    def baseForgeVersionProperty = project.objects.property(String)
+    baseForgeVersionProperty.set(project.provider { getLatestForgeVersion(MC_VERSION) }.map { MC_VERSION + '-' + it })
+    baseForgeVersionProperty.finalizeValueOnRead()
+    def jarCompatibilityTaskSetup = { task ->
+        task.group = 'jar compatibility'
+        task.onlyIf {
+            baseForgeVersionProperty.getOrNull() != null
+        }
+    }
+
+    tasks.register('setupCheckJarCompatibility', SetupCheckJarCompatibility) {
+        inputVersion = baseForgeVersionProperty
+    }
+
+    tasks.register('applyBaseCompatibilityJarBinPatches', ApplyBinPatches) {
+        jarCompatibilityTaskSetup(it)
+
+        clean = project.tasks.createJoinedSRG.output
+        patch = project.tasks.named('setupCheckJarCompatibility').flatMap { it.baseBinPatchesOutput }
+        output = project.layout.buildDirectory.dir(name).map { it.file('output.jar') }
+    }
+
+    tasks.register('mergeBaseForgeJar', MergeJars) {
+        jarCompatibilityTaskSetup(it)
+
+        inputJars.from(project.tasks.named('applyBaseCompatibilityJarBinPatches').flatMap { it.output })
+        inputJars.from(baseForgeVersionProperty.map { inputVersion ->
+            def output = project.layout.buildDirectory.dir(name).map { it.file("forge-${inputVersion}-universal.jar") }.get().asFile
+            project.rootProject.extensions.download.run {
+                src "https://maven.minecraftforge.net/net/minecraftforge/forge/${inputVersion}/forge-${inputVersion}-universal.jar"
+                dest output
+            }
+            return output
+        })
+    }
+
+    tasks.register('checkJarCompatibility', CheckJarCompatibility) {
+        jarCompatibilityTaskSetup(it)
+        dependsOn 'setupCheckJarCompatibility'
+
+        baseJar = project.tasks.named('mergeBaseForgeJar').flatMap { it.output }
+        baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
+
+        inputJar = project.tasks.named('reobfJar').flatMap { it.output }
+
+        commonLibraries.from(configurations.minecraftImplementation)
+        commonLibraries.from(configurations.installer)
+        commonLibraries.from(configurations.moduleonly)
+        commonLibraries.from(configurations.internalProject)
+    }
+
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
@@ -1288,9 +1371,12 @@ project(':forge') {
         from extraTxts
 
         // add crowdin locales
-        from { crowdin.output.present && crowdin.output.get().asFile.exists() ? zipTree(crowdin.output) : null}
-        dependsOn crowdin
-        duplicatesStrategy = 'exclude'
+        from zipTree(downloadCrowdin.dest).matching {
+            include 'assets/forge/lang/*.json'
+        }
+
+        dependsOn downloadCrowdin
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         doFirst {
             MANIFESTS.each{ pkg, values ->
