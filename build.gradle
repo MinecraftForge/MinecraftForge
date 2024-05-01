@@ -9,6 +9,7 @@ buildscript {
     }
 }
 
+import de.undercouch.gradle.tasks.download.Download
 import groovy.json.JsonBuilder
 import net.minecraftforge.forge.tasks.checks.CheckATs
 import net.minecraftforge.forge.tasks.checks.CheckExcs
@@ -56,12 +57,12 @@ ext {
     MCP_VERSION = '20220404.173914'
     SPI_VERSION = '4.0.15-4.x'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.1.2'
+    COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.1.3'
     SECUREJARHANDLER_VERSION = '1.0.8'
     BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
-    ASM_VERSION = '9.6'
+    ASM_VERSION = '9.7'
     INSTALLER_VERSION = '2.2.+'
     MIXIN_VERSION = '0.8.5'
     JARJAR_VERSION = '0.3.19'
@@ -1121,9 +1122,12 @@ project(':forge') {
         ]
     }
 
-    task crowdin(type: Crowdin) {
-        key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
-        //TODO: Merge our english.json?
+    tasks.register('downloadCrowdin', Download) {
+        src 'https://files.minecraftforge.net/crowdin.zip'
+        dest file('build/crowdin.zip')
+        useETag 'all'
+        onlyIfModified true
+        quiet true
     }
 
     sharedFmlonlyForge.call(project)
@@ -1510,9 +1514,12 @@ project(':forge') {
         from extraTxts
 
         // add crowdin locales
-        from { crowdin.output.present && crowdin.output.get().asFile.exists() ? zipTree(crowdin.output) : null}
-        dependsOn crowdin
-        duplicatesStrategy = 'exclude'
+        from zipTree(downloadCrowdin.dest).matching {
+            include 'assets/forge/lang/*.json'
+        }
+
+        dependsOn downloadCrowdin
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         doFirst {
             MANIFESTS.each{ pkg, values ->

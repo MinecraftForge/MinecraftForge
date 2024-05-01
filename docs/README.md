@@ -30,8 +30,8 @@ You can download the installer for the *Recommended Build* or the
  more unstable as a result. The installer will attempt to install Forge
  into your vanilla launcher environment, where you can then create a new
  profile using that version and play the game!
- 
-For support and questions, visit [the Support Forum](https://forums.minecraftforge.net/forum/18-support-bug-reports/) or [the Forge Discord server][Discord].
+
+For support and questions, visit [the Support Forum][Support-Forum] or [the Forge Discord server][Discord].
 
 [Here is a short video from Rorax showing how to install and setup Forge.](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
@@ -62,6 +62,7 @@ We require all contributors to acknowledge the [Forge Contributor
 *Forge is a large project with many collaborators working on it around the clock. Forge is and will always remain free to use and modify. However, it costs money to run such a large project as this, so please consider [becoming a patron](https://www.patreon.com/LexManos).*
 
 [Download]: https://files.minecraftforge.net/
-[Forum]: https://forums.minecraftforge.net/
+[Forum]: https://forums.minecraftforge.net
+[Support-Forum]: https://forums.minecraftforge.net/forum/18-support-bug-reports/
 [Discord]: https://discord.minecraftforge.net
 [Documentation]: https://docs.minecraftforge.net/en/1.18.x/
