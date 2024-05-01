@@ -10,6 +10,7 @@ buildscript {
 }
 
 import groovy.json.JsonBuilder
+import de.undercouch.gradle.tasks.download.Download
 import net.minecraftforge.forge.tasks.checks.CheckATs
 import net.minecraftforge.forge.tasks.checks.CheckExcs
 import net.minecraftforge.forge.tasks.checks.CheckPatches
@@ -1017,9 +1018,12 @@ project(':forge') {
         ]
     }
 
-    task crowdin(type: Crowdin) {
-        key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
-        //TODO: Merge our english.json?
+    tasks.register('downloadCrowdin', Download) {
+        src 'https://files.minecraftforge.net/crowdin.zip'
+        dest file('build/crowdin.zip')
+        useETag 'all'
+        onlyIfModified true
+        quiet true
     }
 
     sharedFmlonlyForge.call(project)
@@ -1367,9 +1371,12 @@ project(':forge') {
         from extraTxts
 
         // add crowdin locales
-        from { crowdin.output.present && crowdin.output.get().asFile.exists() ? zipTree(crowdin.output) : null}
-        dependsOn crowdin
-        duplicatesStrategy = 'exclude'
+        from zipTree(downloadCrowdin.dest).matching {
+            include 'assets/forge/lang/*.json'
+        }
+
+        dependsOn downloadCrowdin
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         doFirst {
             MANIFESTS.each{ pkg, values ->
