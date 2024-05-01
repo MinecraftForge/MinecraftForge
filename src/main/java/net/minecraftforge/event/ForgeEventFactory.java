@@ -1060,4 +1060,8 @@ public final class ForgeEventFactory {
     public static void onPlayerTradeWithVillager(Player player, MerchantOffer offer, AbstractVillager villager) {
         post(new TradeWithVillagerEvent(player, offer, villager));
     }
+
+    public static GatherComponentsEvent.GatherItemComponentsEvent gatherItemComponentsEvent(Item item) {
+        return fire(new GatherComponentsEvent.GatherItemComponentsEvent(item));
+    }
 }
