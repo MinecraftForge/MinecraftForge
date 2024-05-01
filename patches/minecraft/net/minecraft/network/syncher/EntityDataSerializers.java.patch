@@ -1,10 +1,12 @@
 --- a/net/minecraft/network/syncher/EntityDataSerializers.java
 +++ b/net/minecraft/network/syncher/EntityDataSerializers.java
-@@ -121,15 +_,16 @@
+@@ -120,16 +_,18 @@
+     public static final EntityDataSerializer<Quaternionf> QUATERNION = EntityDataSerializer.forValueType(ByteBufCodecs.QUATERNIONF);
  
      public static void registerSerializer(EntityDataSerializer<?> p_135051_) {
++        int id =
          SERIALIZERS.add(p_135051_);
-+        if (SERIALIZERS.add(p_135051_) >= 256) throw new RuntimeException("Vanilla DataSerializer ID limit exceeded");
++        if (id >= 256) throw new RuntimeException("Vanilla DataSerializer ID limit exceeded");
      }
  
      @Nullable

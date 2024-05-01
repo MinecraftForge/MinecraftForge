@@ -9,10 +9,11 @@
              this.socket.setSoTimeout(5000);
              this.socket.joinGroup(this.pingGroup);
          }
-@@ -89,6 +_,11 @@
+@@ -88,7 +_,11 @@
+             String s = LanServerPinger.parseMotd(p_120097_);
              String s1 = LanServerPinger.parseAddress(p_120097_);
              if (s1 != null) {
-                 s1 = p_120098_.getHostAddress() + ":" + s1;
+-                s1 = p_120098_.getHostAddress() + ":" + s1;
 +                if (net.minecraftforge.network.DualStackUtils.checkIPv6(p_120098_)) {
 +                    s1 = "[" + com.google.common.net.InetAddresses.toAddrString(p_120098_) + "]:" + s1;
 +                } else {
