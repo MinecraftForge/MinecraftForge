@@ -115,7 +115,6 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
@@ -126,7 +125,6 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.GatherItemComponentsEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -1264,16 +1262,10 @@ public final class ForgeHooks {
         );
     }
 
-    public static GatherItemComponentsEvent gatherItemComponents(Item item) {
-        var event = new GatherItemComponentsEvent(item);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
-    }
-
     public static DataComponentMap gatherItemComponents(Item item, DataComponentMap dataComponents) {
         return DataComponentMap.builder()
                 .addAll(dataComponents)
-                .addAll(gatherItemComponents(item).getDataComponentMap())
+                .addAll(ForgeEventFactory.gatherItemComponents(item).getDataComponentMap())
                 .build();
     }
 }
