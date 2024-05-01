@@ -821,7 +821,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Supplier<T> defaultSupplier;
 
         private T cachedValue = null;
-        protected boolean updateCasted = true;
 
         private ForgeConfigSpec spec;
 
@@ -835,10 +834,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public List<String> getPath() {
             return new ArrayList<>(path);
-        }
-
-        protected boolean updateCasted() {
-            return cachedValue == null || updateCasted;
         }
 
         public boolean cacheIsNull() {
