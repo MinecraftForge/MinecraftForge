@@ -16,9 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -823,6 +821,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private final Supplier<T> defaultSupplier;
 
         private T cachedValue = null;
+        protected boolean updateCasted = true;
 
         private ForgeConfigSpec spec;
 
@@ -836,6 +835,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public List<String> getPath() {
             return new ArrayList<>(path);
+        }
+
+        protected boolean updateCasted() {
+            return cachedValue == null || updateCasted;
+        }
+
+        public boolean cacheIsNull() {
+            return cachedValue == null;
         }
 
         /**
@@ -865,10 +872,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (spec.childConfig == null)
                 return defaultSupplier.get();
 
-            if (USE_CACHES && cachedValue == null)
-                cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
-            else if (!USE_CACHES)
+            if (!USE_CACHES)
                 return getRaw(spec.childConfig, path, defaultSupplier);
+            if (cachedValue == null)
+                return cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
 
             return cachedValue;
         }
@@ -906,13 +913,22 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
     }
 
-    public static class BooleanValue extends ConfigValue<Boolean> {
+    public static class BooleanValue extends ConfigValue<Boolean> implements BooleanSupplier {
+        private boolean value;
+
         BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
+
+        @Override
+        public boolean getAsBoolean() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class ByteValue extends ConfigValue<Byte> {
+    public static class ByteValue extends ConfigValue<Byte> implements Supplier<Byte> {
+        private byte value;
         ByteValue(Builder parent, List<String> path, Supplier<Byte> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -921,9 +937,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Byte getRaw(Config config, List<String> path, Supplier<Byte> defaultSupplier) {
             return config.getByteOrElse(path, defaultSupplier.get());
         }
+
+        public byte getAsByte() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class ShortValue extends ConfigValue<Short> {
+    public static class ShortValue extends ConfigValue<Short> implements Supplier<Short> {
+        private short value;
         ShortValue(Builder parent, List<String> path, Supplier<Short> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -932,9 +954,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Short getRaw(Config config, List<String> path, Supplier<Short> defaultSupplier) {
             return config.getShortOrElse(path, defaultSupplier.get());
         }
+
+        public short getAsShort() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class IntValue extends ConfigValue<Integer> {
+    public static class IntValue extends ConfigValue<Integer> implements IntSupplier {
+        private int value;
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -943,9 +971,17 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Integer getRaw(Config config, List<String> path, Supplier<Integer> defaultSupplier) {
             return config.getIntOrElse(path, defaultSupplier::get);
         }
+
+        @Override
+        public int getAsInt() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class LongValue extends ConfigValue<Long> {
+    public static class LongValue extends ConfigValue<Long> implements LongSupplier {
+        private long value;
+
         LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -954,9 +990,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier) {
             return config.getLongOrElse(path, defaultSupplier::get);
         }
+
+        @Override
+        public long getAsLong() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class FloatValue extends ConfigValue<Float> {
+    public static class FloatValue extends ConfigValue<Float> implements Supplier<Float> {
+        private float value;
         FloatValue(Builder parent, List<String> path, Supplier<Float> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -966,9 +1009,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.floatValue();
         }
+
+        public float getAsFloat() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class DoubleValue extends ConfigValue<Double> {
+    public static class DoubleValue extends ConfigValue<Double> implements DoubleSupplier {
+        private double value;
         DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier) {
             super(parent, path, defaultSupplier);
         }
@@ -978,9 +1027,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             Number n = config.get(path);
             return n == null ? defaultSupplier.get() : n.doubleValue();
         }
+
+        @Override
+        public double getAsDouble() {
+            if (cacheIsNull()) value = get();
+            return value;
+        }
     }
 
-    public static class EnumValue<T extends Enum<T>> extends ConfigValue<T> {
+    public static class EnumValue<T extends Enum<T>> extends ConfigValue<T> implements Supplier<T> {
         private final EnumGetMethod converter;
         private final Class<T> clazz;
 
