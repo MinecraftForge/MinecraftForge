@@ -224,10 +224,6 @@ public final class ForgeHooks {
         return brainBuilder.makeBrain(dynamic);
     }
 
-    public static boolean onLivingTick(LivingEntity entity) {
-        return MinecraftForge.EVENT_BUS.post(new LivingTickEvent(entity));
-    }
-
     public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
         return entity instanceof Player || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
@@ -248,14 +244,6 @@ public final class ForgeHooks {
     public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
         LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
-    }
-
-    public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
-        return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
-    }
-
-    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
-        return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
@@ -776,7 +764,7 @@ public final class ForgeHooks {
     @SuppressWarnings("deprecation")
     public static synchronized void updateBurns() {
         VANILLA_BURNS.clear();
-        FurnaceBlockEntity.getFuel().entrySet().forEach(e -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(e.getKey()), e.getValue()));
+        FurnaceBlockEntity.getFuel().forEach((k, v) -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(k), v));
     }
 
     /**
@@ -1260,5 +1248,20 @@ public final class ForgeHooks {
                 }
             }
         );
+    }
+
+    @Nullable
+    public static DyeColor getDyeColorFromItemStack(ItemStack stack) {
+        if (stack.getItem() instanceof DyeItem dye)
+            return dye.getDyeColor();
+
+        for (int x = 0; x < DyeColor.BLACK.getId(); x++) {
+            var color = DyeColor.byId(x);
+            if (stack.is(color.getTag())) {
+                return color;
+            }
+        }
+
+        return null;
     }
 }

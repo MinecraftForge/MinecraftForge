@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import net.minecraftforge.event.AbstractForgeEventFactory;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.audio.Channel;
@@ -50,31 +52,20 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.ModLoader;
 
-public final class ForgeEventFactoryClient {
+@ApiStatus.Internal
+public final class ForgeEventFactoryClient extends AbstractForgeEventFactory {
     private ForgeEventFactoryClient() {}
-
-    private static boolean post(Event e) {
-        return MinecraftForge.EVENT_BUS.post(e);
-    }
-
-    private static <E extends Event> E fire(E e) {
-        MinecraftForge.EVENT_BUS.post(e);
-        return e;
-    }
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<Model, EntityRenderer<? extends Player>> playerRenderers, Context context) {
         // TODO: Why is this a ModLoader event...
-        ModLoader.get().postEvent(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
+        postModBus(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
     }
 
     public static void onRegisterShaders(ResourceProvider resourceProvider, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList) {
-        // TODO: Why i this a ModLoader event...
-        ModLoader.get().postEvent(new RegisterShadersEvent(resourceProvider, shaderList));
+        // TODO: Why is this a ModLoader event...
+        postModBus(new RegisterShadersEvent(resourceProvider, shaderList));
     }
 
     public static void onScreenMouseReleased(boolean[] state, Screen screen, double mouseX, double mouseY, int button) {

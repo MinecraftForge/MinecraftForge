@@ -1,7 +1,11 @@
 --- a/net/minecraft/world/level/biome/Biome.java
 +++ b/net/minecraft/world/level/biome/Biome.java
-@@ -35,8 +_,8 @@
- public final class Biome {
+@@ -32,11 +_,11 @@
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.material.Fluids;
+ 
+-public final class Biome {
++public final class Biome implements net.minecraftforge.common.extensions.IForgeBiome {
      public static final Codec<Biome> DIRECT_CODEC = RecordCodecBuilder.create(
          p_220544_ -> p_220544_.group(
 -                    Biome.ClimateSettings.CODEC.forGetter(p_151717_ -> p_151717_.climateSettings),
@@ -44,33 +48,15 @@
      }
  
      public int getFogColor() {
-@@ -251,6 +_,29 @@
+@@ -251,6 +_,11 @@
  
      public Optional<Music> getBackgroundMusic() {
          return this.specialEffects.getBackgroundMusic();
 +    }
 +
-+    /**
-+     * {@return Cache of original biome data and biome data modified by biome modifiers}
-+     * Modified biome data is set by server after datapacks and serverconfigs load.
-+     * Climate and effects field reads are coremodded to redirect to this.
-+     **/
++    @Override
 +    public net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo() {
 +        return this.modifiableBiomeInfo;
-+    }
-+
-+    /**
-+     * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
-+     */
-+    public ClimateSettings getModifiedClimateSettings() {
-+        return this.modifiableBiomeInfo().get().climateSettings();
-+    }
-+
-+    /**
-+     * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
-+     */
-+    public BiomeSpecialEffects getModifiedSpecialEffects() {
-+        return this.modifiableBiomeInfo().get().effects();
      }
  
      public static class BiomeBuilder {

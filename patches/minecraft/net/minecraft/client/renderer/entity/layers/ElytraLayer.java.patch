@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
+@@ -23,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class ElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
++public class ElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> implements net.minecraftforge.client.extensions.IForgeElytraLayer<T> {
+     public static final ResourceLocation WINGS_LOCATION = new ResourceLocation("textures/entity/elytra.png");
+     private final ElytraModel<T> elytraModel;
+ 
 @@ -45,7 +_,7 @@
          float p_116960_
      ) {
@@ -22,34 +31,3 @@
              }
  
              p_116951_.pushPose();
-@@ -68,5 +_,30 @@
-             this.elytraModel.renderToBuffer(p_116951_, vertexconsumer, p_116953_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-             p_116951_.popPose();
-         }
-+    }
-+
-+    /**
-+     * Determines if the ElytraLayer should render.
-+     * ItemStack and Entity are provided for modder convenience,
-+     * For example, using the same ElytraLayer for multiple custom Elytra.
-+     *
-+     * @param stack  The Elytra ItemStack
-+     * @param entity The entity being rendered.
-+     * @return If the ElytraLayer should render.
-+     */
-+    public boolean shouldRender(ItemStack stack, T entity) {
-+        return stack.getItem() == Items.ELYTRA;
-+    }
-+
-+    /**
-+     * Gets the texture to use with this ElytraLayer.
-+     * This assumes the vanilla Elytra model.
-+     *
-+     * @param stack  The Elytra ItemStack.
-+     * @param entity The entity being rendered.
-+     * @return The texture.
-+     */
-+    public ResourceLocation getElytraTexture(ItemStack stack, T entity) {
-+        return WINGS_LOCATION;
-     }
- }

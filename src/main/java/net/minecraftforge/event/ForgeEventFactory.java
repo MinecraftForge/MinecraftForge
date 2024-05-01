@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +112,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -136,10 +136,13 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -152,7 +155,6 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.PositionCheck;
 import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
 import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.event.entity.living.LivingChangeTargetEvent.ILivingTargetType;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
@@ -198,28 +200,12 @@ import net.minecraftforge.event.level.SleepFinishedTimeEvent;
 import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.event.IModBusEvent;
 
 @ApiStatus.Internal
-public final class ForgeEventFactory {
+public final class ForgeEventFactory extends AbstractForgeEventFactory {
     private ForgeEventFactory() {}
-
-    private static boolean post(Event e) {
-        return MinecraftForge.EVENT_BUS.post(e);
-    }
-
-    private static <E extends Event> E fire(E e) {
-        post(e);
-        return e;
-    }
-
-    private static <T extends Event & IModBusEvent> void postModBus(T e) {
-        ModLoader.get().postEvent(e);
-    }
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction) {
         var snap = blockSnapshots.get(0);
@@ -909,6 +895,10 @@ public final class ForgeEventFactory {
         post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    public static boolean onLivingTick(LivingEntity entity) {
+        return post(new LivingEvent.LivingTickEvent(entity));
+    }
+
     public static LivingFallEvent onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
         return fire(new LivingFallEvent(entity, distance, damageMultiplier));
     }
@@ -923,6 +913,14 @@ public final class ForgeEventFactory {
 
     public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ) {
         return fire(new LivingKnockBackEvent(target, strength, ratioX, ratioZ));
+    }
+
+    public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
+        return post(new LivingDeathEvent(entity, src));
+    }
+
+    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
+        return post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
     public static void onLeftClickEmpty(Player player) {
