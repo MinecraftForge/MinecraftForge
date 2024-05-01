@@ -103,9 +103,6 @@ public class ForgeConfig {
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
-        @Deprecated(since = "1.20.1", forRemoval = true) // Config option ignored.
-        public final BooleanValue compressLanIPv6Addresses;
-
         public final BooleanValue calculateAllNormals;
 
         public final BooleanValue stabilizeDirectionGetNearest;
@@ -136,11 +133,6 @@ public class ForgeConfig {
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
                     .translation("forge.configgui.useCombinedDepthStencilAttachment")
                     .define("useCombinedDepthStencilAttachment", false);
-
-            compressLanIPv6Addresses = builder
-                    .comment("[DEPRECATED] Does nothing anymore, IPv6 addresses will be compressed always")
-                    .translation("forge.configgui.compressLanIPv6Addresses")
-                    .define("compressLanIPv6Addresses", true);
 
             calculateAllNormals = builder
                     .comment("During block model baking, manually calculates the normal for all faces.",
