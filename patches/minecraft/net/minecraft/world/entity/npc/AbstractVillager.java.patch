@@ -5,7 +5,7 @@
              CriteriaTriggers.TRADE.trigger((ServerPlayer)this.tradingPlayer, this, p_35274_.getResult());
          }
 +
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.TradeWithVillagerEvent(this.tradingPlayer, p_35274_, this));
++        net.minecraftforge.event.ForgeEventFactory.onPlayerTradeWithVillager(this.tradingPlayer, p_35274_, this);
      }
  
      protected abstract void rewardTradeXp(MerchantOffer p_35299_);

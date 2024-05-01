@@ -37,3 +37,11 @@
                      PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
                      this.broadcastChatMessage(playerchatmessage1);
                  });
+@@ -1797,6 +_,7 @@
+ 
+     @Override
+     public void handleCustomPayload(ServerboundCustomPayloadPacket p_329963_) {
++        net.minecraftforge.common.ForgeHooks.onCustomPayload(p_329963_, this.connection);
+     }
+ 
+     @Override
