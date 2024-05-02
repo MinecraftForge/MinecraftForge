@@ -239,9 +239,25 @@ public class Tags {
         private static void init() {}
 
         public static final TagKey<EntityType<?>> BOSSES = tag("bosses");
+        public static final TagKey<EntityType<?>> MINECARTS = tag("minecarts");
+        public static final TagKey<EntityType<?>> BOATS = tag("boats");
+
+        /**
+         * Entities should be included in this tag if they are not allowed to be picked up by items or grabbed in a way
+         * that a player can easily move the entity to anywhere they want. Ideal for special entities that should not
+         * be able to be put into a mob jar for example.
+         */
+        public static final TagKey<EntityType<?>> CAPTURING_NOT_SUPPORTED = tag("capturing_not_supported");
+
+        /**
+         * Entities should be included in this tag if they are not allowed to be teleported in any way.
+         * This is more for mods that allow teleporting entities within the same dimension. Any mod that is
+         * teleporting entities to new dimensions should be checking canChangeDimensions method on the entity itself.
+         */
+        public static final TagKey<EntityType<?>> TELEPORTING_NOT_SUPPORTED = tag("teleporting_not_supported");
 
         private static TagKey<EntityType<?>> tag(String name) {
-            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("forge", name));
+            return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath("c", name));
         }
     }
 
