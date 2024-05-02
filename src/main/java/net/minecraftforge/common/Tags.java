@@ -21,6 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 
 public class Tags {
@@ -31,6 +32,7 @@ public class Tags {
         Fluids.init();
         Enchantments.init();
         Biomes.init();
+        Structures.init();
     }
 
     public static class Blocks {
@@ -965,6 +967,26 @@ public class Tags {
 
         private static TagKey<Biome> tag(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", name));
+        }
+    }
+
+    public static class Structures {
+        private static void init() {}
+        
+        /**
+         * Structures that should not show up on minimaps or world map views from mods/sites.
+         * No effect on vanilla map items.
+         */
+        public static final TagKey<Structure> HIDDEN_FROM_DISPLAYERS = tag("hidden_from_displayers");
+
+        /**
+         * Structures that should not be locatable/selectable by modded structure-locating items or abilities.
+         * No effect on vanilla map items.
+         */
+        public static final TagKey<Structure> HIDDEN_FROM_LOCATOR_SELECTION = tag("hidden_from_locator_selection");
+
+        private static TagKey<Structure> tag(String name) {
+            return TagKey.create(Registries.STRUCTURE, new ResourceLocation("c", name));
         }
     }
 }
