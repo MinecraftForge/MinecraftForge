@@ -73,10 +73,10 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         replace(Items.DIAMOND, Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD, Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST, Tags.Items.CHESTS_WOODEN);
-        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE_NORMAL);
-        replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
+        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONES_NORMAL);
+        replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONES_DEEPSLATE);
 
-        replace(Items.STRING, Tags.Items.STRING);
+        replace(Items.STRING, Tags.Items.STRINGS);
         exclude(getConversionRecipeName(Blocks.WHITE_WOOL, Items.STRING));
 
         exclude(Blocks.GOLD_BLOCK);
