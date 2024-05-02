@@ -622,6 +622,19 @@ public class Tags {
     public static class Biomes {
         private static void init() {}
 
+        /**
+         * For biomes that should not spawn monsters over time the normal way.
+         * In other words, their Spawners and Spawn Cost entries have the monster category empty.
+         * Example: Mushroom Biomes not having Zombies, Creepers, Skeleton, nor any other normal monsters.
+         */
+        public static final TagKey<Biome> NO_DEFAULT_MONSTERS = tag("no_default_monsters");
+        /**
+         * Biomes that should not be locatable/selectable by modded biome-locating items or abilities.
+         */
+        public static final TagKey<Biome> HIDDEN_FROM_LOCATOR_SELECTION = tag("hidden_from_locator_selection");
+
+        public static final TagKey<Biome> IS_VOID = tag("is_void");
+
         public static final TagKey<Biome> IS_HOT = tag("is_hot");
         public static final TagKey<Biome> IS_HOT_OVERWORLD = tag("is_hot/overworld");
         public static final TagKey<Biome> IS_HOT_NETHER = tag("is_hot/nether");
@@ -632,14 +645,14 @@ public class Tags {
         public static final TagKey<Biome> IS_COLD_NETHER = tag("is_cold/nether");
         public static final TagKey<Biome> IS_COLD_END = tag("is_cold/end");
 
-        public static final TagKey<Biome> IS_SPARSE = tag("is_sparse");
-        public static final TagKey<Biome> IS_SPARSE_OVERWORLD = tag("is_sparse/overworld");
-        public static final TagKey<Biome> IS_SPARSE_NETHER = tag("is_sparse/nether");
-        public static final TagKey<Biome> IS_SPARSE_END = tag("is_sparse/end");
-        public static final TagKey<Biome> IS_DENSE = tag("is_dense");
-        public static final TagKey<Biome> IS_DENSE_OVERWORLD = tag("is_dense/overworld");
-        public static final TagKey<Biome> IS_DENSE_NETHER = tag("is_dense/nether");
-        public static final TagKey<Biome> IS_DENSE_END = tag("is_dense/end");
+        public static final TagKey<Biome> IS_SPARSE_VEGETATION = tag("is_sparse_vegetation");
+        public static final TagKey<Biome> IS_SPARSE_VEGETATION_OVERWORLD = tag("is_sparse_vegetation/overworld");
+        public static final TagKey<Biome> IS_SPARSE_VEGETATION_NETHER = tag("is_sparse_vegetation/nether");
+        public static final TagKey<Biome> IS_SPARSE_VEGETATION_END = tag("is_sparse_vegetation/end");
+        public static final TagKey<Biome> IS_DENSE_VEGETATION = tag("is_dense_vegetation");
+        public static final TagKey<Biome> IS_DENSE_VEGETATION_OVERWORLD = tag("is_dense_vegetation/overworld");
+        public static final TagKey<Biome> IS_DENSE_VEGETATION_NETHER = tag("is_dense_vegetation/nether");
+        public static final TagKey<Biome> IS_DENSE_VEGETATION_END = tag("is_dense_vegetation/end");
 
         public static final TagKey<Biome> IS_WET = tag("is_wet");
         public static final TagKey<Biome> IS_WET_OVERWORLD = tag("is_wet/overworld");
@@ -650,34 +663,179 @@ public class Tags {
         public static final TagKey<Biome> IS_DRY_NETHER = tag("is_dry/nether");
         public static final TagKey<Biome> IS_DRY_END = tag("is_dry/end");
 
-        public static final TagKey<Biome> IS_CONIFEROUS = tag("is_coniferous");
+        /**
+         * Biomes that spawn in the Overworld.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_OVERWORLD}
+         * <p></p>
+         * NOTE: If you do not add to the vanilla Overworld tag, be sure to add to
+         * {@link net.minecraft.tags.BiomeTags#HAS_STRONGHOLD} so some Strongholds do not go missing.)
+         */
+        public static final TagKey<Biome> IS_OVERWORLD = tag("is_overworld");
 
-        public static final TagKey<Biome> IS_SPOOKY = tag("is_spooky");
-        public static final TagKey<Biome> IS_DEAD = tag("is_dead");
-        public static final TagKey<Biome> IS_LUSH = tag("is_lush");
+        public static final TagKey<Biome> IS_CONIFEROUS_TREE = tag("is_tree/coniferous");
+        public static final TagKey<Biome> IS_SAVANNA_TREE = tag("is_tree/savanna");
+        public static final TagKey<Biome> IS_JUNGLE_TREE = tag("is_tree/jungle");
+        public static final TagKey<Biome> IS_DECIDUOUS_TREE = tag("is_tree/deciduous");
+
+        /**
+         * Biomes that spawn as part of giant mountains.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_MOUNTAIN})
+         */
+        public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
+        public static final TagKey<Biome> IS_MOUNTAIN_PEAK = tag("is_mountain/peak");
+        public static final TagKey<Biome> IS_MOUNTAIN_SLOPE = tag("is_mountain/slope");
+
+        /**
+         * For temperate or warmer plains-like biomes.
+         * For snowy plains-like biomes, see {@link #IS_SNOWY_PLAINS}.
+         */
+        public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
+        /**
+         * For snowy plains-like biomes.
+         * For warmer plains-like biomes, see {@link #IS_PLAINS}.
+         */
+        public static final TagKey<Biome> IS_SNOWY_PLAINS = tag("is_snowy_plains");
+        /**
+         * Biomes densely populated with deciduous trees.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_FOREST})
+         */
+        public static final TagKey<Biome> IS_FOREST = tag("is_forest");
+        public static final TagKey<Biome> IS_BIRCH_FOREST = tag("is_birch_forest");
+        public static final TagKey<Biome> IS_FLOWER_FOREST = tag("is_flower_forest");
+        /**
+         * Biomes that spawn as a taiga.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_TAIGA})
+         */
+        public static final TagKey<Biome> IS_TAIGA = tag("is_taiga");
+        public static final TagKey<Biome> IS_OLD_GROWTH = tag("is_old_growth");
+        /**
+         * Biomes that spawn as a hills biome. (Previously was called Extreme Hills biome in past)
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_HILL})
+         */
+        public static final TagKey<Biome> IS_HILL = tag("is_hill");
+        public static final TagKey<Biome> IS_WINDSWEPT = tag("is_windswept");
+        /**
+         * Biomes that spawn as a jungle.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_JUNGLE})
+         */
+        public static final TagKey<Biome> IS_JUNGLE = tag("is_jungle");
+        /**
+         * Biomes that spawn as a savanna.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_SAVANNA})
+         */
+        public static final TagKey<Biome> IS_SAVANNA = tag("is_savanna");
+        public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
+        public static final TagKey<Biome> IS_DESERT = tag("is_desert");
+        /**
+         * Biomes that spawn as a badlands.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_BADLANDS})
+         */
+        public static final TagKey<Biome> IS_BADLANDS = tag("is_badlands");
+        /**
+         * Biomes that are dedicated to spawning on the shoreline of a body of water.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_BEACH})
+         */
+        public static final TagKey<Biome> IS_BEACH = tag("is_beach");
+        public static final TagKey<Biome> IS_STONY_SHORES = tag("is_stony_shores");
         public static final TagKey<Biome> IS_MUSHROOM = tag("is_mushroom");
+
+        /**
+         * Biomes that spawn as a river.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_RIVER})
+         */
+        public static final TagKey<Biome> IS_RIVER = tag("is_river");
+        /**
+         * Biomes that spawn as part of the world's oceans.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_OCEAN})
+         */
+        public static final TagKey<Biome> IS_OCEAN = tag("is_ocean");
+        /**
+         * Biomes that spawn as part of the world's oceans that have low depth.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_DEEP_OCEAN})
+         */
+        public static final TagKey<Biome> IS_DEEP_OCEAN = tag("is_deep_ocean");
+        public static final TagKey<Biome> IS_SHALLOW_OCEAN = tag("is_shallow_ocean");
+
+        public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
+        public static final TagKey<Biome> IS_CAVE = tag("is_cave");
+
+        public static final TagKey<Biome> IS_LUSH = tag("is_lush");
         public static final TagKey<Biome> IS_MAGICAL = tag("is_magical");
         public static final TagKey<Biome> IS_RARE = tag("is_rare");
         public static final TagKey<Biome> IS_PLATEAU = tag("is_plateau");
         public static final TagKey<Biome> IS_MODIFIED = tag("is_modified");
-
-        public static final TagKey<Biome> IS_WATER = tag("is_water");
-        public static final TagKey<Biome> IS_DESERT = tag("is_desert");
-        public static final TagKey<Biome> IS_PLAINS = tag("is_plains");
-        public static final TagKey<Biome> IS_SWAMP = tag("is_swamp");
-        public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
-        public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
+        public static final TagKey<Biome> IS_SPOOKY = tag("is_spooky");
+        /**
+         * Biomes that lack any natural life or vegetation.
+         * (Example, land destroyed and sterilized by nuclear weapons)
+         */
         public static final TagKey<Biome> IS_WASTELAND = tag("is_wasteland");
-        public static final TagKey<Biome> IS_VOID = tag("is_void");
-        public static final TagKey<Biome> IS_UNDERGROUND = tag("is_underground");
+        /**
+         * Biomes whose flora primarily consists of dead or decaying vegetation.
+         */
+        public static final TagKey<Biome> IS_DEAD = tag("is_dead");
+        /**
+         * Biomes with a large amount of flowers.
+         */
+        public static final TagKey<Biome> IS_FLORAL = tag("is_floral");
+        /**
+         * Biomes that are able to spawn sand-based blocks on the surface.
+         */
+        public static final TagKey<Biome> IS_SANDY = tag("is_sandy");
+        /**
+         * For biomes that contains lots of naturally spawned snow.
+         * For biomes where lot of ice is present, see {@link #IS_ICY}.
+         * Biome with lots of both snow and ice may be in both tags.
+         */
+        public static final TagKey<Biome> IS_SNOWY = tag("is_snowy");
+        /**
+         * For land biomes where ice naturally spawns.
+         * For biomes where snow alone spawns, see {@link #IS_SNOWY}.
+         */
+        public static final TagKey<Biome> IS_ICY = tag("is_icy");
+        /**
+         * Biomes consisting primarily of water.
+         */
+        public static final TagKey<Biome> IS_AQUATIC = tag("is_aquatic");
+        /**
+         * For water biomes where ice naturally spawns.
+         * For biomes where snow alone spawns, see {@link #IS_SNOWY}.
+         */
+        public static final TagKey<Biome> IS_AQUATIC_ICY = tag("is_aquatic_icy");
 
-        public static final TagKey<Biome> IS_CAVE = tag("is_cave");
-        public static final TagKey<Biome> IS_PEAK = tag("is_peak");
-        public static final TagKey<Biome> IS_SLOPE = tag("is_slope");
-        public static final TagKey<Biome> IS_MOUNTAIN = tag("is_mountain");
+        /**
+         * Biomes that spawn in the Nether.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_NETHER})
+         */
+        public static final TagKey<Biome> IS_NETHER = tag("is_nether");
+        public static final TagKey<Biome> IS_NETHER_FOREST = tag("is_nether_forest");
+
+        /**
+         * Biomes that spawn in the End.
+         * (This is for people who want to tag their biomes without getting
+         * side effects from {@link net.minecraft.tags.BiomeTags#IS_END})
+         */
+        public static final TagKey<Biome> IS_END = tag("is_end");
+        /**
+         * Biomes that spawn as part of the large islands outside the center island in The End dimension.
+         */
+        public static final TagKey<Biome> IS_OUTER_END_ISLAND = tag("is_outer_end_island");
 
         private static TagKey<Biome> tag(String name) {
-            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("forge", name));
+            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", name));
         }
     }
 }
