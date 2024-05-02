@@ -230,6 +230,35 @@ public class Tags {
         public static final TagKey<Block> VILLAGER_JOB_SITES = tag("villager_job_sites");
         //endregion
 
+        //region Redirect fields for improved backward-compatibility
+        // TODO: Remove backwards compat redirect fields in 1.22
+        /** @deprecated Use {@link #COBBLESTONES} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> COBBLESTONE = COBBLESTONES;
+        /** @deprecated Use {@link #COBBLESTONES_NORMAL} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> COBBLESTONE_NORMAL = COBBLESTONES_NORMAL;
+        /** @deprecated Use {@link #COBBLESTONES_INFESTED} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> COBBLESTONE_INFESTED = COBBLESTONES_INFESTED;
+        /** @deprecated Use {@link #COBBLESTONES_MOSSY} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> COBBLESTONE_MOSSY = COBBLESTONES_MOSSY;
+        /** @deprecated Use {@link #COBBLESTONES_DEEPSLATE} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
+
+        /** @deprecated Use {@link #SANDS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> SAND = SANDS;
+        /** @deprecated Use {@link #SANDS_COLORLESS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> SAND_COLORLESS = SANDS_COLORLESS;
+        /** @deprecated Use {@link #SANDS_RED} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> SAND_RED = SANDS_RED;
+        //endregion
+
         private static TagKey<Block> tag(String name) {
             return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
         }
@@ -638,6 +667,52 @@ public class Tags {
          * Collects the many enchantable tags into one parent collection for ease.
          */
         public static final TagKey<Item> ENCHANTABLES = tag("enchantables");
+        //endregion
+
+        //region Redirect fields for improved backward-compatibility
+        // TODO: Remove backwards compat redirect fields in 1.22
+        /** @deprecated Use {@link #COBBLESTONES} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> COBBLESTONE = COBBLESTONES;
+        /** @deprecated Use {@link #COBBLESTONES_NORMAL} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> COBBLESTONE_NORMAL = COBBLESTONES_NORMAL;
+        /** @deprecated Use {@link #COBBLESTONES_INFESTED} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> COBBLESTONE_INFESTED = COBBLESTONES_INFESTED;
+        /** @deprecated Use {@link #COBBLESTONES_MOSSY} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> COBBLESTONE_MOSSY = COBBLESTONES_MOSSY;
+        /** @deprecated Use {@link #COBBLESTONES_DEEPSLATE} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
+        /** @deprecated Use {@link #LEATHERS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> LEATHER = LEATHERS;
+        /** @deprecated Use {@link #NETHERRACKS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> NETHERRACK = NETHERRACKS;
+        /** @deprecated Use {@link #OBSIDIANS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> OBSIDIAN = OBSIDIANS;
+        /** @deprecated Use {@link #SANDS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> SAND = SANDS;
+        /** @deprecated Use {@link #SANDS_COLORLESS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> SAND_COLORLESS = SANDS_COLORLESS;
+        /** @deprecated Use {@link #SANDS_RED} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> SAND_RED = SANDS_RED;
+        /** @deprecated Use {@link #STONES} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> STONE = STONES;
+        /** @deprecated Use {@link #TOOLS_SHEARS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> SHEARS = TOOLS_SHEARS;
+        /** @deprecated Use {@link #STRINGS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> STRING = STRINGS;
         //endregion
 
         private static TagKey<Item> tag(String name) {
