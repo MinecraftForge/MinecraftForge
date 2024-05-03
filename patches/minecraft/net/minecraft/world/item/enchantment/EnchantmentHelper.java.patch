@@ -48,7 +48,7 @@
                  && (!enchantment.isTreasureOnly() || p_44820_)
                  && enchantment.isDiscoverable()
 -                && (flag || enchantment.canEnchant(p_44819_) && enchantment.isPrimaryItem(p_44819_))) {
-+                && ((flag && enchantment.isAllowedOnBooks()) || enchantment.canApplyAtEnchatingTable(p_44819_))) {
++                && ((flag && enchantment.isAllowedOnBooks()) || enchantment.canApplyAtEnchantingTable(p_44819_))) {
                  for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; i--) {
                      if (p_44818_ >= enchantment.getMinCost(i) && p_44818_ <= enchantment.getMaxCost(i)) {
                          list.add(new EnchantmentInstance(enchantment, i));

@@ -39,7 +39,7 @@ public interface IForgeEnchantment {
     * This applies specifically to applying at the enchanting table. The other method {@link #canEnchant(ItemStack)}
     * applies for <i>all possible</i> enchantments.
     */
-   default boolean canApplyAtEnchatingTable(ItemStack stack) {
-       return stack.canApplyAtEnchantingTable(null);
+   default boolean canApplyAtEnchantingTable(ItemStack stack) {
+       return stack.canApplyAtEnchantingTable(self());
    }
 }
