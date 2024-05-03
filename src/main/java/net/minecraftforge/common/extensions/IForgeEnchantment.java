@@ -35,6 +35,11 @@ public interface IForgeEnchantment {
        return true;
    }
 
+    @Deprecated(forRemoval = true, since = "1.20.6")
+    default boolean canApplyAtEnchatingTable(ItemStack stack) {
+        return canApplyAtEnchantingTable(stack);
+    }
+
    /**
     * This applies specifically to applying at the enchanting table. The other method {@link #canEnchant(ItemStack)}
     * applies for <i>all possible</i> enchantments.
