@@ -24,10 +24,6 @@ public interface ICustomPacket<T extends Packet<?>> {
 
     int getIndex();
 
-    default NetworkDirection getDirection() {
-        return NetworkDirection.directionFor(this.getClass());
-    }
-
     @SuppressWarnings("unchecked")
     default T getThis() {
         return (T)this;

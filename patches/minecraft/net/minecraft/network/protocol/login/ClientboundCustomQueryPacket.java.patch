@@ -9,13 +9,14 @@
      public static final StreamCodec<FriendlyByteBuf, ClientboundCustomQueryPacket> STREAM_CODEC = Packet.codec(
          ClientboundCustomQueryPacket::write, ClientboundCustomQueryPacket::new
      );
-@@ -25,8 +_,7 @@
+@@ -25,8 +_,8 @@
      private static DiscardedQueryPayload readUnknownPayload(ResourceLocation p_299981_, FriendlyByteBuf p_297706_) {
          int i = p_297706_.readableBytes();
          if (i >= 0 && i <= 1048576) {
 -            p_297706_.skipBytes(i);
 -            return new DiscardedQueryPayload(p_299981_);
-+            return new DiscardedQueryPayload(p_299981_, new FriendlyByteBuf(p_297706_.readBytes(i)));
++            var data = p_297706_.wrap(p_297706_.readBytes(i));
++            return new DiscardedQueryPayload(p_299981_, data, buf -> buf.writeBytes(data.slice()));
          } else {
              throw new IllegalArgumentException("Payload may not be larger than 1048576 bytes");
          }

@@ -5,7 +5,6 @@
 
 package net.minecraftforge.network.packets;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -18,7 +17,6 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -43,7 +41,6 @@ public class SpawnEntity {
     private final int velX, velY, velZ;
     private final FriendlyByteBuf buf;
 
-    @SuppressWarnings("deprecation")
     @ApiStatus.Internal
     public SpawnEntity(Entity e) {
         this.entity = e;
@@ -128,9 +125,8 @@ public class SpawnEntity {
 
     public static void handle(SpawnEntity msg, CustomPayloadEvent.Context ctx) {
         try {
-            @SuppressWarnings("deprecation")
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
-            Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.getDirection().getReceptionSide());
+            var world = LogicalSidedProvider.CLIENTWORLD.get(ctx.isClientSide());
             Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
             if (e == null)
                 return;

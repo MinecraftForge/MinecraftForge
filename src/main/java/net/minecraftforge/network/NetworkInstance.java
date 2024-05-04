@@ -28,7 +28,9 @@ import io.netty.util.AttributeKey;
  */
 @ApiStatus.Internal
 public class NetworkInstance {
-    private final IEventBus networkEventBus; // TODO: Evaluate why we even use event bus for this...
+    // We use an event bus here so that we don't have to have a handle(event) public function on Channel.
+    // Should this be changed so that modders can fire other channel's handlers?
+    private final IEventBus networkEventBus;
     private final ResourceLocation channelName;
     private final int networkProtocolVersion;
     final VersionTest clientAcceptedVersions;

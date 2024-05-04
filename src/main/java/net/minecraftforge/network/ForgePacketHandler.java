@@ -73,7 +73,7 @@ public class ForgePacketHandler {
     }
 
     void handleLoginWrapper(LoginWrapper msg, CustomPayloadEvent.Context ctx) {
-        ForgeHooks.onCustomPayload(new CustomPayloadEvent(msg.channel(), msg.data(), ctx, -1));
+        ForgeHooks.onCustomPayload(new CustomPayloadEvent(msg.name(), msg.data(), ctx, -1));
     }
 
     void handleClientAck(Acknowledge msg, CustomPayloadEvent.Context ctx) {

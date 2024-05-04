@@ -7,9 +7,9 @@ package net.minecraftforge.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public class SimpleChannel extends Channel<Object> {
      * @param type Type of message
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type) {
+    public <M> MessageBuilder<M, FriendlyByteBuf> messageBuilder(Class<M> type) {
         return messageBuilder(type, nextIndex());
     }
 
@@ -55,8 +55,19 @@ public class SimpleChannel extends Channel<Object> {
      * @param discriminator Manually configured discriminator, Must be a positive number.
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int discriminator) {
-        return messageBuilder(type, discriminator, null);
+    public <M> MessageBuilder<M, FriendlyByteBuf> messageBuilder(Class<M> type, int discriminator) {
+        return messageBuilder(type, discriminator, (NetworkProtocol<FriendlyByteBuf>)null);
+    }
+
+    /**
+     * Build a new MessageBuilder, using the next available discriminator.
+     *
+     * @param type Type of message
+     * @param protocol The protocol that this packet is allowed to be sent/received in, Use enforce strict state handling to prevent spoofing.
+     * @param <M> Type of type
+     */
+    public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, NetworkProtocol<B> protocol) {
+        return messageBuilder(type, nextIndex(), protocol);
     }
 
     /**
@@ -67,8 +78,20 @@ public class SimpleChannel extends Channel<Object> {
      *                  enforce strict sided handling to prevent spoofing.
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, NetworkDirection direction) {
-        return messageBuilder(type, nextIndex(), direction);
+    public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, NetworkDirection<B> direction) {
+        return messageBuilder(type, nextIndex(), direction.protocol()).direction(direction.direction());
+    }
+
+    /**
+     * Build a new MessageBuilder, using the next available discriminator.
+     *
+     * @param type Type of message
+     * @param discriminator Manually configured discriminator, Must be a positive number.
+     * @param protocol The protocol that this packet is allowed to be sent/received in, Use enforce strict state handling to prevent spoofing.
+     * @param <M> Type of type
+     */
+    public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int descriminator, NetworkProtocol<B> protocol) {
+        return new MessageBuilder<>(this, type, descriminator, protocol);
     }
 
     /**
@@ -80,25 +103,39 @@ public class SimpleChannel extends Channel<Object> {
      *                  enforce strict sided handling to prevent spoofing.
      * @param <M> Type of type
      */
-    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int discriminator, NetworkDirection direction) {
-        return new MessageBuilder<>(this, type, discriminator, direction);
+    public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int discriminator, NetworkDirection<B> direction) {
+        return messageBuilder(type, discriminator, direction.protocol()).direction(direction.direction());
     }
 
-    public static class MessageBuilder<MSG>  {
+
+    public static class MessageBuilder<MSG, BUF extends FriendlyByteBuf>  {
         private final SimpleChannel channel;
         private final Class<MSG> type;
         private final int id;
-        private final Optional<NetworkDirection> direction;
+        private final NetworkProtocol<BUF> protocol;
 
-        private BiConsumer<MSG, FriendlyByteBuf> encoder;
-        private Function<FriendlyByteBuf, MSG> decoder;
+        private BiConsumer<MSG, BUF> encoder;
+        private Function<BUF, MSG> decoder;
         private BiConsumer<MSG, CustomPayloadEvent.Context> consumer;
+        private PacketFlow direction;
 
-        private MessageBuilder(final SimpleChannel channel, final Class<MSG> type, int id, @Nullable NetworkDirection networkDirection) {
+        private MessageBuilder(SimpleChannel channel, Class<MSG> type, int id, @Nullable NetworkProtocol<BUF> protocol) {
             this.channel = channel;
             this.type = type;
             this.id = id;
-            this.direction = Optional.ofNullable(networkDirection);
+            this.protocol = protocol;
+        }
+
+        /**
+         * Set the direction that this packet is allowed to be sent/received.
+         * Use to enforce strict sided handling to prevent spoofing.
+         *
+         * @param direction The direction this packet is allowed on.
+         * @return This message builder, for chaining.
+         */
+        private MessageBuilder<MSG, BUF> direction(PacketFlow direction) {
+            this.direction = direction;
+            return this;
         }
 
         /**
@@ -114,7 +151,7 @@ public class SimpleChannel extends Channel<Object> {
          * @param encoder The message encoder.
          * @return This message builder, for chaining.
          */
-        public MessageBuilder<MSG> encoder(BiConsumer<MSG, FriendlyByteBuf> encoder) {
+        public MessageBuilder<MSG, BUF> encoder(BiConsumer<MSG, BUF> encoder) {
             this.encoder = encoder;
             return this;
         }
@@ -129,7 +166,7 @@ public class SimpleChannel extends Channel<Object> {
          * @param decoder The message decoder.
          * @return The message builder, for chaining.
          */
-        public MessageBuilder<MSG> decoder(Function<FriendlyByteBuf, MSG> decoder) {
+        public MessageBuilder<MSG, BUF> decoder(Function<BUF, MSG> decoder) {
             this.decoder = decoder;
             return this;
         }
@@ -148,7 +185,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerMainThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumerNetworkThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
+        public MessageBuilder<MSG, BUF> consumerNetworkThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
             this.consumer = consumer;
             return this;
         }
@@ -168,7 +205,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerMainThread(BiConsumer)
          */
-        public <C> MessageBuilder<MSG> consumerNetworkThread(AttributeKey<C> key, TriConsumer<C, MSG, CustomPayloadEvent.Context> consumer) {
+        public <C> MessageBuilder<MSG, BUF> consumerNetworkThread(AttributeKey<C> key, TriConsumer<C, MSG, CustomPayloadEvent.Context> consumer) {
             return consumerNetworkThread((msg, ctx) -> {
                 var inst = ctx.getConnection().channel().attr(key).get();
                 consumer.accept(inst, msg, ctx);
@@ -180,7 +217,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerNetworkThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumerNetworkThread(ToBooleanBiFunction<MSG, CustomPayloadEvent.Context> handler) {
+        public MessageBuilder<MSG, BUF> consumerNetworkThread(ToBooleanBiFunction<MSG, CustomPayloadEvent.Context> handler) {
             this.consumer = (msg, ctx) -> ctx.setPacketHandled(handler.applyAsBool(msg, ctx));
             return this;
         }
@@ -190,7 +227,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerNetworkThread(AttributeKey,TriConsumer)
          */
-        public <C> MessageBuilder<MSG> consumerNetworkThread(AttributeKey<C> key, ToBooleanTriFunction<C, MSG, CustomPayloadEvent.Context> handler) {
+        public <C> MessageBuilder<MSG, BUF> consumerNetworkThread(AttributeKey<C> key, ToBooleanTriFunction<C, MSG, CustomPayloadEvent.Context> handler) {
             return consumerNetworkThread((msg, ctx) -> {
                 var inst = ctx.getConnection().channel().attr(key).get();
                 return handler.applyAsBool(inst, msg, ctx);
@@ -209,7 +246,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerNetworkThread(BiConsumer)
          */
-        public MessageBuilder<MSG> consumerMainThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
+        public MessageBuilder<MSG, BUF> consumerMainThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
             this.consumer = (msg, context) -> {
                 var ctx = context;
                 ctx.enqueueWork(() -> consumer.accept(msg, context));
@@ -231,7 +268,7 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerNetworkThread(BiConsumer)
          */
-        public <C> MessageBuilder<MSG> consumerMainThread(AttributeKey<C> key, TriConsumer<C, MSG, CustomPayloadEvent.Context> consumer) {
+        public <C> MessageBuilder<MSG, BUF> consumerMainThread(AttributeKey<C> key, TriConsumer<C, MSG, CustomPayloadEvent.Context> consumer) {
             this.consumer = (msg, ctx) -> {
                 ctx.enqueueWork(() -> {
                     var inst = ctx.getConnection().channel().attr(key).get();
@@ -260,7 +297,10 @@ public class SimpleChannel extends Channel<Object> {
             if (this.id < 0)
                 throw new IllegalStateException("Failed to register SimpleChannel message, Invalid ID " + this.id + ": " + this.type.getName());
 
-            var msg = new Message<>(this.id, this.type, this.direction, this.encoder, this.decoder, this.consumer);
+            var msg = new Message<MSG, BUF>(
+                this.id, this.type, this.protocol, this.direction,
+                this.encoder, this.decoder, this.consumer
+            );
 
             if (channel.byId.containsKey(msg.index()))
                 throw new IllegalStateException("Failed to register SimpleChannel message, ID " + msg.index() + " already claimed: " + msg.type().getName());
@@ -278,15 +318,16 @@ public class SimpleChannel extends Channel<Object> {
      * ===================================================================================
      */
     private int lastIndex = 0;
-    private Int2ObjectMap<Message<?>> byId = new Int2ObjectArrayMap<>();
-    private Object2ObjectMap<Class<?>, Message<?>> byType = new Object2ObjectArrayMap<>();
+    private Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
+    private Object2ObjectMap<Class<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
 
-    private record Message<MSG>(
+    private record Message<MSG, BUF extends FriendlyByteBuf>(
         int index,
         Class<MSG> type,
-        Optional<NetworkDirection> direction,
-        BiConsumer<MSG, FriendlyByteBuf> encoder,
-        Function<FriendlyByteBuf, MSG> decoder,
+        NetworkProtocol<BUF> protocol,
+        PacketFlow direction,
+        BiConsumer<MSG, BUF> encoder,
+        Function<BUF, MSG> decoder,
         BiConsumer<MSG, CustomPayloadEvent.Context> consumer
     ){ };
 
@@ -307,17 +348,22 @@ public class SimpleChannel extends Channel<Object> {
         }
 
         int id = data.readVarInt();
-        var msg = byId.get(id);
+        @SuppressWarnings("unchecked")
+        var msg = (Message<?, FriendlyByteBuf>)byId.get(id);
         if (msg == null) {
             LOGGER.error(MARKER, "Received invalid discriminator {} on channel {}", id, getName());
             return;
         }
 
         var con = event.getSource().getConnection();
-        var dir = event.getSource().getDirection();
+        var protocol = msg.protocol() == null ? con.getProtocol() : msg.protocol().toVanilla();
+        var direction = msg.direction() == null ?  con.getReceiving() : msg.direction();
 
-        if (msg.direction.isPresent() && msg.direction.get() != dir) {
-            var error = "Illegal packet received, terminating connection. " + msg.type().getName() + " expexted " + msg.direction.get() + " but was " + dir;
+        if (protocol != con.getProtocol() || direction != con.getReceiving()) {
+            var error = "Illegal packet received, terminating connection. " + msg.type().getName() + " expexted " +
+                direction.name() + " " + protocol.name() + " but was " +
+                con.getReceiving().name() + " " + con.getProtocol().name();
+
             LOGGER.error(MARKER, error);
             con.disconnect(Component.literal(error));
             throw new IllegalStateException(error);
@@ -327,25 +373,22 @@ public class SimpleChannel extends Channel<Object> {
     }
 
     // Yay generics
-    private static <MSG> void decodeAndDispatch(FriendlyByteBuf data, CustomPayloadEvent.Context ctx, Message<MSG> msg) {
+    private static <MSG> void decodeAndDispatch(FriendlyByteBuf data, CustomPayloadEvent.Context ctx, Message<MSG, FriendlyByteBuf> msg) {
         var message = msg.decoder().apply(data);
         msg.consumer.accept(message, ctx);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public FriendlyByteBuf toBuffer(Object message) {
+    public void encode(FriendlyByteBuf out, Object message) {
         var msg = byType.get(message.getClass());
 
         if (msg == null) {
             LOGGER.error(MARKER, "Attempted to send invalid message {} on channel {}", message.getClass().getName(), getName());
             throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
         }
-        var ret = new FriendlyByteBuf(Unpooled.buffer());
-        ret.writeVarInt(msg.index());
+        out.writeVarInt(msg.index());
         if (msg.encoder() != null)
-            ((BiConsumer<Object, FriendlyByteBuf>)msg.encoder()).accept(message, ret);
-
-        return ret;
+            ((BiConsumer<Object, FriendlyByteBuf>)msg.encoder()).accept(message, out);
     }
 }

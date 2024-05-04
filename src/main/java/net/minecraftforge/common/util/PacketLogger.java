@@ -10,9 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.configuration.ClientboundFinishConfigurationPacket;
@@ -48,7 +46,7 @@ public class PacketLogger {
             enabled = false;
 
         if (packet instanceof ICustomPacket custom && custom.getInternalData() != null) {
-            LOGGER.info(MARKER, "{} {} {}\n{}", side(side), dir(flow), packet.getClass().getName(), HexDumper.dump(custom.getInternalData()));
+            LOGGER.info(MARKER, "{} {} {} {}\n{}", side(side), dir(flow), packet.getClass().getName(), custom.getName(), HexDumper.dump(custom.getInternalData()));
         } else {
             LOGGER.info(MARKER, "{} {} {}", side(side), dir(flow), packet.getClass().getName());
         }
