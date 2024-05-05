@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
 import net.minecraftforge.network.NetworkContext.NetworkMismatchData.Version;
@@ -22,6 +23,7 @@ public record MismatchData(
     Map<ResourceLocation, Version> mismatched,
     Set<ResourceLocation> missing
 ) {
+    public static StreamCodec<FriendlyByteBuf, MismatchData> STREAM_CODEC = StreamCodec.ofMember(MismatchData::encode, MismatchData::decode);
     private static final int MAX_LENGTH = 0x100;
 
     public MismatchData(NetworkMismatchData data) {

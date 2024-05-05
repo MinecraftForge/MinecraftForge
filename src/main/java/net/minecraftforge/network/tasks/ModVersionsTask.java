@@ -25,7 +25,7 @@ public class ModVersionsTask implements ConfigurationTask {
 
     @Override
     public void start(ConfigurationTaskContext ctx) {
-        NetworkInitialization.PLAY.send(ModVersions.create(), ctx.getConnection());
+        NetworkInitialization.CONFIG.send(ModVersions.create(), ctx.getConnection());
     }
 
     @Override

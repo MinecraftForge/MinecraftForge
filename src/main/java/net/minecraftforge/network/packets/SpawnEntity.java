@@ -13,6 +13,8 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +34,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  */
 // TODO: Re-write this packet into something simpler. This is literally just ClientboundAddEntityPacket with an extra byte[]
 public class SpawnEntity {
+    public static StreamCodec<RegistryFriendlyByteBuf, SpawnEntity> STREAM_CODEC = StreamCodec.ofMember(SpawnEntity::encode, SpawnEntity::decode);
     private final Entity entity;
     private final int typeId;
     private final int entityId;

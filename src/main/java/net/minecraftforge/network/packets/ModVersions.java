@@ -8,6 +8,7 @@ package net.minecraftforge.network.packets;
 import java.util.Map;
 import java.util.stream.Collectors;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
 
@@ -16,6 +17,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
  * The mod data is stored as follows: [modId -> [modName, modVersion]]
  */
 public record ModVersions(Map<String, Info> mods) {
+    public static StreamCodec<FriendlyByteBuf, ModVersions> STREAM_CODEC = StreamCodec.ofMember(ModVersions::encode, ModVersions::decode);
+
     private static final int MAX_LENGTH = 0x100;
 
     public static ModVersions create() {

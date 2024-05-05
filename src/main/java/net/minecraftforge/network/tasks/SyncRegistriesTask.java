@@ -54,7 +54,7 @@ public class SyncRegistriesTask implements ConfigurationTask {
             this.snapshot = RegistryManager.ACTIVE.takeSnapshot(false);
 
         expectedToken = handler.expectAck(this::sendRegistries);
-        NetworkInitialization.PLAY.send(new RegistryList(expectedToken), con);
+        NetworkInitialization.CONFIG.send(new RegistryList(expectedToken), con);
     }
 
     private void sendRegistries(Acknowledge msg, CustomPayloadEvent.Context ctx) {
@@ -74,7 +74,7 @@ public class SyncRegistriesTask implements ConfigurationTask {
         var name = this.snapshot.keySet().iterator().next();
         var data = this.snapshot.remove(name);
         expectedToken = this.handler.expectAck(this::sendRegistries);
-        NetworkInitialization.PLAY.reply(new RegistryData(expectedToken, name, data), ctx);
+        NetworkInitialization.CONFIG.reply(new RegistryData(expectedToken, name, data), ctx);
     }
 
     @Override

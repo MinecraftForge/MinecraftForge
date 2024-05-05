@@ -5,6 +5,8 @@
 
 package net.minecraftforge.network;
 
+import java.util.function.BiConsumer;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -13,6 +15,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.packets.Acknowledge;
 import net.minecraftforge.network.packets.ChannelVersions;
 import net.minecraftforge.network.packets.LoginWrapper;
@@ -37,84 +40,65 @@ public class NetworkInitialization {
         .named(LOGIN_NAME)
         .optional()
         .networkProtocolVersion(0)
+        .attribute(CONTEXT, ForgePacketHandler::new) // Shared across all of our channels
         .simpleChannel()
 
-        .messageBuilder(LoginWrapper.class, NetworkDirection.LOGIN_TO_SERVER)
-            .codec(LoginWrapper.STREAM_CODEC)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleLoginWrapper)
-            .add()
+        .login()
+            .serverbound()
+                .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
 
-        .build();
+        .buildAll();
 
-    public static SimpleChannel PLAY = ChannelBuilder
+    public static SimpleChannel CONFIG = ChannelBuilder
         .named(HANDSHAKE_NAME)
         .optional()
         .networkProtocolVersion(0)
-        .attribute(CONTEXT, ForgePacketHandler::new)
         .simpleChannel()
 
-        .messageBuilder(Acknowledge.class, NetworkDirection.CONFIG_TO_SERVER)
-            .decoder(Acknowledge::decode)
-            .encoder(Acknowledge::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleClientAck)
-            .add()
+            .config()
+                .add(ModVersions.class, ModVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleModVersions))
+                .add(ChannelVersions.class, ChannelVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleChannelVersions))
+                .serverbound()
+                    .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
+                .build()
+                .clientbound()
+                    .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
+                    .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
+                    .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
+                    .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
 
-        .messageBuilder(ModVersions.class, NetworkProtocol.CONFIG)
-            .decoder(ModVersions::decode)
-            .encoder(ModVersions::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModVersions)
-            .add()
+        .buildAll();
 
-        .messageBuilder(ChannelVersions.class, NetworkProtocol.CONFIG)
-            .decoder(ChannelVersions::decode)
-            .encoder(ChannelVersions::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleChannelVersions)
-            .add()
+    public static SimpleChannel PLAY = ChannelBuilder
+        .named(PLAY_NAME)
+        .optional()
+        .networkProtocolVersion(0)
+        .simpleChannel()
+            .play()
+                .clientbound()
+                    .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
+                .build()
+                .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
 
-        .messageBuilder(RegistryList.class, NetworkDirection.CONFIG_TO_CLIENT)
-            .decoder(RegistryList::decode)
-            .encoder(RegistryList::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryList)
-            .add()
-
-        .messageBuilder(RegistryData.class, NetworkDirection.CONFIG_TO_CLIENT)
-            .decoder(RegistryData::decode)
-            .encoder(RegistryData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryData)
-            .add()
-
-        .messageBuilder(ConfigData.class, NetworkDirection.CONFIG_TO_CLIENT)
-            .decoder(ConfigData::decode)
-            .encoder(ConfigData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleConfigSync)
-            .add()
-
-        .messageBuilder(MismatchData.class, NetworkDirection.CONFIG_TO_CLIENT)
-            .decoder(MismatchData::decode)
-            .encoder(MismatchData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModMismatchData)
-            .add()
-
-        .messageBuilder(SpawnEntity.class, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(SpawnEntity::decode)
-            .encoder(SpawnEntity::encode)
-            .consumerMainThread(SpawnEntity::handle)
-            .add()
-
-        .messageBuilder(OpenContainer.class, NetworkProtocol.PLAY)
-            .decoder(OpenContainer::decode)
-            .encoder(OpenContainer::encode)
-            .consumerMainThread(OpenContainer::handle)
-            .add()
-
-        .build();
+        .buildAll();
 
     public static void init() {
-        for (var channel : new Channel[]{ LOGIN, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
+        for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
             LOGGER.debug(MARKER, "Registering Network {} v{}", channel.getName(), channel.getProtocolVersion());
     }
 
     public static int getVersion() {
         return PLAY.getProtocolVersion();
+    }
+
+    private interface Handler<MSG> {
+        void handle(ForgePacketHandler handler, MSG msg, CustomPayloadEvent.Context ctx);
+    }
+
+    private static <MSG> BiConsumer<MSG, CustomPayloadEvent.Context> ctx(Handler<MSG> handler) {
+        return (msg, ctx) -> {
+            var inst = ctx.getConnection().channel().attr(CONTEXT).get();
+            handler.handle(inst, msg, ctx);
+        };
     }
 }

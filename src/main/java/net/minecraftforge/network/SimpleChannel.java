@@ -785,7 +785,7 @@ public class SimpleChannel extends Channel<Object> {
         var protocol = msg.protocol() == null ? con.getProtocol() : msg.protocol().toVanilla();
         var direction = msg.direction() == null ?  con.getSending() : msg.direction();
 
-        if (protocol != con.getProtocol() || direction != con.getReceiving()) {
+        if (protocol != con.getProtocol() || direction != con.getSending()) {
             var error = "Illegal packet sent, terminating connection. " + msg.type().getName() + " expected " +
                 direction.name() + " " + protocol.name() + " but was " +
                 con.getSending().name() + " " + con.getProtocol().name();
