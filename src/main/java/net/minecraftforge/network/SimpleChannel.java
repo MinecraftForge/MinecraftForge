@@ -7,6 +7,7 @@ package net.minecraftforge.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
@@ -21,7 +22,6 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-import io.netty.buffer.Unpooled;
 import io.netty.util.AttributeKey;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -31,6 +31,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 public class SimpleChannel extends Channel<Object> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("SIMPLE_CHANNEL");
+    private boolean built = false;
 
     @ApiStatus.Internal
     SimpleChannel(NetworkInstance instance) {
@@ -91,6 +92,7 @@ public class SimpleChannel extends Channel<Object> {
      * @param <M> Type of type
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int descriminator, NetworkProtocol<B> protocol) {
+        checkBuilt();
         return new MessageBuilder<>(this, type, descriminator, protocol);
     }
 
@@ -105,6 +107,17 @@ public class SimpleChannel extends Channel<Object> {
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int discriminator, NetworkDirection<B> direction) {
         return messageBuilder(type, discriminator, direction.protocol()).direction(direction.direction());
+    }
+
+    public SimpleChannel build() {
+        checkBuilt();
+        this.built = true;
+        return this;
+    }
+
+    private void checkBuilt() {
+        if (this.built)
+            throw new IllegalStateException("SimpleChannel builder is fully built, can not modify it any more");
     }
 
 
@@ -169,6 +182,20 @@ public class SimpleChannel extends Channel<Object> {
         public MessageBuilder<MSG, BUF> decoder(Function<BUF, MSG> decoder) {
             this.decoder = decoder;
             return this;
+        }
+
+        /**
+         * Set the StreamCodec to be used for marshaling the message object to and from a {@link FriendlyByteBuf}
+         * <p>
+         * This has all the same limitations of {@link #encoder(BiFunction)} and {@link #decoder(Function)} as it is equivalent of calling those functions
+         * with the codec's encode and decode functions.
+         *
+         * @param codec The codec to use.
+         * @return The message builder, for chaining.
+         */
+        public MessageBuilder<MSG, BUF> codec(StreamCodec<BUF, MSG> codec) {
+            return this.encoder((msg, buf) -> codec.encode(buf, msg))
+                .decoder(codec::decode);
         }
 
         /**

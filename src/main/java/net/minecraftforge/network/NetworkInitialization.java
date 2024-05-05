@@ -40,10 +40,11 @@ public class NetworkInitialization {
         .simpleChannel()
 
         .messageBuilder(LoginWrapper.class)
-            .decoder(LoginWrapper::decode)
-            .encoder(LoginWrapper::encode)
+            .codec(LoginWrapper.STREAM_CODEC)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleLoginWrapper)
-            .add();
+            .add()
+
+        .build();
 
     public static SimpleChannel PLAY = ChannelBuilder
         .named(HANDSHAKE_NAME)
@@ -52,59 +53,61 @@ public class NetworkInitialization {
         .attribute(CONTEXT, ForgePacketHandler::new)
         .simpleChannel()
 
-        .messageBuilder(Acknowledge.class, NetworkDirection.PLAY_TO_SERVER)
+        .messageBuilder(Acknowledge.class, NetworkDirection.CONFIG_TO_SERVER)
             .decoder(Acknowledge::decode)
             .encoder(Acknowledge::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleClientAck)
             .add()
 
-        .messageBuilder(ModVersions.class)
+        .messageBuilder(ModVersions.class, NetworkProtocol.CONFIG)
             .decoder(ModVersions::decode)
             .encoder(ModVersions::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModVersions)
             .add()
 
-        .messageBuilder(ChannelVersions.class)
+        .messageBuilder(ChannelVersions.class, NetworkProtocol.CONFIG)
             .decoder(ChannelVersions::decode)
             .encoder(ChannelVersions::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleChannelVersions)
             .add()
 
-        .messageBuilder(RegistryList.class, NetworkDirection.PLAY_TO_CLIENT)
+        .messageBuilder(RegistryList.class, NetworkDirection.CONFIG_TO_CLIENT)
             .decoder(RegistryList::decode)
             .encoder(RegistryList::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryList)
             .add()
 
-        .messageBuilder(RegistryData.class, NetworkDirection.PLAY_TO_CLIENT)
+        .messageBuilder(RegistryData.class, NetworkDirection.CONFIG_TO_CLIENT)
             .decoder(RegistryData::decode)
             .encoder(RegistryData::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryData)
             .add()
 
-        .messageBuilder(ConfigData.class, NetworkDirection.PLAY_TO_CLIENT)
+        .messageBuilder(ConfigData.class, NetworkDirection.CONFIG_TO_CLIENT)
             .decoder(ConfigData::decode)
             .encoder(ConfigData::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleConfigSync)
             .add()
 
-        .messageBuilder(MismatchData.class, NetworkDirection.PLAY_TO_CLIENT)
+        .messageBuilder(MismatchData.class, NetworkDirection.CONFIG_TO_CLIENT)
             .decoder(MismatchData::decode)
             .encoder(MismatchData::encode)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModMismatchData)
             .add()
 
         .messageBuilder(SpawnEntity.class, NetworkDirection.PLAY_TO_CLIENT)
-           .decoder(SpawnEntity::decode)
-           .encoder(SpawnEntity::encode)
-           .consumerMainThread(SpawnEntity::handle)
-           .add()
+            .decoder(SpawnEntity::decode)
+            .encoder(SpawnEntity::encode)
+            .consumerMainThread(SpawnEntity::handle)
+            .add()
 
-       .messageBuilder(OpenContainer.class)
-           .decoder(OpenContainer::decode)
-           .encoder(OpenContainer::encode)
-           .consumerMainThread(OpenContainer::handle)
-           .add();
+        .messageBuilder(OpenContainer.class, NetworkProtocol.PLAY)
+            .decoder(OpenContainer::decode)
+            .encoder(OpenContainer::encode)
+            .consumerMainThread(OpenContainer::handle)
+            .add()
+
+        .build();
 
     public static void init() {
         for (var channel : new Channel[]{ LOGIN, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})

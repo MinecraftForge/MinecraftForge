@@ -7,10 +7,12 @@ package net.minecraftforge.network.packets;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.Channel;
 
 public class LoginWrapper {
+    public static final StreamCodec<FriendlyByteBuf, LoginWrapper> STREAM_CODEC = StreamCodec.ofMember(LoginWrapper::encode, LoginWrapper::new);
     private final ResourceLocation name;
     private FriendlyByteBuf data;
     private final Channel<Object> channel;
@@ -20,8 +22,8 @@ public class LoginWrapper {
         this(channel.getName(), null, channel, packet);
     }
 
-    public LoginWrapper(ResourceLocation name, FriendlyByteBuf data) {
-        this(name, data, null, null);
+    private LoginWrapper(FriendlyByteBuf buf) {
+        this(buf.readResourceLocation(), buf.wrap(buf.readBytes(buf.readVarInt())), null, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -30,13 +32,6 @@ public class LoginWrapper {
         this.data = data;
         this.channel = (Channel<Object>)channel;
         this.packet = packet;
-    }
-
-    public static LoginWrapper decode(FriendlyByteBuf buf) {
-        var channel = buf.readResourceLocation();
-        var len = buf.readVarInt();
-        var data = buf.wrap(buf.readBytes(len));
-        return new LoginWrapper(channel, data);
     }
 
     public void encode(FriendlyByteBuf buf) {
