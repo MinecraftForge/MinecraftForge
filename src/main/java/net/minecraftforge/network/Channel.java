@@ -41,7 +41,7 @@ public abstract class Channel<MSG> {
     public abstract void encode(FriendlyByteBuf out, MSG message);
 
     // Package private so we can call from ourselves.
-    Packet<?> toVanillaPacket(Connection connection, MSG message) {
+    protected Packet<?> toVanillaPacket(Connection connection, MSG message) {
         var protocol = connection.getProtocol();
         var handler = switch (protocol) {
             case LOGIN         -> NetworkProtocol.LOGIN;

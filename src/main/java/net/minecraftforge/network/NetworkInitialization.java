@@ -39,7 +39,7 @@ public class NetworkInitialization {
         .networkProtocolVersion(0)
         .simpleChannel()
 
-        .messageBuilder(LoginWrapper.class)
+        .messageBuilder(LoginWrapper.class, NetworkDirection.LOGIN_TO_SERVER)
             .codec(LoginWrapper.STREAM_CODEC)
             .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleLoginWrapper)
             .add()

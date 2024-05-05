@@ -5,11 +5,15 @@
 
 package net.minecraftforge.network;
 
+import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -37,6 +41,48 @@ public class SimpleChannel extends Channel<Object> {
     SimpleChannel(NetworkInstance instance) {
         super(instance);
         instance.addListener(this::networkEventListener);
+    }
+
+    /**
+     * Creates a builder context where every packet type must implement ISimplePacket.
+     * All added packets will automatically have their handle method called. This is added to mimic vanilla design.
+     *
+     * @param context AttributeKey holding a reference to the context object. See {@link ChannelBuilder#attribute(AttributeKey, Supplier)}
+     */
+    public <CTX, BASE extends ISimplePacket<CTX>> ContextBuilder<CTX, BASE> handler(AttributeKey<CTX> context) {
+        return new ContextBuilder<>(context);
+    }
+
+    /**
+     * Creates a builder grouping together all packets under the same protocol.
+     * This will validate that the protocol matches before the packet is sent or received.
+     */
+    public <BUF extends FriendlyByteBuf> Protocol<BUF, Object, SimpleChannel> protocol(NetworkProtocol<BUF> protocol) {
+        return new Protocol<BUF, Object, SimpleChannel>(SimpleChannel.this, this, protocol, null);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
+     * This will validate that the protocol matches before the packet is sent or received.
+     */
+    public Protocol<FriendlyByteBuf, Object, SimpleChannel> config() {
+        return protocol(NetworkProtocol.CONFIG);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are only valid when under the Login protocol.
+     * This will validate that the protocol matches before the packet is sent or received.
+     */
+    public Protocol<FriendlyByteBuf, Object, SimpleChannel> login() {
+        return protocol(NetworkProtocol.LOGIN);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are only valid when under the Play protocol.
+     * This will validate that the protocol matches before the packet is sent or received.
+     */
+    public Protocol<RegistryFriendlyByteBuf, Object, SimpleChannel> play() {
+        return protocol(NetworkProtocol.PLAY);
     }
 
     /**
@@ -109,6 +155,9 @@ public class SimpleChannel extends Channel<Object> {
         return messageBuilder(type, discriminator, direction.protocol()).direction(direction.direction());
     }
 
+    /**
+     * Finishes off the builder side of the SimpleChanel. This prevents adding more messages to this channel.
+     */
     public SimpleChannel build() {
         checkBuilt();
         this.built = true;
@@ -116,12 +165,11 @@ public class SimpleChannel extends Channel<Object> {
     }
 
     private void checkBuilt() {
-        if (this.built)
+        if (built)
             throw new IllegalStateException("SimpleChannel builder is fully built, can not modify it any more");
     }
 
-
-    public static class MessageBuilder<MSG, BUF extends FriendlyByteBuf>  {
+    public static class MessageBuilder<MSG, BUF extends FriendlyByteBuf> extends Buildable {
         private final SimpleChannel channel;
         private final Class<MSG> type;
         private final int id;
@@ -146,7 +194,7 @@ public class SimpleChannel extends Channel<Object> {
          * @param direction The direction this packet is allowed on.
          * @return This message builder, for chaining.
          */
-        private MessageBuilder<MSG, BUF> direction(PacketFlow direction) {
+        public MessageBuilder<MSG, BUF> direction(PacketFlow direction) {
             this.direction = direction;
             return this;
         }
@@ -212,9 +260,27 @@ public class SimpleChannel extends Channel<Object> {
          *
          * @see #consumerMainThread(BiConsumer)
          */
-        public MessageBuilder<MSG, BUF> consumerNetworkThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
+        public MessageBuilder<MSG, BUF> consumer(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
             this.consumer = consumer;
             return this;
+        }
+
+        /**
+         * Set the message consumer, which is called once a message has been decoded. This accepts the decoded message
+         * object and the message's context.
+         * <p>
+         * The consumer is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread. Alternatively one can use {@link #consumerMainThread(BiConsumer)} to run the handler on the
+         * main thread.
+         *
+         * @param consumer The message consumer.
+         * @return The message builder, for chaining.
+         *
+         * @see #consumerMainThread(BiConsumer)
+         */
+        public MessageBuilder<MSG, BUF> consumerNetworkThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
+            return this.consumer(consumer);
         }
 
         /**
@@ -321,6 +387,9 @@ public class SimpleChannel extends Channel<Object> {
          * @return The attached SimpleChannel to facilitate chaining.
          */
         public SimpleChannel add() {
+            checkBuilt();
+            this.built = true;
+
             if (this.id < 0)
                 throw new IllegalStateException("Failed to register SimpleChannel message, Invalid ID " + this.id + ": " + this.type.getName());
 
@@ -338,17 +407,316 @@ public class SimpleChannel extends Channel<Object> {
             channel.byType.put(msg.type(), msg);
             return this.channel;
         }
+
+        public SimpleChannel build() {
+            return add();
+        }
+
+        @Override
+        public SimpleChannel buildAll() {
+            return build().build();
+        }
+    }
+
+    /**
+     * A simple builder for packets that extend ISimplePacket using a context handler object similar to Mojang's
+     * packet layout, where it calls handle() on the packet an bounces to a listener.
+     */
+    public class ContextBuilder<CTX, BASE extends ISimplePacket<CTX>> extends Buildable {
+        private final AttributeKey<CTX> attr;
+
+        private ContextBuilder(AttributeKey<CTX> context) {
+            this.attr = context;
+        }
+
+        private <MSG extends BASE> BiConsumer<MSG, CustomPayloadEvent.Context> consumer(boolean network) {
+            final var context = this.attr;
+            if (network) {
+                return (msg, ctx) -> {
+                    var inst = ctx.getConnection().channel().attr(context).get();
+                    ctx.setPacketHandled(msg.handle(inst, ctx));
+                };
+            } else {
+                return (msg, ctx) -> {
+                    ctx.enqueueWork(() -> {
+                        var inst = ctx.getConnection().channel().attr(context).get();
+                        msg.handle(inst, ctx);
+                    });
+                    ctx.setPacketHandled(true);
+                };
+            }
+        }
+
+        /**
+         * Creates a builder grouping together all packets under the same protocol.
+         * This will validate that the protocol matches before the packet is sent or received.
+         */
+        public <BUF extends FriendlyByteBuf> Protocol<BUF, BASE, ContextBuilder<CTX, BASE>> protocol(NetworkProtocol<BUF> protocol) {
+            return new Protocol<BUF, BASE, ContextBuilder<CTX, BASE>>(SimpleChannel.this, this, protocol, this::consumer);
+        }
+
+        /**
+         * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
+         * This will validate that the protocol matches before the packet is sent or received.
+         */
+        public Protocol<FriendlyByteBuf, BASE, ContextBuilder<CTX, BASE>> config() {
+            return protocol(NetworkProtocol.CONFIG);
+        }
+
+        /**
+         * Creates a builder grouping together packets that are only valid when under the Login protocol.
+         * This will validate that the protocol matches before the packet is sent or received.
+         */
+        public Protocol<FriendlyByteBuf, BASE, ContextBuilder<CTX, BASE>> login() {
+            return protocol(NetworkProtocol.LOGIN);
+        }
+
+        /**
+         * Creates a builder grouping together packets that are only valid when under the Play protocol.
+         * This will validate that the protocol matches before the packet is sent or received.
+         */
+        public Protocol<RegistryFriendlyByteBuf, BASE, ContextBuilder<CTX, BASE>> play() {
+            return protocol(NetworkProtocol.PLAY);
+        }
+
+        /**
+         * Adds a packet to this channel which is valid under any protocol, in any direction.
+         * <p>
+         * The handler is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread. Alternatively one can use {@link #addMain(Class,StreamCodec)} to run the handler on the
+         * main thread.
+         */
+        public <MSG extends BASE> ContextBuilder<CTX, BASE> add(Class<MSG> type, StreamCodec<FriendlyByteBuf, MSG> codec) {
+            return add(type, codec, true);
+        }
+
+        /**
+         * Adds a packet to this channel which is valid under any protocol, in any direction.
+         * <p>
+         * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
+         * interact with most game state by default.
+         */
+        public <MSG extends BASE> ContextBuilder<CTX, BASE> addMain(Class<MSG> type, StreamCodec<FriendlyByteBuf, MSG> codec) {
+            return add(type, codec, false);
+        }
+
+        private <MSG extends BASE> ContextBuilder<CTX, BASE> add(Class<MSG> type, StreamCodec<FriendlyByteBuf, MSG> codec, boolean network) {
+            SimpleChannel.this.messageBuilder(type)
+                .codec(codec)
+                .consumer(consumer(network))
+                .add();
+            return this;
+        }
+
+        /**
+         * Prevents any further packets from being registered to this builder
+         */
+        public SimpleChannel build() {
+            checkBuilt();
+            this.built = true;
+            return SimpleChannel.this;
+        }
+
+        /**
+         * Calls the build function all the way down the stack to the root SimpleChannel
+         */
+        @Override
+        public SimpleChannel buildAll() {
+            return build().build();
+        }
+
+    }
+
+    public static class Protocol<BUF extends FriendlyByteBuf, BASE, PARENT> extends Buildable {
+        private final SimpleChannel channel;
+        private final PARENT parent;
+        private final NetworkProtocol<BUF> protocol;
+        private final Function<Boolean, BiConsumer<BASE, CustomPayloadEvent.Context>> defaultConsumer;
+
+        private Protocol(SimpleChannel channel, PARENT parent, NetworkProtocol<BUF> protocol, Function<Boolean, BiConsumer<BASE, CustomPayloadEvent.Context>> defaultConsumer) {
+            this.channel = channel;
+            this.parent = parent;
+            this.protocol = protocol;
+            this.defaultConsumer = defaultConsumer;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <MSG extends BASE> BiConsumer<MSG, Context> consumer(boolean network) {
+            if (this.defaultConsumer == null)
+                throw new IllegalStateException("DefaultConsumer factory not set");
+            return (BiConsumer<MSG, Context>) this.defaultConsumer.apply(network);
+        }
+
+        /**
+         * Creates a builder that validates both current protocol, and packet sending direction.
+         * @param flow The direction that following packets are valid for
+         */
+        private Flow<BUF, BASE, Protocol<BUF, BASE, PARENT>> flow(PacketFlow flow) {
+            return new Flow<>(channel, this, this.protocol, flow, defaultConsumer);
+        }
+
+        /**
+         * Creates a builder that validates both current protocol, and that packets are send from Server to Client
+         */
+        public Flow<BUF, BASE, Protocol<BUF, BASE, PARENT>> clientbound() {
+            return flow(PacketFlow.CLIENTBOUND);
+        }
+
+        /**
+         * Creates a builder that validates both current protocol, and that packets are send from Client to Server
+         */
+        public Flow<BUF, BASE, Protocol<BUF, BASE, PARENT>> serverbound() {
+            return flow(PacketFlow.SERVERBOUND);
+        }
+
+        /**
+         * Adds a packet to this channel that has it's protocol validated whenever sent or received.
+         * <p>
+         * The handler is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread. Alternatively one can use {@link #addMain(Class,StreamCodec)} to run the handler on the
+         * main thread.
+         */
+        public <MSG extends BASE> Protocol<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, consumer(true));
+        }
+
+        /**
+         * Adds a packet to this channel that has it's protocol validated whenever sent or received.
+         * <p>
+         * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
+         * interact with most game state by default.
+         */
+        public <MSG extends BASE> Protocol<BUF, BASE, PARENT> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, consumer(false));
+        }
+
+
+        /**
+         * Adds a packet to this channel that has it's protocol validated whenever sent or received.
+         * <p>
+         * The handler is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread.
+         */
+        public <MSG extends BASE> Protocol<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+            channel.messageBuilder(type, this.protocol)
+                .codec(codec)
+                .consumer(handler)
+                .add();
+            return this;
+        }
+
+        /**
+         * Prevents any further packets from being registered to this builder
+         */
+        public PARENT build() {
+            checkBuilt();
+            this.built = true;
+            return parent;
+        }
+
+        /**
+         * Calls the build function all the way down the stack to the root SimpleChannel
+         */
+        @Override
+        public SimpleChannel buildAll() {
+            if (build() instanceof Buildable parent)
+                return parent.buildAll();
+            return channel;
+        }
+    }
+
+    public static class Flow<BUF extends FriendlyByteBuf, BASE, PARENT> extends Buildable {
+        private final SimpleChannel channel;
+        private final PARENT parent;
+        private final PacketFlow flow;
+        private final Function<Boolean, BiConsumer<BASE, CustomPayloadEvent.Context>> defaultConsumer;
+        private final NetworkProtocol<BUF> protocol;
+
+        private Flow(SimpleChannel channel, PARENT parent, NetworkProtocol<BUF> protocol, PacketFlow flow, Function<Boolean, BiConsumer<BASE, CustomPayloadEvent.Context>> defaultConsumer) {
+            this.channel = channel;
+            this.parent = parent;
+            this.protocol = protocol;
+            this.flow = flow;
+            this.defaultConsumer = defaultConsumer;
+        }
+
+        @SuppressWarnings("unchecked")
+        private <MSG extends BASE> BiConsumer<MSG, Context> consumer(boolean network) {
+            if (this.defaultConsumer == null)
+                throw new IllegalStateException("DefaultConsumer factory not set");
+            return (BiConsumer<MSG, Context>) this.defaultConsumer.apply(network);
+        }
+
+        /**
+         * Adds a packet to this channel that has it's protocol and direction validated whenever sent or received.
+         * <p>
+         * The handler is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread. Alternatively one can use {@link #addMain(Class,StreamCodec)} to run the handler on the
+         * main thread.
+         */
+        public <MSG extends BASE> Flow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, consumer(true));
+        }
+
+        /**
+         * Adds a packet to this channel that has it's protocol and direction validated whenever sent or received.
+         * <p>
+         * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
+         * interact with most game state by default.
+         */
+        public <MSG extends BASE> Flow<BUF, BASE, PARENT> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, consumer(false));
+        }
+
+        /**
+         * Adds a packet to this channel that has it's protocol and direction validated whenever sent or received.
+         * <p>
+         * The handler is called on the network thread, and so should not interact with most game state by default.
+         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
+         * client thread.
+         */
+        public <MSG extends BASE> Flow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+            channel.messageBuilder(type, protocol)
+                .codec(codec)
+                .consumer(handler)
+                .direction(this.flow)
+                .add();
+            return this;
+        }
+
+        /**
+         * Prevents any further packets from being registered to this builder
+         */
+        public PARENT build() {
+            checkBuilt();
+            this.built = true;
+            return this.parent;
+        }
+
+        /**
+         * Calls the build function all the way down the stack to the root SimpleChannel
+         */
+        @Override
+        public SimpleChannel buildAll() {
+            if (build() instanceof Buildable parent)
+                return parent.buildAll();
+            return channel;
+        }
     }
 
     /* ===================================================================================
      *                           INTERNAL BELOW THIS
      * ===================================================================================
      */
-    private int lastIndex = 0;
-    private Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
-    private Object2ObjectMap<Class<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
+    protected int lastIndex = 0;
+    protected Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
+    protected Object2ObjectMap<Class<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
 
-    private record Message<MSG, BUF extends FriendlyByteBuf>(
+    protected record Message<MSG, BUF extends FriendlyByteBuf>(
         int index,
         Class<MSG> type,
         NetworkProtocol<BUF> protocol,
@@ -358,7 +726,7 @@ public class SimpleChannel extends Channel<Object> {
         BiConsumer<MSG, CustomPayloadEvent.Context> consumer
     ){ };
 
-    private int nextIndex() {
+    protected int nextIndex() {
         while (byId.containsKey(lastIndex)) {
             lastIndex++;
             if (lastIndex < 0)
@@ -387,7 +755,7 @@ public class SimpleChannel extends Channel<Object> {
         var direction = msg.direction() == null ?  con.getReceiving() : msg.direction();
 
         if (protocol != con.getProtocol() || direction != con.getReceiving()) {
-            var error = "Illegal packet received, terminating connection. " + msg.type().getName() + " expexted " +
+            var error = "Illegal packet received, terminating connection. " + msg.type().getName() + " expected " +
                 direction.name() + " " + protocol.name() + " but was " +
                 con.getReceiving().name() + " " + con.getProtocol().name();
 
@@ -405,17 +773,54 @@ public class SimpleChannel extends Channel<Object> {
         msg.consumer.accept(message, ctx);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void encode(FriendlyByteBuf out, Object message) {
+    protected Packet<?> toVanillaPacket(Connection con, Object message) {
         var msg = byType.get(message.getClass());
 
         if (msg == null) {
             LOGGER.error(MARKER, "Attempted to send invalid message {} on channel {}", message.getClass().getName(), getName());
             throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
         }
+
+        var protocol = msg.protocol() == null ? con.getProtocol() : msg.protocol().toVanilla();
+        var direction = msg.direction() == null ?  con.getSending() : msg.direction();
+
+        if (protocol != con.getProtocol() || direction != con.getReceiving()) {
+            var error = "Illegal packet sent, terminating connection. " + msg.type().getName() + " expected " +
+                direction.name() + " " + protocol.name() + " but was " +
+                con.getSending().name() + " " + con.getProtocol().name();
+
+            LOGGER.error(MARKER, error);
+            con.disconnect(Component.literal(error));
+            throw new IllegalStateException(error);
+        }
+
+        return super.toVanillaPacket(con, message);
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf out, Object message) {
+        @SuppressWarnings("unchecked")
+        var msg = (Message<Object, FriendlyByteBuf>)byType.get(message.getClass());
+
+        if (msg == null) {
+            LOGGER.error(MARKER, "Attempted to send invalid message {} on channel {}", message.getClass().getName(), getName());
+            throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
+        }
+
         out.writeVarInt(msg.index());
         if (msg.encoder() != null)
-            ((BiConsumer<Object, FriendlyByteBuf>)msg.encoder()).accept(message, out);
+            msg.encoder().accept(message, out);
+    }
+
+    private static abstract class Buildable {
+        protected boolean built = false;
+
+        protected void checkBuilt() {
+            if (built)
+                throw new IllegalStateException(getClass().getName() + " is fully built, can not modify it any more");
+        }
+
+        protected abstract SimpleChannel buildAll();
     }
 }
