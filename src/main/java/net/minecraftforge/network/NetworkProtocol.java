@@ -24,7 +24,7 @@ import net.minecraft.network.protocol.login.custom.DiscardedQueryPayload;
 public class NetworkProtocol<B extends FriendlyByteBuf> {
     public static final NetworkProtocol<RegistryFriendlyByteBuf> PLAY = new NetworkProtocol<>(ConnectionProtocol.PLAY);
     public static final NetworkProtocol<FriendlyByteBuf> LOGIN = new NetworkProtocol<>(ConnectionProtocol.LOGIN);
-    public static final NetworkProtocol<FriendlyByteBuf> CONFIG = new NetworkProtocol<>(ConnectionProtocol.CONFIGURATION);
+    public static final NetworkProtocol<FriendlyByteBuf> CONFIGURATION = new NetworkProtocol<>(ConnectionProtocol.CONFIGURATION);
 
     private final ConnectionProtocol protocol;
 

@@ -15,8 +15,8 @@ public record NetworkDirection<B extends FriendlyByteBuf>(NetworkProtocol<B> pro
     public static final NetworkDirection<RegistryFriendlyByteBuf> PLAY_TO_SERVER = new NetworkDirection<>(NetworkProtocol.PLAY, PacketFlow.SERVERBOUND);
     public static final NetworkDirection<FriendlyByteBuf> LOGIN_TO_CLIENT = new NetworkDirection<>(NetworkProtocol.LOGIN, PacketFlow.CLIENTBOUND);
     public static final NetworkDirection<FriendlyByteBuf> LOGIN_TO_SERVER = new NetworkDirection<>(NetworkProtocol.LOGIN, PacketFlow.SERVERBOUND);
-    public static final NetworkDirection<FriendlyByteBuf> CONFIG_TO_CLIENT = new NetworkDirection<>(NetworkProtocol.CONFIG, PacketFlow.CLIENTBOUND);
-    public static final NetworkDirection<FriendlyByteBuf> CONFIG_TO_SERVER = new NetworkDirection<>(NetworkProtocol.CONFIG, PacketFlow.SERVERBOUND);
+    public static final NetworkDirection<FriendlyByteBuf> CONFIGURATION_TO_CLIENT = new NetworkDirection<>(NetworkProtocol.CONFIGURATION, PacketFlow.CLIENTBOUND);
+    public static final NetworkDirection<FriendlyByteBuf> CONFIGURATION_TO_SERVER = new NetworkDirection<>(NetworkProtocol.CONFIGURATION, PacketFlow.SERVERBOUND);
 
     public <T extends Packet<?>, MSG> ICustomPacket<T> buildPacket(Channel<MSG> channel, MSG packet) {
         return this.protocol().buildPacket(this.direction(), channel, packet);

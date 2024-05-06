@@ -45,7 +45,7 @@ public abstract class Channel<MSG> {
         var protocol = connection.getProtocol();
         var handler = switch (protocol) {
             case LOGIN         -> NetworkProtocol.LOGIN;
-            case CONFIGURATION -> NetworkProtocol.CONFIG;
+            case CONFIGURATION -> NetworkProtocol.CONFIGURATION;
             case PLAY          -> NetworkProtocol.PLAY;
             default -> throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in Forge Networking Channel");
         };
