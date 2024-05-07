@@ -16,25 +16,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  *
  *  I explicitly do not duplicate them to {@link SimpleConection} because you should at least be checking the direction of your packets.
  */
-public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE, PARENT> extends SimpleBuildable<PARENT> {
-    /**
-     * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-     * <p>
-     * The handler is called on the network thread, and so should not interact with most game state by default.
-     * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-     * client thread. Alternatively one can use {@link #addMain(Class,StreamCodec)} to run the handler on the
-     * main thread.
-     */
-    <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec);
-
-    /**
-     * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-     * <p>
-     * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
-     * interact with most game state by default.
-     */
-    <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec);
-
+public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE> extends SimpleProtocol<BUF, BASE>, SimpleBuildable {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
      * <p>
@@ -42,5 +24,5 @@ public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE, PARENT> extends S
      * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
      * client thread.
      */
-    <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler);
+    <MSG extends BASE> SimpleFlow<BUF, BASE> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler);
 }

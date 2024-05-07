@@ -12,75 +12,89 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import org.jetbrains.annotations.Nullable;
 
-public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE, PARENT> extends SimpleBuildable<PARENT> {
+public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE> extends SimpleConnection<Object> {
     /**
      * Creates a builder that validates both current protocol, and packet sending direction.
-     * @param flow The direction that following packets are valid for
+     * @param flow The direction that following packets are valid for. Null for bidirectional
      */
-    SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> flow(PacketFlow flow);
+    SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
 
     /**
      * Consumer version of {@link #flow(PacketFlow)}. The Consumer will immediately be called with the created protocol.
      */
-    default SimpleProtocol<BUF, BASE, PARENT> flow(PacketFlow flow, Consumer<SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>>> consumer) {
-        var tmp = flow(flow);
-        consumer.accept(tmp);
-        return tmp.build();
+    default SimpleProtocol<BUF, BASE> flow(@Nullable PacketFlow flow, Consumer<SimpleFlow<BUF, BASE>> consumer) {
+        consumer.accept(flow(flow));
+        return this;
     }
 
     /**
      * Creates a builder that validates both current protocol, and that packets are send from Server to Client
      */
-    default SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> clientbound() {
+    default SimpleFlow<BUF, BASE> clientbound() {
         return flow(PacketFlow.CLIENTBOUND);
     }
 
     /**
      * Consumer version of {@link #clientbound()}. The Consumer will immediately be called with the created flow.
      */
-    default SimpleProtocol<BUF, BASE, PARENT> clientbound(Consumer<SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>>> consumer) {
+    default SimpleProtocol<BUF, BASE> clientbound(Consumer<SimpleFlow<BUF, BASE>> consumer) {
         return flow(PacketFlow.CLIENTBOUND, consumer);
+    }
+
+    /**
+     * Creates a builder that validates both current protocol, and that packets are send from Server to Client
+     */
+    default <MSG extends BASE> SimpleProtocol<BUF, BASE> clientbound(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+        var flow = flow(PacketFlow.CLIENTBOUND);
+        flow.add(type, codec, handler);
+        return this;
     }
 
     /**
      * Creates a builder that validates both current protocol, and that packets are send from Client to Server
      */
-    default SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> serverbound() {
+    default SimpleFlow<BUF, BASE> serverbound() {
         return flow(PacketFlow.SERVERBOUND);
     }
 
     /**
      * Consumer version of {@link #serverbound()}. The Consumer will immediately be called with the created flow.
      */
-    default SimpleProtocol<BUF, BASE, PARENT> serverbound(Consumer<SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>>> consumer) {
+    default SimpleProtocol<BUF, BASE> serverbound(Consumer<SimpleFlow<BUF, BASE>> consumer) {
         return flow(PacketFlow.SERVERBOUND, consumer);
     }
 
     /**
-     * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-     * <p>
-     * The handler is called on the network thread, and so should not interact with most game state by default.
-     * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-     * client thread. Alternatively one can use {@link #addMain(Class,StreamCodec)} to run the handler on the
-     * main thread.
+     * Creates a builder that validates both current protocol, and that packets are send from Client to Server
      */
-    <MSG extends BASE> SimpleProtocol<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec);
+    default <MSG extends BASE> SimpleProtocol<BUF, BASE> serverbound(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+        var flow = flow(PacketFlow.SERVERBOUND);
+        flow.add(type, codec, handler);
+        return this;
+    }
 
     /**
-     * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-     * <p>
-     * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
-     * interact with most game state by default.
+     * Creates a builder that validates both current protocol, and that packets are send from either flow
      */
-    <MSG extends BASE> SimpleProtocol<BUF, BASE, PARENT> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec);
+    default SimpleFlow<BUF, BASE> bidirectional() {
+        return flow(null);
+    }
 
     /**
-     * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-     * <p>
-     * The handler is called on the network thread, and so should not interact with most game state by default.
-     * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-     * client thread.
+     * Consumer version of {@link #bidirectional()}. The Consumer will immediately be called with the created flow.
      */
-    <MSG extends BASE> SimpleProtocol<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler);
+    default SimpleProtocol<BUF, BASE> bidirectional(Consumer<SimpleFlow<BUF, BASE>> consumer) {
+        return flow(null, consumer);
+    }
+
+    /**
+     * Creates a builder that validates both current protocol, and that packets are send from Client to Server
+     */
+    default <MSG extends BASE> SimpleProtocol<BUF, BASE> bidirectional(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+        var flow = flow(null);
+        flow.add(type, codec, handler);
+        return this;
+    }
 }

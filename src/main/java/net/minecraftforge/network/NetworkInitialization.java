@@ -5,27 +5,17 @@
 
 package net.minecraftforge.network;
 
-import java.util.function.BiConsumer;
-
+import io.netty.util.AttributeKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.packets.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 
-import io.netty.util.AttributeKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.packets.Acknowledge;
-import net.minecraftforge.network.packets.ChannelVersions;
-import net.minecraftforge.network.packets.LoginWrapper;
-import net.minecraftforge.network.packets.OpenContainer;
-import net.minecraftforge.network.packets.RegistryList;
-import net.minecraftforge.network.packets.RegistryData;
-import net.minecraftforge.network.packets.ConfigData;
-import net.minecraftforge.network.packets.MismatchData;
-import net.minecraftforge.network.packets.ModVersions;
-import net.minecraftforge.network.packets.SpawnEntity;
+import java.util.function.BiConsumer;
 
 @ApiStatus.Internal
 public class NetworkInitialization {
@@ -42,45 +32,41 @@ public class NetworkInitialization {
         .networkProtocolVersion(0)
         .attribute(CONTEXT, ForgePacketHandler::new) // Shared across all of our channels
         .simpleChannel()
-
         .login()
             .serverbound()
                 .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
-
-        .buildAll();
+        .build();
 
     public static SimpleChannel CONFIG = ChannelBuilder
         .named(HANDSHAKE_NAME)
         .optional()
         .networkProtocolVersion(0)
         .simpleChannel()
-
-            .configuration()
+        .configuration()
+            .bidirectional()
                 .add(ModVersions.class, ModVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleModVersions))
                 .add(ChannelVersions.class, ChannelVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleChannelVersions))
-                .serverbound()
-                    .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
-                .build()
-                .clientbound()
-                    .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
-                    .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
-                    .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
-                    .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
-
-        .buildAll();
+            .serverbound()
+                .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
+            .clientbound()
+                .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
+                .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
+                .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
+                .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
+        .build();
 
     public static SimpleChannel PLAY = ChannelBuilder
         .named(PLAY_NAME)
         .optional()
         .networkProtocolVersion(0)
         .simpleChannel()
-            .play()
-                .clientbound()
-                    .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
-                .build()
+        .play()
+            .clientbound()
+                .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
+            .bidirectional()
+                // This was being registered bidirectionally on the original code. Seems its suppose to be S2C only
                 .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
-
-        .buildAll();
+        .build();
 
     public static void init() {
         for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
