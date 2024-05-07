@@ -26,7 +26,7 @@ public class NetworkInitialization {
     private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
     public static final AttributeKey<ForgePacketHandler> CONTEXT = AttributeKey.newInstance(HANDSHAKE_NAME.toString());
 
-    public static SimpleChannel LOGIN = ChannelBuilder
+    public static final SimpleChannel LOGIN = ChannelBuilder
         .named(LOGIN_NAME)
         .optional()
         .networkProtocolVersion(0)
