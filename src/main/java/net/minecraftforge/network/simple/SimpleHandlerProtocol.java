@@ -11,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface SimpleContextProtocol<BUF extends FriendlyByteBuf, BASE> extends SimpleConnection<Object> {
+public interface SimpleHandlerProtocol<BUF extends FriendlyByteBuf, BASE> extends SimpleConnection<Object> {
 
     SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
 
-    default SimpleContextProtocol<BUF, BASE> flow(@Nullable PacketFlow flow, Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
+    default SimpleHandlerProtocol<BUF, BASE> flow(@Nullable PacketFlow flow, Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
         consumer.accept(flow(flow));
         return this;
     }
@@ -24,7 +24,7 @@ public interface SimpleContextProtocol<BUF extends FriendlyByteBuf, BASE> extend
         return flow(PacketFlow.CLIENTBOUND);
     }
 
-    default SimpleContextProtocol<BUF, BASE> clientbound(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
+    default SimpleHandlerProtocol<BUF, BASE> clientbound(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
         return flow(PacketFlow.CLIENTBOUND, consumer);
     }
 
@@ -32,7 +32,7 @@ public interface SimpleContextProtocol<BUF extends FriendlyByteBuf, BASE> extend
         return flow(PacketFlow.SERVERBOUND);
     }
 
-    default SimpleContextProtocol<BUF, BASE> serverbound(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
+    default SimpleHandlerProtocol<BUF, BASE> serverbound(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
         return flow(PacketFlow.SERVERBOUND, consumer);
     }
 
@@ -40,7 +40,7 @@ public interface SimpleContextProtocol<BUF extends FriendlyByteBuf, BASE> extend
         return flow(null);
     }
 
-    default SimpleContextProtocol<BUF, BASE> bidirectional(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
+    default SimpleHandlerProtocol<BUF, BASE> bidirectional(Consumer<SimpleHandlerFlow<BUF, BASE>> consumer) {
         return flow(null, consumer);
     }
 }

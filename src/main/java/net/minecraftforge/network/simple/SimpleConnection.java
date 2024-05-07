@@ -34,7 +34,7 @@ public interface SimpleConnection<BASE> extends SimpleProtocolFactory {
      * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleContextProtocol<FriendlyByteBuf, NEWBASE> configuration(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> configuration(AttributeKey<CTX> context) {
         return protocol(context, NetworkProtocol.CONFIGURATION);
     }
 
@@ -57,7 +57,7 @@ public interface SimpleConnection<BASE> extends SimpleProtocolFactory {
      * Creates a builder grouping together packets that are only valid when under the Login protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleContextProtocol<FriendlyByteBuf, NEWBASE> login(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> login(AttributeKey<CTX> context) {
         return protocol(context, NetworkProtocol.LOGIN);
     }
 

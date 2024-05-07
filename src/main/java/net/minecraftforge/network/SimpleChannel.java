@@ -22,7 +22,7 @@ import net.minecraftforge.network.simple.SimpleProtocolFactory;
 import net.minecraftforge.network.simple.SimpleBuildable;
 import net.minecraftforge.network.simple.SimpleConnection;
 import net.minecraftforge.network.simple.SimpleHandlerFlow;
-import net.minecraftforge.network.simple.SimpleContextProtocol;
+import net.minecraftforge.network.simple.SimpleHandlerProtocol;
 import net.minecraftforge.network.simple.SimpleFlow;
 import net.minecraftforge.network.simple.SimplePacket;
 import net.minecraftforge.network.simple.SimpleProtocol;
@@ -55,7 +55,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
     }
 
     @Override
-    public <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleContextProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
+    public <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
         return SimpleChannel.newProtocol(this, context, protocol);
     }
 
@@ -445,7 +445,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
     }
 
-    private record HandlerProtocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleContextProtocol<BUF, BASE>, SimpleBuildable {
+    private record HandlerProtocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable {
 
         @Override
         public SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
@@ -536,7 +536,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
 
         @Override
-        default <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleContextProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
+        default <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
             return SimpleChannel.newProtocol(asContext().channel, context, protocol);
         }
 
@@ -655,7 +655,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         return new Protocol<>(new SimpleContext<NEWBUF, NEWBASE>(channel).protocol(protocol));
     }
 
-    private static <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleContextProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
+    private static <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
         return new HandlerProtocol<>(new SimpleContext<NEWBUF, NEWBASE>(channel).protocol(protocol).base(context));
     }
 }
