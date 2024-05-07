@@ -37,7 +37,7 @@ public final class NetworkInitialization {
                     .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
         .build();
 
-    public static SimpleChannel CONFIG = ChannelBuilder
+    public static final SimpleChannel CONFIG = ChannelBuilder
         .named(HANDSHAKE_NAME)
         .optional()
         .networkProtocolVersion(0)
