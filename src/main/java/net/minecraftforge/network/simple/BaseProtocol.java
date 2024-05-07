@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
-{
+public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FLOW, PRO>> {
     FLOW flow(@Nullable PacketFlow flow);
 
     /**
