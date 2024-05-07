@@ -1,12 +1,14 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.network.simple;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkProtocol;
 
-/**
- * Author: MrCrayfish
- */
 public interface SimpleProtocolFactory
 {
     /**

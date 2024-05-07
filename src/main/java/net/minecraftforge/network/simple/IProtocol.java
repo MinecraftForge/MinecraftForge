@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.network.simple;
 
 import net.minecraft.network.protocol.PacketFlow;
@@ -5,9 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * Author: MrCrayfish
- */
 public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
 {
     PRO self();

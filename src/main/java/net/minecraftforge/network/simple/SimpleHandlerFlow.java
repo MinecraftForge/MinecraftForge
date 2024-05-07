@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.network.simple;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -6,9 +11,6 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.function.BiConsumer;
 
-/**
- * Author: MrCrayfish
- */
 public interface SimpleHandlerFlow<BUF extends FriendlyByteBuf, BASE> extends IFlow, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable
 {
     /**
