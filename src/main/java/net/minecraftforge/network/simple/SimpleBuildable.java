@@ -8,5 +8,9 @@ package net.minecraftforge.network.simple;
 import net.minecraftforge.network.SimpleChannel;
 
 public interface SimpleBuildable {
+    /*
+     * This will build the entire channel, locking any future modifications from happening.
+     * This should be the LAST call in your builder chain and can only be called once.
+     */
     SimpleChannel build();
 }
