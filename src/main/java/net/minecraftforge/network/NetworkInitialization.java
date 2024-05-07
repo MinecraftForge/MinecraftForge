@@ -59,7 +59,7 @@ public class NetworkInitialization {
                     .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
         .build();
 
-    public static SimpleChannel PLAY = CONFIG;;
+    public static final SimpleChannel PLAY = CONFIG;;
 
     public static void init() {
         for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
