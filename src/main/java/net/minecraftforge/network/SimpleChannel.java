@@ -477,25 +477,11 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
     }
 
     private record HandlerFlow<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleHandlerFlow<BUF, BASE> {
-        /**
-         * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-         * <p>
-         * The handler is called on the network thread, and so should not interact with most game state by default.
-         * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-         * client thread. Alternatively one can use {@link #addMain(Class, StreamCodec)} to run the handler on the
-         * main thread.
-         */
         @Override
         public <MSG extends BASE> SimpleHandlerFlow<BUF, BASE> add(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
             return this.add(type, codec, ctx.consumer(true));
         }
 
-        /**
-         * Adds a packet to this channel that has it's protocol validated whenever sent or received.
-         * <p>
-         * Unlike {@link #add(Class,StreamCodec)}, the consumer is called on the main thread, and so can
-         * interact with most game state by default.
-         */
         @Override
         public <MSG extends BASE> SimpleHandlerFlow<BUF, BASE> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
             return this.add(type, codec, ctx.consumer(false));
