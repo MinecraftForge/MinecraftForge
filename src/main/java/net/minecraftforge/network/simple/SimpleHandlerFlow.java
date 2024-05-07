@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 /**
  * Author: MrCrayfish
  */
-public interface SimpleHandlerFlow<BUF extends FriendlyByteBuf, BASE> extends SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable
+public interface SimpleHandlerFlow<BUF extends FriendlyByteBuf, BASE> extends IFlow, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable
 {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
