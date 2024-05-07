@@ -651,7 +651,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
             msg.encoder().accept(message, out);
     }
 
-    private static <NEWBUF extends FriendlyByteBuf, NEWBASE, FLOW extends SimpleFlow<NEWBUF, NEWBASE>> SimpleProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, NetworkProtocol<NEWBUF> protocol) {
+    private static <NEWBUF extends FriendlyByteBuf, NEWBASE> SimpleProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, NetworkProtocol<NEWBUF> protocol) {
         return new Protocol<>(new SimpleContext<NEWBUF, NEWBASE>(channel).protocol(protocol));
     }
 
