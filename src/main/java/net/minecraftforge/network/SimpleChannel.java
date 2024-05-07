@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object>, SimpleProtocolFactory
+public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("SIMPLE_CHANNEL");
