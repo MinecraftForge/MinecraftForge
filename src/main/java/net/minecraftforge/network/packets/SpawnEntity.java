@@ -34,7 +34,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  */
 // TODO: Re-write this packet into something simpler. This is literally just ClientboundAddEntityPacket with an extra byte[]
 public class SpawnEntity {
-    public static StreamCodec<RegistryFriendlyByteBuf, SpawnEntity> STREAM_CODEC = StreamCodec.ofMember(SpawnEntity::encode, SpawnEntity::decode);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpawnEntity> STREAM_CODEC = StreamCodec.ofMember(SpawnEntity::encode, SpawnEntity::decode);
     private final Entity entity;
     private final int typeId;
     private final int entityId;
