@@ -22,8 +22,8 @@ public class NetworkInitialization {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("FORGE_NETWORK");
     public static final ResourceLocation LOGIN_NAME = new ResourceLocation("forge", "login");
-    public static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
-    public static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "play");
+    private static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
+    private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
     public static final AttributeKey<ForgePacketHandler> CONTEXT = AttributeKey.newInstance(HANDSHAKE_NAME.toString());
 
     public static SimpleChannel LOGIN = ChannelBuilder
@@ -32,9 +32,9 @@ public class NetworkInitialization {
         .networkProtocolVersion(0)
         .attribute(CONTEXT, ForgePacketHandler::new) // Shared across all of our channels
         .simpleChannel()
-        .login()
-            .serverbound()
-                .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
+            .login()
+                .serverbound()
+                    .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
         .build();
 
     public static SimpleChannel CONFIG = ChannelBuilder
@@ -42,31 +42,24 @@ public class NetworkInitialization {
         .optional()
         .networkProtocolVersion(0)
         .simpleChannel()
-        .configuration()
-            .bidirectional()
-                .add(ModVersions.class, ModVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleModVersions))
-                .add(ChannelVersions.class, ChannelVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleChannelVersions))
-            .serverbound()
-                .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
-            .clientbound()
-                .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
-                .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
-                .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
-                .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
+            .configuration()
+                .serverbound()
+                    .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
+                .bidirectional()
+                    .add(ModVersions.class, ModVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleModVersions))
+                    .add(ChannelVersions.class, ChannelVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleChannelVersions))
+                .clientbound()
+                    .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
+                    .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
+                    .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
+                    .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
+            .play() // TODO: Move to it's own channel, so that we can keep the core handshake channel clean/simple and thus not need to bump the version ever As it is the one responsible for validating versions
+                .clientbound()
+                    .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
+                    .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
         .build();
 
-    public static SimpleChannel PLAY = ChannelBuilder
-        .named(PLAY_NAME)
-        .optional()
-        .networkProtocolVersion(0)
-        .simpleChannel()
-        .play()
-            .clientbound()
-                .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
-            .bidirectional()
-                // This was being registered bidirectionally on the original code. Seems its suppose to be S2C only
-                .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
-        .build();
+    public static SimpleChannel PLAY = CONFIG;;
 
     public static void init() {
         for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
@@ -74,7 +67,7 @@ public class NetworkInitialization {
     }
 
     public static int getVersion() {
-        return PLAY.getProtocolVersion();
+        return CONFIG.getProtocolVersion();
     }
 
     private interface Handler<MSG> {

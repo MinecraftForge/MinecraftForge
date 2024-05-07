@@ -30,7 +30,6 @@ public class OpenContainer {
 
     /** Use NetworkHooks.openScreen */
     @ApiStatus.Internal
-    @SuppressWarnings("deprecation")
     public OpenContainer(MenuType<?> id, int windowId, Component name, FriendlyByteBuf additionalData) {
         this(BuiltInRegistries.MENU.getId(id), windowId, name, additionalData);
     }
@@ -78,7 +77,6 @@ public class OpenContainer {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public final MenuType<?> getType() {
         return BuiltInRegistries.MENU.byId(this.id);
     }
