@@ -37,8 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object>
-{
+public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("SIMPLE_CHANNEL");
     private boolean built = false;
@@ -382,8 +381,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
             return this.channel;
         }
 
-        public SimpleChannel build()
-        {
+        public SimpleChannel build() {
             return this.channel.build();
         }
     }
@@ -433,7 +431,6 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
     }
 
     private record Protocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleProtocol<BUF, BASE>, SimpleBuildable {
-
         @Override
         public SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
             return new Flow<>(ctx.flow(flow));
@@ -446,7 +443,6 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
     }
 
     private record HandlerProtocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable {
-
         @Override
         public SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
             return new HandlerFlow<>(ctx.flow(flow));
@@ -458,8 +454,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
     }
 
-    private record Flow<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>,  SimpleFlow<BUF, BASE> {
-
+    private record Flow<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleFlow<BUF, BASE> {
         @Override
         public <MSG extends BASE> Flow<BUF, BASE> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, Context> handler) {
             ctx.channel.messageBuilder(type, ctx.protocol)
