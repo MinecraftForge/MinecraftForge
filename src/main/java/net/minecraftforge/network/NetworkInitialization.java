@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.BiConsumer;
 
 @ApiStatus.Internal
-public class NetworkInitialization {
+public final class NetworkInitialization {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("FORGE_NETWORK");
     public static final ResourceLocation LOGIN_NAME = new ResourceLocation("forge", "login");
