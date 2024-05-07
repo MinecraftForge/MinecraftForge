@@ -19,7 +19,7 @@ public record RegistryList(
     List<ResourceLocation> normal,
     List<ResourceKey<? extends Registry<?>>> datapacks) {
 
-    public static StreamCodec<FriendlyByteBuf, RegistryList> STREAM_CODEC = StreamCodec.ofMember(RegistryList::encode, RegistryList::decode);
+    public static final StreamCodec<FriendlyByteBuf, RegistryList> STREAM_CODEC = StreamCodec.ofMember(RegistryList::encode, RegistryList::decode);
 
     public RegistryList(int token) {
         this(token, RegistryManager.getRegistryNamesForSyncToClient(), List.copyOf(DataPackRegistriesHooks.getSyncedCustomRegistries()));
