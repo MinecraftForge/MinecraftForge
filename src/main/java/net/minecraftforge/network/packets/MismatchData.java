@@ -23,7 +23,7 @@ public record MismatchData(
     Map<ResourceLocation, Version> mismatched,
     Set<ResourceLocation> missing
 ) {
-    public static StreamCodec<FriendlyByteBuf, MismatchData> STREAM_CODEC = StreamCodec.ofMember(MismatchData::encode, MismatchData::decode);
+    public static final StreamCodec<FriendlyByteBuf, MismatchData> STREAM_CODEC = StreamCodec.ofMember(MismatchData::encode, MismatchData::decode);
     private static final int MAX_LENGTH = 0x100;
 
     public MismatchData(NetworkMismatchData data) {
