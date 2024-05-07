@@ -17,7 +17,7 @@ import net.minecraftforge.forgespi.language.IModInfo;
  * The mod data is stored as follows: [modId -> [modName, modVersion]]
  */
 public record ModVersions(Map<String, Info> mods) {
-    public static StreamCodec<FriendlyByteBuf, ModVersions> STREAM_CODEC = StreamCodec.ofMember(ModVersions::encode, ModVersions::decode);
+    public static final StreamCodec<FriendlyByteBuf, ModVersions> STREAM_CODEC = StreamCodec.ofMember(ModVersions::encode, ModVersions::decode);
 
     private static final int MAX_LENGTH = 0x100;
 
