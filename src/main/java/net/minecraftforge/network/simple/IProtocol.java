@@ -12,16 +12,15 @@ import java.util.function.Consumer;
 
 public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
 {
-    PRO self();
-
     FLOW flow(@Nullable PacketFlow flow);
 
     /**
      * Consumer version of {@link #flow(PacketFlow)}. The Consumer will immediately be called with the created protocol.
      */
+    @SuppressWarnings("unchecked")
     default PRO flow(@Nullable PacketFlow flow, Consumer<FLOW> consumer) {
         consumer.accept(flow(flow));
-        return this.self();
+        return (PRO) this;
     }
 
     /**

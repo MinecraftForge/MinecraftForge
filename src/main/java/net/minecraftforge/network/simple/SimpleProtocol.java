@@ -15,9 +15,4 @@ public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE> extends IProt
      * @param flow The direction that following packets are valid for. Null for bidirectional
      */
     SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
-
-    @Override
-    default SimpleProtocol<BUF, BASE> self() {
-        return this;
-    }
 }

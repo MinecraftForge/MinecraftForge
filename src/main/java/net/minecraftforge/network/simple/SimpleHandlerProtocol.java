@@ -12,11 +12,5 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public interface SimpleHandlerProtocol<BUF extends FriendlyByteBuf, BASE> extends IProtocol<SimpleHandlerFlow<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>>, SimpleConnection<Object> {
-
     SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
-
-    @Override
-    default SimpleHandlerProtocol<BUF, BASE> self() {
-        return this;
-    }
 }
