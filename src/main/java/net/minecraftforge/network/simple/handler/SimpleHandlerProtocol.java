@@ -6,16 +6,14 @@
 package net.minecraftforge.network.simple.handler;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.network.simple.BaseProtocol;
 import net.minecraftforge.network.simple.SimpleConnection;
 
-import org.jetbrains.annotations.Nullable;
-
+/**
+ * Entry point for a {@link net.minecraftforge.network.SimpleChannel SimpleChannel} protocol that mimics vanilla's
+ * {@link net.minecraft.network.protocol.Packet Packet} system where every packet must implement
+ * {@link SimplePacket} and will have their {@link SimplePacket#handle(Object, net.minecraftforge.event.network.CustomPayloadEvent.Context) handle(CTX, Context)}
+ * method called.
+ */
 public interface SimpleHandlerProtocol<BUF extends FriendlyByteBuf, BASE> extends BaseProtocol<SimpleHandlerFlow<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>>, SimpleConnection<BASE> {
-    /**
-     * Creates a builder that validates both current protocol, and packet sending direction.
-     * @param flow The direction that following packets are valid for. Null for bidirectional
-     */
-    SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
 }

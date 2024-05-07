@@ -6,13 +6,9 @@
 package net.minecraftforge.network.simple;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.PacketFlow;
-import org.jetbrains.annotations.Nullable;
 
+/**
+ * Entry point for a {@link net.minecraftforge.network.SimpleChannel SimpleChannel} protocol without any extra context handler marshaling.
+ */
 public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE> extends BaseProtocol<SimpleFlow<BUF, BASE>, SimpleProtocol<BUF, BASE>>, SimpleConnection<BASE> {
-    /**
-     * Creates a builder that validates both current protocol, and packet sending direction.
-     * @param flow The direction that following packets are valid for. Null for bidirectional
-     */
-    SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
 }

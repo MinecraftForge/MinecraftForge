@@ -37,6 +37,15 @@ public interface SimpleConnection<BASE> {
     }
 
     /**
+     * Consumer version of {@link #protocol(AttribyteKey,NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
+     */
+    default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> protocol(AttributeKey<CTX> context, NetworkProtocol<BUF> protocol, Consumer<SimpleHandlerProtocol<BUF, NEWBASE>> consumer) {
+        var tmp = this.<BUF, CTX, NEWBASE>protocol(context, protocol);
+        consumer.accept(tmp);
+        return this;
+    }
+
+    /**
      * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
@@ -57,6 +66,13 @@ public interface SimpleConnection<BASE> {
      */
     default SimpleConnection<BASE> configuration(Consumer<SimpleProtocol<FriendlyByteBuf, BASE>> consumer) {
         return protocol(NetworkProtocol.CONFIGURATION, consumer);
+    }
+
+    /**
+     * Consumer version of {@link #configuration(AttributeKey)}. The Consumer will immediately be called with the created protocol.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> configuration(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+        return protocol(context, NetworkProtocol.CONFIGURATION, consumer);
     }
 
     /**
@@ -83,6 +99,13 @@ public interface SimpleConnection<BASE> {
     }
 
     /**
+     * Consumer version of {@link #login(AttributeKey)}. The Consumer will immediately be called with the created protocol.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> login(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+        return protocol(context, NetworkProtocol.LOGIN, consumer);
+    }
+
+    /**
      * Creates a builder grouping together packets that are only valid when under the Play protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
@@ -91,12 +114,25 @@ public interface SimpleConnection<BASE> {
     }
 
     /**
+     * Creates a builder grouping together packets that are only valid when under the Login protocol.
+     * This will validate that the protocol matches before the packet is sent or received.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE> play(AttributeKey<CTX> context) {
+        return protocol(context, NetworkProtocol.PLAY);
+    }
+
+
+    /**
      * Consumer version of {@link #play()}. The Consumer will immediately be called with the created protocol.
-     *
-     * @param consumer
-     * @return
      */
     default SimpleConnection<BASE> play(Consumer<SimpleProtocol<RegistryFriendlyByteBuf, BASE>> consumer) {
         return protocol(NetworkProtocol.PLAY, consumer);
+    }
+
+    /**
+     * Consumer version of {@link #play(AttributeKey)}. The Consumer will immediately be called with the created protocol.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> play(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE>> consumer) {
+        return protocol(context, NetworkProtocol.PLAY, consumer);
     }
 }
