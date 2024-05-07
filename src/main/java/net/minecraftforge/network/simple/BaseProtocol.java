@@ -16,10 +16,11 @@ public interface BaseProtocol<FLOW, PROTOCOL extends BaseProtocol<FLOW, PROTOCOL
     /**
      * Consumer version of {@link #flow(PacketFlow)}. The Consumer will immediately be called with the created protocol.
      */
-    @SuppressWarnings("unchecked")
     default PROTOCOL flow(@Nullable PacketFlow flow, Consumer<FLOW> consumer) {
         consumer.accept(flow(flow));
-        return (PROTOCOL) this;
+        @SuppressWarnings("unchecked")
+        var ret = (PROTOCOL)this;
+        return ret;
     }
 
     /**
@@ -54,7 +55,7 @@ public interface BaseProtocol<FLOW, PROTOCOL extends BaseProtocol<FLOW, PROTOCOL
      * Creates a builder that validates both current protocol, and that packets are send from either flow
      */
     default FLOW bidirectional() {
-        return flow(null);
+        return flow((PacketFlow)null);
     }
 
     /**
@@ -62,5 +63,12 @@ public interface BaseProtocol<FLOW, PROTOCOL extends BaseProtocol<FLOW, PROTOCOL
      */
     default PROTOCOL bidirectional(Consumer<FLOW> consumer) {
         return flow(null, consumer);
+    }
+
+    /**
+     * An alias for {@link #bidirectional(Consumer)}. The Consumer will immediately be called with the created flow.
+     */
+    default PROTOCOL flow(Consumer<FLOW> consumer) {
+        return bidirectional(consumer);
     }
 }
