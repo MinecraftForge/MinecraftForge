@@ -586,7 +586,7 @@
              Item item = this.useItem.getItem();
 -            return item.getUseAnimation(this.useItem) != UseAnim.BLOCK ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
 +            boolean canBlock = this.useItem.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK);
-+            return canBlock ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
++            return !canBlock ? false : item.getUseDuration(this.useItem) - this.useItemRemaining >= 5;
          } else {
              return false;
          }
