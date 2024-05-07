@@ -9,6 +9,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import org.jetbrains.annotations.Nullable;
 
-public interface SimpleHandlerProtocol<BUF extends FriendlyByteBuf, BASE> extends BaseProtocol<SimpleHandlerFlow<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>>, SimpleConnection<Object> {
+import java.util.function.Consumer;
+
+public interface SimpleHandlerProtocol<BUF extends FriendlyByteBuf, BASE> extends IProtocol<SimpleHandlerFlow<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>>, SimpleConnection<Object> {
     SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow);
 }

@@ -5,5 +5,5 @@
 
 package net.minecraftforge.network.simple;
 
-public interface BaseFlow {
+public interface IFlow {
 }

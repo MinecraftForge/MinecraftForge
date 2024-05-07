@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.PacketFlow;
 import org.jetbrains.annotations.Nullable;
 
-public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE> extends BaseProtocol<SimpleFlow<BUF, BASE>, SimpleProtocol<BUF, BASE>>, SimpleConnection<Object> {
+public interface SimpleProtocol<BUF extends FriendlyByteBuf, BASE> extends IProtocol<SimpleFlow<BUF, BASE>, SimpleProtocol<BUF, BASE>>, SimpleConnection<Object> {
     /**
      * Creates a builder that validates both current protocol, and packet sending direction.
      * @param flow The direction that following packets are valid for. Null for bidirectional
