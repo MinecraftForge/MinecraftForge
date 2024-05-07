@@ -10,16 +10,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FLOW, PRO>> {
+public interface BaseProtocol<FLOW extends BaseFlow, PROTOCOL extends BaseProtocol<FLOW, PROTOCOL>> {
     FLOW flow(@Nullable PacketFlow flow);
 
     /**
      * Consumer version of {@link #flow(PacketFlow)}. The Consumer will immediately be called with the created protocol.
      */
     @SuppressWarnings("unchecked")
-    default PRO flow(@Nullable PacketFlow flow, Consumer<FLOW> consumer) {
+    default PROTOCOL flow(@Nullable PacketFlow flow, Consumer<FLOW> consumer) {
         consumer.accept(flow(flow));
-        return (PRO) this;
+        return (PROTOCOL) this;
     }
 
     /**
@@ -32,7 +32,7 @@ public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FL
     /**
      * Consumer version of {@link #clientbound()}. The Consumer will immediately be called with the created flow.
      */
-    default PRO clientbound(Consumer<FLOW> consumer) {
+    default PROTOCOL clientbound(Consumer<FLOW> consumer) {
         return flow(PacketFlow.CLIENTBOUND, consumer);
     }
 
@@ -46,7 +46,7 @@ public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FL
     /**
      * Consumer version of {@link #serverbound()}. The Consumer will immediately be called with the created flow.
      */
-    default PRO serverbound(Consumer<FLOW> consumer) {
+    default PROTOCOL serverbound(Consumer<FLOW> consumer) {
         return flow(PacketFlow.SERVERBOUND, consumer);
     }
 
@@ -60,7 +60,7 @@ public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FL
     /**
      * Consumer version of {@link #bidirectional()}. The Consumer will immediately be called with the created flow.
      */
-    default PRO bidirectional(Consumer<FLOW> consumer) {
+    default PROTOCOL bidirectional(Consumer<FLOW> consumer) {
         return flow(null, consumer);
     }
 }
