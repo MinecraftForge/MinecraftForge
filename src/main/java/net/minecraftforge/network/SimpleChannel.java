@@ -18,13 +18,12 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-import net.minecraftforge.network.simple.SimpleProtocolFactory;
+import net.minecraftforge.network.simple.handler.SimpleHandlerFlow;
+import net.minecraftforge.network.simple.handler.SimpleHandlerProtocol;
+import net.minecraftforge.network.simple.handler.SimplePacket;
 import net.minecraftforge.network.simple.SimpleBuildable;
 import net.minecraftforge.network.simple.SimpleConnection;
-import net.minecraftforge.network.simple.SimpleHandlerFlow;
-import net.minecraftforge.network.simple.SimpleHandlerProtocol;
 import net.minecraftforge.network.simple.SimpleFlow;
-import net.minecraftforge.network.simple.SimplePacket;
 import net.minecraftforge.network.simple.SimpleProtocol;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.logging.log4j.LogManager;
@@ -409,15 +408,12 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
 
         public <CTX, NEWBASE extends SimplePacket<CTX>> SimpleContext<BUF, NEWBASE> base(AttributeKey<CTX> context) {
             return new SimpleContext<>(channel, protocol, flow, network -> {
-                if(network)
-                {
+                if(network) {
                     return (msg, ctx) -> {
                         var inst = ctx.getConnection().channel().attr(context).get();
                         ctx.setPacketHandled(msg.handle(inst, ctx));
                     };
-                }
-                else
-                {
+                } else {
                     return (msg, ctx) -> {
                         ctx.enqueueWork(() -> {
                             var inst = ctx.getConnection().channel().attr(context).get();
@@ -508,7 +504,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
     }
 
-    private interface ProtocolFactory<BUF extends FriendlyByteBuf, BASE> extends SimpleProtocolFactory, SimpleBuildable {
+    private interface ProtocolFactory<BUF extends FriendlyByteBuf, BASE> extends SimpleConnection<BASE>, SimpleBuildable {
         SimpleContext<BUF, BASE> asContext();
 
         @Override

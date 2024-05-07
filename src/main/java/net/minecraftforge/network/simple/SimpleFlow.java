@@ -16,7 +16,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  *
  *  I explicitly do not duplicate them to {@link SimpleConection} because you should at least be checking the direction of your packets.
  */
-public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE> extends SimpleProtocol<BUF, BASE>, SimpleBuildable, BaseFlow {
+public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE> extends SimpleProtocol<BUF, BASE>, SimpleBuildable {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
      * <p>

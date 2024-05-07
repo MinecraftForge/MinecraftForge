@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple;
+package net.minecraftforge.network.simple.handler;
 
 import net.minecraftforge.event.network.CustomPayloadEvent;
 

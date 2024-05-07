@@ -3,15 +3,16 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple;
+package net.minecraftforge.network.simple.handler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.simple.SimpleBuildable;
 
 import java.util.function.BiConsumer;
 
-public interface SimpleHandlerFlow<BUF extends FriendlyByteBuf, BASE> extends BaseFlow, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable {
+public interface SimpleHandlerFlow<BUF extends FriendlyByteBuf, BASE> extends SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
      * <p>
