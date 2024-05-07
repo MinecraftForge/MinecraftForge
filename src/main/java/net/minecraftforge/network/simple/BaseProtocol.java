@@ -10,8 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
-{
+public interface BaseProtocol<FLOW extends BaseFlow, PRO extends BaseProtocol<FLOW, PRO>> {
     FLOW flow(@Nullable PacketFlow flow);
 
     /**
@@ -21,6 +20,13 @@ public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
     default PRO flow(@Nullable PacketFlow flow, Consumer<FLOW> consumer) {
         consumer.accept(flow(flow));
         return (PRO) this;
+    }
+
+    /**
+     * Creates a builder that validates both current protocol, and that packets are sent bidirectionally
+     */
+    default PRO flow(Consumer<FLOW> consumer) {
+        return this.flow(null, consumer);
     }
 
     /**
@@ -55,7 +61,7 @@ public interface IProtocol<FLOW extends IFlow, PRO extends IProtocol<FLOW, PRO>>
      * Creates a builder that validates both current protocol, and that packets are send from either flow
      */
     default FLOW bidirectional() {
-        return flow(null);
+        return flow((PacketFlow) null);
     }
 
     /**
