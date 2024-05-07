@@ -22,7 +22,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 
 // TODO: Reevaluate if this is needed This is the same as ClientboundOpenScreenPacket packet but allows for additional data
 public class OpenContainer {
-    public static StreamCodec<RegistryFriendlyByteBuf, OpenContainer> STREAM_CODEC = StreamCodec.ofMember(OpenContainer::encode, OpenContainer::decode);
+    public static final StreamCodec<RegistryFriendlyByteBuf, OpenContainer> STREAM_CODEC = StreamCodec.ofMember(OpenContainer::encode, OpenContainer::decode);
     private final int id;
     private final int windowId;
     private final Component name;
