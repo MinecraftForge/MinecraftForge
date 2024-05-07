@@ -38,6 +38,10 @@ public class TickEvent extends Event {
         private final BooleanSupplier haveTime;
         private final MinecraftServer server;
 
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server) {
+            this(haveTime, server, phase);
+        }
         protected ServerTickEvent(BooleanSupplier haveTime, MinecraftServer server, Phase phase) {
             super(Type.SERVER, LogicalSide.SERVER, phase);
             this.haveTime = haveTime;
