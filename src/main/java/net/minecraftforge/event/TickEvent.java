@@ -26,7 +26,7 @@ public class TickEvent extends Event {
 
     public final Type type;
     public final LogicalSide side;
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "1.20.6")
     public final Phase phase;
     public TickEvent(Type type, LogicalSide side, Phase phase) {
         this.type = type;
@@ -80,7 +80,8 @@ public class TickEvent extends Event {
     }
 
     public static class ClientTickEvent extends TickEvent {
-        protected ClientTickEvent(Phase phase) {
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public ClientTickEvent(Phase phase) {
             super(Type.CLIENT, LogicalSide.CLIENT, phase);
         }
 
@@ -115,6 +116,12 @@ public class TickEvent extends Event {
         public final Level level;
         private final BooleanSupplier haveTime;
 
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public LevelTickEvent(LogicalSide side, Phase phase, Level level, BooleanSupplier haveTime) {
+            super(Type.LEVEL, side, phase);
+            this.level = level;
+            this.haveTime = haveTime;
+        }
         protected LevelTickEvent(LogicalSide side, Level level, BooleanSupplier haveTime, Phase phase) {
             super(Type.LEVEL, side, phase);
             this.level = level;
@@ -147,6 +154,10 @@ public class TickEvent extends Event {
     public static class PlayerTickEvent extends TickEvent {
         public final Player player;
 
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public PlayerTickEvent(Phase phase, Player player) {
+            this(player, phase);
+        }
         protected PlayerTickEvent(Player player, Phase phase) {
             super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.player = player;
@@ -168,6 +179,11 @@ public class TickEvent extends Event {
     public static class RenderTickEvent extends TickEvent {
         public final float renderTickTime;
 
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public RenderTickEvent(Phase phase, float renderTickTime) {
+            super(Type.RENDER, LogicalSide.CLIENT, phase);
+            this.renderTickTime = renderTickTime;
+        }
         protected RenderTickEvent(float renderTickTime, Phase phase) {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
             this.renderTickTime = renderTickTime;
