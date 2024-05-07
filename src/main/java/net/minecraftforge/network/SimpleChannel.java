@@ -49,12 +49,12 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
 
     @Override
     public <NEWBUF extends FriendlyByteBuf, NEWBASE> SimpleProtocol<NEWBUF, NEWBASE> protocol(NetworkProtocol<NEWBUF> protocol) {
-        return SimpleChannel.newProtocol(this, protocol);
+        return new Protocol<>(new SimpleContext<NEWBUF, NEWBASE>(this).protocol(protocol));
     }
 
     @Override
     public <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
-        return SimpleChannel.newProtocol(this, context, protocol);
+        return new HandlerProtocol<>(context, new SimpleContext<NEWBUF, NEWBASE>(this).protocol(protocol));
     }
 
     /**
@@ -379,74 +379,36 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
 
             return this.channel;
         }
-
-        public SimpleChannel build() {
-            return this.channel.build();
-        }
     }
 
-    private record SimpleContext<BUF extends FriendlyByteBuf, BASE>(SimpleChannel channel, NetworkProtocol<BUF> protocol, @Nullable PacketFlow flow, Function<Boolean, BiConsumer<BASE, CustomPayloadEvent.Context>> defaultConsumer) {
+    private record SimpleContext<BUF extends FriendlyByteBuf, BASE>(SimpleChannel channel, @Nullable NetworkProtocol<BUF> protocol, @Nullable PacketFlow flow) {
         public SimpleContext(SimpleChannel channel) {
-            this(channel, null, null, null);
-        }
-
-        @SuppressWarnings("unchecked")
-        private <MSG extends BASE> BiConsumer<MSG, CustomPayloadEvent.Context> consumer(boolean network) {
-            if(this.defaultConsumer == null) {
-                throw new IllegalStateException("DefaultConsumer factory not set");
-            }
-            return (BiConsumer<MSG, CustomPayloadEvent.Context>) this.defaultConsumer.apply(network);
+            this(channel, null, null);
         }
 
         public <NEWBUF extends FriendlyByteBuf> SimpleContext<NEWBUF, BASE> protocol(NetworkProtocol<NEWBUF> protocol) {
-            return new SimpleContext<>(channel, protocol, flow, defaultConsumer);
+            return new SimpleContext<>(channel, protocol, flow);
         }
 
         private SimpleContext<BUF, BASE> flow(@Nullable PacketFlow flow) {
-            return new SimpleContext<>(channel, protocol, flow, defaultConsumer);
-        }
-
-        public <CTX, NEWBASE extends SimplePacket<CTX>> SimpleContext<BUF, NEWBASE> base(AttributeKey<CTX> context) {
-            return new SimpleContext<>(channel, protocol, flow, network -> {
-                if(network) {
-                    return (msg, ctx) -> {
-                        var inst = ctx.getConnection().channel().attr(context).get();
-                        ctx.setPacketHandled(msg.handle(inst, ctx));
-                    };
-                } else {
-                    return (msg, ctx) -> {
-                        ctx.enqueueWork(() -> {
-                            var inst = ctx.getConnection().channel().attr(context).get();
-                            msg.handle(inst, ctx);
-                        });
-                        ctx.setPacketHandled(true);
-                    };
-                }
-            });
+            return new SimpleContext<>(channel, protocol, flow);
         }
     }
 
-    private record Protocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleProtocol<BUF, BASE>, SimpleBuildable {
+    private record Protocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleProtocol<BUF, BASE> {
         @Override
         public SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
             return new Flow<>(ctx.flow(flow));
         }
-
-        @Override
-        public SimpleContext<BUF, BASE> asContext() {
-            return ctx;
-        }
     }
 
-    private record HandlerProtocol<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE>, SimpleBuildable {
+    private record HandlerProtocol<BUF extends FriendlyByteBuf, CTX, BASE extends SimplePacket<CTX>>(
+        AttributeKey<CTX> key,
+        SimpleContext<BUF, BASE> ctx
+    ) implements ProtocolFactory<BUF, BASE>, SimpleHandlerProtocol<BUF, BASE> {
         @Override
         public SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
-            return new HandlerFlow<>(ctx.flow(flow));
-        }
-
-        @Override
-        public SimpleContext<BUF, BASE> asContext() {
-            return ctx;
+            return new HandlerFlow<>(key, ctx.flow(flow));
         }
     }
 
@@ -465,22 +427,29 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         public SimpleFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
             return new Flow<>(ctx.flow(flow));
         }
-
-        @Override
-        public SimpleContext<BUF, BASE> asContext() {
-            return ctx;
-        }
     }
 
-    private record HandlerFlow<BUF extends FriendlyByteBuf, BASE>(SimpleContext<BUF, BASE> ctx) implements ProtocolFactory<BUF, BASE>, SimpleHandlerFlow<BUF, BASE> {
+    private record HandlerFlow<BUF extends FriendlyByteBuf, CTX, BASE extends SimplePacket<CTX>>(
+        AttributeKey<CTX> key,
+        SimpleContext<BUF, BASE> ctx
+    ) implements ProtocolFactory<BUF, BASE>, SimpleHandlerFlow<BUF, BASE> {
         @Override
         public <MSG extends BASE> SimpleHandlerFlow<BUF, BASE> add(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
-            return this.add(type, codec, ctx.consumer(true));
+            return this.add(type, codec, (msg, ctx) -> {
+                var inst = ctx.getConnection().channel().attr(key).get();
+                ctx.setPacketHandled(msg.handle(inst, ctx));
+            });
         }
 
         @Override
         public <MSG extends BASE> SimpleHandlerFlow<BUF, BASE> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
-            return this.add(type, codec, ctx.consumer(false));
+            return this.add(type, codec, (msg, ctx) -> {
+                ctx.enqueueWork(() -> {
+                    var inst = ctx.getConnection().channel().attr(key).get();
+                    msg.handle(inst, ctx);
+                });
+                ctx.setPacketHandled(true);
+            });
         }
 
         @Override
@@ -495,31 +464,26 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
 
         @Override
         public SimpleHandlerFlow<BUF, BASE> flow(@Nullable PacketFlow flow) {
-            return new HandlerFlow<>(ctx.flow(flow));
-        }
-
-        @Override
-        public SimpleContext<BUF, BASE> asContext() {
-            return ctx;
+            return new HandlerFlow<>(key, ctx.flow(flow));
         }
     }
 
     private interface ProtocolFactory<BUF extends FriendlyByteBuf, BASE> extends SimpleConnection<BASE>, SimpleBuildable {
-        SimpleContext<BUF, BASE> asContext();
+        SimpleContext<BUF, BASE> ctx();
 
         @Override
         default <NEWBUF extends FriendlyByteBuf, NEWBASE> SimpleProtocol<NEWBUF, NEWBASE> protocol(NetworkProtocol<NEWBUF> protocol) {
-            return SimpleChannel.newProtocol(asContext().channel, protocol);
+            return ctx().channel.protocol(protocol);
         }
 
         @Override
         default <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
-            return SimpleChannel.newProtocol(asContext().channel, context, protocol);
+            return ctx().channel.protocol(context, protocol);
         }
 
         @Override
         default SimpleChannel build() {
-            return asContext().channel.build();
+            return ctx().channel.build();
         }
     }
 
@@ -626,13 +590,5 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         out.writeVarInt(msg.index());
         if (msg.encoder() != null)
             msg.encoder().accept(message, out);
-    }
-
-    private static <NEWBUF extends FriendlyByteBuf, NEWBASE> SimpleProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, NetworkProtocol<NEWBUF> protocol) {
-        return new Protocol<>(new SimpleContext<NEWBUF, NEWBASE>(channel).protocol(protocol));
-    }
-
-    private static <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> newProtocol(SimpleChannel channel, AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol) {
-        return new HandlerProtocol<>(new SimpleContext<NEWBUF, NEWBASE>(channel).protocol(protocol).base(context));
     }
 }
