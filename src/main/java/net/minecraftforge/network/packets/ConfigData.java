@@ -9,7 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 public record ConfigData(String name, byte[] data) {
-    public static StreamCodec<FriendlyByteBuf, ConfigData> STREAM_CODEC = StreamCodec.ofMember(ConfigData::encode, ConfigData::decode);
+    public static final StreamCodec<FriendlyByteBuf, ConfigData> STREAM_CODEC = StreamCodec.ofMember(ConfigData::encode, ConfigData::decode);
 
     public void encode(final FriendlyByteBuf buf) {
         buf.writeUtf(this.name());
