@@ -16,6 +16,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent.Context;
 import net.minecraftforge.network.simple.SimplePacket;
 import net.minecraftforge.network.simple.SimpleBuildable;
 import net.minecraftforge.network.simple.SimpleConnection;
+import net.minecraftforge.network.simple.SimpleFlow;
 import net.minecraftforge.network.simple.SimpleProtocol;
 
 import java.util.function.BiConsumer;
@@ -35,7 +36,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 
-public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object> {
+public class SimpleChannel extends Channel<Object> implements SimpleConnection<Object, SimpleChannel> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("SIMPLE_CHANNEL");
     private boolean built = false;
@@ -53,15 +54,15 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      *
      * @param context AttributeKey holding a reference to the context object. See {@link ChannelBuilder#attribute(AttributeKey, Supplier)}
      */
-    public <CTX, BASE extends SimplePacket<CTX>> SimpleProtocol<FriendlyByteBuf, BASE, SimpleConnection<Object>> handler(AttributeKey<CTX> context) {
-        return new Protocol<>(this, new SimpleContext<>(this).base(context));
+    public <CTX, BASE extends SimplePacket<CTX>> SimpleConnection<BASE, SimpleConnection<Object, SimpleChannel>> handler(AttributeKey<CTX> context) {
+        return new ContextConnection<>(this, new SimpleContext<>(this).base(context));
     }
 
     /**
      * Creates a builder grouping together all packets under the same protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    public <BUF extends FriendlyByteBuf> SimpleProtocol<BUF, Object, SimpleConnection<Object>> protocol(NetworkProtocol<BUF> protocol) {
+    public <BUF extends FriendlyByteBuf> SimpleProtocol<BUF, Object, SimpleConnection<Object, SimpleChannel>> protocol(NetworkProtocol<BUF> protocol) {
         return new Protocol<>(this, new SimpleContext<>(this).protocol(protocol));
     }
 
@@ -453,6 +454,20 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
     };
 
+    private static class ContextConnection<BASE, PARENT extends SimpleBuildable<?>> extends Buildable<PARENT> implements SimpleConnection<BASE, PARENT> {
+        private final SimpleContext<FriendlyByteBuf, BASE> ctx;
+
+        private ContextConnection(PARENT parent, SimpleContext<FriendlyByteBuf, BASE> ctx) {
+            super(parent);
+            this.ctx = ctx;
+        }
+
+        @Override
+        public <BUF extends FriendlyByteBuf> SimpleProtocol<BUF, BASE, SimpleConnection<BASE, PARENT>> protocol(NetworkProtocol<BUF> protocol) {
+            return new Protocol<>(this, this.ctx.protocol(protocol));
+        }
+    }
+
     private static class Protocol<BUF extends FriendlyByteBuf, BASE, PARENT extends SimpleBuildable<?>> extends Buildable<PARENT> implements SimpleProtocol<BUF, BASE, PARENT> {
         private final SimpleContext<BUF, BASE> ctx;
 
@@ -462,13 +477,8 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         }
 
         @Override
-        public <NEWBUF extends FriendlyByteBuf> SimpleProtocol<NEWBUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> protocol(NetworkProtocol<NEWBUF> protocol) {
-            return new Protocol<>(this, this.ctx.protocol(protocol));
-        }
-
-        @Override
-        public SimpleProtocol<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> flow(PacketFlow flow) {
-            return new Protocol<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>>(this, this.ctx.flow(flow));
+        public SimpleFlow<BUF, BASE, SimpleProtocol<BUF, BASE, PARENT>> flow(PacketFlow flow) {
+            return new Flow<>(this, this.ctx.flow(flow));
         }
 
         @Override
@@ -483,14 +493,39 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
 
         @Override
         public <MSG extends BASE> Protocol<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
-            var pkt = ctx.channel.messageBuilder(type, ctx.protocol)
+            ctx.channel.messageBuilder(type, ctx.protocol)
                 .codec(codec)
-                .consumer(handler);
+                .consumer(handler)
+                .add();
+            return this;
+        }
+    }
 
-            if (ctx.flow() != null)
-                pkt.direction(ctx.flow());
+    private static class Flow<BUF extends FriendlyByteBuf, BASE, PARENT extends SimpleBuildable<?>> extends Buildable<PARENT> implements SimpleFlow<BUF, BASE, PARENT> {
+        private final SimpleContext<BUF, BASE> ctx;
 
-            pkt.add();
+        private Flow(PARENT parent, SimpleContext<BUF, BASE> ctx) {
+            super(parent);
+            this.ctx = ctx;
+        }
+
+        @Override
+        public <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, ctx.consumer(true));
+        }
+
+        @Override
+        public <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec) {
+            return add(type, codec, ctx.consumer(false));
+        }
+
+        @Override
+        public <MSG extends BASE> SimpleFlow<BUF, BASE, PARENT> add(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
+            ctx.channel.messageBuilder(type, ctx.protocol)
+                .codec(codec)
+                .consumer(handler)
+                .direction(ctx.flow())
+                .add();
             return this;
         }
     }
