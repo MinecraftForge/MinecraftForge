@@ -37,7 +37,7 @@ public interface SimpleConnection<BASE> {
     }
 
     /**
-     * Consumer version of {@link #protocol(AttribyteKey,NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
+     * Consumer version of {@link #protocol(AttributeKey,NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
      */
     default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> protocol(AttributeKey<CTX> context, NetworkProtocol<BUF> protocol, Consumer<SimpleHandlerProtocol<BUF, NEWBASE>> consumer) {
         var tmp = this.<BUF, CTX, NEWBASE>protocol(context, protocol);

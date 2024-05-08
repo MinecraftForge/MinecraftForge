@@ -262,7 +262,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
          * <p>
          * The consumer is called on the network thread, and so should not interact with most game state by default.
          * {@link CustomPayloadEvent.Context#enqueueWork(Runnable)} can be used to handle the message on the main server or
-         * client thread. Alternatively one can use {@link #consumerMainThread(TriConsumer)} to run the handler on the
+         * client thread. Alternatively one can use {@link #consumerMainThread(BiConsumer)} to run the handler on the
          * main thread.
          *
          * @param consumer The message consumer.
