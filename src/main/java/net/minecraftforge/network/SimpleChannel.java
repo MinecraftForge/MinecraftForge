@@ -178,7 +178,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
          * packet is sent}. This means encoding typically occurs on the main server/client thread rather than on the
          * network thread.
          * <p>
-         * However, this behaviour should not be relied on, and the encoder should try to be thread-safe and not
+         * However, this behavior should not be relied on, and the encoder should try to be thread-safe and not
          * interact with the current game state.
          *
          * @param encoder The message encoder.
@@ -193,7 +193,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
          * Set the message decoder, which reads the message from a {@link FriendlyByteBuf}.
          * <p>
          * The decoder is called when the message is received on the network thread. The decoder should not attempt to
-         * access or mutate any game state, deferring that until the {@linkplain #consumer(ToBooleanBiFunction) the
+         * access or mutate any game state, deferring that until the {@linkplain #consumer(BiConsumer) the
          * message is handled}.
          *
          * @param decoder The message decoder.
@@ -207,7 +207,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         /**
          * Set the StreamCodec to be used for marshaling the message object to and from a {@link FriendlyByteBuf}
          * <p>
-         * This has all the same limitations of {@link #encoder(BiFunction)} and {@link #decoder(Function)} as it is equivalent of calling those functions
+         * This has all the same limitations of {@link #encoder(BiConsumer)} and {@link #decoder(Function)} as it is equivalent of calling those functions
          * with the codec's encode and decode functions.
          *
          * @param codec The codec to use.
