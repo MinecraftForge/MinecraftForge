@@ -1265,7 +1265,7 @@ public final class ForgeHooks {
     public static DataComponentMap gatherItemComponents(Item item, DataComponentMap dataComponents) {
         return DataComponentMap.builder()
                 .addAll(dataComponents)
-                .addAll(ForgeEventFactory.gatherItemComponents(item).getDataComponentMap())
+                .addAll(ForgeEventFactory.gatherItemComponentsEvent(item, dataComponents).getDataComponentMap())
                 .build();
     }
 }

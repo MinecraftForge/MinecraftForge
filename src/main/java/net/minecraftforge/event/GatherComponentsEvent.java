@@ -27,13 +27,19 @@ public abstract class GatherComponentsEvent extends Event {
 
     public static class GatherItemComponentsEvent extends GatherComponentsEvent {
         private final Item item;
+        private final DataComponentMap dataComponents;
 
-        public GatherItemComponentsEvent(Item item) {
+        public GatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
             this.item = item;
+            this.dataComponents = dataComponents;
         }
 
         public Item getItem() {
             return item;
+        }
+
+        public DataComponentMap getDataComponentMap() {
+            return dataComponents;
         }
     }
 }
