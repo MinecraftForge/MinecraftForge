@@ -100,6 +100,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
@@ -114,7 +115,6 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.BrainBuilder;
@@ -155,6 +155,7 @@ import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.config.ConfigTracker;
@@ -164,6 +165,7 @@ import net.minecraftforge.network.ICustomPacket;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkInitialization;
+import net.minecraftforge.network.NetworkProtocol;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.packets.SpawnEntity;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -1121,13 +1123,14 @@ public final class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static boolean onCustomPayload(final ICustomPacket<?> packet, final Connection connection) {
-        if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
+    public static boolean onCustomPayload(ICustomPacket<?> packet, Connection connection) {
+        var expectedSide = connection.getReceiving() == PacketFlow.CLIENTBOUND ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        if (expectedSide != EffectiveSide.get()) {
             connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
             return false;
         }
 
-        var context = new CustomPayloadEvent.Context(connection, packet.getDirection());
+        var context = new CustomPayloadEvent.Context(connection);
         return onCustomPayload(new CustomPayloadEvent(packet, context));
     }
 
@@ -1155,17 +1158,13 @@ public final class ForgeHooks {
             LOGGER.info("Connected to a modded server.");
     }
 
+    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     public static Packet<ClientGamePacketListener> getEntitySpawnPacket(Entity entity) {
         if (!(entity instanceof IEntityAdditionalSpawnData add))
             throw new IllegalArgumentException(entity.getClass() + " is not an instance of " + IEntityAdditionalSpawnData.class);
 
-        var play = NetworkInitialization.PLAY;
-        var msg = new SpawnEntity(entity);
-        var data = play.toBuffer(msg);
-        @SuppressWarnings("unchecked")
-        var pkt = (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(data, play.getName()).getThis();
-        return pkt;
+        return (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(NetworkInitialization.PLAY, new SpawnEntity(entity));
     }
 
     @ApiStatus.Internal

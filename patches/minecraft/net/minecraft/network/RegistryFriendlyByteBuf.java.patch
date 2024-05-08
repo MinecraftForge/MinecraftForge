@@ -1,0 +1,14 @@
+--- a/net/minecraft/network/RegistryFriendlyByteBuf.java
++++ b/net/minecraft/network/RegistryFriendlyByteBuf.java
+@@ -16,6 +_,11 @@
+         return this.registryAccess;
+     }
+ 
++    @Override
++    public RegistryFriendlyByteBuf wrap(ByteBuf data) {
++        return new RegistryFriendlyByteBuf(data, this.registryAccess);
++    }
++
+     public static Function<ByteBuf, RegistryFriendlyByteBuf> decorator(RegistryAccess p_336066_) {
+         return p_328649_ -> new RegistryFriendlyByteBuf(p_328649_, p_336066_);
+     }

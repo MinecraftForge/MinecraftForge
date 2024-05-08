@@ -35,7 +35,7 @@ class SyncConfigTask extends SimpleConfigurationTask {
         for (var cfg : ConfigTracker.INSTANCE.configSets().get(ModConfig.Type.SERVER)) {
             try {
                 var pkt = new ConfigData(cfg.getFileName(), Files.readAllBytes(cfg.getFullPath()));
-                NetworkInitialization.PLAY.send(pkt, ctx.getConnection());
+                NetworkInitialization.CONFIG.send(pkt, ctx.getConnection());
             } catch (IOException e) {
                 LOGGER.error(MARKER, "Failed to read config file {} terminating connection", cfg.getFileName(), e);
                 ctx.getConnection().disconnect(Component.literal("Connection closed - Failed to read config on server"));

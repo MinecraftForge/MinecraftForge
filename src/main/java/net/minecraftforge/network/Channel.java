@@ -38,29 +38,24 @@ public abstract class Channel<MSG> {
         return NetworkContext.get(connection).getRemoteChannels().contains(getName());
     }
 
-    public abstract FriendlyByteBuf toBuffer(MSG message);
+    public abstract void encode(FriendlyByteBuf out, MSG message);
 
     // Package private so we can call from ourselves.
-    Packet<?> toVanillaPacket(Connection connection, MSG message) {
+    protected Packet<?> toVanillaPacket(Connection connection, MSG message) {
         var protocol = connection.getProtocol();
-        var serverbound = connection.getSending() == PacketFlow.SERVERBOUND;
-        var data = toBuffer(message);
+        var handler = switch (protocol) {
+            case LOGIN         -> NetworkProtocol.LOGIN;
+            case CONFIGURATION -> NetworkProtocol.CONFIGURATION;
+            case PLAY          -> NetworkProtocol.PLAY;
+            default -> throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in Forge Networking Channel");
+        };
 
-        if (protocol == ConnectionProtocol.LOGIN) {
-            // Login Protocol C->S packets do not contain the plugin channel name. As they are meant to be replies.
-            // So fuck it lets just wrap in our own packet that DOES include the channel name
-            if (serverbound) {
-                if (this != NetworkInitialization.LOGIN)
-                    return NetworkInitialization.LOGIN.toVanillaPacket(connection, new LoginWrapper(getName(), data));
-                else
-                    return NetworkDirection.LOGIN_TO_SERVER.buildPacket(data, getName()).getThis();
-            }
-            return NetworkDirection.LOGIN_TO_CLIENT.buildPacket(data, getName()).getThis();
-        } else if (protocol == ConnectionProtocol.PLAY || protocol == ConnectionProtocol.CONFIGURATION) {
-            var dir = serverbound ? NetworkDirection.PLAY_TO_SERVER : NetworkDirection.PLAY_TO_CLIENT;
-            return dir.buildPacket(data, getName()).getThis();
-        } else
-            throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in Forge Networking Channel");
+        // Login Protocol C->S packets do not contain the plugin channel name. As they are meant to be replies.
+        // So fuck it lets just wrap in our own packet that DOES include the channel name
+        if (protocol == ConnectionProtocol.LOGIN && this != NetworkInitialization.LOGIN && connection.getSending() == PacketFlow.SERVERBOUND)
+            return NetworkInitialization.LOGIN.toVanillaPacket(connection, new LoginWrapper(this, message));
+
+        return handler.buildPacket(connection.getSending(), this, message).getThis();
     }
 
     public void send(MSG msg, Connection connection) {
@@ -79,7 +74,7 @@ public abstract class Channel<MSG> {
      * @param <MSG> The type of the message
      */
     public void send(MSG msg, PacketDistributor.PacketTarget target) {
-        target.send(target.direction().buildPacket(toBuffer(msg), getName()).getThis());
+        target.send(target.direction().buildPacket(this, msg).getThis());
     }
 
     public void reply(MSG msg, CustomPayloadEvent.Context context) {

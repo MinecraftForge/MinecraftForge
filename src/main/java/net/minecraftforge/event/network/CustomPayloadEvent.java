@@ -15,10 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.network.ICustomPacket;
-import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,29 +65,21 @@ public class CustomPayloadEvent extends Event {
          * The {@link Connection} for this message.
          */
         private final Connection connection;
-
-        /**
-         * The {@link NetworkDirection} this message has been received on.
-         */
-        private final NetworkDirection networkDirection;
+        private final boolean client;
 
         private boolean packetHandled;
 
-        public Context(Connection connection, NetworkDirection networkDirection) {
+        public Context(Connection connection) {
             this.connection = connection;
-            this.networkDirection = networkDirection;
+            this.client = connection.getReceiving() == PacketFlow.CLIENTBOUND;
         }
 
         public boolean isClientSide() {
-            return getConnection().getReceiving() == PacketFlow.CLIENTBOUND;
+            return client;
         }
 
         public boolean isServerSide() {
             return !isClientSide();
-        }
-
-        public NetworkDirection getDirection() {
-            return networkDirection;
         }
 
         public Connection getConnection() {
@@ -109,7 +99,8 @@ public class CustomPayloadEvent extends Event {
         }
 
         public CompletableFuture<Void> enqueueWork(Runnable runnable) {
-            BlockableEventLoop<?> executor = LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
+            var executor = LogicalSidedProvider.WORKQUEUE.get(isClientSide());
+
             // Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
             // Same logic as ThreadTaskExecutor#runImmediately without the join
             if (!executor.isSameThread())

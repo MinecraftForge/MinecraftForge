@@ -5,7 +5,6 @@
 
 package net.minecraftforge.network.packets;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -14,11 +13,12 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
@@ -34,6 +34,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
  */
 // TODO: Re-write this packet into something simpler. This is literally just ClientboundAddEntityPacket with an extra byte[]
 public class SpawnEntity {
+    public static final StreamCodec<RegistryFriendlyByteBuf, SpawnEntity> STREAM_CODEC = StreamCodec.ofMember(SpawnEntity::encode, SpawnEntity::decode);
     private final Entity entity;
     private final int typeId;
     private final int entityId;
@@ -43,7 +44,6 @@ public class SpawnEntity {
     private final int velX, velY, velZ;
     private final FriendlyByteBuf buf;
 
-    @SuppressWarnings("deprecation")
     @ApiStatus.Internal
     public SpawnEntity(Entity e) {
         this.entity = e;
@@ -128,9 +128,8 @@ public class SpawnEntity {
 
     public static void handle(SpawnEntity msg, CustomPayloadEvent.Context ctx) {
         try {
-            @SuppressWarnings("deprecation")
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(msg.typeId);
-            Optional<Level> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.getDirection().getReceptionSide());
+            var world = LogicalSidedProvider.CLIENTWORLD.get(ctx.isClientSide());
             Entity e = world.map(w -> type.customClientSpawn(msg, w)).orElse(null);
             if (e == null)
                 return;

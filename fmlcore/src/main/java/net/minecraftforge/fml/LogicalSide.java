@@ -16,8 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
  *
  * @see Dist
  */
-public enum LogicalSide
-{
+public enum LogicalSide {
     /**
      * The logical client of the Minecraft game, which interfaces with the player's inputs and renders the player's
      * viewpoint.
@@ -27,6 +26,7 @@ public enum LogicalSide
      * @see Dist#CLIENT
      */
     CLIENT,
+
     /**
      * The logical server of the Minecraft game, responsible for connecting to clients and running the simulation logic
      * on the level.
@@ -41,16 +41,14 @@ public enum LogicalSide
     /**
      * {@return if this logical side is the server}
      */
-    public boolean isServer()
-    {
+    public boolean isServer() {
         return !isClient();
     }
 
     /**
      * {@return if the logical side is the client}
      */
-    public boolean isClient()
-    {
+    public boolean isClient() {
         return this == CLIENT;
     }
 }

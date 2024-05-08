@@ -5,113 +5,79 @@
 
 package net.minecraftforge.network;
 
+import io.netty.util.AttributeKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftforge.network.packets.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 
-import io.netty.util.AttributeKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.packets.Acknowledge;
-import net.minecraftforge.network.packets.ChannelVersions;
-import net.minecraftforge.network.packets.LoginWrapper;
-import net.minecraftforge.network.packets.OpenContainer;
-import net.minecraftforge.network.packets.RegistryList;
-import net.minecraftforge.network.packets.RegistryData;
-import net.minecraftforge.network.packets.ConfigData;
-import net.minecraftforge.network.packets.MismatchData;
-import net.minecraftforge.network.packets.ModVersions;
-import net.minecraftforge.network.packets.SpawnEntity;
+import java.util.function.BiConsumer;
 
 @ApiStatus.Internal
-public class NetworkInitialization {
+public final class NetworkInitialization {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("FORGE_NETWORK");
     public static final ResourceLocation LOGIN_NAME = new ResourceLocation("forge", "login");
-    public static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
-    public static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "play");
+    private static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
+    private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
     public static final AttributeKey<ForgePacketHandler> CONTEXT = AttributeKey.newInstance(HANDSHAKE_NAME.toString());
 
-    public static SimpleChannel LOGIN = ChannelBuilder
+    public static final SimpleChannel LOGIN = ChannelBuilder
         .named(LOGIN_NAME)
         .optional()
         .networkProtocolVersion(0)
+        .attribute(CONTEXT, ForgePacketHandler::new) // Shared across all of our channels
         .simpleChannel()
+            .login()
+                .serverbound()
+                    .add(LoginWrapper.class, LoginWrapper.STREAM_CODEC, ctx(ForgePacketHandler::handleLoginWrapper))
+        .build();
 
-        .messageBuilder(LoginWrapper.class)
-            .decoder(LoginWrapper::decode)
-            .encoder(LoginWrapper::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleLoginWrapper)
-            .add();
-
-    public static SimpleChannel PLAY = ChannelBuilder
+    public static final SimpleChannel CONFIG = ChannelBuilder
         .named(HANDSHAKE_NAME)
         .optional()
         .networkProtocolVersion(0)
-        .attribute(CONTEXT, ForgePacketHandler::new)
         .simpleChannel()
+            .configuration()
+                .serverbound()
+                    .add(Acknowledge.class, Acknowledge.STREAM_CODEC, ctx(ForgePacketHandler::handleClientAck))
+                .bidirectional()
+                    .add(ModVersions.class, ModVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleModVersions))
+                    .add(ChannelVersions.class, ChannelVersions.STREAM_CODEC, ctx(ForgePacketHandler::handleChannelVersions))
+                .clientbound()
+                    .add(RegistryList.class, RegistryList.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryList))
+                    .add(RegistryData.class, RegistryData.STREAM_CODEC, ctx(ForgePacketHandler::handleRegistryData))
+                    .add(ConfigData.class, ConfigData.STREAM_CODEC, ctx(ForgePacketHandler::handleConfigSync))
+                    .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
+            .play() // TODO: Move to it's own channel, so that we can keep the core handshake channel clean/simple and thus not need to bump the version ever As it is the one responsible for validating versions
+                .clientbound()
+                    .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
+                    .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
+        .build();
 
-        .messageBuilder(Acknowledge.class, NetworkDirection.PLAY_TO_SERVER)
-            .decoder(Acknowledge::decode)
-            .encoder(Acknowledge::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleClientAck)
-            .add()
-
-        .messageBuilder(ModVersions.class)
-            .decoder(ModVersions::decode)
-            .encoder(ModVersions::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModVersions)
-            .add()
-
-        .messageBuilder(ChannelVersions.class)
-            .decoder(ChannelVersions::decode)
-            .encoder(ChannelVersions::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleChannelVersions)
-            .add()
-
-        .messageBuilder(RegistryList.class, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(RegistryList::decode)
-            .encoder(RegistryList::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryList)
-            .add()
-
-        .messageBuilder(RegistryData.class, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(RegistryData::decode)
-            .encoder(RegistryData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleRegistryData)
-            .add()
-
-        .messageBuilder(ConfigData.class, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(ConfigData::decode)
-            .encoder(ConfigData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleConfigSync)
-            .add()
-
-        .messageBuilder(MismatchData.class, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(MismatchData::decode)
-            .encoder(MismatchData::encode)
-            .consumerNetworkThread(CONTEXT, ForgePacketHandler::handleModMismatchData)
-            .add()
-
-        .messageBuilder(SpawnEntity.class, NetworkDirection.PLAY_TO_CLIENT)
-           .decoder(SpawnEntity::decode)
-           .encoder(SpawnEntity::encode)
-           .consumerMainThread(SpawnEntity::handle)
-           .add()
-
-       .messageBuilder(OpenContainer.class)
-           .decoder(OpenContainer::decode)
-           .encoder(OpenContainer::encode)
-           .consumerMainThread(OpenContainer::handle)
-           .add();
+    public static final SimpleChannel PLAY = CONFIG;;
 
     public static void init() {
-        for (var channel : new Channel[]{ LOGIN, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
+        for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
             LOGGER.debug(MARKER, "Registering Network {} v{}", channel.getName(), channel.getProtocolVersion());
     }
 
     public static int getVersion() {
-        return PLAY.getProtocolVersion();
+        return CONFIG.getProtocolVersion();
+    }
+
+    private interface Handler<MSG> {
+        void handle(ForgePacketHandler handler, MSG msg, CustomPayloadEvent.Context ctx);
+    }
+
+    private static <MSG> BiConsumer<MSG, CustomPayloadEvent.Context> ctx(Handler<MSG> handler) {
+        return (msg, ctx) -> {
+            var inst = ctx.getConnection().channel().attr(CONTEXT).get();
+            handler.handle(inst, msg, ctx);
+        };
     }
 }

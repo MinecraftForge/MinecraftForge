@@ -73,7 +73,7 @@ public class ForgePacketHandler {
     }
 
     void handleLoginWrapper(LoginWrapper msg, CustomPayloadEvent.Context ctx) {
-        ForgeHooks.onCustomPayload(new CustomPayloadEvent(msg.channel(), msg.data(), ctx, -1));
+        ForgeHooks.onCustomPayload(new CustomPayloadEvent(msg.name(), msg.data(), ctx, -1));
     }
 
     void handleClientAck(Acknowledge msg, CustomPayloadEvent.Context ctx) {
@@ -96,7 +96,7 @@ public class ForgePacketHandler {
         nctx.modList.putAll(list.mods());
 
         if (ctx.isClientSide()) {
-            NetworkInitialization.PLAY.send(ModVersions.create(), ctx.getConnection());
+            NetworkInitialization.CONFIG.send(ModVersions.create(), ctx.getConnection());
             /*
              *  Set the modded marker on the channel so we know we got packets
              *  TODO: NETWORKING: Move modded marker to it's own handler? Its here just because this is the first packet sent from the server to the client
@@ -121,14 +121,14 @@ public class ForgePacketHandler {
             nctx.mismatchData = new NetworkMismatchData(invalid.mismatched(), invalid.missing(), invalid.fromServer(), nctx.getModList());
 
             if (ctx.isServerSide())
-                NetworkInitialization.PLAY.reply(new MismatchData(nctx.mismatchData), ctx);
+                NetworkInitialization.CONFIG.reply(new MismatchData(nctx.mismatchData), ctx);
 
             ctx.getConnection().disconnect(Component.literal("Connection closed - mismatched mod channel list"));
             return;
         }
 
         if (ctx.isClientSide())
-            NetworkInitialization.PLAY.send(new ChannelVersions(), ctx.getConnection());
+            NetworkInitialization.CONFIG.send(new ChannelVersions(), ctx.getConnection());
         else
             nctx.finishTask(ChannelVersionsTask.TYPE);
 
@@ -162,7 +162,7 @@ public class ForgePacketHandler {
             return;
         }
 
-        NetworkInitialization.PLAY.reply(new Acknowledge(list.token()), ctx);
+        NetworkInitialization.CONFIG.reply(new Acknowledge(list.token()), ctx);
 
         this.registriesToReceive = new HashSet<>(list.normal());
         this.registrySnapshots.clear();
@@ -187,7 +187,7 @@ public class ForgePacketHandler {
         if (!continueHandshake)
             LOGGER.error(MARKER, "Connection closed, not continuing handshake");
         else
-            NetworkInitialization.PLAY.reply(new Acknowledge(msg.token()), ctx);
+            NetworkInitialization.CONFIG.reply(new Acknowledge(msg.token()), ctx);
     }
 
     private boolean handleRegistryLoading(CustomPayloadEvent.Context ctx) {

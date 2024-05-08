@@ -42,7 +42,7 @@ public class EventNetworkChannel extends Channel<FriendlyByteBuf> {
     }
 
     @Override
-    public FriendlyByteBuf toBuffer(FriendlyByteBuf message) {
-        return message;
+    public void encode(FriendlyByteBuf out, FriendlyByteBuf message) {
+        out.writeBytes(message.slice());
     }
 }
