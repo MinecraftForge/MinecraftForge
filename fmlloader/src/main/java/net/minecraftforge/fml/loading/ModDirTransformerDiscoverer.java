@@ -10,6 +10,8 @@ import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
+
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@ApiStatus.Internal
 public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Set<String> SERVICES = Set.of(
@@ -75,5 +78,16 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
             .map(ModuleDescriptor.Provides::service)
             .filter(SERVICES::contains)
             .forEach(s -> found.add(new NamedPath(s, path)));
+    }
+
+    public static boolean isServiceProvider(Path path) {
+        var jar = SecureJar.from(path);
+
+        for (var providers : jar.moduleDataProvider().descriptor().provides()) {
+            if (SERVICES.contains(providers.service()))
+                return true;
+        }
+
+        return false;
     }
 }
