@@ -13,9 +13,6 @@ repositories {
     maven gradleutils.forgeMaven
     maven gradleutils.minecraftLibsMaven
     //mavenLocal()
-    maven { // temporary measure until Fabric Mixin is mirrored on Forge's maven
-        url = 'https://maven.fabricmc.net/'
-    }
 }
 
 tasks.withType(Javadoc).configureEach {
