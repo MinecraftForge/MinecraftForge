@@ -8,6 +8,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.mojang.logging.LogUtils;
 
 import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -71,8 +72,11 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
         }
 
         var ret = new ArrayList<ModFileOrException>();
-        for (var path : claimed)
-            ret.add(createMod(path));
+        for (var path : claimed) {
+            // Filter out anything found by the ServiceLoader
+            if (!ModDirTransformerDiscoverer.isServiceProvider(path))
+                ret.add(createMod(path));
+        }
         return ret;
     }
 
