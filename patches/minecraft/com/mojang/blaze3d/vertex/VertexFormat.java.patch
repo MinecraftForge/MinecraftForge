@@ -1,16 +1,21 @@
 --- a/com/mojang/blaze3d/vertex/VertexFormat.java
 +++ b/com/mojang/blaze3d/vertex/VertexFormat.java
-@@ -114,6 +_,13 @@
+@@ -12,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class VertexFormat {
++public class VertexFormat implements net.minecraftforge.client.extensions.IForgeVertexFormat {
+     private final ImmutableList<VertexFormatElement> elements;
+     private final ImmutableMap<String, VertexFormatElement> elementMapping;
+     private final IntList offsets = new IntArrayList();
+@@ -113,6 +_,9 @@
+ 
          return vertexbuffer;
      }
- 
++
 +    public ImmutableMap<String, VertexFormatElement> getElementMapping() { return elementMapping; }
 +    public int getOffset(int index) { return offsets.getInt(index); }
-+    public boolean hasPosition() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.POSITION); }
-+    public boolean hasNormal() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.NORMAL); }
-+    public boolean hasColor() { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.COLOR); }
-+    public boolean hasUV(int which) { return elements.stream().anyMatch(e -> e.getUsage() == VertexFormatElement.Usage.UV && e.getIndex() == which); }
-+
+ 
      @OnlyIn(Dist.CLIENT)
      public static enum IndexType {
-         SHORT(5123, 2),

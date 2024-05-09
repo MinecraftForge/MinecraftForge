@@ -8,6 +8,7 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -40,7 +41,7 @@ public class LivingEvent extends EntityEvent
     /**
      * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingTick(LivingEntity)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#onLivingTick(LivingEntity)}.<br>
      * <br>
      * This event is {@link Cancelable}.<br>
      * If this event is canceled, the Entity does not update.<br>

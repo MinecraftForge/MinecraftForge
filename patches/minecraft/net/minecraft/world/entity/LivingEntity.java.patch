@@ -220,7 +220,7 @@
      }
  
      public void die(DamageSource p_21014_) {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_21014_)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_21014_)) return;
          if (!this.isRemoved() && !this.dead) {
              Entity entity = p_21014_.getEntity();
              LivingEntity livingentity = this.getKillCredit();
@@ -252,7 +252,7 @@
          this.dropExperience();
 +
 +        var drops = captureDrops(null);
-+        if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0)) {
++        if (!net.minecraftforge.event.ForgeEventFactory.onLivingDrops(this, p_21192_, drops, i, lastHurtByPlayerTime > 0)) {
 +            drops.forEach(e -> level().addFreshEntity(e));
 +        }
      }
@@ -439,7 +439,7 @@
  
      @Override
      public void tick() {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingTick(this)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingTick(this)) return;
          super.tick();
          this.updatingUsingItem();
          this.updateSwimAmount();

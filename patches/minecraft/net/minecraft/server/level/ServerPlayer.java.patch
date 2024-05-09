@@ -14,7 +14,7 @@
  
      @Override
      public void die(DamageSource p_9035_) {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_9035_)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_9035_)) return;
          this.gameEvent(GameEvent.ENTITY_DIE);
          boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
          if (flag) {

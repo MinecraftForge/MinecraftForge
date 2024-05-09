@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.RenderType;
  * be the same as {@code entity}.
  */
 public record RenderTypeGroup(RenderType block, RenderType entity, RenderType entityFabulous) {
-    public static RenderTypeGroup EMPTY = new RenderTypeGroup(null, null, null);
+    public static final RenderTypeGroup EMPTY = new RenderTypeGroup(null, null, null);
 
     public RenderTypeGroup {
         if ((block == null) != (entity == null) || (block == null) != (entityFabulous == null))
