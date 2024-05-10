@@ -42,7 +42,7 @@
  
      public boolean hasMix(ItemStack p_43509_, ItemStack p_43510_) {
 -        return !this.isContainer(p_43509_) ? false : this.hasContainerMix(p_43509_, p_43510_) || this.hasPotionMix(p_43509_, p_43510_);
-+        return !mix(p_43509_, p_43510_).isEmpty();
++        return !mix(p_43510_, p_43509_).isEmpty();
      }
  
 +    /** @deprecated Forge: use hasMix(ItemStack, ItemStack)*/
@@ -61,11 +61,11 @@
      }
  
      public ItemStack mix(ItemStack p_43530_, ItemStack p_43531_) {
-+        if (p_43530_.isEmpty() || p_43530_.getCount() != 1) return ItemStack.EMPTY;
-+        if (p_43531_.isEmpty()) return ItemStack.EMPTY;
++        if (p_43531_.isEmpty() || p_43531_.getCount() != 1) return ItemStack.EMPTY;
++        if (p_43530_.isEmpty()) return ItemStack.EMPTY;
 +
 +        for (var recipe : recipes) {
-+            ItemStack output = recipe.getOutput(p_43530_, p_43531_);
++            ItemStack output = recipe.getOutput(p_43531_, p_43530_);
 +            if (!output.isEmpty()) {
 +                return output;
 +            }
