@@ -10,10 +10,11 @@
                              }
  
                              boolean flag1 = spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().contains("id", 8);
+-                            if (flag1) {
+-                                ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, null);
 +                            // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
 +                            var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
-                             if (flag1) {
--                                ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), MobSpawnType.SPAWNER, null);
++                            if (!event.isCanceled() && flag1) {
 +                                ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), MobSpawnType.SPAWNER, null);
                              }
  
