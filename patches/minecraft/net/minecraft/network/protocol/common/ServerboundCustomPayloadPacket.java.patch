@@ -1,20 +1,11 @@
 --- a/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
 +++ b/net/minecraft/network/protocol/common/ServerboundCustomPayloadPacket.java
-@@ -12,7 +_,7 @@
- import net.minecraft.network.protocol.common.custom.DiscardedPayload;
- import net.minecraft.resources.ResourceLocation;
- 
--public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ServerCommonPacketListener> {
-+public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ServerCommonPacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomPayloadPacket> {
+@@ -15,7 +_,7 @@
+ public record ServerboundCustomPayloadPacket(CustomPacketPayload payload) implements Packet<ServerCommonPacketListener> {
      private static final int MAX_PAYLOAD_SIZE = 32767;
      public static final StreamCodec<FriendlyByteBuf, ServerboundCustomPayloadPacket> STREAM_CODEC = CustomPacketPayload.<FriendlyByteBuf>codec(
-             p_335203_ -> DiscardedPayload.codec(p_335203_, 32767),
-@@ -29,4 +_,8 @@
-     public void handle(ServerCommonPacketListener p_297991_) {
-         p_297991_.handleCustomPayload(this);
-     }
-+
-+    @Override public @org.jetbrains.annotations.Nullable FriendlyByteBuf getInternalData() { return payload instanceof DiscardedPayload dc ? dc.data() : null; }
-+    @Override public ResourceLocation getName() { return payload.type().id(); }
-+    @Override public int getIndex() { return 0; }
- }
+-            p_335203_ -> DiscardedPayload.codec(p_335203_, 32767),
++            p_335203_ -> net.minecraftforge.common.ForgeHooks.getCustomPayloadCodec(p_335203_, 32767),
+             Util.make(Lists.newArrayList(new CustomPacketPayload.TypeAndCodec<>(BrandPayload.TYPE, BrandPayload.STREAM_CODEC)), p_334419_ -> {
+             })
+         )

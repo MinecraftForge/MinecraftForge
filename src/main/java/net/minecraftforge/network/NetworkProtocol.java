@@ -9,17 +9,14 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.network.protocol.common.custom.DiscardedPayload;
-
 import java.util.function.Consumer;
 
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
-import net.minecraft.network.protocol.login.custom.DiscardedQueryAnswerPayload;
-import net.minecraft.network.protocol.login.custom.DiscardedQueryPayload;
 
 public class NetworkProtocol<B extends FriendlyByteBuf> {
     public static final NetworkProtocol<RegistryFriendlyByteBuf> PLAY = new NetworkProtocol<>(ConnectionProtocol.PLAY);
@@ -42,22 +39,23 @@ public class NetworkProtocol<B extends FriendlyByteBuf> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Packet<?>, MSG> ICustomPacket<T> buildPacket(PacketFlow direction, Channel<MSG> channel, MSG packet) {
+    public <T extends PacketListener, MSG> Packet<T> buildPacket(PacketFlow direction, Channel<MSG> channel, MSG packet) {
         var name = channel.getName();
         var encoder = (Consumer<FriendlyByteBuf>)(buf -> channel.encode(buf, packet));
+        var payload = ForgePayload.create(name, encoder);
 
         switch (this.protocol) {
             case PLAY, CONFIGURATION:
                 if (direction == PacketFlow.CLIENTBOUND)
-                    return (ICustomPacket<T>)new ClientboundCustomPayloadPacket(new DiscardedPayload(name, null, encoder));
+                    return (Packet<T>)new ClientboundCustomPayloadPacket(payload);
                 else
-                    return (ICustomPacket<T>)new ServerboundCustomPayloadPacket(new DiscardedPayload(name, null, encoder));
+                    return (Packet<T>)new ServerboundCustomPayloadPacket(payload);
 
             case LOGIN:
                 if (direction == PacketFlow.CLIENTBOUND)
-                    return (ICustomPacket<T>)new ClientboundCustomQueryPacket(0, new DiscardedQueryPayload(name, null, encoder));
+                    return (Packet<T>)new ClientboundCustomQueryPacket(0, payload);
                 else
-                    return (ICustomPacket<T>)new ServerboundCustomQueryAnswerPacket(0, new DiscardedQueryAnswerPayload(null, encoder));
+                    return (Packet<T>)new ServerboundCustomQueryAnswerPacket(0, payload);
 
             default:
                 throw new IllegalArgumentException("Invalid protocol, shouldn't be possible as this is a private class..");

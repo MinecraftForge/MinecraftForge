@@ -55,7 +55,7 @@ public abstract class Channel<MSG> {
         if (protocol == ConnectionProtocol.LOGIN && this != NetworkInitialization.LOGIN && connection.getSending() == PacketFlow.SERVERBOUND)
             return NetworkInitialization.LOGIN.toVanillaPacket(connection, new LoginWrapper(this, message));
 
-        return handler.buildPacket(connection.getSending(), this, message).getThis();
+        return handler.buildPacket(connection.getSending(), this, message);
     }
 
     public void send(MSG msg, Connection connection) {
@@ -74,7 +74,7 @@ public abstract class Channel<MSG> {
      * @param <MSG> The type of the message
      */
     public void send(MSG msg, PacketDistributor.PacketTarget target) {
-        target.send(target.direction().buildPacket(this, msg).getThis());
+        target.send(target.direction().buildPacket(this, msg));
     }
 
     public void reply(MSG msg, CustomPayloadEvent.Context context) {
