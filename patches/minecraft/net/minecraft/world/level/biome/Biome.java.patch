@@ -1,11 +1,7 @@
 --- a/net/minecraft/world/level/biome/Biome.java
 +++ b/net/minecraft/world/level/biome/Biome.java
-@@ -32,11 +_,11 @@
- import net.minecraft.world.level.material.FluidState;
- import net.minecraft.world.level.material.Fluids;
- 
--public final class Biome {
-+public final class Biome implements net.minecraftforge.common.extensions.IForgeBiome {
+@@ -35,8 +_,8 @@
+ public final class Biome {
      public static final Codec<Biome> DIRECT_CODEC = RecordCodecBuilder.create(
          p_220544_ -> p_220544_.group(
 -                    Biome.ClimateSettings.CODEC.forGetter(p_151717_ -> p_151717_.climateSettings),
@@ -15,6 +11,17 @@
                      BiomeGenerationSettings.CODEC.forGetter(p_220548_ -> p_220548_.generationSettings),
                      MobSpawnSettings.CODEC.forGetter(p_220546_ -> p_220546_.mobSettings)
                  )
+@@ -58,8 +_,10 @@
+     )
+     public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
+     private static final int TEMPERATURE_CACHE_SIZE = 1024;
++    /** @deprecated Redirected to {@link #getModifiedClimateSettings()} by field_to_method.js */
+     private final Biome.ClimateSettings climateSettings;
+     private final BiomeGenerationSettings generationSettings;
++    /** @deprecated Redirected to {@link #getModifiedSpecialEffects()} by field_to_method.js */
+     private final MobSpawnSettings mobSettings;
+     private final BiomeSpecialEffects specialEffects;
+     private final ThreadLocal<Long2FloatLinkedOpenHashMap> temperatureCache = ThreadLocal.withInitial(() -> Util.make(() -> {
 @@ -71,12 +_,14 @@
              long2floatlinkedopenhashmap.defaultReturnValue(Float.NaN);
              return long2floatlinkedopenhashmap;
@@ -48,15 +55,35 @@
      }
  
      public int getFogColor() {
-@@ -251,6 +_,11 @@
+@@ -251,6 +_,31 @@
  
      public Optional<Music> getBackgroundMusic() {
          return this.specialEffects.getBackgroundMusic();
 +    }
 +
-+    @Override
++    /**
++     * {@return Cache of original biome data and biome data modified by biome modifiers}
++     * Modified biome data is set by server after datapacks and serverconfigs load.
++     * Climate and effects field reads are coremodded to redirect to this.
++     **/
 +    public net.minecraftforge.common.world.ModifiableBiomeInfo modifiableBiomeInfo() {
 +        return this.modifiableBiomeInfo;
++    }
++
++    /**
++     * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
++     * Note: This method is called by our field_to_method coremod. Which redirects {@link #climateSettings} to this method at load time.
++     */
++    public ClimateSettings getModifiedClimateSettings() {
++        return this.modifiableBiomeInfo().get().climateSettings();
++    }
++
++    /**
++     * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
++     * Note: This methods is called by our field_to_method coremod. Which redirects {@link #specialEffects} to this method at load time.
++     */
++    public BiomeSpecialEffects getModifiedSpecialEffects() {
++        return this.modifiableBiomeInfo().get().effects();
      }
  
      public static class BiomeBuilder {
