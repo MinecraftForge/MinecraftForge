@@ -22,8 +22,7 @@ import org.slf4j.Logger;
 /**
  * Register new registries when you receive this event through {@link RegistryBuilder} and {@link #create(RegistryBuilder)}.
  */
-public class NewRegistryEvent extends Event implements IModBusEvent
-{
+public class NewRegistryEvent extends Event implements IModBusEvent {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final List<RegistryData<?>> registries = new ArrayList<>();
 
@@ -35,8 +34,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
      * @param builder The builder to turn into a {@link IForgeRegistry}
      * @return A supplier of the {@link IForgeRegistry} created by the builder. Resolving too early will return null.
      */
-    public <V> Supplier<IForgeRegistry<V>> create(RegistryBuilder<V> builder)
-    {
+    public <V> Supplier<IForgeRegistry<V>> create(RegistryBuilder<V> builder) {
         return create(builder, null);
     }
 
@@ -47,8 +45,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
      * @param onFill  Called when the returned supplier is filled with the registry
      * @return a supplier of the {@link IForgeRegistry} created by the builder. Resolving too early will return null.
      */
-    public <V> Supplier<IForgeRegistry<V>> create(RegistryBuilder<V> builder, @Nullable Consumer<IForgeRegistry<V>> onFill)
-    {
+    public <V> Supplier<IForgeRegistry<V>> create(RegistryBuilder<V> builder, @Nullable Consumer<IForgeRegistry<V>> onFill) {
         RegistryHolder<V> registryHolder = new RegistryHolder<>();
 
         registries.add(new RegistryData<>(builder, registryHolder, onFill));
@@ -57,20 +54,17 @@ public class NewRegistryEvent extends Event implements IModBusEvent
     }
 
     @SuppressWarnings("deprecation")
-    void fill()
-    {
+    void fill() {
         RuntimeException aggregate = new RuntimeException();
         Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries = new IdentityHashMap<>();
 
         if (BuiltInRegistries.REGISTRY instanceof MappedRegistry<?> rootRegistry)
             rootRegistry.unfreeze();
 
-        for (RegistryData<?> data : this.registries)
-        {
+        for (RegistryData<?> data : this.registries) {
             try {
                 buildRegistry(builtRegistries, data);
-            } catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 aggregate.addSuppressed(t);
                 return;
             }
@@ -83,8 +77,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             LOGGER.error(LogUtils.FATAL_MARKER, "Failed to create some forge registries, see suppressed exceptions for details", aggregate);
     }
 
-    private <T> void buildRegistry(Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries, RegistryData<T> data)
-    {
+    private <T> void buildRegistry(Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries, RegistryData<T> data) {
         RegistryBuilder<T> builder = data.builder;
         IForgeRegistry<T> registry = builder.create();
 
@@ -104,20 +97,17 @@ public class NewRegistryEvent extends Event implements IModBusEvent
             Consumer<IForgeRegistry<V>> onFill
     ) {}
 
-    private static class RegistryHolder<V> implements Supplier<IForgeRegistry<V>>
-    {
+    private static class RegistryHolder<V> implements Supplier<IForgeRegistry<V>> {
         IForgeRegistry<V> registry = null;
 
         @Override
-        public IForgeRegistry<V> get()
-        {
+        public IForgeRegistry<V> get() {
             return this.registry;
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "RegistryEvent.NewRegistry";
     }
 }

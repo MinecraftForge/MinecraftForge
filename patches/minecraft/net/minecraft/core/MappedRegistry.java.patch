@@ -35,10 +35,14 @@
                  }
  
                  return this;
-@@ -435,5 +_,20 @@
+@@ -435,5 +_,24 @@
      @Override
      public HolderLookup.RegistryLookup<T> asLookup() {
          return this.lookup;
++    }
++
++    public boolean isIntrusive() {
++        return this.unregisteredIntrusiveHolders != null;
 +    }
 +
 +    private static final Set<ResourceLocation> KNOWN = new java.util.LinkedHashSet<>();
