@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -42,11 +43,21 @@ public class ModsFolderLocator extends AbstractModProvider implements IModLocato
     public List<IModLocator.ModFileOrException> scanMods() {
         LOGGER.debug(LogMarkers.SCAN, "Scanning mods dir {} for mods", this.modFolder);
         var excluded = ModDirTransformerDiscoverer.allExcluded();
-        try (var stream = Files.list(this.modFolder)) {
-            return stream.filter(path -> !excluded.contains(path) && path.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(SUFFIX))
-                .sorted(Comparator.comparing(path -> path.getFileName().toString().toLowerCase(Locale.ROOT)))
-                .map(this::createMod)
-                .toList();
+        try {
+            var ret = new ArrayList<IModLocator.ModFileOrException>();
+            var files = Files.list(this.modFolder).toList();
+            for (var file : files) {
+                var name = file.getFileName().toString().toLowerCase(Locale.ROOT);
+                if (excluded.contains(file) || !name.endsWith(SUFFIX))
+                    continue;
+                var mod = this.createMod(file, true);
+                if (mod == null) {
+                    LOGGER.debug(LogMarkers.SCAN, "Found unknown jar file {} ignoring", file);
+                } else {
+                    ret.add(mod);
+                }
+            }
+            return ret;
         } catch (IOException e) {
             return sneak(e);
         }

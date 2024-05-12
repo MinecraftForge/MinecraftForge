@@ -18,6 +18,7 @@ import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -36,6 +37,11 @@ public abstract class AbstractModProvider implements IModProvider {
     protected static final String MODS_TOML = "META-INF/mods.toml";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
+        return createMod(path, false);
+    }
+
+    @Nullable
+    protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
             jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
@@ -57,6 +63,8 @@ public abstract class AbstractModProvider implements IModProvider {
         } else if (type != null) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", JarFile.MANIFEST_NAME, type, path);
             mod = new ModFile(sj, this, this::manifestParser, type);
+        } else if (ignoreUnknown) {
+            return null;
         } else
             return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + path));
 
