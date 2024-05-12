@@ -347,9 +347,9 @@ public final class ForgeEventFactory {
         boolean cancel = post(event);
 
         if (!cancel)
-            mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData());
+            return mob.finalizeSpawn(level, event.getDifficulty(), event.getSpawnType(), event.getSpawnData());
 
-        return cancel ? null : event.getSpawnData();
+        return null;
     }
 
     /**
@@ -840,6 +840,7 @@ public final class ForgeEventFactory {
         LevelEvent.PotentialSpawns event = new LevelEvent.PotentialSpawns(level, category, pos, oldList);
         if (post(event))
             return WeightedRandomList.create();
+        //System.out.println("List: " + oldList.unwrap() + " " + event.getSpawnerDataList());
         return WeightedRandomList.create(event.getSpawnerDataList());
     }
 
