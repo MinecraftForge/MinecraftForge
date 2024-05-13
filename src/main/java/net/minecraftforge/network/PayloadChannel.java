@@ -50,7 +50,7 @@ public class PayloadChannel extends Channel<CustomPacketPayload> {
         return new Builder(instance);
     }
 
-    public static class Builder implements PayloadConnection<CustomPacketPayload> {
+    private static class Builder implements PayloadConnection<CustomPacketPayload> {
         private final NetworkInstance instance;
         private boolean built = false;
         private int lastIndex = 0;

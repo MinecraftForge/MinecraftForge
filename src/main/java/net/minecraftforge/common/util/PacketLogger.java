@@ -86,13 +86,8 @@ public class PacketLogger {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static <T extends PacketListener> String hex(ProtocolInfo protocol, Packet packet) {
-        try {
         var buf = Unpooled.buffer();
         protocol.codec().encode(buf, packet);
         return HexDumper.dump(buf);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            return null;
-        }
     }
 }
