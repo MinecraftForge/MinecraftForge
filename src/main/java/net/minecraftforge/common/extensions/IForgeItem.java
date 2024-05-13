@@ -28,6 +28,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
@@ -326,11 +327,12 @@ public interface IForgeItem {
      * @param stack  ItemStack for the equipped armor
      * @param entity The entity wearing the armor
      * @param slot   The slot the armor is in
-     * @param type   The subtype, can be null or "overlay"
+     * @param layer   The layer of the armor being rendered. Typically want to use {@alin ArmorMaterial.Layer#getSuffix()}.
+     * @param inner   Weither or not to use the inner texture layer.
      * @return Path of texture to bind, or null to use default
      */
     @Nullable
-    default String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
+    default ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean inner) {
         return null;
     }
 

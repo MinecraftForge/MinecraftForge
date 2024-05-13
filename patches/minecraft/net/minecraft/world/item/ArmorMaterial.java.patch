@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/ArmorMaterial.java
++++ b/net/minecraft/world/item/ArmorMaterial.java
+@@ -56,5 +_,9 @@
+         public boolean dyeable() {
+             return this.dyeable;
+         }
++
++        public String getSuffix() {
++            return this.suffix;
++        }
+     }
+ }
