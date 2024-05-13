@@ -53,19 +53,24 @@ public class PacketLogger {
 
         String channel = null;
         String hex = null;
-
-        if (packet instanceof ClientboundCustomPayloadPacket custom) {
-            channel = custom.payload().type().id().toString();
-            hex = hex(protocol, packet);
-        } else if (packet instanceof ServerboundCustomPayloadPacket custom) {
-            channel = custom.payload().type().id().toString();
-            hex = hex(protocol, packet);
-        } else if (packet instanceof ClientboundCustomQueryPacket custom) {
-            channel = custom.payload().id().toString() + " id " + custom.transactionId();
-            hex = hex(protocol, packet);
-        } else if (packet instanceof ServerboundCustomQueryAnswerPacket custom) {
-            channel = packet.getClass().getName() + " id " + custom.transactionId();
-            hex = hex(protocol, packet);
+        switch (packet) {
+            case ClientboundCustomPayloadPacket custom -> {
+                channel = custom.payload().type().id().toString();
+                hex = hex(protocol, packet);
+            }
+            case ServerboundCustomPayloadPacket custom -> {
+                channel = custom.payload().type().id().toString();
+                hex = hex(protocol, packet);
+            }
+            case ClientboundCustomQueryPacket custom -> {
+                channel = custom.payload().id().toString() + " id " + custom.transactionId();
+                hex = hex(protocol, packet);
+            }
+            case ServerboundCustomQueryAnswerPacket custom -> {
+                channel = packet.getClass().getName() + " id " + custom.transactionId();
+                hex = hex(protocol, packet);
+            }
+            default -> {}
         }
 
         if (channel != null && hex != null) {

@@ -1115,9 +1115,7 @@ public final class ForgeHooks {
             output.accept(entry.getKey(), entry.getValue());
     }
 
-    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
-    @Nullable
     public static <B extends FriendlyByteBuf> StreamCodec<B, ? extends CustomPacketPayload> getCustomPayloadCodec(ResourceLocation id, int max) {
         var channel = NetworkRegistry.findTarget(id);
         if (channel == null)

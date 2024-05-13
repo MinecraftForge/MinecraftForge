@@ -8,8 +8,10 @@ package net.minecraftforge.network;
 import io.netty.util.AttributeKey;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -36,26 +38,30 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-public class PayloadChannel extends Channel<CustomPacketPayload> {
+public final class PayloadChannel extends Channel<CustomPacketPayload> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("PAYLOAD_CHANNEL");
+    private final Int2ObjectMap<Message<?, ?>> byId;
+    private final Object2ObjectMap<CustomPacketPayload.Type<?>, Message<?, ?>> byType;
 
     @ApiStatus.Internal
-    PayloadChannel(NetworkInstance instance) {
-        super(instance);
-        instance.addListener(this::networkEventListener);
+    private PayloadChannel(Builder builder) {
+        super(builder.instance);
+        builder.instance.addListener(this::networkEventListener);
+        this.byId = Int2ObjectMaps.unmodifiable(builder.byId);
+        this.byType = Object2ObjectMaps.unmodifiable(builder.byType);
     }
 
     public static PayloadConnection<CustomPacketPayload> builder(NetworkInstance instance) {
         return new Builder(instance);
     }
 
-    private static class Builder implements PayloadConnection<CustomPacketPayload> {
+    private final static class Builder implements PayloadConnection<CustomPacketPayload> {
         private final NetworkInstance instance;
         private boolean built = false;
         private int lastIndex = 0;
-        protected Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
-        protected Object2ObjectMap<CustomPacketPayload.Type<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
+        private final Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
+        private final Object2ObjectMap<CustomPacketPayload.Type<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
 
         private Builder(NetworkInstance instance) {
             this.instance = instance;
@@ -71,7 +77,7 @@ public class PayloadChannel extends Channel<CustomPacketPayload> {
             return new HandlerProtocol<>(context, new BuilderContext<NEWBUF, NEWBASE>(this).protocol(protocol));
         }
 
-        protected int nextIndex() {
+        private int nextIndex() {
             while (byId.containsKey(lastIndex)) {
                 lastIndex++;
                 if (lastIndex < 0)
@@ -80,7 +86,7 @@ public class PayloadChannel extends Channel<CustomPacketPayload> {
             return lastIndex;
         }
 
-        protected void add(Message<?, ?> msg) {
+        private void add(Message<?, ?> msg) {
             this.byId.put(msg.index(), msg);
             this.byType.put(msg.type(), msg);
         }
@@ -92,7 +98,7 @@ public class PayloadChannel extends Channel<CustomPacketPayload> {
 
         public PayloadChannel build() {
             checkBuilt();
-            return new PayloadChannel(instance);
+            return new PayloadChannel(this);
         }
     }
 
@@ -198,13 +204,13 @@ public class PayloadChannel extends Channel<CustomPacketPayload> {
      *                           INTERNAL BELOW THIS
      * ===================================================================================
      */
-    protected Int2ObjectMap<Message<?, ?>> byId = new Int2ObjectArrayMap<>();
-    protected Object2ObjectMap<CustomPacketPayload.Type<?>, Message<?, ?>> byType = new Object2ObjectArrayMap<>();
 
-    protected record Message<MSG extends CustomPacketPayload, BUF extends FriendlyByteBuf>(
+    private record Message<MSG extends CustomPacketPayload, BUF extends FriendlyByteBuf>(
         int index,
         Type<MSG> type,
+        @Nullable
         NetworkProtocol<BUF> protocol,
+        @Nullable
         PacketFlow direction,
         StreamCodec<BUF, MSG> codec,
         BiConsumer<MSG, CustomPayloadEvent.Context> consumer
