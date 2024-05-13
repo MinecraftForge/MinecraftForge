@@ -14,8 +14,10 @@ import java.util.function.Supplier;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.Channel.VersionTest;
+import net.minecraftforge.network.payload.PayloadConnection;
 
 /**
  * Builder for constructing impl channels using a builder style API.
@@ -203,7 +205,7 @@ public class ChannelBuilder {
      * @return A new {@link SimpleChannel}
      */
     public SimpleChannel simpleChannel() {
-        return new SimpleChannel(createNetworkInstance());
+        return channel(SimpleChannel::new);
     }
 
     /**
@@ -211,6 +213,22 @@ public class ChannelBuilder {
      * @return A new {@link EventNetworkChannel}
      */
     public EventNetworkChannel eventNetworkChannel() {
-        return new EventNetworkChannel(createNetworkInstance());
+        return channel(EventNetworkChannel::new);
+    }
+
+    /**
+     * Build a new {@link PayloadChannel} with this builder's configuration.
+     * @return A new {@link PayloadConnection PayloadConnection&lt;CustomPacketPayload&gt}
+     */
+    public PayloadConnection<CustomPacketPayload> payloadChannel() {
+        return channel(PayloadChannel::builder);
+    }
+
+    /**
+     * Registers this channel with the {@link NetworkManager} and calls the supplied Function.
+     * This is meant to allow modders to build their own Channel implementations.
+     */
+    public <C> C channel(Function<NetworkInstance, C> factory) {
+        return factory.apply(createNetworkInstance());
     }
 }
