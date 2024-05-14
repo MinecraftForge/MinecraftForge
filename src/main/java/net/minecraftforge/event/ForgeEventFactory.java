@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -1087,5 +1089,9 @@ public final class ForgeEventFactory {
 
     public static void onPlayerTradeWithVillager(Player player, MerchantOffer offer, AbstractVillager villager) {
         post(new TradeWithVillagerEvent(player, offer, villager));
+    }
+
+    public static GatherComponentsEvent.ItemEvent gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
+        return fire(new GatherComponentsEvent.ItemEvent(item, dataComponents));
     }
 }

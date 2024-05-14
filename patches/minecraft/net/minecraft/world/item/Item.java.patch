@@ -23,7 +23,7 @@
      }
  
      @Deprecated
-@@ -100,17 +_,28 @@
+@@ -100,17 +_,25 @@
          return this.builtInRegistryHolder;
      }
  
@@ -33,10 +33,7 @@
      public DataComponentMap components() {
 -        return this.components;
 +        if (builtComponents == null) {
-+            builtComponents = DataComponentMap.builder()
-+                    .addAll(components)
-+                    .addAll(net.minecraftforge.event.ForgeEventFactory.gatherItemComponents(this).getDataComponentMap())
-+                    .build();
++            builtComponents = net.minecraftforge.common.ForgeHooks.gatherItemComponents(this, components);
 +        }
 +
 +        return builtComponents;
