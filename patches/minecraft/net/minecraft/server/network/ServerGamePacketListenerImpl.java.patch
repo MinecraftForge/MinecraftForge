@@ -41,7 +41,7 @@
  
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket p_329963_) {
-+        net.minecraftforge.common.ForgeHooks.onCustomPayload(p_329963_, this.connection);
++        net.minecraftforge.common.ForgeHooks.onCustomPayload(p_329963_.payload(), this.connection);
      }
  
      @Override

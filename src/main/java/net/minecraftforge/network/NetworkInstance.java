@@ -14,7 +14,9 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.network.Channel.VersionTest;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,6 +40,7 @@ public final class NetworkInstance {
     final Map<AttributeKey<?>, Function<Connection, ?>> attributes;
     final Consumer<Connection> channelHandler;
     final ServerStatusPing.ChannelData pingData;
+    private final Set<ResourceLocation> ids = new HashSet<>();
 
     NetworkInstance(ResourceLocation channelName, int networkProtocolVersion,
         VersionTest clientAcceptedVersions, VersionTest serverAcceptedVersions,
@@ -73,6 +76,16 @@ public final class NetworkInstance {
         return event.getSource().getPacketHandled();
     }
 
+    /**
+     * Registers another name that will have its CustomPayloadEvents redirected to this channel.
+     * Like the main name, this must be unique across all channels.
+     */
+    public NetworkInstance addChild(ResourceLocation name) {
+        NetworkRegistry.register(this, name);
+        this.ids.add(name);
+        return this;
+    }
+
     ResourceLocation getChannelName() {
         return channelName;
     }
@@ -81,7 +94,12 @@ public final class NetworkInstance {
         return networkProtocolVersion;
     }
 
-    void registrationChange(boolean registered) {
+    void registrationChange(ResourceLocation name, boolean registered) {
         // TODO: Expose to listeners?
+    }
+
+    boolean isRemotePresent(Connection con) {
+        var channels = NetworkContext.get(con).getRemoteChannels();
+        return channels.containsAll(ids);
     }
 }

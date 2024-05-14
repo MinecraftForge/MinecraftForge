@@ -52,6 +52,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -101,9 +102,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
+import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -161,7 +166,7 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.ICustomPacket;
+import net.minecraftforge.network.ForgePayload;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkInitialization;
@@ -1111,19 +1116,51 @@ public final class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static boolean onCustomPayload(ICustomPacket<?> packet, Connection connection) {
+    public static <B extends FriendlyByteBuf> StreamCodec<B, ? extends CustomPacketPayload> getCustomPayloadCodec(ResourceLocation id, int max) {
+        var channel = NetworkRegistry.findTarget(id);
+        if (channel == null)
+            return DiscardedPayload.codec(id, max);
+
+        return StreamCodec.<B, ForgePayload>ofMember(
+            (value, buf) -> {
+                value.encoder().accept(buf);
+            },
+            (buf) -> {
+                int len = buf.readableBytes();
+                if (len < 0 || len > max)
+                    throw new IllegalArgumentException("Payload may not be larger then " + max + " bytes");
+                return ForgePayload.create(id, buf.wrap(buf.readBytes(len)));
+            }
+        );
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(CustomPacketPayload payload, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(payload.type().id(), payload, context, 0));
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(ClientboundCustomQueryPacket packet, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(packet.payload().id(), packet.payload(), context, packet.transactionId()));
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(ServerboundCustomQueryAnswerPacket packet, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(NetworkInitialization.LOGIN_NAME, packet.payload(), context, packet.transactionId()));
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(CustomPayloadEvent event) {
+        var connection = event.getSource().getConnection();
         var expectedSide = connection.getReceiving() == PacketFlow.CLIENTBOUND ? LogicalSide.CLIENT : LogicalSide.SERVER;
         if (expectedSide != EffectiveSide.get()) {
             connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
             return false;
         }
 
-        var context = new CustomPayloadEvent.Context(connection);
-        return onCustomPayload(new CustomPayloadEvent(packet, context));
-    }
-
-    @ApiStatus.Internal
-    public static boolean onCustomPayload(CustomPayloadEvent event) {
         var channel = NetworkRegistry.findTarget(event.getChannel());
         if (channel != null && channel.dispatch(event))
             return true;
@@ -1146,13 +1183,12 @@ public final class ForgeHooks {
             LOGGER.info("Connected to a modded server.");
     }
 
-    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     public static Packet<ClientGamePacketListener> getEntitySpawnPacket(Entity entity) {
         if (!(entity instanceof IEntityAdditionalSpawnData add))
             throw new IllegalArgumentException(entity.getClass() + " is not an instance of " + IEntityAdditionalSpawnData.class);
 
-        return (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(NetworkInitialization.PLAY, new SpawnEntity(entity));
+        return NetworkDirection.PLAY_TO_CLIENT.buildPacket(NetworkInitialization.PLAY, new SpawnEntity(entity));
     }
 
     @ApiStatus.Internal

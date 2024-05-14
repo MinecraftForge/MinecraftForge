@@ -3,34 +3,37 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple;
+package net.minecraftforge.network.payload;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraftforge.network.NetworkProtocol;
-import net.minecraftforge.network.simple.handler.SimpleHandlerProtocol;
+import net.minecraftforge.network.payload.handler.PayloadHandlerProtocol;
 import net.minecraftforge.network.simple.handler.SimplePacket;
 
 import java.util.function.Consumer;
 
-public interface SimpleConnection<BASE> {
+import org.jetbrains.annotations.Nullable;
+
+public interface PayloadConnection<BASE extends CustomPacketPayload> {
     /**
      * Creates a builder grouping together all packets under the same protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    <NEWBUF extends FriendlyByteBuf, NEWBASE> SimpleProtocol<NEWBUF, NEWBASE> protocol(NetworkProtocol<NEWBUF> protocol);
+    <NEWBUF extends FriendlyByteBuf, NEWBASE extends CustomPacketPayload> PayloadProtocol<NEWBUF, NEWBASE> protocol(@Nullable NetworkProtocol<NEWBUF> protocol);
 
     /**
      * Creates a builder grouping together all packets under the same protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol);
+    <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, @Nullable NetworkProtocol<NEWBUF> protocol);
 
     /**
      * Consumer version of {@link #protocol(NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
      */
-    default <BUF extends FriendlyByteBuf> SimpleConnection<BASE> protocol(NetworkProtocol<BUF> protocol, Consumer<SimpleProtocol<BUF, BASE>> consumer) {
+    default <BUF extends FriendlyByteBuf> PayloadConnection<BASE> protocol(@Nullable NetworkProtocol<BUF> protocol, Consumer<PayloadProtocol<BUF, BASE>> consumer) {
         var tmp = this.<BUF, BASE>protocol(protocol);
         consumer.accept(tmp);
         return this;
@@ -39,7 +42,7 @@ public interface SimpleConnection<BASE> {
     /**
      * Consumer version of {@link #protocol(AttributeKey,NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
      */
-    default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> protocol(AttributeKey<CTX> context, NetworkProtocol<BUF> protocol, Consumer<SimpleHandlerProtocol<BUF, NEWBASE>> consumer) {
+    default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> protocol(AttributeKey<CTX> context, @Nullable NetworkProtocol<BUF> protocol, Consumer<PayloadHandlerProtocol<BUF, NEWBASE>> consumer) {
         var tmp = this.<BUF, CTX, NEWBASE>protocol(context, protocol);
         consumer.accept(tmp);
         return this;
@@ -49,7 +52,7 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default SimpleProtocol<FriendlyByteBuf, BASE> configuration() {
+    default PayloadProtocol<FriendlyByteBuf, BASE> configuration() {
         return protocol(NetworkProtocol.CONFIGURATION);
     }
 
@@ -57,21 +60,21 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Configuration protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> configuration(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE> configuration(AttributeKey<CTX> context) {
         return protocol(context, NetworkProtocol.CONFIGURATION);
     }
 
     /**
      * Consumer version of {@link #configuration()}. The Consumer will immediately be called with the created protocol.
      */
-    default SimpleConnection<BASE> configuration(Consumer<SimpleProtocol<FriendlyByteBuf, BASE>> consumer) {
+    default PayloadConnection<BASE> configuration(Consumer<PayloadProtocol<FriendlyByteBuf, BASE>> consumer) {
         return protocol(NetworkProtocol.CONFIGURATION, consumer);
     }
 
     /**
      * Consumer version of {@link #configuration(AttributeKey)}. The Consumer will immediately be called with the created protocol.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> configuration(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> configuration(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, NetworkProtocol.CONFIGURATION, consumer);
     }
 
@@ -79,7 +82,7 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Login protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default SimpleProtocol<FriendlyByteBuf, BASE> login() {
+    default PayloadProtocol<FriendlyByteBuf, BASE> login() {
         return protocol(NetworkProtocol.LOGIN);
     }
 
@@ -87,21 +90,21 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Login protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> login(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE> login(AttributeKey<CTX> context) {
         return protocol(context, NetworkProtocol.LOGIN);
     }
 
     /**
      * Consumer version of {@link #login()}. The Consumer will immediately be called with the created protocol.
      */
-    default SimpleConnection<BASE> login(Consumer<SimpleProtocol<FriendlyByteBuf, BASE>> consumer) {
+    default PayloadConnection<BASE> login(Consumer<PayloadProtocol<FriendlyByteBuf, BASE>> consumer) {
         return protocol(NetworkProtocol.LOGIN, consumer);
     }
 
     /**
      * Consumer version of {@link #login(AttributeKey)}. The Consumer will immediately be called with the created protocol.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> login(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> login(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, NetworkProtocol.LOGIN, consumer);
     }
 
@@ -109,7 +112,7 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Play protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default SimpleProtocol<RegistryFriendlyByteBuf, BASE> play() {
+    default PayloadProtocol<RegistryFriendlyByteBuf, BASE> play() {
         return protocol(NetworkProtocol.PLAY);
     }
 
@@ -117,22 +120,21 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are only valid when under the Login protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE> play(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE> play(AttributeKey<CTX> context) {
         return protocol(context, NetworkProtocol.PLAY);
     }
-
 
     /**
      * Consumer version of {@link #play()}. The Consumer will immediately be called with the created protocol.
      */
-    default SimpleConnection<BASE> play(Consumer<SimpleProtocol<RegistryFriendlyByteBuf, BASE>> consumer) {
+    default PayloadConnection<BASE> play(Consumer<PayloadProtocol<RegistryFriendlyByteBuf, BASE>> consumer) {
         return protocol(NetworkProtocol.PLAY, consumer);
     }
 
     /**
      * Consumer version of {@link #play(AttributeKey)}. The Consumer will immediately be called with the created protocol.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> play(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE>> consumer) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> play(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, NetworkProtocol.PLAY, consumer);
     }
 
@@ -140,7 +142,7 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are valid under any protocol.
      * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
      */
-    default SimpleProtocol<FriendlyByteBuf, BASE> any() {
+    default PayloadProtocol<FriendlyByteBuf, BASE> any() {
         return protocol(null);
     }
 
@@ -148,7 +150,7 @@ public interface SimpleConnection<BASE> {
      * Creates a builder grouping together packets that are valid under any protocol.
      * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> any(AttributeKey<CTX> context) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE> any(AttributeKey<CTX> context) {
         return protocol(context, null);
     }
 
@@ -156,7 +158,7 @@ public interface SimpleConnection<BASE> {
      * Consumer version of {@link #any()}. The Consumer will immediately be called with the created protocol.
      * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
      */
-    default SimpleConnection<BASE> any(Consumer<SimpleProtocol<FriendlyByteBuf, BASE>> consumer) {
+    default PayloadConnection<BASE> any(Consumer<PayloadProtocol<FriendlyByteBuf, BASE>> consumer) {
         return protocol(null, consumer);
     }
 
@@ -164,7 +166,7 @@ public interface SimpleConnection<BASE> {
      * Consumer version of {@link #any(AttributeKey)}. The Consumer will immediately be called with the created protocol.
      * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
      */
-    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> any(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> any(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, null, consumer);
     }
 }

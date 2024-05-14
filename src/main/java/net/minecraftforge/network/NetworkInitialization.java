@@ -23,7 +23,7 @@ public final class NetworkInitialization {
     private static final Marker MARKER = MarkerManager.getMarker("FORGE_NETWORK");
     public static final ResourceLocation LOGIN_NAME = new ResourceLocation("forge", "login");
     private static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
-    private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
+    //private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
     public static final AttributeKey<ForgePacketHandler> CONTEXT = AttributeKey.newInstance(HANDSHAKE_NAME.toString());
 
     public static final SimpleChannel LOGIN = ChannelBuilder
@@ -62,7 +62,7 @@ public final class NetworkInitialization {
     public static final SimpleChannel PLAY = CONFIG;;
 
     public static void init() {
-        for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.REGISTER, ChannelListManager.UNREGISTER})
+        for (var channel : new Channel[]{ LOGIN, CONFIG, PLAY, ChannelListManager.CHANNEL})
             LOGGER.debug(MARKER, "Registering Network {} v{}", channel.getName(), channel.getProtocolVersion());
     }
 

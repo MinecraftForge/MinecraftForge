@@ -1,15 +1,20 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
-@@ -107,9 +_,12 @@
+@@ -107,9 +_,17 @@
      private volatile Component delayedDisconnect;
      @Nullable
      BandwidthDebugMonitor bandwidthDebugMonitor;
 +    private java.util.function.Consumer<Connection> activationHandler;
-+    private final net.minecraftforge.common.util.PacketLogger packetLogger;
++    private final net.minecraftforge.common.util.PacketLogger packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
++    private ProtocolInfo<?> outboundProtocol = null;
++    private ProtocolInfo<?> inboundProtocol = null;
  
      public Connection(PacketFlow p_129482_) {
          this.receiving = p_129482_;
-+        this.packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
++        if (this.receiving == PacketFlow.SERVERBOUND)
++            this.inboundProtocol = INITIAL_PROTOCOL;
++        else
++            this.outboundProtocol = INITIAL_PROTOCOL;
      }
  
      @Override
@@ -29,14 +34,23 @@
                          genericsFtw(p_129488_, packetlistener);
                      } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
                      } catch (RejectedExecutionException rejectedexecutionexception) {
-@@ -249,6 +_,7 @@
-                     p_326044_ -> p_326044_.pipeline().addAfter("encoder", "unbundler", packetbundleunpacker)
-                 );
-             }
-+            unconfiguredpipelinehandler$outboundconfigurationtask = unconfiguredpipelinehandler$outboundconfigurationtask.andThen(f -> this.protocol = p_329145_.id());
- 
-             boolean flag = p_329145_.id() == ConnectionProtocol.LOGIN;
-             syncAfterConfigurationChange(this.channel.writeAndFlush(unconfiguredpipelinehandler$outboundconfigurationtask.andThen(p_326048_ -> this.sendLoginDisconnect = flag)));
+@@ -218,6 +_,7 @@
+         if (p_333271_.flow() != this.getReceiving()) {
+             throw new IllegalStateException("Invalid inbound protocol: " + p_333271_.id());
+         } else {
++            this.inboundProtocol = p_333271_;
+             this.packetListener = p_330962_;
+             this.disconnectListener = null;
+             UnconfiguredPipelineHandler.InboundConfigurationTask unconfiguredpipelinehandler$inboundconfigurationtask = UnconfiguredPipelineHandler.setupInboundProtocol(
+@@ -241,6 +_,8 @@
+         } else {
+             UnconfiguredPipelineHandler.OutboundConfigurationTask unconfiguredpipelinehandler$outboundconfigurationtask = UnconfiguredPipelineHandler.setupOutboundProtocol(
+                 p_329145_
++            ).andThen(
++                f -> this.outboundProtocol = p_329145_
+             );
+             BundlerInfo bundlerinfo = p_329145_.bundlerInfo();
+             if (bundlerinfo != null) {
 @@ -290,7 +_,8 @@
              this.disconnectListener = p_330656_;
              this.runOnceConnected(p_326042_ -> {
@@ -81,7 +95,7 @@
          new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
              @Override
              protected void initChannel(Channel p_332618_) {
-@@ -616,6 +_,15 @@
+@@ -616,6 +_,22 @@
  
      public float getAverageSentPackets() {
          return this.averageSentPackets;
@@ -91,9 +105,16 @@
 +        return this.channel;
 +    }
 +
-+    private ConnectionProtocol protocol = INITIAL_PROTOCOL.id();
 +    public ConnectionProtocol getProtocol() {
-+        return protocol;
++        return outboundProtocol != null ? outboundProtocol.id() : inboundProtocol.id();
++    }
++
++    public ProtocolInfo<?> getInboundProtocolInfo() {
++        return this.inboundProtocol;
++    }
++
++    public ProtocolInfo<?> getOutputboundProtocolInfo() {
++        return this.outboundProtocol;
      }
  
      public void setBandwidthLogger(LocalSampleLogger p_333554_) {

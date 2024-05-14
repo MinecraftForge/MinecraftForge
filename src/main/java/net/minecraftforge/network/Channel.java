@@ -7,9 +7,15 @@ package net.minecraftforge.network;
 
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import net.minecraft.network.Connection;
 import net.minecraft.network.ConnectionProtocol;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +23,8 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.network.packets.LoginWrapper;
 
 public abstract class Channel<MSG> {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker MARKER = MarkerManager.getMarker("CHANNEL");
     protected final NetworkInstance instance;
 
     protected Channel(NetworkInstance instance) {
@@ -27,6 +35,15 @@ public abstract class Channel<MSG> {
         return instance.getChannelName();
     }
 
+    /**
+     * Retrieves the channel name to use for the specified packet
+     * This typically is the main channel's name, but in some cases
+     * you want to specify a custom one. If your channel has {@link NetworkInstance#addChild(ResourceLocation) children}
+     */
+    ResourceLocation getName(MSG packet) {
+        return getName();
+    }
+
     public int getProtocolVersion() {
         return instance.getNetworkProtocolVersion();
     }
@@ -35,12 +52,11 @@ public abstract class Channel<MSG> {
      * Returns true if the channel is present in the given connection.
      */
     public boolean isRemotePresent(Connection connection) {
-        return NetworkContext.get(connection).getRemoteChannels().contains(getName());
+        return instance.isRemotePresent(connection);
     }
 
     public abstract void encode(FriendlyByteBuf out, MSG message);
 
-    // Package private so we can call from ourselves.
     protected Packet<?> toVanillaPacket(Connection connection, MSG message) {
         var protocol = connection.getProtocol();
         var handler = switch (protocol) {
@@ -55,7 +71,7 @@ public abstract class Channel<MSG> {
         if (protocol == ConnectionProtocol.LOGIN && this != NetworkInitialization.LOGIN && connection.getSending() == PacketFlow.SERVERBOUND)
             return NetworkInitialization.LOGIN.toVanillaPacket(connection, new LoginWrapper(this, message));
 
-        return handler.buildPacket(connection.getSending(), this, message).getThis();
+        return handler.buildPacket(connection.getSending(), this, message);
     }
 
     public void send(MSG msg, Connection connection) {
@@ -74,11 +90,28 @@ public abstract class Channel<MSG> {
      * @param <MSG> The type of the message
      */
     public void send(MSG msg, PacketDistributor.PacketTarget target) {
-        target.send(target.direction().buildPacket(this, msg).getThis());
+        target.send(target.direction().buildPacket(this, msg));
     }
 
     public void reply(MSG msg, CustomPayloadEvent.Context context) {
         send(msg, context.getConnection());
+    }
+
+    protected void validate(Object id, Connection con, NetworkProtocol<?> protocol, PacketFlow direction, boolean sending) {
+        var actualD = sending ? con.getSending() : con.getReceiving();
+        var actualP = con.getProtocol();
+        var expectedP = protocol == null ? actualP : protocol.toVanilla();
+        var expectedD = direction == null ? actualD : direction;
+
+        if (expectedP != actualP || expectedD != actualD) {
+            var error = "Illegal packet " + (sending ? "sent" : "received") + ", terminating connection. " + id + " expected " +
+                expectedD + " " + expectedP + " but was " +
+                actualD + " " + actualP;
+
+            LOGGER.error(MARKER, error);
+            con.disconnect(Component.literal(error));
+            throw new IllegalStateException(error);
+        }
     }
 
     @FunctionalInterface
