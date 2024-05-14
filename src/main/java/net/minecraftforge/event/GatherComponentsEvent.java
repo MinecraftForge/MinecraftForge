@@ -23,7 +23,9 @@ public abstract class GatherComponentsEvent extends Event {
         return components.build();
     }
 
-
+    /**
+     * Used to get additional Components for any {@link net.minecraft.world.item.Item}
+     */
     public static class Item extends GatherComponentsEvent {
         private final net.minecraft.world.item.Item item;
         private final DataComponentMap dataComponents;
