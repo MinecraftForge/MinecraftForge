@@ -52,7 +52,7 @@ public abstract class Channel<MSG> {
      * Returns true if the channel is present in the given connection.
      */
     public boolean isRemotePresent(Connection connection) {
-        return NetworkContext.get(connection).getRemoteChannels().contains(getName());
+        return instance.isRemotePresent(connection);
     }
 
     public abstract void encode(FriendlyByteBuf out, MSG message);

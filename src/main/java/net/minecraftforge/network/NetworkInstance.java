@@ -14,7 +14,9 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.network.Channel.VersionTest;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
@@ -38,6 +40,7 @@ public final class NetworkInstance {
     final Map<AttributeKey<?>, Function<Connection, ?>> attributes;
     final Consumer<Connection> channelHandler;
     final ServerStatusPing.ChannelData pingData;
+    private final Set<ResourceLocation> ids = new HashSet<>();
 
     NetworkInstance(ResourceLocation channelName, int networkProtocolVersion,
         VersionTest clientAcceptedVersions, VersionTest serverAcceptedVersions,
@@ -79,6 +82,7 @@ public final class NetworkInstance {
      */
     public NetworkInstance addChild(ResourceLocation name) {
         NetworkRegistry.register(this, name);
+        this.ids.add(name);
         return this;
     }
 
@@ -92,5 +96,10 @@ public final class NetworkInstance {
 
     void registrationChange(ResourceLocation name, boolean registered) {
         // TODO: Expose to listeners?
+    }
+
+    boolean isRemotePresent(Connection con) {
+        var channels = NetworkContext.get(con).getRemoteChannels();
+        return channels.containsAll(ids);
     }
 }
