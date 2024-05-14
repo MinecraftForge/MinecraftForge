@@ -16,12 +16,11 @@
      }
  
      public int getId() {
-@@ -104,5 +_,26 @@
+@@ -104,5 +_,14 @@
      @Override
      public String getSerializedName() {
          return this.name;
 +    }
-+
 +
 +    public net.minecraft.tags.TagKey<Item> getTag() {
 +        return tag;
@@ -29,17 +28,6 @@
 +
 +    @Nullable
 +    public static DyeColor getColor(ItemStack stack) {
-+        if (stack.getItem() instanceof DyeItem dye) {
-+            return dye.getDyeColor();
-+        }
-+
-+        for (int x = 0; x < BLACK.getId(); x++) {
-+            var color = byId(x);
-+            if (stack.is(color.getTag())) {
-+                return color;
-+            }
-+        }
-+
-+        return null;
++        return net.minecraftforge.common.ForgeHooks.getDyeColorFromItemStack(stack);
      }
  }

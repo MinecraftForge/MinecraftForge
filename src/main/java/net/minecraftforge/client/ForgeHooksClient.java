@@ -98,6 +98,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -260,9 +261,9 @@ public class ForgeHooksClient {
         MinecraftForge.EVENT_BUS.post(new ClientPauseChangeEvent.Post(pause));
     }
 
-    public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type) {
-        String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
-        return result != null ? result : _default;
+    public static ResourceLocation getArmorTexture(Entity entity, ItemStack armor, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean inner) {
+        var result = armor.getItem().getArmorTexture(armor, entity, slot, layer, inner);
+        return result != null ? result : layer.texture(inner);
     }
 
     public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, Matrix4f ctxPos, MultiBufferSource bufferSource) {

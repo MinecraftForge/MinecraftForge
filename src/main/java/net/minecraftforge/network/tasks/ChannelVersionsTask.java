@@ -24,7 +24,7 @@ public class ChannelVersionsTask implements ConfigurationTask {
 
     @Override
     public void start(ConfigurationTaskContext ctx) {
-        NetworkInitialization.PLAY.send(new ChannelVersions(), ctx.getConnection());
+        NetworkInitialization.CONFIG.send(new ChannelVersions(), ctx.getConnection());
     }
 
     @Override

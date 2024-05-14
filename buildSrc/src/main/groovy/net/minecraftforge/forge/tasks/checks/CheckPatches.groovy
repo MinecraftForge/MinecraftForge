@@ -140,7 +140,7 @@ abstract class CheckPatches extends CheckTask {
                     final nextLineChange = i + 1 < lines.size() && lines[i + 1].startsWithAny('+','-')
 
                     if (!prevLineChange && !nextLineChange) {
-                        reporter.report("Patch contains white space change in valid hunk at line ${i + 1}, file: $patchPath", false)
+                        reporter.report("Patch contains white space change in valid hunk at line ${i + 1}, file: $patchPath \n$prevLine\n$line\n${lines[i+1]}", false)
                     }
                 }
 

@@ -13,15 +13,14 @@
                  int i = p_222538_.getValue(AGE);
                  if (i < 7) {
                      p_222538_ = p_222538_.setValue(AGE, Integer.valueOf(i + 1));
-@@ -90,7 +_,7 @@
-                     Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
-                     BlockPos blockpos = p_222540_.relative(direction);
-                     BlockState blockstate = p_222539_.getBlockState(blockpos.below());
--                    if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
-+                    if (p_222539_.getBlockState(blockpos).isAir() && blockstate.canSustainPlant(p_222539_, blockpos.below(), Direction.UP, this)) {
-                         Registry<Block> registry = p_222539_.registryAccess().registryOrThrow(Registries.BLOCK);
-                         Optional<Block> optional = registry.getOptional(this.fruit);
-                         Optional<Block> optional1 = registry.getOptional(this.attachedStem);
+@@ -100,6 +_,7 @@
+                         }
+                     }
+                 }
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_222539_, p_222540_, p_222538_);
+             }
+         }
+     }
 @@ -132,5 +_,10 @@
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57040_) {

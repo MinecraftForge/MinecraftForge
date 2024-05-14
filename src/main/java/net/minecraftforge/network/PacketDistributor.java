@@ -29,55 +29,63 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <T>
  */
-public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<Packet<?>>> functor, NetworkDirection direction) {
+public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<Packet<?>>> functor, NetworkDirection<?> direction) {
     /**
      * Send to the player specified in the Supplier
      * <br/>
      * {@link #with(T)} Player
      */
     public static final PacketDistributor<ServerPlayer> PLAYER = new PacketDistributor<>(PacketDistributor::playerConsumer);
+
     /**
      * Send to everyone in the dimension specified in the Supplier
      * <br/>
      * {@link #with(T)} DimensionType
      */
     public static final PacketDistributor<ResourceKey<Level>> DIMENSION = new PacketDistributor<>(PacketDistributor::playerListDimConsumer);
+
     /**
      * Send to everyone near the {@link TargetPoint} specified in the Supplier
      * <br/>
      * {@link #with(T)} TargetPoint
      */
     public static final PacketDistributor<TargetPoint> NEAR = new PacketDistributor<>(PacketDistributor::playerListPointConsumer);
+
     /**
      * Send to everyone
      * <br/>
      * {@link #noArg()}
      */
     public static final PacketDistributor<Void> ALL = new PacketDistributor<>(PacketDistributor::playerListAll);
+
     /**
      * Send to the server (CLIENT to SERVER)
      * <br/>
      * {@link #noArg()}
      */
     public static final PacketDistributor<Void> SERVER = new PacketDistributor<>(PacketDistributor::clientToServer, NetworkDirection.PLAY_TO_SERVER);
+
     /**
      * Send to all tracking the Entity in the Supplier
      * <br/>
      * {@link #with(T)} Entity
      */
     public static final PacketDistributor<Entity> TRACKING_ENTITY = new PacketDistributor<>(PacketDistributor::trackingEntity);
+
     /**
      * Send to all tracking the Entity and Player in the Supplier
      * <br/>
      * {@link #with(T)} Entity
      */
     public static final PacketDistributor<Entity> TRACKING_ENTITY_AND_SELF = new PacketDistributor<>(PacketDistributor::trackingEntityAndSelf);
+
     /**
      * Send to all tracking the Chunk in the Supplier
      * <br/>
      * {@link #with(T)} Chunk
      */
     public static final PacketDistributor<LevelChunk> TRACKING_CHUNK = new PacketDistributor<>(PacketDistributor::trackingChunk);
+
     /**
      * Send to the supplied list of NetworkManager instances in the Supplier
      * <br/>
@@ -99,7 +107,7 @@ public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<
      *
      * @see Channel#send(Object, PacketTarget)
      */
-    public record PacketTarget(Consumer<Packet<?>> packetConsumer, NetworkDirection direction) {
+    public record PacketTarget(Consumer<Packet<?>> packetConsumer, NetworkDirection<?> direction) {
         public void send(Packet<?> packet) {
             packetConsumer.accept(packet);
         }

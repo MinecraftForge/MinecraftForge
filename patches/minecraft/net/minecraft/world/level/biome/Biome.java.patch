@@ -11,6 +11,17 @@
                      BiomeGenerationSettings.CODEC.forGetter(p_220548_ -> p_220548_.generationSettings),
                      MobSpawnSettings.CODEC.forGetter(p_220546_ -> p_220546_.mobSettings)
                  )
+@@ -58,8 +_,10 @@
+     )
+     public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
+     private static final int TEMPERATURE_CACHE_SIZE = 1024;
++    /** @deprecated Redirected to {@link #getModifiedClimateSettings()} by field_to_method.js */
+     private final Biome.ClimateSettings climateSettings;
+     private final BiomeGenerationSettings generationSettings;
++    /** @deprecated Redirected to {@link #getModifiedSpecialEffects()} by field_to_method.js */
+     private final MobSpawnSettings mobSettings;
+     private final BiomeSpecialEffects specialEffects;
+     private final ThreadLocal<Long2FloatLinkedOpenHashMap> temperatureCache = ThreadLocal.withInitial(() -> Util.make(() -> {
 @@ -71,12 +_,14 @@
              long2floatlinkedopenhashmap.defaultReturnValue(Float.NaN);
              return long2floatlinkedopenhashmap;
@@ -44,7 +55,7 @@
      }
  
      public int getFogColor() {
-@@ -251,6 +_,29 @@
+@@ -251,6 +_,31 @@
  
      public Optional<Music> getBackgroundMusic() {
          return this.specialEffects.getBackgroundMusic();
@@ -61,6 +72,7 @@
 +
 +    /**
 +     * {@return The biome's climate settings, with modifications if called after modifiers are applied in server init.}
++     * Note: This method is called by our field_to_method coremod. Which redirects {@link #climateSettings} to this method at load time.
 +     */
 +    public ClimateSettings getModifiedClimateSettings() {
 +        return this.modifiableBiomeInfo().get().climateSettings();
@@ -68,6 +80,7 @@
 +
 +    /**
 +     * {@return The biome's client effects, with modifications if called after modifiers are applied in server init.}
++     * Note: This methods is called by our field_to_method coremod. Which redirects {@link #specialEffects} to this method at load time.
 +     */
 +    public BiomeSpecialEffects getModifiedSpecialEffects() {
 +        return this.modifiableBiomeInfo().get().effects();

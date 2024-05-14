@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/FriendlyByteBuf.java
++++ b/net/minecraft/network/FriendlyByteBuf.java
+@@ -1589,4 +_,8 @@
+     public boolean release(int p_130347_) {
+         return this.source.release(p_130347_);
+     }
++
++    public FriendlyByteBuf wrap(ByteBuf data) {
++        return new FriendlyByteBuf(data);
++    }
+ }

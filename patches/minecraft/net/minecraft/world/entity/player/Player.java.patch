@@ -69,7 +69,7 @@
  
      @Override
      public void die(DamageSource p_36152_) {
-+        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_36152_)) return;
++        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_36152_)) return;
          super.die(p_36152_);
          this.reapplyPosition();
          if (!this.isSpectator()) {

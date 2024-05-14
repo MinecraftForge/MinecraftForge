@@ -377,7 +377,8 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         return this.frozen;
     }
 
-    boolean isIntrusive() {
+    @Override
+    public boolean isIntrusive() {
         return this.intrusiveHolderCallback != null && this.stage == RegistryManager.ACTIVE;
     }
 

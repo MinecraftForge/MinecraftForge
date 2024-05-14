@@ -41,25 +41,28 @@ public class NetworkRegistry {
     static final Logger LOGGER = LogManager.getLogger();
     static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+    private static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+    private static Map<ResourceLocation, NetworkInstance> byName = Collections.synchronizedMap(new HashMap<>());
 
     public static boolean acceptsVanillaClientConnections() {
-        return (instances.isEmpty() || listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty()) && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
+        return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
     }
 
     public static boolean canConnectToVanillaServer() {
-        return instances.isEmpty() || listRejectedVanillaMods(n -> n.serverAcceptedVersions).isEmpty();
+        return listRejectedVanillaMods(n -> n.serverAcceptedVersions).isEmpty();
     }
 
     @Nullable
     public static NetworkInstance findTarget(ResourceLocation resourceLocation) {
-        return instances.get(resourceLocation);
+        return byName.get(resourceLocation);
     }
 
     static Map<ResourceLocation, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
-        return instances.entrySet().stream()
-            .filter(p -> !p.getKey().getNamespace().equals("forge"))
-            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().pingData));
+        var ret = new HashMap<ResourceLocation, ServerStatusPing.ChannelData>();
+        for (var channel : instances.values()) {
+            ret.put(channel.getChannelName(), channel.pingData);
+        }
+        return ret;
     }
 
     static List<String> listRejectedVanillaMods(Function<NetworkInstance, VersionTest> testFunction) {
@@ -86,7 +89,8 @@ public class NetworkRegistry {
 
         Set<ResourceLocation> missing = new HashSet<>();
         Map<ResourceLocation, NetworkMismatchData.Version> results = new HashMap<>();
-        instances.forEach((name, net) -> {
+        for (var net : instances.values()) {
+            var name = net.getChannelName();
             VersionTest test = fromClient ? net.clientAcceptedVersions : net.serverAcceptedVersions;
 
             var status = VersionTest.Status.MISSING;
@@ -105,7 +109,7 @@ public class NetworkRegistry {
                 else
                     results.put(name, new NetworkMismatchData.Version(Integer.toString(version), Integer.toString(net.getNetworkProtocolVersion())));
             }
-        });
+        }
 
         if (!results.isEmpty() || !missing.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
@@ -176,7 +180,45 @@ public class NetworkRegistry {
 
     public static Map<ResourceLocation, Integer> buildChannelVersions() {
         var ret = new Object2IntOpenHashMap<ResourceLocation>(instances.size());
-        instances.forEach((k, v) -> ret.put(k, v.getNetworkProtocolVersion()));
+        for (var net : instances.values()) {
+            ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
+        }
         return ret;
+    }
+
+    static List<ResourceLocation> buildRegisterList() {
+        var ret = new ArrayList<ResourceLocation>(byName.keySet().size());
+        for (var name : byName.keySet())
+            if (!"minecraft".equals(name.getNamespace()))
+                ret.add(name);
+        return ret;
+    }
+
+    static void register(NetworkInstance instance, ResourceLocation name) {
+        checkLock(instance);
+        if (NetworkRegistry.byName.containsKey(name))
+            error("Payload name " + name + " already registered.");
+
+        byName.put(name, instance);
+    }
+
+    static void register(NetworkInstance instance) {
+        checkLock(instance);
+
+        var name = instance.getChannelName();
+        if (NetworkRegistry.instances.containsKey(name))
+            error("Channel " + name + " already registered.");
+
+        instances.put(name, instance);
+    }
+
+    private static void checkLock(NetworkInstance instance) {
+        if (NetworkRegistry.lock)
+            error("Attempted to register channel " + instance.getChannelName() + " even though registry phase is over");
+    }
+
+    private static void error(String message) {
+        NetworkRegistry.LOGGER.error(NetworkRegistry.NETREGISTRY, message);
+        throw new IllegalArgumentException(message);
     }
 }

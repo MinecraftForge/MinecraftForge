@@ -14,7 +14,9 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.network.Channel.VersionTest;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
@@ -27,8 +29,10 @@ import io.netty.util.AttributeKey;
  * as the internal API and {@link Channel} as the public.
  */
 @ApiStatus.Internal
-public class NetworkInstance {
-    private final IEventBus networkEventBus; // TODO: Evaluate why we even use event bus for this...
+public final class NetworkInstance {
+    // We use an event bus here so that we don't have to have a handle(event) public function on Channel.
+    // Should this be changed so that modders can fire other channel's handlers?
+    private final IEventBus networkEventBus;
     private final ResourceLocation channelName;
     private final int networkProtocolVersion;
     final VersionTest clientAcceptedVersions;
@@ -36,6 +40,7 @@ public class NetworkInstance {
     final Map<AttributeKey<?>, Function<Connection, ?>> attributes;
     final Consumer<Connection> channelHandler;
     final ServerStatusPing.ChannelData pingData;
+    private final Set<ResourceLocation> ids = new HashSet<>();
 
     NetworkInstance(ResourceLocation channelName, int networkProtocolVersion,
         VersionTest clientAcceptedVersions, VersionTest serverAcceptedVersions,
@@ -71,6 +76,16 @@ public class NetworkInstance {
         return event.getSource().getPacketHandled();
     }
 
+    /**
+     * Registers another name that will have its CustomPayloadEvents redirected to this channel.
+     * Like the main name, this must be unique across all channels.
+     */
+    public NetworkInstance addChild(ResourceLocation name) {
+        NetworkRegistry.register(this, name);
+        this.ids.add(name);
+        return this;
+    }
+
     ResourceLocation getChannelName() {
         return channelName;
     }
@@ -79,7 +94,12 @@ public class NetworkInstance {
         return networkProtocolVersion;
     }
 
-    void registrationChange(boolean registered) {
+    void registrationChange(ResourceLocation name, boolean registered) {
         // TODO: Expose to listeners?
+    }
+
+    boolean isRemotePresent(Connection con) {
+        var channels = NetworkContext.get(con).getRemoteChannels();
+        return channels.containsAll(ids);
     }
 }

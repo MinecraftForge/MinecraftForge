@@ -49,10 +49,10 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -101,9 +101,14 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
+import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -155,15 +160,17 @@ import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.ICustomPacket;
+import net.minecraftforge.network.ForgePayload;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkInitialization;
+import net.minecraftforge.network.NetworkProtocol;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.packets.SpawnEntity;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -224,10 +231,6 @@ public final class ForgeHooks {
         return brainBuilder.makeBrain(dynamic);
     }
 
-    public static boolean onLivingTick(LivingEntity entity) {
-        return MinecraftForge.EVENT_BUS.post(new LivingTickEvent(entity));
-    }
-
     public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
         return entity instanceof Player || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
@@ -248,14 +251,6 @@ public final class ForgeHooks {
     public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
         LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
-    }
-
-    public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
-        return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
-    }
-
-    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
-        return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
@@ -776,7 +771,7 @@ public final class ForgeHooks {
     @SuppressWarnings("deprecation")
     public static synchronized void updateBurns() {
         VANILLA_BURNS.clear();
-        FurnaceBlockEntity.getFuel().entrySet().forEach(e -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(e.getKey()), e.getValue()));
+        FurnaceBlockEntity.getFuel().forEach((k, v) -> VANILLA_BURNS.put(ForgeRegistries.ITEMS.getDelegateOrThrow(k), v));
     }
 
     /**
@@ -1121,18 +1116,51 @@ public final class ForgeHooks {
     }
 
     @ApiStatus.Internal
-    public static boolean onCustomPayload(final ICustomPacket<?> packet, final Connection connection) {
-        if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
-            return false;
-        }
+    public static <B extends FriendlyByteBuf> StreamCodec<B, ? extends CustomPacketPayload> getCustomPayloadCodec(ResourceLocation id, int max) {
+        var channel = NetworkRegistry.findTarget(id);
+        if (channel == null)
+            return DiscardedPayload.codec(id, max);
 
-        var context = new CustomPayloadEvent.Context(connection, packet.getDirection());
-        return onCustomPayload(new CustomPayloadEvent(packet, context));
+        return StreamCodec.<B, ForgePayload>ofMember(
+            (value, buf) -> {
+                value.encoder().accept(buf);
+            },
+            (buf) -> {
+                int len = buf.readableBytes();
+                if (len < 0 || len > max)
+                    throw new IllegalArgumentException("Payload may not be larger then " + max + " bytes");
+                return ForgePayload.create(id, buf.wrap(buf.readBytes(len)));
+            }
+        );
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(CustomPacketPayload payload, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(payload.type().id(), payload, context, 0));
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(ClientboundCustomQueryPacket packet, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(packet.payload().id(), packet.payload(), context, packet.transactionId()));
+    }
+
+    @ApiStatus.Internal
+    public static boolean onCustomPayload(ServerboundCustomQueryAnswerPacket packet, Connection connection) {
+        var context = new CustomPayloadEvent.Context(connection);
+        return onCustomPayload(new CustomPayloadEvent(NetworkInitialization.LOGIN_NAME, packet.payload(), context, packet.transactionId()));
     }
 
     @ApiStatus.Internal
     public static boolean onCustomPayload(CustomPayloadEvent event) {
+        var connection = event.getSource().getConnection();
+        var expectedSide = connection.getReceiving() == PacketFlow.CLIENTBOUND ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        if (expectedSide != EffectiveSide.get()) {
+            connection.disconnect(Component.literal("Illegal packet received, terminating connection"));
+            return false;
+        }
+
         var channel = NetworkRegistry.findTarget(event.getChannel());
         if (channel != null && channel.dispatch(event))
             return true;
@@ -1160,12 +1188,7 @@ public final class ForgeHooks {
         if (!(entity instanceof IEntityAdditionalSpawnData add))
             throw new IllegalArgumentException(entity.getClass() + " is not an instance of " + IEntityAdditionalSpawnData.class);
 
-        var play = NetworkInitialization.PLAY;
-        var msg = new SpawnEntity(entity);
-        var data = play.toBuffer(msg);
-        @SuppressWarnings("unchecked")
-        var pkt = (Packet<ClientGamePacketListener>)NetworkDirection.PLAY_TO_CLIENT.buildPacket(data, play.getName()).getThis();
-        return pkt;
+        return NetworkDirection.PLAY_TO_CLIENT.buildPacket(NetworkInitialization.PLAY, new SpawnEntity(entity));
     }
 
     @ApiStatus.Internal
@@ -1262,10 +1285,18 @@ public final class ForgeHooks {
         );
     }
 
-    public static DataComponentMap gatherItemComponents(Item item, DataComponentMap dataComponents) {
-        return DataComponentMap.builder()
-                .addAll(dataComponents)
-                .addAll(ForgeEventFactory.gatherItemComponents(item).getDataComponentMap())
-                .build();
+    @Nullable
+    public static DyeColor getDyeColorFromItemStack(ItemStack stack) {
+        if (stack.getItem() instanceof DyeItem dye)
+            return dye.getDyeColor();
+
+        for (int x = 0; x < DyeColor.BLACK.getId(); x++) {
+            var color = DyeColor.byId(x);
+            if (stack.is(color.getTag())) {
+                return color;
+            }
+        }
+
+        return null;
     }
 }
