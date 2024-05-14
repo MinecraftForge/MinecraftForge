@@ -45,8 +45,8 @@ public class NetworkProtocol<B extends FriendlyByteBuf> {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends PacketListener, MSG> Packet<T> buildPacket(PacketFlow direction, ResourceLocation name, Consumer<FriendlyByteBuf> encoder) {
-        var payload = ForgePayload.create(name, encoder);
+    public <T extends PacketListener> Packet<T> buildPacket(PacketFlow direction, ResourceLocation name, Consumer<B> encoder) {
+        var payload = ForgePayload.create(name, (Consumer<FriendlyByteBuf>)encoder);
 
         switch (this.protocol) {
             case PLAY, CONFIGURATION:
