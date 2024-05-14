@@ -45,7 +45,9 @@ public abstract class GatherComponentsEvent extends Event {
      *
      * Fired once for every {@link net.minecraft.world.item.Item} instance, only once, Lazily.
      *
-     * Recursion is not supported.
+     * Recursion is not supported. Cant call {@link net.minecraft.world.item.Item#components()} as that would cause a loop.
+     *
+     * References in {@link net.minecraft.world.item.Items} may not be valid at the current time.
      */
     public static class Item extends GatherComponentsEvent {
         public Item(net.minecraft.world.item.Item item, DataComponentMap dataComponents) {
