@@ -2,6 +2,8 @@ package net.minecraftforge.event;
 
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -13,6 +15,13 @@ import javax.annotation.Nullable;
 
 public abstract class GatherComponentsEvent extends Event {
     private final DataComponentMap.Builder components = DataComponentMap.builder();
+    private final DataComponentMap originalComponents;
+    private final Object owner;
+
+    protected GatherComponentsEvent(Object owner, DataComponentMap originalComponents) {
+        this.originalComponents = originalComponents;
+        this.owner = owner;
+    }
 
     public <T> void register(DataComponentType<T> componentType, @Nullable T value) {
         components.set(componentType, value);
@@ -23,24 +32,29 @@ public abstract class GatherComponentsEvent extends Event {
         return components.build();
     }
 
+    public DataComponentMap getOriginalComponentMap() {
+        return originalComponents;
+    }
+
+    public Object getOwner() {
+        return owner;
+    }
+
     /**
      * Used to get additional Components for any {@link net.minecraft.world.item.Item}
+     *
+     * Fired once for every {@link net.minecraft.world.item.Item} instance, only once, Lazily.
+     *
+     * Recursion is not supported.
      */
     public static class Item extends GatherComponentsEvent {
-        private final net.minecraft.world.item.Item item;
-        private final DataComponentMap dataComponents;
-
         public Item(net.minecraft.world.item.Item item, DataComponentMap dataComponents) {
-            this.item = item;
-            this.dataComponents = dataComponents;
+            super(item, dataComponents);
         }
 
-        public net.minecraft.world.item.Item getItem() {
-            return item;
-        }
-
-        public DataComponentMap getDataComponentMap() {
-            return dataComponents;
+        @Override
+        public net.minecraft.world.item.Item getOwner() {
+            return (net.minecraft.world.item.Item) super.getOwner();
         }
     }
 }
