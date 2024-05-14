@@ -15,23 +15,25 @@ import net.minecraftforge.network.simple.handler.SimplePacket;
 
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface PayloadConnection<BASE extends CustomPacketPayload> {
     /**
      * Creates a builder grouping together all packets under the same protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    <NEWBUF extends FriendlyByteBuf, NEWBASE extends CustomPacketPayload> PayloadProtocol<NEWBUF, NEWBASE> protocol(NetworkProtocol<NEWBUF> protocol);
+    <NEWBUF extends FriendlyByteBuf, NEWBASE extends CustomPacketPayload> PayloadProtocol<NEWBUF, NEWBASE> protocol(@Nullable NetworkProtocol<NEWBUF> protocol);
 
     /**
      * Creates a builder grouping together all packets under the same protocol.
      * This will validate that the protocol matches before the packet is sent or received.
      */
-    <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, NetworkProtocol<NEWBUF> protocol);
+    <NEWBUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<NEWBUF, NEWBASE> protocol(AttributeKey<CTX> context, @Nullable NetworkProtocol<NEWBUF> protocol);
 
     /**
      * Consumer version of {@link #protocol(NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
      */
-    default <BUF extends FriendlyByteBuf> PayloadConnection<BASE> protocol(NetworkProtocol<BUF> protocol, Consumer<PayloadProtocol<BUF, BASE>> consumer) {
+    default <BUF extends FriendlyByteBuf> PayloadConnection<BASE> protocol(@Nullable NetworkProtocol<BUF> protocol, Consumer<PayloadProtocol<BUF, BASE>> consumer) {
         var tmp = this.<BUF, BASE>protocol(protocol);
         consumer.accept(tmp);
         return this;
@@ -40,7 +42,7 @@ public interface PayloadConnection<BASE extends CustomPacketPayload> {
     /**
      * Consumer version of {@link #protocol(AttributeKey,NetworkProtocol)}. The Consumer will immediately be called with the created protocol.
      */
-    default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> protocol(AttributeKey<CTX> context, NetworkProtocol<BUF> protocol, Consumer<PayloadHandlerProtocol<BUF, NEWBASE>> consumer) {
+    default <BUF extends FriendlyByteBuf, CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> protocol(AttributeKey<CTX> context, @Nullable NetworkProtocol<BUF> protocol, Consumer<PayloadHandlerProtocol<BUF, NEWBASE>> consumer) {
         var tmp = this.<BUF, CTX, NEWBASE>protocol(context, protocol);
         consumer.accept(tmp);
         return this;
@@ -122,7 +124,6 @@ public interface PayloadConnection<BASE extends CustomPacketPayload> {
         return protocol(context, NetworkProtocol.PLAY);
     }
 
-
     /**
      * Consumer version of {@link #play()}. The Consumer will immediately be called with the created protocol.
      */
@@ -135,5 +136,37 @@ public interface PayloadConnection<BASE extends CustomPacketPayload> {
      */
     default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> play(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, NetworkProtocol.PLAY, consumer);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are valid under any protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default PayloadProtocol<FriendlyByteBuf, BASE> any() {
+        return protocol(null);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are valid under any protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE> any(AttributeKey<CTX> context) {
+        return protocol(context, null);
+    }
+
+    /**
+     * Consumer version of {@link #any()}. The Consumer will immediately be called with the created protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default PayloadConnection<BASE> any(Consumer<PayloadProtocol<FriendlyByteBuf, BASE>> consumer) {
+        return protocol(null, consumer);
+    }
+
+    /**
+     * Consumer version of {@link #any(AttributeKey)}. The Consumer will immediately be called with the created protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX> & CustomPacketPayload> PayloadConnection<BASE> any(AttributeKey<CTX> context, Consumer<PayloadHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+        return protocol(context, null, consumer);
     }
 }

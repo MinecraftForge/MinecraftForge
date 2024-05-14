@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
+
 import java.util.function.Consumer;
 
 import net.minecraft.network.ConnectionProtocol;
@@ -17,6 +18,7 @@ import net.minecraft.network.PacketListener;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
 import net.minecraft.network.protocol.login.ServerboundCustomQueryAnswerPacket;
+import net.minecraft.resources.ResourceLocation;
 
 public class NetworkProtocol<B extends FriendlyByteBuf> {
     public static final NetworkProtocol<RegistryFriendlyByteBuf> PLAY = new NetworkProtocol<>(ConnectionProtocol.PLAY);
@@ -38,10 +40,12 @@ public class NetworkProtocol<B extends FriendlyByteBuf> {
         return this.protocol;
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends PacketListener, MSG> Packet<T> buildPacket(PacketFlow direction, Channel<MSG> channel, MSG packet) {
-        var name = channel.getName();
-        var encoder = (Consumer<FriendlyByteBuf>)(buf -> channel.encode(buf, packet));
+        return buildPacket(direction, channel.getName(packet), buf -> channel.encode(buf, packet));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends PacketListener, MSG> Packet<T> buildPacket(PacketFlow direction, ResourceLocation name, Consumer<FriendlyByteBuf> encoder) {
         var payload = ForgePayload.create(name, encoder);
 
         switch (this.protocol) {

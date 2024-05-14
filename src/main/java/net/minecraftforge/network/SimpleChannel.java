@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -505,6 +504,22 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
         BiConsumer<MSG, CustomPayloadEvent.Context> consumer
     ){ };
 
+    private Message<Object, FriendlyByteBuf> get(int id) {
+        @SuppressWarnings("unchecked")
+        var msg = (Message<Object, FriendlyByteBuf>)byId.get(id);
+        if (msg == null)
+            error("Received invalid discriminator " + id + " on channel " + getName());
+        return msg;
+    }
+
+    private Message<Object, FriendlyByteBuf> get(Object type) {
+        @SuppressWarnings("unchecked")
+        var msg = (Message<Object, FriendlyByteBuf>)byType.get(type.getClass());
+        if (msg == null)
+            error("Attemped to send invalid message " + type + " on channel " + getName());
+        return msg;
+    }
+
     protected int nextIndex() {
         while (byId.containsKey(lastIndex)) {
             lastIndex++;
@@ -521,74 +536,29 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
             return;
         }
 
-        int id = data.readVarInt();
-        @SuppressWarnings("unchecked")
-        var msg = (Message<?, FriendlyByteBuf>)byId.get(id);
-        if (msg == null) {
-            LOGGER.error(MARKER, "Received invalid discriminator {} on channel {}", id, getName());
-            return;
-        }
-
-        var con = event.getSource().getConnection();
-        var protocol = msg.protocol() == null ? con.getProtocol() : msg.protocol().toVanilla();
-        var direction = msg.direction() == null ?  con.getReceiving() : msg.direction();
-
-        if (protocol != con.getProtocol() || direction != con.getReceiving()) {
-            var error = "Illegal packet received, terminating connection. " + msg.type().getName() + " expected " +
-                direction.name() + " " + protocol.name() + " but was " +
-                con.getReceiving().name() + " " + con.getProtocol().name();
-
-            LOGGER.error(MARKER, error);
-            con.disconnect(Component.literal(error));
-            throw new IllegalStateException(error);
-        }
-
-        decodeAndDispatch(data, event.getSource(), msg);
-    }
-
-    // Yay generics
-    private static <MSG> void decodeAndDispatch(FriendlyByteBuf data, CustomPayloadEvent.Context ctx, Message<MSG, FriendlyByteBuf> msg) {
-        var message = msg.decoder().apply(data);
-        msg.consumer.accept(message, ctx);
+        var msg = get(data.readVarInt());
+        super.validate(msg.type.getName(), event.getSource().getConnection(), msg.protocol(), msg.direction(), false);
+        var pkt = msg.decoder().apply(data);
+        msg.consumer().accept(pkt, event.getSource());
     }
 
     @Override
     protected Packet<?> toVanillaPacket(Connection con, Object message) {
-        var msg = byType.get(message.getClass());
-
-        if (msg == null) {
-            LOGGER.error(MARKER, "Attempted to send invalid message {} on channel {}", message.getClass().getName(), getName());
-            throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
-        }
-
-        var protocol = msg.protocol() == null ? con.getProtocol() : msg.protocol().toVanilla();
-        var direction = msg.direction() == null ?  con.getSending() : msg.direction();
-
-        if (protocol != con.getProtocol() || direction != con.getSending()) {
-            var error = "Illegal packet sent, terminating connection. " + msg.type().getName() + " expected " +
-                direction.name() + " " + protocol.name() + " but was " +
-                con.getSending().name() + " " + con.getProtocol().name();
-
-            LOGGER.error(MARKER, error);
-            con.disconnect(Component.literal(error));
-            throw new IllegalStateException(error);
-        }
-
+        var msg = get(message);
+        super.validate(message.getClass().getName(), con, msg.protocol(), msg.direction(), true);
         return super.toVanillaPacket(con, message);
     }
 
     @Override
     public void encode(FriendlyByteBuf out, Object message) {
-        @SuppressWarnings("unchecked")
-        var msg = (Message<Object, FriendlyByteBuf>)byType.get(message.getClass());
-
-        if (msg == null) {
-            LOGGER.error(MARKER, "Attempted to send invalid message {} on channel {}", message.getClass().getName(), getName());
-            throw new IllegalArgumentException("Invalid message " + message.getClass().getName());
-        }
-
+        var msg = get(message);
         out.writeVarInt(msg.index());
         if (msg.encoder() != null)
             msg.encoder().accept(message, out);
+    }
+
+    private void error(String message) {
+        LOGGER.error(MARKER, message);
+        throw new IllegalArgumentException(message);
     }
 }

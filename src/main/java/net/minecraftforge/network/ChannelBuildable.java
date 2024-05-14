@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.payload;
+package net.minecraftforge.network;
 
-import net.minecraftforge.network.PayloadChannel;
-
-public interface PayloadBuildable {
+public interface ChannelBuildable<T> {
     /*
      * This will build the entire channel, locking any future modifications from happening.
      * This should be the LAST call in your builder chain and can only be called once.
      */
-    PayloadChannel build();
+    Channel<T> build();
 }

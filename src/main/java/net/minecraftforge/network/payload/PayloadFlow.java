@@ -12,8 +12,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent.Context;
+import net.minecraftforge.network.ChannelBuildable;
 
-public interface PayloadFlow<BUF extends FriendlyByteBuf, BASE extends CustomPacketPayload> extends PayloadProtocol<BUF, BASE>, PayloadBuildable {
+public interface PayloadFlow<BUF extends FriendlyByteBuf, BASE extends CustomPacketPayload> extends PayloadProtocol<BUF, BASE>, ChannelBuildable<CustomPacketPayload> {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
      * <p>

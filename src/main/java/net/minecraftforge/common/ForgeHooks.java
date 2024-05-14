@@ -1183,7 +1183,6 @@ public final class ForgeHooks {
             LOGGER.info("Connected to a modded server.");
     }
 
-    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     public static Packet<ClientGamePacketListener> getEntitySpawnPacket(Entity entity) {
         if (!(entity instanceof IEntityAdditionalSpawnData add))

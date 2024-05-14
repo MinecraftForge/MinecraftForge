@@ -73,6 +73,15 @@ public final class NetworkInstance {
         return event.getSource().getPacketHandled();
     }
 
+    /**
+     * Registers another name that will have its CustomPayloadEvents redirected to this channel.
+     * Like the main name, this must be unique across all channels.
+     */
+    public NetworkInstance addChild(ResourceLocation name) {
+        NetworkRegistry.register(this, name);
+        return this;
+    }
+
     ResourceLocation getChannelName() {
         return channelName;
     }
@@ -81,7 +90,7 @@ public final class NetworkInstance {
         return networkProtocolVersion;
     }
 
-    void registrationChange(boolean registered) {
+    void registrationChange(ResourceLocation name, boolean registered) {
         // TODO: Expose to listeners?
     }
 }

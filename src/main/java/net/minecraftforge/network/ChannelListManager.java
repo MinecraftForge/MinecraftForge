@@ -6,10 +6,11 @@
 package net.minecraftforge.network;
 
 import com.mojang.logging.LogUtils;
-import io.netty.buffer.Unpooled;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
@@ -19,44 +20,70 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 @ApiStatus.Internal // TODO: Decide what I want to have public, Right now it should just be add/remove channels.
 public class ChannelListManager {
     private static final Logger LOGGER = LogUtils.getLogger();
-    static final EventNetworkChannel REGISTER = ChannelBuilder
-        .named("minecraft:register")
-        .optional()
-        .eventNetworkChannel()
-        .addListener(ChannelListManager::registerListener);
-    static final EventNetworkChannel UNREGISTER = ChannelBuilder
-        .named("minecraft:unregister")
-        .optional()
-        .eventNetworkChannel()
-        .addListener(ChannelListManager::unregisterListener);
 
-    private static void registerListener(CustomPayloadEvent evt) {
-        var ctx = evt.getSource();
-        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.REGISTER);
+    public static final ResourceLocation NAME = new ResourceLocation("forge", "channel_registration");
+
+    static final Channel<CustomPacketPayload> CHANNEL = ChannelBuilder
+        .named(NAME)
+        .optional()
+        .payloadChannel()
+            .any()
+                .bidirectional()
+                    .add(Register.TYPE, Register.CODEC, ChannelListManager::register)
+                    .add(Unregister.TYPE, Unregister.CODEC, ChannelListManager::unregister)
+        .build();
+
+    private record Register(List<String> channels) implements CustomPacketPayload {
+        private static Type<Register> TYPE = CustomPacketPayload.createType("minecraft:register");
+        private static StreamCodec<FriendlyByteBuf, Register> CODEC = StreamCodec.of(
+            (buf, v) -> encode(buf, v.channels),
+            buf -> new Register(decode(buf))
+        );
+
+        @Override
+        public Type<Register> type() {
+            return TYPE;
+        }
+    }
+
+    private record Unregister(List<String> channels) implements CustomPacketPayload {
+        private static Type<Unregister> TYPE = CustomPacketPayload.createType("minecraft:unregister");
+        private static StreamCodec<FriendlyByteBuf, Unregister> CODEC = StreamCodec.of(
+            (buf, v) -> encode(buf, v.channels),
+            buf -> new Unregister(decode(buf))
+        );
+
+        @Override
+        public Type<Unregister> type() {
+            return TYPE;
+        }
+    }
+
+    private static void register(Register payload, CustomPayloadEvent.Context ctx) {
+        updateFrom(ctx, payload.channels(), ChannelRegistrationChangeEvent.Type.REGISTER);
         ctx.setPacketHandled(true);
         // Send the client's channels to the server whenever asked. If we're in the login state then our login wrapper will unwrap for us.
         if (ctx.isClientSide())
             addChannels(ctx.getConnection());
     }
 
-    private static void unregisterListener(CustomPayloadEvent evt) {
-        var ctx = evt.getSource();
-        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.UNREGISTER);
+    private static void unregister(Unregister payload, CustomPayloadEvent.Context ctx) {
+        updateFrom(ctx, payload.channels(), ChannelRegistrationChangeEvent.Type.UNREGISTER);
         ctx.setPacketHandled(true);
     }
 
     public static void addChannels(Connection connection) {
-        addChannels(connection, NetworkRegistry.buildChannelVersions().keySet().stream()
-            .filter(rl -> !"minecraft".equals(rl.getNamespace()))
-            .toList()
-        );
+        addChannels(connection, NetworkRegistry.buildRegisterList());
     }
 
     public static void addChannels(Connection connection, ResourceLocation... channels) {
@@ -65,12 +92,14 @@ public class ChannelListManager {
 
     public static void addChannels(Connection connection, Collection<ResourceLocation> channels) {
         var list = NetworkContext.get(connection);
-        var toSend = new HashSet<ResourceLocation>();
+        var toSend = new HashSet<String>();
         for (var channel : channels) {
             if (list.sentChannels.add(channel))
-                toSend.add(channel);
+                toSend.add(channel.toString());
         }
-        sendChannels(REGISTER, connection, toSend);
+
+        if (!toSend.isEmpty())
+            CHANNEL.send(new Register(toSend.stream().sorted().toList()), connection);
     }
 
     public static void removeChannels(Connection connection, ResourceLocation... channels) {
@@ -79,31 +108,27 @@ public class ChannelListManager {
 
     public static void removeChannels(Connection connection, Collection<ResourceLocation> channels) {
         var list = NetworkContext.get(connection);
-        var toSend = new HashSet<ResourceLocation>();
+        var toSend = new HashSet<String>();
         for (var channel : channels) {
             if (list.sentChannels.remove(channel))
-                toSend.add(channel);
+                toSend.add(channel.toString());
         }
-        sendChannels(UNREGISTER, connection, toSend);
+
+        if (!toSend.isEmpty())
+            CHANNEL.send(new Unregister(toSend.stream().toList()), connection);
     }
 
-    private static void sendChannels(EventNetworkChannel channel, Connection connection, Collection<ResourceLocation> channels) {
-        if (channels.isEmpty())
-            return;
-
-        var buf = new FriendlyByteBuf(Unpooled.buffer());
+    private static void encode(FriendlyByteBuf buf, List<String> channels) {
         for (var c : channels) {
             buf.writeBytes(c.toString().getBytes(StandardCharsets.UTF_8));
             buf.writeByte(0);
         }
-
-        channel.send(buf, connection);
     }
 
-    private static void updateFrom(CustomPayloadEvent.Context source, FriendlyByteBuf buffer, final ChannelRegistrationChangeEvent.Type changeType) {
+    private static List<String> decode(FriendlyByteBuf buffer) {
         byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
         buffer.readBytes(data);
-        var channels = new HashSet<String>();
+        var channels = new ArrayList<String>();
 
         int last = 0;
         for (int cur = 0; cur < data.length; cur++) {
@@ -117,6 +142,10 @@ public class ChannelListManager {
         if (last < data.length)
             channels.add(new String(data, last, data.length - last, StandardCharsets.UTF_8));
 
+        return Collections.unmodifiableList(channels);
+    }
+
+    private static void updateFrom(CustomPayloadEvent.Context source, List<String> channels, final ChannelRegistrationChangeEvent.Type changeType) {
         var changed = new HashSet<ResourceLocation>();
         for (var channel : channels) {
             // It also says nothing about the format of channels so ignore bad channels.
@@ -142,7 +171,7 @@ public class ChannelListManager {
             if (fire) {
                 var target = NetworkRegistry.findTarget(channel);
                 if (target != null)
-                    target.registrationChange(changeType == ChannelRegistrationChangeEvent.Type.REGISTER);
+                    target.registrationChange(channel, changeType == ChannelRegistrationChangeEvent.Type.REGISTER);
             }
         }
     }

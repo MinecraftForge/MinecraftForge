@@ -10,10 +10,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.payload.PayloadBuildable;
+import net.minecraftforge.network.ChannelBuildable;
+
 import java.util.function.BiConsumer;
 
-public interface PayloadHandlerFlow<BUF extends FriendlyByteBuf, BASE extends CustomPacketPayload> extends PayloadHandlerProtocol<BUF, BASE>, PayloadBuildable {
+public interface PayloadHandlerFlow<BUF extends FriendlyByteBuf, BASE extends CustomPacketPayload> extends PayloadHandlerProtocol<BUF, BASE>, ChannelBuildable<CustomPacketPayload> {
     /**
      * Adds a packet to this channel that has it's protocol validated whenever sent or received.
      * <p>

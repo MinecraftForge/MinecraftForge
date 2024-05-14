@@ -29,6 +29,7 @@ public class ChannelBuilder {
     private Channel.VersionTest serverAcceptedVersions;
     private Map<AttributeKey<?>, Function<Connection, ?>> attributes = new HashMap<>();
     private Consumer<Connection> connectionHandler;
+    private boolean registerSelf = true;
 
     /**
      * Creates a new channel builder, The name of the channel must be unique.
@@ -173,21 +174,17 @@ public class ChannelBuilder {
      * @return the {@link NetworkInstance}
      */
     private NetworkInstance createNetworkInstance() {
-        if (NetworkRegistry.lock) {
-            NetworkRegistry.LOGGER.error(NetworkRegistry.NETREGISTRY, "Attempted to register channel {} even though registry phase is over", name);
-            throw new IllegalArgumentException("Registration of impl channels is locked");
-        }
-        if (NetworkRegistry.instances.containsKey(name)) {
-            NetworkRegistry.LOGGER.error(NetworkRegistry.NETREGISTRY, "NetworkDirection channel {} already registered.", name);
-            throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
-        }
-
-        var networkInstance = new NetworkInstance(name, networkProtocolVersion,
+        var instance = new NetworkInstance(name, networkProtocolVersion,
             getClientAcceptedVersions(), getServerAcceptedVersions(),
             attributes, connectionHandler
         );
-        NetworkRegistry.instances.put(name, networkInstance);
-        return networkInstance;
+
+        NetworkRegistry.register(instance);
+
+        if (registerSelf)
+            instance.addChild(name);
+
+        return instance;
 
     }
 
@@ -221,6 +218,7 @@ public class ChannelBuilder {
      * @return A new {@link PayloadConnection PayloadConnection&lt;CustomPacketPayload&gt}
      */
     public PayloadConnection<CustomPacketPayload> payloadChannel() {
+        this.registerSelf = false;
         return channel(PayloadChannel::builder);
     }
 
