@@ -2,7 +2,6 @@ package net.minecraftforge.event;
 
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -25,16 +24,16 @@ public abstract class GatherComponentsEvent extends Event {
     }
 
 
-    public static class ItemEvent extends GatherComponentsEvent {
-        private final Item item;
+    public static class Item extends GatherComponentsEvent {
+        private final net.minecraft.world.item.Item item;
         private final DataComponentMap dataComponents;
 
-        public ItemEvent(Item item, DataComponentMap dataComponents) {
+        public Item(net.minecraft.world.item.Item item, DataComponentMap dataComponents) {
             this.item = item;
             this.dataComponents = dataComponents;
         }
 
-        public Item getItem() {
+        public net.minecraft.world.item.Item getItem() {
             return item;
         }
 

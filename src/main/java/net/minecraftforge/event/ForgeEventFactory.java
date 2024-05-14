@@ -1091,7 +1091,7 @@ public final class ForgeEventFactory {
         post(new TradeWithVillagerEvent(player, offer, villager));
     }
 
-    public static GatherComponentsEvent.ItemEvent gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
-        return fire(new GatherComponentsEvent.ItemEvent(item, dataComponents));
+    public static GatherComponentsEvent.Item gatherItemComponentsEvent(Item item, DataComponentMap dataComponents) {
+        return fire(new GatherComponentsEvent.Item(item, dataComponents));
     }
 }
