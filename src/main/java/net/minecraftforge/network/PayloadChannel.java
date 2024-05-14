@@ -229,7 +229,7 @@ final class PayloadChannel extends Channel<CustomPacketPayload> {
     }
 
     @Override
-    public ResourceLocation getName(CustomPacketPayload packet) {
+    ResourceLocation getName(CustomPacketPayload packet) {
         return packet.type().id();
     }
 

@@ -135,4 +135,36 @@ public interface SimpleConnection<BASE> {
     default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> play(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<RegistryFriendlyByteBuf, NEWBASE>> consumer) {
         return protocol(context, NetworkProtocol.PLAY, consumer);
     }
+
+    /**
+     * Creates a builder grouping together packets that are valid under any protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default SimpleProtocol<FriendlyByteBuf, BASE> any() {
+        return protocol(null);
+    }
+
+    /**
+     * Creates a builder grouping together packets that are valid under any protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE> any(AttributeKey<CTX> context) {
+        return protocol(context, null);
+    }
+
+    /**
+     * Consumer version of {@link #any()}. The Consumer will immediately be called with the created protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default SimpleConnection<BASE> any(Consumer<SimpleProtocol<FriendlyByteBuf, BASE>> consumer) {
+        return protocol(null, consumer);
+    }
+
+    /**
+     * Consumer version of {@link #any(AttributeKey)}. The Consumer will immediately be called with the created protocol.
+     * It is not recommended to do this, instead you should use one of the other methods in this class to make sure your packets have basic validation.
+     */
+    default <CTX, NEWBASE extends SimplePacket<CTX>> SimpleConnection<BASE> any(AttributeKey<CTX> context, Consumer<SimpleHandlerProtocol<FriendlyByteBuf, NEWBASE>> consumer) {
+        return protocol(context, null, consumer);
+    }
 }

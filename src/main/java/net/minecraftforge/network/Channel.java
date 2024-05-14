@@ -40,7 +40,7 @@ public abstract class Channel<MSG> {
      * This typically is the main channel's name, but in some cases
      * you want to specify a custom one. If your channel has {@link NetworkInstance#addChild(ResourceLocation) children}
      */
-    public ResourceLocation getName(MSG packet) {
+    ResourceLocation getName(MSG packet) {
         return getName();
     }
 
