@@ -49,6 +49,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.Connection;
@@ -130,6 +131,7 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.GatherComponentsEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -1298,5 +1300,9 @@ public final class ForgeHooks {
         }
 
         return null;
+    }
+
+    public static DataComponentMap gatherItemComponents(Item item, DataComponentMap dataComponents) {
+        return DataComponentMap.composite(dataComponents, ForgeEventFactory.gatherItemComponentsEvent(item, dataComponents).getDataComponentMap());
     }
 }
