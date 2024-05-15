@@ -37,18 +37,9 @@ public class GatherComponentsEventTest extends BaseTestMod {
     }
 
     @GameTest(template = "forge:empty3x3x3")
-    public static void onTestForFood1(GameTestHelper helper) {
-        if (Items.IRON_NUGGET.components().has(DataComponents.FOOD))
-            helper.succeed();
-        else
-            helper.fail("Iron Nugget is not edible, failed to apply DataComponents.FOOD to it");
-    }
-
-    @GameTest(template = "forge:empty3x3x3")
-    public static void onTestForFood2(GameTestHelper helper) {
-        if (Items.IRON_INGOT.components().has(DataComponents.FOOD))
-            helper.fail("Iron Ingot is edible, should not have DataComponents.FOOD");
-        else
-            helper.succeed();
+    public static void onTestForFood(GameTestHelper helper) {
+        helper.assertTrue(Items.IRON_NUGGET.components().has(DataComponents.FOOD), "Iron Nugget is not edible, failed to apply DataComponents.FOOD to it.");
+        helper.assertFalse(Items.IRON_INGOT.components().has(DataComponents.FOOD), "Iron Ingot is edible, should not have DataComponents.FOOD");
+        helper.succeed();
     }
 }
