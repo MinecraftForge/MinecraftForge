@@ -34,7 +34,7 @@
              switch (railshape) {
                  case NORTH_SOUTH:
                      if (p_55223_) {
-@@ -110,18 +_,18 @@
+@@ -110,10 +_,10 @@
  
      protected boolean isSameRailWithPower(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
          BlockState blockstate = p_55226_.getBlockState(p_55227_);
@@ -47,9 +47,8 @@
              if (p_55230_ != RailShape.EAST_WEST
                  || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
                  if (p_55230_ != RailShape.NORTH_SOUTH
-                     || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
--                    if (!blockstate.getValue(POWERED)) {
-+                    if (isActivatorRail() == other.isActivatorRail()) {
+@@ -121,7 +_,7 @@
+                     if (!blockstate.getValue(POWERED)) {
                          return false;
                      } else {
 -                        return p_55226_.hasNeighborSignal(p_55227_) ? true : this.findPoweredRailSignal(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
