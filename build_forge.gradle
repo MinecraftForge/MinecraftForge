@@ -180,6 +180,7 @@ patcher {
 
         forge_client_test {
             parent runs.forge_client
+            source sourceSets.test
         }
 
         forge_server {
@@ -188,6 +189,7 @@ patcher {
 
         forge_server_test {
             parent runs.forge_server
+            source sourceSets.test
         }
 
         forge_server_gametest {
@@ -196,6 +198,7 @@ patcher {
 
         forge_server_gametest_test {
             parent runs.forge_server_gametest
+            source sourceSets.test
         }
 
         forge_data {
