@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public class Item implements FeatureElement, ItemLike {
-+public class Item implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
++public class Item extends net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<ItemStack> implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
      private static final Logger LOGGER = LogUtils.getLogger();
 -    public static final Map<Block, Item> BY_BLOCK = Maps.newHashMap();
 +
