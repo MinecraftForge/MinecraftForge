@@ -5,7 +5,7 @@
  import org.slf4j.Logger;
  
 -public class Item implements FeatureElement, ItemLike {
-+public class Item extends net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<ItemStack> implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
++public class Item implements FeatureElement, ItemLike, net.minecraftforge.common.extensions.IForgeItem {
      private static final Logger LOGGER = LogUtils.getLogger();
 -    public static final Map<Block, Item> BY_BLOCK = Maps.newHashMap();
 +
@@ -15,6 +15,14 @@
      public static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
      public static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
      public static final int DEFAULT_MAX_STACK_SIZE = 64;
+@@ -69,6 +_,7 @@
+     @Nullable
+     private String descriptionId;
+     private final FeatureFlagSet requiredFeatures;
++    final net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<ItemStack, Item> capabilityFactoryManager = new net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<>(this, getClass());
+ 
+     public static int getId(Item p_41394_) {
+         return p_41394_ == null ? 0 : BuiltInRegistries.ITEM.getId(p_41394_);
 @@ -93,6 +_,7 @@
                  LOGGER.error("Item classes should end with Item and {} doesn't.", s);
              }

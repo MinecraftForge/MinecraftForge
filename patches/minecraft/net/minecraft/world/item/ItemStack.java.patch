@@ -5,26 +5,32 @@
  import org.slf4j.Logger;
  
 -public final class ItemStack implements DataComponentHolder {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.factory.CapabilityFactoryProvider<ItemStack, Item> implements DataComponentHolder, net.minecraftforge.common.extensions.IForgeItemStack {
++public final class ItemStack implements DataComponentHolder, net.minecraftforge.common.extensions.IForgeItemStack, net.minecraftforge.common.capabilities.ICapabilityProvider {
      public static final Codec<Holder<Item>> ITEM_NON_AIR_CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(
-@@ -251,6 +_,7 @@
-     }
+@@ -183,6 +_,7 @@
+     final PatchedDataComponentMap components;
+     @Nullable
+     private Entity entityRepresentation;
++    private final net.minecraftforge.common.capabilities.ICapabilityProvider capabilityProvider;
  
-     private ItemStack(ItemLike p_331826_, int p_332766_, PatchedDataComponentMap p_333722_) {
-+        super(p_331826_.asItem());
-         this.item = p_331826_.asItem();
+     private static DataResult<ItemStack> validateStrict(ItemStack p_332181_) {
+         DataResult<Unit> dataresult = validateComponents(p_332181_.getComponents());
+@@ -255,11 +_,13 @@
          this.count = p_332766_;
          this.components = p_333722_;
-@@ -258,6 +_,7 @@
+         this.getItem().verifyComponentsAfterLoad(this);
++        this.capabilityProvider = p_331826_.asItem().capabilityFactoryManager.getWrapper(this);
      }
  
      private ItemStack(@Nullable Void p_282703_) {
-+        super(null);
          this.item = null;
          this.components = new PatchedDataComponentMap(DataComponentMap.EMPTY);
++        this.capabilityProvider = null;
      }
+ 
+     public static DataResult<Unit> validateComponents(DataComponentMap p_336343_) {
 @@ -335,13 +_,22 @@
      }
  
@@ -77,3 +83,14 @@
      public void onDestroyed(ItemEntity p_150925_) {
          this.getItem().onDestroyed(p_150925_);
      }
+@@ -988,5 +_,10 @@
+ 
+     public boolean canBeHurtBy(DamageSource p_334859_) {
+         return !this.has(DataComponents.FIRE_RESISTANT) || !p_334859_.is(DamageTypeTags.IS_FIRE);
++    }
++
++    @Override
++    public @org.jetbrains.annotations.NotNull <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
++        return capabilityProvider == null ? net.minecraftforge.common.util.LazyOptional.empty() : capabilityProvider.getCapability(cap, side);
+     }
+ }

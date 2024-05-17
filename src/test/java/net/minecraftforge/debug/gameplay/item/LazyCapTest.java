@@ -2,6 +2,9 @@ package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -10,6 +13,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.RegisterCapabilityFactoriesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -24,15 +28,17 @@ public class LazyCapTest extends BaseTestMod {
     public static final String MOD_ID = "lazy_cap_test";
 
     public LazyCapTest() {
-
-        
-        Items.DIAMOND_AXE.register(s -> {
-            return LazyOptional.of(MyEnergyStorage::new);
-        }, ForgeCapabilities.ENERGY, Direction.DOWN, Direction.UP);
-
-
         var bus = MinecraftForge.EVENT_BUS;
         bus.addListener(this::onTick);
+        bus.addGenericListener(AxeItem.class, this::addEvent);
+    }
+
+    public void addEvent(RegisterCapabilityFactoriesEvent<ItemStack, AxeItem> event) {
+        if (event.getInstance() == Items.DIAMOND_AXE) {
+            event.register(s -> {
+                return LazyOptional.of(MyEnergyStorage::new);
+            }, ForgeCapabilities.ENERGY, Direction.DOWN, Direction.UP);
+        }
     }
 
 
