@@ -31,7 +31,7 @@ public interface NonNullLazy<T> extends NonNullSupplier<T>
      */
     static <T> NonNullLazy<T> concurrentOf(@NotNull NonNullSupplier<T> supplier)
     {
-        Lazy<T> lazy = Lazy.concurrentOf(supplier::get);
+        Lazy<T> lazy = Lazy.of(supplier::get);
         return () -> Objects.requireNonNull(lazy.get());
     }
 }

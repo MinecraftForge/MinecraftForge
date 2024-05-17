@@ -13,88 +13,52 @@ import java.util.function.Supplier;
  * Proxy object for a value that is calculated on first access
  * @param <T> The type of the value
  */
-public interface Lazy<T> extends Supplier<T>
+public final class Lazy<T> implements Supplier<T>
 {
     /**
-     * Constructs a lazy-initialized object
-     * @param supplier The supplier for the value, to be called the first time the value is needed.
+     * Constructs a lazy-initialized object.
+     * @param supplier The supplier for the value, to be called the first time the value is needed,
+     * or whenever the cache has been invalidated
      */
-    static <T> Lazy<T> of(@NotNull Supplier<T> supplier)
-    {
-        return new Lazy.Fast<>(supplier);
+    public static <T> Lazy<T> of(Supplier<T> supplier) {
+        return new Lazy<>(supplier);
     }
 
     /**
-     * Constructs a thread-safe lazy-initialized object
-     * @param supplier The supplier for the value, to be called the first time the value is needed.
+     * Invalidates the cache, causing the supplier to be called again on the next access.
      */
-    static <T> Lazy<T> concurrentOf(@NotNull Supplier<T> supplier)
-    {
-        return new Lazy.Concurrent<>(supplier);
+    public synchronized void invalidate() {
+        this.cachedValue = null;
     }
 
     /**
      * Non-thread-safe implementation.
      */
-    final class Fast<T> implements Lazy<T>
-    {
-        private Supplier<T> supplier;
-        private T instance;
+    private final Supplier<T> delegate;
+    @Nullable
+    private volatile T cachedValue;
 
-        private Fast(Supplier<T> supplier)
-        {
-            this.supplier = supplier;
-        }
-
-        @Nullable
-        @Override
-        public final T get()
-        {
-            if (supplier != null)
-            {
-                instance = supplier.get();
-                supplier = null;
-            }
-            return instance;
-        }
+    private Lazy(Supplier<T> delegate) {
+        this.delegate = delegate;
     }
 
     /**
      * Thread-safe implementation.
      */
-    final class Concurrent<T> implements Lazy<T>
-    {
-        private volatile Object lock = new Object();
-        private volatile Supplier<T> supplier;
-        private volatile T instance;
-
-        private Concurrent(Supplier<T> supplier)
-        {
-            this.supplier = supplier;
-        }
-
-        @Nullable
-        @Override
-        public final T get()
-        {
-            // Copy the lock to a local variable to prevent NPEs if the lock field is set to null between the
-            // null-check and the synchronization
-            Object localLock = this.lock;
-            if (supplier != null)
-            {
-                // localLock is not null here because supplier was non-null after we copied the lock and both of them
-                // are volatile
-                synchronized (localLock)
-                {
-                    if (supplier != null)
-                    {
-                        instance = supplier.get();
-                        supplier = null;
-                        this.lock = null;
+    @Override
+    public T get() {
+        T ret = cachedValue;
+        if (ret == null) {
+            synchronized (this) {
+                ret = cachedValue;
+                if (ret == null) {
+                    cachedValue = ret = delegate.get();
+                    if (ret == null) {
+                        throw new IllegalStateException("Lazy value cannot be null, but supplier returned null: " + delegate);
                     }
                 }
             }
-            return instance;
         }
+        return ret;
     }
 }
