@@ -17,7 +17,11 @@ import net.minecraftforge.event.RegisterCapabilityFactoriesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,15 +30,18 @@ import org.jetbrains.annotations.Nullable;
 @Mod(LazyCapTest.MOD_ID)
 public class LazyCapTest extends BaseTestMod {
     public static final String MOD_ID = "lazy_cap_test";
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    public static final RegistryObject<Item> ITEM_TEST = ITEMS.register("test", () -> new Item(new Item.Properties()));
 
     public LazyCapTest() {
         var bus = MinecraftForge.EVENT_BUS;
+
         bus.addListener(this::onTick);
-        bus.addGenericListener(AxeItem.class, this::addEvent);
+        bus.addListener(this::addEvent);
     }
 
-    public void addEvent(RegisterCapabilityFactoriesEvent<ItemStack, AxeItem> event) {
-        if (event.getInstance() == Items.DIAMOND_AXE) {
+    public void addEvent(@NotNull RegisterCapabilityFactoriesEvent<?, ?> event) {
+        if (event.getInstance() == ITEM_TEST.get()) {
             event.register(s -> {
                 return LazyOptional.of(MyEnergyStorage::new);
             }, ForgeCapabilities.ENERGY, Direction.DOWN, Direction.UP);

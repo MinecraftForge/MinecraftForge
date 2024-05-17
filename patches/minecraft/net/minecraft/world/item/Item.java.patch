@@ -19,7 +19,7 @@
      @Nullable
      private String descriptionId;
      private final FeatureFlagSet requiredFeatures;
-+    final net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<ItemStack, Item> capabilityFactoryManager = new net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<>(this, getClass());
++    final net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<ItemStack, Item> capabilityFactoryManager = new net.minecraftforge.common.capabilities.factory.CapabilityFactoryManager<>(this, Item.class);
  
      public static int getId(Item p_41394_) {
          return p_41394_ == null ? 0 : BuiltInRegistries.ITEM.getId(p_41394_);

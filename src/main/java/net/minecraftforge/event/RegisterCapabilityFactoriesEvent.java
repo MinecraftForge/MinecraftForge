@@ -3,6 +3,7 @@ package net.minecraftforge.event;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import org.apache.logging.log4j.util.TriConsumer;
 
@@ -10,15 +11,13 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Function;
 
-public class RegisterCapabilityFactoriesEvent<I, T> extends GenericEvent<T> {
+public class RegisterCapabilityFactoriesEvent<I, T> extends Event {
 
     private final TriConsumer<Function<I, LazyOptional<?>>, Capability<?>, List<Direction>> consumer;
     private final T instance;
-    private final Class<? extends T> tClass;
 
     public RegisterCapabilityFactoriesEvent(T instance, Class<? extends T> iClass, TriConsumer<Function<I, LazyOptional<?>>, Capability<?>, List<Direction>> consumer) {
         this.instance = instance;
-        this.tClass = iClass;
         this.consumer = consumer;
     }
 
@@ -32,10 +31,5 @@ public class RegisterCapabilityFactoriesEvent<I, T> extends GenericEvent<T> {
 
     public T getInstance() {
         return instance;
-    }
-
-    @Override
-    public Type getGenericType() {
-        return tClass;
     }
 }
