@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -67,7 +68,9 @@ public class ConfigFileTypeHandler {
     }
 
     private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
-        Files.createDirectories(file.getParent());
+        try {
+            Files.createDirectories(file.getParent());
+        } catch (FileAlreadyExistsException e) {}
         Path p = defaultConfigPath.resolve(modConfig.getFileName());
         if (Files.exists(p)) {
             LOGGER.info(CONFIG, "Loading default config file from path {}", p);
