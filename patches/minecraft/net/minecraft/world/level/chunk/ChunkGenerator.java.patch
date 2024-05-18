@@ -5,14 +5,14 @@
          this.biomeSource = p_255838_;
          this.generationSettingsGetter = p_256216_;
 -        this.featuresPerStep = Suppliers.memoize(
-+        this.featuresPerStep = net.minecraftforge.common.util.Lazy.of(
++        this.featuresPerStep = net.minecraftforge.common.util.Lazier.of(
              () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
          );
 +    }
 +
 +    @org.jetbrains.annotations.ApiStatus.Internal
 +    public void refreshFeaturesPerStep() {
-+        ((net.minecraftforge.common.util.Lazy<?>) this.featuresPerStep).invalidate();
++        ((net.minecraftforge.common.util.Lazier<?>) this.featuresPerStep).invalidate();
      }
  
      public void validate() {
