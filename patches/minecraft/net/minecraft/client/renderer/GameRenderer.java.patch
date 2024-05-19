@@ -31,13 +31,13 @@
                      0.0F,
                      1000.0F,
 -                    21000.0F
-+                    21000.0f
++                    net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane()
                  );
              RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
              Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
              matrix4fstack.pushMatrix();
 -            matrix4fstack.translation(0.0F, 0.0F, -11000.0F);
-+            matrix4fstack.translation(0.0F, 0.0F, 1000F - net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
++            matrix4fstack.translation(0.0F, 0.0F, 10000F - net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
              RenderSystem.applyModelViewMatrix();
              Lighting.setupFor3DItems();
              GuiGraphics guigraphics = new GuiGraphics(this.minecraft, this.renderBuffers.bufferSource());

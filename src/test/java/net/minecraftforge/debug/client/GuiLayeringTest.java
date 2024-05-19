@@ -23,7 +23,7 @@ import java.util.Random;
 
 @Mod(GuiLayeringTest.MODID)
 public class GuiLayeringTest {
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     private static final Random RANDOM = new Random();
     public static final String MODID = "gui_layer_test";
@@ -52,8 +52,8 @@ public class GuiLayeringTest {
             @Override
             public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
                 this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-                graphics.drawString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
                 super.render(graphics, mouseX, mouseY, partialTicks);
+                graphics.drawString(this.font, this.title, this.width / 2, 15, 0xFFFFFF);
             }
 
             @Override
