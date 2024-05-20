@@ -247,10 +247,10 @@ public class ForgeHooksClient {
     }
 
     public static float getGuiFarPlane() {
-        // 1000 units for the overlay background,
+        // 11000 units for the overlay background,
         // and 10000 units for each layered Screen,
 
-        return 1000.0F + 10000.0F * (1 + guiLayers.size());
+        return 11000.0F + 10000.0F * (1 + guiLayers.size());
     }
 
     public static boolean onClientPauseChangePre(boolean pause) {
@@ -383,7 +383,7 @@ public class ForgeHooksClient {
         guiLayers.forEach(layer -> {
             // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
             drawScreenInternal(layer, guiGraphics, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTick);
-            guiGraphics.pose().translate(0,0,2000);
+            guiGraphics.pose().translate(0, 0, 10000);
         });
         drawScreenInternal(screen, guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.pose().popPose();
