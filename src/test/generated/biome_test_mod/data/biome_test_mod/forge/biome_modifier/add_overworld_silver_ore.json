@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "biome_test_mod:overworld_silver_ore_placed",
+  "step": "underground_ores"
+}

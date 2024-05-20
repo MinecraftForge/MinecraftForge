@@ -24,6 +24,11 @@ public interface Lazy<T> extends Supplier<T>
         return new Lazy.Fast<>(supplier);
     }
 
+    static <T> Lazy<T> ofInvalidatable(@NotNull Supplier<T> supplier)
+    {
+        return new Lazy.InvalidatableFast<>(supplier);
+    }
+
     /**
      * Constructs a thread-safe lazy-initialized object
      * @param supplier The supplier for the value, to be called the first time the value is needed.
@@ -95,6 +100,31 @@ public interface Lazy<T> extends Supplier<T>
                 }
             }
             return instance;
+        }
+    }
+
+    final class InvalidatableFast<T> implements Lazy<T> {
+        private final Supplier<T> supplier;
+        private T instance;
+
+        private InvalidatableFast(Supplier<T> supplier)
+        {
+            this.supplier = supplier;
+        }
+
+        @Nullable
+        @Override
+        public final T get()
+        {
+            if (instance == null)
+            {
+                instance = supplier.get();
+            }
+            return instance;
+        }
+
+        public void invalidate() {
+            this.instance = null;
         }
     }
 }

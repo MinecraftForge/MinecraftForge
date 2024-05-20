@@ -132,6 +132,10 @@ public class ServerLifecycleHooks {
         registries.registryOrThrow(Registries.BIOME).holders().forEach(biomeHolder ->
             biomeHolder.value().modifiableBiomeInfo().applyBiomeModifiers(biomeHolder, biomeModifiers)
         );
+        // Rebuild the indexed feature list
+        registries.registryOrThrow(Registries.LEVEL_STEM).forEach(levelStem -> {
+            levelStem.generator().refreshFeaturesPerStep();
+        });
         // Apply sorted structure modifiers to each structure.
         registries.registryOrThrow(Registries.STRUCTURE).holders().forEach(structureHolder ->
             structureHolder.value().modifiableStructureInfo().applyStructureModifiers(structureHolder, structureModifiers)
