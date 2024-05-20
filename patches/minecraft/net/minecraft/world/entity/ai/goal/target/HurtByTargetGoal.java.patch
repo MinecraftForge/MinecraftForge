@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal.java
++++ b/net/minecraft/world/entity/ai/goal/target/HurtByTargetGoal.java
+@@ -84,6 +_,10 @@
+                 }
+ 
+                 mob = (Mob)iterator.next();
++                // Fix NPE if modders do things vanilla doesn't expect. https://github.com/MinecraftForge/MinecraftForge/issues/7853
++                if (this.mob.getLastHurtByMob() == null)
++                    return;
++
+                 if (this.mob != mob
+                     && mob.getTarget() == null
+                     && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal)this.mob).getOwner() == ((TamableAnimal)mob).getOwner())
