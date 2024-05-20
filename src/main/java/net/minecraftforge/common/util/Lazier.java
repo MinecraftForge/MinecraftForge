@@ -4,6 +4,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
+/*
+ * The purpose of this class is to support invalidation of cached values.
+ * By having this class implement Lazy, we can use methods from Lazy
+ * without having to change Lazy to a class in order to support the
+ * same functionality
+ */
+
 public final class Lazier<T> implements Lazy<T> {
     private final Supplier<T> delegate;
     @Nullable
