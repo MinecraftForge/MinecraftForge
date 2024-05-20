@@ -1,0 +1,6 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "biome_decoration_test:test_generation",
+  "step": "underground_ores"
+}
