@@ -214,6 +214,7 @@ patcher {
         }
 
         forge_data_test {
+            source sourceSets.test
             args '--launchTarget', 'forge_dev_data',
                  '--mod', '.+',
                  '--all',
