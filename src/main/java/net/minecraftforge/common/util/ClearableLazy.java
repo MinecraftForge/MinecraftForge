@@ -13,8 +13,7 @@ public interface ClearableLazy<T> extends Lazy<T> {
      * Constructs a lazy-initialized object
      * @param supplier The supplier for the value, to be called the first time the value is needed.
      */
-    static <T> ClearableLazy<T> of(@NotNull Supplier<T> supplier)
-    {
+    static <T> ClearableLazy<T> of(@NotNull Supplier<T> supplier) {
         return new ClearableLazy.Fast<T>(supplier);
     }
 
@@ -22,30 +21,25 @@ public interface ClearableLazy<T> extends Lazy<T> {
      * Constructs a thread-safe lazy-initialized object
      * @param supplier The supplier for the value, to be called the first time the value is needed.
      */
-    static <T> ClearableLazy<T> concurrentOf(@NotNull Supplier<T> supplier)
-    {
+    static <T> ClearableLazy<T> concurrentOf(@NotNull Supplier<T> supplier) {
         return new ClearableLazy.Concurrent<>(supplier);
     }
 
     /**
      * Non-thread-safe implementation.
      */
-    final class Fast<T> implements ClearableLazy<T>
-    {
+    final class Fast<T> implements ClearableLazy<T> {
         private final Supplier<T> supplier;
         private T instance;
 
-        private Fast(Supplier<T> supplier)
-        {
+        private Fast(Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
         @Nullable
         @Override
-        public final T get()
-        {
-            if (instance == null)
-            {
+        public final T get() {
+            if (instance == null) {
                 instance = supplier.get();
             }
             return instance;
@@ -60,14 +54,12 @@ public interface ClearableLazy<T> extends Lazy<T> {
     /**
      * Thread-safe implementation.
      */
-    final class Concurrent<T> implements ClearableLazy<T>
-    {
+    final class Concurrent<T> implements ClearableLazy<T> {
         private final Object lock = new Object();
         private final Supplier<T> supplier;
         private volatile T instance;
 
-        private Concurrent(Supplier<T> supplier)
-        {
+        private Concurrent(Supplier<T> supplier) {
             this.supplier = supplier;
         }
 
@@ -76,12 +68,9 @@ public interface ClearableLazy<T> extends Lazy<T> {
         public final T get()
         {
             var ret = instance;
-            if (ret == null)
-            {
-                synchronized (lock)
-                {
-                    if (instance == null)
-                    {
+            if (ret == null) {
+                synchronized (lock) {
+                    if (instance == null) {
                         return instance = supplier.get();
                     }
                 }

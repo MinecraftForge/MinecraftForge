@@ -14,9 +14,8 @@
          this.biomeSource = p_255838_;
          this.generationSettingsGetter = p_256216_;
 -        this.featuresPerStep = Suppliers.memoize(
--            () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
 +        this.featuresPerStep = net.minecraftforge.common.util.ClearableLazy.concurrentOf(
-+                () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
+             () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
          );
 +    }
 +

@@ -2,11 +2,11 @@
   "type": "minecraft:ore",
   "config": {
     "discard_chance_on_air_exposure": 0.0,
-    "size": 9,
+    "size": 23,
     "targets": [
       {
         "state": {
-          "Name": "biome_test_mod:silver_ore"
+          "Name": "minecraft:netherite_block"
         },
         "target": {
           "predicate_type": "minecraft:tag_match",

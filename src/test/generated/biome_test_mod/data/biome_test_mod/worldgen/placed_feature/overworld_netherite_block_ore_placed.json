@@ -1,9 +1,9 @@
 {
-  "feature": "biome_test_mod:overworld_silver_ore",
+  "feature": "biome_test_mod:overworld_netherite_block_ore",
   "placement": [
     {
       "type": "minecraft:count",
-      "count": 4
+      "count": 18
     },
     {
       "type": "minecraft:in_square"
