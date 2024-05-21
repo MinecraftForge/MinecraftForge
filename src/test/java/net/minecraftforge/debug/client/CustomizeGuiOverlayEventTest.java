@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(CustomizeGuiOverlayEventTest.MODID)
 public class CustomizeGuiOverlayEventTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     public static final String MODID = "custom_gui_event_test";
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
