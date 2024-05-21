@@ -69,18 +69,18 @@
          list.add("");
          boolean flag = this.minecraft.getSingleplayerServer() != null;
          list.add(
-@@ -176,11 +_,18 @@
+@@ -176,11 +_,19 @@
                  + (this.renderNetworkCharts ? " visible" : " hidden")
          );
          list.add("For help: press F3 + Q");
--        this.renderLines(p_281525_, list, true);
 +        return list;
 +    }
-+   protected void drawGameInformation(GuiGraphics p_281525_) {
-+      List<String> list = this.getGameInformation();
-+      list.addAll(this.getOverlayHelp());
-+      net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281525_, minecraft.getWindow(), minecraft.getFrameTime(), list, true);
-+      this.renderLines(p_281525_, list, true);
++
++    protected void drawGameInformation(GuiGraphics p_281525_) {
++        List<String> list = this.getGameInformation();
++        list.addAll(this.getOverlayHelp());
++        net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281525_, minecraft.getWindow(), minecraft.getFrameTime(), list, true);
+         this.renderLines(p_281525_, list, true);
      }
  
      protected void drawSystemInformation(GuiGraphics p_281261_) {

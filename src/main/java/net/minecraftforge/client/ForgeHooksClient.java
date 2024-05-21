@@ -542,7 +542,6 @@ public class ForgeHooksClient {
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-
     public static void onClientChangeGameType(PlayerInfo info, GameType currentGameMode, GameType newGameMode) {
         if (currentGameMode != newGameMode) {
             ClientPlayerChangeGameTypeEvent evt = new ClientPlayerChangeGameTypeEvent(info, currentGameMode, newGameMode);
