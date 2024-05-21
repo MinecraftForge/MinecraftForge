@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -81,7 +_,7 @@
+ public abstract class ChunkGenerator {
+     public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
+     protected final BiomeSource biomeSource;
+-    private final Supplier<List<FeatureSorter.StepFeatureData>> featuresPerStep;
++    private final net.minecraftforge.common.util.ClearableLazy<List<FeatureSorter.StepFeatureData>> featuresPerStep;
+     private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
+ 
+     public ChunkGenerator(BiomeSource p_256133_) {
+@@ -91,9 +_,14 @@
+     public ChunkGenerator(BiomeSource p_255838_, Function<Holder<Biome>, BiomeGenerationSettings> p_256216_) {
+         this.biomeSource = p_255838_;
+         this.generationSettingsGetter = p_256216_;
+-        this.featuresPerStep = Suppliers.memoize(
++        this.featuresPerStep = net.minecraftforge.common.util.ClearableLazy.concurrentOf(
+             () -> FeatureSorter.buildFeaturesPerStep(List.copyOf(p_255838_.possibleBiomes()), p_223216_ -> p_256216_.apply(p_223216_).features(), true)
+         );
++    }
++
++    @org.jetbrains.annotations.ApiStatus.Internal
++    public void refreshFeaturesPerStep() {
++        featuresPerStep.invalidate();
+     }
+ 
+     public void validate() {

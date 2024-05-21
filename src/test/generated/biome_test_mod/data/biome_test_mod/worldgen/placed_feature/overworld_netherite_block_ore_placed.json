@@ -1,0 +1,15 @@
+{
+  "feature": "biome_test_mod:overworld_netherite_block_ore",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 1
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "absolute": 100
+      }
+    }
+  ]
+}

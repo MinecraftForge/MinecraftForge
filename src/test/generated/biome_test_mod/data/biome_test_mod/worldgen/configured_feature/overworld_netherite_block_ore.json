@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:replace_single_block",
+  "config": {
+    "targets": [
+      {
+        "state": {
+          "Name": "minecraft:netherite_block"
+        },
+        "target": {
+          "block_state": {
+            "Name": "minecraft:air"
+          },
+          "predicate_type": "minecraft:blockstate_match"
+        }
+      }
+    ]
+  }
+}
