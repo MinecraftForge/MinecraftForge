@@ -531,6 +531,18 @@ public class ForgeHooksClient {
         return evt;
     }
 
+    public static void onCustomizeChatEvent(GuiGraphics guiGraphics, Window window, int x, int y, float partialTick) {
+        CustomizeGuiOverlayEvent.Chat evt = new CustomizeGuiOverlayEvent.Chat(window, guiGraphics, partialTick, x, y);
+        MinecraftForge.EVENT_BUS.post(evt);
+    }
+
+    public static void onCustomizeDebugEvent(GuiGraphics guiGraphics, Window window, float partialTick, List<String> text, boolean isLeft) {
+        var event = new CustomizeGuiOverlayEvent.DebugText(window, guiGraphics, partialTick, text,
+                isLeft ? CustomizeGuiOverlayEvent.DebugText.Side.Left : CustomizeGuiOverlayEvent.DebugText.Side.Right);
+        MinecraftForge.EVENT_BUS.post(event);
+    }
+
+
     public static void onClientChangeGameType(PlayerInfo info, GameType currentGameMode, GameType newGameMode) {
         if (currentGameMode != newGameMode) {
             ClientPlayerChangeGameTypeEvent evt = new ClientPlayerChangeGameTypeEvent(info, currentGameMode, newGameMode);

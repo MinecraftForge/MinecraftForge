@@ -15,6 +15,7 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fired when an overlay is about to be rendered to the screen to allow the user to modify it.
@@ -133,31 +134,36 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      */
     public static class DebugText extends CustomizeGuiOverlayEvent
     {
-        private final ArrayList<String> left;
-        private final ArrayList<String> right;
+        private final List<String> text;
+
+        private final Side side;
 
         @ApiStatus.Internal
-        public DebugText(Window window, GuiGraphics guiGraphics, float partialTick, ArrayList<String> left, ArrayList<String> right)
+        public DebugText(Window window, GuiGraphics guiGraphics, float partialTick, List<String> text, Side side)
         {
             super(window, guiGraphics, partialTick);
-            this.left = left;
-            this.right = right;
+            this.text = text;
+            this.side = side;
         }
 
         /**
-         * @return the modifiable list of text to render on the left side
+         * @return the modifiable list of text to render on the side
          */
-        public ArrayList<String> getLeft()
+        public List<String> getText()
         {
-            return left;
+            return text;
         }
 
         /**
-         * @return the modifiable list of text to render on the right side
+         * @return the side of the text getting rendered.
          */
-        public ArrayList<String> getRight()
-        {
-            return right;
+        public Side getSide() {
+            return this.side;
+        }
+
+        public enum Side {
+            Left,
+            Right
         }
     }
 
