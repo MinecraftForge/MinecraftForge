@@ -14,6 +14,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -150,7 +151,17 @@ public abstract class CustomizeGuiOverlayEvent extends Event
          */
         public List<String> getText()
         {
-            return text;
+            return this.text;
+        }
+
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public List<String> getLeft() {
+            return Side.Left.equals(this.side) ? this.text : new ArrayList<>();
+        }
+
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public List<String> getRight() {
+            return Side.Right.equals(this.side) ? this.text : new ArrayList<>();
         }
 
         /**
