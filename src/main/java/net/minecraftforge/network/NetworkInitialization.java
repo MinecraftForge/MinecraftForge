@@ -55,8 +55,8 @@ public final class NetworkInitialization {
                     .add(MismatchData.class, MismatchData.STREAM_CODEC, ctx(ForgePacketHandler::handleModMismatchData))
             .play() // TODO: Move to it's own channel, so that we can keep the core handshake channel clean/simple and thus not need to bump the version ever As it is the one responsible for validating versions
                 .clientbound()
-                    .add(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
-                    .add(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
+                    .addMain(SpawnEntity.class, SpawnEntity.STREAM_CODEC, SpawnEntity::handle)
+                    .addMain(OpenContainer.class, OpenContainer.STREAM_CODEC, OpenContainer::handle)
         .build();
 
     public static final SimpleChannel PLAY = CONFIG;;
