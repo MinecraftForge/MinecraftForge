@@ -28,6 +28,7 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -531,15 +532,27 @@ public class ForgeHooksClient {
         return evt;
     }
 
-    public static void onCustomizeChatEvent(GuiGraphics guiGraphics, Window window, int x, int y, float partialTick) {
-        CustomizeGuiOverlayEvent.Chat evt = new CustomizeGuiOverlayEvent.Chat(window, guiGraphics, partialTick, x, y);
+    public static void onCustomizeChatEvent(GuiGraphics guiGraphics, ChatComponent chat, int tickCount) {
+        var minecraft = Minecraft.getInstance();
+        minecraft.getProfiler().push("chat");
+        var window = minecraft.getWindow();
+
+        CustomizeGuiOverlayEvent.Chat evt = new CustomizeGuiOverlayEvent.Chat(window, guiGraphics, minecraft.getFrameTime(), 0, chat.getHeight() - 40);
         MinecraftForge.EVENT_BUS.post(evt);
+        guiGraphics.pose().pushPose();
+        // We give the absolute Y position of the chat component in the event and account for the chat component's own offsetting here.
+        guiGraphics.pose().translate(evt.getPosX(), (evt.getPosY() - chat.getHeight() + 40) / chat.getScale(), 0.0D);
+        int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
+        int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
+        chat.render(guiGraphics, tickCount, mouseX, mouseY, false);
+        guiGraphics.pose().popPose();
+        minecraft.getProfiler().pop();
     }
 
     public static void onCustomizeDebugEvent(GuiGraphics guiGraphics, Window window, float partialTick, List<String> text, boolean isLeft) {
-        var event = new CustomizeGuiOverlayEvent.DebugText(window, guiGraphics, partialTick, text,
+        var evt = new CustomizeGuiOverlayEvent.DebugText(window, guiGraphics, partialTick, text,
                 isLeft ? CustomizeGuiOverlayEvent.DebugText.Side.Left : CustomizeGuiOverlayEvent.DebugText.Side.Right);
-        MinecraftForge.EVENT_BUS.post(event);
+        MinecraftForge.EVENT_BUS.post(evt);
     }
 
     public static void onClientChangeGameType(PlayerInfo info, GameType currentGameMode, GameType newGameMode) {
