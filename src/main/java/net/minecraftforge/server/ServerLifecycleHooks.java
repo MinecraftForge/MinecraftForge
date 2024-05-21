@@ -26,6 +26,8 @@ import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkRegistry;
@@ -61,7 +63,13 @@ public class ServerLifecycleHooks {
     private static MinecraftServer currentServer;
 
     private static Path getServerConfigPath(final MinecraftServer server) {
-        final Path serverConfig = server.getWorldPath(SERVERCONFIG);
+        final Path serverConfig;
+        if (FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.GLOBAL_SERVER_CONFIG)) {
+            serverConfig = FMLPaths.CONFIGDIR.get();
+        } else {
+            serverConfig = server.getWorldPath(SERVERCONFIG);
+        }
+
         if (!Files.isDirectory(serverConfig)) {
             try {
                 Files.createDirectories(serverConfig);

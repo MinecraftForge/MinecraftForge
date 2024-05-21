@@ -30,6 +30,7 @@ public class FMLConfig
         VERSION_CHECK("versionCheck", Boolean.TRUE, "Enable forge global version checking"),
         DEFAULT_CONFIG_PATH("defaultConfigPath", "defaultconfigs", "Default config path for servers"),
         DISABLE_OPTIMIZED_DFU("disableOptimizedDFU", Boolean.TRUE, "Disables Optimized DFU client-side - already disabled on servers"),
+        GLOBAL_SERVER_CONFIG("globalServerConfig", Boolean.TRUE, "Set this to true to enable global server config so that generates server config in default config folder (./config) instead of world folder"),
         EARLY_WINDOW_PROVIDER("earlyWindowProvider", "fmlearlywindow", "Early window provider"),
         EARLY_WINDOW_WIDTH("earlyWindowWidth", 854, "Early window width"),
         EARLY_WINDOW_HEIGHT("earlyWindowHeight", 480, "Early window height"),
