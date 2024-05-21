@@ -17,6 +17,8 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.ReplaceBlockConfiguration;
+import net.minecraft.world.level.levelgen.heightproviders.ConstantHeight;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
@@ -57,45 +59,28 @@ public class BiomeTestMod extends BaseTestMod {
 
     private static class ModWorldGenProvider extends DatapackBuiltinEntriesProvider {
         public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, BiomeTestMod::bootstrapConfiguredFeature)
-                .add(Registries.PLACED_FEATURE, BiomeTestMod::bootstrapPlacedFeature)
-                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, BiomeTestMod::bootstrapBiomeModifier);
+                .add(Registries.CONFIGURED_FEATURE, context -> {
+                    context.register(OVERWORLD_NETHERITE_BLOCK_ORE, new ConfiguredFeature<>(
+                            Feature.REPLACE_SINGLE_BLOCK,
+                            new ReplaceBlockConfiguration(Blocks.AIR.defaultBlockState(), Blocks.NETHERITE_BLOCK.defaultBlockState())
+                    ));
+                })
+                .add(Registries.PLACED_FEATURE, context -> {
+                    context.register(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY, new PlacedFeature(
+                            context.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE),
+                            List.of(CountPlacement.of(1), HeightRangePlacement.of(ConstantHeight.of(VerticalAnchor.absolute(100))))
+                    ));
+                })
+                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                    context.register(ADD_OVERWORLD_NETHERITE_BLOCK_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+                            context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_OVERWORLD),
+                            HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY)),
+                            GenerationStep.Decoration.UNDERGROUND_ORES
+                    ));
+                });
 
         public ModWorldGenProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, registries, BUILDER, Set.of(BiomeTestMod.MOD_ID));
         }
-    }
-
-    private static List<PlacementModifier> orePlacement(PlacementModifier m1, PlacementModifier m2) {
-        return List.of(m1, InSquarePlacement.spread(), m2, BiomeFilter.biome());
-    }
-
-    private static List<PlacementModifier> commonOrePlacement(int count, PlacementModifier heightRange) {
-        return orePlacement(CountPlacement.of(count), heightRange);
-    }
-
-    private static void bootstrapConfiguredFeature(BootstrapContext<ConfiguredFeature<?, ?>> context) {
-        RuleTest stoneReplaceables = new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES);
-        List<OreConfiguration.TargetBlockState> overworldNetheriteBlockOre = List.of(OreConfiguration.target(stoneReplaceables, Blocks.NETHERITE_BLOCK.defaultBlockState()));
-        context.register(OVERWORLD_NETHERITE_BLOCK_ORE, new ConfiguredFeature<>(Feature.ORE, new OreConfiguration(overworldNetheriteBlockOre, 23)));
-    }
-
-    private static void bootstrapBiomeModifier(BootstrapContext<BiomeModifier> context) {
-        var placedFeatures = context.lookup(Registries.PLACED_FEATURE);
-        var biomes = context.lookup(Registries.BIOME);
-
-        context.register(ADD_OVERWORLD_NETHERITE_BLOCK_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
-                biomes.getOrThrow(BiomeTags.IS_OVERWORLD),
-                HolderSet.direct(placedFeatures.getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY)),
-                GenerationStep.Decoration.UNDERGROUND_ORES)
-        );
-    }
-
-    private static void bootstrapPlacedFeature(BootstrapContext<PlacedFeature> context) {
-        HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
-        context.register(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY, new PlacedFeature(
-                configuredFeatures.getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE),
-                List.copyOf(commonOrePlacement(18, HeightRangePlacement.triangle(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(32))))
-        ));
     }
 }
