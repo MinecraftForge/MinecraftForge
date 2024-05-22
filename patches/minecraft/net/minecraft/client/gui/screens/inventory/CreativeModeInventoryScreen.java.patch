@@ -155,10 +155,10 @@
              if (this.checkTabHovering(p_283000_, creativemodetab, p_281317_, p_282770_)) {
                  break;
              }
-@@ -653,7 +_,15 @@
-             && this.isHovering(this.destroyItemSlot.x, this.destroyItemSlot.y, 16, 16, (double)p_281317_, (double)p_282770_)) {
+@@ -654,6 +_,15 @@
              p_283000_.renderTooltip(this.font, TRASH_SLOT_TOOLTIP, p_281317_, p_282770_);
          }
+ 
 +        if (this.pages.size() != 1) {
 +            Component page = Component.literal(String.format("%d / %d", this.pages.indexOf(this.currentPage) + 1, this.pages.size()));
 +            p_283000_.pose().pushPose();
@@ -166,7 +166,7 @@
 +            p_283000_.drawString(font, page.getVisualOrderText(), leftPos + (imageWidth / 2) - (font.width(page) / 2), topPos - 44, -1);
 +            p_283000_.pose().popPose();
 +        }
- 
++
 +        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
          this.renderTooltip(p_283000_, p_281317_, p_282770_);
      }
