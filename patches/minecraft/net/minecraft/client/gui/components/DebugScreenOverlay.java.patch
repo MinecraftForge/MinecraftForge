@@ -69,7 +69,7 @@
          list.add("");
          boolean flag = this.minecraft.getSingleplayerServer() != null;
          list.add(
-@@ -176,7 +_,12 @@
+@@ -176,11 +_,18 @@
                  + (this.renderNetworkCharts ? " visible" : " hidden")
          );
          list.add("For help: press F3 + Q");
@@ -79,10 +79,16 @@
 +   protected void drawGameInformation(GuiGraphics p_281525_) {
 +      List<String> list = this.getGameInformation();
 +      list.addAll(this.getOverlayHelp());
++      net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281525_, minecraft.getWindow(), minecraft.getFrameTime(), list, true);
 +      this.renderLines(p_281525_, list, true);
      }
  
      protected void drawSystemInformation(GuiGraphics p_281261_) {
+         List<String> list = this.getSystemInformation();
++        net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281261_, minecraft.getWindow(), minecraft.getFrameTime(), list, false);
+         this.renderLines(p_281261_, list, false);
+     }
+ 
 @@ -529,6 +_,7 @@
                  list.add("");
                  list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
