@@ -9,15 +9,12 @@
      private final SubtitleOverlay subtitleOverlay;
      private final SpectatorGui spectatorGui;
      private final PlayerTabOverlay tabList;
-@@ -317,10 +_,7 @@
- 
-     private void renderChat(GuiGraphics p_329202_, float p_328014_) {
-         if (!this.chat.isChatFocused()) {
--            Window window = this.minecraft.getWindow();
--            int i = Mth.floor(this.minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
--            int j = Mth.floor(this.minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
+@@ -320,7 +_,7 @@
+             Window window = this.minecraft.getWindow();
+             int i = Mth.floor(this.minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
+             int j = Mth.floor(this.minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
 -            this.chat.render(p_329202_, this.tickCount, i, j, false);
-+            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(p_329202_, this.chat, this.tickCount);
++            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(p_329202_, this.chat, window, i, j, this.tickCount);
          }
      }
  

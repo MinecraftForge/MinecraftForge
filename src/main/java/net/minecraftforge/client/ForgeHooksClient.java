@@ -532,18 +532,14 @@ public class ForgeHooksClient {
         return evt;
     }
 
-    public static void onCustomizeChatEvent(GuiGraphics guiGraphics, ChatComponent chat, int tickCount) {
+    public static void onCustomizeChatEvent(GuiGraphics guiGraphics, ChatComponent chat, Window window, int mouseX, int mouseY, int tickCount) {
         var minecraft = Minecraft.getInstance();
         minecraft.getProfiler().push("chat");
-        var window = minecraft.getWindow();
-
         CustomizeGuiOverlayEvent.Chat evt = new CustomizeGuiOverlayEvent.Chat(window, guiGraphics, minecraft.getFrameTime(), 0, chat.getHeight() - 40);
         MinecraftForge.EVENT_BUS.post(evt);
         guiGraphics.pose().pushPose();
         // We give the absolute Y position of the chat component in the event and account for the chat component's own offsetting here.
         guiGraphics.pose().translate(evt.getPosX(), (evt.getPosY() - chat.getHeight() + 40) / chat.getScale(), 0.0D);
-        int mouseX = Mth.floor(minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
-        int mouseY = Mth.floor(minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
         chat.render(guiGraphics, tickCount, mouseX, mouseY, false);
         guiGraphics.pose().popPose();
         minecraft.getProfiler().pop();
