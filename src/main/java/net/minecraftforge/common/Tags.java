@@ -257,6 +257,10 @@ public class Tags {
         /** @deprecated Use {@link #SANDS_RED} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Block> SAND_RED = SANDS_RED;
+
+        /** @deprecated Use {@link #GLASS_BLOCKS_CHEAP} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> GLASS_SILICA = GLASS_BLOCKS_CHEAP;
         //endregion
 
         private static TagKey<Block> tag(String name) {
@@ -1039,6 +1043,46 @@ public class Tags {
          * Biomes that spawn as part of the large islands outside the center island in The End dimension.
          */
         public static final TagKey<Biome> IS_OUTER_END_ISLAND = tag("is_outer_end_island");
+
+        //region Redirect fields for improved backward-compatibility
+        // TODO: Remove backwards compat redirect fields in 1.22
+        /** @deprecated Use {@link #IS_SPARSE_VEGETATION} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_SPARSE = IS_SPARSE_VEGETATION;
+        /** @deprecated Use {@link #IS_SPARSE_VEGETATION_OVERWORLD} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_SPARSE_OVERWORLD = IS_SPARSE_VEGETATION_OVERWORLD;
+        /** @deprecated Use {@link #IS_SPARSE_VEGETATION_NETHER} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_SPARSE_NETHER = IS_SPARSE_VEGETATION_NETHER;
+        /** @deprecated Use {@link #IS_SPARSE_VEGETATION_END} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_SPARSE_END = IS_SPARSE_VEGETATION_END;
+
+        /** @deprecated Use {@link #IS_DENSE_VEGETATION} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_DENSE = IS_DENSE_VEGETATION;
+        /** @deprecated Use {@link #IS_DENSE_VEGETATION_OVERWORLD} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_DENSE_OVERWORLD = IS_DENSE_VEGETATION_OVERWORLD;
+        /** @deprecated Use {@link #IS_DENSE_VEGETATION_NETHER} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_DENSE_NETHER = IS_DENSE_VEGETATION_NETHER;
+        /** @deprecated Use {@link #IS_DENSE_VEGETATION_END} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_DENSE_END = IS_DENSE_VEGETATION_END;
+
+        /** @deprecated Use {@link #IS_DENSE_VEGETATION_END} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_WATER = IS_AQUATIC;
+
+        /** @deprecated Use {@link #IS_MOUNTAIN_SLOPE} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_SLOPE = IS_MOUNTAIN_SLOPE;
+        /** @deprecated Use {@link #IS_MOUNTAIN_PEAK} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Biome> IS_PEAK = IS_MOUNTAIN_PEAK;
+        //endregion
 
         private static TagKey<Biome> tag(String name) {
             return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("c", name));
