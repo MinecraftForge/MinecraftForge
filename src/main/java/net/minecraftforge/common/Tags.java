@@ -48,6 +48,8 @@ public class Tags {
         public static final TagKey<Block> NEEDS_WOOD_TOOL = forgeTag("needs_wood_tool");
         public static final TagKey<Block> NEEDS_GOLD_TOOL = forgeTag("needs_gold_tool");
         public static final TagKey<Block> NEEDS_NETHERITE_TOOL = forgeTag("needs_netherite_tool");
+        public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
+        public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
         //endregion
 
         //region `c` tags for common conventions
@@ -307,6 +309,9 @@ public class Tags {
          * This tag defaults to {@link net.minecraft.world.item.Items#LAPIS_LAZULI} when not present in any datapacks, including forge client on vanilla server
          */
         public static final TagKey<Item> ENCHANTING_FUELS = forgeTag("enchanting_fuels");
+
+        public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
+        public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
         //endregion
 
         //region `c` tags for common conventions
@@ -714,6 +719,9 @@ public class Tags {
         /** @deprecated Use {@link #TOOLS_SHEARS} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> SHEARS = TOOLS_SHEARS;
+        /** @deprecated Use {@link #TOOLS_SPEARS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> TOOLS_TRIDENTS = TOOLS_SPEARS;
         /** @deprecated Use {@link #STRINGS} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> STRING = STRINGS;
