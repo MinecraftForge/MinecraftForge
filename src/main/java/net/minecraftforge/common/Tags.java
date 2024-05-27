@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 public class Tags {
     public static void init() {
@@ -118,13 +119,13 @@ public class Tags {
         public static final TagKey<Block> GLASS_PANES = tag("glass_panes");
         public static final TagKey<Block> GLASS_PANES_COLORLESS = tag("glass_panes/colorless");
 
-        public static final TagKey<Block> GRAVELS = tag("gravel");
+        public static final TagKey<Block> GRAVELS = tag("gravels");
         /**
          * Tag that holds all blocks that recipe viewers should not show to users.
          * Recipe viewers may use this to automatically find the corresponding BlockItem to hide.
          */
         public static final TagKey<Block> HIDDEN_FROM_RECIPE_VIEWERS = tag("hidden_from_recipe_viewers");
-        public static final TagKey<Block> NETHERRACKS = tag("netherrack");
+        public static final TagKey<Block> NETHERRACKS = tag("netherracks");
         public static final TagKey<Block> OBSIDIANS = tag("obsidians");
         /**
          * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
@@ -250,6 +251,14 @@ public class Tags {
         @Deprecated(forRemoval = true)
         public static final TagKey<Block> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
 
+        /** @deprecated Use {@link #GRAVELS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> GRAVEL = GRAVELS;
+
+        /** @deprecated Use {@link #NETHERRACKS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Block> NETHERRACK = NETHERRACKS;
+
         /** @deprecated Use {@link #SANDS} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Block> SAND = SANDS;
@@ -322,6 +331,20 @@ public class Tags {
         public static final TagKey<Item> BRICKS = tag("bricks");
         public static final TagKey<Item> BRICKS_NORMAL = tag("bricks/normal");
         public static final TagKey<Item> BRICKS_NETHER = tag("bricks/nether");
+        public static final TagKey<Item> BUCKETS = tag("buckets");
+        public static final TagKey<Item> BUCKETS_EMPTY = tag("buckets/empty");
+        /**
+         * Does not include entity water buckets.
+         * If checking for the fluid this bucket holds in code, please use {@link FluidBucketWrapper#getFluid} instead.
+         */
+        public static final TagKey<Item> BUCKETS_WATER = tag("buckets/water");
+        /**
+         * If checking for the fluid this bucket holds in code, please use {@link FluidBucketWrapper#getFluid} instead.
+         */
+        public static final TagKey<Item> BUCKETS_LAVA = tag("buckets/lava");
+        public static final TagKey<Item> BUCKETS_MILK = tag("buckets/milk");
+        public static final TagKey<Item> BUCKETS_POWDER_SNOW = tag("buckets/powder_snow");
+        public static final TagKey<Item> BUCKETS_ENTITY_WATER = tag("buckets/entity_water");
         /**
          * For blocks that are similar to amethyst where their budding block produces buds and cluster blocks
          */
@@ -461,8 +484,8 @@ public class Tags {
         public static final TagKey<Item> GLASS_PANES = tag("glass_panes");
         public static final TagKey<Item> GLASS_PANES_COLORLESS = tag("glass_panes/colorless");
 
-        public static final TagKey<Item> GRAVELS = tag("gravel");
-        public static final TagKey<Item> GUNPOWDERS = tag("gunpowder");
+        public static final TagKey<Item> GRAVELS = tag("gravels");
+        public static final TagKey<Item> GUNPOWDERS = tag("gunpowders");
         /**
          * Tag that holds all items that recipe viewers should not show to users.
          */
@@ -472,10 +495,10 @@ public class Tags {
         public static final TagKey<Item> INGOTS_GOLD = tag("ingots/gold");
         public static final TagKey<Item> INGOTS_IRON = tag("ingots/iron");
         public static final TagKey<Item> INGOTS_NETHERITE = tag("ingots/netherite");
-        public static final TagKey<Item> LEATHERS = tag("leather");
+        public static final TagKey<Item> LEATHERS = tag("leathers");
         public static final TagKey<Item> MUSHROOMS = tag("mushrooms");
         public static final TagKey<Item> NETHER_STARS = tag("nether_stars");
-        public static final TagKey<Item> NETHERRACKS = tag("netherrack");
+        public static final TagKey<Item> NETHERRACKS = tag("netherracks");
         public static final TagKey<Item> NUGGETS = tag("nuggets");
         public static final TagKey<Item> NUGGETS_GOLD = tag("nuggets/gold");
         public static final TagKey<Item> NUGGETS_IRON = tag("nuggets/iron");
@@ -695,6 +718,12 @@ public class Tags {
         /** @deprecated Use {@link #COBBLESTONES_DEEPSLATE} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
+        /** @deprecated Use {@link #GRAVELS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> GRAVEL = GRAVELS;
+        /** @deprecated Use {@link #GUNPOWDERS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> GUNPOWDER = GUNPOWDERS;
         /** @deprecated Use {@link #LEATHERS} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> LEATHER = LEATHERS;
@@ -713,6 +742,9 @@ public class Tags {
         /** @deprecated Use {@link #SANDS_RED} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> SAND_RED = SANDS_RED;
+        /** @deprecated Use {@link #SANDSTONE_BLOCKS} instead */
+        @Deprecated(forRemoval = true)
+        public static final TagKey<Item> SANDSTONE = SANDSTONE_BLOCKS;
         /** @deprecated Use {@link #STONES} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> STONE = STONES;
