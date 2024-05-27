@@ -7,7 +7,6 @@ public class ModConstructorTestNoArg {
     static final String MODID = "modconstructortest_no_arg";
 
     public ModConstructorTestNoArg() {
-
     }
 
 }
