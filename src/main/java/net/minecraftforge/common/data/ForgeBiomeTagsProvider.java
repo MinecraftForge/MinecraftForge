@@ -261,7 +261,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         return tag(tag).addOptionalTag(ResourceLocation.fromNamespaceAndPath("forge", tag.location().getPath()));
     }
 
-    private ResourceLocation forgeRl(String path) {
+    private static ResourceLocation forgeRl(String path) {
         return ResourceLocation.fromNamespaceAndPath("forge", path);
     }
 

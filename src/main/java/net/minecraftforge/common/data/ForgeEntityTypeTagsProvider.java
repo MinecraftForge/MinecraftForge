@@ -37,7 +37,7 @@ public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
         tag(BOATS).addOptionalTag(forgeRl("boats"));
     }
 
-    private ResourceLocation forgeRl(String path) {
+    private static ResourceLocation forgeRl(String path) {
         return ResourceLocation.fromNamespaceAndPath("forge", path);
     }
 

@@ -103,6 +103,8 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(ORES_IN_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE_COAL_ORE, Blocks.DEEPSLATE_COPPER_ORE, Blocks.DEEPSLATE_DIAMOND_ORE, Blocks.DEEPSLATE_EMERALD_ORE, Blocks.DEEPSLATE_GOLD_ORE, Blocks.DEEPSLATE_IRON_ORE, Blocks.DEEPSLATE_LAPIS_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
         tag(ORES_IN_GROUND_NETHERRACK).add(Blocks.NETHER_GOLD_ORE, Blocks.NETHER_QUARTZ_ORE);
         tag(ORES_IN_GROUND_STONE).add(Blocks.COAL_ORE, Blocks.COPPER_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
+        tag(PLAYER_WORKSTATIONS_CRAFTING_TABLES).add(Blocks.CRAFTING_TABLE);
+        tag(PLAYER_WORKSTATIONS_FURNACES).add(Blocks.FURNACE);
         tag(SANDS).addTags(SANDS_COLORLESS, SANDS_RED);
         tag(RELOCATION_NOT_SUPPORTED);
         tag(ROPES);
@@ -271,9 +273,12 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(SANDS_RED).addOptionalTag(forgeRl("sand/red"));
     }
 
+    /**
+     * Shorthand for {@code tag(tag).addOptionalTag(forgeRl(tag.location().getPath()))}
+     */
     private IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tagWithOptionalLegacy(TagKey<Block> tag) {
         IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> tagAppender = tag(tag);
-        tagAppender.addOptionalTag(new ResourceLocation("forge", tag.location().getPath()));
+        tagAppender.addOptionalTag(forgeRl(tag.location().getPath()));
         return tagAppender;
     }
 
@@ -307,7 +312,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         }
     }
 
-    private ResourceLocation forgeRl(String path) {
+    private static ResourceLocation forgeRl(String path) {
         return ResourceLocation.fromNamespaceAndPath("forge", path);
     }
 
