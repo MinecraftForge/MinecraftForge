@@ -63,7 +63,21 @@ public class FMLModContainer extends ModContainer {
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
-            this.modInstance = modClass.getDeclaredConstructor().newInstance();
+            /** Get a Constructor that has a {@link IEventBus} as a parameter, and pass the modBus thru **/
+            var constructors = modClass.getConstructors();
+            if (constructors.length == 0)
+                throw new IllegalStateException("No constructor found");
+
+            var parameters = constructors[0].getParameters();
+            if (parameters.length == 0) {
+                this.modInstance = constructors[0].newInstance();
+            } else {
+                if (parameters[0].getType() == IEventBus.class) {
+                    this.modInstance = constructors[0].newInstance(eventBus);
+                } else {
+                    throw new IllegalStateException("Could not find a constructor with allowed parameter of net.minecraftforge.eventbus.api.IEventBus");
+                }
+            }
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         } catch (Throwable e) {
             // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
