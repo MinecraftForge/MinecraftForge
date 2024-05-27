@@ -73,7 +73,7 @@ public class FMLModContainer extends ModContainer {
                 this.modInstance = constructors[0].newInstance();
             } else {
                 if (parameters[0].getType() == FMLModContainer.class) {
-                    this.modInstance = constructors[0].newInstance(this);
+                    this.modInstance = constructors[0].newInstance(FMLModContainer.this);
                 } else {
                     throw new IllegalStateException("Could not find a constructor with allowed parameter of net.minecraftforge.fml.javafmlmod.FMLModContainer");
                 }
