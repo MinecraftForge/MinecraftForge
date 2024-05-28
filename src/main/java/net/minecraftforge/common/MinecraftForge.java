@@ -54,6 +54,7 @@ public class MinecraftForge
        UsernameCache.load();
        if (FMLEnvironment.dist == Dist.CLIENT) ClientCommandHandler.init();
        DualStackUtils.initialise();
+       TagConventionMigrationHelper.init();
    }
 
     /**

@@ -1112,7 +1112,7 @@ public class Tags {
         @Deprecated(forRemoval = true)
         public static final TagKey<Biome> IS_DENSE_END = IS_DENSE_VEGETATION_END;
 
-        /** @deprecated Use {@link #IS_DENSE_VEGETATION_END} instead */
+        /** @deprecated Use {@link #IS_AQUATIC} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Biome> IS_WATER = IS_AQUATIC;
 
