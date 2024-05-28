@@ -16,14 +16,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.gui.widget.ModListWidget;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -56,10 +55,11 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import org.slf4j.Logger;
 
 public class ModListScreen extends Screen {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtil.stripColor(value); }
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private enum SortType implements Comparator<IModInfo> {
         NORMAL,
         A_TO_Z{ @Override protected int compare(String name1, String name2){ return name1.compareTo(name2); }},
@@ -229,7 +229,7 @@ public class ModListScreen extends Screen {
             listWidth = Math.max(listWidth,getFontRenderer().width(mod.getDisplayName()) + 10);
             listWidth = Math.max(listWidth,getFontRenderer().width(MavenVersionStringHelper.artifactVersionToString(mod.getVersion())) + 5);
         }
-        listWidth = Math.max(Math.min(listWidth, width/3), 100);
+        listWidth = Math.max(Math.min(listWidth, width / 3), 100);
         listWidth += listWidth % NUM_BUTTONS != 0 ? (NUM_BUTTONS - listWidth % NUM_BUTTONS) : 0;
 
         int modInfoWidth = this.width - this.listWidth - (PADDING * 3);
@@ -237,14 +237,23 @@ public class ModListScreen extends Screen {
         int y = this.height - 20 - PADDING;
         int fullButtonHeight = PADDING + 20 + PADDING;
 
-        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose()).bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20).build();
-        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile())).bounds(6, y, this.listWidth, 20).build();
+        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose())
+                .bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20)
+                .build();
+
+        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()))
+                .bounds(6, y, this.listWidth, 20)
+                .build();
+
         y -= 20 + PADDING;
-        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig()).bounds(6, y, this.listWidth, 20).build();
+        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig())
+                .bounds(6, y, this.listWidth, 20)
+                .build();
+
         y -= 14 + PADDING;
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
-        this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.getY() - getFontRenderer().lineHeight*4 - PADDING);
+        this.modList = new ModListWidget(this, listWidth, fullButtonHeight, search.getY() - getFontRenderer().lineHeight * 4 - PADDING);
         this.modList.setX(6);
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
 
@@ -261,11 +270,20 @@ public class ModListScreen extends Screen {
 
         final int width = listWidth / NUM_BUTTONS;
         int x = PADDING;
-        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
+        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL))
+                .bounds(x, PADDING, width - BUTTON_MARGIN, 20)
+                .build());
+
         x += width + BUTTON_MARGIN;
-        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
+        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z))
+                .bounds(x, PADDING, width - BUTTON_MARGIN, 20)
+                .build());
+
         x += width + BUTTON_MARGIN;
-        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)).bounds(x, PADDING, width - BUTTON_MARGIN, 20).build());
+        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A))
+                .bounds(x, PADDING, width - BUTTON_MARGIN, 20)
+                .build());
+
         resortMods(SortType.NORMAL);
         updateCache();
     }
@@ -275,7 +293,9 @@ public class ModListScreen extends Screen {
             return;
 
         try {
-            ConfigScreenHandler.getScreenFactoryFor(selected.getInfo()).map(f->f.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
+            ConfigScreenHandler.getScreenFactoryFor(selected.getInfo())
+                    .map(f -> f.apply(this.minecraft, this))
+                    .ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         } catch (final Exception e) {
             LOGGER.error("There was a critical issue trying to build the config GUI for {}", selected.getInfo().getModId(), e);
         }
@@ -295,7 +315,10 @@ public class ModListScreen extends Screen {
             mods.sort(sortType);
             modList.refreshList();
             if (selected != null) {
-                selected = modList.children().stream().filter(e -> e.getInfo() == selected.getInfo()).findFirst().orElse(null);
+                selected = modList.children().stream()
+                        .filter(e -> e.getInfo() == selected.getInfo())
+                        .findFirst()
+                        .orElse(null);
                 updateCache();
             }
             sorted = true;
@@ -303,7 +326,9 @@ public class ModListScreen extends Screen {
     }
 
     public <T extends ObjectSelectionList.Entry<T>> void buildModList(Consumer<T> modListViewConsumer, Function<IModInfo, T> newEntry) {
-        mods.forEach(mod->modListViewConsumer.accept(newEntry.apply(mod)));
+        for (IModInfo mod : mods) {
+            modListViewConsumer.accept(newEntry.apply(mod));
+        }
     }
 
     private void reloadMods() {
@@ -405,12 +430,12 @@ public class ModListScreen extends Screen {
                 lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.authors", authors)));
         selectedMod.getConfig().getConfigElement("displayURL").ifPresent(displayURL ->
                 lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.displayurl", displayURL)));
-        if (selectedMod.getOwningFile() == null || selectedMod.getOwningFile().getMods().size()==1)
+        if (selectedMod.getOwningFile() == null || selectedMod.getOwningFile().getMods().size() == 1)
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.nochildmods"));
         else
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.childmods", selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(","))));
 
-        if (vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED)
+        if (vercheck.status().isOutdated())
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url() == null ? "" : vercheck.url()));
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", ((ModFileInfo) selectedMod.getOwningFile()).getLicense()));
         lines.add(null);
@@ -426,7 +451,7 @@ public class ModListScreen extends Screen {
         }
         */
 
-        if ((vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED) && !vercheck.changes().isEmpty()) {
+        if ((vercheck.status().isOutdated()) && !vercheck.changes().isEmpty()) {
             lines.add(null);
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.changelogheader"));
             for (Entry<ComparableVersion, String> entry : vercheck.changes().entrySet()) {
