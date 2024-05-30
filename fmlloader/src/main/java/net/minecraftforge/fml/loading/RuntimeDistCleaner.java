@@ -67,7 +67,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         {
             unpack(classNode.visibleAnnotations).stream()
                 .filter(ann->Objects.equals(ann.desc, ONLYIN))
-                .filter(ann->ann.values.indexOf("_interface") != -1)
+                .filter(ann-> ann.values.contains("_interface"))
                 .filter(ann->!Objects.equals(((String[])ann.values.get(ann.values.indexOf("value") + 1))[1], DIST))
                 .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
                 .forEach(intf -> {

@@ -44,7 +44,7 @@ public class AutomaticEventSubscriber {
             .filter(data -> AUTO_SUBSCRIBER.equals(data.annotationType()))
             .toList();
 
-        var onlyIns = FMLEnvironment.production ? Collections.emptyList() : scanData.getAnnotations().stream()
+        var onlyIns = FMLEnvironment.production ? Collections.emptySet() : scanData.getAnnotations().stream()
                 .filter(data -> ONLY_IN_TYPE.equals(data.annotationType()))
                 .map(data -> data.clazz().getClassName())
                 .collect(Collectors.toSet());
