@@ -8,6 +8,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.google.common.base.Strings;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
@@ -48,6 +49,9 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     @ApiStatus.Internal
     public static final String NOT_A_FORGE_MOD_PROP = "__FORGE__not_a_forge_mod";
 
+    @ApiStatus.Internal
+    public static final boolean DETECT_NON_FORGE_MODS_TOML = FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.DETECT_NON_FORGE_MODS_TOML);
+
     private final IConfigurable config;
     private final ModFile modFile;
     private final URL issueURL;
@@ -75,7 +79,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
 
         // if true, this might not be a Forge mod
-        boolean maybeNotAForgeMod = modLoader.equals(JAVAFML)
+        boolean maybeNotAForgeMod = DETECT_NON_FORGE_MODS_TOML
+                && modLoader.equals(JAVAFML)
                 && modLoaderVersion.hasRestrictions() // if loaderVersion is not "*"
                 && modLoaderVerStr.equals(MAYBE_NOT_JAVAFML_VER); // if loaderVersion is exactly "[2,)"
 
