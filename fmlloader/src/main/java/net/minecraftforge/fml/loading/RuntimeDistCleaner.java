@@ -60,7 +60,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         if (!FMLEnvironment.production && hasOnlyInWithModAnnotation(classNode.visibleAnnotations))
         {
             LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
-            throw new RuntimeException("Attempted to load class "+ classNode.name  + " with @Mod and @OnlyIn/@OnlyIns annotations you should instead use the side setting in the mods.toml");
+            throw new RuntimeException("Found @OnlyIn on @Mod class "+ classNode.name  + " - this is not allowed as it causes crashes. Remove the OnlyIn and consider setting clientSideOnly=true in the root of your mods.toml instead");
         }
 
         if (classNode.interfaces != null )
