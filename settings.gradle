@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -45,7 +43,7 @@ dependencyResolutionManagement {
             library('jimfs', 'com.google.jimfs:jimfs:1.3.0')
             bundle('jimfs', ['guava', 'failureaccess'])
             
-            version('bootstrap', '2.1.1')
+            version('bootstrap', '2.1.3')
             library('bootstrap',      'net.minecraftforge', 'bootstrap'     ).versionRef('bootstrap') // Needs modlauncher
             library('bootstrap-api',  'net.minecraftforge', 'bootstrap-api' ).versionRef('bootstrap')
             library('bootstrap-dev',  'net.minecraftforge', 'bootstrap-dev' ).versionRef('bootstrap')
