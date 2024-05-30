@@ -483,10 +483,10 @@ tasks.register('createServerShimClasspath', BundleList) {
 tasks.register('createServerShimConfig') {
     ext.output = file('build/libs/bootstrap-shim.properties')
     doLast {
-        def cfg = new CleanProperties()
-        cfg."Main-Class" = 'net.minecraftforge.bootstrap.ForgeBootstrap'
-        cfg."Java-Version" = '17'
-        cfg."Arguments" = "--launchTarget forge_server"
+        var cfg = new CleanProperties()
+        cfg['Main-Class'] = 'net.minecraftforge.bootstrap.ForgeBootstrap'
+        cfg['Java-Version'] = '21'
+        cfg['Arguments'] = '--launchTarget forge_server'
         cfg.store(output)
     }
 }
