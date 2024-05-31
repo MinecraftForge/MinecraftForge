@@ -458,9 +458,20 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class PlayerLoggedOutEvent extends PlayerEvent {
-        public PlayerLoggedOutEvent(Player player)
-        {
+        protected PlayerLoggedOutEvent(Player player) {
             super(player);
+        }
+
+        public static class Pre extends PlayerLoggedOutEvent {
+            public Pre(Player player) {
+                super(player);
+            }
+        }
+
+        public static class Post extends PlayerLoggedOutEvent {
+            public Post(Player player) {
+                super(player);
+            }
         }
     }
 

@@ -36,10 +36,18 @@
      }
  
      public void remove(ServerPlayer p_11287_) {
-+        net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
++        net.minecraftforge.event.ForgeEventFactory.firePrePlayerLoggedOut(p_11287_);
          ServerLevel serverlevel = p_11287_.serverLevel();
          p_11287_.awardStat(Stats.LEAVE_GAME);
          this.save(p_11287_);
+@@ -379,6 +_,7 @@
+         }
+ 
+         this.broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(p_11287_.getUUID())));
++        net.minecraftforge.event.ForgeEventFactory.firePostPlayerLoggedOut(p_11287_);
+     }
+ 
+     @Nullable
 @@ -497,6 +_,7 @@
          this.playersByUUID.put(serverplayer.getUUID(), serverplayer);
          serverplayer.initInventoryMenu();

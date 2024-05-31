@@ -778,8 +778,11 @@ public final class ForgeEventFactory {
         post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
-    public static void firePlayerLoggedOut(Player player) {
-        post(new PlayerEvent.PlayerLoggedOutEvent(player));
+    public static void firePrePlayerLoggedOut(Player player) {
+        post(new PlayerEvent.PlayerLoggedOutEvent.Pre(player));
+    }
+    public static void firePostPlayerLoggedOut(Player player) {
+        post(new PlayerEvent.PlayerLoggedOutEvent.Post(player));
     }
 
     public static void firePlayerRespawnEvent(Player player, boolean endConquered) {
