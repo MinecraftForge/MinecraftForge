@@ -46,17 +46,26 @@
          RegistryOps<JsonElement> p_332135_,
          ResourceKey<E> p_332850_,
          Resource p_335244_,
-@@ -197,7 +_,14 @@
+@@ -197,7 +_,23 @@
      ) throws IOException {
          try (Reader reader = p_335244_.openAsReader()) {
              JsonElement jsonelement = JsonParser.parseReader(reader);
 -            DataResult<E> dataresult = p_333909_.parse(p_332135_, jsonelement);
 +
 +            var result = p_333909_.decode(p_332135_, jsonelement);
-+            if (result.result().map(p -> p.getFirst()).isEmpty()) {
-+               LOGGER.debug("Skipping {} conditions not met", p_332850_);
-+               return;
++
++            if (result.isError()) {
++                LOGGER.error("Couldn't parse data file {}: {}", p_332850_, result.error().get().message());
++                throw new IllegalStateException("Couldn't parse data file " + p_332850_ + ": " + result.error().get().message());
 +            }
++
++            var mappedResult = result.result().map(a -> a.getFirst());
++
++            if (mappedResult.get().isEmpty()) {
++                LOGGER.debug("Skipping {} conditions not met", p_332850_);
++                return;
++            }
++
 +            DataResult<E> dataresult = result.map(p -> p.mapFirst(Optional::get)).map(p -> p.getFirst());
 +
              E e = dataresult.getOrThrow();
