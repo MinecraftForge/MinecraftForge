@@ -73,4 +73,4 @@ Please ensure you have a valid email address associated with your GitHub account
 [ForgeDev]: https://docs.minecraftforge.net/en/1.20.1/forgedev/
 [Pull-Requests]: https://docs.minecraftforge.net/en/1.20.1/forgedev/#making-changes-and-pull-requests
 
-[Patreon]: https://www.patreon.com/MinecraftForge
+[Patreon]: https://www.patreon.com/LexManos
