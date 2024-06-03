@@ -685,10 +685,16 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
      */
     public void freeze() {
         this.isFrozen = true;
+        var wrapper = this.getWrapper();
+        if (wrapper != null)
+            wrapper.locked = true;
     }
 
     public void unfreeze() {
         this.isFrozen = false;
+        var wrapper = this.getWrapper();
+        if (wrapper != null)
+            wrapper.locked = false;
     }
 
     void dump(ResourceLocation name) {
