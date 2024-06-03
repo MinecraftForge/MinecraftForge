@@ -27,6 +27,6 @@ abstract class BytecodePredicateFinder extends BytecodeFinder {
     @Internal
     @Override
     protected Object getData() {
-        return matches.toSorted(Comparator.naturalOrder()) ?: {throw new RuntimeException('Failed to find any targets, please ensure that method names and descriptors are correct.')}()
+        return matches.stream().sorted().toList() ?: {throw new RuntimeException('Failed to find any targets, please ensure that method names and descriptors are correct.')}()
     }
 }
