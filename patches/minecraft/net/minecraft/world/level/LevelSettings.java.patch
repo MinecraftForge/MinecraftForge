@@ -45,7 +45,7 @@
  
     public LevelSettings m_247275_(WorldDataConfiguration p_250867_) {
 -      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, p_250867_);
-+      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, f_243681_, this.lifecycle);
++      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, p_250867_, this.lifecycle);
     }
  
     public LevelSettings m_46935_() {
