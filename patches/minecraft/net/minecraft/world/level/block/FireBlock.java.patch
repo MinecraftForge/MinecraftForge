@@ -16,11 +16,7 @@
              }
           }
  
-@@ -135,14 +_,14 @@
-       p_221161_.scheduleTick(p_221162_, this, getFireTickDelay(p_221161_.random));
-       if (p_221161_.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
-          if (!p_221160_.canSurvive(p_221161_, p_221162_)) {
--            p_221161_.removeBlock(p_221162_, false);
+@@ -139,7 +_,7 @@
           }
  
           BlockState blockstate = p_221161_.getBlockState(p_221162_.below());
@@ -29,10 +25,6 @@
           int i = p_221160_.getValue(AGE);
           if (!flag && p_221161_.isRaining() && this.isNearRain(p_221161_, p_221162_) && p_221163_.nextFloat() < 0.2F + (float)i * 0.03F) {
              p_221161_.removeBlock(p_221162_, false);
-+            p_221161_.removeBlock(p_221162_, false);
-          } else {
-             int j = Math.min(15, i + p_221163_.nextInt(3) / 2);
-             if (i != j) {
 @@ -160,7 +_,7 @@
                    return;
                 }
