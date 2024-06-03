@@ -37,6 +37,15 @@
                      PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
                      this.broadcastChatMessage(playerchatmessage1);
                  });
+@@ -1516,7 +_,7 @@
+ 
+                         @Override
+                         public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
+-                            this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> p_143687_.interactAt(p_143686_, p_143683_, p_143688_));
++                            this.performInteraction(p_143682_, (p_143686_, p_143687_, p_143688_) -> net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_143687_, p_143686_, p_143683_, p_143688_));
+                         }
+ 
+                         @Override
 @@ -1797,6 +_,7 @@
  
      @Override

@@ -255,6 +255,13 @@ public final class ForgeHooks {
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
+    public static InteractionResult onInteractEntityAt(Entity entity, Player player, Vec3 vec3d, InteractionHand hand) {
+        var ret = ForgeEventFactory.onEntityInteractSpecific(player, entity, hand, vec3d);
+        if (ret.isCanceled())
+            return ret.getCancellationResult();
+        return entity.interactAt(player, vec3d, hand);
+    }
+
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
         int looting = 0;
         if (killer instanceof LivingEntity living)
