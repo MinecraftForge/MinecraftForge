@@ -45,7 +45,7 @@
  
     public LevelSettings withDataConfiguration(WorldDataConfiguration p_250867_) {
 -      return new LevelSettings(this.levelName, this.gameType, this.hardcore, this.difficulty, this.allowCommands, this.gameRules, p_250867_);
-+      return new LevelSettings(this.levelName, this.gameType, this.hardcore, this.difficulty, this.allowCommands, this.gameRules, dataConfiguration, this.lifecycle);
++      return new LevelSettings(this.levelName, this.gameType, this.hardcore, this.difficulty, this.allowCommands, this.gameRules, p_250867_, this.lifecycle);
     }
  
     public LevelSettings copy() {
