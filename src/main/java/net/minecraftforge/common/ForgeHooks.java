@@ -697,7 +697,7 @@ public final class ForgeHooks {
                 if (potion != null && potion.unwrapKey().isPresent())
                     return potion.unwrapKey().get().location().getNamespace();
             } else if (item instanceof SpawnEggItem egg) {
-                var resourceLocation = ForgeRegistries.ENTITY_TYPES.getKey(egg.getType(null));
+                var resourceLocation = ForgeRegistries.ENTITY_TYPES.getKey(egg.getType(itemStack));
                 if (resourceLocation != null)
                     return resourceLocation.getNamespace();
             }
