@@ -1,17 +1,5 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -437,9 +_,11 @@
-                 }
- 
-                 entity.absMoveTo(d3, d4, d5, f, f1);
-+                this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-                 boolean flag3 = serverlevel.noCollision(entity, entity.getBoundingBox().deflate(0.0625));
-                 if (flag && (flag2 || !flag3)) {
-                     entity.absMoveTo(d0, d1, d2, f, f1);
-+                    this.player.absMoveTo(d3, d4, d5, this.player.getYRot(), this.player.getXRot()); // Forge - Resync player position on vehicle moving
-                     this.send(new ClientboundMoveVehiclePacket(entity));
-                     return;
-                 }
 @@ -1005,9 +_,10 @@
          switch (serverboundplayeractionpacket$action) {
              case SWAP_ITEM_WITH_OFFHAND:
