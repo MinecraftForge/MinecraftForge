@@ -27,7 +27,7 @@ public class Bindings {
             .findFirst().orElseThrow(() -> new IllegalStateException("Could not find bindings provider"));
 
     /**
-     * @see net.minecraftforge.common.MinecraftForge#EVENT_BUS
+     * @return A supplier of net.minecraftforge.common.MinecraftForge#EVENT_BUS
      */
     public static Supplier<IEventBus> getForgeBus() {
         return PROVIDER.getForgeBusSupplier();
