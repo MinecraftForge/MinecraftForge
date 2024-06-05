@@ -9,41 +9,35 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 
-import java.util.ArrayList;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
+/**
+ * Used to allow access to certain things from the game layer
+ */
 public class Bindings {
-    private static final Bindings INSTANCE = new Bindings();
+    private Bindings() {}
 
-    private final IBindingsProvider provider;
+    /**
+     * The provider of the bindings
+     * @implNote May also throw a {@link ServiceConfigurationError}
+     */
+    private static final IBindingsProvider PROVIDER = ServiceLoader.load(FMLLoader.getGameLayer(), IBindingsProvider.class)
+            .findFirst().orElseThrow(() -> new IllegalStateException("Could not find bindings provider"));
 
-    private Bindings() {
-        var providers = new ArrayList<IBindingsProvider>(1);
-        for (var itr = ServiceLoader.load(FMLLoader.getGameLayer(), IBindingsProvider.class).iterator(); itr.hasNext(); ) {
-            try {
-                providers.add(itr.next());
-            } catch (ServiceConfigurationError sce) {
-                sce.printStackTrace();
-            }
-        }
-
-        if (providers.size() != 1)
-            throw new IllegalStateException("Could not find bindings provider: " + providers);
-
-        this.provider = providers.get(0);
-    }
-
+    /**
+     * @see net.minecraftforge.common.MinecraftForge#EVENT_BUS
+     */
     public static Supplier<IEventBus> getForgeBus() {
-        return INSTANCE.provider.getForgeBusSupplier();
+        return PROVIDER.getForgeBusSupplier();
     }
 
     public static Supplier<I18NParser> getMessageParser() {
-        return INSTANCE.provider.getMessageParser();
+        return PROVIDER.getMessageParser();
     }
 
     public static Supplier<IConfigEvent.ConfigConfig> getConfigConfiguration() {
-        return INSTANCE.provider.getConfigConfiguration();
+        return PROVIDER.getConfigConfiguration();
     }
 }
