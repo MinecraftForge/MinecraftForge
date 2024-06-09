@@ -26,11 +26,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -83,7 +79,14 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
             final Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
             final FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);
             final Path pathInFS = zipFS.getPath("/");
-            return Optional.of(createMod(pathInFS).file());
+            final IModFile.Type parentType = file.getType();
+            final String modType;
+            if (parentType == IModFile.Type.LIBRARY || parentType == IModFile.Type.LANGPROVIDER) {
+                modType = IModFile.Type.LIBRARY.name();
+            } else {
+                modType = IModFile.Type.GAMELIBRARY.name();
+            }
+            return Optional.of(createMod(pathInFS, modType, false).file());
         } catch (Exception e) {
             LOGGER.error("Failed to load mod file {} from {}", path, file.getFileName());
             final RuntimeException exception = new ModFileLoadingException("Failed to load mod file " + file.getFileName());
