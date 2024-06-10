@@ -26,7 +26,11 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,7 +90,7 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
             } else {
                 modType = IModFile.Type.GAMELIBRARY.name();
             }
-            return Optional.of(createMod(pathInFS, modType, false).file());
+            return Optional.of(createMod(pathInFS, false, modType).file());
         } catch (Exception e) {
             LOGGER.error("Failed to load mod file {} from {}", path, file.getFileName());
             final RuntimeException exception = new ModFileLoadingException("Failed to load mod file " + file.getFileName());
