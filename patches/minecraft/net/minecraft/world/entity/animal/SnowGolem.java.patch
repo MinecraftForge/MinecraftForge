@@ -36,15 +36,10 @@
              this.shear(SoundSource.PLAYERS);
              this.gameEvent(GameEvent.SHEAR, p_29920_);
              if (!this.level().isClientSide) {
-@@ -189,4 +_,21 @@
+@@ -189,4 +_,16 @@
      public Vec3 getLeashOffset() {
          return new Vec3(0.0, (double)(0.75F * this.getEyeHeight()), (double)(this.getBbWidth() * 0.4F));
      }
-+
-+    @Override
-+    public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
-+         return readyForShearing();
-+    }
 +
 +    @org.jetbrains.annotations.NotNull
 +    @Override

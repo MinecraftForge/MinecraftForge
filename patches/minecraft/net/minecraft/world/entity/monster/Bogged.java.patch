@@ -1,0 +1,49 @@
+--- a/net/minecraft/world/entity/monster/Bogged.java
++++ b/net/minecraft/world/entity/monster/Bogged.java
+@@ -74,7 +_,7 @@
+     @Override
+     protected InteractionResult mobInteract(Player p_335303_, InteractionHand p_335145_) {
+         ItemStack itemstack = p_335303_.getItemInHand(p_335145_);
+-        if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
++        if (false && itemstack.is(Items.SHEARS) && this.readyForShearing()) { // Forge: move to onSheared
+             this.shear(SoundSource.PLAYERS);
+             this.gameEvent(GameEvent.SHEAR, p_335303_);
+             if (!this.level().isClientSide) {
+@@ -129,12 +_,20 @@
+ 
+     @Override
+     public void shear(SoundSource p_332421_) {
+-        this.level().playSound(null, this, SoundEvents.BOGGED_SHEAR, p_332421_, 1.0F, 1.0F);
+-        this.spawnShearedMushrooms();
++        shearInternal(p_332421_).stream().forEach(stack -> this.spawnAtLocation(stack, this.getBbHeight()));
++    }
++
++    @Override
++    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
++        this.gameEvent(GameEvent.SHEAR, player);
++        return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++    }
++
++    private java.util.List<ItemStack> shearInternal(SoundSource sound) {
++        this.level().playSound(null, this, SoundEvents.BOGGED_SHEAR, sound, 1.0F, 1.0F);
+         this.setSheared(true);
+-    }
+ 
+-    private void spawnShearedMushrooms() {
++        var ret = new java.util.ArrayList<ItemStack>();
+         if (this.level() instanceof ServerLevel serverlevel && serverlevel.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
+             LootTable loottable = serverlevel.getServer().reloadableRegistries().getLootTable(BuiltInLootTables.BOGGED_SHEAR);
+             LootParams lootparams = new LootParams.Builder(serverlevel)
+@@ -143,9 +_,11 @@
+                 .create(LootContextParamSets.SHEARING);
+ 
+             for (ItemStack itemstack : loottable.getRandomItems(lootparams)) {
+-                this.spawnAtLocation(itemstack);
++                ret.add(itemstack);
+             }
+         }
++
++        return ret;
+     }
+ 
+     @Override

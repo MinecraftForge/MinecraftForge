@@ -23,8 +23,7 @@ import org.jetbrains.annotations.Nullable;
  * to support mod-shears as well.
  *
  */
-public interface IForgeShearable
-{
+public interface IForgeShearable {
     /**
      * Checks if the object is currently shearable
      * Example: Sheep return false when they have no wool
@@ -34,8 +33,7 @@ public interface IForgeShearable
      * @param pos Block's position in level.
      * @return If this is shearable, and onSheared should be called.
      */
-    default boolean isShearable(@NotNull ItemStack item, Level level, BlockPos pos)
-    {
+    default boolean isShearable(@NotNull ItemStack item, Level level, BlockPos pos) {
         return true;
     }
 
@@ -58,8 +56,7 @@ public interface IForgeShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @NotNull
-    default List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level level, BlockPos pos, int fortune)
-    {
+    default List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level level, BlockPos pos, int fortune) {
         return Collections.emptyList();
     }
 }

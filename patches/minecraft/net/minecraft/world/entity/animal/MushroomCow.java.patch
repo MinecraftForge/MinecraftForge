@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/animal/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/MushroomCow.java
-@@ -42,7 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraft.world.level.gameevent.GameEvent;
- 
--public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType> {
-+public class MushroomCow extends Cow implements Shearable, VariantHolder<MushroomCow.MushroomType>, net.minecraftforge.common.IForgeShearable {
-     private static final EntityDataAccessor<String> DATA_TYPE = SynchedEntityData.defineId(MushroomCow.class, EntityDataSerializers.STRING);
-     private static final int MUTATE_CHANCE = 1024;
-     private static final String TAG_STEW_EFFECTS = "stew_effects";
 @@ -108,7 +_,7 @@
  
              this.playSound(soundevent, 1.0F, 1.0F);
@@ -55,7 +46,7 @@
      }
  
      @Override
-@@ -255,6 +_,17 @@
+@@ -255,6 +_,12 @@
          }
  
          return mushroomcow$mushroomtype2;
@@ -65,11 +56,6 @@
 +    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
 +        this.gameEvent(GameEvent.SHEAR, player);
 +        return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
-+    }
-+
-+    @Override
-+    public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
-+       return readyForShearing();
      }
  
      public static enum MushroomType implements StringRepresentable {

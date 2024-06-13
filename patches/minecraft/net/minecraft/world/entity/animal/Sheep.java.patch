@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -62,7 +_,7 @@
- import net.minecraft.world.level.storage.loot.BuiltInLootTables;
- import net.minecraft.world.level.storage.loot.LootTable;
- 
--public class Sheep extends Animal implements Shearable {
-+public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
-     private static final int EAT_ANIMATION_TICKS = 40;
-     private static final EntityDataAccessor<Byte> DATA_WOOL_ID = SynchedEntityData.defineId(Sheep.class, EntityDataSerializers.BYTE);
-     private static final Map<DyeColor, ItemLike> ITEM_BY_DYE = Util.make(Maps.newEnumMap(DyeColor.class), p_29841_ -> {
 @@ -208,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
@@ -44,15 +35,10 @@
              if (itementity != null) {
                  itementity.setDeltaMovement(
                      itementity.getDeltaMovement()
-@@ -375,5 +_,15 @@
+@@ -375,5 +_,10 @@
          craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
          craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
          return craftingcontainer;
-+    }
-+
-+    @Override
-+    public boolean isShearable(@org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos) {
-+       return readyForShearing();
 +    }
 +
 +    @Override

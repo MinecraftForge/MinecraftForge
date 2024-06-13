@@ -1,5 +1,33 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
+@@ -86,7 +_,7 @@
+ import net.minecraft.world.level.pathfinder.PathType;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Holder<WolfVariant>> {
++public class Wolf extends TamableAnimal implements NeutralMob, VariantHolder<Holder<WolfVariant>>, net.minecraftforge.common.IForgeShearable {
+     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.BOOLEAN);
+     private static final EntityDataAccessor<Integer> DATA_COLLAR_COLOR = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
+     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
+@@ -450,16 +_,11 @@
+                         this.setBodyArmorItem(itemstack.copyWithCount(1));
+                         itemstack.consume(1, p_30412_);
+                         return InteractionResult.SUCCESS;
+-                    } else if (itemstack.is(Items.SHEARS)
++                    } else if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)
+                         && this.isOwnedBy(p_30412_)
+                         && this.hasArmor()
+                         && (!EnchantmentHelper.hasBindingCurse(this.getBodyArmorItem()) || p_30412_.isCreative())) {
+-                        itemstack.hurtAndBreak(1, p_30412_, getSlotForHand(p_30413_));
+-                        this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
+-                        ItemStack itemstack1 = this.getBodyArmorItem();
+-                        this.setBodyArmorItem(ItemStack.EMPTY);
+-                        this.spawnAtLocation(itemstack1);
+-                        return InteractionResult.SUCCESS;
++                        return InteractionResult.PASS;
+                     } else if (ArmorMaterials.ARMADILLO.value().repairIngredient().get().test(itemstack)
+                         && this.isInSittingPose()
+                         && this.hasArmor()
 @@ -498,7 +_,7 @@
      }
  
@@ -9,3 +37,28 @@
              this.tame(p_336244_);
              this.navigation.stop();
              this.setTarget(null);
+@@ -650,6 +_,24 @@
+ 
+             return true;
+         }
++    }
++
++    @Override
++    public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
++        return this.hasArmor();
++    }
++
++    @Override
++    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
++        if (!this.hasArmor() || (player != null && !this.isOwnedBy(player)) ||
++            (EnchantmentHelper.hasBindingCurse(this.getBodyArmorItem()) && (player == null || !player.isCreative()))
++        )
++            return java.util.Collections.emptyList();
++
++        this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
++        var armor = this.getBodyArmorItem();
++        this.setBodyArmorItem(ItemStack.EMPTY);
++        return java.util.List.of(armor);
+     }
+ 
+     @Override
