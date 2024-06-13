@@ -258,10 +258,10 @@ public final class ForgeEventFactoryClient {
     }
 
     public static void onRenderTickStart(DeltaTracker timer) {
-        post(new TickEvent.RenderTickEvent.Start(timer));
+        post(new TickEvent.RenderTickEvent.Pre(timer));
     }
 
     public static void onRenderTickEnd(DeltaTracker timer) {
-        post(new TickEvent.RenderTickEvent.End(timer));
+        post(new TickEvent.RenderTickEvent.Post(timer));
     }
 }
