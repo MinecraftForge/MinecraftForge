@@ -15,8 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
-public class TickEvent extends Event
-{
+public class TickEvent extends Event {
     public enum Type {
         LEVEL, PLAYER, CLIENT, SERVER, RENDER;
     }
@@ -24,11 +23,12 @@ public class TickEvent extends Event
     public enum Phase {
         START, END;
     }
+
     public final Type type;
     public final LogicalSide side;
+    @Deprecated(forRemoval = true, since = "1.20.6")
     public final Phase phase;
-    public TickEvent(Type type, LogicalSide side, Phase phase)
-    {
+    public TickEvent(Type type, LogicalSide side, Phase phase) {
         this.type = type;
         this.side = side;
         this.phase = phase;
@@ -38,8 +38,11 @@ public class TickEvent extends Event
         private final BooleanSupplier haveTime;
         private final MinecraftServer server;
 
-        public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server)
-        {
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public ServerTickEvent(Phase phase, BooleanSupplier haveTime, MinecraftServer server) {
+            this(haveTime, server, phase);
+        }
+        protected ServerTickEvent(BooleanSupplier haveTime, MinecraftServer server, Phase phase) {
             super(Type.SERVER, LogicalSide.SERVER, phase);
             this.haveTime = haveTime;
             this.server = server;
@@ -47,27 +50,65 @@ public class TickEvent extends Event
 
         /**
          * @return {@code true} whether the server has enough time to perform any
-         *         additional tasks (usually IO related) during the current tick,
-         *         otherwise {@code false}
+         * additional tasks (usually IO related) during the current tick,
+         * otherwise {@code false}
          */
-        public boolean haveTime()
-        {
+        public boolean haveTime() {
             return this.haveTime.getAsBoolean();
         }
-        
+
         /**
          * {@return the server instance}
          */
-        public MinecraftServer getServer()
-        {
+        public MinecraftServer getServer() {
             return server;
+        }
+
+        public static class Pre extends ServerTickEvent {
+
+            public Pre(BooleanSupplier haveTime, MinecraftServer server) {
+                super(haveTime, server, Phase.START);
+            }
+        }
+
+        public static class Post extends ServerTickEvent {
+
+            public Post(BooleanSupplier haveTime, MinecraftServer server) {
+                super(haveTime, server, Phase.END);
+            }
         }
     }
 
     public static class ClientTickEvent extends TickEvent {
-        public ClientTickEvent(Phase phase)
-        {
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public ClientTickEvent(Phase phase) {
             super(Type.CLIENT, LogicalSide.CLIENT, phase);
+        }
+
+        public static class Pre extends ClientTickEvent {
+
+            private static final Pre INSTANCE = new Pre();
+
+            private Pre() {
+                super(Phase.START);
+            }
+
+            public static Pre get() {
+                return INSTANCE;
+            }
+        }
+
+        public static class Post extends ClientTickEvent {
+
+            private static final Post INSTANCE = new Post();
+
+            private Post() {
+                super(Phase.END);
+            }
+
+            public static Post get() {
+                return INSTANCE;
+            }
         }
     }
 
@@ -75,8 +116,13 @@ public class TickEvent extends Event
         public final Level level;
         private final BooleanSupplier haveTime;
 
-        public LevelTickEvent(LogicalSide side, Phase phase, Level level, BooleanSupplier haveTime)
-        {
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public LevelTickEvent(LogicalSide side, Phase phase, Level level, BooleanSupplier haveTime) {
+            super(Type.LEVEL, side, phase);
+            this.level = level;
+            this.haveTime = haveTime;
+        }
+        protected LevelTickEvent(LogicalSide side, Level level, BooleanSupplier haveTime, Phase phase) {
             super(Type.LEVEL, side, phase);
             this.level = level;
             this.haveTime = haveTime;
@@ -84,32 +130,75 @@ public class TickEvent extends Event
 
         /**
          * @return {@code true} whether the server has enough time to perform any
-         *         additional tasks (usually IO related) during the current tick,
-         *         otherwise {@code false}
-         *
+         * additional tasks (usually IO related) during the current tick,
+         * otherwise {@code false}
          * @see ServerTickEvent#haveTime()
          */
-        public boolean haveTime()
-        {
+        public boolean haveTime() {
             return this.haveTime.getAsBoolean();
         }
+
+        public static class Pre extends LevelTickEvent {
+            public Pre(LogicalSide side, Level level, BooleanSupplier haveTime) {
+                super(side, level, haveTime, Phase.START);
+            }
+        }
+
+        public static class Post extends LevelTickEvent {
+            public Post(LogicalSide side, Level level, BooleanSupplier haveTime) {
+                super(side, level, haveTime, Phase.END);
+            }
+        }
     }
+
     public static class PlayerTickEvent extends TickEvent {
         public final Player player;
 
-        public PlayerTickEvent(Phase phase, Player player)
-        {
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public PlayerTickEvent(Phase phase, Player player) {
+            this(player, phase);
+        }
+        protected PlayerTickEvent(Player player, Phase phase) {
             super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.player = player;
+        }
+
+        public static class Pre extends PlayerTickEvent {
+            public Pre(Player player) {
+                super(player, Phase.START);
+            }
+        }
+
+        public static class Post extends PlayerTickEvent {
+            public Post(Player player) {
+                super(player, Phase.END);
+            }
         }
     }
 
     public static class RenderTickEvent extends TickEvent {
         public final float renderTickTime;
-        public RenderTickEvent(Phase phase, float renderTickTime)
-        {
+
+        @Deprecated(forRemoval = true, since = "1.20.6")
+        public RenderTickEvent(Phase phase, float renderTickTime) {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
             this.renderTickTime = renderTickTime;
+        }
+        protected RenderTickEvent(float renderTickTime, Phase phase) {
+            super(Type.RENDER, LogicalSide.CLIENT, phase);
+            this.renderTickTime = renderTickTime;
+        }
+
+        public static class Pre extends RenderTickEvent {
+            public Pre(float renderTickTime) {
+                super(renderTickTime, Phase.START);
+            }
+        }
+
+        public static class Post extends RenderTickEvent {
+            public Post(float renderTickTime) {
+                super(renderTickTime, Phase.END);
+            }
         }
     }
 }
