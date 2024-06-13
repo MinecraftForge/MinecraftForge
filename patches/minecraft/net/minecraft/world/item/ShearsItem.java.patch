@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -79,4 +_,32 @@
+@@ -79,4 +_,33 @@
  
          return super.useOn(p_186371_);
      }
@@ -21,7 +21,8 @@
 +                    var ent = entity.spawnAtLocation(d, 1.0F);
 +                    ent.setDeltaMovement(ent.getDeltaMovement().add((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
 +                });
-+                stack.hurtAndBreak(1, playerIn, LivingEntity.getSlotForHand(hand));
++                if (!drops.isEmpty())
++                    stack.hurtAndBreak(1, playerIn, LivingEntity.getSlotForHand(hand));
 +            }
 +            return InteractionResult.SUCCESS;
 +        }
