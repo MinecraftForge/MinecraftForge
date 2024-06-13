@@ -28,7 +28,7 @@
                  VertexConsumer vertexconsumer;
                  if (hasAnimatedTexture(p_115144_) && p_115144_.hasFoil()) {
                      PoseStack.Pose posestack$pose = p_115147_.last().copy();
-@@ -150,9 +_,11 @@
+@@ -146,9 +_,11 @@
                      vertexconsumer = getFoilBuffer(p_115148_, rendertype, true, p_115144_.hasFoil());
                  }
  
@@ -42,7 +42,7 @@
              }
  
              p_115147_.popPose();
-@@ -211,7 +_,7 @@
+@@ -199,7 +_,7 @@
              float f1 = (float)FastColor.ARGB32.red(i) / 255.0F;
              float f2 = (float)FastColor.ARGB32.green(i) / 255.0F;
              float f3 = (float)FastColor.ARGB32.blue(i) / 255.0F;
@@ -51,7 +51,7 @@
          }
      }
  
-@@ -264,5 +_,9 @@
+@@ -252,5 +_,9 @@
      @Override
      public void onResourceManagerReload(ResourceManager p_115105_) {
          this.itemModelShaper.rebuildCache();

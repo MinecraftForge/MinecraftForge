@@ -1,12 +1,24 @@
 --- a/net/minecraft/client/Camera.java
 +++ b/net/minecraft/client/Camera.java
-@@ -227,6 +_,18 @@
-         return this.partialTickTime;
+@@ -105,9 +_,13 @@
      }
  
-+    public void setAnglesInternal(float yaw, float pitch) {
-+        this.yRot = yaw;
-+        this.xRot = pitch;
+     protected void setRotation(float p_90573_, float p_90574_) {
++        setRotation(p_90573_, p_90574_, 0.0f);
++    }
++
++    public void setRotation(float p_90573_, float p_90574_, float z) {
+         this.xRot = p_90574_;
+         this.yRot = p_90573_;
+-        this.rotation.rotationYXZ((float) Math.PI - p_90573_ * (float) (Math.PI / 180.0), -p_90574_ * (float) (Math.PI / 180.0), 0.0F);
++        this.rotation.rotationYXZ((float) Math.PI - p_90573_ * (float) (Math.PI / 180.0), -p_90574_ * (float) (Math.PI / 180.0), z * (float) (Math.PI / 180.0));
+         FORWARDS.rotate(this.rotation, this.forwards);
+         UP.rotate(this.rotation, this.up);
+         LEFT.rotate(this.rotation, this.left);
+@@ -223,6 +_,13 @@
+ 
+     public float getPartialTickTime() {
+         return this.partialTickTime;
 +    }
 +
 +    public net.minecraft.world.level.block.state.BlockState getBlockAtCamera() {
@@ -14,8 +26,6 @@
 +            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
 +        else
 +            return this.level.getBlockState(this.blockPosition).getStateAtViewpoint(this.level, this.blockPosition, this.position);
-+    }
-+
+     }
+ 
      @OnlyIn(Dist.CLIENT)
-     public static class NearPlane {
-         final Vec3 forward;

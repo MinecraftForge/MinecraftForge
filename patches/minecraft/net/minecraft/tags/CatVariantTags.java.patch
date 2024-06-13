@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/CatVariantTags.java
++++ b/net/minecraft/tags/CatVariantTags.java
+@@ -14,4 +_,12 @@
+     private static TagKey<CatVariant> create(String p_215846_) {
+         return TagKey.create(Registries.CAT_VARIANT, ResourceLocation.withDefaultNamespace(p_215846_));
+     }
++
++    public static TagKey<CatVariant> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<CatVariant> create(ResourceLocation name) {
++        return TagKey.create(Registries.CAT_VARIANT, name);
++    }
+ }

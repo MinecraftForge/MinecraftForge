@@ -27,16 +27,16 @@ import java.util.function.BiConsumer;
  */
 public abstract class SpriteSourceProvider extends JsonCodecProvider<List<SpriteSource>>
 {
-    protected static final ResourceLocation BLOCKS_ATLAS = new ResourceLocation("blocks");
-    protected static final ResourceLocation BANNER_PATTERNS_ATLAS = new ResourceLocation("banner_patterns");
-    protected static final ResourceLocation BEDS_ATLAS = new ResourceLocation("beds");
-    protected static final ResourceLocation CHESTS_ATLAS = new ResourceLocation("chests");
-    protected static final ResourceLocation SHIELD_PATTERNS_ATLAS = new ResourceLocation("shield_patterns");
-    protected static final ResourceLocation SHULKER_BOXES_ATLAS = new ResourceLocation("shulker_boxes");
-    protected static final ResourceLocation SIGNS_ATLAS = new ResourceLocation("signs");
-    protected static final ResourceLocation MOB_EFFECTS_ATLAS = new ResourceLocation("mob_effects");
-    protected static final ResourceLocation PAINTINGS_ATLAS = new ResourceLocation("paintings");
-    protected static final ResourceLocation PARTICLES_ATLAS = new ResourceLocation("particles");
+    protected static final ResourceLocation BLOCKS_ATLAS = ResourceLocation.withDefaultNamespace("blocks");
+    protected static final ResourceLocation BANNER_PATTERNS_ATLAS = ResourceLocation.withDefaultNamespace("banner_patterns");
+    protected static final ResourceLocation BEDS_ATLAS = ResourceLocation.withDefaultNamespace("beds");
+    protected static final ResourceLocation CHESTS_ATLAS = ResourceLocation.withDefaultNamespace("chests");
+    protected static final ResourceLocation SHIELD_PATTERNS_ATLAS = ResourceLocation.withDefaultNamespace("shield_patterns");
+    protected static final ResourceLocation SHULKER_BOXES_ATLAS = ResourceLocation.withDefaultNamespace("shulker_boxes");
+    protected static final ResourceLocation SIGNS_ATLAS = ResourceLocation.withDefaultNamespace("signs");
+    protected static final ResourceLocation MOB_EFFECTS_ATLAS = ResourceLocation.withDefaultNamespace("mob_effects");
+    protected static final ResourceLocation PAINTINGS_ATLAS = ResourceLocation.withDefaultNamespace("paintings");
+    protected static final ResourceLocation PARTICLES_ATLAS = ResourceLocation.withDefaultNamespace("particles");
 
     private final Map<ResourceLocation, SourceList> atlases = new HashMap<>();
 

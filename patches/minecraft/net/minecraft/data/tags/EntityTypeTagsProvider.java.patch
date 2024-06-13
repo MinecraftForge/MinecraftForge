@@ -10,4 +10,4 @@
 +
      @Override
      protected void addTags(HolderLookup.Provider p_255894_) {
-         this.tag(EntityTypeTags.SKELETONS).add(EntityType.SKELETON, EntityType.STRAY, EntityType.WITHER_SKELETON, EntityType.SKELETON_HORSE);
+         this.tag(EntityTypeTags.SKELETONS)

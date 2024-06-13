@@ -58,7 +58,10 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior {
 
         if (stack.getCount() == 1)
             return resultStack;
-        else if (((DispenserBlockEntity)source.blockEntity()).addItem(resultStack) < 0)
+
+        source.blockEntity().insertItem(resultStack);
+
+        if (!resultStack.isEmpty())
             this.dispenseBehavior.dispense(source, resultStack);
 
         ItemStack stackCopy = stack.copy();
@@ -87,8 +90,11 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior {
 
             if (drainedStack.getCount() == 1)
                 return drainedStack;
-            else if (!drainedStack.isEmpty() && ((DispenserBlockEntity)source.blockEntity()).addItem(drainedStack) < 0)
+
+            if (!drainedStack.isEmpty()) {
+                source.blockEntity().insertItem(drainedStack);
                 this.dispenseBehavior.dispense(source, drainedStack);
+            }
 
             ItemStack stackCopy = drainedStack.copy();
             stackCopy.shrink(1);

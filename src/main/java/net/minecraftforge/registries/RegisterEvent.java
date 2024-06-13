@@ -125,7 +125,7 @@ public class RegisterEvent extends Event implements IModBusEvent
          */
         default void register(String name, T value)
         {
-            register(new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name), value);
+            register(ResourceLocation.fromNamespaceAndPath(ModLoadingContext.get().getActiveNamespace(), name), value);
         }
 
         /**

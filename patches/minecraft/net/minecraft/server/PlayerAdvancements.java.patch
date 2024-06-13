@@ -7,9 +7,9 @@
 +            net.minecraftforge.event.ForgeEventFactory.onAdvancementGrant(this.player, p_298135_, advancementprogress, p_135990_);
              if (!flag1 && advancementprogress.isDone()) {
                  p_298135_.value().rewards().grant(this.player);
-                 p_298135_.value().display().ifPresent(p_326189_ -> {
+                 p_298135_.value().display().ifPresent(p_341116_ -> {
 @@ -180,6 +_,7 @@
-                         this.playerList.broadcastSystemMessage(p_326189_.getType().createAnnouncement(p_298135_, this.player), false);
+                         this.playerList.broadcastSystemMessage(p_341116_.getType().createAnnouncement(p_298135_, this.player), false);
                      }
                  });
 +                net.minecraftforge.event.ForgeEventFactory.onAdvancementEarned(this.player, p_298135_);

@@ -119,9 +119,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         {
             String lib = materialLibraryOverrideLocation;
             if (lib.contains(":"))
-                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(ResourceLocation.parse(lib));
             else
-                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+                mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(ResourceLocation.fromNamespaceAndPath(modelDomain, modelPath + lib));
         }
 
         String[] line;
@@ -136,9 +136,9 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
 
                     String lib = line[1];
                     if (lib.contains(":"))
-                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(lib));
+                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(ResourceLocation.parse(lib));
                     else
-                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(new ResourceLocation(modelDomain, modelPath + lib));
+                        mtllib = ObjLoader.INSTANCE.loadMaterialLibrary(ResourceLocation.fromNamespaceAndPath(modelDomain, modelPath + lib));
                     break;
                 }
 
@@ -334,7 +334,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
     }
 
     @Override
-    protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation)
+    protected void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform)
     {
         parts.values().stream().filter(part -> owner.isComponentVisible(part.name(), true))
              .forEach(part -> part.addQuads(owner, modelBuilder, baker, spriteGetter, modelTransform, modelLocation));
@@ -421,19 +421,18 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     color.y() * colorTint.y(),
                     color.z() * colorTint.z(),
                     color.w() * colorTint.w());
-            quadBaker.vertex(position.x(), position.y(), position.z());
-            quadBaker.color(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
-            quadBaker.uv(
+            quadBaker.addVertex(position.x(), position.y(), position.z());
+            quadBaker.setColor(tintedColor.x(), tintedColor.y(), tintedColor.z(), tintedColor.w());
+            quadBaker.setUv(
                     texture.getU(texCoord.x),
                     texture.getV((flipV ? 1 - texCoord.y : texCoord.y))
             );
-            quadBaker.uv2(uv2);
-            quadBaker.normal(normal.x(), normal.y(), normal.z());
+            quadBaker.setUv2(uv2 & 0xFFFF, uv2 >> 16 & 0xFFFF);
+            quadBaker.setNormal(normal.x(), normal.y(), normal.z());
             if (i == 0)
             {
                 quadBaker.setDirection(Direction.getNearest(normal.x(), normal.y(), normal.z()));
             }
-            quadBaker.endVertex();
             pos[i] = position;
             norm[i] = normal;
         }
@@ -656,7 +655,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
 
             ResourceLocation textureLocation = UnbakedGeometryHelper.resolveDirtyMaterial(mat.diffuseColorMap, configuration).texture();
-            ResourceLocation texturePath = new ResourceLocation(textureLocation.getNamespace(), "textures/" + textureLocation.getPath() + ".png");
+            ResourceLocation texturePath = textureLocation.withPath(p -> "textures/" + p + ".png");
 
             builder.addMesh(texturePath, quads);
         }

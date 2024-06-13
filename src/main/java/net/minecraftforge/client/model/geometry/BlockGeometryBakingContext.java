@@ -156,12 +156,12 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         this.gui3d = other.gui3d;
     }
 
-    public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(ModelBaker baker, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides)
     {
         IUnbakedGeometry<?> geometry = getCustomGeometry();
         if (geometry == null)
             throw new IllegalStateException("Can not use custom baking without custom geometry");
-        return geometry.bake(this, baker, bakedTextureGetter, modelTransform, overrides, modelLocation);
+        return geometry.bake(this, baker, bakedTextureGetter, modelTransform, overrides);
     }
 
     public static class VisibilityData

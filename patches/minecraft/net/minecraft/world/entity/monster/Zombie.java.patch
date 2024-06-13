@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -249,6 +_,7 @@
+@@ -257,6 +_,7 @@
      }
  
      protected void doUnderWaterConversion() {
@@ -8,7 +8,7 @@
          this.convertToZombieType(EntityType.DROWNED);
          if (!this.isSilent()) {
              this.level().levelEvent(null, 1040, this.blockPosition(), 0);
-@@ -260,6 +_,7 @@
+@@ -268,6 +_,7 @@
          if (zombie != null) {
              zombie.handleAttributes(zombie.level().getCurrentDifficultyAt(zombie.blockPosition()).getSpecialMultiplier());
              zombie.setCanBreakDoors(zombie.supportsBreakDoorGoal() && this.canBreakDoors());
@@ -16,7 +16,7 @@
          }
      }
  
-@@ -280,15 +_,25 @@
+@@ -288,15 +_,25 @@
                  livingentity = (LivingEntity)p_34288_.getEntity();
              }
  
@@ -46,7 +46,7 @@
                  for (int l = 0; l < 50; l++) {
                      int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
                      int j1 = j + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
-@@ -302,6 +_,7 @@
+@@ -310,6 +_,7 @@
                              && this.level().isUnobstructed(zombie)
                              && this.level().noCollision(zombie)
                              && !this.level().containsAnyLiquid(zombie.getBoundingBox())) {
@@ -54,7 +54,7 @@
                              zombie.setTarget(livingentity);
                              zombie.finalizeSpawn(serverlevel, this.level().getCurrentDifficultyAt(zombie.blockPosition()), MobSpawnType.REINFORCEMENT, null);
                              serverlevel.addFreshEntityWithPassengers(zombie);
-@@ -397,6 +_,10 @@
+@@ -407,6 +_,10 @@
                  return flag;
              }
  
@@ -65,7 +65,7 @@
              ZombieVillager zombievillager = villager.convertTo(EntityType.ZOMBIE_VILLAGER, false);
              if (zombievillager != null) {
                  zombievillager.finalizeSpawn(
-@@ -406,6 +_,7 @@
+@@ -416,6 +_,7 @@
                  zombievillager.setGossips(villager.getGossips().store(NbtOps.INSTANCE));
                  zombievillager.setTradeOffers(villager.getOffers().copy());
                  zombievillager.setVillagerXp(villager.getVillagerXp());

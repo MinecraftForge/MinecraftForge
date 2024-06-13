@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/storage/loot/functions/EnchantedCountIncreaseFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/EnchantedCountIncreaseFunction.java
+@@ -65,8 +_,12 @@
+     @Override
+     public ItemStack run(ItemStack p_344964_, LootContext p_345394_) {
+         Entity entity = p_345394_.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
+-        if (entity instanceof LivingEntity livingentity) {
+-            int i = EnchantmentHelper.getEnchantmentLevel(this.enchantment, livingentity);
++        int i = 0;
++        if (this.enchantment.is(Enchantments.LOOTING))
++            i = p_345394_.getLootingModifier();
++        else if (entity instanceof LivingEntity livingentity)
++            i = EnchantmentHelper.getEnchantmentLevel(this.enchantment, livingentity);
++
+             if (i == 0) {
+                 return p_344964_;
+             }
+@@ -76,7 +_,6 @@
+             if (this.hasLimit()) {
+                 p_344964_.limitSize(this.limit);
+             }
+-        }
+ 
+         return p_344964_;
+     }

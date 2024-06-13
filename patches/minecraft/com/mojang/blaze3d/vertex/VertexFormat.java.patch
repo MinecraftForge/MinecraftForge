@@ -1,21 +1,41 @@
 --- a/com/mojang/blaze3d/vertex/VertexFormat.java
 +++ b/com/mojang/blaze3d/vertex/VertexFormat.java
-@@ -12,7 +_,7 @@
+@@ -13,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public class VertexFormat {
 +public class VertexFormat implements net.minecraftforge.client.extensions.IForgeVertexFormat {
-     private final ImmutableList<VertexFormatElement> elements;
-     private final ImmutableMap<String, VertexFormatElement> elementMapping;
-     private final IntList offsets = new IntArrayList();
-@@ -113,6 +_,9 @@
+     public static final int UNKNOWN_ELEMENT = -1;
+     private final List<VertexFormatElement> elements;
+     private final List<String> names;
+@@ -22,6 +_,7 @@
+     private final int[] offsetsByElement = new int[32];
+     @Nullable
+     private VertexBuffer immediateDrawVertexBuffer;
++    private final com.google.common.collect.ImmutableMap<String, VertexFormatElement> elementMapping;
+ 
+     VertexFormat(List<VertexFormatElement> p_343616_, List<String> p_345241_, IntList p_345522_, int p_344162_) {
+         this.elements = p_343616_;
+@@ -34,6 +_,11 @@
+             int j = vertexformatelement != null ? p_343616_.indexOf(vertexformatelement) : -1;
+             this.offsetsByElement[i] = j != -1 ? p_345522_.getInt(j) : -1;
+         }
++
++        ImmutableMap.Builder<String, VertexFormatElement> elements = ImmutableMap.builder();
++        for (int i = 0; i < p_343616_.size(); i++)
++            elements.put(p_345241_.get(i), p_343616_.get(i));
++        this.elementMapping = elements.buildOrThrow();
+     }
+ 
+     public static VertexFormat.Builder builder() {
+@@ -158,6 +_,9 @@
  
          return vertexbuffer;
      }
 +
 +    public ImmutableMap<String, VertexFormatElement> getElementMapping() { return elementMapping; }
-+    public int getOffset(int index) { return offsets.getInt(index); }
++    public int getOffset(int index) { return offsetsByElement[index]; }
  
      @OnlyIn(Dist.CLIENT)
-     public static enum IndexType {
+     public static class Builder {

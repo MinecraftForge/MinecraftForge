@@ -74,7 +74,7 @@ public class DeferredRegister<T> {
      * @see #create(ResourceKey, String)
      * @see #create(ResourceLocation, String)
      */
-    public static <B> DeferredRegister<B> create(@Deprecated(forRemoval = true/* change to RegistryHolder */, since = "1.20.2") Supplier<IForgeRegistry<B>> reg, String modid) {
+    public static <B> DeferredRegister<B> create(RegistryHolder<B> reg, String modid) {
         if (reg instanceof RegistryHolder<B> holder)
             return create(holder.registryKey, modid);
         throw new IllegalArgumentException("Registry argument was not made by DefferredRegister.makeRegistry. Use another create method. This method will be changed to use the hard type in1 1.20.3, but I don't wanna break everything in 1.20.2 so we have this error");
@@ -184,7 +184,7 @@ public class DeferredRegister<T> {
 
         Objects.requireNonNull(name);
         Objects.requireNonNull(sup);
-        final ResourceLocation key = new ResourceLocation(modid, name);
+        var key = ResourceLocation.fromNamespaceAndPath(modid, name);
 
         RegistryObject<I> ret;
         if (this.registryKey != null) {
@@ -210,7 +210,7 @@ public class DeferredRegister<T> {
      * @return A supplier of the {@link IForgeRegistry} created by the builder.
      * Will always return null until after the {@link NewRegistryEvent} event fires.
      */
-    public Supplier<IForgeRegistry<T>> makeRegistry(final Supplier<RegistryBuilder<T>> sup) {
+    public RegistryHolder<T> makeRegistry(final Supplier<RegistryBuilder<T>> sup) {
         return makeRegistry(this.registryKey.location(), sup);
     }
 
@@ -226,7 +226,7 @@ public class DeferredRegister<T> {
     @NotNull
     public TagKey<T> createTagKey(@NotNull String path) {
         Objects.requireNonNull(path);
-        return createTagKey(new ResourceLocation(this.modid, path));
+        return createTagKey(ResourceLocation.fromNamespaceAndPath(this.modid, path));
     }
 
     /**
@@ -261,7 +261,7 @@ public class DeferredRegister<T> {
     @NotNull
     public TagKey<T> createOptionalTagKey(@NotNull String path, @NotNull Set<? extends Supplier<T>> defaults) {
         Objects.requireNonNull(path);
-        return createOptionalTagKey(new ResourceLocation(this.modid, path), defaults);
+        return createOptionalTagKey(ResourceLocation.fromNamespaceAndPath(this.modid, path), defaults);
     }
 
     /**
@@ -335,7 +335,7 @@ public class DeferredRegister<T> {
         return Objects.requireNonNull(this.registryKey).location();
     }
 
-    private Supplier<IForgeRegistry<T>> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
+    private RegistryHolder<T> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
         if (registryName == null)
             throw new IllegalStateException("Cannot create a registry without specifying a registry name");
         if (RegistryManager.ACTIVE.getRegistry(registryName) != null || this.registryFactory != null)
@@ -376,17 +376,16 @@ public class DeferredRegister<T> {
         }
     }
 
-    /*
-     * Make this public API and make `makeRegistry` return this. Thus allowing us to make a new create method that takes this in for a simpler API
-     * for custom Forge registries. But it requires breaking the core api of makeRegistry and the fields we store forge's custom registries in.
-     */
-    @Deprecated(forRemoval = true, since = "1.20.2")
-    private static class RegistryHolder<V> implements Supplier<IForgeRegistry<V>> {
+    public static final class RegistryHolder<V> implements Supplier<IForgeRegistry<V>> {
         private final ResourceKey<? extends Registry<V>> registryKey;
         private IForgeRegistry<V> registry = null;
 
         private RegistryHolder(ResourceKey<? extends Registry<V>> registryKey) {
             this.registryKey = registryKey;
+        }
+
+        public ResourceKey<? extends Registry<V>> getKey() {
+            return this.registryKey;
         }
 
         @Override

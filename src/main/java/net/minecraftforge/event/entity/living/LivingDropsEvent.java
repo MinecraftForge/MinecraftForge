@@ -34,39 +34,27 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @net.minecraftforge.eventbus.api.Cancelable
-public class LivingDropsEvent extends LivingEvent
-{
+public class LivingDropsEvent extends LivingEvent {
     private final DamageSource source;
     private final Collection<ItemEntity> drops;
-    private final int lootingLevel;
     private final boolean recentlyHit;
 
-    public LivingDropsEvent(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit)
-    {
+    public LivingDropsEvent(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, boolean recentlyHit) {
         super(entity);
         this.source = source;
         this.drops = drops;
-        this.lootingLevel = lootingLevel;
         this.recentlyHit = recentlyHit;
     }
 
-    public DamageSource getSource()
-    {
+    public DamageSource getSource() {
         return source;
     }
 
-    public Collection<ItemEntity> getDrops()
-    {
+    public Collection<ItemEntity> getDrops() {
         return drops;
     }
 
-    public int getLootingLevel()
-    {
-        return lootingLevel;
-    }
-
-    public boolean isRecentlyHit()
-    {
+    public boolean isRecentlyHit() {
         return recentlyHit;
     }
 }

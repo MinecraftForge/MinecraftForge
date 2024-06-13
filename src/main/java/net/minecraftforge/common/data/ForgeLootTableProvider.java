@@ -62,12 +62,12 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     public List<LootTableProvider.SubProviderEntry> getTables() {
         return super.getTables().stream().map(entry -> {
             // Provides new sub provider with filtering only changed loot tables and replacing condition item to condition tag
-            return new LootTableProvider.SubProviderEntry(() -> replaceAndFilterChangesOnly(entry.provider().get()), entry.paramSet());
+            return new LootTableProvider.SubProviderEntry(provider -> replaceAndFilterChangesOnly(entry.provider().apply(provider)), entry.paramSet());
         }).collect(Collectors.toList());
     }
 
     private LootTableSubProvider replaceAndFilterChangesOnly(LootTableSubProvider subProvider) {
-        return (provider, newConsumer) -> subProvider.generate(provider, (resourceLocation, builder) -> {
+        return (newConsumer) -> subProvider.generate((resourceLocation, builder) -> {
             if (findAndReplaceInLootTableBuilder(builder, Items.SHEARS, ToolActions.SHEARS_DIG)) {
                 newConsumer.accept(resourceLocation, builder);
             }

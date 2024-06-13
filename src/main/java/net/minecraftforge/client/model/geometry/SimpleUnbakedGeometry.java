@@ -24,7 +24,7 @@ import net.minecraftforge.client.model.IModelBuilder;
 public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> implements IUnbakedGeometry<T>
 {
     @Override
-    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides)
     {
         TextureAtlasSprite particle = spriteGetter.apply(context.getMaterial("particle"));
 
@@ -33,10 +33,10 @@ public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> 
         IModelBuilder<?> builder = IModelBuilder.of(context.useAmbientOcclusion(), context.useBlockLight(), context.isGui3d(),
                 context.getTransforms(), overrides, particle, renderTypes);
 
-        addQuads(context, builder, baker, spriteGetter, modelState, modelLocation);
+        addQuads(context, builder, baker, spriteGetter, modelState);
 
         return builder.build();
     }
 
-    protected abstract void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ResourceLocation modelLocation);
+    protected abstract void addQuads(IGeometryBakingContext owner, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform);
 }

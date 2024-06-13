@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ChunkMap.java
 +++ b/net/minecraft/server/level/ChunkMap.java
-@@ -413,6 +_,7 @@
+@@ -388,6 +_,7 @@
                  this.modified = true;
              }
  
@@ -8,38 +8,23 @@
              return p_140179_;
          }
      }
-@@ -521,6 +_,7 @@
-                 if (this.pendingUnloads.remove(p_140182_, p_140183_) && p_203002_ != null) {
-                     if (p_203002_ instanceof LevelChunk) {
-                         ((LevelChunk)p_203002_).setLoaded(false);
-+                        net.minecraftforge.event.ForgeEventFactory.onChunkUnload(p_203002_);
+@@ -498,6 +_,7 @@
+                 if (this.pendingUnloads.remove(p_140182_, p_140183_) && chunkaccess != null) {
+                     if (chunkaccess instanceof LevelChunk levelchunk) {
+                         levelchunk.setLoaded(false);
++                        net.minecraftforge.event.ForgeEventFactory.onChunkUnload(chunkaccess);
                      }
  
-                     this.save(p_203002_);
-@@ -717,8 +_,14 @@
-             levelchunk.runPostLoad();
-             if (this.entitiesInLevel.add(chunkpos.toLong())) {
-                 levelchunk.setLoaded(true);
-+                try {
-+                    p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
-                 levelchunk.registerAllBlockEntitiesAfterLevelLoad();
-                 levelchunk.registerTickContainerInLevel(this.level);
-+                    net.minecraftforge.event.ForgeEventFactory.onChunkLoad(levelchunk, !(protochunk instanceof ImposterProtoChunk));
-+                } finally {
-+                    p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
-+                }
-             }
- 
-             return levelchunk;
-@@ -818,6 +_,7 @@
+                     this.save(chunkaccess);
+@@ -744,6 +_,7 @@
  
                  this.level.getProfiler().incrementCounter("chunkSave");
                  CompoundTag compoundtag = ChunkSerializer.write(this.level, p_140259_);
 +                net.minecraftforge.event.ForgeEventFactory.onChunkDataSave(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.level, compoundtag);
-                 this.write(chunkpos, compoundtag).exceptionallyAsync(p_326408_ -> {
-                     this.level.getServer().reportChunkSaveFailure(chunkpos);
+                 this.write(chunkpos, compoundtag).exceptionally(p_341222_ -> {
+                     this.level.getServer().reportChunkSaveFailure(p_341222_, this.storageInfo(), chunkpos);
                      return null;
-@@ -1136,7 +_,7 @@
+@@ -1061,7 +_,7 @@
      }
  
      protected void addEntity(Entity p_140200_) {

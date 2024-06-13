@@ -38,10 +38,10 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
 
     public static final String MOD_ID = "datapack_builtin_entries_provider_test";
     // Vanilla registry entries
-    public static final ResourceKey<ConfiguredFeature<?, ?>> MOSSY_STONE_FEATURE = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(MOD_ID, "mossy_stone"));
-    public static final ResourceKey<PlacedFeature> MOSSY_STONE_PLACEMENT = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(MOD_ID, "mossy_stone"));
+    public static final ResourceKey<ConfiguredFeature<?, ?>> MOSSY_STONE_FEATURE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(MOD_ID, "mossy_stone"));
+    public static final ResourceKey<PlacedFeature> MOSSY_STONE_PLACEMENT = ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(MOD_ID, "mossy_stone"));
     // Forge registry entries
-    public static final ResourceKey<BiomeModifier> MOSSY_STONE_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MOD_ID, "mossy_stone_modifier"));
+    public static final ResourceKey<BiomeModifier> MOSSY_STONE_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(MOD_ID, "mossy_stone_modifier"));
     // The ore targets
     public static final Supplier<List<OreConfiguration.TargetBlockState>> MOSSY_STONE_TARGETS = () -> {
         return List.of(

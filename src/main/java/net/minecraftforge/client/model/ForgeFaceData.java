@@ -30,10 +30,8 @@ import net.minecraft.util.ExtraCodecs;
  * @param ambientOcclusion If this face has AO
  * @param calculateNormals If we should manually calculate the normals for this block or inherit facing normals like vanilla
  */
-public record ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion, boolean calculateNormals)
-{
-    public ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion)
-    {
+public record ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion, boolean calculateNormals) {
+    public ForgeFaceData(int color, int blockLight, int skyLight, boolean ambientOcclusion) {
         this(color, blockLight, skyLight, ambientOcclusion, false);
     }
 
@@ -59,12 +57,9 @@ public record ForgeFaceData(int color, int blockLight, int skyLight, boolean amb
      * @throws JsonParseException
      */
     @Nullable
-    public static ForgeFaceData read(@Nullable JsonElement obj, @Nullable ForgeFaceData fallback) throws JsonParseException
-    {
-        if(obj == null)
-        {
+    public static ForgeFaceData read(@Nullable JsonElement obj, @Nullable ForgeFaceData fallback) throws JsonParseException {
+        if (obj == null)
             return fallback;
-        }
         return CODEC.parse(JsonOps.INSTANCE, obj).getOrThrow(JsonParseException::new);
     }
 }

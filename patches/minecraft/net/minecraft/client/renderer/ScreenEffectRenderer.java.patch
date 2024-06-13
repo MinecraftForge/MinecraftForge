@@ -49,7 +49,7 @@
              }
          }
  
-@@ -89,8 +_,12 @@
+@@ -88,8 +_,12 @@
      }
  
      private static void renderWater(Minecraft p_110726_, PoseStack p_110727_) {
@@ -60,6 +60,6 @@
          RenderSystem.setShader(GameRenderer::getPositionTexShader);
 -        RenderSystem.setShaderTexture(0, UNDERWATER_LOCATION);
 +        RenderSystem.setShaderTexture(0, texture);
-         BufferBuilder bufferbuilder = Tesselator.getInstance().getBuilder();
          BlockPos blockpos = BlockPos.containing(p_110726_.player.getX(), p_110726_.player.getEyeY(), p_110726_.player.getZ());
          float f = LightTexture.getBrightness(p_110726_.player.level().dimensionType(), p_110726_.player.level().getMaxLocalRawBrightness(blockpos));
+         RenderSystem.enableBlend();

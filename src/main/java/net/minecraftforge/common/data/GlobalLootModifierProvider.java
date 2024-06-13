@@ -56,7 +56,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
     /**
      * Call {@link #add} here, which will pass in the necessary information to write the jsons.
      */
-    protected abstract void start();
+    protected abstract void start(HolderLookup.Provider registries);
 
     @Override
     public CompletableFuture<?> run(CachedOutput cache) {
@@ -64,7 +64,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
     }
 
     private CompletableFuture<?> run(CachedOutput cache, HolderLookup.Provider registries) {
-        start();
+        start(registries);
 
         Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge/loot_modifiers/global_loot_modifiers.json");
         Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
@@ -78,7 +78,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
 
         toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, instance) -> {
             var json = codec.encodeStart(ops, instance).getOrThrow();
-            entries.add(new ResourceLocation(modid, name));
+            entries.add(ResourceLocation.fromNamespaceAndPath(modid, name));
             Path modifierPath = modifierFolderPath.resolve(name + ".json");
             futuresBuilder.add(DataProvider.saveStable(cache, json, modifierPath));
         }));

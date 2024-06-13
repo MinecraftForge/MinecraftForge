@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -161,7 +_,8 @@
+@@ -162,7 +_,8 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.slf4j.Logger;
  
@@ -10,7 +10,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -646,6 +_,7 @@
+@@ -653,6 +_,7 @@
  
      @Override
      public void die(DamageSource p_9035_) {
@@ -18,63 +18,32 @@
          this.gameEvent(GameEvent.ENTITY_DIE);
          boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
          if (flag) {
-@@ -788,11 +_,12 @@
- 
+@@ -849,6 +_,7 @@
      @Nullable
      @Override
--    public Entity changeDimension(ServerLevel p_9180_) {
-+    public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+        if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9180_.dimension())) return null;
-         this.isChangingDimension = true;
-         ServerLevel serverlevel = this.serverLevel();
-         ResourceKey<Level> resourcekey = serverlevel.dimension();
--        if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD) {
-+        if (resourcekey == Level.END && p_9180_.dimension() == Level.OVERWORLD && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
-             this.unRide();
-             this.serverLevel().removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
-             if (!this.wonGame) {
-@@ -809,13 +_,14 @@
-             PlayerList playerlist = this.server.getPlayerList();
-             playerlist.sendPlayerPermissionLevel(this);
-             serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--            this.unsetRemoved();
--            PortalInfo portalinfo = this.findDimensionEntryPoint(p_9180_);
-+            this.revive();
-+            PortalInfo portalinfo = teleporter.getPortalInfo(this, p_9180_, this::findDimensionEntryPoint);
-             if (portalinfo != null) {
-+                Entity e = teleporter.placeEntity(this, serverlevel, p_9180_, this.getYRot(), spawnPortal -> {//Forge: Start vanilla logic
-                 serverlevel.getProfiler().push("moving");
-                 if (resourcekey == Level.OVERWORLD && p_9180_.dimension() == Level.NETHER) {
+     public Entity changeDimension(DimensionTransition p_344993_) {
++        if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_344993_.newLevel().dimension())) return null;
+         if (this.isRemoved()) {
+             return null;
+         } else {
+@@ -879,7 +_,7 @@
+                 PlayerList playerlist = this.server.getPlayerList();
+                 playerlist.sendPlayerPermissionLevel(this);
+                 serverlevel1.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-                this.unsetRemoved();
++                this.revive();
+                 serverlevel1.getProfiler().push("moving");
+                 if (resourcekey == Level.OVERWORLD && serverlevel.dimension() == Level.NETHER) {
                      this.enteredNetherPosition = this.position();
--                } else if (p_9180_.dimension() == Level.END) {
-+                } else if (spawnPortal && p_9180_.dimension() == Level.END) {
-                     this.createEndPlatform(p_9180_, BlockPos.containing(portalinfo.pos));
-                 }
- 
-@@ -828,6 +_,9 @@
-                 p_9180_.addDuringPortalTeleport(this);
-                 serverlevel.getProfiler().pop();
-                 this.triggerDimensionChangeTriggers(serverlevel);
-+                return this;//forge: this is part of the ITeleporter patch
-+                });//Forge: End vanilla logic
-+                if (e != this) throw new java.lang.IllegalArgumentException(String.format(java.util.Locale.ENGLISH, "Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
-                 this.connection.send(new ClientboundPlayerAbilitiesPacket(this.getAbilities()));
-                 playerlist.sendLevelInfo(this, p_9180_);
-                 playerlist.sendAllPlayerInfo(this);
-@@ -836,10 +_,12 @@
-                     this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobeffectinstance, false));
-                 }
- 
-+                if (teleporter.playTeleportSound(this, serverlevel, p_9180_))
-                 this.connection.send(new ClientboundLevelEventPacket(1032, BlockPos.ZERO, 0, false));
+@@ -908,6 +_,7 @@
                  this.lastSentExp = -1;
                  this.lastSentHealth = -1.0F;
                  this.lastSentFood = -1;
-+                net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, p_9180_.dimension());
++                net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, p_344993_.newLevel().dimension());
+                 return this;
              }
- 
-             return this;
-@@ -905,6 +_,9 @@
+         }
+@@ -943,6 +_,9 @@
  
      @Override
      public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
@@ -84,7 +53,7 @@
          Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
          if (this.isSleeping() || !this.isAlive()) {
              return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
-@@ -916,7 +_,7 @@
+@@ -954,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
              this.setRespawnPosition(this.level().dimension(), p_9115_, this.getYRot(), false, true);
@@ -93,7 +62,7 @@
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
-@@ -962,6 +_,7 @@
+@@ -1000,6 +_,7 @@
      }
  
      private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
@@ -101,7 +70,7 @@
          return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
      }
  
-@@ -1076,6 +_,7 @@
+@@ -1114,6 +_,7 @@
                  this.connection.send(new ClientboundOpenScreenPacket(abstractcontainermenu.containerId, abstractcontainermenu.getType(), p_9033_.getDisplayName()));
                  this.initMenu(abstractcontainermenu);
                  this.containerMenu = abstractcontainermenu;
@@ -109,7 +78,7 @@
                  return OptionalInt.of(this.containerCounter);
              }
          }
-@@ -1124,6 +_,7 @@
+@@ -1163,6 +_,7 @@
      public void doCloseContainer() {
          this.containerMenu.removed(this);
          this.inventoryMenu.transferState(this.containerMenu);
@@ -117,7 +86,7 @@
          this.containerMenu = this.inventoryMenu;
      }
  
-@@ -1349,6 +_,15 @@
+@@ -1395,6 +_,15 @@
          this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
          this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
          this.setLastDeathLocation(p_9016_.getLastDeathLocation());
@@ -133,15 +102,15 @@
      }
  
      @Override
-@@ -1449,6 +_,7 @@
-     }
+@@ -1496,6 +_,7 @@
  
      public boolean setGameMode(GameType p_143404_) {
+         boolean flag = this.isSpectator();
 +        p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.gameMode.getGameModeForPlayer(), p_143404_);
          if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
              return false;
          } else {
-@@ -1591,6 +_,9 @@
+@@ -1642,6 +_,9 @@
      public void setCamera(@Nullable Entity p_9214_) {
          Entity entity = this.getCamera();
          this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
@@ -151,7 +120,7 @@
          if (entity != this.camera) {
              if (this.camera.level() instanceof ServerLevel serverlevel) {
                  this.teleportTo(
-@@ -1629,7 +_,11 @@
+@@ -1680,7 +_,11 @@
  
      @Nullable
      public Component getTabListDisplayName() {
@@ -164,32 +133,7 @@
      }
  
      @Override
-@@ -1656,20 +_,23 @@
-         if (p_9000_ == this.level()) {
-             this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-         } else {
-+            if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_9000_.dimension())) return;
-             ServerLevel serverlevel = this.serverLevel();
-             LevelData leveldata = p_9000_.getLevelData();
-             this.connection.send(new ClientboundRespawnPacket(this.createCommonSpawnInfo(p_9000_), (byte)3));
-             this.connection.send(new ClientboundChangeDifficultyPacket(leveldata.getDifficulty(), leveldata.isDifficultyLocked()));
-             this.server.getPlayerList().sendPlayerPermissionLevel(this);
-             serverlevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--            this.unsetRemoved();
-+            this.revive();
-             this.moveTo(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-             this.setServerLevel(p_9000_);
-             p_9000_.addDuringCommandTeleport(this);
-             this.triggerDimensionChangeTriggers(serverlevel);
-             this.connection.teleport(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
-+            this.gameMode.setLevel(p_9000_);
-             this.server.getPlayerList().sendLevelInfo(this, p_9000_);
-             this.server.getPlayerList().sendAllPlayerInfo(this);
-+            net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, serverlevel.dimension(), p_9000_.dimension());
-         }
-     }
- 
-@@ -1691,6 +_,9 @@
+@@ -1733,6 +_,9 @@
      }
  
      public void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -199,7 +143,7 @@
          if (p_9160_ != null) {
              boolean flag = p_9160_.equals(this.respawnPosition) && p_9159_.equals(this.respawnDimension);
              if (p_9163_ && !flag) {
-@@ -1748,6 +_,9 @@
+@@ -1790,6 +_,9 @@
          if (itementity == null) {
              return null;
          } else {
@@ -209,7 +153,7 @@
              this.level().addFreshEntity(itementity);
              ItemStack itemstack = itementity.getItem();
              if (p_9087_) {
-@@ -1819,9 +_,12 @@
+@@ -1861,9 +_,12 @@
  
      public boolean drop(boolean p_182295_) {
          Inventory inventory = this.getInventory();
@@ -223,7 +167,7 @@
      }
  
      public boolean allowsListing() {
-@@ -1914,5 +_,74 @@
+@@ -1955,6 +_,75 @@
      @Nullable
      public BlockPos getRaidOmenPosition() {
          return this.raidOmenPosition;
@@ -297,4 +241,5 @@
 +            this.getServer().getPlayerList().broadcastAll(new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.UPDATE_DISPLAY_NAME, this));
 +        }
      }
- }
+ 
+     @Override

@@ -1,0 +1,19 @@
+--- a/net/minecraft/network/protocol/common/custom/CustomPacketPayload.java
++++ b/net/minecraft/network/protocol/common/custom/CustomPacketPayload.java
+@@ -18,7 +_,15 @@
+     }
+ 
+     static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> createType(String p_331650_) {
+-        return new CustomPacketPayload.Type<>(ResourceLocation.withDefaultNamespace(p_331650_));
++        return new CustomPacketPayload.Type<>(ResourceLocation.parse(p_331650_));
++    }
++
++    static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> createType(String namespace, String path) {
++        return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(namespace, path));
++    }
++
++    static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> createType(ResourceLocation name) {
++        return new CustomPacketPayload.Type<>(name);
+     }
+ 
+     static <B extends FriendlyByteBuf> StreamCodec<B, CustomPacketPayload> codec(

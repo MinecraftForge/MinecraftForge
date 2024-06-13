@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +51,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -131,7 +131,6 @@ import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.GatherComponentsEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -143,16 +142,12 @@ import net.minecraftforge.event.entity.living.EnderManAngerEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
 import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
-import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -172,7 +167,6 @@ import net.minecraftforge.network.ForgePayload;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.NetworkProtocol;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.packets.SpawnEntity;
 import net.minecraftforge.resource.ResourcePackLoader;
@@ -265,16 +259,12 @@ public final class ForgeHooks {
     public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause) {
         int looting = 0;
         if (killer instanceof LivingEntity living)
-            looting = EnchantmentHelper.getMobLooting(living);
-        if (target instanceof LivingEntity living)
-            looting = getLootingLevel(living, cause, looting);
-        return looting;
-    }
+            looting = EnchantmentHelper.getEnchantmentLevel(living.level().holderLookup(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), living);
 
-    public static int getLootingLevel(LivingEntity target, @Nullable DamageSource cause, int level) {
-        LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getLootingLevel();
+        if (target instanceof LivingEntity living)
+            looting = ForgeEventFactory.fireLootingLevel(living, cause, looting).getLootingLevel();
+
+        return looting;
     }
 
     public static double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier){
@@ -406,8 +396,9 @@ public final class ForgeHooks {
     }
 
     public static void dropXpForBlock(BlockState state, ServerLevel level, BlockPos pos, ItemStack stack) {
-        int fortuneLevel = stack.getEnchantmentLevel(Enchantments.FORTUNE);
-        int silkTouchLevel = stack.getEnchantmentLevel(Enchantments.SILK_TOUCH);
+        var lookup = level.holderLookup(Registries.ENCHANTMENT);
+        int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.FORTUNE), stack);
+        int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.SILK_TOUCH), stack);
         int exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
         if (exp > 0)
             state.getBlock().popExperience(level, pos, exp);
@@ -948,7 +939,7 @@ public final class ForgeHooks {
             Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
             CompoundTag regs = tag.getCompound("Registries");
             for (String key : regs.getAllKeys())
-                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
+                snapshot.put(ResourceLocation.parse(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
             failedElements = GameData.injectSnapshot(snapshot, true, true);
         }
 
@@ -1011,30 +1002,6 @@ public final class ForgeHooks {
     public static boolean checkStructureNamespace(String biome) {
         @Nullable ResourceLocation biomeLocation = ResourceLocation.tryParse(biome);
         return biomeLocation != null && !biomeLocation.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
-    }
-
-    /**
-     * <p>
-     *    This method is used to prefix the path, where elements of the associated registry are stored, with their namespace, if it is not minecraft
-     * </p>
-     * <p>
-     *    This rules conflicts with equal paths out. If for example the mod {@code fancy_cheese} adds a registry named {@code cheeses},
-     *    but the mod {@code awesome_cheese} also adds a registry called {@code cheeses},
-     *    they are going to have the same path {@code cheeses}, just with different namespaces.
-     *    If {@code additional_cheese} wants to add additional cheese to {@code awesome_cheese}, but not {@code fancy_cheese},
-     *    it can not differentiate both. Both paths will look like {@code data/additional_cheese/cheeses}.
-     * </p>
-     * <p>
-     *    The fix, which is applied here prefixes the path of the registry with the namespace,
-     *    so {@code fancy_cheese}'s registry stores its elements in {@code data/<namespace>/fancy_cheese/cheeses}
-     *    and {@code awesome_cheese}'s registry stores its elements in {@code data/namespace/awesome_cheese/cheeses}
-     * </p>
-     *
-     * @param registryKey key of the registry
-     * @return path of the registry key. Prefixed with the namespace if it is not "minecraft"
-     */
-    public static String prefixNamespace(ResourceLocation registryKey) {
-        return registryKey.getNamespace().equals("minecraft") ? registryKey.getPath() : registryKey.getNamespace() +  "/"  + registryKey.getPath();
     }
 
     public static boolean canUseEntitySelectors(SharedSuggestionProvider provider) {

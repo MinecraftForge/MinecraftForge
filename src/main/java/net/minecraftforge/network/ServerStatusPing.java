@@ -227,7 +227,7 @@ public record ServerStatusPing(
                     var channelName = buf.readUtf();
                     var channelVersion = buf.readVarInt();
                     var requiredOnClient = buf.readBoolean();
-                    final ResourceLocation id = new ResourceLocation(modId, channelName);
+                    final ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, channelName);
                     channels.put(id, new ChannelData(id, channelVersion, requiredOnClient));
                 }
 

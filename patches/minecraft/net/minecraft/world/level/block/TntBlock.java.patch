@@ -48,8 +48,8 @@
 +            onCaughtFire(p_331413_, p_329038_, p_333168_, p_330020_.getDirection(), p_335932_);
              p_329038_.setBlock(p_333168_, Blocks.AIR.defaultBlockState(), 11);
              Item item = p_329029_.getItem();
-             if (!p_335932_.isCreative()) {
-@@ -123,7 +_,7 @@
+             if (p_329029_.is(Items.FLINT_AND_STEEL)) {
+@@ -121,7 +_,7 @@
              BlockPos blockpos = p_57431_.getBlockPos();
              Entity entity = p_57432_.getOwner();
              if (p_57432_.isOnFire() && p_57432_.mayInteract(p_57429_, blockpos)) {
@@ -58,7 +58,7 @@
                  p_57429_.removeBlock(blockpos, false);
              }
          }
-@@ -137,5 +_,9 @@
+@@ -135,5 +_,9 @@
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_57464_) {
          p_57464_.add(UNSTABLE);

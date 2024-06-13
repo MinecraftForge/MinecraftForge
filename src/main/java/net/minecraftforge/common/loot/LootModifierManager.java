@@ -38,7 +38,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
     @Override
     protected Map<ResourceLocation, JsonElement> prepare(ResourceManager resources, ProfilerFiller profilerFiller) {
-        var path = new ResourceLocation("forge", FOLDER + "/global_loot_modifiers.json");
+        var path = ResourceLocation.fromNamespaceAndPath("forge", FOLDER + "/global_loot_modifiers.json");
 
         List<ResourceLocation> toLoad = new ArrayList<>();
         //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
@@ -50,7 +50,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
                     toLoad.clear();
 
                 for(var entry : GsonHelper.getAsJsonArray(json, "entries")) {
-                    ResourceLocation loc = new ResourceLocation(entry.getAsString());
+                    ResourceLocation loc = ResourceLocation.parse(entry.getAsString());
                     toLoad.remove(loc); //remove and re-add if needed, to update the ordering.
                     toLoad.add(loc);
                 }

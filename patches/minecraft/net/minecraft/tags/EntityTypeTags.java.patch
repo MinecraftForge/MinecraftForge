@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/EntityTypeTags.java
++++ b/net/minecraft/tags/EntityTypeTags.java
+@@ -43,4 +_,12 @@
+     private static TagKey<EntityType<?>> create(String p_203849_) {
+         return TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.withDefaultNamespace(p_203849_));
+     }
++
++    public static TagKey<EntityType<?>> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<EntityType<?>> create(ResourceLocation name) {
++        return TagKey.create(Registries.ENTITY_TYPE, name);
++    }
+ }

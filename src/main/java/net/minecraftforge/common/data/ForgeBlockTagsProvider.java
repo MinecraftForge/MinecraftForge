@@ -112,7 +112,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
-            ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
+            ResourceLocation key = ResourceLocation.fromNamespaceAndPath("minecraft", pattern.replace("{color}",  color.getName()));
             TagKey<Block> tag = getForgeTag(prefix + color.getName());
             Block block = ForgeRegistries.BLOCKS.getValue(key);
             if (block == null || block  == Blocks.AIR)

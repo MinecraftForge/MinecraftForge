@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
 +++ b/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
-@@ -116,7 +_,7 @@
+@@ -115,7 +_,7 @@
          this.initFilterButtonTextures();
          this.tabButtons.clear();
  
@@ -9,7 +9,7 @@
              this.tabButtons.add(new RecipeBookTabButton(recipebookcategories));
          }
  
-@@ -291,7 +_,7 @@
+@@ -293,7 +_,7 @@
          }
  
          if (itemstack != null && this.minecraft.screen != null) {

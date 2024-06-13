@@ -14,41 +14,41 @@
          float f1 = (float)(i >> 8 & 0xFF) / 255.0F;
          float f2 = (float)(i & 0xFF) / 255.0F;
 @@ -181,15 +_,15 @@
-                 float f52 = f4 * f;
-                 float f30 = f4 * f1;
-                 float f31 = f4 * f2;
--                this.vertex(p_234372_, d1 + 0.0, d2 + (double)f8, d0 + 0.0, f52, f30, f31, f18, f22, l);
--                this.vertex(p_234372_, d1 + 0.0, d2 + (double)f10, d0 + 1.0, f52, f30, f31, f19, f23, l);
--                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f9, d0 + 1.0, f52, f30, f31, f20, f24, l);
--                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f7, d0 + 0.0, f52, f30, f31, f21, f25, l);
-+                this.vertex(p_234372_, d1 + 0.0, d2 + (double)f8, d0 + 0.0, f52, f30, f31, f18, f22, l, alpha);
-+                this.vertex(p_234372_, d1 + 0.0, d2 + (double)f10, d0 + 1.0, f52, f30, f31, f19, f23, l, alpha);
-+                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f9, d0 + 1.0, f52, f30, f31, f20, f24, l, alpha);
-+                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f7, d0 + 0.0, f52, f30, f31, f21, f25, l, alpha);
+                 float f57 = f4 * f;
+                 float f29 = f4 * f1;
+                 float f30 = f4 * f2;
+-                this.vertex(p_234372_, f36 + 0.0F, f37 + f8, f38 + 0.0F, f57, f29, f30, f17, f21, l);
+-                this.vertex(p_234372_, f36 + 0.0F, f37 + f10, f38 + 1.0F, f57, f29, f30, f18, f22, l);
+-                this.vertex(p_234372_, f36 + 1.0F, f37 + f9, f38 + 1.0F, f57, f29, f30, f19, f23, l);
+-                this.vertex(p_234372_, f36 + 1.0F, f37 + f7, f38 + 0.0F, f57, f29, f30, f20, f24, l);
++                this.vertex(p_234372_, f36 + 0.0F, f37 + f8, f38 + 0.0F, f57, f29, f30, f17, f21, l, alpha);
++                this.vertex(p_234372_, f36 + 0.0F, f37 + f10, f38 + 1.0F, f57, f29, f30, f18, f22, l, alpha);
++                this.vertex(p_234372_, f36 + 1.0F, f37 + f9, f38 + 1.0F, f57, f29, f30, f19, f23, l, alpha);
++                this.vertex(p_234372_, f36 + 1.0F, f37 + f7, f38 + 0.0F, f57, f29, f30, f20, f24, l, alpha);
                  if (p_234374_.shouldRenderBackwardUpFace(p_234370_, p_234371_.above())) {
--                    this.vertex(p_234372_, d1 + 0.0, d2 + (double)f8, d0 + 0.0, f52, f30, f31, f18, f22, l);
--                    this.vertex(p_234372_, d1 + 1.0, d2 + (double)f7, d0 + 0.0, f52, f30, f31, f21, f25, l);
--                    this.vertex(p_234372_, d1 + 1.0, d2 + (double)f9, d0 + 1.0, f52, f30, f31, f20, f24, l);
--                    this.vertex(p_234372_, d1 + 0.0, d2 + (double)f10, d0 + 1.0, f52, f30, f31, f19, f23, l);
-+                    this.vertex(p_234372_, d1 + 0.0, d2 + (double)f8, d0 + 0.0, f52, f30, f31, f18, f22, l, alpha);
-+                    this.vertex(p_234372_, d1 + 1.0, d2 + (double)f7, d0 + 0.0, f52, f30, f31, f21, f25, l, alpha);
-+                    this.vertex(p_234372_, d1 + 1.0, d2 + (double)f9, d0 + 1.0, f52, f30, f31, f20, f24, l, alpha);
-+                    this.vertex(p_234372_, d1 + 0.0, d2 + (double)f10, d0 + 1.0, f52, f30, f31, f19, f23, l, alpha);
+-                    this.vertex(p_234372_, f36 + 0.0F, f37 + f8, f38 + 0.0F, f57, f29, f30, f17, f21, l);
+-                    this.vertex(p_234372_, f36 + 1.0F, f37 + f7, f38 + 0.0F, f57, f29, f30, f20, f24, l);
+-                    this.vertex(p_234372_, f36 + 1.0F, f37 + f9, f38 + 1.0F, f57, f29, f30, f19, f23, l);
+-                    this.vertex(p_234372_, f36 + 0.0F, f37 + f10, f38 + 1.0F, f57, f29, f30, f18, f22, l);
++                    this.vertex(p_234372_, f36 + 0.0F, f37 + f8, f38 + 0.0F, f57, f29, f30, f17, f21, l, alpha);
++                    this.vertex(p_234372_, f36 + 1.0F, f37 + f7, f38 + 0.0F, f57, f29, f30, f20, f24, l, alpha);
++                    this.vertex(p_234372_, f36 + 1.0F, f37 + f9, f38 + 1.0F, f57, f29, f30, f19, f23, l, alpha);
++                    this.vertex(p_234372_, f36 + 0.0F, f37 + f10, f38 + 1.0F, f57, f29, f30, f18, f22, l, alpha);
                  }
              }
  
 @@ -202,10 +_,10 @@
                  float f46 = f3 * f;
-                 float f47 = f3 * f1;
-                 float f48 = f3 * f2;
--                this.vertex(p_234372_, d1, d2 + (double)f17, d0 + 1.0, f46, f47, f48, f40, f43, k);
--                this.vertex(p_234372_, d1, d2 + (double)f17, d0, f46, f47, f48, f40, f42, k);
--                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f17, d0, f46, f47, f48, f41, f42, k);
--                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f17, d0 + 1.0, f46, f47, f48, f41, f43, k);
-+                this.vertex(p_234372_, d1, d2 + (double)f17, d0 + 1.0, f46, f47, f48, f40, f43, k, alpha);
-+                this.vertex(p_234372_, d1, d2 + (double)f17, d0, f46, f47, f48, f40, f42, k, alpha);
-+                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f17, d0, f46, f47, f48, f41, f42, k, alpha);
-+                this.vertex(p_234372_, d1 + 1.0, d2 + (double)f17, d0 + 1.0, f46, f47, f48, f41, f43, k, alpha);
+                 float f48 = f3 * f1;
+                 float f50 = f3 * f2;
+-                this.vertex(p_234372_, f36, f37 + f16, f38 + 1.0F, f46, f48, f50, f40, f43, k);
+-                this.vertex(p_234372_, f36, f37 + f16, f38, f46, f48, f50, f40, f42, k);
+-                this.vertex(p_234372_, f36 + 1.0F, f37 + f16, f38, f46, f48, f50, f41, f42, k);
+-                this.vertex(p_234372_, f36 + 1.0F, f37 + f16, f38 + 1.0F, f46, f48, f50, f41, f43, k);
++                this.vertex(p_234372_, f36, f37 + f16, f38 + 1.0F, f46, f48, f50, f40, f43, k, alpha);
++                this.vertex(p_234372_, f36, f37 + f16, f38, f46, f48, f50, f40, f42, k, alpha);
++                this.vertex(p_234372_, f36 + 1.0F, f37 + f16, f38, f46, f48, f50, f41, f42, k, alpha);
++                this.vertex(p_234372_, f36 + 1.0F, f37 + f16, f38 + 1.0F, f46, f48, f50, f41, f43, k, alpha);
              }
  
              int j = this.getLightColor(p_234370_, p_234371_);
@@ -67,40 +67,40 @@
                      }
  
 @@ -275,15 +_,15 @@
-                     float f37 = f4 * f36 * f;
-                     float f38 = f4 * f36 * f1;
-                     float f39 = f4 * f36 * f2;
--                    this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
--                    this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
--                    this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
--                    this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
-+                    this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j, alpha);
-+                    this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j, alpha);
-+                    this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j, alpha);
-+                    this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j, alpha);
+                     float f33 = f4 * f32 * f;
+                     float f34 = f4 * f32 * f1;
+                     float f35 = f4 * f32 * f2;
+-                    this.vertex(p_234372_, f47, f37 + f44, f49, f33, f34, f35, f56, f59, j);
+-                    this.vertex(p_234372_, f51, f37 + f45, f52, f33, f34, f35, f58, f60, j);
+-                    this.vertex(p_234372_, f51, f37 + f16, f52, f33, f34, f35, f58, f31, j);
+-                    this.vertex(p_234372_, f47, f37 + f16, f49, f33, f34, f35, f56, f31, j);
++                    this.vertex(p_234372_, f47, f37 + f44, f49, f33, f34, f35, f56, f59, j, alpha);
++                    this.vertex(p_234372_, f51, f37 + f45, f52, f33, f34, f35, f58, f60, j, alpha);
++                    this.vertex(p_234372_, f51, f37 + f16, f52, f33, f34, f35, f58, f31, j, alpha);
++                    this.vertex(p_234372_, f47, f37 + f16, f49, f33, f34, f35, f56, f31, j, alpha);
                      if (textureatlassprite2 != this.waterOverlay) {
--                        this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j);
--                        this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j);
--                        this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j);
--                        this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j);
-+                        this.vertex(p_234372_, d3, d2 + (double)f17, d4, f37, f38, f39, f53, f35, j, alpha);
-+                        this.vertex(p_234372_, d5, d2 + (double)f17, d6, f37, f38, f39, f32, f35, j, alpha);
-+                        this.vertex(p_234372_, d5, d2 + (double)f45, d6, f37, f38, f39, f32, f34, j, alpha);
-+                        this.vertex(p_234372_, d3, d2 + (double)f44, d4, f37, f38, f39, f53, f33, j, alpha);
+-                        this.vertex(p_234372_, f47, f37 + f16, f49, f33, f34, f35, f56, f31, j);
+-                        this.vertex(p_234372_, f51, f37 + f16, f52, f33, f34, f35, f58, f31, j);
+-                        this.vertex(p_234372_, f51, f37 + f45, f52, f33, f34, f35, f58, f60, j);
+-                        this.vertex(p_234372_, f47, f37 + f44, f49, f33, f34, f35, f56, f59, j);
++                        this.vertex(p_234372_, f47, f37 + f16, f49, f33, f34, f35, f56, f31, j, alpha);
++                        this.vertex(p_234372_, f51, f37 + f16, f52, f33, f34, f35, f58, f31, j, alpha);
++                        this.vertex(p_234372_, f51, f37 + f45, f52, f33, f34, f35, f58, f60, j, alpha);
++                        this.vertex(p_234372_, f47, f37 + f44, f49, f33, f34, f35, f56, f59, j, alpha);
                      }
                  }
              }
 @@ -345,10 +_,11 @@
-         float p_110991_,
-         float p_110992_,
-         float p_110993_,
+         float p_343128_,
+         float p_344448_,
+         float p_344284_,
 -        int p_110994_
 +        int p_110994_,
 +        float alpha
      ) {
-         p_110985_.vertex(p_110986_, p_110987_, p_110988_)
--            .color(p_110989_, p_110990_, p_110991_, 1.0F)
-+            .color(p_110989_, p_110990_, p_110991_, alpha)
-             .uv(p_110992_, p_110993_)
-             .uv2(p_110994_)
-             .normal(0.0F, 1.0F, 0.0F)
+         p_110985_.addVertex(p_110989_, p_110990_, p_110991_)
+-            .setColor(p_110992_, p_110993_, p_343128_, 1.0F)
++            .setColor(p_110992_, p_110993_, p_343128_, alpha)
+             .setUv(p_344448_, p_344284_)
+             .setLight(p_110994_)
+             .setNormal(0.0F, 1.0F, 0.0F);

@@ -59,7 +59,7 @@ class TagsCommand
 {
     private static final long PAGE_SIZE = 8;
     private static final ResourceKey<Registry<Registry<?>>> ROOT_REGISTRY_KEY =
-            ResourceKey.createRegistryKey(new ResourceLocation("root"));
+            ResourceKey.createRegistryKey(ResourceLocation.parse("root"));
 
     private static final DynamicCommandExceptionType UNKNOWN_REGISTRY = new DynamicCommandExceptionType(key ->
             Component.translatable("commands.forge.tags.error.unknown_registry", key));

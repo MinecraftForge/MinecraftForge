@@ -44,7 +44,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -114,7 +113,6 @@ public class GameData {
         makeRegistry(Keys.MOB_EFFECTS).create();
         makeRegistry(Keys.SOUND_EVENTS).create();
         makeRegistry(Keys.POTIONS).create();
-        makeRegistry(Keys.ENCHANTMENTS).legacyName("enchantments").intrusiveHolderCallback(Enchantment::builtInRegistryHolder).create();
         makeRegistry(Keys.ENTITY_TYPES, "pig").legacyName("entities").intrusiveHolderCallback(EntityType::builtInRegistryHolder).create();
         makeRegistry(Keys.BLOCK_ENTITY_TYPES).disableSaving().legacyName("blockentities").intrusiveHolderCallback(BlockEntityType::builtInRegistryHolder).create();
         makeRegistry(Keys.PARTICLE_TYPES).disableSaving().create();
@@ -165,7 +163,7 @@ public class GameData {
     static RegistryBuilder<ItemDisplayContext> getItemDisplayContextRegistryBuilder() {
         return new RegistryBuilder<ItemDisplayContext>()
             .setMaxID(128 * 2) /* 0 -> 127 gets positive ID, 128 -> 256 gets negative ID */.disableOverrides().disableSaving()
-            .setDefaultKey(new ResourceLocation("minecraft:none"))
+            .setDefaultKey(ResourceLocation.withDefaultNamespace("none"))
             .onAdd(ItemDisplayContext.ADD_CALLBACK);
     }
 
@@ -178,7 +176,7 @@ public class GameData {
     }
 
     private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key, String _default) {
-        return new RegistryBuilder<T>().setName(key.location()).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.location()).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(ResourceLocation.parse(_default));
     }
 
     @SuppressWarnings("unchecked")
@@ -432,7 +430,6 @@ public class GameData {
         @Override
         public void onCreate(IForgeRegistryInternal<Block> owner, RegistryManager stage) {
             var idMap = new ClearableObjectIntIdentityMap<BlockState>() {
-                @SuppressWarnings("deprecation")
                 @Override
                 public int getId(BlockState key) {
                     return this.tToId.containsKey(key) ? this.tToId.getInt(key) : -1;
@@ -775,6 +772,6 @@ public class GameData {
             LogManager.getLogger().debug("Mod `{}` attempting to register `{}` to the namespace `{}`. This could be intended, but likely means an EventBusSubscriber without a modid.", prefix, name, oldPrefix);
             prefix = oldPrefix;
         }
-        return new ResourceLocation(prefix, name);
+        return ResourceLocation.fromNamespaceAndPath(prefix, name);
     }
 }

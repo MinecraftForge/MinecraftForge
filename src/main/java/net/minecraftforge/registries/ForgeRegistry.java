@@ -893,19 +893,19 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             ListTag list = nbt.getList("ids", 10);
             list.forEach(e -> {
                 CompoundTag comp = (CompoundTag)e;
-                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInt("V"));
+                ret.ids.put(ResourceLocation.parse(comp.getString("K")), comp.getInt("V"));
             });
 
             list = nbt.getList("aliases", 10);
             list.forEach(e -> {
                 CompoundTag comp = (CompoundTag)e;
-                ret.aliases.put(new ResourceLocation(comp.getString("K")), new ResourceLocation(comp.getString("V")));
+                ret.aliases.put(ResourceLocation.parse(comp.getString("K")), ResourceLocation.parse(comp.getString("V")));
             });
 
             list = nbt.getList("overrides", 10);
             list.forEach(e -> {
                 CompoundTag comp = (CompoundTag)e;
-                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
+                ret.overrides.put(ResourceLocation.parse(comp.getString("K")), comp.getString("V"));
             });
 
             int[] blocked = nbt.getIntArray("blocked");

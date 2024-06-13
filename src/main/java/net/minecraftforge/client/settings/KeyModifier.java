@@ -93,18 +93,6 @@ public enum KeyModifier {
         }
     };
 
-    @Deprecated(forRemoval = true, since = "1.20.2")
-    public static final KeyModifier[] MODIFIER_VALUES = {SHIFT, CONTROL, ALT};
-
-    @Deprecated(forRemoval = true, since = "1.20.2")
-    public static KeyModifier getActiveModifier() {
-        for (var keyModifier : VALUES) {
-            if (keyModifier.isActive(null))
-                return keyModifier;
-        }
-        return NONE;
-    }
-
     private static final KeyModifier[] VALUES = {SHIFT, CONTROL, ALT};
     private static final List<KeyModifier> VALUES_LIST = List.of(SHIFT, CONTROL, ALT);
     private static final List<KeyModifier> ALL = List.of(SHIFT, CONTROL, ALT, NONE);

@@ -9,7 +9,7 @@
      public static final Codec<Holder<Item>> ITEM_NON_AIR_CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(
-@@ -335,13 +_,22 @@
+@@ -347,13 +_,22 @@
      }
  
      public InteractionResult useOn(UseOnContext p_41662_) {
@@ -33,18 +33,22 @@
              if (player != null && interactionresult.indicateItemUse()) {
                  player.awardStat(Stats.ITEM_USED.get(item));
              }
-@@ -447,6 +_,10 @@
-             }
- 
-             this.hurtAndBreak(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null, () -> {
-+                if (p_41624_ instanceof Player player) {
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
-+                    player.stopUsingItem(); // Forge: fix MC-168573
+@@ -453,7 +_,13 @@
+                 p_41623_,
+                 serverlevel,
+                 p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null,
+-                p_341563_ -> p_41624_.onEquippedItemBroken(p_341563_, p_335324_)
++                p_341563_ -> {
++                    if (p_41624_ instanceof Player player) {
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
++                        player.stopUsingItem(); // Forge: fix MC-168573
++                    }
++                    p_41624_.onEquippedItemBroken(p_341563_, p_335324_);
 +                }
-                 p_41624_.broadcastBreakEvent(p_335324_);
-                 Item item = this.getItem();
-                 this.shrink(1);
-@@ -757,6 +_,8 @@
+             );
+         }
+     }
+@@ -780,6 +_,8 @@
                  list.add(DISABLED_ITEM_TOOLTIP);
              }
  
@@ -53,7 +57,7 @@
              return list;
          }
      }
-@@ -970,6 +_,7 @@
+@@ -1011,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }
  

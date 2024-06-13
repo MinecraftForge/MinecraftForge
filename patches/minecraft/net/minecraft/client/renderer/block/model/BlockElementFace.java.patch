@@ -1,38 +1,26 @@
 --- a/net/minecraft/client/renderer/block/model/BlockElementFace.java
 +++ b/net/minecraft/client/renderer/block/model/BlockElementFace.java
-@@ -19,13 +_,31 @@
-     public final int tintIndex;
-     public final String texture;
-     public final BlockFaceUV uv;
-+    @Nullable
-+    private final net.minecraftforge.client.model.ForgeFaceData faceData; // If null, we defer to the parent BlockElement's ForgeFaceData, which is not nullable.
-+    @Nullable
-+    BlockElement parent; // Parent canot be set by the constructor due to instantiation ordering. This shouldn't really ever be null, but it could theoretically be.
+@@ -13,9 +_,18 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
-     public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_) {
-+        this(p_111359_, p_111360_, p_111361_, p_111362_, null);
+ @OnlyIn(Dist.CLIENT)
+-public record BlockElementFace(@Nullable Direction cullForDirection, int tintIndex, String texture, BlockFaceUV uv) {
++public record BlockElementFace(@Nullable Direction cullForDirection, int tintIndex, String texture, BlockFaceUV uv, @Nullable net.minecraftforge.client.model.ForgeFaceData data) {
+     public static final int NO_TINT = -1;
+ 
++    public BlockElementFace(@Nullable Direction cullForDirection, int tintIndex, String texture, BlockFaceUV uv) {
++        this(cullForDirection, tintIndex, texture, uv, null);
 +    }
 +
-+    public BlockElementFace(@Nullable Direction p_111359_, int p_111360_, String p_111361_, BlockFaceUV p_111362_, @Nullable net.minecraftforge.client.model.ForgeFaceData faceData) {
-         this.cullForDirection = p_111359_;
-         this.tintIndex = p_111360_;
-         this.texture = p_111361_;
-         this.uv = p_111362_;
-+        this.faceData = faceData;
-     }
++    @Override
++    public net.minecraftforge.client.model.ForgeFaceData data() {
++        return this.data == null ? net.minecraftforge.client.model.ForgeFaceData.DEFAULT : this.data;
++    }
 +
-+    public net.minecraftforge.client.model.ForgeFaceData getFaceData() {
-+        if (this.faceData != null) {
-+            return this.faceData;
-+        } else if (this.parent != null) {
-+            return this.parent.getFaceData();
-+        }
-+        return net.minecraftforge.client.model.ForgeFaceData.DEFAULT;
-+     }
- 
      @OnlyIn(Dist.CLIENT)
      public static class Deserializer implements JsonDeserializer<BlockElementFace> {
-@@ -37,7 +_,7 @@
+         private static final int DEFAULT_TINT_INDEX = -1;
+@@ -26,7 +_,7 @@
              int i = this.getTintIndex(jsonobject);
              String s = this.getTexture(jsonobject);
              BlockFaceUV blockfaceuv = p_111367_.deserialize(jsonobject, BlockFaceUV.class);

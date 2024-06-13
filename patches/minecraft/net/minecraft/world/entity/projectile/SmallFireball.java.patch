@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/SmallFireball.java
 +++ b/net/minecraft/world/entity/projectile/SmallFireball.java
-@@ -47,7 +_,7 @@
+@@ -51,7 +_,7 @@
          super.onHitBlock(p_37384_);
          if (!this.level().isClientSide) {
              Entity entity = this.getOwner();

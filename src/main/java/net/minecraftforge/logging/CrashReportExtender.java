@@ -8,6 +8,7 @@ package net.minecraftforge.logging;
 import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportType;
 import net.minecraft.SystemReport;
 import net.minecraftforge.fml.CrashReportCallables;
 import net.minecraftforge.fml.ISystemReportExtender;
@@ -65,12 +66,12 @@ public class CrashReportExtender {
         });
         final File file1 = new File(topLevelDir, "crash-reports");
         final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
-        if (crashReport.saveToFile(file2)) {
+        if (crashReport.saveToFile(file2.toPath(), ReportType.CRASH)) {
             logger.fatal("Crash report saved to {}", file2);
         } else {
             logger.fatal("Failed to save crash report");
         }
-        System.out.print(crashReport.getFriendlyReport());
+        System.out.print(crashReport.getFriendlyReport(ReportType.CRASH));
         return file2;
     }
 }

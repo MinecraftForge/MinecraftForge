@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -740,6 +_,11 @@
+@@ -723,6 +_,11 @@
      private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;
  
@@ -12,7 +12,7 @@
      private static <T extends Entity> EntityType<T> register(String p_20635_, EntityType.Builder<T> p_20636_) {
          return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_20635_, p_20636_.build(p_20635_));
      }
-@@ -752,6 +_,10 @@
+@@ -735,6 +_,10 @@
          return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.tryParse(p_20633_));
      }
  
@@ -23,7 +23,7 @@
      public EntityType(
          EntityType.EntityFactory<T> p_273268_,
          MobCategory p_272918_,
-@@ -764,7 +_,8 @@
+@@ -747,7 +_,8 @@
          float p_332711_,
          int p_272895_,
          int p_273451_,
@@ -33,7 +33,7 @@
      ) {
          this.factory = p_273268_;
          this.category = p_272918_;
-@@ -778,6 +_,10 @@
+@@ -761,6 +_,10 @@
          this.clientTrackingRange = p_272895_;
          this.updateInterval = p_273451_;
          this.requiredFeatures = p_273518_;
@@ -44,7 +44,7 @@
      }
  
      @Nullable
-@@ -1054,14 +_,26 @@
+@@ -1037,14 +_,26 @@
      }
  
      public int clientTrackingRange() {
@@ -71,7 +71,7 @@
          return this != PLAYER
              && this != LLAMA_SPIT
              && this != WITHER
-@@ -1097,6 +_,12 @@
+@@ -1080,6 +_,12 @@
          return this.builtInRegistryHolder;
      }
  
@@ -84,7 +84,7 @@
      public static class Builder<T extends Entity> {
          private final EntityType.EntityFactory<T> factory;
          private final MobCategory category;
-@@ -1111,6 +_,10 @@
+@@ -1094,6 +_,10 @@
          private float spawnDimensionsScale = 1.0F;
          private EntityAttachments.Builder attachments = EntityAttachments.builder();
          private FeatureFlagSet requiredFeatures = FeatureFlags.VANILLA_SET;
@@ -95,7 +95,7 @@
  
          private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
              this.factory = p_20696_;
-@@ -1219,6 +_,30 @@
+@@ -1202,6 +_,30 @@
              return this;
          }
  
@@ -126,7 +126,7 @@
          public EntityType<T> build(String p_20713_) {
              if (this.serialize) {
                  Util.fetchChoiceType(References.ENTITY_TREE, p_20713_);
-@@ -1236,7 +_,8 @@
+@@ -1219,7 +_,8 @@
                  this.spawnDimensionsScale,
                  this.clientTrackingRange,
                  this.updateInterval,

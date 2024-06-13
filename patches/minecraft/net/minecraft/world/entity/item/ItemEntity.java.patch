@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -48,6 +_,10 @@
+@@ -49,6 +_,10 @@
      @Nullable
      private UUID target;
      public final float bobOffs;
@@ -11,7 +11,7 @@
  
      public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
          super(p_31991_, p_31992_);
-@@ -66,6 +_,7 @@
+@@ -67,6 +_,7 @@
          this.setPos(p_149664_, p_149665_, p_149666_);
          this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
          this.setItem(p_149667_);
@@ -19,7 +19,7 @@
      }
  
      private ItemEntity(ItemEntity p_31994_) {
-@@ -74,6 +_,7 @@
+@@ -75,6 +_,7 @@
          this.copyPosition(p_31994_);
          this.age = p_31994_.age;
          this.bobOffs = p_31994_.bobOffs;
@@ -27,7 +27,7 @@
      }
  
      @Override
-@@ -119,6 +_,7 @@
+@@ -120,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -35,7 +35,7 @@
          if (this.getItem().isEmpty()) {
              this.discard();
          } else {
-@@ -131,6 +_,10 @@
+@@ -132,6 +_,10 @@
              this.yo = this.getY();
              this.zo = this.getZ();
              Vec3 vec3 = this.getDeltaMovement();
@@ -46,7 +46,7 @@
              if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
                  this.setUnderwaterMovement();
              } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
-@@ -152,7 +_,8 @@
+@@ -153,7 +_,8 @@
                  this.move(MoverType.SELF, this.getDeltaMovement());
                  float f = 0.98F;
                  if (this.onGround()) {
@@ -56,7 +56,7 @@
                  }
  
                  this.setDeltaMovement(this.getDeltaMovement().multiply((double)f, 0.98, (double)f));
-@@ -184,7 +_,16 @@
+@@ -185,7 +_,16 @@
                  }
              }
  
@@ -74,7 +74,7 @@
                  this.discard();
              }
          }
-@@ -281,7 +_,7 @@
+@@ -282,7 +_,7 @@
              this.health = (int)((float)this.health - p_32014_);
              this.gameEvent(GameEvent.ENTITY_DAMAGE, p_32013_.getEntity());
              if (this.health <= 0) {
@@ -83,7 +83,7 @@
                  this.discard();
              }
  
-@@ -294,6 +_,7 @@
+@@ -295,6 +_,7 @@
          p_32050_.putShort("Health", (short)this.health);
          p_32050_.putShort("Age", (short)this.age);
          p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
@@ -91,7 +91,7 @@
          if (this.thrower != null) {
              p_32050_.putUUID("Thrower", this.thrower);
          }
-@@ -315,6 +_,10 @@
+@@ -316,6 +_,10 @@
              this.pickupDelay = p_32034_.getShort("PickupDelay");
          }
  
@@ -102,7 +102,7 @@
          if (p_32034_.hasUUID("Owner")) {
              this.target = p_32034_.getUUID("Owner");
          }
-@@ -339,10 +_,17 @@
+@@ -340,10 +_,17 @@
      @Override
      public void playerTouch(Player p_32040_) {
          if (!this.level().isClientSide) {
@@ -121,18 +121,7 @@
                  p_32040_.take(this, i);
                  if (itemstack.isEmpty()) {
                      this.discard();
-@@ -368,8 +_,8 @@
- 
-     @Nullable
-     @Override
--    public Entity changeDimension(ServerLevel p_32042_) {
--        Entity entity = super.changeDimension(p_32042_);
-+    public Entity changeDimension(ServerLevel p_32042_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+        Entity entity = super.changeDimension(p_32042_, teleporter);
-         if (!this.level().isClientSide && entity instanceof ItemEntity) {
-             ((ItemEntity)entity).mergeWithNeighbours();
-         }
-@@ -436,7 +_,7 @@
+@@ -437,7 +_,7 @@
  
      public void makeFakeItem() {
          this.setNeverPickUp();

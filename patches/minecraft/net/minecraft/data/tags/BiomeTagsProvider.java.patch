@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/BiomeTagsProvider.java
 +++ b/net/minecraft/data/tags/BiomeTagsProvider.java
-@@ -14,6 +_,10 @@
+@@ -15,6 +_,10 @@
          super(p_255800_, Registries.BIOME, p_256205_);
      }
  

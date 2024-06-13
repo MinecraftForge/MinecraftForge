@@ -6,18 +6,10 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.core.*;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.registries.RegistriesDatapackGenerator;
 import net.minecraft.data.registries.RegistryPatchGenerator;
-import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.data.worldgen.features.OreFeatures;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,8 +18,7 @@ import java.util.concurrent.CompletableFuture;
  * referencing existing dynamic registry objects within another dynamic registry
  * object.
  */
-public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
-{
+public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator {
 
     private final CompletableFuture<HolderLookup.Provider> fullRegistries;
 
@@ -39,8 +30,7 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
      * @param registries a future of patched registries
      * @param modIds a set of mod ids to generate the dynamic registry objects of
      */
-    public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<RegistrySetBuilder.PatchedRegistries> registries, Set<String> modIds)
-    {
+    public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<RegistrySetBuilder.PatchedRegistries> registries, Set<String> modIds) {
         super(output, registries.thenApply(RegistrySetBuilder.PatchedRegistries::patches), modIds);
         this.fullRegistries = registries.thenApply(RegistrySetBuilder.PatchedRegistries::full);
     }
@@ -55,8 +45,7 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
      * @param registryBuilder a builder containing the dynamic registry objects added by this provider
      * @param modIds a set of mod ids to generate the dynamic registry objects of
      */
-    public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, RegistrySetBuilder registryBuilder, Set<String> modIds)
-    {
+    public DatapackBuiltinEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, RegistrySetBuilder registryBuilder, Set<String> modIds) {
         this(output, RegistryPatchGenerator.createLookup(registries, registryBuilder), modIds);
     }
 
@@ -69,8 +58,7 @@ public class DatapackBuiltinEntriesProvider extends RegistriesDatapackGenerator
      * An example use case is the {@link TagsProvider}.
      * @return the future of the full registry lookup
      */
-    public CompletableFuture<HolderLookup.Provider> getFullRegistries()
-    {
+    public CompletableFuture<HolderLookup.Provider> getFullRegistries() {
         return this.fullRegistries;
     }
 }

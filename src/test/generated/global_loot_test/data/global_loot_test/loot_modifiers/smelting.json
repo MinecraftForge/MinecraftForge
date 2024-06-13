@@ -7,7 +7,7 @@
         "predicates": {
           "minecraft:enchantments": [
             {
-              "enchantment": "global_loot_test:smelt",
+              "enchantments": "global_loot_test:smelt",
               "levels": {
                 "min": 1
               }

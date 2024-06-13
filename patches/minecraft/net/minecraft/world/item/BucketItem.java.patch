@@ -31,13 +31,13 @@
              return InteractionResultHolder.pass(itemstack);
          } else if (blockhitresult.getType() != HitResult.Type.BLOCK) {
 @@ -56,7 +_,7 @@
-                     ItemStack itemstack2 = bucketpickup.pickupBlock(p_40704_, p_40703_, blockpos, blockstate1);
-                     if (!itemstack2.isEmpty()) {
+                     ItemStack itemstack3 = bucketpickup.pickupBlock(p_40704_, p_40703_, blockpos, blockstate1);
+                     if (!itemstack3.isEmpty()) {
                          p_40704_.awardStat(Stats.ITEM_USED.get(this));
 -                        bucketpickup.getPickupSound().ifPresent(p_150709_ -> p_40704_.playSound(p_150709_, 1.0F, 1.0F));
 +                        bucketpickup.getPickupSound(blockstate1).ifPresent(p_150709_ -> p_40704_.playSound(p_150709_, 1.0F, 1.0F));
                          p_40703_.gameEvent(p_40704_, GameEvent.FLUID_PICKUP, blockpos);
-                         ItemStack itemstack1 = ItemUtils.createFilledResult(itemstack, p_40704_, itemstack2);
+                         ItemStack itemstack2 = ItemUtils.createFilledResult(itemstack, p_40704_, itemstack3);
                          if (!p_40703_.isClientSide) {
 @@ -70,8 +_,8 @@
                  return InteractionResultHolder.fail(itemstack);
@@ -50,7 +50,7 @@
                      this.checkExtraContent(p_40704_, p_40703_, itemstack, blockpos2);
                      if (p_40704_ instanceof ServerPlayer) {
                          CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)p_40704_, blockpos2, itemstack);
-@@ -94,8 +_,13 @@
+@@ -95,8 +_,13 @@
      public void checkExtraContent(@Nullable Player p_150711_, Level p_150712_, ItemStack p_150713_, BlockPos p_150714_) {
      }
  
@@ -64,7 +64,7 @@
          if (!(this.content instanceof FlowingFluid flowingfluid)) {
              return false;
          } else {
-@@ -122,8 +_,12 @@
+@@ -123,8 +_,12 @@
              }
  
              boolean flag1 = flag2;
@@ -78,7 +78,7 @@
              } else if (p_150717_.dimensionType().ultraWarm() && this.content.is(FluidTags.WATER)) {
                  int l = p_150718_.getX();
                  int i = p_150718_.getY();
-@@ -143,7 +_,7 @@
+@@ -144,7 +_,7 @@
  
                  return true;
              } else {
@@ -87,7 +87,7 @@
                      liquidblockcontainer1.placeLiquid(p_150717_, p_150718_, blockstate, flowingfluid.getSource(false));
                      this.playEmptySound(p_150716_, p_150717_, p_150718_);
                      return true;
-@@ -165,7 +_,32 @@
+@@ -166,7 +_,32 @@
  
      protected void playEmptySound(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
          SoundEvent soundevent = this.content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;

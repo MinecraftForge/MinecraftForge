@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -376,6 +_,10 @@
+@@ -371,6 +_,10 @@
  
      @Override
      public boolean causeFallDamage(float p_149538_, float p_149539_, DamageSource p_149540_) {

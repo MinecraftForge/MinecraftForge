@@ -50,7 +50,7 @@
          ContainerHelper.saveAllItems(p_187452_, this.items, p_330192_);
          CompoundTag compoundtag = new CompoundTag();
          this.recipesUsed.forEach((p_187449_, p_187450_) -> compoundtag.putInt(p_187449_.toString(), p_187450_));
-@@ -268,28 +_,30 @@
+@@ -269,28 +_,30 @@
              }
  
              int i = p_155017_.getMaxStackSize();
@@ -86,7 +86,7 @@
                          p_155017_.setRecipeUsed(recipeholder);
                      }
  
-@@ -313,9 +_,9 @@
+@@ -314,9 +_,9 @@
          }
      }
  
@@ -94,11 +94,11 @@
 +    private boolean canBurn(RegistryAccess p_266924_, @Nullable RecipeHolder<?> p_299207_, NonNullList<ItemStack> p_155007_, int p_155008_) {
          if (!p_155007_.get(0).isEmpty() && p_299207_ != null) {
 -            ItemStack itemstack = p_299207_.value().getResultItem(p_266924_);
-+            ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299207_).value().assemble(this, p_266924_);
++            ItemStack itemstack = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<SingleRecipeInput>>)p_299207_).value().assemble(new SingleRecipeInput(this.getItem(0)), p_266924_);
              if (itemstack.isEmpty()) {
                  return false;
              } else {
-@@ -325,9 +_,9 @@
+@@ -326,9 +_,9 @@
                  } else if (!ItemStack.isSameItemSameComponents(itemstack1, itemstack)) {
                      return false;
                  } else {
@@ -110,7 +110,7 @@
                  }
              }
          } else {
-@@ -335,15 +_,15 @@
+@@ -336,15 +_,15 @@
          }
      }
  
@@ -119,7 +119,7 @@
          if (p_299450_ != null && canBurn(p_266740_, p_299450_, p_267073_, p_267157_)) {
              ItemStack itemstack = p_267073_.get(0);
 -            ItemStack itemstack1 = p_299450_.value().getResultItem(p_266740_);
-+            ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<WorldlyContainer>>)p_299450_).value().assemble(this, p_266740_);
++            ItemStack itemstack1 = ((RecipeHolder<net.minecraft.world.item.crafting.Recipe<SingleRecipeInput>>)p_299450_).value().assemble(new SingleRecipeInput(this.getItem(0)), p_266740_);
              ItemStack itemstack2 = p_267073_.get(2);
              if (itemstack2.isEmpty()) {
                  p_267073_.set(2, itemstack1.copy());
@@ -129,7 +129,7 @@
              }
  
              if (itemstack.is(Blocks.WET_SPONGE.asItem()) && !p_267073_.get(1).isEmpty() && p_267073_.get(1).is(Items.BUCKET)) {
-@@ -362,7 +_,7 @@
+@@ -363,7 +_,7 @@
              return 0;
          } else {
              Item item = p_58343_.getItem();
@@ -138,7 +138,7 @@
          }
      }
  
-@@ -371,7 +_,7 @@
+@@ -373,7 +_,7 @@
      }
  
      public static boolean isFuel(ItemStack p_58400_) {
@@ -147,7 +147,7 @@
      }
  
      @Override
-@@ -429,7 +_,7 @@
+@@ -431,7 +_,7 @@
              return true;
          } else {
              ItemStack itemstack = this.items.get(1);
@@ -156,7 +156,7 @@
          }
      }
  
-@@ -492,5 +_,34 @@
+@@ -494,5 +_,34 @@
          for (ItemStack itemstack : this.items) {
              p_58342_.accountStack(itemstack);
          }

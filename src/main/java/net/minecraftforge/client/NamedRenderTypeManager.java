@@ -20,21 +20,18 @@ import java.util.Map;
  * <p>
  * Provides a lookup.
  */
-public final class NamedRenderTypeManager
-{
+public final class NamedRenderTypeManager {
     private static ImmutableMap<ResourceLocation, RenderTypeGroup> RENDER_TYPES;
 
     /**
      * Finds the {@link RenderTypeGroup} for a given name, or the {@link RenderTypeGroup#EMPTY empty group} if not found.
      */
-    public static RenderTypeGroup get(ResourceLocation name)
-    {
+    public static RenderTypeGroup get(ResourceLocation name) {
         return RENDER_TYPES.getOrDefault(name, RenderTypeGroup.EMPTY);
     }
 
     @ApiStatus.Internal
-    public static void init()
-    {
+    public static void init() {
         var renderTypes = new HashMap<ResourceLocation, RenderTypeGroup>();
         preRegisterVanillaRenderTypes(renderTypes);
         var event = new RegisterNamedRenderTypesEvent(renderTypes);
@@ -45,18 +42,19 @@ public final class NamedRenderTypeManager
     /**
      * Pre-registers vanilla render types.
      */
-    private static void preRegisterVanillaRenderTypes(Map<ResourceLocation, RenderTypeGroup> blockRenderTypes)
-    {
-        blockRenderTypes.put(new ResourceLocation("solid"), new RenderTypeGroup(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get()));
-        blockRenderTypes.put(new ResourceLocation("cutout"), new RenderTypeGroup(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
+    private static void preRegisterVanillaRenderTypes(Map<ResourceLocation, RenderTypeGroup> blockRenderTypes) {
+        blockRenderTypes.put(rl("solid"), new RenderTypeGroup(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get()));
+        blockRenderTypes.put(rl("cutout"), new RenderTypeGroup(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
         // Generally entity/item rendering shouldn't use mipmaps, so cutout_mipped has them off by default. To enforce them, use cutout_mipped_all.
-        blockRenderTypes.put(new ResourceLocation("cutout_mipped"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
-        blockRenderTypes.put(new ResourceLocation("cutout_mipped_all"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get()));
-        blockRenderTypes.put(new ResourceLocation("translucent"), new RenderTypeGroup(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
-        blockRenderTypes.put(new ResourceLocation("tripwire"), new RenderTypeGroup(RenderType.tripwire(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
+        blockRenderTypes.put(rl("cutout_mipped"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
+        blockRenderTypes.put(rl("cutout_mipped_all"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get()));
+        blockRenderTypes.put(rl("translucent"), new RenderTypeGroup(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
+        blockRenderTypes.put(rl("tripwire"), new RenderTypeGroup(RenderType.tripwire(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
     }
 
-    private NamedRenderTypeManager()
-    {
+    private static ResourceLocation rl(String paht) {
+        return ResourceLocation.withDefaultNamespace(paht);
     }
+
+    private NamedRenderTypeManager() { }
 }

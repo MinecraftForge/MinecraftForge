@@ -12,7 +12,7 @@
 +    }
 +
 +    public RecipeManager(HolderLookup.Provider p_330459_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-         super(GSON, "recipes");
+         super(GSON, Registries.elementsDirPath(Registries.RECIPE));
          this.registries = p_330459_;
 +        this.context = context;
      }

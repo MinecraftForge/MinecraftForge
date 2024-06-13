@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -299,6 +_,11 @@
+@@ -303,6 +_,11 @@
  
      @Override
      public boolean causeFallDamage(float p_149499_, float p_149500_, DamageSource p_149501_) {
@@ -12,7 +12,7 @@
          if (p_149499_ > 1.0F) {
              this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
          }
-@@ -340,6 +_,7 @@
+@@ -348,6 +_,7 @@
  
          this.inventory.addListener(this);
          this.syncSaddleToClients();
@@ -20,7 +20,7 @@
      }
  
      protected void syncSaddleToClients() {
-@@ -385,9 +_,9 @@
+@@ -393,9 +_,9 @@
      protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
          if (!p_30585_.liquid()) {
              BlockState blockstate = this.level().getBlockState(p_30584_.above());
@@ -32,7 +32,7 @@
              }
  
              if (this.isVehicle() && this.canGallop) {
-@@ -810,6 +_,7 @@
+@@ -818,6 +_,7 @@
              float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
              this.setDeltaMovement(this.getDeltaMovement().add((double)(-0.4F * f * p_248808_), 0.0, (double)(0.4F * f1 * p_248808_)));
          }
@@ -40,7 +40,7 @@
      }
  
      protected void playJumpSound() {
-@@ -1126,5 +_,25 @@
+@@ -1134,6 +_,26 @@
  
      public final Container getBodyArmorAccess() {
          return this.bodyArmorAccess;
@@ -65,4 +65,5 @@
 +           oldHandler.invalidate();
 +        }
      }
- }
+ 
+     public int getInventoryColumns() {

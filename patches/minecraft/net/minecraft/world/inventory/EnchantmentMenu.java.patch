@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -57,7 +_,7 @@
+@@ -63,7 +_,7 @@
          this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
              @Override
              public boolean mayPlace(ItemStack p_39517_) {
@@ -9,17 +9,17 @@
              }
  
              @Override
-@@ -94,23 +_,25 @@
-             ItemStack itemstack = p_39461_.getItem(0);
+@@ -101,23 +_,25 @@
              if (!itemstack.isEmpty() && itemstack.isEnchantable()) {
-                 this.access.execute((p_327074_, p_327075_) -> {
+                 this.access.execute((p_341515_, p_341516_) -> {
+                     IdMap<Holder<Enchantment>> idmap = p_341515_.registryAccess().registryOrThrow(Registries.ENCHANTMENT).asHolderIdMap();
 -                    int j = 0;
 +                    float j = 0;
  
                      for (BlockPos blockpos : EnchantingTableBlock.BOOKSHELF_OFFSETS) {
-                         if (EnchantingTableBlock.isValidBookShelf(p_327074_, p_327075_, blockpos)) {
+                         if (EnchantingTableBlock.isValidBookShelf(p_341515_, p_341516_, blockpos)) {
                              j++;
-+                            j += p_327074_.getBlockState(p_327075_.offset(blockpos)).getEnchantPowerBonus(p_327074_, p_327075_.offset(blockpos));
++                            j += p_341515_.getBlockState(p_341516_.offset(blockpos)).getEnchantPowerBonus(p_341515_, p_341516_.offset(blockpos));
                          }
                      }
  
@@ -33,11 +33,11 @@
                          if (this.costs[k] < k + 1) {
                              this.costs[k] = 0;
                          }
-+                        this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_327074_, p_327075_, k, (int)j, itemstack, costs[k]);
++                        this.costs[k] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_341515_, p_341516_, k, (int)j, itemstack, costs[k]);
                      }
  
                      for (int l = 0; l < 3; l++) {
-@@ -234,7 +_,7 @@
+@@ -244,7 +_,7 @@
                  if (!this.moveItemStackTo(itemstack1, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }

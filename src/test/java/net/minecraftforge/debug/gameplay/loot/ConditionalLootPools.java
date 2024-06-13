@@ -71,8 +71,8 @@ public class ConditionalLootPools extends BaseTestMod {
     }
 
     private static class BlockLoot extends BlockLootSubProvider implements IConditionBuilder {
-        public BlockLoot() {
-            super(Set.of(), FeatureFlags.REGISTRY.allFlags());
+        public BlockLoot(HolderLookup.Provider lookup) {
+            super(Set.of(), FeatureFlags.REGISTRY.allFlags(), lookup);
         }
 
         @Override

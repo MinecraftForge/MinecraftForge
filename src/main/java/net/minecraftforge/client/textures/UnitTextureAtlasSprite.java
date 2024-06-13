@@ -18,7 +18,7 @@ import net.minecraft.server.packs.resources.ResourceMetadata;
  * Useful for baking quads that won't be used with an atlas.
  */
 public class UnitTextureAtlasSprite extends TextureAtlasSprite {
-    public static final ResourceLocation LOCATION = new ResourceLocation("forge", "unit");
+    public static final ResourceLocation LOCATION = ResourceLocation.fromNamespaceAndPath("forge", "unit");
     public static final UnitTextureAtlasSprite INSTANCE = new UnitTextureAtlasSprite();
 
     private UnitTextureAtlasSprite() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -75,11 +_,11 @@
+@@ -77,11 +_,11 @@
          ParticleRenderType.TERRAIN_SHEET, ParticleRenderType.PARTICLE_SHEET_OPAQUE, ParticleRenderType.PARTICLE_SHEET_LIT, ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT, ParticleRenderType.CUSTOM
      );
      protected ClientLevel level;
@@ -14,7 +14,7 @@
      private final Queue<Particle> particlesToAdd = Queues.newArrayDeque();
      private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> spriteSets = Maps.newHashMap();
      private final TextureAtlas textureAtlas;
-@@ -210,10 +_,14 @@
+@@ -212,10 +_,14 @@
          this.register(ParticleTypes.OMINOUS_SPAWNING, FlyStraightTowardsParticle.OminousSpawnProvider::new);
      }
  
@@ -30,7 +30,7 @@
      public <T extends ParticleOptions> void register(ParticleType<T> p_273423_, ParticleProvider.Sprite<T> p_273134_) {
          this.register(
              p_273423_,
-@@ -230,10 +_,12 @@
+@@ -232,10 +_,12 @@
          );
      }
  
@@ -44,7 +44,7 @@
      }
  
      @Override
-@@ -359,7 +_,7 @@
+@@ -361,7 +_,7 @@
      private <T extends ParticleOptions> Particle makeParticle(
          T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_
      ) {
@@ -53,7 +53,7 @@
          return particleprovider == null
              ? null
              : particleprovider.createParticle(p_107396_, this.level, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
-@@ -435,11 +_,19 @@
+@@ -437,11 +_,19 @@
          }
      }
  
@@ -71,18 +71,18 @@
 -        for (ParticleRenderType particlerendertype : RENDER_ORDER) {
 +        for (ParticleRenderType particlerendertype : this.particles.keySet()) { // Forge: allow custom IParticleRenderType's
 +            if (particlerendertype == ParticleRenderType.NO_RENDER) continue;
-             Iterable<Particle> iterable = this.particles.get(particlerendertype);
-             if (iterable != null) {
+             Queue<Particle> queue = this.particles.get(particlerendertype);
+             if (queue != null && !queue.isEmpty()) {
                  RenderSystem.setShader(GameRenderer::getParticleShader);
-@@ -448,6 +_,7 @@
-                 particlerendertype.begin(bufferbuilder, this.textureManager);
- 
-                 for (Particle particle : iterable) {
-+                    if (frustum != null && particle.shouldCull() && !frustum.isVisible(particle.getBoundingBox())) continue;
-                     try {
-                         particle.render(bufferbuilder, p_107340_, p_107341_);
-                     } catch (Throwable throwable) {
-@@ -475,7 +_,7 @@
+@@ -449,6 +_,7 @@
+                 BufferBuilder bufferbuilder = particlerendertype.begin(tesselator, this.textureManager);
+                 if (bufferbuilder != null) {
+                     for (Particle particle : queue) {
++                        if (frustum != null && particle.shouldCull() && !frustum.isVisible(particle.getBoundingBox())) continue;
+                         try {
+                             particle.render(bufferbuilder, p_107340_, p_107341_);
+                         } catch (Throwable throwable) {
+@@ -480,7 +_,7 @@
      }
  
      public void destroy(BlockPos p_107356_, BlockState p_107357_) {
@@ -91,7 +91,7 @@
              VoxelShape voxelshape = p_107357_.getShape(this.level, p_107356_);
              double d0 = 0.25;
              voxelshape.forAllBoxes(
-@@ -508,6 +_,7 @@
+@@ -513,6 +_,7 @@
                                          p_107357_,
                                          p_107356_
                                      )
@@ -99,7 +99,7 @@
                                  );
                              }
                          }
-@@ -517,6 +_,13 @@
+@@ -522,6 +_,13 @@
          }
      }
  
@@ -113,7 +113,7 @@
      public void crack(BlockPos p_107368_, Direction p_107369_) {
          BlockState blockstate = this.level.getBlockState(p_107368_);
          if (blockstate.getRenderShape() != RenderShape.INVISIBLE && blockstate.shouldSpawnTerrainParticles()) {
-@@ -552,7 +_,7 @@
+@@ -557,7 +_,7 @@
                  d0 = (double)i + aabb.maxX + 0.1F;
              }
  

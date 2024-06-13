@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -238,8 +_,8 @@
+@@ -239,8 +_,8 @@
      private boolean shouldStopFishing(Player p_37137_) {
          ItemStack itemstack = p_37137_.getMainHandItem();
          ItemStack itemstack1 = p_37137_.getOffhandItem();
@@ -11,7 +11,7 @@
          if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0)) {
              return false;
          } else {
-@@ -250,6 +_,7 @@
+@@ -251,6 +_,7 @@
  
      private void checkCollision() {
          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -19,7 +19,7 @@
          this.hitTargetOrDeflectSelf(hitresult);
      }
  
-@@ -439,6 +_,7 @@
+@@ -440,6 +_,7 @@
          Player player = this.getPlayerOwner();
          if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {
              int i = 0;
@@ -27,12 +27,11 @@
              if (this.hookedIn != null) {
                  this.pullEntity(this.hookedIn);
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, Collections.emptyList());
-@@ -449,10 +_,17 @@
+@@ -450,10 +_,16 @@
                      .withParameter(LootContextParams.ORIGIN, this.position())
                      .withParameter(LootContextParams.TOOL, p_37157_)
                      .withParameter(LootContextParams.THIS_ENTITY, this)
-+                    .withParameter(LootContextParams.KILLER_ENTITY, this.getOwner())
-+                    .withParameter(LootContextParams.THIS_ENTITY, this)
++                    .withParameter(LootContextParams.ATTACKING_ENTITY, this.getOwner())
                      .withLuck((float)this.luck + player.getLuck())
                      .create(LootContextParamSets.FISHING);
                  LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
@@ -45,7 +44,7 @@
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, list);
  
                  for (ItemStack itemstack : list) {
-@@ -482,7 +_,7 @@
+@@ -483,7 +_,7 @@
              }
  
              this.discard();

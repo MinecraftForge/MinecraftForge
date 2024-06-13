@@ -217,7 +217,7 @@ public class RenderLevelStageEvent extends Event {
         }
 
         private static Stage register(String name, @Nullable RenderType renderType) throws IllegalArgumentException {
-            return register(new ResourceLocation(name), renderType);
+            return register(ResourceLocation.parse(name), renderType);
         }
 
         @Override
@@ -239,7 +239,7 @@ public class RenderLevelStageEvent extends Event {
             var mc = Minecraft.getInstance();
             var profiler = mc.getProfiler();
             profiler.push(this.toString());
-            MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(this, levelRenderer, poseStack, projectionMatrix, renderTick, mc.getPartialTick(), camera, frustum));
+            MinecraftForge.EVENT_BUS.post(new RenderLevelStageEvent(this, levelRenderer, poseStack, projectionMatrix, renderTick, mc.getTimer().getRealtimeDeltaTicks(), camera, frustum));
             profiler.pop();
         }
     }

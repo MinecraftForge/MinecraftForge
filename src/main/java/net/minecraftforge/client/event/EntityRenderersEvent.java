@@ -165,16 +165,6 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         }
 
         /**
-         * @deprecated Use getEntitySkin, return type down graded to EntityRenderer instead of LivingEntityRenderer
-         */
-        @Nullable
-        @SuppressWarnings("unchecked")
-        @Deprecated(forRemoval = true, since = "1.20.2")
-        public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(PlayerSkin.Model skinName) {
-            return (R)skinMap.get(skinName);
-        }
-
-        /**
          * Returns an entity renderer for the given entity type.
          *
          * @param entityType the entity type to return a renderer for
@@ -186,16 +176,6 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
         @SuppressWarnings("unchecked")
         public <T extends LivingEntity, R extends EntityRenderer<T>> R getEntityRenderer(EntityType<? extends T> entityType) {
             return (R)renderers.get(entityType);
-        }
-
-        /**
-         * @deprecated Use getEntityRenderer, return type down graded to EntityRenderer instead of LivingEntityRenderer
-         */
-        @Nullable
-        @SuppressWarnings("unchecked")
-        @Deprecated(forRemoval = true, since = "1.20.2")
-        public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType) {
-            return (R) renderers.get(entityType);
         }
 
         /**

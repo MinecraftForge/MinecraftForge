@@ -1,9 +1,9 @@
 --- a/net/minecraft/data/registries/VanillaRegistries.java
 +++ b/net/minecraft/data/registries/VanillaRegistries.java
-@@ -60,6 +_,7 @@
-         .add(Registries.WOLF_VARIANT, WolfVariants::bootstrap)
-         .add(Registries.DAMAGE_TYPE, DamageTypes::bootstrap)
-         .add(Registries.BANNER_PATTERN, BannerPatterns::bootstrap);
+@@ -68,6 +_,7 @@
+         .add(Registries.ENCHANTMENT, Enchantments::bootstrap)
+         .add(Registries.ENCHANTMENT_PROVIDER, VanillaEnchantmentProviders::bootstrap)
+         .add(Registries.JUKEBOX_SONG, JukeboxSongs::bootstrap);
 +    public static final List<? extends net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> DATAPACK_REGISTRY_KEYS = BUILDER.getEntryKeys();
  
      private static void validateThatAllBiomeFeaturesHaveBiomeFilter(HolderLookup.Provider p_256242_) {

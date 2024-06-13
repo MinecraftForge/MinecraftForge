@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/AbstractSkeleton.java
 +++ b/net/minecraft/world/entity/monster/AbstractSkeleton.java
-@@ -155,7 +_,7 @@
+@@ -157,7 +_,7 @@
          if (this.level() != null && !this.level().isClientSide) {
              this.goalSelector.removeGoal(this.meleeGoal);
              this.goalSelector.removeGoal(this.bowGoal);
@@ -9,13 +9,14 @@
              if (itemstack.is(Items.BOW)) {
                  int i = this.getHardAttackInterval();
                  if (this.level().getDifficulty() != Difficulty.HARD) {
-@@ -180,8 +_,11 @@
+@@ -182,9 +_,12 @@
  
      @Override
      public void performRangedAttack(LivingEntity p_32141_, float p_32142_) {
--        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW)));
-+        ItemStack itemstack = this.getProjectile(this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
-         AbstractArrow abstractarrow = this.getArrow(itemstack, p_32142_);
+-        ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, Items.BOW));
++        ItemStack itemstack = this.getItemInHand(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
+         ItemStack itemstack1 = this.getProjectile(itemstack);
+         AbstractArrow abstractarrow = this.getArrow(itemstack1, p_32142_, itemstack);
 +        if (this.getMainHandItem().getItem() instanceof net.minecraft.world.item.BowItem bow) {
 +            abstractarrow = bow.customArrow(abstractarrow);
 +        }

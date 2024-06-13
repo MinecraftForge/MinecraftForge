@@ -9,7 +9,7 @@
      private final SubtitleOverlay subtitleOverlay;
      private final SpectatorGui spectatorGui;
      private final PlayerTabOverlay tabList;
-@@ -320,7 +_,7 @@
+@@ -318,7 +_,7 @@
              Window window = this.minecraft.getWindow();
              int i = Mth.floor(this.minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
              int j = Mth.floor(this.minecraft.mouseHandler.ypos() * (double)window.getGuiScaledHeight() / (double)window.getScreenHeight());
@@ -18,7 +18,7 @@
          }
      }
  
-@@ -444,6 +_,8 @@
+@@ -434,6 +_,8 @@
  
              for (MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
                  Holder<MobEffect> holder = mobeffectinstance.getEffect();
@@ -27,7 +27,7 @@
                  if (mobeffectinstance.showIcon()) {
                      int i = p_282812_.guiWidth();
                      int j = 1;
-@@ -473,6 +_,7 @@
+@@ -463,6 +_,7 @@
                          }
                      }
  
@@ -35,7 +35,7 @@
                      TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
                      int l1 = i;
                      int i1 = j;
-@@ -635,6 +_,10 @@
+@@ -625,6 +_,10 @@
      }
  
      private void renderSelectedItemName(GuiGraphics p_283501_) {
@@ -46,7 +46,7 @@
          this.minecraft.getProfiler().push("selectedItemName");
          if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
              MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
-@@ -642,9 +_,10 @@
+@@ -632,9 +_,10 @@
                  mutablecomponent.withStyle(ChatFormatting.ITALIC);
              }
  
@@ -59,10 +59,10 @@
              if (!this.minecraft.gameMode.canHurtPlayer()) {
                  k += 14;
              }
-@@ -657,6 +_,13 @@
+@@ -646,6 +_,13 @@
+ 
              if (l > 0) {
-                 p_283501_.fill(j - 2, k - 2, j + i + 2, k + 9 + 2, this.minecraft.options.getBackgroundColor(0));
-                 p_283501_.drawString(this.getFont(), mutablecomponent, j, k, 16777215 + (l << 24));
+                 p_283501_.drawStringWithBackdrop(this.getFont(), mutablecomponent, j, k, i, FastColor.ARGB32.color(l, -1));
 +                Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
 +                if (font == null) {
 +                    p_283501_.drawString(this.getFont(), highlightTip, j, k, 16777215 + (l << 24));
@@ -73,7 +73,7 @@
              }
          }
  
-@@ -1155,7 +_,7 @@
+@@ -1146,7 +_,7 @@
              ItemStack itemstack = this.minecraft.player.getInventory().getSelected();
              if (itemstack.isEmpty()) {
                  this.toolHighlightTimer = 0;

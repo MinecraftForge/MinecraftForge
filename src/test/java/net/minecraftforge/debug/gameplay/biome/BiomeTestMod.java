@@ -35,9 +35,9 @@ import java.util.concurrent.CompletableFuture;
 public class BiomeTestMod extends BaseTestMod {
     public static final String MOD_ID = "biome_test_mod";
 
-    private static final ResourceKey<PlacedFeature> OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore_placed"));
-    private static final ResourceKey<BiomeModifier> ADD_OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(BiomeTestMod.MOD_ID, "add_overworld_netherite_block_ore"));
-    private static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore"));
+    private static final ResourceKey<PlacedFeature> OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY = ResourceKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore_placed"));
+    private static final ResourceKey<BiomeModifier> ADD_OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "add_overworld_netherite_block_ore"));
+    private static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore"));
 
     public BiomeTestMod() {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();

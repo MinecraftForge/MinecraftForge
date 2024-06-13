@@ -17,6 +17,8 @@ import java.util.*;
 
 public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "composite");
+
     public static <T extends ModelBuilder<T>> CompositeModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
         return new CompositeModelBuilder<>(parent, existingFileHelper);
@@ -27,7 +29,7 @@ public class CompositeModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 
     protected CompositeModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:composite"), parent, existingFileHelper);
+        super(NAME, parent, existingFileHelper);
     }
 
     public CompositeModelBuilder<T> child(String name, T modelBuilder)

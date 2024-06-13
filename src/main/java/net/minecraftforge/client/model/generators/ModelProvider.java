@@ -6,8 +6,6 @@
 package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +30,6 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
     protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models");
     protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
 
-    private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final PackOutput output;
     protected final String modid;
     protected final String folder;
@@ -63,7 +60,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
     public T getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
-        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+        ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? ResourceLocation.parse(path) : ResourceLocation.fromNamespaceAndPath(modid, path));
         this.existingFileHelper.trackGenerated(outputLoc, MODEL);
         return generatedModels.computeIfAbsent(outputLoc, factory);
     }
@@ -72,15 +69,15 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         if (rl.getPath().contains("/")) {
             return rl;
         }
-        return new ResourceLocation(rl.getNamespace(), folder + "/" + rl.getPath());
+        return rl.withPrefix(folder + '/');
     }
 
     public ResourceLocation modLoc(String name) {
-        return new ResourceLocation(modid, name);
+        return ResourceLocation.fromNamespaceAndPath(modid, name);
     }
 
     public ResourceLocation mcLoc(String name) {
-        return new ResourceLocation(name);
+        return ResourceLocation.parse(name);
     }
 
     public T withExistingParent(String name, String parent) {
@@ -375,9 +372,8 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
     /**
      * {@return a model builder that's not directly saved to disk. Meant for use in custom model loaders.}
      */
-    public T nested()
-    {
-        return factory.apply(new ResourceLocation("dummy:dummy"));
+    public T nested() {
+        return factory.apply(ResourceLocation.fromNamespaceAndPath("dummy",  "dummy"));
     }
 
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {

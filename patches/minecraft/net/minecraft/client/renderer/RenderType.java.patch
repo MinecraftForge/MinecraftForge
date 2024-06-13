@@ -1,6 +1,29 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -907,7 +_,7 @@
+@@ -674,11 +_,22 @@
+         RenderType.CompositeState.builder().setShaderState(RENDERTYPE_GUI_GHOST_RECIPE_OVERLAY_SHADER).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setDepthTestState(GREATER_DEPTH_TEST).setWriteMaskState(COLOR_WRITE).createCompositeState(false)
+     );
+     private static final ImmutableList<RenderType> CHUNK_BUFFER_LAYERS = ImmutableList.of(solid(), cutoutMipped(), cutout(), translucent(), tripwire());
++    static {
++        int i = 0;
++        for (var layer : CHUNK_BUFFER_LAYERS)
++            layer.chunkLayerId = i++;
++    }
++
+     private final VertexFormat format;
+     private final VertexFormat.Mode mode;
+     private final int bufferSize;
+     private final boolean affectsCrumbling;
+     private final boolean sortOnUpload;
++    private int chunkLayerId = -1;
++    /** {@return the unique ID of this {@link RenderType} for chunk rendering purposes, or {@literal -1} if this is not a chunk {@link RenderType}} */
++    public final int getChunkLayerId() {
++        return chunkLayerId;
++    }
+ 
+     public static RenderType solid() {
+         return SOLID;
+@@ -899,7 +_,7 @@
      }
  
      public static RenderType text(ResourceLocation p_110498_) {
@@ -9,7 +32,7 @@
      }
  
      public static RenderType textBackground() {
-@@ -915,19 +_,19 @@
+@@ -907,19 +_,19 @@
      }
  
      public static RenderType textIntensity(ResourceLocation p_173238_) {
@@ -33,7 +56,7 @@
      }
  
      public static RenderType textBackgroundSeeThrough() {
-@@ -935,12 +_,25 @@
+@@ -927,7 +_,7 @@
      }
  
      public static RenderType textIntensitySeeThrough(ResourceLocation p_173241_) {
@@ -42,21 +65,3 @@
      }
  
      public static RenderType lightning() {
-         return LIGHTNING;
-     }
-+
-+    // Forge start
-+    private int chunkLayerId = -1;
-+    /** {@return the unique ID of this {@link RenderType} for chunk rendering purposes, or {@literal -1} if this is not a chunk {@link RenderType}} */
-+    public final int getChunkLayerId() {
-+        return chunkLayerId;
-+    }
-+    static {
-+        int i = 0;
-+        for (var layer : chunkBufferLayers())
-+            layer.chunkLayerId = i++;
-+    }
-+    // Forge end
- 
-     private static RenderType.CompositeState tripwireState() {
-         return RenderType.CompositeState.builder()

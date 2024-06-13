@@ -6,6 +6,6 @@
          p_100014_.setSelected(null);
 -        p_100015_.forEach(
 +        p_100015_.filter(PackSelectionModel.Entry::notHidden).forEach(
-             p_325390_ -> {
+             p_340813_ -> {
                  TransferableSelectionList.PackEntry transferableselectionlist$packentry1 = new TransferableSelectionList.PackEntry(
-                     this.minecraft, p_100014_, p_325390_
+                     this.minecraft, p_100014_, p_340813_

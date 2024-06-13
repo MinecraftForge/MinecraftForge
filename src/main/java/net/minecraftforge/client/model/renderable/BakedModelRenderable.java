@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -30,42 +31,36 @@ import java.util.Arrays;
  *
  * @see Context
  */
-public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Context>
-{
+public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Context> {
     /**
      * Constructs a {@link BakedModelRenderable} from the given model location.
      * The model is expected to have been baked ahead of time.
      *
      * @see net.minecraftforge.client.event.ModelEvent.RegisterAdditional
      */
-    public static BakedModelRenderable of(ResourceLocation model)
-    {
+    public static BakedModelRenderable of(ModelResourceLocation model) {
         return of(Minecraft.getInstance().getModelManager().getModel(model));
     }
 
     /**
      * Constructs a {@link BakedModelRenderable} from the given baked model.
      */
-    public static BakedModelRenderable of(BakedModel model)
-    {
+    public static BakedModelRenderable of(BakedModel model) {
         return new BakedModelRenderable(model);
     }
 
     private final BakedModel model;
 
-    private BakedModelRenderable(BakedModel model)
-    {
+    private BakedModelRenderable(BakedModel model) {
         this.model = model;
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Context context)
-    {
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Context context) {
         var buffer = bufferSource.getBuffer(textureRenderTypeLookup.get(InventoryMenu.BLOCK_ATLAS));
         var tint = context.tint();
         var randomSource = context.randomSource();
-        for (Direction direction : context.faces())
-        {
+        for (var direction : context.faces()) {
             randomSource.setSeed(context.seed());
             // Given the lack of context, the requested render type has to be null to ensure the model renders all of its geometry
             for (BakedQuad quad : model.getQuads(context.state(), direction, randomSource, context.data(), null))
@@ -73,24 +68,20 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
         }
     }
 
-    public IRenderable<Unit> withContext(ModelData modelData)
-    {
+    public IRenderable<Unit> withContext(ModelData modelData) {
         return withContext(new Context(modelData));
     }
 
-    public IRenderable<ModelData> withModelDataContext()
-    {
+    public IRenderable<ModelData> withModelDataContext() {
         return (poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, context) ->
                 render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, new Context(context));
     }
 
-    public record Context(@Nullable BlockState state, Direction[] faces, RandomSource randomSource, long seed, ModelData data, Vector4f tint)
-    {
+    public record Context(@Nullable BlockState state, Direction[] faces, RandomSource randomSource, long seed, ModelData data, Vector4f tint) {
         private static final Direction[] ALL_FACES_AND_NULL = Arrays.copyOf(Direction.values(), Direction.values().length + 1);
         private static final Vector4f WHITE = new Vector4f(1, 1, 1, 1);
 
-        public Context(ModelData data)
-        {
+        public Context(ModelData data) {
             this(null, ALL_FACES_AND_NULL, RandomSource.create(), 42, data, WHITE);
         }
     }

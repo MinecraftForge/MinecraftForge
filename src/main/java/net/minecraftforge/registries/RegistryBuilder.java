@@ -26,7 +26,7 @@ public class RegistryBuilder<T> {
     }
 
     public static <T> RegistryBuilder<T> of(String name) {
-        return of(new ResourceLocation(name));
+        return of(ResourceLocation.parse(name));
     }
 
     public static <T> RegistryBuilder<T> of(ResourceLocation name) {
@@ -174,7 +174,7 @@ public class RegistryBuilder<T> {
     }
 
     public RegistryBuilder<T> legacyName(String name) {
-        return legacyName(new ResourceLocation(name));
+        return legacyName(ResourceLocation.parse(name));
     }
 
     public RegistryBuilder<T> legacyName(ResourceLocation name) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -258,7 +_,7 @@
+@@ -264,7 +_,7 @@
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
          AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,7 +9,7 @@
          thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> LOGGER.error("Uncaught exception in server thread", p_177910_));
          if (Runtime.getRuntime().availableProcessors() > 4) {
              thread.setPriority(8);
-@@ -361,6 +_,7 @@
+@@ -367,6 +_,7 @@
          this.readScoreboard(dimensiondatastorage);
          this.commandStorage = new CommandStorage(dimensiondatastorage);
          WorldBorder worldborder = serverlevel.getWorldBorder();
@@ -17,7 +17,7 @@
          if (!serverleveldata.isInitialized()) {
              try {
                  setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -410,6 +_,7 @@
+@@ -416,6 +_,7 @@
                  );
                  worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
                  this.levels.put(resourcekey1, serverlevel1);
@@ -25,7 +25,7 @@
              }
          }
  
-@@ -421,6 +_,7 @@
+@@ -427,6 +_,7 @@
              p_177898_.setSpawn(BlockPos.ZERO.above(80), 0.0F);
          } else {
              ServerChunkCache serverchunkcache = p_177897_.getChunkSource();
@@ -33,7 +33,7 @@
              ChunkPos chunkpos = new ChunkPos(serverchunkcache.randomState().sampler().findSpawnPosition());
              int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
              if (i < p_177897_.getMinBuildHeight()) {
-@@ -502,6 +_,7 @@
+@@ -508,6 +_,7 @@
                      ChunkPos chunkpos = new ChunkPos(k);
                      serverlevel1.getChunkSource().updateChunkForced(chunkpos, true);
                  }
@@ -41,7 +41,7 @@
              }
          }
  
-@@ -609,6 +_,7 @@
+@@ -615,6 +_,7 @@
          for (ServerLevel serverlevel2 : this.getAllLevels()) {
              if (serverlevel2 != null) {
                  try {
@@ -49,7 +49,7 @@
                      serverlevel2.close();
                  } catch (IOException ioexception1) {
                      LOGGER.error("Exception closing the level", (Throwable)ioexception1);
-@@ -655,9 +_,11 @@
+@@ -661,9 +_,11 @@
                  throw new IllegalStateException("Failed to initialize server");
              }
  
@@ -61,7 +61,7 @@
  
              while (this.running) {
                  long i;
-@@ -702,6 +_,8 @@
+@@ -708,6 +_,8 @@
                  this.isReady = true;
                  JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
              }
@@ -70,7 +70,7 @@
          } catch (Throwable throwable1) {
              LOGGER.error("Encountered an unexpected exception", throwable1);
              CrashReport crashreport = constructOrExtractCrashReport(throwable1);
-@@ -713,6 +_,7 @@
+@@ -719,6 +_,7 @@
                  LOGGER.error("We were unable to save this crash report to disk.");
              }
  
@@ -78,7 +78,7 @@
              this.onServerCrash(crashreport);
          } finally {
              try {
-@@ -725,6 +_,7 @@
+@@ -731,6 +_,7 @@
                      this.services.profileCache().clearExecutor();
                  }
  
@@ -86,7 +86,7 @@
                  this.onServerExit();
              }
          }
-@@ -870,12 +_,14 @@
+@@ -894,12 +_,14 @@
  
      public void tickServer(BooleanSupplier p_129871_) {
          long i = Util.getNanos();
@@ -101,7 +101,7 @@
          }
  
          this.ticksUntilAutosave--;
-@@ -897,6 +_,7 @@
+@@ -921,6 +_,7 @@
          this.smoothedTickTimeMillis = this.smoothedTickTimeMillis * 0.8F + (float)j / (float)TimeUtil.NANOSECONDS_PER_MILLISECOND * 0.19999999F;
          this.logTickMethodTime(i);
          this.profiler.pop();
@@ -109,7 +109,7 @@
      }
  
      private void logTickMethodTime(long p_331549_) {
-@@ -936,7 +_,8 @@
+@@ -960,7 +_,8 @@
              Optional.of(serverstatus$players),
              Optional.of(ServerStatus.Version.current()),
              Optional.ofNullable(this.statusIcon),
@@ -119,7 +119,7 @@
          );
      }
  
-@@ -966,7 +_,8 @@
+@@ -990,7 +_,8 @@
          this.getFunctions().tick();
          this.profiler.popPush("levels");
  
@@ -129,7 +129,7 @@
              this.profiler.push(() -> serverlevel + " " + serverlevel.dimension().location());
              if (this.tickCount % 20 == 0) {
                  this.profiler.push("timeSync");
-@@ -975,6 +_,7 @@
+@@ -999,6 +_,7 @@
              }
  
              this.profiler.push("tick");
@@ -137,7 +137,7 @@
  
              try {
                  serverlevel.tick(p_129954_);
-@@ -983,16 +_,18 @@
+@@ -1007,16 +_,18 @@
                  serverlevel.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
              }
@@ -157,7 +157,7 @@
              GameTestTicker.SINGLETON.tick();
          }
  
-@@ -1088,7 +_,7 @@
+@@ -1112,7 +_,7 @@
  
      @DontObfuscate
      public String getServerModName() {
@@ -166,7 +166,7 @@
      }
  
      public SystemReport fillSystemReport(SystemReport p_177936_) {
-@@ -1443,6 +_,7 @@
+@@ -1467,6 +_,7 @@
                  this.getPlayerList().reloadResources();
                  this.functionManager.replaceLibrary(this.resources.managers.getFunctionLibrary());
                  this.structureTemplateManager.onResourceManagerReload(this.resources.resourceManager);
@@ -174,7 +174,7 @@
              }, this);
          if (this.isSameThread()) {
              this.managedBlock(completablefuture::isDone);
-@@ -1452,12 +_,15 @@
+@@ -1476,12 +_,15 @@
      }
  
      public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, WorldDataConfiguration p_331931_, boolean p_249869_, boolean p_330480_) {
@@ -191,10 +191,10 @@
          } else {
              Set<String> set = Sets.newLinkedHashSet();
  
-@@ -1921,6 +_,48 @@
+@@ -1982,6 +_,48 @@
  
-     public PotionBrewing potionBrewing() {
-         return this.potionBrewing;
+     public ServerLinks serverLinks() {
+         return ServerLinks.EMPTY;
 +    }
 +
 +    private static final com.google.gson.Gson GSON = new com.google.gson.Gson();

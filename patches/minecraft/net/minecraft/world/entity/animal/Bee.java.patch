@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Bee.java
 +++ b/net/minecraft/world/entity/animal/Bee.java
-@@ -486,7 +_,7 @@
+@@ -491,7 +_,7 @@
              return false;
          } else {
              BlockEntity blockentity = this.level().getBlockEntity(this.hivePos);
@@ -9,7 +9,7 @@
          }
      }
  
-@@ -635,13 +_,22 @@
+@@ -640,13 +_,22 @@
      }
  
      @Override

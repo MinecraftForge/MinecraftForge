@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
 +++ b/net/minecraft/world/item/crafting/SmithingTransformRecipe.java
-@@ -63,7 +_,7 @@
+@@ -60,7 +_,7 @@
  
      @Override
      public boolean isIncomplete() {

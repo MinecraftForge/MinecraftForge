@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerStatusPacketListenerImpl.java
-@@ -12,12 +_,18 @@
+@@ -13,12 +_,18 @@
  public class ServerStatusPacketListenerImpl implements ServerStatusPacketListener {
      private static final Component DISCONNECT_REASON = Component.translatable("multiplayer.status.request_handled");
      private final ServerStatus status;
@@ -19,7 +19,7 @@
      }
  
      @Override
-@@ -35,7 +_,7 @@
+@@ -36,7 +_,7 @@
              this.connection.disconnect(DISCONNECT_REASON);
          } else {
              this.hasRequestedStatus = true;

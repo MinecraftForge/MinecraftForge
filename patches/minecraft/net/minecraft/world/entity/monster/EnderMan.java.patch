@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -112,7 +_,6 @@
+@@ -114,7 +_,6 @@
  
      @Override
      public void setTarget(@Nullable LivingEntity p_32537_) {
@@ -8,7 +8,7 @@
          AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
          if (p_32537_ == null) {
              this.targetChangeTime = 0;
-@@ -126,6 +_,7 @@
+@@ -128,6 +_,7 @@
                  attributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
              }
          }
@@ -16,7 +16,7 @@
      }
  
      @Override
-@@ -208,7 +_,7 @@
+@@ -210,7 +_,7 @@
  
      boolean isLookingAtMe(Player p_32535_) {
          ItemStack itemstack = p_32535_.getInventory().armor.get(3);
@@ -25,7 +25,7 @@
              return false;
          } else {
              Vec3 vec3 = p_32535_.getViewVector(1.0F).normalize();
-@@ -295,8 +_,10 @@
+@@ -297,8 +_,10 @@
          boolean flag = blockstate.blocksMotion();
          boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);
          if (flag && !flag1) {
@@ -37,7 +37,7 @@
              if (flag2) {
                  this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
                  if (!this.isSilent()) {
-@@ -447,7 +_,7 @@
+@@ -451,7 +_,7 @@
              if (this.enderman.getCarriedBlock() == null) {
                  return false;
              } else {
@@ -46,7 +46,7 @@
              }
          }
  
-@@ -465,7 +_,7 @@
+@@ -469,7 +_,7 @@
              BlockState blockstate2 = this.enderman.getCarriedBlock();
              if (blockstate2 != null) {
                  blockstate2 = Block.updateFromNeighbourShapes(blockstate2, this.enderman.level(), blockpos);
@@ -55,7 +55,7 @@
                      level.setBlock(blockpos, blockstate2, 3);
                      level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
                      this.enderman.setCarriedBlock(null);
-@@ -474,12 +_,7 @@
+@@ -478,12 +_,7 @@
          }
  
          private boolean canPlaceBlock(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
@@ -69,7 +69,7 @@
          }
      }
  
-@@ -585,7 +_,7 @@
+@@ -589,7 +_,7 @@
              if (this.enderman.getCarriedBlock() != null) {
                  return false;
              } else {

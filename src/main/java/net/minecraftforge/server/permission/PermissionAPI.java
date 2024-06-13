@@ -110,7 +110,7 @@ public final class PermissionAPI
 
         try
         {
-            ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
+            ResourceLocation selectedPermissionHandler = ResourceLocation.parse(ForgeConfig.SERVER.permissionHandler.get());
             if (!availableHandlers.containsKey(selectedPermissionHandler))
             {
                 LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);

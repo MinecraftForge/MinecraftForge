@@ -1,0 +1,25 @@
+--- a/net/minecraft/client/DeltaTracker.java
++++ b/net/minecraft/client/DeltaTracker.java
+@@ -87,18 +_,22 @@
+ 
+         private void pause() {
+             if (!this.paused) {
++                if (net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePre(true)) return;
+                 this.pausedDeltaTickResidual = this.deltaTickResidual;
+             }
+ 
+             this.paused = true;
++            net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePost(true);
+         }
+ 
+         private void unPause() {
+             if (this.paused) {
++                if (net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePre(false)) return;
+                 this.deltaTickResidual = this.pausedDeltaTickResidual;
+             }
+ 
+             this.paused = false;
++            net.minecraftforge.client.ForgeHooksClient.onClientPauseChangePost(false);
+         }
+ 
+         public void updateFrozenState(boolean p_344005_) {

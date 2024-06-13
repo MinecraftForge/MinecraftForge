@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -23,6 +24,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.GuiGraphics;
@@ -253,5 +255,13 @@ public final class ForgeEventFactoryClient {
 
     public static void onRenderScreenBackground(Screen screen, GuiGraphics guiGraphics) {
         fire(new ScreenEvent.BackgroundRendered(screen, guiGraphics));
+    }
+
+    public static void onRenderTickStart(DeltaTracker timer) {
+        post(new TickEvent.RenderTickEvent.Start(timer));
+    }
+
+    public static void onRenderTickEnd(DeltaTracker timer) {
+        post(new TickEvent.RenderTickEvent.End(timer));
     }
 }

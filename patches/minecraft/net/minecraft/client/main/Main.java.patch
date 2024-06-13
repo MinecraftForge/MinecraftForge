@@ -1,12 +1,12 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -154,8 +_,8 @@
-         CrashReport.preload();
- 
-         try {
+@@ -111,8 +_,8 @@
+             CrashReport.preload();
+             logger = LogUtils.getLogger();
+             s1 = "Bootstrap";
 -            Bootstrap.bootStrap();
              GameLoadTimesEvent.INSTANCE.setBootstrapTime(Bootstrap.bootstrapDuration.get());
 +            net.minecraftforge.fml.loading.BackgroundWaiter.runAndTick(Bootstrap::bootStrap, net.minecraftforge.fml.loading.FMLLoader.progressWindowTick);
              Bootstrap.validate();
-         } catch (Throwable throwable2) {
-             CrashReport crashreport = CrashReport.forThrowable(throwable2, "Bootstrap");
+             s1 = "Argument parsing";
+             List<String> list = optionset.valuesOf(optionspec27);

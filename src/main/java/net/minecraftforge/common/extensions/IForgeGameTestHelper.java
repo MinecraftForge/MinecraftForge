@@ -54,7 +54,7 @@ public interface IForgeGameTestHelper {
         var server = level.getServer();
 
         var listener = new ServerGamePacketListenerImpl(server, connection, player, cookie);
-        var info = GameProtocols.SERVERBOUND.bind(RegistryFriendlyByteBuf.decorator(server.registryAccess()));
+        var info = GameProtocols.SERVERBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(server.registryAccess()));
         connection.setupInboundProtocol(info, listener);
         return player;
     }

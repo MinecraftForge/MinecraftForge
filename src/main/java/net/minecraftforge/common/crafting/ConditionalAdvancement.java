@@ -37,7 +37,7 @@ public class ConditionalAdvancement {
     }
 
     public static class Builder {
-        private static final ResourceLocation DOESNT_MATTER = new ResourceLocation("doesnt", "matter");
+        private static final ResourceLocation DOESNT_MATTER = ResourceLocation.fromNamespaceAndPath("doesnt", "matter");
 
         private List<Adv> advancements = new ArrayList<>();
         private ICondition condition;

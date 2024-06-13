@@ -15,6 +15,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "obj");
     public static <T extends ModelBuilder<T>> ObjModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
         return new ObjModelBuilder<>(parent, existingFileHelper);
@@ -29,7 +30,7 @@ public class ObjModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuil
 
     protected ObjModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:obj"), parent, existingFileHelper);
+        super(NAME, parent, existingFileHelper);
     }
 
     public ObjModelBuilder<T> modelLocation(ResourceLocation modelLocation)

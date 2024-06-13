@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Pillager.java
 +++ b/net/minecraft/world/entity/monster/Pillager.java
-@@ -112,7 +_,7 @@
+@@ -116,7 +_,7 @@
      public AbstractIllager.IllagerArmPose getArmPose() {
          if (this.isChargingCrossbow()) {
              return AbstractIllager.IllagerArmPose.CROSSBOW_CHARGE;

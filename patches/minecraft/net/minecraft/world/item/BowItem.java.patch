@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/item/BowItem.java
 +++ b/net/minecraft/world/item/BowItem.java
-@@ -27,6 +_,9 @@
+@@ -28,6 +_,9 @@
              ItemStack itemstack = player.getProjectile(p_40667_);
              if (!itemstack.isEmpty()) {
-                 int i = this.getUseDuration(p_40667_) - p_40670_;
+                 int i = this.getUseDuration(p_40667_, p_40669_) - p_40670_;
 +                i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40667_, p_40668_, player, i, true);
 +                if (i < 0) return;
 +
                  float f = getPowerForTime(i);
                  if (!((double)f < 0.1)) {
                      List<ItemStack> list = draw(p_40667_, itemstack, player);
-@@ -81,6 +_,8 @@
+@@ -82,6 +_,8 @@
      public InteractionResultHolder<ItemStack> use(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
          ItemStack itemstack = p_40673_.getItemInHand(p_40674_);
          boolean flag = !p_40673_.getProjectile(itemstack).isEmpty();

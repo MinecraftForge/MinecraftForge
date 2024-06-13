@@ -66,7 +66,7 @@ public final class ForgeTextureMetadata
             ITextureAtlasSpriteLoader loader;
             if (json.has("loader"))
             {
-                ResourceLocation loaderName = new ResourceLocation(GsonHelper.getAsString(json, "loader"));
+                ResourceLocation loaderName = ResourceLocation.parse(GsonHelper.getAsString(json, "loader"));
                 loader = TextureAtlasSpriteLoaderManager.get(loaderName);
                 if (loader == null)
                 {

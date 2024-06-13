@@ -160,7 +160,7 @@ public final class QuadTransformers {
     /**
      * Converts an ARGB color to an ABGR color, as the commonly used color format is not the format colors end up packed into.
      * This function doubles as its own inverse.
-     * @param color ARGB color
+     * @param argb ARGB color
      * @return ABGR color
      */
     public static int toABGR(int argb)

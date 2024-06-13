@@ -1,7 +1,13 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipePattern.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipePattern.java
-@@ -179,16 +_,16 @@
+@@ -212,18 +_,22 @@
+         return this.ingredients;
+     }
  
++    public Optional<ShapedRecipePattern.Data> data() {
++        return this.data;
++    }
++
      public static record Data(Map<Character, Ingredient> key, List<String> pattern) {
          private static final Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().comapFlatMap(p_311191_ -> {
 -            if (p_311191_.size() > 3) {
@@ -11,7 +17,7 @@
              } else if (p_311191_.isEmpty()) {
                  return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
              } else {
-                 int i = p_311191_.get(0).length();
+                 int i = p_311191_.getFirst().length();
  
                  for (String s : p_311191_) {
 -                    if (s.length() > 3) {

@@ -2,10 +2,10 @@
 +++ b/net/minecraft/client/resources/model/ModelManager.java
 @@ -63,13 +_,14 @@
          TextureAtlas.LOCATION_BLOCKS,
-         new ResourceLocation("blocks")
+         ResourceLocation.withDefaultNamespace("blocks")
      );
--    private Map<ResourceLocation, BakedModel> bakedRegistry;
-+    private Map<ResourceLocation, BakedModel> bakedRegistry = new java.util.HashMap<>();
+-    private Map<ModelResourceLocation, BakedModel> bakedRegistry;
++    private Map<ModelResourceLocation, BakedModel> bakedRegistry = new java.util.HashMap<>();
      private final AtlasSet atlases;
      private final BlockModelShaper blockModelShaper;
      private final BlockColors blockColors;
@@ -16,35 +16,24 @@
  
      public ModelManager(TextureManager p_119406_, BlockColors p_119407_, int p_119408_) {
          this.blockColors = p_119407_;
-@@ -78,6 +_,10 @@
-         this.atlases = new AtlasSet(VANILLA_ATLASES, p_119406_);
-     }
- 
-+    public BakedModel getModel(ResourceLocation modelLocation) {
-+        return this.bakedRegistry.getOrDefault(modelLocation, this.missingModel);
-+    }
-+
-     public BakedModel getModel(ModelResourceLocation p_119423_) {
-         return this.bakedRegistry.getOrDefault(p_119423_, this.missingModel);
-     }
 @@ -100,6 +_,7 @@
          Executor p_249221_
      ) {
          p_250336_.startTick();
 +        net.minecraftforge.client.model.geometry.GeometryLoaderManager.init();
          CompletableFuture<Map<ResourceLocation, BlockModel>> completablefuture = loadBlockModels(p_251134_, p_250550_);
-         CompletableFuture<Map<ResourceLocation, List<ModelBakery.LoadedJson>>> completablefuture1 = loadBlockStates(p_251134_, p_250550_);
+         CompletableFuture<Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>>> completablefuture1 = loadBlockStates(p_251134_, p_250550_);
          CompletableFuture<ModelBakery> completablefuture2 = completablefuture.thenCombineAsync(
-@@ -211,6 +_,8 @@
+@@ -214,6 +_,8 @@
                              .collect(Collectors.joining("\n"))
                      )
              );
 +        p_252136_.popPush("forge_modify_baking_result");
 +        net.minecraftforge.client.ForgeHooksClient.onModifyBakingResult(p_248945_.getBakedTopLevelModels(), p_248945_);
          p_252136_.popPush("dispatch");
-         Map<ResourceLocation, BakedModel> map = p_248945_.getBakedTopLevelModels();
-         BakedModel bakedmodel = map.get(ModelBakery.MISSING_MODEL_LOCATION);
-@@ -240,6 +_,8 @@
+         Map<ModelResourceLocation, BakedModel> map = p_248945_.getBakedTopLevelModels();
+         BakedModel bakedmodel = map.get(ModelBakery.MISSING_MODEL_VARIANT);
+@@ -243,6 +_,8 @@
          this.bakedRegistry = modelbakery.getBakedTopLevelModels();
          this.modelGroups = modelbakery.getModelGroups();
          this.missingModel = p_248996_.missingModel;
@@ -53,7 +42,7 @@
          p_251960_.popPush("cache");
          this.blockModelShaper.replaceCache(p_248996_.modelCache);
          p_251960_.pop();
-@@ -265,6 +_,7 @@
+@@ -268,6 +_,7 @@
      }
  
      public TextureAtlas getAtlas(ResourceLocation p_119429_) {
@@ -61,7 +50,7 @@
          return this.atlases.getAtlas(p_119429_);
      }
  
-@@ -275,6 +_,10 @@
+@@ -278,6 +_,10 @@
  
      public void updateMaxMipLevel(int p_119411_) {
          this.maxMipmapLevels = p_119411_;

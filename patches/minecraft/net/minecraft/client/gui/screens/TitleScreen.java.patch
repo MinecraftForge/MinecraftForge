@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -61,6 +_,7 @@
-     @Nullable
-     private TitleScreen.WarningLabel warningLabel;
+@@ -60,6 +_,7 @@
+     private boolean fading;
+     private long fadeInStart;
      private final LogoRenderer logoRenderer;
 +    private net.minecraftforge.client.gui.TitleScreenModUpdateIndicator modUpdateNotification;
  
      public TitleScreen() {
          this(false);
-@@ -116,11 +_,15 @@
+@@ -115,11 +_,15 @@
          int j = this.width - i - 2;
          int k = 24;
          int l = this.height / 4 + 48;
@@ -24,7 +24,7 @@
  
          SpriteIconButton spriteiconbutton = this.addRenderableWidget(
              CommonButtons.language(
-@@ -171,7 +_,7 @@
+@@ -170,7 +_,7 @@
          }).bounds(this.width / 2 - 100, p_96764_ + p_96765_ * 1, 200, 20).tooltip(tooltip).build()).active = flag;
          this.addRenderableWidget(
                  Button.builder(Component.translatable("menu.online"), p_325369_ -> this.minecraft.setScreen(new RealmsMainScreen(this)))
@@ -33,15 +33,15 @@
                      .tooltip(tooltip)
                      .build()
              )
-@@ -281,6 +_,7 @@
-                 this.warningLabel.render(p_282860_, i);
-             }
- 
+@@ -276,6 +_,7 @@
+         if ((i & -67108864) != 0) {
+             super.render(p_282860_, p_281753_, p_283539_, p_282628_);
+             this.logoRenderer.renderLogo(p_282860_, this.width, f);
 +            net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_282860_, this.font, this.width, this.height, i);
              if (this.splash != null && !this.minecraft.options.hideSplashTexts().get()) {
                  this.splash.render(p_282860_, this.width, this.font, i);
              }
-@@ -296,11 +_,19 @@
+@@ -291,11 +_,19 @@
                  s = s + I18n.get("menu.modded");
              }
  

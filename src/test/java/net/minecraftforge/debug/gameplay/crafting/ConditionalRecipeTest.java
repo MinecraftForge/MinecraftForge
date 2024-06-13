@@ -20,10 +20,12 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.SimpleCraftingContainer;
@@ -46,16 +48,16 @@ public class ConditionalRecipeTest extends BaseTestMod {
     }
 
     private static ResourceLocation rl(String path) {
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
-    private static <C extends Container, T extends Recipe<C>> void assertFalse(GameTestHelper helper, RecipeType<T> type, C container) {
+    private static <C extends RecipeInput, T extends Recipe<C>> void assertFalse(GameTestHelper helper, RecipeType<T> type, C container) {
         var recipe = helper.getLevel().getRecipeManager().getRecipeFor(type, container, helper.getLevel());
         helper.assertTrue(recipe.isEmpty(), () -> "Found crafting recipe when unexpected: " + recipe.get().id());
         helper.succeed();
     }
 
-    private static <C extends Container, T extends Recipe<C>> void assertTrue(GameTestHelper helper, RecipeType<T> type, C container) {
+    private static <C extends RecipeInput, T extends Recipe<C>> void assertTrue(GameTestHelper helper, RecipeType<T> type, C container) {
         var recipe = helper.getLevel().getRecipeManager().getRecipeFor(type, container, helper.getLevel());
         helper.assertTrue(recipe.isPresent(), "Did not find crafting recipe when expected!");
         helper.assertTrue(recipe.get().id().getNamespace().equals(MODID), "It wasn't our recipe: " + recipe.get().id());
@@ -108,38 +110,22 @@ public class ConditionalRecipeTest extends BaseTestMod {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void cooking_false_conditions(GameTestHelper helper) {
-        assertFalse(helper, RecipeType.SMELTING, SimpleCraftingContainer.builder()
-            .pattern("X")
-            .define('X', Blocks.DIRT)
-            .build()
-        );
+        assertFalse(helper, RecipeType.SMELTING, new SingleRecipeInput(new ItemStack(Blocks.DIRT)));
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void cooking_true_conditions(GameTestHelper helper) {
-        assertTrue(helper, RecipeType.SMELTING, SimpleCraftingContainer.builder()
-            .pattern("X")
-            .define('X', Blocks.BEE_NEST)
-            .build()
-        );
+        assertTrue(helper, RecipeType.SMELTING, new SingleRecipeInput(new ItemStack(Blocks.BEE_NEST)));
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void single_item_false_conditions(GameTestHelper helper) {
-        assertFalse(helper, RecipeType.STONECUTTING, SimpleCraftingContainer.builder()
-            .pattern("X")
-            .define('X', Blocks.DIRT)
-            .build()
-        );
+        assertFalse(helper, RecipeType.STONECUTTING, new SingleRecipeInput(new ItemStack(Blocks.DIRT)));
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void single_item_true_conditions(GameTestHelper helper) {
-        assertTrue(helper, RecipeType.STONECUTTING, SimpleCraftingContainer.builder()
-            .pattern("X")
-            .define('X', Blocks.REDSTONE_ORE)
-            .build()
-        );
+        assertTrue(helper, RecipeType.STONECUTTING, new SingleRecipeInput(new ItemStack(Blocks.REDSTONE_ORE)));
     }
 
     @GameTest(template = "forge:empty3x3x3")

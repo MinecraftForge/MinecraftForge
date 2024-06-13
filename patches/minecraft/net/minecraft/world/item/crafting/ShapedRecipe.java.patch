@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
-@@ -12,7 +_,19 @@
+@@ -11,7 +_,19 @@
  import net.minecraft.world.item.ItemStack;
  import net.minecraft.world.level.Level;
  
 -public class ShapedRecipe implements CraftingRecipe {
-+public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
++public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInput> {
 +    static int MAX_WIDTH = 3;
 +    static int MAX_HEIGHT = 3;
 +    /**
@@ -21,7 +21,7 @@
      final ShapedRecipePattern pattern;
      final ItemStack result;
      final String group;
-@@ -83,9 +_,19 @@
+@@ -82,9 +_,19 @@
      }
  
      @Override

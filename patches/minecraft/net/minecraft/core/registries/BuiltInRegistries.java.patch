@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -230,7 +_,9 @@
+@@ -240,7 +_,9 @@
      ) {
          Bootstrap.checkBootstrapCalled(() -> "registry " + p_259230_);
          ResourceLocation resourcelocation = p_259230_.location();
@@ -11,7 +11,7 @@
          WRITABLE_REGISTRY.register((ResourceKey)p_259230_, p_260327_, RegistrationInfo.BUILT_IN);
          return p_260327_;
      }
-@@ -265,7 +_,7 @@
+@@ -275,7 +_,7 @@
  
              if (p_325821_ instanceof DefaultedRegistry) {
                  ResourceLocation resourcelocation = ((DefaultedRegistry)p_325821_).getDefaultKey();

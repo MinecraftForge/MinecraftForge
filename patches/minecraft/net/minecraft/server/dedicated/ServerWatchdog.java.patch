@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/ServerWatchdog.java
 +++ b/net/minecraft/server/dedicated/ServerWatchdog.java
-@@ -48,7 +_,7 @@
+@@ -49,7 +_,7 @@
                  ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
                  ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
                  StringBuilder stringbuilder = new StringBuilder();

@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/item/CrossbowItem.java
 +++ b/net/minecraft/world/item/CrossbowItem.java
-@@ -169,6 +_,7 @@
+@@ -182,6 +_,7 @@
          Level p_40888_, LivingEntity p_40889_, InteractionHand p_40890_, ItemStack p_40891_, float p_40892_, float p_40893_, @Nullable LivingEntity p_329478_
      ) {
-         if (!p_40888_.isClientSide()) {
+         if (p_40888_ instanceof ServerLevel serverlevel) {
 +            if (p_40889_ instanceof Player player && net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40891_, p_40889_.level(), player, 1, true) < 0) return;
              ChargedProjectiles chargedprojectiles = p_40891_.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.EMPTY);
              if (chargedprojectiles != null && !chargedprojectiles.isEmpty()) {

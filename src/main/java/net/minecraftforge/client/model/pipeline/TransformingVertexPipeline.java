@@ -24,21 +24,21 @@ public class TransformingVertexPipeline extends VertexConsumerWrapper
     }
 
     @Override
-    public VertexConsumer vertex(double x, double y, double z)
+    public VertexConsumer addVertex(float x, float y, float z)
     {
         var vec = new Vector4f((float) x, (float) y, (float) z, 1);
         transformation.transformPosition(vec);
         vec.div(vec.w);
-        return super.vertex(vec.x(), vec.y(), vec.z());
+        return super.addVertex(vec.x(), vec.y(), vec.z());
     }
 
     @Override
-    public VertexConsumer normal(float x, float y, float z)
+    public VertexConsumer setNormal(float x, float y, float z)
     {
         var vec = new Vector3f(x, y, z);
         transformation.transformNormal(vec);
         vec.normalize();
-        return super.normal(vec.x(), vec.y(), vec.z());
+        return super.setNormal(vec.x(), vec.y(), vec.z());
     }
 
 }

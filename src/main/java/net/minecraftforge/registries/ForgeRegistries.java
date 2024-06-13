@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
@@ -14,7 +13,6 @@ import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -50,6 +48,7 @@ import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.DeferredRegister.RegistryHolder;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class ForgeRegistries {
         return RegistryManager.ACTIVE.getRegistry(key);
     }
     static final List<DeferredRegister<?>> registries = new ArrayList<>();
-    private static final <T> Supplier<IForgeRegistry<T>> registry(ResourceKey<Registry<T>> key, Supplier<RegistryBuilder<T>> factory) {
+    private static final <T> RegistryHolder<T> registry(ResourceKey<Registry<T>> key, Supplier<RegistryBuilder<T>> factory) {
         var dr = DeferredRegister.create(key, key.location().getNamespace());
         registries.add(dr);
         return dr.makeRegistry(factory);
@@ -81,7 +80,6 @@ public class ForgeRegistries {
     public static final IForgeRegistry<MobEffect> MOB_EFFECTS = active(Keys.MOB_EFFECTS);
     public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = active(Keys.SOUND_EVENTS);
     public static final IForgeRegistry<Potion> POTIONS = active(Keys.POTIONS);
-    public static final IForgeRegistry<Enchantment> ENCHANTMENTS = active(Keys.ENCHANTMENTS);
     public static final IForgeRegistry<EntityType<?>> ENTITY_TYPES = active(Keys.ENTITY_TYPES);
     public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITY_TYPES = active(Keys.BLOCK_ENTITY_TYPES);
     public static final IForgeRegistry<ParticleType<?>> PARTICLE_TYPES = active(Keys.PARTICLE_TYPES);
@@ -113,15 +111,15 @@ public class ForgeRegistries {
     public static final IForgeRegistry<Biome> BIOMES = active(Keys.BIOMES);
 
     // Custom forge registries
-    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = registry(Keys.ENTITY_DATA_SERIALIZERS, GameData::getDataSerializersRegistryBuilder);
-    public static final Supplier<IForgeRegistry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = registry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, GameData::getGLMSerializersRegistryBuilder);
-    public static final Supplier<IForgeRegistry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = registry(Keys.BIOME_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
-    public static final Supplier<IForgeRegistry<MapCodec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = registry(Keys.STRUCTURE_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
-    public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = registry(Keys.FLUID_TYPES, GameData::getFluidTypeRegistryBuilder);
-    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = registry(Keys.HOLDER_SET_TYPES, GameData::makeUnsavedAndUnsynced);
-    public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = registry(Keys.DISPLAY_CONTEXTS, GameData::getItemDisplayContextRegistryBuilder);
-    public static final Supplier<IForgeRegistry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
-    public static final Supplier<IForgeRegistry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = registry(Keys.INGREDIENT_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final RegistryHolder<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS = registry(Keys.ENTITY_DATA_SERIALIZERS, GameData::getDataSerializersRegistryBuilder);
+    public static final RegistryHolder<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = registry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, GameData::getGLMSerializersRegistryBuilder);
+    public static final RegistryHolder<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = registry(Keys.BIOME_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final RegistryHolder<MapCodec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = registry(Keys.STRUCTURE_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final RegistryHolder<FluidType> FLUID_TYPES = registry(Keys.FLUID_TYPES, GameData::getFluidTypeRegistryBuilder);
+    public static final RegistryHolder<HolderSetType> HOLDER_SET_TYPES = registry(Keys.HOLDER_SET_TYPES, GameData::makeUnsavedAndUnsynced);
+    public static final RegistryHolder<ItemDisplayContext> DISPLAY_CONTEXTS = registry(Keys.DISPLAY_CONTEXTS, GameData::getItemDisplayContextRegistryBuilder);
+    public static final RegistryHolder<MapCodec<? extends ICondition>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final RegistryHolder<IIngredientSerializer<?>> INGREDIENT_SERIALIZERS = registry(Keys.INGREDIENT_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
 
     public static final class Keys {
         //Vanilla
@@ -134,7 +132,6 @@ public class ForgeRegistries {
         public static final ResourceKey<Registry<StatType<?>>> STAT_TYPES = key("stat_type");
         public static final ResourceKey<Registry<ArgumentTypeInfo<?, ?>>> COMMAND_ARGUMENT_TYPES = key("command_argument_type");
         public static final ResourceKey<Registry<SoundEvent>> SOUND_EVENTS = key("sound_event");
-        public static final ResourceKey<Registry<Enchantment>> ENCHANTMENTS = key("enchantment");
         public static final ResourceKey<Registry<EntityType<?>>> ENTITY_TYPES = key("entity_type");
         public static final ResourceKey<Registry<PaintingVariant>> PAINTING_VARIANTS = key("painting_variant");
         public static final ResourceKey<Registry<ParticleType<?>>> PARTICLE_TYPES = key("particle_type");
@@ -174,7 +171,7 @@ public class ForgeRegistries {
         public static final ResourceKey<Registry<StructureModifier>> STRUCTURE_MODIFIERS = key("forge:structure_modifier");
 
         private static <T> ResourceKey<Registry<T>> key(String name) {
-            return ResourceKey.createRegistryKey(new ResourceLocation(name));
+            return ResourceKey.createRegistryKey(ResourceLocation.parse(name));
         }
 
         private static void init() {}

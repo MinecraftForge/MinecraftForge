@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -265,7 +_,7 @@
+@@ -278,7 +_,7 @@
      @Override
      public boolean mayInteract(Level p_150167_, BlockPos p_150168_) {
          Entity entity = this.getOwner();

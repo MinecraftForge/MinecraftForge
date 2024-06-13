@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithEnchantedBonusCondition.java
++++ b/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithEnchantedBonusCondition.java
+@@ -42,7 +_,11 @@
+ 
+     public boolean test(LootContext p_343845_) {
+         Entity entity = p_343845_.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
+-        int i = entity instanceof LivingEntity livingentity ? EnchantmentHelper.getEnchantmentLevel(this.enchantment, livingentity) : 0;
++        int i = 0;
++        if (this.enchantment.is(Enchantments.LOOTING))
++            i = p_343845_.getLootingModifier();
++        else if (entity instanceof LivingEntity livingentity)
++            i = EnchantmentHelper.getEnchantmentLevel(this.enchantment, livingentity);
+         float f = i > 0 ? this.enchantedChance.calculate(i) : this.unenchantedChance;
+         return p_343845_.getRandom().nextFloat() < f;
+     }

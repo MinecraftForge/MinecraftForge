@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -83,21 +_,16 @@
+@@ -84,21 +_,16 @@
          this.buildRecipes(
              new RecipeOutput() {
                  @Override
@@ -28,7 +28,7 @@
                          }
                      }
                  }
-@@ -106,9 +_,24 @@
+@@ -107,9 +_,24 @@
                  public Advancement.Builder advancement() {
                      return Advancement.Builder.recipeAdvancement().parent(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
                  }

@@ -78,7 +78,7 @@ public class DataPackRegistryEvent extends Event implements IModBusEvent
          */
         public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec)
         {
-            this.registryDataList.add(new DataPackRegistryData<>(new RegistryDataLoader.RegistryData<>(registryKey, codec), networkCodec));
+            this.registryDataList.add(new DataPackRegistryData<>(new RegistryDataLoader.RegistryData<>(registryKey, codec, false), networkCodec));
         }
 
         void process()

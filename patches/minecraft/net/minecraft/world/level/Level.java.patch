@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/level/Level.java
 +++ b/net/minecraft/world/level/Level.java
-@@ -75,7 +_,7 @@
+@@ -76,7 +_,7 @@
  import net.minecraft.world.phys.Vec3;
  import net.minecraft.world.scores.Scoreboard;
  
 -public abstract class Level implements LevelAccessor, AutoCloseable {
 +public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
-     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("overworld"));
-     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("the_nether"));
-@@ -113,6 +_,11 @@
+     public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("overworld"));
+     public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_nether"));
+@@ -114,6 +_,11 @@
      private final RegistryAccess registryAccess;
      private final DamageSources damageSources;
      private long subTickCount;
@@ -21,7 +21,7 @@
  
      protected Level(
          WritableLevelData p_270739_,
-@@ -125,6 +_,7 @@
+@@ -126,6 +_,7 @@
          long p_270248_,
          int p_270466_
      ) {
@@ -29,7 +29,7 @@
          this.profiler = p_270692_;
          this.levelData = p_270739_;
          this.dimensionTypeRegistration = p_270240_;
-@@ -215,11 +_,39 @@
+@@ -216,11 +_,39 @@
          } else {
              LevelChunk levelchunk = this.getChunkAt(p_46605_);
              Block block = p_46606_.getBlock();
@@ -69,7 +69,7 @@
                  if (blockstate1 == p_46606_) {
                      if (blockstate != blockstate1) {
                          this.setBlocksDirty(p_46605_, blockstate, blockstate1);
-@@ -246,9 +_,8 @@
+@@ -247,9 +_,8 @@
                      }
  
                      this.onBlockStateChange(p_46605_, blockstate, blockstate1);
@@ -80,7 +80,7 @@
              }
          }
      }
-@@ -300,6 +_,7 @@
+@@ -301,6 +_,7 @@
      }
  
      public void updateNeighborsAt(BlockPos p_46673_, Block p_46674_) {
@@ -88,7 +88,7 @@
      }
  
      public void updateNeighborsAtExceptFromFacing(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
-@@ -474,10 +_,30 @@
+@@ -488,10 +_,30 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(p_151526_);
      }
  
@@ -119,7 +119,7 @@
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
              this.pendingBlockEntityTickers.clear();
-@@ -501,12 +_,19 @@
+@@ -515,12 +_,19 @@
  
      public <T extends Entity> void guardEntityTick(Consumer<T> p_46654_, T p_46655_) {
          try {
@@ -130,7 +130,7 @@
              CrashReportCategory crashreportcategory = crashreport.addCategory("Entity being ticked");
              p_46655_.fillCrashReportCategory(crashreportcategory);
 +            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
-+                com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport());
++                com.mojang.logging.LogUtils.getLogger().error("{}", crashreport.getFriendlyReport(net.minecraft.ReportType.CRASH));
 +                p_46655_.discard();
 +            } else
              throw new ReportedException(crashreport);
@@ -139,16 +139,16 @@
          }
      }
  
-@@ -655,7 +_,7 @@
+@@ -669,7 +_,7 @@
          Explosion.BlockInteraction explosion$blockinteraction = switch (p_310628_) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.RULE_BLOCK_EXPLOSION_DROP_DECAY);
 -            case MOB -> this.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
 +            case MOB -> net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this, p_312521_) ? this.getDestroyType(GameRules.RULE_MOB_EXPLOSION_DROP_DECAY) : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY);
-             case BLOW -> Explosion.BlockInteraction.TRIGGER_BLOCK;
+             case TRIGGER -> Explosion.BlockInteraction.TRIGGER_BLOCK;
          };
-@@ -674,6 +_,9 @@
+@@ -688,6 +_,9 @@
              p_311434_,
              p_328498_
          );
@@ -158,7 +158,7 @@
          explosion.explode();
          explosion.finalizeExplosion(p_309655_);
          return explosion;
-@@ -708,6 +_,7 @@
+@@ -722,6 +_,7 @@
          if (!this.isOutsideBuildHeight(p_46748_)) {
              this.getChunkAt(p_46748_).removeBlockEntity(p_46748_);
          }
@@ -166,7 +166,7 @@
      }
  
      public boolean isLoaded(BlockPos p_46750_) {
-@@ -784,8 +_,8 @@
+@@ -798,8 +_,8 @@
                  list.add(p_151522_);
              }
  
@@ -177,7 +177,7 @@
                      if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                          list.add(enderdragonpart);
                      }
-@@ -818,8 +_,8 @@
+@@ -832,8 +_,8 @@
                  }
              }
  
@@ -188,7 +188,7 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -958,16 +_,15 @@
+@@ -972,16 +_,15 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -209,7 +209,7 @@
                          this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                      }
                  }
-@@ -1078,6 +_,20 @@
+@@ -1092,6 +_,20 @@
      }
  
      public abstract PotionBrewing potionBrewing();
@@ -228,5 +228,5 @@
 +       return maxEntityRadius;
 +    }
  
-     public static enum ExplosionInteraction {
-         NONE,
+     public static enum ExplosionInteraction implements StringRepresentable {
+         NONE("none"),

@@ -138,22 +138,6 @@ public interface IForgeItemStack {
     }
 
     /**
-     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
-     *
-     * Equivalent to calling {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
-     * Use in place of {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} for checking presence of an enchantment in logic implementing the enchantment behavior.
-     * Use {@link net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)} instead when modifying an item's enchantments.
-     *
-     * @param enchantment  the enchantment being checked for
-     * @return  Level of the enchantment, or 0 if not present
-     * @see #getAllEnchantments()
-     * @see net.minecraft.world.item.enchantment.EnchantmentHelper#getTagEnchantmentLevel(Enchantment, ItemStack)
-     */
-    default int getEnchantmentLevel(Enchantment enchantment) {
-        return self().getItem().getEnchantmentLevel(self(), enchantment);
-    }
-
-    /**
      * ItemStack sensitive version of {@link Item#getEnchantmentValue()}.
      *
      * @return the enchantment value of this ItemStack
@@ -229,14 +213,6 @@ public interface IForgeItemStack {
      */
     default boolean onEntityItemUpdate(ItemEntity entity) {
         return self().getItem().onEntityItemUpdate(self(), entity);
-    }
-
-    /**
-    * Determines the amount of durability the mending enchantment
-    * will repair, on average, per point of experience.
-    */
-    default float getXpRepairRatio() {
-        return self().getItem().getXpRepairRatio(self());
     }
 
     /**

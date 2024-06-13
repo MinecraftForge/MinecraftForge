@@ -39,7 +39,7 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
     }
 
     @Override
-    protected void addQuads(IGeometryBakingContext context, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation)
+    protected void addQuads(IGeometryBakingContext context, IModelBuilder<?> modelBuilder, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState)
     {
         // If there is a root transform, undo the ModelState transform, apply it, then re-apply the ModelState transform.
         // This is necessary because of things like UV locking, which should only respond to the ModelState, and as such
@@ -54,14 +54,14 @@ public class ElementsModel extends SimpleUnbakedGeometry<ElementsModel>
             for (Direction direction : element.faces.keySet())
             {
                 var face = element.faces.get(direction);
-                var sprite = spriteGetter.apply(context.getMaterial(face.texture));
-                var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState, modelLocation);
+                var sprite = spriteGetter.apply(context.getMaterial(face.texture()));
+                var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState);
                 postTransform.processInPlace(quad);
 
-                if (face.cullForDirection == null)
+                if (face.cullForDirection() == null)
                     modelBuilder.addUnculledFace(quad);
                 else
-                    modelBuilder.addCulledFace(modelState.getRotation().rotateTransform(face.cullForDirection), quad);
+                    modelBuilder.addCulledFace(modelState.getRotation().rotateTransform(face.cullForDirection()), quad);
             }
         }
     }

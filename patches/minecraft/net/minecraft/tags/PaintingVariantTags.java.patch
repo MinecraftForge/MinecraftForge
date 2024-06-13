@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/PaintingVariantTags.java
++++ b/net/minecraft/tags/PaintingVariantTags.java
+@@ -13,4 +_,12 @@
+     private static TagKey<PaintingVariant> create(String p_215874_) {
+         return TagKey.create(Registries.PAINTING_VARIANT, ResourceLocation.withDefaultNamespace(p_215874_));
+     }
++
++    public static TagKey<PaintingVariant> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<PaintingVariant> create(ResourceLocation name) {
++        return TagKey.create(Registries.PAINTING_VARIANT, name);
++    }
+ }

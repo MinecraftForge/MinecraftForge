@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -88,8 +_,12 @@
+@@ -94,8 +_,12 @@
              ListTag listtag = new ListTag();
              p_156559_.getEntities().forEach(p_156567_ -> {
                  CompoundTag compoundtag1 = new CompoundTag();

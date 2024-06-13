@@ -148,7 +148,7 @@ public class ObjectHolderRegistry
         }
         if (isClass)
         {
-            scanClassForFields(classModIds, type, new ResourceLocation(registryName), registryClass, value, clazz, extractFromValue);
+            scanClassForFields(classModIds, type, ResourceLocation.parse(registryName), registryClass, value, clazz, extractFromValue);
         }
         else
         {
@@ -165,7 +165,7 @@ public class ObjectHolderRegistry
             try
             {
                 Field f = clazz.getDeclaredField(annotationTarget);
-                ObjectHolderRef ref = ObjectHolderRef.create(new ResourceLocation(registryName), f, value, extractFromValue);
+                ObjectHolderRef ref = ObjectHolderRef.create(ResourceLocation.parse(registryName), f, value, extractFromValue);
                 if (ref != null)
                     addHandler(ref);
             }
@@ -196,7 +196,7 @@ public class ObjectHolderRegistry
             Type targetClass, Object declaration)
     {
         if (registryName != null)
-            return new ResourceLocation(registryName);
+            return ResourceLocation.parse(registryName);
 
         if (classRegistryNames.containsKey(targetClass))
             return classRegistryNames.get(targetClass);

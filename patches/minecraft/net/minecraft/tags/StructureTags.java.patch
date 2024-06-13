@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/StructureTags.java
++++ b/net/minecraft/tags/StructureTags.java
+@@ -29,4 +_,12 @@
+     private static TagKey<Structure> create(String p_215896_) {
+         return TagKey.create(Registries.STRUCTURE, ResourceLocation.withDefaultNamespace(p_215896_));
+     }
++
++    public static TagKey<Structure> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<Structure> create(ResourceLocation name) {
++        return TagKey.create(Registries.STRUCTURE, name);
++    }
+ }

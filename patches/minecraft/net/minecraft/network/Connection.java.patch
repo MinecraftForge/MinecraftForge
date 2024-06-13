@@ -1,7 +1,7 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
 @@ -107,9 +_,17 @@
-     private volatile Component delayedDisconnect;
+     private volatile DisconnectionDetails delayedDisconnect;
      @Nullable
      BandwidthDebugMonitor bandwidthDebugMonitor;
 +    private java.util.function.Consumer<Connection> activationHandler;
@@ -26,7 +26,7 @@
          if (this.delayedDisconnect != null) {
              this.disconnect(this.delayedDisconnect);
          }
-@@ -169,6 +_,7 @@
+@@ -177,6 +_,7 @@
              } else {
                  if (packetlistener.shouldHandleMessage(p_129488_)) {
                      try {
@@ -34,7 +34,7 @@
                          genericsFtw(p_129488_, packetlistener);
                      } catch (RunningOnDifferentThreadException runningondifferentthreadexception) {
                      } catch (RejectedExecutionException rejectedexecutionexception) {
-@@ -218,6 +_,7 @@
+@@ -226,6 +_,7 @@
          if (p_333271_.flow() != this.getReceiving()) {
              throw new IllegalStateException("Invalid inbound protocol: " + p_333271_.id());
          } else {
@@ -42,7 +42,7 @@
              this.packetListener = p_330962_;
              this.disconnectListener = null;
              UnconfiguredPipelineHandler.InboundConfigurationTask unconfiguredpipelinehandler$inboundconfigurationtask = UnconfiguredPipelineHandler.setupInboundProtocol(
-@@ -241,6 +_,8 @@
+@@ -249,6 +_,8 @@
          } else {
              UnconfiguredPipelineHandler.OutboundConfigurationTask unconfiguredpipelinehandler$outboundconfigurationtask = UnconfiguredPipelineHandler.setupOutboundProtocol(
                  p_329145_
@@ -51,7 +51,7 @@
              );
              BundlerInfo bundlerinfo = p_329145_.bundlerInfo();
              if (bundlerinfo != null) {
-@@ -290,7 +_,8 @@
+@@ -298,7 +_,8 @@
              this.disconnectListener = p_330656_;
              this.runOnceConnected(p_326042_ -> {
                  this.setupInboundProtocol(p_329827_, p_330656_);
@@ -61,7 +61,7 @@
                  this.setupOutboundProtocol(p_328134_);
              });
          }
-@@ -333,6 +_,7 @@
+@@ -341,6 +_,7 @@
  
      private void doSendPacket(Packet<?> p_243260_, @Nullable PacketSendListener p_243290_, boolean p_299937_) {
          ChannelFuture channelfuture = p_299937_ ? this.channel.writeAndFlush(p_243260_) : this.channel.write(p_243260_);
@@ -69,7 +69,7 @@
          if (p_243290_ != null) {
              channelfuture.addListener(p_243167_ -> {
                  if (p_243167_.isSuccess()) {
-@@ -415,7 +_,7 @@
+@@ -423,7 +_,7 @@
          if (this.address == null) {
              return "local";
          } else {
@@ -78,7 +78,7 @@
          }
      }
  
-@@ -454,6 +_,8 @@
+@@ -466,6 +_,8 @@
      }
  
      public static ChannelFuture connect(InetSocketAddress p_290034_, boolean p_290035_, final Connection p_290031_) {
@@ -87,7 +87,7 @@
          Class<? extends SocketChannel> oclass;
          EventLoopGroup eventloopgroup;
          if (Epoll.isAvailable() && p_290035_) {
-@@ -525,6 +_,7 @@
+@@ -537,6 +_,7 @@
  
      public static Connection connectToLocalServer(SocketAddress p_129494_) {
          final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
@@ -95,7 +95,7 @@
          new Bootstrap().group(LOCAL_WORKER_GROUP.get()).handler(new ChannelInitializer<Channel>() {
              @Override
              protected void initChannel(Channel p_332618_) {
-@@ -616,6 +_,22 @@
+@@ -630,6 +_,22 @@
  
      public float getAverageSentPackets() {
          return this.averageSentPackets;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -66,7 +_,7 @@
+@@ -70,7 +_,7 @@
          Lifecycle lifecycle = p_326161_.map(KnownPack::isVanilla).map(p_326166_ -> Lifecycle.stable()).orElse(Lifecycle.experimental());
          return new RegistrationInfo(p_326161_, lifecycle);
      });
@@ -9,8 +9,8 @@
          new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
-@@ -103,6 +_,10 @@
-         new RegistryDataLoader.RegistryData<>(Registries.BANNER_PATTERN, BannerPattern.DIRECT_CODEC)
+@@ -114,6 +_,10 @@
+         new RegistryDataLoader.RegistryData<>(Registries.JUKEBOX_SONG, JukeboxSong.DIRECT_CODEC)
      );
  
 +    public static java.util.stream.Stream<RegistryDataLoader.RegistryData<?>> getWorldGenAndDimensionStream() {
@@ -20,7 +20,7 @@
      public static RegistryAccess.Frozen load(ResourceManager p_252046_, RegistryAccess p_249916_, List<RegistryDataLoader.RegistryData<?>> p_250344_) {
          return load((p_326156_, p_326157_) -> p_326156_.loadFromResources(p_252046_, p_326157_), p_249916_, p_250344_);
      }
-@@ -136,7 +_,9 @@
+@@ -151,7 +_,9 @@
          });
          if (!map.isEmpty()) {
              logErrors(map);
@@ -31,13 +31,7 @@
          } else {
              return new RegistryAccess.ImmutableRegistryAccess(list.stream().map(RegistryDataLoader.Loader::registry).toList()).freeze();
          }
-@@ -184,12 +_,12 @@
-     }
- 
-     private static String registryDirPath(ResourceLocation p_252033_) {
--        return p_252033_.getPath();
-+        return net.minecraftforge.common.ForgeHooks.prefixNamespace(p_252033_); // FORGE: add non-vanilla registry namespace to loader directory, same format as tag directory (see net.minecraft.tags.TagManager#getTagDir(ResourceKey))
-     }
+@@ -200,7 +_,7 @@
  
      private static <E> void loadElementFromResource(
          WritableRegistry<E> p_330991_,
@@ -46,7 +40,7 @@
          RegistryOps<JsonElement> p_332135_,
          ResourceKey<E> p_332850_,
          Resource p_335244_,
-@@ -197,7 +_,14 @@
+@@ -208,7 +_,14 @@
      ) throws IOException {
          try (Reader reader = p_335244_.openAsReader()) {
              JsonElement jsonelement = JsonParser.parseReader(reader);
@@ -62,15 +56,15 @@
              E e = dataresult.getOrThrow();
              p_330991_.register(p_332850_, e, p_332222_);
          }
-@@ -213,6 +_,7 @@
-         String s = registryDirPath(p_331358_.key().location());
+@@ -224,6 +_,7 @@
+         String s = Registries.elementsDirPath(p_331358_.key());
          FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
          RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, p_333035_);
 +        Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_329404_);
  
          for (Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_335634_).entrySet()) {
              ResourceLocation resourcelocation = entry.getKey();
-@@ -221,7 +_,7 @@
+@@ -232,7 +_,7 @@
              RegistrationInfo registrationinfo = REGISTRATION_INFO_CACHE.apply(resource.knownPackInfo());
  
              try {
@@ -79,7 +73,7 @@
              } catch (Exception exception) {
                  p_335074_.put(
                      resourcekey,
-@@ -242,7 +_,9 @@
+@@ -253,7 +_,9 @@
          List<RegistrySynchronization.PackedRegistryEntry> list = p_331925_.get(p_332518_.key());
          if (list != null) {
              RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, p_329253_);
@@ -87,10 +81,10 @@
 +            RegistryOps<JsonElement> registryops1 = RegistryOps.create(JsonOps.INSTANCE, p_329253_)
 +                .withContext(net.minecraftforge.common.crafting.conditions.ICondition.IContext.KEY, net.minecraftforge.common.crafting.conditions.ICondition.IContext.TAGS_INVALID);
 +            Decoder<Optional<E>> conditional = net.minecraftforge.common.crafting.conditions.ConditionCodec.wrap(p_328898_);
-             String s = registryDirPath(p_332518_.key().location());
+             String s = Registries.elementsDirPath(p_332518_.key());
              FileToIdConverter filetoidconverter = FileToIdConverter.json(s);
  
-@@ -265,7 +_,7 @@
+@@ -276,7 +_,7 @@
  
                      try {
                          Resource resource = p_332010_.getResourceOrThrow(resourcelocation);

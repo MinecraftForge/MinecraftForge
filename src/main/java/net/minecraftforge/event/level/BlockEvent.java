@@ -8,7 +8,9 @@ package net.minecraftforge.event.level;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,8 +75,10 @@ public class BlockEvent extends Event {
             if (state == null || !ForgeHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
                 this.exp = 0;
             } else {
-                int fortuneLevel = player.getMainHandItem().getEnchantmentLevel(Enchantments.FORTUNE);
-                int silkTouchLevel = player.getMainHandItem().getEnchantmentLevel(Enchantments.SILK_TOUCH);
+                var lookup = level.registryAccess().lookup(Registries.ENCHANTMENT).get();
+
+                int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.FORTUNE), player.getMainHandItem());
+                int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.SILK_TOUCH), player.getMainHandItem());
                 this.exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
             }
         }

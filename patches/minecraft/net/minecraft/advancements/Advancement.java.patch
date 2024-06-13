@@ -4,8 +4,8 @@
          }
  
          public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, String p_138391_) {
--            AdvancementHolder advancementholder = this.build(new ResourceLocation(p_138391_));
-+            return save(p_138390_, new ResourceLocation(p_138391_));
+-            AdvancementHolder advancementholder = this.build(ResourceLocation.parse(p_138391_));
++            return save(p_138390_, ResourceLocation.parse(p_138391_));
 +        }
 +
 +        public AdvancementHolder save(Consumer<AdvancementHolder> p_138390_, ResourceLocation id) {

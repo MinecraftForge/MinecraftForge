@@ -19,7 +19,7 @@
 +                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this)) {
                      BlockPos blockpos = structuretemplate$structureblockinfo.pos;
                      if (boundingbox == null || boundingbox.isInside(blockpos)) {
-                         FluidState fluidstate = p_230332_.shouldKeepLiquids() ? p_230329_.getFluidState(blockpos) : null;
+                         FluidState fluidstate = p_230332_.shouldApplyWaterlogging() ? p_230329_.getFluidState(blockpos) : null;
 @@ -360,7 +_,7 @@
                  }
  

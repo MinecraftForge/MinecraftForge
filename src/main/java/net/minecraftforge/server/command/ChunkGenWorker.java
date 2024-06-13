@@ -117,7 +117,7 @@ public class ChunkGenWorker implements IWorker
 
             if (!dim.hasChunk(x, z)) { //Chunk is unloaded
                 ChunkAccess chunk = dim.getChunk(x, z, ChunkStatus.EMPTY, true);
-                if (!chunk.getStatus().isOrAfter(ChunkStatus.FULL)) {
+                if (!chunk.getPersistedStatus().isOrAfter(ChunkStatus.FULL)) {
                     chunk = dim.getChunk(x, z, ChunkStatus.FULL);
                     genned++; //There isn't a way to check if the chunk is actually created just if it was loaded
                 }

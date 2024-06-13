@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/ChunkGenerator.java
 +++ b/net/minecraft/world/level/chunk/ChunkGenerator.java
-@@ -81,7 +_,7 @@
+@@ -80,7 +_,7 @@
  public abstract class ChunkGenerator {
      public static final Codec<ChunkGenerator> CODEC = BuiltInRegistries.CHUNK_GENERATOR.byNameCodec().dispatchStable(ChunkGenerator::codec, Function.identity());
      protected final BiomeSource biomeSource;
@@ -9,7 +9,7 @@
      private final Function<Holder<Biome>, BiomeGenerationSettings> generationSettingsGetter;
  
      public ChunkGenerator(BiomeSource p_256133_) {
-@@ -91,9 +_,14 @@
+@@ -90,9 +_,14 @@
      public ChunkGenerator(BiomeSource p_255838_, Function<Holder<Biome>, BiomeGenerationSettings> p_256216_) {
          this.biomeSource = p_255838_;
          this.generationSettingsGetter = p_256216_;

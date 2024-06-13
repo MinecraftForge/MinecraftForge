@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -68,6 +_,7 @@
-     @Nullable
-     private List<Entity> piercedAndKilledEntities;
+@@ -71,6 +_,7 @@
      private ItemStack pickupItemStack = this.getDefaultPickupItem();
+     @Nullable
+     private ItemStack firedFromWeapon = null;
 +    private final IntOpenHashSet ignoredEntities = new IntOpenHashSet();
  
      protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {
          super(p_332730_, p_335646_);
-@@ -167,7 +_,7 @@
+@@ -188,7 +_,7 @@
              this.shakeTime--;
          }
  
@@ -17,7 +17,7 @@
              this.clearFire();
          }
  
-@@ -203,11 +_,27 @@
+@@ -224,11 +_,27 @@
                      }
                  }
  
@@ -50,7 +50,7 @@
                      }
                  }
  
-@@ -218,6 +_,9 @@
+@@ -239,6 +_,9 @@
                  hitresult = null;
              }
  
@@ -60,7 +60,7 @@
              vec3 = this.getDeltaMovement();
              double d5 = vec3.x;
              double d6 = vec3.y;
-@@ -453,7 +_,7 @@
+@@ -504,7 +_,7 @@
  
      @Override
      protected boolean canHitEntity(Entity p_36743_) {

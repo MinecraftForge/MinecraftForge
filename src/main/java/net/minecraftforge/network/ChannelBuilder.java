@@ -36,7 +36,7 @@ public class ChannelBuilder {
      * @param channelName The name of the channel
      */
     public static ChannelBuilder named(String channelName) {
-        return named(new ResourceLocation(channelName));
+        return named(ResourceLocation.parse(channelName));
     }
 
     /**

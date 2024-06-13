@@ -21,8 +21,8 @@ import java.util.function.BiConsumer;
 public final class NetworkInitialization {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("FORGE_NETWORK");
-    public static final ResourceLocation LOGIN_NAME = new ResourceLocation("forge", "login");
-    private static final ResourceLocation HANDSHAKE_NAME = new ResourceLocation("forge", "handshake");
+    public static final ResourceLocation LOGIN_NAME = ResourceLocation.fromNamespaceAndPath("forge", "login");
+    private static final ResourceLocation HANDSHAKE_NAME = ResourceLocation.fromNamespaceAndPath("forge", "handshake");
     //private static final ResourceLocation PLAY_NAME = new ResourceLocation("forge", "network");
     public static final AttributeKey<ForgePacketHandler> CONTEXT = AttributeKey.newInstance(HANDSHAKE_NAME.toString());
 

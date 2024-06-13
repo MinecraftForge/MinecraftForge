@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -204,7 +_,7 @@
+@@ -201,7 +_,7 @@
      }
  
      public void onClose() {
@@ -9,7 +9,7 @@
      }
  
      protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
-@@ -320,8 +_,10 @@
+@@ -312,8 +_,10 @@
          this.width = p_96608_;
          this.height = p_96609_;
          if (!this.initialized) {
@@ -20,7 +20,7 @@
          } else {
              this.repositionElements();
          }
-@@ -334,8 +_,10 @@
+@@ -326,8 +_,10 @@
      protected void rebuildWidgets() {
          this.clearWidgets();
          this.clearFocus();
@@ -31,7 +31,7 @@
      }
  
      @Override
-@@ -362,6 +_,7 @@
+@@ -354,6 +_,7 @@
  
          this.renderBlurredBackground(p_297268_);
          this.renderMenuBackground(p_283688_);
@@ -39,7 +39,7 @@
      }
  
      protected void renderBlurredBackground(float p_336041_) {
-@@ -492,6 +_,19 @@
+@@ -463,6 +_,19 @@
      }
  
      public void onFilesDrop(List<Path> p_96591_) {

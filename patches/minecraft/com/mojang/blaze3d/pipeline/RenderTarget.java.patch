@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/pipeline/RenderTarget.java
 +++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
-@@ -106,7 +_,10 @@
+@@ -104,7 +_,10 @@
                  GlStateManager._texParameter(3553, 34892, 0);
                  GlStateManager._texParameter(3553, 10242, 33071);
                  GlStateManager._texParameter(3553, 10243, 33071);
@@ -11,7 +11,7 @@
              }
  
              this.setFilterMode(9728, true);
-@@ -116,8 +_,13 @@
+@@ -114,8 +_,13 @@
              GlStateManager._texImage2D(3553, 0, 32856, this.width, this.height, 0, 6408, 5121, null);
              GlStateManager._glBindFramebuffer(36160, this.frameBufferId);
              GlStateManager._glFramebufferTexture2D(36160, 36064, 3553, this.colorTextureId, 0);
@@ -26,7 +26,7 @@
              }
  
              this.checkStatus();
-@@ -280,5 +_,26 @@
+@@ -257,5 +_,26 @@
  
      public int getDepthTextureId() {
          return this.depthBufferId;

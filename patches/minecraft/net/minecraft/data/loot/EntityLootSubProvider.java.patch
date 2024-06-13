@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/loot/EntityLootSubProvider.java
 +++ b/net/minecraft/data/loot/EntityLootSubProvider.java
-@@ -58,12 +_,16 @@
+@@ -96,12 +_,16 @@
  
      public abstract void generate();
  
@@ -9,7 +9,7 @@
 +    }
 +
      @Override
-     public void generate(HolderLookup.Provider p_327798_, BiConsumer<ResourceKey<LootTable>, LootTable.Builder> p_251751_) {
+     public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> p_251751_) {
          this.generate();
          Set<ResourceKey<LootTable>> set = new HashSet<>();
 -        BuiltInRegistries.ENTITY_TYPE
@@ -19,7 +19,7 @@
              .forEach(
                  p_266624_ -> {
                      EntityType<?> entitytype = p_266624_.value();
-@@ -113,7 +_,7 @@
+@@ -151,7 +_,7 @@
          }
      }
  

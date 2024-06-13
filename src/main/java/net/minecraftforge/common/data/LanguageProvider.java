@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -87,7 +88,10 @@ public abstract class LanguageProvider implements DataProvider {
     }
 
     public void add(Enchantment key, String name) {
-        add(key.getDescriptionId(), name);
+        if (!(key.description().getContents() instanceof TranslatableContents description))
+            throw new IllegalArgumentException("Enchantment " + key + " does not have a translatable name");
+
+        add(description.getKey(), name);
     }
 
     /*

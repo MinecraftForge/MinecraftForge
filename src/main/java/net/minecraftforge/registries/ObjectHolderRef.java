@@ -54,7 +54,7 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
         {
             try
             {
-                injectedObjectName = new ResourceLocation(injectedObject);
+                injectedObjectName = ResourceLocation.parse(injectedObject);
             }
             catch (ResourceLocationException e)
             {

@@ -54,6 +54,6 @@ public class ForgeItemModelShaper extends ItemModelShaper {
 
     public ModelResourceLocation getLocation(@NotNull ItemStack stack) {
         ModelResourceLocation location = locations.get(ForgeRegistries.ITEMS.getDelegateOrThrow(stack.getItem()));
-        return location == null ? ModelBakery.MISSING_MODEL_LOCATION : location;
+        return location == null ? ModelBakery.MISSING_MODEL_VARIANT : location;
     }
 }

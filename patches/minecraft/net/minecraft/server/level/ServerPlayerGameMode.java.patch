@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -129,6 +_,10 @@
+@@ -133,6 +_,10 @@
      }
  
      public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
@@ -11,15 +11,23 @@
          if (!this.player.canInteractWithBlock(p_215120_, 1.0)) {
              this.debugLogging(p_215120_, false, p_215124_, "too far");
          } else if (p_215120_.getY() >= p_215123_) {
-@@ -157,6 +_,7 @@
+@@ -161,6 +_,7 @@
                  float f = 1.0F;
                  BlockState blockstate = this.level.getBlockState(p_215120_);
                  if (!blockstate.isAir()) {
-+                    if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
++                    if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
+                     EnchantmentHelper.onHitBlock(
+                         this.level,
+                         this.player.getMainHandItem(),
+@@ -172,6 +_,7 @@
+                         p_343810_ -> this.player.onEquippedItemBroken(p_343810_, EquipmentSlot.MAINHAND)
+                     );
                      blockstate.attack(this.level, p_215120_, this.player);
++                    }
                      f = blockstate.getDestroyProgress(this.player, this.player.level(), p_215120_);
                  }
-@@ -224,7 +_,8 @@
+ 
+@@ -238,7 +_,8 @@
  
      public boolean destroyBlock(BlockPos p_9281_) {
          BlockState blockstate1 = this.level.getBlockState(p_9281_);
@@ -29,7 +37,7 @@
              return false;
          } else {
              BlockEntity blockentity = this.level.getBlockEntity(p_9281_);
-@@ -232,30 +_,47 @@
+@@ -246,30 +_,47 @@
              if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
                  this.level.sendBlockUpdated(p_9281_, blockstate1, blockstate1, 3);
                  return false;
@@ -84,7 +92,7 @@
      }
  
      public InteractionResult useItem(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -264,6 +_,8 @@
+@@ -278,6 +_,8 @@
          } else if (p_9262_.getCooldowns().isOnCooldown(p_9264_.getItem())) {
              return InteractionResult.PASS;
          } else {
@@ -93,7 +101,7 @@
              int i = p_9264_.getCount();
              int j = p_9264_.getDamageValue();
              InteractionResultHolder<ItemStack> interactionresultholder = p_9264_.use(p_9263_, p_9262_, p_9265_);
-@@ -296,6 +_,11 @@
+@@ -310,6 +_,11 @@
          if (!blockstate.getBlock().isEnabled(p_9267_.enabledFeatures())) {
              return InteractionResult.FAIL;
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
@@ -105,7 +113,7 @@
              MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
              if (menuprovider != null) {
                  p_9266_.openMenu(menuprovider);
-@@ -304,10 +_,16 @@
+@@ -318,10 +_,16 @@
                  return InteractionResult.PASS;
              }
          } else {
@@ -123,7 +131,7 @@
                  ItemInteractionResult iteminteractionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
                  if (iteminteractionresult.consumesAction()) {
                      CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
-@@ -323,8 +_,8 @@
+@@ -337,8 +_,8 @@
                  }
              }
  

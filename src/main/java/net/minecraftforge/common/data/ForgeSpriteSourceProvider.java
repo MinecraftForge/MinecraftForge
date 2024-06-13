@@ -21,6 +21,6 @@ public class ForgeSpriteSourceProvider extends SpriteSourceProvider
     @Override
     protected void addSources()
     {
-        atlas(SpriteSourceProvider.BLOCKS_ATLAS).addSource(new SingleFile(new ResourceLocation("forge:white"), Optional.empty()));
+        atlas(SpriteSourceProvider.BLOCKS_ATLAS).addSource(new SingleFile(ResourceLocation.parse("forge:white"), Optional.empty()));
     }
 }

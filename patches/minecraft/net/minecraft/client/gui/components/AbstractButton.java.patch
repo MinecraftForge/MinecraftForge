@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/AbstractButton.java
 +++ b/net/minecraft/client/gui/components/AbstractButton.java
-@@ -32,7 +_,7 @@
+@@ -34,7 +_,7 @@
          RenderSystem.enableDepthTest();
          p_281670_.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
          p_281670_.setColor(1.0F, 1.0F, 1.0F, 1.0F);

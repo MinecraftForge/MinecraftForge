@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/BannerPatternTags.java
++++ b/net/minecraft/tags/BannerPatternTags.java
+@@ -21,4 +_,12 @@
+     private static TagKey<BannerPattern> create(String p_215798_) {
+         return TagKey.create(Registries.BANNER_PATTERN, ResourceLocation.withDefaultNamespace(p_215798_));
+     }
++
++    public static TagKey<BannerPattern> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<BannerPattern> create(ResourceLocation name) {
++        return TagKey.create(Registries.BANNER_PATTERN, name);
++    }
+ }

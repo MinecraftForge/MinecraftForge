@@ -6,7 +6,7 @@
  @OnlyIn(Dist.CLIENT)
 -public class ElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> {
 +public class ElytraLayer<T extends LivingEntity, M extends EntityModel<T>> extends RenderLayer<T, M> implements net.minecraftforge.client.extensions.IForgeElytraLayer<T> {
-     public static final ResourceLocation WINGS_LOCATION = new ResourceLocation("textures/entity/elytra.png");
+     public static final ResourceLocation WINGS_LOCATION = ResourceLocation.withDefaultNamespace("textures/entity/elytra.png");
      private final ElytraModel<T> elytraModel;
  
 @@ -45,7 +_,7 @@

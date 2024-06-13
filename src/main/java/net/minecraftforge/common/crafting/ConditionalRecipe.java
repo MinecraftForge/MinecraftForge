@@ -31,6 +31,7 @@ import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -134,7 +135,7 @@ public class ConditionalRecipe {
         }
 
         public void save(RecipeOutput out, String namespace, String path) {
-            save(out, new ResourceLocation(namespace, path));
+            save(out, ResourceLocation.fromNamespaceAndPath(namespace, path));
         }
 
         public void save(RecipeOutput out, ResourceLocation id) {
@@ -168,9 +169,9 @@ public class ConditionalRecipe {
     private record InnerRecipe(ICondition condition, Recipe<?> recipe) {}
     private record InnerAdvancement(ICondition condition, AdvancementHolder advancement, JsonObject json) {}
 
-    private static class Wrapper implements Recipe<Container> {
-        @Override public boolean matches(Container inv, Level level) { return false; }
-        @Override public ItemStack assemble(Container inv, HolderLookup.Provider reg) { return null; }
+    private static class Wrapper implements Recipe<CraftingInput> {
+        @Override public boolean matches(CraftingInput inv, Level level) { return false; }
+        @Override public ItemStack assemble(CraftingInput inv, HolderLookup.Provider reg) { return null; }
         @Override public boolean canCraftInDimensions(int width, int height) { return false; }
         @Override public ItemStack getResultItem(HolderLookup.Provider reg) { return null; }
         @Override public RecipeSerializer<?> getSerializer() { return ConditionalRecipe.SERIALZIER; }

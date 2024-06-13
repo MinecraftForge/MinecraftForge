@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Ocelot.java
 +++ b/net/minecraft/world/entity/animal/Ocelot.java
-@@ -170,7 +_,7 @@
+@@ -160,7 +_,7 @@
          if ((this.temptGoal == null || this.temptGoal.isRunning()) && !this.isTrusting() && this.isFood(itemstack) && p_29021_.distanceToSqr(this) < 9.0) {
              this.usePlayerItem(p_29021_, p_29022_, itemstack);
              if (!this.level().isClientSide) {

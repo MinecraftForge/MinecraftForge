@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/WorldPresetTags.java
++++ b/net/minecraft/tags/WorldPresetTags.java
+@@ -14,4 +_,12 @@
+     private static TagKey<WorldPreset> create(String p_216058_) {
+         return TagKey.create(Registries.WORLD_PRESET, ResourceLocation.withDefaultNamespace(p_216058_));
+     }
++
++    public static TagKey<WorldPreset> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<WorldPreset> create(ResourceLocation name) {
++        return TagKey.create(Registries.WORLD_PRESET, name);
++    }
+ }

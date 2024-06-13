@@ -104,7 +104,7 @@ public class FluidStack
             return EMPTY;
         }
 
-        ResourceLocation fluidName = new ResourceLocation(nbt.getString("FluidName"));
+        ResourceLocation fluidName = ResourceLocation.parse(nbt.getString("FluidName"));
         Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
         if (fluid == null)
         {

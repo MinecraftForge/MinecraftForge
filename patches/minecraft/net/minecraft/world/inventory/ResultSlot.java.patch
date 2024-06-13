@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/ResultSlot.java
 +++ b/net/minecraft/world/inventory/ResultSlot.java
-@@ -46,6 +_,7 @@
+@@ -47,6 +_,7 @@
      protected void checkTakeAchievements(ItemStack p_40185_) {
          if (this.removeCount > 0) {
              p_40185_.onCraftedBy(this.player.level(), this.player, this.removeCount);
@@ -8,13 +8,13 @@
          }
  
          if (this.container instanceof RecipeCraftingHolder recipecraftingholder) {
-@@ -58,7 +_,9 @@
-     @Override
-     public void onTake(Player p_150638_, ItemStack p_150639_) {
-         this.checkTakeAchievements(p_150639_);
+@@ -63,7 +_,9 @@
+         CraftingInput craftinginput = craftinginput$positioned.input();
+         int i = craftinginput$positioned.left();
+         int j = craftinginput$positioned.top();
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_150638_);
-         NonNullList<ItemStack> nonnulllist = p_150638_.level().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, this.craftSlots, p_150638_.level());
+         NonNullList<ItemStack> nonnulllist = p_150638_.level().getRecipeManager().getRemainingItemsFor(RecipeType.CRAFTING, craftinginput, p_150638_.level());
 +        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
  
-         for (int i = 0; i < nonnulllist.size(); i++) {
-             ItemStack itemstack = this.craftSlots.getItem(i);
+         for (int k = 0; k < craftinginput.height(); k++) {
+             for (int l = 0; l < craftinginput.width(); l++) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/portal/PortalShape.java
 +++ b/net/minecraft/world/level/portal/PortalShape.java
-@@ -28,7 +_,7 @@
+@@ -27,7 +_,7 @@
      public static final int MAX_WIDTH = 21;
      private static final int MIN_HEIGHT = 3;
      public static final int MAX_HEIGHT = 21;

@@ -5,8 +5,6 @@
 
 package net.minecraftforge.common.extensions;
 
-import com.google.gson.JsonObject;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagEntry;
@@ -15,12 +13,6 @@ public interface IForgeRawTagBuilder {
     default TagBuilder getRawBuilder() {
         return (TagBuilder) this;
     }
-
-    /**
-     * @deprecated Never used, tags use a Codec now, so remove this later.
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1")
-    default void serializeTagAdditions(final JsonObject tagJson) {}
 
     /**
      * Adds a tag entry to the remove list.

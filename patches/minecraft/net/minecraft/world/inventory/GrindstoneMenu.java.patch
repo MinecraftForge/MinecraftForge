@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/GrindstoneMenu.java
 +++ b/net/minecraft/world/inventory/GrindstoneMenu.java
-@@ -37,6 +_,7 @@
+@@ -38,6 +_,7 @@
          }
      };
      private final ContainerLevelAccess access;
@@ -8,7 +8,7 @@
  
      public GrindstoneMenu(int p_39563_, Inventory p_39564_) {
          this(p_39563_, p_39564_, ContainerLevelAccess.NULL);
-@@ -48,13 +_,13 @@
+@@ -49,13 +_,13 @@
          this.addSlot(new Slot(this.repairSlots, 0, 49, 19) {
              @Override
              public boolean mayPlace(ItemStack p_39607_) {
@@ -24,7 +24,7 @@
              }
          });
          this.addSlot(new Slot(this.resultSlots, 2, 129, 34) {
-@@ -65,6 +_,7 @@
+@@ -66,6 +_,7 @@
  
              @Override
              public void onTake(Player p_150574_, ItemStack p_150575_) {
@@ -32,7 +32,7 @@
                  p_39568_.execute((p_39634_, p_39635_) -> {
                      if (p_39634_ instanceof ServerLevel) {
                          ExperienceOrb.award((ServerLevel)p_39634_, Vec3.atCenterOf(p_39635_), this.getExperienceAmount(p_39634_));
-@@ -77,6 +_,7 @@
+@@ -78,6 +_,7 @@
              }
  
              private int getExperienceAmount(Level p_39632_) {
@@ -40,7 +40,7 @@
                  int l = 0;
                  l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(0));
                  l += this.getExperienceFromItem(GrindstoneMenu.this.repairSlots.getItem(1));
-@@ -129,6 +_,17 @@
+@@ -130,6 +_,17 @@
      }
  
      private ItemStack computeResult(ItemStack p_335167_, ItemStack p_329934_) {

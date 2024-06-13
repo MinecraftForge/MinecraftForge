@@ -8,7 +8,7 @@
  
      public PlayerList(MinecraftServer p_203842_, LayeredRegistryAccess<RegistryLayer> p_251844_, PlayerDataStorage p_203844_, int p_203845_) {
          this.server = p_203842_;
-@@ -267,6 +_,7 @@
+@@ -261,6 +_,7 @@
          }
  
          p_11263_.initInventoryMenu();
@@ -16,7 +16,7 @@
      }
  
      protected void updateEntireScoreboard(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -332,6 +_,7 @@
+@@ -326,6 +_,7 @@
              optional = Optional.of(compoundtag);
              p_11225_.load(compoundtag);
              LOGGER.debug("loading single player");
@@ -24,7 +24,7 @@
          } else {
              optional = this.playerIo.load(p_11225_);
          }
-@@ -340,6 +_,7 @@
+@@ -334,6 +_,7 @@
      }
  
      protected void save(ServerPlayer p_11277_) {
@@ -32,7 +32,7 @@
          this.playerIo.save(p_11277_);
          ServerStatsCounter serverstatscounter = this.stats.get(p_11277_.getUUID());
          if (serverstatscounter != null) {
-@@ -353,6 +_,7 @@
+@@ -347,6 +_,7 @@
      }
  
      public void remove(ServerPlayer p_11287_) {
@@ -40,15 +40,15 @@
          ServerLevel serverlevel = p_11287_.serverLevel();
          p_11287_.awardStat(Stats.LEAVE_GAME);
          this.save(p_11287_);
-@@ -497,6 +_,7 @@
+@@ -467,6 +_,7 @@
          this.playersByUUID.put(serverplayer.getUUID(), serverplayer);
          serverplayer.initInventoryMenu();
          serverplayer.setHealth(serverplayer.getHealth());
 +        net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
-         if (flag2) {
-             serverplayer.connection
-                 .send(
-@@ -588,6 +_,7 @@
+         if (!p_11238_) {
+             BlockPos blockpos = BlockPos.containing(dimensiontransition.pos());
+             BlockState blockstate = serverlevel.getBlockState(blockpos);
+@@ -572,6 +_,7 @@
      }
  
      public void op(GameProfile p_11254_) {
@@ -56,7 +56,7 @@
          this.ops.add(new ServerOpListEntry(p_11254_, this.server.getOperatorUserPermissionLevel(), this.ops.canBypassPlayerLimit(p_11254_)));
          ServerPlayer serverplayer = this.getPlayer(p_11254_.getId());
          if (serverplayer != null) {
-@@ -596,6 +_,7 @@
+@@ -580,6 +_,7 @@
      }
  
      public void deop(GameProfile p_11281_) {
@@ -64,7 +64,7 @@
          this.ops.remove(p_11281_);
          ServerPlayer serverplayer = this.getPlayer(p_11281_.getId());
          if (serverplayer != null) {
-@@ -809,13 +_,6 @@
+@@ -793,13 +_,6 @@
          if (serverstatscounter == null) {
              File file1 = this.server.getWorldPath(LevelResource.PLAYER_STATS_DIR).toFile();
              File file2 = new File(file1, uuid + ".json");
@@ -78,7 +78,7 @@
  
              serverstatscounter = new ServerStatsCounter(this.server, file2);
              this.stats.put(uuid, serverstatscounter);
-@@ -860,7 +_,7 @@
+@@ -844,7 +_,7 @@
      }
  
      public List<ServerPlayer> getPlayers() {
@@ -87,7 +87,7 @@
      }
  
      @Nullable
-@@ -877,6 +_,7 @@
+@@ -861,6 +_,7 @@
              playeradvancements.reload(this.server.getAdvancements());
          }
  

@@ -27,7 +27,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
         EquipmentSlot equ = null;
         for (EquipmentSlot s : EquipmentSlot.values())
         {
-            if (s.getType() == EquipmentSlot.Type.ARMOR && s.getIndex() == slot)
+            if (s.getType() == EquipmentSlot.Type.HUMANOID_ARMOR && s.getIndex() == slot)
             {
                 equ = s;
                 break;

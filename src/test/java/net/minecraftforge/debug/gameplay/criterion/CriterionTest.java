@@ -53,7 +53,7 @@ public final class CriterionTest extends BaseTestMod {
     private static final DeferredRegister<CriterionTrigger<?>> TRIGGERS = DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES.key(), MOD_ID);
     public static final RegistryObject<BreakWithItemCriterion> CRITERION = TRIGGERS.register("criterion", BreakWithItemCriterion::new);
     public static final String TEST_CRITERION_ID = "break_glass_with_fish";
-    public static final ResourceLocation TEST_ADVANCEMENT_ID = new ResourceLocation(MOD_ID, TEST_CRITERION_ID);
+    public static final ResourceLocation TEST_ADVANCEMENT_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, TEST_CRITERION_ID);
 
     public CriterionTest() {
         MinecraftForge.EVENT_BUS.addListener(this::onBlockBreak);
@@ -107,7 +107,7 @@ public final class CriterionTest extends BaseTestMod {
 
     @SubscribeEvent
     public void onGatherData(GatherDataEvent event) {
-        var tag = TagKey.create(Registries.ITEM, new ResourceLocation(MOD_ID, "fish"));
+        var tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MOD_ID, "fish"));
 
         event.getGenerator().addProvider(true, new TagsProvider<Item>(event.getGenerator().getPackOutput(), Registries.ITEM, event.getLookupProvider(), MOD_ID, event.getExistingFileHelper()) {
             @Override
@@ -123,7 +123,7 @@ public final class CriterionTest extends BaseTestMod {
             }
         });
 
-        var STORY_ROOT = new AdvancementHolder(new ResourceLocation("minecraft", "story/root"), null);
+        var STORY_ROOT = new AdvancementHolder(ResourceLocation.fromNamespaceAndPath("minecraft", "story/root"), null);
 
         event.getGenerator().addProvider(true,
             new ForgeAdvancementProvider(

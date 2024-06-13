@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
 +++ b/net/minecraft/world/item/crafting/ShulkerBoxColoring.java
-@@ -25,7 +_,7 @@
+@@ -24,7 +_,7 @@
                  if (Block.byItem(itemstack.getItem()) instanceof ShulkerBoxBlock) {
                      i++;
                  } else {
@@ -9,16 +9,16 @@
                          return false;
                      }
  
-@@ -43,7 +_,7 @@
+@@ -42,7 +_,7 @@
  
-     public ItemStack assemble(CraftingContainer p_44322_, HolderLookup.Provider p_336251_) {
+     public ItemStack assemble(CraftingInput p_343576_, HolderLookup.Provider p_336251_) {
          ItemStack itemstack = ItemStack.EMPTY;
 -        DyeItem dyeitem = (DyeItem)Items.WHITE_DYE;
 +        var dyecolor = net.minecraft.world.item.DyeColor.WHITE;
  
-         for (int i = 0; i < p_44322_.getContainerSize(); i++) {
-             ItemStack itemstack1 = p_44322_.getItem(i);
-@@ -52,12 +_,15 @@
+         for (int i = 0; i < p_343576_.size(); i++) {
+             ItemStack itemstack1 = p_343576_.getItem(i);
+@@ -51,12 +_,15 @@
                  if (Block.byItem(item) instanceof ShulkerBoxBlock) {
                      itemstack = itemstack1;
                  } else if (item instanceof DyeItem) {

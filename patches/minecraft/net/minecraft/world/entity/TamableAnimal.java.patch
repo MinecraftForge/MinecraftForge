@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -193,11 +_,14 @@
+@@ -218,11 +_,14 @@
  
      @Override
      public void die(DamageSource p_21809_) {

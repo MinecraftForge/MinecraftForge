@@ -52,8 +52,10 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer vertex(double x, double y, double z)
+    public VertexConsumer addVertex(float x, float y, float z)
     {
+        endVertex();
+
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.POSITION;
         quadData[offset] = Float.floatToRawIntBits((float) x);
         quadData[offset + 1] = Float.floatToRawIntBits((float) y);
@@ -62,7 +64,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer normal(float x, float y, float z)
+    public VertexConsumer setNormal(float x, float y, float z)
     {
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.NORMAL;
         quadData[offset] = ((int) (x * 127.0f) & 0xFF) |
@@ -72,7 +74,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer color(int r, int g, int b, int a)
+    public VertexConsumer setColor(int r, int g, int b, int a)
     {
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.COLOR;
         quadData[offset] = ((a & 0xFF) << 24) |
@@ -83,7 +85,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer uv(float u, float v)
+    public VertexConsumer setUv(float u, float v)
     {
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.UV0;
         quadData[offset] = Float.floatToRawIntBits(u);
@@ -92,7 +94,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer overlayCoords(int u, int v)
+    public VertexConsumer setUv1(int u, int v)
     {
         if (IQuadTransformer.UV1 >= 0) // Vanilla doesn't support this, but it may be added by a 3rd party
         {
@@ -103,7 +105,7 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer uv2(int u, int v)
+    public VertexConsumer setUv2(int u, int v)
     {
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.UV2;
         quadData[offset] = (u & 0xFFFF) | ((v & 0xFFFF) << 16);
@@ -122,25 +124,16 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         return this;
     }
 
-    @Override
-    public void endVertex()
+    private void endVertex()
     {
-        if (++vertexIndex != 4)
+        if (vertexIndex != 4) {
+            ++vertexIndex;
             return;
+        }
         // We have a full quad, pass it to the consumer and reset
         quadConsumer.accept(new BakedQuad(quadData, tintIndex, direction, sprite, shade, hasAmbientOcclusion));
         vertexIndex = 0;
         quadData = new int[QUAD_DATA_SIZE];
-    }
-
-    @Override
-    public void defaultColor(int r, int g, int b, int a)
-    {
-    }
-
-    @Override
-    public void unsetDefaultColor()
-    {
     }
 
     public void setTintIndex(int tintIndex)

@@ -70,7 +70,7 @@ public class ExtendedBlockModelDeserializer extends BlockModel.Deserializer
         if (jsonobject.has("render_type"))
         {
             var renderTypeHintName = GsonHelper.getAsString(jsonobject, "render_type");
-            model.customData.setRenderTypeHint(new ResourceLocation(renderTypeHintName));
+            model.customData.setRenderTypeHint(ResourceLocation.parse(renderTypeHintName));
         }
 
         if (jsonobject.has("visibility"))
@@ -91,7 +91,7 @@ public class ExtendedBlockModelDeserializer extends BlockModel.Deserializer
         if (!object.has("loader"))
             return null;
 
-        var name = new ResourceLocation(GsonHelper.getAsString(object, "loader"));
+        var name = ResourceLocation.parse(GsonHelper.getAsString(object, "loader"));
         var loader = GeometryLoaderManager.get(name);
         if (loader == null)
             throw new JsonParseException(String.format(Locale.ENGLISH, "Model loader '%s' not found. Registered loaders: %s", name, GeometryLoaderManager.getLoaderList()));

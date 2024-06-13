@@ -1,31 +1,6 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -99,7 +_,7 @@
- 
-     public static float getDamageBonus(ItemStack p_44834_, @Nullable EntityType<?> p_331963_) {
-         MutableFloat mutablefloat = new MutableFloat();
--        runIterationOnItem((p_327223_, p_327224_) -> mutablefloat.add(p_327223_.getDamageBonus(p_327224_, p_331963_)), p_44834_);
-+        runIterationOnItem((p_327223_, p_327224_) -> mutablefloat.add(p_327223_.getDamageBonus(p_327224_, p_331963_, p_44834_)), p_44834_);
-         return mutablefloat.floatValue();
-     }
- 
-@@ -125,6 +_,7 @@
-             runIterationOnInventory(enchantmenthelper$enchantmentvisitor, p_44824_.getAllSlots());
-         }
- 
-+        if(false) // Forge: Fix MC-248272
-         if (p_44825_ instanceof Player) {
-             runIterationOnItem(enchantmenthelper$enchantmentvisitor, p_44824_.getMainHandItem());
-         }
-@@ -136,6 +_,7 @@
-             runIterationOnInventory(enchantmenthelper$enchantmentvisitor, p_44897_.getAllSlots());
-         }
- 
-+        if(false) // Forge: Fix MC-248272
-         if (p_44897_ instanceof Player) {
-             runIterationOnItem(enchantmenthelper$enchantmentvisitor, p_44897_.getMainHandItem());
-         }
-@@ -263,7 +_,7 @@
+@@ -462,7 +_,7 @@
  
      public static int getEnchantmentCost(RandomSource p_220288_, int p_220289_, int p_220290_, ItemStack p_220291_) {
          Item item = p_220291_.getItem();
@@ -34,8 +9,8 @@
          if (i <= 0) {
              return 0;
          } else {
-@@ -296,7 +_,7 @@
-     public static List<EnchantmentInstance> selectEnchantment(FeatureFlagSet p_329284_, RandomSource p_220298_, ItemStack p_220299_, int p_220300_, boolean p_220301_) {
+@@ -507,7 +_,7 @@
+     public static List<EnchantmentInstance> selectEnchantment(RandomSource p_220298_, ItemStack p_220299_, int p_220300_, Stream<Holder<Enchantment>> p_342119_) {
          List<EnchantmentInstance> list = Lists.newArrayList();
          Item item = p_220299_.getItem();
 -        int i = item.getEnchantmentValue();
@@ -43,12 +18,12 @@
          if (i <= 0) {
              return list;
          } else {
-@@ -353,7 +_,7 @@
-             if (enchantment.isEnabled(p_334102_)
-                 && (!enchantment.isTreasureOnly() || p_44820_)
-                 && enchantment.isDiscoverable()
--                && (flag || enchantment.canEnchant(p_44819_) && enchantment.isPrimaryItem(p_44819_))) {
-+                && ((flag && enchantment.isAllowedOnBooks()) || enchantment.canApplyAtEnchantingTable(p_44819_))) {
-                 for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; i--) {
-                     if (p_44818_ >= enchantment.getMinCost(i) && p_44818_ <= enchantment.getMaxCost(i)) {
-                         list.add(new EnchantmentInstance(enchantment, i));
+@@ -553,7 +_,7 @@
+     public static List<EnchantmentInstance> getAvailableEnchantmentResults(int p_44818_, ItemStack p_44819_, Stream<Holder<Enchantment>> p_342857_) {
+         List<EnchantmentInstance> list = Lists.newArrayList();
+         boolean flag = p_44819_.is(Items.BOOK);
+-        p_342857_.filter(p_341799_ -> p_341799_.value().isPrimaryItem(p_44819_) || flag).forEach(p_341708_ -> {
++        p_342857_.filter(p_341799_ -> p_44819_.canApplyAtEnchantingTable(p_341799_.value()) || flag).forEach(p_341708_ -> {
+             Enchantment enchantment = p_341708_.value();
+ 
+             for (int i = enchantment.getMaxLevel(); i >= enchantment.getMinLevel(); i--) {

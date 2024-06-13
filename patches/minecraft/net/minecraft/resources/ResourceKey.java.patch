@@ -9,13 +9,12 @@
      private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = new MapMaker().weakValues().makeMap();
      private final ResourceLocation registryName;
      private final ResourceLocation location;
-@@ -67,5 +_,19 @@
+@@ -67,5 +_,18 @@
      }
  
      static record InternKey(ResourceLocation registry, ResourceLocation location) {
 +    }
 +
-+    // Forge start
 +    @Override
 +    public boolean equals(Object obj) {
 +        if (this == obj) return true;

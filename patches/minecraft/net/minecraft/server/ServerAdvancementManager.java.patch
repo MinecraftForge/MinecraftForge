@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -34,10 +_,18 @@
+@@ -32,10 +_,18 @@
      private Map<ResourceLocation, AdvancementHolder> advancements = Map.of();
      private AdvancementTree tree = new AdvancementTree();
      private final HolderLookup.Provider registries;
@@ -13,13 +13,13 @@
 +    }
 +
 +    public ServerAdvancementManager(HolderLookup.Provider p_336198_, net.minecraftforge.common.crafting.conditions.ICondition.IContext context) {
-         super(GSON, "advancements");
+         super(GSON, Registries.elementsDirPath(Registries.ADVANCEMENT));
          this.registries = p_336198_;
 +        this.context = context;
      }
  
      protected void apply(Map<ResourceLocation, JsonElement> p_136034_, ResourceManager p_136035_, ProfilerFiller p_136036_) {
-@@ -45,7 +_,12 @@
+@@ -43,7 +_,12 @@
          Builder<ResourceLocation, AdvancementHolder> builder = ImmutableMap.builder();
          p_136034_.forEach((p_326203_, p_326204_) -> {
              try {

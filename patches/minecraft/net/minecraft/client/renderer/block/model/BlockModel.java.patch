@@ -52,7 +52,7 @@
          this.overrides.forEach(p_247932_ -> {
              UnbakedModel unbakedmodel1 = p_249059_.apply(p_247932_.getModel());
              if (!Objects.equals(unbakedmodel1, this)) {
-@@ -192,18 +_,27 @@
+@@ -192,13 +_,21 @@
          });
      }
  
@@ -61,27 +61,21 @@
 +     */
 +    @Deprecated
      @Override
-     public BakedModel bake(ModelBaker p_252120_, Function<Material, TextureAtlasSprite> p_250023_, ModelState p_251130_, ResourceLocation p_252208_) {
-         return this.bake(p_252120_, this, p_250023_, p_251130_, p_252208_, true);
+     public BakedModel bake(ModelBaker p_252120_, Function<Material, TextureAtlasSprite> p_250023_, ModelState p_251130_) {
+         return this.bake(p_252120_, this, p_250023_, p_251130_, true);
      }
  
-+    public BakedModel bake(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
-+        return net.minecraftforge.client.model.geometry.UnbakedGeometryHelper.bake(this, p_249720_, p_111451_, p_111452_, p_111453_, p_111454_, p_111455_);
++    public BakedModel bake(ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, boolean p_111455_) {
++        return net.minecraftforge.client.model.geometry.UnbakedGeometryHelper.bake(this, p_249720_, p_111451_, p_111452_, p_111453_, p_111455_);
 +    }
 +
      public BakedModel bake(
-         ModelBaker p_249720_,
-         BlockModel p_111451_,
-         Function<Material, TextureAtlasSprite> p_111452_,
-         ModelState p_111453_,
-         ResourceLocation p_111454_,
--        boolean p_111455_
-+        boolean p_111455_,
-+        net.minecraftforge.client.RenderTypeGroup renderTypes
+-        ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, boolean p_111455_
++        ModelBaker p_249720_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, boolean p_111455_, net.minecraftforge.client.RenderTypeGroup renderTypes
      ) {
          TextureAtlasSprite textureatlassprite = p_111452_.apply(this.getMaterial("particle"));
          if (this.getRootModel() == ModelBakery.BLOCK_ENTITY_MARKER) {
-@@ -295,7 +_,18 @@
+@@ -290,7 +_,18 @@
          ItemTransform itemtransform5 = this.getTransform(ItemDisplayContext.GUI);
          ItemTransform itemtransform6 = this.getTransform(ItemDisplayContext.GROUND);
          ItemTransform itemtransform7 = this.getTransform(ItemDisplayContext.FIXED);
@@ -101,7 +95,7 @@
      }
  
      private ItemTransform getTransform(ItemDisplayContext p_270662_) {
-@@ -413,6 +_,10 @@
+@@ -408,6 +_,10 @@
  
          public boolean lightLikeBlock() {
              return this == SIDE;

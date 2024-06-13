@@ -26,6 +26,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "item_layers");
     public static <T extends ModelBuilder<T>> ItemLayerModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
         return new ItemLayerModelBuilder<>(parent, existingFileHelper);
@@ -37,7 +38,7 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
 
     protected ItemLayerModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:item_layers"), parent, existingFileHelper);
+        super(NAME, parent, existingFileHelper);
     }
 
     /**
@@ -109,9 +110,9 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
         Preconditions.checkNotNull(renderType, "Render type must not be null");
         ResourceLocation asLoc;
         if (renderType.contains(":"))
-            asLoc = new ResourceLocation(renderType);
+            asLoc = ResourceLocation.parse(renderType);
         else
-            asLoc = new ResourceLocation(parent.getLocation().getNamespace(), renderType);
+            asLoc = parent.getLocation().withPath(renderType);
         return renderType(asLoc, layers);
     }
 

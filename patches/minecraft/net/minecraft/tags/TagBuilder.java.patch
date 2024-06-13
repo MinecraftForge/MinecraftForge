@@ -9,13 +9,12 @@
      private final List<TagEntry> entries = new ArrayList<>();
  
      public static TagBuilder create() {
-@@ -34,5 +_,31 @@
+@@ -34,5 +_,30 @@
  
      public TagBuilder addOptionalTag(ResourceLocation p_215910_) {
          return this.add(TagEntry.optionalTag(p_215910_));
 +    }
 +
-+    // Forge start
 +    /** Forge: Used for datagen */
 +    private final List<TagEntry> removeEntries = new ArrayList<>();
 +    private boolean replace = false;

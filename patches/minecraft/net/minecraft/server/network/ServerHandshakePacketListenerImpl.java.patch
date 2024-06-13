@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
-@@ -23,6 +_,7 @@
+@@ -24,6 +_,7 @@
  
      @Override
      public void handleIntention(ClientIntentionPacket p_9975_) {
@@ -8,7 +8,7 @@
          switch (p_9975_.intention()) {
              case LOGIN:
                  this.beginLogin(p_9975_, false);
-@@ -31,7 +_,7 @@
+@@ -32,7 +_,7 @@
                  ServerStatus serverstatus = this.server.getStatus();
                  this.connection.setupOutboundProtocol(StatusProtocols.CLIENTBOUND);
                  if (this.server.repliesToStatus() && serverstatus != null) {

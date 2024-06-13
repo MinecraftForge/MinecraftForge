@@ -1,0 +1,43 @@
+--- a/net/minecraft/client/gui/screens/options/controls/KeyBindsList.java
++++ b/net/minecraft/client/gui/screens/options/controls/KeyBindsList.java
+@@ -69,6 +_,11 @@
+         return 340;
+     }
+ 
++    @Override
++    protected int getScrollbarPosition() {
++      return super.getScrollbarPosition() + 20;
++    }
++
+     @OnlyIn(Dist.CLIENT)
+     public class CategoryEntry extends KeyBindsList.Entry {
+         final Component name;
+@@ -153,9 +_,10 @@
+             this.name = p_343976_;
+             this.changeButton = Button.builder(p_343976_, p_342196_ -> {
+                     KeyBindsList.this.keyBindsScreen.selectedKey = p_343088_;
++                    p_343088_.setKeyModifierAndCode(null, com.mojang.blaze3d.platform.InputConstants.UNKNOWN);
+                     KeyBindsList.this.resetMappingAndUpdateButtons();
+                 })
+-                .bounds(0, 0, 75, 20)
++                .bounds(0, 0, 75 + 20 /* Forge: Add space */, 20)
+                 .createNarration(
+                     p_342179_ -> p_343088_.isUnbound()
+                             ? Component.translatable("narrator.controls.unbound", p_343976_)
+@@ -163,6 +_,7 @@
+                 )
+                 .build();
+             this.resetButton = Button.builder(RESET_BUTTON_TITLE, p_343650_ -> {
++                this.key.setToDefault();
+                 KeyBindsList.this.minecraft.options.setKey(p_343088_, p_343088_.getDefaultKey());
+                 KeyBindsList.this.resetMappingAndUpdateButtons();
+             }).bounds(0, 0, 50, 20).createNarration(p_344192_ -> Component.translatable("narrator.controls.reset", p_343976_)).build();
+@@ -215,7 +_,7 @@
+             MutableComponent mutablecomponent = Component.empty();
+             if (!this.key.isUnbound()) {
+                 for (KeyMapping keymapping : KeyBindsList.this.minecraft.options.keyMappings) {
+-                    if (keymapping != this.key && this.key.same(keymapping)) {
++                    if ((keymapping != this.key && this.key.same(keymapping)) || keymapping.hasKeyModifierConflict(this.key)) { // FORGE: gracefully handle conflicts like SHIFT vs SHIFT+G
+                         if (this.hasCollision) {
+                             mutablecomponent.append(", ");
+                         }

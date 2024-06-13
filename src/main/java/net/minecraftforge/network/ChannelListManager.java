@@ -31,7 +31,7 @@ import java.util.List;
 public class ChannelListManager {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final ResourceLocation NAME = new ResourceLocation("forge", "channel_registration");
+    public static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "channel_registration");
 
     static final Channel<CustomPacketPayload> CHANNEL = ChannelBuilder
         .named(NAME)
@@ -44,7 +44,7 @@ public class ChannelListManager {
         .build();
 
     private record Register(List<String> channels) implements CustomPacketPayload {
-        private static Type<Register> TYPE = CustomPacketPayload.createType("minecraft:register");
+        private static Type<Register> TYPE = CustomPacketPayload.createType("register");
         private static StreamCodec<FriendlyByteBuf, Register> CODEC = StreamCodec.of(
             (buf, v) -> encode(buf, v.channels),
             buf -> new Register(decode(buf))
@@ -57,7 +57,7 @@ public class ChannelListManager {
     }
 
     private record Unregister(List<String> channels) implements CustomPacketPayload {
-        private static Type<Unregister> TYPE = CustomPacketPayload.createType("minecraft:unregister");
+        private static Type<Unregister> TYPE = CustomPacketPayload.createType("unregister");
         private static StreamCodec<FriendlyByteBuf, Unregister> CODEC = StreamCodec.of(
             (buf, v) -> encode(buf, v.channels),
             buf -> new Unregister(decode(buf))
@@ -153,7 +153,7 @@ public class ChannelListManager {
                 continue;
 
             try {
-                changed.add(new ResourceLocation(channel));
+                changed.add(ResourceLocation.parse(channel));
             } catch (ResourceLocationException ex) {
                 // Vanilla packet deserializers now force this to be a resource location, so we should never get this, but just in case.
                 LOGGER.warn("Invalid channel name received: {}. Ignoring", channel);

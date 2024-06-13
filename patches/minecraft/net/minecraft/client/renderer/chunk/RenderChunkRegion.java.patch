@@ -1,8 +1,8 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunkRegion.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunkRegion.java
-@@ -74,4 +_,14 @@
-     public int getHeight() {
-         return this.level.getHeight();
+@@ -78,4 +_,14 @@
+     public static int index(int p_345383_, int p_342744_, int p_343921_, int p_343462_) {
+         return p_343921_ - p_345383_ + (p_343462_ - p_342744_) * 3;
      }
 +
 +    @Override

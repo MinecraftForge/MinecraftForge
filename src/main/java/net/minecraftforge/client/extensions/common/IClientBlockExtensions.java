@@ -8,11 +8,13 @@ package net.minecraftforge.client.extensions.common;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -91,7 +93,8 @@ public interface IClientBlockExtensions {
             float f12 = 0.0F;
 
             if (entity instanceof LivingEntity ent) {
-                f12 = (float) EnchantmentHelper.getRespiration(ent) * 0.2F;
+                var lookup = level.registryAccess().lookup(Registries.ENCHANTMENT).get();
+                f12 = (float) EnchantmentHelper.getEnchantmentLevel(lookup.getOrThrow(Enchantments.RESPIRATION), ent) * 0.2F;
 
                 if (ent.hasEffect(MobEffects.WATER_BREATHING)) {
                     f12 = f12 * 0.3F + 0.6F;

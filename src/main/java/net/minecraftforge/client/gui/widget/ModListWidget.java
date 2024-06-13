@@ -23,7 +23,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
 {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtil.stripColor(value); }
-    private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
+    private static final ResourceLocation VERSION_CHECK_ICONS = ResourceLocation.fromNamespaceAndPath(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
     private final ModListScreen parent;

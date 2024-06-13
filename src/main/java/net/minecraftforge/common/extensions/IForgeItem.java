@@ -27,6 +27,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -104,14 +105,6 @@ public interface IForgeItem {
      */
     default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer) {
         return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getMaterial() == ArmorMaterials.GOLD;
-    }
-
-    /**
-    * Determines the amount of durability the mending enchantment
-    * will repair, on average, per point of experience.
-    */
-    default float getXpRepairRatio(ItemStack stack) {
-        return 2f;
     }
 
     /**
@@ -256,12 +249,6 @@ public interface IForgeItem {
     }
 
     /**
-     * Called to tick armor in the armor slot. Override to do something
-     */
-    @Deprecated(forRemoval = true, since = "1.20.1") // Use onInventoryTick
-    default void onArmorTick(ItemStack stack, Level level, Player player){ }
-
-    /**
      * Called to tick this items in a players inventory, the indexes are the global slot index.
      */
     default void onInventoryTick(ItemStack stack, Level level, Player player, int slotIndex, int selectedIndex) {
@@ -272,8 +259,6 @@ public interface IForgeItem {
             vanillaIndex -= inv.items.size();
             if (vanillaIndex >= inv.armor.size())
                 vanillaIndex -= inv.armor.size();
-            else
-                onArmorTick(stack, level, player);
         }
         stack.inventoryTick(level, player, vanillaIndex, selectedIndex == vanillaIndex);
     }
@@ -288,7 +273,9 @@ public interface IForgeItem {
      * @return True if the given ItemStack can be inserted in the slot
      */
     default boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity) {
-        return Mob.getEquipmentSlotForItem(stack) == armorType;
+        if (entity instanceof LivingEntity living)
+            return living.getEquipmentSlotForItem(stack) == armorType;
+        return false;
     }
 
     /**
@@ -382,21 +369,7 @@ public interface IForgeItem {
      * @return true if the enchantment can be applied to this item
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return  self().builtInRegistryHolder().is(enchantment.getSupportedItems()) && enchantment.isPrimaryItem(stack);
-    }
-
-    /**
-     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
-     * Most enchantment implementations rely upon this method.
-     * For consistency, results of this method should be the same as getting the enchantment from {@link #getAllEnchantments(ItemStack)}
-     *
-     * @param stack        the item stack being checked
-     * @param enchantment  the enchantment being checked for
-     * @return  Level of the enchantment, or 0 if not present
-     * @see #getAllEnchantments(ItemStack)
-     */
-    default int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
-        return EnchantmentHelper.getEnchantmentsForCrafting(stack).getLevel(enchantment);
+        return enchantment.isPrimaryItem(stack);
     }
 
     /**

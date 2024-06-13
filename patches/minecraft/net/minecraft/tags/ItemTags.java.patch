@@ -1,11 +1,15 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -160,4 +_,8 @@
+@@ -159,4 +_,12 @@
      private static TagKey<Item> bind(String p_203855_) {
-         return TagKey.create(Registries.ITEM, new ResourceLocation(p_203855_));
+         return TagKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace(p_203855_));
      }
 +
-+    public static TagKey<Item> create(final ResourceLocation name) {
++    public static TagKey<Item> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<Item> create(ResourceLocation name) {
 +        return TagKey.create(Registries.ITEM, name);
 +    }
  }

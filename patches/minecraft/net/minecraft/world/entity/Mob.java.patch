@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -133,6 +_,9 @@
-     private Either<UUID, BlockPos> delayedLeashInfo;
+@@ -131,6 +_,9 @@
+     private Leashable.LeashData leashData;
      private BlockPos restrictCenter = BlockPos.ZERO;
      private float restrictRadius = -1.0F;
 +    @Nullable
@@ -10,7 +10,7 @@
  
      protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
          super(p_21368_, p_21369_);
-@@ -239,7 +_,10 @@
+@@ -237,7 +_,10 @@
      }
  
      public void setTarget(@Nullable LivingEntity p_21544_) {
@@ -22,7 +22,7 @@
      }
  
      @Override
-@@ -444,6 +_,10 @@
+@@ -425,6 +_,10 @@
          if (this.isNoAi()) {
              p_21484_.putBoolean("NoAI", this.isNoAi());
          }
@@ -33,7 +33,7 @@
      }
  
      @Override
-@@ -510,6 +_,14 @@
+@@ -484,6 +_,14 @@
          }
  
          this.setNoAi(p_21450_.getBoolean("NoAI"));
@@ -48,7 +48,7 @@
      }
  
      @Override
-@@ -561,7 +_,7 @@
+@@ -535,7 +_,7 @@
      public void aiStep() {
          super.aiStep();
          this.level().getProfiler().push("looting");
@@ -57,7 +57,7 @@
              Vec3i vec3i = this.getPickupReach();
  
              for (ItemEntity itementity : this.level()
-@@ -730,6 +_,14 @@
+@@ -699,6 +_,14 @@
              this.discard();
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity entity = this.level().getNearestPlayer(this, -1.0);
@@ -72,7 +72,7 @@
              if (entity != null) {
                  double d0 = entity.distanceToSqr(this);
                  int i = this.getType().getCategory().getDespawnDistance();
-@@ -1127,6 +_,16 @@
+@@ -1121,6 +_,16 @@
          }
      }
  
@@ -89,15 +89,15 @@
      @Nullable
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, MobSpawnType p_21436_, @Nullable SpawnGroupData p_21437_) {
          RandomSource randomsource = p_21434_.getRandom();
-@@ -1135,6 +_,7 @@
-                 new AttributeModifier("Random spawn bonus", randomsource.triangle(0.0, 0.11485000000000001), AttributeModifier.Operation.ADD_MULTIPLIED_BASE)
-             );
+@@ -1132,6 +_,7 @@
+         }
+ 
          this.setLeftHanded(randomsource.nextFloat() < 0.05F);
 +        this.spawnType = p_21436_;
          return p_21437_;
      }
  
-@@ -1521,15 +_,25 @@
+@@ -1457,15 +_,25 @@
          return false;
      }
  
@@ -123,8 +123,8 @@
 +
      @VisibleForTesting
      public void removeFreeWill() {
-         this.removeAllGoals(p_262562_ -> true);
-@@ -1556,5 +_,40 @@
+         this.removeAllGoals(p_341273_ -> true);
+@@ -1491,5 +_,40 @@
      public ItemStack getPickResult() {
          SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
          return spawneggitem == null ? null : new ItemStack(spawneggitem);

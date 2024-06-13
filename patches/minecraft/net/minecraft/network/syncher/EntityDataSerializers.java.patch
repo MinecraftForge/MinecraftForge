@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/syncher/EntityDataSerializers.java
 +++ b/net/minecraft/network/syncher/EntityDataSerializers.java
-@@ -120,16 +_,18 @@
+@@ -119,16 +_,18 @@
      public static final EntityDataSerializer<Quaternionf> QUATERNION = EntityDataSerializer.forValueType(ByteBufCodecs.QUATERNIONF);
  
      public static void registerSerializer(EntityDataSerializer<?> p_135051_) {

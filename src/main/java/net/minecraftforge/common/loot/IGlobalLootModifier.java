@@ -31,7 +31,7 @@ import java.util.function.Function;
 public interface IGlobalLootModifier {
     Codec<IGlobalLootModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getCodec().dispatch(IGlobalLootModifier::codec, Function.identity()));
 
-    Codec<LootItemCondition[]> LOOT_CONDITIONS_CODEC = LootItemConditions.DIRECT_CODEC.listOf().xmap(list -> list.toArray(LootItemCondition[]::new), List::of);
+    Codec<LootItemCondition[]> LOOT_CONDITIONS_CODEC = LootItemCondition.DIRECT_CODEC.listOf().xmap(list -> list.toArray(LootItemCondition[]::new), List::of);
 
     @SuppressWarnings("unchecked")
     static <U> JsonElement getJson(Dynamic<?> dynamic) {

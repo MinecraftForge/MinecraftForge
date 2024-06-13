@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
-@@ -141,6 +_,7 @@
+@@ -143,6 +_,7 @@
              );
          this.connection.send(ServerboundFinishConfigurationPacket.INSTANCE);
-         this.connection.setupOutboundProtocol(GameProtocols.SERVERBOUND.bind(RegistryFriendlyByteBuf.decorator(registryaccess$frozen)));
+         this.connection.setupOutboundProtocol(GameProtocols.SERVERBOUND_TEMPLATE.bind(RegistryFriendlyByteBuf.decorator(registryaccess$frozen)));
 +        net.minecraftforge.common.ForgeHooks.handleClientConfigurationComplete(this.connection);
      }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -498,7 +_,7 @@
+@@ -496,7 +_,7 @@
      }
  
      private void tryToTame(Player p_336244_) {

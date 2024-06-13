@@ -1,12 +1,11 @@
 --- a/net/minecraft/client/renderer/PostChain.java
 +++ b/net/minecraft/client/renderer/PostChain.java
-@@ -156,7 +_,8 @@
+@@ -156,7 +_,7 @@
                                  throw new ChainedJsonException("Render target '" + s4 + "' can't be used as depth buffer");
                              }
  
--                            ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s4 + ".png");
-+                            ResourceLocation rl = ResourceLocation.tryParse(s4);
-+                            ResourceLocation resourcelocation = new ResourceLocation(rl.getNamespace(), "textures/effect/" + rl.getPath() + ".png");
+-                            ResourceLocation resourcelocation = ResourceLocation.withDefaultNamespace("textures/effect/" + s4 + ".png");
++                            ResourceLocation resourcelocation = ResourceLocation.tryParse(s4).withPath(p -> "textures/effect/" + p + ".png");
                              this.resourceProvider
                                  .getResource(resourcelocation)
                                  .orElseThrow(() -> new ChainedJsonException("Render target or texture '" + s4 + "' does not exist"));

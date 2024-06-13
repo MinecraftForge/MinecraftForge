@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -410,9 +_,9 @@
+@@ -405,9 +_,9 @@
                  Screen.wrapScreenError(() -> {
                      if (p_90897_ == 1 || p_90897_ == 2) {
                          screen.afterKeyboardAction();
@@ -12,7 +12,7 @@
                      }
                  }, "keyPressed event handler", screen.getClass().getCanonicalName());
                  if (aboolean[0]) {
-@@ -481,20 +_,21 @@
+@@ -476,20 +_,21 @@
                      }
                  }
              }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ArrowItem.java
 +++ b/net/minecraft/world/item/ArrowItem.java
-@@ -23,4 +_,11 @@
+@@ -24,4 +_,11 @@
          arrow.pickup = AbstractArrow.Pickup.ALLOWED;
          return arrow;
      }

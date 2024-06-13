@@ -55,7 +55,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     }
 
     private void exclude(String name) {
-        excludes.add(new ResourceLocation(name));
+        excludes.add(ResourceLocation.parse(name));
     }
 
     private void replace(ItemLike item, TagKey<Item> tag) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ShieldItem.java
 +++ b/net/minecraft/world/item/ShieldItem.java
-@@ -57,4 +_,9 @@
+@@ -58,4 +_,9 @@
      public EquipmentSlot getEquipmentSlot() {
          return EquipmentSlot.OFFHAND;
      }

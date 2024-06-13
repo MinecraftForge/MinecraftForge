@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/Explosion.java
 +++ b/net/minecraft/world/level/Explosion.java
-@@ -256,6 +_,7 @@
+@@ -257,6 +_,7 @@
          int j2 = Mth.floor(this.z - (double)f2 - 1.0);
          int j1 = Mth.floor(this.z + (double)f2 + 1.0);
          List<Entity> list = this.level.getEntities(this.source, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));

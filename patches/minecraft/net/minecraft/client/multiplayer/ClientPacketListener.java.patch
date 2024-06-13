@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -425,6 +_,7 @@
+@@ -427,6 +_,7 @@
  
          this.minecraft.debugRenderer.clear();
          this.minecraft.player.resetPos();
@@ -8,8 +8,8 @@
          this.minecraft.player.setId(p_105030_.playerId());
          this.level.addEntity(this.minecraft.player);
          this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
-@@ -1159,7 +_,9 @@
-             localplayer1.getAttributes().assignValues(localplayer.getAttributes());
+@@ -1164,7 +_,9 @@
+             localplayer1.getAttributes().assignBaseValues(localplayer.getAttributes());
          }
  
 +        localplayer1.updateSyncFields(localplayer); // Forge: fix MC-10657
@@ -18,7 +18,7 @@
          this.level.addEntity(localplayer1);
          localplayer1.setYRot(-180.0F);
          localplayer1.input = new KeyboardInput(this.minecraft.options);
-@@ -1294,10 +_,7 @@
+@@ -1300,10 +_,7 @@
          PacketUtils.ensureRunningOnSameThread(p_104976_, this, this.minecraft);
          BlockPos blockpos = p_104976_.getPos();
          this.minecraft.level.getBlockEntity(blockpos, p_104976_.getType()).ifPresent(p_325478_ -> {
@@ -30,7 +30,7 @@
  
              if (p_325478_ instanceof CommandBlockEntity && this.minecraft.screen instanceof CommandBlockEditScreen) {
                  ((CommandBlockEditScreen)this.minecraft.screen).updateGui();
-@@ -1464,7 +_,9 @@
+@@ -1465,7 +_,9 @@
      @Override
      public void handleCommands(ClientboundCommandsPacket p_104990_) {
          PacketUtils.ensureRunningOnSameThread(p_104990_, this, this.minecraft);
@@ -41,24 +41,24 @@
      }
  
      @Override
-@@ -1486,6 +_,7 @@
+@@ -1487,6 +_,7 @@
          ClientRecipeBook clientrecipebook = this.minecraft.player.getRecipeBook();
          clientrecipebook.setupCollections(this.recipeManager.getOrderedRecipes(), this.minecraft.level.registryAccess());
-         this.minecraft.populateSearchTree(SearchRegistry.RECIPE_COLLECTIONS, clientrecipebook.getCollections());
+         this.searchTrees.updateRecipes(clientrecipebook, this.registryAccess);
 +        net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.recipeManager);
      }
  
      @Override
-@@ -1582,6 +_,8 @@
-         TagCollector tagcollector = new TagCollector();
-         p_298004_.getTags().forEach(tagcollector::append);
+@@ -1585,6 +_,8 @@
          tagcollector.updateTags(this.registryAccess, this.connection.isMemoryConnection());
+         List<ItemStack> list = List.copyOf(CreativeModeTabs.searchTab().getDisplayItems());
+         this.searchTrees.updateCreativeTags(list);
 +
 +        net.minecraftforge.event.ForgeEventFactory.onTagsUpdated(this.registryAccess, true, this.connection.isMemoryConnection());
      }
  
      @Override
-@@ -2388,6 +_,8 @@
+@@ -2389,6 +_,8 @@
      }
  
      public void sendChat(String p_249888_) {
@@ -67,7 +67,7 @@
          Instant instant = Instant.now();
          long i = Crypt.SaltSupplier.getLong();
          LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.lastSeenMessages.generateAndApplyUpdate();
-@@ -2396,6 +_,7 @@
+@@ -2397,6 +_,7 @@
      }
  
      public void sendCommand(String p_250092_) {

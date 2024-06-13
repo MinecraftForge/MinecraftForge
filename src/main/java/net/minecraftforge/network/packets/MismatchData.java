@@ -32,14 +32,14 @@ public record MismatchData(
 
     public static MismatchData decode(FriendlyByteBuf buf) {
         var mismatched = buf.readMap(
-            i -> new ResourceLocation(i.readUtf(MAX_LENGTH)),
+            i -> ResourceLocation.parse(i.readUtf(MAX_LENGTH)),
             i -> new Version(
                 i.readUtf(MAX_LENGTH),
                 i.readUtf(MAX_LENGTH)
             )
         );
         var missing = buf.readCollection(HashSet::new,
-            i -> new ResourceLocation(i.readUtf(MAX_LENGTH))
+            i -> ResourceLocation.parse(i.readUtf(MAX_LENGTH))
         );
         return new MismatchData(mismatched, missing);
     }

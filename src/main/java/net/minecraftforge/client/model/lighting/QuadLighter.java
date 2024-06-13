@@ -152,21 +152,4 @@ public abstract class QuadLighter
         float yFactor = constantAmbientLight ? 0.9F : ((3.0F + normalY) / 4.0F);
         return Math.min(normalX * normalX * 0.6F + normalY * normalY * yFactor + normalZ * normalZ * 0.8F, 1.0F);
     }
-
-    /**
-     * Note: This method is subtly different than {@link net.minecraft.client.renderer.LevelRenderer#getLightColor(BlockAndTintGetter, BlockState, BlockPos)}
-     * as it only uses the state for querying if the state has emissive rendering but instead looks up the state at the given position for checking the
-     * light emission.
-     */
-    @Deprecated(since = "1.20.1")
-    protected static int getLightColor(BlockAndTintGetter level, BlockPos pos, BlockState state)
-    {
-        if (state.emissiveRendering(level, pos))
-        {
-            return LightTexture.FULL_BRIGHT;
-        }
-        int skyLight = level.getBrightness(LightLayer.SKY, pos);
-        int blockLight = Math.max(level.getBrightness(LightLayer.BLOCK, pos), level.getBlockState(pos).getLightEmission(level, pos));
-        return skyLight << 20 | blockLight << 4;
-    }
 }

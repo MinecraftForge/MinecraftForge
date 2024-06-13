@@ -1,24 +1,24 @@
 --- a/com/mojang/blaze3d/vertex/VertexConsumer.java
 +++ b/com/mojang/blaze3d/vertex/VertexConsumer.java
-@@ -13,7 +_,7 @@
+@@ -12,7 +_,7 @@
  import org.lwjgl.system.MemoryStack;
  
  @OnlyIn(Dist.CLIENT)
 -public interface VertexConsumer {
 +public interface VertexConsumer extends net.minecraftforge.client.extensions.IForgeVertexConsumer {
-     VertexConsumer vertex(double p_85945_, double p_85946_, double p_85947_);
+     VertexConsumer addVertex(float p_344294_, float p_342213_, float p_344859_);
  
-     VertexConsumer color(int p_85973_, int p_85974_, int p_85975_, int p_85976_);
-@@ -142,10 +_,11 @@
-                     f5 = afloat[k] * p_85992_;
+     VertexConsumer setColor(int p_342749_, int p_344324_, int p_343336_, int p_342831_);
+@@ -135,10 +_,11 @@
                  }
  
--                int l = aint[k];
-+                int l = applyBakedLighting(aint[k], bytebuffer);
-                 float f9 = bytebuffer.getFloat(16);
-                 float f10 = bytebuffer.getFloat(20);
-                 Vector4f vector4f = matrix4f.transform(new Vector4f(f, f1, f2, 1.0F));
+                 int i1 = FastColor.ARGB32.color(k, (int)f3, (int)f4, (int)f5);
+-                int j1 = p_331444_[l];
++                int j1 = applyBakedLighting(p_331444_[l], bytebuffer);
+                 float f10 = bytebuffer.getFloat(16);
+                 float f9 = bytebuffer.getFloat(20);
+                 Vector3f vector3f1 = matrix4f.transformPosition(f, f1, f2, new Vector3f());
 +                applyBakedNormals(vector3f, bytebuffer, p_85988_.normal());
-                 this.vertex(vector4f.x(), vector4f.y(), vector4f.z(), f3, f4, f5, p_335371_, f9, f10, p_85993_, l, vector3f.x(), vector3f.y(), vector3f.z());
+                 this.addVertex(vector3f1.x(), vector3f1.y(), vector3f1.z(), i1, f10, f9, p_85993_, j1, vector3f.x(), vector3f.y(), vector3f.z());
              }
          }

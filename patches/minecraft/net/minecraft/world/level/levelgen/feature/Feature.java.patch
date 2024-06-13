@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -186,7 +_,7 @@
+@@ -187,7 +_,7 @@
      }
  
      protected static boolean isStone(BlockState p_159748_) {

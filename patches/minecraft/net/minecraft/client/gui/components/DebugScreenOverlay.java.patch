@@ -79,13 +79,13 @@
 +   protected void drawGameInformation(GuiGraphics p_281525_) {
 +      List<String> list = this.getGameInformation();
 +      list.addAll(this.getOverlayHelp());
-+      net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281525_, minecraft.getWindow(), minecraft.getFrameTime(), list, true);
++      net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281525_, minecraft.getWindow(), minecraft.getTimer().getRealtimeDeltaTicks(), list, true);
 +      this.renderLines(p_281525_, list, true);
      }
  
      protected void drawSystemInformation(GuiGraphics p_281261_) {
          List<String> list = this.getSystemInformation();
-+        net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281261_, minecraft.getWindow(), minecraft.getFrameTime(), list, false);
++        net.minecraftforge.client.ForgeHooksClient.onCustomizeDebugEvent(p_281261_, minecraft.getWindow(), minecraft.getTimer().getRealtimeDeltaTicks(), list, false);
          this.renderLines(p_281261_, list, false);
      }
  

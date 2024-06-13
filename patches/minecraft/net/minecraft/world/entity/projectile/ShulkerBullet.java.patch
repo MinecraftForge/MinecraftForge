@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/ShulkerBullet.java
 +++ b/net/minecraft/world/entity/projectile/ShulkerBullet.java
-@@ -219,7 +_,7 @@
+@@ -220,7 +_,7 @@
              }
  
              HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);

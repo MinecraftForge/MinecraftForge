@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/ZombieVillager.java
-@@ -133,7 +_,7 @@
+@@ -135,7 +_,7 @@
          if (!this.level().isClientSide && this.isAlive() && this.isConverting()) {
              int i = this.getConversionProgress();
              this.villagerConversionTime -= i;
@@ -9,11 +9,11 @@
                  this.finishConversion((ServerLevel)this.level());
              }
          }
-@@ -245,6 +_,7 @@
-         if (!this.isSilent()) {
-             p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
+@@ -238,6 +_,7 @@
+             if (!this.isSilent()) {
+                 p_34399_.levelEvent(null, 1027, this.blockPosition(), 0);
+             }
++            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, villager);
          }
-+        net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, villager);
      }
  
-     private int getConversionProgress() {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/EnderDragonPart.java
 +++ b/net/minecraft/world/entity/boss/EnderDragonPart.java
-@@ -12,13 +_,13 @@
+@@ -13,13 +_,13 @@
  import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
  import net.minecraft.world.item.ItemStack;
  

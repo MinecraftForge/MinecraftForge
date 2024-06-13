@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/tags/TagsProvider.java
 +++ b/net/minecraft/data/tags/TagsProvider.java
-@@ -36,26 +_,57 @@
+@@ -32,26 +_,57 @@
      private final CompletableFuture<TagsProvider.TagLookup<T>> parentProvider;
      protected final ResourceKey<? extends Registry<T>> registryKey;
      protected final Map<ResourceLocation, TagBuilder> builders = Maps.newLinkedHashMap();
@@ -38,14 +38,14 @@
 +        String modId,
 +        @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper
      ) {
-         this.pathProvider = p_275432_.createPathProvider(PackOutput.Target.DATA_PACK, TagManager.getTagDir(p_275476_));
+         this.pathProvider = p_275432_.createRegistryTagsPathProvider(p_275476_);
          this.registryKey = p_275476_;
          this.parentProvider = p_275565_;
          this.lookupProvider = p_275222_;
 +        this.modId = modId;
 +        this.existingFileHelper = existingFileHelper;
-+        this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", TagManager.getTagDir(p_275476_));
-+        this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraftforge.common.ForgeHooks.prefixNamespace(p_275476_.location()));
++        this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraft.core.registries.Registries.tagsDirPath(p_275476_));
++        this.elementResourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.server.packs.PackType.SERVER_DATA, ".json", net.minecraft.core.registries.Registries.elementsDirPath(p_275476_));
 +    }
 +
 +    // Forge: Allow customizing the path for a given tag or returning null
@@ -61,7 +61,7 @@
      }
  
      protected abstract void addTags(HolderLookup.Provider p_256380_);
-@@ -73,7 +_,13 @@
+@@ -69,7 +_,13 @@
              .thenCombineAsync(this.parentProvider, (p_274778_, p_274779_) -> new CombinedData<>(p_274778_, (TagsProvider.TagLookup<T>)p_274779_), Util.backgroundExecutor())
              .thenCompose(
                  p_325926_ -> {
@@ -76,7 +76,7 @@
                      Predicate<ResourceLocation> predicate = p_255496_ -> registrylookup.get(ResourceKey.create(this.registryKey, p_255496_)).isPresent();
                      Predicate<ResourceLocation> predicate1 = p_274776_ -> this.builders.containsKey(p_274776_)
                              || p_325926_.parent.contains(TagKey.create(this.registryKey, p_274776_));
-@@ -86,7 +_,7 @@
+@@ -82,7 +_,7 @@
                                      ResourceLocation resourcelocation = p_325931_.getKey();
                                      TagBuilder tagbuilder = p_325931_.getValue();
                                      List<TagEntry> list = tagbuilder.build();
@@ -85,7 +85,7 @@
                                      if (!list1.isEmpty()) {
                                          throw new IllegalArgumentException(
                                              String.format(
-@@ -97,8 +_,11 @@
+@@ -93,8 +_,11 @@
                                              )
                                          );
                                      } else {
@@ -99,7 +99,7 @@
                                      }
                                  }
                              )
-@@ -110,11 +_,16 @@
+@@ -106,11 +_,16 @@
  
      protected TagsProvider.TagAppender<T> tag(TagKey<T> p_206425_) {
          TagBuilder tagbuilder = this.getOrCreateRawBuilder(p_206425_);
@@ -118,7 +118,7 @@
      }
  
      public CompletableFuture<TagsProvider.TagLookup<T>> contentsGetter() {
-@@ -129,11 +_,26 @@
+@@ -125,11 +_,26 @@
          });
      }
  
@@ -146,7 +146,7 @@
          }
  
          public final TagsProvider.TagAppender<T> add(ResourceKey<T> p_256138_) {
-@@ -171,6 +_,19 @@
+@@ -167,6 +_,19 @@
          public TagsProvider.TagAppender<T> addOptionalTag(ResourceLocation p_176842_) {
              this.builder.addOptionalTag(p_176842_);
              return this;

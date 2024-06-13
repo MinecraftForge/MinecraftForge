@@ -1,0 +1,15 @@
+--- a/net/minecraft/tags/DamageTypeTags.java
++++ b/net/minecraft/tags/DamageTypeTags.java
+@@ -42,4 +_,12 @@
+     private static TagKey<DamageType> create(String p_270635_) {
+         return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.withDefaultNamespace(p_270635_));
+     }
++
++    public static TagKey<DamageType> create(String namepsace, String path) {
++        return create(ResourceLocation.fromNamespaceAndPath(namepsace, path));
++    }
++
++    public static TagKey<DamageType> create(ResourceLocation name) {
++        return TagKey.create(Registries.DAMAGE_TYPE, name);
++    }
+ }

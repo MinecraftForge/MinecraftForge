@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/Window.java
 +++ b/com/mojang/blaze3d/platform/Window.java
-@@ -82,7 +_,8 @@
+@@ -84,7 +_,8 @@
          GLFW.glfwWindowHint(139267, 2);
          GLFW.glfwWindowHint(139272, 204801);
          GLFW.glfwWindowHint(139270, 1);
@@ -10,7 +10,7 @@
          if (monitor != null) {
              VideoMode videomode = monitor.getPreferredVidMode(this.fullscreen ? this.preferredFullscreenVideoMode : Optional.empty());
              this.windowedX = this.x = monitor.getX() + videomode.getWidth() / 2 - this.width / 2;
-@@ -94,6 +_,7 @@
+@@ -96,6 +_,7 @@
              this.windowedX = this.x = aint1[0];
              this.windowedY = this.y = aint[0];
          }
@@ -18,7 +18,7 @@
  
          GLFW.glfwMakeContextCurrent(this.window);
          GL.createCapabilities();
-@@ -242,6 +_,9 @@
+@@ -254,6 +_,9 @@
          GLFW.glfwGetFramebufferSize(this.window, aint, aint1);
          this.framebufferWidth = aint[0] > 0 ? aint[0] : 1;
          this.framebufferHeight = aint1[0] > 0 ? aint1[0] : 1;

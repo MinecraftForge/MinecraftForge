@@ -119,9 +119,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         } else {
             ResourceLocation asLoc;
             if (texture.contains(":")) {
-                asLoc = new ResourceLocation(texture);
+                asLoc = ResourceLocation.parse(texture);
             } else {
-                asLoc = new ResourceLocation(getLocation().getNamespace(), texture);
+                asLoc = ResourceLocation.fromNamespaceAndPath(getLocation().getNamespace(), texture);
             }
             return texture(key, asLoc);
         }
@@ -158,7 +158,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      */
     public T renderType(String renderType) {
         Preconditions.checkNotNull(renderType, "Render type must not be null");
-        return renderType(new ResourceLocation(renderType));
+        return renderType(ResourceLocation.parse(renderType));
     }
 
     /**
@@ -317,27 +317,21 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face == null) continue;
 
                     JsonObject faceObj = new JsonObject();
-                    faceObj.addProperty("texture", serializeLocOrKey(face.texture));
-                    if (!Arrays.equals(face.uv.uvs, part.uvsByFace(dir))) {
-                        faceObj.add("uv", new Gson().toJsonTree(face.uv.uvs));
-                    }
-                    if (face.cullForDirection != null) {
-                        faceObj.addProperty("cullface", face.cullForDirection.getSerializedName());
-                    }
-                    if (face.uv.rotation != 0) {
-                        faceObj.addProperty("rotation", face.uv.rotation);
-                    }
-                    if (face.tintIndex != -1) {
-                        faceObj.addProperty("tintindex", face.tintIndex);
-                    }
-                    if (!face.getFaceData().equals(ForgeFaceData.DEFAULT)) {
-                        faceObj.add("forge_data", ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.getFaceData()).result().get());
-                    }
+                    faceObj.addProperty("texture", serializeLocOrKey(face.texture()));
+                    if (!Arrays.equals(face.uv().uvs, part.uvsByFace(dir)))
+                        faceObj.add("uv", new Gson().toJsonTree(face.uv().uvs));
+                    if (face.cullForDirection() != null)
+                        faceObj.addProperty("cullface", face.cullForDirection().getSerializedName());
+                    if (face.uv().rotation != 0)
+                        faceObj.addProperty("rotation", face.uv().rotation);
+                    if (face.tintIndex() != -1)
+                        faceObj.addProperty("tintindex", face.tintIndex());
+                    if (face.data() != null && !ForgeFaceData.DEFAULT.equals(face.data()))
+                        faceObj.add("forge_data", ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, face.data()).result().get());
                     faces.add(dir.getSerializedName(), faceObj);
                 }
-                if (!part.faces.isEmpty()) {
+                if (!part.faces.isEmpty())
                     partObj.add("faces", faces);
-                }
                 elements.add(partObj);
             });
             root.add("elements", elements);
@@ -360,7 +354,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         if (tex.charAt(0) == '#') {
             return tex;
         }
-        return new ResourceLocation(tex).toString();
+        return ResourceLocation.parse(tex).toString();
     }
 
     private JsonArray serializeVector3f(Vector3f vec) {
@@ -385,10 +379,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         private final Map<Direction, FaceBuilder> faces = new LinkedHashMap<>();
         private RotationBuilder rotation;
         private boolean shade = true;
-        private int color = 0xFFFFFFFF;
-        private int blockLight = 0, skyLight = 0;
-        private boolean hasAmbientOcclusion = true;
-        private boolean calculateNormals = false;
+        private ForgeFaceData data = ForgeFaceData.DEFAULT;
 
         private void validateCoordinate(float coord, char name) {
             Preconditions.checkArgument(!(coord < -16.0F) && !(coord > 32.0F), "Position " + name + " out of range, must be within [-16, 32]. Found: %d", coord);
@@ -530,9 +521,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          */
         public ElementBuilder emissivity(int blockLight, int skyLight) {
-            this.blockLight = blockLight;
-            this.skyLight = skyLight;
-            return this;
+            return data(new ForgeFaceData(this.data.color(), blockLight, skyLight, this.data.ambientOcclusion(), this.data.calculateNormals()));
         }
 
         /**
@@ -542,8 +531,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          */
         public ElementBuilder color(int color) {
-            this.color = color;
-            return this;
+            return data(new ForgeFaceData(color, this.data.blockLight(), this.data.skyLight(), this.data.ambientOcclusion(), this.data.calculateNormals()));
         }
 
         /**
@@ -553,8 +541,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          */
         public ElementBuilder ao(boolean ao) {
-            this.hasAmbientOcclusion = ao;
-            return this;
+            return data(new ForgeFaceData(this.data.color(), this.data.blockLight(), this.data.skyLight(), ao, this.data.calculateNormals()));
         }
 
         /**
@@ -564,7 +551,11 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          */
         public ElementBuilder calculateNormals(boolean calc) {
-            this.calculateNormals = calc;
+            return data(new ForgeFaceData(this.data.color(), this.data.blockLight(), this.data.skyLight(), this.data.ambientOcclusion(), calc));
+        }
+
+        public ElementBuilder data(ForgeFaceData data) {
+            this.data = data;
             return this;
         }
 
@@ -575,22 +566,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         BlockElement build() {
             Map<Direction, BlockElementFace> faces = this.faces.entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
-            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade, new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion, this.calculateNormals));
+            return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade);
         }
 
         public T end() { return self(); }
 
         public class FaceBuilder {
-
             private Direction cullface;
             private int tintindex = -1;
             private String texture = MissingTextureAtlasSprite.getLocation().toString();
             private float[] uvs;
             private FaceRotation rotation = FaceRotation.ZERO;
-            private int color = 0xFFFFFFFF;
-            private int blockLight = 0, skyLight = 0;
-            private boolean hasAmbientOcclusion = true;
-            private boolean calculateNormals = false;
+            private ForgeFaceData data = ElementBuilder.this.data;
 
             FaceBuilder(Direction dir) {
                 // param unused for functional match
@@ -646,9 +633,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
              * @return this builder
              */
             public FaceBuilder emissivity(int blockLight, int skyLight) {
-                this.blockLight = blockLight;
-                this.skyLight = skyLight;
-                return this;
+                return data(new ForgeFaceData(this.data.color(), blockLight, skyLight, this.data.ambientOcclusion(), this.data.calculateNormals()));
             }
 
             /**
@@ -658,8 +643,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
              * @return this builder
              */
             public FaceBuilder color(int color) {
-                this.color = color;
-                return this;
+                return data(new ForgeFaceData(color, this.data.blockLight(), this.data.skyLight(), this.data.ambientOcclusion(), this.data.calculateNormals()));
             }
 
             /**
@@ -669,8 +653,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
              * @return this builder
              */
             public FaceBuilder ao(boolean ao) {
-                this.hasAmbientOcclusion = ao;
-                return this;
+                return data(new ForgeFaceData(this.data.color(), this.data.blockLight(), this.data.skyLight(), ao, this.data.calculateNormals()));
             }
 
             /**
@@ -680,15 +663,18 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
              * @return this builder
              */
             public FaceBuilder calculateNormals(boolean calc) {
-                this.calculateNormals = calc;
+                return data(new ForgeFaceData(this.data.color(), this.data.blockLight(), this.data.skyLight(), this.data.ambientOcclusion(), calc));
+            }
+
+            public FaceBuilder data(ForgeFaceData data) {
+                this.data = data;
                 return this;
             }
 
             BlockElementFace build() {
-                if (this.texture == null) {
+                if (this.texture == null)
                     throw new IllegalStateException("A model face must have a texture");
-                }
-                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), new ForgeFaceData(this.color, this.blockLight, this.skyLight, this.hasAmbientOcclusion, this.calculateNormals));
+                return new BlockElementFace(cullface, tintindex, texture, new BlockFaceUV(uvs, rotation.rotation), this.data);
             }
 
             public ElementBuilder end() { return ElementBuilder.this; }
@@ -826,8 +812,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
     }
 
-    public class RootTransformsBuilder
-    {
+    public class RootTransformsBuilder {
         private static final Vector3f ONE = new Vector3f(1, 1, 1);
 
         private Vector3f translation = new Vector3f();
@@ -838,9 +823,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         private @Nullable TransformationHelper.TransformOrigin origin;
         private @Nullable Vector3f originVec;
 
-        RootTransformsBuilder()
-        {
-        }
+        RootTransformsBuilder() { }
 
         /**
          * Sets the translation of the root transform.
@@ -849,8 +832,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code translation} is {@code null}
          */
-        public RootTransformsBuilder translation(Vector3f translation)
-        {
+        public RootTransformsBuilder translation(Vector3f translation) {
             this.translation = Preconditions.checkNotNull(translation, "Translation must not be null");
             return this;
         }
@@ -863,8 +845,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param z z translation
          * @return this builder
          */
-        public RootTransformsBuilder translation(float x, float y, float z)
-        {
+        public RootTransformsBuilder translation(float x, float y, float z) {
             return translation(new Vector3f(x, y, z));
         }
 
@@ -875,8 +856,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code rotation} is {@code null}
          */
-        public RootTransformsBuilder rotation(Quaternionf rotation)
-        {
+        public RootTransformsBuilder rotation(Quaternionf rotation) {
             this.leftRotation = Preconditions.checkNotNull(rotation, "Rotation must not be null");
             return this;
         }
@@ -890,8 +870,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param isDegrees whether the rotation is in degrees or radians
          * @return this builder
          */
-        public RootTransformsBuilder rotation(float x, float y, float z, boolean isDegrees)
-        {
+        public RootTransformsBuilder rotation(float x, float y, float z, boolean isDegrees) {
             return rotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
@@ -902,8 +881,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code leftRotation} is {@code null}
          */
-        public RootTransformsBuilder leftRotation(Quaternionf leftRotation)
-        {
+        public RootTransformsBuilder leftRotation(Quaternionf leftRotation) {
             return rotation(leftRotation);
         }
 
@@ -916,8 +894,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param isDegrees whether the rotation is in degrees or radians
          * @return this builder
          */
-        public RootTransformsBuilder leftRotation(float x, float y, float z, boolean isDegrees)
-        {
+        public RootTransformsBuilder leftRotation(float x, float y, float z, boolean isDegrees) {
             return leftRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
@@ -928,8 +905,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code rightRotation} is {@code null}
          */
-        public RootTransformsBuilder rightRotation(Quaternionf rightRotation)
-        {
+        public RootTransformsBuilder rightRotation(Quaternionf rightRotation) {
             this.rightRotation = Preconditions.checkNotNull(rightRotation, "Rotation must not be null");
             return this;
         }
@@ -943,8 +919,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param isDegrees whether the rotation is in degrees or radians
          * @return this builder
          */
-        public RootTransformsBuilder rightRotation(float x, float y, float z, boolean isDegrees)
-        {
+        public RootTransformsBuilder rightRotation(float x, float y, float z, boolean isDegrees) {
             return rightRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
@@ -955,8 +930,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code rightRotation} is {@code null}
          */
-        public RootTransformsBuilder postRotation(Quaternionf postRotation)
-        {
+        public RootTransformsBuilder postRotation(Quaternionf postRotation) {
             return rightRotation(postRotation);
         }
 
@@ -969,8 +943,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param isDegrees whether the rotation is in degrees or radians
          * @return this builder
          */
-        public RootTransformsBuilder postRotation(float x, float y, float z, boolean isDegrees)
-        {
+        public RootTransformsBuilder postRotation(float x, float y, float z, boolean isDegrees) {
             return postRotation(TransformationHelper.quatFromXYZ(x, y, z, isDegrees));
         }
 
@@ -980,8 +953,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param scale the scale
          * @return this builder
          */
-        public RootTransformsBuilder scale(float scale)
-        {
+        public RootTransformsBuilder scale(float scale) {
             return scale(new Vector3f(scale, scale, scale));
         }
 
@@ -993,8 +965,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @param zScale z scale
          * @return this builder
          */
-        public RootTransformsBuilder scale(float xScale, float yScale, float zScale)
-        {
+        public RootTransformsBuilder scale(float xScale, float yScale, float zScale) {
             return scale(new Vector3f(xScale, yScale, zScale));
         }
 
@@ -1005,8 +976,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code scale} is {@code null}
          */
-        public RootTransformsBuilder scale(Vector3f scale)
-        {
+        public RootTransformsBuilder scale(Vector3f scale) {
             this.scale = Preconditions.checkNotNull(scale, "Scale must not be null");
             return this;
         }
@@ -1018,8 +988,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code transformation} is {@code null}
          */
-        public RootTransformsBuilder transform(Transformation transformation)
-        {
+        public RootTransformsBuilder transform(Transformation transformation) {
             Preconditions.checkNotNull(transformation, "Transformation must not be null");
             this.translation = transformation.getTranslation();
             this.leftRotation = transformation.getLeftRotation();
@@ -1035,8 +1004,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @return this builder
          * @throws NullPointerException if {@code origin} is {@code null}
          */
-        public RootTransformsBuilder origin(Vector3f origin)
-        {
+        public RootTransformsBuilder origin(Vector3f origin) {
             this.originVec = Preconditions.checkNotNull(origin, "Origin must not be null");
             this.origin = null;
             return this;
@@ -1050,8 +1018,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * @throws NullPointerException if {@code origin} is {@code null}
          * @throws IllegalArgumentException if {@code origin} is not {@code center}, {@code corner} or {@code opposing-corner}
          */
-        public RootTransformsBuilder origin(TransformationHelper.TransformOrigin origin)
-        {
+        public RootTransformsBuilder origin(TransformationHelper.TransformOrigin origin) {
             this.origin = Preconditions.checkNotNull(origin, "Origin must not be null");
             this.originVec = null;
             return this;
@@ -1061,8 +1028,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
          * Finish configuring the parent builder
          * @return the parent block model builder
          */
-        public ModelBuilder<T> end()
-        {
+        public ModelBuilder<T> end() {
             return ModelBuilder.this;
         }
 
@@ -1071,39 +1037,26 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             JsonObject transform = new JsonObject();
 
             if (!translation.equals(0, 0, 0))
-            {
                 transform.add("translation", writeVec3(translation));
-            }
 
             if (!scale.equals(ONE))
-            {
                 transform.add("scale", writeVec3(scale));
-            }
 
             if (!leftRotation.equals(0, 0, 0, 1))
-            {
                 transform.add("rotation", writeQuaternion(leftRotation));
-            }
 
             if (!rightRotation.equals(0, 0, 0, 1))
-            {
                 transform.add("post_rotation", writeQuaternion(rightRotation));
-            }
 
             if (origin != null)
-            {
                 transform.addProperty("origin", origin.getSerializedName());
-            }
             else if (originVec != null && !originVec.equals(0, 0, 0))
-            {
                 transform.add("origin", writeVec3(originVec));
-            }
 
             return transform;
         }
 
-        private static JsonArray writeVec3(Vector3f vector)
-        {
+        private static JsonArray writeVec3(Vector3f vector) {
             JsonArray array = new JsonArray();
             array.add(vector.x());
             array.add(vector.y());
@@ -1111,8 +1064,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             return array;
         }
 
-        private static JsonArray writeQuaternion(Quaternionf quaternion)
-        {
+        private static JsonArray writeQuaternion(Quaternionf quaternion) {
             JsonArray array = new JsonArray();
             array.add(quaternion.x());
             array.add(quaternion.y());

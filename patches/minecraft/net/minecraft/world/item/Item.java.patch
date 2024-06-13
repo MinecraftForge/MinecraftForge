@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -54,9 +_,12 @@
+@@ -56,9 +_,12 @@
  import net.minecraft.world.phys.Vec3;
  import org.slf4j.Logger;
  
@@ -12,10 +12,10 @@
 +    public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, Holder<Item>> STREAM_CODEC =
 +        net.minecraft.network.codec.ByteBufCodecs.holderRegistry(net.minecraft.core.registries.Registries.ITEM);
 +    public static final Map<Block, Item> BY_BLOCK = net.minecraftforge.registries.GameData.ItemCallbacks.getBlockItemMap();
-     public static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-     public static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+     public static final ResourceLocation BASE_ATTACK_DAMAGE_ID = ResourceLocation.withDefaultNamespace("base_attack_damage");
+     public static final ResourceLocation BASE_ATTACK_SPEED_ID = ResourceLocation.withDefaultNamespace("base_attack_speed");
      public static final int DEFAULT_MAX_STACK_SIZE = 64;
-@@ -93,6 +_,7 @@
+@@ -95,6 +_,7 @@
                  LOGGER.error("Item classes should end with Item and {} doesn't.", s);
              }
          }
@@ -23,7 +23,7 @@
      }
  
      @Deprecated
-@@ -100,17 +_,25 @@
+@@ -102,17 +_,25 @@
          return this.builtInRegistryHolder;
      }
  
@@ -51,7 +51,7 @@
      public void onDestroyed(ItemEntity p_150887_) {
      }
  
-@@ -232,10 +_,12 @@
+@@ -238,10 +_,12 @@
      }
  
      @Nullable
@@ -64,7 +64,7 @@
      public boolean hasCraftingRemainingItem() {
          return this.craftingRemainingItem != null;
      }
-@@ -291,6 +_,7 @@
+@@ -297,6 +_,7 @@
          return p_41436_.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
      }
  
@@ -72,7 +72,7 @@
      public int getEnchantmentValue() {
          return 0;
      }
-@@ -332,6 +_,30 @@
+@@ -338,6 +_,30 @@
      public FeatureFlagSet requiredFeatures() {
          return this.requiredFeatures;
      }

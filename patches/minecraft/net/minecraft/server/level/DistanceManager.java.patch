@@ -8,7 +8,7 @@
  
      protected DistanceManager(Executor p_140774_, Executor p_140775_) {
          ProcessorHandle<Runnable> processorhandle = ProcessorHandle.of("player ticket throttler", p_140775_::execute);
-@@ -151,6 +_,11 @@
+@@ -152,6 +_,11 @@
          if (p_140786_.getTicketLevel() < i) {
              this.ticketTracker.update(p_140785_, p_140786_.getTicketLevel(), true);
          }
@@ -20,7 +20,7 @@
      }
  
      void removeTicket(long p_140819_, Ticket<?> p_140820_) {
-@@ -163,6 +_,14 @@
+@@ -164,6 +_,14 @@
          }
  
          this.ticketTracker.update(p_140819_, getTicketLevelAt(sortedarrayset), false);
@@ -35,7 +35,7 @@
      }
  
      public <T> void addTicket(TicketType<T> p_140793_, ChunkPos p_140794_, int p_140795_, T p_140796_) {
-@@ -175,14 +_,22 @@
+@@ -176,14 +_,22 @@
      }
  
      public <T> void addRegionTicket(TicketType<T> p_140841_, ChunkPos p_140842_, int p_140843_, T p_140844_) {
@@ -60,7 +60,7 @@
          long i = p_140851_.toLong();
          this.removeTicket(i, ticket);
          this.tickingTicketsTracker.removeTicket(i, ticket);
-@@ -266,6 +_,11 @@
+@@ -267,6 +_,11 @@
  
      public String getDebugStatus() {
          return this.ticketThrottler.getDebugStatus();

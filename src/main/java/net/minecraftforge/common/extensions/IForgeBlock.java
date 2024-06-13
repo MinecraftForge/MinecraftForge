@@ -476,13 +476,13 @@ public interface IForgeBlock {
      * @param level The level
      * @param pos The position of this state
      * @param beaconPos The position of the beacon
-     * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
+     * @return A ARGB32 color to merge info the beacon's existing beam color, or -1 to do nothing to the beam
      */
     @Nullable
-    default float[] getBeaconColorMultiplier(BlockState state, LevelReader level, BlockPos pos, BlockPos beaconPos) {
+    default int getBeaconColorMultiplier(BlockState state, LevelReader level, BlockPos pos, BlockPos beaconPos) {
         if (self() instanceof BeaconBeamBlock beam)
-            return beam.getColor().getTextureDiffuseColors();
-        return null;
+            return beam.getColor().getTextureDiffuseColor();
+        return -1;
     }
 
     /**

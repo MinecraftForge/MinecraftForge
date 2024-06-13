@@ -26,25 +26,20 @@ import net.minecraft.resources.ResourceLocation;
  * @see IGeometryLoader
  * @see IGeometryBakingContext
  */
-public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>>
-{
-    BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation);
+public interface IUnbakedGeometry<T extends IUnbakedGeometry<T>> {
+    BakedModel bake(IGeometryBakingContext context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides);
 
     /**
      * Resolve parents of nested {@link BlockModel}s which are later used in
-     * {@link IUnbakedGeometry#bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation)}
+     * {@link IUnbakedGeometry#bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides)}
      * via {@link BlockModel#resolveParents(Function)}
      */
-    default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context)
-    {
-
-    }
+    default void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context) { }
 
     /**
      * {@return a set of all the components whose visibility may be configured via {@link IGeometryBakingContext}}
      */
-    default Set<String> getConfigurableComponentNames()
-    {
+    default Set<String> getConfigurableComponentNames() {
         return Set.of();
     }
 }

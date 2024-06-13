@@ -1,15 +1,15 @@
 --- a/net/minecraft/commands/Commands.java
 +++ b/net/minecraft/commands/Commands.java
-@@ -215,7 +_,7 @@
+@@ -214,7 +_,7 @@
              JfrCommand.register(this.dispatcher);
          }
  
 -        if (SharedConstants.IS_RUNNING_IN_IDE) {
 +        if (net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled()) {
              TestCommand.register(this.dispatcher);
-             ResetChunksCommand.register(this.dispatcher);
              RaidCommand.register(this.dispatcher, p_230944_);
-@@ -250,6 +_,7 @@
+             DebugPathCommand.register(this.dispatcher);
+@@ -248,6 +_,7 @@
          if (p_230943_.includeIntegrated) {
              PublishCommand.register(this.dispatcher);
          }
@@ -17,7 +17,7 @@
  
          this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
      }
-@@ -268,9 +_,18 @@
+@@ -266,9 +_,18 @@
      public void performCommand(ParseResults<CommandSourceStack> p_242844_, String p_242841_) {
          CommandSourceStack commandsourcestack = p_242844_.getContext().getSource();
          commandsourcestack.getServer().getProfiler().push(() -> "/" + p_242841_);
@@ -37,7 +37,7 @@
              if (contextchain != null) {
                  executeCommandInContext(
                      commandsourcestack,
-@@ -361,7 +_,8 @@
+@@ -359,7 +_,8 @@
          Map<CommandNode<CommandSourceStack>, CommandNode<SharedSuggestionProvider>> map = Maps.newHashMap();
          RootCommandNode<SharedSuggestionProvider> rootcommandnode = new RootCommandNode<>();
          map.put(this.dispatcher.getRoot(), rootcommandnode);

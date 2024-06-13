@@ -8,8 +8,8 @@
              Frog frog = EntityType.FROG.create(this.level());
              if (frog != null) {
                  frog.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-@@ -238,6 +_,7 @@
-                 frog.setPersistenceRequired();
+@@ -239,6 +_,7 @@
+                 frog.fudgePositionAfterSizeChange(this.getDimensions(this.getPose()));
                  this.playSound(SoundEvents.TADPOLE_GROW_UP, 0.15F, 1.0F);
                  serverlevel.addFreshEntityWithPassengers(frog);
 +                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, frog);

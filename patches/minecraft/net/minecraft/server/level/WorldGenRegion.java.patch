@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/WorldGenRegion.java
 +++ b/net/minecraft/server/level/WorldGenRegion.java
-@@ -325,6 +_,7 @@
+@@ -317,6 +_,7 @@
  
      @Override
      public boolean addFreshEntity(Entity p_9580_) {

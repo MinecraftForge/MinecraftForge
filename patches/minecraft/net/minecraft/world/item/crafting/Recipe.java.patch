@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/item/crafting/Recipe.java
 +++ b/net/minecraft/world/item/crafting/Recipe.java
-@@ -31,9 +_,9 @@
-         NonNullList<ItemStack> nonnulllist = NonNullList.withSize(p_44004_.getContainerSize(), ItemStack.EMPTY);
+@@ -30,9 +_,9 @@
+         NonNullList<ItemStack> nonnulllist = NonNullList.withSize(p_344178_.size(), ItemStack.EMPTY);
  
          for (int i = 0; i < nonnulllist.size(); i++) {
--            Item item = p_44004_.getItem(i).getItem();
-+            ItemStack item = p_44004_.getItem(i);
+-            Item item = p_344178_.getItem(i).getItem();
++            ItemStack item = p_344178_.getItem(i);
              if (item.hasCraftingRemainingItem()) {
 -                nonnulllist.set(i, new ItemStack(item.getCraftingRemainingItem()));
 +                nonnulllist.set(i, item.getCraftingRemainingItem());
              }
          }
  
-@@ -66,6 +_,6 @@
+@@ -65,6 +_,6 @@
  
      default boolean isIncomplete() {
          NonNullList<Ingredient> nonnulllist = this.getIngredients();

@@ -74,7 +74,7 @@ public class LanguageHook
         ResourceManager resourceManager = server.getServerResources().resourceManager();
         resourceManager.getNamespaces().forEach(namespace -> {
             try {
-                ResourceLocation langResource = new ResourceLocation(namespace, langFile);
+                ResourceLocation langResource = ResourceLocation.fromNamespaceAndPath(namespace, langFile);
                 loadLocaleData(resourceManager.getResourceStack(langResource));
             } catch (Exception exception) {
                 LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);

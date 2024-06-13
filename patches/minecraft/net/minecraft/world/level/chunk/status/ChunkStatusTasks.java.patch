@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
++++ b/net/minecraft/world/level/chunk/status/ChunkStatusTasks.java
+@@ -183,8 +_,14 @@
+             levelchunk.setFullStatus(generationchunkholder::getFullStatus);
+             levelchunk.runPostLoad();
+             levelchunk.setLoaded(true);
++            try {
++                generationchunkholder.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
+             levelchunk.registerAllBlockEntitiesAfterLevelLoad();
+             levelchunk.registerTickContainerInLevel(serverlevel);
++                net.minecraftforge.event.ForgeEventFactory.onChunkLoad(levelchunk, !(protochunk instanceof ImposterProtoChunk));
++            } finally {
++                generationchunkholder.currentlyLoading = null; // Forge - Stop bypassing the future chain.
++            }
+             return levelchunk;
+         }, p_341879_ -> p_342042_.mainThreadMailBox().tell(ChunkTaskPriorityQueueSorter.message(p_341879_, chunkpos.toLong(), generationchunkholder::getTicketLevel)));
+     }

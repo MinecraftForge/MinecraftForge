@@ -1,7 +1,7 @@
 --- a/net/minecraft/data/registries/RegistriesDatapackGenerator.java
 +++ b/net/minecraft/data/registries/RegistriesDatapackGenerator.java
-@@ -22,10 +_,21 @@
-     private static final Logger LOGGER = LogUtils.getLogger();
+@@ -20,10 +_,21 @@
+ public class RegistriesDatapackGenerator implements DataProvider {
      private final PackOutput output;
      private final CompletableFuture<HolderLookup.Provider> registries;
 +    private final java.util.function.Predicate<String> namespacePredicate;
@@ -22,7 +22,7 @@
      }
  
      @Override
-@@ -35,8 +_,7 @@
+@@ -33,8 +_,7 @@
                  p_325918_ -> {
                      DynamicOps<JsonElement> dynamicops = p_325918_.createSerializationContext(JsonOps.INSTANCE);
                      return CompletableFuture.allOf(
@@ -32,14 +32,10 @@
                              .flatMap(p_256552_ -> this.dumpRegistryCap(p_255785_, p_325918_, dynamicops, (RegistryDataLoader.RegistryData<?>)p_256552_).stream())
                              .toArray(CompletableFuture[]::new)
                      );
-@@ -52,9 +_,10 @@
-             .map(
-                 p_255847_ -> {
-                     PackOutput.PathProvider packoutput$pathprovider = this.output
--                        .createPathProvider(PackOutput.Target.DATA_PACK, resourcekey.location().getPath());
-+                        .createPathProvider(PackOutput.Target.DATA_PACK, net.minecraftforge.common.ForgeHooks.prefixNamespace(resourcekey.location()));
+@@ -52,6 +_,7 @@
+                     PackOutput.PathProvider packoutput$pathprovider = this.output.createRegistryElementsPathProvider(resourcekey);
                      return CompletableFuture.allOf(
-                         p_255847_.listElements()
+                         p_341079_.listElements()
 +                            .filter(holder -> this.namespacePredicate.test(holder.key().location().getNamespace()))
                              .map(
                                  p_256105_ -> dumpValue(

@@ -43,19 +43,19 @@
 +        net.minecraft.client.renderer.RenderType renderType
      ) {
          try {
-             RenderShape rendershape = p_234356_.getRenderShape();
-@@ -76,7 +_,9 @@
-                         p_234361_,
-                         p_234362_,
-                         p_234356_.getSeed(p_234357_),
--                        OverlayTexture.NO_OVERLAY
-+                        OverlayTexture.NO_OVERLAY,
-+                        modelData,
-+                        renderType
-                     );
-             }
+             this.modelRenderer
+@@ -74,7 +_,9 @@
+                     p_234361_,
+                     p_234362_,
+                     p_234356_.getSeed(p_234357_),
+-                    OverlayTexture.NO_OVERLAY
++                    OverlayTexture.NO_OVERLAY,
++                    modelData,
++                    renderType
+                 );
          } catch (Throwable throwable) {
-@@ -106,7 +_,12 @@
+             CrashReport crashreport = CrashReport.forThrowable(throwable, "Tesselating block in world");
+@@ -103,7 +_,12 @@
          return this.blockModelShaper.getBlockModel(p_110911_);
      }
  
@@ -68,7 +68,7 @@
          RenderShape rendershape = p_110913_.getRenderShape();
          if (rendershape != RenderShape.INVISIBLE) {
              switch (rendershape) {
-@@ -116,21 +_,26 @@
+@@ -113,21 +_,26 @@
                      float f = (float)(i >> 16 & 0xFF) / 255.0F;
                      float f1 = (float)(i >> 8 & 0xFF) / 255.0F;
                      float f2 = (float)(i & 0xFF) / 255.0F;

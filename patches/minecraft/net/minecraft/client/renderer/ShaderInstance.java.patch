@@ -7,31 +7,30 @@
 +    @Deprecated // Forge: Use the ResourceLocation variant below
      public ShaderInstance(ResourceProvider p_173336_, String p_173337_, VertexFormat p_173338_) throws IOException {
 -        this.name = p_173337_;
-+        this(p_173336_, new ResourceLocation(p_173337_), p_173338_);
++        this(p_173336_, ResourceLocation.parse(p_173337_), p_173338_);
 +    }
 +
 +    public ShaderInstance(ResourceProvider p_173336_, ResourceLocation shaderLocation, VertexFormat p_173338_) throws IOException {
 +        this.name = shaderLocation.getNamespace().equals("minecraft") ? shaderLocation.getPath() : shaderLocation.toString();
          this.vertexFormat = p_173338_;
--        ResourceLocation resourcelocation = new ResourceLocation("shaders/core/" + p_173337_ + ".json");
-+        ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.getNamespace(), "shaders/core/" + shaderLocation.getPath() + ".json");
+-        ResourceLocation resourcelocation = ResourceLocation.withDefaultNamespace("shaders/core/" + p_173337_ + ".json");
++        ResourceLocation resourcelocation = shaderLocation.withPath(p -> "shaders/core/" + p + ".json");
  
          try (Reader reader = p_173336_.openAsReader(resourcelocation)) {
              JsonObject jsonobject = GsonHelper.parse(reader);
-@@ -178,8 +_,10 @@
+@@ -177,8 +_,9 @@
          Program program1 = p_173342_.getPrograms().get(p_173343_);
          Program program;
          if (program1 == null) {
 -            String s = "shaders/core/" + p_173343_ + p_173342_.getExtension();
--            Resource resource = p_173341_.getResourceOrThrow(new ResourceLocation(s));
-+            ResourceLocation loc = new ResourceLocation(p_173343_);
-+            String s = "shaders/core/" + loc.getPath() + p_173342_.getExtension();
-+            ResourceLocation resourcelocation = new ResourceLocation(loc.getNamespace(), s);
+-            Resource resource = p_173341_.getResourceOrThrow(ResourceLocation.withDefaultNamespace(s));
++            ResourceLocation resourcelocation = ResourceLocation.parse(p_173343_).withPath(p -> "shaders/core/" + p + p_173342_.getExtension());
++            String s = resourcelocation.getPath();
 +            Resource resource = p_173341_.getResourceOrThrow(resourcelocation);
  
              try (InputStream inputstream = resource.open()) {
                  final String s1 = FileUtil.getFullResourcePath(s);
-@@ -188,12 +_,11 @@
+@@ -187,12 +_,11 @@
  
                      @Override
                      public String applyImport(boolean p_173374_, String p_173375_) {
@@ -42,12 +41,12 @@
 +                        if (!this.importedPaths.add(resourcelocation.toString())) {
                              return null;
                          } else {
--                            ResourceLocation resourcelocation = new ResourceLocation(p_173375_);
+-                            ResourceLocation resourcelocation = ResourceLocation.parse(p_173375_);
 -
                              try {
                                  String s2;
                                  try (Reader reader = p_173341_.openAsReader(resourcelocation)) {
-@@ -202,7 +_,8 @@
+@@ -201,7 +_,8 @@
  
                                  return s2;
                              } catch (IOException ioexception) {

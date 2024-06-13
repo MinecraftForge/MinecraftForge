@@ -175,7 +175,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
-            ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
+            ResourceLocation key = ResourceLocation.fromNamespaceAndPath("minecraft", pattern.replace("{color}",  color.getName()));
             TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)

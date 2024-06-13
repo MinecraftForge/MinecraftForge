@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -133,7 +_,7 @@
-             if (!this.level().isClientSide) {
+@@ -138,7 +_,7 @@
+             if (!this.level().isClientSide && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {
                  BlockPos blockpos = this.blockPosition();
                  boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
 -                boolean flag1 = flag && this.level().getFluidState(blockpos).is(FluidTags.WATER);
@@ -9,7 +9,7 @@
                  double d0 = this.getDeltaMovement().lengthSqr();
                  if (flag && d0 > 1.0) {
                      BlockHitResult blockhitresult = this.level()
-@@ -146,7 +_,7 @@
+@@ -151,7 +_,7 @@
                                  this
                              )
                          );

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -79,4 +_,31 @@
+@@ -79,4 +_,32 @@
  
          return super.useOn(p_186371_);
      }
@@ -14,7 +14,8 @@
 +
 +            BlockPos pos = BlockPos.containing(entity.position());
 +            if (target.isShearable(stack, entity.level(), pos)) {
-+                var drops = target.onSheared(playerIn, stack, entity.level(), pos, stack.getEnchantments().getLevel(net.minecraft.world.item.enchantment.Enchantments.FORTUNE));
++                var key = net.minecraft.world.item.enchantment.Enchantments.FORTUNE;
++                var drops = target.onSheared(playerIn, stack, entity.level(), pos, net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(entity.level().holderLookup(key.registryKey()).getOrThrow(key), stack));
 +                var rand = new java.util.Random();
 +                drops.forEach(d -> {
 +                    var ent = entity.spawnAtLocation(d, 1.0F);

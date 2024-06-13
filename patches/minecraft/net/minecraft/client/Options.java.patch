@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -680,7 +_,8 @@
+@@ -681,7 +_,8 @@
          },
          new OptionInstance.LazyEnum<>(
              () -> Stream.concat(Stream.of(""), Minecraft.getInstance().getSoundManager().getAvailableSoundDevices().stream()).toList(),
@@ -10,7 +10,7 @@
                      ? Optional.empty()
                      : Optional.of(p_232011_),
              Codec.STRING
-@@ -1044,6 +_,7 @@
+@@ -1050,6 +_,7 @@
      }
  
      public Options(Minecraft p_92138_, File p_92139_) {
@@ -18,7 +18,7 @@
          this.minecraft = p_92138_;
          this.optionsFile = new File(p_92139_, "options.txt");
          boolean flag = Runtime.getRuntime().maxMemory() >= 1000000000L;
-@@ -1178,12 +_,22 @@
+@@ -1184,12 +_,22 @@
          p_168428_.process("telemetryOptInExtra", this.telemetryOptInExtra);
          this.onboardAccessibility = p_168428_.process("onboardAccessibility", this.onboardAccessibility);
          p_168428_.process("menuBackgroundBlurriness", this.menuBackgroundBlurriness);
@@ -42,7 +42,7 @@
              }
          }
  
-@@ -1201,6 +_,10 @@
+@@ -1207,6 +_,10 @@
      }
  
      public void load() {
@@ -53,7 +53,7 @@
          try {
              if (!this.optionsFile.exists()) {
                  return;
-@@ -1228,7 +_,8 @@
+@@ -1234,7 +_,8 @@
                  }
              }
  
@@ -63,7 +63,7 @@
                  new Options.FieldAccess() {
                      @Nullable
                      private String getValueOrNull(String p_168459_) {
-@@ -1422,6 +_,7 @@
+@@ -1428,6 +_,7 @@
      }
  
      public void broadcastOptions() {
@@ -71,7 +71,7 @@
          if (this.minecraft.player != null) {
              this.minecraft.player.connection.send(new ServerboundClientInformationPacket(this.buildPlayerInformation()));
          }
-@@ -1544,6 +_,23 @@
+@@ -1546,6 +_,23 @@
  
      public static Component genericValueLabel(Component p_231901_, int p_231902_) {
          return genericValueLabel(p_231901_, Component.literal(Integer.toString(p_231902_)));
@@ -94,4 +94,4 @@
 +        keySmoothCamera.setKeyConflictContext(inGame);
      }
  
-     @OnlyIn(Dist.CLIENT)
+     public static Component genericValueOrOffLabel(Component p_345288_, int p_344826_) {

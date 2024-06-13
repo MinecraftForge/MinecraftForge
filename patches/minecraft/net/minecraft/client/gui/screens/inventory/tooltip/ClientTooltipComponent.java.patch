@@ -1,8 +1,8 @@
 --- a/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
 +++ b/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
-@@ -20,6 +_,8 @@
-         if (p_169951_ instanceof BundleTooltip bundletooltip) {
-             return new ClientBundleTooltip(bundletooltip.contents());
+@@ -22,6 +_,8 @@
+         } else if (p_169951_ instanceof ClientActivePlayersTooltip.ActivePlayersTooltip clientactiveplayerstooltip$activeplayerstooltip) {
+             return new ClientActivePlayersTooltip(clientactiveplayerstooltip$activeplayerstooltip);
          } else {
 +            ClientTooltipComponent result = net.minecraftforge.client.gui.ClientTooltipComponentManager.createClientTooltipComponent(p_169951_);
 +            if (result != null) return result;

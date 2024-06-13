@@ -33,7 +33,7 @@ public interface IConditionBuilder {
     }
 
     default ICondition itemExists(String namespace, String path) {
-        return new ItemExistsCondition(new ResourceLocation(namespace, path));
+        return new ItemExistsCondition(ResourceLocation.fromNamespaceAndPath(namespace, path));
     }
 
     default ICondition modLoaded(String modid) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientCommonPacketListenerImpl.java
-@@ -116,6 +_,7 @@
+@@ -149,6 +_,7 @@
  
      @Override
      public void handleCustomPayload(ClientboundCustomPayloadPacket p_298103_) {

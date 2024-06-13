@@ -143,11 +143,11 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public ResourceLocation modLoc(String name) {
-        return new ResourceLocation(modid, name);
+        return ResourceLocation.fromNamespaceAndPath(modid, name);
     }
 
     public ResourceLocation mcLoc(String name) {
-        return new ResourceLocation(name);
+        return ResourceLocation.parse(name);
     }
 
     private ResourceLocation key(Block block) {
@@ -159,12 +159,11 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public ResourceLocation blockTexture(Block block) {
-        ResourceLocation name = key(block);
-        return new ResourceLocation(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+        return key(block).withPath(p -> ModelProvider.BLOCK_FOLDER + '/' + p);
     }
 
     private ResourceLocation extend(ResourceLocation rl, String suffix) {
-        return new ResourceLocation(rl.getNamespace(), rl.getPath() + suffix);
+        return rl.withSuffix(suffix);
     }
 
     public ModelFile cubeAll(Block block) {
@@ -627,31 +626,31 @@ public abstract class BlockStateProvider implements DataProvider {
     }
 
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
-    		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
-    		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
-    		.put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
-    		.put(Direction.WEST,  BlockStateProperties.WEST_WALL)
-    		.build();
+            .put(Direction.EAST,  BlockStateProperties.EAST_WALL)
+            .put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
+            .put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
+            .put(Direction.WEST,  BlockStateProperties.WEST_WALL)
+            .build();
 
     public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel()
                     .condition(WallBlock.UP, true).end();
         WALL_PROPS.entrySet().stream()
-        	.filter(e -> e.getKey().getAxis().isHorizontal())
-        	.forEach(e -> {
-        		wallSidePart(builder, side, e, WallSide.LOW);
-        		wallSidePart(builder, sideTall, e, WallSide.TALL);
-        	});
+            .filter(e -> e.getKey().getAxis().isHorizontal())
+            .forEach(e -> {
+                wallSidePart(builder, side, e, WallSide.LOW);
+                wallSidePart(builder, sideTall, e, WallSide.TALL);
+            });
     }
 
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
-        	.modelFile(model)
-        		.rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
-        		.uvLock(true)
-        		.addModel()
-    		.condition(entry.getValue(), height);
+            .modelFile(model)
+                .rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
+                .uvLock(true)
+                .addModel()
+            .condition(entry.getValue(), height);
     }
 
     public void paneBlock(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge) {

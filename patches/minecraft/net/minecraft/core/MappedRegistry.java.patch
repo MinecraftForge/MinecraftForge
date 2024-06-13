@@ -17,7 +17,7 @@
          }
  
          this.byKey.put(p_256252_, reference);
-@@ -322,7 +_,6 @@
+@@ -327,7 +_,6 @@
              return this;
          } else {
              this.frozen = true;
@@ -25,7 +25,7 @@
              List<ResourceLocation> list = this.byKey
                  .entrySet()
                  .stream()
-@@ -338,7 +_,8 @@
+@@ -343,7 +_,8 @@
                          throw new IllegalStateException("Some intrusive holders were not registered: " + this.unregisteredIntrusiveHolders.values());
                      }
  
@@ -35,7 +35,7 @@
                  }
  
                  return this;
-@@ -435,5 +_,24 @@
+@@ -440,5 +_,24 @@
      @Override
      public HolderLookup.RegistryLookup<T> asLookup() {
          return this.lookup;

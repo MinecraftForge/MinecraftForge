@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/PauseScreen.java
 +++ b/net/minecraft/client/gui/screens/PauseScreen.java
-@@ -86,6 +_,7 @@
+@@ -94,6 +_,7 @@
          } else {
              gridlayout$rowhelper.addChild(this.openScreenButton(PLAYER_REPORTING, () -> new SocialInteractionsScreen(this)));
          }

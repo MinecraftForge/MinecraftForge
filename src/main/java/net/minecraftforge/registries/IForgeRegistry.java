@@ -142,7 +142,7 @@ public interface IForgeRegistry<V> extends Iterable<V> {
 
     public record SlaveKey<T>(ResourceLocation name) {
         public static <X> SlaveKey<X> create(String name) {
-            return create(new ResourceLocation(name));
+            return create(ResourceLocation.parse(name));
         }
 
         public static <X> SlaveKey<X> create(ResourceLocation name) {

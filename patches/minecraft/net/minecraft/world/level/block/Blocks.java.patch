@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -791,7 +_,7 @@
+@@ -790,7 +_,7 @@
      public static final Block RED_BED = register("red_bed", bed(DyeColor.RED));
      public static final Block BLACK_BED = register("black_bed", bed(DyeColor.BLACK));
      public static final Block POWERED_RAIL = register(
@@ -9,7 +9,7 @@
      );
      public static final Block DETECTOR_RAIL = register(
          "detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL))
-@@ -7581,16 +_,5 @@
+@@ -7546,16 +_,5 @@
  
      public static void rebuildCache() {
          Block.BLOCK_STATE_REGISTRY.forEach(BlockBehaviour.BlockStateBase::initCache);

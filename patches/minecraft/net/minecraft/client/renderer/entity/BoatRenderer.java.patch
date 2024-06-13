@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/BoatRenderer.java
 +++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
-@@ -75,7 +_,7 @@
+@@ -76,7 +_,7 @@
              p_113932_.mulPose(new Quaternionf().setAngleAxis(p_113929_.getBubbleAngle(p_113931_) * (float) (Math.PI / 180.0), 1.0F, 0.0F, 1.0F));
          }
  
@@ -9,7 +9,7 @@
          ResourceLocation resourcelocation = pair.getFirst();
          ListModel<Boat> listmodel = pair.getSecond();
          p_113932_.scale(-1.0F, -1.0F, 1.0F);
-@@ -94,7 +_,12 @@
+@@ -95,7 +_,12 @@
          super.render(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
      }
  

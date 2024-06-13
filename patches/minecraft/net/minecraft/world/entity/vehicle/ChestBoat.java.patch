@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/ChestBoat.java
 +++ b/net/minecraft/world/entity/vehicle/ChestBoat.java
-@@ -213,4 +_,26 @@
+@@ -220,4 +_,26 @@
      public void stopOpen(Player p_270286_) {
          this.level().gameEvent(GameEvent.CONTAINER_CLOSE, this.position(), GameEvent.Context.of(p_270286_));
      }

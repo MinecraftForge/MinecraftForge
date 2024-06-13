@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerConfigurationPacketListenerImpl.java
-@@ -38,6 +_,7 @@
+@@ -41,6 +_,7 @@
  public class ServerConfigurationPacketListenerImpl extends ServerCommonPacketListenerImpl implements ServerConfigurationPacketListener, TickablePacketListener {
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final Component DISCONNECT_REASON_INVALID_DATA = Component.translatable("multiplayer.disconnect.invalid_player_data");
@@ -8,7 +8,7 @@
      private final GameProfile gameProfile;
      private final Queue<ConfigurationTask> configurationTasks = new ConcurrentLinkedQueue<>();
      @Nullable
-@@ -45,11 +_,13 @@
+@@ -48,11 +_,13 @@
      private ClientInformation clientInformation;
      @Nullable
      private SynchronizeRegistriesTask synchronizeRegistriesTask;
@@ -22,13 +22,18 @@
      }
  
      @Override
-@@ -68,13 +_,18 @@
+@@ -71,18 +_,23 @@
          return this.connection.isConnected();
      }
  
 -    public void startConfiguration() {
 +    public void vanillaStart() {
          this.send(new ClientboundCustomPayloadPacket(new BrandPayload(this.server.getServerModName())));
+         ServerLinks serverlinks = this.server.serverLinks();
+         if (!serverlinks.isEmpty()) {
+             this.send(new ClientboundServerLinksPacket(serverlinks.untrust()));
+         }
+ 
 +        this.send(new ClientboundUpdateEnabledFeaturesPacket(FeatureFlags.REGISTRY.toNames(this.server.getWorldData().enabledFeatures())));
 +    }
 +
@@ -43,7 +48,7 @@
          this.addOptionalTasks();
          this.configurationTasks.add(new JoinWorldTask());
          this.startNextTask();
-@@ -153,7 +_,7 @@
+@@ -161,7 +_,7 @@
              ConfigurationTask configurationtask = this.configurationTasks.poll();
              if (configurationtask != null) {
                  this.currentTask = configurationtask;

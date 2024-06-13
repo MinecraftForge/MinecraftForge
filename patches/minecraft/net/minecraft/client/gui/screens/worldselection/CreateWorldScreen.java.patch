@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -119,6 +_,7 @@
+@@ -118,6 +_,7 @@
      public static void openFresh(Minecraft p_232897_, @Nullable Screen p_232898_) {
          queueLoadScreen(p_232897_, PREPARING_WORLD_DATA);
          PackRepository packrepository = new PackRepository(new ServerPacksSource(p_232897_.directoryValidator()));
@@ -8,7 +8,7 @@
          WorldLoader.InitConfig worldloader$initconfig = createDefaultLoadConfig(packrepository, WorldDataConfiguration.DEFAULT);
          CompletableFuture<WorldCreationContext> completablefuture = WorldLoader.load(
              worldloader$initconfig,
-@@ -419,7 +_,7 @@
+@@ -415,7 +_,7 @@
                                          if (p_269627_) {
                                              p_270552_.accept(this.uiState.getSettings().dataConfiguration());
                                          } else {
@@ -17,7 +17,7 @@
                                          }
                                      },
                                      Component.translatable("dataPack.validation.failed"),
-@@ -537,6 +_,7 @@
+@@ -533,6 +_,7 @@
          if (path != null) {
              if (this.tempDataPackRepository == null) {
                  this.tempDataPackRepository = ServerPacksSource.createPackRepository(path, this.packValidator);

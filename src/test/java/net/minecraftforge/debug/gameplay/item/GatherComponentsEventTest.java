@@ -13,6 +13,7 @@ import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.test.BaseTestMod;
 
 import java.util.List;
+import java.util.Optional;
 
 @GameTestHolder("forge." + GatherComponentsEventTest.MOD_ID)
 @Mod(GatherComponentsEventTest.MOD_ID)
@@ -31,6 +32,7 @@ public class GatherComponentsEventTest extends BaseTestMod {
                     7,
                     true,
                     3,
+                    Optional.empty(),
                     List.of()
             ));
         }

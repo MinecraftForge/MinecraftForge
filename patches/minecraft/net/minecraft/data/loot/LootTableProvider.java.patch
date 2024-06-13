@@ -4,8 +4,8 @@
      private CompletableFuture<?> run(CachedOutput p_327970_, HolderLookup.Provider p_331092_) {
          WritableRegistry<LootTable> writableregistry = new MappedRegistry<>(Registries.LOOT_TABLE, Lifecycle.experimental());
          Map<RandomSupport.Seed128bit, ResourceLocation> map = new Object2ObjectOpenHashMap<>();
--        this.subProviders.forEach(p_325858_ -> p_325858_.provider().get().generate(p_331092_, (p_325864_, p_325865_) -> {
-+        this.getTables().forEach(p_325858_ -> p_325858_.provider().get().generate(p_331092_, (p_325864_, p_325865_) -> {
+-        this.subProviders.forEach(p_341016_ -> p_341016_.provider().apply(p_331092_).generate((p_325864_, p_325865_) -> {
++        this.getTables().forEach(p_341016_ -> p_341016_.provider().apply(p_331092_).generate((p_325864_, p_325865_) -> {
                  ResourceLocation resourcelocation = sequenceIdForLootTable(p_325864_);
                  ResourceLocation resourcelocation1 = map.put(RandomSequence.seedForKey(resourcelocation), resourcelocation);
                  if (resourcelocation1 != null) {
@@ -50,4 +50,4 @@
 +        ));
      }
  
-     public static record SubProviderEntry(Supplier<LootTableSubProvider> provider, LootContextParamSet paramSet) {
+     public static record SubProviderEntry(Function<HolderLookup.Provider, LootTableSubProvider> provider, LootContextParamSet paramSet) {

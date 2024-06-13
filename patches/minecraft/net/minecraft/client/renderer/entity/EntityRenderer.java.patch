@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
-@@ -71,8 +_,9 @@
-     }
+@@ -94,8 +_,9 @@
+             }
+         }
  
-     public void render(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
 -        if (this.shouldShowName(p_114485_)) {
 -            this.renderNameTag(p_114485_, p_114485_.getDisplayName(), p_114488_, p_114489_, p_114490_, p_114487_);
 +        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.fireRenderNameTagEvent(p_114485_, p_114485_.getDisplayName(), this, p_114488_, p_114489_, p_114490_, p_114487_);
@@ -12,7 +12,7 @@
          }
      }
  
-@@ -88,7 +_,7 @@
+@@ -181,7 +_,7 @@
  
      protected void renderNameTag(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_, float p_334448_) {
          double d0 = this.entityRenderDispatcher.distanceToSqr(p_114498_);

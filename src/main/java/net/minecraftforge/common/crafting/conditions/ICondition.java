@@ -38,7 +38,7 @@ public interface ICondition {
     interface IContext {
         /* Key used to attach this context option to a DynamicOps instance */
         @ApiStatus.Internal
-        public static ResourceLocation KEY = new ResourceLocation("forge", "condition_context");
+        public static ResourceLocation KEY = ResourceLocation.fromNamespaceAndPath("forge", "condition_context");
 
         IContext EMPTY = new IContext() {
             @Override

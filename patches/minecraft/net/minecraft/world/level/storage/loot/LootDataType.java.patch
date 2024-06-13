@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/storage/loot/LootDataType.java
 +++ b/net/minecraft/world/level/storage/loot/LootDataType.java
-@@ -34,7 +_,12 @@
-     public <V> Optional<T> deserialize(ResourceLocation p_279253_, DynamicOps<V> p_335939_, V p_327740_) {
+@@ -30,7 +_,12 @@
          DataResult<T> dataresult = this.codec.parse(p_335939_, p_327740_);
-         dataresult.error().ifPresent(p_327555_ -> LOGGER.error("Couldn't parse element {}:{} - {}", this.directory, p_279253_, p_327555_.message()));
+         dataresult.error()
+             .ifPresent(p_341974_ -> LOGGER.error("Couldn't parse element {}/{} - {}", this.registryKey.location(), p_279253_, p_341974_.message()));
 -        return dataresult.result();
 +        var ret = dataresult.result();
 +        if (ret.orElse(null) instanceof LootTable table) {

@@ -27,7 +27,7 @@ import net.minecraftforge.registries.RegisterEvent;
 @Mod(TestHelperMod.MOD_ID)
 public class TestHelperMod extends BaseTestMod {
     public static final String MOD_ID = "test_helper_mod";
-    public static final ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(MOD_ID, "test_items"));
+    public static final ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "test_items"));
 
     @SubscribeEvent
     public void onRegister(RegisterEvent event) {

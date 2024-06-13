@@ -23,7 +23,7 @@
      }
  
 +    public int getLootingModifier() {
-+        return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.KILLER_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
++        return net.minecraftforge.common.ForgeHooks.getLootingLevel(getParamOrNull(LootContextParams.THIS_ENTITY), getParamOrNull(LootContextParams.ATTACKING_ENTITY), getParamOrNull(LootContextParams.DAMAGE_SOURCE));
 +    }
 +
 +    public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
@@ -53,7 +53,7 @@
          public LootContext.Builder withOptionalRandomSeed(long p_78966_) {
              if (p_78966_ != 0L) {
                  this.random = RandomSource.create(p_78966_);
-@@ -104,6 +_,11 @@
+@@ -109,6 +_,11 @@
              return this;
          }
  
@@ -65,7 +65,7 @@
          public ServerLevel getLevel() {
              return this.params.getLevel();
          }
-@@ -112,7 +_,7 @@
+@@ -117,7 +_,7 @@
              ServerLevel serverlevel = this.getLevel();
              MinecraftServer minecraftserver = serverlevel.getServer();
              RandomSource randomsource = Optional.ofNullable(this.random).or(() -> p_299315_.map(serverlevel::getRandomSequence)).orElseGet(serverlevel::getRandom);

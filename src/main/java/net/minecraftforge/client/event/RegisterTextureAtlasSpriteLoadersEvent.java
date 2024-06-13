@@ -26,22 +26,19 @@ import java.util.Map;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterTextureAtlasSpriteLoadersEvent extends Event implements IModBusEvent
-{
+public class RegisterTextureAtlasSpriteLoadersEvent extends Event implements IModBusEvent {
     private final Map<ResourceLocation, ITextureAtlasSpriteLoader> loaders;
 
     @ApiStatus.Internal
-    public RegisterTextureAtlasSpriteLoadersEvent(Map<ResourceLocation, ITextureAtlasSpriteLoader> loaders)
-    {
+    public RegisterTextureAtlasSpriteLoadersEvent(Map<ResourceLocation, ITextureAtlasSpriteLoader> loaders) {
         this.loaders = loaders;
     }
 
     /**
      * Registers a custom {@link ITextureAtlasSpriteLoader sprite loader}.
      */
-    public void register(String name, ITextureAtlasSpriteLoader loader)
-    {
-        var key = new ResourceLocation(ModLoadingContext.get().getActiveNamespace(), name);
+    public void register(String name, ITextureAtlasSpriteLoader loader) {
+        var key = ResourceLocation.fromNamespaceAndPath(ModLoadingContext.get().getActiveNamespace(), name);
         Preconditions.checkArgument(!loaders.containsKey(key), "Sprite loader already registered: " + key);
         loaders.put(key, loader);
     }

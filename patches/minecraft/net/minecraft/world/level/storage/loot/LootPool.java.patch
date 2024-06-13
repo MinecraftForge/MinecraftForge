@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/storage/loot/LootPool.java
 +++ b/net/minecraft/world/level/storage/loot/LootPool.java
-@@ -34,10 +_,13 @@
-                     LootItemConditions.DIRECT_CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(p_297008_ -> p_297008_.conditions),
+@@ -33,10 +_,13 @@
+                     LootItemCondition.DIRECT_CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(p_297008_ -> p_297008_.conditions),
                      LootItemFunctions.ROOT_CODEC.listOf().optionalFieldOf("functions", List.of()).forGetter(p_297009_ -> p_297009_.functions),
                      NumberProviders.CODEC.fieldOf("rolls").forGetter(p_297004_ -> p_297004_.rolls),
 -                    NumberProviders.CODEC.fieldOf("bonus_rolls").orElse(ConstantValue.exactly(0.0F)).forGetter(p_297006_ -> p_297006_.bonusRolls)
@@ -9,13 +9,13 @@
 +                    Codec.STRING.optionalFieldOf("name").forGetter(p -> p.name.filter(n -> !n.startsWith("custom#"))),
 +                    net.minecraftforge.common.crafting.conditions.ICondition.OPTIONAL_FEILD_CODEC.forGetter(p -> p.forge_condition)
                  )
-                 .apply(p_327556_, LootPool::new)
+                 .apply(p_341975_, LootPool::new)
      );
 +    public static final Codec<LootPool> CONDITIONAL_CODEC = net.minecraftforge.common.crafting.conditions.ConditionCodec.checkingDecode(CODEC, () -> lootPool().build());
      private final List<LootPoolEntryContainer> entries;
      private final List<LootItemCondition> conditions;
      private final Predicate<LootContext> compositeCondition;
-@@ -45,13 +_,21 @@
+@@ -44,13 +_,21 @@
      private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
      private NumberProvider rolls;
      private NumberProvider bonusRolls;
@@ -38,7 +38,7 @@
      ) {
          this.entries = p_298341_;
          this.conditions = p_297697_;
-@@ -60,6 +_,8 @@
+@@ -59,6 +_,8 @@
          this.compositeFunction = LootItemFunctions.compose(p_299722_);
          this.rolls = p_165131_;
          this.bonusRolls = p_165132_;
@@ -47,7 +47,7 @@
      }
  
      private void addRandomItem(Consumer<ItemStack> p_79059_, LootContext p_79060_) {
-@@ -127,12 +_,35 @@
+@@ -126,12 +_,35 @@
          return new LootPool.Builder();
      }
  
@@ -83,7 +83,7 @@
  
          public LootPool.Builder setRolls(NumberProvider p_165134_) {
              this.rolls = p_165134_;
-@@ -163,8 +_,18 @@
+@@ -162,8 +_,18 @@
              return this;
          }
  

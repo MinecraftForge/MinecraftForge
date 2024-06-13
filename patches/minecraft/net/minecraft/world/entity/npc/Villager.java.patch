@@ -9,7 +9,7 @@
              return super.mobInteract(p_35472_, p_35473_);
          } else if (this.isBaby()) {
              this.setUnhappy();
-@@ -725,7 +_,8 @@
+@@ -727,7 +_,8 @@
  
      @Override
      protected Component getTypeName() {
@@ -19,7 +19,7 @@
      }
  
      @Override
-@@ -780,7 +_,7 @@
+@@ -782,7 +_,7 @@
  
      @Override
      public void thunderHit(ServerLevel p_35409_, LightningBolt p_35410_) {
@@ -28,7 +28,7 @@
              LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
              Witch witch = EntityType.WITCH.create(p_35409_);
              if (witch != null) {
-@@ -793,6 +_,7 @@
+@@ -795,6 +_,7 @@
                  }
  
                  witch.setPersistenceRequired();

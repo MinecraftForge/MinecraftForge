@@ -16,6 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "fluid_container");
     public static <T extends ModelBuilder<T>> DynamicFluidContainerModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
         return new DynamicFluidContainerModelBuilder<>(parent, existingFileHelper);
@@ -29,7 +30,7 @@ public class DynamicFluidContainerModelBuilder<T extends ModelBuilder<T>> extend
 
     protected DynamicFluidContainerModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:fluid_container"), parent, existingFileHelper);
+        super(NAME, parent, existingFileHelper);
     }
 
     public DynamicFluidContainerModelBuilder<T> fluid(Fluid fluid)

@@ -5,7 +5,7 @@
      });
      public static final LootContextParamSet CHEST = register(
 -        "chest", p_327636_ -> p_327636_.required(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY)
-+        "chest", p_327636_ -> p_327636_.required(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY).optional(LootContextParams.KILLER_ENTITY) //Forge: Chest Minecarts can have killers.
++        "chest", p_327636_ -> p_327636_.required(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY).optional(LootContextParams.ATTACKING_ENTITY) //Forge: Chest Minecarts can have killers.
      );
      public static final LootContextParamSet COMMAND = register(
          "command", p_327634_ -> p_327634_.required(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY)
@@ -14,7 +14,7 @@
      );
      public static final LootContextParamSet FISHING = register(
 -        "fishing", p_81446_ -> p_81446_.required(LootContextParams.ORIGIN).required(LootContextParams.TOOL).optional(LootContextParams.THIS_ENTITY)
-+        "fishing", p_81446_ -> p_81446_.required(LootContextParams.ORIGIN).required(LootContextParams.TOOL).optional(LootContextParams.THIS_ENTITY).optional(LootContextParams.KILLER_ENTITY).optional(LootContextParams.THIS_ENTITY) //Forge: Allow fisher, and bobber
++        "fishing", p_81446_ -> p_81446_.required(LootContextParams.ORIGIN).required(LootContextParams.TOOL).optional(LootContextParams.THIS_ENTITY).optional(LootContextParams.ATTACKING_ENTITY).optional(LootContextParams.THIS_ENTITY) //Forge: Allow fisher, and bobber
      );
      public static final LootContextParamSet ENTITY = register(
          "entity",

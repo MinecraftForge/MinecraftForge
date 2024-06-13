@@ -9,9 +9,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
-
+import java.util.function.Function;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,7 +19,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 
 public abstract class BaseTestMod {
-    private List<Supplier<ItemStack>> testItems = new ArrayList<>();
+    private List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
 
     protected BaseTestMod() {
         // TODO: Some form of enable flag?
@@ -41,18 +41,17 @@ public abstract class BaseTestMod {
         }
     }
 
-    protected Supplier<ItemStack> testItem(Supplier<ItemStack> supplier) {
+    protected void testItem(Function<HolderLookup.Provider, ItemStack> supplier) {
         this.testItems.add(supplier);
-        return supplier;
     }
-
 
     @SubscribeEvent
     protected void onCreativeModeTabBuildContents(BuildCreativeModeTabContentsEvent event) {
         var entries = event.getEntries();
+        var lookup = event.getParameters().holders();
         if (event.getTabKey() == TestHelperMod.TAB) {
             for (var s : testItems)
-                entries.put(s.get(), TabVisibility.PARENT_AND_SEARCH_TABS);
+                entries.put(s.apply(lookup), TabVisibility.PARENT_AND_SEARCH_TABS);
         }
     }
 

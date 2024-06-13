@@ -40,7 +40,7 @@ public abstract class ModelFile {
     public static class UncheckedModelFile extends ModelFile {
 
         public UncheckedModelFile(String location) {
-           this(new ResourceLocation(location));
+           this(ResourceLocation.parse(location));
         }
         public UncheckedModelFile(ResourceLocation location) {
             super(location);

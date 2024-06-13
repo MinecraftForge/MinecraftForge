@@ -23,44 +23,44 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     }
 
     @Override
-    public VertexConsumer vertex(double x, double y, double z)
+    public VertexConsumer addVertex(float x, float y, float z)
     {
-        parent.vertex(x, y, z);
+        parent.addVertex(x, y, z);
         return this;
     }
 
     @Override
-    public VertexConsumer color(int r, int g, int b, int a)
+    public VertexConsumer setColor(int r, int g, int b, int a)
     {
-        parent.color(r, g, b, a);
+        parent.setColor(r, g, b, a);
         return this;
     }
 
     @Override
-    public VertexConsumer uv(float u, float v)
+    public VertexConsumer setUv(float u, float v)
     {
-        parent.uv(u, v);
+        parent.setUv(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer overlayCoords(int u, int v)
+    public VertexConsumer setUv1(int u, int v)
     {
-        parent.overlayCoords(u, v);
+        parent.setUv1(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer uv2(int u, int v)
+    public VertexConsumer setUv2(int u, int v)
     {
-        parent.uv2(u, v);
+        parent.setUv2(u, v);
         return this;
     }
 
     @Override
-    public VertexConsumer normal(float x, float y, float z)
+    public VertexConsumer setNormal(float x, float y, float z)
     {
-        parent.normal(x, y, z);
+        parent.setNormal(x, y, z);
         return this;
     }
 
@@ -69,23 +69,5 @@ public abstract class VertexConsumerWrapper implements VertexConsumer
     {
         parent.misc(element, values);
         return this;
-    }
-
-    @Override
-    public void endVertex()
-    {
-        parent.endVertex();
-    }
-
-    @Override
-    public void defaultColor(int r, int g, int b, int a)
-    {
-        parent.defaultColor(r, g, b, a);
-    }
-
-    @Override
-    public void unsetDefaultColor()
-    {
-        parent.unsetDefaultColor();
     }
 }

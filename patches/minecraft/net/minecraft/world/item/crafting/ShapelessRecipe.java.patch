@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/world/item/crafting/ShapelessRecipe.java
-@@ -20,12 +_,14 @@
+@@ -18,12 +_,14 @@
      final CraftingBookCategory category;
      final ItemStack result;
      final NonNullList<Ingredient> ingredients;
@@ -15,29 +15,23 @@
      }
  
      @Override
-@@ -55,17 +_,20 @@
- 
-     public boolean matches(CraftingContainer p_44262_, Level p_44263_) {
-         StackedContents stackedcontents = new StackedContents();
-+        var inputs = new java.util.ArrayList<ItemStack>();
-         int i = 0;
- 
-         for (int j = 0; j < p_44262_.getContainerSize(); j++) {
-             ItemStack itemstack = p_44262_.getItem(j);
-             if (!itemstack.isEmpty()) {
-                 i++;
-+                if (isSimple)
-                 stackedcontents.accountStack(itemstack, 1);
-+                else inputs.add(itemstack);
-             }
+@@ -54,10 +_,12 @@
+     public boolean matches(CraftingInput p_345423_, Level p_44263_) {
+         if (p_345423_.ingredientCount() != this.ingredients.size()) {
+             return false;
++        } else if (p_345423_.size() == 1 && this.ingredients.size() == 1) {
++            return this.ingredients.getFirst().test(p_345423_.getItem(0));
++        } else if (!isSimple) {
++            return net.minecraftforge.common.util.RecipeMatcher.findMatches(p_345423_.items(),  this.ingredients) != null;
+         } else {
+-            return p_345423_.size() == 1 && this.ingredients.size() == 1
+-                ? this.ingredients.getFirst().test(p_345423_.getItem(0))
+-                : p_345423_.stackedContents().canCraft(this, null);
++            return p_345423_.stackedContents().canCraft(this, null);
          }
- 
--        return i == this.ingredients.size() && stackedcontents.canCraft(this, null);
-+        return i == this.ingredients.size() && (isSimple ? stackedcontents.canCraft(this, null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs,  this.ingredients) != null);
      }
  
-     public ItemStack assemble(CraftingContainer p_44260_, HolderLookup.Provider p_334364_) {
-@@ -92,7 +_,7 @@
+@@ -85,7 +_,7 @@
                                      if (aingredient.length == 0) {
                                          return DataResult.error(() -> "No ingredients for shapeless recipe");
                                      } else {

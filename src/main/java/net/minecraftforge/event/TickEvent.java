@@ -6,6 +6,7 @@
 package net.minecraftforge.event;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.function.BooleanSupplier;
@@ -54,7 +55,7 @@ public class TickEvent extends Event
         {
             return this.haveTime.getAsBoolean();
         }
-        
+
         /**
          * {@return the server instance}
          */
@@ -105,11 +106,27 @@ public class TickEvent extends Event
     }
 
     public static class RenderTickEvent extends TickEvent {
-        public final float renderTickTime;
-        public RenderTickEvent(Phase phase, float renderTickTime)
-        {
+        private final DeltaTracker timer;
+
+        private RenderTickEvent(Phase phase, DeltaTracker timer) {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
-            this.renderTickTime = renderTickTime;
+            this.timer = timer;
+        }
+
+        public DeltaTracker getTimer() {
+            return this.timer;
+        }
+
+        public static class Start extends RenderTickEvent {
+            public Start(DeltaTracker timer) {
+                super(Phase.START, timer);
+            }
+        }
+
+        public static class End extends RenderTickEvent {
+            public End(DeltaTracker timer) {
+                super(Phase.END, timer);
+            }
         }
     }
 }

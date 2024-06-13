@@ -1,39 +1,30 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -58,6 +_,8 @@
-             Entity entity = this.getOwner();
-             if (entity instanceof ServerPlayer serverplayer) {
-                 if (serverplayer.connection.isAcceptingMessages() && serverplayer.level() == this.level() && !serverplayer.isSleeping()) {
-+                    var event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
-+                    if (!event.isCanceled()) { // Don't indent to lower patch size
-                     if (this.random.nextFloat() < 0.05F && this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
-                         Endermite endermite = EntityType.ENDERMITE.create(this.level());
-                         if (endermite != null) {
-@@ -72,9 +_,11 @@
-                         entity.teleportTo(this.getX(), this.getY(), this.getZ());
+@@ -66,6 +_,12 @@
+ 
+                 if (entity instanceof ServerPlayer serverplayer) {
+                     if (serverplayer.connection.isAcceptingMessages()) {
++                        var event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
++                        if (event.isCanceled()) {
++                            this.discard();
++                            return;
++                        }
++
+                         if (this.random.nextFloat() < 0.05F && serverlevel.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
+                             Endermite endermite = EntityType.ENDERMITE.create(serverlevel);
+                             if (endermite != null) {
+@@ -76,12 +_,12 @@
+ 
+                         entity.changeDimension(
+                             new DimensionTransition(
+-                                serverlevel, this.position(), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), DimensionTransition.DO_NOTHING
++                                serverlevel, event.getTarget(), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), DimensionTransition.DO_NOTHING
+                             )
+                         );
+                         entity.resetFallDistance();
+                         serverplayer.resetCurrentImpulseContext();
+-                        entity.hurt(this.damageSources().fall(), 5.0F);
++                        entity.hurt(this.damageSources().fall(), event.getAttackDamage());
+                         this.playSound(serverlevel, this.position());
                      }
- 
-+                    entity.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-                     entity.resetFallDistance();
--                    entity.hurt(this.damageSources().fall(), 5.0F);
-                     this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_TELEPORT, SoundSource.PLAYERS);
-+                    entity.hurt(this.damageSources().fall(), event.getAttackDamage());
-+                    } //Forge: End
-                 }
-             } else if (entity != null) {
-                 entity.teleportTo(this.getX(), this.getY(), this.getZ());
-@@ -97,12 +_,12 @@
- 
-     @Nullable
-     @Override
--    public Entity changeDimension(ServerLevel p_37506_) {
-+    public Entity changeDimension(ServerLevel p_37506_, net.minecraftforge.common.util.ITeleporter teleporter) {
-         Entity entity = this.getOwner();
-         if (entity != null && entity.level().dimension() != p_37506_.dimension()) {
-             this.setOwner(null);
-         }
- 
--        return super.changeDimension(p_37506_);
-+        return super.changeDimension(p_37506_, teleporter);
-     }
- }
+                 } else {

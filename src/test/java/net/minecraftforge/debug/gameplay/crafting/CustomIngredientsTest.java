@@ -24,13 +24,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.SimpleCraftingContainer;
@@ -70,20 +70,20 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     }
 
     private static ResourceLocation rl(String path) {
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 
     private static TagKey<Item> tag(String name) {
         return ItemTags.create(rl(name));
     }
 
-    private static <C extends Container, T extends Recipe<C>> void assertRecipeMiss(GameTestHelper helper, RecipeType<T> type, C container) {
+    private static <C extends RecipeInput, T extends Recipe<C>> void assertRecipeMiss(GameTestHelper helper, RecipeType<T> type, C container) {
         var recipe = helper.getLevel().getRecipeManager().getRecipeFor(type, container, helper.getLevel());
         helper.assertTrue(recipe.isEmpty(), () -> "Found crafting recipe when unexpected: " + recipe.get().id());
         helper.succeed();
     }
 
-    private static <C extends Container, T extends Recipe<C>> void assertRecipeMatch(GameTestHelper helper, RecipeType<T> type, C container, String name) {
+    private static <C extends RecipeInput, T extends Recipe<C>> void assertRecipeMatch(GameTestHelper helper, RecipeType<T> type, C container, String name) {
         var recipe = helper.getLevel().getRecipeManager().getRecipeFor(type, container, helper.getLevel());
         helper.assertTrue(recipe.isPresent(), "Did not find crafting recipe when expected!");
         helper.assertTrue(recipe.get().id().getNamespace().equals(MODID), "It wasn't our recipe: " + recipe.get().id());
@@ -133,7 +133,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
         var iron_tag = tagged(Items.IRON_PICKAXE, both);
         var diamond = stack(Items.DIAMOND_PICKAXE);
         var diamond_tag = tagged(Items.DIAMOND_PICKAXE, both);
-        Function<ItemStack, CraftingContainer> container = (stack) ->
+        Function<ItemStack, CraftingInput> container = (stack) ->
             SimpleCraftingContainer.builder()
                 .pattern("XXX")
                 .pattern("XXX")
@@ -167,7 +167,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void compound(GameTestHelper helper) {
-        Function<ItemStack, CraftingContainer> container = (stack) ->
+        Function<ItemStack, CraftingInput> container = (stack) ->
             SimpleCraftingContainer.builder()
                 .pattern("XXX")
                 .pattern(" X ")
@@ -183,7 +183,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void strict(GameTestHelper helper) {
-        Function<ItemStack, CraftingContainer> container = (stack) ->
+        Function<ItemStack, CraftingInput> container = (stack) ->
             SimpleCraftingContainer.builder()
                 .pattern("XXX")
                 .define('X', stack)
@@ -196,7 +196,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void intersection(GameTestHelper helper) {
-        Function<ItemStack, CraftingContainer> container = (stack) ->
+        Function<ItemStack, CraftingInput> container = (stack) ->
             SimpleCraftingContainer.builder()
                 .pattern("XXX")
                 .pattern("XXX")
@@ -212,7 +212,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void difference(GameTestHelper helper) {
-        Function<ItemStack, CraftingContainer> container = (stack) ->
+        Function<ItemStack, CraftingInput> container = (stack) ->
             SimpleCraftingContainer.builder()
                 .pattern(" X ")
                 .pattern("XXX")

@@ -1,0 +1,17 @@
+--- a/net/minecraft/core/registries/Registries.java
++++ b/net/minecraft/core/registries/Registries.java
+@@ -237,10 +_,14 @@
+     }
+ 
+     public static String elementsDirPath(ResourceKey<? extends Registry<?>> p_343743_) {
++        if (!p_343743_.location().getNamespace().equals("minecraft"))
++            return p_343743_.location().getNamespace() + '/' + p_343743_.location().getPath();
+         return p_343743_.location().getPath();
+     }
+ 
+     public static String tagsDirPath(ResourceKey<? extends Registry<?>> p_343025_) {
++        if (!p_343025_.location().getNamespace().equals("minecraft"))
++            return "tags/" + p_343025_.location().getNamespace() + '/' + p_343025_.location().getPath();
+         return "tags/" + p_343025_.location().getPath();
+     }
+ }

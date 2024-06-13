@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class SeparateTransformsModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
+    private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "separate_transforms");
+
     public static <T extends ModelBuilder<T>> SeparateTransformsModelBuilder<T> begin(T parent, ExistingFileHelper existingFileHelper)
     {
         return new SeparateTransformsModelBuilder<>(parent, existingFileHelper);
@@ -29,7 +31,7 @@ public class SeparateTransformsModelBuilder<T extends ModelBuilder<T>> extends C
 
     protected SeparateTransformsModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
-        super(new ResourceLocation("forge:separate_transforms"), parent, existingFileHelper);
+        super(NAME, parent, existingFileHelper);
     }
 
     public SeparateTransformsModelBuilder<T> base(T modelBuilder)

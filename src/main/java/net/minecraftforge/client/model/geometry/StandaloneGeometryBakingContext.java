@@ -25,7 +25,7 @@ import java.util.function.Predicate;
  */
 public class StandaloneGeometryBakingContext implements IGeometryBakingContext
 {
-    public static final ResourceLocation LOCATION = new ResourceLocation("forge", "standalone");
+    public static final ResourceLocation LOCATION = ResourceLocation.fromNamespaceAndPath("forge", "standalone");
 
     public static final StandaloneGeometryBakingContext INSTANCE = create(LOCATION);
 

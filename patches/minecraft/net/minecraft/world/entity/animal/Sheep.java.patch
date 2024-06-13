@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Sheep.java
 +++ b/net/minecraft/world/entity/animal/Sheep.java
-@@ -62,7 +_,7 @@
+@@ -61,7 +_,7 @@
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
  import net.minecraft.world.level.storage.loot.LootTable;
  
@@ -9,7 +9,7 @@
      private static final int EAT_ANIMATION_TICKS = 40;
      private static final EntityDataAccessor<Byte> DATA_WOOL_ID = SynchedEntityData.defineId(Sheep.class, EntityDataSerializers.BYTE);
      private static final Map<DyeColor, ItemLike> ITEM_BY_DYE = Util.make(Maps.newEnumMap(DyeColor.class), p_29841_ -> {
-@@ -208,7 +_,7 @@
+@@ -212,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_29853_, InteractionHand p_29854_) {
          ItemStack itemstack = p_29853_.getItemInHand(p_29854_);
@@ -18,7 +18,7 @@
              if (!this.level().isClientSide && this.readyForShearing()) {
                  this.shear(SoundSource.PLAYERS);
                  this.gameEvent(GameEvent.SHEAR, p_29853_);
-@@ -224,12 +_,24 @@
+@@ -228,12 +_,24 @@
  
      @Override
      public void shear(SoundSource p_29819_) {
@@ -44,10 +44,10 @@
              if (itementity != null) {
                  itementity.setDeltaMovement(
                      itementity.getDeltaMovement()
-@@ -375,5 +_,15 @@
-         craftingcontainer.setItem(0, new ItemStack(DyeItem.byColor(p_29832_)));
-         craftingcontainer.setItem(1, new ItemStack(DyeItem.byColor(p_29833_)));
-         return craftingcontainer;
+@@ -366,5 +_,15 @@
+ 
+     private static CraftingInput makeCraftInput(DyeColor p_344668_, DyeColor p_344678_) {
+         return CraftingInput.of(2, 1, List.of(new ItemStack(DyeItem.byColor(p_344668_)), new ItemStack(DyeItem.byColor(p_344678_))));
 +    }
 +
 +    @Override

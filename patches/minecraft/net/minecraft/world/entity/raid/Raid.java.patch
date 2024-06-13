@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -836,7 +_,7 @@
+@@ -833,7 +_,7 @@
          }
      }
  
@@ -9,7 +9,7 @@
          VINDICATOR(EntityType.VINDICATOR, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
          EVOKER(EntityType.EVOKER, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
          PILLAGER(EntityType.PILLAGER, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -850,6 +_,20 @@
+@@ -847,6 +_,20 @@
          private RaiderType(final EntityType<? extends Raider> p_37821_, final int[] p_37822_) {
              this.entityType = p_37821_;
              this.spawnsPerWaveBeforeBonus = p_37822_;

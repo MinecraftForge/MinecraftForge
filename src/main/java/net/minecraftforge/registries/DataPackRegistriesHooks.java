@@ -40,7 +40,7 @@ public final class DataPackRegistriesHooks {
         WORLDGEN_REGISTRIES.add(loaderData);
         if (data.networkCodec() != null) {
             SYNCED_CUSTOM_REGISTRIES.add(loaderData.key());
-            NETWORKABLE_REGISTRIES.put(loaderData.key(), new RegistryDataLoader.RegistryData<>(loaderData.key(), data.networkCodec()));
+            NETWORKABLE_REGISTRIES.put(loaderData.key(), new RegistryDataLoader.RegistryData<>(loaderData.key(), data.networkCodec(), false));
         }
     }
 

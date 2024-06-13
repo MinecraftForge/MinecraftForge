@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/FishingHookRenderer.java
 +++ b/net/minecraft/client/renderer/entity/FishingHookRenderer.java
-@@ -66,7 +_,7 @@
+@@ -64,7 +_,7 @@
      private Vec3 getPlayerHandPos(Player p_328037_, float p_328369_, float p_332926_) {
          int i = p_328037_.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
          ItemStack itemstack = p_328037_.getMainHandItem();

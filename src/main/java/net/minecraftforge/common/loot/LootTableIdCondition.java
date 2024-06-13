@@ -21,7 +21,7 @@ public record LootTableIdCondition(ResourceLocation id) implements LootItemCondi
 
     // TODO Forge Registry at some point?
     public static final LootItemConditionType TYPE = new LootItemConditionType(CODEC);
-    public static final ResourceLocation UNKNOWN_LOOT_TABLE = new ResourceLocation("forge", "unknown_loot_table");
+    public static final ResourceLocation UNKNOWN_LOOT_TABLE = ResourceLocation.fromNamespaceAndPath("forge", "unknown_loot_table");
 
     @Override
     public LootItemConditionType getType() {

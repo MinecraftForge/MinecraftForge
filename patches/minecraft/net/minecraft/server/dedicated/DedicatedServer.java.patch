@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -77,6 +_,8 @@
-     private RemoteSampleLogger tickTimeLogger;
+@@ -80,6 +_,8 @@
      @Nullable
      private DebugSampleSubscriptionTracker debugSampleSubscriptionTracker;
+     private final ServerLinks serverLinks;
 +    @Nullable
 +    private net.minecraft.client.server.LanServerPinger dediLanPinger;
  
      public DedicatedServer(
          Thread p_214789_,
-@@ -99,6 +_,7 @@
+@@ -103,6 +_,7 @@
          Thread thread = new Thread("Server console handler") {
              @Override
              public void run() {
@@ -17,7 +17,7 @@
                  BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
                  String s1;
-@@ -179,11 +_,13 @@
+@@ -183,11 +_,13 @@
              long i = Util.getNanos();
              SkullBlockEntity.setup(this.services, this);
              GameProfileCache.setUsesAuthentication(this.usesAuthentication());
@@ -31,7 +31,7 @@
              if (dedicatedserverproperties.announcePlayerAchievements != null) {
                  this.getGameRules().getRule(GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(dedicatedserverproperties.announcePlayerAchievements, this);
              }
-@@ -211,7 +_,12 @@
+@@ -215,7 +_,12 @@
                  LOGGER.info("JMX monitoring enabled");
              }
  
@@ -45,7 +45,7 @@
          }
      }
  
-@@ -289,6 +_,11 @@
+@@ -293,6 +_,11 @@
          if (this.queryThreadGs4 != null) {
              this.queryThreadGs4.stop();
          }
@@ -57,7 +57,7 @@
      }
  
      @Override
-@@ -542,7 +_,12 @@
+@@ -546,7 +_,12 @@
  
      @Override
      public void stopServer() {
