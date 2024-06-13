@@ -228,7 +228,7 @@
              }
  
 +            p_20241_.putBoolean("CanUpdate", canUpdate);
-+            CompoundTag caps = serializeCaps();
++            CompoundTag caps = serializeCaps(this.registryAccess());
 +            if (caps != null) p_20241_.put("ForgeCaps", caps);
 +            if (persistentData != null) p_20241_.put("ForgeData", persistentData.copy());
 +
@@ -241,7 +241,7 @@
                  this.hasVisualFire = p_20259_.getBoolean("HasVisualFire");
 +                if (p_20259_.contains("ForgeData", 10)) persistentData = p_20259_.getCompound("ForgeData");
 +                if (p_20259_.contains("CanUpdate", 99)) this.canUpdate(p_20259_.getBoolean("CanUpdate"));
-+                if (p_20259_.contains("ForgeCaps", 10)) deserializeCaps(p_20259_.getCompound("ForgeCaps"));
++                if (p_20259_.contains("ForgeCaps", 10)) deserializeCaps(this.registryAccess(), p_20259_.getCompound("ForgeCaps"));
                  if (p_20259_.contains("Tags", 9)) {
                      this.tags.clear();
                      ListTag listtag3 = p_20259_.getList("Tags", 8);

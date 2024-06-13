@@ -105,7 +105,7 @@
          this.blockEntities.values().forEach(p_187988_ -> {
              if (this.level instanceof ServerLevel serverlevel) {
                  this.addGameEventListener(p_187988_, serverlevel);
-@@ -654,6 +_,34 @@
+@@ -654,6 +_,24 @@
          return new LevelChunk.BoundTickingBlockEntity<>(p_156376_, p_156377_);
      }
  
@@ -115,16 +115,6 @@
 +    @Override
 +    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side) {
 +       return capProvider.getCapability(cap, side);
-+    }
-+
-+    @Override
-+    public boolean areCapsCompatible(net.minecraftforge.common.capabilities.CapabilityProvider<LevelChunk> other) {
-+        return capProvider.areCapsCompatible(other);
-+    }
-+
-+    @Override
-+    public boolean areCapsCompatible(@org.jetbrains.annotations.Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher other) {
-+        return capProvider.areCapsCompatible(other);
 +    }
 +
 +    @Override
@@ -173,8 +163,8 @@
 +     */
 +    @java.lang.Deprecated
 +    @org.jetbrains.annotations.Nullable
-+    public final CompoundTag writeCapsToNBT() {
-+       return capProvider.serializeInternal();
++    public final CompoundTag writeCapsToNBT(HolderLookup.Provider registryAccess) {
++       return capProvider.serializeInternal(registryAccess);
 +    }
 +
 +    /**
@@ -184,8 +174,8 @@
 +     *
 +     */
 +    @java.lang.Deprecated
-+    public final void readCapsFromNBT(CompoundTag tag) {
-+        capProvider.deserializeInternal(tag);
++    public final void readCapsFromNBT(HolderLookup.Provider registryAccess, CompoundTag tag) {
++        capProvider.deserializeInternal(registryAccess, tag);
 +    }
 +
 +    @Override

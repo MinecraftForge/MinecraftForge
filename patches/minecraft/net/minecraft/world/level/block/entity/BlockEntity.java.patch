@@ -25,7 +25,7 @@
      }
  
      protected void loadAdditional(CompoundTag p_331149_, HolderLookup.Provider p_333170_) {
-+        if (getCapabilities() != null && p_331149_.contains("ForgeCaps")) deserializeCaps(p_331149_.getCompound("ForgeCaps"));
++        if (getCapabilities() != null && p_331149_.contains("ForgeCaps")) deserializeCaps(p_333170_, p_331149_.getCompound("ForgeCaps"));
      }
  
      public final void loadWithComponents(CompoundTag p_331756_, HolderLookup.Provider p_335164_) {
@@ -33,7 +33,7 @@
      }
  
      protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_327783_) {
-+        if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps());
++        if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps(p_327783_));
      }
  
      public final CompoundTag saveWithFullMetadata(HolderLookup.Provider p_331193_) {

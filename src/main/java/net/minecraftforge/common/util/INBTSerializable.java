@@ -13,14 +13,10 @@ import net.minecraft.nbt.Tag;
  * code base that can be serialized to and from a NBT tag.
  *
  * @deprecated // Mojang has switched most things to Codecs and registry context, probably worth deleting this.
+ *
+ * Most cases this is used for Capabilities, and should use Components attached to the object that the cap is attached to.
  */
 public interface INBTSerializable<T extends Tag> {
-    default T serializeNBT() { return null; }
-    default T serializeNBT(HolderLookup.Provider registryAccess) {
-        return serializeNBT();
-    }
-    default void deserializeNBT(T nbt) { }
-    default void deserializeNBT(HolderLookup.Provider registryAccess, T nbt) {
-        deserializeNBT(nbt);
-    }
+    T serializeNBT(HolderLookup.Provider registryAccess);
+    void deserializeNBT(HolderLookup.Provider registryAccess, T nbt);
 }

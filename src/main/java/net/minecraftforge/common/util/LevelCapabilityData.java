@@ -6,7 +6,6 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
@@ -23,18 +22,10 @@ public class LevelCapabilityData extends SavedData {
         this.serializable = serializable;
     }
 
-    public void read(CompoundTag nbt) {
-        this.capNBT = nbt;
-        if (serializable != null) {
-            serializable.deserializeNBT(this.capNBT);
-            this.capNBT = null;
-        }
-    }
-
     @Override
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
         if (serializable != null)
-            nbt = serializable.serializeNBT();
+            nbt = serializable.serializeNBT(provider);
         return nbt;
     }
 
@@ -43,27 +34,18 @@ public class LevelCapabilityData extends SavedData {
         return true;
     }
 
-    public void setCapabilities(INBTSerializable<CompoundTag> capabilities) {
-        this.serializable = capabilities;
-        if (this.capNBT != null && serializable != null) {
-            serializable.deserializeNBT(this.capNBT);
-            this.capNBT = null;
-        }
-    }
-
     public static LevelCapabilityData compute(DimensionDataStorage data, @Nullable INBTSerializable<CompoundTag> caps) {
         var factory = new Factory<>(
             () -> new LevelCapabilityData(caps),
             (tag, lookup) -> {
                 var ret = new LevelCapabilityData(caps);
-                ret.read(tag);
+                if (caps != null)
+                    caps.deserializeNBT(lookup, tag);
                 return ret;
             },
             null
         );
 
-        var ret = data.computeIfAbsent(factory, ID);
-        ret.setCapabilities(caps);
-        return ret;
+        return data.computeIfAbsent(factory, ID);
     }
 }

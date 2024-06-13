@@ -20,6 +20,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeSpawnEggItem;
@@ -34,11 +35,13 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
         return (Entity)this;
     }
 
-    default void deserializeNBT(CompoundTag nbt) {
+    @Override
+    default void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag nbt) {
         self().load(nbt);
     }
 
-    default CompoundTag serializeNBT() {
+    @Override
+    default CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
         var ret = new CompoundTag();
         var id = self().getEncodeId();
         if (id != null)
