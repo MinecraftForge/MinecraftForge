@@ -31,6 +31,10 @@ public abstract class AbstractModLocator implements IModLocator
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
     protected Optional<IModFile> createMod(Path... path) {
+        return this.createMod(getDefaultJarModType(), path);
+    }
+
+    protected Optional<IModFile> createMod(String defaultType, Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
                 Manifest::new,
@@ -42,7 +46,7 @@ public abstract class AbstractModLocator implements IModLocator
         IModFile mod;
         var type = sj.getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (type == null) {
-            type = getDefaultJarModType();
+            type = defaultType;
         }
         if (sj.findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
