@@ -83,7 +83,14 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
             final Map<String, ?> outerFsArgs = ImmutableMap.of("packagePath", pathInModFile);
             final FileSystem zipFS = FileSystems.newFileSystem(filePathUri, outerFsArgs);
             final Path pathInFS = zipFS.getPath("/");
-            return Optional.of(createMod(pathInFS).file());
+            final IModFile.Type parentType = file.getType();
+            final String modType;
+            if (parentType == IModFile.Type.LIBRARY || parentType == IModFile.Type.LANGPROVIDER) {
+                modType = IModFile.Type.LIBRARY.name();
+            } else {
+                modType = IModFile.Type.GAMELIBRARY.name();
+            }
+            return Optional.of(createMod(pathInFS, modType).file());
         } catch (Exception e) {
             LOGGER.error("Failed to load mod file {} from {}", path, file.getFileName());
             final RuntimeException exception = new ModFileLoadingException("Failed to load mod file " + file.getFileName());

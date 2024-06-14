@@ -36,6 +36,10 @@ public abstract class AbstractModProvider implements IModProvider {
     protected static final String MODS_TOML = "META-INF/mods.toml";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
+        return this.createMod(path, getDefaultJarModType());
+    }
+
+    protected IModLocator.ModFileOrException createMod(Path path, String defaultType) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
             jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
@@ -45,7 +49,7 @@ public abstract class AbstractModProvider implements IModProvider {
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (type == null)
-            type = getDefaultJarModType();
+            type = defaultType;
 
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
