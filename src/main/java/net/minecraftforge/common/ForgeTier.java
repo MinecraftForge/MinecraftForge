@@ -18,42 +18,6 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("ClassCanBeRecord") // can't make it a record because the method names will be obfuscated
 public final class ForgeTier implements Tier {
-
-    public static Tier createTier(TagKey<Block> incorrectBlocks, int uses, int speed, float attackDamageBonus, int enchantmentValue, Supplier<Ingredient> repairIngredient) {
-        return new Tier() {
-            @Override
-            public int getUses() {
-                return uses;
-            }
-
-            @Override
-            public float getSpeed() {
-                return speed;
-            }
-
-            @Override
-            public float getAttackDamageBonus() {
-                return attackDamageBonus;
-            }
-
-            @Override
-            public TagKey<Block> getIncorrectBlocksForDrops() {
-                return incorrectBlocks;
-            }
-
-            @Override
-            public int getEnchantmentValue() {
-                return enchantmentValue;
-            }
-
-            @Override
-            public Ingredient getRepairIngredient() {
-                return repairIngredient.get();
-            }
-        };
-    }
-
-
     private final int uses;
     private final float speed;
     private final float attackDamageBonus;
