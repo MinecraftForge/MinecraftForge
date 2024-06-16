@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Rarity.java
 +++ b/net/minecraft/world/item/Rarity.java
-@@ -9,15 +_,16 @@
+@@ -9,15 +_,19 @@
  import net.minecraft.util.ByIdMap;
  import net.minecraft.util.StringRepresentable;
  
@@ -12,32 +12,36 @@
      EPIC(3, "epic", ChatFormatting.LIGHT_PURPLE);
  
 -    public static final Codec<Rarity> CODEC = StringRepresentable.fromValues(Rarity::values);
++    private static final java.util.Map<String, Rarity> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(rarity -> rarity.name, rarity -> rarity));
++    private static final java.util.Map<Rarity, String> BY_RARITY = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(rarity -> rarity, rarity -> rarity.name));
++
 +    public static final Codec<Rarity> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(Rarity::values, Rarity::byName);
      public static final IntFunction<Rarity> BY_ID = ByIdMap.continuous(p_328775_ -> p_328775_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
 -    public static final StreamCodec<ByteBuf, Rarity> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, p_330010_ -> p_330010_.id);
-+    public static final StreamCodec<ByteBuf, Rarity> STREAM_CODEC = net.minecraftforge.common.IExtensibleEnum.createStreamCodecForExtensibleEnum(Rarity::values);
-+    private static final java.util.Map<String, Rarity> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(Rarity::getName, rarity -> rarity));
++    public static final StreamCodec<ByteBuf, Rarity> STREAM_CODEC = net.minecraftforge.common.IExtensibleEnum.createStreamCodecForExtensibleEnum(BY_NAME, BY_RARITY);
++
      private final int id;
      private final String name;
      private final ChatFormatting color;
-@@ -35,5 +_,23 @@
+@@ -35,5 +_,24 @@
      @Override
      public String getSerializedName() {
          return this.name;
 +    }
 +
-+    public static Rarity create(final String EnumName, final int id, final String name, final ChatFormatting chatFormatting) {
-+        throw new IllegalStateException("Enum not extended");
++    public static Rarity createRarity(final String name, final int id, final ChatFormatting chatFormatting) {
++        return create(name.toUpperCase(), id, name.toLowerCase(), chatFormatting);
 +    }
 +
-+    public String getName() {
-+        return name;
++    public static Rarity create(final String name, final int id, String lowerCaseNName, final ChatFormatting chatFormatting) {
++        throw new IllegalStateException("Enum not extended");
 +    }
 +
 +    @Override
 +    @Deprecated
 +    public void init() {
-+        BY_NAME.put(this.getName(), this);
++        BY_NAME.put(getSerializedName(), this);
++        BY_RARITY.put(this, getSerializedName());
 +    }
 +
 +    public static Rarity byName(String name) {

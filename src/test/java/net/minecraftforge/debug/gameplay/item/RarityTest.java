@@ -15,7 +15,7 @@ public class RarityTest extends BaseTestMod {
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    public static final Rarity CUSTOM = Rarity.create("LEGENDARY", 4, "legendary", ChatFormatting.GOLD);
+    public static final Rarity CUSTOM = Rarity.createRarity("LEGENDARY", 4, ChatFormatting.GOLD);
 
     public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new Item(new Item.Properties().rarity(CUSTOM)));
 }
