@@ -8,10 +8,15 @@ package net.minecraftforge.common;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 /**
  * To be implemented on vanilla enums that should be enhanced with ASM to be
@@ -58,5 +63,13 @@ public interface IExtensibleEnum {
                 ),
                 value -> Either.left(value.getSerializedName())
         );
+    }
+
+    /**
+     * Use this instead of {@link ByteBufCodecs#idMapper(IntFunction, ToIntFunction)} for extensible enums
+     * because this will not cache the enum values on construction
+     */
+    static <E extends Enum<E> & StringRepresentable> StreamCodec<ByteBuf, E> createStreamCodecForExtensibleEnum(Supplier<E[]> valuesSupplier) {
+        return ByteBufCodecs.VAR_INT.map(i -> valuesSupplier.get()[i], Enum::ordinal);
     }
 }

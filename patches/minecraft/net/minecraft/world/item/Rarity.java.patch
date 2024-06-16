@@ -1,0 +1,46 @@
+--- a/net/minecraft/world/item/Rarity.java
++++ b/net/minecraft/world/item/Rarity.java
+@@ -9,15 +_,16 @@
+ import net.minecraft.util.ByIdMap;
+ import net.minecraft.util.StringRepresentable;
+ 
+-public enum Rarity implements StringRepresentable {
++public enum Rarity implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+     COMMON(0, "common", ChatFormatting.WHITE),
+     UNCOMMON(1, "uncommon", ChatFormatting.YELLOW),
+     RARE(2, "rare", ChatFormatting.AQUA),
+     EPIC(3, "epic", ChatFormatting.LIGHT_PURPLE);
+ 
+-    public static final Codec<Rarity> CODEC = StringRepresentable.fromValues(Rarity::values);
++    public static final Codec<Rarity> CODEC = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(Rarity::values, Rarity::byName);
+     public static final IntFunction<Rarity> BY_ID = ByIdMap.continuous(p_328775_ -> p_328775_.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
+-    public static final StreamCodec<ByteBuf, Rarity> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, p_330010_ -> p_330010_.id);
++    public static final StreamCodec<ByteBuf, Rarity> STREAM_CODEC = net.minecraftforge.common.IExtensibleEnum.createStreamCodecForExtensibleEnum(Rarity::values);
++    private static final java.util.Map<String, Rarity> BY_NAME = java.util.Arrays.stream(values()).collect(java.util.stream.Collectors.toMap(Rarity::getName, rarity -> rarity));
+     private final int id;
+     private final String name;
+     private final ChatFormatting color;
+@@ -35,5 +_,23 @@
+     @Override
+     public String getSerializedName() {
+         return this.name;
++    }
++
++    public static Rarity create(final String EnumName, final int id, final String name, final ChatFormatting chatFormatting) {
++        throw new IllegalStateException("Enum not extended");
++    }
++
++    public String getName() {
++        return name;
++    }
++
++    @Override
++    @Deprecated
++    public void init() {
++        BY_NAME.put(this.getName(), this);
++    }
++
++    public static Rarity byName(String name) {
++        return BY_NAME.get(name);
+     }
+ }
