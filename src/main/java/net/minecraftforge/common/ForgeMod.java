@@ -70,6 +70,7 @@ import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.items.ForgeRarity;
+import net.minecraftforge.items.IForgeRarity;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
@@ -361,8 +362,8 @@ public class ForgeMod {
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = deferred(Registries.DATA_COMPONENT_TYPE);
-    public static final RegistryObject<DataComponentType<ForgeRarity>> FORGE_RARITY_COMPONENT = DATA_COMPONENT_TYPES.register("forge_rarity", () -> {
-        return DataComponentType.<ForgeRarity>builder().persistent(ForgeRarity.RARITY_CODEC).networkSynchronized(ForgeRarity.STREAM_CODEC).build();
+    public static final RegistryObject<DataComponentType<IForgeRarity>> FORGE_RARITY_COMPONENT = DATA_COMPONENT_TYPES.register("forge_rarity", () -> {
+        return DataComponentType.<IForgeRarity>builder().persistent(ForgeRarity.RARITY_CODEC).networkSynchronized(ForgeRarity.STREAM_CODEC).build();
     });
 
     /*

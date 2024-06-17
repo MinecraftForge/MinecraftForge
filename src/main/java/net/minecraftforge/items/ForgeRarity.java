@@ -8,6 +8,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public record ForgeRarity(ChatFormatting color) implements IForgeRarity {
-    public static final Codec<ForgeRarity> RARITY_CODEC = ForgeRegistries.FORGE_RARITY.get().getCodec();
-    public static final StreamCodec<RegistryFriendlyByteBuf, ForgeRarity> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(RARITY_CODEC);
+    public static final Codec<IForgeRarity> RARITY_CODEC = ForgeRegistries.FORGE_RARITY.get().getCodec();
+    public static final StreamCodec<RegistryFriendlyByteBuf, IForgeRarity> STREAM_CODEC = ByteBufCodecs.fromCodecWithRegistries(RARITY_CODEC);
 }

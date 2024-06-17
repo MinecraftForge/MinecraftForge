@@ -1,30 +1,28 @@
 package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Registry;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ForgeRarity;
+import net.minecraftforge.items.IForgeRarity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
-
-import java.util.function.Supplier;
 
 @Mod(RarityTest.MOD_ID)
 public class RarityTest extends BaseTestMod {
     static final String MOD_ID = "raritytest";
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    public static final DeferredRegister<ForgeRarity> RARITIES = DeferredRegister.create(ForgeRegistries.FORGE_RARITY, MOD_ID);
+    public static final DeferredRegister<IForgeRarity> RARITIES = DeferredRegister.create(ForgeRegistries.FORGE_RARITY, MOD_ID);
 
     public static final RegistryObject<ForgeRarity> LEGENDARY = RARITIES.register("legendary", () -> new ForgeRarity(ChatFormatting.GOLD));
 
-    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new TestItem(new Item.Properties()));
+    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new TestItem(new Item.Properties().rarity(() -> LEGENDARY.get())));
 
 
     public static class TestItem extends Item {
