@@ -26,8 +26,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.items.IForgeRarity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -426,5 +428,12 @@ public interface IForgeItemStack {
      */
     default boolean canGrindstoneRepair() {
         return self().getItem().canGrindstoneRepair(self());
+    }
+
+    default IForgeRarity getForgeRarity() {
+        var forgeRarity = self().get(ForgeMod.FORGE_RARITY_COMPONENT.get());
+        if (forgeRarity != null)
+            return forgeRarity;
+        return self().getRarity();
     }
 }

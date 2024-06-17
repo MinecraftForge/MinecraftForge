@@ -72,11 +72,10 @@
      public int getEnchantmentValue() {
          return 0;
      }
-@@ -332,6 +_,30 @@
-     public FeatureFlagSet requiredFeatures() {
+@@ -333,6 +_,30 @@
          return this.requiredFeatures;
      }
-+
+ 
 +    private Object renderProperties;
 +
 +    /*
@@ -100,6 +99,21 @@
 +    }
 +
 +    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) { }
- 
++
      public static class Properties {
          private static final Interner<DataComponentMap> COMPONENT_INTERNER = Interners.newStrongInterner();
+         @Nullable
+@@ -361,8 +_,11 @@
+             return this;
+         }
+ 
+-        public Item.Properties rarity(Rarity p_41498_) {
+-            return this.component(DataComponents.RARITY, p_41498_);
++        public Item.Properties rarity(net.minecraftforge.items.IForgeRarity p_41498_) {
++            if (p_41498_.isModded())
++                return this.component(net.minecraftforge.common.ForgeMod.FORGE_RARITY_COMPONENT.get(), (net.minecraftforge.items.ForgeRarity) p_41498_);
++            else
++                return this.component(DataComponents.RARITY, (Rarity) p_41498_);
+         }
+ 
+         public Item.Properties fireResistant() {

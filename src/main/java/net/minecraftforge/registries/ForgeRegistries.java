@@ -50,6 +50,8 @@ import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.items.ForgeRarity;
+import net.minecraftforge.items.IForgeRarity;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
 import java.util.ArrayList;
@@ -122,6 +124,7 @@ public class ForgeRegistries {
     public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = registry(Keys.DISPLAY_CONTEXTS, GameData::getItemDisplayContextRegistryBuilder);
     public static final Supplier<IForgeRegistry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
     public static final Supplier<IForgeRegistry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = registry(Keys.INGREDIENT_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<ForgeRarity>> FORGE_RARITY = registry(Keys.FORGE_RARITY, GameData::makeUnsavedAndUnsynced);
 
     public static final class Keys {
         //Vanilla
@@ -168,6 +171,7 @@ public class ForgeRegistries {
         public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("forge:display_contexts");
         public static final ResourceKey<Registry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
         public static final ResourceKey<Registry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = key("forge:ingredient_serializers");
+        public static final ResourceKey<Registry<ForgeRarity>> FORGE_RARITY = key("forge:rarity_type");
 
         // Forge Dynamic
         public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");

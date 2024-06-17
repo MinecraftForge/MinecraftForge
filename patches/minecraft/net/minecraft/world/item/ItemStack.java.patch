@@ -44,6 +44,15 @@
                  p_41624_.broadcastBreakEvent(p_335324_);
                  Item item = this.getItem();
                  this.shrink(1);
+@@ -702,7 +_,7 @@
+             return List.of();
+         } else {
+             List<Component> list = Lists.newArrayList();
+-            MutableComponent mutablecomponent = Component.empty().append(this.getHoverName()).withStyle(this.getRarity().color());
++            MutableComponent mutablecomponent = Component.empty().append(this.getHoverName()).withStyle(this.getForgeRarity().color());
+             if (this.has(DataComponents.CUSTOM_NAME)) {
+                 mutablecomponent.withStyle(ChatFormatting.ITALIC);
+             }
 @@ -757,6 +_,8 @@
                  list.add(DISABLED_ITEM_TOOLTIP);
              }
@@ -53,6 +62,15 @@
              return list;
          }
      }
+@@ -913,7 +_,7 @@
+ 
+         MutableComponent mutablecomponent1 = ComponentUtils.wrapInSquareBrackets(mutablecomponent);
+         if (!this.isEmpty()) {
+-            mutablecomponent1.withStyle(this.getRarity().color())
++            mutablecomponent1.withStyle(this.getForgeRarity().color())
+                 .withStyle(p_220170_ -> p_220170_.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(this))));
+         }
+ 
 @@ -970,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }
