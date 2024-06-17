@@ -3,6 +3,7 @@ package net.minecraftforge.debug.gameplay.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +23,8 @@ public class RarityTest extends BaseTestMod {
 
     public static final RegistryObject<ForgeRarity> LEGENDARY = RARITIES.register("legendary", () -> new ForgeRarity(ChatFormatting.GOLD));
 
-    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new TestItem(new Item.Properties().rarity(() -> LEGENDARY.get())));
+    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new TestItem(new Item.Properties().rarity(LEGENDARY::get)));
+    public static final RegistryObject<Item> TEST_ITEM_2 = ITEMS.register("test2", () -> new Item(new Item.Properties().rarity(() -> Rarity.UNCOMMON)));
 
 
     public static class TestItem extends Item {
