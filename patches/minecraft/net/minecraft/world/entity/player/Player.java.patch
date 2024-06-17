@@ -224,6 +224,17 @@
                                  if (livingentity2 != this
                                      && livingentity2 != p_36347_
                                      && !this.isAlliedTo(livingentity2)
+@@ -1262,8 +_,8 @@
+ 
+                         this.setLastHurtMob(p_36347_);
+                         Entity entity = p_36347_;
+-                        if (p_36347_ instanceof EnderDragonPart) {
+-                            entity = ((EnderDragonPart)p_36347_).parentMob;
++                        if (p_36347_ instanceof net.minecraftforge.entity.PartEntity<?> pe) {
++                            entity = pe.getParent();
+                         }
+ 
+                         boolean flag5 = false;
 @@ -1304,6 +_,7 @@
                          this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, this.getSoundSource(), 1.0F, 1.0F);
                      }
