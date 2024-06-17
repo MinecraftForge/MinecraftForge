@@ -32,7 +32,9 @@ import net.minecraft.core.IdMapper;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -109,6 +111,7 @@ public class GameData {
 
         // Game objects
         makeRegistry(Keys.BLOCKS, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").intrusiveHolderCallback(Block::builtInRegistryHolder).create();
+        makeRegistry(Keys.DATA_COMPONENT_TYPE).create();
         makeRegistry(Keys.FLUIDS, "empty").intrusiveHolderCallback(Fluid::builtInRegistryHolder).create();
         makeRegistry(Keys.ITEMS, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").intrusiveHolderCallback(Item::builtInRegistryHolder).create();
         makeRegistry(Keys.MOB_EFFECTS).create();
@@ -167,6 +170,10 @@ public class GameData {
             .setMaxID(128 * 2) /* 0 -> 127 gets positive ID, 128 -> 256 gets negative ID */.disableOverrides().disableSaving()
             .setDefaultKey(new ResourceLocation("minecraft:none"))
             .onAdd(ItemDisplayContext.ADD_CALLBACK);
+    }
+
+    static RegistryBuilder<DataComponentType<?>> getDataComponentRegistryBuilder() {
+        return makeRegistry(Registries.DATA_COMPONENT_TYPE);
     }
 
     private static <T> RegistryBuilder<T> makeRegistry(ResourceKey<? extends Registry<T>> key) {

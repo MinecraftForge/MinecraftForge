@@ -362,13 +362,13 @@ public class ForgeMod {
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
     public static DeferredRegister<DataComponentType<?>> component() {
-        var a = DeferredRegister.create(ForgeRegistries.DATA_COMPONENT_TYPES.get(), "forge");
+        var a = DeferredRegister.create(ForgeRegistries.DATA_COMPONENT_TYPES, "forge");
         registries.add(a);
         return a;
     }
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = component();
 
-    public static final RegistryObject<DataComponentType<IForgeRarity>> FORGE_RARITY_COMPONENT = DATA_COMPONENT_TYPES.register("rarity", () -> {
+    public static final RegistryObject<DataComponentType<IForgeRarity>> FORGE_RARITY_COMPONENT = DATA_COMPONENT_TYPES.register("forge_rarity", () -> {
         return DataComponentType.<IForgeRarity>builder().persistent(ForgeRarity.RARITY_CODEC).networkSynchronized(ForgeRarity.STREAM_CODEC).build();
     });
 

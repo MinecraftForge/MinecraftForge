@@ -9,6 +9,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -78,7 +79,7 @@ public class ForgeRegistries {
     // Game objects
     public static final IForgeRegistry<Block> BLOCKS = active(Keys.BLOCKS);
     public static final IForgeRegistry<Fluid> FLUIDS = active(Keys.FLUIDS);
-    public static final Supplier<IForgeRegistry<DataComponentType<?>>> DATA_COMPONENT_TYPES = registry(Keys.DATA_COMPONENT_TYPE, () -> RegistryBuilder.<DataComponentType<?>>of().hasWrapper());
+    public static final IForgeRegistry<DataComponentType<?>> DATA_COMPONENT_TYPES = active(Keys.DATA_COMPONENT_TYPE);
     public static final IForgeRegistry<Item> ITEMS = active(Keys.ITEMS);
     public static final IForgeRegistry<MobEffect> MOB_EFFECTS = active(Keys.MOB_EFFECTS);
     public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = active(Keys.SOUND_EVENTS);
