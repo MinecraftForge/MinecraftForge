@@ -1,14 +1,15 @@
 package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Registry;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ForgeRarity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
@@ -23,5 +24,22 @@ public class RarityTest extends BaseTestMod {
 
     public static final RegistryObject<ForgeRarity> LEGENDARY = RARITIES.register("legendary", () -> new ForgeRarity(ChatFormatting.GOLD));
 
-    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new Item(new Item.Properties().rarity(LEGENDARY.get())));
+    public static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new TestItem(new Item.Properties()));
+
+
+    public static class TestItem extends Item {
+
+        public TestItem(Properties p_41383_) {
+            super(p_41383_);
+        }
+
+        @Override
+        public InteractionResult useOn(UseOnContext p_41427_) {
+            var lvl = p_41427_.getLevel();
+            if (!lvl.isClientSide()) {
+                p_41427_.getItemInHand().set(ForgeMod.FORGE_RARITY_COMPONENT.get(), LEGENDARY.get());
+            }
+            return super.useOn(p_41427_);
+        }
+    }
 }
