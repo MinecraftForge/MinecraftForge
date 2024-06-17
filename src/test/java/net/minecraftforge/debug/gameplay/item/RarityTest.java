@@ -2,13 +2,17 @@ package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Rarity;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.ForgeRarity;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryBuilder;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
+
+import java.util.function.Supplier;
 
 @Mod(RarityTest.MOD_ID)
 public class RarityTest extends BaseTestMod {
