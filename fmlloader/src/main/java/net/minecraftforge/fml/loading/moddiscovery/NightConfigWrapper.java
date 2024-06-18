@@ -6,6 +6,8 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.google.common.collect.ImmutableMap;
+
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 
@@ -38,8 +40,12 @@ class NightConfigWrapper implements IConfigurable {
     public <T> Optional<T> getConfigElement(final String... key) {
         var path = asList(key);
         return this.config.getOptional(path).map(value -> {
-            if (value instanceof UnmodifiableConfig) {
-                return (T) ((UnmodifiableConfig) value).valueMap();
+            if (value instanceof UnmodifiableConfig cfg) {
+                // New Night config doesn't implement valueMap(), so do a copy.
+                var builder = ImmutableMap.builder();
+                for (var e: cfg.entrySet())
+                    builder.put(e.getKey(), e.getValue());
+                return (T)builder.build();
             } else if (value instanceof ArrayList<?> al && al.size() > 0 && al.get(0) instanceof UnmodifiableConfig) {
                 throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
             }

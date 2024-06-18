@@ -67,7 +67,7 @@ dependencyResolutionManagement {
             bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jna'])
 
             // The core of our configuration system, it has many flaws, but it works for the most part
-            version('night-config', '3.7.1')
+            version('night-config', '3.7.3')
             library('night-config-toml', 'com.electronwill.night-config', 'toml').versionRef('night-config')
             library('night-config-core', 'com.electronwill.night-config', 'core').versionRef('night-config')
             bundle('night-config', ['night-config-toml', 'night-config-core'])

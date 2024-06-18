@@ -119,17 +119,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     @Override
     public void afterReload() {
-        this.resetCaches(getValues().valueMap().values());
+        this.resetCaches(getValues());
     }
 
-    private void resetCaches(final Iterable<Object> configValues) {
-        configValues.forEach(value -> {
-            if (value instanceof ConfigValue<?> configValue) {
+    private void resetCaches(UnmodifiableConfig cfg) {
+        for (var entry : cfg.entrySet()) {
+            if (entry.getValue() instanceof ConfigValue<?> configValue)
                 configValue.clearCache();
-            } else if (value instanceof Config innerConfig) {
-                this.resetCaches(innerConfig.valueMap().values());
-            }
-        });
+            else if (entry.getValue() instanceof UnmodifiableConfig innerConfig)
+                resetCaches(innerConfig);
+        }
     }
 
     public void save() {
@@ -169,13 +168,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     private int correct(UnmodifiableConfig spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, CorrectionListener commentListener, boolean dryRun) {
         int count = 0;
 
-        Map<String, Object> specMap = spec.valueMap();
-        Map<String, Object> configMap = config.valueMap();
-
-        for (Map.Entry<String, Object> specEntry : specMap.entrySet()) {
+        for (var specEntry : spec.entrySet()) {
             final String key = specEntry.getKey();
             final Object specValue = specEntry.getValue();
-            final Object configValue = configMap.get(key);
+            final Object configValue = config.get(key);
             final CorrectionAction action = configValue == null ? CorrectionAction.ADD : CorrectionAction.REPLACE;
 
             parentPath.addLast(key);
@@ -189,7 +185,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     return 1;
                 } else {
                     CommentedConfig newValue = config.createSubConfig();
-                    configMap.put(key, newValue);
+                    config.set(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
                     count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
@@ -213,7 +209,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                         return 1;
 
                     Object newValue = valueSpec.correct(configValue);
-                    configMap.put(key, newValue);
+                    config.set(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
                 }
@@ -232,16 +228,17 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             parentPath.removeLast();
         }
 
+        var keys = config.entrySet().stream().map(Entry::getKey).toList();
         // Second step: removes the unspecified values
-        for (Iterator<Map.Entry<String, Object>> ittr = configMap.entrySet().iterator(); ittr.hasNext();) {
-            Map.Entry<String, Object> entry = ittr.next();
-            if (!specMap.containsKey(entry.getKey())) {
+        for (var key : keys) {
+            if (!spec.contains(key)) {
                 if (dryRun)
                     return 1;
 
-                ittr.remove();
-                parentPath.addLast(entry.getKey());
-                listener.onCorrect(CorrectionAction.REMOVE, parentPathUnmodifiable, entry.getValue(), null);
+                var value = config.get(key);
+                config.remove(key);
+                parentPath.addLast(key);
+                listener.onCorrect(CorrectionAction.REMOVE, parentPathUnmodifiable, value, null);
                 parentPath.removeLast();
                 count++;
             }
