@@ -19,11 +19,11 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 @ApiStatus.Internal
@@ -50,34 +50,39 @@ public class ModInfo implements IModInfo, IConfigurable {
     private final IConfigurable config;
     private final Optional<URL> modUrl;
 
-    public ModInfo(final ModFileInfo owningFile, final IConfigurable config)
-    {
+    public ModInfo(final ModFileInfo owningFile, final IConfigurable config) {
         Optional<ModFileInfo> ownFile = Optional.ofNullable(owningFile);
         this.owningFile = owningFile;
         this.config = config;
+
         // These are sourced from the mod specific [[mod]] entry
         this.modId = config.<String>getConfigElement("modId")
                 .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
+
         // verify we have a valid modid
         if (!VALID_MODID.matcher(this.modId).matches()) {
             LOGGER.error(LogUtils.FATAL_MARKER, "Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_MODID.pattern());
             throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
         }
+
         this.namespace = config.<String>getConfigElement("namespace")
                 .orElse(this.modId);
+
         // verify our namespace is valid
         if (!VALID_NAMESPACE.matcher(this.namespace).matches()) {
             LOGGER.error(LogUtils.FATAL_MARKER, "Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_NAMESPACE.pattern());
             throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
         }
+
         this.version = config.<String>getConfigElement("version")
                 .map(s -> StringSubstitutor.replace(s, ownFile.map(ModFileInfo::getFile).orElse(null)))
                 .map(DefaultArtifactVersion::new)
                 .orElse(DEFAULT_VERSION);
+
         // verify we have a valid mod version
-        if (!VALID_VERSION.matcher(this.version.toString()).matches()) {
-            throw new InvalidModFileException("Illegal version number specified "+this.version, this.getOwningFile());
-        }
+        if (!VALID_VERSION.matcher(this.version.toString()).matches())
+            throw new InvalidModFileException("Illegal version number specified " + this.version, this.getOwningFile());
+
         // The remaining properties all default to sensible values and are not essential
         this.displayName = config.<String>getConfigElement("displayName")
                 .orElse(this.modId);
@@ -88,25 +93,48 @@ public class ModInfo implements IModInfo, IConfigurable {
                 .orElseGet(() -> ownFile.flatMap(mf -> mf.<String>getConfigElement("logoFile"))
                         .orElse(null)));
         this.logoBlur = config.<Boolean>getConfigElement("logoBlur")
-                .orElseGet(() -> ownFile.flatMap(f -> f.<Boolean>getConfigElement("logoBlur"))
+                .orElseGet(() -> ownFile.flatMap(mf -> mf.<Boolean>getConfigElement("logoBlur"))
                         .orElse(true));
         this.updateJSONURL = config.<String>getConfigElement("updateJSONURL")
                 .map(StringUtils::toURL);
         this.modUrl = config.<String>getConfigElement("modUrl")
                 .map(StringUtils::toURL);
+
         // These are sourced from the file rather than the mod-specific block, but with a modid tag
-        this.dependencies = ownFile.map(mfi -> mfi.getConfigList("dependencies", this.modId))
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(dep -> new ModVersion(this, dep))
-                .toList();
-        this.features = ownFile.flatMap(mfi -> mfi.<Map<String, Object>>getConfigElement("features", this.modId))
-                .stream()
-                .flatMap(m->m.entrySet().stream())
-                .map(this::makeBound)
-                .toList();
-        this.properties = ownFile.flatMap(mfi -> mfi.<Map<String, Object>>getConfigElement("modproperties", this.modId))
-                .orElse(Collections.emptyMap());
+        if (ownFile.isEmpty()) {
+            this.dependencies = Collections.emptyList();
+            this.features = Collections.emptyList();
+            this.properties = Collections.emptyMap();
+        } else {
+            var deps = this.owningFile.getConfigList("dependencies", this.modId);
+            if (deps == null || deps.isEmpty()) {
+                this.dependencies = Collections.emptyList();
+            } else {
+                var tmp = new ArrayList<ModVersion>();
+                for (var dep : deps)
+                    tmp.add(new ModVersion(this, dep));
+                this.dependencies = Collections.unmodifiableList(tmp);
+            }
+
+            var feats = this.owningFile.<Map<String, Object>>getConfigElement("features", this.modId).orElse(null);
+            if (feats == null) {
+                this.features = Collections.emptyList();
+            } else {
+                var tmp = new ArrayList<ForgeFeature.Bound>();
+                for (var entry : feats.entrySet()) {
+                    if (!(entry.getValue() instanceof String val))
+                        throw new InvalidModFileException("Invalid feature bound {" + entry.getValue() + "} for key {" + entry.getKey() + "} only strings are accepted", this.owningFile);
+                    tmp.add(new ForgeFeature.Bound(entry.getKey(), val, this));
+                }
+                this.features = Collections.unmodifiableList(tmp);
+            }
+
+            var props = this.owningFile.<Map<String, Object>>getConfigElement("modproperties", this.modId).orElse(null);
+            if (props == null)
+                this.properties = Collections.emptyMap();
+            else
+                this.properties = Collections.unmodifiableMap(props);
+        }
     }
 
     @Override
@@ -120,14 +148,12 @@ public class ModInfo implements IModInfo, IConfigurable {
     }
 
     @Override
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return this.displayName;
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
@@ -157,14 +183,12 @@ public class ModInfo implements IModInfo, IConfigurable {
     }
 
     @Override
-    public Optional<String> getLogoFile()
-    {
+    public Optional<String> getLogoFile() {
         return this.logoFile;
     }
 
     @Override
-    public boolean getLogoBlur()
-    {
+    public boolean getLogoBlur() {
         return this.logoBlur;
     }
 
@@ -193,14 +217,6 @@ public class ModInfo implements IModInfo, IConfigurable {
         return modUrl;
     }
 
-    private ForgeFeature.Bound makeBound(Map.Entry<String, Object> e) {
-        if (e.getValue() instanceof String val) {
-            return new ForgeFeature.Bound(e.getKey(), val, this);
-        } else {
-            throw new InvalidModFileException("Invalid feature bound {" + e.getValue() + "} for key {" + e.getKey() + "} only strings are accepted", this.owningFile);
-        }
-    }
-
     class ModVersion implements net.minecraftforge.forgespi.language.IModInfo.ModVersion {
         private IModInfo owner;
         private final String modId;
@@ -214,6 +230,7 @@ public class ModInfo implements IModInfo, IConfigurable {
             this.owner = owner;
             this.modId = config.<String>getConfigElement("modId")
                     .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", getOwningFile()));
+
             if (this.modId.equals("forge")) {
                 var fileProps = owner.getOwningFile().getFileProperties();
                 // Checking containsKey to avoid a possible exception if the property is not present (due to Collections.emptyMap())
@@ -223,14 +240,15 @@ public class ModInfo implements IModInfo, IConfigurable {
                     fileProps.remove(ModFileInfo.NOT_A_FORGE_MOD_PROP);
                 }
             }
+
             var mandatory = config.<Boolean>getConfigElement("mandatory");
-            if (mandatory.isPresent()) {
+            if (mandatory.isPresent())
                 this.mandatory = mandatory.get();
-            } else if (owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
+            else if (owner.getOwningFile().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP))
                 this.mandatory = true;
-            } else {
+            else
                 throw new InvalidModFileException("Missing required field mandatory in dependency", getOwningFile());
-            }
+
             this.versionRange = config.<String>getConfigElement("versionRange")
                     .map(MavenVersionAdapter::createFromVersionSpec)
                     .orElse(UNBOUNDED);
@@ -244,46 +262,38 @@ public class ModInfo implements IModInfo, IConfigurable {
                     .map(StringUtils::toURL);
         }
 
-
         @Override
-        public String getModId()
-        {
+        public String getModId() {
             return modId;
         }
 
         @Override
-        public VersionRange getVersionRange()
-        {
+        public VersionRange getVersionRange() {
             return versionRange;
         }
 
         @Override
-        public boolean isMandatory()
-        {
+        public boolean isMandatory() {
             return mandatory;
         }
 
         @Override
-        public Ordering getOrdering()
-        {
+        public Ordering getOrdering() {
             return ordering;
         }
 
         @Override
-        public DependencySide getSide()
-        {
+        public DependencySide getSide() {
             return side;
         }
 
         @Override
-        public void setOwner(final IModInfo owner)
-        {
+        public void setOwner(final IModInfo owner) {
             this.owner = owner;
         }
 
         @Override
-        public IModInfo getOwner()
-        {
+        public IModInfo getOwner() {
             return owner;
         }
 
@@ -292,5 +302,4 @@ public class ModInfo implements IModInfo, IConfigurable {
             return referralUrl;
         }
     }
-
 }

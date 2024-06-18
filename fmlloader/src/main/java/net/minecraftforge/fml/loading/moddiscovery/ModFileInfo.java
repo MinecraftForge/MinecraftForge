@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.base.Strings;
 import com.mojang.logging.LogUtils;
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
@@ -18,17 +17,15 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import javax.security.auth.x500.X500Principal;
 import java.net.URL;
-import java.security.CodeSigner;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
-import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,10 +34,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class ModFileInfo implements IModFileInfo, IConfigurable
-{
+public class ModFileInfo implements IModFileInfo, IConfigurable {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final String MAYBE_NOT_JAVAFML_VER = "[2,)";
     private static final String JAVAFML = "javafml";
@@ -60,8 +55,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final String license;
     private final List<String> usesServices;
 
-    ModFileInfo(final ModFile modFile, final IConfigurable config, Consumer<IModFileInfo> configFileConsumer)
-    {
+    ModFileInfo(final ModFile modFile, final IConfigurable config, Consumer<IModFileInfo> configFileConsumer) {
         this.modFile = modFile;
         this.config = config;
         configFileConsumer.accept(this);
@@ -86,10 +80,6 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .orElse(false);
         this.clientSideOnly = config.<Boolean>getConfigElement("clientSideOnly")
                 .orElse(false);
-        if (this.clientSideOnly) {
-            // if clientSideOnly, then this is definitely a Forge mod
-            maybeNotAForgeMod = false;
-        }
         this.showAsDataPack = config.<Boolean>getConfigElement("showAsDataPack")
                 .orElse(false);
         this.usesServices = config.<List<String>>getConfigElement("services")
@@ -97,6 +87,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.issueURL = config.<String>getConfigElement("issueTrackerURL")
                 .map(StringUtils::toURL)
                 .orElse(null);
+
+        // if clientSideOnly, then this is definitely a Forge mod
+        if (this.clientSideOnly)
+            maybeNotAForgeMod = false;
 
         if (maybeNotAForgeMod) {
             // mark this file as not a Forge mod. Note: this marker may be removed later based on the mod dependencies
@@ -111,14 +105,13 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
 
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs.isEmpty())
-        {
             throw new InvalidModFileException("Missing mods list", this);
-        }
+
         this.mods = modConfigs.stream()
                 .map(mi-> (IModInfo)new ModInfo(this, mi))
                 .toList();
-        if (LOGGER.isDebugEnabled(LogMarkers.LOADING))
-        {
+
+        if (LOGGER.isDebugEnabled(LogMarkers.LOADING)) {
             LOGGER.debug(LogMarkers.LOADING, "Found valid mod file {} with {} mods - versions {}",
                     this.modFile.getFileName(),
                     this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
@@ -132,13 +125,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public List<IModInfo> getMods()
-    {
+    public List<IModInfo> getMods() {
         return mods;
     }
 
-    public ModFile getFile()
-    {
+    public ModFile getFile() {
         return this.modFile;
     }
 
@@ -148,44 +139,37 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     }
 
     @Override
-    public Map<String, Object> getFileProperties()
-    {
+    public Map<String, Object> getFileProperties() {
         return this.properties;
     }
 
     @Override
-    public boolean showAsResourcePack()
-    {
+    public boolean showAsResourcePack() {
         return this.showAsResourcePack;
     }
 
     @Override
-    public boolean isClientSideOnly()
-    {
+    public boolean isClientSideOnly() {
         return this.clientSideOnly;
     }
 
     @Override
-    public boolean showAsDataPack()
-    {
+    public boolean showAsDataPack() {
         return this.showAsDataPack;
     }
 
     @Override
-    public <T> Optional<T> getConfigElement(final String... key)
-    {
+    public <T> Optional<T> getConfigElement(final String... key) {
         return this.config.getConfigElement(key);
     }
 
     @Override
-    public List<? extends IConfigurable> getConfigList(final String... key)
-    {
+    public List<? extends IConfigurable> getConfigList(final String... key) {
         return this.config.getConfigList(key);
     }
 
     @Override
-    public String getLicense()
-    {
+    public String getLicense() {
         return license;
     }
 
@@ -194,49 +178,78 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         return this;
     }
 
-    public URL getIssueURL()
-    {
+    public URL getIssueURL() {
         return issueURL;
     }
 
-    public boolean missingLicense()
-    {
+    public boolean missingLicense() {
         return Strings.isNullOrEmpty(license);
     }
 
+    private final char[] HEX = "0123456789ABCDEF".toCharArray();
     public Optional<String> getCodeSigningFingerprint() {
         var signers = this.modFile.getSecureJar().getManifestSigners();
-        return (signers == null ? Stream.<CodeSigner>of() : Arrays.stream(signers))
-                .flatMap(csa->csa.getSignerCertPath().getCertificates().stream())
-                .findFirst()
-                .map(LamdbaExceptionUtils.rethrowFunction(Certificate::getEncoded))
-                .map(bytes->LamdbaExceptionUtils.uncheck(()->MessageDigest.getInstance("SHA-256")).digest(bytes))
-                .map(StringUtils::binToHex)
-                .map(str-> String.join(":", str.split("(?<=\\G.{2})")));
+        if (signers == null)
+            return Optional.empty();
+
+        for (var signer : signers) {
+            for (var cert : signer.getSignerCertPath().getCertificates()) {
+                try {
+                    var encoded = cert.getEncoded();
+                    var sha256 = MessageDigest.getInstance("SHA-256");
+                    var digest = sha256.digest(encoded);
+                    var buf = new StringBuilder(digest.length * 3);
+                    for (int x = 0; x < digest.length - 1; x++) {
+                        buf.append(HEX[(digest[x] & 0xF0) >> 4]);
+                        buf.append(HEX[(digest[x] & 0x0F)     ]);
+                        buf.append(':');
+                    }
+                    buf.append(HEX[(digest[digest.length - 1] & 0xF0) >> 4]);
+                    buf.append(HEX[(digest[digest.length - 1] & 0x0F)     ]);
+
+                    // We only care about the first. Should we list them all?
+                    return Optional.of(buf.toString());
+                } catch (CertificateEncodingException | NoSuchAlgorithmException e) {
+                    sneak(e);
+                }
+            }
+        }
+
+        return Optional.empty();
+
     }
 
     public Optional<String> getTrustData() {
-        return Arrays.stream(this.modFile.getSecureJar().getManifestSigners())
-                .flatMap(csa->csa.getSignerCertPath().getCertificates().stream())
-                .findFirst()
-                .map(X509Certificate.class::cast)
-                .map(c->{
-                    StringBuffer sb = new StringBuffer();
-                    sb.append(c.getSubjectX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
-                    boolean selfSigned = false;
-                   try {
-                       c.verify(c.getPublicKey());
-                       selfSigned = true;
-                   } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
-                       // not self signed
-                   }
-                   if (selfSigned) {
+        var signers = this.modFile.getSecureJar().getManifestSigners();
+        if (signers == null)
+            return Optional.empty();
+
+        for (var signer : signers) {
+            for (var cert : signer.getSignerCertPath().getCertificates()) {
+                if (!(cert instanceof X509Certificate x509))
+                    continue;
+
+                var sb = new StringBuilder();
+                sb.append(x509.getSubjectX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
+
+                var selfSigned = false;
+                try {
+                    x509.verify(x509.getPublicKey());
+                    selfSigned = true;
+                } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
+                    // not self signed
+                }
+
+                if (selfSigned)
                     sb.append(" self-signed");
-                   } else {
-                       sb.append(" signed by ").append(c.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
-                   };
-                   return sb.toString();
-                });
+                else
+                    sb.append(" signed by ").append(x509.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
+
+               return Optional.of(sb.toString());
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -252,5 +265,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     @Override
     public List<String> usesServices() {
         return usesServices;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <E extends Throwable, R> R sneak(Throwable e) throws E {
+        throw (E)e;
     }
 }
