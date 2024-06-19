@@ -49,49 +49,38 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
     private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
-    {
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
         return isEmpty ? NAY : YAY;
     }
 
     @Override
-    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
-    {
-        if (CAP_INJECT.equals(classNode.name))
-        {
-            for (MethodNode mtd : classNode.methods)
-            {
-                if (FUNC_NAME.equals(mtd.name) && FUNC_DESC.equals(mtd.desc))
-                {
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason) {
+        if (CAP_INJECT.equals(classNode.name)) {
+            for (MethodNode mtd : classNode.methods) {
+                if (FUNC_NAME.equals(mtd.name) && FUNC_DESC.equals(mtd.desc)) {
                     mtd.access &= ~Opcodes.ACC_FINAL; // We have it final in code so people don't override it, cuz that'd be stupid, and make our transformer more complicated.
                 }
             }
             return ComputeFlags.SIMPLE_REWRITE;
-        }
-        else if (CAP_INJECT.equals(classNode.superName))
-        {
+        } else if (CAP_INJECT.equals(classNode.superName)) {
             Holder cls = new Holder();
 
             SignatureReader reader = new SignatureReader(classNode.signature); // Having a node version of this would probably be useful.
-            reader.accept(new SignatureVisitor(Opcodes.ASM9)
-            {
+            reader.accept(new SignatureVisitor(Opcodes.ASM9) {
                 Deque<String> stack = new ArrayDeque<>();
 
                 @Override
-                public void visitClassType(final String name)
-                {
+                public void visitClassType(final String name) {
                     stack.push(name);
                 }
 
                 @Override
-                public void visitInnerClassType(final String name)
-                {
+                public void visitInnerClassType(final String name) {
                     stack.push(stack.pop() + '$' + name);
                 }
 
                 @Override
-                public void visitEnd()
-                {
+                public void visitEnd() {
                     var val = stack.pop();
                     if (!stack.isEmpty() && CAP_INJECT.equals(stack.peek()))
                         cls.value = val;
@@ -106,9 +95,7 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
             mtd.visitInsn(Opcodes.ARETURN);
             mtd.visitEnd();
             return ComputeFlags.COMPUTE_MAXS;
-        }
-        else
-        {
+        } else {
             return ComputeFlags.NO_REWRITE;
         }
     }
@@ -116,5 +103,4 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
     private static class Holder {
         String value;
     }
-
 }

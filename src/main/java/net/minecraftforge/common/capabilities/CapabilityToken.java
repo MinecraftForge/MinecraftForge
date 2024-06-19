@@ -21,16 +21,13 @@ import net.minecraftforge.fml.common.asm.CapabilityTokenSubclass;
  * }</pre>
  *
  */
-public abstract class CapabilityToken<T>
-{
-    protected final String getType()
-    {
+public abstract class CapabilityToken<T> {
+    protected final String getType() {
         throw new RuntimeException("This will be implemented by a transformer");
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "CapabilityToken[" + getType() + "]";
     }
 }
