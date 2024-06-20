@@ -37,6 +37,7 @@ public abstract class AbstractModProvider implements IModProvider
         return this.createMod(getDefaultJarModType(), path);
     }
 
+    // FORGE: Backporting artifact, the defaultType must be the first parameter since path is varargs
     protected IModLocator.ModFileOrException createMod(String defaultType, Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
