@@ -34,6 +34,7 @@ public abstract class AbstractModLocator implements IModLocator
         return this.createMod(getDefaultJarModType(), path);
     }
 
+    // FORGE: Backporting artifact, the defaultType must be the first parameter since path is varargs
     protected Optional<IModFile> createMod(String defaultType, Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
