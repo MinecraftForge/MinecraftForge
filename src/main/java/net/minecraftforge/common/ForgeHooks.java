@@ -465,7 +465,7 @@ public final class ForgeHooks {
         level.captureBlockSnapshots = false;
 
         if (ret.consumesAction()) {
-            var postUse = itemstack.copy();
+            var postUse = player.getItemInHand(context.getHand());
 
             var blockSnapshots = new ArrayList<>(level.capturedBlockSnapshots);
             level.capturedBlockSnapshots.clear();
