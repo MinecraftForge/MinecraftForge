@@ -1,14 +1,12 @@
 --- a/net/minecraft/world/entity/monster/Spider.java
 +++ b/net/minecraft/world/entity/monster/Spider.java
-@@ -121,7 +_,12 @@
+@@ -121,7 +_,10 @@
  
      @Override
      public boolean canBeAffected(MobEffectInstance p_33809_) {
 -        return p_33809_.is(MobEffects.POISON) ? false : super.canBeAffected(p_33809_);
 +        if (p_33809_.getEffect() == MobEffects.POISON) {
-+            net.minecraftforge.event.entity.living.MobEffectEvent.Applicable event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_33809_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+            return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++            return net.minecraftforge.common.MinecraftForge.EVENT_BUS.fire(new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_33809_)).getResult().isAllowed();
 +        }
 +        return super.canBeAffected(p_33809_);
      }

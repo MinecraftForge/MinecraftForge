@@ -7,7 +7,7 @@
 -        if (this.shouldShowName(p_114485_)) {
 -            this.renderNameTag(p_114485_, p_114485_.getDisplayName(), p_114488_, p_114489_, p_114490_, p_114487_);
 +        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.fireRenderNameTagEvent(p_114485_, p_114485_.getDisplayName(), this, p_114488_, p_114489_, p_114490_, p_114487_);
-+        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.shouldShowName(p_114485_))) {
++        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (event.getResult().isAllowed() || this.shouldShowName(p_114485_))) {
 +           this.renderNameTag(p_114485_, event.getContent(), p_114488_, p_114489_, p_114490_, p_114487_);
          }
      }

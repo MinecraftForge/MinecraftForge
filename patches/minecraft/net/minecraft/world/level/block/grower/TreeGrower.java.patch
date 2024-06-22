@@ -6,7 +6,7 @@
              Holder<ConfiguredFeature<?, ?>> holder = p_309830_.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(resourcekey).orElse(null);
 +            var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_309830_, p_309951_, p_310327_, holder);
 +            holder = event.getFeature();
-+            if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
++            if (event.getResult().isDenied()) return false;
              if (holder != null) {
                  for (int i = 0; i >= -1; i--) {
                      for (int j = 0; j >= -1; j--) {
