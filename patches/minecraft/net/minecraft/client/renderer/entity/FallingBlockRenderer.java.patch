@@ -1,11 +1,12 @@
 --- a/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
 +++ b/net/minecraft/client/renderer/entity/FallingBlockRenderer.java
-@@ -34,20 +_,25 @@
+@@ -34,20 +_,26 @@
                  p_114637_.pushPose();
                  BlockPos blockpos = BlockPos.containing(p_114634_.getX(), p_114634_.getBoundingBox().maxY, p_114634_.getZ());
                  p_114637_.translate(-0.5, 0.0, -0.5);
 +                var model = this.dispatcher.getBlockModel(blockstate);
 +                for (var renderType : model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(p_114634_.getStartPos())), net.minecraftforge.client.model.data.ModelData.EMPTY)) {
++                renderType = net.minecraftforge.client.RenderTypeHelper.getMovingBlockRenderType(renderType);
                  this.dispatcher
                      .getModelRenderer()
                      .tesselateBlock(
