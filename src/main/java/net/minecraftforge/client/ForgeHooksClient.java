@@ -986,9 +986,9 @@ public class ForgeHooksClient {
         initializedClientHooks = true;
 
         ForgeGameTestHooks.registerGametests();
-        ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
-        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
-        ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());
+        MinecraftForge.EVENT_BUS.post(new RegisterClientReloadListenersEvent(resourceManager));
+        MinecraftForge.EVENT_BUS.post(new EntityRenderersEvent.RegisterLayerDefinitions());
+        MinecraftForge.EVENT_BUS.post(new EntityRenderersEvent.RegisterRenderers());
         TextureAtlasSpriteLoaderManager.init();
         ClientTooltipComponentManager.init();
         EntitySpectatorShaderManager.init();

@@ -91,7 +91,7 @@ public final class ForgeEventFactoryClient {
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?>> renderers, Map<Model, EntityRenderer<? extends Player>> playerRenderers, Context context) {
         // TODO: Why is this a ModLoader event...
-        postModBus(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
     }
 
     public static void onRegisterShaders(ResourceProvider resourceProvider, List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList) {
