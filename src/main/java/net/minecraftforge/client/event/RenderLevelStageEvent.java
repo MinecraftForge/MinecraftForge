@@ -77,8 +77,9 @@ public class RenderLevelStageEvent extends Event {
     }
 
     /**
-     * {@return the pose stack used for rendering}
+     * @deprecated Mojang has stopped passing around PosStacks. getProjectionMatrix should be enough.
      */
+    @Deprecated(forRemoval = true, since = "1.21")
     public Matrix4f getPoseStack() {
         return poseStack;
     }

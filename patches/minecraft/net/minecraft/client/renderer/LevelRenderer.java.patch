@@ -139,7 +139,7 @@
              profilerfiller.popPush("particles");
 -            this.minecraft.particleEngine.render(p_109606_, p_109604_, f);
 +            this.minecraft.particleEngine.render(p_109606_, p_109604_, f, frustum);
-+            net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES.dispatch(this, p_254120_, p_254120_, this.ticks, p_109604_, frustum);
++            net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES.dispatch(this, posestack.last().pose(), p_254120_, this.ticks, p_109604_, frustum);
              RenderStateShard.PARTICLES_TARGET.clearRenderState();
          } else {
              profilerfiller.popPush("translucent");
@@ -149,7 +149,7 @@
              profilerfiller.popPush("particles");
 -            this.minecraft.particleEngine.render(p_109606_, p_109604_, f);
 +            this.minecraft.particleEngine.render(p_109606_, p_109604_, f, frustum);
-+            net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES.dispatch(this, p_254120_, p_254120_, this.ticks, p_109604_, frustum);
++            net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES.dispatch(this, posestack.last().pose(), p_254120_, this.ticks, p_109604_, frustum);
          }
  
          if (this.minecraft.options.getCloudsType() != CloudStatus.OFF) {
