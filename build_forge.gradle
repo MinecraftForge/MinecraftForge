@@ -404,16 +404,6 @@ tasks.register("downloadServerShim", DownloadMavenArtifact) {
     artifact = libs.bootstrap.shim.get().toString()
     changing = true
 }
-tasks.register("downloadMCPConfig", DownloadMavenArtifact) {
-    artifact = MCP_ARTIFACT
-}
-tasks.register('extractMCPConfigMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
-    ext.output = file('build/mcp_mappings.tsrg')
-    tool = INSTALLER_TOOLS + ':fatjar'
-    args = ['--task', 'MCP_DATA', '--key', 'mappings', '--input', downloadMCPConfig.output.get().asFile.absolutePath, '--output', output.absolutePath]
-    outputs.file(output)
-    inputs.file(downloadMCPConfig.output)
-}
 tasks.register('downloadClientMappings', net.minecraftforge.gradle.common.tasks.JarExec) {
     ext.output = file('build/client_mappings.tsrg')
     tool = INSTALLER_TOOLS + ':fatjar'
@@ -620,9 +610,6 @@ tasks.register('installerJson', InstallerJson) {
     dependsOn(launcherJson)
     input.from(launcherJson.output)
     
-    // Extract MCP Mappings
-    dependsOn(extractMCPConfigMappings)
-    input.from(extractMCPConfigMappings.output)
     // Download Official Mappings
     dependsOn(downloadClientMappings, downloadServerMappings)
     input.from(downloadClientMappings.output, downloadServerMappings.output)
@@ -649,14 +636,6 @@ tasks.register('installerJson', InstallerJson) {
             minecraft: MC_VERSION,
             serverJarPath: '{LIBRARY_DIR}/net/minecraft/server/{MINECRAFT_VERSION}/server-{MINECRAFT_VERSION}-bundled.jar',
             data: [
-                MAPPINGS: [
-                    client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@tsrg]",
-                    server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@tsrg]"
-                ],
-                MAPPINGS_SHA: [
-                    client: "'${extractMCPConfigMappings.output.sha1}'",
-                    server: "'${extractMCPConfigMappings.output.sha1}'"
-                ],
                 MOJMAPS: [
                     client: "[net.minecraft:client:${MC_VERSION}:mappings@tsrg]",
                     server: "[net.minecraft:server:${MC_VERSION}:mappings@tsrg]"
@@ -745,18 +724,6 @@ tasks.register('installerJson', InstallerJson) {
                     ],
                     outputs: [
                         '{MC_UNPACKED}': '{MC_UNPACKED_SHA}'
-                    ]
-                ], [
-                    jar: INSTALLER_TOOLS,
-                    classpath: INSTALLER_TOOLS_CLASSPATH,
-                    args: [
-                        '--task', 'MCP_DATA',
-                        '--input', "[${MCP_ARTIFACT.descriptor}]",
-                        '--output', '{MAPPINGS}',
-                        '--key', 'mappings'
-                    ],
-                    outputs: [
-                        '{MAPPINGS}': '{MAPPINGS_SHA}'
                     ]
                 ], [
                     jar: INSTALLER_TOOLS,

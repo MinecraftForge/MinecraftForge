@@ -538,7 +538,7 @@ public class ForgeMod {
     /**
      * TODO: Remove when {@link ForgeRegistry#addAlias(ResourceLocation, ResourceLocation)} is elevated to {@link IForgeRegistry}.
      */
-    @Deprecated(forRemoval = true, since = "1.20")
+    //@Deprecated(forRemoval = true, since = "1.20")
     private static <T> void addAlias(IForgeRegistry<T> registry, ResourceLocation from, ResourceLocation to) {
         ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;
         fReg.addAlias(from, to);
