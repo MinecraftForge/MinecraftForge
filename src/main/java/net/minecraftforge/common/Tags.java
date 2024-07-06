@@ -80,6 +80,7 @@ public class Tags {
         public static final TagKey<Block> COBBLESTONES_INFESTED = cTag("cobblestones/infested");
         public static final TagKey<Block> COBBLESTONES_MOSSY = cTag("cobblestones/mossy");
         public static final TagKey<Block> COBBLESTONES_DEEPSLATE = cTag("cobblestones/deepslate");
+        public static final TagKey<Block> CONCRETES = cTag("concretes");
 
         /**
          * Tag that holds all blocks that can be dyed a specific color.
@@ -119,6 +120,7 @@ public class Tags {
 
         public static final TagKey<Block> GLASS_PANES = cTag("glass_panes");
         public static final TagKey<Block> GLASS_PANES_COLORLESS = cTag("glass_panes/colorless");
+        public static final TagKey<Block> GLAZED_TERRACOTTAS = cTag("glazed_terracottas");
 
         public static final TagKey<Block> GRAVELS = cTag("gravels");
         /**
@@ -366,6 +368,11 @@ public class Tags {
         public static final TagKey<Item> COBBLESTONES_INFESTED = cTag("cobblestones/infested");
         public static final TagKey<Item> COBBLESTONES_MOSSY = cTag("cobblestones/mossy");
         public static final TagKey<Item> COBBLESTONES_DEEPSLATE = cTag("cobblestones/deepslate");
+        public static final TagKey<Item> CONCRETES = cTag("concretes");
+        /**
+         * Block tag equivalent is {@link BlockTags#CONCRETE_POWDER}
+         */
+        public static final TagKey<Item> CONCRETE_POWDERS = cTag("concrete_powders");
         /**
          * For blocks that are similar to amethyst where they have clusters forming from budding blocks
          */
@@ -486,6 +493,7 @@ public class Tags {
 
         public static final TagKey<Item> GLASS_PANES = cTag("glass_panes");
         public static final TagKey<Item> GLASS_PANES_COLORLESS = cTag("glass_panes/colorless");
+        public static final TagKey<Item> GLAZED_TERRACOTTAS = cTag("glazed_terracottas");
 
         public static final TagKey<Item> GRAVELS = cTag("gravels");
         public static final TagKey<Item> GUNPOWDERS = cTag("gunpowders");
@@ -500,6 +508,11 @@ public class Tags {
         public static final TagKey<Item> INGOTS_NETHERITE = cTag("ingots/netherite");
         public static final TagKey<Item> LEATHERS = cTag("leathers");
         public static final TagKey<Item> MUSHROOMS = cTag("mushrooms");
+        /**
+         * For music disc-like materials to be used in recipes.
+         * A pancake with a JUKEBOX_PLAYABLE component attached to play in Jukeboxes as an Easter Egg is not a music disc and would not go in this tag.
+         */
+        public static final TagKey<Item> MUSIC_DISCS = cTag("music_discs");
         public static final TagKey<Item> NETHER_STARS = cTag("nether_stars");
         public static final TagKey<Item> NETHERRACKS = cTag("netherracks");
         public static final TagKey<Item> NUGGETS = cTag("nuggets");
@@ -595,6 +608,10 @@ public class Tags {
         public static final TagKey<Item> SEEDS_MELON = cTag("seeds/melon");
         public static final TagKey<Item> SEEDS_PUMPKIN = cTag("seeds/pumpkin");
         public static final TagKey<Item> SEEDS_WHEAT = cTag("seeds/wheat");
+        /**
+         * Block tag equivalent is {@link BlockTags#SHULKER_BOXES}
+         */
+        public static final TagKey<Item> SHULKER_BOXES = cTag("shulker_boxes");
         public static final TagKey<Item> SLIMEBALLS = cTag("slimeballs");
         /**
          * Natural stone-like blocks that can be used as a base ingredient in recipes that takes stone.
