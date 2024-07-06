@@ -14,7 +14,7 @@
              return false;
          } else {
 +            var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221774_, p_221777_, p_221775_, optional.get());
-+            if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return false;
++            if (event.getResult().isDenied()) return false;
              p_221774_.removeBlock(p_221775_, false);
 -            if (optional.get().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
 +            if (event.getFeature().value().place(p_221774_, p_221774_.getChunkSource().getGenerator(), p_221777_, p_221775_)) {
