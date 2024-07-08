@@ -568,10 +568,6 @@ public class Tags {
         public static final TagKey<Item> ORES_IN_GROUND_STONE = cTag("ores_in_ground/stone");
         public static final TagKey<Item> PLAYER_WORKSTATIONS_CRAFTING_TABLES = cTag("player_workstations/crafting_tables");
         public static final TagKey<Item> PLAYER_WORKSTATIONS_FURNACES = cTag("player_workstations/furnaces");
-        public static final TagKey<Item> RAW_BLOCKS = cTag("raw_blocks");
-        public static final TagKey<Item> RAW_BLOCKS_COPPER = cTag("raw_blocks/copper");
-        public static final TagKey<Item> RAW_BLOCKS_GOLD = cTag("raw_blocks/gold");
-        public static final TagKey<Item> RAW_BLOCKS_IRON = cTag("raw_blocks/iron");
         public static final TagKey<Item> RAW_MATERIALS = cTag("raw_materials");
         public static final TagKey<Item> RAW_MATERIALS_COPPER = cTag("raw_materials/copper");
         public static final TagKey<Item> RAW_MATERIALS_GOLD = cTag("raw_materials/gold");
@@ -660,7 +656,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_SHIELDS = cTag("tools/shields");
+        public static final TagKey<Item> TOOLS_SHIELD = cTag("tools/shield");
         /**
          * A tag containing all existing bows. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
@@ -668,7 +664,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_BOWS = cTag("tools/bows");
+        public static final TagKey<Item> TOOLS_BOW = cTag("tools/bow");
         /**
          * A tag containing all existing crossbows. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
@@ -676,7 +672,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_CROSSBOWS = cTag("tools/crossbows");
+        public static final TagKey<Item> TOOLS_CROSSBOW = cTag("tools/crossbow");
         /**
          * A tag containing all existing fishing rods. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
@@ -684,7 +680,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_FISHING_RODS = cTag("tools/fishing_rods");
+        public static final TagKey<Item> TOOLS_FISHING_ROD = cTag("tools/fishing_rod");
         /**
          * A tag containing all existing spears. Other tools such as throwing knives or boomerangs
          * should not be put into this tag and should be put into their own tool tags.
@@ -694,7 +690,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_SPEARS = cTag("tools/spears");
+        public static final TagKey<Item> TOOLS_SPEAR = cTag("tools/spear");
         /**
          * A tag containing all existing shears. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
@@ -702,7 +698,7 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_SHEARS = cTag("tools/shears");
+        public static final TagKey<Item> TOOLS_SHEAR = cTag("tools/shear");
         /**
          * A tag containing all existing brushes. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
@@ -710,7 +706,15 @@ public class Tags {
          * @see ToolAction
          * @see ToolActions
          */
-        public static final TagKey<Item> TOOLS_BRUSHES = cTag("tools/brushes");
+        public static final TagKey<Item> TOOLS_BRUSH = cTag("tools/brush");
+        /**
+         * A tag containing all existing maces. Do not use this tag for determining a tool's behavior.
+         * Please use {@link ToolActions} instead for what action a tool can do.
+         *
+         * @see ToolAction
+         * @see ToolActions
+         */
+        public static final TagKey<Item> TOOLS_MACE = cTag("tools/mace");
         /**
          * Collects the 4 vanilla armor tags into one parent collection for ease.
          */
@@ -768,12 +772,12 @@ public class Tags {
         /** @deprecated Use {@link #STONES} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> STONE = STONES;
-        /** @deprecated Use {@link #TOOLS_SHEARS} instead */
+        /** @deprecated Use {@link #TOOLS_SHEAR} instead */
         @Deprecated(forRemoval = true)
-        public static final TagKey<Item> SHEARS = TOOLS_SHEARS;
-        /** @deprecated Use {@link #TOOLS_SPEARS} instead */
+        public static final TagKey<Item> SHEARS = TOOLS_SHEAR;
+        /** @deprecated Use {@link #TOOLS_SPEAR} instead */
         @Deprecated(forRemoval = true)
-        public static final TagKey<Item> TOOLS_TRIDENTS = TOOLS_SPEARS;
+        public static final TagKey<Item> TOOLS_TRIDENTS = TOOLS_SPEAR;
         /** @deprecated Use {@link #STRINGS} instead */
         @Deprecated(forRemoval = true)
         public static final TagKey<Item> STRING = STRINGS;

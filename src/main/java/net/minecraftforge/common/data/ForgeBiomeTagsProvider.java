@@ -88,7 +88,6 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
 
         tag(IS_SPARSE_VEGETATION_OVERWORLD)
                 .add(Biomes.WOODED_BADLANDS)
-                .add(Biomes.ERODED_BADLANDS)
                 .add(Biomes.SAVANNA)
                 .add(Biomes.SAVANNA_PLATEAU)
                 .add(Biomes.WINDSWEPT_SAVANNA)

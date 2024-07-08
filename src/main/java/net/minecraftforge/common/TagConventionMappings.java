@@ -309,12 +309,12 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("string"), Tags.Items.STRINGS),
 
             legacyToCommon(Registries.ITEM, forgeRl("tools"), Tags.Items.TOOLS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/shields"), Tags.Items.TOOLS_SHIELDS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/bows"), Tags.Items.TOOLS_BOWS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/crossbows"), Tags.Items.TOOLS_CROSSBOWS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/fishing_rods"), Tags.Items.TOOLS_FISHING_RODS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/tridents"), Tags.Items.TOOLS_SPEARS),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/shears"), Tags.Items.TOOLS_SHEARS),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/shields"), Tags.Items.TOOLS_SHIELD),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/bows"), Tags.Items.TOOLS_BOW),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/crossbows"), Tags.Items.TOOLS_CROSSBOW),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/fishing_rods"), Tags.Items.TOOLS_FISHING_ROD),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/tridents"), Tags.Items.TOOLS_SPEAR),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/shears"), Tags.Items.TOOLS_SHEAR),
 
             legacyToCommon(Registries.ITEM, forgeRl("armors"), Tags.Items.ARMORS),
             //endregion

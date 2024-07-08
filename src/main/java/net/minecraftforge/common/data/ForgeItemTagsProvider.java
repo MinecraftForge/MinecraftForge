@@ -145,6 +145,11 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.INGOTS_NETHERITE).add(Items.NETHERITE_INGOT);
         tag(Tags.Items.LEATHERS).add(Items.LEATHER);
         tag(Tags.Items.MUSHROOMS).add(Items.BROWN_MUSHROOM, Items.RED_MUSHROOM);
+        tag(Tags.Items.MUSIC_DISCS).add(Items.MUSIC_DISC_13, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP,
+                Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD,
+                Items.MUSIC_DISC_WARD, Items.MUSIC_DISC_11, Items.MUSIC_DISC_WAIT, Items.MUSIC_DISC_OTHERSIDE, Items.MUSIC_DISC_5,
+                Items.MUSIC_DISC_PIGSTEP, Items.MUSIC_DISC_RELIC, Items.MUSIC_DISC_CREATOR, Items.MUSIC_DISC_CREATOR_MUSIC_BOX,
+                Items.MUSIC_DISC_PRECIPICE);
         tag(Tags.Items.NETHER_STARS).add(Items.NETHER_STAR);
         copy(Tags.Blocks.NETHERRACKS, Tags.Items.NETHERRACKS);
         tag(Tags.Items.NUGGETS).addTags(Tags.Items.NUGGETS_GOLD, Tags.Items.NUGGETS_IRON);
@@ -173,10 +178,6 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
         copy(Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES, Tags.Items.PLAYER_WORKSTATIONS_CRAFTING_TABLES);
         copy(Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES, Tags.Items.PLAYER_WORKSTATIONS_FURNACES);
-        tag(Tags.Items.RAW_BLOCKS).addTags(Tags.Items.RAW_BLOCKS_COPPER, Tags.Items.RAW_BLOCKS_GOLD, Tags.Items.RAW_BLOCKS_IRON);
-        tag(Tags.Items.RAW_BLOCKS_COPPER).add(Items.RAW_COPPER_BLOCK);
-        tag(Tags.Items.RAW_BLOCKS_GOLD).add(Items.RAW_GOLD_BLOCK);
-        tag(Tags.Items.RAW_BLOCKS_IRON).add(Items.RAW_IRON_BLOCK);
         tag(Tags.Items.RAW_MATERIALS).addTags(Tags.Items.RAW_MATERIALS_COPPER, Tags.Items.RAW_MATERIALS_GOLD, Tags.Items.RAW_MATERIALS_IRON);
         tag(Tags.Items.RAW_MATERIALS_COPPER).add(Items.RAW_COPPER);
         tag(Tags.Items.RAW_MATERIALS_GOLD).add(Items.RAW_GOLD);
@@ -236,16 +237,17 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
                 Items.LECTERN, Items.LOOM, Items.SMITHING_TABLE, Items.SMOKER, Items.STONECUTTER);
 
         // Tools and Armors
-        tag(Tags.Items.TOOLS_SHIELDS).add(Items.SHIELD);
-        tag(Tags.Items.TOOLS_BOWS).add(Items.BOW);
-        tag(Tags.Items.TOOLS_BRUSHES).add(Items.BRUSH);
-        tag(Tags.Items.TOOLS_CROSSBOWS).add(Items.CROSSBOW);
-        tag(Tags.Items.TOOLS_FISHING_RODS).add(Items.FISHING_ROD);
-        tag(Tags.Items.TOOLS_SHEARS).add(Items.SHEARS);
-        tag(Tags.Items.TOOLS_SPEARS).add(Items.TRIDENT);
+        tag(Tags.Items.TOOLS_SHIELD).add(Items.SHIELD);
+        tag(Tags.Items.TOOLS_BOW).add(Items.BOW);
+        tag(Tags.Items.TOOLS_BRUSH).add(Items.BRUSH);
+        tag(Tags.Items.TOOLS_CROSSBOW).add(Items.CROSSBOW);
+        tag(Tags.Items.TOOLS_FISHING_ROD).add(Items.FISHING_ROD);
+        tag(Tags.Items.TOOLS_SHEAR).add(Items.SHEARS);
+        tag(Tags.Items.TOOLS_SPEAR).add(Items.TRIDENT);
+        tag(Tags.Items.TOOLS_MACE).add(Items.MACE);
         tag(Tags.Items.TOOLS)
                 .addTags(ItemTags.AXES, ItemTags.HOES, ItemTags.PICKAXES, ItemTags.SHOVELS, ItemTags.SWORDS)
-                .addTags(Tags.Items.TOOLS_BOWS, Tags.Items.TOOLS_BRUSHES, Tags.Items.TOOLS_CROSSBOWS, Tags.Items.TOOLS_FISHING_RODS, Tags.Items.TOOLS_SHEARS, Tags.Items.TOOLS_SHIELDS, Tags.Items.TOOLS_SPEARS);
+                .addTags(Tags.Items.TOOLS_BOW, Tags.Items.TOOLS_BRUSH, Tags.Items.TOOLS_CROSSBOW, Tags.Items.TOOLS_FISHING_ROD, Tags.Items.TOOLS_SHEAR, Tags.Items.TOOLS_SHIELD, Tags.Items.TOOLS_SPEAR);
         tag(Tags.Items.ARMORS).addTags(ItemTags.HEAD_ARMOR, ItemTags.CHEST_ARMOR, ItemTags.LEG_ARMOR, ItemTags.FOOT_ARMOR);
         tag(Tags.Items.ENCHANTABLES).addTags(ItemTags.ARMOR_ENCHANTABLE, ItemTags.EQUIPPABLE_ENCHANTABLE, ItemTags.WEAPON_ENCHANTABLE, ItemTags.SWORD_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.FISHING_ENCHANTABLE, ItemTags.TRIDENT_ENCHANTABLE, ItemTags.BOW_ENCHANTABLE, ItemTags.CROSSBOW_ENCHANTABLE, ItemTags.FIRE_ASPECT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE).addOptionalTag(ItemTags.MACE_ENCHANTABLE);
 
@@ -350,14 +352,15 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tagWithOptionalLegacy(Tags.Items.SEEDS_WHEAT);
         tagWithOptionalLegacy(Tags.Items.SLIMEBALLS);
         tagWithOptionalLegacy(Tags.Items.STRINGS);
-        tagWithOptionalLegacy(Tags.Items.TOOLS_SHIELDS);
-        tagWithOptionalLegacy(Tags.Items.TOOLS_BOWS);
-        tagWithOptionalLegacy(Tags.Items.TOOLS_CROSSBOWS);
-        tagWithOptionalLegacy(Tags.Items.TOOLS_FISHING_RODS);
-        tag(Tags.Items.TOOLS_SHEARS).addOptionalTag(forgeRl("shears"));
-        tag(Tags.Items.TOOLS_SPEARS).addOptionalTag(forgeRl("tools/tridents"));
         tagWithOptionalLegacy(Tags.Items.TOOLS);
         tagWithOptionalLegacy(Tags.Items.ARMORS);
+        tag(Tags.Items.TOOLS_SHIELD).addOptionalTag(forgeRl("tools/shields"));
+        tag(Tags.Items.TOOLS_BOW).addOptionalTag(forgeRl("tools/bows"));
+        tag(Tags.Items.TOOLS_BRUSH).addOptionalTag(forgeRl("tools/brushes"));
+        tag(Tags.Items.TOOLS_CROSSBOW).addOptionalTag(forgeRl("tools/crossbows"));
+        tag(Tags.Items.TOOLS_FISHING_ROD).addOptionalTag(forgeRl("tools/fishing_rods"));
+        tag(Tags.Items.TOOLS_SHEAR).addOptionalTag(forgeRl("shears")); // yes, it's forge:shears not forge:tools/shears
+        tag(Tags.Items.TOOLS_SPEAR).addOptionalTag(forgeRl("tools/tridents"));
     }
 
     /**
