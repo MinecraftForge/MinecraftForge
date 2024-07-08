@@ -44,6 +44,7 @@ tasks.withType(JavaCompile).configureEach {
     dependsOn 'processResources' // Needed because we merge the output of this with the output of the compile task. And gradle detects downstream tasks using the output without a hard dep
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
     options.warnings = false // Shutup deprecated for removal warnings
+    options.forkOptions.jvmArgs += '-Xmx3G' // Needed to make compiling faster, and not run out of heap space in some cases.
 }
 
 // Merge the resources and classes into the same directory. We'll need to split them at runtime because
