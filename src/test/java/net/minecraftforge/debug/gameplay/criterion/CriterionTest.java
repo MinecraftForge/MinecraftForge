@@ -31,6 +31,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.OldTags;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -142,7 +143,7 @@ public final class CriterionTest extends BaseTestMod {
                         .parent(STORY_ROOT)
                         .requirements(AdvancementRequirements.Strategy.AND)
                         .addCriterion(TEST_CRITERION_ID, CRITERION.get().instance(
-                            BlockPredicate.Builder.block().of(Tags.Blocks.GLASS).build(),
+                            BlockPredicate.Builder.block().of(Tags.Blocks.GLASS_BLOCKS).build(),
                             ItemPredicate.Builder.item().of(tag).build(),
                             true
                         ))
