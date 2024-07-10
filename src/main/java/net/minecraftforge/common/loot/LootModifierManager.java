@@ -23,6 +23,7 @@ import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 
 public class LootModifierManager extends SimpleJsonResourceReloadListener {
@@ -30,10 +31,12 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final String FOLDER = "loot_modifiers";
 
+    private final RegistryAccess registryAccess;
     private Map<ResourceLocation, IGlobalLootModifier> modifiers = ImmutableMap.of();
 
-    public LootModifierManager() {
+    public LootModifierManager(RegistryAccess registryAccess) {
         super(GSON, FOLDER);
+        this.registryAccess = registryAccess;
     }
 
     @Override
@@ -69,7 +72,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> resources, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
         resources.forEach((location, json) -> {
-            IGlobalLootModifier.DIRECT_CODEC.parse(JsonOps.INSTANCE, json)
+            IGlobalLootModifier.DIRECT_CODEC.parse(registryAccess.createSerializationContext(JsonOps.INSTANCE), json)
                 // log error if parse fails
                 .resultOrPartial(errorMsg -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, errorMsg))
                 // add loot modifier if parse succeeds
