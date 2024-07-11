@@ -239,42 +239,156 @@ public class Tags {
         //region Redirect fields for improved backward-compatibility
         // TODO: Remove backwards compat redirect fields in 1.22
         /** @deprecated Use {@link #COBBLESTONES} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> COBBLESTONE = COBBLESTONES;
         /** @deprecated Use {@link #COBBLESTONES_NORMAL} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> COBBLESTONE_NORMAL = COBBLESTONES_NORMAL;
         /** @deprecated Use {@link #COBBLESTONES_INFESTED} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> COBBLESTONE_INFESTED = COBBLESTONES_INFESTED;
         /** @deprecated Use {@link #COBBLESTONES_MOSSY} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> COBBLESTONE_MOSSY = COBBLESTONES_MOSSY;
         /** @deprecated Use {@link #COBBLESTONES_DEEPSLATE} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
 
         /** @deprecated Use {@link #GRAVELS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> GRAVEL = GRAVELS;
 
         /** @deprecated Use {@link #NETHERRACKS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> NETHERRACK = NETHERRACKS;
 
         /** @deprecated Use {@link #SANDS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> SAND = SANDS;
         /** @deprecated Use {@link #SANDS_COLORLESS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> SAND_COLORLESS = SANDS_COLORLESS;
         /** @deprecated Use {@link #SANDS_RED} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> SAND_RED = SANDS_RED;
 
         /** @deprecated Use {@link #GLASS_BLOCKS_CHEAP} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Block> GLASS_SILICA = GLASS_BLOCKS_CHEAP;
+        //endregion
+        
+        //region Forge tags that now map to combining multiple `c` tags
+        // Kept for binary compatibility
+        // TODO: Remove these in 1.22
+        /** @deprecated Use {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS = forgeTag("glass");
+        /** @deprecated Use {@link #DYED_BLACK} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_BLACK = forgeTag("glass/black");
+        /** @deprecated Use {@link #DYED_BLUE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_BLUE = forgeTag("glass/blue");
+        /** @deprecated Use {@link #DYED_BROWN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_BROWN = forgeTag("glass/brown");
+        /** @deprecated Use {@link #GLASS_BLOCKS_COLORLESS} and/or {@link #GLASS_PANES_COLORLESS} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_COLORLESS = forgeTag("glass/colorless");
+        /** @deprecated Use {@link #DYED_CYAN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_CYAN = forgeTag("glass/cyan");
+        /** @deprecated Use {@link #DYED_GRAY} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_GRAY = forgeTag("glass/gray");
+        /** @deprecated Use {@link #DYED_GREEN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_GREEN = forgeTag("glass/green");
+        /** @deprecated Use {@link #DYED_LIGHT_BLUE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_LIGHT_BLUE = forgeTag("glass/light_blue");
+        /** @deprecated Use {@link #DYED_LIGHT_GRAY} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_LIGHT_GRAY = forgeTag("glass/light_gray");
+        /** @deprecated Use {@link #DYED_LIME} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_LIME = forgeTag("glass/lime");
+        /** @deprecated Use {@link #DYED_MAGENTA} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_MAGENTA = forgeTag("glass/magenta");
+        /** @deprecated Use {@link #DYED_ORANGE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_ORANGE = forgeTag("glass/orange");
+        /** @deprecated Use {@link #DYED_PINK} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PINK = forgeTag("glass/pink");
+        /** @deprecated Use {@link #DYED_PURPLE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PURPLE = forgeTag("glass/purple");
+        /** @deprecated Use {@link #DYED_RED} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_RED = forgeTag("glass/red");
+        /** @deprecated Use {@link #DYED_WHITE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_WHITE = forgeTag("glass/white");
+        /** @deprecated Use {@link #DYED_YELLOW} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_YELLOW = forgeTag("glass/yellow");
+        /** @deprecated Use {@link #DYED} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> STAINED_GLASS = forgeTag("stained_glass");
+
+        /** @deprecated Use {@link #DYED_BLACK} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_BLACK = forgeTag("glass_panes/black");
+        /** @deprecated Use {@link #DYED_BLUE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_BLUE = forgeTag("glass_panes/blue");
+        /** @deprecated Use {@link #DYED_BROWN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_BROWN = forgeTag("glass_panes/brown");
+        /** @deprecated Use {@link #DYED_CYAN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_CYAN = forgeTag("glass_panes/cyan");
+        /** @deprecated Use {@link #DYED_GRAY} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_GRAY = forgeTag("glass_panes/gray");
+        /** @deprecated Use {@link #DYED_GREEN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_GREEN = forgeTag("glass_panes/green");
+        /** @deprecated Use {@link #DYED_LIGHT_BLUE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_LIGHT_BLUE = forgeTag("glass_panes/light_blue");
+        /** @deprecated Use {@link #DYED_LIGHT_GRAY} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_LIGHT_GRAY = forgeTag("glass_panes/light_gray");
+        /** @deprecated Use {@link #DYED_LIME} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_LIME = forgeTag("glass_panes/lime");
+        /** @deprecated Use {@link #DYED_MAGENTA} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_MAGENTA = forgeTag("glass_panes/magenta");
+        /** @deprecated Use {@link #DYED_ORANGE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_ORANGE = forgeTag("glass_panes/orange");
+        /** @deprecated Use {@link #DYED_PINK} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_PINK = forgeTag("glass_panes/pink");
+        /** @deprecated Use {@link #DYED_PURPLE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_PURPLE = forgeTag("glass_panes/purple");
+        /** @deprecated Use {@link #DYED_RED} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_RED = forgeTag("glass_panes/red");
+        /** @deprecated Use {@link #DYED_WHITE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_WHITE = forgeTag("glass_panes/white");
+        /** @deprecated Use {@link #DYED_YELLOW} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> GLASS_PANES_YELLOW = forgeTag("glass_panes/yellow");
+        /** @deprecated Use {@link #DYED} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Block> STAINED_GLASS_PANES = forgeTag("stained_glass_panes");
         //endregion
 
         private static TagKey<Block> cTag(String name) {
@@ -326,6 +440,10 @@ public class Tags {
 
         public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
         public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
+
+        /** Deprecated for removal as misleading, because it also contained prismarine shards */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> DUSTS_PRISMARINE = forgeTag("dusts/prismarine");
         //endregion
 
         //region `c` tags for common conventions
@@ -766,59 +884,186 @@ public class Tags {
         //region Redirect fields for improved backward-compatibility
         // TODO: Remove backwards compat redirect fields in 1.22
         /** @deprecated Use {@link #COBBLESTONES} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> COBBLESTONE = COBBLESTONES;
         /** @deprecated Use {@link #COBBLESTONES_NORMAL} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> COBBLESTONE_NORMAL = COBBLESTONES_NORMAL;
         /** @deprecated Use {@link #COBBLESTONES_INFESTED} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> COBBLESTONE_INFESTED = COBBLESTONES_INFESTED;
         /** @deprecated Use {@link #COBBLESTONES_MOSSY} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> COBBLESTONE_MOSSY = COBBLESTONES_MOSSY;
         /** @deprecated Use {@link #COBBLESTONES_DEEPSLATE} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> COBBLESTONE_DEEPSLATE = COBBLESTONES_DEEPSLATE;
         /** @deprecated Use {@link #GRAVELS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> GRAVEL = GRAVELS;
         /** @deprecated Use {@link #GUNPOWDERS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> GUNPOWDER = GUNPOWDERS;
         /** @deprecated Use {@link #LEATHERS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> LEATHER = LEATHERS;
         /** @deprecated Use {@link #NETHERRACKS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> NETHERRACK = NETHERRACKS;
         /** @deprecated Use {@link #OBSIDIANS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> OBSIDIAN = OBSIDIANS;
         /** @deprecated Use {@link #SANDS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> SAND = SANDS;
         /** @deprecated Use {@link #SANDS_COLORLESS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> SAND_COLORLESS = SANDS_COLORLESS;
         /** @deprecated Use {@link #SANDS_RED} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> SAND_RED = SANDS_RED;
         /** @deprecated Use {@link #SANDSTONE_BLOCKS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> SANDSTONE = SANDSTONE_BLOCKS;
         /** @deprecated Use {@link #STONES} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> STONE = STONES;
         /** @deprecated Use {@link #TOOLS_SHEAR} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> SHEARS = TOOLS_SHEAR;
         /** @deprecated Use {@link #TOOLS_SPEAR} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> TOOLS_TRIDENTS = TOOLS_SPEAR;
         /** @deprecated Use {@link #STRINGS} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> STRING = STRINGS;
+        //endregion
+
+        //region Forge tags that now map to combining multiple `c` tags
+        // Kept for binary compatibility
+        // TODO: Remove these in 1.22
+        /** @deprecated Use {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS = forgeTag("glass");
+        /** @deprecated Use {@link #DYED_BLACK} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_BLACK = forgeTag("glass/black");
+        /** @deprecated Use {@link #DYED_BLUE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_BLUE = forgeTag("glass/blue");
+        /** @deprecated Use {@link #DYED_BROWN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_BROWN = forgeTag("glass/brown");
+        /** @deprecated Use {@link #GLASS_BLOCKS_COLORLESS} and/or {@link #GLASS_PANES_COLORLESS} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_COLORLESS = forgeTag("glass/colorless");
+        /** @deprecated Use {@link #DYED_CYAN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_CYAN = forgeTag("glass/cyan");
+        /** @deprecated Use {@link #DYED_GRAY} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_GRAY = forgeTag("glass/gray");
+        /** @deprecated Use {@link #DYED_GREEN} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_GREEN = forgeTag("glass/green");
+        /** @deprecated Use {@link #DYED_LIGHT_BLUE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_LIGHT_BLUE = forgeTag("glass/light_blue");
+        /** @deprecated Use {@link #DYED_LIGHT_GRAY} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_LIGHT_GRAY = forgeTag("glass/light_gray");
+        /** @deprecated Use {@link #DYED_LIME} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_LIME = forgeTag("glass/lime");
+        /** @deprecated Use {@link #DYED_MAGENTA} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_MAGENTA = forgeTag("glass/magenta");
+        /** @deprecated Use {@link #DYED_ORANGE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_ORANGE = forgeTag("glass/orange");
+        /** @deprecated Use {@link #DYED_PINK} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PINK = forgeTag("glass/pink");
+        /** @deprecated Use {@link #DYED_PURPLE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PURPLE = forgeTag("glass/purple");
+        /** @deprecated Use {@link #DYED_RED} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_RED = forgeTag("glass/red");
+        /** @deprecated Use {@link #DYED_WHITE} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_WHITE = forgeTag("glass/white");
+        /** @deprecated Use {@link #DYED_YELLOW} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_YELLOW = forgeTag("glass/yellow");
+        /** @deprecated Use {@link #DYED} combined with {@link #GLASS_BLOCKS} and/or {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> STAINED_GLASS = forgeTag("stained_glass");
+
+        /** @deprecated Use {@link #DYED_BLACK} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_BLACK = forgeTag("glass_panes/black");
+        /** @deprecated Use {@link #DYED_BLUE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_BLUE = forgeTag("glass_panes/blue");
+        /** @deprecated Use {@link #DYED_BROWN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_BROWN = forgeTag("glass_panes/brown");
+        /** @deprecated Use {@link #DYED_CYAN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_CYAN = forgeTag("glass_panes/cyan");
+        /** @deprecated Use {@link #DYED_GRAY} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_GRAY = forgeTag("glass_panes/gray");
+        /** @deprecated Use {@link #DYED_GREEN} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_GREEN = forgeTag("glass_panes/green");
+        /** @deprecated Use {@link #DYED_LIGHT_BLUE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_LIGHT_BLUE = forgeTag("glass_panes/light_blue");
+        /** @deprecated Use {@link #DYED_LIGHT_GRAY} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_LIGHT_GRAY = forgeTag("glass_panes/light_gray");
+        /** @deprecated Use {@link #DYED_LIME} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_LIME = forgeTag("glass_panes/lime");
+        /** @deprecated Use {@link #DYED_MAGENTA} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_MAGENTA = forgeTag("glass_panes/magenta");
+        /** @deprecated Use {@link #DYED_ORANGE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_ORANGE = forgeTag("glass_panes/orange");
+        /** @deprecated Use {@link #DYED_PINK} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_PINK = forgeTag("glass_panes/pink");
+        /** @deprecated Use {@link #DYED_PURPLE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_PURPLE = forgeTag("glass_panes/purple");
+        /** @deprecated Use {@link #DYED_RED} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_RED = forgeTag("glass_panes/red");
+        /** @deprecated Use {@link #DYED_WHITE} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_WHITE = forgeTag("glass_panes/white");
+        /** @deprecated Use {@link #DYED_YELLOW} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> GLASS_PANES_YELLOW = forgeTag("glass_panes/yellow");
+        /** @deprecated Use {@link #DYED} combined with {@link #GLASS_PANES} */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> STAINED_GLASS_PANES = forgeTag("stained_glass_panes");
+
+        /** @deprecated Use the Vanilla tag {@link ItemTags#HEAD_ARMOR} instead */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> ARMORS_HELMETS = forgeTag("armors/helmets");
+        /** @deprecated Use the Vanilla tag {@link ItemTags#CHEST_ARMOR} instead */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> ARMORS_CHESTPLATES = forgeTag("armors/chestplates");
+        /** @deprecated Use the Vanilla tag {@link ItemTags#LEG_ARMOR} instead */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> ARMORS_LEGGINGS = forgeTag("armors/leggings");
+        /** @deprecated Use the Vanilla tag {@link ItemTags#FOOT_ARMOR} instead */
+        @Deprecated(forRemoval = true, since = "1.21")
+        public static final TagKey<Item> ARMORS_BOOTS = forgeTag("armors/boots");
         //endregion
 
         private static TagKey<Item> cTag(String name) {
@@ -1155,40 +1400,40 @@ public class Tags {
         //region Redirect fields for improved backward-compatibility
         // TODO: Remove backwards compat redirect fields in 1.22
         /** @deprecated Use {@link #IS_SPARSE_VEGETATION} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_SPARSE = IS_SPARSE_VEGETATION;
         /** @deprecated Use {@link #IS_SPARSE_VEGETATION_OVERWORLD} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_SPARSE_OVERWORLD = IS_SPARSE_VEGETATION_OVERWORLD;
         /** @deprecated Use {@link #IS_SPARSE_VEGETATION_NETHER} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_SPARSE_NETHER = IS_SPARSE_VEGETATION_NETHER;
         /** @deprecated Use {@link #IS_SPARSE_VEGETATION_END} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_SPARSE_END = IS_SPARSE_VEGETATION_END;
 
         /** @deprecated Use {@link #IS_DENSE_VEGETATION} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_DENSE = IS_DENSE_VEGETATION;
         /** @deprecated Use {@link #IS_DENSE_VEGETATION_OVERWORLD} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_DENSE_OVERWORLD = IS_DENSE_VEGETATION_OVERWORLD;
         /** @deprecated Use {@link #IS_DENSE_VEGETATION_NETHER} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_DENSE_NETHER = IS_DENSE_VEGETATION_NETHER;
         /** @deprecated Use {@link #IS_DENSE_VEGETATION_END} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_DENSE_END = IS_DENSE_VEGETATION_END;
 
         /** @deprecated Use {@link #IS_AQUATIC} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_WATER = IS_AQUATIC;
 
         /** @deprecated Use {@link #IS_MOUNTAIN_SLOPE} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_SLOPE = IS_MOUNTAIN_SLOPE;
         /** @deprecated Use {@link #IS_MOUNTAIN_PEAK} instead */
-        @Deprecated(forRemoval = true)
+        @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Biome> IS_PEAK = IS_MOUNTAIN_PEAK;
         //endregion
 
