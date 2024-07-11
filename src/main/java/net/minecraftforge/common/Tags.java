@@ -442,30 +442,34 @@ public class Tags {
          * Apples and other foods that are considered fruits in the culinary field belong in this tag.
          * Cherries would go here as they are considered a "stone fruit" within culinary fields.
          */
-        public static final TagKey<Item> FOODS_FRUITS = cTag("foods/fruits");
+        public static final TagKey<Item> FOODS_FRUIT = cTag("foods/fruit");
         /**
          * Tomatoes and other foods that are considered vegetables in the culinary field belong in this tag.
          */
-        public static final TagKey<Item> FOODS_VEGETABLES = cTag("foods/vegetables");
+        public static final TagKey<Item> FOODS_VEGETABLE = cTag("foods/vegetable");
         /**
          * Strawberries, raspberries, and other berry foods belong in this tag.
          * Cherries would NOT go here as they are considered a "stone fruit" within culinary fields.
          */
-        public static final TagKey<Item> FOODS_BERRIES = cTag("foods/berries");
-        public static final TagKey<Item> FOODS_BREADS = cTag("foods/breads");
-        public static final TagKey<Item> FOODS_COOKIES = cTag("foods/cookies");
-        public static final TagKey<Item> FOODS_RAW_MEATS = cTag("foods/raw_meats");
-        public static final TagKey<Item> FOODS_COOKED_MEATS = cTag("foods/cooked_meats");
-        public static final TagKey<Item> FOODS_RAW_FISHES = cTag("foods/raw_fishes");
-        public static final TagKey<Item> FOODS_COOKED_FISHES = cTag("foods/cooked_fishes");
+        public static final TagKey<Item> FOODS_BERRY = cTag("foods/berry");
+        public static final TagKey<Item> FOODS_BREAD = cTag("foods/bread");
+        public static final TagKey<Item> FOODS_COOKIE = cTag("foods/cookie");
+        public static final TagKey<Item> FOODS_RAW_MEAT = cTag("foods/raw_meat");
+        public static final TagKey<Item> FOODS_COOKED_MEAT = cTag("foods/cooked_meat");
+        public static final TagKey<Item> FOODS_RAW_FISH = cTag("foods/raw_fish");
+        public static final TagKey<Item> FOODS_COOKED_FISH = cTag("foods/cooked_fish");
         /**
          * Soups, stews, and other liquid food in bowls belongs in this tag.
          */
-        public static final TagKey<Item> FOODS_SOUPS = cTag("foods/soups");
+        public static final TagKey<Item> FOODS_SOUP = cTag("foods/soup");
         /**
          * Sweets and candies like lollipops or chocolate belong in this tag.
          */
-        public static final TagKey<Item> FOODS_CANDIES = cTag("foods/candies");
+        public static final TagKey<Item> FOODS_CANDY = cTag("foods/candy");
+        /**
+         * Any gold-based foods would go in this tag. Such as Golden Apples or Glistering Melon Slice.
+         */
+        public static final TagKey<Item> FOODS_GOLDEN = cTag("foods/golden");
         /**
          * Foods like cake that can be eaten when placed in the world belong in this tag.
          */
@@ -708,6 +712,15 @@ public class Tags {
          */
         public static final TagKey<Item> TOOLS_BRUSH = cTag("tools/brush");
         /**
+         * A tag containing all existing fire starting tools such as Flint and Steel.
+         * Fire Charge is not a tool (no durability) and thus, does not go in this tag.
+         * Please use {@link ToolActions} instead for what action a tool can do.
+         *
+         * @see ToolAction
+         * @see ToolActions
+         */
+        public static final TagKey<Item> TOOLS_IGNITER = cTag("tools/igniter");
+        /**
          * A tag containing all existing maces. Do not use this tag for determining a tool's behavior.
          * Please use {@link ToolActions} instead for what action a tool can do.
          *
@@ -715,6 +728,31 @@ public class Tags {
          * @see ToolActions
          */
         public static final TagKey<Item> TOOLS_MACE = cTag("tools/mace");
+        /**
+         * A tag containing melee-based weapons for recipes and loot tables.
+         * Please use {@link ToolActions} instead for what action a tool can do.
+         *
+         * @see ToolAction
+         * @see ToolActions
+         */
+        public static final TagKey<Item> MELEE_WEAPON_TOOLS = cTag("tools/melee_weapon");
+        /**
+         * A tag containing ranged-based weapons for recipes and loot tables.
+         * Please use {@link ToolActions} instead for what action a tool can do.
+         *
+         * @see ToolAction
+         * @see ToolActions
+         */
+        public static final TagKey<Item> RANGED_WEAPON_TOOLS = cTag("tools/ranged_weapon");
+        /**
+         * A tag containing mining-based tools for recipes and loot tables.
+         * Do not use this tag for determining a tool's behavior in-code.
+         * Please use {@link ToolActions} instead for what action a tool can do.
+         *
+         * @see ToolAction
+         * @see ToolActions
+         */
+        public static final TagKey<Item> MINING_TOOL_TOOLS = cTag("tools/mining_tool");
         /**
          * Collects the 4 vanilla armor tags into one parent collection for ease.
          */
