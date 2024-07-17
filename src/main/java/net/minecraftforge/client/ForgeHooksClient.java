@@ -251,17 +251,6 @@ public class ForgeHooksClient {
         return result != null ? result : layer.texture(inner);
     }
 
-    /**
-     * @deprecated Use the version taking a {@code PoseStack} instead, {@link #onDrawHighlight(LevelRenderer, Camera, HitResult, float, PoseStack, MultiBufferSource)}.
-     */
-    // TODO: Remove in next breaking changes period
-    @Deprecated
-    public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, Matrix4f ctxPos, MultiBufferSource bufferSource) {
-        var poseStack = new PoseStack();
-        poseStack.mulPose(ctxPos);
-        return onDrawHighlight(context, camera, target, partialTick, poseStack, bufferSource);
-    }
-
     public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {
         switch (target.getType()) {
             case BLOCK:
