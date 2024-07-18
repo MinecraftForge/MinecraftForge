@@ -123,13 +123,13 @@
              profilerfiller.popPush("outline");
              BlockPos blockpos1 = ((BlockHitResult)hitresult).getBlockPos();
              BlockState blockstate = this.level.getBlockState(blockpos1);
-+            if (!net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_254120_, multibuffersource$buffersource))
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, posestack, multibuffersource$buffersource))
              if (!blockstate.isAir() && this.level.getWorldBorder().isWithinBounds(blockpos1)) {
                  VertexConsumer vertexconsumer2 = multibuffersource$buffersource.getBuffer(RenderType.lines());
                  this.renderHitOutline(posestack, vertexconsumer2, p_109604_.getEntity(), d0, d1, d2, blockpos1, blockstate);
              }
 +        } else if (hitresult != null && hitresult.getType() == HitResult.Type.ENTITY) {
-+            net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_254120_, multibuffersource$buffersource);
++            net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, posestack, multibuffersource$buffersource);
          }
  
          this.minecraft.debugRenderer.render(posestack, multibuffersource$buffersource, d0, d1, d2);

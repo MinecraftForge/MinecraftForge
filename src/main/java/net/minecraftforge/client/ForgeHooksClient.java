@@ -267,9 +267,7 @@ public class ForgeHooksClient {
         return result != null ? result : layer.texture(inner);
     }
 
-    public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, Matrix4f ctxPos, MultiBufferSource bufferSource) {
-        var poseStack = new PoseStack();
-        poseStack.mulPose(ctxPos);
+    public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {
         switch (target.getType()) {
             case BLOCK:
                 if (!(target instanceof BlockHitResult blockTarget)) return false;
