@@ -491,8 +491,7 @@ public final class ForgeHooks {
                 }
             } else {
                 // Change the stack to its new content
-                if (!player.isCreative())
-                    player.setItemInHand(context.getHand(), postUse);
+                player.setItemInHand(context.getHand(), postUse);
 
                 for (BlockSnapshot snap : blockSnapshots) {
                     int updateFlag = snap.getFlag();
