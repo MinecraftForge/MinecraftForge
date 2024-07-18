@@ -474,7 +474,7 @@ public final class ForgeHooks {
         level.captureBlockSnapshots = false;
 
         if (ret.consumesAction()) {
-            var postUse = itemstack.copy();
+            var postUse = player.getItemInHand(context.getHand());
 
             var blockSnapshots = new ArrayList<>(level.capturedBlockSnapshots);
             level.capturedBlockSnapshots.clear();
@@ -500,8 +500,7 @@ public final class ForgeHooks {
                 }
             } else {
                 // Change the stack to its new content
-                if (!player.isCreative())
-                    player.setItemInHand(context.getHand(), postUse);
+                player.setItemInHand(context.getHand(), postUse);
 
                 for (BlockSnapshot snap : blockSnapshots) {
                     int updateFlag = snap.getFlag();
