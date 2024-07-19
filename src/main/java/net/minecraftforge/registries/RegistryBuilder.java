@@ -15,6 +15,8 @@ import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
 import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,18 +41,18 @@ public class RegistryBuilder<T> {
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
     private int maxId = MAX_ID;
-    private List<AddCallback<T>> addCallback = Lists.newArrayList();
-    private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
-    private List<CreateCallback<T>> createCallback = Lists.newArrayList();
-    private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
-    private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
+    private final List<AddCallback<T>> addCallback = new ArrayList<>();
+    private final List<ClearCallback<T>> clearCallback = new ArrayList<>();
+    private final List<CreateCallback<T>> createCallback = new ArrayList<>();
+    private final List<ValidateCallback<T>> validateCallback = new ArrayList<>();
+    private final List<BakeCallback<T>> bakeCallback = new ArrayList<>();
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
     private MissingFactory<T> missingFactory;
-    private Set<ResourceLocation> legacyNames = new HashSet<>();
+    private final Set<ResourceLocation> legacyNames = new HashSet<>();
     @Nullable
     private Function<T, Holder.Reference<T>> intrusiveHolderCallback = null;
 

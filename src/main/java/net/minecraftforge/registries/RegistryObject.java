@@ -26,7 +26,7 @@ public final class RegistryObject<T> implements Supplier<T> {
     @Nullable
     private final ResourceLocation name;
     @Nullable
-    private ResourceKey<T> key;
+    private final ResourceKey<T> key;
     private final boolean optionalRegistry;
     @Nullable
     private T value;

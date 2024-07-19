@@ -7,14 +7,13 @@ package net.minecraftforge.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
 
-import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.RegistrationInfo;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,10 +34,10 @@ public class RegistryManager {
     private static Set<ResourceLocation> vanillaRegistryKeys = Set.of();
 
     BiMap<ResourceLocation, ForgeRegistry<?>> registries = HashBiMap.create();
-    private Map<ResourceLocation, ? extends IForgeRegistry<?>> registryView = Collections.unmodifiableMap(registries);
-    private Set<ResourceLocation> persisted = Sets.newHashSet();
-    private Set<ResourceLocation> synced = Sets.newHashSet();
-    private Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
+    private final Map<ResourceLocation, ? extends IForgeRegistry<?>> registryView = Collections.unmodifiableMap(registries);
+    private final Set<ResourceLocation> persisted = new HashSet<>();
+    private final Set<ResourceLocation> synced = new HashSet<>();
+    private final Map<ResourceLocation, ResourceLocation> legacyNames = new HashMap<>();
     private final String name;
 
     RegistryManager() {
