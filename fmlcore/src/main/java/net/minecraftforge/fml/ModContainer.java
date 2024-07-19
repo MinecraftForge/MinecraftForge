@@ -45,7 +45,7 @@ public abstract class ModContainer
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected Supplier<?> contextExtension;
-    protected final Map<ModLoadingStage, Runnable> activityMap = new HashMap<>();
+    protected final Map<ModLoadingStage, Runnable> activityMap = new EnumMap<>(ModLoadingStage.class);
     protected final Map<Class<? extends IExtensionPoint<?>>, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

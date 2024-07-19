@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -126,7 +126,7 @@ public class ModDiscoverer {
         }
 
         //First processing run of the mod list. Any duplicates will cause resolution failure and dependency loading will be skipped.
-        Map<IModFile.Type, List<ModFile>> modFilesMap = Maps.newHashMap();
+        Map<IModFile.Type, List<ModFile>> modFilesMap = new EnumMap<>(IModFile.Type.class);
         try {
             final UniqueModListBuilder modsUniqueListBuilder = new UniqueModListBuilder(loadedFiles);
             final UniqueModListBuilder.UniqueModListData uniqueModsData = modsUniqueListBuilder.buildUniqueList();
@@ -134,7 +134,7 @@ public class ModDiscoverer {
             //Grab the temporary results.
             //This allows loading to continue to a base state, in case dependency loading fails.
             modFilesMap = uniqueModsData.modFiles().stream()
-                            .collect(Collectors.groupingBy(IModFile::getType));
+                            .collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             loadedFiles = uniqueModsData.modFiles();
         }
         catch (EarlyLoadingException exception) {
@@ -171,11 +171,11 @@ public class ModDiscoverer {
 
                 //We now only need the mod files map, not the list.
                 modFilesMap = uniqueModsAndDependenciesData.modFiles().stream()
-                                .collect(Collectors.groupingBy(IModFile::getType));
+                                .collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             } catch (EarlyLoadingException exception) {
                 LOGGER.error(LogMarkers.SCAN, "Failed to build unique mod list after dependency discovery.", exception);
                 discoveryErrorData.addAll(exception.getAllData());
-                modFilesMap = loadedFiles.stream().collect(Collectors.groupingBy(IModFile::getType));
+                modFilesMap = loadedFiles.stream().collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             }
         }
         else {
