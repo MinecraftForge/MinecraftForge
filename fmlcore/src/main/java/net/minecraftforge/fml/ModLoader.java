@@ -83,7 +83,7 @@ public class ModLoader
     private final Set<IModInfo> erroredModInfos;
     private final List<ModLoadingWarning> loadingWarnings;
     private final ModStateManager stateManager;
-    private boolean loadingStateValid;
+    private static boolean loadingStateValid;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<Consumer<String>> statusConsumer = StartupNotificationManager.modLoaderConsumer();
     private final Set<IModLoadingState> completedStates = new HashSet<>();
@@ -318,7 +318,7 @@ public class ModLoader
      * and don't want to cause extraneous crashes due to trying to do things that aren't possible in a "broken load"
      */
     public static boolean isLoadingStateValid() {
-        return get().loadingStateValid;
+        return loadingStateValid;
     }
 
     public boolean hasCompletedState(final String stateName) {
