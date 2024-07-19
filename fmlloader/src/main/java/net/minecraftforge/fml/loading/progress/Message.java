@@ -5,31 +5,13 @@
 
 package net.minecraftforge.fml.loading.progress;
 
-public class Message {
-    private final String text;
-    private final MessageType type;
-    private final long timestamp;
-
-    public Message(final String text, final MessageType type) {
-        this.text = text;
-        this.type = type;
-        this.timestamp = System.nanoTime();
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    MessageType getType() {
-        return type;
-    }
-
-    long timestamp() {
-        return timestamp;
+public record Message(String getText, MessageType getType, long timestamp) {
+    Message(String text, MessageType type) {
+        this(text, type, System.nanoTime());
     }
 
     public float[] getTypeColour() {
-        return type.colour();
+        return getType.colour();
     }
 
     enum MessageType {

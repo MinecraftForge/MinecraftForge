@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.earlydisplay;
 
-import net.minecraftforge.fml.loading.progress.Message;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 
@@ -77,9 +76,8 @@ public class RenderElement {
             final StartupNotificationManager.AgeMessage pair = messages.get(i);
             final float fade = clamp((4000.0f - (float) pair.age() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
             if (fade <0.01f) continue;
-            Message msg = pair.message();
             int colour = Math.min((int)(fade * 255f), globalAlpha) << 24 | 0xFFFFFF;
-            texts.add(new SimpleFont.DisplayText(msg.getText()+"\n", colour));
+            texts.add(new SimpleFont.DisplayText(pair.message().getText()+"\n", colour));
         }
 
         font.generateVerticesForTexts(10, context.scaledHeight() -  texts.size() * font.lineSpacing() + font.descent() - 10, bb, texts.toArray(SimpleFont.DisplayText[]::new));
