@@ -184,21 +184,27 @@ public class ModLoader
         this.modList = modList;
         var stateList = stateManager.getStates(ModLoadingPhase.GATHER);
         var progress = StartupMessageManager.addProgressBar("Mod Gather", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         progress.complete();
     }
 
     public void loadMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
         var stateList = stateManager.getStates(ModLoadingPhase.LOAD);
         var progress = StartupMessageManager.addProgressBar("Mod Loading", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         progress.complete();
     }
 
     public void finishMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
         var stateList = stateManager.getStates(ModLoadingPhase.COMPLETE);
         var progress = StartupMessageManager.addProgressBar("Mod Complete", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", this.modList.size())));
         progress.complete();
     }
