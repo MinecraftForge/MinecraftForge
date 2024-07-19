@@ -80,6 +80,7 @@ public class ModLoader
     private final LoadingModList loadingModList;
 
     private final List<ModLoadingException> loadingExceptions;
+    private final Set<IModInfo> erroredModInfos;
     private final List<ModLoadingWarning> loadingWarnings;
     private final ModStateManager stateManager;
     private boolean loadingStateValid;
@@ -97,9 +98,15 @@ public class ModLoader
         this.loadingWarnings = this.loadingModList.getBrokenFiles().stream()
                 .map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE, InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName()))
                 .collect(Collectors.toList());
+        if (this.loadingExceptions.isEmpty()) {
+            this.erroredModInfos = Collections.emptySet();
+        } else {
+            this.erroredModInfos = Collections.newSetFromMap(new IdentityHashMap<>());
+            this.erroredModInfos.addAll(this.loadingExceptions.stream().map(ModLoadingException::getModInfo).toList());
+        }
         this.loadingModList.getModFiles().stream()
                 .filter(ModFileInfo::missingLicense)
-                .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
+                .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(this.erroredModInfos::contains)) //Ignore files where any other mod already encountered an error
                 .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
                 .forEach(this.loadingExceptions::add);
         this.stateManager = new ModStateManager();
