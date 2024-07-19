@@ -77,7 +77,6 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class ModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static ModLoader INSTANCE;
     private final LoadingModList loadingModList;
 
     private final List<ModLoadingException> loadingExceptions;
@@ -91,7 +90,6 @@ public class ModLoader
 
     private ModLoader()
     {
-        INSTANCE = this;
         this.loadingModList = FMLLoader.getLoadingModList();
         this.loadingExceptions = this.loadingModList.getErrors().stream()
                 .flatMap(ModLoadingException::fromEarlyException)
@@ -125,9 +123,13 @@ public class ModLoader
                 collect(Collectors.joining("\n\t\t","\t\t",""));
     }
 
-    public static ModLoader get()
-    {
-        return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
+    public static ModLoader get() {
+        return LazyInit.INSTANCE;
+    }
+
+    private static final class LazyInit {
+        private static final ModLoader INSTANCE = new ModLoader();
+        private LazyInit() {}
     }
 
     /**
