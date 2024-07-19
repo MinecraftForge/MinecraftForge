@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.Lists;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.AddCallback;
@@ -208,8 +207,8 @@ public class RegistryBuilder<T> {
     IForgeRegistry<T> create() {
         if (hasWrapper) {
             GameData.WrapperFactory<T> wrapper = GameData.createWrapperFactory(getDefault() != null);
-            this.addCallback.add(0, wrapper);
-            this.createCallback.add(0, wrapper);
+            this.addCallback.addFirst(wrapper);
+            this.createCallback.addFirst(wrapper);
         }
         return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
@@ -219,7 +218,7 @@ public class RegistryBuilder<T> {
         if (addCallback.isEmpty())
             return null;
         if (addCallback.size() == 1)
-            return addCallback.get(0);
+            return addCallback.getFirst();
 
         var tmp = this.addCallback;
         return (owner, stage, id, key, obj, old) -> {
@@ -233,7 +232,7 @@ public class RegistryBuilder<T> {
         if (clearCallback.isEmpty())
             return null;
         if (clearCallback.size() == 1)
-            return clearCallback.get(0);
+            return clearCallback.getFirst();
 
         var tmp = this.clearCallback;
         return (owner, stage) -> {
@@ -247,7 +246,7 @@ public class RegistryBuilder<T> {
         if (createCallback.isEmpty())
             return null;
         if (createCallback.size() == 1)
-            return createCallback.get(0);
+            return createCallback.getFirst();
 
         var tmp = this.createCallback;
         return (owner, stage) -> {
@@ -261,7 +260,7 @@ public class RegistryBuilder<T> {
         if (validateCallback.isEmpty())
             return null;
         if (validateCallback.size() == 1)
-            return validateCallback.get(0);
+            return validateCallback.getFirst();
 
         var tmp = this.validateCallback;
         return (owner, stage, id, key, obj) -> {
@@ -275,7 +274,7 @@ public class RegistryBuilder<T> {
         if (bakeCallback.isEmpty())
             return null;
         if (bakeCallback.size() == 1)
-            return bakeCallback.get(0);
+            return bakeCallback.getFirst();
 
         var tmp = this.bakeCallback;
         return (owner, stage) -> {

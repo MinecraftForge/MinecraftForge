@@ -75,7 +75,7 @@ public class UniqueModListBuilder
         final List<String> dupedModErrors = modIds.values().stream()
                 .filter(modInfos -> modInfos.size() > 1)
                 .map(mods -> String.format("\tMod ID: '%s' from mod files: %s",
-                        mods.get(0).getModId(),
+                        mods.getFirst().getModId(),
                         mods.stream()
                                 .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
                 )).toList();
@@ -91,9 +91,8 @@ public class UniqueModListBuilder
         final List<String> dupedLibErrors = versionedLibIds.values().stream()
                 .filter(modFiles -> modFiles.size() > 1)
                 .map(mods -> String.format("\tLibrary: '%s' from files: %s",
-                        getModId(mods.get(0)),
-                        mods.stream()
-                                .map(modFile -> modFile.getFileName()).collect(joining(", "))
+                        getModId(mods.getFirst()),
+                        mods.stream().map(ModFile::getFileName).collect(joining(", "))
                 )).toList();
 
         if (!dupedLibErrors.isEmpty()) {
@@ -119,7 +118,7 @@ public class UniqueModListBuilder
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
             modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), this.getVersion(modInfoList.get(0)));
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.getFirst().getFileName(), fullList.getKey(), this.getVersion(modInfoList.getFirst()));
         }
         return modInfoList.get(0);
     }

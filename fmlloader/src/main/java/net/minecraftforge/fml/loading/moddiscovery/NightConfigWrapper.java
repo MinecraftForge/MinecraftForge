@@ -46,7 +46,7 @@ class NightConfigWrapper implements IConfigurable {
                 for (var e: cfg.entrySet())
                     builder.put(e.getKey(), e.getValue());
                 return (T)builder.build();
-            } else if (value instanceof ArrayList<?> al && al.size() > 0 && al.get(0) instanceof UnmodifiableConfig) {
+            } else if (value instanceof ArrayList<?> al && !al.isEmpty() && al.getFirst() instanceof UnmodifiableConfig) {
                 throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
             }
             return (T) value;
