@@ -301,9 +301,12 @@ public class ModLoader
         try {
             final String modId = idToProviderEntry.getKey();
             final IModLanguageProvider.IModLanguageLoader languageLoader = idToProviderEntry.getValue();
-            IModInfo info = Optional.ofNullable(modInfoMap.get(modId)).
-                    // throw a missing metadata error if there is no matching modid in the modInfoMap from the mods.toml file
-                    orElseThrow(()->new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId));
+
+            IModInfo info = modInfoMap.get(modId);
+            // throw a missing metadata error if there is no matching modid in the modInfoMap from the mods.toml file
+            if (info == null)
+                throw new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId);
+
             return languageLoader.loadMod(info, modFile.getScanResult(), FMLLoader.getGameLayer());
         } catch (ModLoadingException mle) {
             // exceptions are caught and added to the error list for later handling
