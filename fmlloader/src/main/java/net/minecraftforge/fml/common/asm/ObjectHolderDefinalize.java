@@ -35,7 +35,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
             new VanillaObjectHolderData("net.minecraft.core.particles.ParticleTypes", "particle_type", "net.minecraft.core.particles.ParticleType"),
             new VanillaObjectHolderData("net.minecraft.sounds.SoundEvents", "sound_event", "net.minecraft.sounds.SoundEvent")
     ).collect(Collectors.toMap(VanillaObjectHolderData::holderClass, Function.identity()));
-    private final String OBJECT_HOLDER = "Lnet/minecraftforge/registries/ObjectHolder;"; //Don't directly reference this to prevent class loading.
+    private static final String OBJECT_HOLDER = "Lnet/minecraftforge/registries/ObjectHolder;"; //Don't directly reference this to prevent class loading.
 
     @Override
     public String name() {
