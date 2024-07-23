@@ -555,6 +555,10 @@ public class Tags {
         public static final TagKey<Item> FENCES = cTag("fences");
         public static final TagKey<Item> FENCES_NETHER_BRICK = cTag("fences/nether_brick");
         public static final TagKey<Item> FENCES_WOODEN = cTag("fences/wooden");
+        /**
+         * For bonemeal-like items that can grow plants.
+         */
+        public static final TagKey<Item> FERTILIZERS = cTag("fertilizers");
         public static final TagKey<Item> FOODS = cTag("foods");
         /**
          * Apples and other foods that are considered fruits in the culinary field belong in this tag.
@@ -848,6 +852,7 @@ public class Tags {
         public static final TagKey<Item> TOOLS_MACE = cTag("tools/mace");
         /**
          * A tag containing melee-based weapons for recipes and loot tables.
+         * Tools are considered melee if they contain an ATTACK_DAMAGE attribute.
          * Please use {@link ToolActions} instead for what action a tool can do.
          *
          * @see ToolAction
@@ -856,6 +861,7 @@ public class Tags {
         public static final TagKey<Item> MELEE_WEAPON_TOOLS = cTag("tools/melee_weapon");
         /**
          * A tag containing ranged-based weapons for recipes and loot tables.
+         * Tools are considered ranged if they can damage entities beyond the weapon's and player's melee attack range.
          * Please use {@link ToolActions} instead for what action a tool can do.
          *
          * @see ToolAction

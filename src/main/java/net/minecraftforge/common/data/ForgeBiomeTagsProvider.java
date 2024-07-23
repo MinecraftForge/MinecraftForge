@@ -90,6 +90,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.WOODED_BADLANDS)
                 .add(Biomes.SAVANNA)
                 .add(Biomes.SAVANNA_PLATEAU)
+                .add(Biomes.SPARSE_JUNGLE)
                 .add(Biomes.WINDSWEPT_SAVANNA)
                 .add(Biomes.WINDSWEPT_FOREST)
                 .add(Biomes.WINDSWEPT_HILLS)
