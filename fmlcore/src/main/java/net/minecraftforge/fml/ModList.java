@@ -148,11 +148,11 @@ public class ModList
     static <V> CompletableFuture<List<Map.Entry<V, Throwable>>> gather(List<? extends CompletableFuture<? extends V>> futures) {
         List<Map.Entry<V, Throwable>> list = new ArrayList<>(futures.size());
         CompletableFuture<?>[] results = new CompletableFuture[futures.size()];
-        futures.forEach(future -> {
+        for (var future : futures) {
             int i = list.size();
             list.add(null);
             results[i] = future.whenComplete((result, exception) -> list.set(i, new AbstractMap.SimpleImmutableEntry<>(result, exception)));
-        });
+        }
         return CompletableFuture.allOf(results).handle((r, th)->null).thenApply(res -> list);
     }
 

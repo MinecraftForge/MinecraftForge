@@ -221,16 +221,13 @@ public class ObjectHolderRegistry
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
         RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
-        objectHolders.forEach(objectHolder -> {
-            try
-            {
+        for (Consumer<Predicate<ResourceLocation>> objectHolder : objectHolders) {
+            try {
                 objectHolder.accept(filter);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 aggregate.addSuppressed(e);
             }
-        });
+        }
 
         if (aggregate.getSuppressed().length > 0)
         {

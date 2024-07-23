@@ -53,10 +53,10 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     Lifecycle registryLifecycle = Lifecycle.stable();
     private boolean frozen = false; // Frozen is vanilla's variant of locked, but it can be unfrozen
     private List<Holder.Reference<T>> holdersSorted;
-    private ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
-    private Map<ResourceLocation, Holder.Reference<T>> holdersByName = new HashMap<>();
-    private Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
-    private RegistryManager stage;
+    private final ObjectList<Holder.Reference<T>> holdersById = new ObjectArrayList<>(256);
+    private final Map<ResourceLocation, Holder.Reference<T>> holdersByName = new HashMap<>();
+    private final Map<T, Holder.Reference<T>> holders = new IdentityHashMap<>();
+    private final RegistryManager stage;
     private volatile Map<TagKey<T>, HolderSet.Named<T>> tags = new IdentityHashMap<>();
     private final Map<ResourceKey<T>, RegistrationInfo> registrationInfos = new IdentityHashMap<>();
 

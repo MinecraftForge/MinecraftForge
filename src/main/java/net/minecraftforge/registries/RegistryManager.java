@@ -151,7 +151,9 @@ public class RegistryManager {
     public Map<ResourceLocation, Snapshot> takeSnapshot(boolean savingToDisc) {
         Map<ResourceLocation, Snapshot> ret = new HashMap<>();
         var keys = savingToDisc ? this.persisted : this.synced;
-        keys.forEach(name -> ret.put(name, getRegistry(name).makeSnapshot()));
+        for (ResourceLocation key : keys) {
+            ret.put(key, getRegistry(key).makeSnapshot());
+        }
         return ret;
     }
 
