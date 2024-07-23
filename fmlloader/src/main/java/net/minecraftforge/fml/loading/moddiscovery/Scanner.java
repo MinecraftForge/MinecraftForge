@@ -21,37 +21,36 @@ import java.nio.file.Path;
 import java.util.List;
 
 @ApiStatus.Internal
-class Scanner {
+record Scanner(ModFile fileToScan, ModFileScanData result) {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final ModFile fileToScan;
+    private static final boolean DEBUG = LOGGER.isDebugEnabled(LogMarkers.SCAN);
 
-    public Scanner(final ModFile fileToScan) {
-        this.fileToScan = fileToScan;
+    public Scanner(ModFile fileToScan) {
+        this(fileToScan, new ModFileScanData());
     }
 
     public ModFileScanData scan() {
-        ModFileScanData result = new ModFileScanData();
         result.addModFileInfo(fileToScan.getModFileInfo());
-        fileToScan.scanFile(p -> fileVisitor(p, result));
+        fileToScan.scanFile(this::fileVisitor);
         final List<IModLanguageProvider> loaders = fileToScan.getLoaders();
         if (loaders != null) {
-            loaders.forEach(loader -> {
-                LOGGER.debug(LogMarkers.SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
+            for (IModLanguageProvider loader : loaders) {
+                if (DEBUG) LOGGER.debug("Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
                 loader.getFileVisitor().accept(result);
-            });
+            }
         }
         return result;
     }
 
-    private void fileVisitor(final Path path, final ModFileScanData result) {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning {} path {}", fileToScan, path);
-        try (InputStream in = Files.newInputStream(path)){
+    private void fileVisitor(final Path path) {
+        try (InputStream in = Files.newInputStream(path)) {
             ModClassVisitor mcv = new ModClassVisitor();
             ClassReader cr = new ClassReader(in);
             cr.accept(mcv, 0);
             mcv.buildData(result.getClasses(), result.getAnnotations());
         } catch (IOException | IllegalArgumentException e) {
             // mark path bad
+            if (DEBUG) LOGGER.warn("Failed scanning {} path {}", fileToScan, path);
         }
     }
 }
