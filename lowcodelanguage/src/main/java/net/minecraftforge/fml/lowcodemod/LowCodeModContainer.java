@@ -21,14 +21,12 @@ import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 public class LowCodeModContainer extends ModContainer
 {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final ModFileScanData scanResults;
-    private Object modInstance;
+    private final Object modInstance;
 
     public LowCodeModContainer(IModInfo info, ModFileScanData modFileScanResults, ModuleLayer gameLayer)
     {
         super(info);
         LOGGER.debug(LOADING, "Creating LowCodeModContainer for {}", info.getModId());
-        this.scanResults = modFileScanResults;
         this.modInstance = new Object();
         this.contextExtension = () -> null;
         this.extensionPoints.remove(IExtensionPoint.DisplayTest.class);
@@ -44,10 +42,5 @@ public class LowCodeModContainer extends ModContainer
     public Object getMod()
     {
         return modInstance;
-    }
-
-    @Override
-    protected <T extends Event & IModBusEvent> void acceptEvent(final T e)
-    {
     }
 }
