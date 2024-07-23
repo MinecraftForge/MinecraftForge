@@ -57,7 +57,9 @@ public class DeferredWorkQueue
         LOGGER.debug(LOADING, "Dispatching synchronous work for work queue {}: {} jobs", modLoadingStage, tasks.size());
         RuntimeException aggregate = new RuntimeException();
         Stopwatch timer = Stopwatch.createStarted();
-        tasks.forEach(t -> makeRunnable(t, Runnable::run, aggregate));
+        for (TaskInfo t : tasks) {
+            makeRunnable(t, Runnable::run, aggregate);
+        }
         timer.stop();
         if (aggregate.getSuppressed().length > 0) {
             LOGGER.fatal(
