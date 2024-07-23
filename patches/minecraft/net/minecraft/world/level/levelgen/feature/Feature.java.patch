@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/levelgen/feature/Feature.java
++++ b/net/minecraft/world/level/levelgen/feature/Feature.java
+@@ -187,7 +_,9 @@
+     }
+ 
+     protected static boolean isStone(BlockState p_159748_) {
+-        return p_159748_.is(BlockTags.BASE_STONE_OVERWORLD);
++        // Forge deprecation notice: this patch is deprecated for removal since 1.21.
++        // After that version, Vanilla behaviour will be used (checking against BlockTags.BASE_STONE_OVERWORLD) to better align with other loaders
++        return p_159748_.is(net.minecraftforge.common.Tags.Blocks.STONES);
+     }
+ 
+     public static boolean isDirt(BlockState p_159760_) {
