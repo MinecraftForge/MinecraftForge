@@ -165,7 +165,7 @@ public class ModSorter
             var container = modFilesByFirstId.get(systemMod);
             if (container != null && !container.isEmpty()) {
                 LOGGER.debug("Found system mod: {}", systemMod);
-                this.systemMods.add((ModFile) container.get(0));
+                this.systemMods.add(container.getFirst());
             } else {
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
             }
@@ -242,7 +242,8 @@ public class ModSorter
 
     private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
-        return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
+        return VersionSupportMatrix.isEnabled()
+                && !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
                 (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
     }
 }
