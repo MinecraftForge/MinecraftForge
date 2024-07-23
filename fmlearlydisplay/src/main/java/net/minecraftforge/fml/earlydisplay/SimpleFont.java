@@ -25,7 +25,7 @@ public class SimpleFont {
     private final int lineSpacing;
     private final int descent;
     private final int GLYPH_COUNT = 127-32;
-    private Glyph[] glyphs;
+    private final Glyph[] glyphs;
 
     private record Glyph(char c, int charwidth, int[] pos, float[] uv) {
         Pos loadQuad(Pos pos, int colour, SimpleBufferBuilder bb) {
