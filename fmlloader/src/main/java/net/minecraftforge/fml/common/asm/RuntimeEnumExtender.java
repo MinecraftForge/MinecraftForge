@@ -37,6 +37,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     private static final String CLEAN_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Class.class));
     private static final String NAME_DESC = Type.getMethodDescriptor(STRING);
     private static final String EQUALS_DESC = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, STRING);
+    private static final int FLAGS = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
     @Override
     public String name() {
@@ -59,9 +60,9 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             return ComputeFlags.NO_REWRITE;
 
         Type array = Type.getType("[" + classType.getDescriptor());
-        final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
+        String arrayDesc = array.getDescriptor();
 
-        FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
+        FieldNode values = classNode.fields.stream().filter(f -> f.desc.equals(arrayDesc) && ((f.access & FLAGS) == FLAGS)).findFirst().orElse(null);
 
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
             return ComputeFlags.NO_REWRITE;

@@ -17,10 +17,12 @@ public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Plai
 {
     public BiomeGenerationSettingsBuilder(BiomeGenerationSettings orig)
     {
-        orig.getCarvingStages().forEach(k -> {
+        for (GenerationStep.Carving k : orig.getCarvingStages()) {
             carvers.put(k, new ArrayList<>());
-            orig.getCarvers(k).forEach(v -> carvers.get(k).add(v));
-        });
+            for (Holder<ConfiguredWorldCarver<?>> v : orig.getCarvers(k)) {
+                carvers.get(k).add(v);
+            }
+        }
         orig.features().forEach(l -> {
             final ArrayList<Holder<PlacedFeature>> featureList = new ArrayList<>();
             l.forEach(featureList::add);

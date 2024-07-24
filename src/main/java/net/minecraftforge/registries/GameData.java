@@ -514,12 +514,12 @@ public class GameData {
                 throw new IllegalStateException("Could not get holder for " + key + " " + obj);
             }
 
-            obj.matchingStates().forEach((state) -> {
+            for (BlockState state : obj.matchingStates()) {
                 var oldType = map.put(state, holder);
                 if (oldType != null) {
                     throw new IllegalStateException(String.format(Locale.ENGLISH, "Point of interest types %s and %s both list %s in their blockstates, this is not allowed. Blockstates can only have one point of interest type each.", oldType, obj, state));
                 }
-            });
+            }
         }
 
         @Override

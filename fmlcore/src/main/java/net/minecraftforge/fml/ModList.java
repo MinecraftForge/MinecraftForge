@@ -131,16 +131,18 @@ public class ModList
             CompletableFuture<Void> cf = new CompletableFuture<>();
             final RuntimeException accumulator = new RuntimeException();
             cf.completeExceptionally(accumulator);
-            throwables.forEach(exception -> {
+            for (Throwable exception : throwables) {
                 if (exception instanceof CompletionException) {
                     exception = exception.getCause();
                 }
-                if (exception.getSuppressed().length!=0) {
-                    Arrays.stream(exception.getSuppressed()).forEach(accumulator::addSuppressed);
+                if (exception.getSuppressed().length != 0) {
+                    for (Throwable throwable : exception.getSuppressed()) {
+                        accumulator.addSuppressed(throwable);
+                    }
                 } else {
                     accumulator.addSuppressed(exception);
                 }
-            });
+            }
             return cf;
         }
     }

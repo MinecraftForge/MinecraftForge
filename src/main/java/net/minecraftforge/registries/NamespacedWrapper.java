@@ -323,7 +323,9 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     @Override
     public void bindTags(Map<TagKey<T>, List<Holder<T>>> newTags) {
         Map<Holder.Reference<T>, List<TagKey<T>>> holderToTag = new IdentityHashMap<>();
-        this.holdersByName.values().forEach(v -> holderToTag.put(v, new ArrayList<>()));
+        for (Holder.Reference<T> tReference : this.holdersByName.values()) {
+            holderToTag.put(tReference, new ArrayList<>());
+        }
         newTags.forEach((name, values) -> values.forEach(holder -> addTagToHolder(holderToTag, name, holder)));
 
         Set<TagKey<T>> set = new HashSet<>(Sets.difference(this.tags.keySet(), newTags.keySet()));
@@ -336,15 +338,17 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         newTags.forEach((k, v) -> tmpTags.computeIfAbsent(k, this::createTag).bind(v));
 
         Set<TagKey<T>> defaultedTags = Sets.difference(this.optionalTags.keySet(), newTags.keySet());
-        defaultedTags.forEach(name -> {
+        for (TagKey<T> name : defaultedTags) {
             List<Holder<T>> defaults = this.optionalTags.get(name).stream()
                     .map(valueSupplier -> getHolder(valueSupplier.get()).orElse(null))
                     .filter(Objects::nonNull)
                     .distinct()
                     .toList();
-            defaults.forEach(holder -> addTagToHolder(holderToTag, name, holder));
+            for (Holder<T> holder : defaults) {
+                addTagToHolder(holderToTag, name, holder);
+            }
             tmpTags.computeIfAbsent(name, this::createTag).bind(defaults);
-        });
+        }
 
         holderToTag.forEach(Holder.Reference::bindTags);
         this.tags = tmpTags;

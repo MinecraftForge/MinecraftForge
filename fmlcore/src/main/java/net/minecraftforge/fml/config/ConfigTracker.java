@@ -47,12 +47,16 @@ public class ConfigTracker {
 
     public void loadConfigs(ModConfig.Type type, Path configBasePath) {
         LOGGER.debug(CONFIG, "Loading configs type {}", type);
-        this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
+        for (ModConfig config : this.configSets.get(type)) {
+            openConfig(config, configBasePath);
+        }
     }
 
     public void unloadConfigs(ModConfig.Type type, Path configBasePath) {
         LOGGER.debug(CONFIG, "Unloading configs type {}", type);
-        this.configSets.get(type).forEach(config -> closeConfig(config, configBasePath));
+        for (ModConfig config : this.configSets.get(type)) {
+            closeConfig(config, configBasePath);
+        }
     }
 
     private void openConfig(final ModConfig config, final Path configBasePath) {
