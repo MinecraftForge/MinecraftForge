@@ -106,8 +106,7 @@ public class UniqueModListBuilder
         final Map<String, List<ModFile>> uniqueModFilesByFirstId = uniqueModList.stream()
                 .collect(groupingBy(UniqueModListBuilder::getModId));
 
-        final List<ModFile> loadedList = new ArrayList<>();
-        loadedList.addAll(uniqueModList);
+        final List<ModFile> loadedList = new ArrayList<>(uniqueModList);
         loadedList.addAll(uniqueLibListWithVersion);
 
         return new UniqueModListData(loadedList, uniqueModFilesByFirstId);

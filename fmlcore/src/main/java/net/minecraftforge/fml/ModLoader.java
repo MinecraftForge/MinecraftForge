@@ -153,7 +153,7 @@ public class ModLoader
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).toList(),
                 loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.getFirst());
             statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
@@ -161,7 +161,7 @@ public class ModLoader
         }
         List<? extends ForgeFeature.Bound> failedBounds = loadingModList.getMods().stream()
                 .map(ModInfo::getForgeFeatures)
-                .flatMap(Collection::stream)
+                .flatMap(List::stream)
                 .filter(bound -> !ForgeFeature.testFeature(FMLEnvironment.dist, bound))
                 .toList();
 
@@ -178,10 +178,10 @@ public class ModLoader
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream()
                 .map(ModFileInfo::getFile)
                 .map(this::buildMods)
-                .<ModContainer>mapMulti(Iterable::forEach)
+                .flatMap(List::stream)
                 .toList();
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
+            LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.getFirst());
             statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
             modList.setLoadedMods(Collections.emptyList());
             loadingStateValid = false;
@@ -190,7 +190,7 @@ public class ModLoader
         modList.setLoadedMods(modContainers);
         this.modList = modList;
         var stateList = stateManager.getStates(ModLoadingPhase.GATHER);
-        var progress = StartupMessageManager.addProgressBar("Mod Gather", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
+        var progress = StartupMessageManager.addProgressBar("Mod Gather", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(this.modList)).sum());
         for (IModLoadingState mls : stateList) {
             dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
         }
@@ -221,10 +221,15 @@ public class ModLoader
             LOGGER.error("Cowardly refusing to process mod state change request from {}", state);
             return;
         }
-        progressBar.label(progressBar.name()+ " working");
+        progressBar.label(progressBar.name() + " working");
         syncExecutor.drive(ticker);
-        state.inlineRunnable().ifPresent(a->this.handleInlineTransition(a, state, syncExecutor, ticker));
-        state.buildTransition(syncExecutor, parallelExecutor, progressBar).ifPresent(t->waitForTransition(state, syncExecutor, ticker, t));
+
+        var inlineRunnable = state.inlineRunnable().orElse(null);
+        if (inlineRunnable != null) handleInlineTransition(inlineRunnable, state, syncExecutor, ticker);
+
+        var transition = state.buildTransition(syncExecutor, parallelExecutor, progressBar).orElse(null);
+        if (transition != null) waitForTransition(state, syncExecutor, ticker, transition);
+
         completedStates.add(state);
     }
 
