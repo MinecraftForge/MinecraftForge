@@ -61,9 +61,7 @@ public class ModDiscoverer {
             LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", modLocatorList.stream()
                                                                        .map(modLocator -> "(%s:%s)".formatted(modLocator.name(),
                                                                          modLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
-        }
-        if (LOGGER.isDebugEnabled(LogMarkers.CORE))
-        {
+
             LOGGER.debug(LogMarkers.CORE, "Found Dependency Locators : {}", dependencyLocatorList.stream()
                                                                        .map(dependencyLocator -> "(%s:%s)".formatted(dependencyLocator.name(),
                                                                          dependencyLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));

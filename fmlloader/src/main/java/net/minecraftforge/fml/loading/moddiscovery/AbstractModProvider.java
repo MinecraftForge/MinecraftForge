@@ -140,7 +140,7 @@ public abstract class AbstractModProvider implements IModProvider {
     }
 
     private static final class Holder<T> {
-        T value;
+        private T value;
     }
 
     private record DefaultModFileInfo(IModFile mod, String license, IConfigurable configurable) implements IModFileInfo, IConfigurable {
