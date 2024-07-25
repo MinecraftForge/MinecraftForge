@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -23,11 +22,11 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -45,10 +44,17 @@ public interface IForgeItem {
     }
 
     /**
-     * ItemStack sensitive version of getItemAttributeModifiers
+     * @deprecated In favor of {@link #getDefaultAttributeModifiers(ItemStack)} as it matches vanilla name, and not all cases that call this has the EquipmentSlot argument
      */
-    @SuppressWarnings("deprecation")
+    @Deprecated(forRemoval = true, since = "1.21")
     default ItemAttributeModifiers getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        return getDefaultAttributeModifiers(stack);
+    }
+
+    /**
+     * ItemStack sensitive version of {@link Item#getDefaultAttributeModifiers}
+     */
+    default ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         return self().getDefaultAttributeModifiers();
     }
 

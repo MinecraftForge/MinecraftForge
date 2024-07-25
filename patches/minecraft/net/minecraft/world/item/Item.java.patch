@@ -68,10 +68,18 @@
          return p_41436_.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
      }
  
-+    @Deprecated // Use ItemStack sensitive version.
++    /** @deprecated in favor of {@link net.minecraftforge.common.extensions.IForgeItem#getEnchantmentValue(ItemStack)}  */
      public int getEnchantmentValue() {
          return 0;
      }
+@@ -305,6 +_,7 @@
+         return false;
+     }
+ 
++    /** @deprecated in favor of {@link net.minecraftforge.common.extensions.IForgeItem#getDefaultAttributeModifiers(ItemStack)}  */
+     @Deprecated
+     public ItemAttributeModifiers getDefaultAttributeModifiers() {
+         return ItemAttributeModifiers.EMPTY;
 @@ -338,6 +_,30 @@
      public FeatureFlagSet requiredFeatures() {
          return this.requiredFeatures;
