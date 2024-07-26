@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -54,7 +_,7 @@
+ 
+     @Override
+     protected boolean mayPlaceOn(BlockState p_52302_, BlockGetter p_52303_, BlockPos p_52304_) {
+-        return p_52302_.is(Blocks.FARMLAND);
++        return p_52302_.getBlock() instanceof net.minecraft.world.level.block.FarmBlock;
+     }
+ 
+     protected IntegerProperty getAgeProperty() {
 @@ -88,8 +_,9 @@
              int i = this.getAge(p_221050_);
              if (i < this.getMaxAge()) {
