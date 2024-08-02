@@ -118,8 +118,8 @@
 +         */
 +        public CreativeModeTab.Builder withSearchBar() {
 +            this.hasSearchBar = true;
-+            if (this.backgroundTexture == null)
-+                return this.backgroundTexture(createTextureLocation("item_seach"));
++            if (this.backgroundTexture == CreativeModeTab.DEFAULT_BACKGROUND)
++                return this.backgroundTexture(createTextureLocation("item_search"));
 +            return this;
 +        }
 +
