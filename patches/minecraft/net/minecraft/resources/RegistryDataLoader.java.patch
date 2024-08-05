@@ -9,6 +9,15 @@
          new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
+@@ -100,7 +_,7 @@
+     public static final List<RegistryDataLoader.RegistryData<?>> DIMENSION_REGISTRIES = List.of(
+         new RegistryDataLoader.RegistryData<>(Registries.LEVEL_STEM, LevelStem.CODEC)
+     );
+-    public static final List<RegistryDataLoader.RegistryData<?>> SYNCHRONIZED_REGISTRIES = List.of(
++    public static final List<RegistryDataLoader.RegistryData<?>> SYNCHRONIZED_REGISTRIES = net.minecraftforge.registries.DataPackRegistriesHooks.grabSynchronizedRegistries(
+         new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.NETWORK_CODEC),
+         new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
+         new RegistryDataLoader.RegistryData<>(Registries.TRIM_PATTERN, TrimPattern.DIRECT_CODEC),
 @@ -114,6 +_,10 @@
          new RegistryDataLoader.RegistryData<>(Registries.JUKEBOX_SONG, JukeboxSong.DIRECT_CODEC)
      );
