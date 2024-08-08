@@ -1,10 +1,10 @@
 --- a/net/minecraft/commands/arguments/MessageArgument.java
 +++ b/net/minecraft/commands/arguments/MessageArgument.java
-@@ -84,7 +_,7 @@
+@@ -89,7 +_,7 @@
  
      public static record Message(String text, MessageArgument.Part[] parts) {
          Component resolveComponent(CommandSourceStack p_232197_) throws CommandSyntaxException {
--            return this.toComponent(p_232197_, p_232197_.hasPermission(2));
+-            return this.toComponent(p_232197_, EntitySelectorParser.allowSelectors(p_232197_));
 +            return this.toComponent(p_232197_, net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_232197_));
          }
  
