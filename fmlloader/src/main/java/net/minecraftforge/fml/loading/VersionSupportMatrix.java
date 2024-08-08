@@ -19,11 +19,11 @@ public class VersionSupportMatrix {
     private static final HashMap<String, List<ArtifactVersion>> overrideVersions = new HashMap<>();
     static {
          final ArtifactVersion version = new DefaultArtifactVersion(FMLLoader.versionInfo().mcVersion());
-         if (MavenVersionAdapter.createFromVersionSpec("[1.19.2]").containsVersion(version)) {
-             // 1.19.2 is Compatible with 1.19.1
-             add("languageloader.javafml", "42");
-             add("mod.minecraft",          "1.19.1");
-             add("mod.forge",              "42.0.9");
+         if (MavenVersionAdapter.createFromVersionSpec("[1.21.1]").containsVersion(version)) {
+             // 1.21.1 is Compatible with 1.21
+             add("languageloader.javafml", "51");
+             add("mod.minecraft",          "1.21");
+             add("mod.forge",              "51.0.33");
         }
     }
     private static void add(String key, String value) {
