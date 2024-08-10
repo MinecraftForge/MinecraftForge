@@ -80,11 +80,10 @@
      @Deprecated
      public ItemAttributeModifiers getDefaultAttributeModifiers() {
          return ItemAttributeModifiers.EMPTY;
-@@ -338,6 +_,30 @@
-     public FeatureFlagSet requiredFeatures() {
+@@ -339,6 +_,30 @@
          return this.requiredFeatures;
      }
-+
+ 
 +    private Object renderProperties;
 +
 +    /*
@@ -108,6 +107,31 @@
 +    }
 +
 +    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) { }
- 
++
      public static class Properties {
          private static final Interner<DataComponentMap> COMPONENT_INTERNER = Interners.newStrongInterner();
+         @Nullable
+@@ -439,6 +_,11 @@
+         @Nullable
+         MapItemSavedData mapData(MapId p_335695_);
+ 
++        @Nullable
++        default Level level() {
++            return null;
++        }
++
+         static Item.TooltipContext of(@Nullable final Level p_332083_) {
+             return p_332083_ == null ? EMPTY : new Item.TooltipContext() {
+                 @Override
+@@ -454,6 +_,11 @@
+                 @Override
+                 public MapItemSavedData mapData(MapId p_330171_) {
+                     return p_332083_.getMapData(p_330171_);
++                }
++
++                @Override
++                public Level level() {
++                    return p_332083_;
+                 }
+             };
+         }
