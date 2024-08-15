@@ -165,7 +165,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         return Strings.isNullOrEmpty(license);
     }
 
-    private final char[] HEX = "0123456789ABCDEF".toCharArray();
+    private static final char[] HEX = "0123456789ABCDEF".toCharArray();
     public Optional<String> getCodeSigningFingerprint() {
         var signers = this.modFile.getSecureJar().getManifestSigners();
         if (signers == null)
