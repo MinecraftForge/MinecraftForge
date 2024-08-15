@@ -194,7 +194,7 @@ public class ModSorter
         final long mandatoryRequired = modRequirements.stream().filter(IModInfo.ModVersion::isMandatory).count();
         LOGGER.debug(LOADING, "Found {} mod requirements ({} mandatory, {} optional)", modRequirements.size(), mandatoryRequired, modRequirements.size() - mandatoryRequired);
         final var missingVersions = modRequirements.stream()
-                .filter(mv -> (mv.isMandatory() || modVersions.containsKey(mv.getModId())) && this.modVersionNotContained(mv, modVersions))
+                .filter(mv -> (mv.isMandatory() || modVersions.containsKey(mv.getModId())) && !modVersionContained(mv, modVersions))
                 .collect(toSet());
         final long mandatoryMissing = missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).count();
         LOGGER.debug(LOADING, "Found {} mod requirements missing ({} mandatory, {} optional)", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing);
@@ -242,10 +242,13 @@ public class ModSorter
         );
     }
 
-    private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
-    {
-        return VersionSupportMatrix.isEnabled()
-                && !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
-                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
+    private static boolean modVersionContained(IModInfo.ModVersion mv, Map<String, ArtifactVersion> modVersions) {
+        var modId = mv.getModId();
+        var range = mv.getVersionRange();
+        if (modVersions.containsKey(modId)
+                && (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE")))
+            return true;
+
+        return VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod");
     }
 }

@@ -9,7 +9,6 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -21,13 +20,13 @@ public class VersionSupportMatrix {
     static {
         if (ENABLED) {
             overrideVersions = Map.ofEntries(
-                    // 1.21.1 is Compatible with 1.21
+                    // 1.21.1 is compatible with 1.21
                     entry("languageloader.javafml", "51"),
                     entry("mod.minecraft",          "1.21"),
                     entry("mod.forge",              "51.0.33")
             );
         } else {
-            overrideVersions = Collections.emptyMap();
+            overrideVersions = null;
         }
     }
 
@@ -41,12 +40,9 @@ public class VersionSupportMatrix {
     }
 
     public static boolean testVersionSupportMatrix(VersionRange declaredRange, String lookupId, String type) {
+        if (!ENABLED) return false;
         List<ArtifactVersion> custom = overrideVersions.get(type + "." + lookupId);
         return custom != null && custom.stream().anyMatch(declaredRange::containsVersion);
-    }
-
-    static boolean isEnabled() {
-        return ENABLED;
     }
 
     private static Map.Entry<String, List<ArtifactVersion>> entry(String typeAndLookupId, String declaredRange) {
