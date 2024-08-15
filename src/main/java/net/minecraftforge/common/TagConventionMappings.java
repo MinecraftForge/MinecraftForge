@@ -288,7 +288,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("seeds/pumpkin"), Tags.Items.SEEDS_PUMPKIN),
             legacyToCommon(Registries.ITEM, forgeRl("seeds/wheat"), Tags.Items.SEEDS_WHEAT),
 
-            legacyToCommon(Registries.ITEM, forgeRl("slimeballs"), Tags.Items.SLIMEBALLS),
+            legacyToCommon(Registries.ITEM, forgeRl("slimeballs"), Tags.Items.SLIME_BALLS),
             legacyToCommon(Registries.ITEM, forgeRl("stained_glass"), List.of(Tags.Items.GLASS_BLOCKS, Tags.Blocks.DYED)),
             legacyToCommon(Registries.ITEM, forgeRl("stained_glass_panes"), List.of(Tags.Items.GLASS_BLOCKS, Tags.Blocks.DYED)),
             legacyToCommon(Registries.ITEM, forgeRl("stone"), Tags.Items.STONES),

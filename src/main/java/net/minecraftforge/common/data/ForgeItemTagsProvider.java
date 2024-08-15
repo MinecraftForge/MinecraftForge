@@ -103,8 +103,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copy(Tags.Blocks.FENCES_NETHER_BRICK, Tags.Items.FENCES_NETHER_BRICK);
         copy(Tags.Blocks.FENCES_WOODEN, Tags.Items.FENCES_WOODEN);
         tag(Tags.Items.FERTILIZERS).add(Items.BONE_MEAL);
-        tag(Tags.Items.FOODS_FRUIT).add(Items.APPLE, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
-        tag(Tags.Items.FOODS_VEGETABLE).add(Items.CARROT, Items.GOLDEN_CARROT, Items.POTATO, Items.MELON_SLICE, Items.BEETROOT);
+        tag(Tags.Items.FOODS_FRUIT).add(Items.APPLE, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE, Items.MELON_SLICE);
+        tag(Tags.Items.FOODS_VEGETABLE).add(Items.CARROT, Items.GOLDEN_CARROT, Items.POTATO, Items.BEETROOT);
         tag(Tags.Items.FOODS_BERRY).add(Items.SWEET_BERRIES, Items.GLOW_BERRIES);
         tag(Tags.Items.FOODS_BREAD).add(Items.BREAD);
         tag(Tags.Items.FOODS_COOKIE).add(Items.COOKIE);
@@ -116,7 +116,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.FOODS_CANDY);
         tag(Tags.Items.FOODS_EDIBLE_WHEN_PLACED).add(Items.CAKE);
         tag(Tags.Items.FOODS_FOOD_POISONING).add(Items.POISONOUS_POTATO, Items.PUFFERFISH, Items.SPIDER_EYE, Items.CHICKEN, Items.ROTTEN_FLESH);
-        tag(Tags.Items.FOODS_GOLDEN).add(Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_CARROT, Items.GLISTERING_MELON_SLICE);
+        tag(Tags.Items.FOODS_GOLDEN).add(Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_CARROT);
         tag(Tags.Items.FOODS)
                 .add(Items.BAKED_POTATO, Items.PUMPKIN_PIE, Items.HONEY_BOTTLE, Items.OMINOUS_BOTTLE, Items.DRIED_KELP)
                 .addTags(Tags.Items.FOODS_FRUIT, Tags.Items.FOODS_VEGETABLE, Tags.Items.FOODS_BERRY, Tags.Items.FOODS_BREAD, Tags.Items.FOODS_COOKIE,
@@ -206,7 +206,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.SEEDS_MELON).add(Items.MELON_SEEDS);
         tag(Tags.Items.SEEDS_PUMPKIN).add(Items.PUMPKIN_SEEDS);
         tag(Tags.Items.SEEDS_WHEAT).add(Items.WHEAT_SEEDS);
-        tag(Tags.Items.SLIMEBALLS).add(Items.SLIME_BALL);
+        tag(Tags.Items.SLIME_BALLS).add(Items.SLIME_BALL);
         tag(Tags.Items.SHULKER_BOXES)
                 .add(Items.SHULKER_BOX, Items.WHITE_SHULKER_BOX, Items.ORANGE_SHULKER_BOX,
                         Items.MAGENTA_SHULKER_BOX, Items.LIGHT_BLUE_SHULKER_BOX, Items.YELLOW_SHULKER_BOX,
@@ -252,10 +252,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.MELEE_WEAPON_TOOLS).add(
                 Items.MACE, Items.TRIDENT,
                 Items.WOODEN_SWORD, Items.STONE_SWORD, Items.GOLDEN_SWORD, Items.IRON_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD,
-                Items.WOODEN_AXE, Items.STONE_AXE, Items.GOLDEN_AXE, Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE,
-                Items.WOODEN_PICKAXE, Items.STONE_PICKAXE, Items.GOLDEN_PICKAXE, Items.IRON_PICKAXE, Items.DIAMOND_PICKAXE, Items.NETHERITE_PICKAXE,
-                Items.WOODEN_SHOVEL, Items.STONE_SHOVEL, Items.GOLDEN_SHOVEL, Items.IRON_SHOVEL, Items.DIAMOND_SHOVEL, Items.NETHERITE_SHOVEL,
-                Items.WOODEN_HOE, Items.STONE_HOE, Items.GOLDEN_HOE, Items.IRON_HOE, Items.DIAMOND_HOE, Items.NETHERITE_HOE);
+                Items.WOODEN_AXE, Items.STONE_AXE, Items.GOLDEN_AXE, Items.IRON_AXE, Items.DIAMOND_AXE, Items.NETHERITE_AXE
+        );
         tag(Tags.Items.TOOLS)
                 .addTags(ItemTags.AXES, ItemTags.HOES, ItemTags.PICKAXES, ItemTags.SHOVELS, ItemTags.SWORDS)
                 .addTags(Tags.Items.TOOLS_BOW, Tags.Items.TOOLS_BRUSH, Tags.Items.TOOLS_CROSSBOW, Tags.Items.TOOLS_FISHING_ROD, Tags.Items.TOOLS_SHEAR, Tags.Items.TOOLS_IGNITER, Tags.Items.TOOLS_SHIELD, Tags.Items.TOOLS_SPEAR, Tags.Items.TOOLS_MACE, Tags.Items.MINING_TOOL_TOOLS, Tags.Items.MELEE_WEAPON_TOOLS, Tags.Items.RANGED_WEAPON_TOOLS);
@@ -361,7 +359,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tagWithOptionalLegacy(Tags.Items.SEEDS_MELON);
         tagWithOptionalLegacy(Tags.Items.SEEDS_PUMPKIN);
         tagWithOptionalLegacy(Tags.Items.SEEDS_WHEAT);
-        tagWithOptionalLegacy(Tags.Items.SLIMEBALLS);
+        tag(Tags.Items.SLIME_BALLS).addOptionalTag(forgeRl("slimeballs"));
         tagWithOptionalLegacy(Tags.Items.STRINGS);
         tagWithOptionalLegacy(Tags.Items.TOOLS);
         tagWithOptionalLegacy(Tags.Items.ARMORS);

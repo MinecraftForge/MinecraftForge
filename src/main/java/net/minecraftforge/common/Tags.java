@@ -734,7 +734,7 @@ public class Tags {
          * Block tag equivalent is {@link BlockTags#SHULKER_BOXES}
          */
         public static final TagKey<Item> SHULKER_BOXES = cTag("shulker_boxes");
-        public static final TagKey<Item> SLIMEBALLS = cTag("slimeballs");
+        public static final TagKey<Item> SLIME_BALLS = cTag("slime_balls");
         /**
          * Natural stone-like blocks that can be used as a base ingredient in recipes that takes stone.
          */
@@ -852,7 +852,8 @@ public class Tags {
         public static final TagKey<Item> TOOLS_MACE = cTag("tools/mace");
         /**
          * A tag containing melee-based weapons for recipes and loot tables.
-         * Tools are considered melee if they contain an ATTACK_DAMAGE attribute.
+         * Tools are considered melee if they are intentionally intended to be used for melee attack as a primary purpose.
+         * (In other words, Pickaxes are not melee weapons as they are not intended to be a weapon as a primary purpose)
          * Please use {@link ToolActions} instead for what action a tool can do.
          *
          * @see ToolAction
