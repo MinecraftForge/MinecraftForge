@@ -8,11 +8,13 @@ package net.minecraftforge.fml.loading;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
+@ApiStatus.Internal // since 1.21.1, will be made non-public in a later MC version
 public class VersionSupportMatrix {
     private static final boolean ENABLED = FMLLoader.versionInfo().mcVersion().equals("1.21.1");
     private static final Map<String, List<ArtifactVersion>> overrideVersions;
