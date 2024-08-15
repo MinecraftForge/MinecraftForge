@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/functions/SetAttributesFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/SetAttributesFunction.java
+@@ -66,7 +_,7 @@
+             p_80840_.update(
+                 DataComponents.ATTRIBUTE_MODIFIERS,
+                 ItemAttributeModifiers.EMPTY,
+-                p_327582_ -> p_327582_.modifiers().isEmpty() ? this.updateModifiers(p_80841_, p_80840_.getItem().getDefaultAttributeModifiers()) : this.updateModifiers(p_80841_, p_327582_)
++                p_327582_ -> p_327582_.modifiers().isEmpty() ? this.updateModifiers(p_80841_, p_80840_.getDefaultAttributeModifiers()) : this.updateModifiers(p_80841_, p_327582_)
+             );
+         }
+ 

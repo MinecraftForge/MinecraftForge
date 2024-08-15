@@ -57,6 +57,24 @@
              return list;
          }
      }
+@@ -923,7 +_,7 @@
+         if (!itemattributemodifiers.modifiers().isEmpty()) {
+             itemattributemodifiers.forEach(p_344758_, p_342345_);
+         } else {
+-            this.getItem().getDefaultAttributeModifiers().forEach(p_344758_, p_342345_);
++            this.getDefaultAttributeModifiers().forEach(p_344758_, p_342345_);
+         }
+ 
+         EnchantmentHelper.forEachModifier(this, p_344758_, p_342345_);
+@@ -934,7 +_,7 @@
+         if (!itemattributemodifiers.modifiers().isEmpty()) {
+             itemattributemodifiers.forEach(p_331036_, p_334430_);
+         } else {
+-            this.getItem().getDefaultAttributeModifiers().forEach(p_331036_, p_334430_);
++            this.getItem().getAttributeModifiers(p_331036_, this).forEach(p_331036_, p_334430_);
+         }
+ 
+         EnchantmentHelper.forEachModifier(this, p_331036_, p_334430_);
 @@ -1011,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }

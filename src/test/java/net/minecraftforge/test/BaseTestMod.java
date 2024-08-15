@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.function.Function;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,6 +40,10 @@ public abstract class BaseTestMod {
             }
             cls = cls.getSuperclass();
         }
+    }
+
+    protected static ResourceLocation rl(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
     protected void testItem(Function<HolderLookup.Provider, ItemStack> supplier) {

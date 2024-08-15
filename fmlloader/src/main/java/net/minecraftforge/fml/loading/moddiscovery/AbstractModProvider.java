@@ -42,7 +42,7 @@ public abstract class AbstractModProvider implements IModProvider {
 
     @Nullable
     protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown) {
-        return createMod(path, false, getDefaultJarModType());
+        return createMod(path, ignoreUnknown, getDefaultJarModType());
     }
 
     @Nullable
