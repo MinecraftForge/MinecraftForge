@@ -20,7 +20,7 @@ public class VersionSupportMatrix {
     private static final Map<String, List<ArtifactVersion>> OVERRIDE_VERSIONS;
 
     static {
-        if (FMLLoader.versionInfo().mcVersion().equals("1.21.1")) {
+        if ("1.21.1".equals(FMLLoader.versionInfo().mcVersion())) {
             OVERRIDE_VERSIONS = Map.ofEntries(
                     // 1.21.1 is compatible with 1.21
                     entry("languageloader.javafml", "51"),
