@@ -37,6 +37,11 @@ import java.util.stream.Collectors;
 
 public class ModFileInfo implements IModFileInfo, IConfigurable {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final String MAYBE_NOT_JAVAFML_VER = "[2,)";
+    private static final String JAVAFML = "javafml";
+
+    @ApiStatus.Internal
+    public static final String NOT_A_FORGE_MOD_PROP = "__FORGE__not_a_forge_mod";
 
     private final IConfigurable config;
     private final ModFile modFile;
@@ -63,6 +68,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         var modLoaderVersion = MavenVersionAdapter.createFromVersionSpec(modLoaderVerStr);
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
 
+        // if true, this might not be a Forge mod
+        boolean maybeNotAForgeMod = modLoader.equals(JAVAFML)
+                && modLoaderVersion.hasRestrictions() // if loaderVersion is not "*"
+                && modLoaderVerStr.equals(MAYBE_NOT_JAVAFML_VER); // if loaderVersion is exactly "[2,)"
+
         // the remaining properties are optional with sensible defaults
         this.license = config.<String>getConfigElement("license")
                 .orElse("");
@@ -78,8 +88,19 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
                 .map(StringUtils::toURL)
                 .orElse(null);
 
-        this.properties = config.<Map<String, Object>>getConfigElement("properties")
-                .orElse(Collections.emptyMap());
+        // if clientSideOnly, then this is definitely a Forge mod
+        if (this.clientSideOnly)
+            maybeNotAForgeMod = false;
+
+        if (maybeNotAForgeMod) {
+            // mark this file as not a Forge mod. Note: this marker may be removed later based on the mod dependencies
+            this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                    .orElse(new LinkedHashMap<>());
+            this.properties.put(NOT_A_FORGE_MOD_PROP, true);
+        } else {
+            this.properties = config.<Map<String, Object>>getConfigElement("properties")
+                    .orElse(Collections.emptyMap());
+        }
         this.modFile.setFileProperties(this.properties);
 
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
