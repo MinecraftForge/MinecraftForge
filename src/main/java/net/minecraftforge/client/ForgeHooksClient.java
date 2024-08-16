@@ -333,27 +333,40 @@ public class ForgeHooksClient {
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
+    private static VersionChecker.Status getForgeVersionStatus() {
+        final class LazyInit {
+            private static final VersionChecker.Status INSTANCE = ForgeVersion.getStatus();
+
+            static {
+                forgeStatusLine = switch (INSTANCE) {
+                    // case FAILED -> " Version check failed";
+                    // case UP_TO_DATE -> "Forge up to date";
+                    // case AHEAD -> "Using non-recommended Forge build, issues may arise.";
+                    case OUTDATED, BETA_OUTDATED -> I18n.get("forge.update.newversion", ForgeVersion.getTarget());
+                    default -> null;
+                };
+            }
+
+            private LazyInit() {}
+        }
+
+        return LazyInit.INSTANCE;
+    }
+
     public static void renderMainMenu(TitleScreen gui, GuiGraphics graphics, Font font, int width, int height, int alpha) {
-        VersionChecker.Status status = ForgeVersion.getStatus();
+        VersionChecker.Status status = getForgeVersionStatus();
 
         if (status == VersionChecker.Status.BETA || status == VersionChecker.Status.BETA_OUTDATED) {
             // Render a warning at the top of the screen
             Component line = Component.translatable("forge.update.beta.1", ChatFormatting.RED, ChatFormatting.RESET).withStyle(ChatFormatting.RED);
-            graphics.drawCenteredString(font, line, width / 2, 4 + (0 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+            graphics.drawCenteredString(font, line, width / 2, 4, 0xFFFFFF | alpha);
             line = Component.translatable("forge.update.beta.2");
-            graphics.drawCenteredString(font, line, width / 2, 4 + (1 * (font.lineHeight + 1)), 0xFFFFFF | alpha);
+            graphics.drawCenteredString(font, line, width / 2, 4 + (font.lineHeight + 1), 0xFFFFFF | alpha);
         }
-
-        forgeStatusLine = switch(status) {
-            // case FAILED -> " Version check failed";
-            // case UP_TO_DATE -> "Forge up to date";
-            // case AHEAD -> "Using non-recommended Forge build, issues may arise.";
-            case OUTDATED, BETA_OUTDATED -> I18n.get("forge.update.newversion", ForgeVersion.getTarget());
-            default -> null;
-        };
     }
 
     public static String forgeStatusLine;
+
     @Nullable
     public static SoundInstance playSound(SoundEngine manager, SoundInstance sound) {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);
@@ -363,11 +376,11 @@ public class ForgeHooksClient {
 
     public static void drawScreen(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.pose().pushPose();
-        guiLayers.forEach(layer -> {
+        for (Screen layer : guiLayers) {
             // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
             drawScreenInternal(layer, guiGraphics, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTick);
             guiGraphics.pose().translate(0, 0, 10000);
-        });
+        }
         drawScreenInternal(screen, guiGraphics, mouseX, mouseY, partialTick);
         guiGraphics.pose().popPose();
     }

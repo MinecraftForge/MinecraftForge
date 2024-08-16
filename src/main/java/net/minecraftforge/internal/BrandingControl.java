@@ -7,8 +7,11 @@ package net.minecraftforge.internal;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.ObjIntConsumer;
 import java.util.stream.IntStream;
 
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -45,22 +48,28 @@ public class BrandingControl {
             return reverse ? Lists.reverse(brandingsNoMC) : brandingsNoMC;
     }
 
-    private static void computeOverCopyrightBrandings() {
-        if (overCopyrightBrandings == null) {
-            ImmutableList.Builder<String> brd = ImmutableList.builder();
-            if (ForgeHooksClient.forgeStatusLine != null) brd.add(ForgeHooksClient.forgeStatusLine);
-            overCopyrightBrandings = brd.build();
+    public static List<String> getOverCopyrightBrandings() {
+        final class LazyInit {
+            private static final List<String> INSTANCE = ForgeHooksClient.forgeStatusLine == null
+                    ? Collections.emptyList()
+                    : List.of(ForgeHooksClient.forgeStatusLine);
+
+            private LazyInit() {}
         }
+
+        return LazyInit.INSTANCE;
     }
 
-    public static void forEachLine(boolean includeMC, boolean reverse, BiConsumer<Integer, String> lineConsumer) {
+    public static void forEachLine(boolean includeMC, boolean reverse, ObjIntConsumer<String> lineConsumer) {
         final List<String> brandings = getBrandings(includeMC, reverse);
-        IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
+        for (int idx = 0; idx < brandings.size(); idx++)
+            lineConsumer.accept(brandings.get(idx), idx);
     }
 
-    public static void forEachAboveCopyrightLine(BiConsumer<Integer, String> lineConsumer) {
-        computeOverCopyrightBrandings();
-        IntStream.range(0, overCopyrightBrandings.size()).boxed().forEachOrdered(idx->lineConsumer.accept(idx, overCopyrightBrandings.get(idx)));
+    public static void forEachAboveCopyrightLine(ObjIntConsumer<String> lineConsumer) {
+        var overCopyrightBrandings = getOverCopyrightBrandings();
+        for (int idx = 0; idx < overCopyrightBrandings.size(); idx++)
+            lineConsumer.accept(overCopyrightBrandings.get(idx), idx);
     }
 
     public static String getClientBranding() {
