@@ -54,8 +54,9 @@ public record ModInfo(
 
     public static ModInfo of(ModFileInfo owningFile, IConfigurable config) {
         // These are sourced from the mod specific [[mod]] entry
-        String modId = config.<String>getConfigElement("modId")
-                .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
+        String modId = config.<String>getConfigElement("modId").orElse(null);
+        if (modId == null)
+            throw new InvalidModFileException("Missing modId", owningFile);
 
         // verify we have a valid modid
         if (!VALID_MODID.matcher(modId).matches()) {
@@ -182,7 +183,7 @@ public record ModInfo(
         }
     }
 
-    record ModVersion(
+    private record ModVersion(
             Holder<IModInfo> owner,
 
             String getModId,
@@ -193,8 +194,9 @@ public record ModInfo(
             Optional<URL> getReferralURL
     ) implements IModInfo.ModVersion {
         public static ModVersion of(IModInfo owner, IConfigurable config) {
-            var modId = config.<String>getConfigElement("modId")
-                    .orElseThrow(()->new InvalidModFileException("Missing required field modid in dependency", owner.getOwningFile()));
+            var modId = config.<String>getConfigElement("modId").orElse(null);
+            if (modId == null)
+                throw new InvalidModFileException("Missing required field modid in dependency", owner.getOwningFile());
 
             if (modId.equals("forge")) {
                 var fileProps = owner.getOwningFile().getFileProperties();
