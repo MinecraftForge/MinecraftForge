@@ -59,7 +59,7 @@ public class ConfigTracker {
         }
     }
 
-    private void openConfig(final ModConfig config, final Path configBasePath) {
+    private static void openConfig(final ModConfig config, final Path configBasePath) {
         LOGGER.trace(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
         final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
@@ -67,7 +67,7 @@ public class ConfigTracker {
         config.save();
     }
 
-    private void closeConfig(final ModConfig config, final Path configBasePath) {
+    private static void closeConfig(final ModConfig config, final Path configBasePath) {
         if (config.getConfigData() != null) {
             LOGGER.trace(CONFIG, "Closing config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
             // stop the filewatcher before we save the file and close it, so reload doesn't fire

@@ -47,12 +47,12 @@ public class UniqueModListBuilder
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueModList = modFilesByFirstId.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueLibListWithVersion = libFilesWithVersionByModuleName.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Transform to the full mod id list
@@ -112,18 +112,17 @@ public class UniqueModListBuilder
         return new UniqueModListData(loadedList, uniqueModFilesByFirstId);
     }
 
-    private ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
+    private static ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
         List<ModFile> modInfoList = fullList.getValue();
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
-            modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.getFirst().getFileName(), fullList.getKey(), this.getVersion(modInfoList.getFirst()));
+            modInfoList.sort(Comparator.comparing(UniqueModListBuilder::getVersion).reversed());
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.getFirst().getFileName(), fullList.getKey(), getVersion(modInfoList.getFirst()));
         }
         return modInfoList.get(0);
     }
 
-    private ArtifactVersion getVersion(final ModFile mf)
-    {
+    private static ArtifactVersion getVersion(final ModFile mf) {
         if (mf.getModFileInfo() == null || mf.getModInfos() == null || mf.getModInfos().isEmpty()) {
             return mf.getJarVersion();
         }

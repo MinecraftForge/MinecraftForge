@@ -52,8 +52,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         return isEmpty ? NAY : YAY;
     }
 
-    private boolean hasHolder(List<AnnotationNode> lst)
-    {
+    private static boolean hasHolder(List<AnnotationNode> lst) {
         return lst != null && lst.stream().anyMatch(n -> n.desc.equals(OBJECT_HOLDER));
     }
 

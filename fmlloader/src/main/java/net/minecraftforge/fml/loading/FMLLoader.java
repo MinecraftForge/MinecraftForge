@@ -17,11 +17,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -137,13 +135,13 @@ public class FMLLoader {
         }
         commonLaunchHandler = (CommonLaunchHandler)launchHandler.get();
         launchHandlerName = launchHandler.get().name();
-        gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
+        gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Path.of(".").toAbsolutePath());
 
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         production = commonLaunchHandler.isProduction();
 
-        accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
+        accessTransformer.getExtension().accept(Map.entry(naming, "srg"));
 
         runtimeDistCleaner.getExtension().accept(dist);
     }

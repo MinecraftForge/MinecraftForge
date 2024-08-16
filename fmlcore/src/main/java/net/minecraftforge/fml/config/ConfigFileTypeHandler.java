@@ -62,7 +62,7 @@ public class ConfigFileTypeHandler {
         }
     }
 
-    private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
+    private static boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
         if (!Files.isDirectory(file.getParent())) {
             Files.createDirectories(file.getParent());
         }

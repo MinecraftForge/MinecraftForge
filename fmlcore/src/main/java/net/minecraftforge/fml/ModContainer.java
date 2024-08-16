@@ -168,7 +168,10 @@ public abstract class ModContainer
     }
 
     public void dispatchConfigEvent(IConfigEvent event) {
-        configHandler.ifPresent(configHandler->configHandler.accept(event));
+        var handler = configHandler.orElse(null);
+        if (handler != null) {
+            handler.accept(event);
+        }
     }
 
     /**

@@ -190,7 +190,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
     }
 
     // Builds or update the mods.toml file for all @Mods in this package
-    private void buildModsToml(Set<Path> resources, Set<String> modids, Path root) {
+    private static void buildModsToml(Set<Path> resources, Set<String> modids, Path root) {
         var toml = resources.stream()
             .map(p -> p.resolve(MODS_TOML))
             .filter(Files::exists)
@@ -248,7 +248,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
     }
 
     // This is optional, it just hides a warning screen when starting up. I should probably remove this once I restructure how data gen for test mods work and make it generate there.
-    private void buildPackMeta(Set<Path> paths, Path root) {
+    private static void buildPackMeta(Set<Path> paths, Path root) {
         var existing = paths.stream()
                 .map(p -> p.resolve(PACK_META))
                 .filter(Files::exists)

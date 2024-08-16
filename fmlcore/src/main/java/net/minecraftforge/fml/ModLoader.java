@@ -113,15 +113,17 @@ public class ModLoader
         CrashReportCallables.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportCallables.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
         CrashReportCallables.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);
-        CrashReportCallables.registerCrashCallable("ModLauncher services", this::computeModLauncherServiceList);
-        CrashReportCallables.registerCrashCallable("FML Language Providers", this::computeLanguageList);
+        CrashReportCallables.registerCrashCallable("ModLauncher services", ModLoader::computeModLauncherServiceList);
+        CrashReportCallables.registerCrashCallable("FML Language Providers", ModLoader::computeLanguageList);
     }
 
-    private String computeLanguageList() {
-        return "\n"+FMLLoader.getLanguageLoadingProvider().applyForEach(lp->lp.name() +"@"+ lp.getClass().getPackage().getImplementationVersion()).collect(Collectors.joining("\n\t\t", "\t\t", ""));
+    private static String computeLanguageList() {
+        return "\n" + FMLLoader.getLanguageLoadingProvider()
+                .applyForEach(lp -> lp.name() + "@" + lp.getClass().getPackage().getImplementationVersion())
+                .collect(Collectors.joining("\n\t\t", "\t\t", ""));
     }
 
-    private String computeModLauncherServiceList() {
+    private static String computeModLauncherServiceList() {
         final List<Map<String, String>> mods = FMLLoader.modLauncherModList();
         return "\n"+mods.stream().map(mod->mod.getOrDefault("file","nofile")+
                 " "+mod.getOrDefault("name", "missing")+

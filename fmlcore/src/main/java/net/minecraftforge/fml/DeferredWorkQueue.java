@@ -116,7 +116,7 @@ public class DeferredWorkQueue
         return future;
     }
 
-    private static class TaskInfo {
+    private static final class TaskInfo {
         private final ModContainer owner;
         private Runnable task;
         private CompletableFuture<?> future;
