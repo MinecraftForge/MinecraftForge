@@ -138,6 +138,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
     }
 
     @Override
+    public <T> Optional<T> getConfigElement(final String key) {
+        return this.config.getConfigElement(key);
+    }
+
+    @Override
     public <T> Optional<T> getConfigElement(final String... key) {
         return this.config.getConfigElement(key);
     }

@@ -78,6 +78,11 @@ public abstract class AbstractModProvider implements IModProvider {
         var license = mf.getValue("LICENSE");
         var dummy = new IConfigurable() {
             @Override
+            public <T> Optional<T> getConfigElement(String key) {
+                return Optional.empty();
+            }
+
+            @Override
             public <T> Optional<T> getConfigElement(String... key) {
                 return Optional.empty();
             }
@@ -140,6 +145,7 @@ public abstract class AbstractModProvider implements IModProvider {
     }
 
     private record DefaultModFileInfo(IModFile mod, String license, IConfigurable configurable) implements IModFileInfo, IConfigurable {
+        @Override public <T> Optional<T> getConfigElement(final String string) { return Optional.empty(); }
         @Override public <T> Optional<T> getConfigElement(final String... strings) { return Optional.empty(); }
         @Override public List<? extends IConfigurable> getConfigList(final String... strings) { return null; }
         @Override public List<IModInfo> getMods() { return Collections.emptyList(); }

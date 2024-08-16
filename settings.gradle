@@ -23,9 +23,9 @@ plugins {
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
-            library('forgespi', 'net.minecraftforge:forgespi:7.1.4') // Needs modlauncher
+            library('forgespi', 'net.minecraftforge:forgespi:7.1.5') // Needs modlauncher
             library('modlauncher', 'net.minecraftforge:modlauncher:10.2.1') // Needs securemodules
-            library('securemodules', 'net.minecraftforge:securemodules:2.2.19') // Needs unsafe
+            library('securemodules', 'net.minecraftforge:securemodules:2.2.20') // Needs unsafe
             library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.0')
             library('coremods', 'net.minecraftforge:coremods:5.1.6')

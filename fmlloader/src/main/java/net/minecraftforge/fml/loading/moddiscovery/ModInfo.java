@@ -146,6 +146,11 @@ public record ModInfo(
     }
 
     @Override
+    public <T> Optional<T> getConfigElement(String key) {
+        return getConfig.getConfigElement(key);
+    }
+
+    @Override
     public <T> Optional<T> getConfigElement(String... key) {
         return getConfig.getConfigElement(key);
     }

@@ -41,6 +41,12 @@ final class NightConfigWrapper implements IConfigurable {
     }
 
     @Override
+    public <T> Optional<T> getConfigElement(String key) {
+        var path = List.of(key);
+        return Optional.ofNullable(validate(this.config.get(path), path));
+    }
+
+    @Override
     public <T> Optional<T> getConfigElement(final String... key) {
         var path = asList(key);
         return Optional.ofNullable(validate(this.config.get(path), path));
