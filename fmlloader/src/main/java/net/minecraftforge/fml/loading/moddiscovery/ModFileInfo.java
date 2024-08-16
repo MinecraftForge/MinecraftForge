@@ -83,11 +83,11 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         this.modFile.setFileProperties(this.properties);
 
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
-        if (modConfigs.isEmpty())
+        if (modConfigs == null || modConfigs.isEmpty())
             throw new InvalidModFileException("Missing mods list", this);
 
         this.mods = modConfigs.stream()
-                .map(mi-> (IModInfo)new ModInfo(this, mi))
+                .map(mi -> (IModInfo) ModInfo.of(this, mi))
                 .toList();
 
         if (LOGGER.isDebugEnabled(LogMarkers.LOADING)) {

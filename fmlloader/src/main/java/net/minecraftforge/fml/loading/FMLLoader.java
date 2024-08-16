@@ -34,7 +34,6 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public class FMLLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static AccessTransformerService accessTransformer;
-    private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Dist dist;
@@ -149,7 +148,7 @@ public class FMLLoader {
 
     public static List<ITransformationService.Resource> beginModScan(final Map<String,?> arguments) {
         LOGGER.debug(SCAN,"Scanning for Mod Locators");
-        modDiscoverer = new ModDiscoverer(arguments);
+        var modDiscoverer = new ModDiscoverer(arguments);
         modValidator = modDiscoverer.discoverMods();
         var pluginResources = modValidator.getPluginResources();
         return List.of(pluginResources);
@@ -169,10 +168,6 @@ public class FMLLoader {
 
     public static LanguageLoadingProvider getLanguageLoadingProvider() {
         return languageLoadingProvider;
-    }
-
-    static ModDiscoverer getModDiscoverer() {
-        return modDiscoverer;
     }
 
     public static CommonLaunchHandler getLaunchHandler() {
