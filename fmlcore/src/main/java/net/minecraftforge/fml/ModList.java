@@ -74,11 +74,12 @@ public class ModList
     }
 
     private String fileToLine(IModFile mf) {
+        var mainMod = mf.getModInfos().getFirst();
         return String.format(Locale.ENGLISH, "%-50.50s|%-30.30s|%-30.30s|%-20.20s|%-10.10s|Manifest: %s", mf.getFileName(),
-                mf.getModInfos().get(0).getDisplayName(),
-                mf.getModInfos().get(0).getModId(),
-                mf.getModInfos().get(0).getVersion(),
-                getModContainerState(mf.getModInfos().get(0).getModId()),
+                mainMod.getDisplayName(),
+                mainMod.getModId(),
+                mainMod.getVersion(),
+                getModContainerState(mainMod.getModId()),
                 ((ModFileInfo)mf.getModFileInfo()).getCodeSigningFingerprint().orElse("NOSIGNATURE"));
     }
     private String crashReport() {
@@ -93,14 +94,6 @@ public class ModList
 
     public static ModList get() {
         return INSTANCE;
-    }
-
-    private static ForkJoinWorkerThread newForkJoinWorkerThread(ForkJoinPool pool) {
-        ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-        thread.setName("modloading-worker-" + thread.getPoolIndex());
-        // The default sets it to the SystemClassloader, so copy the current one.
-        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
-        return thread;
     }
 
     public List<IModFileInfo> getModFiles()
