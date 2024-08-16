@@ -21,60 +21,44 @@ import java.util.Optional;
 /**
  * The "forge" section of texture metadata files (.mcmeta). Currently used only to specify custom
  * TextureAtlasSprite loaders.
+ *
  * @see ITextureAtlasSpriteLoader
  */
-public final class ForgeTextureMetadata
-{
+public record ForgeTextureMetadata(@Nullable ITextureAtlasSpriteLoader loader) {
 
     public static final ForgeTextureMetadata EMPTY = new ForgeTextureMetadata(null);
     public static final MetadataSectionSerializer<ForgeTextureMetadata> SERIALIZER = new Serializer();
 
     public static ForgeTextureMetadata forResource(Resource resource) throws IOException {
         Optional<ForgeTextureMetadata> metadata = resource.metadata().getSection(SERIALIZER);
-        return metadata.isEmpty() ? EMPTY : metadata.get();
+        return metadata.orElse(EMPTY);
     }
 
     @Nullable
-    private final ITextureAtlasSpriteLoader loader;
-
-    public ForgeTextureMetadata(@Nullable ITextureAtlasSpriteLoader loader)
-    {
-        this.loader = loader;
-    }
-
-    @Nullable
-    public ITextureAtlasSpriteLoader getLoader()
-    {
+    public ITextureAtlasSpriteLoader getLoader() {
         return loader;
     }
 
-    private static final class Serializer implements MetadataSectionSerializer<ForgeTextureMetadata>
-    {
+    private static final class Serializer implements MetadataSectionSerializer<ForgeTextureMetadata> {
 
         @Override
         @NotNull
-        public String getMetadataSectionName()
-        {
+        public String getMetadataSectionName() {
             return "forge";
         }
 
         @Override
         @NotNull
-        public ForgeTextureMetadata fromJson(JsonObject json)
-        {
+        public ForgeTextureMetadata fromJson(JsonObject json) {
             @Nullable
             ITextureAtlasSpriteLoader loader;
-            if (json.has("loader"))
-            {
+            if (json.has("loader")) {
                 ResourceLocation loaderName = ResourceLocation.parse(GsonHelper.getAsString(json, "loader"));
                 loader = TextureAtlasSpriteLoaderManager.get(loaderName);
-                if (loader == null)
-                {
+                if (loader == null) {
                     throw new JsonSyntaxException("Unknown TextureAtlasSpriteLoader " + loaderName);
                 }
-            }
-            else
-            {
+            } else {
                 loader = null;
             }
             return new ForgeTextureMetadata(loader);

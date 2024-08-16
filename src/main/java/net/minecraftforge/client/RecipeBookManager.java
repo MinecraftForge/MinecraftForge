@@ -5,8 +5,6 @@
 
 package net.minecraftforge.client;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.crafting.Recipe;
@@ -57,14 +55,14 @@ public final class RecipeBookManager {
     @ApiStatus.Internal
     public static void init() {
         // The ImmutableMap is the patched out value of AGGREGATE_CATEGORIES
-        var aggregateCategories = new HashMap<>(ImmutableMap.of(
-            RecipeBookCategories.CRAFTING_SEARCH, ImmutableList.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE),
-            RecipeBookCategories.FURNACE_SEARCH, ImmutableList.of(RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC),
-            RecipeBookCategories.BLAST_FURNACE_SEARCH, ImmutableList.of(RecipeBookCategories.BLAST_FURNACE_BLOCKS, RecipeBookCategories.BLAST_FURNACE_MISC),
-            RecipeBookCategories.SMOKER_SEARCH, ImmutableList.of(RecipeBookCategories.SMOKER_FOOD)
+        var aggregateCategories = new HashMap<>(Map.of(
+            RecipeBookCategories.CRAFTING_SEARCH, List.of(RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE),
+            RecipeBookCategories.FURNACE_SEARCH, List.of(RecipeBookCategories.FURNACE_FOOD, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC),
+            RecipeBookCategories.BLAST_FURNACE_SEARCH, List.of(RecipeBookCategories.BLAST_FURNACE_BLOCKS, RecipeBookCategories.BLAST_FURNACE_MISC),
+            RecipeBookCategories.SMOKER_SEARCH, List.of(RecipeBookCategories.SMOKER_FOOD)
         ));
 
-        var typeCategories = new HashMap<RecipeBookType, ImmutableList<RecipeBookCategories>>();
+        var typeCategories = new HashMap<RecipeBookType, List<RecipeBookCategories>>();
         var recipeCategoryLookups = new HashMap<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>>();
         var event = new RegisterRecipeBookCategoriesEvent(aggregateCategories, typeCategories, recipeCategoryLookups);
         ModLoader.get().postEventWrapContainerInModOrder(event);

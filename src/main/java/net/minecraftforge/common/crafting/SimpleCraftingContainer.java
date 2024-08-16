@@ -59,7 +59,7 @@ public class SimpleCraftingContainer {
             int height = this.rows.size();
             if (height == 0)
                 throw new IllegalStateException("Invalid builder, empty inventory");
-            int width = this.rows.get(0).length();
+            int width = this.rows.getFirst().length();
             var items = NonNullList.withSize(width * height, ItemStack.EMPTY);
 
             int idx = 0;

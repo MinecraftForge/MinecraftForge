@@ -253,10 +253,10 @@ public abstract class SoundDefinitionsProvider implements DataProvider
 
     private CompletableFuture<?> save(final CachedOutput cache, final Path targetFile)
     {
-        return DataProvider.saveStable(cache, this.mapToJson(this.sounds), targetFile);
+        return DataProvider.saveStable(cache, mapToJson(this.sounds), targetFile);
     }
 
-    private JsonObject mapToJson(final Map<String, SoundDefinition> map)
+    private static JsonObject mapToJson(final Map<String, SoundDefinition> map)
     {
         final JsonObject obj = new JsonObject();
         // namespaces are ignored when serializing

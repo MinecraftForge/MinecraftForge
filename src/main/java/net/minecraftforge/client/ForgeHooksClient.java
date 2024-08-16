@@ -141,7 +141,6 @@ import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
@@ -202,7 +201,7 @@ public class ForgeHooksClient {
     }
 
     public static void clearGuiLayers(Minecraft minecraft) {
-        while(guiLayers.size() > 0)
+        while (!guiLayers.isEmpty())
             popGuiLayerInternal(minecraft);
     }
 
@@ -320,9 +319,7 @@ public class ForgeHooksClient {
     }
 
     public static float getFieldOfViewModifier(Player entity, float fovModifier) {
-        ComputeFovModifierEvent fovModifierEvent = new ComputeFovModifierEvent(entity, fovModifier);
-        MinecraftForge.EVENT_BUS.post(fovModifierEvent);
-        return fovModifierEvent.getNewFovModifier();
+        return MinecraftForge.EVENT_BUS.fire(new ComputeFovModifierEvent(entity, fovModifier)).getNewFovModifier();
     }
 
     /**
@@ -369,9 +366,7 @@ public class ForgeHooksClient {
 
     @Nullable
     public static SoundInstance playSound(SoundEngine manager, SoundInstance sound) {
-        PlaySoundEvent e = new PlaySoundEvent(manager, sound);
-        MinecraftForge.EVENT_BUS.post(e);
-        return e.getSound();
+        return MinecraftForge.EVENT_BUS.fire(new PlaySoundEvent(manager, sound)).getSound();
     }
 
     public static void drawScreen(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -548,8 +543,7 @@ public class ForgeHooksClient {
 
     public static void onClientChangeGameType(PlayerInfo info, GameType currentGameMode, GameType newGameMode) {
         if (currentGameMode != newGameMode) {
-            ClientPlayerChangeGameTypeEvent evt = new ClientPlayerChangeGameTypeEvent(info, currentGameMode, newGameMode);
-            MinecraftForge.EVENT_BUS.post(evt);
+            MinecraftForge.EVENT_BUS.post(new ClientPlayerChangeGameTypeEvent(info, currentGameMode, newGameMode));
         }
     }
 
@@ -576,8 +570,7 @@ public class ForgeHooksClient {
     }
 
     public static void onRecipesUpdated(RecipeManager mgr) {
-        Event event = new RecipesUpdatedEvent(mgr);
-        MinecraftForge.EVENT_BUS.post(event);
+        MinecraftForge.EVENT_BUS.post(new RecipesUpdatedEvent(mgr));
     }
 
     public static void onKeyInput(int key, int scanCode, int action, int modifiers) {
@@ -602,7 +595,7 @@ public class ForgeHooksClient {
     public static SpriteContents loadSpriteContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, ResourceMetadata animationMeta) {
         try {
             ForgeTextureMetadata forgeMeta = ForgeTextureMetadata.forResource(resource);
-            return forgeMeta.getLoader() == null ? null : forgeMeta.getLoader().loadContents(name, resource, frameSize, image, animationMeta, forgeMeta);
+            return forgeMeta.loader() == null ? null : forgeMeta.loader().loadContents(name, resource, frameSize, image, animationMeta, forgeMeta);
         } catch (IOException e) {
             LOGGER.error("Unable to get Forge metadata for {}, falling back to vanilla loading", name);
             e.printStackTrace();
@@ -612,10 +605,10 @@ public class ForgeHooksClient {
 
     @Nullable
     public static TextureAtlasSprite loadTextureAtlasSprite(ResourceLocation atlasName, SpriteContents contents, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel) {
-        if (contents.forgeMeta == null || contents.forgeMeta.getLoader() == null)
+        if (contents.forgeMeta == null || contents.forgeMeta.loader() == null)
             return null;
 
-        return contents.forgeMeta.getLoader().makeSprite(atlasName, contents, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel);
+        return contents.forgeMeta.loader().makeSprite(atlasName, contents, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel);
     }
 
     private static final Map<ModelLayerLocation, Supplier<LayerDefinition>> layerDefinitions = new HashMap<>();
@@ -625,7 +618,9 @@ public class ForgeHooksClient {
     }
 
     public static void loadLayerDefinitions(ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder) {
-        layerDefinitions.forEach((k, v) -> builder.put(k, v.get()));
+        for (var entry : layerDefinitions.entrySet()) {
+            builder.put(entry.getKey(), entry.getValue().get());
+        }
     }
 
     public static void processForgeListPingData(ServerStatus packet, ServerData target) {
@@ -729,7 +724,7 @@ public class ForgeHooksClient {
     }
 
     private static Connection getClientConnection() {
-        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getConnection() : null;
+        return Minecraft.getInstance().getConnection() != null ? Minecraft.getInstance().getConnection().getConnection() : null;
     }
 
     public static void handleClientLevelClosing(ClientLevel level) {
@@ -838,8 +833,7 @@ public class ForgeHooksClient {
         Font font = getTooltipFont(stack, fallbackFont);
 
         var event = new RenderTooltipEvent.GatherComponents(stack, screenWidth, screenHeight, elements, -1);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.isCanceled()) return List.of();
+        if (MinecraftForge.EVENT_BUS.post(event)) return List.of();
 
         // text wrapping
         int tooltipTextWidth = event.getTooltipElements().stream()
@@ -904,9 +898,7 @@ public class ForgeHooksClient {
     }
 
     public static ScreenEvent.RenderInventoryMobEffects onScreenPotionSize(Screen screen, int availableSpace, boolean compact, int horizontalOffset) {
-        final ScreenEvent.RenderInventoryMobEffects event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
+        return MinecraftForge.EVENT_BUS.fire(new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset));
     }
 
     public static boolean onToastAdd(Toast toast) {

@@ -162,7 +162,7 @@
      @DontObfuscate
      public String getServerModName() {
 -        return "vanilla";
-+        return net.minecraftforge.internal.BrandingControl.getServerBranding();
++        return net.minecraftforge.internal.BrandingControl.getBranding();
      }
  
      public SystemReport fillSystemReport(SystemReport p_177936_) {

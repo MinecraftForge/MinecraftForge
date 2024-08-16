@@ -45,7 +45,10 @@ public final class ItemDecoratorHandler
         var event = new RegisterItemDecorationsEvent(decorators);
         ModLoader.get().postEventWrapContainerInModOrder(event);
         var builder = new ImmutableMap.Builder<Item, ItemDecoratorHandler>();
-        decorators.forEach((item, itemDecorators) -> builder.put(item, new ItemDecoratorHandler(itemDecorators)));
+        for (var entry : decorators.entrySet()) {
+            Item item = entry.getKey();
+            builder.put(item, new ItemDecoratorHandler(entry.getValue()));
+        }
         DECORATOR_LOOKUP = builder.build();
     }
 
