@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import static java.util.Arrays.asList;
 
@@ -35,28 +36,29 @@ final class NightConfigWrapper implements IConfigurable {
         this.file = file;
     }
 
-    NightConfigWrapper setFile(IModFileInfo file) {
+    void setFile(IModFileInfo file) {
         this.file = file;
-        return this;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfigElement(final String... key) {
         var path = asList(key);
-        return this.config.getOptional(path).map(value -> {
-            if (value instanceof UnmodifiableConfig cfg) {
-                // New Night config doesn't implement valueMap(), so do a copy.
-                var entries = cfg.entrySet();
-                var builder = ImmutableMap.builderWithExpectedSize(entries.size());
-                for (var e : entries)
-                    builder.put(e.getKey(), e.getValue());
-                return (T) builder.build();
-            } else if (value instanceof ArrayList<?> al && !al.isEmpty() && al.getFirst() instanceof UnmodifiableConfig) {
-                throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
-            }
-            return (T) value;
-        });
+        return Optional.ofNullable(validate(this.config.get(path), path));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T validate(@Nullable T value, List<String> path) {
+        if (value instanceof UnmodifiableConfig cfg) {
+            // New Night config doesn't implement valueMap(), so do a copy.
+            var entries = cfg.entrySet();
+            var builder = ImmutableMap.builderWithExpectedSize(entries.size());
+            for (var e : entries)
+                builder.put(e.getKey(), e.getValue());
+            return (T) builder.build();
+        } else if (value instanceof ArrayList<?> al && !al.isEmpty() && al.getFirst() instanceof UnmodifiableConfig) {
+            throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
+        }
+        return value;
     }
 
     @Override
