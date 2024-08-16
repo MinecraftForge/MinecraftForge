@@ -22,12 +22,17 @@ import org.jetbrains.annotations.ApiStatus;
 import static java.util.Arrays.asList;
 
 @ApiStatus.Internal
-class NightConfigWrapper implements IConfigurable {
+final class NightConfigWrapper implements IConfigurable {
     private final UnmodifiableConfig config;
     private IModFileInfo file;
 
     public NightConfigWrapper(final UnmodifiableConfig config) {
         this.config = config;
+    }
+
+    private NightConfigWrapper(UnmodifiableConfig config, IModFileInfo file) {
+        this.config = config;
+        this.file = file;
     }
 
     NightConfigWrapper setFile(IModFileInfo file) {
@@ -42,10 +47,11 @@ class NightConfigWrapper implements IConfigurable {
         return this.config.getOptional(path).map(value -> {
             if (value instanceof UnmodifiableConfig cfg) {
                 // New Night config doesn't implement valueMap(), so do a copy.
-                var builder = ImmutableMap.builder();
-                for (var e: cfg.entrySet())
+                var entries = cfg.entrySet();
+                var builder = ImmutableMap.builderWithExpectedSize(entries.size());
+                for (var e : entries)
                     builder.put(e.getKey(), e.getValue());
-                return (T)builder.build();
+                return (T) builder.build();
             } else if (value instanceof ArrayList<?> al && !al.isEmpty() && al.getFirst() instanceof UnmodifiableConfig) {
                 throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
             }
@@ -57,12 +63,11 @@ class NightConfigWrapper implements IConfigurable {
     public List<? extends IConfigurable> getConfigList(final String... key) {
         final List<String> path = asList(key);
         if (this.config.contains(path) && !(this.config.get(path) instanceof Collection)) {
-            throw new InvalidModFileException("The configuration path "+path+" is invalid. Expecting a collection!", file);
+            throw new InvalidModFileException("The configuration path " + path + " is invalid. Expecting a collection!", file);
         }
         final Collection<UnmodifiableConfig> nestedConfigs = this.config.getOrElse(path, ArrayList::new);
         return nestedConfigs.stream()
-                .map(NightConfigWrapper::new)
-                .map(cw->cw.setFile(file))
+                .map(conf -> new NightConfigWrapper(conf, file))
                 .collect(Collectors.toList());
     }
 }
