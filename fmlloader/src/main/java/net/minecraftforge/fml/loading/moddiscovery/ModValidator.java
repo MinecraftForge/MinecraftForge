@@ -106,9 +106,8 @@ public class ModValidator {
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {
         List<EarlyLoadingException.ExceptionData> errorData = new ArrayList<>();
-        Iterator<ModFile> iterator = this.candidateMods.iterator();
-        while (iterator.hasNext()) {
-            final ModFile modFile = iterator.next();
+        for (Iterator<ModFile> iterator = this.candidateMods.iterator(); iterator.hasNext();) {
+            var modFile = iterator.next();
             try {
                 modFile.identifyLanguage();
             } catch (EarlyLoadingException e) {
