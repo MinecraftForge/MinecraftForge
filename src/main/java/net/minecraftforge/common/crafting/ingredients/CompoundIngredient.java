@@ -35,7 +35,7 @@ public class CompoundIngredient extends AbstractIngredient {
         return new CompoundIngredient(Arrays.asList(children));
     }
 
-    private List<Ingredient> children;
+    private final List<Ingredient> children;
     private ItemStack[] stacks;
     private IntList itemIds;
     private final boolean isSimple;

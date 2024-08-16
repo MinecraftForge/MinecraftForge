@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,17 +49,19 @@ public class ModDiscoverer {
         modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
         dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
         modLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
-        modLocatorList.forEach(l->l.initArguments(arguments));
+        for (IModLocator iModLocator : modLocatorList) {
+            iModLocator.initArguments(arguments);
+        }
         dependencyLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
-        dependencyLocatorList.forEach(l->l.initArguments(arguments));
+        for (IDependencyLocator l : dependencyLocatorList) {
+            l.initArguments(arguments);
+        }
         if (LOGGER.isDebugEnabled(LogMarkers.CORE))
         {
             LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", modLocatorList.stream()
                                                                        .map(modLocator -> "(%s:%s)".formatted(modLocator.name(),
                                                                          modLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
-        }
-        if (LOGGER.isDebugEnabled(LogMarkers.CORE))
-        {
+
             LOGGER.debug(LogMarkers.CORE, "Found Dependency Locators : {}", dependencyLocatorList.stream()
                                                                        .map(dependencyLocator -> "(%s:%s)".formatted(dependencyLocator.name(),
                                                                          dependencyLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
@@ -126,7 +128,7 @@ public class ModDiscoverer {
         }
 
         //First processing run of the mod list. Any duplicates will cause resolution failure and dependency loading will be skipped.
-        Map<IModFile.Type, List<ModFile>> modFilesMap = Maps.newHashMap();
+        Map<IModFile.Type, List<ModFile>> modFilesMap = new EnumMap<>(IModFile.Type.class);
         try {
             final UniqueModListBuilder modsUniqueListBuilder = new UniqueModListBuilder(loadedFiles);
             final UniqueModListBuilder.UniqueModListData uniqueModsData = modsUniqueListBuilder.buildUniqueList();
@@ -134,7 +136,7 @@ public class ModDiscoverer {
             //Grab the temporary results.
             //This allows loading to continue to a base state, in case dependency loading fails.
             modFilesMap = uniqueModsData.modFiles().stream()
-                            .collect(Collectors.groupingBy(IModFile::getType));
+                            .collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             loadedFiles = uniqueModsData.modFiles();
         }
         catch (EarlyLoadingException exception) {
@@ -171,11 +173,11 @@ public class ModDiscoverer {
 
                 //We now only need the mod files map, not the list.
                 modFilesMap = uniqueModsAndDependenciesData.modFiles().stream()
-                                .collect(Collectors.groupingBy(IModFile::getType));
+                                .collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             } catch (EarlyLoadingException exception) {
                 LOGGER.error(LogMarkers.SCAN, "Failed to build unique mod list after dependency discovery.", exception);
                 discoveryErrorData.addAll(exception.getAllData());
-                modFilesMap = loadedFiles.stream().collect(Collectors.groupingBy(IModFile::getType));
+                modFilesMap = loadedFiles.stream().collect(Collectors.groupingBy(IModFile::getType, () -> new EnumMap<>(IModFile.Type.class), Collectors.toList()));
             }
         }
         else {
@@ -190,8 +192,7 @@ public class ModDiscoverer {
         return validator;
     }
 
-    private void handleLocatedFiles(final List<ModFile> loadedFiles, final List<IModFile> locatedFiles)
-    {
+    private static void handleLocatedFiles(final List<ModFile> loadedFiles, final List<IModFile> locatedFiles) {
         var locatedModFiles = locatedFiles.stream().filter(ModFile.class::isInstance).map(ModFile.class::cast).toList();
         for (IModFile mf : locatedModFiles) {
             LOGGER.info(LogMarkers.SCAN, "Found mod file {} of type {} with provider {}", mf.getFileName(), mf.getType(), mf.getProvider());

@@ -31,21 +31,8 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static class FMLModTarget implements IModLanguageProvider.IModLanguageLoader {
+    private record FMLModTarget(String className, String modId) implements IModLanguageProvider.IModLanguageLoader {
         private static final Logger LOGGER = FMLJavaModLanguageProvider.LOGGER;
-        private final String className;
-        private final String modId;
-
-        private FMLModTarget(String className, String modId)
-        {
-            this.className = className;
-            this.modId = modId;
-        }
-
-        public String getModId()
-        {
-            return modId;
-        }
 
         @SuppressWarnings("unchecked")
         @Override
@@ -94,7 +81,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
                     .filter(ad -> ad.annotationType().equals(MODANNOTATION))
                     .peek(ad -> LOGGER.debug(SCAN, "Found @Mod class {} with id {}", ad.clazz().getClassName(), ad.annotationData().get("value")))
                     .map(ad -> new FMLModTarget(ad.clazz().getClassName(), (String)ad.annotationData().get("value")))
-                    .collect(Collectors.toMap(FMLModTarget::getModId, Function.identity(), (a,b)->a));
+                    .collect(Collectors.toMap(FMLModTarget::modId, Function.identity(), (a,b)->a));
             scanResult.addLanguageLoader(modTargetMap);
         };
     }

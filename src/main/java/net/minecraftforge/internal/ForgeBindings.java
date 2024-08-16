@@ -15,15 +15,9 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.function.Supplier;
 
-public class ForgeBindings implements IBindingsProvider {
-    @Override
-    public Supplier<IEventBus> getForgeBusSupplier() {
-        return ()-> MinecraftForge.EVENT_BUS;
-    }
-
-    @Override
-    public Supplier<I18NParser> getMessageParser() {
-        return ()->new I18NParser() {
+public final class ForgeBindings implements IBindingsProvider {
+    private static final class LazyInit {
+        private static final Supplier<I18NParser> INSTANCE = () -> new I18NParser() {
             @Override
             public String parseMessage(final String i18nMessage, final Object... args) {
                 return ForgeI18n.parseMessage(i18nMessage, args);
@@ -34,10 +28,22 @@ public class ForgeBindings implements IBindingsProvider {
                 return ForgeI18n.stripControlCodes(toStrip);
             }
         };
+
+        private LazyInit() {}
+    }
+
+    @Override
+    public Supplier<IEventBus> getForgeBusSupplier() {
+        return () -> MinecraftForge.EVENT_BUS;
+    }
+
+    @Override
+    public Supplier<I18NParser> getMessageParser() {
+        return LazyInit.INSTANCE;
     }
 
     @Override
     public Supplier<IConfigEvent.ConfigConfig> getConfigConfiguration() {
-        return ()->new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new, ModConfigEvent.Unloading::new);
+        return () -> new IConfigEvent.ConfigConfig(ModConfigEvent.Loading::new, ModConfigEvent.Reloading::new, ModConfigEvent.Unloading::new);
     }
 }

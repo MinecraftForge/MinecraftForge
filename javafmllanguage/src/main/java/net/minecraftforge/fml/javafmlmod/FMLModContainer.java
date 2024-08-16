@@ -38,7 +38,7 @@ public class FMLModContainer extends ModContainer {
         LOGGER.debug(LOADING,"Creating FMLModContainer instance for {}", className);
         this.scanResults = modFileScanResults;
         activityMap.put(ModLoadingStage.CONSTRUCT, this::constructMod);
-        this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).markerType(IModBusEvent.class).useModLauncher().build();
+        this.eventBus = BusBuilder.builder().setExceptionHandler(FMLModContainer::onEventFailed).setTrackPhases(false).markerType(IModBusEvent.class).useModLauncher().build();
         this.configHandler = Optional.of(ce->this.eventBus.post(ce.self()));
         final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
         this.contextExtension = () -> contextExtension;
@@ -56,7 +56,7 @@ public class FMLModContainer extends ModContainer {
         }
     }
 
-    private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
+    private static void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
     }
 

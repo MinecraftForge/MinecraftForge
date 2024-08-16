@@ -5,11 +5,9 @@
 
 package net.minecraftforge.internal;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.stream.IntStream;
+import java.util.function.ObjIntConsumer;
 
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -19,20 +17,20 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
-public class BrandingControl {
+public final class BrandingControl {
+    private BrandingControl() {}
+
     private static List<String> brandings;
     private static List<String> brandingsNoMC;
-    private static List<String> overCopyrightBrandings;
 
     private static void computeBranding() {
         if (brandings == null) {
-            ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add("Forge " + ForgeVersion.getVersion());
-            brd.add("Minecraft " + MCPVersion.getMCVersion());
-            brd.add("MCP " + MCPVersion.getMCPVersion());
-            int tModCount = ModList.get().size();
-            brd.add(ForgeI18n.parseMessage("fml.menu.loadingmods", tModCount));
-            brandings = brd.build();
+            brandings = List.of(
+                    "Forge " + ForgeVersion.getVersion(),
+                    "Minecraft " + MCPVersion.getMCVersion(),
+                    "MCP " + MCPVersion.getMCPVersion(),
+                    ForgeI18n.parseMessage("fml.menu.loadingmods", ModList.get().size())
+            );
             brandingsNoMC = brandings.subList(1, brandings.size());
         }
     }
@@ -40,34 +38,36 @@ public class BrandingControl {
     private static List<String> getBrandings(boolean includeMC, boolean reverse) {
         computeBranding();
         if (includeMC)
-            return reverse ? Lists.reverse(brandings) : brandings;
+            return reverse ? brandings.reversed() : brandings;
         else
-            return reverse ? Lists.reverse(brandingsNoMC) : brandingsNoMC;
+            return reverse ? brandingsNoMC.reversed() : brandingsNoMC;
     }
 
-    private static void computeOverCopyrightBrandings() {
-        if (overCopyrightBrandings == null) {
-            ImmutableList.Builder<String> brd = ImmutableList.builder();
-            if (ForgeHooksClient.forgeStatusLine != null) brd.add(ForgeHooksClient.forgeStatusLine);
-            overCopyrightBrandings = brd.build();
+    public static List<String> getOverCopyrightBrandings() {
+        final class LazyInit {
+            private static final List<String> INSTANCE = ForgeHooksClient.forgeStatusLine == null
+                    ? Collections.emptyList()
+                    : List.of(ForgeHooksClient.forgeStatusLine);
+
+            private LazyInit() {}
         }
+
+        return LazyInit.INSTANCE;
     }
 
-    public static void forEachLine(boolean includeMC, boolean reverse, BiConsumer<Integer, String> lineConsumer) {
-        final List<String> brandings = getBrandings(includeMC, reverse);
-        IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
+    public static void forEachLine(boolean includeMC, boolean reverse, ObjIntConsumer<String> lineConsumer) {
+        var brandings = getBrandings(includeMC, reverse);
+        for (int idx = 0; idx < brandings.size(); idx++)
+            lineConsumer.accept(brandings.get(idx), idx);
     }
 
-    public static void forEachAboveCopyrightLine(BiConsumer<Integer, String> lineConsumer) {
-        computeOverCopyrightBrandings();
-        IntStream.range(0, overCopyrightBrandings.size()).boxed().forEachOrdered(idx->lineConsumer.accept(idx, overCopyrightBrandings.get(idx)));
+    public static void forEachAboveCopyrightLine(ObjIntConsumer<String> lineConsumer) {
+        var overCopyrightBrandings = getOverCopyrightBrandings();
+        for (int idx = 0; idx < overCopyrightBrandings.size(); idx++)
+            lineConsumer.accept(overCopyrightBrandings.get(idx), idx);
     }
 
-    public static String getClientBranding() {
-        return "forge";
-    }
-
-    public static String getServerBranding() {
+    public static String getBranding() {
         return "forge";
     }
 

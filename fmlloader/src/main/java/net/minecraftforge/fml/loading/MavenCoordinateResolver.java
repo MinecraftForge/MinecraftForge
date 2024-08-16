@@ -34,7 +34,7 @@ public class MavenCoordinateResolver {
                 (!extension.isEmpty() ? "." + extension : ".jar");
 
         String[] groups = groupId.split("\\.");
-        Path result = Paths.get(groups[0]);
+        Path result = Path.of(groups[0]);
         for (int i = 1; i < groups.length; i++) {
             result = result.resolve(groups[i]);
         }

@@ -78,9 +78,13 @@ public class LoadingModList
 
     public void addAccessTransformers()
     {
-        modFiles.stream()
-                .map(ModFileInfo::getFile)
-                .forEach(mod -> mod.getAccessTransformer().ifPresent(path -> FMLLoader.addAccessTransformer(path, mod)));
+        for (ModFileInfo modFile : modFiles) {
+            ModFile mod = modFile.getFile();
+            var at = mod.getAccessTransformer().orElse(null);
+            if (at != null) {
+                FMLLoader.addAccessTransformer(at, mod);
+            }
+        }
     }
 
     public void addForScanning(BackgroundScanHandler backgroundScanHandler)

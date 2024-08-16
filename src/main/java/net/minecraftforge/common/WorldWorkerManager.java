@@ -10,7 +10,7 @@ import java.util.List;
 
 public class WorldWorkerManager
 {
-    private static List<IWorker> workers = new ArrayList<IWorker>();
+    private static final List<IWorker> workers = new ArrayList<>();
     private static long startTime = -1;
     private static int index = 0;
 

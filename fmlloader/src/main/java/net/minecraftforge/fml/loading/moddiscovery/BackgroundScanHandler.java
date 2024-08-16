@@ -29,6 +29,7 @@ public class BackgroundScanHandler
     }
 
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final boolean DEBUG = LOGGER.isErrorEnabled(LogMarkers.SCAN);
     private final ExecutorService modContentScanner;
     private final List<ModFile> modFiles;
     private ScanStatus status;
@@ -55,16 +56,16 @@ public class BackgroundScanHandler
         }
         status = ScanStatus.RUNNING;
         ImmediateWindowHandler.updateProgress("Scanning mod candidates");
-        final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
-                .whenComplete(file::setScanResult)
-                .whenComplete((r,t)-> this.addCompletedFile(file,r,t));
+        CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
+                .whenComplete(file::setScanResult);
+        if (DEBUG) future = future.whenComplete((r, t) -> addCompletedFile(file, t));
         file.setFutureScanResult(future);
     }
 
-    private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
+    private void addCompletedFile(final ModFile file, final Throwable throwable) {
         if (throwable != null) {
             status = ScanStatus.ERRORED;
-            LOGGER.error(LogMarkers.SCAN,"An error occurred scanning file {}", file, throwable);
+            LOGGER.error(LogMarkers.SCAN, "An error occurred scanning file {}", file, throwable);
         }
     }
 

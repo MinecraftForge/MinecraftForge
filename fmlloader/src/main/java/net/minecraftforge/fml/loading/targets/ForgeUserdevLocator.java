@@ -12,7 +12,7 @@ import net.minecraftforge.fml.loading.moddiscovery.AbstractModProvider;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
 @ApiStatus.Internal
-public class ForgeUserdevLocator extends AbstractModProvider implements IModLocator {
+public final class ForgeUserdevLocator extends AbstractModProvider implements IModLocator {
     @Override
     public String name() {
         return "forge_userdev_locator";

@@ -49,10 +49,7 @@ public class ForgeHighlight {
             LOGGER.warn("Failed to invoke initializeTerminal on TCA", e);
         }
         if (!TerminalConsoleAppender.isAnsiSupported() && Arrays.stream(options).noneMatch(s -> s.equals("disableAnsi=true"))) {
-            List<String> optionList = new ArrayList<>();
-            optionList.add(options[0]);
-            optionList.add("disableAnsi=true");
-            options = optionList.toArray(new String[0]);
+            options = new String[] { options[0], "disableAnsi=true" };
         }
         return HighlightConverter.newInstance(config, options);
     }

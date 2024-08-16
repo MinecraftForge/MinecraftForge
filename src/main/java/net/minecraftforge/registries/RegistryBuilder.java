@@ -5,7 +5,6 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.Lists;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.AddCallback;
@@ -15,6 +14,8 @@ import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
 import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
 import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,18 +40,18 @@ public class RegistryBuilder<T> {
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
     private int maxId = MAX_ID;
-    private List<AddCallback<T>> addCallback = Lists.newArrayList();
-    private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
-    private List<CreateCallback<T>> createCallback = Lists.newArrayList();
-    private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
-    private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
+    private final List<AddCallback<T>> addCallback = new ArrayList<>();
+    private final List<ClearCallback<T>> clearCallback = new ArrayList<>();
+    private final List<CreateCallback<T>> createCallback = new ArrayList<>();
+    private final List<ValidateCallback<T>> validateCallback = new ArrayList<>();
+    private final List<BakeCallback<T>> bakeCallback = new ArrayList<>();
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private boolean hasWrapper = false;
     private MissingFactory<T> missingFactory;
-    private Set<ResourceLocation> legacyNames = new HashSet<>();
+    private final Set<ResourceLocation> legacyNames = new HashSet<>();
     @Nullable
     private Function<T, Holder.Reference<T>> intrusiveHolderCallback = null;
 
@@ -206,8 +207,8 @@ public class RegistryBuilder<T> {
     IForgeRegistry<T> create() {
         if (hasWrapper) {
             GameData.WrapperFactory<T> wrapper = GameData.createWrapperFactory(getDefault() != null);
-            this.addCallback.add(0, wrapper);
-            this.createCallback.add(0, wrapper);
+            this.addCallback.addFirst(wrapper);
+            this.createCallback.addFirst(wrapper);
         }
         return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
@@ -217,7 +218,7 @@ public class RegistryBuilder<T> {
         if (addCallback.isEmpty())
             return null;
         if (addCallback.size() == 1)
-            return addCallback.get(0);
+            return addCallback.getFirst();
 
         var tmp = this.addCallback;
         return (owner, stage, id, key, obj, old) -> {
@@ -231,7 +232,7 @@ public class RegistryBuilder<T> {
         if (clearCallback.isEmpty())
             return null;
         if (clearCallback.size() == 1)
-            return clearCallback.get(0);
+            return clearCallback.getFirst();
 
         var tmp = this.clearCallback;
         return (owner, stage) -> {
@@ -245,7 +246,7 @@ public class RegistryBuilder<T> {
         if (createCallback.isEmpty())
             return null;
         if (createCallback.size() == 1)
-            return createCallback.get(0);
+            return createCallback.getFirst();
 
         var tmp = this.createCallback;
         return (owner, stage) -> {
@@ -259,7 +260,7 @@ public class RegistryBuilder<T> {
         if (validateCallback.isEmpty())
             return null;
         if (validateCallback.size() == 1)
-            return validateCallback.get(0);
+            return validateCallback.getFirst();
 
         var tmp = this.validateCallback;
         return (owner, stage, id, key, obj) -> {
@@ -273,7 +274,7 @@ public class RegistryBuilder<T> {
         if (bakeCallback.isEmpty())
             return null;
         if (bakeCallback.size() == 1)
-            return bakeCallback.get(0);
+            return bakeCallback.getFirst();
 
         var tmp = this.bakeCallback;
         return (owner, stage) -> {

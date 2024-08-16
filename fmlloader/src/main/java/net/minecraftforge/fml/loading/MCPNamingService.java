@@ -36,7 +36,7 @@ public class MCPNamingService implements INameMappingService {
 
     @Override
     public Map.Entry<String, String> understanding() {
-        return Pair.of("srg", "mcp");
+        return Map.entry("srg", "mcp");
     }
 
     @Override

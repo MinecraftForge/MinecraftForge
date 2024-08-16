@@ -17,6 +17,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class ModWorkManager {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final long PARK_TIME = TimeUnit.MILLISECONDS.toNanos(1);
+
     public interface DrivenExecutor extends Executor {
         boolean selfDriven();
         boolean driveOne();
@@ -33,8 +34,11 @@ public class ModWorkManager {
             }
         }
     }
-    private static class SyncExecutor implements DrivenExecutor {
-        private ConcurrentLinkedDeque<Runnable> tasks = new ConcurrentLinkedDeque<>();
+
+    private record SyncExecutor(ConcurrentLinkedDeque<Runnable> tasks) implements DrivenExecutor {
+        public SyncExecutor() {
+            this(new ConcurrentLinkedDeque<>());
+        }
 
         @Override
         public boolean driveOne() {
@@ -56,13 +60,7 @@ public class ModWorkManager {
         }
     }
 
-    private static class WrappingExecutor implements DrivenExecutor {
-        private final Executor wrapped;
-
-        public WrappingExecutor(final Executor executor) {
-            this.wrapped = executor;
-        }
-
+    private record WrappingExecutor(Executor wrapped) implements DrivenExecutor {
         @Override
         public boolean selfDriven() {
             return true;
@@ -79,11 +77,9 @@ public class ModWorkManager {
         }
     }
 
-    private static SyncExecutor syncExecutor;
+    private static final SyncExecutor syncExecutor = new SyncExecutor();
 
     public static DrivenExecutor syncExecutor() {
-        if (syncExecutor == null)
-            syncExecutor = new SyncExecutor();
         return syncExecutor;
     }
 
@@ -91,14 +87,8 @@ public class ModWorkManager {
         return new WrappingExecutor(executor);
     }
 
-    private static ForkJoinPool parallelThreadPool;
     public static Executor parallelExecutor() {
-        if (parallelThreadPool == null) {
-            final int loadingThreadCount = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.MAX_THREADS);
-            LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
-            parallelThreadPool = new ForkJoinPool(loadingThreadCount, ModWorkManager::newForkJoinWorkerThread, null, false);
-        }
-        return parallelThreadPool;
+        return LazyInit.PARALLEL_EXECUTOR;
     }
 
     private static ForkJoinWorkerThread newForkJoinWorkerThread(ForkJoinPool pool) {
@@ -109,4 +99,14 @@ public class ModWorkManager {
         return thread;
     }
 
+    private static final class LazyInit {
+        private LazyInit() {}
+        private static final ForkJoinPool PARALLEL_EXECUTOR;
+
+        static {
+            final int loadingThreadCount = FMLConfig.getIntConfigValue(FMLConfig.ConfigValue.MAX_THREADS);
+            LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
+            PARALLEL_EXECUTOR = new ForkJoinPool(loadingThreadCount, ModWorkManager::newForkJoinWorkerThread, null, false);
+        }
+    }
 }

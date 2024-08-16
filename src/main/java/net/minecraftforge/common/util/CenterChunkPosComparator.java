@@ -11,8 +11,8 @@ import net.minecraft.world.level.ChunkPos;
 // Sorter to load nearby chunks first
 public class CenterChunkPosComparator implements java.util.Comparator<ChunkPos>
 {
-    private int x;
-    private int z;
+    private final int x;
+    private final int z;
 
     public CenterChunkPosComparator(ServerPlayer entityplayer)
     {

@@ -35,7 +35,7 @@ import net.minecraftforge.fml.loading.moddiscovery.AbstractModProvider;
 import net.minecraftforge.forgespi.locating.IModLocator;
 
 @ApiStatus.Internal
-public class ForgeDevLocator extends AbstractModProvider implements IModLocator {
+public final class ForgeDevLocator extends AbstractModProvider implements IModLocator {
     private static final String PACK_META = "pack.mcmeta";
 
     @Override
@@ -60,7 +60,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
         return ret;
     }
 
-    private List<Path> getMods() {
+    private static List<Path> getMods() {
         // Forge is an exploded directory as well
         var minecraft = ForgeDevLaunchHandler.getPathFromResource("net/minecraft/client/Minecraft.class");
         var forge = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
@@ -84,7 +84,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
         return ret;
     }
 
-    private List<Path> explodeTestMods(Path path) {
+    private static List<Path> explodeTestMods(Path path) {
         var mod = new ArrayList<Path>();
         var memory = Jimfs.newFileSystem();
 
@@ -137,7 +137,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
 
     // Find all the @Mods so we can generate tomls, and so we can pick packages. Right now it doesn't allow mods in parent directories,
     // I could make it merge all the way up, but I think this would be fine.
-    private Map<String, Set<String>> findTestModPackages(Path path) {
+    private static Map<String, Set<String>> findTestModPackages(Path path) {
         var mods = new HashMap<String, Set<String>>();
         try (var files = Files.walk(path)) {
             var classes = files
@@ -190,7 +190,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
     }
 
     // Builds or update the mods.toml file for all @Mods in this package
-    private void buildModsToml(Set<Path> resources, Set<String> modids, Path root) {
+    private static void buildModsToml(Set<Path> resources, Set<String> modids, Path root) {
         var toml = resources.stream()
             .map(p -> p.resolve(MODS_TOML))
             .filter(Files::exists)
@@ -226,7 +226,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
         }
 
         for (var modid : modids) {
-            if (!modlist.stream().anyMatch(c -> modid.equals(c.get("modId")))) {
+            if (modlist.stream().noneMatch(c -> modid.equals(c.get("modId")))) {
                 modified = true;
                 var tmp = Config.inMemory();
                 tmp.set("modId", modid);
@@ -248,7 +248,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
     }
 
     // This is optional, it just hides a warning screen when starting up. I should probably remove this once I restructure how data gen for test mods work and make it generate there.
-    private void buildPackMeta(Set<Path> paths, Path root) {
+    private static void buildPackMeta(Set<Path> paths, Path root) {
         var existing = paths.stream()
                 .map(p -> p.resolve(PACK_META))
                 .filter(Files::exists)

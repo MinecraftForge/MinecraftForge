@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -26,6 +25,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +51,7 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
 
     @Override
     public List<IModFile> scanMods(Iterable<IModFile> loadedMods) {
-        final List<IModFile> sources = Lists.newArrayList();
+        final List<IModFile> sources = new ArrayList<>();
         loadedMods.forEach(sources::add);
 
         var dependenciesToLoad = JarSelector.detectAndSelect(
@@ -102,34 +102,34 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
     protected EarlyLoadingException exception(Collection<JarSelector.ResolutionFailureInformation<IModFile>> failedDependencies) {
         final List<EarlyLoadingException.ExceptionData> errors = failedDependencies.stream()
                .filter(entry -> !entry.sources().isEmpty()) //Should never be the case, but just to be sure
-               .map(this::buildExceptionData)
+               .map(JarInJarDependencyLocator::buildExceptionData)
                .toList();
 
         return new EarlyLoadingException(failedDependencies.size() + " Dependency restrictions were not met.", null, errors);
     }
 
     @NotNull
-    private EarlyLoadingException.ExceptionData buildExceptionData(JarSelector.ResolutionFailureInformation<IModFile> entry) {
+    private static EarlyLoadingException.ExceptionData buildExceptionData(JarSelector.ResolutionFailureInformation<IModFile> entry) {
         return new EarlyLoadingException.ExceptionData(
                 getErrorTranslationKey(entry),
                 entry.identifier().group() + ":" + entry.identifier().artifact(),
                 entry.sources()
                      .stream()
-                     .flatMap(this::getModWithVersionRangeStream)
-                     .map(this::formatError)
+                     .flatMap(JarInJarDependencyLocator::getModWithVersionRangeStream)
+                     .map(JarInJarDependencyLocator::formatError)
                      .collect(Collectors.joining(", "))
         );
     }
 
     @NotNull
-    private String getErrorTranslationKey(JarSelector.ResolutionFailureInformation<IModFile> entry) {
+    private static String getErrorTranslationKey(JarSelector.ResolutionFailureInformation<IModFile> entry) {
         return entry.failureReason() == JarSelector.FailureReason.VERSION_RESOLUTION_FAILED ?
                        "fml.dependencyloading.conflictingdependencies" :
                        "fml.dependencyloading.mismatchedcontaineddependencies";
     }
 
     @NotNull
-    private Stream<ModWithVersionRange> getModWithVersionRangeStream(JarSelector.SourceWithRequestedVersionRange<IModFile> file) {
+    private static Stream<ModWithVersionRange> getModWithVersionRangeStream(JarSelector.SourceWithRequestedVersionRange<IModFile> file) {
         return file.sources()
                    .stream()
                    .map(IModFile::getModFileInfo)
@@ -152,7 +152,7 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
     }
 
     @NotNull
-    private String formatError(ModWithVersionRange modWithVersionRange){
+    private static String formatError(ModWithVersionRange modWithVersionRange){
         return YELLOW + modWithVersionRange.modInfo().getModId() + RESET + " - " +
                RED + modWithVersionRange.versionRange().toString() + RESET + " - " +
                GREEN + modWithVersionRange.artifactVersion().toString() + RESET;

@@ -10,7 +10,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
+sealed abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     protected ForgeProdLaunchHandler(LaunchType type) {
         super(type, "forge_");
     }
@@ -18,7 +18,7 @@ abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
     @Override public String getNaming() { return "mcp"; }
     @Override public boolean isProduction() { return true; }
 
-    public static class Client extends ForgeProdLaunchHandler {
+    public static final class Client extends ForgeProdLaunchHandler {
         public Client() {
             super(CLIENT);
         }
@@ -29,7 +29,7 @@ abstract class ForgeProdLaunchHandler extends CommonLaunchHandler {
         }
     }
 
-    public static class Server extends ForgeProdLaunchHandler {
+    public static final class Server extends ForgeProdLaunchHandler {
         public Server() {
             super(SERVER);
         }

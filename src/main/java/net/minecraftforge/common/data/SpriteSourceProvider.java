@@ -49,7 +49,11 @@ public abstract class SpriteSourceProvider extends JsonCodecProvider<List<Sprite
     protected final void gather(BiConsumer<ResourceLocation, List<SpriteSource>> consumer)
     {
         addSources();
-        atlases.forEach((atlas, srcList) -> consumer.accept(atlas, srcList.sources));
+        for (var entry : atlases.entrySet()) {
+            ResourceLocation atlas = entry.getKey();
+            SourceList srcList = entry.getValue();
+            consumer.accept(atlas, srcList.sources);
+        }
     }
 
     protected abstract void addSources();

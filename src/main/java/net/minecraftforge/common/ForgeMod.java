@@ -399,7 +399,9 @@ public class ForgeMod {
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
         modEventBus.register(this);
-        registries.forEach(r -> r.register(modEventBus));
+        for (DeferredRegister<?> r : registries) {
+            r.register(modEventBus);
+        }
 
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);

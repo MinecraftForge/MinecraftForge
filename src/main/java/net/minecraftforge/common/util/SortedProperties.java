@@ -8,6 +8,7 @@ package net.minecraftforge.common.util;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -25,7 +26,7 @@ public class SortedProperties extends Properties {
 
     @Override
     public Set<Map.Entry<Object, Object>> entrySet() {
-        Set<Map.Entry<Object, Object>> ret = new TreeSet<>((left, right) -> left.getKey().toString().compareTo(right.getKey().toString()));
+        Set<Map.Entry<Object, Object>> ret = new TreeSet<>(Comparator.comparing(entry -> entry.getKey().toString()));
         ret.addAll(super.entrySet());
         return ret;
     }

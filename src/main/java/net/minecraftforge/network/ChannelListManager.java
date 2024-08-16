@@ -44,8 +44,8 @@ public class ChannelListManager {
         .build();
 
     private record Register(List<String> channels) implements CustomPacketPayload {
-        private static Type<Register> TYPE = CustomPacketPayload.createType("register");
-        private static StreamCodec<FriendlyByteBuf, Register> CODEC = StreamCodec.of(
+        private static final Type<Register> TYPE = CustomPacketPayload.createType("register");
+        private static final StreamCodec<FriendlyByteBuf, Register> CODEC = StreamCodec.of(
             (buf, v) -> encode(buf, v.channels),
             buf -> new Register(decode(buf))
         );
@@ -57,8 +57,8 @@ public class ChannelListManager {
     }
 
     private record Unregister(List<String> channels) implements CustomPacketPayload {
-        private static Type<Unregister> TYPE = CustomPacketPayload.createType("unregister");
-        private static StreamCodec<FriendlyByteBuf, Unregister> CODEC = StreamCodec.of(
+        private static final Type<Unregister> TYPE = CustomPacketPayload.createType("unregister");
+        private static final StreamCodec<FriendlyByteBuf, Unregister> CODEC = StreamCodec.of(
             (buf, v) -> encode(buf, v.channels),
             buf -> new Unregister(decode(buf))
         );

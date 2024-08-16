@@ -325,7 +325,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         Value apply(Key key, Value left, Value right);
     }
 
-    private class Entry implements Map.Entry<K, V>
+    private final class Entry implements Map.Entry<K, V>
     {
         private final K key;
         private V value;
@@ -374,7 +374,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         }
     }
 
-    private static class BasicStrategy implements Strategy<Object> {
+    private static final class BasicStrategy implements Strategy<Object> {
         @Override
         public int hashCode(Object o) {
             return Objects.hashCode(o);
@@ -386,7 +386,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
         }
     }
 
-    private static class IdentityStrategy implements Strategy<Object> {
+    private static final class IdentityStrategy implements Strategy<Object> {
         @Override
         public int hashCode(Object o) {
             return System.identityHashCode(o);

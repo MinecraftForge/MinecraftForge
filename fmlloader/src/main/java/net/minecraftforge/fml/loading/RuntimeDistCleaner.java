@@ -173,7 +173,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         return unpacked;
     }
 
-    private boolean remove(final List<AnnotationNode> anns, final String side)
+    private static boolean remove(final List<AnnotationNode> anns, final String side)
     {
         var onlyIns = unpack(anns);
 
@@ -193,7 +193,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         return false;
     }
 
-    private boolean hasOnlyInWithModAnnotation(final List<AnnotationNode> anns)
+    private static boolean hasOnlyInWithModAnnotation(final List<AnnotationNode> anns)
     {
         if (anns == null)
         {
