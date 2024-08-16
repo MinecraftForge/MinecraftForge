@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CrashReportExtender {
-    private static final String LINE_SEPARATOR = System.getProperty( "line.separator" );
+    private static final String LINE_SEPARATOR = System.lineSeparator();
     public static void extendSystemReport(final SystemReport systemReport) {
         for (final ISystemReportExtender call : CrashReportCallables.allCrashCallables()) {
             if (call.isActive())

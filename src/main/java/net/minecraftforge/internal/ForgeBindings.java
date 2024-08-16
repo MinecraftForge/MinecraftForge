@@ -15,7 +15,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 
 import java.util.function.Supplier;
 
-public class ForgeBindings implements IBindingsProvider {
+public final class ForgeBindings implements IBindingsProvider {
     @Override
     public Supplier<IEventBus> getForgeBusSupplier() {
         return ()-> MinecraftForge.EVENT_BUS;
@@ -23,17 +23,23 @@ public class ForgeBindings implements IBindingsProvider {
 
     @Override
     public Supplier<I18NParser> getMessageParser() {
-        return ()->new I18NParser() {
-            @Override
-            public String parseMessage(final String i18nMessage, final Object... args) {
-                return ForgeI18n.parseMessage(i18nMessage, args);
-            }
+        final class LazyInit {
+            private static final Supplier<I18NParser> INSTANCE = () -> new I18NParser() {
+                @Override
+                public String parseMessage(final String i18nMessage, final Object... args) {
+                    return ForgeI18n.parseMessage(i18nMessage, args);
+                }
 
-            @Override
-            public String stripControlCodes(final String toStrip) {
-                return ForgeI18n.stripControlCodes(toStrip);
-            }
-        };
+                @Override
+                public String stripControlCodes(final String toStrip) {
+                    return ForgeI18n.stripControlCodes(toStrip);
+                }
+            };
+
+            private LazyInit() {}
+        }
+
+        return LazyInit.INSTANCE;
     }
 
     @Override

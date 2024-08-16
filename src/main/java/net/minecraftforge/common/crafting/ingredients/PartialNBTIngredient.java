@@ -109,7 +109,7 @@ public class PartialNBTIngredient extends AbstractIngredient {
     };
 
     public static class Builder {
-        private List<ItemLike> items = new ArrayList<>();
+        private final List<ItemLike> items = new ArrayList<>();
         private CompoundTag nbt;
 
         public Builder nbt(CompoundTag value) {

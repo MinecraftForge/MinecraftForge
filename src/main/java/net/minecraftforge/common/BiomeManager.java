@@ -21,7 +21,7 @@ import net.minecraft.world.level.biome.Biome;
 
 public class BiomeManager
 {
-    private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
+    private static final TrackedList<BiomeEntry>[] biomes = setupBiomes();
     private static final List<ResourceKey<Biome>> additionalOverworldBiomes = new ArrayList<>();
     private static final List<ResourceKey<Biome>> additionalOverworldBiomesView = Collections.unmodifiableList(additionalOverworldBiomes);
 
