@@ -95,8 +95,9 @@ public record ModInfo(
                         .orElseGet(() -> owningFile.<String>getConfigElement("logoFile").orElse(null))
         );
 
-        boolean logoBlur = config.<Boolean>getConfigElement("logoBlur")
-                .orElseGet(() -> owningFile.<Boolean>getConfigElement("logoBlur").orElse(true));
+        Boolean logoBlur = config.<Boolean>getConfigElement("logoBlur").orElse(null);
+        if (logoBlur == null)
+            logoBlur = owningFile.<Boolean>getConfigElement("logoBlur").orElse(true);
 
         Optional<URL> updateJSONURL = config.<String>getConfigElement("updateJSONURL")
                 .map(StringUtils::toURL);
@@ -124,13 +125,14 @@ public record ModInfo(
         var deps = getOwningFile.getConfigList("dependencies", getModId);
         if (deps == null || deps.isEmpty()) {
             dependencies.value = Collections.emptyList();
-        } else {
-            var tmp = new ModVersion[deps.size()];
-            for (int i = 0; i < deps.size(); i++) {
-                tmp[i] = ModVersion.of(this, deps.get(i));
-            }
-            dependencies.value = List.of(tmp);
+            return this;
         }
+
+        var tmp = new ModVersion[deps.size()];
+        for (int i = 0; i < deps.size(); i++) {
+            tmp[i] = ModVersion.of(this, deps.get(i));
+        }
+        dependencies.value = List.of(tmp);
         return this;
     }
 
@@ -138,15 +140,16 @@ public record ModInfo(
         var feats = getOwningFile.<Map<String, Object>>getConfigElement("features", getModId).orElse(null);
         if (feats == null) {
             forgeFeatures.value = Collections.emptyList();
-        } else {
-            var tmp = new ArrayList<ForgeFeature.Bound>();
-            for (var entry : feats.entrySet()) {
-                if (!(entry.getValue() instanceof String val))
-                    throw new InvalidModFileException("Invalid feature bound {" + entry.getValue() + "} for key {" + entry.getKey() + "} only strings are accepted", getOwningFile);
-                tmp.add(new ForgeFeature.Bound(entry.getKey(), val, this));
-            }
-            forgeFeatures.value = List.copyOf(tmp);
+            return this;
         }
+
+        var tmp = new ArrayList<ForgeFeature.Bound>();
+        for (var entry : feats.entrySet()) {
+            if (!(entry.getValue() instanceof String val))
+                throw new InvalidModFileException("Invalid feature bound {" + entry.getValue() + "} for key {" + entry.getKey() + "} only strings are accepted", getOwningFile);
+            tmp.add(new ForgeFeature.Bound(entry.getKey(), val, this));
+        }
+        forgeFeatures.value = List.copyOf(tmp);
         return this;
     }
 
