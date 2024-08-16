@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class StronglyConnectedComponentDetector<T> {
     private final Graph<T> graph;
-    private Map<T, Integer> ids;
+    private final Map<T, Integer> ids = new HashMap<>();
     private T[] elements;
     private int[] dfn;
     private int[] low;
@@ -49,7 +49,6 @@ public class StronglyConnectedComponentDetector<T> {
     private void calculate() {
         components = new HashSet<>();
         int t = 0;
-        ids = new HashMap<>();
         Set<T> nodes = graph.nodes();
         elements = (T[]) new Object[nodes.size()];
         for (T node : nodes) {

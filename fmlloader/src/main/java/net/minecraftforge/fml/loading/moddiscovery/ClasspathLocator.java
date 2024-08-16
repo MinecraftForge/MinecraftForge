@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,7 +28,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 @ApiStatus.Internal
-public class ClasspathLocator extends AbstractModProvider implements IModLocator {
+public final class ClasspathLocator extends AbstractModProvider implements IModLocator {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Attributes.Name MOD_TYPE = new Attributes.Name("FMLModType");
 
@@ -105,8 +104,7 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
             len += 2;
         }
         str = str.substring(0, str.length() - len);
-        var path = Paths.get(URI.create(str));
-        return path;
+        return Path.of(URI.create(str));
     }
 
     private static Path getPathFromResource(ClassLoader cl, String resource) {

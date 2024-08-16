@@ -221,7 +221,7 @@ public class ForgeHooksClient {
     }
 
     public static void popGuiLayer(Minecraft minecraft) {
-        if (guiLayers.size() == 0) {
+        if (guiLayers.isEmpty()) {
             minecraft.setScreen(null);
             return;
         }
@@ -310,7 +310,7 @@ public class ForgeHooksClient {
         if (idx == -1)
             return base + complex;
 
-        String name = complex.substring(idx + 1, complex.length());
+        String name = complex.substring(idx + 1);
         if (idx > 1) {
             String domain = complex.substring(0, idx);
             return domain + ':' + base + name;

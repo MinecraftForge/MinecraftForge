@@ -18,7 +18,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public class MinecraftLocator extends AbstractModProvider implements IModLocator {
+public final class MinecraftLocator extends AbstractModProvider implements IModLocator {
     @Override
     public List<IModLocator.ModFileOrException> scanMods() {
         var minecraft = FMLLoader.getLaunchHandler().getMinecraftPaths();

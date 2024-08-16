@@ -60,7 +60,7 @@ public class FMLLoader {
         /*eventBus       =*/ getPlugin(env, "eventbus",           "1.0", "EventBus");
         runtimeDistCleaner = getPlugin(env, "runtimedistcleaner", "1.0", "RuntimeDistCleaner");
         coreModProvider = getSingleService(ICoreModProvider.class, "CoreMod");
-        LOGGER.debug(CORE,"FML found CoreMod version : {}", JarVersionLookupHandler.getInfo(coreModProvider.getClass()).impl().version().orElse("MISSING"));
+        LOGGER.debug(CORE, "FML found CoreMod version : {}", JarVersionLookupHandler.getInfo(coreModProvider.getClass()).impl().version().orElse("MISSING"));
         checkPackage(Environment.class, "2.0", "ForgeSPI");
 
         try {
@@ -72,14 +72,15 @@ public class FMLLoader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T getPlugin(IEnvironment env, String id, String version, String name) throws IncompatibleEnvironmentException {
-        @SuppressWarnings("unchecked")
-        var plugin = (T)env.findLaunchPlugin(id).orElseThrow(() -> {
+        var plugin = env.findLaunchPlugin(id).orElse(null);
+        if (plugin == null) {
             LOGGER.error(CORE, "{} library is missing, we need this to run", name);
-            return new IncompatibleEnvironmentException("Missing " + name + ", cannot run");
-        });
+            throw new IncompatibleEnvironmentException("Missing " + name + ", cannot run");
+        }
         checkPackage(plugin.getClass(), version, name);
-        return plugin;
+        return (T) plugin;
     }
 
     private static void checkPackage(Class<?> cls, String version, String name) throws IncompatibleEnvironmentException {
