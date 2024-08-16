@@ -226,7 +226,7 @@ public class ForgeDevLocator extends AbstractModProvider implements IModLocator 
         }
 
         for (var modid : modids) {
-            if (!modlist.stream().anyMatch(c -> modid.equals(c.get("modId")))) {
+            if (modlist.stream().noneMatch(c -> modid.equals(c.get("modId")))) {
                 modified = true;
                 var tmp = Config.inMemory();
                 tmp.set("modId", modid);

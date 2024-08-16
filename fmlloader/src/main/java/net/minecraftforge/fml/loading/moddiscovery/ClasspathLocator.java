@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.jar.Attributes;
@@ -80,11 +81,11 @@ public class ClasspathLocator extends AbstractModProvider implements IModLocator
         return ret;
     }
 
-    private List<URL> getUrls(ClassLoader cl, String resource) {
+    private static List<URL> getUrls(ClassLoader cl, String resource) {
         try {
             var lst = Collections.list(cl.getResources(resource));
             if (LOGGER.isDebugEnabled(LogMarkers.SCAN)) {
-                Collections.sort(lst, (a, b) -> a.toString().compareTo(b.toString()));
+                lst.sort(Comparator.comparing(URL::toString));
                 LOGGER.debug(LogMarkers.SCAN, "Scanning Classloader: {} for {}", cl, resource);
                 for (var url : lst)
                     LOGGER.debug(LogMarkers.SCAN, "\t{}", url);

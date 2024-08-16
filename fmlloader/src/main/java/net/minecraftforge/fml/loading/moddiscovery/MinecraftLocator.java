@@ -29,13 +29,13 @@ public class MinecraftLocator extends AbstractModProvider implements IModLocator
             jar -> meta,
             minecraft.toArray(Path[]::new)
         );
-        var mc = ModFileFactory.FACTORY.build(mcjar, this, this::buildMinecraftTOML);
+        var mc = ModFileFactory.FACTORY.build(mcjar, this, MinecraftLocator::buildMinecraftTOML);
         meta.setModFile(mc);
 
         return List.of(new ModFileOrException(mc, null));
     }
 
-    private IModFileInfo buildMinecraftTOML(final IModFile iModFile) {
+    private static IModFileInfo buildMinecraftTOML(final IModFile iModFile) {
         // We haven't changed this in years, and I can't be asked right now to special case this one file in the path.
         final var conf = Config.inMemory();
         conf.set("modLoader", "minecraft");
@@ -52,7 +52,7 @@ public class MinecraftLocator extends AbstractModProvider implements IModLocator
         conf.set("mods", List.of(mods));
 
         var configWrapper = new NightConfigWrapper(conf);
-        return new ModFileInfo((ModFile)iModFile, configWrapper, configWrapper::setFile, List.of());
+        return new ModFileInfo((ModFile) iModFile, configWrapper, configWrapper::setFile);
     }
 
     @Override

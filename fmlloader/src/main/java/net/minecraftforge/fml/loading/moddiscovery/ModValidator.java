@@ -64,7 +64,7 @@ public class ModValidator {
     }
 
     @NotNull
-    private List<ModFile> validateFiles(final List<ModFile> mods) {
+    private static List<ModFile> validateFiles(final List<ModFile> mods) {
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext();) {
             ModFile modFile = iterator.next();
