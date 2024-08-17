@@ -1,0 +1,30 @@
+{
+  "type": "forge:conditional",
+  "forge:condition": {
+    "type": "forge:tag_empty",
+    "tag": "forge:empty"
+  },
+  "recipes": [
+    {
+      "recipe": {
+        "type": "minecraft:crafting_shapeless",
+        "category": "misc",
+        "ingredients": [
+          {
+            "item": "minecraft:gold_ore"
+          },
+          {
+            "item": "minecraft:gold_ore"
+          },
+          {
+            "item": "minecraft:gold_ore"
+          }
+        ],
+        "result": {
+          "count": 1,
+          "id": "minecraft:diamond_block"
+        }
+      }
+    }
+  ]
+}

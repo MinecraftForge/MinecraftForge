@@ -32,7 +32,7 @@ public record TagEmptyCondition(TagKey<Item> tag) implements ICondition {
             Optional<HolderGetter<Item>> items = reg.getter(Registries.ITEM);
             if (items.isPresent()) {
                 var optional = items.get().get(this.tag);
-                return optional.isPresent();
+                return optional.isEmpty() || optional.get().size() == 0;
             }
         }
         return context.getTag(tag).isEmpty();

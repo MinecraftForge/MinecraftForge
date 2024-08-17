@@ -20,6 +20,8 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -42,6 +44,8 @@ import net.minecraftforge.test.BaseTestMod;
 @Mod(ConditionalRecipeTest.MODID)
 public class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
+    
+    private static final TagKey<Item> EMPTY = ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "empty"));
 
     public ConditionalRecipeTest(FMLJavaModLoadingContext context) {
         super(context);
@@ -146,6 +150,24 @@ public class ConditionalRecipeTest extends BaseTestMod {
             .pattern("XXX")
             .pattern("XX ")
             .define('X', Blocks.OAK_LOG)
+            .build()
+        );
+    }
+    
+    @GameTest(template = "forge:empty3x3x3")
+    public static void tag_empty_condition_with_populated_tag(GameTestHelper helper) {
+        assertFalse(helper, RecipeType.CRAFTING, SimpleCraftingContainer.builder()
+            .pattern("XXX")
+            .define('X', Blocks.IRON_ORE)
+            .build()
+        );
+    }
+    
+    @GameTest(template = "forge:empty3x3x3")
+    public static void tag_empty_condition_with_empty_tag(GameTestHelper helper) {
+        assertTrue(helper, RecipeType.CRAFTING, SimpleCraftingContainer.builder()
+            .pattern("XXX")
+            .define('X', Blocks.GOLD_ORE)
             .build()
         );
     }
@@ -302,6 +324,30 @@ public class ConditionalRecipeTest extends BaseTestMod {
                         ::save
                 )
                 .save(out, rl("conditional_doesnt_load_empty"));
+
+            ConditionalRecipe.builder()
+                .condition(tagEmpty(ItemTags.DIRT))
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.IRON_ORE)
+                        .requires(Blocks.IRON_ORE)
+                        .requires(Blocks.IRON_ORE)
+                        .unlockedBy(getHasName(Blocks.IRON_ORE), has(Blocks.IRON_ORE))
+                        ::save
+                )
+                .save(out, rl("tag_empty_condition_doesnt_load"));
+
+            ConditionalRecipe.builder()
+                .condition(tagEmpty(EMPTY))
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.GOLD_ORE)
+                        .requires(Blocks.GOLD_ORE)
+                        .requires(Blocks.GOLD_ORE)
+                        .unlockedBy(getHasName(Blocks.GOLD_ORE), has(Blocks.GOLD_ORE))
+                        ::save
+                )
+                .save(out, rl("tag_empty_condition_loads"));
         }
     }
 
