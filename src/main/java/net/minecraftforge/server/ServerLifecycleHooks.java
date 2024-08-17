@@ -166,7 +166,7 @@ public class ServerLifecycleHooks {
         if (!allowLogins.get())
             return rejectConnection(connection, ctx.getType(), "Server is still starting! Please wait before reconnecting.");
 
-        if (packet.intention() != ClientIntent.LOGIN)
+        if (packet.intention() == ClientIntent.STATUS)
             return true;
 
         if (ctx.getType() == ConnectionType.MODDED && ctx.getNetVersion() != NetworkContext.NET_VERSION)
