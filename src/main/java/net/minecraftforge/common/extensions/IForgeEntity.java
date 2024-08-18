@@ -6,10 +6,8 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +30,7 @@ import net.minecraftforge.entity.PartEntity;
 import net.minecraftforge.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
-public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>, IForgeRegistryAccessHolder {
+public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
     private Entity self() {
         return (Entity)this;
     }
@@ -392,11 +390,4 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>, IFor
     default boolean shouldUpdateFluidWhileBoating(FluidState state, Boat boat) {
         return boat.shouldUpdateFluidWhileRiding(state, self());
     }
-
-    @Override
-    default Optional<RegistryAccess> getRegistryAccess() {
-        var lvl = self().level();
-        if (lvl == null) return Optional.empty();
-        return Optional.of(lvl.registryAccess());
-    };
 }

@@ -7,19 +7,12 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Optional;
 
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.entity.PartEntity;
 
-public interface IForgeLevel extends ICapabilityProvider, IForgeRegistryAccessHolder
+public interface IForgeLevel extends ICapabilityProvider
 {
-    private Level self() {
-        return (Level) this;
-    }
-
     /**
      * The maximum radius to scan for entities when trying to check bounding boxes. Vanilla's default is
      * 2.0D But mods that add larger entities may increase this.
@@ -41,10 +34,4 @@ public interface IForgeLevel extends ICapabilityProvider, IForgeRegistryAccessHo
     {
         return Collections.emptyList();
     }
-
-    @Override
-    default Optional<RegistryAccess> getRegistryAccess() {
-        var access = self().registryAccess();
-        return Optional.of(access);
-    };
 }
