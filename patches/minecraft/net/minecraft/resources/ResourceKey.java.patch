@@ -5,7 +5,7 @@
  import net.minecraft.network.codec.StreamCodec;
  
 -public class ResourceKey<T> {
-+public class ResourceKey<T> implements Comparable<ResourceKey<?>> {
++public class ResourceKey<T> implements Comparable<ResourceKey<?>>, net.minecraftforge.common.extensions.IForgeResourceKey<T> {
      private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = new MapMaker().weakValues().makeMap();
      private final ResourceLocation registryName;
      private final ResourceLocation location;

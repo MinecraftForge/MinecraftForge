@@ -7,6 +7,7 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +27,9 @@ import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
-public interface IForgeBlockEntity extends ICapabilityProvider {
+import java.util.Optional;
+
+public interface IForgeBlockEntity extends ICapabilityProvider, IForgeRegistryAccessHolder {
     private BlockEntity self() {
         return (BlockEntity)this;
     }
@@ -147,4 +150,11 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
     default boolean hasCustomOutlineRendering(Player player) {
         return false;
     }
+
+    @Override
+    default Optional<RegistryAccess> getRegistryAccess() {
+        var lvl = self().getLevel();
+        if (lvl == null) return Optional.empty();
+        return Optional.of(lvl.registryAccess());
+    };
 }
