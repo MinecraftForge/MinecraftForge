@@ -490,7 +490,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
         }
 
-        return Pair.of(quadBaker.getQuad(), cull);
+        return Pair.of(quadBaker.build(), cull);
     }
 
     public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)
