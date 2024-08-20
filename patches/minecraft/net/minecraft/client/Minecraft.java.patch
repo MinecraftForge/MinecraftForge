@@ -120,7 +120,7 @@
        StringBuilder stringbuilder = new StringBuilder("Minecraft");
        if (m_193589_().m_184597_()) {
 -         stringbuilder.append("*");
-+         stringbuilder.append(' ').append(net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.BRANDING_NAME).append('*');
++         stringbuilder.append("* ").append(net.minecraftforge.forge.snapshots.ForgeSnapshotsMod.BRANDING_NAME);
        }
  
        stringbuilder.append(" ");
