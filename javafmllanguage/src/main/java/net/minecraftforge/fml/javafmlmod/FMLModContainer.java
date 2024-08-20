@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.common.FMLJavaModContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,7 +45,6 @@ public class FMLModContainer extends ModContainer {
         final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
         this.contextExtension = () -> contextExtension;
 
-
         try {
             var moduleName = info.getOwningFile().moduleName();
             var module = gameLayer.findModule(moduleName)
@@ -63,7 +64,23 @@ public class FMLModContainer extends ModContainer {
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
-            this.modInstance = modClass.getDeclaredConstructor().newInstance();
+            Constructor<?> ctor = null;
+
+            try {
+                ctor = modClass.getDeclaredConstructor(FMLJavaModContext.class);
+            } catch (Throwable e) {
+                ctor = modClass.getDeclaredConstructor();
+            }
+
+            if (ctor == null)
+                throw new IllegalStateException("Unable to find Consturctor");
+
+            this.modInstance = ctor.getParameterCount() == 0 ? ctor.newInstance() : ctor.newInstance(
+                    new FMLJavaModContext(
+                            getEventBus()
+                    )
+            );
+
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         } catch (Throwable e) {
             // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the

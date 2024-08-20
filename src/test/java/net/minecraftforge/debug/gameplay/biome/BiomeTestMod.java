@@ -27,8 +27,8 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.fml.common.FMLJavaModContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.test.BaseTestMod;
 import java.util.List;
@@ -44,8 +44,8 @@ public class BiomeTestMod extends BaseTestMod {
     private static final ResourceKey<BiomeModifier> ADD_OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "add_overworld_netherite_block_ore"));
     private static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore"));
 
-    public BiomeTestMod() {
-        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public BiomeTestMod(FMLJavaModContext context) {
+        var modBus = context.getModBus();
         modBus.addListener(BiomeTestMod::onDataGen);
     }
 

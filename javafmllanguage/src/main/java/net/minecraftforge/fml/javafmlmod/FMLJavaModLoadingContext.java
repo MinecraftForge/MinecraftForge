@@ -8,6 +8,11 @@ package net.minecraftforge.fml.javafmlmod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 
+/**
+ * Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+ * instead in your mods constructor to get access to ModBus.
+ */
+@Deprecated(forRemoval = true)
 public class FMLJavaModLoadingContext
 {
     private final FMLModContainer container;
