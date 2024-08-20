@@ -12,7 +12,7 @@ import net.minecraftforge.fml.ModLoadingContext;
  * Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
  * instead in your mod's constructor to get access to its EventBus.
  */
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "1.21.1")
 public class FMLJavaModLoadingContext
 {
     private final FMLModContainer container;

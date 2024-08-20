@@ -26,7 +26,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * used in your mods constructor to get access to ModBus and various mod-specific objects.
+ * Supplied as a param to your mod's constructor to get access
+ * to the mod EventBus and various mod-specific objects.
  */
 public class FMLConstructModEvent extends ParallelDispatchEvent {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -120,8 +121,8 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
      *                       show when the player clicks the config button for your mod on the mods screen.
      *                       <p>You should call {@link Minecraft#setScreen(Screen)} with the provided mods screen for the
      *                       action of your close button, using {@link Screen#minecraft} to get the client instance.</p>
-     * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
-     * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     * @see FMLConstructModEvent#registerExtensionPoint(Class, Supplier)
+     * @see FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec)
      */
     public void registerConfigScreen(Function<Screen, Screen> screenFunction) {
         registerConfigScreen((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
@@ -134,8 +135,8 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
      *                       for your mod on the mods screen.
      *                       <p>You should call {@link Minecraft#setScreen(Screen)} with the provided client instance
      *                       and mods screen for the action of your close button.</p>
-     * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
-     * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     * @see FMLConstructModEvent#registerExtensionPoint(Class, Supplier)
+     * @see FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec)
      */
     public void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {
          getContainer().registerExtensionPoint(

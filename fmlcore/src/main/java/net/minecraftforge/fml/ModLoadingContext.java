@@ -46,7 +46,10 @@ public class ModLoadingContext
      * @param point The extension point to register
      * @param extension An extension operator
      * @param <T> The type signature of the extension operator
+     *
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public <T extends Record & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
         getActiveContainer().registerExtensionPoint(point, extension);
     }
@@ -55,7 +58,10 @@ public class ModLoadingContext
      * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
+     *
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
         getActiveContainer().registerDisplayTest(() -> displayTest);
     }
@@ -64,7 +70,10 @@ public class ModLoadingContext
      * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
      * <p>A shorthand for registering a DisplayTest supplier with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
+     *
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
         getActiveContainer().registerDisplayTest(displayTest);
     }
@@ -74,7 +83,10 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(String, BiPredicate)
+     *
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
         getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
     }
@@ -84,11 +96,18 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(Supplier, BiPredicate)
+     *
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
         getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
     }
 
+    /**
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+    */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
         if (spec.isEmpty())
         {
@@ -100,6 +119,10 @@ public class ModLoadingContext
         getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
     }
 
+    /**
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec, String fileName) {
         if (spec.isEmpty())
         {

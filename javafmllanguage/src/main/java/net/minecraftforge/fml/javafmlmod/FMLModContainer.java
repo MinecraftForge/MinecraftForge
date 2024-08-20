@@ -33,7 +33,7 @@ public class FMLModContainer extends ModContainer implements IEventBusSupplier {
         private LazyInit() {}
         private static final Constructor<?> FML_CONSTRUCT_EVENT_CTOR = LamdbaExceptionUtils.uncheck(() ->
                 Class.forName("net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader())
-                        .getConstructor(ModContainer.class, ModLoadingStage.class)
+                        .getDeclaredConstructor(ModContainer.class, ModLoadingStage.class)
         );
     }
 

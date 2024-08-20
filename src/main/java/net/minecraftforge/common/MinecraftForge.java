@@ -65,9 +65,9 @@ public class MinecraftForge
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
      *
-     * Deprecated, take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since="1.21.1")
     public static void registerConfigScreen(Function<Screen, Screen> screenFunction) {
         registerConfigScreen((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
     }
@@ -82,9 +82,9 @@ public class MinecraftForge
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
      *
-     * Deprecated, take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since="1.21.1")
     public static void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {
         ModLoadingContext.get().registerExtensionPoint(
                ConfigScreenHandler.ConfigScreenFactory.class,

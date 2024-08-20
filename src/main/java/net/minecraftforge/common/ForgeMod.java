@@ -409,7 +409,7 @@ public class ForgeMod {
         modEventBus.register(ForgeConfig.class);
         ForgeDeferredRegistriesSetup.setup(modEventBus);
         // Forge does not display problems when the remote is not matching.
-        modEvent.registerExtensionPoint(IExtensionPoint.DisplayTest.class, ()->new IExtensionPoint.DisplayTest(()->"ANY", (remote, isServer)-> true));
+        modEvent.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
 
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
