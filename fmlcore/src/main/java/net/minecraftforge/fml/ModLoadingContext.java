@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
-/**
- * Planned for removal eventually,.
- */
-@Deprecated
+
 public class ModLoadingContext
 {
     private static final Logger LOGGER = LogUtils.getLogger();

@@ -33,7 +33,7 @@ public class FMLModContainer extends ModContainer {
     private final IEventBus eventBus;
     private Object modInstance;
     private final Class<?> modClass;
-    private final Object contextObject;
+    private final Event contextObject;
 
     public FMLModContainer(IModInfo info, String className, ModFileScanData modFileScanResults, ModuleLayer gameLayer) {
         super(info);
@@ -51,7 +51,7 @@ public class FMLModContainer extends ModContainer {
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
 
             Class<?> fmlConstructEvent = Class.forName( "net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader());
-            this.contextObject = fmlConstructEvent.getConstructor(ModContainer.class, ModLoadingStage.class).newInstance(this, getCurrentState());
+            this.contextObject = (Event) fmlConstructEvent.getConstructor(ModContainer.class, ModLoadingStage.class).newInstance(this, getCurrentState());
 
             modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
@@ -68,16 +68,13 @@ public class FMLModContainer extends ModContainer {
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
-            Constructor<?> ctor = null;
+            Constructor<?> ctor;
 
             try {
                 ctor = modClass.getDeclaredConstructor(contextObject.getClass());
             } catch (Throwable e) {
                 ctor = modClass.getDeclaredConstructor();
             }
-
-            if (ctor == null)
-                throw new IllegalStateException("Unable to find Consturctor");
 
             this.modInstance = ctor.getParameterCount() == 0 ? ctor.newInstance() : ctor.newInstance(contextObject);
 

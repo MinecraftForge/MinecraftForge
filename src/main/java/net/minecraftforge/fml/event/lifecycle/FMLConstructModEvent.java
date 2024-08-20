@@ -6,6 +6,9 @@
 package net.minecraftforge.fml.event.lifecycle;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
@@ -16,9 +19,14 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import org.slf4j.Logger;
 
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * used in your mods constructor to get access to ModBus and various mod-specific objects.
+ */
 public class FMLConstructModEvent extends ParallelDispatchEvent {
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -26,7 +34,7 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
         super(container, stage);
     }
 
-    public IEventBus getModBus() {
+    public IEventBus getModEventBus() {
         if (getContainer() instanceof FMLModContainer modContainer)
             return modContainer.getEventBus();
         return null;
@@ -102,4 +110,33 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
         getContainer().addConfig(new ModConfig(type, spec, getContainer(), fileName));
     }
 
+    /**
+     * Register a config screen for the active mod container.
+     * @param screenFunction A function that takes the mods screen as an argument and returns your config screen to
+     *                       show when the player clicks the config button for your mod on the mods screen.
+     *                       <p>You should call {@link Minecraft#setScreen(Screen)} with the provided mods screen for the
+     *                       action of your close button, using {@link Screen#minecraft} to get the client instance.</p>
+     * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
+     * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     */
+    public void registerConfigScreen(Function<Screen, Screen> screenFunction) {
+        registerConfigScreen((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
+    }
+
+    /**
+     * Register a config screen for the active mod container.
+     * @param screenFunction A function that takes the {@link Minecraft} client instance and the mods screen as
+     *                       arguments and returns your config screen to show when the player clicks the config button
+     *                       for your mod on the mods screen.
+     *                       <p>You should call {@link Minecraft#setScreen(Screen)} with the provided client instance
+     *                       and mods screen for the action of your close button.</p>
+     * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
+     * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     */
+    public void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {
+         getContainer().registerExtensionPoint(
+                ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory(screenFunction)
+        );
+    }
 }

@@ -64,7 +64,10 @@ public class MinecraftForge
      *                       action of your close button, using {@link Screen#minecraft} to get the client instance.</p>
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     *
+     * Deprecated, take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true)
     public static void registerConfigScreen(Function<Screen, Screen> screenFunction) {
         registerConfigScreen((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
     }
@@ -78,7 +81,10 @@ public class MinecraftForge
      *                       and mods screen for the action of your close button.</p>
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
+     *
+     * Deprecated, take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
      */
+    @Deprecated(forRemoval = true)
     public static void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {
         ModLoadingContext.get().registerExtensionPoint(
                ConfigScreenHandler.ConfigScreenFactory.class,
