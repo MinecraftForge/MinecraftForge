@@ -17,6 +17,7 @@ import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.fml.util.IEventBusSupplier;
 import org.slf4j.Logger;
 
 import java.util.function.BiFunction;
@@ -38,8 +39,8 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
      * @return The mod's event bus, to allow subscription to Mod specific events
      */
     public IEventBus getModEventBus() {
-        if (getContainer() instanceof FMLModContainer modContainer)
-            return modContainer.getEventBus();
+        if (getContainer() instanceof IEventBusSupplier supplier)
+            return supplier.getEventBus();
         return null;
     }
 
