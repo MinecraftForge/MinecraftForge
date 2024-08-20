@@ -59,8 +59,6 @@ public class FMLModContainer extends ModContainer implements IEventBusSupplier {
             var moduleName = info.getOwningFile().moduleName();
             var module = gameLayer.findModule(moduleName)
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
-
-
             this.contextObject = (Event) LazyInit.FML_CONSTRUCT_EVENT_CTOR.newInstance(this, ModLoadingStage.CONSTRUCT);
             modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
