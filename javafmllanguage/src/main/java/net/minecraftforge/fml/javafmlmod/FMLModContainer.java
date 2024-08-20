@@ -46,12 +46,13 @@ public class FMLModContainer extends ModContainer {
         this.contextExtension = () -> contextExtension;
 
         try {
-            Class<?> fmlConstructEvent = Class.forName("net.minecraftforge.fml.event.lifecycle.FMLConstructEvent", true, Thread.currentThread().getContextClassLoader());
-            this.contextObject = fmlConstructEvent.getConstructor(ModContainer.class, ModLoadingStage.class).newInstance(this, getCurrentState());
-
             var moduleName = info.getOwningFile().moduleName();
             var module = gameLayer.findModule(moduleName)
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
+
+            Class<?> fmlConstructEvent = Class.forName( "net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader());
+            this.contextObject = fmlConstructEvent.getConstructor(ModContainer.class, ModLoadingStage.class).newInstance(this, getCurrentState());
+
             modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         } catch (Throwable e) {
