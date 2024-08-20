@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(CreativeModeTabTest.MOD_ID)
@@ -36,11 +36,11 @@ public class CreativeModeTabTest {
     private static final ResourceKey<CreativeModeTab> COLORS = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "colors"));
     private static final ResourceKey<CreativeModeTab> SEARCH = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "search"));
 
-    public CreativeModeTabTest() {
+    public CreativeModeTabTest(FMLConstructModEvent event) {
         if (!ENABLED)
             return;
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = event.getModEventBus();
 
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabRegister);
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);

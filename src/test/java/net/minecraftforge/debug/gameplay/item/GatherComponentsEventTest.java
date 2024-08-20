@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GatherComponentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.test.BaseTestMod;
 
@@ -25,7 +26,8 @@ import java.util.Optional;
 public class GatherComponentsEventTest extends BaseTestMod {
     public static final String MOD_ID = "gather_components_test_event";
 
-    public GatherComponentsEventTest() {
+    public GatherComponentsEventTest(FMLConstructModEvent context) {
+        super(context);
         IEventBus bus = MinecraftForge.EVENT_BUS;
         bus.addListener(this::onItem);
     }

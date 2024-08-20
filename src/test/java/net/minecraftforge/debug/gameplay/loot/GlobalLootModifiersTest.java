@@ -60,6 +60,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 import net.minecraftforge.fml.common.Mod;
@@ -105,7 +106,8 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
-    public GlobalLootModifiersTest() {
+    public GlobalLootModifiersTest(FMLConstructModEvent context) {
+        super(context);
         testItem(lookup -> getSmelterAxe(lookup.lookup(Registries.ENCHANTMENT).get(), true));
     }
 

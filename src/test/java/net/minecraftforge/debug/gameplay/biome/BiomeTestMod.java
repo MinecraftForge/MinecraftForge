@@ -45,7 +45,7 @@ public class BiomeTestMod extends BaseTestMod {
     private static final ResourceKey<ConfiguredFeature<?, ?>> OVERWORLD_NETHERITE_BLOCK_ORE = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.fromNamespaceAndPath(BiomeTestMod.MOD_ID, "overworld_netherite_block_ore"));
 
     public BiomeTestMod(FMLConstructModEvent context) {
-        var modBus = context.getModEventBus();
+        super(context);
         modBus.addListener(BiomeTestMod::onDataGen);
     }
 

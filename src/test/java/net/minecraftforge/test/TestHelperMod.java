@@ -21,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.RegisterEvent;
 
 /* A place where I can put common utility stuff for now. Until I re-write the test codebase. */
@@ -28,6 +29,10 @@ import net.minecraftforge.registries.RegisterEvent;
 public class TestHelperMod extends BaseTestMod {
     public static final String MOD_ID = "test_helper_mod";
     public static final ResourceKey<CreativeModeTab> TAB = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "test_items"));
+
+    public TestHelperMod(FMLConstructModEvent event) {
+        super(event);
+    }
 
     @SubscribeEvent
     public void onRegister(RegisterEvent event) {
