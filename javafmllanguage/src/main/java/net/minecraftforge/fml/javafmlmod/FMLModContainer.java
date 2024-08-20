@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
@@ -27,6 +28,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class FMLModContainer extends ModContainer {
+    private static final class LazyInit {
+        private LazyInit() {}
+        private static final Constructor<?> FML_CONSTRUCT_EVENT_CTOR = LamdbaExceptionUtils.uncheck(() ->
+                Class.forName("net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader())
+                        .getConstructor(ModContainer.class, ModLoadingStage.class)
+        );
+    }
+
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker LOADING = MarkerManager.getMarker("LOADING");
     private final ModFileScanData scanResults;
@@ -50,9 +59,8 @@ public class FMLModContainer extends ModContainer {
             var module = gameLayer.findModule(moduleName)
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
 
-            Class<?> fmlConstructEvent = Class.forName( "net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader());
-            this.contextObject = (Event) fmlConstructEvent.getConstructor(ModContainer.class, ModLoadingStage.class).newInstance(this, getCurrentState());
 
+            this.contextObject = (Event) LazyInit.FML_CONSTRUCT_EVENT_CTOR.newInstance(this, ModLoadingStage.CONSTRUCT);
             modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         } catch (Throwable e) {

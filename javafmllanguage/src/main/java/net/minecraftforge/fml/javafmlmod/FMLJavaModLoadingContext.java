@@ -10,7 +10,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 
 /**
  * Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
- * instead in your mods constructor to get access to ModBus.
+ * instead in your mod's constructor to get access to its EventBus.
  */
 @Deprecated(forRemoval = true)
 public class FMLJavaModLoadingContext
