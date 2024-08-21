@@ -6,11 +6,13 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.forgespi.language.IModInfo;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -172,6 +174,10 @@ public abstract class ModContainer
         if (handler != null) {
             handler.accept(event);
         }
+    }
+
+    public @Nullable IEventBus getEventBus() {
+        return null;
     }
 
     /**

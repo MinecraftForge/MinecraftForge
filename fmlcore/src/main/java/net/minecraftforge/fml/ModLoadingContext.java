@@ -47,7 +47,7 @@ public class ModLoadingContext
      * @param extension An extension operator
      * @param <T> The type signature of the extension operator
      *
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerExtensionPoint(Class, Supplier)}
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public <T extends Record & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
@@ -59,7 +59,7 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
      *
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(IExtensionPoint.DisplayTest)}
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
@@ -71,7 +71,7 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest supplier with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
      *
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(Supplier<IExtensionPoint.DisplayTest>)}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
@@ -84,7 +84,7 @@ public class ModLoadingContext
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(String, BiPredicate)
      *
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(String, BiPredicate)}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
@@ -97,7 +97,7 @@ public class ModLoadingContext
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(Supplier, BiPredicate)
      *
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(Supplier, BiPredicate)}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
@@ -105,7 +105,7 @@ public class ModLoadingContext
     }
 
     /**
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec)}
     */
     @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
@@ -120,7 +120,7 @@ public class ModLoadingContext
     }
 
     /**
-     * @deprecated take a look at {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
+     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec, String)}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec, String fileName) {

@@ -15,20 +15,20 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.util.IEventBusSupplier;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Optional;
 
-public class FMLModContainer extends ModContainer implements IEventBusSupplier {
+public class FMLModContainer extends ModContainer {
     private static final class LazyInit {
         private LazyInit() {}
         private static final Constructor<?> FML_CONSTRUCT_EVENT_CTOR = LamdbaExceptionUtils.uncheck(() ->
@@ -116,7 +116,8 @@ public class FMLModContainer extends ModContainer implements IEventBusSupplier {
         return modInstance;
     }
 
-    public IEventBus getEventBus() {
+    @Override
+    public @NotNull IEventBus getEventBus() {
         return this.eventBus;
     }
 
