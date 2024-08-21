@@ -2,7 +2,7 @@
   "type": "forge:conditional",
   "forge:condition": {
     "type": "forge:tag_empty",
-    "tag": "forge:empty"
+    "tag": "forge:eggs"
   },
   "recipes": [
     {
