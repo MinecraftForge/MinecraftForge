@@ -37,7 +37,7 @@ public class FMLConstructModEvent extends ParallelDispatchEvent {
      * @return The mod's event bus, to allow subscription to Mod specific events
      */
     public IEventBus getModEventBus() {
-        return getContainer().getEventBus();
+        return getContainer().getModEventBus();
     }
 
     /**

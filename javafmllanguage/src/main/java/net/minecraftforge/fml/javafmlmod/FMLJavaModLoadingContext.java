@@ -26,7 +26,7 @@ public class FMLJavaModLoadingContext
      */
     public IEventBus getModEventBus()
     {
-        return container.getEventBus();
+        return container.getModEventBus();
     }
 
 

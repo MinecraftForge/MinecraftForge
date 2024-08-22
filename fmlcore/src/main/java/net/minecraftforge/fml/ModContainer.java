@@ -176,7 +176,7 @@ public abstract class ModContainer
         }
     }
 
-    public @Nullable IEventBus getEventBus() {
+    public @Nullable IEventBus getModEventBus() {
         return null;
     }
 
