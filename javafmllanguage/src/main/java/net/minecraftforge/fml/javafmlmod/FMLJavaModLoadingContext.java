@@ -6,14 +6,13 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
- * Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent}
- * instead in your mod's constructor to get access to its EventBus.
+ * Use {@link FMLJavaModLoadingContext} in your mod constructor.
  */
-@Deprecated(forRemoval = true, since = "1.21.1")
-public class FMLJavaModLoadingContext
+public class FMLJavaModLoadingContext extends ModLoadingContext
 {
     private final FMLModContainer container;
 
@@ -29,11 +28,21 @@ public class FMLJavaModLoadingContext
         return container.getModEventBus();
     }
 
+    /**
+     * @return {@link FMLModContainer} by default.
+     */
+    @Override
+    public FMLModContainer getContainer() {
+        return container;
+    }
 
     /**
      * Helper to get the right instance from the {@link ModLoadingContext} correctly.
      * @return The FMLJavaMod language specific extension from the ModLoadingContext
+     *
+     * @deprecated use {@link FMLJavaModLoadingContext} in your mod constructor
      */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public static FMLJavaModLoadingContext get() {
         return ModLoadingContext.get().extension();
     }

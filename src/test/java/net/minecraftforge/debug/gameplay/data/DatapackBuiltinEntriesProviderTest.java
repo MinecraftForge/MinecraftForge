@@ -28,6 +28,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.test.BaseTestMod;
 
@@ -51,8 +52,8 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
         );
     };
 
-    public DatapackBuiltinEntriesProviderTest(FMLConstructModEvent event) {
-        super(event);
+    public DatapackBuiltinEntriesProviderTest(FMLJavaModLoadingContext context) {
+        super(context);
     }
 
     @SubscribeEvent

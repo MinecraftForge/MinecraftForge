@@ -8,6 +8,7 @@ package net.minecraftforge.debug.registries;
 import java.util.Set;
 
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -39,8 +40,8 @@ public class NetworkDatapackRegistryTest extends BaseTestMod {
     private static final ResourceKey<DataObject> TEST_ENTRY = ResourceKey.create(REGISTRY_KEY, rl(MODID, "test_entry"));
     private static final ResourceLocation TEST_VALUE = rl(MODID, "test_value");
 
-    public NetworkDatapackRegistryTest(FMLConstructModEvent event) {
-        super(event);
+    public NetworkDatapackRegistryTest(FMLJavaModLoadingContext context) {
+        super(context);
     }
 
     @SubscribeEvent

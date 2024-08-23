@@ -64,7 +64,7 @@ public class MinecraftForge
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
      *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfigScreen(Function)}
+     * @deprecated Register it yourself.
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public static void registerConfigScreen(Function<Screen, Screen> screenFunction) {
@@ -81,7 +81,7 @@ public class MinecraftForge
      * @see ModLoadingContext#registerExtensionPoint(Class, Supplier)
      * @see ModLoadingContext#registerConfig(ModConfig.Type, IConfigSpec)
      *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfigScreen(BiFunction)}
+     * @deprecated Register it yourself.
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public static void registerConfigScreen(BiFunction<Minecraft, Screen, Screen> screenFunction) {

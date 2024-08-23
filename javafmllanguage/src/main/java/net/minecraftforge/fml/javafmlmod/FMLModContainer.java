@@ -29,21 +29,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class FMLModContainer extends ModContainer {
-    private static final class LazyInit {
-        private LazyInit() {}
-        private static final Constructor<?> FML_CONSTRUCT_EVENT_CTOR = LamdbaExceptionUtils.uncheck(() ->
-                Class.forName("net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent", true, Thread.currentThread().getContextClassLoader())
-                        .getDeclaredConstructor(ModContainer.class, ModLoadingStage.class)
-        );
-    }
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker LOADING = MarkerManager.getMarker("LOADING");
     private final ModFileScanData scanResults;
     private final IEventBus eventBus;
     private Object modInstance;
     private final Class<?> modClass;
-    private final Event contextObject;
 
     public FMLModContainer(IModInfo info, String className, ModFileScanData modFileScanResults, ModuleLayer gameLayer) {
         super(info);
@@ -59,7 +50,6 @@ public class FMLModContainer extends ModContainer {
             var moduleName = info.getOwningFile().moduleName();
             var module = gameLayer.findModule(moduleName)
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
-            this.contextObject = (Event) LazyInit.FML_CONSTRUCT_EVENT_CTOR.newInstance(this, ModLoadingStage.CONSTRUCT);
             modClass = Class.forName(module, className);
             LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         } catch (Throwable e) {
@@ -78,12 +68,12 @@ public class FMLModContainer extends ModContainer {
             Constructor<?> ctor;
 
             try {
-                ctor = modClass.getDeclaredConstructor(contextObject.getClass());
+                ctor = modClass.getDeclaredConstructor(contextExtension.get().getClass());
             } catch (Throwable e) {
                 ctor = modClass.getDeclaredConstructor();
             }
 
-            this.modInstance = ctor.getParameterCount() == 0 ? ctor.newInstance() : ctor.newInstance(contextObject);
+            this.modInstance = ctor.getParameterCount() == 0 ? ctor.newInstance() : ctor.newInstance(contextExtension.get());
 
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         } catch (Throwable e) {

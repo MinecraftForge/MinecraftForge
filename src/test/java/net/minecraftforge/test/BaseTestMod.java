@@ -17,17 +17,17 @@ import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 
 public abstract class BaseTestMod {
     private List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
     protected final IEventBus modBus;
 
-    public BaseTestMod(FMLConstructModEvent event) {
+    public BaseTestMod(FMLJavaModLoadingContext context) {
         // TODO: Some form of enable flag?
 
-        this.modBus = event.getModEventBus();
+        this.modBus = context.getModEventBus();
         modBus.register(this);
 
         Class<?> cls = getClass();

@@ -19,26 +19,49 @@ public class ModLoadingContext
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    private ModContainer activeContainer;
     private Object languageExtension;
     private ModLoadingStage stage;
 
+    /**
+     * @deprecated Use {@link ModLoadingContext} or any class that extends it, in your mod constructor.
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public static ModLoadingContext get() {
         return context.get();
     }
 
-    private ModContainer activeContainer;
-
+    /**
+     * @deprecated Going to be moved to ForgeHooks for Internal use.
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public void setActiveContainer(final ModContainer container) {
         this.activeContainer = container;
         this.languageExtension = container == null ? null : container.contextExtension.get();
     }
 
+    /**
+     * Going to be moved to ForgeHooks for Internal use.
+     * @deprecated Override/Use {@link ModLoadingContext#getContainer()}
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public ModContainer getActiveContainer() {
         return activeContainer == null ? ModList.get().getModContainerById("minecraft").orElseThrow(()->new RuntimeException("Where is minecraft???!")) : activeContainer;
     }
 
+    /**
+     * @deprecated Going to be moved to ForgeHooks for Internal use.
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public String getActiveNamespace() {
         return activeContainer == null ? "minecraft" : activeContainer.getNamespace();
+    }
+
+    /**
+     * @return {@link ModLoadingContext#getActiveContainer()} by default.
+     */
+    public ModContainer getContainer() {
+        return getActiveContainer();
     }
 
     /**
@@ -46,10 +69,7 @@ public class ModLoadingContext
      * @param point The extension point to register
      * @param extension An extension operator
      * @param <T> The type signature of the extension operator
-     *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerExtensionPoint(Class, Supplier)}
      */
-    @Deprecated(forRemoval = true, since="1.21.1")
     public <T extends Record & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
         getActiveContainer().registerExtensionPoint(point, extension);
     }
@@ -58,10 +78,7 @@ public class ModLoadingContext
      * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
-     *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(IExtensionPoint.DisplayTest)}
      */
-    @Deprecated(forRemoval = true, since="1.21.1")
     public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
         getActiveContainer().registerDisplayTest(() -> displayTest);
     }
@@ -70,10 +87,7 @@ public class ModLoadingContext
      * Register a {@link IExtensionPoint.DisplayTest} with the mod container.
      * <p>A shorthand for registering a DisplayTest supplier with {@link #registerExtensionPoint(Class, Supplier)}.</p>
      * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
-     *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(Supplier<IExtensionPoint.DisplayTest>)}
      */
-    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
         getActiveContainer().registerDisplayTest(displayTest);
     }
@@ -83,10 +97,7 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(String, BiPredicate)
-     *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(String, BiPredicate)}
      */
-    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
         getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
     }
@@ -96,18 +107,11 @@ public class ModLoadingContext
      * <p>A shorthand for registering a DisplayTest with {@link #registerExtensionPoint(Class, Supplier)} that also
      * creates the DisplayTest instance for you using the provided parameters.</p>
      * @see IExtensionPoint.DisplayTest#DisplayTest(Supplier, BiPredicate)
-     *
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerDisplayTest(Supplier, BiPredicate)}
      */
-    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
         getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
     }
 
-    /**
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec)}
-    */
-    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
         if (spec.isEmpty())
         {
@@ -119,10 +123,6 @@ public class ModLoadingContext
         getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
     }
 
-    /**
-     * @deprecated Use {@link net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent#registerConfig(ModConfig.Type, IConfigSpec, String)}
-     */
-    @Deprecated(forRemoval = true, since = "1.21.1")
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec, String fileName) {
         if (spec.isEmpty())
         {
