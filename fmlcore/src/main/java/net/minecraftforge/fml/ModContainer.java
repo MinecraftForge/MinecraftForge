@@ -176,10 +176,6 @@ public abstract class ModContainer
         }
     }
 
-    public @Nullable IEventBus getModEventBus() {
-        return null;
-    }
-
     /**
      * Does this mod match the supplied mod?
      *
