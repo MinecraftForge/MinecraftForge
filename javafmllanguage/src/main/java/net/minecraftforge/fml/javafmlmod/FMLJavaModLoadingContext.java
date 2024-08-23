@@ -10,7 +10,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
- * Use {@link FMLJavaModLoadingContext} in your mod constructor.
+ * Use the context provided by your language loader in your mod's constructor
  */
 public class FMLJavaModLoadingContext extends ModLoadingContext
 {

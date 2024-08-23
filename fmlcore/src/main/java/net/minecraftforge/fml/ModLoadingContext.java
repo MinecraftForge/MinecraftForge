@@ -24,7 +24,7 @@ public class ModLoadingContext
     private ModLoadingStage stage;
 
     /**
-     * @deprecated Use {@link ModLoadingContext} or any class that extends it, in your mod constructor.
+     * @deprecated Use the context provided by your language loader in your mod's constructor
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public static ModLoadingContext get() {
