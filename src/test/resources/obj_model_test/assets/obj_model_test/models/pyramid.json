@@ -1,0 +1,8 @@
+{
+  "loader": "forge:obj",
+  "model": "obj_model_test:models/pyramid.obj",
+  "flip-v": true,
+  "detectCullableFaces": false,
+  "diffuseLighting": false,
+  "ambientToFullbright": true
+}

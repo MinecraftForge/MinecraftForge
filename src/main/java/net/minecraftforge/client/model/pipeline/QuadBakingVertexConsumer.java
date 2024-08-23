@@ -33,11 +33,12 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         for (var element : DefaultVertexFormat.BLOCK.getElements())
             map.put(element, DefaultVertexFormat.BLOCK.getOffset(i++) / 4); // Int offset
     });
-    private static final int QUAD_DATA_SIZE = IQuadTransformer.STRIDE * 4;
+    private static final int MAX_VERTICES = 4;
+    private static final int QUAD_DATA_SIZE = IQuadTransformer.STRIDE * MAX_VERTICES;
 
     private final Consumer<BakedQuad> quadConsumer;
 
-    int vertexIndex = 0;
+    int vertexIndex = -1;
     private int[] quadData = new int[QUAD_DATA_SIZE];
 
     private int tintIndex;
@@ -54,7 +55,8 @@ public class QuadBakingVertexConsumer implements VertexConsumer
     @Override
     public VertexConsumer addVertex(float x, float y, float z)
     {
-        endVertex();
+        if (vertexIndex++ == MAX_VERTICES)
+            build();
 
         int offset = vertexIndex * IQuadTransformer.STRIDE + IQuadTransformer.POSITION;
         quadData[offset] = Float.floatToRawIntBits((float) x);
@@ -124,16 +126,14 @@ public class QuadBakingVertexConsumer implements VertexConsumer
         return this;
     }
 
-    private void endVertex()
+    public BakedQuad build()
     {
-        if (vertexIndex != 4) {
-            ++vertexIndex;
-            return;
-        }
+        BakedQuad quad = new BakedQuad(quadData, tintIndex, direction, sprite, shade, hasAmbientOcclusion);
         // We have a full quad, pass it to the consumer and reset
-        quadConsumer.accept(new BakedQuad(quadData, tintIndex, direction, sprite, shade, hasAmbientOcclusion));
+        quadConsumer.accept(quad);
         vertexIndex = 0;
         quadData = new int[QUAD_DATA_SIZE];
+        return quad;
     }
 
     public void setTintIndex(int tintIndex)
