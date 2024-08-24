@@ -20,6 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,11 +62,13 @@ public class FMLModContainer extends ModContainer {
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
+            Constructor<?> constructor;
             try {
-                this.modInstance = modClass.getDeclaredConstructor(context.getClass()).newInstance(context);
+                constructor = modClass.getDeclaredConstructor(context.getClass());
             } catch (Throwable throwable) {
-                this.modInstance = modClass.getDeclaredConstructor().newInstance();
+                constructor = modClass.getDeclaredConstructor();
             }
+            this.modInstance = constructor.getParameterCount() == 0 ? constructor.newInstance() : constructor.newInstance(context);
             LOGGER.trace(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         } catch (Throwable e) {
             // When a mod constructor throws an exception, it's wrapped in an InvocationTargetException which hides the
