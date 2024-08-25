@@ -65,7 +65,7 @@ public class FMLModContainer extends ModContainer {
             Constructor<?> constructor;
             try {
                 constructor = modClass.getDeclaredConstructor(context.getClass());
-            } catch (Throwable throwable) {
+            } catch (NoSuchMethodException | SecurityException exception) {
                 constructor = modClass.getDeclaredConstructor();
             }
             this.modInstance = constructor.getParameterCount() == 0 ? constructor.newInstance() : constructor.newInstance(context);
@@ -100,7 +100,7 @@ public class FMLModContainer extends ModContainer {
         return modInstance;
     }
 
-    public IEventBus getModEventBus() {
+    public IEventBus getEventBus() {
         return this.eventBus;
     }
 
