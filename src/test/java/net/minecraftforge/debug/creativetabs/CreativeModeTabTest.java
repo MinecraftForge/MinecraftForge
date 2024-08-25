@@ -12,7 +12,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
@@ -36,11 +35,11 @@ public class CreativeModeTabTest {
     private static final ResourceKey<CreativeModeTab> COLORS = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "colors"));
     private static final ResourceKey<CreativeModeTab> SEARCH = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "search"));
 
-    public CreativeModeTabTest() {
+    public CreativeModeTabTest(FMLJavaModLoadingContext context) {
         if (!ENABLED)
             return;
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = context.getModEventBus();
 
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabRegister);
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
