@@ -21,8 +21,6 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -41,7 +39,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.test.BaseTestMod;
@@ -51,8 +48,6 @@ import net.minecraftforge.test.BaseTestMod;
 public class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
     
-    private static final TagKey<Item> EMPTY = ItemTags.create(ResourceLocation.fromNamespaceAndPath("forge", "empty"));
-
     public ConditionalRecipeTest(FMLJavaModLoadingContext context) {
         super(context);
     }

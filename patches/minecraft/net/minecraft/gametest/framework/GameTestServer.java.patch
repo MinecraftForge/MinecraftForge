@@ -1,0 +1,11 @@
+--- a/net/minecraft/gametest/framework/GameTestServer.java
++++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -79,7 +_,7 @@
+         } else {
+             p_206609_.reload();
+             WorldDataConfiguration worlddataconfiguration = new WorldDataConfiguration(
+-                new DataPackConfig(new ArrayList<>(p_206609_.getAvailableIds()), List.of()), FeatureFlags.REGISTRY.allFlags()
++                new DataPackConfig(new ArrayList<>(p_206609_.getSelectedIds()), List.of()), FeatureFlags.REGISTRY.allFlags()
+             );
+             LevelSettings levelsettings = new LevelSettings("Test Level", GameType.CREATIVE, false, Difficulty.NORMAL, true, TEST_GAME_RULES, worlddataconfiguration);
+             WorldLoader.PackConfig worldloader$packconfig = new WorldLoader.PackConfig(p_206609_, worlddataconfiguration, false, true);
