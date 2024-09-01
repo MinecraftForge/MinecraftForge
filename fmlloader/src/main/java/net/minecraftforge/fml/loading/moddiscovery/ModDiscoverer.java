@@ -12,6 +12,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
@@ -90,7 +91,9 @@ public class ModDiscoverer {
                 }
 
                 if (distIsDedicatedServer) {
-                    var clientOnlyModFiles = locatedFiles.stream().filter(file -> file.getModFileInfo().isClientSideOnly()).toList();
+                    var clientOnlyModFiles = locatedFiles.stream()
+                            .filter(file -> (Boolean) file.getModFileInfo().getFileProperties().getOrDefault(ModFileInfo.CLIENT_SIDE_ONLY_PROP, Boolean.FALSE))
+                            .toList();
                     if (!clientOnlyModFiles.isEmpty()) {
                         LOGGER.warn(LogMarkers.SCAN, "Locator {} returned {} files which are client-side-only mods, but we're on a dedicated server. They will be skipped!", locator, clientOnlyModFiles.size());
                         locatedFiles.removeAll(clientOnlyModFiles);
