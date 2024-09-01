@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.forgespi.language.IModInfo;
 
@@ -59,7 +60,8 @@ public abstract class ModContainer
         this.modInfo = info;
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
 
-        final String displayTestString = info.getConfig().<String>getConfigElement("displayTest").orElse("MATCH_VERSION"); // missing defaults to DEFAULT type
+        final String displayTestString = info.getConfig().<String>getConfigElement("displayTest")
+                .orElseGet(() -> (Boolean) info.getModProperties().getOrDefault(ModFileInfo.CLIENT_SIDE_ONLY_PROP, Boolean.FALSE) ? "IGNORE_ALL_VERSION" : "MATCH_VERSION");
         Supplier<IExtensionPoint.DisplayTest> displayTestSupplier = switch (displayTestString) {
             case "MATCH_VERSION" -> // default displaytest checks for version string match
                     () -> new IExtensionPoint.DisplayTest(() -> this.modInfo.getVersion().toString(),
