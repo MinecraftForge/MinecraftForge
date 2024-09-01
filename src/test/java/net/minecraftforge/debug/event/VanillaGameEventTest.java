@@ -40,7 +40,7 @@ public class VanillaGameEventTest extends BaseTestMod {
         @SubscribeEvent
         public static void vanillaEvent(VanillaGameEvent event) {
             // Replace any activated block with a diamond block
-            if (GameEvent.BLOCK_ACTIVATE.is(event.getVanillaEvent())) {
+            if (GameEvent.BLOCK_ACTIVATE.is(event.getVanillaEventHolder())) {
                 event.getLevel().setBlock(BlockPos.containing(event.getEventPosition()), Blocks.DIAMOND_BLOCK.defaultBlockState(), 3);
             }
         }

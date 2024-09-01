@@ -59,8 +59,19 @@ public class VanillaGameEvent extends Event
 
     /**
      * @return The Vanilla event.
+     * 
+     * @deprecated Use {@link #getVanillaEventHolder()}
      */
-    public Holder<GameEvent> getVanillaEvent()
+    @Deprecated
+    public GameEvent getVanillaEvent()
+    {
+        return vanillaEvent.get();
+    }
+
+    /**
+     * @return The Vanilla event.
+     */
+    public Holder<GameEvent> getVanillaEventHolder()
     {
         return vanillaEvent;
     }
