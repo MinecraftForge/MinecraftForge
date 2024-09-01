@@ -19,26 +19,43 @@ public class ModLoadingContext
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    private ModContainer activeContainer;
     private Object languageExtension;
     private ModLoadingStage stage;
 
+    /**
+     * @deprecated Use the context provided by your language loader in your mod's constructor.
+     */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public static ModLoadingContext get() {
         return context.get();
     }
 
-    private ModContainer activeContainer;
-
+    /**
+     * @deprecated Going to be moved to ForgeHooks for internal use.
+     */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public void setActiveContainer(final ModContainer container) {
         this.activeContainer = container;
         this.languageExtension = container == null ? null : container.contextExtension.get();
     }
 
+    /**
+     * Going to be moved to ForgeHooks for internal use.
+     * @deprecated Override/Use {@link ModLoadingContext#getContainer()}
+     */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public ModContainer getActiveContainer() {
         return activeContainer == null ? ModList.get().getModContainerById("minecraft").orElseThrow(()->new RuntimeException("Where is minecraft???!")) : activeContainer;
     }
 
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public String getActiveNamespace() {
         return activeContainer == null ? "minecraft" : activeContainer.getNamespace();
+    }
+
+    public ModContainer getContainer() {
+        return getActiveContainer();
     }
 
     /**
