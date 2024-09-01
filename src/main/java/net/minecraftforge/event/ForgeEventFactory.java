@@ -1012,7 +1012,7 @@ public final class ForgeEventFactory {
     }
 
     public static boolean onVanillaGameEvent(Level level, Holder<GameEvent> vanillaEvent, Vec3 pos, GameEvent.Context context) {
-        return post(new VanillaGameEvent(level, vanillaEvent.get(), pos, context));
+        return post(new VanillaGameEvent(level, vanillaEvent, pos, context));
     }
 
     public static boolean onLivingEffectExpire(LivingEntity entity, MobEffectInstance effect) {
