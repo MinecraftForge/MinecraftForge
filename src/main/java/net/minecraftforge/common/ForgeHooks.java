@@ -647,9 +647,8 @@ public final class ForgeHooks {
     }
 
     public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def) {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
-        MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+        var result = MinecraftForge.EVENT_BUS.fire(new BlockEvent.CropGrowEvent.Pre(level,pos,state)).getResult();
+        return (result.isAllowed() || (def && result.isDefault()));
     }
 
     public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state) {
