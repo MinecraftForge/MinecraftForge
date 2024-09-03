@@ -51,8 +51,8 @@ public class VersionChecker
         BETA(),
         BETA_OUTDATED(6, true);
 
-        final int sheetOffset;
-        final boolean draw, animated;
+        private final int sheetOffset;
+        private final boolean draw, animated;
 
         Status()
         {
@@ -91,6 +91,9 @@ public class VersionChecker
             return animated;
         }
 
+        public boolean isOutdated() {
+            return this == OUTDATED || this == BETA_OUTDATED;
+        }
     }
 
     public record CheckResult(VersionChecker.Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url) {}
@@ -257,7 +260,7 @@ public class VersionChecker
                     LOGGER.warn("Failed to process update information", e);
                     status = FAILED;
                 }
-                results.put(mod, new CheckResult(status, target, changes, display_url));
+                RESULTS.put(mod, new CheckResult(status, target, changes, display_url));
             }
         }.start();
     }
@@ -273,12 +276,12 @@ public class VersionChecker
         return ret;
     }
 
-    private static Map<IModInfo, CheckResult> results = new ConcurrentHashMap<>();
+    private static final Map<IModInfo, CheckResult> RESULTS = new ConcurrentHashMap<>();
     private static final CheckResult PENDING_CHECK = new CheckResult(PENDING, null, null, null);
 
     public static CheckResult getResult(IModInfo mod)
     {
-        return results.getOrDefault(mod, PENDING_CHECK);
+        return RESULTS.getOrDefault(mod, PENDING_CHECK);
     }
 
 }
