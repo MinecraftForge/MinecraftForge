@@ -757,9 +757,8 @@ public class ForgeHooks {
     }
 
     public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def) {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
-        MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+        var result = MinecraftForge.EVENT_BUS.fire(new BlockEvent.CropGrowEvent.Pre(level,pos,state)).getResult();
+        return (result.isAllowed() || (def && result.isDefault()));
     }
 
     public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state) {
@@ -768,9 +767,8 @@ public class ForgeHooks {
 
     @Nullable
     public static CriticalHitEvent getCriticalHit(Player player, Entity target, boolean vanillaCritical, float damageModifier) {
-        CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
-        MinecraftForge.EVENT_BUS.post(hitResult);
-        if (hitResult.getResult() == Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == Event.Result.DEFAULT))
+        CriticalHitEvent hitResult = MinecraftForge.EVENT_BUS.fire(new CriticalHitEvent(player, target, damageModifier, vanillaCritical));
+        if (hitResult.getResult().isAllowed() || (vanillaCritical && hitResult.getResult().isDefault()))
             return hitResult;
         return null;
     }

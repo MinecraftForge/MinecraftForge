@@ -131,13 +131,12 @@
           if (mobeffectinstance == null) {
              this.activeEffects.put(p_147208_.getEffect(), p_147208_);
              this.onEffectAdded(p_147208_, p_147209_);
-@@ -928,6 +_,9 @@
+@@ -928,6 +_,8 @@
     }
  
     public boolean canBeAffected(MobEffectInstance p_21197_) {
-+      var event = new net.minecraftforge.event.entity.living.MobEffectEvent.Applicable(this, p_21197_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+      if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++      var eventResult = net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_21197_).getResult();
++      if (!eventResult.isDefault()) return eventResult.isAllowed();
        if (this.getMobType() == MobType.UNDEAD) {
           MobEffect mobeffect = p_21197_.getEffect();
           if (mobeffect == MobEffects.REGENERATION || mobeffect == MobEffects.POISON) {

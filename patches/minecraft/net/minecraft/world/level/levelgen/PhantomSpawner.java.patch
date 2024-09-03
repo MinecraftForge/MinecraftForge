@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/PhantomSpawner.java
 +++ b/net/minecraft/world/level/levelgen/PhantomSpawner.java
-@@ -42,19 +_,22 @@
+@@ -42,19 +_,23 @@
                 for(ServerPlayer serverplayer : p_64576_.players()) {
                    if (!serverplayer.isSpectator()) {
                       BlockPos blockpos = serverplayer.blockPosition();
@@ -9,14 +9,15 @@
 +                     DifficultyInstance difficultyinstance = p_64576_.getCurrentDifficultyAt(blockpos);
 +                     var event = new net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent(serverplayer, 1 + randomsource.nextInt(difficultyinstance.getDifficulty().getId() + 1));
 +                     net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) continue;
-+                     if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || !p_64576_.dimensionType().hasSkyLight() || blockpos.getY() >= p_64576_.getSeaLevel() && p_64576_.canSeeSky(blockpos)) {
++                     var eventResult = event.getResult();
++                     if (eventResult.isDenied()) continue;
++                     if (eventResult.isAllowed() || !p_64576_.dimensionType().hasSkyLight() || blockpos.getY() >= p_64576_.getSeaLevel() && p_64576_.canSeeSky(blockpos)) {
                          if (difficultyinstance.isHarderThan(randomsource.nextFloat() * 3.0F)) {
                             ServerStatsCounter serverstatscounter = serverplayer.getStats();
                             int j = Mth.clamp(serverstatscounter.getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)), 1, Integer.MAX_VALUE);
                             int k = 24000;
 -                           if (randomsource.nextInt(j) >= 72000) {
-+                           if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || randomsource.nextInt(j) >= 72000) {
++                           if (eventResult.isAllowed() || randomsource.nextInt(j) >= 72000) {
                                BlockPos blockpos1 = blockpos.above(20 + randomsource.nextInt(15)).east(-10 + randomsource.nextInt(21)).south(-10 + randomsource.nextInt(21));
                                BlockState blockstate = p_64576_.getBlockState(blockpos1);
                                FluidState fluidstate = p_64576_.getFluidState(blockpos1);
