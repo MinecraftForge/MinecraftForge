@@ -31,12 +31,10 @@ import java.util.function.Supplier;
 public class MinecraftForge
 {
     /**
-     * The core Forge EventBusses, all events for Forge will be fired on these,
-     * you should use this to register all your listeners.
-     * This replaces every register*Handler() function in the old version of Forge.
-     * TERRAIN_GEN_BUS for terrain gen events
-     * ORE_GEN_BUS for ore gen events
-     * EVENT_BUS for everything else
+     * The EventBus for all the Forge Events.
+     *
+     * Events marked with {@link net.minecraftforge.fml.event.IModBusEvent}
+     * belong on the ModBus and not this bus
      */
     public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().useModLauncher().build();
 
