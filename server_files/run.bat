@@ -9,7 +9,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Add custom program arguments (such as nogui) to the next line before the %* or pass them to this script directly
-java @libraries/@MAVEN_PATH@/win_args.txt %*
+java @user_jvm_args.txt @libraries/@MAVEN_PATH@/win_args.txt %*
 
 :exit
 pause
