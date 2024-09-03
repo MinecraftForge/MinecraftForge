@@ -740,11 +740,11 @@ public class ForgeEventFactory {
     }
 
     public static void onPreClientTick() {
-        post(TickEvent.ClientTickEvent.Pre.get());
+        post(new TickEvent.ClientTickEvent.Pre());
     }
 
     public static void onPostClientTick() {
-        post(TickEvent.ClientTickEvent.Post.get());
+        post(new TickEvent.ClientTickEvent.Post());
     }
 
     public static void onPreServerTick(BooleanSupplier haveTime, MinecraftServer server) {

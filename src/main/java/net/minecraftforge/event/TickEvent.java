@@ -90,24 +90,14 @@ public class TickEvent extends Event {
         }
 
         public static class Pre extends ClientTickEvent {
-
-            private Pre() {
+            public Pre() {
                 super(Phase.START);
-            }
-
-            public static Pre get() {
-                return new Pre();
             }
         }
 
         public static class Post extends ClientTickEvent {
-
-            private Post() {
+            public Post() {
                 super(Phase.END);
-            }
-
-            public static Post get() {
-                return new Post();
             }
         }
     }
