@@ -16,24 +16,29 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.SimpleCraftingContainer;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.BlockTagsProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.test.BaseTestMod;
@@ -42,7 +47,7 @@ import net.minecraftforge.test.BaseTestMod;
 @Mod(ConditionalRecipeTest.MODID)
 public class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
-
+    
     public ConditionalRecipeTest(FMLJavaModLoadingContext context) {
         super(context);
     }
@@ -51,6 +56,9 @@ public class ConditionalRecipeTest extends BaseTestMod {
     public void gatherData(GatherDataEvent event) {
         var gen = event.getGenerator();
         gen.addProvider(event.includeServer(), new Recipes(gen.getPackOutput(), event.getLookupProvider()));
+        var testBlockTags = new TestBlockTags(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
+        gen.addProvider(event.includeServer(), testBlockTags);
+        gen.addProvider(event.includeServer(), new TestItemTags(gen.getPackOutput(), event.getLookupProvider(), testBlockTags.contentsGetter(), event.getExistingFileHelper()));
     }
 
     private static ResourceLocation rl(String path) {
@@ -148,6 +156,47 @@ public class ConditionalRecipeTest extends BaseTestMod {
             .define('X', Blocks.OAK_LOG)
             .build()
         );
+    }
+    
+    @GameTest(template = "forge:empty3x3x3")
+    public static void tag_empty_condition_with_populated_tag(GameTestHelper helper) {
+        assertFalse(helper, RecipeType.CRAFTING, SimpleCraftingContainer.builder()
+            .pattern("XXX")
+            .define('X', Blocks.IRON_ORE)
+            .build()
+        );
+    }
+    
+    @GameTest(template = "forge:empty3x3x3")
+    public static void tag_empty_condition_with_empty_tag(GameTestHelper helper) {
+        assertTrue(helper, RecipeType.CRAFTING, SimpleCraftingContainer.builder()
+            .pattern("XXX")
+            .define('X', Blocks.GOLD_ORE)
+            .build()
+        );
+    }
+    
+    public static class TestBlockTags extends BlockTagsProvider {
+        public TestBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider registries) {
+            // No block tags needed; just need a block provider content-getter to supply to the item tags generator
+        }
+    }
+    
+    public static class TestItemTags extends ItemTagsProvider {
+        public TestItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider, blockTagProvider, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider registries) {
+            // Empty out the Forge eggs tag for purposes of testing the tag-empty recipe condition
+            this.tag(Tags.Items.EGGS).remove(Items.EGG);
+        }
     }
 
     public static class Recipes extends RecipeProvider implements IConditionBuilder {
@@ -302,6 +351,30 @@ public class ConditionalRecipeTest extends BaseTestMod {
                         ::save
                 )
                 .save(out, rl("conditional_doesnt_load_empty"));
+
+            ConditionalRecipe.builder()
+                .condition(tagEmpty(ItemTags.DIRT))
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.IRON_ORE)
+                        .requires(Blocks.IRON_ORE)
+                        .requires(Blocks.IRON_ORE)
+                        .unlockedBy(getHasName(Blocks.IRON_ORE), has(Blocks.IRON_ORE))
+                        ::save
+                )
+                .save(out, rl("tag_empty_condition_doesnt_load"));
+
+            ConditionalRecipe.builder()
+                .condition(tagEmpty(Tags.Items.EGGS))
+                .recipe(
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Blocks.DIAMOND_BLOCK)
+                        .requires(Blocks.GOLD_ORE)
+                        .requires(Blocks.GOLD_ORE)
+                        .requires(Blocks.GOLD_ORE)
+                        .unlockedBy(getHasName(Blocks.GOLD_ORE), has(Blocks.GOLD_ORE))
+                        ::save
+                )
+                .save(out, rl("tag_empty_condition_loads"));
         }
     }
 

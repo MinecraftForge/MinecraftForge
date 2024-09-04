@@ -194,6 +194,7 @@ patcher {
 
         forge_server_gametest {
             args '--launchTarget', 'forge_dev_server_gametest'
+            args '--uniqueWorld' // Unique world is used so that the world regenerates, as well as the world config isn't influenced by other runs
         }
 
         forge_server_gametest_test {
