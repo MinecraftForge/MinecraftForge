@@ -389,7 +389,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BLOCK, forgeRl("crafting_table"), Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES),
             legacyToCommon(Registries.BLOCK, forgeRl("crafting_tables"), Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES),
             legacyToCommon(Registries.BLOCK, forgeRl("furnace"), Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES),
-            legacyToCommon(Registries.BLOCK, forgeRl("furnace"), Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES),
+            legacyToCommon(Registries.BLOCK, forgeRl("furnaces"), Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES),
             legacyToCommon(Registries.BLOCK, forgeRl("workbench"), Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES),
             legacyToCommon(Registries.BLOCK, forgeRl("workbenches"), Tags.Blocks.PLAYER_WORKSTATIONS_CRAFTING_TABLES),
 
