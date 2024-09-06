@@ -58,8 +58,7 @@ public final class TagConventionMigrationHelper {
             Note: This feature isn't fully comprehensive - see Forge's net.minecraftforge.common.Tags class for a full list of tags.
             You can disable this message by setting "migrationHelperMode" to "OFF" in Forge's common config.
             
-            Here are some suggestions for replacements:
-            """.stripIndent());
+            Here are some suggestions for replacements:""".stripIndent());
 
         for (var legacyTag : FOUND_LEGACY_TAGS) {
             var replacement = TagConventionMappings.MAPPINGS.get(legacyTag);
