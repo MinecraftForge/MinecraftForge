@@ -125,7 +125,7 @@ class EntityCommand
                         return b.getRight() - a.getRight();
                 });
 
-                if (info.size() == 0)
+                if (info.isEmpty())
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();

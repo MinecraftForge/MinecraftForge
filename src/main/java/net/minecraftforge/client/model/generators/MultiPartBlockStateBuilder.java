@@ -253,7 +253,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockState
             StringBuilder activeString = new StringBuilder();
             for (Comparable<?> val : e.getValue())
             {
-                if (activeString.length() > 0)
+                if (!activeString.isEmpty())
                     activeString.append("|");
                 activeString.append(((Property) e.getKey()).getName(val));
             }
