@@ -72,13 +72,13 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     protected void apply(Map<ResourceLocation, JsonElement> resources, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
         var ops = registries.createSerializationContext(JsonOps.INSTANCE);
-        resources.forEach((location, json) -> {
+        resources.forEach((location, json) ->
             IGlobalLootModifier.DIRECT_CODEC.parse(ops, json)
                 // log error if parse fails
                 .ifError(error -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, error.message()))
                 // add loot modifier if parse succeeds
-                .ifSuccess(modifier -> builder.put(location, modifier));
-        });
+                .ifSuccess(modifier -> builder.put(location, modifier))
+        );
         this.modifiers = builder.build();
     }
 

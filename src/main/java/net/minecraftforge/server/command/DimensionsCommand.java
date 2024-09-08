@@ -37,9 +37,9 @@ class DimensionsCommand
                     types.computeIfAbsent(reg.getKey(dim.dimensionType()), k -> new ArrayList<>()).add(dim.dimension().location());
                 }
 
-                types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendSuccess(() -> Component.literal(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
-                });
+                types.keySet().stream().sorted().forEach(key ->
+                    ctx.getSource().sendSuccess(() -> Component.literal(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false)
+                );
                 return 0;
             });
     }

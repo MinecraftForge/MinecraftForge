@@ -794,9 +794,9 @@ public class ForgeHooksClient {
 
         @SubscribeEvent
         public static void registerShaders(RegisterShadersEvent event) throws IOException {
-            event.registerShader(new ShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath("forge", "rendertype_entity_unlit_translucent"), DefaultVertexFormat.NEW_ENTITY), (p_172645_) -> {
-                rendertypeEntityTranslucentUnlitShader = p_172645_;
-            });
+            event.registerShader(new ShaderInstance(event.getResourceProvider(), ResourceLocation.fromNamespaceAndPath("forge", "rendertype_entity_unlit_translucent"), DefaultVertexFormat.NEW_ENTITY), (p_172645_) ->
+                    rendertypeEntityTranslucentUnlitShader = p_172645_
+            );
         }
     }
 

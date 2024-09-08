@@ -37,13 +37,13 @@ public class TestHelperMod extends BaseTestMod {
 
     @SubscribeEvent
     public void onRegister(RegisterEvent event) {
-        event.register(Registries.CREATIVE_MODE_TAB, h -> {
+        event.register(Registries.CREATIVE_MODE_TAB, h ->
             h.register(TAB, CreativeModeTab.builder()
                 .icon(() -> new ItemStack(Items.STICK))
                 .title(Component.literal("Test Items"))
                 .build()
-            );
-        });
+            )
+        );
     }
 
     @SubscribeEvent

@@ -45,12 +45,12 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     // Forge registry entries
     public static final ResourceKey<BiomeModifier> MOSSY_STONE_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ResourceLocation.fromNamespaceAndPath(MOD_ID, "mossy_stone_modifier"));
     // The ore targets
-    public static final Supplier<List<OreConfiguration.TargetBlockState>> MOSSY_STONE_TARGETS = () -> {
-        return List.of(
+    public static final Supplier<List<OreConfiguration.TargetBlockState>> MOSSY_STONE_TARGETS = () ->
+        List.of(
             OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES), Blocks.MOSSY_COBBLESTONE.defaultBlockState()),
-            OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), Blocks.MOSSY_COBBLESTONE.defaultBlockState())
-        );
-    };
+            OreConfiguration.target(new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES), Blocks.MOSSY_COBBLESTONE.defaultBlockState()
+        )
+    );
 
     public DatapackBuiltinEntriesProviderTest(FMLJavaModLoadingContext context) {
         super(context);

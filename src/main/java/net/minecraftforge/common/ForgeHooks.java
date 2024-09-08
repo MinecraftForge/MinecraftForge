@@ -1097,9 +1097,7 @@ public final class ForgeHooks {
             return DiscardedPayload.codec(id, max);
 
         return StreamCodec.<B, ForgePayload>ofMember(
-            (value, buf) -> {
-                value.encoder().accept(buf);
-            },
+            (value, buf) -> value.encoder().accept(buf),
             (buf) -> {
                 int len = buf.readableBytes();
                 if (len < 0 || len > max)

@@ -685,9 +685,8 @@ public class GameData {
             // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
             // So we load it from the frozen persistent registry
             RegistryManager.ACTIVE.registries.forEach((name, reg) ->
-            {
-                loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name));
-            });
+                    loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name))
+            );
         }
 
         // Validate that all the STAGING data is good
@@ -696,9 +695,8 @@ public class GameData {
         // Load the STAGING registry into the ACTIVE registry
         //for (Map.Entry<ResourceLocation, IForgeRegistry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         RegistryManager.ACTIVE.registries.forEach((key, value) ->
-        {
-            loadRegistry(key, STAGING, RegistryManager.ACTIVE, true);
-        });
+                loadRegistry(key, STAGING, RegistryManager.ACTIVE, true)
+        );
 
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             reg.bake();

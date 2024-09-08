@@ -28,13 +28,13 @@ public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWi
         return this.createCriterion(new Instance(block, item, offHand));
     }
 
-    private static final Codec<Instance> CODEC = RecordCodecBuilder.create(it -> {
-        return it.group(
+    private static final Codec<Instance> CODEC = RecordCodecBuilder.create(it ->
+        it.group(
             BlockPredicate.CODEC.fieldOf("breakingBlock").forGetter(i -> i.breakingBlock),
             ItemPredicate.CODEC.fieldOf("holdingItem").forGetter(i -> i.holdingItem),
             Codec.BOOL.optionalFieldOf("allowOffhand", false).forGetter(i -> i.allowOffHand)
-        ).apply(it, Instance::new);
-    });
+        ).apply(it, Instance::new)
+    );
 
     @Override
     public Codec<Instance> codec() {

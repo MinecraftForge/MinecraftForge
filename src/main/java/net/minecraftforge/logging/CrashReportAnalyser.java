@@ -76,12 +76,12 @@ public final class CrashReportAnalyser {
                         .append(" (").append(iModInfo.getModId()).append("),")
                         .append(" Version: ").append(iModInfo.getVersion());
 
-                iModInfo.getOwningFile().getConfig().<String>getConfigElement("issueTrackerURL").ifPresent(issuesLink -> {
+                iModInfo.getOwningFile().getConfig().<String>getConfigElement("issueTrackerURL").ifPresent(issuesLink ->
                     stringBuilder
                             .append("\n\t\t")
                             .append("Issue tracker URL: ")
-                            .append(issuesLink);
-                });
+                            .append(issuesLink)
+                );
 
                 stringBuilder.append("\n\t\t");
 

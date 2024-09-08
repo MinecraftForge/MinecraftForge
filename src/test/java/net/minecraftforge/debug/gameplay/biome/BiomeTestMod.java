@@ -56,25 +56,25 @@ public class BiomeTestMod extends BaseTestMod {
 
     private static class ModWorldGenProvider extends DatapackBuiltinEntriesProvider {
         public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-                .add(Registries.CONFIGURED_FEATURE, context -> {
+                .add(Registries.CONFIGURED_FEATURE, context ->
                     context.register(OVERWORLD_NETHERITE_BLOCK_ORE, new ConfiguredFeature<>(
                             Feature.REPLACE_SINGLE_BLOCK,
                             new ReplaceBlockConfiguration(Blocks.AIR.defaultBlockState(), Blocks.NETHERITE_BLOCK.defaultBlockState())
-                    ));
-                })
-                .add(Registries.PLACED_FEATURE, context -> {
+                    ))
+                )
+                .add(Registries.PLACED_FEATURE, context ->
                     context.register(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY, new PlacedFeature(
                             context.lookup(Registries.CONFIGURED_FEATURE).getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE),
                             List.of(CountPlacement.of(1), HeightRangePlacement.of(ConstantHeight.of(VerticalAnchor.absolute(100))))
-                    ));
-                })
-                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                    ))
+                )
+                .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context ->
                     context.register(ADD_OVERWORLD_NETHERITE_BLOCK_ORE, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
                             context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_OVERWORLD),
                             HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(OVERWORLD_NETHERITE_BLOCK_ORE_PLACED_KEY)),
                             GenerationStep.Decoration.UNDERGROUND_ORES
-                    ));
-                });
+                    ))
+                );
 
         public ModWorldGenProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, registries, BUILDER, Set.of(BiomeTestMod.MOD_ID));

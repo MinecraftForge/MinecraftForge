@@ -34,13 +34,13 @@ public class GuiLayeringTest {
         @SubscribeEvent
         public static void guiOpen(ScreenEvent.Init event) {
             if (event.getScreen() instanceof AbstractContainerScreen && ENABLED) {
-                event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
-                    Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
-                }).pos(2,2).size(150, 20).build());
+                event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn ->
+                    Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")))
+                ).pos(2,2).size(150, 20).build());
 
-                event.addListener(Button.builder(Component.literal("Test Gui Normal"), btn -> {
-                    Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
-                }).pos(2, 25).size(150, 20).build());
+                event.addListener(Button.builder(Component.literal("Test Gui Normal"), btn ->
+                    Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")))
+                ).pos(2, 25).size(150, 20).build());
             }
         }
 
