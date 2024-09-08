@@ -122,9 +122,8 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
     @Override
     public boolean equals(Object other)
     {
-        if (!(other instanceof ObjectHolderRef))
+        if (!(other instanceof ObjectHolderRef o))
             return false;
-        ObjectHolderRef o = (ObjectHolderRef)other;
         return this.field.equals(o.field);
     }
 }

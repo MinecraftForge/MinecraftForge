@@ -173,9 +173,8 @@ public class VanillaInventoryCodeHooks
 
             if (insertedItem)
             {
-                if (inventoryWasEmpty && destination instanceof HopperBlockEntity)
+                if (inventoryWasEmpty && destination instanceof HopperBlockEntity destinationHopper)
                 {
-                    HopperBlockEntity destinationHopper = (HopperBlockEntity)destination;
 
                     if (!destinationHopper.isOnCustomCooldown())
                     {
