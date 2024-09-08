@@ -116,8 +116,7 @@ public class SimpleFont {
     public int stringWidth(String text) {
         var bytes = text.getBytes(StandardCharsets.US_ASCII);
         int len = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            final byte c = bytes[i];
+        for (final byte c : bytes) {
             len += switch (c) {
                 case '\n', '\t' -> 0;
                 case ' ' -> glyphs[0].charwidth();
