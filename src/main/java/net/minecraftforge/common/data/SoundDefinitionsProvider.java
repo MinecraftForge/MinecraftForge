@@ -218,16 +218,14 @@ public abstract class SoundDefinitionsProvider implements DataProvider
 
     private boolean validate(final String name, final SoundDefinition.Sound sound)
     {
-        switch (sound.type())
-        {
-            case SOUND: return this.validateSound(name, sound.name());
-            case EVENT: return this.validateEvent(name, sound.name());
-        }
+        return switch (sound.type()) {
+            case SOUND -> this.validateSound(name, sound.name());
+            case EVENT -> this.validateEvent(name, sound.name());
+        };
         // Differently from all the other errors, this is not a 'missing sound' but rather something completely different
         // that has broken the invariants of this sound definition's provider. In fact, a sound may only be either of
         // SOUND or EVENT type. Any other values is somebody messing with the internals, reflectively adding something
         // to an enum or passing `null` to a parameter annotated with `@NotNull`.
-        throw new IllegalArgumentException("The given sound '" + sound.name() + "' does not have a valid type: expected either SOUND or EVENT, but found " + sound.type());
     }
 
     private boolean validateSound(final String soundName, final ResourceLocation name)

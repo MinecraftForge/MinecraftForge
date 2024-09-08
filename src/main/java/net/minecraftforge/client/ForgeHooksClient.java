@@ -251,16 +251,17 @@ public class ForgeHooksClient {
     }
 
     public static boolean onDrawHighlight(LevelRenderer context, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {
-        switch (target.getType()) {
-            case BLOCK:
-                if (!(target instanceof BlockHitResult blockTarget)) return false;
-                return MinecraftForge.EVENT_BUS.post(new RenderHighlightEvent.Block(context, camera, blockTarget, partialTick, poseStack, bufferSource));
-            case ENTITY:
-                if (!(target instanceof EntityHitResult entityTarget)) return false;
-                return MinecraftForge.EVENT_BUS.post(new RenderHighlightEvent.Entity(context, camera, entityTarget, partialTick, poseStack, bufferSource));
-            default:
-                return false; // NO-OP - This doesn't even get called for anything other than blocks and entities
-        }
+        return switch (target.getType()) {
+            case BLOCK -> {
+                if (!(target instanceof BlockHitResult blockTarget)) yield false;
+                yield MinecraftForge.EVENT_BUS.post(new RenderHighlightEvent.Block(context, camera, blockTarget, partialTick, poseStack, bufferSource));
+            }
+            case ENTITY -> {
+                if (!(target instanceof EntityHitResult entityTarget)) yield false;
+                yield MinecraftForge.EVENT_BUS.post(new RenderHighlightEvent.Entity(context, camera, entityTarget, partialTick, poseStack, bufferSource));
+            }
+            default -> false; // NO-OP - This doesn't even get called for anything other than blocks and entities
+        };
     }
 
     public static void dispatchRenderStage(RenderType renderType, LevelRenderer levelRenderer, Matrix4f poseStack, Matrix4f projectionMatrix, int renderTick, Camera camera, Frustum frustum) {
