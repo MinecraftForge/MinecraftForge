@@ -194,7 +194,7 @@ public final class UsernameCache {
                 // Make sure we don't save when another thread is still saving
                 synchronized (saveFile)
                 {
-                    Files.write(saveFile, data.getBytes(StandardCharsets.UTF_8));
+                    Files.writeString(saveFile, data);
                 }
             }
             catch (IOException e)

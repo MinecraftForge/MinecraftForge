@@ -129,15 +129,13 @@ public class TablePrinter<T>
     private static void line(StringBuilder buf, int size)
     {
         buf.append('|');
-        for (int x = 0; x < size - 2; x++)
-            buf.append('-');
+        buf.append("-".repeat(Math.max(0, size - 2)));
         buf.append('|').append('\n');
     }
 
     private static void pad(StringBuilder buf, int size)
     {
-        for (int y = 0; y < size; y++)
-            buf.append(' ');
+        buf.append(" ".repeat(Math.max(0, size)));
     }
 
 

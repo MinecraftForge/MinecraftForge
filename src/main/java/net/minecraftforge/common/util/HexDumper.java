@@ -88,8 +88,7 @@ public class HexDumper {
         public String finish() {
             int padding = 16 - (index % 16);
             if (padding > 0) {
-                for (int x = 0; x < padding * 3; x++)
-                    buf.append(' ');
+                buf.append(" ".repeat(padding * 3));
                 buf.append('\t');
                 buf.append(ascii);
             }
