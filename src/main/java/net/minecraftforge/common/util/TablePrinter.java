@@ -139,17 +139,5 @@ public class TablePrinter<T>
     }
 
 
-    private static class Header<T>
-    {
-        private final String name;
-        private final Function<T, String> supplier;
-        private final boolean right;
-
-        private Header(String name, Function<T, String> supplier, boolean right)
-        {
-            this.name = name;
-            this.supplier = supplier;
-            this.right = right;
-        }
-    }
+    private record Header<T>(String name, Function<T, String> supplier, boolean right) {}
 }

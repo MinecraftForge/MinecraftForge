@@ -9,16 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
-public class BrewingRecipe implements IBrewingRecipe {
-    @NotNull private final Ingredient input;
-    @NotNull private final Ingredient ingredient;
-    @NotNull private final ItemStack output;
-
-    public BrewingRecipe(Ingredient input, Ingredient ingredient, ItemStack output) {
-        this.input = input;
-        this.ingredient = ingredient;
-        this.output = output;
-    }
+public record BrewingRecipe(Ingredient input, Ingredient ingredient, ItemStack output) implements IBrewingRecipe {
 
     @Override
     public boolean isInput(@NotNull ItemStack stack) {
@@ -27,18 +18,21 @@ public class BrewingRecipe implements IBrewingRecipe {
 
     @Override
     public ItemStack getOutput(ItemStack input, ItemStack ingredient) {
-        return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : ItemStack.EMPTY;
+        return isInput(input) && isIngredient(ingredient) ? output().copy() : ItemStack.EMPTY;
     }
 
-    public Ingredient getInput() {
+    @Override
+    public Ingredient input() {
         return input;
     }
 
-    public Ingredient getIngredient() {
+    @Override
+    public Ingredient ingredient() {
         return ingredient;
     }
 
-    public ItemStack getOutput() {
+    @Override
+    public ItemStack output() {
         return output;
     }
 

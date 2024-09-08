@@ -19,26 +19,8 @@ import java.util.Objects;
 /**
  * Key and value decoded independently, unknown set of keys
  */
-public class LenientUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec<Map<K, V>>
-{
-    private final Codec<K> keyCodec;
-    private final Codec<V> elementCodec;
-
-    public LenientUnboundedMapCodec(final Codec<K> keyCodec, final Codec<V> elementCodec) {
-        this.keyCodec = keyCodec;
-        this.elementCodec = elementCodec;
-    }
-
-    @Override
-    public Codec<K> keyCodec() {
-        return keyCodec;
-    }
-
-    @Override
-    public Codec<V> elementCodec() {
-        return elementCodec;
-    }
-
+public record LenientUnboundedMapCodec<K, V>(Codec<K> keyCodec, Codec<V> elementCodec)
+    implements BaseMapCodec<K, V>, Codec<Map<K, V>> {
     @Override // FORGE: Modified from decode() in BaseMapCodec
     public <T> DataResult<Map<K, V>> decode(DynamicOps<T> ops, MapLike<T> input)
     {
@@ -73,23 +55,6 @@ public class LenientUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec
     @Override
     public <T> DataResult<T> encode(final Map<K, V> input, final DynamicOps<T> ops, final T prefix) {
         return encode(input, ops, ops.mapBuilder()).build(prefix);
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        final LenientUnboundedMapCodec<?, ?> that = (LenientUnboundedMapCodec<?, ?>) o;
-        return Objects.equals(keyCodec, that.keyCodec) && Objects.equals(elementCodec, that.elementCodec);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(keyCodec, elementCodec);
     }
 
     @Override

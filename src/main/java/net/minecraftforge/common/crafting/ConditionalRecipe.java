@@ -170,21 +170,13 @@ public class ConditionalRecipe {
     private record InnerRecipe(ICondition condition, Recipe<?> recipe) {}
     private record InnerAdvancement(ICondition condition, AdvancementHolder advancement, JsonObject json) {}
 
-    private static class Wrapper implements Recipe<CraftingInput> {
+    private record Wrapper(@Nullable ICondition main, List<InnerRecipe> recipes) implements Recipe<CraftingInput> {
         @Override public boolean matches(CraftingInput inv, Level level) { return false; }
         @Override public ItemStack assemble(CraftingInput inv, HolderLookup.Provider reg) { return null; }
         @Override public boolean canCraftInDimensions(int width, int height) { return false; }
         @Override public ItemStack getResultItem(HolderLookup.Provider reg) { return null; }
         @Override public RecipeSerializer<?> getSerializer() { return ConditionalRecipe.SERIALZIER; }
         @Override public RecipeType<?> getType() { throw new UnsupportedOperationException(); }
-
-        @Nullable private final ICondition main;
-        private final List<InnerRecipe> recipes;
-        private Wrapper(@Nullable ICondition main, List<InnerRecipe> recipes) {
-            this.main = main;
-            this.recipes = recipes;
-        }
-
     }
     private static final MapCodec<Recipe<?>> CODEC = Codec.of(new MapEncoder.Implementation<>() {
         @Override
