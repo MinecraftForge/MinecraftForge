@@ -103,7 +103,7 @@ public class NetworkContext {
                 if (pt.startsWith(MARKER)) {
                     this.type = ConnectionType.MODDED;
                     if (pt.length() > MARKER.length())
-                        this.netVersion = Integer.valueOf(pt.substring(MARKER.length()));
+                        this.netVersion = Integer.parseInt(pt.substring(MARKER.length()));
                 }
             }
         }
