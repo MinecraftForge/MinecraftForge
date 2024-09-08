@@ -26,8 +26,8 @@ class ModListCommand {
                                             String.format(Locale.ROOT, "%s %s : %s (%s) - %d",
                                                     modFile.getProvider().name().replace(' ', '_'),
                                                     modFile.getFileName(),
-                                                    modFile.getModInfos().get(0).getModId(),
-                                                    modFile.getModInfos().get(0).getVersion(),
+                                                    modFile.getModInfos().getFirst().getModId(),
+                                                    modFile.getModInfos().getFirst().getVersion(),
                                                     modFile.getModInfos().size())).
                                         collect(Collectors.joining("\n\u2022 ","\n\u2022 ", ""))),
                                     false);

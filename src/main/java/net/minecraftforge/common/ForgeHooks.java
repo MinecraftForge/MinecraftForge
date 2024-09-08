@@ -480,7 +480,7 @@ public final class ForgeHooks {
             if (blockSnapshots.size() > 1)
                 eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
             else if (blockSnapshots.size() == 1)
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.getFirst(), side);
 
             if (eventResult) {
                 ret = InteractionResult.FAIL; // cancel placement

@@ -196,7 +196,7 @@ public class ConditionalRecipe {
             if (wrapper.main != null)
                 prefix.add(ICondition.DEFAULT_FIELD, ICondition.CODEC.encodeStart(ops, wrapper.main));
             else if (wrapper.recipes.size() == 1)
-                prefix.add(ICondition.DEFAULT_FIELD, ICondition.CODEC.encodeStart(ops, wrapper.recipes.get(0).condition()));
+                prefix.add(ICondition.DEFAULT_FIELD, ICondition.CODEC.encodeStart(ops, wrapper.recipes.getFirst().condition()));
 
             var recipes = ops.listBuilder();
             for (var recipe : wrapper.recipes) {

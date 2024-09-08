@@ -239,7 +239,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
         var date = Calendar.getInstance();
         if (FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_SQUIR) || (date.get(Calendar.MONTH) == Calendar.APRIL && date.get(Calendar.DAY_OF_MONTH) == 1))
-            this.elements.add(0, RenderElement.squir());
+            this.elements.addFirst(RenderElement.squir());
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -633,7 +633,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     }
 
     public void addMojangTexture(final int textureId) {
-        this.elements.add(0, RenderElement.mojang(textureId, framecount));
+        this.elements.addFirst(RenderElement.mojang(textureId, framecount));
 //        this.elements.get(0).retire(framecount + 1);
     }
 

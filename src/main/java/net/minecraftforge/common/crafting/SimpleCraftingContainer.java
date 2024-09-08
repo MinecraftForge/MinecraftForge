@@ -29,7 +29,7 @@ public class SimpleCraftingContainer {
         }
 
         public Builder pattern(String row) {
-            if (!this.rows.isEmpty() && row.length() != this.rows.get(0).length())
+            if (!this.rows.isEmpty() && row.length() != this.rows.getFirst().length())
                 throw new IllegalArgumentException("Pattern must be the same width on every line");
             this.rows.add(row);
             return this;

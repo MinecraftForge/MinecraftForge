@@ -150,7 +150,7 @@ public final class CrashReportAnalyser {
             String elementAsString = stackTraceElement.toString();
             String mixinClassName = mixinInfo.getClassName();
             List<String> targetClasses = mixinInfo.getTargetClasses();
-            blameIfPresent(mixinClassName, "Mixin class: ", mixinClassName, "\n\t\tTarget", (targetClasses.size() == 1 ? ": " + targetClasses.get(0) : "s: " + targetClasses).replaceAll("/", "."), "\n\t\tat ", elementAsString);
+            blameIfPresent(mixinClassName, "Mixin class: ", mixinClassName, "\n\t\tTarget", (targetClasses.size() == 1 ? ": " + targetClasses.getFirst() : "s: " + targetClasses).replaceAll("/", "."), "\n\t\tat ", elementAsString);
         }
     }
 

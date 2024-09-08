@@ -64,6 +64,6 @@ public final class CreativeTabsScreenPage
 
     public CreativeModeTab getDefaultTab()
     {
-        return this.tabs.get(0);
+        return this.tabs.getFirst();
     }
 }

@@ -57,13 +57,13 @@ public class ModSorter
             // Note this will never actually throw an error because the duplicate checks are done in ModDiscovererer before we get to this phase
             // So all this is really doing is wasting time.
             // But i'm leaving it here until I rewrite all of cpw's mod loading code because its such a clusterfuck.
-            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).toList(), e);
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().getFirst()).toList(), e);
         }
         // try and validate dependencies
         final List<ExceptionData> failedList = Stream.concat(ms.verifyDependencyVersions().stream(), errors.stream()).toList();
         // if we miss one or the other, we abort now
         if (!failedList.isEmpty()) {
-            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).toList(), new EarlyLoadingException("failure to validate mod list", null, failedList));
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().getFirst()).toList(), new EarlyLoadingException("failure to validate mod list", null, failedList));
         } else {
             // Otherwise, lets try and sort the modlist and proceed
             EarlyLoadingException earlyLoadingException = null;
@@ -150,10 +150,10 @@ public class ModSorter
         detectSystemMods(uniqueModListData.modFilesByFirstId());
 
         modIdNameLookup = uniqueModListData.modFilesByFirstId().entrySet().stream()
-                .filter(e -> !e.getValue().get(0).getModInfos().isEmpty())
+                .filter(e -> !e.getValue().getFirst().getModInfos().isEmpty())
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
-                    e -> e.getValue().get(0).getModInfos().get(0)
+                    e -> e.getValue().getFirst().getModInfos().getFirst()
                   ));
     }
 

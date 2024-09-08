@@ -115,7 +115,7 @@ public class FMLLoader {
               throw new IncompatibleEnvironmentException("Multiple " + name + " libraries found");
           }
 
-          return providers.get(0);
+          return providers.getFirst();
     }
 
     static void setupLaunchHandler(final IEnvironment environment, final Map<String, Object> arguments) {

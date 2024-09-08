@@ -105,7 +105,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
             Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(gen -> gen.getPackOutput().getOutputFolder(), LinkedHashMap::new, Collectors.toList()));
 
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
-                DataGenerator parent = lst.get(0);
+                DataGenerator parent = lst.getFirst();
                 for (int x = 1; x < lst.size(); x++)
                     lst.get(x).getProvidersView().forEach((name, provider) -> parent.addProvider(true, provider));
                 parent.run();

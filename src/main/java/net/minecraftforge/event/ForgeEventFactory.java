@@ -245,7 +245,7 @@ public final class ForgeEventFactory {
     }
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction) {
-        var snap = blockSnapshots.get(0);
+        var snap = blockSnapshots.getFirst();
         var placedAgainst = snap.getLevel().getBlockState(snap.getPos().relative(direction.getOpposite()));
         var event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
         return post(event);

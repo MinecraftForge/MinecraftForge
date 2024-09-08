@@ -42,12 +42,12 @@ public class ForgeVersion {
     }
 
     public static VersionChecker.Status getStatus() {
-        return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0)).status();
+        return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().getFirst()).status();
     }
 
     @Nullable
     public static String getTarget() {
-        VersionChecker.CheckResult res = VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0));
+        VersionChecker.CheckResult res = VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().getFirst());
         return res.target() == null ? "" : res.target().toString();
     }
 

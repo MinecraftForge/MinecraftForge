@@ -41,7 +41,7 @@ final class UnionHelper {
                 map.put("filter", filter);
 
             var lst = new ArrayList<>(Arrays.asList(paths));
-            var base = lst.remove(0);
+            var base = lst.removeFirst();
             map.put("additional", lst);
             return UFSP.newFileSystem(base, map);
         } catch (IOException e) {

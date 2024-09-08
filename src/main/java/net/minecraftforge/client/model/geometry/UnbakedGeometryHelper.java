@@ -138,7 +138,7 @@ public class UnbakedGeometryHelper
     public static List<BlockElement> createUnbakedItemMaskElements(int layerIndex, SpriteContents spriteContents)
     {
         var elements = createUnbakedItemElements(layerIndex, spriteContents);
-        elements.remove(0); // Remove north and south faces
+        elements.removeFirst(); // Remove north and south faces
 
         int width = spriteContents.width(), height = spriteContents.height();
         var bits = new BitSet(width * height);

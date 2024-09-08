@@ -149,7 +149,7 @@ public class BlockEvent extends Event {
         private final List<BlockSnapshot> blockSnapshots;
 
         public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
-            super(blockSnapshots.get(0), placedAgainst, entity);
+            super(blockSnapshots.getFirst(), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG) {
                 System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);

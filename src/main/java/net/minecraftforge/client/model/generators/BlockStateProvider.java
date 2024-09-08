@@ -889,7 +889,7 @@ public abstract class BlockStateProvider implements DataProvider {
 
         public JsonElement toJSON() {
             if (models.size()==1) {
-                return models.get(0).toJSON(false);
+                return models.getFirst().toJSON(false);
             } else {
                 JsonArray ret = new JsonArray();
                 for (ConfiguredModel m:models) {

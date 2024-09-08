@@ -56,11 +56,11 @@ public class AndHolderSet<T> extends CompositeHolderSet<T> {
         }
 
         if (components.size() == 1) {
-            return components.get(0).stream().collect(Collectors.toSet());
+            return components.getFirst().stream().collect(Collectors.toSet());
         }
 
         List<HolderSet<T>> remainingComponents = components.subList(1, components.size());
-        return components.get(0)
+        return components.getFirst()
             .stream()
             .filter(holder -> remainingComponents.stream().allMatch(holderset -> holderset.contains(holder)))
             .collect(Collectors.toSet());

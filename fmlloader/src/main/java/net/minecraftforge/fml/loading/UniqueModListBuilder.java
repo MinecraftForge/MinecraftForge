@@ -119,7 +119,7 @@ public class UniqueModListBuilder
             modInfoList.sort(Comparator.comparing(UniqueModListBuilder::getVersion).reversed());
             LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.getFirst().getFileName(), fullList.getKey(), getVersion(modInfoList.getFirst()));
         }
-        return modInfoList.get(0);
+        return modInfoList.getFirst();
     }
 
     private static ArtifactVersion getVersion(final ModFile mf) {
@@ -127,7 +127,7 @@ public class UniqueModListBuilder
             return mf.getJarVersion();
         }
 
-        return mf.getModInfos().get(0).getVersion();
+        return mf.getModInfos().getFirst().getVersion();
     }
 
     private static String getModId(ModFile modFile) {

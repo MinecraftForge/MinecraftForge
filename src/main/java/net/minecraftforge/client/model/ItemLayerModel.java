@@ -64,7 +64,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
         }
 
         TextureAtlasSprite particle = spriteGetter.apply(
-                context.hasMaterial("particle") ? context.getMaterial("particle") : textures.get(0)
+                context.hasMaterial("particle") ? context.getMaterial("particle") : textures.getFirst()
         );
         var rootTransform = context.getRootTransform();
         if (!rootTransform.isIdentity())

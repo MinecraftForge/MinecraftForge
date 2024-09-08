@@ -220,7 +220,7 @@ public abstract class CompositeHolderSet<T> implements ICustomHolderSet<T>
         }
         
         // Get the first holderset and check if any subsequent holdersets are different
-        SerializationType firstType = holderSets.get(0).serializationType();
+        SerializationType firstType = holderSets.getFirst().serializationType();
         
         // If any holderset has an unknown type, then we cannot assume we are homogenous
         if (firstType == SerializationType.UNKNOWN)

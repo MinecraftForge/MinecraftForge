@@ -43,7 +43,7 @@ public final class CoreModFile implements ICoreModFile {
 
     @Override
     public String getOwnerId() {
-        return this.file.getModInfos().get(0).getModId();
+        return this.file.getModInfos().getFirst().getModId();
     }
 
     @Override

@@ -66,7 +66,7 @@ public class IntersectionIngredient extends AbstractIngredient {
     public ItemStack[] getItems() {
         if (this.intersectedMatchingStacks == null) {
             this.intersectedMatchingStacks = Arrays
-                .stream(children.get(0).getItems())
+                .stream(children.getFirst().getItems())
                 .filter(stack -> {
                     // the first ingredient is treated as a base, filtered by the second onwards
                     for (int i = 1; i < children.size(); i++)
