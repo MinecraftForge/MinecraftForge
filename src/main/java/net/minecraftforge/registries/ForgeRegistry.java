@@ -312,7 +312,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         Integer ret = this.ids.inverse().get(value);
         if (ret == null && this.defaultValue != null)
             ret = this.ids.inverse().get(this.defaultValue);
-        return ret == null ? -1 : ret.intValue();
+        return ret == null ? -1 : ret;
     }
 
     public int getID(ResourceLocation name) {
@@ -321,7 +321,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     private int getIDRaw(V value) {
         Integer ret = this.ids.inverse().get(value);
-        return ret == null ? -1 : ret.intValue();
+        return ret == null ? -1 : ret;
     }
 
     private int getIDRaw(ResourceLocation name) {
