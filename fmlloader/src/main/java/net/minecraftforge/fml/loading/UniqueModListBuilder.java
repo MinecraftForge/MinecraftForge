@@ -83,7 +83,7 @@ public class UniqueModListBuilder
         if (!dupedModErrors.isEmpty()) {
             LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedModErrors.stream().collect(joining("\n")));
             throw new EarlyLoadingException("Duplicate mods found", null, dupedModErrors.stream()
-                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .map(EarlyLoadingException.ExceptionData::new)
                     .toList());
         }
 
@@ -98,7 +98,7 @@ public class UniqueModListBuilder
         if (!dupedLibErrors.isEmpty()) {
             LOGGER.error(LOADING, "Found duplicate plugins or libraries:\n{}", dupedLibErrors.stream().collect(joining("\n")));
             throw new EarlyLoadingException("Duplicate plugins or libraries found", null, dupedLibErrors.stream()
-                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .map(EarlyLoadingException.ExceptionData::new)
                     .toList());
         }
 

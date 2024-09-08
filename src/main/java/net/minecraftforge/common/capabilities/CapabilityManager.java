@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -91,7 +92,7 @@ public final class CapabilityManager {
         var autos = modlist.getAllScanData().stream()
             .flatMap(e -> e.getAnnotations().stream())
             .filter(a -> AUTO_REGISTER.equals(a.annotationType()))
-            .map(a -> a.clazz())
+            .map(ModFileScanData.AnnotationData::clazz)
             .distinct()
             .sorted(Comparator.comparing(Type::toString))
             .toList();
