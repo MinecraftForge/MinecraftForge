@@ -65,20 +65,22 @@ public final class CommandHelper {
         }
 
         ArgumentBuilder<T, ?> resultBuilder;
-        if (sourceNode instanceof ArgumentCommandNode<S, ?> sourceArgument) {
-            RequiredArgumentBuilder<T, ?> resultArgumentBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
-            if (sourceArgument.getCustomSuggestions() != null) {
-                resultArgumentBuilder.suggests(sourceToResultSuggestion.apply(sourceArgument.getCustomSuggestions()));
+        switch (sourceNode) {
+            case ArgumentCommandNode<S, ?> sourceArgument -> {
+                RequiredArgumentBuilder<T, ?> resultArgumentBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
+                if (sourceArgument.getCustomSuggestions() != null) {
+                    resultArgumentBuilder.suggests(sourceToResultSuggestion.apply(sourceArgument.getCustomSuggestions()));
+                }
+                resultBuilder = resultArgumentBuilder;
             }
-            resultBuilder = resultArgumentBuilder;
-        } else if (sourceNode instanceof LiteralCommandNode<S> sourceLiteral) {
-            resultBuilder = LiteralArgumentBuilder.literal(sourceLiteral.getLiteral());
-        } else if (sourceNode instanceof RootCommandNode<?>) {
-            CommandNode<T> resultNode = new RootCommandNode<>();
-            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
-            return resultNode;
-        } else {
-            throw new IllegalStateException("Node type " + sourceNode + " is not a standard node type");
+            case LiteralCommandNode<S> sourceLiteral ->
+                    resultBuilder = LiteralArgumentBuilder.literal(sourceLiteral.getLiteral());
+            case RootCommandNode<?> rootCommandNode -> {
+                CommandNode<T> resultNode = new RootCommandNode<>();
+                mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
+                return resultNode;
+            }
+            default -> throw new IllegalStateException("Node type " + sourceNode + " is not a standard node type");
         }
 
         if (sourceNode.getCommand() != null) {

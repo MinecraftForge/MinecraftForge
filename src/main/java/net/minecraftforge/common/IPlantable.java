@@ -16,10 +16,22 @@ import net.minecraft.world.level.BlockGetter;
 
 public interface IPlantable {
     default PlantType getPlantType(BlockGetter level, BlockPos pos) {
-        if (this instanceof AttachedStemBlock) return PlantType.CROP;
-        if (this instanceof CropBlock)     return PlantType.CROP;
-        if (this instanceof SaplingBlock)  return PlantType.PLAINS;
-        if (this instanceof FlowerBlock)   return PlantType.PLAINS;
+        switch (this) {
+            case AttachedStemBlock attachedStemBlock -> {
+                return PlantType.CROP;
+            }
+            case CropBlock cropBlock -> {
+                return PlantType.CROP;
+            }
+            case SaplingBlock saplingBlock -> {
+                return PlantType.PLAINS;
+            }
+            case FlowerBlock flowerBlock -> {
+                return PlantType.PLAINS;
+            }
+            default -> {
+            }
+        }
         if (this == Blocks.PITCHER_CROP)   return PlantType.CROP;
         if (this == Blocks.DEAD_BUSH)      return PlantType.DESERT;
         if (this == Blocks.LILY_PAD)       return PlantType.WATER;

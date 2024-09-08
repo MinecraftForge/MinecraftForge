@@ -29,22 +29,22 @@ public interface IForgeBlockGetter
     @Nullable
     default BlockEntity getExistingBlockEntity(BlockPos pos)
     {
-        if (this instanceof Level level)
-        {
-            if (!level.hasChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ())))
-            {
-                return null;
-            }
+        switch (this) {
+            case Level level -> {
+                if (!level.hasChunk(SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getZ()))) {
+                    return null;
+                }
 
-            return level.getChunk(pos).getExistingBlockEntity(pos);
-        }
-        else if (this instanceof LevelChunk chunk)
-        {
-            return chunk.getBlockEntities().get(pos);
-        }
-        else if (this instanceof ImposterProtoChunk chunk)
-        {
-            return chunk.getWrapped().getExistingBlockEntity(pos);
+                return level.getChunk(pos).getExistingBlockEntity(pos);
+            }
+            case LevelChunk chunk -> {
+                return chunk.getBlockEntities().get(pos);
+            }
+            case ImposterProtoChunk chunk -> {
+                return chunk.getWrapped().getExistingBlockEntity(pos);
+            }
+            default -> {
+            }
         }
         return self().getBlockEntity(pos);
     }
