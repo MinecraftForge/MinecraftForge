@@ -16,7 +16,7 @@ import net.minecraft.world.entity.EntityType;
 
 public class DungeonHooks
 {
-    private static ArrayList<DungeonMob> dungeonMobs = new ArrayList<DungeonMob>();
+    private static ArrayList<DungeonMob> dungeonMobs = new ArrayList<>();
 
     /**
      * Adds a mob to the possible list of creatures the spawner will create.

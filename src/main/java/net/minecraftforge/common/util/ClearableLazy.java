@@ -19,7 +19,7 @@ public interface ClearableLazy<T> extends Lazy<T> {
      * @param supplier The supplier for the value, to be called the first time the value is needed.
      */
     static <T> ClearableLazy<T> of(@NotNull Supplier<T> supplier) {
-        return new ClearableLazy.Fast<T>(supplier);
+        return new ClearableLazy.Fast<>(supplier);
     }
 
     /**

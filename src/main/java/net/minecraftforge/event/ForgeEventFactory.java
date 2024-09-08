@@ -605,7 +605,7 @@ public final class ForgeEventFactory {
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent) {
-        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>((Class<T>) type, provider), parent);
     }
 
     @Nullable

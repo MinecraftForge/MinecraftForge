@@ -23,7 +23,7 @@ import java.util.function.Function;
 
 public class RegistryBuilder<T> {
     public static <T> RegistryBuilder<T> of() {
-        return new RegistryBuilder<T>();
+        return new RegistryBuilder<>();
     }
 
     public static <T> RegistryBuilder<T> of(String name) {

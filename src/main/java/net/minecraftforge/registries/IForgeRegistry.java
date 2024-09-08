@@ -146,7 +146,7 @@ public interface IForgeRegistry<V> extends Iterable<V> {
         }
 
         public static <X> SlaveKey<X> create(ResourceLocation name) {
-            return new SlaveKey<X>(name);
+            return new SlaveKey<>(name);
         }
     }
 }

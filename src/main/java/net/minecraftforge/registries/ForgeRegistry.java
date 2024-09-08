@@ -140,10 +140,13 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     @Override
     public Iterator<V> iterator() {
-        return new Iterator<V>() {
+        return new Iterator<>() {
             int cur = -1;
             V next = null;
-            { next(); }
+
+            {
+                next();
+            }
 
             @Override
             public boolean hasNext() {
