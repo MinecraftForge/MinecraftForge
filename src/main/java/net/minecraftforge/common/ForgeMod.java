@@ -14,6 +14,9 @@ import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
@@ -66,6 +69,8 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.items.ForgeRarity;
+import net.minecraftforge.items.IForgeRarity;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.registries.holdersets.AndHolderSet;
 import net.minecraftforge.registries.holdersets.AnyHolderSet;
@@ -355,6 +360,17 @@ public class ForgeMod {
     public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(new ResourceLocation("milk"), ForgeRegistries.Keys.FLUID_TYPES.location(), "minecraft");
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
+    public static DeferredRegister<DataComponentType<?>> component() {
+        var a = DeferredRegister.create(ForgeRegistries.DATA_COMPONENT_TYPES, "forge");
+        registries.add(a);
+        return a;
+    }
+    public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = component();
+
+    public static final RegistryObject<DataComponentType<IForgeRarity>> FORGE_RARITY_COMPONENT = DATA_COMPONENT_TYPES.register("forge_rarity", () -> {
+        return DataComponentType.<IForgeRarity>builder().persistent(ForgeRarity.RARITY_CODEC).networkSynchronized(ForgeRarity.STREAM_CODEC).build();
+    });
 
     /*
     private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);

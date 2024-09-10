@@ -5,10 +5,11 @@
 
 package net.minecraftforge.registries;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -50,6 +51,7 @@ import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.items.IForgeRarity;
 import net.minecraftforge.registries.holdersets.HolderSetType;
 
 import java.util.ArrayList;
@@ -77,6 +79,7 @@ public class ForgeRegistries {
     // Game objects
     public static final IForgeRegistry<Block> BLOCKS = active(Keys.BLOCKS);
     public static final IForgeRegistry<Fluid> FLUIDS = active(Keys.FLUIDS);
+    public static final IForgeRegistry<DataComponentType<?>> DATA_COMPONENT_TYPES = active(Keys.DATA_COMPONENT_TYPE);
     public static final IForgeRegistry<Item> ITEMS = active(Keys.ITEMS);
     public static final IForgeRegistry<MobEffect> MOB_EFFECTS = active(Keys.MOB_EFFECTS);
     public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = active(Keys.SOUND_EVENTS);
@@ -122,12 +125,14 @@ public class ForgeRegistries {
     public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = registry(Keys.DISPLAY_CONTEXTS, GameData::getItemDisplayContextRegistryBuilder);
     public static final Supplier<IForgeRegistry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = registry(Keys.CONDITION_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
     public static final Supplier<IForgeRegistry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = registry(Keys.INGREDIENT_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<IForgeRarity>> FORGE_RARITY = registry(Keys.FORGE_RARITY, GameData::makeUnsavedAndUnsynced);
 
     public static final class Keys {
         //Vanilla
         public static final ResourceKey<Registry<Block>>  BLOCKS  = key("block");
         public static final ResourceKey<Registry<Fluid>>  FLUIDS  = key("fluid");
         public static final ResourceKey<Registry<Item>>   ITEMS   = key("item");
+        public static final ResourceKey<Registry<DataComponentType<?>>> DATA_COMPONENT_TYPE = key("data_component_type");
         public static final ResourceKey<Registry<MobEffect>> MOB_EFFECTS = key("mob_effect");
         public static final ResourceKey<Registry<Potion>> POTIONS = key("potion");
         public static final ResourceKey<Registry<Attribute>> ATTRIBUTES = key("attribute");
@@ -168,6 +173,7 @@ public class ForgeRegistries {
         public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("forge:display_contexts");
         public static final ResourceKey<Registry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
         public static final ResourceKey<Registry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = key("forge:ingredient_serializers");
+        public static final ResourceKey<Registry<IForgeRarity>> FORGE_RARITY = key("forge:rarity_type");
 
         // Forge Dynamic
         public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");

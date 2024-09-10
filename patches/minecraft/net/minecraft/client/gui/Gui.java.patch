@@ -35,7 +35,7 @@
                      TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
                      int l1 = i;
                      int i1 = j;
-@@ -635,6 +_,10 @@
+@@ -635,16 +_,21 @@
      }
  
      private void renderSelectedItemName(GuiGraphics p_283501_) {
@@ -45,8 +45,9 @@
 +    public void renderSelectedItemName(GuiGraphics p_283501_, int yShift) {
          this.minecraft.getProfiler().push("selectedItemName");
          if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
-             MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
-@@ -642,9 +_,10 @@
+-            MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
++            MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getForgeRarity().color());
+             if (this.lastToolHighlight.has(DataComponents.CUSTOM_NAME)) {
                  mutablecomponent.withStyle(ChatFormatting.ITALIC);
              }
  

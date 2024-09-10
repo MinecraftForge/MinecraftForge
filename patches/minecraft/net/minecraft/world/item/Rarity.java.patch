@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/Rarity.java
++++ b/net/minecraft/world/item/Rarity.java
+@@ -9,7 +_,7 @@
+ import net.minecraft.util.ByIdMap;
+ import net.minecraft.util.StringRepresentable;
+ 
+-public enum Rarity implements StringRepresentable {
++public enum Rarity implements StringRepresentable, net.minecraftforge.items.IForgeRarity {
+     COMMON(0, "common", ChatFormatting.WHITE),
+     UNCOMMON(1, "uncommon", ChatFormatting.YELLOW),
+     RARE(2, "rare", ChatFormatting.AQUA),
