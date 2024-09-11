@@ -46,30 +46,28 @@
          this.minecraft.getProfiler().push("selectedItemName");
          if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
              MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
-@@ -642,9 +_,10 @@
+@@ -642,9 +_,13 @@
                  mutablecomponent.withStyle(ChatFormatting.ITALIC);
              }
  
 -            int i = this.getFont().width(mutablecomponent);
 +            Component highlightTip = this.lastToolHighlight.getHighlightTip(mutablecomponent);
-+            int i = this.getFont().width(highlightTip);
++            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
++            if (font == null)
++                font = this.getFont();
++            int i = font.width(highlightTip);
              int j = (p_283501_.guiWidth() - i) / 2;
 -            int k = p_283501_.guiHeight() - 59;
 +            int k = p_283501_.guiHeight() - Math.max(yShift, 59);
              if (!this.minecraft.gameMode.canHurtPlayer()) {
                  k += 14;
              }
-@@ -657,6 +_,13 @@
+@@ -656,7 +_,7 @@
+ 
              if (l > 0) {
                  p_283501_.fill(j - 2, k - 2, j + i + 2, k + 9 + 2, this.minecraft.options.getBackgroundColor(0));
-                 p_283501_.drawString(this.getFont(), mutablecomponent, j, k, 16777215 + (l << 24));
-+                Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
-+                if (font == null) {
-+                    p_283501_.drawString(this.getFont(), highlightTip, j, k, 16777215 + (l << 24));
-+                } else {
-+                    j = (p_283501_.guiWidth() - font.width(highlightTip)) / 2;
-+                    p_283501_.drawString(font, highlightTip, j, k, 16777215 + (l << 24));
-+                }
+-                p_283501_.drawString(this.getFont(), mutablecomponent, j, k, 16777215 + (l << 24));
++                p_283501_.drawString(font, highlightTip, j, k, 16777215 + (l << 24));
              }
          }
  
