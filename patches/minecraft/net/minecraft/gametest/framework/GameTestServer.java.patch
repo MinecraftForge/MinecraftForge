@@ -9,3 +9,11 @@
              );
              LevelSettings levelsettings = new LevelSettings("Test Level", GameType.CREATIVE, false, Difficulty.NORMAL, true, TEST_GAME_RULES, worlddataconfiguration);
              WorldLoader.PackConfig worldloader$packconfig = new WorldLoader.PackConfig(p_206609_, worlddataconfiguration, false, true);
+@@ -138,6 +_,7 @@
+ 
+     @Override
+     public boolean initServer() {
++        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+         this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, 1) {
+         });
+         this.loadLevel();
