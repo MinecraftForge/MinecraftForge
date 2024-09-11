@@ -352,12 +352,6 @@ public class ForgeMod {
     public static final RegistryObject<Fluid> MILK = RegistryObject.create(ResourceLocation.withDefaultNamespace("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(ResourceLocation.withDefaultNamespace("flowing_milk"), ForgeRegistries.FLUIDS);
 
-    /*
-    private static final ChatTypeDecoration SYSTEM_CHAT_TYPE_DECORATION = new ChatTypeDecoration("forge.chatType.system", List.of(ChatTypeDecoration.Parameter.CONTENT), Style.EMPTY);
-    private static final DeferredRegister<ChatType> CHAT_TYPES = deferred(Registries.CHAT_TYPE);
-    public static final RegistryObject<ChatType> SYSTEM_CHAT_TYPE = CHAT_TYPES.register("syste_chat", () -> new ChatType(SYSTEM_CHAT_TYPE_DECORATION, SYSTEM_CHAT_TYPE_DECORATION));
-    */
-
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance() {
         return INSTANCE;

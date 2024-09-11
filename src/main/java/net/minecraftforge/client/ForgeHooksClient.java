@@ -67,7 +67,6 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.ChatType;
@@ -106,6 +105,7 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.ClientPauseChangeEvent;
 import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
+import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -759,13 +759,10 @@ public class ForgeHooksClient {
     }
 
     @Nullable
-    public static Component onClientSystemChat(Component message, boolean overlay, RegistryAccess registry) {
-        return message;
-        /*
-        var bound = ChatType.bind(ForgeMod.SYSTEM_CHAT_TYPE.getKey(), registry, Component.literal("System"));
-        var event = new ClientChatReceivedEvent.System(bound, message, overlay);
+    public static Component onClientSystemMessage(Component message, boolean overlay) {
+        var event = new SystemMessageReceivedEvent(message, overlay);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
-        */
+
     }
 
     @NotNull
