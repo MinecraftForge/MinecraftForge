@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * Automatic eventbus subscriber - reads {@link EventBusSubscriber}
- * annotations and passes the class instances to the {@link nBus}
+ * annotations and passes the class instances to the {@link Bus}
  * defined by the annotation. Defaults to {@code MinecraftForge#EVENT_BUS}
  */
 public class AutomaticEventSubscriber {
