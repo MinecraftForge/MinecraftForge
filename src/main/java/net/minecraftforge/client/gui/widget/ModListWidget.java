@@ -26,7 +26,7 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry>
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
-    private ModListScreen parent;
+    private final ModListScreen parent;
 
     public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
     {
