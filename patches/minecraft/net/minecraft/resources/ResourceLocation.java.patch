@@ -1,20 +1,18 @@
 --- a/net/minecraft/resources/ResourceLocation.java
 +++ b/net/minecraft/resources/ResourceLocation.java
-@@ -34,6 +_,8 @@
+@@ -34,6 +_,7 @@
        this.path = p_249394_;
     }
  
-+   /** @deprecated Forge: Use {@link #fromNamespaceAndPath(String, String)} instead */
-+   @Deprecated(forRemoval = true, since = "1.21")
++   /** Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
     public ResourceLocation(String p_135811_, String p_135812_) {
        this(assertValidNamespace(p_135811_, p_135812_), assertValidPath(p_135811_, p_135812_), (ResourceLocation.Dummy)null);
     }
-@@ -42,6 +_,8 @@
+@@ -42,6 +_,7 @@
        this(p_135814_[0], p_135814_[1]);
     }
  
-+   /** @deprecated Forge: Use {@link #parse(String)} instead */
-+   @Deprecated(forRemoval = true, since = "1.21")
++   /** Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
     public ResourceLocation(String p_135809_) {
        this(decompose(p_135809_, ':'));
     }
