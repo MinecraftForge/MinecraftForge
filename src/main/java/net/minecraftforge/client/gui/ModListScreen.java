@@ -17,6 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.server.packs.resources.IoSupplier;
@@ -26,8 +27,6 @@ import net.minecraftforge.client.gui.widget.ScrollPanel;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.resource.PathPackResources;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -60,11 +59,12 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import org.slf4j.Logger;
 
 public class ModListScreen extends Screen
 {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtil.stripColor(value); }
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogUtils.getLogger();
     private enum SortType implements Comparator<IModInfo>
     {
         NORMAL,
@@ -87,7 +87,7 @@ public class ModListScreen extends Screen
 
     private static final int PADDING = 6;
 
-    private Screen parentScreen;
+    private final Screen parentScreen;
 
     private ModListWidget modList;
     private InfoPanel modInfo;
@@ -98,7 +98,7 @@ public class ModListScreen extends Screen
     private Button configButton, openModsFolderButton, doneButton;
 
     private int buttonMargin = 1;
-    private int numButtons = SortType.values().length;
+    private final int numButtons = SortType.values().length;
     private String lastFilterText = "";
 
     private EditBox search;
@@ -265,10 +265,19 @@ public class ModListScreen extends Screen
         int y = this.height - 20 - PADDING;
         int fullButtonHeight = PADDING + 20 + PADDING;
 
-        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose()).bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20).build();
-        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile())).bounds(6, y, this.listWidth, 20).build();
+        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose())
+                .bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20)
+                .build();
+
+        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()))
+                .bounds(6, y, this.listWidth, 20)
+                .build();
+
         y -= 20 + PADDING;
-        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig()).bounds(6, y, this.listWidth, 20).build();
+        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig())
+                .bounds(6, y, this.listWidth, 20)
+                .build();
+
         y -= 14 + PADDING;
         search = new EditBox(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, Component.translatable("fml.menu.mods.search"));
 
@@ -289,11 +298,20 @@ public class ModListScreen extends Screen
 
         final int width = listWidth / numButtons;
         int x = PADDING;
-        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)).bounds(x, PADDING, width - buttonMargin, 20).build());
+        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL))
+                .bounds(x, PADDING, width - buttonMargin, 20)
+                .build());
+
         x += width + buttonMargin;
-        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)).bounds(x, PADDING, width - buttonMargin, 20).build());
+        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z))
+                .bounds(x, PADDING, width - buttonMargin, 20)
+                .build());
+
         x += width + buttonMargin;
-        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)).bounds(x, PADDING, width - buttonMargin, 20).build());
+        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A))
+                .bounds(x, PADDING, width - buttonMargin, 20)
+                .build());
+
         resortMods(SortType.NORMAL);
         updateCache();
     }
@@ -303,7 +321,9 @@ public class ModListScreen extends Screen
         if (selected == null) return;
         try
         {
-            ConfigScreenHandler.getScreenFactoryFor(selected.getInfo()).map(f->f.apply(this.minecraft, this)).ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
+            ConfigScreenHandler.getScreenFactoryFor(selected.getInfo())
+                    .map(f -> f.apply(this.minecraft, this))
+                    .ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
         }
         catch (final Exception e)
         {
@@ -330,7 +350,10 @@ public class ModListScreen extends Screen
             modList.refreshList();
             if (selected != null)
             {
-                selected = modList.children().stream().filter(e -> e.getInfo() == selected.getInfo()).findFirst().orElse(null);
+                selected = modList.children().stream()
+                        .filter(e -> e.getInfo() == selected.getInfo())
+                        .findFirst()
+                        .orElse(null);
                 updateCache();
             }
             sorted = true;
@@ -339,7 +362,9 @@ public class ModListScreen extends Screen
 
     public <T extends ObjectSelectionList.Entry<T>> void buildModList(Consumer<T> modListViewConsumer, Function<IModInfo, T> newEntry)
     {
-        mods.forEach(mod->modListViewConsumer.accept(newEntry.apply(mod)));
+        for (IModInfo mod : mods) {
+            modListViewConsumer.accept(newEntry.apply(mod));
+        }
     }
 
     private void reloadMods()
@@ -451,7 +476,7 @@ public class ModListScreen extends Screen
         else
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.childmods", selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(","))));
 
-        if (vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED)
+        if (vercheck.status().isOutdated())
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url() == null ? "" : vercheck.url()));
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", ((ModFileInfo) selectedMod.getOwningFile()).getLicense()));
         lines.add(null);
@@ -467,7 +492,7 @@ public class ModListScreen extends Screen
         }
         */
 
-        if ((vercheck.status() == VersionChecker.Status.OUTDATED || vercheck.status() == VersionChecker.Status.BETA_OUTDATED) && vercheck.changes().size() > 0)
+        if (vercheck.status().isOutdated() && !vercheck.changes().isEmpty())
         {
             lines.add(null);
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.changelogheader"));
