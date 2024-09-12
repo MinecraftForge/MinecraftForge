@@ -30,7 +30,7 @@ dependencyResolutionManagement {
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.0')
             library('coremods', 'net.minecraftforge:coremods:5.1.6')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.4') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:6.2.6')
+            library('eventbus', 'net.minecraftforge:eventbus:6.2.8')
             library('typetools', 'net.jodah:typetools:0.6.3') // Needed by EventBus because of lambdas
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
 

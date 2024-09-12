@@ -129,9 +129,9 @@
      }
  
      public boolean canBeAffected(MobEffectInstance p_21197_) {
-+        var event = net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_21197_);
-+        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) {
-+            return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++        var eventResult = net.minecraftforge.event.ForgeEventFactory.onLivingEffectCanApply(this, p_21197_).getResult();
++        if (!eventResult.isDefault()) {
++            return eventResult.isAllowed();
 +        }
          if (this.getType().is(EntityTypeTags.IMMUNE_TO_INFESTED)) {
              return !p_21197_.is(MobEffects.INFESTED);

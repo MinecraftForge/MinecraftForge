@@ -36,9 +36,9 @@
 +            var event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), i, j, k, livingentity, this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE));
 +
 +            Zombie zombie = null;
-+            if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
++            if (event.getResult().isAllowed()) {
 +                zombie = event.getCustomSummonedAid() != null ? event.getCustomSummonedAid() : EntityType.ZOMBIE.create(this.level());
-+            } else if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && vanilla) {
++            } else if (vanilla && event.getResult().isDefault()) {
 +                zombie = EntityType.ZOMBIE.create(this.level());
 +            }
 +
