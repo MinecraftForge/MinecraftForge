@@ -1,5 +1,21 @@
 --- a/net/minecraft/resources/ResourceLocation.java
 +++ b/net/minecraft/resources/ResourceLocation.java
+@@ -34,6 +_,7 @@
+       this.path = p_249394_;
+    }
+ 
++   /** Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
+    public ResourceLocation(String p_135811_, String p_135812_) {
+       this(assertValidNamespace(p_135811_, p_135812_), assertValidPath(p_135811_, p_135812_), (ResourceLocation.Dummy)null);
+    }
+@@ -42,6 +_,7 @@
+       this(p_135814_[0], p_135814_[1]);
+    }
+ 
++   /** Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
+    public ResourceLocation(String p_135809_) {
+       this(decompose(p_135809_, ':'));
+    }
 @@ -143,6 +_,12 @@
        return i;
     }
@@ -13,3 +29,19 @@
     public String toDebugFileName() {
        return this.toString().replace('/', '_').replace(':', '_');
     }
+@@ -244,5 +_,15 @@
+       public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
+          return new JsonPrimitive(p_135855_.toString());
+       }
++   }
++
++   /** Forge: Backport of Vanilla 1.21 method */
++   public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
++      return new ResourceLocation(namespace, path);
++   }
++
++   /** Forge: Backport of Vanilla 1.21 method */
++   public static ResourceLocation parse(String location) {
++      return new ResourceLocation(location);
+    }
+ }
