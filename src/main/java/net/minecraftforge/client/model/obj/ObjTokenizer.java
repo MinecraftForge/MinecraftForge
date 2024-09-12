@@ -46,7 +46,7 @@ public class ObjTokenizer implements AutoCloseable
             if (currentLine.startsWith("#"))
                 currentLine = "";
 
-            if (currentLine.length() > 0)
+            if (!currentLine.isEmpty())
             {
 
                 boolean hasContinuation;
@@ -63,13 +63,13 @@ public class ObjTokenizer implements AutoCloseable
                         if (currentLine == null)
                             break;
 
-                        if (currentLine.length() == 0 || currentLine.startsWith("#"))
+                        if (currentLine.isEmpty() || currentLine.startsWith("#"))
                             break;
                     }
                 } while (hasContinuation);
             }
 
-            if (lineParts.size() > 0)
+            if (!lineParts.isEmpty())
                 return lineParts.toArray(new String[0]);
         }
         while (ignoreEmptyLines);

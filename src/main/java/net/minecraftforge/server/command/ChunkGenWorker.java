@@ -75,7 +75,7 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean hasWork()
     {
-        return queue.size() > 0;
+        return !queue.isEmpty();
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ChunkGenWorker implements IWorker
             }
         }
 
-        if (queue.size() == 0)
+        if (queue.isEmpty())
         {
             listener.sendSuccess(() -> Component.translatable("commands.forge.gen.complete", genned, total, dim.dimension().location()), true);
             /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.

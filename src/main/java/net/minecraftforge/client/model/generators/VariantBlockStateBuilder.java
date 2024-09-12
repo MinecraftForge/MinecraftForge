@@ -288,7 +288,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockState
         public String toString() {
             StringBuilder ret = new StringBuilder();
             for (Map.Entry<Property<?>, Comparable<?>> entry : setStates.entrySet()) {
-                if (ret.length() > 0) {
+                if (!ret.isEmpty()) {
                     ret.append(',');
                 }
                 ret.append(entry.getKey().getName())

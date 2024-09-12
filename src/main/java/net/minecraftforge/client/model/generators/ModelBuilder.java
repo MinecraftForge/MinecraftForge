@@ -224,7 +224,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      */
     public <L extends CustomLoaderBuilder<T>> L customLoader(BiFunction<T, ExistingFileHelper, L> customLoaderFactory)
     {
-        Preconditions.checkState(elements.size() == 0, "Cannot use elements and custom loaders at the same time");
+        Preconditions.checkState(elements.isEmpty(), "Cannot use elements and custom loaders at the same time");
         Preconditions.checkNotNull(customLoaderFactory, "customLoaderFactory must not be null");
         L customLoader  = customLoaderFactory.apply(self(), existingFileHelper);
         this.customLoader = customLoader;
@@ -339,7 +339,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         // If there were any transform properties set, add them to the output.
         JsonObject transform = rootTransforms.toJson();
-        if (transform.size() > 0)
+        if (!transform.isEmpty())
         {
             root.add("transform", transform);
         }
