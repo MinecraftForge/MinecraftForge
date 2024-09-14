@@ -372,8 +372,13 @@ public class ForgeHooksClient {
     public static void drawScreen(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         guiGraphics.pose().pushPose();
         for (Screen layer : guiLayers) {
+            // 1.21 breaks background layering of translucent sprites.
+            RenderSystem.enableBlend();
             // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
             drawScreenInternal(layer, guiGraphics, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTick);
+
+            RenderSystem.disableBlend();
+
             guiGraphics.pose().translate(0, 0, 10000);
         }
         drawScreenInternal(screen, guiGraphics, mouseX, mouseY, partialTick);
