@@ -9,6 +9,18 @@
          }
      }
  
+@@ -350,8 +_,11 @@
+     public void processBlurEffect(float p_333718_) {
+         float f = (float)this.minecraft.options.getMenuBackgroundBlurriness();
+         if (this.blurEffect != null && f >= 1.0F) {
++            // FORGE: Blending the blur was removed in 1.21. This is necessary for screen layering to work properly.
++            RenderSystem.enableBlend();
+             this.blurEffect.setUniform("Radius", f);
+             this.blurEffect.process(p_333718_);
++            RenderSystem.disableBlend();
+         }
+     }
+ 
 @@ -526,6 +_,7 @@
                  Pair.of(new ShaderInstance(p_250719_, "rendertype_gui_ghost_recipe_overlay", DefaultVertexFormat.POSITION_COLOR), p_286147_ -> rendertypeGuiGhostRecipeOverlayShader = p_286147_)
              );
