@@ -13,7 +13,7 @@
      public void processBlurEffect(float p_333718_) {
          float f = (float)this.minecraft.options.getMenuBackgroundBlurriness();
          if (this.blurEffect != null && f >= 1.0F) {
-+            // FORGE: Blending the blur was removed in 1.21. This is necessary for screen layering to work properly.
++            // FORGE: Blending the blur was removed in 1.21. This is necessary for screen layering to work properly. https://github.com/MinecraftForge/MinecraftForge/issues/10114
 +            RenderSystem.enableBlend();
              this.blurEffect.setUniform("Radius", f);
              this.blurEffect.process(p_333718_);
