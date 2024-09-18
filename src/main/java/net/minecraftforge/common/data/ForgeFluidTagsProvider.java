@@ -42,13 +42,7 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         // Backwards compat with pre-1.21 tags. Done after so optional tag is last for better readability.
         // TODO: Remove backwards compat tag entries in 1.22
         tagWithOptionalLegacy(MILK);
-        tagWithOptionalLegacy(GASEOUS);
         tagWithOptionalLegacy(HONEY);
-        tagWithOptionalLegacy(POTION);
-        tagWithOptionalLegacy(SUSPICIOUS_STEW);
-        tagWithOptionalLegacy(MUSHROOM_STEW);
-        tagWithOptionalLegacy(RABBIT_STEW);
-        tagWithOptionalLegacy(BEETROOT_SOUP);
     }
 
     private IntrinsicHolderTagsProvider.IntrinsicTagAppender<Fluid> tagWithOptionalLegacy(TagKey<Fluid> tag) {

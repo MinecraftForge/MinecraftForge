@@ -103,9 +103,9 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.SNOWY_SLOPES)
                 .add(Biomes.JAGGED_PEAKS)
                 .add(Biomes.FROZEN_PEAKS);
-        tag(IS_SPARSE_VEGETATION_NETHER);
-        tag(IS_SPARSE_VEGETATION_END);
-        tag(IS_SPARSE_VEGETATION).addTag(IS_SPARSE_VEGETATION_OVERWORLD).addOptionalTag(IS_SPARSE_VEGETATION_NETHER.location()).addOptionalTag(IS_SPARSE_VEGETATION_END.location());
+        tag(IS_SPARSE_NETHER);
+        tag(IS_SPARSE_END);
+        tag(IS_SPARSE_VEGETATION).addTag(IS_SPARSE_VEGETATION_OVERWORLD).addOptionalTag(IS_SPARSE_NETHER.location()).addOptionalTag(IS_SPARSE_END.location());
 
         tag(IS_DENSE_VEGETATION_OVERWORLD)
                 .add(Biomes.DARK_FOREST)
@@ -114,9 +114,9 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.JUNGLE)
                 .add(Biomes.BAMBOO_JUNGLE)
                 .add(Biomes.MANGROVE_SWAMP);
-        tag(IS_DENSE_VEGETATION_NETHER);
-        tag(IS_DENSE_VEGETATION_END);
-        tag(IS_DENSE_VEGETATION).addTag(IS_DENSE_VEGETATION_OVERWORLD).addOptionalTag(IS_DENSE_VEGETATION_NETHER.location()).addOptionalTag(IS_DENSE_VEGETATION_END.location());
+        tag(IS_DENSE_NETHER);
+        tag(IS_DENSE_END);
+        tag(IS_DENSE_VEGETATION).addTag(IS_DENSE_VEGETATION_OVERWORLD).addOptionalTag(IS_DENSE_NETHER.location()).addOptionalTag(IS_DENSE_END.location());
 
         tag(IS_WET_OVERWORLD)
                 .add(Biomes.SWAMP)
@@ -182,6 +182,8 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tag(IS_SWAMP).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP);
         tag(IS_OLD_GROWTH).add(Biomes.OLD_GROWTH_BIRCH_FOREST).add(Biomes.OLD_GROWTH_PINE_TAIGA).add(Biomes.OLD_GROWTH_SPRUCE_TAIGA);
         tag(IS_LUSH).add(Biomes.LUSH_CAVES);
+        tag(IS_MAGICAL);
+        tag(IS_MODIFIED);
         tag(IS_SANDY).add(Biomes.DESERT).add(Biomes.BADLANDS).add(Biomes.WOODED_BADLANDS).add(Biomes.ERODED_BADLANDS).add(Biomes.BEACH);
         tag(IS_MUSHROOM).add(Biomes.MUSHROOM_FIELDS);
         tag(IS_PLATEAU).add(Biomes.WOODED_BADLANDS).add(Biomes.SAVANNA_PLATEAU).add(Biomes.CHERRY_GROVE).add(Biomes.MEADOW);
@@ -209,47 +211,31 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tagWithOptionalLegacy(IS_MOUNTAIN);
         tagWithOptionalLegacy(IS_HOT_OVERWORLD);
         tagWithOptionalLegacy(IS_HOT_NETHER);
-        tagWithOptionalLegacy(IS_HOT_END);
         tagWithOptionalLegacy(IS_HOT);
         tagWithOptionalLegacy(IS_COLD_OVERWORLD);
-        tagWithOptionalLegacy(IS_COLD_NETHER);
         tagWithOptionalLegacy(IS_COLD_END);
         tagWithOptionalLegacy(IS_COLD);
         tagWithOptionalLegacy(IS_SPARSE_VEGETATION_OVERWORLD);
-        tagWithOptionalLegacy(IS_SPARSE_VEGETATION_NETHER);
-        tagWithOptionalLegacy(IS_SPARSE_VEGETATION_END);
         tagWithOptionalLegacy(IS_SPARSE_VEGETATION);
         tag(IS_SPARSE_VEGETATION_OVERWORLD).addOptionalTag(forgeRl("is_sparse/overworld"));
-        tag(IS_SPARSE_VEGETATION_NETHER).addOptionalTag(forgeRl("is_sparse/nether"));
-        tag(IS_SPARSE_VEGETATION_END).addOptionalTag(forgeRl("is_sparse/end"));
         tag(IS_SPARSE_VEGETATION).addOptionalTag(forgeRl("is_sparse"));
         tag(IS_DENSE_VEGETATION_OVERWORLD).addOptionalTag(forgeRl("is_dense/overworld"));
-        tag(IS_DENSE_VEGETATION_NETHER).addOptionalTag(forgeRl("is_dense/nether"));
-        tag(IS_DENSE_VEGETATION_END).addOptionalTag(forgeRl("is_dense/end"));
+        tag(IS_DENSE_END);
         tag(IS_DENSE_VEGETATION).addOptionalTag(forgeRl("is_dense"));
         tagWithOptionalLegacy(IS_WET_OVERWORLD);
-        tagWithOptionalLegacy(IS_WET_NETHER);
-        tagWithOptionalLegacy(IS_WET_END);
         tagWithOptionalLegacy(IS_WET);
         tagWithOptionalLegacy(IS_DRY_OVERWORLD);
         tagWithOptionalLegacy(IS_DRY_NETHER);
         tagWithOptionalLegacy(IS_DRY_END);
         tagWithOptionalLegacy(IS_DRY);
         tagWithOptionalLegacy(IS_CONIFEROUS_TREE);
-        tagWithOptionalLegacy(IS_SPOOKY);
         tagWithOptionalLegacy(IS_DEAD);
-        tagWithOptionalLegacy(IS_LUSH);
         tagWithOptionalLegacy(IS_MUSHROOM);
-        tagWithOptionalLegacy(IS_MAGICAL);
-        tagWithOptionalLegacy(IS_RARE);
-        tagWithOptionalLegacy(IS_PLATEAU);
-        tagWithOptionalLegacy(IS_MODIFIED);
         tagWithOptionalLegacy(IS_FLORAL);
         tag(IS_AQUATIC).addOptionalTag(forgeRl("is_water"));
         tagWithOptionalLegacy(IS_DESERT);
         tagWithOptionalLegacy(IS_PLAINS);
         tagWithOptionalLegacy(IS_SWAMP);
-        tagWithOptionalLegacy(IS_SANDY);
         tagWithOptionalLegacy(IS_SNOWY);
         tagWithOptionalLegacy(IS_WASTELAND);
         tagWithOptionalLegacy(IS_VOID);

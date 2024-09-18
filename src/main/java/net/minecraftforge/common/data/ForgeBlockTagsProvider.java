@@ -46,11 +46,11 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
         tag(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
         tag(CLUSTERS).add(Blocks.AMETHYST_CLUSTER);
-        tag(COBBLESTONES).addTags(COBBLESTONES_NORMAL, COBBLESTONES_INFESTED, COBBLESTONES_MOSSY, COBBLESTONES_DEEPSLATE);
-        tag(COBBLESTONES_NORMAL).add(Blocks.COBBLESTONE);
-        tag(COBBLESTONES_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
-        tag(COBBLESTONES_MOSSY).add(Blocks.MOSSY_COBBLESTONE);
-        tag(COBBLESTONES_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);
+        tag(COBBLESTONES).addTags(COBBLESTONE_NORMAL, COBBLESTONE_INFESTED, COBBLESTONE_MOSSY, COBBLESTONE_DEEPSLATE);
+        tag(COBBLESTONE_NORMAL).add(Blocks.COBBLESTONE);
+        tag(COBBLESTONE_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
+        tag(COBBLESTONE_MOSSY).add(Blocks.MOSSY_COBBLESTONE);
+        tag(COBBLESTONE_DEEPSLATE).add(Blocks.COBBLED_DEEPSLATE);
         tag(CONCRETES).add(Blocks.WHITE_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.MAGENTA_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE, Blocks.YELLOW_CONCRETE, Blocks.LIME_CONCRETE, Blocks.PINK_CONCRETE, Blocks.GRAY_CONCRETE, Blocks.LIGHT_GRAY_CONCRETE, Blocks.CYAN_CONCRETE, Blocks.PURPLE_CONCRETE, Blocks.BLUE_CONCRETE, Blocks.BROWN_CONCRETE, Blocks.GREEN_CONCRETE, Blocks.RED_CONCRETE, Blocks.BLACK_CONCRETE);
         addColored(DYED, "{color}_banner");
         addColored(DYED, "{color}_bed");
@@ -80,11 +80,11 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(GLASS_PANES).addTags(GLASS_PANES_COLORLESS).add(Blocks.WHITE_STAINED_GLASS_PANE, Blocks.ORANGE_STAINED_GLASS_PANE, Blocks.MAGENTA_STAINED_GLASS_PANE, Blocks.LIGHT_BLUE_STAINED_GLASS_PANE, Blocks.YELLOW_STAINED_GLASS_PANE, Blocks.LIME_STAINED_GLASS_PANE, Blocks.PINK_STAINED_GLASS_PANE, Blocks.GRAY_STAINED_GLASS_PANE, Blocks.LIGHT_GRAY_STAINED_GLASS_PANE, Blocks.CYAN_STAINED_GLASS_PANE, Blocks.PURPLE_STAINED_GLASS_PANE, Blocks.BLUE_STAINED_GLASS_PANE, Blocks.BROWN_STAINED_GLASS_PANE, Blocks.GREEN_STAINED_GLASS_PANE, Blocks.RED_STAINED_GLASS_PANE, Blocks.BLACK_STAINED_GLASS_PANE);
         tag(GLASS_PANES_COLORLESS).add(Blocks.GLASS_PANE);
         tag(GLAZED_TERRACOTTAS).add(Blocks.WHITE_GLAZED_TERRACOTTA, Blocks.ORANGE_GLAZED_TERRACOTTA, Blocks.MAGENTA_GLAZED_TERRACOTTA, Blocks.LIGHT_BLUE_GLAZED_TERRACOTTA, Blocks.YELLOW_GLAZED_TERRACOTTA, Blocks.LIME_GLAZED_TERRACOTTA, Blocks.PINK_GLAZED_TERRACOTTA, Blocks.GRAY_GLAZED_TERRACOTTA, Blocks.LIGHT_GRAY_GLAZED_TERRACOTTA, Blocks.CYAN_GLAZED_TERRACOTTA, Blocks.PURPLE_GLAZED_TERRACOTTA, Blocks.BLUE_GLAZED_TERRACOTTA, Blocks.BROWN_GLAZED_TERRACOTTA, Blocks.GREEN_GLAZED_TERRACOTTA, Blocks.RED_GLAZED_TERRACOTTA, Blocks.BLACK_GLAZED_TERRACOTTA);
-        tag(GRAVELS).add(Blocks.GRAVEL);
+        tag(GRAVEL).add(Blocks.GRAVEL);
         tag(SKULLS).add(Blocks.SKELETON_SKULL, Blocks.SKELETON_WALL_SKULL, Blocks.WITHER_SKELETON_SKULL, Blocks.WITHER_SKELETON_WALL_SKULL, Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD, Blocks.ZOMBIE_HEAD, Blocks.ZOMBIE_WALL_HEAD, Blocks.CREEPER_HEAD, Blocks.CREEPER_WALL_HEAD, Blocks.PIGLIN_HEAD, Blocks.PIGLIN_WALL_HEAD, Blocks.DRAGON_HEAD, Blocks.DRAGON_WALL_HEAD);
         tag(HIDDEN_FROM_RECIPE_VIEWERS);
-        tag(NETHERRACKS).add(Blocks.NETHERRACK);
-        tag(OBSIDIANS).add(Blocks.OBSIDIAN);
+        tag(NETHERRACK).add(Blocks.NETHERRACK);
+        tag(OBSIDIAN).add(Blocks.OBSIDIAN);
         tag(ORE_BEARING_GROUND_DEEPSLATE).add(Blocks.DEEPSLATE);
         tag(ORE_BEARING_GROUND_NETHERRACK).add(Blocks.NETHERRACK);
         tag(ORE_BEARING_GROUND_STONE).add(Blocks.STONE);
@@ -107,11 +107,11 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(ORES_IN_GROUND_STONE).add(Blocks.COAL_ORE, Blocks.COPPER_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
         tag(PLAYER_WORKSTATIONS_CRAFTING_TABLES).add(Blocks.CRAFTING_TABLE);
         tag(PLAYER_WORKSTATIONS_FURNACES).add(Blocks.FURNACE);
-        tag(SANDS).addTags(SANDS_COLORLESS, SANDS_RED);
+        tag(SAND).addTags(SAND_COLORLESS, SAND_RED);
         tag(RELOCATION_NOT_SUPPORTED);
         tag(ROPES);
-        tag(SANDS_COLORLESS).add(Blocks.SAND);
-        tag(SANDS_RED).add(Blocks.RED_SAND);
+        tag(SAND_COLORLESS).add(Blocks.SAND);
+        tag(SAND_RED).add(Blocks.RED_SAND);
 
         tag(SANDSTONE_RED_BLOCKS).add(Blocks.RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
         tag(SANDSTONE_UNCOLORED_BLOCKS).add(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.SMOOTH_SANDSTONE);
@@ -158,14 +158,10 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tagWithOptionalLegacy(BARRELS_WOODEN);
         tagWithOptionalLegacy(BOOKSHELVES);
         tagWithOptionalLegacy(CHESTS);
-        tagWithOptionalLegacy(CHESTS_ENDER);
-        tagWithOptionalLegacy(CHESTS_TRAPPED);
+        tag(CHESTS_ENDER);
+        tag(CHESTS_TRAPPED);
         tagWithOptionalLegacy(CHESTS_WOODEN);
         tag(COBBLESTONES).addOptionalTag(forgeRl("cobblestone"));
-        tag(COBBLESTONES_NORMAL).addOptionalTag(forgeRl("cobblestone/normal"));
-        tag(COBBLESTONES_INFESTED).addOptionalTag(forgeRl("cobblestone/infested"));
-        tag(COBBLESTONES_MOSSY).addOptionalTag(forgeRl("cobblestone/mossy"));
-        tag(COBBLESTONES_DEEPSLATE).addOptionalTag(forgeRl("cobblestone/deepslate"));
         tag(DYED_BLACK)
                 .addOptionalTag(forgeRl("glass/black"))
                 .addOptionalTag(forgeRl("stained_glass/black"));
@@ -217,41 +213,15 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(DYED_YELLOW)
                 .addOptionalTag(forgeRl("glass/yellow"))
                 .addOptionalTag(forgeRl("stained_glass/yellow"));
-        tagWithOptionalLegacy(END_STONES);
         tagWithOptionalLegacy(ENDERMAN_PLACE_ON_BLACKLIST);
-        tagWithOptionalLegacy(FENCE_GATES);
-        tagWithOptionalLegacy(FENCE_GATES_WOODEN);
-        tagWithOptionalLegacy(FENCES);
-        tagWithOptionalLegacy(FENCES_NETHER_BRICK);
-        tagWithOptionalLegacy(FENCES_WOODEN);
-        tag(GRAVELS).addOptionalTag(forgeRl("gravel"));
         tag(GLASS_BLOCKS).addOptionalTag(forgeRl("glass"));
         tag(GLASS_BLOCKS_COLORLESS).addOptionalTag(forgeRl("glass_colorless"));
         tag(GLASS_BLOCKS_CHEAP).addOptionalTag(forgeRl("glass_silica"));
         tag(GLASS_BLOCKS_TINTED).addOptionalTag(forgeRl("glass_tinted"));
         tag(GLASS_PANES_COLORLESS).addOptionalTag(forgeRl("glass_panes_colorless"));
-        tag(NETHERRACKS).addOptionalTag(forgeRl("netherrack"));
-        tag(OBSIDIANS).addOptionalTag(forgeRl("obsidian"));
-        tagWithOptionalLegacy(ORE_BEARING_GROUND_DEEPSLATE);
-        tagWithOptionalLegacy(ORE_BEARING_GROUND_NETHERRACK);
-        tagWithOptionalLegacy(ORE_BEARING_GROUND_STONE);
-        tagWithOptionalLegacy(ORE_RATES_DENSE);
-        tagWithOptionalLegacy(ORE_RATES_SINGULAR);
-        tagWithOptionalLegacy(ORE_RATES_SPARSE);
         tagWithOptionalLegacy(ORES);
-        tagWithOptionalLegacy(ORES_COAL);
-        tagWithOptionalLegacy(ORES_COPPER);
-        tagWithOptionalLegacy(ORES_DIAMOND);
-        tagWithOptionalLegacy(ORES_EMERALD);
-        tagWithOptionalLegacy(ORES_GOLD);
-        tagWithOptionalLegacy(ORES_IRON);
-        tagWithOptionalLegacy(ORES_LAPIS);
         tagWithOptionalLegacy(ORES_QUARTZ);
-        tagWithOptionalLegacy(ORES_REDSTONE);
         tagWithOptionalLegacy(ORES_NETHERITE_SCRAP);
-        tagWithOptionalLegacy(ORES_IN_GROUND_DEEPSLATE);
-        tagWithOptionalLegacy(ORES_IN_GROUND_NETHERRACK);
-        tagWithOptionalLegacy(ORES_IN_GROUND_STONE);
         tag(STONES).addOptionalTag(forgeRl("stone"));
         tagWithOptionalLegacy(STORAGE_BLOCKS);
         tagWithOptionalLegacy(STORAGE_BLOCKS_COAL);
@@ -270,9 +240,6 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
                 .addOptionalTag(forgeRl("relocation_not_supported"))
                 .addOptionalTag(forgeRl("immovable"));
         tag(SANDSTONE_BLOCKS).addOptionalTag(forgeRl("sandstone"));
-        tag(SANDS).addOptionalTag(forgeRl("sand"));
-        tag(SANDS_COLORLESS).addOptionalTag(forgeRl("sand/colorless"));
-        tag(SANDS_RED).addOptionalTag(forgeRl("sand/red"));
     }
 
     /**

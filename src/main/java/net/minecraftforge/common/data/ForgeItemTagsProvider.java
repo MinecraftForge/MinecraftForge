@@ -56,10 +56,10 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copy(Tags.Blocks.CHESTS_WOODEN, Tags.Items.CHESTS_WOODEN);
         copy(Tags.Blocks.CLUSTERS, Tags.Items.CLUSTERS);
         copy(Tags.Blocks.COBBLESTONES, Tags.Items.COBBLESTONES);
-        copy(Tags.Blocks.COBBLESTONES_NORMAL, Tags.Items.COBBLESTONES_NORMAL);
-        copy(Tags.Blocks.COBBLESTONES_INFESTED, Tags.Items.COBBLESTONES_INFESTED);
-        copy(Tags.Blocks.COBBLESTONES_MOSSY, Tags.Items.COBBLESTONES_MOSSY);
-        copy(Tags.Blocks.COBBLESTONES_DEEPSLATE, Tags.Items.COBBLESTONES_DEEPSLATE);
+        copy(Tags.Blocks.COBBLESTONE_NORMAL, Tags.Items.COBBLESTONE_NORMAL);
+        copy(Tags.Blocks.COBBLESTONE_INFESTED, Tags.Items.COBBLESTONE_INFESTED);
+        copy(Tags.Blocks.COBBLESTONE_MOSSY, Tags.Items.COBBLESTONE_MOSSY);
+        copy(Tags.Blocks.COBBLESTONE_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
         copy(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES);
         tag(Tags.Items.CONCRETE_POWDERS)
                 .add(Items.WHITE_CONCRETE_POWDER, Items.ORANGE_CONCRETE_POWDER, Items.MAGENTA_CONCRETE_POWDER,
@@ -153,8 +153,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copy(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copy(Tags.Blocks.GLASS_PANES_COLORLESS, Tags.Items.GLASS_PANES_COLORLESS);
         copy(Tags.Blocks.GLAZED_TERRACOTTAS, Tags.Items.GLAZED_TERRACOTTAS);
-        copy(Tags.Blocks.GRAVELS, Tags.Items.GRAVELS);
-        tag(Tags.Items.GUNPOWDERS).add(Items.GUNPOWDER);
+        copy(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
+        tag(Tags.Items.GUNPOWDER).add(Items.GUNPOWDER);
         tag(Tags.Items.HIDDEN_FROM_RECIPE_VIEWERS);
         tag(Tags.Items.INGOTS).addTags(Tags.Items.INGOTS_COPPER, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_NETHERITE);
         tag(Tags.Items.INGOTS_COPPER).add(Items.COPPER_INGOT);
@@ -169,11 +169,11 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
                 Items.MUSIC_DISC_PIGSTEP, Items.MUSIC_DISC_RELIC, Items.MUSIC_DISC_CREATOR, Items.MUSIC_DISC_CREATOR_MUSIC_BOX,
                 Items.MUSIC_DISC_PRECIPICE);
         tag(Tags.Items.NETHER_STARS).add(Items.NETHER_STAR);
-        copy(Tags.Blocks.NETHERRACKS, Tags.Items.NETHERRACKS);
+        copy(Tags.Blocks.NETHERRACK, Tags.Items.NETHERRACK);
         tag(Tags.Items.NUGGETS).addTags(Tags.Items.NUGGETS_GOLD, Tags.Items.NUGGETS_IRON);
         tag(Tags.Items.NUGGETS_IRON).add(Items.IRON_NUGGET);
         tag(Tags.Items.NUGGETS_GOLD).add(Items.GOLD_NUGGET);
-        copy(Tags.Blocks.OBSIDIANS, Tags.Items.OBSIDIANS);
+        copy(Tags.Blocks.OBSIDIAN, Tags.Items.OBSIDIAN);
         copy(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE, Tags.Items.ORE_BEARING_GROUND_DEEPSLATE);
         copy(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK, Tags.Items.ORE_BEARING_GROUND_NETHERRACK);
         copy(Tags.Blocks.ORE_BEARING_GROUND_STONE, Tags.Items.ORE_BEARING_GROUND_STONE);
@@ -205,9 +205,9 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.RODS_BREEZE).add(Items.BREEZE_ROD);
         tag(Tags.Items.RODS_WOODEN).add(Items.STICK);
         copy(Tags.Blocks.ROPES, Tags.Items.ROPES);
-        copy(Tags.Blocks.SANDS, Tags.Items.SANDS);
-        copy(Tags.Blocks.SANDS_COLORLESS, Tags.Items.SANDS_COLORLESS);
-        copy(Tags.Blocks.SANDS_RED, Tags.Items.SANDS_RED);
+        copy(Tags.Blocks.SAND, Tags.Items.SAND);
+        copy(Tags.Blocks.SAND_COLORLESS, Tags.Items.SAND_COLORLESS);
+        copy(Tags.Blocks.SAND_RED, Tags.Items.SAND_RED);
         copy(Tags.Blocks.SANDSTONE_BLOCKS, Tags.Items.SANDSTONE_BLOCKS);
         copy(Tags.Blocks.SANDSTONE_SLABS, Tags.Items.SANDSTONE_SLABS);
         copy(Tags.Blocks.SANDSTONE_STAIRS, Tags.Items.SANDSTONE_STAIRS);
@@ -343,7 +343,6 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
                 .addOptionalTag(forgeRl("glass/yellow"))
                 .addOptionalTag(forgeRl("stained_glass/yellow"));
         tagWithOptionalLegacy(Tags.Items.ENDER_PEARLS);
-        tagWithOptionalLegacy(Tags.Items.FEATHERS);
         tagWithOptionalLegacy(Tags.Items.GEMS);
         tagWithOptionalLegacy(Tags.Items.GEMS_AMETHYST);
         tagWithOptionalLegacy(Tags.Items.GEMS_DIAMOND);
@@ -351,15 +350,12 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tagWithOptionalLegacy(Tags.Items.GEMS_LAPIS);
         tagWithOptionalLegacy(Tags.Items.GEMS_PRISMARINE);
         tagWithOptionalLegacy(Tags.Items.GEMS_QUARTZ);
-        tag(Tags.Items.GUNPOWDERS).addOptionalTag(forgeRl("gunpowder"));
         tagWithOptionalLegacy(Tags.Items.INGOTS);
         tagWithOptionalLegacy(Tags.Items.INGOTS_COPPER);
         tagWithOptionalLegacy(Tags.Items.INGOTS_GOLD);
         tagWithOptionalLegacy(Tags.Items.INGOTS_IRON);
         tagWithOptionalLegacy(Tags.Items.INGOTS_NETHERITE);
         tag(Tags.Items.LEATHERS).addOptionalTag(forgeRl("leather"));
-        tagWithOptionalLegacy(Tags.Items.MUSHROOMS);
-        tagWithOptionalLegacy(Tags.Items.NETHER_STARS);
         tagWithOptionalLegacy(Tags.Items.NUGGETS);
         tagWithOptionalLegacy(Tags.Items.NUGGETS_IRON);
         tagWithOptionalLegacy(Tags.Items.NUGGETS_GOLD);
@@ -370,11 +366,6 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tagWithOptionalLegacy(Tags.Items.RODS);
         tagWithOptionalLegacy(Tags.Items.RODS_BLAZE);
         tagWithOptionalLegacy(Tags.Items.RODS_WOODEN);
-        tagWithOptionalLegacy(Tags.Items.SEEDS);
-        tagWithOptionalLegacy(Tags.Items.SEEDS_BEETROOT);
-        tagWithOptionalLegacy(Tags.Items.SEEDS_MELON);
-        tagWithOptionalLegacy(Tags.Items.SEEDS_PUMPKIN);
-        tagWithOptionalLegacy(Tags.Items.SEEDS_WHEAT);
         tag(Tags.Items.SLIME_BALLS).addOptionalTag(forgeRl("slimeballs"));
         tagWithOptionalLegacy(Tags.Items.STRINGS);
         tagWithOptionalLegacy(Tags.Items.TOOLS);

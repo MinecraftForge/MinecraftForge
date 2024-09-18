@@ -23,23 +23,9 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BLOCK, forgeRl("bookshelves"), Tags.Blocks.BOOKSHELVES),
 
             legacyToCommon(Registries.BLOCK, forgeRl("chests"), Tags.Blocks.CHESTS),
-            legacyToCommon(Registries.BLOCK, forgeRl("chests/ender"), Tags.Blocks.CHESTS_ENDER),
-            legacyToCommon(Registries.BLOCK, forgeRl("chests/trapped"), Tags.Blocks.CHESTS_TRAPPED),
             legacyToCommon(Registries.BLOCK, forgeRl("chests/wooden"), Tags.Blocks.CHESTS_WOODEN),
 
             legacyToCommon(Registries.BLOCK, forgeRl("cobblestone"), Tags.Blocks.COBBLESTONES),
-            legacyToCommon(Registries.BLOCK, forgeRl("cobblestone/normal"), Tags.Blocks.COBBLESTONES_NORMAL),
-            legacyToCommon(Registries.BLOCK, forgeRl("cobblestone/infested"), Tags.Blocks.COBBLESTONES_INFESTED),
-            legacyToCommon(Registries.BLOCK, forgeRl("cobblestone/mossy"), Tags.Blocks.COBBLESTONES_MOSSY),
-            legacyToCommon(Registries.BLOCK, forgeRl("cobblestone/deepslate"), Tags.Blocks.COBBLESTONES_DEEPSLATE),
-
-            legacyToCommon(Registries.BLOCK, forgeRl("end_stones"), Tags.Blocks.END_STONES),
-
-            legacyToCommon(Registries.BLOCK, forgeRl("fence_gates"), Tags.Blocks.FENCE_GATES),
-            legacyToCommon(Registries.BLOCK, forgeRl("fence_gates/wooden"), Tags.Blocks.FENCE_GATES_WOODEN),
-            legacyToCommon(Registries.BLOCK, forgeRl("fences"), Tags.Blocks.FENCES),
-            legacyToCommon(Registries.BLOCK, forgeRl("fences/nether_brick"), Tags.Blocks.FENCES_NETHER_BRICK),
-            legacyToCommon(Registries.BLOCK, forgeRl("fences/wooden"), Tags.Blocks.FENCES_WOODEN),
 
             legacyToCommon(Registries.BLOCK, forgeRl("glass"), Tags.Blocks.GLASS_BLOCKS),
             legacyToCommon(Registries.BLOCK, forgeRl("glass/black"), List.of(Tags.Blocks.GLASS_BLOCKS, Tags.Items.DYED_BLACK)),
@@ -79,33 +65,11 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BLOCK, forgeRl("glass_panes/red"), List.of(Tags.Blocks.GLASS_PANES, Tags.Items.DYED_RED)),
             legacyToCommon(Registries.BLOCK, forgeRl("glass_panes/white"), List.of(Tags.Blocks.GLASS_PANES, Tags.Items.DYED_WHITE)),
             legacyToCommon(Registries.BLOCK, forgeRl("glass_panes/yellow"), List.of(Tags.Blocks.GLASS_PANES, Tags.Items.DYED_YELLOW)),
-            legacyToCommon(Registries.BLOCK, forgeRl("gravel"), Tags.Blocks.GRAVELS),
 
-            legacyToCommon(Registries.BLOCK, forgeRl("obsidian"), Tags.Blocks.OBSIDIANS),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_bearing_ground/deepslate"), Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_bearing_ground/netherrack"), Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_bearing_ground/stone"), Tags.Blocks.ORE_BEARING_GROUND_STONE),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_rates/dense"), Tags.Blocks.ORE_RATES_DENSE),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_rates/singular"), Tags.Blocks.ORE_RATES_SINGULAR),
-            legacyToCommon(Registries.BLOCK, forgeRl("ore_rates/sparse"), Tags.Blocks.ORE_RATES_SPARSE),
             legacyToCommon(Registries.BLOCK, forgeRl("ores"), Tags.Blocks.ORES),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/coal"), Tags.Blocks.ORES_COAL),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/copper"), Tags.Blocks.ORES_COPPER),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/diamond"), Tags.Blocks.ORES_DIAMOND),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/emerald"), Tags.Blocks.ORES_EMERALD),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/gold"), Tags.Blocks.ORES_GOLD),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/iron"), Tags.Blocks.ORES_IRON),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/lapis"), Tags.Blocks.ORES_LAPIS),
             legacyToCommon(Registries.BLOCK, forgeRl("ores/netherite_scrap"), Tags.Blocks.ORES_NETHERITE_SCRAP),
             legacyToCommon(Registries.BLOCK, forgeRl("ores/quartz"), Tags.Blocks.ORES_QUARTZ),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores/redstone"), Tags.Blocks.ORES_REDSTONE),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores_in_ground/deepslate"), Tags.Blocks.ORES_IN_GROUND_DEEPSLATE),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores_in_ground/netherrack"), Tags.Blocks.ORES_IN_GROUND_NETHERRACK),
-            legacyToCommon(Registries.BLOCK, forgeRl("ores_in_ground/stone"), Tags.Blocks.ORES_IN_GROUND_STONE),
 
-            legacyToCommon(Registries.BLOCK, forgeRl("sand"), Tags.Blocks.SANDS),
-            legacyToCommon(Registries.BLOCK, forgeRl("sand/colorless"), Tags.Blocks.SANDS_COLORLESS),
-            legacyToCommon(Registries.BLOCK, forgeRl("sand/red"), Tags.Blocks.SANDS_RED),
             legacyToCommon(Registries.BLOCK, forgeRl("sandstone"), Tags.Blocks.SANDSTONE_BLOCKS),
             legacyToCommon(Registries.BLOCK, forgeRl("stained_glass"), List.of(Tags.Blocks.GLASS_BLOCKS, Tags.Blocks.DYED)),
             legacyToCommon(Registries.BLOCK, forgeRl("stained_glass_panes"), List.of(Tags.Blocks.GLASS_PANES, Tags.Blocks.DYED)),
@@ -133,18 +97,11 @@ public final class TagConventionMappings {
             //region Items
             legacyToCommon(Registries.ITEM, forgeRl("barrels"), Tags.Items.BARRELS),
             legacyToCommon(Registries.ITEM, forgeRl("barrels/wooden"), Tags.Items.BARRELS_WOODEN),
-            legacyToCommon(Registries.ITEM, forgeRl("bones"), Tags.Items.BONES),
             legacyToCommon(Registries.ITEM, forgeRl("bookshelves"), Tags.Items.BOOKSHELVES),
 
             legacyToCommon(Registries.ITEM, forgeRl("chests"), Tags.Items.CHESTS),
-            legacyToCommon(Registries.ITEM, forgeRl("chests/ender"), Tags.Items.CHESTS_ENDER),
-            legacyToCommon(Registries.ITEM, forgeRl("chests/trapped"), Tags.Items.CHESTS_TRAPPED),
             legacyToCommon(Registries.ITEM, forgeRl("chests/wooden"), Tags.Items.CHESTS_WOODEN),
             legacyToCommon(Registries.ITEM, forgeRl("cobblestone"), Tags.Items.COBBLESTONES),
-            legacyToCommon(Registries.ITEM, forgeRl("cobblestone/normal"), Tags.Items.COBBLESTONES_NORMAL),
-            legacyToCommon(Registries.ITEM, forgeRl("cobblestone/infested"), Tags.Items.COBBLESTONES_INFESTED),
-            legacyToCommon(Registries.ITEM, forgeRl("cobblestone/mossy"), Tags.Items.COBBLESTONES_MOSSY),
-            legacyToCommon(Registries.ITEM, forgeRl("cobblestone/deepslate"), Tags.Items.COBBLESTONES_DEEPSLATE),
             legacyToCommon(Registries.ITEM, forgeRl("crops"), Tags.Items.CROPS),
             legacyToCommon(Registries.ITEM, forgeRl("crops/beetroot"), Tags.Items.CROPS_BEETROOT),
             legacyToCommon(Registries.ITEM, forgeRl("crops/carrot"), Tags.Items.CROPS_CARROT),
@@ -172,16 +129,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("dyes/orange"), Tags.Items.DYES_ORANGE),
             legacyToCommon(Registries.ITEM, forgeRl("dyes/white"), Tags.Items.DYES_WHITE),
 
-            legacyToCommon(Registries.ITEM, forgeRl("eggs"), Tags.Items.EGGS),
-            legacyToCommon(Registries.ITEM, forgeRl("end_stones"), Tags.Items.END_STONES),
             legacyToCommon(Registries.ITEM, forgeRl("ender_pearls"), Tags.Items.ENDER_PEARLS),
-
-            legacyToCommon(Registries.ITEM, forgeRl("feathers"), Tags.Items.FEATHERS),
-            legacyToCommon(Registries.ITEM, forgeRl("fence_gates"), Tags.Items.FENCE_GATES),
-            legacyToCommon(Registries.ITEM, forgeRl("fence_gates/wooden"), Tags.Items.FENCE_GATES_WOODEN),
-            legacyToCommon(Registries.ITEM, forgeRl("fences"), Tags.Items.FENCES),
-            legacyToCommon(Registries.ITEM, forgeRl("fences/nether_brick"), Tags.Items.FENCES_NETHER_BRICK),
-            legacyToCommon(Registries.ITEM, forgeRl("fences/wooden"), Tags.Items.FENCES_WOODEN),
 
             legacyToCommon(Registries.ITEM, forgeRl("gems"), Tags.Items.GEMS),
             legacyToCommon(Registries.ITEM, forgeRl("gems/diamond"), Tags.Items.GEMS_DIAMOND),
@@ -227,8 +175,6 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("glass_panes/red"), List.of(Tags.Items.GLASS_PANES, Tags.Items.DYED_RED)),
             legacyToCommon(Registries.ITEM, forgeRl("glass_panes/white"), List.of(Tags.Items.GLASS_PANES, Tags.Items.DYED_WHITE)),
             legacyToCommon(Registries.ITEM, forgeRl("glass_panes/yellow"), List.of(Tags.Items.GLASS_PANES, Tags.Items.DYED_YELLOW)),
-            legacyToCommon(Registries.ITEM, forgeRl("gravel"), Tags.Items.GRAVELS),
-            legacyToCommon(Registries.ITEM, forgeRl("gunpowder"), Tags.Items.GUNPOWDERS),
 
             legacyToCommon(Registries.ITEM, forgeRl("ingots"), Tags.Items.INGOTS),
             legacyToCommon(Registries.ITEM, forgeRl("ingots/brick"), Tags.Items.BRICKS_NORMAL),
@@ -240,35 +186,13 @@ public final class TagConventionMappings {
 
             legacyToCommon(Registries.ITEM, forgeRl("leather"), Tags.Items.LEATHERS),
 
-            legacyToCommon(Registries.ITEM, forgeRl("mushrooms"), Tags.Items.MUSHROOMS),
-
-            legacyToCommon(Registries.ITEM, forgeRl("nether_stars"), Tags.Items.NETHER_STARS),
-            legacyToCommon(Registries.ITEM, forgeRl("netherrack"), Tags.Items.NETHERRACKS),
             legacyToCommon(Registries.ITEM, forgeRl("nuggets"), Tags.Items.NUGGETS),
             legacyToCommon(Registries.ITEM, forgeRl("nuggets/gold"), Tags.Items.NUGGETS_GOLD),
             legacyToCommon(Registries.ITEM, forgeRl("nuggets/iron"), Tags.Items.NUGGETS_IRON),
 
-            legacyToCommon(Registries.ITEM, forgeRl("obsidian"), Tags.Items.OBSIDIANS),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_bearing_ground/deepslate"), Tags.Items.ORE_BEARING_GROUND_DEEPSLATE),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_bearing_ground/netherrack"), Tags.Items.ORE_BEARING_GROUND_NETHERRACK),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_bearing_ground/stone"), Tags.Items.ORE_BEARING_GROUND_STONE),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_rates/dense"), Tags.Items.ORE_RATES_DENSE),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_rates/singular"), Tags.Items.ORE_RATES_SINGULAR),
-            legacyToCommon(Registries.ITEM, forgeRl("ore_rates/sparse"), Tags.Items.ORE_RATES_SPARSE),
             legacyToCommon(Registries.ITEM, forgeRl("ores"), Tags.Items.ORES),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/coal"), Tags.Items.ORES_COAL),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/copper"), Tags.Items.ORES_COPPER),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/diamond"), Tags.Items.ORES_DIAMOND),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/emerald"), Tags.Items.ORES_EMERALD),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/gold"), Tags.Items.ORES_GOLD),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/iron"), Tags.Items.ORES_IRON),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/lapis"), Tags.Items.ORES_LAPIS),
             legacyToCommon(Registries.ITEM, forgeRl("ores/netherite_scrap"), Tags.Items.ORES_NETHERITE_SCRAP),
             legacyToCommon(Registries.ITEM, forgeRl("ores/quartz"), Tags.Items.ORES_QUARTZ),
-            legacyToCommon(Registries.ITEM, forgeRl("ores/redstone"), Tags.Items.ORES_REDSTONE),
-            legacyToCommon(Registries.ITEM, forgeRl("ores_in_ground/deepslate"), Tags.Items.ORES_IN_GROUND_DEEPSLATE),
-            legacyToCommon(Registries.ITEM, forgeRl("ores_in_ground/netherrack"), Tags.Items.ORES_IN_GROUND_NETHERRACK),
-            legacyToCommon(Registries.ITEM, forgeRl("ores_in_ground/stone"), Tags.Items.ORES_IN_GROUND_STONE),
 
             legacyToCommon(Registries.ITEM, forgeRl("raw_materials"), Tags.Items.RAW_MATERIALS),
             legacyToCommon(Registries.ITEM, forgeRl("raw_materials/copper"), Tags.Items.RAW_MATERIALS_COPPER),
@@ -278,15 +202,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("rods/blaze"), Tags.Items.RODS_BLAZE),
             legacyToCommon(Registries.ITEM, forgeRl("rods/wooden"), Tags.Items.RODS_WOODEN),
 
-            legacyToCommon(Registries.ITEM, forgeRl("sand"), Tags.Items.SANDS),
-            legacyToCommon(Registries.ITEM, forgeRl("sand/colorless"), Tags.Items.SANDS_COLORLESS),
-            legacyToCommon(Registries.ITEM, forgeRl("sand/red"), Tags.Items.SANDS_RED),
             legacyToCommon(Registries.ITEM, forgeRl("sandstone"), Tags.Items.SANDSTONE_BLOCKS),
-            legacyToCommon(Registries.ITEM, forgeRl("seeds"), Tags.Items.SEEDS),
-            legacyToCommon(Registries.ITEM, forgeRl("seeds/beetroot"), Tags.Items.SEEDS_BEETROOT),
-            legacyToCommon(Registries.ITEM, forgeRl("seeds/melon"), Tags.Items.SEEDS_MELON),
-            legacyToCommon(Registries.ITEM, forgeRl("seeds/pumpkin"), Tags.Items.SEEDS_PUMPKIN),
-            legacyToCommon(Registries.ITEM, forgeRl("seeds/wheat"), Tags.Items.SEEDS_WHEAT),
 
             legacyToCommon(Registries.ITEM, forgeRl("slimeballs"), Tags.Items.SLIME_BALLS),
             legacyToCommon(Registries.ITEM, forgeRl("stained_glass"), List.of(Tags.Items.GLASS_BLOCKS, Tags.Blocks.DYED)),
@@ -321,7 +237,6 @@ public final class TagConventionMappings {
 
             //region Fluids
             legacyToCommon(Registries.FLUID, forgeRl("milk"), Tags.Fluids.MILK),
-            legacyToCommon(Registries.FLUID, forgeRl("gaseous"), Tags.Fluids.GASEOUS),
             //endregion
 
             //region Biomes
@@ -330,26 +245,18 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BIOME, forgeRl("is_hot"), Tags.Biomes.IS_HOT),
             legacyToCommon(Registries.BIOME, forgeRl("is_hot/overworld"), Tags.Biomes.IS_HOT_OVERWORLD),
             legacyToCommon(Registries.BIOME, forgeRl("is_hot/nether"), Tags.Biomes.IS_HOT_NETHER),
-            legacyToCommon(Registries.BIOME, forgeRl("is_hot/end"), Tags.Biomes.IS_HOT_END),
 
             legacyToCommon(Registries.BIOME, forgeRl("is_cold"), Tags.Biomes.IS_COLD),
             legacyToCommon(Registries.BIOME, forgeRl("is_cold/overworld"), Tags.Biomes.IS_COLD_OVERWORLD),
-            legacyToCommon(Registries.BIOME, forgeRl("is_cold/nether"), Tags.Biomes.IS_COLD_NETHER),
             legacyToCommon(Registries.BIOME, forgeRl("is_cold/end"), Tags.Biomes.IS_COLD_END),
 
             legacyToCommon(Registries.BIOME, forgeRl("is_sparse"), Tags.Biomes.IS_SPARSE_VEGETATION),
             legacyToCommon(Registries.BIOME, forgeRl("is_sparse/overworld"), Tags.Biomes.IS_SPARSE_VEGETATION_OVERWORLD),
-            legacyToCommon(Registries.BIOME, forgeRl("is_sparse/nether"), Tags.Biomes.IS_SPARSE_VEGETATION_NETHER),
-            legacyToCommon(Registries.BIOME, forgeRl("is_sparse/end"), Tags.Biomes.IS_SPARSE_VEGETATION_END),
             legacyToCommon(Registries.BIOME, forgeRl("is_dense"), Tags.Biomes.IS_DENSE_VEGETATION),
             legacyToCommon(Registries.BIOME, forgeRl("is_dense/overworld"), Tags.Biomes.IS_DENSE_VEGETATION_OVERWORLD),
-            legacyToCommon(Registries.BIOME, forgeRl("is_dense/nether"), Tags.Biomes.IS_DENSE_VEGETATION_NETHER),
-            legacyToCommon(Registries.BIOME, forgeRl("is_dense/end"), Tags.Biomes.IS_DENSE_VEGETATION_END),
 
             legacyToCommon(Registries.BIOME, forgeRl("is_wet"), Tags.Biomes.IS_WET),
             legacyToCommon(Registries.BIOME, forgeRl("is_wet/overworld"), Tags.Biomes.IS_WET_OVERWORLD),
-            legacyToCommon(Registries.BIOME, forgeRl("is_wet/nether"), Tags.Biomes.IS_WET_NETHER),
-            legacyToCommon(Registries.BIOME, forgeRl("is_wet/end"), Tags.Biomes.IS_WET_END),
             legacyToCommon(Registries.BIOME, forgeRl("is_dry"), Tags.Biomes.IS_DRY),
             legacyToCommon(Registries.BIOME, forgeRl("is_dry/overworld"), Tags.Biomes.IS_DRY_OVERWORLD),
             legacyToCommon(Registries.BIOME, forgeRl("is_dry/nether"), Tags.Biomes.IS_DRY_NETHER),
@@ -369,12 +276,6 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BIOME, forgeRl("is_underground"), Tags.Biomes.IS_UNDERGROUND),
             legacyToCommon(Registries.BIOME, forgeRl("is_cave"), Tags.Biomes.IS_CAVE),
 
-            legacyToCommon(Registries.BIOME, forgeRl("is_lush"), Tags.Biomes.IS_LUSH),
-            legacyToCommon(Registries.BIOME, forgeRl("is_magical"), Tags.Biomes.IS_MAGICAL),
-            legacyToCommon(Registries.BIOME, forgeRl("is_rare"), Tags.Biomes.IS_RARE),
-            legacyToCommon(Registries.BIOME, forgeRl("is_plateau"), Tags.Biomes.IS_PLATEAU),
-            legacyToCommon(Registries.BIOME, forgeRl("is_modified"), Tags.Biomes.IS_MODIFIED),
-            legacyToCommon(Registries.BIOME, forgeRl("is_spooky"), Tags.Biomes.IS_SPOOKY),
             legacyToCommon(Registries.BIOME, forgeRl("is_wasteland"), Tags.Biomes.IS_WASTELAND),
             legacyToCommon(Registries.BIOME, forgeRl("is_dead"), Tags.Biomes.IS_DEAD),
             legacyToCommon(Registries.BIOME, forgeRl("is_water"), Tags.Biomes.IS_AQUATIC),
@@ -432,7 +333,6 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.FLUID, forgeRl("water"), Tags.Fluids.WATER),
             legacyToCommon(Registries.FLUID, forgeRl("lava"), Tags.Fluids.LAVA),
             legacyToCommon(Registries.FLUID, forgeRl("honey"), Tags.Fluids.HONEY),
-            legacyToCommon(Registries.FLUID, forgeRl("potion"), Tags.Fluids.POTION),
 
             // Biomes
             legacyToCommon(Registries.BIOME, forgeRl("is_overworld"), Tags.Biomes.IS_OVERWORLD),
@@ -442,7 +342,6 @@ public final class TagConventionMappings {
 
             legacyToCommon(Registries.BIOME, forgeRl("is_forest"), Tags.Biomes.IS_FOREST),
             legacyToCommon(Registries.BIOME, forgeRl("is_jungle"), Tags.Biomes.IS_JUNGLE),
-            legacyToCommon(Registries.BIOME, forgeRl("is_sandy"), Tags.Biomes.IS_SANDY),
             legacyToCommon(Registries.BIOME, forgeRl("is_savanna"), Tags.Biomes.IS_SAVANNA),
             legacyToCommon(Registries.BIOME, forgeRl("is_floral"), Tags.Biomes.IS_FLORAL),
             legacyToCommon(Registries.BIOME, forgeRl("is_snowy"), Tags.Biomes.IS_SNOWY),
