@@ -66,6 +66,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.BLOCK, forgeRl("glass_panes/white"), List.of(Tags.Blocks.GLASS_PANES, Tags.Items.DYED_WHITE)),
             legacyToCommon(Registries.BLOCK, forgeRl("glass_panes/yellow"), List.of(Tags.Blocks.GLASS_PANES, Tags.Items.DYED_YELLOW)),
 
+            legacyToCommon(Registries.BLOCK, forgeRl("obsidian"), Tags.Blocks.OBSIDIANS),
             legacyToCommon(Registries.BLOCK, forgeRl("ores"), Tags.Blocks.ORES),
             legacyToCommon(Registries.BLOCK, forgeRl("ores/netherite_scrap"), Tags.Blocks.ORES_NETHERITE_SCRAP),
             legacyToCommon(Registries.BLOCK, forgeRl("ores/quartz"), Tags.Blocks.ORES_QUARTZ),
@@ -176,6 +177,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("glass_panes/white"), List.of(Tags.Items.GLASS_PANES, Tags.Items.DYED_WHITE)),
             legacyToCommon(Registries.ITEM, forgeRl("glass_panes/yellow"), List.of(Tags.Items.GLASS_PANES, Tags.Items.DYED_YELLOW)),
 
+            legacyToCommon(Registries.ITEM, forgeRl("obsidian"), Tags.Items.OBSIDIANS),
             legacyToCommon(Registries.ITEM, forgeRl("ingots"), Tags.Items.INGOTS),
             legacyToCommon(Registries.ITEM, forgeRl("ingots/brick"), Tags.Items.BRICKS_NORMAL),
             legacyToCommon(Registries.ITEM, forgeRl("ingots/copper"), Tags.Items.INGOTS_COPPER),

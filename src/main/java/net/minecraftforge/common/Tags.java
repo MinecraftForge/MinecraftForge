@@ -68,7 +68,6 @@ public class Tags {
 
         public static final TagKey<Block> GRAVEL = forgeTag("gravel");
         public static final TagKey<Block> NETHERRACK = forgeTag("netherrack");
-        public static final TagKey<Block> OBSIDIAN = forgeTag("obsidian");
         /**
          * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
          */
@@ -182,6 +181,7 @@ public class Tags {
          * Recipe viewers may use this to automatically find the corresponding BlockItem to hide.
          */
         public static final TagKey<Block> HIDDEN_FROM_RECIPE_VIEWERS = cTag("hidden_from_recipe_viewers");
+        public static final TagKey<Block> OBSIDIANS = cTag("obsidians");
         public static final TagKey<Block> ORES = cTag("ores");
         public static final TagKey<Block> ORES_NETHERITE_SCRAP = cTag("ores/netherite_scrap");
         public static final TagKey<Block> ORES_QUARTZ = cTag("ores/quartz");
@@ -428,7 +428,6 @@ public class Tags {
         public static final TagKey<Item> MUSHROOMS = forgeTag("mushrooms");
         public static final TagKey<Item> NETHER_STARS = forgeTag("nether_stars");
         public static final TagKey<Item> NETHERRACK = forgeTag("netherrack");
-        public static final TagKey<Item> OBSIDIAN = forgeTag("obsidian");
         /**
          * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
          */
@@ -678,6 +677,7 @@ public class Tags {
          * Tag that holds all items that recipe viewers should not show to users.
          */
         public static final TagKey<Item> HIDDEN_FROM_RECIPE_VIEWERS = cTag("hidden_from_recipe_viewers");
+        public static final TagKey<Item> OBSIDIANS = cTag("obsidians");
         public static final TagKey<Item> INGOTS = cTag("ingots");
         public static final TagKey<Item> INGOTS_COPPER = cTag("ingots/copper");
         public static final TagKey<Item> INGOTS_GOLD = cTag("ingots/gold");
