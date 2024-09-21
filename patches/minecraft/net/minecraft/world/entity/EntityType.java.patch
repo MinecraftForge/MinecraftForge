@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
+@@ -170,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import org.slf4j.Logger;
+ 
+-public class EntityType<T extends Entity> implements FeatureElement, EntityTypeTest<Entity, T> {
++public class EntityType<T extends Entity> extends net.minecraftforge.common.capabilities.CapabilityFactoryHolder<T> implements FeatureElement, EntityTypeTest<Entity, T> {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private final Holder.Reference<EntityType<?>> builtInRegistryHolder = BuiltInRegistries.ENTITY_TYPE.createIntrusiveHolder(this);
+     private static final float MAGIC_HORSE_WIDTH = 1.3964844F;
 @@ -723,6 +_,11 @@
      private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;
