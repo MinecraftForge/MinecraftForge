@@ -43,8 +43,6 @@ public class GatherComponentsEventTest extends BaseTestMod {
     public GatherComponentsEventTest() {
         IEventBus bus = MinecraftForge.EVENT_BUS;
         bus.addListener(this::onItem);
-        bus.addListener(this::onEvent);
-        bus.addListener(this::onInteract);
     }
 
     public void onItem(GatherComponentsEvent.Item itemEvent) {
@@ -57,35 +55,6 @@ public class GatherComponentsEventTest extends BaseTestMod {
                     Optional.empty(),
                     List.of()
             ));
-        }
-    }
-
-    public void onEvent(RegisterCapabilityFactoryEvent event) {
-        if (event.getObject() == EntityType.PIG) {
-            event.register(ResourceLocation.fromNamespaceAndPath("mc", "test"), (pig) -> {
-                Pig pig1 = (Pig) pig;
-
-                return new ICapabilityProvider() {
-                    LazyOptional<EnergyStorage> STORAGE = LazyOptional.of(() -> new EnergyStorage(1000));
-
-
-                    @Override
-                    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                        if (cap == ForgeCapabilities.ENERGY)
-                            return STORAGE.cast();
-                        return LazyOptional.empty();
-                    }
-                };
-            });
-        }
-    }
-
-    public void onInteract(AttackEntityEvent event) {
-        var target = event.getTarget();
-        var plr = event.getEntity();
-
-        if (target.getCapability(ForgeCapabilities.ENERGY).isPresent()) {
-            plr.sendSystemMessage(Component.literal("HAS ENERGY!"));
         }
     }
 

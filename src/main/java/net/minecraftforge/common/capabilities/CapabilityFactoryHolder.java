@@ -10,10 +10,10 @@ public class CapabilityFactoryHolder<T> {
     private Map<ResourceLocation, ICapabilityFactory<T>> FACTORIES = new HashMap<>();
     private boolean built = false;
 
-    protected void build() {
+    protected <G> void build(G obj) {
         if (built) return;
         built = true;
-        var event = new RegisterCapabilityFactoryEvent(this);
+        var event = new RegisterCapabilityFactoryEvent<G>(this, obj);
         MinecraftForge.EVENT_BUS.post(event);
         event.getFactories().forEach((rl, f) -> {
             FACTORIES.put(rl, cast(f));

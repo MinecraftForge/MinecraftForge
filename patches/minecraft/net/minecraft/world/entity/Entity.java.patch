@@ -28,19 +28,12 @@
      private final Set<TagKey<Fluid>> fluidOnEyes = new HashSet<>();
      public int invulnerableTime;
      protected boolean firstTick = true;
-@@ -243,6 +_,7 @@
-     private BlockState inBlockState = null;
- 
-     public Entity(EntityType<?> p_19870_, Level p_19871_) {
-+        super((EntityType) p_19870_);
-         this.type = p_19870_;
-         this.level = p_19871_;
-         this.dimensions = p_19870_.getDimensions();
-@@ -262,6 +_,7 @@
+@@ -262,6 +_,8 @@
          this.entityData = synchedentitydata$builder.build();
          this.setPos(0.0, 0.0, 0.0);
          this.eyeHeight = this.dimensions.eyeHeight();
 +        net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
++        init((EntityType) p_19870_);
      }
  
      public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {
