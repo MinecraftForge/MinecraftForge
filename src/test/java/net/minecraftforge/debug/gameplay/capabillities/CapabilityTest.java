@@ -5,18 +5,20 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.RegisterCapabilityFactoryEvent;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.test.BaseTestMod;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +32,24 @@ public class CapabilityTest extends BaseTestMod {
 
     public CapabilityTest() {
         IEventBus bus = MinecraftForge.EVENT_BUS;
-        bus.addGenericListener(Pig.class, this::onEvent);
         bus.addListener(this::onInteract);
-    }
-    public void onEvent(RegisterCapabilityFactoryEvent<Pig> event) {
-        if (event.getObject().getType() == EntityType.PIG) {
-            event.register(ResourceLocation.fromNamespaceAndPath("mc", "test"), (pig) -> new MyProvider());
-        }
+
+        CapabilityFactoryManager.getInstance().register(Pig.class, ResourceLocation.fromNamespaceAndPath("mc", "test"), e -> {
+            return new MyProvider();
+        });
+
+        CapabilityFactoryManager.getInstance().register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), e -> {
+            return new ICapabilityProvider() {
+                LazyOptional<IFluidHandler> HANDLER = LazyOptional.of(() -> new FluidTank(111));
+
+                @Override
+                public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                    if (cap == ForgeCapabilities.FLUID_HANDLER)
+                        return HANDLER.cast();
+                    return LazyOptional.empty();
+                }
+            };
+        });
     }
 
     public void onInteract(AttackEntityEvent event) {
@@ -46,6 +59,9 @@ public class CapabilityTest extends BaseTestMod {
 
         if (target.getCapability(ForgeCapabilities.ENERGY).isPresent()) {
             plr.sendSystemMessage(Component.literal("HAS ENERGY!"));
+        }
+        if (target.getCapability(ForgeCapabilities.FLUID_HANDLER).isPresent()) {
+            plr.sendSystemMessage(Component.literal("HAS FLUID!"));
         }
     }
 

@@ -13,9 +13,8 @@ public class CapabilityFactoryHolder<T> {
     protected <G> void build(G obj) {
         if (built) return;
         built = true;
-        var event = new RegisterCapabilityFactoryEvent<G>(this, obj);
-        MinecraftForge.EVENT_BUS.post(event);
-        event.getFactories().forEach((rl, f) -> {
+
+        CapabilityFactoryManager.getInstance().build((obj.getClass())).forEach((rl, f) -> {
             FACTORIES.put(rl, cast(f));
         });
     }
