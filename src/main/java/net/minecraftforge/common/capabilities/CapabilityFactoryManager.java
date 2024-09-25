@@ -20,16 +20,16 @@ public class CapabilityFactoryManager {
         FACTORY.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory);
     }
 
-    private <G> void add(Map<ResourceLocation, ICapabilityFactory<G>> FACTORIES, Class<?> clz) {
+    private <G> void add(Map<ResourceLocation, ICapabilityFactory<G>> factories, Class<?> clz) {
         if (clz == Object.class) return;
-        FACTORIES.putAll(cast(FACTORY.getOrDefault(clz, Map.of())));
-        add(FACTORIES, clz.getSuperclass());
+        factories.putAll(cast(FACTORY.getOrDefault(clz, Map.of())));
+        add(factories, clz.getSuperclass());
     }
 
     protected <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj) {
-        Map<ResourceLocation, ICapabilityFactory<G>> FACTORIES = new HashMap<>(cast(FACTORY.getOrDefault(obj, Map.of())));
-        add(FACTORIES, obj.getSuperclass());
-        return FACTORIES;
+        Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(FACTORY.getOrDefault(obj, Map.of())));
+        add(factories, obj.getSuperclass());
+        return factories;
     }
 
     private <T> T cast(Object o) {
