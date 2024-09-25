@@ -12,22 +12,22 @@ public class CapabilityFactoryManager {
         return MANAGER;
     }
 
-    private final Map<Class<?>, Map<ResourceLocation, ICapabilityFactory<?>>> FACTORY = new HashMap<>();
+    private final Map<Class<?>, Map<ResourceLocation, ICapabilityFactory<?>>> factory = new HashMap<>();
 
     private CapabilityFactoryManager() {}
 
     public <G> void register(Class<G> gClass, ResourceLocation resourceLocation, ICapabilityFactory<G> factory) {
-        FACTORY.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory);
+        this.factory.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory);
     }
 
     private <G> void add(Map<ResourceLocation, ICapabilityFactory<G>> factories, Class<?> clz) {
         if (clz == Object.class) return;
-        factories.putAll(cast(FACTORY.getOrDefault(clz, Map.of())));
+        factories.putAll(cast(factory.getOrDefault(clz, Map.of())));
         add(factories, clz.getSuperclass());
     }
 
     protected <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj) {
-        Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(FACTORY.getOrDefault(obj, Map.of())));
+        Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(factory.getOrDefault(obj, Map.of())));
         add(factories, obj.getSuperclass());
         return factories;
     }
