@@ -10,6 +10,7 @@ import net.minecraft.world.entity.animal.Pig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
+import net.minecraftforge.common.capabilities.CapabilityFactoryRegisterEvent;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -33,12 +34,11 @@ public class CapabilityTest extends BaseTestMod {
     public CapabilityTest() {
         IEventBus bus = MinecraftForge.EVENT_BUS;
         bus.addListener(this::onInteract);
+        bus.addListener(this::onRegister);
+    }
 
-        CapabilityFactoryManager.getInstance().register(Pig.class, ResourceLocation.fromNamespaceAndPath("mc", "test"), e -> {
-            return new MyProvider();
-        });
-
-        CapabilityFactoryManager.getInstance().register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), e -> {
+    public void onRegister(CapabilityFactoryRegisterEvent event) {
+        event.register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), e -> {
             return new ICapabilityProvider() {
                 LazyOptional<IFluidHandler> HANDLER = LazyOptional.of(() -> new FluidTank(111));
 
@@ -49,6 +49,9 @@ public class CapabilityTest extends BaseTestMod {
                     return LazyOptional.empty();
                 }
             };
+        });
+        event.register(Pig.class, ResourceLocation.fromNamespaceAndPath("mc", "test"), e -> {
+            return new MyProvider();
         });
     }
 

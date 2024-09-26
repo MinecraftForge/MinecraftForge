@@ -1,14 +1,22 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CapabilityFactoryManager {
+public final class CapabilityFactoryManager {
     private static final CapabilityFactoryManager MANAGER = new CapabilityFactoryManager();
+    private static boolean init = false;
 
-    public static CapabilityFactoryManager getInstance() {
+    public static void init() {
+        if (init) return;
+        init = true;
+        MinecraftForge.EVENT_BUS.post(new CapabilityFactoryRegisterEvent());
+    }
+
+    static CapabilityFactoryManager getInstance() {
         return MANAGER;
     }
 
@@ -16,17 +24,18 @@ public class CapabilityFactoryManager {
 
     private CapabilityFactoryManager() {}
 
-    public <G> void register(Class<G> gClass, ResourceLocation resourceLocation, ICapabilityFactory<G> factory) {
+    <G> void register(Class<G> gClass, ResourceLocation resourceLocation, ICapabilityFactory<G> factory) {
         this.factory.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory);
     }
 
     private <G> void add(Map<ResourceLocation, ICapabilityFactory<G>> factories, Class<?> clz) {
         if (clz == Object.class) return;
-        factories.putAll(cast(factory.getOrDefault(clz, Map.of())));
+        var map = factory.get(clz);
+        if (map != null) factories.putAll(cast(map));
         add(factories, clz.getSuperclass());
     }
 
-    protected <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj) {
+    <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj) {
         Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(factory.getOrDefault(obj, Map.of())));
         add(factories, obj.getSuperclass());
         return factories;

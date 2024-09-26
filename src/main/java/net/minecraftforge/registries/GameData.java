@@ -53,6 +53,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.CreativeModeTabRegistry;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fluids.FluidType;
@@ -273,7 +274,7 @@ public class GameData {
 
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         fireRemapEvent(ImmutableMap.of(), true);
-
+        CapabilityFactoryManager.init();
         LOGGER.debug(REGISTRIES, "All registries frozen");
     }
 
