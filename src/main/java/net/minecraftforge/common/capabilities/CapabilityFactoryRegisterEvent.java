@@ -4,12 +4,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.eventbus.api.Event;
 
-public final class CapabilityFactoryRegisterEvent extends Event {
-    private final CapabilityFactoryManager MANAGER = CapabilityFactoryManager.getInstance();
+import java.util.HashMap;
+import java.util.Map;
+
+public class CapabilityFactoryRegisterEvent extends Event {
+    final Map<Class<?>, Map<ResourceLocation, ICapabilityFactory<?>>> factory = new HashMap<>();
 
     public CapabilityFactoryRegisterEvent() {}
 
     public <G> void register(Class<G> gClass, ResourceLocation resourceLocation, ICapabilityFactory<G> factory) {
-        MANAGER.register(gClass, resourceLocation, factory);
+        if (this.factory.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory) != null) {
+            throw new IllegalStateException("Duplicate CapabilityFactory registered for class %s with id of %s".formatted(gClass, resourceLocation));
+        }
     }
 }

@@ -1,5 +1,6 @@
 package net.minecraftforge.common.capabilities;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -13,7 +14,12 @@ public final class CapabilityFactoryManager {
     public static void init() {
         if (init) return;
         init = true;
-        MinecraftForge.EVENT_BUS.post(new CapabilityFactoryRegisterEvent());
+
+        var event = new CapabilityFactoryRegisterEvent();
+        MinecraftForge.EVENT_BUS.post(event);
+        event.factory.forEach((k, m) -> {
+            MANAGER.factory.put(k, ImmutableMap.copyOf(m));
+        });
     }
 
     static CapabilityFactoryManager getInstance() {
