@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/entity/BlockEntityType.java
++++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
+@@ -20,7 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import org.slf4j.Logger;
+ 
+-public class BlockEntityType<T extends BlockEntity> {
++public class BlockEntityType<T extends BlockEntity> extends net.minecraftforge.common.capabilities.CapabilityFactoryHolder<T> {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     public static final BlockEntityType<FurnaceBlockEntity> FURNACE = register(
+         "furnace", BlockEntityType.Builder.of(FurnaceBlockEntity::new, Blocks.FURNACE)

@@ -33,7 +33,7 @@
          this.setPos(0.0, 0.0, 0.0);
          this.eyeHeight = this.dimensions.eyeHeight();
 +        net.minecraftforge.event.ForgeEventFactory.onEntityConstructing(this);
-+        init((EntityType) p_19870_);
++        this.gatherCapabilities((EntityType<Entity>) p_19870_);
      }
  
      public boolean isColliding(BlockPos p_20040_, BlockState p_20041_) {

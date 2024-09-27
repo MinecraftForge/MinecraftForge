@@ -5,21 +5,22 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.common.capabilities.CapabilityFactoryRegisterEvent;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityFactory;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -38,6 +39,8 @@ public class CapabilityTest extends BaseTestMod {
         IEventBus bus = MinecraftForge.EVENT_BUS;
         bus.addListener(this::onInteract);
         bus.addListener(this::onRegister);
+        bus.addListener(this::onToolTip);
+        bus.addListener(this::tick);
     }
 
     public void onRegister(CapabilityFactoryRegisterEvent event) {
@@ -60,6 +63,24 @@ public class CapabilityTest extends BaseTestMod {
 
         event.register(EntityType.SHEEP, ResourceLocation.fromNamespaceAndPath("mc", "test3"), e -> {
             return new MyProvider();
+        });
+
+        event.register(Items.STICK, ResourceLocation.fromNamespaceAndPath("mc", "test4"), e -> {
+            return new MyProvider();
+        });
+    }
+
+    public void tick(TickEvent.PlayerTickEvent event) {
+        event.player.getItemInHand(InteractionHand.MAIN_HAND).getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> e.receiveEnergy(1, false));
+    }
+
+    public void onToolTip(ItemTooltipEvent event) {
+        var item = event.getItemStack();
+        item.getCapability(ForgeCapabilities.ENERGY).ifPresent(e -> {
+            event.getToolTip()
+                    .add(
+                            Component.literal("Energy: %s / %s".formatted(e.getEnergyStored(), e.getMaxEnergyStored()))
+                    );
         });
     }
 
@@ -97,7 +118,7 @@ public class CapabilityTest extends BaseTestMod {
 
         @Override
         public void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag nbt) {
-            STORAGE.deserializeNBT(registryAccess, nbt.getCompound("energy"));
+            STORAGE.deserializeNBT(registryAccess, nbt.get("energy"));
         }
     }
 

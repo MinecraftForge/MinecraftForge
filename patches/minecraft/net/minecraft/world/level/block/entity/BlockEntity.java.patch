@@ -5,20 +5,15 @@
  import org.slf4j.Logger;
  
 -public abstract class BlockEntity {
-+public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
++public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProviderWithFactory<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
      private static final Logger LOGGER = LogUtils.getLogger();
      private final BlockEntityType<?> type;
      @Nullable
-@@ -38,10 +_,12 @@
-     private DataComponentMap components = DataComponentMap.EMPTY;
- 
-     public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
-+        super(BlockEntity.class);
-         this.type = p_155228_;
+@@ -42,6 +_,7 @@
          this.worldPosition = p_155229_.immutable();
          this.validateBlockState(p_155230_);
          this.blockState = p_155230_;
-+        this.gatherCapabilities();
++        this.gatherCapabilities((BlockEntityType<BlockEntity>) p_155228_);
      }
  
      private void validateBlockState(BlockState p_345558_) {

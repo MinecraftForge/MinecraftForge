@@ -1,13 +1,13 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CapabilityFactoryHolder<T> {
-    private Map<ResourceLocation, ICapabilityFactory<T>> FACTORIES = new HashMap<>();
+public abstract class CapabilityFactoryHolder<T> {
+    private final Map<ResourceLocation, ICapabilityFactory<T>> factories = new HashMap<>();
     private boolean built = false;
 
     protected <G> void build(G obj) {
@@ -15,7 +15,7 @@ public class CapabilityFactoryHolder<T> {
         built = true;
 
         CapabilityFactoryManager.getInstance().build(cast(obj.getClass()), this).forEach((rl, f) -> {
-            FACTORIES.put(rl, cast(f));
+            factories.put(rl, cast(f));
         });
     }
 
@@ -26,9 +26,11 @@ public class CapabilityFactoryHolder<T> {
 
     public Map<ResourceLocation, ICapabilityProvider> getCaps(T obj) {
         Map<ResourceLocation, ICapabilityProvider> providerMap = new HashMap<>();
-        FACTORIES.forEach((rl, f) -> {
+        factories.forEach((rl, f) -> {
             providerMap.put(rl, f.create(obj));
         });
         return providerMap;
     }
+
+    public static class AsField<T> extends CapabilityFactoryHolder<T> {}
 }
