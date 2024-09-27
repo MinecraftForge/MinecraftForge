@@ -20,6 +20,9 @@ public final class CapabilityFactoryManager {
         event.factory.forEach((k, m) -> {
             MANAGER.factory.put(k, ImmutableMap.copyOf(m));
         });
+        event.factory_holder.forEach((k, m) -> {
+            MANAGER.factory_holder.put(k, ImmutableMap.copyOf(m));
+        });
     }
 
     static CapabilityFactoryManager getInstance() {
@@ -27,12 +30,9 @@ public final class CapabilityFactoryManager {
     }
 
     private final Map<Class<?>, Map<ResourceLocation, ICapabilityFactory<?>>> factory = new HashMap<>();
+    private final Map<CapabilityFactoryHolder<?>, Map<ResourceLocation, ICapabilityFactory<?>>> factory_holder = new HashMap<>();
 
     private CapabilityFactoryManager() {}
-
-    <G> void register(Class<G> gClass, ResourceLocation resourceLocation, ICapabilityFactory<G> factory) {
-        this.factory.computeIfAbsent(gClass, k -> new HashMap<>()).put(resourceLocation, factory);
-    }
 
     private <G> void add(Map<ResourceLocation, ICapabilityFactory<G>> factories, Class<?> clz) {
         if (clz == Object.class) return;
@@ -41,8 +41,11 @@ public final class CapabilityFactoryManager {
         add(factories, clz.getSuperclass());
     }
 
-    <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj) {
-        Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(factory.getOrDefault(obj, Map.of())));
+    <G> Map<ResourceLocation, ICapabilityFactory<G>> build(Class<G> obj, CapabilityFactoryHolder<G> holder) {
+        Map<ResourceLocation, ICapabilityFactory<G>> factories = new HashMap<>(cast(factory_holder.getOrDefault(holder, Map.of())));
+        var map = factory.get(obj);
+        if (map != null)
+            factories.putAll(cast(map));
         add(factories, obj.getSuperclass());
         return factories;
     }

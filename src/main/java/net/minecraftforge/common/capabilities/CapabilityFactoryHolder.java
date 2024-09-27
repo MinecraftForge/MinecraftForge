@@ -14,7 +14,7 @@ public class CapabilityFactoryHolder<T> {
         if (built) return;
         built = true;
 
-        CapabilityFactoryManager.getInstance().build((obj.getClass())).forEach((rl, f) -> {
+        CapabilityFactoryManager.getInstance().build(cast(obj.getClass()), this).forEach((rl, f) -> {
             FACTORIES.put(rl, cast(f));
         });
     }

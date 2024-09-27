@@ -6,12 +6,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.animal.Sheep;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.common.capabilities.CapabilityFactoryRegisterEvent;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityFactory;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -50,7 +53,12 @@ public class CapabilityTest extends BaseTestMod {
                 }
             };
         });
+
         event.register(Pig.class, ResourceLocation.fromNamespaceAndPath("mc", "test"), e -> {
+            return new MyProvider();
+        });
+
+        event.register(EntityType.SHEEP, ResourceLocation.fromNamespaceAndPath("mc", "test3"), e -> {
             return new MyProvider();
         });
     }
