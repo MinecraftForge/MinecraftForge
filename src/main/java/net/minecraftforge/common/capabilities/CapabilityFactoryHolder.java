@@ -1,35 +1,35 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.chunk.LevelChunk;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class CapabilityFactoryHolder<T> {
-    private final Map<ResourceLocation, ICapabilityFactory<T>> factories = new HashMap<>();
+    public record Result(Map<ResourceLocation, ICapabilityProvider> map, List<Runnable> listeners) {};
+
+    private final Map<ResourceLocation, ICapabilityFactory<T, ?>> factories = new HashMap<>();
     private boolean built = false;
 
     protected <G> void build(G obj) {
         if (built) return;
         built = true;
 
-        CapabilityFactoryManager.getInstance().build(cast(obj.getClass()), this).forEach((rl, f) -> {
-            factories.put(rl, cast(f));
-        });
+        factories.putAll(CapabilityFactoryManager.getInstance().build((Class<T>) obj.getClass(), this));
     }
 
-
-    private <G> G cast(Object o) {
-        return (G) o;
-    }
-
-    public Map<ResourceLocation, ICapabilityProvider> getCaps(T obj) {
+    public Result getCapabilities(T obj) {
         Map<ResourceLocation, ICapabilityProvider> providerMap = new HashMap<>();
+        List<Runnable> runnables = new ArrayList<>();
         factories.forEach((rl, f) -> {
-            providerMap.put(rl, f.create(obj));
+            CapabilityProviderHolder cph = f.create(obj);
+            runnables.add(() -> cph.listener().accept(cph.provider()));
+            providerMap.put(rl, cph.provider());
+
         });
-        return providerMap;
+        return new Result(providerMap, runnables);
     }
 
     public static class AsField<T> extends CapabilityFactoryHolder<T> {}

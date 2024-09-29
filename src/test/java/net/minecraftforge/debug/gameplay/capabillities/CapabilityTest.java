@@ -9,15 +9,19 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityFactoryRegisterEvent;
+import net.minecraftforge.common.capabilities.CapabilityProviderHolder;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityFactory;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -44,30 +48,15 @@ public class CapabilityTest extends BaseTestMod {
     }
 
     public void onRegister(CapabilityFactoryRegisterEvent event) {
-        event.register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), e -> {
-            return new ICapabilityProvider() {
-                LazyOptional<IFluidHandler> HANDLER = LazyOptional.of(() -> new FluidTank(111));
 
-                @Override
-                public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-                    if (cap == ForgeCapabilities.FLUID_HANDLER)
-                        return HANDLER.cast();
-                    return LazyOptional.empty();
-                }
-            };
-        });
+        var cap = new CapabilityProviderHolder<>(
+                new MyProvider(),
+                e -> {}
+        );
 
-        event.register(Pig.class, ResourceLocation.fromNamespaceAndPath("mc", "test"), e -> {
-            return new MyProvider();
-        });
+        event.register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), (ICapabilityFactory<Entity, MyProvider>) obj -> cap);
 
-        event.register(EntityType.SHEEP, ResourceLocation.fromNamespaceAndPath("mc", "test3"), e -> {
-            return new MyProvider();
-        });
 
-        event.register(Items.STICK, ResourceLocation.fromNamespaceAndPath("mc", "test4"), e -> {
-            return new MyProvider();
-        });
     }
 
     public void tick(TickEvent.PlayerTickEvent event) {

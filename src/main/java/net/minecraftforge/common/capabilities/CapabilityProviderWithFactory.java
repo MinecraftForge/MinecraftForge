@@ -3,14 +3,10 @@ package net.minecraftforge.common.capabilities;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.network.NetworkInitialization;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
-
-import java.util.List;
 import java.util.function.Supplier;
 
 public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B> {
@@ -42,9 +38,10 @@ public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>>
     protected void gatherCapabilities(CapabilityFactoryHolder<B> holder) {
         if (capabilities != null) return;
         holder.build(this);
+        var caps = holder.getCapabilities((B) this);
         this.capabilities = new CapabilityDispatcher(
-                holder.getCaps((B) this),
-                List.of() // Maybe not needed?
+                caps.map(),
+                caps.listeners() // Maybe not needed?
         );
         this.initialized = true;
     }

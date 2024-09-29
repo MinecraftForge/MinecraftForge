@@ -1,7 +1,6 @@
 package net.minecraftforge.common.capabilities;
 
-import net.minecraft.resources.ResourceLocation;
-
-public interface ICapabilityFactory<T> {
-    ICapabilityProvider create(T obj);
+@FunctionalInterface
+public interface ICapabilityFactory<T, B extends ICapabilityProvider> {
+    CapabilityProviderHolder<B> create(T obj);
 }
