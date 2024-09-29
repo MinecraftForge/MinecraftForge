@@ -14,6 +14,7 @@ import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -40,7 +42,6 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
@@ -140,6 +141,13 @@ public class ForgeMod {
         return ret;
     }
 
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = deferred(Registries.DATA_COMPONENT_TYPE);
+    public static final RegistryObject<DataComponentType<CustomData>> FORGE_DATA_COMPONENT = DATA_COMPONENTS.register("forge_data", () ->
+                DataComponentType.<CustomData>builder()
+                        .persistent(CustomData.CODEC)
+                        .networkSynchronized(CustomData.STREAM_CODEC)
+                        .build()
+            );
     private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = deferred(Registries.COMMAND_ARGUMENT_TYPE);
     static {
         @SuppressWarnings({ "unchecked", "rawtypes", "unused" })

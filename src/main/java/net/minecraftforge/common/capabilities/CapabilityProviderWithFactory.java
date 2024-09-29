@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.common.capabilities;
 
 import net.minecraft.core.Direction;
@@ -44,7 +49,11 @@ public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>>
                 caps.listeners() // Maybe not needed?
         );
         this.initialized = true;
+        postGather();
     }
+
+    // For when you need to know once its safe to deserialize, useful for items.
+    protected void postGather() {}
 
     protected Supplier<CapabilityFactoryHolder<B>> getLazyCapabilityHolderSupplier() {
         return lazyCapabilityHolderSupplier;
