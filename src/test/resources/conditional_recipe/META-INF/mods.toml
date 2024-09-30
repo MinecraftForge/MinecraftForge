@@ -1,0 +1,6 @@
+[[dependencies.conditional_recipe]]
+    modId="forge"
+    mandatory=true
+    versionRange="[0,]"
+    ordering="AFTER"
+    side="BOTH"

@@ -18,8 +18,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionResult;
@@ -402,5 +404,12 @@ public interface IForgeItemStack {
      */
     default boolean canGrindstoneRepair() {
         return self().getItem().canGrindstoneRepair(self());
+    }
+
+    /**
+     * ItemStack and Slot sensitive version of {@link Item#getItemAttributeModifiers}
+     */
+    default ItemAttributeModifiers getDefaultAttributeModifiers() {
+        return self().getItem().getDefaultAttributeModifiers(self());
     }
 }

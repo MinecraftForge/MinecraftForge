@@ -31,6 +31,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntRBTreeMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -794,7 +795,11 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     //Public for tests
     public Snapshot makeSnapshot() {
         Snapshot ret = new Snapshot();
-        this.ids.forEach((id, value) -> ret.ids.put(getKey(value), id));
+        for (Entry<Integer, V> entry : this.ids.entrySet()) {
+            Integer id = entry.getKey();
+            V value = entry.getValue();
+            ret.ids.put(getKey(value), id.intValue());
+        }
         ret.aliases.putAll(this.aliases);
         ret.blocked.addAll(this.blocked);
         ret.overrides.putAll(getOverrideOwners());
@@ -862,19 +867,19 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             data.put("ids", ids);
 
             ListTag aliases = new ListTag();
-            this.aliases.entrySet().forEach(e -> {
+            this.aliases.forEach((k, v) -> {
                 CompoundTag tag = new CompoundTag();
-                tag.putString("K", e.getKey().toString());
-                tag.putString("V", e.getValue().toString());
+                tag.putString("K", k.toString());
+                tag.putString("V", v.toString());
                 aliases.add(tag);
             });
             data.put("aliases", aliases);
 
             ListTag overrides = new ListTag();
-            this.overrides.entrySet().forEach(e -> {
+            this.overrides.forEach((k, v) -> {
                 CompoundTag tag = new CompoundTag();
-                tag.putString("K", e.getKey().toString());
-                tag.putString("V", e.getValue());
+                tag.putString("K", k.toString());
+                tag.putString("V", v);
                 overrides.add(tag);
             });
             data.put("overrides", overrides);
@@ -891,22 +896,22 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 return ret;
 
             ListTag list = nbt.getList("ids", 10);
-            list.forEach(e -> {
-                CompoundTag comp = (CompoundTag)e;
+            for (Tag tag : list) {
+                CompoundTag comp = (CompoundTag) tag;
                 ret.ids.put(ResourceLocation.parse(comp.getString("K")), comp.getInt("V"));
-            });
+            }
 
             list = nbt.getList("aliases", 10);
-            list.forEach(e -> {
-                CompoundTag comp = (CompoundTag)e;
+            for (Tag tag : list) {
+                CompoundTag comp = (CompoundTag) tag;
                 ret.aliases.put(ResourceLocation.parse(comp.getString("K")), ResourceLocation.parse(comp.getString("V")));
-            });
+            }
 
             list = nbt.getList("overrides", 10);
-            list.forEach(e -> {
-                CompoundTag comp = (CompoundTag)e;
+            for (Tag tag : list) {
+                CompoundTag comp = (CompoundTag) tag;
                 ret.overrides.put(ResourceLocation.parse(comp.getString("K")), comp.getString("V"));
-            });
+            }
 
             int[] blocked = nbt.getIntArray("blocked");
             for (int i : blocked)
@@ -976,20 +981,24 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 }
             } else {
                 // block item missing, warn as requested and block the id
-                if (action == MissingMappingsEvent.Action.DEFAULT) {
-                    V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
-                    if (m == null)
-                        defaulted.add(remap.key);
-                    else
-                        this.add(remap.id, remap.key, m, remap.key.getNamespace());
-                } else if (action == MissingMappingsEvent.Action.IGNORE) {
-                    LOGGER.debug(REGISTRIES,"Ignoring {}", remap.key);
-                    ignored++;
-                } else if (action == MissingMappingsEvent.Action.FAIL) {
-                    LOGGER.debug(REGISTRIES,"Failing {}!", remap.key);
-                    failed.add(remap.key);
-                } else if (action == MissingMappingsEvent.Action.WARN) {
-                    LOGGER.warn(REGISTRIES,"{} may cause world breakage!", remap.key);
+                switch (action) {
+                    case DEFAULT -> {
+                        V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
+                        if (m == null)
+                            defaulted.add(remap.key);
+                        else
+                            this.add(remap.id, remap.key, m, remap.key.getNamespace());
+                    }
+                    case IGNORE -> {
+                        LOGGER.debug(REGISTRIES, "Ignoring {}", remap.key);
+                        ignored++;
+                    }
+                    case FAIL -> {
+                        LOGGER.debug(REGISTRIES, "Failing {}!", remap.key);
+                        failed.add(remap.key);
+                    }
+                    case WARN -> LOGGER.warn(REGISTRIES, "{} may cause world breakage!", remap.key);
+                    case null, default -> {}
                 }
                 this.block(remap.id);
             }

@@ -64,7 +64,7 @@ public class ModValidator {
     }
 
     @NotNull
-    private List<ModFile> validateFiles(final List<ModFile> mods) {
+    private static List<ModFile> validateFiles(final List<ModFile> mods) {
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext();) {
             ModFile modFile = iterator.next();
@@ -106,8 +106,8 @@ public class ModValidator {
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {
         List<EarlyLoadingException.ExceptionData> errorData = new ArrayList<>();
-        for (Iterator<ModFile> iterator = this.candidateMods.iterator(); iterator.hasNext(); ) {
-            final ModFile modFile = iterator.next();
+        for (Iterator<ModFile> iterator = this.candidateMods.iterator(); iterator.hasNext();) {
+            var modFile = iterator.next();
             try {
                 modFile.identifyLanguage();
             } catch (EarlyLoadingException e) {

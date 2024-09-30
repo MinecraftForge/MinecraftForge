@@ -24,7 +24,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLServiceProvider implements ITransformationService {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private Map<String, Object> arguments;
+    private final Map<String, Object> arguments = new HashMap<>();
 
     public FMLServiceProvider() {
         var markers = System.getProperty("forge.logging.markers", "").split(",");
@@ -45,7 +45,6 @@ public class FMLServiceProvider implements ITransformationService {
         FMLConfig.load();
         LOGGER.debug(CORE, "Preparing ModFile");
         environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile::new);
-        arguments = new HashMap<>();
         LOGGER.debug(CORE, "Preparing launch handler");
         FMLLoader.setupLaunchHandler(environment, arguments);
         FMLEnvironment.setupInteropEnvironment(environment);
@@ -66,14 +65,6 @@ public class FMLServiceProvider implements ITransformationService {
     @Override
     public void onLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException {
         FMLLoader.onInitialLoad(environment, otherServices);
-    }
-
-    @Override
-    public void arguments(BiFunction<String, String, OptionSpecBuilder> argumentBuilder) {
-    }
-
-    @Override
-    public void argumentValues(OptionResult option) {
     }
 
     @SuppressWarnings("rawtypes")

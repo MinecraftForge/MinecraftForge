@@ -43,7 +43,7 @@ public abstract class CustomLoaderBuilder<T extends ModelBuilder<T>>
     {
         json.addProperty("loader", loaderId.toString());
 
-        if (visibility.size() > 0)
+        if (!visibility.isEmpty())
         {
             JsonObject visibilityObj = new JsonObject();
 

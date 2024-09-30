@@ -1,0 +1,8 @@
+{
+    "sources": [
+        {
+            "type": "single",
+            "resource": "obj_model_test:pyramid"
+        }
+    ]
+}

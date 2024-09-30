@@ -632,7 +632,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (count > currentPath.size())
                 throw new IllegalArgumentException("Attempted to pop " + count + " elements when we only had: " + currentPath);
             for (int x = 0; x < count; x++)
-                currentPath.remove(currentPath.size() - 1);
+                currentPath.removeLast();
             return this;
         }
 
@@ -644,10 +644,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public ForgeConfigSpec build() {
             context.ensureEmpty();
             Config valueCfg = Config.of(Config.getDefaultMapCreator(true, true), InMemoryFormat.withSupport(ConfigValue.class::isAssignableFrom));
-            values.forEach(v -> valueCfg.set(v.getPath(), v));
+            for (ConfigValue<?> value : values) {
+                valueCfg.set(value.getPath(), value);
+            }
 
             ForgeConfigSpec ret = new ForgeConfigSpec(storage, valueCfg, levelComments, levelTranslationKeys);
-            values.forEach(v -> v.spec = ret);
+            for (ConfigValue<?> v : values) {
+                v.spec = ret;
+            }
             return ret;
         }
 

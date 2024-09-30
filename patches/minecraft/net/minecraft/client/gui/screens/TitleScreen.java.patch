@@ -46,11 +46,11 @@
              }
  
 -            p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
-+            net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brdline, brd) ->
++            net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brd, brdline) ->
 +                    p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
 +            );
 +
-+            net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brdline, brd) ->
++            net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brd, brdline) ->
 +                    p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
 +            );
 +

@@ -61,7 +61,7 @@ public class InterModComms
         }
     }
 
-    private static ConcurrentMap<String, ConcurrentLinkedQueue<IMCMessage>> containerQueues = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ConcurrentLinkedQueue<IMCMessage>> containerQueues = new ConcurrentHashMap<>();
 
     /**
      * Send IMC to remote. Sender will default to the active modcontainer, or minecraft if not.
@@ -115,16 +115,14 @@ public class InterModComms
         return getMessages(modId, s->Boolean.TRUE);
     }
 
-    private static class QueueFilteringSpliterator implements Spliterator<IMCMessage>
-    {
-        private final ConcurrentLinkedQueue<IMCMessage> queue;
-        private final Predicate<String> methodFilter;
-        private final Iterator<IMCMessage> iterator;
+    private record QueueFilteringSpliterator(
+            ConcurrentLinkedQueue<IMCMessage> queue,
+            Predicate<String> methodFilter,
+            Iterator<IMCMessage> iterator
+    ) implements Spliterator<IMCMessage> {
 
         public QueueFilteringSpliterator(final ConcurrentLinkedQueue<IMCMessage> queue, final Predicate<String> methodFilter) {
-            this.queue = queue;
-            this.iterator = queue.iterator();
-            this.methodFilter = methodFilter;
+            this(queue, methodFilter, queue.iterator());
         }
 
         @Override

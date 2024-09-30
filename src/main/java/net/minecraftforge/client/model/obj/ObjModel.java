@@ -150,7 +150,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     if (!Objects.equals(newMat, currentMat))
                     {
                         currentMat = newMat;
-                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.size() == 0)
+                        if (currentMesh != null && currentMesh.mat == null && currentMesh.faces.isEmpty())
                         {
                             currentMesh.mat = currentMat;
                         }
@@ -233,7 +233,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
                     if (!Objects.equals(currentSmoothingGroup, smoothingGroup))
                     {
                         currentSmoothingGroup = smoothingGroup;
-                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.size() == 0)
+                        if (currentMesh != null && currentMesh.smoothingGroup == null && currentMesh.faces.isEmpty())
                         {
                             currentMesh.smoothingGroup = currentSmoothingGroup;
                         }
@@ -406,10 +406,10 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
         {
             int[] index = indices[Math.min(i, indices.length - 1)];
             Vector4f position = new Vector4f(positions.get(index[0]), 1);
-            Vec2 texCoord = index.length >= 2 && texCoords.size() > 0 ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
-            Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && normals.size() > 0 ? normals.get(index[2]) : faceNormal;
+            Vec2 texCoord = index.length >= 2 && !texCoords.isEmpty() ? texCoords.get(index[1]) : DEFAULT_COORDS[i];
+            Vector3f norm0 = !needsNormalRecalculation && index.length >= 3 && !normals.isEmpty() ? normals.get(index[2]) : faceNormal;
             Vector3f normal = norm0;
-            Vector4f color = index.length >= 4 && colors.size() > 0 ? colors.get(index[3]) : COLOR_WHITE;
+            Vector4f color = index.length >= 4 && !colors.isEmpty() ? colors.get(index[3]) : COLOR_WHITE;
             if (hasTransform)
             {
                 normal = new Vector3f(norm0);
@@ -490,7 +490,7 @@ public class ObjModel extends SimpleUnbakedGeometry<ObjModel>
             }
         }
 
-        return Pair.of(quadBaker.getQuad(), cull);
+        return Pair.of(quadBaker.build(), cull);
     }
 
     public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)

@@ -1,15 +1,17 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -83,6 +_,15 @@
+@@ -83,6 +_,17 @@
          OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
          OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
          OptionSpec<String> optionspec15 = optionparser.nonOptions();
 +        optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +        optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
 +        final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
++        OptionSpec<Void> uniqueWorld = null;
 +        boolean gametestEnabled = Boolean.getBoolean("forge.gameTestServer");
 +        if (gametestEnabled) {
 +            spawnPosOpt = optionparser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new net.minecraftforge.gametest.BlockPosValueConverter()).defaultsTo(new net.minecraft.core.BlockPos(0, 60, 0));
++            uniqueWorld = optionparser.accepts("uniqueWorld");
 +        } else {
 +            spawnPosOpt = null;
 +        }
@@ -31,7 +33,7 @@
              Path path = optionset.valueOf(optionspec14);
              if (path != null) {
                  writePidFile(path);
-@@ -105,24 +_,26 @@
+@@ -105,24 +_,29 @@
              Bootstrap.validate();
              Util.startTimerHackThread();
              Path path1 = Paths.get("server.properties");
@@ -58,6 +60,9 @@
              File file1 = new File(optionset.valueOf(optionspec9));
              Services services = Services.create(new YggdrasilAuthenticationService(Proxy.NO_PROXY), file1);
              String s = Optional.ofNullable(optionset.valueOf(optionspec10)).orElse(dedicatedserversettings.getProperties().levelName);
++            // Forge: make each gametest use a timestamped world name
++            if (uniqueWorld != null && optionset.has(uniqueWorld))
++                s = "gametest_world\\" + java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss.SSS").format(java.time.LocalDateTime.now());
 +            if (s == null || s.isEmpty() || new File(file1, s).getAbsolutePath().equals(new File(s).getAbsolutePath())) {
 +                LOGGER.error("Invalid world directory specified, must not be null, empty or the same directory as your universe! " + s);
 +                return;

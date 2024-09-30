@@ -19,26 +19,49 @@ public class ModLoadingContext
 {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    private ModContainer activeContainer;
     private Object languageExtension;
     private ModLoadingStage stage;
 
+    /**
+     * @deprecated Use the context provided by your language loader in your mod's constructor
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public static ModLoadingContext get() {
         return context.get();
     }
 
-    private ModContainer activeContainer;
-
+    /**
+     * @deprecated Going to be moved to ForgeHooks for Internal use.
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public void setActiveContainer(final ModContainer container) {
         this.activeContainer = container;
         this.languageExtension = container == null ? null : container.contextExtension.get();
     }
 
+    /**
+     * Going to be moved to ForgeHooks for Internal use.
+     * @deprecated Override/Use {@link ModLoadingContext#getContainer()}
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public ModContainer getActiveContainer() {
         return activeContainer == null ? ModList.get().getModContainerById("minecraft").orElseThrow(()->new RuntimeException("Where is minecraft???!")) : activeContainer;
     }
 
+    /**
+     * @deprecated Going to be moved to ForgeHooks for Internal use.
+     */
+    @Deprecated(forRemoval = true, since="1.21.1")
     public String getActiveNamespace() {
         return activeContainer == null ? "minecraft" : activeContainer.getNamespace();
+    }
+
+    /**
+     * @return {@link ModLoadingContext#getActiveContainer()} by default.
+     */
+    public ModContainer getContainer() {
+        return getActiveContainer();
     }
 
     /**
@@ -48,7 +71,7 @@ public class ModLoadingContext
      * @param <T> The type signature of the extension operator
      */
     public <T extends Record & IExtensionPoint<T>> void registerExtensionPoint(Class<? extends IExtensionPoint<T>> point, Supplier<T> extension) {
-        getActiveContainer().registerExtensionPoint(point, extension);
+        getContainer().registerExtensionPoint(point, extension);
     }
 
     /**
@@ -57,7 +80,7 @@ public class ModLoadingContext
      * @param displayTest The {@link IExtensionPoint.DisplayTest} to register
      */
     public void registerDisplayTest(IExtensionPoint.DisplayTest displayTest) {
-        getActiveContainer().registerDisplayTest(() -> displayTest);
+        getContainer().registerDisplayTest(() -> displayTest);
     }
 
     /**
@@ -66,7 +89,7 @@ public class ModLoadingContext
      * @param displayTest The {@link Supplier<IExtensionPoint.DisplayTest>} to register
      */
     public void registerDisplayTest(Supplier<IExtensionPoint.DisplayTest> displayTest) {
-        getActiveContainer().registerDisplayTest(displayTest);
+        getContainer().registerDisplayTest(displayTest);
     }
 
     /**
@@ -76,7 +99,7 @@ public class ModLoadingContext
      * @see IExtensionPoint.DisplayTest#DisplayTest(String, BiPredicate)
      */
     public void registerDisplayTest(String version, BiPredicate<String, Boolean> remoteVersionTest) {
-        getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
+        getContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(version, remoteVersionTest));
     }
 
     /**
@@ -86,29 +109,29 @@ public class ModLoadingContext
      * @see IExtensionPoint.DisplayTest#DisplayTest(Supplier, BiPredicate)
      */
     public void registerDisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) {
-        getActiveContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
+        getContainer().registerDisplayTest(new IExtensionPoint.DisplayTest(suppliedVersion, remoteVersionTest));
     }
 
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec) {
         if (spec.isEmpty())
         {
             // This handles the case where a mod tries to register a config, without any options configured inside it.
-            LOGGER.debug("Attempted to register an empty config for type {} on mod {}", type, getActiveContainer().getModId());
+            LOGGER.debug("Attempted to register an empty config for type {} on mod {}", type, getContainer().getModId());
             return;
         }
 
-        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
+        getContainer().addConfig(new ModConfig(type, spec, getContainer()));
     }
 
     public void registerConfig(ModConfig.Type type, IConfigSpec<?> spec, String fileName) {
         if (spec.isEmpty())
         {
             // This handles the case where a mod tries to register a config, without any options configured inside it.
-            LOGGER.debug("Attempted to register an empty config for type {} on mod {} using file name {}", type, getActiveContainer().getModId(), fileName);
+            LOGGER.debug("Attempted to register an empty config for type {} on mod {} using file name {}", type, getContainer().getModId(), fileName);
             return;
         }
 
-        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
+        getContainer().addConfig(new ModConfig(type, spec, getContainer(), fileName));
     }
 
 

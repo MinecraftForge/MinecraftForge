@@ -38,6 +38,8 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -56,7 +58,8 @@ public final class CriterionTest extends BaseTestMod {
     public static final String TEST_CRITERION_ID = "break_glass_with_fish";
     public static final ResourceLocation TEST_ADVANCEMENT_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, TEST_CRITERION_ID);
 
-    public CriterionTest() {
+    public CriterionTest(FMLJavaModLoadingContext context) {
+        super(context);
         MinecraftForge.EVENT_BUS.addListener(this::onBlockBreak);
     }
 

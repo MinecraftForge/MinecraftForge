@@ -45,7 +45,6 @@ public class ModFile implements IModFile {
     private Throwable scanError;
     private final SecureJar jar;
     private final Type modFileType;
-    private final Manifest     manifest;
     private final IModProvider provider;
     private       IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
@@ -65,7 +64,7 @@ public class ModFile implements IModFile {
         this.jar = jar;
         this.parser = parser;
 
-        manifest = this.jar.moduleDataProvider().getManifest();
+        var manifest = this.jar.moduleDataProvider().getManifest();
         modFileType = Type.valueOf(type);
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
         this.modFileInfo = ModFileParser.readModList(this, this.parser);

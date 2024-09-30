@@ -13,35 +13,31 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manager for {@link ITextureAtlasSpriteLoader} instances.
  * <p>
  * Provides a lookup.
  */
-public final class TextureAtlasSpriteLoaderManager
-{
-    private static ImmutableMap<ResourceLocation, ITextureAtlasSpriteLoader> LOADERS;
+public final class TextureAtlasSpriteLoaderManager {
+    private static Map<ResourceLocation, ITextureAtlasSpriteLoader> LOADERS;
 
     /**
      * Finds the loader with the given name, or null if none is registered.
      */
     @Nullable
-    public static ITextureAtlasSpriteLoader get(ResourceLocation name)
-    {
+    public static ITextureAtlasSpriteLoader get(ResourceLocation name) {
         return LOADERS.get(name);
     }
 
     @ApiStatus.Internal
-    public static void init()
-    {
+    public static void init() {
         var loaders = new HashMap<ResourceLocation, ITextureAtlasSpriteLoader>();
         var event = new RegisterTextureAtlasSpriteLoadersEvent(loaders);
         ModLoader.get().postEventWrapContainerInModOrder(event);
         LOADERS = ImmutableMap.copyOf(loaders);
     }
 
-    private TextureAtlasSpriteLoaderManager()
-    {
-    }
+    private TextureAtlasSpriteLoaderManager() {}
 }

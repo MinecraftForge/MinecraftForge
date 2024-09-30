@@ -9,7 +9,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
+sealed abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
     private ForgeDevLaunchHandler(LaunchType type) {
         super(type, "forge_dev_");
     }
@@ -33,25 +33,25 @@ abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
         return List.of(filtered);
     }
 
-    public static class Client extends ForgeDevLaunchHandler {
+    public static final class Client extends ForgeDevLaunchHandler {
         public Client() {
             super(CLIENT);
         }
     }
 
-    public static class Data extends ForgeDevLaunchHandler {
+    public static final class Data extends ForgeDevLaunchHandler {
         public Data() {
             super(DATA);
         }
     }
 
-    public static class Server extends ForgeDevLaunchHandler {
+    public static final class Server extends ForgeDevLaunchHandler {
         public Server() {
             super(SERVER);
         }
     }
 
-    public static class ServerGameTest extends ForgeDevLaunchHandler {
+    public static final class ServerGameTest extends ForgeDevLaunchHandler {
         public ServerGameTest() {
             super(SERVER_GAMETEST);
         }

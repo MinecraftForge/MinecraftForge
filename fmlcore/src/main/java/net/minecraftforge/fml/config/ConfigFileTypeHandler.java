@@ -25,7 +25,7 @@ import static net.minecraftforge.fml.config.ConfigTracker.CONFIG;
 
 public class ConfigFileTypeHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    static ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
+    static final ConfigFileTypeHandler TOML = new ConfigFileTypeHandler();
     private static final Path defaultConfigPath = FMLPaths.GAMEDIR.get().resolve(FMLConfig.getConfigValue(FMLConfig.ConfigValue.DEFAULT_CONFIG_PATH));
 
     public Function<ModConfig, CommentedFileConfig> reader(Path configBasePath) {
@@ -62,7 +62,7 @@ public class ConfigFileTypeHandler {
         }
     }
 
-    private boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
+    private static boolean setupConfigFile(final ModConfig modConfig, final Path file, final ConfigFormat<?> conf) throws IOException {
         if (!Files.isDirectory(file.getParent())) {
             Files.createDirectories(file.getParent());
         }
@@ -109,17 +109,11 @@ public class ConfigFileTypeHandler {
         }
     }
 
-    private static class ConfigWatcher implements Runnable {
-        private final ModConfig modConfig;
-        private final CommentedFileConfig commentedFileConfig;
-        private final ClassLoader realClassLoader;
-
-        ConfigWatcher(final ModConfig modConfig, final CommentedFileConfig commentedFileConfig, final ClassLoader classLoader) {
-            this.modConfig = modConfig;
-            this.commentedFileConfig = commentedFileConfig;
-            this.realClassLoader = classLoader;
-        }
-
+    private record ConfigWatcher(
+            ModConfig modConfig,
+            CommentedFileConfig commentedFileConfig,
+            ClassLoader realClassLoader
+    ) implements Runnable {
         @Override
         public void run() {
             // Force the regular classloader onto the special thread

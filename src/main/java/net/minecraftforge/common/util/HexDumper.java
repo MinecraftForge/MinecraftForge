@@ -46,7 +46,7 @@ public class HexDumper {
         private static final String HEX = "0123456789ABCDEF";
         private final int marked;
         private final StringBuilder buf;
-        private char[] ascii = new char[16];
+        private final char[] ascii = new char[16];
         private int index = 0;
 
         private Instance(int marked, int size) {

@@ -11,21 +11,23 @@
      private CompletableFuture<SearchTree<RecipeCollection>> recipeSearch = CompletableFuture.completedFuture(SearchTree.empty());
      private final Map<SessionSearchTrees.Key, Runnable> reloaders = new IdentityHashMap<>();
  
-@@ -82,44 +_,50 @@
+@@ -82,44 +_,52 @@
      }
  
      public void updateCreativeTags(List<ItemStack> p_344581_) {
-+        for (var name : net.minecraftforge.client.CreativeModeTabSearchRegistry.getTagSearchKeys().values())
++        for (var entry : net.minecraftforge.client.CreativeModeTabSearchRegistry.getTagSearchKeys().entrySet())
          this.register(
 -            CREATIVE_TAGS,
-+            name,
++            entry.getValue(),
              () -> {
 -                CompletableFuture<?> completablefuture = this.creativeByTagSearch;
 -                this.creativeByTagSearch = CompletableFuture.supplyAsync(
-+                CompletableFuture<?> completablefuture = this.creativeSearch.getOrDefault(name, EMPTY);
-+                this.creativeSearch.put(name, CompletableFuture.supplyAsync(
-                     () -> new IdSearchTree<>(p_342206_ -> p_342206_.getTags().map(TagKey::location), p_344581_), Util.backgroundExecutor()
+-                    () -> new IdSearchTree<>(p_342206_ -> p_342206_.getTags().map(TagKey::location), p_344581_), Util.backgroundExecutor()
 -                );
++                var items = entry.getKey() == net.minecraft.world.item.CreativeModeTabs.searchTab() ? p_344581_ : List.copyOf(entry.getKey().getDisplayItems());
++                CompletableFuture<?> completablefuture = this.creativeSearch.getOrDefault(entry.getValue(), EMPTY);
++                this.creativeSearch.put(entry.getValue(), CompletableFuture.supplyAsync(
++                    () -> new IdSearchTree<>(p_342206_ -> p_342206_.getTags().map(TagKey::location), items), Util.backgroundExecutor()
 +                ));
                  completablefuture.cancel(true);
              }
@@ -38,21 +40,23 @@
      }
  
      public void updateCreativeTooltips(HolderLookup.Provider p_343364_, List<ItemStack> p_342500_) {
-+        for (var name : net.minecraftforge.client.CreativeModeTabSearchRegistry.getNameSearchKeys().values())
++        for (var entry : net.minecraftforge.client.CreativeModeTabSearchRegistry.getNameSearchKeys().entrySet())
          this.register(
 -            CREATIVE_NAMES,
-+            name,
++            entry.getValue(),
              () -> {
++                var items = entry.getKey() == net.minecraft.world.item.CreativeModeTabs.searchTab() ? p_342500_ : List.copyOf(entry.getKey().getDisplayItems());
                  Item.TooltipContext item$tooltipcontext = Item.TooltipContext.of(p_343364_);
                  TooltipFlag tooltipflag = TooltipFlag.Default.NORMAL.asCreative();
 -                CompletableFuture<?> completablefuture = this.creativeByNameSearch;
 -                this.creativeByNameSearch = CompletableFuture.supplyAsync(
-+                CompletableFuture<?> completablefuture = this.creativeSearch.getOrDefault(name, EMPTY);
-+                this.creativeSearch.put(name, CompletableFuture.supplyAsync(
++                CompletableFuture<?> completablefuture = this.creativeSearch.getOrDefault(entry.getValue(), EMPTY);
++                this.creativeSearch.put(entry.getValue(), CompletableFuture.supplyAsync(
                      () -> new FullTextSearchTree<>(
                              p_345254_ -> getTooltipLines(Stream.of(p_345254_), item$tooltipcontext, tooltipflag),
                              p_344415_ -> p_344415_.getItemHolder().unwrapKey().map(ResourceKey::location).stream(),
-                             p_342500_
+-                            p_342500_
++                            items
                          ),
                      Util.backgroundExecutor()
 -                );

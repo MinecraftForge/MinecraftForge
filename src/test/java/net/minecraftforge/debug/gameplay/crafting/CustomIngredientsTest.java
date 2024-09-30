@@ -8,6 +8,8 @@ package net.minecraftforge.debug.gameplay.crafting;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.HolderLookup;
@@ -55,6 +57,10 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     private static final String TEST_DISPLAY_NAME = "{\"text\":\"Test Item\"}";
     private static final TagKey<Item> LEFT = tag("left");
     private static final TagKey<Item> RIGHT = tag("right");
+
+    public CustomIngredientsTest(FMLJavaModLoadingContext context) {
+        super(context);
+    }
 
     @SubscribeEvent
     public void gatherData(GatherDataEvent event) {

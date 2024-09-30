@@ -23,7 +23,7 @@ public final class OptionalMod<T>
         return new OptionalMod<>(modId);
     }
 
-    private static OptionalMod<?> EMPTY = new OptionalMod<>(true);
+    private static final OptionalMod<?> EMPTY = new OptionalMod<>(true);
     private static <T> OptionalMod<T> empty() {
         @SuppressWarnings("unchecked")
         OptionalMod<T> t = (OptionalMod<T>) EMPTY;
@@ -213,8 +213,8 @@ public final class OptionalMod<T>
     public boolean equals(Object obj)
     {
         if (this == obj) return true;
-        if (obj instanceof OptionalMod) {
-            return Objects.equals(((OptionalMod)obj).modId, modId);
+        if (obj instanceof OptionalMod<?> optionalMod) {
+            return Objects.equals(optionalMod.modId, modId);
         }
         return false;
     }

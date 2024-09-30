@@ -24,7 +24,6 @@ public class ModConfig
     private final ModContainer container;
     private final ConfigFileTypeHandler configHandler;
     private CommentedConfig configData;
-    private Callable<Void> saveHandler;
 
     public ModConfig(final Type type, final IConfigSpec<?> spec, final ModContainer container, final String fileName) {
         this.type = type;

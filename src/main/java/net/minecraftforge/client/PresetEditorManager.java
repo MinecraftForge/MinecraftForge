@@ -7,6 +7,7 @@ package net.minecraftforge.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,12 @@ public final class PresetEditorManager
         Map<ResourceKey<WorldPreset>, PresetEditor> gatheredEditors = new HashMap<>();
         // Vanilla's map uses Optional<ResourceKey>s as its keys.
         // As far as we can tell there's no good reason for this, so we'll just use regular keys.
-        PresetEditor.EDITORS.forEach((k, v) -> k.ifPresent(key -> gatheredEditors.put(key, v)));
+        for (var entry : PresetEditor.EDITORS.entrySet()) {
+            var key = entry.getKey().orElse(null);
+            if (key != null) {
+                gatheredEditors.put(key, entry.getValue());
+            }
+        }
 
         // Gather mods' entries
         RegisterPresetEditorsEvent event = new RegisterPresetEditorsEvent(gatheredEditors);

@@ -34,7 +34,7 @@
  
      public void handleSystemMessage(Component p_240522_, boolean p_240642_) {
          if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(this.guessChatUUID(p_240522_))) {
-+            p_240522_ = net.minecraftforge.client.ForgeHooksClient.onClientSystemChat(p_240522_, p_240642_, this.minecraft.level.registryAccess());
++            p_240522_ = net.minecraftforge.client.ForgeHooksClient.onClientSystemMessage(p_240522_, p_240642_);
 +            if (p_240522_ == null) return;
              if (p_240642_) {
                  this.minecraft.gui.setOverlayMessage(p_240522_, false);

@@ -17,11 +17,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +34,6 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public class FMLLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static AccessTransformerService accessTransformer;
-    private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Dist dist;
@@ -62,7 +59,7 @@ public class FMLLoader {
         /*eventBus       =*/ getPlugin(env, "eventbus",           "1.0", "EventBus");
         runtimeDistCleaner = getPlugin(env, "runtimedistcleaner", "1.0", "RuntimeDistCleaner");
         coreModProvider = getSingleService(ICoreModProvider.class, "CoreMod");
-        LOGGER.debug(CORE,"FML found CoreMod version : {}", JarVersionLookupHandler.getInfo(coreModProvider.getClass()).impl().version().orElse("MISSING"));
+        LOGGER.debug(CORE, "FML found CoreMod version : {}", JarVersionLookupHandler.getInfo(coreModProvider.getClass()).impl().version().orElse("MISSING"));
         checkPackage(Environment.class, "2.0", "ForgeSPI");
 
         try {
@@ -74,14 +71,15 @@ public class FMLLoader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T getPlugin(IEnvironment env, String id, String version, String name) throws IncompatibleEnvironmentException {
-        @SuppressWarnings("unchecked")
-        var plugin = (T)env.findLaunchPlugin(id).orElseThrow(() -> {
+        var plugin = env.findLaunchPlugin(id).orElse(null);
+        if (plugin == null) {
             LOGGER.error(CORE, "{} library is missing, we need this to run", name);
-            return new IncompatibleEnvironmentException("Missing " + name + ", cannot run");
-        });
+            throw new IncompatibleEnvironmentException("Missing " + name + ", cannot run");
+        }
         checkPackage(plugin.getClass(), version, name);
-        return plugin;
+        return (T) plugin;
     }
 
     private static void checkPackage(Class<?> cls, String version, String name) throws IncompatibleEnvironmentException {
@@ -137,20 +135,20 @@ public class FMLLoader {
         }
         commonLaunchHandler = (CommonLaunchHandler)launchHandler.get();
         launchHandlerName = launchHandler.get().name();
-        gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
+        gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Path.of(".").toAbsolutePath());
 
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         production = commonLaunchHandler.isProduction();
 
-        accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
+        accessTransformer.getExtension().accept(Map.entry(naming, "srg"));
 
         runtimeDistCleaner.getExtension().accept(dist);
     }
 
     public static List<ITransformationService.Resource> beginModScan(final Map<String,?> arguments) {
         LOGGER.debug(SCAN,"Scanning for Mod Locators");
-        modDiscoverer = new ModDiscoverer(arguments);
+        var modDiscoverer = new ModDiscoverer(arguments);
         modValidator = modDiscoverer.discoverMods();
         var pluginResources = modValidator.getPluginResources();
         return List.of(pluginResources);
@@ -170,10 +168,6 @@ public class FMLLoader {
 
     public static LanguageLoadingProvider getLanguageLoadingProvider() {
         return languageLoadingProvider;
-    }
-
-    static ModDiscoverer getModDiscoverer() {
-        return modDiscoverer;
     }
 
     public static CommonLaunchHandler getLaunchHandler() {

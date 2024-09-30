@@ -26,7 +26,7 @@ public final class RegistryObject<T> implements Supplier<T> {
     @Nullable
     private final ResourceLocation name;
     @Nullable
-    private ResourceKey<T> key;
+    private final ResourceKey<T> key;
     private final boolean optionalRegistry;
     @Nullable
     private T value;
@@ -189,7 +189,8 @@ public final class RegistryObject<T> implements Supplier<T> {
     @Override
     public T get() {
         T ret = this.value;
-        Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);
+        if (ret == null)
+            throw new NullPointerException("Registry Object not present: " + this.name);
         return ret;
     }
 

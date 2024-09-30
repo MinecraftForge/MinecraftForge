@@ -7,6 +7,7 @@ package net.minecraftforge.common.crafting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -61,10 +62,10 @@ public class ConditionalRecipe {
     }
 
     public static class Builder {
-        private List<InnerRecipe> recipes = new ArrayList<>();
-        private List<InnerAdvancement> advancements = new ArrayList<>();
+        private final List<InnerRecipe> recipes = new ArrayList<>();
+        private final List<InnerAdvancement> advancements = new ArrayList<>();
 
-        private RecipeOutput bouncer = new RecipeOutput() {
+        private final RecipeOutput bouncer = new RecipeOutput() {
             @Override
             public void accept(ResourceLocation id, Recipe<?> value, @Nullable AdvancementHolder advancement) {
                 recipe(id, value, advancement);
@@ -221,7 +222,7 @@ public class ConditionalRecipe {
                 var count = new Holder<Integer>();
                 count.value = -1;
                 var ret = stream.map(entry -> accept(context, ops, count, entry))
-                    .filter(entry -> entry != null)
+                    .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
 
@@ -273,7 +274,7 @@ public class ConditionalRecipe {
         }
     };
 
-    private static class Holder<T> {
+    private static final class Holder<T> {
         private T value;
     }
 }

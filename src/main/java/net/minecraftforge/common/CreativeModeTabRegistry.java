@@ -109,7 +109,7 @@ public final class CreativeModeTabRegistry {
             @Override
             protected void apply(@NotNull JsonObject data, @NotNull ResourceManager resourceManager, ProfilerFiller p) {
                 try {
-                    if (data.size() > 0) {
+                    if (!data.isEmpty()) {
                         JsonArray order = GsonHelper.getAsJsonArray(data, "order");
                         List<CreativeModeTab> customOrder = new ArrayList<>();
                         for (JsonElement entry : order) {
@@ -183,8 +183,9 @@ public final class CreativeModeTabRegistry {
         DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.OP_BLOCKS));
         DEFAULT_TABS.add(BuiltInRegistries.CREATIVE_MODE_TAB.get(CreativeModeTabs.INVENTORY));
 
-        final List<Holder<CreativeModeTab>> indexed = new ArrayList<>();
-        BuiltInRegistries.CREATIVE_MODE_TAB.holders().filter(c -> !DEFAULT_TABS.contains(c.get())).forEach(indexed::add);
+        final List<Holder<CreativeModeTab>> indexed = BuiltInRegistries.CREATIVE_MODE_TAB.holders()
+                .filter(c -> !DEFAULT_TABS.contains(c.get()))
+                .collect(Collectors.toList());
         int vanillaTabs = 10;
 
         for (int i = 0; i < vanillaTabs; i++) { // Vanilla ordering

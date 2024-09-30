@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class LevelCapabilityData extends SavedData {
     public static final String ID = "capabilities";
 
-    private INBTSerializable<CompoundTag> serializable;
+    private final INBTSerializable<CompoundTag> serializable;
     private CompoundTag capNBT = null;
 
     public LevelCapabilityData(@Nullable INBTSerializable<CompoundTag> serializable) {

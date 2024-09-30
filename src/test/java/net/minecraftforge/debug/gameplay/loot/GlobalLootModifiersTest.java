@@ -60,6 +60,8 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 import net.minecraftforge.fml.common.Mod;
@@ -105,16 +107,20 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties()));
 
-    public GlobalLootModifiersTest() {
-        testItem(lookup -> getTestItem(lookup.lookup(Registries.ENCHANTMENT).get()));
+    public GlobalLootModifiersTest(FMLJavaModLoadingContext context) {
+        super(context);
+        testItem(lookup -> getSmelterAxe(lookup.lookup(Registries.ENCHANTMENT).get(), true));
     }
 
-    private static ItemStack getTestItem(HolderLookup<Enchantment> lookup) {
-        var smelt = new ItemStack(Items.IRON_AXE);
-        var enchants = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(smelt));
+    private static ItemStack getSmelterAxe(HolderLookup<Enchantment> lookup, boolean enchanted) {
+        var item = new ItemStack(Items.IRON_AXE);
+        if (!enchanted)
+            return item;
+
+        var enchants = new ItemEnchantments.Mutable(EnchantmentHelper.getEnchantmentsForCrafting(item));
         enchants.set(lookup.getOrThrow(SMELT), 1);
-        smelt.set(DataComponents.ENCHANTMENTS, enchants.toImmutable());
-        return smelt;
+        item.set(DataComponents.ENCHANTMENTS, enchants.toImmutable());
+        return item;
     }
 
     @SubscribeEvent
@@ -128,24 +134,36 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         event.getGenerator().addProvider(event.includeServer(), new LootProvider(out, lookup));
     }
 
+    // Tests the Enchantment condition, as well as the ability to completely override the returned values.
     @GameTest(template = "forge:empty3x3x3")
-    public static void test_smelting_modifier(GameTestHelper helper) {
-        var center = new BlockPos(1, 1, 1);
-        helper.setBlock(center, Blocks.OAK_LOG);
-
-        var smelt = getTestItem(helper.getLevel().holderLookup(Registries.ENCHANTMENT));
-
+    public static void smellting(GameTestHelper helper) {
         var player = helper.makeMockServerPlayer();
-        player.setItemSlot(EquipmentSlot.MAINHAND, smelt);
-        player.gameMode.destroyBlock(helper.absolutePos(center));
+        var center = new BlockPos(1, 1, 1);
+        var enchants = helper.getLevel().holderLookup(Registries.ENCHANTMENT);
+        var smelt = getSmelterAxe(enchants, true);
+        var normal = getSmelterAxe(enchants, false);
 
+        // Harvesting with normal axe should just dorp log
+        player.setItemSlot(EquipmentSlot.MAINHAND, normal);
+        helper.setBlock(center, Blocks.OAK_LOG);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+        helper.assertItemEntityPresent(Items.OAK_LOG, center, 1.0);
+
+        //Reset
+        helper.killAllEntities();
+
+        // Test smelting enchantment, should result in charcoal
+        player.setItemSlot(EquipmentSlot.MAINHAND, smelt);
+        helper.setBlock(center, Blocks.OAK_LOG);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
         helper.assertItemEntityPresent(Items.CHARCOAL, center, 1.0);
 
         helper.succeed();
     }
 
+    // Tests the table name condition by duplicating the drops for our test block, but not for anything else.
     @GameTest(template = "forge:empty3x3x3")
-    public static void table_name_condition(GameTestHelper helper) {
+    public static void condition_table_name(GameTestHelper helper) {
         var center = new BlockPos(1, 1, 1);
         var player = helper.makeMockServerPlayer();
 
@@ -162,6 +180,29 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         helper.succeed();
     }
 
+
+    @GameTest(template = "forge:empty3x3x3")
+    public static void silk_reentrant(GameTestHelper helper) {
+        var center = new BlockPos(1, 1, 1);
+        var player = helper.makeMockServerPlayer();
+        var bamboo = new ItemStack(Items.BAMBOO);
+        var normal = new ItemStack(Items.IRON_AXE);
+
+        // Should drop nothing
+        helper.setBlock(center, Blocks.GLASS);
+        player.setItemSlot(EquipmentSlot.MAINHAND, normal);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+        helper.assertItemEntityNotPresent(Items.GLASS, center, 1.0);
+
+        // Should drop the glass
+        helper.setBlock(center, Blocks.GLASS);
+        player.setItemSlot(EquipmentSlot.MAINHAND, bamboo);
+        player.gameMode.destroyBlock(helper.absolutePos(center));
+        helper.assertItemEntityPresent(Items.GLASS, center, 1.0);
+
+        helper.succeed();
+    }
+
     private static class ModifierProvider extends GlobalLootModifierProvider {
         public ModifierProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, modid, registries);
@@ -171,6 +212,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
         protected void start(HolderLookup.Provider registries) {
             var smelt = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(SMELT);
 
+            // Tested vis breaking a log and checking if we get charcoal
             add("smelting", new SmeltingEnchantmentModifier(
                 new LootItemCondition[]{
                     MatchTool.toolMatches(
@@ -185,6 +227,8 @@ public class GlobalLootModifiersTest extends BaseTestMod {
                 })
             );
 
+
+            // This has no game test because it relies on random number generation and I can't be bothered to try and force that right now.
             add("wheat_harvest", new WheatSeedsConverterModifier(
                 new LootItemCondition[] {
                     MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS)).build(),
@@ -193,13 +237,14 @@ public class GlobalLootModifiersTest extends BaseTestMod {
                 3, Items.WHEAT_SEEDS, Items.WHEAT)
             );
 
+            // Tested by verifying that we drop 2 test blocks when broken instead of the default 1
             add("multiply_loot", new MultiplyDropsModifier(
                 new LootItemCondition[] {
                     LootTableIdCondition.builder(TEST_BLOCK.get().getLootTable().location()).build()
                 }, 2)
             );
 
-            // Bamboo silk harvests everything
+            // Bamboo silk harvests everything, Tested by breaking glass and seeing if we get glass back.
             add("bamboo_silk", new SilkTouchTestModifier(
                 new LootItemCondition[] {
                     MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.BAMBOO)).build()
@@ -275,7 +320,6 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
     /**
      * When harvesting blocks with bamboo, this modifier is invoked, via the silk_touch_bamboo loot_modifier json
-     *
      */
     private static class SilkTouchTestModifier extends LootModifier {
         public static final Supplier<MapCodec<SilkTouchTestModifier>> CODEC = Suppliers.memoize(() ->
@@ -317,7 +361,6 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     /**
      * When harvesting wheat with shears, this modifier is invoked via the wheat_harvest loot_modifier json<br/>
      * This modifier checks how many seeds were harvested and turns X seeds into Y wheat (3:1)
-     *
      */
     private static class WheatSeedsConverterModifier extends LootModifier {
         public static final Supplier<MapCodec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).and(

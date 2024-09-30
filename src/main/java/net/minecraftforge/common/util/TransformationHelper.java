@@ -302,19 +302,12 @@ public final class TransformationHelper
             Quaternionf ret;
             try
             {
-                if (entry.getKey().equals("x"))
-                {
-                    ret = Axis.XP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
-                }
-                else if (entry.getKey().equals("y"))
-                {
-                    ret = Axis.YP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
-                }
-                else if (entry.getKey().equals("z"))
-                {
-                    ret = Axis.ZP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
-                }
-                else throw new JsonParseException("Axis rotation: expected single axis key, got: " + entry.getKey());
+                ret = switch (entry.getKey()) {
+                    case "x" -> Axis.XP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
+                    case "y" -> Axis.YP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
+                    case "z" -> Axis.ZP.rotationDegrees(entry.getValue().getAsNumber().floatValue());
+                    default -> throw new JsonParseException("Axis rotation: expected single axis key, got: " + entry.getKey());
+                };
             }
             catch(ClassCastException ex)
             {

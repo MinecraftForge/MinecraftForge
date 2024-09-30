@@ -12,10 +12,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -32,12 +32,14 @@ public class CreativeModeTabTest {
 
     private static final ResourceKey<CreativeModeTab> LOGS = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "logs"));
     private static final ResourceKey<CreativeModeTab> STONE = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "stone"));
+    private static final ResourceKey<CreativeModeTab> COLORS = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "colors"));
+    private static final ResourceKey<CreativeModeTab> SEARCH = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MOD_ID, "search"));
 
-    public CreativeModeTabTest() {
+    public CreativeModeTabTest(FMLJavaModLoadingContext context) {
         if (!ENABLED)
             return;
 
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus modEventBus = context.getModEventBus();
 
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabRegister);
         modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
@@ -58,7 +60,8 @@ public class CreativeModeTabTest {
                 })
                 .build());
 
-            helper.register(STONE, CreativeModeTab.builder().icon(() -> new ItemStack(Blocks.STONE))
+            helper.register(STONE, CreativeModeTab.builder()
+                .icon(() -> new ItemStack(Blocks.STONE))
                 .title(Component.literal("Stone"))
                 .withLabelColor(0x0000FF)
                 .displayItems((params, output) -> {
@@ -67,16 +70,29 @@ public class CreativeModeTabTest {
                     output.accept(new ItemStack(Blocks.DIORITE));
                     output.accept(new ItemStack(Blocks.ANDESITE));
                 })
-                .withTabsAfter(CreativeModeTabs.BUILDING_BLOCKS)
+                .withTabsBefore(LOGS)
                 .build());
 
-            helper.register(ResourceLocation.fromNamespaceAndPath(MOD_ID, "colors"), CreativeModeTab.builder().title(Component.literal("Colors"))
+            helper.register(COLORS, CreativeModeTab.builder()
+                .title(Component.literal("Colors"))
                 .displayItems((params, output) -> {
                     for (DyeColor color : DyeColor.values())
                         output.accept(DyeItem.byColor(color));
                 })
                 .withTabFactory(CreativeModeColorTab::new)
-                .withTabsBefore(CreativeModeTabs.COLORED_BLOCKS)
+                .withTabsBefore(STONE)
+                .build()
+            );
+
+            helper.register(SEARCH, CreativeModeTab.builder()
+                .title(Component.literal("Search"))
+                .icon(() -> new ItemStack(Items.BOOKSHELF))
+                .displayItems((params, output) -> {
+                    for (DyeColor color : DyeColor.values())
+                        output.accept(DyeItem.byColor(color));
+                })
+                .withTabsBefore(COLORS)
+                .withSearchBar()
                 .build()
             );
 

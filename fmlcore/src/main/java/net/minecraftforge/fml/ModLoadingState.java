@@ -39,7 +39,10 @@ public record ModLoadingState(String name, String previous,
                                                       final ProgressMeter progressBar,
                                                       final Function<Executor, CompletableFuture<Void>> preSyncTask,
                                                       final Function<Executor, CompletableFuture<Void>> postSyncTask) {
-        return transition.map(t -> t.build(name, syncExecutor, parallelExecutor, progressBar, preSyncTask, postSyncTask));
+        var transition = this.transition.orElse(null);
+        return transition == null
+                ? Optional.empty()
+                : Optional.ofNullable(transition.build(name, syncExecutor, parallelExecutor, progressBar, preSyncTask, postSyncTask));
     }
 
     /**

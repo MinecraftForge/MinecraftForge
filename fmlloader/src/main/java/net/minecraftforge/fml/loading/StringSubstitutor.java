@@ -14,16 +14,17 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 
 @SuppressWarnings("deprecation")
 public class StringSubstitutor {
+    private static final Map<String, String> GLOBALS = Map.of(
+        "mcVersion", FMLLoader.versionInfo().mcVersion(),
+        "forgeVersion", FMLLoader.versionInfo().forgeVersion()
+    );
+
     public static String replace(final String in, final ModFile file) {
         return new StrSubstitutor(getStringLookup(file)).replace(in);
     }
 
     private static StrLookup<String> getStringLookup(final ModFile file) {
-        var globals = Map.of(
-            "mcVersion", FMLLoader.versionInfo().mcVersion(),
-            "forgeVersion", FMLLoader.versionInfo().forgeVersion()
-        );
-        return new StrLookup<String>() {
+        return new StrLookup<>() {
             @Override
             public String lookup(String key) {
                 var parts = key.split("\\.");
@@ -32,7 +33,7 @@ public class StringSubstitutor {
                 var pfx = parts[0];
 
                 if ("global".equals(pfx))
-                    return globals.get(parts[1]);
+                    return GLOBALS.get(parts[1]);
                 else if ("file".equals(pfx) && file != null)
                     return String.valueOf(file.getSubstitutionMap().get().get(parts[1]));
 

@@ -74,11 +74,12 @@ public class ModList
     }
 
     private String fileToLine(IModFile mf) {
+        var mainMod = mf.getModInfos().getFirst();
         return String.format(Locale.ENGLISH, "%-50.50s|%-30.30s|%-30.30s|%-20.20s|%-10.10s|Manifest: %s", mf.getFileName(),
-                mf.getModInfos().get(0).getDisplayName(),
-                mf.getModInfos().get(0).getModId(),
-                mf.getModInfos().get(0).getVersion(),
-                getModContainerState(mf.getModInfos().get(0).getModId()),
+                mainMod.getDisplayName(),
+                mainMod.getModId(),
+                mainMod.getVersion(),
+                getModContainerState(mainMod.getModId()),
                 ((ModFileInfo)mf.getModFileInfo()).getCodeSigningFingerprint().orElse("NOSIGNATURE"));
     }
     private String crashReport() {
@@ -93,14 +94,6 @@ public class ModList
 
     public static ModList get() {
         return INSTANCE;
-    }
-
-    private static ForkJoinWorkerThread newForkJoinWorkerThread(ForkJoinPool pool) {
-        ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-        thread.setName("modloading-worker-" + thread.getPoolIndex());
-        // The default sets it to the SystemClassloader, so copy the current one.
-        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
-        return thread;
     }
 
     public List<IModFileInfo> getModFiles()
@@ -131,16 +124,18 @@ public class ModList
             CompletableFuture<Void> cf = new CompletableFuture<>();
             final RuntimeException accumulator = new RuntimeException();
             cf.completeExceptionally(accumulator);
-            throwables.forEach(exception -> {
+            for (Throwable exception : throwables) {
                 if (exception instanceof CompletionException) {
                     exception = exception.getCause();
                 }
-                if (exception.getSuppressed().length!=0) {
-                    Arrays.stream(exception.getSuppressed()).forEach(accumulator::addSuppressed);
+                if (exception.getSuppressed().length != 0) {
+                    for (Throwable throwable : exception.getSuppressed()) {
+                        accumulator.addSuppressed(throwable);
+                    }
                 } else {
                     accumulator.addSuppressed(exception);
                 }
-            });
+            }
             return cf;
         }
     }
@@ -148,11 +143,11 @@ public class ModList
     static <V> CompletableFuture<List<Map.Entry<V, Throwable>>> gather(List<? extends CompletableFuture<? extends V>> futures) {
         List<Map.Entry<V, Throwable>> list = new ArrayList<>(futures.size());
         CompletableFuture<?>[] results = new CompletableFuture[futures.size()];
-        futures.forEach(future -> {
+        for (var future : futures) {
             int i = list.size();
             list.add(null);
             results[i] = future.whenComplete((result, exception) -> list.set(i, new AbstractMap.SimpleImmutableEntry<>(result, exception)));
-        });
+        }
         return CompletableFuture.allOf(results).handle((r, th)->null).thenApply(res -> list);
     }
 

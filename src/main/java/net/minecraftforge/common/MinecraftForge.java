@@ -30,13 +30,12 @@ import java.util.function.Supplier;
 
 public class MinecraftForge
 {
+
     /**
-     * The core Forge EventBusses, all events for Forge will be fired on these,
-     * you should use this to register all your listeners.
-     * This replaces every register*Handler() function in the old version of Forge.
-     * TERRAIN_GEN_BUS for terrain gen events
-     * ORE_GEN_BUS for ore gen events
-     * EVENT_BUS for everything else
+     * The EventBus for all the Forge Events.
+     *
+     * Events marked with {@link net.minecraftforge.fml.event.IModBusEvent}
+     * belong on the ModBus and not this bus
      */
     public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().useModLauncher().build();
 
@@ -86,36 +85,4 @@ public class MinecraftForge
                () -> new ConfigScreenHandler.ConfigScreenFactory(screenFunction)
         );
     }
-
-/*
-   public static void preloadCrashClasses(ASMDataTable table, String modID, Set<String> classes)
-   {
-       //Find all ICrashReportDetail's handlers and preload them.
-       List<String> all = Lists.newArrayList();
-       for (ASMData asm : table.getAll(ICrashReportDetail.class.getName().replace('.', '/')))
-           all.add(asm.getClassName());
-       for (ASMData asm : table.getAll(ICrashCallable.class.getName().replace('.', '/')))
-           all.add(asm.getClassName());
-
-       all.retainAll(classes);
-
-       if (all.size() == 0)
-        return;
-
-       ForgeMod.log.debug("Preloading CrashReport Classes");
-       Collections.sort(all); //Sort it because I like pretty output ;)
-       for (String name : all)
-       {
-           ForgeMod.log.debug("\t{}", name);
-           try
-           {
-               Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
-           }
-           catch (Exception e)
-           {
-               LOGGER.error("Could not find class for name '{}'.", name, e);
-           }
-       }
-   }
-*/
 }

@@ -42,6 +42,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -491,8 +492,7 @@ public final class ForgeHooks {
                 }
             } else {
                 // Change the stack to its new content
-                if (!player.isCreative())
-                    player.setItemInHand(context.getHand(), postUse);
+                player.setItemInHand(context.getHand(), postUse);
 
                 for (BlockSnapshot snap : blockSnapshots) {
                     int updateFlag = snap.getFlag();
@@ -1004,7 +1004,7 @@ public final class ForgeHooks {
     }
 
     public static boolean canUseEntitySelectors(SharedSuggestionProvider provider) {
-        if (provider.hasPermission(Commands.LEVEL_GAMEMASTERS))
+        if (EntitySelectorParser.allowSelectors(provider))
             return true;
         else if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
             return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);

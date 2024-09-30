@@ -125,9 +125,9 @@ public class TextTable
 
     public static class Column
     {
-        private String header;
+        private final String header;
         private int width;
-        private Alignment alignment;
+        private final Alignment alignment;
 
         public Column(String header)
         {

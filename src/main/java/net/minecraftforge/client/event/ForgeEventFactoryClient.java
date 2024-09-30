@@ -78,8 +78,7 @@ public final class ForgeEventFactoryClient {
      * @return the event object passed in and possibly modified by listeners
      */
     private static <E extends Event> E fire(E e) {
-        post(e);
-        return e;
+        return MinecraftForge.EVENT_BUS.fire(e);
     }
 
     /**

@@ -51,7 +51,7 @@ public class AndHolderSet<T> extends CompositeHolderSet<T> {
     @Override
     protected Set<Holder<T>> createSet() {
         List<HolderSet<T>> components = this.getComponents();
-        if (components.size() < 1) {
+        if (components.isEmpty()) {
             return Set.of();
         }
 

@@ -30,7 +30,7 @@ public class ConcatenatedListView<T> implements List<T>
     {
         return switch (members.size()) {
             case 0 -> List.of();
-            case 1 -> Collections.unmodifiableList(members.get(0));
+            case 1 -> Collections.unmodifiableList(members.getFirst());
             default -> new ConcatenatedListView<>(members);
         };
     }

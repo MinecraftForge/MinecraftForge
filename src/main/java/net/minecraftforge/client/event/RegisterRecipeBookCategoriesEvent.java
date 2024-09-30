@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.event;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.world.item.crafting.Recipe;
@@ -31,14 +30,14 @@ import java.util.function.Function;
  */
 public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusEvent
 {
-    private final Map<RecipeBookCategories, ImmutableList<RecipeBookCategories>> aggregateCategories;
-    private final Map<RecipeBookType, ImmutableList<RecipeBookCategories>> typeCategories;
+    private final Map<RecipeBookCategories, List<RecipeBookCategories>> aggregateCategories;
+    private final Map<RecipeBookType, List<RecipeBookCategories>> typeCategories;
     private final Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> recipeCategoryLookups;
 
     @ApiStatus.Internal
     public RegisterRecipeBookCategoriesEvent(
-            Map<RecipeBookCategories, ImmutableList<RecipeBookCategories>> aggregateCategories,
-            Map<RecipeBookType, ImmutableList<RecipeBookCategories>> typeCategories,
+            Map<RecipeBookCategories, List<RecipeBookCategories>> aggregateCategories,
+            Map<RecipeBookType, List<RecipeBookCategories>> typeCategories,
             Map<RecipeType<?>, Function<Recipe<?>, RecipeBookCategories>> recipeCategoryLookups)
     {
         this.aggregateCategories = aggregateCategories;
@@ -51,7 +50,7 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
      */
     public void registerAggregateCategory(RecipeBookCategories category, List<RecipeBookCategories> others)
     {
-        aggregateCategories.put(category, ImmutableList.copyOf(others));
+        aggregateCategories.put(category, List.copyOf(others));
     }
 
     /**
@@ -59,7 +58,7 @@ public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusE
      */
     public void registerBookCategories(RecipeBookType type, List<RecipeBookCategories> categories)
     {
-        typeCategories.put(type, ImmutableList.copyOf(categories));
+        typeCategories.put(type, List.copyOf(categories));
     }
 
     /**

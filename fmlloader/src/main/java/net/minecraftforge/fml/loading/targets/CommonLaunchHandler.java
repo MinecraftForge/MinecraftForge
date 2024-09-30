@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading.targets;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import cpw.mods.modlauncher.api.ServiceRunner;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,7 +18,6 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -46,10 +44,6 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     public abstract String getNaming();
 
     public abstract List<Path> getMinecraftPaths();
-
-    @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
-    }
 
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         URI uri;
@@ -107,7 +101,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
             len += 2;
         }
         str = str.substring(0, str.length() - len);
-        var path = Paths.get(URI.create(str));
+        var path = Path.of(URI.create(str));
         return path;
     }
 }

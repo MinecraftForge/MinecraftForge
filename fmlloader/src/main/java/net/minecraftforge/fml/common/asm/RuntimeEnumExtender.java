@@ -28,15 +28,16 @@ import org.slf4j.Logger;
 public class RuntimeEnumExtender implements ILaunchPluginService {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final Type STRING = Type.getType(String.class);
-    private final Type ENUM = Type.getType(Enum.class);
-    private final Type MARKER_IFACE = Type.getType("Lnet/minecraftforge/common/IExtensibleEnum;");
-    private final Type ARRAY_UTILS = Type.getType("Lorg/apache/commons/lang3/ArrayUtils;"); //Don't directly reference this to prevent class loading.
-    private final String ADD_DESC = Type.getMethodDescriptor(Type.getType(Object[].class), Type.getType(Object[].class), Type.getType(Object.class));
-    private final Type UNSAFE_HACKS = Type.getType("Lnet/minecraftforge/fml/unsafe/UnsafeHacks;"); //Again, not direct reference to prevent class loading.
-    private final String CLEAN_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Class.class));
-    private final String NAME_DESC = Type.getMethodDescriptor(STRING);
-    private final String EQUALS_DESC = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, STRING);
+    private static final Type STRING = Type.getType(String.class);
+    private static final Type ENUM = Type.getType(Enum.class);
+    private static final Type MARKER_IFACE = Type.getType("Lnet/minecraftforge/common/IExtensibleEnum;");
+    private static final Type ARRAY_UTILS = Type.getType("Lorg/apache/commons/lang3/ArrayUtils;"); //Don't directly reference this to prevent class loading.
+    private static final String ADD_DESC = Type.getMethodDescriptor(Type.getType(Object[].class), Type.getType(Object[].class), Type.getType(Object.class));
+    private static final Type UNSAFE_HACKS = Type.getType("Lnet/minecraftforge/fml/unsafe/UnsafeHacks;"); //Again, not direct reference to prevent class loading.
+    private static final String CLEAN_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Class.class));
+    private static final String NAME_DESC = Type.getMethodDescriptor(STRING);
+    private static final String EQUALS_DESC = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, STRING);
+    private static final int FLAGS = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
     @Override
     public String name() {
@@ -59,9 +60,9 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             return ComputeFlags.NO_REWRITE;
 
         Type array = Type.getType("[" + classType.getDescriptor());
-        final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
+        String arrayDesc = array.getDescriptor();
 
-        FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
+        FieldNode values = classNode.fields.stream().filter(f -> f.desc.equals(arrayDesc) && ((f.access & FLAGS) == FLAGS)).findFirst().orElse(null);
 
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
             return ComputeFlags.NO_REWRITE;
@@ -70,13 +71,13 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         //Static methods named "create" with first argument as a string
         List<MethodNode> candidates = classNode.methods.stream()
                 .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create"))
-                .collect(Collectors.toList());
+                .toList();
 
         if (candidates.isEmpty()) {
             throw new IllegalStateException("IExtensibleEnum has no candidate factory methods: " + classType.getClassName());
         }
 
-        candidates.forEach(mtd ->
+        for (var mtd : candidates)
         {
             Type[] args = Type.getArgumentTypes(mtd.desc);
             if (args.length == 0 || !args[0].equals(STRING)) {
@@ -108,8 +109,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             Type[] ctrArgs = new Type[args.length + 1];
             ctrArgs[0] = STRING;
             ctrArgs[1] = Type.INT_TYPE;
-            for (int x = 1; x < args.length; x++)
-                ctrArgs[1 + x] = args[x];
+            System.arraycopy(args, 1, ctrArgs, 2, args.length - 1);
 
             String desc = Type.getMethodDescriptor(Type.VOID_TYPE, ctrArgs);
 
@@ -231,7 +231,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.load(vars, classType);
                 ins.areturn(classType);
             }
-        });
+        }
         return ComputeFlags.COMPUTE_FRAMES;
     }
 

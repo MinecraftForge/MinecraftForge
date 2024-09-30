@@ -47,12 +47,12 @@ public class UniqueModListBuilder
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueModList = modFilesByFirstId.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueLibListWithVersion = libFilesWithVersionByModuleName.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Transform to the full mod id list
@@ -75,7 +75,7 @@ public class UniqueModListBuilder
         final List<String> dupedModErrors = modIds.values().stream()
                 .filter(modInfos -> modInfos.size() > 1)
                 .map(mods -> String.format("\tMod ID: '%s' from mod files: %s",
-                        mods.get(0).getModId(),
+                        mods.getFirst().getModId(),
                         mods.stream()
                                 .map(modInfo -> modInfo.getOwningFile().getFile().getFileName()).collect(joining(", "))
                 )).toList();
@@ -91,9 +91,8 @@ public class UniqueModListBuilder
         final List<String> dupedLibErrors = versionedLibIds.values().stream()
                 .filter(modFiles -> modFiles.size() > 1)
                 .map(mods -> String.format("\tLibrary: '%s' from files: %s",
-                        getModId(mods.get(0)),
-                        mods.stream()
-                                .map(modFile -> modFile.getFileName()).collect(joining(", "))
+                        getModId(mods.getFirst()),
+                        mods.stream().map(ModFile::getFileName).collect(joining(", "))
                 )).toList();
 
         if (!dupedLibErrors.isEmpty()) {
@@ -107,25 +106,23 @@ public class UniqueModListBuilder
         final Map<String, List<ModFile>> uniqueModFilesByFirstId = uniqueModList.stream()
                 .collect(groupingBy(UniqueModListBuilder::getModId));
 
-        final List<ModFile> loadedList = new ArrayList<>();
-        loadedList.addAll(uniqueModList);
+        final List<ModFile> loadedList = new ArrayList<>(uniqueModList);
         loadedList.addAll(uniqueLibListWithVersion);
 
         return new UniqueModListData(loadedList, uniqueModFilesByFirstId);
     }
 
-    private ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
+    private static ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
         List<ModFile> modInfoList = fullList.getValue();
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
-            modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), this.getVersion(modInfoList.get(0)));
+            modInfoList.sort(Comparator.comparing(UniqueModListBuilder::getVersion).reversed());
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.getFirst().getFileName(), fullList.getKey(), getVersion(modInfoList.getFirst()));
         }
         return modInfoList.get(0);
     }
 
-    private ArtifactVersion getVersion(final ModFile mf)
-    {
+    private static ArtifactVersion getVersion(final ModFile mf) {
         if (mf.getModFileInfo() == null || mf.getModInfos() == null || mf.getModInfos().isEmpty()) {
             return mf.getJarVersion();
         }

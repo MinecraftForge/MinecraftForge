@@ -92,14 +92,14 @@ public class ForgeSpawnEggItem extends SpawnEggItem {
     private static class ColorRegisterHandler {
         @SubscribeEvent(priority = EventPriority.HIGHEST)
         public static void registerSpawnEggColors(RegisterColorHandlersEvent.Item event) {
-            MOD_EGGS.forEach(egg -> {
+            for (ForgeSpawnEggItem egg : MOD_EGGS) {
                 event.register((stack, layer) -> {
                     int color = egg.getColor(layer);
                     if (FastColor.ARGB32.alpha(color) == 0)
                         color = FastColor.ARGB32.opaque(color);
                     return color;
                 }, egg);
-            });
+            }
         }
     }
 }

@@ -60,11 +60,11 @@ public class ForgeInternalHandler {
         WorldWorkerManager.tick(false);
     }
 
-    @SubscribeEvent
-    public void checkSettings(ClientTickEvent event) {
-        //if (event.phase == Phase.END)
-        //    CloudRenderer.updateCloudSettings();
-    }
+//    @SubscribeEvent
+//    public void checkSettings(ClientTickEvent event) {
+//        if (event.phase == Phase.END)
+//            CloudRenderer.updateCloudSettings();
+//    }
 
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload event) {
@@ -101,7 +101,7 @@ public class ForgeInternalHandler {
 
     @SubscribeEvent
     public void onResourceReload(AddReloadListenerEvent event) {
-        INSTANCE = new LootModifierManager();
+        INSTANCE = new LootModifierManager(event.getRegistryAccess());
         event.addListener(INSTANCE);
     }
 

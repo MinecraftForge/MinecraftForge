@@ -271,7 +271,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
             {
                 if (!Objects.equals(renderTypes, lastRenderTypes))
                 {
-                    if (quads.size() > 0)
+                    if (!quads.isEmpty())
                     {
                         addLayer(lastRenderTypes, quads);
                         quads.clear();
@@ -302,7 +302,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
 
             public BakedModel build()
             {
-                if (quads.size() > 0)
+                if (!quads.isEmpty())
                 {
                     addLayer(lastRenderTypes, quads);
                 }

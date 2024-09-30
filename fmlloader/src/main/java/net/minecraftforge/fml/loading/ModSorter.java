@@ -57,13 +57,13 @@ public class ModSorter
             // Note this will never actually throw an error because the duplicate checks are done in ModDiscovererer before we get to this phase
             // So all this is really doing is wasting time.
             // But i'm leaving it here until I rewrite all of cpw's mod loading code because its such a clusterfuck.
-            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).toList(), e);
         }
         // try and validate dependencies
         final List<ExceptionData> failedList = Stream.concat(ms.verifyDependencyVersions().stream(), errors.stream()).toList();
         // if we miss one or the other, we abort now
         if (!failedList.isEmpty()) {
-            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
+            return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).toList(), new EarlyLoadingException("failure to validate mod list", null, failedList));
         } else {
             // Otherwise, lets try and sort the modlist and proceed
             EarlyLoadingException earlyLoadingException = null;
@@ -89,9 +89,9 @@ public class ModSorter
         infos.keySet().forEach(graph::addNode);
         modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(List::stream)
                 .map(IModInfo::getDependencies)
-                .<IModInfo.ModVersion>mapMulti(Iterable::forEach)
+                .<IModInfo.ModVersion>flatMap(List::stream)
                 .forEach(dep -> addDependency(graph, dep));
 
         final List<ModFileInfo> sorted;
@@ -107,7 +107,7 @@ public class ModSorter
                 LOGGER.error(LOADING, "Mod Sorting failed.\nDetected Cycles: {}\n", cycles);
             }
             var dataList = cycles.stream()
-                    .<ModFileInfo>mapMulti(Iterable::forEach)
+                    .flatMap(Set::stream)
                     .<IModInfo>mapMulti((mf,c)->mf.getMods().forEach(c))
                     .map(IModInfo::getModId)
                     .map(list -> new ExceptionData("fml.modloading.cycle", list))
@@ -116,7 +116,7 @@ public class ModSorter
         }
         this.sortedList = sorted.stream()
                 .map(ModFileInfo::getMods)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(List::stream)
                 .map(ModInfo.class::cast)
                 .collect(toList());
         this.modFiles = sorted.stream()
@@ -126,12 +126,14 @@ public class ModSorter
 
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
-        final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
         final IModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
         // soft dep that doesn't exist. Just return. No edge required.
         if (targetModInfo == null || !(targetModInfo.getOwningFile() instanceof final ModFileInfo target)) return;
+
+        final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
         if (self == target)
             return; // in case a jar has two mods that have dependencies between
+
         switch (dep.getOrdering()) {
             case BEFORE -> topoGraph.putEdge(self, target);
             case AFTER -> topoGraph.putEdge(target, self);
@@ -165,7 +167,7 @@ public class ModSorter
             var container = modFilesByFirstId.get(systemMod);
             if (container != null && !container.isEmpty()) {
                 LOGGER.debug("Found system mod: {}", systemMod);
-                this.systemMods.add((ModFile) container.get(0));
+                this.systemMods.add(container.getFirst());
             } else {
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
             }
@@ -176,23 +178,23 @@ public class ModSorter
     {
         final var modVersions = modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(List::stream)
                 .collect(toMap(IModInfo::getModId, IModInfo::getVersion));
 
         final var modVersionDependencies = modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(List::stream)
                 .collect(groupingBy(Function.identity(), flatMapping(e -> e.getDependencies().stream(), toList())));
 
         final var modRequirements = modVersionDependencies.values().stream()
-                .<IModInfo.ModVersion>mapMulti(Iterable::forEach)
+                .<IModInfo.ModVersion>flatMap(List::stream)
                 .filter(mv -> mv.getSide().isCorrectSide())
                 .collect(toSet());
 
         final long mandatoryRequired = modRequirements.stream().filter(IModInfo.ModVersion::isMandatory).count();
         LOGGER.debug(LOADING, "Found {} mod requirements ({} mandatory, {} optional)", modRequirements.size(), mandatoryRequired, modRequirements.size() - mandatoryRequired);
         final var missingVersions = modRequirements.stream()
-                .filter(mv -> (mv.isMandatory() || modVersions.containsKey(mv.getModId())) && this.modVersionNotContained(mv, modVersions))
+                .filter(mv -> (mv.isMandatory() || modVersions.containsKey(mv.getModId())) && !modVersionContained(mv, modVersions))
                 .collect(toSet());
         final long mandatoryMissing = missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).count();
         LOGGER.debug(LOADING, "Found {} mod requirements missing ({} mandatory, {} optional)", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing);
@@ -240,9 +242,13 @@ public class ModSorter
         );
     }
 
-    private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
-    {
-        return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
-                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
+    private static boolean modVersionContained(IModInfo.ModVersion mv, Map<String, ArtifactVersion> modVersions) {
+        var modId = mv.getModId();
+        var range = mv.getVersionRange();
+        if (modVersions.containsKey(modId)
+                && (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE")))
+            return true;
+
+        return VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod");
     }
 }

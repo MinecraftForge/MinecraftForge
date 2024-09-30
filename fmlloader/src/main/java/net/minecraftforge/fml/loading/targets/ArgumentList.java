@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 class ArgumentList {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private List<Supplier<String[]>> entries = new ArrayList<>();
-    private Map<String, EntryValue> values = new HashMap<>();
+    private final List<Supplier<String[]>> entries = new ArrayList<>();
+    private final Map<String, EntryValue> values = new HashMap<>();
 
     public static ArgumentList from(String... args) {
         ArgumentList ret = new ArgumentList();
@@ -77,8 +77,8 @@ class ArgumentList {
 
     public String[] getArguments() {
         return entries.stream()
-            .flatMap(e -> Arrays.asList(e.get()).stream())
-            .toArray(size -> new String[size]);
+            .flatMap(e -> Arrays.stream(e.get()))
+            .toArray(String[]::new);
     }
 
     public boolean hasValue(String key) {
@@ -122,7 +122,7 @@ class ArgumentList {
         return ent.getValue();
     }
 
-    private class EntryValue implements Supplier<String[]> {
+    private static final class EntryValue implements Supplier<String[]> {
         private final String prefix;
         private final String key;
         private final boolean split;

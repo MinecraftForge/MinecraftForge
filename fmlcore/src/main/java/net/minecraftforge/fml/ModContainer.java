@@ -45,7 +45,7 @@ public abstract class ModContainer
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected Supplier<?> contextExtension;
-    protected final Map<ModLoadingStage, Runnable> activityMap = new HashMap<>();
+    protected final Map<ModLoadingStage, Runnable> activityMap = new EnumMap<>(ModLoadingStage.class);
     protected final Map<Class<? extends IExtensionPoint<?>>, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -168,7 +168,10 @@ public abstract class ModContainer
     }
 
     public void dispatchConfigEvent(IConfigEvent event) {
-        configHandler.ifPresent(configHandler->configHandler.accept(event));
+        var handler = configHandler.orElse(null);
+        if (handler != null) {
+            handler.accept(event);
+        }
     }
 
     /**

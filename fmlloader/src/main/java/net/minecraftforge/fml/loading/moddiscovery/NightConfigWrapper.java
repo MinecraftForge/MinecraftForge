@@ -18,11 +18,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import static java.util.Arrays.asList;
 
 @ApiStatus.Internal
-class NightConfigWrapper implements IConfigurable {
+final class NightConfigWrapper implements IConfigurable {
     private final UnmodifiableConfig config;
     private IModFileInfo file;
 
@@ -30,39 +31,51 @@ class NightConfigWrapper implements IConfigurable {
         this.config = config;
     }
 
-    NightConfigWrapper setFile(IModFileInfo file) {
+    private NightConfigWrapper(UnmodifiableConfig config, IModFileInfo file) {
+        this.config = config;
         this.file = file;
-        return this;
+    }
+
+    void setFile(IModFileInfo file) {
+        this.file = file;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getConfigElement(String key) {
+        var path = List.of(key);
+        return Optional.ofNullable(validate(this.config.get(path), path));
+    }
+
+    @Override
     public <T> Optional<T> getConfigElement(final String... key) {
         var path = asList(key);
-        return this.config.getOptional(path).map(value -> {
-            if (value instanceof UnmodifiableConfig cfg) {
-                // New Night config doesn't implement valueMap(), so do a copy.
-                var builder = ImmutableMap.builder();
-                for (var e: cfg.entrySet())
-                    builder.put(e.getKey(), e.getValue());
-                return (T)builder.build();
-            } else if (value instanceof ArrayList<?> al && al.size() > 0 && al.get(0) instanceof UnmodifiableConfig) {
-                throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
-            }
-            return (T) value;
-        });
+        return Optional.ofNullable(validate(this.config.get(path), path));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T validate(@Nullable T value, List<String> path) {
+        if (value instanceof UnmodifiableConfig cfg) {
+            // New Night config doesn't implement valueMap(), so do a copy.
+            var entries = cfg.entrySet();
+            var builder = ImmutableMap.builderWithExpectedSize(entries.size());
+            for (var e : entries)
+                builder.put(e.getKey(), e.getValue());
+            return (T) builder.build();
+        } else if (value instanceof ArrayList<?> al && !al.isEmpty() && al.getFirst() instanceof UnmodifiableConfig) {
+            throw new InvalidModFileException("The configuration path " + path + " is invalid. I wasn't expecting a multi-object list - remove one of the [[ ]]", file);
+        }
+        return value;
     }
 
     @Override
     public List<? extends IConfigurable> getConfigList(final String... key) {
         final List<String> path = asList(key);
         if (this.config.contains(path) && !(this.config.get(path) instanceof Collection)) {
-            throw new InvalidModFileException("The configuration path "+path+" is invalid. Expecting a collection!", file);
+            throw new InvalidModFileException("The configuration path " + path + " is invalid. Expecting a collection!", file);
         }
         final Collection<UnmodifiableConfig> nestedConfigs = this.config.getOrElse(path, ArrayList::new);
         return nestedConfigs.stream()
-                .map(NightConfigWrapper::new)
-                .map(cw->cw.setFile(file))
+                .map(conf -> new NightConfigWrapper(conf, file))
                 .collect(Collectors.toList());
     }
 }

@@ -12,19 +12,22 @@ import java.util.List;
 import java.util.function.Function;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 
 public abstract class BaseTestMod {
     private List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
+    protected final IEventBus modBus;
 
-    protected BaseTestMod() {
+    public BaseTestMod(FMLJavaModLoadingContext context) {
         // TODO: Some form of enable flag?
 
-        var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        this.modBus = context.getModEventBus();
         modBus.register(this);
 
         Class<?> cls = getClass();
@@ -39,6 +42,10 @@ public abstract class BaseTestMod {
             }
             cls = cls.getSuperclass();
         }
+    }
+
+    protected static ResourceLocation rl(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 
     protected void testItem(Function<HolderLookup.Provider, ItemStack> supplier) {

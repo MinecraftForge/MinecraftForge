@@ -206,7 +206,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
                     "Texture '%s' does not exist in any known resource pack", texture);
             desc.add(texture.toString());
         }
-        Preconditions.checkArgument(desc.size() > 0, "The particle type '%s' must have one texture", particle);
+        Preconditions.checkArgument(!desc.isEmpty(), "The particle type '%s' must have one texture", particle);
 
         // Insert into map
         if (this.descriptions.putIfAbsent(particle, desc) != null) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
 +++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
-@@ -472,6 +_,11 @@
+@@ -477,6 +_,11 @@
              }
  
              this.reader.skip();
@@ -12,7 +12,7 @@
              this.parseSelector();
          } else {
              this.parseNameOrUUID();
-@@ -488,6 +_,7 @@
+@@ -493,6 +_,7 @@
          p_121248_.suggest("@s", Component.translatable("argument.entity.selector.self"));
          p_121248_.suggest("@e", Component.translatable("argument.entity.selector.allEntities"));
          p_121248_.suggest("@n", Component.translatable("argument.entity.selector.nearestEntity"));
