@@ -6,15 +6,14 @@
 package net.minecraftforge.common;
 
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Internal implementation for optionally logging warnings about legacy tags along with suggestions for direct
@@ -25,8 +24,7 @@ import java.util.List;
 public final class TagConventionMigrationHelper {
     private TagConventionMigrationHelper() {}
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final List<TagKey<?>> FOUND_LEGACY_TAGS = new ArrayList<>();
+    private static final ArrayList<TagKey<?>> FOUND_LEGACY_TAGS = new ArrayList<>();
 
     static void init() {
         MinecraftForge.EVENT_BUS.addListener(TagConventionMigrationHelper::onServerStarting);
@@ -47,7 +45,7 @@ public final class TagConventionMigrationHelper {
 
     private static void run(RegistryAccess.Frozen registryAccess) {
         registryAccess.registries().forEach(registryEntry -> {
-            if (registryEntry.key().location().getNamespace().equals("minecraft")) {
+            if (registryEntry.key().location().getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
                 FOUND_LEGACY_TAGS.addAll(
                         registryEntry.value().getTagNames().filter(TagConventionMappings.MAPPINGS::containsKey).toList()
                 );
@@ -71,8 +69,9 @@ public final class TagConventionMigrationHelper {
         }
         stringBuilder.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-        LOGGER.warn(stringBuilder);
+        LogManager.getLogger().warn(stringBuilder);
         FOUND_LEGACY_TAGS.clear();
+        FOUND_LEGACY_TAGS.trimToSize();
     }
 
 }
