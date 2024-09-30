@@ -182,6 +182,12 @@ public class Tags {
          */
         public static final TagKey<Block> HIDDEN_FROM_RECIPE_VIEWERS = cTag("hidden_from_recipe_viewers");
         public static final TagKey<Block> OBSIDIANS = cTag("obsidians");
+        /**
+         * For common obsidian that has no special quirks or behaviours - ideal for recipe use.
+         * Crying Obsidian, for example, is a light block and harder to obtain. So it gets its own tag instead of being under normal tag.
+         */
+        public static final TagKey<Block> OBSIDIANS_NORMAL = cTag("obsidians/normal");
+        public static final TagKey<Block> OBSIDIANS_CRYING = cTag("obsidians/crying");
         public static final TagKey<Block> ORES = cTag("ores");
         public static final TagKey<Block> ORES_NETHERITE_SCRAP = cTag("ores/netherite_scrap");
         public static final TagKey<Block> ORES_QUARTZ = cTag("ores/quartz");
@@ -678,6 +684,12 @@ public class Tags {
          */
         public static final TagKey<Item> HIDDEN_FROM_RECIPE_VIEWERS = cTag("hidden_from_recipe_viewers");
         public static final TagKey<Item> OBSIDIANS = cTag("obsidians");
+        /**
+         * For common obsidian that has no special quirks or behaviours - ideal for recipe use.
+         * Crying Obsidian, for example, is a light block and harder to obtain. So it gets its own tag instead of being under normal tag.
+         */
+        public static final TagKey<Item> OBSIDIANS_NORMAL = cTag("obsidians/normal");
+        public static final TagKey<Item> OBSIDIANS_CRYING = cTag("obsidians/crying");
         public static final TagKey<Item> INGOTS = cTag("ingots");
         public static final TagKey<Item> INGOTS_COPPER = cTag("ingots/copper");
         public static final TagKey<Item> INGOTS_GOLD = cTag("ingots/gold");

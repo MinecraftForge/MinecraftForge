@@ -174,6 +174,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.NUGGETS_IRON).add(Items.IRON_NUGGET);
         tag(Tags.Items.NUGGETS_GOLD).add(Items.GOLD_NUGGET);
         copy(Tags.Blocks.OBSIDIANS, Tags.Items.OBSIDIANS);
+        copy(Tags.Blocks.OBSIDIANS_NORMAL, Tags.Items.OBSIDIANS_NORMAL);
+        copy(Tags.Blocks.OBSIDIANS_CRYING, Tags.Items.OBSIDIANS_CRYING);
         copy(Tags.Blocks.ORE_BEARING_GROUND_DEEPSLATE, Tags.Items.ORE_BEARING_GROUND_DEEPSLATE);
         copy(Tags.Blocks.ORE_BEARING_GROUND_NETHERRACK, Tags.Items.ORE_BEARING_GROUND_NETHERRACK);
         copy(Tags.Blocks.ORE_BEARING_GROUND_STONE, Tags.Items.ORE_BEARING_GROUND_STONE);
