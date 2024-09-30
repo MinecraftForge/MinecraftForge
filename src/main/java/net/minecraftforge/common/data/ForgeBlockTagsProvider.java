@@ -264,7 +264,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         }
     }
 
-    private void addColoredTags(Consumer<TagKey<Block>> consumer, TagKey<Block> group) {
+    private static void addColoredTags(Consumer<TagKey<Block>> consumer, TagKey<Block> group) {
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (var color : DyeColor.values()) {
             TagKey<Block> tag = getForgeTag(prefix + color.getName());
@@ -273,7 +273,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private TagKey<Block> getForgeTag(String name) {
+    private static TagKey<Block> getForgeTag(String name) {
         try {
             name = name.toUpperCase(Locale.ENGLISH);
             return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);

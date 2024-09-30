@@ -408,7 +408,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         }
     }
 
-    private void addColoredTags(Consumer<TagKey<Item>> consumer, TagKey<Item> group) {
+    private static void addColoredTags(Consumer<TagKey<Item>> consumer, TagKey<Item> group) {
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color : DyeColor.values()) {
             TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
@@ -417,7 +417,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private TagKey<Block> getForgeBlockTag(String name) {
+    private static TagKey<Block> getForgeBlockTag(String name) {
         try {
             name = name.toUpperCase(Locale.ENGLISH);
             return (TagKey<Block>) Tags.Blocks.class.getDeclaredField(name).get(null);
@@ -427,7 +427,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private TagKey<Item> getForgeItemTag(String name) {
+    private static TagKey<Item> getForgeItemTag(String name) {
         try {
             name = name.toUpperCase(Locale.ENGLISH);
             return (TagKey<Item>) Tags.Items.class.getDeclaredField(name).get(null);
