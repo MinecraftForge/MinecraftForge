@@ -82,9 +82,9 @@ public class ForgeConfig {
                     .push("general");
 
             migrationHelperMode = builder
-                    .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to ONLY_IN_DEV_ENV.")
+                    .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.")
                     .translation("forge.configgui.migrationHelperMode")
-                    .defineEnum("logLegacyTagWarnings", MigrationHelperMode.ONLY_IN_DEV_ENV);
+                    .defineEnum("logLegacyTagWarnings", MigrationHelperMode.OFF);
 
             builder.pop();
         }

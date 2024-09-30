@@ -67,7 +67,7 @@ public final class TagConventionMigrationHelper {
 
         for (var legacyTag : FOUND_LEGACY_TAGS) {
             var replacement = TagConventionMappings.MAPPINGS.get(legacyTag);
-            stringBuilder.append("\n    - ").append(legacyTag).append("  ->  ").append(replacement);
+            stringBuilder.append("\n- ").append(legacyTag).append(" -> ").append(replacement);
         }
         stringBuilder.append("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
