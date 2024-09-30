@@ -14,6 +14,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import java.util.function.Supplier;
 
+/**
+ * This stores {@link ICapabilityProvider} gathered from {@link CapabilityProviderHolder}
+ * which is a CapabilityProvider factory, to remove the need for {@link net.minecraftforge.event.AttachCapabilitiesEvent}
+ */
 public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B> {
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
@@ -23,7 +27,7 @@ public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>>
     private CapabilityDispatcher capabilities;
     private boolean valid = true;
 
-    private boolean                       isLazy             = false;
+    private final boolean                       isLazy;
     private Supplier<ICapabilityProvider> lazyParentSupplier = null;
     private CompoundTag                   lazyData           = null;
     private HolderLookup.Provider         registryAccess     = null;
@@ -32,6 +36,7 @@ public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>>
     // Non-Lazy Impl
     protected CapabilityProviderWithFactory() {
         this.lazyCapabilityHolderSupplier = null;
+        this.isLazy = false;
     }
 
     // Lazy Impl

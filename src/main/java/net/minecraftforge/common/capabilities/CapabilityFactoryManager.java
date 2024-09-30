@@ -8,10 +8,15 @@ package net.minecraftforge.common.capabilities;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * DO NOT TOUCH. FULLY INTERNAL
+ */
+@ApiStatus.Internal
 public final class CapabilityFactoryManager {
     private static final CapabilityFactoryManager MANAGER = new CapabilityFactoryManager();
     private static boolean init = false;

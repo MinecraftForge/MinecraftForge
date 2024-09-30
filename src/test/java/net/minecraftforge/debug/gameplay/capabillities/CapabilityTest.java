@@ -19,6 +19,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityFactoryRegisterEvent;
 import net.minecraftforge.common.capabilities.CapabilityProviderHolder;
+import net.minecraftforge.common.capabilities.CapabilityProviderWithFactory;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -43,6 +44,7 @@ public class CapabilityTest extends BaseTestMod {
     public static final String MOD_ID = "capability_test";
     public static class SelfMarkEnergyStorage extends EnergyStorage {
         private final ItemStack stack;
+
         public SelfMarkEnergyStorage(ItemStack stack) {
             super(1000, 10, 10, 10);
             this.stack = stack;
