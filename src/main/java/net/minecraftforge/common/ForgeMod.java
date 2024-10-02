@@ -391,10 +391,9 @@ public class ForgeMod {
         });
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
-        modEventBus.addListener(this::loadComplete);
+//        modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
-        modEventBus.register(this);
         for (DeferredRegister<?> r : registries) {
             r.register(modEventBus);
         }
@@ -428,8 +427,7 @@ public class ForgeMod {
         //VanillaPacketSplitter.register();
     }
 
-    public void loadComplete(FMLLoadCompleteEvent event) {
-    }
+//    public void loadComplete(FMLLoadCompleteEvent event) {}
 
     public void serverStopping(ServerStoppingEvent evt) {
         WorldWorkerManager.clear();
@@ -452,7 +450,7 @@ public class ForgeMod {
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.TYPE, new PackMetadataSection(
                 Component.translatable("pack.forge.description"),
-                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                DetectedVersion.BUILT_IN.getPackVersion(PackType.SERVER_DATA),
                 Optional.empty() //Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
             ))
         );
