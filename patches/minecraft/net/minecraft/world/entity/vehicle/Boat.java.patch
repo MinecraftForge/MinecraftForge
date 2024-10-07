@@ -63,20 +63,3 @@
     }
  
     protected int getMaxPassengers() {
-@@ -817,6 +_,16 @@
- 
-    public boolean isUnderWater() {
-       return this.status == Boat.Status.UNDER_WATER || this.status == Boat.Status.UNDER_FLOWING_WATER;
-+   }
-+
-+   // Forge: Fix MC-119811 by instantly completing lerp on board
-+   @Override
-+   protected void addPassenger(Entity passenger) {
-+      super.addPassenger(passenger);
-+      if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
-+         this.lerpSteps = 0;
-+         this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
-+      }
-    }
- 
-    public ItemStack getPickResult() {
