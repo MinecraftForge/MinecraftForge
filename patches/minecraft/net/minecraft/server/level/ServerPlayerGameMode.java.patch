@@ -17,7 +17,7 @@
              float f = 1.0F;
              BlockState blockstate = this.level.getBlockState(p_215120_);
              if (!blockstate.isAir()) {
-+               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
++               if (!event.getUseBlock().isDenied())
                 blockstate.attack(this.level, p_215120_, this.player);
                 f = blockstate.getDestroyProgress(this.player, this.player.level(), p_215120_);
              }
@@ -103,12 +103,12 @@
           MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
           if (menuprovider != null) {
              p_9266_.openMenu(menuprovider);
-@@ -308,10 +_,15 @@
+@@ -308,10 +_,16 @@
              return InteractionResult.PASS;
           }
        } else {
 +         UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++         if (!event.getUseItem().isDenied()) {
 +            InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
 +            if (result != InteractionResult.PASS) return result;
 +         }
@@ -117,7 +117,8 @@
 +         boolean flag1 = (p_9266_.isSecondaryUseActive() && flag) && !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
           ItemStack itemstack = p_9268_.copy();
 -         if (!flag1) {
-+         if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
++         var useBlockResult = event.getUseBlock();
++         if (useBlockResult.isAllowed() || (!flag1 && !useBlockResult.isDenied())) {
              InteractionResult interactionresult = blockstate.use(p_9267_, p_9266_, p_9269_, p_9270_);
              if (interactionresult.consumesAction()) {
                 CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
@@ -127,8 +128,8 @@
  
 -         if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem())) {
 -            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
-+            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
++         if (event.getUseItem().isAllowed() || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_.getItem()))) {
++            if (event.getUseItem().isDenied()) return InteractionResult.PASS;
              InteractionResult interactionresult1;
              if (this.isCreative()) {
                 int i = p_9268_.getCount();

@@ -16,7 +16,7 @@
        }
  
     }
-@@ -275,11 +_,15 @@
+@@ -275,11 +_,16 @@
              livingentity = (LivingEntity)p_34288_.getEntity();
           }
  
@@ -25,12 +25,13 @@
              int j = Mth.floor(this.getY());
              int k = Mth.floor(this.getZ());
 -            Zombie zombie = new Zombie(this.level());
-+         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), i, j, k, livingentity, this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).getValue());
-+         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
-+         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
++         var event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), i, j, k, livingentity, this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).getValue());
++         var eventResult = event.getResult();
++         if (eventResult.isDenied()) return true;
++         if (eventResult.isAllowed() ||
 +            livingentity != null && this.level().getDifficulty() == Difficulty.HARD && (double)this.random.nextFloat() < this.getAttribute(Attributes.SPAWN_REINFORCEMENTS_CHANCE).getValue() && this.level()
 +                    .getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
-+            Zombie zombie = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.ZOMBIE.create(this.level());
++            Zombie zombie = event.getCustomSummonedAid() != null && eventResult.isAllowed() ? event.getCustomSummonedAid() : EntityType.ZOMBIE.create(this.level());
  
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);

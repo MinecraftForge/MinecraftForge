@@ -6,7 +6,7 @@
        this.getFeature(p_221243_).ifPresent((p_256352_) -> {
 -         p_256352_.value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_);
 +         var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(p_221243_, p_221244_, p_221245_, p_256352_);
-+         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY)) return;
++         if (event.getResult().isDenied()) return;
 +         event.getFeature().value().place(p_221243_, p_221243_.getChunkSource().getGenerator(), p_221244_, p_221245_);
        });
     }
