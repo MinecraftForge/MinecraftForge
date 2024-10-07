@@ -12,6 +12,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 @AutoRegisterCapability
 public interface IItemHandler
 {
@@ -48,8 +52,19 @@ public interface IItemHandler
      * <p>
      * Inserts an ItemStack into the given slot and return the remainder.
      * The ItemStack <em>should not</em> be modified in this function!
+     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}.
      * </p>
-     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}
+     * <p>
+     * insertItem must have the four following properties.
+     * First, the simulation mode must not mutate the inventory.
+     * Second, the simulation mode must be accurate, i.e insertItem(slot, stack, true)
+     * must be equivalent to insertItem(slot, stack, false).
+     * Third, real insertion must be idempotent, i.e insertItem(slot, insertItem(slot, stack, false), false)
+     * must be equivalent to insertItem(slot, stack, false).
+     * Fourth, the itemstack returned must only differ with the itemstack given by count,
+     * and the returned count must be less than or equal to the given count.
+     * The obvious exemption to this rule is given for returning the empty itemstack.
+     * </p>
      *
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert. This must not be modified by the item handler.
@@ -62,10 +77,132 @@ public interface IItemHandler
     ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate);
 
     /**
+     * <p>
+     * Inserts a list of itemstacks into the inventory and return the remainder.
+     * The list of itemstacks and its contents <em>should not</em> be modified in this function!
+     * The distribution of the items is left to the ItemHandler.
+     * </p>
+     * <p>
+     * Even though a default implementation is provided,
+     * if your inventory behaves in "nonstandard" ways, you may have to override it.
+     * </p>
+     * <p>
+     * This method must have the four properties required for {@link IItemHandler#insertItem(int, ItemStack, boolean)}.
+     * </p>
+     *
+     * @param stacks   List of items to insert. Contents must not be null.
+     * @param simulate If true, the insertion is only simulated
+     * @return An array with the same length as the input list representing the remaining itemstacks.
+     *         Each element of the array has the same properties as the return value of
+     *         {@link IItemHandler#insertItem(int, ItemStack, boolean)}
+     *         (non-null, could be the same as its corresponding element in input list, etc.).
+     */
+    @NotNull
+    default ItemStack[] insertItems(@NotNull List<ItemStack> stacks, boolean simulate)
+    {
+        return insertItems(stacks, simulate, false);
+    }
+
+    /**
+     * <p>
+     * Inserts a list of itemstacks into the inventory and return the remainder.
+     * The list of itemstacks and its contents <em>should not</em> be modified in this function!
+     * </p>
+     * <p>
+     * The inventory "should" attempt to fill nonempty slots first,
+     * equivalent to the behaviour of a player picking up an item.
+     * However, the inventory may technically distribute the items however it likes.
+     * Note: This function stacks items without subtypes with different metadata together.
+     * </p>
+     * <p>
+     * Even though a default implementation is provided,
+     * if your inventory behaves in "nonstandard" ways, you may have to override it.
+     * </p>
+     * <p>
+     * This method must have the four properties required for {@link IItemHandler#insertItem(int, ItemStack, boolean)}.
+     * </p>
+     *
+     * @param stacks   List of items to insert. Contents must not be null.
+     * @param simulate If true, the insertion is only simulated
+     * @return An array with the same length as the input list representing the remaining itemstacks.
+     *         Each element of the array has the same properties as the return value of
+     *         {@link IItemHandler#insertItem(int, ItemStack, boolean)}
+     *         (non-null, could be the same as its corresponding element in input list, etc.).
+     */
+    @NotNull
+    default ItemStack[] insertItemsStacked(@NotNull List<ItemStack> stacks, boolean simulate)
+    {
+        return insertItems(
+                Arrays.asList(insertItems(stacks, simulate, true)),
+                simulate, false);
+    }
+
+    @NotNull
+    private ItemStack[] insertItems(@NotNull List<ItemStack> stacks, boolean simulate, boolean stackedOnly)
+    {
+        var remaining = stacks.toArray(ItemStack[]::new);
+
+        for (int i = 0; i < getSlots(); i++)
+        {
+            var slot = getStackInSlot(i);
+            boolean allDone = true;
+            for (int j = 0; j < stacks.size(); j++)
+            {
+                if (remaining[j].isEmpty()) continue;
+                allDone = false;
+
+                // pretty sure this could be replaced with stackedOnly && !slot.isEmpty()
+                if (stackedOnly && !ItemHandlerHelper.canItemStacksStackRelaxed(slot, remaining[j]))
+                    continue;
+
+                var prev = remaining[j];
+                remaining[j] = insertItem(i, remaining[j], simulate);
+
+                // run if simulating + we could insert part of the current itemstack into the current slot
+                // note that this could be a false positive, since simulation mode doesn't actually update the inv
+                // so insertItem could think a slot is empty when we want it to run as if it's not
+                // false negatives are impossible
+                if (simulate && !prev.equals(remaining[j], false))
+                {
+                    if (slot.isEmpty())
+                    {
+                        // remaining[j] is already accurate
+                        // update slot var
+                        slot = prev.copy();
+                        slot.shrink(remaining[j].getCount());
+                    }
+                    else if (ItemHandlerHelper.canItemStacksStack(slot, prev))
+                    {
+                        int space = Math.min(getSlotLimit(i), slot.getMaxStackSize()) - slot.getCount();
+                        int inserted = Math.min(space, prev.getCount());
+
+                        // update remaining[j]
+                        remaining[j] = prev.copy();
+                        remaining[j].shrink(inserted);
+
+                        // update slot var
+                        slot.grow(inserted);
+                    }
+                    // handle false positive
+                    // no-op, no need change slot var
+                    else remaining[j] = prev;
+                }
+            }
+
+            if (allDone) break;
+        }
+
+        return remaining;
+    }
+
+    /**
      * Extracts an ItemStack from the given slot.
      * <p>
      * The returned value must be empty if nothing is extracted,
      * otherwise its stack size must be less than or equal to {@code amount} and {@link ItemStack#getMaxStackSize()}.
+     * </p>
+     * <p>
+     * As usual, the simulation mode must be accurate and not mutate the state of the inventory.
      * </p>
      *
      * @param slot     Slot to extract from.
