@@ -63,20 +63,3 @@
      }
  
      protected int getMaxPassengers() {
-@@ -859,6 +_,16 @@
-     @Override
-     public ItemStack getPickResult() {
-         return new ItemStack(this.getDropItem());
-+    }
-+
-+    // Forge: Fix MC-119811 by instantly completing lerp on board
-+    @Override
-+    protected void addPassenger(Entity passenger) {
-+        super.addPassenger(passenger);
-+        if (this.isControlledByLocalInstance() && this.lerpSteps > 0) {
-+            this.lerpSteps = 0;
-+            this.absMoveTo(this.lerpX, this.lerpY, this.lerpZ, (float)this.lerpYRot, (float)this.lerpXRot);
-+        }
-     }
- 
-     public static enum Status {
