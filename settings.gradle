@@ -34,7 +34,7 @@ dependencyResolutionManagement {
             library('typetools', 'net.jodah:typetools:0.6.3') // Needed by EventBus because of lambdas
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
 
-            library('mixin', 'org.spongepowered:mixin:0.8.5')
+            library('mixin', 'net.minecraftforge:mixins:0.8.5-fabric.0.13.4-forge.0.0.1')
             library('nulls', 'org.jetbrains:annotations:24.1.0') // Got to have our null annotations!
             library('slf4j-api', 'org.slf4j:slf4j-api:2.0.7')
             library('maven-artifact', 'org.apache.maven:maven-artifact:3.8.5')
