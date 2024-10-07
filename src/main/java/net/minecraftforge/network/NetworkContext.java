@@ -141,7 +141,7 @@ public class NetworkContext {
     }
 
     @ApiStatus.Internal
-    void setConnectionType(ConnectionType type) {
+    public void setConnectionType(ConnectionType type) {
         this.type = type;
     }
 
