@@ -1,9 +1,11 @@
 --- a/net/minecraft/world/inventory/RecipeBookType.java
 +++ b/net/minecraft/world/inventory/RecipeBookType.java
-@@ -1,8 +_,18 @@
+@@ -1,8 +_,24 @@
  package net.minecraft.world.inventory;
  
 -public enum RecipeBookType {
++import net.minecraft.network.protocol.Packet;
++
 +public enum RecipeBookType implements net.minecraftforge.common.IExtensibleEnum {
      CRAFTING,
      FURNACE,
@@ -18,5 +20,9 @@
 +   public void init() {
 +       String name = this.name().toLowerCase(java.util.Locale.ROOT).replace("_","");
 +       net.minecraft.stats.RecipeBookSettings.addTagsForType(this, "is" + name + "GuiOpen", "is" + name + "FilteringCraftable");
++   }
++
++   public boolean isModded() {
++       return this != CRAFTING && this != FURNACE && this != BLAST_FURNACE && this != SMOKER;
 +   }
  }
