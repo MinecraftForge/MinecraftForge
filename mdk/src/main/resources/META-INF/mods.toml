@@ -12,6 +12,9 @@ loaderVersion="${loader_version_range}" #mandatory This is typically bumped ever
 license="${mod_license}"
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
+# If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
+# set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
+#clientSideOnly=true #optional - defaults to false if absent
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
 # The modid of the mod
@@ -36,7 +39,7 @@ authors="${mod_authors}" #optional
 # IGNORE_ALL_VERSION means that your mod will not cause a red X if it's present on the client or the server. This is a special case and should only be used if your mod has no server component.
 # NONE means that no display test is set on your mod. You need to do this yourself, see IExtensionPoint.DisplayTest for more information. You can define any scheme you wish with this value.
 # IMPORTANT NOTE: this is NOT an instruction as to which environments (CLIENT or DEDICATED SERVER) your mod loads on. Your mod should load (and maybe do nothing!) whereever it finds itself.
-#displayTest="MATCH_VERSION" # MATCH_VERSION is the default if nothing is specified (#optional)
+#displayTest="MATCH_VERSION" # if nothing is specified, MATCH_VERSION is the default when clientSideOnly=false, otherwise IGNORE_ALL_VERSION when clientSideOnly=true (#optional)
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''${mod_description}'''
