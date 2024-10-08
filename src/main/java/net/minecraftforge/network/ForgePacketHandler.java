@@ -175,7 +175,7 @@ public class ForgePacketHandler {
         LOGGER.debug(MARKER,"Received registry data packet for {} token {}", msg.name(), msg.token());
         if (!this.registriesToReceive.remove(msg.name())) {
             LOGGER.error(MARKER, "Received unexpected registry data packet for {}", msg.name());
-            ctx.getConnection().disconnect(Component.literal("Illegal Registry Data packet received, unexpected regitry: " + msg.name()));
+            ctx.getConnection().disconnect(Component.literal("Illegal Registry Data packet received, unexpected registry: " + msg.name()));
             return;
         }
         this.registrySnapshots.put(msg.name(), msg.data());

@@ -817,6 +817,9 @@ tasks.named('universalJar').configure {
 
     manifest {
         attributes([
+            'Automatic-Module-Name': 'net.minecraftforge.forge'
+        ] as LinkedHashMap)
+        attributes([
             'Specification-Title':   'Forge',
             'Specification-Vendor':  'Forge Development LLC',
             'Specification-Version':  SPEC_VERSION,

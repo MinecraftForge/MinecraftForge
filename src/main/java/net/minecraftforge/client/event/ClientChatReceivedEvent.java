@@ -78,7 +78,7 @@ public class ClientChatReceivedEvent extends Event {
      * @Deprecated Mojang made ChatType a registry, which isn't always accessible when the System messages are sent.
      * So moved to it's own event. {@link SystemMessageReceivedEvent}
      */
-    @Deprecated(forRemoval = true, since = "1.20.1")
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public boolean isSystem() {
         return this.sender.equals(Util.NIL_UUID);
     }
@@ -118,7 +118,7 @@ public class ClientChatReceivedEvent extends Event {
      * @Deprecated Mojang made ChatType a registry, which isn't always accessible when the System messages are sent.
      * So moved to it's own event. {@link SystemMessageReceivedEvent}
      */
-    @Deprecated(forRemoval = true, since = "1.20.1")
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public static class System extends ClientChatReceivedEvent {
         private final boolean overlay;
 

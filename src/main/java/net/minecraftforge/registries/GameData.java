@@ -33,6 +33,7 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -123,6 +124,7 @@ public class GameData {
         makeRegistry(Keys.ATTRIBUTES).onValidate(AttributeCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(Keys.STAT_TYPES).create();
         makeRegistry(Keys.COMMAND_ARGUMENT_TYPES).disableSaving().create();
+        makeRegistry(Registries.DATA_COMPONENT_TYPE).disableSaving().create();
 
         // Villagers
         makeRegistry(Keys.VILLAGER_PROFESSIONS, "none").create();
