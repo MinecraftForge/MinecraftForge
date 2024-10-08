@@ -501,6 +501,11 @@ public class Tags {
         /** Deprecated for removal as misleading, because it also contained prismarine shards */
         @Deprecated(forRemoval = true, since = "1.21")
         public static final TagKey<Item> DUSTS_PRISMARINE = forgeTag("dusts/prismarine");
+
+        /**
+         * Pies and other pie-like foods belong in this tag.
+         */
+        public static final TagKey<Item> FOODS_PIE = forgeTag("foods/pie");
         //endregion
 
         //region `c` tags for common conventions
@@ -641,10 +646,6 @@ public class Tags {
          * Sweets and candies like lollipops or chocolate belong in this tag.
          */
         public static final TagKey<Item> FOODS_CANDY = cTag("foods/candy");
-        /**
-         * Pies and other pie-like foods belong in this tag.
-         */
-        public static final TagKey<Item> FOODS_PIE = cTag("foods/pie");
         /**
          * Any gold-based foods would go in this tag. Such as Golden Apples or Glistering Melon Slice.
          */
