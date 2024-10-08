@@ -30,10 +30,10 @@ public class ObjModelTest {
     private static final ModelResourceLocation PYRAMID_MODEL_LOCATION = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath(MODID, "pyramid"), "");
     private static BakedModel pyramidModel;
 
-    public ObjModelTest() {
+    public ObjModelTest(FMLJavaModLoadingContext ctx) {
         if (ENABLED) {
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ObjModelTest::registerObjModel);
-            FMLJavaModLoadingContext.get().getModEventBus().addListener(ObjModelTest::collectObjModel);
+            ctx.getModEventBus().addListener(ObjModelTest::registerObjModel);
+            ctx.getModEventBus().addListener(ObjModelTest::collectObjModel);
             MinecraftForge.EVENT_BUS.addListener(ObjModelTest::renderModel);
         }
     }
@@ -51,7 +51,7 @@ public class ObjModelTest {
             POSE_STACK.setIdentity();
             Vec3 camera = e.getCamera().getPosition();
             //noinspection removal
-            POSE_STACK.mulPose(e.getPoseStack());
+            POSE_STACK.mulPose(e.getProjectionMatrix());
             POSE_STACK.translate(0.5 - camera.x, 0.5 - camera.y, 0.5 - camera.z);
             MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
             // Render the obj model

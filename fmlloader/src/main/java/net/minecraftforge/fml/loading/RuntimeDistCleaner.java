@@ -8,14 +8,8 @@ package net.minecraftforge.fml.loading;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import com.google.common.collect.Streams;
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,200 +22,177 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-public class RuntimeDistCleaner implements ILaunchPluginService
-{
+public class RuntimeDistCleaner implements ILaunchPluginService {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Marker DISTXFORM = MarkerFactory.getMarker("DISTXFORM");
     private static String DIST;
     private static final String ONLYIN = Type.getDescriptor(OnlyIn.class);
     private static final String ONLYINS = Type.getDescriptor(OnlyIns.class);
+    private static final String MOD = "Lnet/minecraftforge/fml/common/Mod;";
+
     @Override
-    public String name()
-    {
+    public String name() {
         return "runtimedistcleaner";
     }
 
     @Override
-    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
-    {
-        AtomicBoolean changes = new AtomicBoolean();
-        if (remove(classNode.visibleAnnotations, DIST))
-        {
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason) {
+        var changed = false;
+
+        var annotations = unpack(classNode.visibleAnnotations);
+
+        if (remove(annotations, DIST)) {
             LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 
-        if (!FMLEnvironment.production && hasOnlyInWithModAnnotation(classNode.visibleAnnotations))
-        {
+        if (!FMLEnvironment.production && !annotations.isEmpty() && hasModAnnotation(classNode.visibleAnnotations)) {
             LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
             throw new RuntimeException("Found @OnlyIn on @Mod class "+ classNode.name  + " - this is not allowed as it causes crashes. Remove the OnlyIn and consider setting clientSideOnly=true in the root of your mods.toml instead");
         }
 
-        if (classNode.interfaces != null )
-        {
-            unpack(classNode.visibleAnnotations).stream()
-                .filter(ann->Objects.equals(ann.desc, ONLYIN))
-                .filter(ann-> ann.values.contains("_interface"))
-                .filter(ann->!Objects.equals(((String[])ann.values.get(ann.values.indexOf("value") + 1))[1], DIST))
-                .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
-                .forEach(intf -> {
-                    if (classNode.interfaces.remove(intf)) {
-                        LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
-                        changes.compareAndSet(false, true);
-                    }
-                });
+        if (classNode.interfaces != null && !classNode.interfaces.isEmpty()) {
+            for (var ann : annotations) {
+                if (ann.intf == null || DIST.equals(ann.side))
+                    continue;
+
+                if (classNode.interfaces.remove(ann.intf)) {
+                    LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, ann.intf);
+                    changed = true;
+                }
+            }
 
             //Remove Class level @OnlyIn/@OnlyIns annotations, this is important if anyone gets ambitious and tries to reflect an annotation with _interface set.
             if (classNode.visibleAnnotations != null) {
-                Iterator<AnnotationNode> itr = classNode.visibleAnnotations.iterator();
-                while (itr.hasNext()) {
-                    AnnotationNode ann = itr.next();
-                    if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS)) {
-                        LOGGER.debug(DISTXFORM,"Removing Class Annotation: {} @{}", classNode.name, ann.desc);
+                for (var itr = classNode.visibleAnnotations.iterator(); itr.hasNext(); ) {
+                    var ann = itr.next();
+                    if (ONLYIN.equals(ann.desc) || ONLYINS.equals(ann.desc)) {
+                        LOGGER.debug(DISTXFORM, "Removing Class Annotation: {} @{}", classNode.name, ann.desc);
                         itr.remove();
-                        changes.compareAndSet(false, true);
+                        changed = true;
                     }
                 }
             }
         }
 
-        Iterator<FieldNode> fields = classNode.fields.iterator();
-        while(fields.hasNext())
-        {
-            FieldNode field = fields.next();
-            if (remove(field.visibleAnnotations, DIST))
-            {
-                LOGGER.debug(DISTXFORM,"Removing field: {}.{}", classNode.name, field.name);
-                fields.remove();
-                changes.compareAndSet(false, true);
+        for (var itr = classNode.fields.iterator(); itr.hasNext(); ) {
+            var field = itr.next();
+            if (remove(unpack(field.visibleAnnotations), DIST)) {
+                LOGGER.debug(DISTXFORM, "Removing field: {}.{}", classNode.name, field.name);
+                itr.remove();
+                changed = true;
             }
         }
 
-        LambdaGatherer lambdaGatherer = new LambdaGatherer();
-        Iterator<MethodNode> methods = classNode.methods.iterator();
-        while(methods.hasNext())
-        {
-            MethodNode method = methods.next();
-            if (remove(method.visibleAnnotations, DIST))
-            {
-                LOGGER.debug(DISTXFORM,"Removing method: {}.{}{}", classNode.name, method.name, method.desc);
-                methods.remove();
+        var lambdaGatherer = new LambdaGatherer();
+        for (var itr = classNode.methods.iterator(); itr.hasNext(); ) {
+            var method = itr.next();
+            if (remove(unpack(method.visibleAnnotations), DIST)) {
+                LOGGER.debug(DISTXFORM, "Removing method: {}.{}{}", classNode.name, method.name, method.desc);
+                itr.remove();
                 lambdaGatherer.accept(method);
-                changes.compareAndSet(false, true);
+                changed = true;
             }
         }
 
         // remove dynamic synthetic lambda methods that are inside of removed methods
-        for (List<Handle> dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles();
-            !dynamicLambdaHandles.isEmpty(); dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles())
-        {
+        for (List<Handle> handles = lambdaGatherer.getDynamicLambdaHandles();
+            !handles.isEmpty(); handles = lambdaGatherer.getDynamicLambdaHandles()) {
             lambdaGatherer = new LambdaGatherer();
-            methods = classNode.methods.iterator();
-            while (methods.hasNext())
-            {
-                MethodNode method = methods.next();
-                if ((method.access & Opcodes.ACC_SYNTHETIC) == 0) continue;
-                for (Handle dynamicLambdaHandle : dynamicLambdaHandles)
-                {
-                    if (method.name.equals(dynamicLambdaHandle.getName()) && method.desc.equals(dynamicLambdaHandle.getDesc()))
-                    {
-                        LOGGER.debug(DISTXFORM,"Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
-                        methods.remove();
+            for (var itr = classNode.methods.iterator(); itr.hasNext(); ) {
+                MethodNode method = itr.next();
+                if ((method.access & Opcodes.ACC_SYNTHETIC) == 0)
+                    continue;
+
+                for (var handle : handles) {
+                    if (method.name.equals(handle.getName()) && method.desc.equals(handle.getDesc())) {
+                        LOGGER.debug(DISTXFORM, "Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
+                        itr.remove();
                         lambdaGatherer.accept(method);
-                        changes.compareAndSet(false, true);
+                        changed = true;
                     }
                 }
             }
         }
-        return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
+
+        return changed ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
+    private static record Target(String side, String intf) {
+        static Target from(final AnnotationNode node) {
+            var idx = node.values.indexOf("value");
+            var value = (String[])node.values.get(idx + 1); // Enums are stored as [Type, Value]
+
+            idx = node.values.indexOf("_interface");
+            if (idx == -1)
+                return new Target(value[1], null);
+
+            var intf = (Type)node.values.get(idx + 1);
+            return new Target(value[1], intf.getInternalName());
+        }
+    }
+
+    /**
+     * Unpack any OnlyIn or OnlyIns annotations to Target objects.
+     */
     @SuppressWarnings("unchecked")
-    private static List<AnnotationNode> unpack(final List<AnnotationNode> anns)
-    {
-        if (anns == null)
-        {
+    private static List<Target> unpack(final List<AnnotationNode> anns) {
+        if (anns == null || anns.isEmpty())
             return Collections.emptyList();
-        }
 
-        List<AnnotationNode> unpacked = new ArrayList<>();
+        var ret = new ArrayList<Target>();
+        for (var node : anns) {
+            if (ONLYIN.equals(node.desc))
+                ret.add(Target.from(node));
+            else if (ONLYINS.equals(node.desc)) {
+                if (node.values == null || node.values.isEmpty())
+                    continue;
 
-        for (var annotationNode : anns)
-        {
-            if (Objects.equals(annotationNode.desc, ONLYINS))
-            {
-                unpacked.add(annotationNode);
+                int idx = node.values.indexOf("value");
+                if (idx == -1)
+                    continue;
 
-                if (annotationNode.values != null)
-                {
-                    List<AnnotationNode> subNodes = (List<AnnotationNode>) annotationNode.values.get(annotationNode.values.indexOf("value") + 1);
-
-                    if (subNodes != null)
-                    {
-                        unpacked.addAll(subNodes);
-                    }
+                var subNodes = (List<AnnotationNode>)node.values.get(idx + 1);
+                if (subNodes != null) {
+                    for (var sub : subNodes)
+                        ret.add(Target.from(sub));
                 }
             }
         }
 
-        return unpacked;
+        return ret;
     }
 
-    private static boolean remove(final List<AnnotationNode> anns, final String side)
-    {
-        var onlyIns = unpack(anns);
-
-        for (var onlyIn : onlyIns)
-        {
-            if (!Objects.equals(onlyIn.desc, ONLYINS) || onlyIn.values.contains("_interface"))
-            {
-                continue;
-            }
-
-            if (!Objects.equals(((String[])onlyIn.values.get(onlyIn.values.indexOf("value") + 1))[1], side))
-            {
+    private static boolean remove(final List<Target> targets, final String side) {
+        for (var target : targets) {
+            if (target.intf == null && !side.equals(target.side))
                 return true;
-            }
         }
 
         return false;
     }
 
-    private static boolean hasOnlyInWithModAnnotation(final List<AnnotationNode> anns)
-    {
-        if (anns == null)
-        {
+    private static boolean hasModAnnotation(final List<AnnotationNode> anns) {
+        if (anns == null || anns.isEmpty())
             return false;
+
+        for (var ann : anns) {
+            if (ann.desc.equals(MOD))
+                return true;
         }
 
-        var foundModAnnotation = false;
-        var foundOnlyIn = false;
-
-        for (var ann : anns)
-        {
-            if (ann.desc.equals("Lnet/minecraftforge/fml/common/Mod;"))
-            {
-                foundModAnnotation = true;
-            } else if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS))
-            {
-                foundOnlyIn = true;
-            }
-        }
-
-        return foundModAnnotation && foundOnlyIn;
+        return false;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Consumer<Dist> getExtension()
-    {
-        return (s)-> {
+    public Consumer<Dist> getExtension() {
+        return s -> {
             DIST = s.name();
             LOGGER.debug(DISTXFORM, "Configuring for Dist {}", DIST);
         };
@@ -231,8 +202,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
-    {
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
         return isEmpty ? NAY : YAY;
     }
 
@@ -248,23 +218,21 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         }
 
         public void accept(MethodNode method) {
-            Streams.stream(method.instructions.iterator()).
-                    filter(insnNode->insnNode.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN).
-                    forEach(insnNode->insnNode.accept(this));
-        }
-
-        @Override
-        public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs)
-        {
-            if (META_FACTORY.equals(bsm))
-            {
-                Handle dynamicLambdaHandle = (Handle) bsmArgs[1];
-                dynamicLambdaHandles.add(dynamicLambdaHandle);
+            for (var insn : method.instructions) {
+                if (insn.getType() == AbstractInsnNode.INVOKE_DYNAMIC_INSN)
+                    insn.accept(this);
             }
         }
 
-        public List<Handle> getDynamicLambdaHandles()
-        {
+        @Override
+        public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
+            if (META_FACTORY.equals(bsm)) {
+                var handle = (Handle)bsmArgs[1];
+                dynamicLambdaHandles.add(handle);
+            }
+        }
+
+        public List<Handle> getDynamicLambdaHandles() {
             return dynamicLambdaHandles;
         }
     }
