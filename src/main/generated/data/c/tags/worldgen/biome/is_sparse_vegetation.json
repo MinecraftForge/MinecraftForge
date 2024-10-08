@@ -1,0 +1,21 @@
+{
+  "values": [
+    "#c:is_sparse_vegetation/overworld",
+    {
+      "id": "#forge:is_sparse/nether",
+      "required": false
+    },
+    {
+      "id": "#forge:is_sparse/end",
+      "required": false
+    },
+    {
+      "id": "#forge:is_sparse_vegetation",
+      "required": false
+    },
+    {
+      "id": "#forge:is_sparse",
+      "required": false
+    }
+  ]
+}

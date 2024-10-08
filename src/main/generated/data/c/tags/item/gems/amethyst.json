@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:amethyst_shard",
+    {
+      "id": "#forge:gems/amethyst",
+      "required": false
+    }
+  ]
+}

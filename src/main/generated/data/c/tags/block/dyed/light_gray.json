@@ -1,0 +1,25 @@
+{
+  "values": [
+    "minecraft:light_gray_banner",
+    "minecraft:light_gray_bed",
+    "minecraft:light_gray_candle",
+    "minecraft:light_gray_carpet",
+    "minecraft:light_gray_concrete",
+    "minecraft:light_gray_concrete_powder",
+    "minecraft:light_gray_glazed_terracotta",
+    "minecraft:light_gray_shulker_box",
+    "minecraft:light_gray_stained_glass",
+    "minecraft:light_gray_stained_glass_pane",
+    "minecraft:light_gray_terracotta",
+    "minecraft:light_gray_wall_banner",
+    "minecraft:light_gray_wool",
+    {
+      "id": "#forge:glass/light_gray",
+      "required": false
+    },
+    {
+      "id": "#forge:stained_glass/light_gray",
+      "required": false
+    }
+  ]
+}

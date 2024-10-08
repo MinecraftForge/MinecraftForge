@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:raw_copper",
+    {
+      "id": "#forge:raw_materials/copper",
+      "required": false
+    }
+  ]
+}

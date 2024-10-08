@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:raw_iron",
+    {
+      "id": "#forge:raw_materials/iron",
+      "required": false
+    }
+  ]
+}

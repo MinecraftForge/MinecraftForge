@@ -1,0 +1,25 @@
+{
+  "values": [
+    "minecraft:blue_banner",
+    "minecraft:blue_bed",
+    "minecraft:blue_candle",
+    "minecraft:blue_carpet",
+    "minecraft:blue_concrete",
+    "minecraft:blue_concrete_powder",
+    "minecraft:blue_glazed_terracotta",
+    "minecraft:blue_shulker_box",
+    "minecraft:blue_stained_glass",
+    "minecraft:blue_stained_glass_pane",
+    "minecraft:blue_terracotta",
+    "minecraft:blue_wall_banner",
+    "minecraft:blue_wool",
+    {
+      "id": "#forge:glass/blue",
+      "required": false
+    },
+    {
+      "id": "#forge:stained_glass/blue",
+      "required": false
+    }
+  ]
+}

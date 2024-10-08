@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:gold_nugget",
+    {
+      "id": "#forge:nuggets/gold",
+      "required": false
+    }
+  ]
+}

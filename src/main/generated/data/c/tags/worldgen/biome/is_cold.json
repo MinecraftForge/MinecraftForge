@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#c:is_cold/overworld",
+    {
+      "id": "#forge:is_cold/nether",
+      "required": false
+    },
+    "#c:is_cold/end",
+    {
+      "id": "#forge:is_cold",
+      "required": false
+    }
+  ]
+}

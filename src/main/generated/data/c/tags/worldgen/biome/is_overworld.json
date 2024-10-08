@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:is_overworld",
+    {
+      "id": "#forge:is_overworld",
+      "required": false
+    }
+  ]
+}

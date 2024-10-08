@@ -1,0 +1,24 @@
+{
+  "values": [
+    "minecraft:cyan_banner",
+    "minecraft:cyan_bed",
+    "minecraft:cyan_candle",
+    "minecraft:cyan_carpet",
+    "minecraft:cyan_concrete",
+    "minecraft:cyan_concrete_powder",
+    "minecraft:cyan_glazed_terracotta",
+    "minecraft:cyan_shulker_box",
+    "minecraft:cyan_stained_glass",
+    "minecraft:cyan_stained_glass_pane",
+    "minecraft:cyan_terracotta",
+    "minecraft:cyan_wool",
+    {
+      "id": "#forge:glass/cyan",
+      "required": false
+    },
+    {
+      "id": "#forge:stained_glass/cyan",
+      "required": false
+    }
+  ]
+}

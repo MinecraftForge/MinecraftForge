@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:lapis_block",
+    {
+      "id": "#forge:storage_blocks/lapis",
+      "required": false
+    }
+  ]
+}

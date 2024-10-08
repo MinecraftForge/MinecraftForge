@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:nuggets/gold",
+    "#c:nuggets/iron",
+    {
+      "id": "#forge:nuggets",
+      "required": false
+    }
+  ]
+}
