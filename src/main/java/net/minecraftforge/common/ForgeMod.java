@@ -391,7 +391,6 @@ public class ForgeMod {
         });
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
-//        modEventBus.addListener(this::loadComplete);
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
         for (DeferredRegister<?> r : registries) {
@@ -426,8 +425,6 @@ public class ForgeMod {
         VersionChecker.startVersionCheck();
         //VanillaPacketSplitter.register();
     }
-
-//    public void loadComplete(FMLLoadCompleteEvent event) {}
 
     public void serverStopping(ServerStoppingEvent evt) {
         WorldWorkerManager.clear();
@@ -545,7 +542,7 @@ public class ForgeMod {
     // net.minecraft.client.multiplayer.resolver.ServerRedirectHandler.createDnsSrvRedirectHandler uses DNSContextFactory
     // to resolve DNS records, and that is initialized reflectively by NamingManager. Which in module land isn't allowed.
     // So hack it so it is. this is equivalent to doing --add-exports jdk.naming.dns/com.sun.jndi.dns=java.naming
-    private void hackDNSResolver() {
+    private static void hackDNSResolver() {
         try {
             var target = Class.forName("com.sun.jndi.dns.DnsContextFactory");
             var reader = Class.forName("javax.naming.spi.NamingManager");
