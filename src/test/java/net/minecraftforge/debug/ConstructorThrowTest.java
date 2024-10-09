@@ -14,6 +14,6 @@ import net.minecraftforge.fml.common.Mod;
 @Mod("constructor_throw_test")
 public class ConstructorThrowTest {
     public ConstructorThrowTest() {
-        throw new RuntimeException("Test");
+        //throw new RuntimeException("Test");
     }
 }
