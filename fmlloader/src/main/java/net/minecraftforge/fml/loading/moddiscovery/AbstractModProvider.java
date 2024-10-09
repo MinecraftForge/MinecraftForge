@@ -34,6 +34,11 @@ public abstract class AbstractModProvider implements IModProvider
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
     protected IModLocator.ModFileOrException createMod(Path... path) {
+        return this.createMod(getDefaultJarModType(), path);
+    }
+
+    // FORGE: Backporting artifact, the defaultType must be the first parameter since path is varargs
+    protected IModLocator.ModFileOrException createMod(String defaultType, Path... path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
                 Manifest::new,
@@ -45,7 +50,7 @@ public abstract class AbstractModProvider implements IModProvider
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (type == null) {
-            type = getDefaultJarModType();
+            type = defaultType;
         }
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
