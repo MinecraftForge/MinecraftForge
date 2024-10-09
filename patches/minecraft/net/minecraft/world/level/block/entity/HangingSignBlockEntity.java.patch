@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/HangingSignBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/HangingSignBlockEntity.java
+@@ -10,6 +_,10 @@
+    public HangingSignBlockEntity(BlockPos p_250603_, BlockState p_251674_) {
+       super(BlockEntityType.f_244529_, p_250603_, p_251674_);
+    }
++   
++   public HangingSignBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
++      super(type, pos, state);
++   }
+ 
+    public int m_245065_() {
+       return 9;

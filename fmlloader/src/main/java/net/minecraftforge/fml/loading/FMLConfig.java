@@ -38,6 +38,7 @@ public class FMLConfig
         EARLY_WINDOW_SKIP_GL_VERSIONS("earlyWindowSkipGLVersions", List.of(), "Skip specific GL versions, may help with buggy graphics card drivers"),
         EARLY_WINDOW_SQUIR("earlyWindowSquir", Boolean.FALSE, "Squir?"),
         EARLY_WINDOW_SHOW_CPU("earlyWindowShowCPU", Boolean.FALSE, "Whether to show CPU usage stats in early window"),
+        EARLY_WINDOW_LOG_HELP_MSG("earlyWindowLogHelpMessage", Boolean.TRUE, "Whether to log a help message on first attempt, to aid troubleshooting. This setting should automatically disable itself after a successful launch"),
         ;
 
         private final String entry;

@@ -1049,11 +1049,16 @@ public class ForgeHooksClient
 
     public static List<ClientTooltipComponent> gatherTooltipComponents(ItemStack stack, List<? extends FormattedText> textElements, Optional<TooltipComponent> itemComponent, int mouseX, int screenWidth, int screenHeight, Font fallbackFont)
     {
-        Font font = getTooltipFont(stack, fallbackFont);
         List<Either<FormattedText, TooltipComponent>> elements = textElements.stream()
                 .map((Function<FormattedText, Either<FormattedText, TooltipComponent>>) Either::left)
                 .collect(Collectors.toCollection(ArrayList::new));
         itemComponent.ifPresent(c -> elements.add(1, Either.right(c)));
+        return gatherTooltipComponentsFromElements(stack, elements, mouseX, screenWidth, screenHeight, fallbackFont);
+    }
+
+    public static List<ClientTooltipComponent> gatherTooltipComponentsFromElements(ItemStack stack, List<Either<FormattedText, TooltipComponent>> elements, int mouseX, int screenWidth, int screenHeight, Font fallbackFont)
+    {
+        Font font = getTooltipFont(stack, fallbackFont);
 
         var event = new RenderTooltipEvent.GatherComponents(stack, screenWidth, screenHeight, elements, -1);
         MinecraftForge.EVENT_BUS.post(event);
