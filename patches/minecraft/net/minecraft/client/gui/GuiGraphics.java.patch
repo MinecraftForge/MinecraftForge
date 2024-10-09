@@ -92,7 +92,7 @@
        this.m_280497_(p_283128_, list, p_283678_, p_281696_, DefaultTooltipPositioner.f_262752_);
     }
  
-@@ -544,7 +_,22 @@
+@@ -544,7 +_,15 @@
     }
  
     public void m_280666_(Font p_282739_, List<Component> p_281832_, int p_282191_, int p_282446_) {
@@ -104,13 +104,6 @@
 +   public void renderComponentTooltip(Font font, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, ItemStack stack) {
 +      this.tooltipStack = stack;
 +      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponents(stack, tooltips, mouseX, m_280182_(), m_280206_(), font);
-+      this.m_280497_(font, components, mouseX, mouseY, DefaultTooltipPositioner.f_262752_);
-+      this.tooltipStack = ItemStack.f_41583_;
-+   }
-+
-+   public void renderComponentTooltipFromElements(Font font, List<com.mojang.datafixers.util.Either<FormattedText, TooltipComponent>> elements, int mouseX, int mouseY, ItemStack stack) {
-+      this.tooltipStack = stack;
-+      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponentsFromElements(stack, elements, mouseX, m_280182_(), m_280206_(), font);
 +      this.m_280497_(font, components, mouseX, mouseY, DefaultTooltipPositioner.f_262752_);
 +      this.tooltipStack = ItemStack.f_41583_;
     }

@@ -28,7 +28,7 @@ public class BrewingFuelTest
     public BrewingFuelTest()
     {
         if (RUNS) {
-        	final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+            final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
         }
     }
