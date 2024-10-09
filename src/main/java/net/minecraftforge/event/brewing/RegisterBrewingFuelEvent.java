@@ -10,7 +10,6 @@ public class RegisterBrewingFuelEvent extends net.minecraftforge.eventbus.api.Ev
     
     public RegisterBrewingFuelEvent()
     {
-        
         super();
         this.brewingFuelValues = new BrewingFuelValues();
     }
