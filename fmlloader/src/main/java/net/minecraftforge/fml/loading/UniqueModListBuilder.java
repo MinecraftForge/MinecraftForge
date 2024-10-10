@@ -135,7 +135,7 @@ public class UniqueModListBuilder
             return modFile.getSecureJar().name();
         }
 
-        return modFile.getModFileInfo().moduleName();
+        return modFile.getModFileInfo().getMods().get(0).getModId();
     }
 
     public record UniqueModListData(List<ModFile> modFiles, Map<String, List<ModFile>> modFilesByFirstId) {}

@@ -1,0 +1,1 @@
+Automatic-Module-Name: net.minecraftforge.test.obj_model_test

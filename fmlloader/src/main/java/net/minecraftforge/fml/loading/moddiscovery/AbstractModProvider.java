@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
+
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -35,6 +36,7 @@ import java.util.jar.JarFile;
 public abstract class AbstractModProvider implements IModProvider {
     private static final   Logger LOGGER    = LogUtils.getLogger();
     protected static final String MODS_TOML = "META-INF/mods.toml";
+    private static final String MODULE_INFO = "module-info.class";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
         return createMod(path, false);
@@ -48,10 +50,7 @@ public abstract class AbstractModProvider implements IModProvider {
     @Nullable
     protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown, String defaultType) {
         var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(
-            jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
-            path
-        );
+        var sj = SecureJar.from(jar -> loadMetaFromJar(jar, mjm), path);
 
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
@@ -61,6 +60,8 @@ public abstract class AbstractModProvider implements IModProvider {
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+            // ModJarMetadata is only used when loading mods.toml mods as ModJarMetadata
+            mjm.setModFile(mod);
             if (mod.getModFileInfo().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
                 LOGGER.error(LogMarkers.SCAN, "Unable to load file \"{}\" because its mods.toml is requesting an invalid javafml loaderVersion (use \"*\" if you want to allow all versions) and is missing a forge modId dependency declaration (see the sample mods.toml in the MDK).", path);
                 return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternative mods.".formatted(mod.getFileName())));
@@ -73,8 +74,19 @@ public abstract class AbstractModProvider implements IModProvider {
         } else
             return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + path));
 
-        mjm.setModFile(mod);
         return new IModLocator.ModFileOrException(mod, null);
+    }
+
+    private static JarMetadata loadMetaFromJar(SecureJar jar, ModJarMetadata mjm) {
+        var automatic = JarMetadata.from(jar, jar.getPrimaryPath());
+
+        if (!jar.moduleDataProvider().findFile(MODS_TOML).isPresent())
+            return automatic;
+
+        if (jar.moduleDataProvider().findFile(MODULE_INFO).isPresent())
+            return automatic;
+
+        return mjm;
     }
 
     protected IModFileInfo manifestParser(final IModFile mod) {
