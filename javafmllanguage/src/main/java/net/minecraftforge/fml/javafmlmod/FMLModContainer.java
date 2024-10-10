@@ -48,7 +48,7 @@ public class FMLModContainer extends ModContainer {
             var module = gameLayer.findModule(moduleName)
                 .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
             modClass = Class.forName(module, className);
-            LOGGER.trace(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
+            LOGGER.debug(LOADING,"Loaded modclass {}/{} with {}", modClass.getModule().getName(), modClass.getName(), modClass.getClassLoader());
         } catch (Throwable e) {
             LOGGER.error(LOADING, "Failed to load class {}", className, e);
             throw new ModLoadingException(info, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmodclass", e);

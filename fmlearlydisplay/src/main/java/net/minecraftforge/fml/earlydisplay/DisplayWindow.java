@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.Desktop;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URI;
@@ -302,13 +300,6 @@ public class DisplayWindow implements ImmediateWindowProvider {
     }
 
     private void crashElegantly(String errorDetails) {
-        String qrText;
-        try (var is = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/glfailure.txt")))) {
-            qrText = is.lines().collect(Collectors.joining("\n"));
-        } catch (IOException ioe) {
-            qrText = "";
-        }
-
         StringBuilder msgBuilder = new StringBuilder(2000);
         msgBuilder.append("Failed to initialize graphics window with current settings.\n");
         msgBuilder.append("\n\n");
@@ -407,13 +398,13 @@ public class DisplayWindow implements ImmediateWindowProvider {
             if (showHelpLog && versidx == 0) {
                 LOGGER.info("""
                 If this message is the only thing at the bottom of your log before a crash, you probably have a driver issue.
-                
+
                 Possible solutions:
                 A) Make sure Minecraft is set to prefer high performance graphics in the OS and/or driver control panel
                 B) Check for driver updates on the graphics brand's website
                 C) Try reinstalling your graphics drivers
                 D) If still not working after trying all of the above, ask for further help on the Forge forums or Discord
-                
+
                 You can safely ignore this message if the game starts up successfully.""");
             }
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSIONS[versidx][0]); // we try our versions one at a time
@@ -612,10 +603,25 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
     @Override
     public void updateModuleReads(final ModuleLayer layer) {
-        var fm = layer.findModule("forge").orElseThrow();
-        getClass().getModule().addReads(fm);
-        var clz = FMLLoader.getGameLayer().findModule("forge").map(l->Class.forName(l, "net.minecraftforge.client.loading.ForgeLoadingOverlay")).orElseThrow();
-        loadingOverlay = Arrays.stream(clz.getDeclaredMethods()).filter(m-> Modifier.isStatic(m.getModifiers()) && m.getName().equals("newInstance")).findFirst().orElseThrow();
+        final var FORGE_MODULE = "net.minecraftforge.forge";
+        var forge_module = layer.findModule(FORGE_MODULE).orElse(null);
+        if (forge_module == null)
+            throw new IllegalStateException("Could not find " + FORGE_MODULE + " in " + layer);
+
+        getClass().getModule().addReads(forge_module);
+
+
+        var clz = Class.forName(forge_module, "net.minecraftforge.client.loading.ForgeLoadingOverlay");
+
+        for (var mtd : clz.getDeclaredMethods()) {
+            if (Modifier.isStatic(mtd.getModifiers()) && "newInstance".equals(mtd.getName())) {
+                this.loadingOverlay = mtd;
+                break;
+            }
+        }
+
+        if (loadingOverlay == null)
+            throw new IllegalStateException("Could not find static newInstace method in " + clz.getName());
     }
 
     public int getFramebufferTextureId() {

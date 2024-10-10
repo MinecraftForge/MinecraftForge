@@ -259,7 +259,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
 
     @Override
     public String moduleName() {
-        return getMods().get(0).getModId();
+        return this.modFile.getSecureJar().name();
     }
 
     @Override
