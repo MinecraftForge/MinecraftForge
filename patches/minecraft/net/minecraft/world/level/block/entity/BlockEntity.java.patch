@@ -22,6 +22,15 @@
      }
  
      private void validateBlockState(BlockState p_345558_) {
+@@ -51,7 +_,7 @@
+     }
+ 
+     public boolean isValidBlockState(BlockState p_345570_) {
+-        return this.type.isValid(p_345570_);
++        return this.getType().isValid(p_345570_);
+     }
+ 
+     public static BlockPos getPosFromTag(CompoundTag p_187473_) {
 @@ -72,6 +_,7 @@
      }
  
