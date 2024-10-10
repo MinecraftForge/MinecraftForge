@@ -1,5 +1,24 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
+@@ -25,6 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ 
+ public class BrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer {
++   private static final net.minecraftforge.common.BrewingFuelValues BREWING_FUELS = net.minecraftforge.common.ForgeHooks.onBrewingFuelRegisterEvent();
+    private static final int f_155280_ = 3;
+    private static final int f_155281_ = 4;
+    private static final int[] f_58972_ = new int[]{3};
+@@ -91,8 +_,8 @@
+ 
+    public static void m_155285_(Level p_155286_, BlockPos p_155287_, BlockState p_155288_, BrewingStandBlockEntity p_155289_) {
+       ItemStack itemstack = p_155289_.f_58975_.get(4);
+-      if (p_155289_.f_58979_ <= 0 && itemstack.m_150930_(Items.f_42593_)) {
+-         p_155289_.f_58979_ = 20;
++      if (p_155289_.f_58979_ <= 0 && (itemstack.m_150930_(Items.f_42593_) || BREWING_FUELS.hasFuel(itemstack.m_41720_()))) {
++         p_155289_.f_58979_ = BREWING_FUELS.get(itemstack.m_41720_());
+          itemstack.m_41774_(1);
+          m_155232_(p_155286_, p_155287_, p_155288_);
+       }
 @@ -148,6 +_,7 @@
  
     private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
@@ -44,7 +63,8 @@
 -         return PotionBrewing.m_43506_(p_59018_);
 +         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_59018_);
        } else if (p_59017_ == 4) {
-          return p_59018_.m_150930_(Items.f_42593_);
+-         return p_59018_.m_150930_(Items.f_42593_);
++         return p_59018_.m_150930_(Items.f_42593_) || BREWING_FUELS.hasFuel(p_59018_.m_41720_());
        } else {
 -         return (p_59018_.m_150930_(Items.f_42589_) || p_59018_.m_150930_(Items.f_42736_) || p_59018_.m_150930_(Items.f_42739_) || p_59018_.m_150930_(Items.f_42590_)) && this.m_8020_(p_59017_).m_41619_();
 +            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_59018_) && this.m_8020_(p_59017_).m_41619_();

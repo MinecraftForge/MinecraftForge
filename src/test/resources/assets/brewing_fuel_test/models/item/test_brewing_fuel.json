@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "brewing_fuel_test:item/test_brewing_fuel"
+  }
+}

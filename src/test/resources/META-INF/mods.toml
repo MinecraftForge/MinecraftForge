@@ -41,6 +41,9 @@ modId="mdk_datagen"
 [[mods]]
     modId="calculate_normals_test"
 
+[[mods]]
+    modId="brewing_fuel_test"
+
 #[[mods]]
 #    modId="constructor_throw_test"
 

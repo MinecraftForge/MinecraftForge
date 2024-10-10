@@ -146,6 +146,7 @@ import net.minecraftforge.event.ModMismatchEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.RegisterStructureConversionsEvent;
 import net.minecraftforge.event.VanillaGameEvent;
+import net.minecraftforge.event.brewing.RegisterBrewingFuelEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -1634,5 +1635,12 @@ public class ForgeHooks
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
+    }
+    
+    public static BrewingFuelValues onBrewingFuelRegisterEvent() 
+    {
+        RegisterBrewingFuelEvent event = new RegisterBrewingFuelEvent();
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getBrewingFuelValues();
     }
 }
