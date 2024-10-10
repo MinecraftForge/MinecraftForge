@@ -107,7 +107,7 @@
 +      this.m_280497_(font, components, mouseX, mouseY, DefaultTooltipPositioner.f_262752_);
 +      this.tooltipStack = ItemStack.f_41583_;
 +   }
-+      
++
 +   public void renderComponentTooltipFromElements(Font font, List<com.mojang.datafixers.util.Either<FormattedText, TooltipComponent>> elements, int mouseX, int mouseY, ItemStack stack) {
 +      this.tooltipStack = stack;
 +      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponentsFromElements(stack, elements, mouseX, m_280182_(), m_280206_(), font);
