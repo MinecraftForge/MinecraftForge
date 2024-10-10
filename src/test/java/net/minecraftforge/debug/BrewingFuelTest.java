@@ -21,13 +21,13 @@ public class BrewingFuelTest
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
     private static final RegistryObject<Item> TEST_BREWING_FUEL = ITEMS.register("test_brewing_fuel",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+            () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 
-    private static final boolean RUNS = true;
+    private static final boolean ENABLED = true;
     
     public BrewingFuelTest()
     {
-        if (RUNS) {
+        if (ENABLED) {
             final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             ITEMS.register(modEventBus);
         }
@@ -36,7 +36,7 @@ public class BrewingFuelTest
     @SubscribeEvent
     public static void addBrewingFuel(RegisterBrewingFuelEvent event) 
     {
-        if (RUNS) 
+        if (ENABLED) 
         {
             // Register vanilla item as fuel.
             event.register(Items.COAL, 5);
