@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -13,6 +_,7 @@
+ import net.minecraft.world.item.alchemy.PotionUtils;
+ 
+ public class BrewingStandMenu extends AbstractContainerMenu {
++   private static final net.minecraftforge.common.BrewingFuelValues BREWING_FUELS = net.minecraftforge.common.ForgeHooks.onBrewingFuelRegisterEvent();
+    private static final int f_150488_ = 0;
+    private static final int f_150489_ = 2;
+    private static final int f_150490_ = 3;
 @@ -75,7 +_,7 @@
                 if (!this.m_38903_(itemstack1, 3, 4, false)) {
                    return ItemStack.f_41583_;
@@ -9,6 +17,15 @@
                 if (!this.m_38903_(itemstack1, 0, 3, false)) {
                    return ItemStack.f_41583_;
                 }
+@@ -132,7 +_,7 @@
+       }
+ 
+       public static boolean m_39112_(ItemStack p_39113_) {
+-         return p_39113_.m_150930_(Items.f_42593_);
++         return p_39113_.m_150930_(Items.f_42593_) || BREWING_FUELS.hasFuel(p_39113_.m_41720_());
+       }
+ 
+       public int m_6641_() {
 @@ -146,7 +_,7 @@
        }
  
