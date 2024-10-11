@@ -53,12 +53,16 @@ public final class ModJarMetadata implements JarMetadata {
             return descriptor;
 
         var bld = ModuleDescriptor.newAutomaticModule(name())
-                .version(version())
-                .packages(modFile.getSecureJar().getPackages());
-        modFile.getSecureJar().getProviders().stream()
-                .filter(p -> !p.providers().isEmpty())
-                .forEach(p -> bld.provides(p.serviceName(), p.providers()));
-        modFile.getModFileInfo().usesServices().forEach(bld::uses);
+            .version(version())
+            .packages(modFile.getSecureJar().getPackages());
+
+        for (var provider : modFile.getSecureJar().getProviders()) {
+            if (provider.providers().isEmpty())
+                continue;
+
+            bld.provides(provider.serviceName(), provider.providers());
+        }
+
         descriptor = bld.build();
         return descriptor;
     }
