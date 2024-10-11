@@ -34,9 +34,9 @@ import java.util.jar.JarFile;
 
 @ApiStatus.Internal
 public abstract class AbstractModProvider implements IModProvider {
-    private static final   Logger LOGGER    = LogUtils.getLogger();
-    protected static final String MODS_TOML = "META-INF/mods.toml";
-    private static final String MODULE_INFO = "module-info.class";
+    private static final   Logger LOGGER      = LogUtils.getLogger();
+    protected static final String MODS_TOML   = "META-INF/mods.toml";
+    protected static final String MODULE_INFO = "module-info.class";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
         return createMod(path, false);
@@ -78,13 +78,9 @@ public abstract class AbstractModProvider implements IModProvider {
     }
 
     private static JarMetadata loadMetaFromJar(SecureJar jar, ModJarMetadata mjm) {
-        var automatic = JarMetadata.from(jar, jar.getPrimaryPath());
-
-        if (!jar.moduleDataProvider().findFile(MODS_TOML).isPresent())
-            return automatic;
-
-        if (jar.moduleDataProvider().findFile(MODULE_INFO).isPresent())
-            return automatic;
+        if (jar.moduleDataProvider().findFile(MODS_TOML).isEmpty() ||
+           jar.moduleDataProvider().findFile(MODULE_INFO).isPresent())
+            return JarMetadata.from(jar, jar.getPrimaryPath());
 
         return mjm;
     }
