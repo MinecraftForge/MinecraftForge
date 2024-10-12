@@ -91,23 +91,24 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
         // First lets find all class files, that have the @Mod annotation and map packages to modids.
         var packages = findTestModPackages(path);
         for (var entry : packages.entrySet()) {
-            var pkg = entry.getKey();
+            var pkg = entry.getKey() + '/';
             var modids = entry.getValue();
 
             // Find resource directories for every mod in this group
-            var resourcePaths = new LinkedHashSet<Path>();
+            var paths = new LinkedHashSet<Path>();
             for (var modid : modids) {
                 var rsc = path.resolve(modid);
                 if (Files.exists(rsc))
-                    resourcePaths.add(rsc);
+                    paths.add(rsc);
             }
 
             var root = memory.getPath(modids.iterator().next()); // use the first modid as our root
-            buildModsToml(resourcePaths, modids, root);
-            buildPackMeta(resourcePaths, root);
+            buildModsToml(paths, modids, root);
+            buildPackMeta(paths, root);
+            moveModuleInfo(paths, root);
 
             if (Files.exists(root))
-                resourcePaths.add(root);
+                paths.add(root);
 
             // We want just the class files from the root of the input paths. So make a new union with a filter.
             var classes = UnionHelper.newFileSystem(
@@ -121,14 +122,10 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
                 }, new Path[] { path }
             );
 
-            // And we want the resources, and none of the classes, just in case things get kinda fucky and somehow a package overlaps a sub package {shading?}
-            var resources = UnionHelper.newFileSystem((name, base) -> !name.endsWith(".class"), resourcePaths.toArray(Path[]::new));
+            paths.addFirst(classes.getRootDirectories().iterator().next());
 
             // Union of unions, Yay!
-            var union = UnionHelper.newFileSystem(null, new Path[] {
-                classes.getRootDirectories().iterator().next(),
-                resources.getRootDirectories().iterator().next()
-            });
+            var union = UnionHelper.newFileSystem(null, paths.stream().toArray(Path[]::new));
             mod.add(union.getRootDirectories().iterator().next());
         }
 
@@ -271,6 +268,25 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
             """, StandardCharsets.UTF_8, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to make in memory pack.mcmeta: " + target, e);
+        }
+    }
+
+    private static void moveModuleInfo(Set<Path> paths, Path root) {
+        var existing = paths.stream()
+            .map(p -> p.resolve("module-info.dat"))
+            .filter(Files::exists)
+            .findFirst()
+            .orElse(null);
+
+        if (existing == null)
+            return;
+
+        var target = root.resolve("module-info.class");
+        try {
+            Files.createDirectories(target.getParent());
+            Files.copy(existing, target);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to copy module-info.dat to memory: " + target, e);
         }
     }
 
