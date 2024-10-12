@@ -18,7 +18,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 @Mod(ClosedTestsMod.MODID)
-@GameTestHolder("forge." + ClosedTestsMod.MODID)
+@GameTestHolder("forge.module.closed")
 public class ClosedTestsMod extends BaseTestMod {
     public static final String MODID = "closed_module_test";
 
