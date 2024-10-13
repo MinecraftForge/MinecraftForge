@@ -1,0 +1,23 @@
+{
+  "values": [
+    "minecraft:baked_potato",
+    "minecraft:honey_bottle",
+    "minecraft:ominous_bottle",
+    "minecraft:dried_kelp",
+    "#c:foods/fruit",
+    "#c:foods/vegetable",
+    "#c:foods/berry",
+    "#c:foods/bread",
+    "#c:foods/cookie",
+    "#c:foods/raw_meat",
+    "#c:foods/raw_fish",
+    "#c:foods/cooked_meat",
+    "#c:foods/cooked_fish",
+    "#c:foods/soup",
+    "#c:foods/candy",
+    "#forge:foods/pie",
+    "#c:foods/golden",
+    "#c:foods/edible_when_placed",
+    "#c:foods/food_poisoning"
+  ]
+}

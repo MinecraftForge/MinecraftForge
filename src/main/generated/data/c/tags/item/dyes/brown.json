@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:brown_dye",
+    {
+      "id": "#forge:dyes/brown",
+      "required": false
+    }
+  ]
+}

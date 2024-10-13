@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#forge:chests/ender",
+    "#forge:chests/trapped",
+    "#c:chests/wooden",
+    {
+      "id": "#forge:chests",
+      "required": false
+    }
+  ]
+}

@@ -1,29 +1,43 @@
 --- a/net/minecraft/world/item/DyeColor.java
 +++ b/net/minecraft/world/item/DyeColor.java
-@@ -44,6 +_,7 @@
+@@ -44,6 +_,8 @@
      private final int textureDiffuseColor;
      private final int fireworkColor;
      private final int textColor;
-+    private final net.minecraft.tags.TagKey<Item> tag;
++    private final net.minecraft.tags.TagKey<Item> dyesTag;
++    private final net.minecraft.tags.TagKey<Item> dyedTag;
  
      private DyeColor(final int p_41046_, final String p_41047_, final int p_41048_, final MapColor p_285297_, final int p_41050_, final int p_41051_) {
          this.id = p_41046_;
-@@ -52,6 +_,7 @@
+@@ -52,6 +_,8 @@
          this.textColor = p_41051_;
          this.textureDiffuseColor = FastColor.ARGB32.opaque(p_41048_);
          this.fireworkColor = p_41050_;
-+        this.tag = net.minecraft.tags.ItemTags.create("forge", "dyes/" + p_41047_);
++        this.dyesTag = net.minecraft.tags.ItemTags.create("c", "dyes/" + p_41047_);
++        this.dyedTag = net.minecraft.tags.ItemTags.create("c", "dyed/" + p_41047_);
      }
  
      public int getId() {
-@@ -102,5 +_,14 @@
+@@ -102,5 +_,26 @@
      @Override
      public String getSerializedName() {
          return this.name;
 +    }
 +
++    /**
++     * Gets the tag key representing the set of items which provide this dye colour.
++     * @return A {@link net.minecraft.tags.TagKey<Item>} representing the set of items which provide this dye colour.
++     */
 +    public net.minecraft.tags.TagKey<Item> getTag() {
-+        return tag;
++        return dyesTag;
++    }
++
++    /**
++     * Gets the tag key representing the set of items which are dyed with this colour.
++     * @return A {@link net.minecraft.tags.TagKey<Item>} representing the set of items which are dyed with this colour.
++     */
++    public net.minecraft.tags.TagKey<Item> getDyedTag() {
++        return dyedTag;
 +    }
 +
 +    @Nullable

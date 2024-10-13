@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:tinted_glass",
+    {
+      "id": "#forge:glass_tinted",
+      "required": false
+    }
+  ]
+}

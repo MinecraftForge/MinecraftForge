@@ -43,8 +43,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public final class ForgeRecipeProvider extends VanillaRecipeProvider {
-    private final Map<Item, TagKey<Item>> replacements = new HashMap<>();
-    private final Set<ResourceLocation> excludes = new HashSet<>();
+    private final Map<Item, TagKey<Item>> replacements = HashMap.newHashMap(12);
+    private final Set<ResourceLocation> excludes = HashSet.newHashSet(16);
 
     public ForgeRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookup) {
         super(packOutput, lookup);
@@ -76,7 +76,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE_NORMAL);
         replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
 
-        replace(Items.STRING, Tags.Items.STRING);
+        replace(Items.STRING, Tags.Items.STRINGS);
         exclude(getConversionRecipeName(Blocks.WHITE_WOOL, Items.STRING));
 
         exclude(Blocks.GOLD_BLOCK);
@@ -196,7 +196,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private <T, R> R getField(Class<T> clz, T inst, int index) {
+    private static <T, R> R getField(Class<T> clz, T inst, int index) {
         Field fld = clz.getDeclaredFields()[index];
         fld.setAccessible(true);
         try {

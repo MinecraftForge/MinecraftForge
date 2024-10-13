@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:is_ocean",
+    "#c:is_river",
+    {
+      "id": "#forge:is_water",
+      "required": false
+    }
+  ]
+}

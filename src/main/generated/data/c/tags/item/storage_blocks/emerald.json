@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:emerald_block",
+    {
+      "id": "#forge:storage_blocks/emerald",
+      "required": false
+    }
+  ]
+}

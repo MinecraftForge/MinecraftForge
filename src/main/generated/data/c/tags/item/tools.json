@@ -1,0 +1,25 @@
+{
+  "values": [
+    "#minecraft:axes",
+    "#minecraft:hoes",
+    "#minecraft:pickaxes",
+    "#minecraft:shovels",
+    "#minecraft:swords",
+    "#c:tools/bow",
+    "#c:tools/brush",
+    "#c:tools/crossbow",
+    "#c:tools/fishing_rod",
+    "#c:tools/shear",
+    "#c:tools/igniter",
+    "#c:tools/shield",
+    "#c:tools/spear",
+    "#c:tools/mace",
+    "#c:tools/mining_tool",
+    "#c:tools/melee_weapon",
+    "#c:tools/ranged_weapon",
+    {
+      "id": "#forge:tools",
+      "required": false
+    }
+  ]
+}

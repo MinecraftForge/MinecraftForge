@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:is_taiga",
+    "minecraft:grove",
+    {
+      "id": "#forge:is_tree/coniferous",
+      "required": false
+    }
+  ]
+}

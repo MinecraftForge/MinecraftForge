@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:gold_block",
+    {
+      "id": "#forge:storage_blocks/gold",
+      "required": false
+    }
+  ]
+}

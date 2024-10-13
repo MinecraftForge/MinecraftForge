@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:prismarine_crystals",
+    {
+      "id": "#forge:gems/prismarine",
+      "required": false
+    }
+  ]
+}

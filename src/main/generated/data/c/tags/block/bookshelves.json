@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:bookshelf",
+    {
+      "id": "#forge:bookshelves",
+      "required": false
+    }
+  ]
+}

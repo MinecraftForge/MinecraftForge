@@ -37,7 +37,6 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.registries.DeferredRegister;
@@ -145,7 +144,7 @@ public final class CriterionTest extends BaseTestMod {
                         .parent(STORY_ROOT)
                         .requirements(AdvancementRequirements.Strategy.AND)
                         .addCriterion(TEST_CRITERION_ID, CRITERION.get().instance(
-                            BlockPredicate.Builder.block().of(Tags.Blocks.GLASS).build(),
+                            BlockPredicate.Builder.block().of(Tags.Blocks.GLASS_BLOCKS).build(),
                             ItemPredicate.Builder.item().of(tag).build(),
                             true
                         ))

@@ -1,0 +1,17 @@
+{
+  "values": [
+    "#c:is_wet/overworld",
+    {
+      "id": "#forge:is_wet/nether",
+      "required": false
+    },
+    {
+      "id": "#forge:is_wet/end",
+      "required": false
+    },
+    {
+      "id": "#forge:is_wet",
+      "required": false
+    }
+  ]
+}

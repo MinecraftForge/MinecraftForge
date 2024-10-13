@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:redstone_block",
+    {
+      "id": "#forge:storage_blocks/redstone",
+      "required": false
+    }
+  ]
+}

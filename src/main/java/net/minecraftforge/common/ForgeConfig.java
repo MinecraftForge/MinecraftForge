@@ -13,8 +13,11 @@ import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import org.apache.logging.log4j.Logger;
 
 public class ForgeConfig {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static class Server {
         public final BooleanValue removeErroringBlockEntities;
 
@@ -66,10 +69,22 @@ public class ForgeConfig {
      * General configuration that doesn't need to be synchronized but needs to be available before server startup
      */
     public static class Common {
+        public enum MigrationHelperMode {
+            OFF,
+            ONLY_IN_DEV_ENV,
+            ALWAYS
+        }
+
+        public final ForgeConfigSpec.EnumValue<MigrationHelperMode> migrationHelperMode;
 
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
+            builder.comment("General configuration settings")
                     .push("general");
+
+            migrationHelperMode = builder
+                    .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.")
+                    .translation("forge.configgui.migrationHelperMode")
+                    .defineEnum("logLegacyTagWarnings", MigrationHelperMode.OFF);
 
             builder.pop();
         }
@@ -174,12 +189,12 @@ public class ForgeConfig {
 
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent.Loading configEvent) {
-        LogManager.getLogger().debug(Logging.FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LOGGER.debug(Logging.FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent
     public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-        LogManager.getLogger().debug(Logging.FORGEMOD, "Forge config just got changed on the file system!");
+        LOGGER.debug(Logging.FORGEMOD, "Forge config just got changed on the file system!");
     }
 
     //General

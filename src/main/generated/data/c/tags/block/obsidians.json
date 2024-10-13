@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:obsidians/normal",
+    "#c:obsidians/crying",
+    {
+      "id": "#forge:obsidian",
+      "required": false
+    }
+  ]
+}

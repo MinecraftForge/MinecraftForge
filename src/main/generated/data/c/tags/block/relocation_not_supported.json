@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#forge:relocation_not_supported",
+      "required": false
+    },
+    {
+      "id": "#forge:immovable",
+      "required": false
+    }
+  ]
+}

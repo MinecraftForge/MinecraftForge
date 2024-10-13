@@ -1,0 +1,18 @@
+{
+  "values": [
+    "#forge:ores/coal",
+    "#forge:ores/copper",
+    "#forge:ores/diamond",
+    "#forge:ores/emerald",
+    "#forge:ores/gold",
+    "#forge:ores/iron",
+    "#forge:ores/lapis",
+    "#c:ores/netherite_scrap",
+    "#forge:ores/redstone",
+    "#c:ores/quartz",
+    {
+      "id": "#forge:ores",
+      "required": false
+    }
+  ]
+}

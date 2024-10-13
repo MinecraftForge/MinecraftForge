@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:andesite",
+    "minecraft:diorite",
+    "minecraft:granite",
+    "minecraft:stone",
+    "minecraft:deepslate",
+    "minecraft:tuff",
+    {
+      "id": "#forge:stone",
+      "required": false
+    }
+  ]
+}

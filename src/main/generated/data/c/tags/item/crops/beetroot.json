@@ -1,0 +1,9 @@
+{
+  "values": [
+    "minecraft:beetroot",
+    {
+      "id": "#forge:crops/beetroot",
+      "required": false
+    }
+  ]
+}
