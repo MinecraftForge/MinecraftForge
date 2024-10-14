@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#forge:ingots/brick",
+    "#forge:ingots/copper",
+    "#forge:ingots/gold",
+    "#forge:ingots/iron",
+    "#forge:ingots/netherite",
+    "#forge:ingots/nether_brick"
+  ]
+}

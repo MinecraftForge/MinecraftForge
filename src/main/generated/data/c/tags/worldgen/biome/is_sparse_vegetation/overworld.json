@@ -10,14 +10,6 @@
     "minecraft:windswept_gravelly_hills",
     "minecraft:snowy_slopes",
     "minecraft:jagged_peaks",
-    "minecraft:frozen_peaks",
-    {
-      "id": "#forge:is_sparse_vegetation/overworld",
-      "required": false
-    },
-    {
-      "id": "#forge:is_sparse/overworld",
-      "required": false
-    }
+    "minecraft:frozen_peaks"
   ]
 }
