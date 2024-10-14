@@ -391,7 +391,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(forgeItemTagKey("crops/wheat")).add(Items.WHEAT);
         tag(forgeItemTagKey("dusts")).addTags(forgeItemTagKey("dusts/glowstone"), Tags.Items.DUSTS_PRISMARINE, forgeItemTagKey("dusts/redstone"));
         tag(forgeItemTagKey("dusts/glowstone")).add(Items.GLOWSTONE_DUST);
-        tag(forgeItemTagKey("dusts/prismarine_shard")).add(Items.PRISMARINE_SHARD);
+        tag(forgeItemTagKey("dusts/prismarine")).add(Items.PRISMARINE_SHARD);
         tag(forgeItemTagKey("dusts/redstone")).add(Items.REDSTONE);
         addColored(tag(forgeItemTagKey("dyes"))::addTags, forgeItemTagKey("dyes"), "{color}_dye");
         tag(forgeItemTagKey("eggs")).add(Items.EGG);
@@ -453,7 +453,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copy(Tags.Blocks.ORES_GOLD, Tags.Items.ORES_GOLD);
         copy(Tags.Blocks.ORES_IRON, Tags.Items.ORES_IRON);
         copy(Tags.Blocks.ORES_LAPIS, Tags.Items.ORES_LAPIS);
-        copy(forgeBlockTagKey("quartz"), forgeItemTagKey("quartz"));
+        copy(forgeBlockTagKey("ores/quartz"), forgeItemTagKey("ores/quartz"));
         copy(Tags.Blocks.ORES_REDSTONE, Tags.Items.ORES_REDSTONE);
         copy(forgeBlockTagKey("ores/netherite_scrap"), forgeItemTagKey("ores/netherite_scrap"));
         copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
@@ -524,10 +524,10 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
     }
 
     private void addColored(Consumer<TagKey<Item>> consumer, TagKey<Item> group, String pattern) {
-        String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
+        String prefix = group.location().getPath() + '/';
         for (DyeColor color  : DyeColor.values()) {
             ResourceLocation key = ResourceLocation.fromNamespaceAndPath("minecraft", pattern.replace("{color}",  color.getName()));
-            TagKey<Item> tag = getForgeItemTag(prefix + color.getName());
+            TagKey<Item> tag = forgeItemTagKey(prefix + color.getName());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());

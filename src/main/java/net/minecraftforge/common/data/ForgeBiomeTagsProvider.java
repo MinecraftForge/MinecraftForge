@@ -231,7 +231,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
         // TODO: Remove backwards compat tag entries in 1.22
         tag(Biomes.PLAINS, forgeTagKey("is_plains"));
-        tag(Biomes.DESERT, forgeTagKey("is_hot/overworld"), forgeTagKey("is_dry_overworld"), forgeTagKey("is_sandy"), forgeTagKey("is_desert"));
+        tag(Biomes.DESERT, forgeTagKey("is_hot/overworld"), forgeTagKey("is_dry/overworld"), forgeTagKey("is_sandy"), forgeTagKey("is_desert"));
         tag(Biomes.TAIGA, forgeTagKey("is_cold/overworld"), forgeTagKey("is_coniferous"));
         tag(Biomes.SWAMP, forgeTagKey("is_wet/overworld"), forgeTagKey("is_swamp"));
         tag(Biomes.NETHER_WASTES, forgeTagKey("is_hot/nether"), forgeTagKey("is_dry/nether"));
