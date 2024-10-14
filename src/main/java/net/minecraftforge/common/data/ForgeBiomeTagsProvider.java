@@ -163,15 +163,15 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.END_BARRENS)
                 .addOptionalTag(forgeTagKey("is_dry/end"));
         tag(IS_DRY)
-                .addTags(IS_DRY_OVERWORLD).addTag(IS_DRY_NETHER).addTag(IS_DRY_END)
+                .addTag(IS_DRY_OVERWORLD).addTag(IS_DRY_NETHER).addTag(IS_DRY_END)
                 .addOptionalTag(forgeTagKey("is_dry"));
 
         tag(IS_CONIFEROUS_TREE)
-                .addTags(IS_TAIGA)
+                .addTag(IS_TAIGA)
                 .add(Biomes.GROVE)
                 .addOptionalTag(forgeTagKey("is_coniferous"));
-        tag(IS_SAVANNA_TREE).addTags(IS_SAVANNA);
-        tag(IS_JUNGLE_TREE).addTags(IS_JUNGLE);
+        tag(IS_SAVANNA_TREE).addTag(IS_SAVANNA);
+        tag(IS_JUNGLE_TREE).addTag(IS_JUNGLE);
         tag(IS_DECIDUOUS_TREE).add(Biomes.FOREST).add(Biomes.FLOWER_FOREST).add(Biomes.BIRCH_FOREST).add(Biomes.DARK_FOREST).add(Biomes.OLD_GROWTH_BIRCH_FOREST).add(Biomes.WINDSWEPT_FOREST);
 
         tag(IS_MOUNTAIN_SLOPE).add(Biomes.SNOWY_SLOPES).add(Biomes.MEADOW).add(Biomes.GROVE).add(Biomes.CHERRY_GROVE);
@@ -182,21 +182,21 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .addTag(BiomeTags.IS_MOUNTAIN).addTag(IS_MOUNTAIN_PEAK).addTag(IS_MOUNTAIN_SLOPE)
                 .addOptionalTag(forgeTagKey("is_mountain"));
 
-        tag(IS_FOREST).addTags(BiomeTags.IS_FOREST);
+        tag(IS_FOREST).addTag(BiomeTags.IS_FOREST);
         tag(IS_BIRCH_FOREST).add(Biomes.BIRCH_FOREST).add(Biomes.OLD_GROWTH_BIRCH_FOREST);
         tag(IS_FLOWER_FOREST).add(Biomes.FLOWER_FOREST);
-        tag(IS_FLORAL).addTags(IS_FLOWER_FOREST).add(Biomes.SUNFLOWER_PLAINS).add(Biomes.CHERRY_GROVE).add(Biomes.MEADOW);
-        tag(IS_BEACH).addTags(BiomeTags.IS_BEACH);
+        tag(IS_FLORAL).addTag(IS_FLOWER_FOREST).add(Biomes.SUNFLOWER_PLAINS).add(Biomes.CHERRY_GROVE).add(Biomes.MEADOW);
+        tag(IS_BEACH).addTag(BiomeTags.IS_BEACH);
         tag(IS_STONY_SHORES).add(Biomes.STONY_SHORE);
         tag(IS_DESERT).add(Biomes.DESERT);
-        tag(IS_BADLANDS).addTags(BiomeTags.IS_BADLANDS);
+        tag(IS_BADLANDS).addTag(BiomeTags.IS_BADLANDS);
         tag(IS_PLAINS).add(Biomes.PLAINS).add(Biomes.SUNFLOWER_PLAINS);
         tag(IS_SNOWY_PLAINS).add(Biomes.SNOWY_PLAINS);
-        tag(IS_TAIGA).addTags(BiomeTags.IS_TAIGA);
-        tag(IS_HILL).addTags(BiomeTags.IS_HILL);
+        tag(IS_TAIGA).addTag(BiomeTags.IS_TAIGA);
+        tag(IS_HILL).addTag(BiomeTags.IS_HILL);
         tag(IS_WINDSWEPT).add(Biomes.WINDSWEPT_HILLS).add(Biomes.WINDSWEPT_GRAVELLY_HILLS).add(Biomes.WINDSWEPT_FOREST).add(Biomes.WINDSWEPT_SAVANNA);
-        tag(IS_SAVANNA).addTags(BiomeTags.IS_SAVANNA);
-        tag(IS_JUNGLE).addTags(BiomeTags.IS_JUNGLE);
+        tag(IS_SAVANNA).addTag(BiomeTags.IS_SAVANNA);
+        tag(IS_JUNGLE).addTag(BiomeTags.IS_JUNGLE);
         tag(IS_SNOWY)
                 .add(Biomes.SNOWY_BEACH).add(Biomes.SNOWY_PLAINS).add(Biomes.ICE_SPIKES).add(Biomes.SNOWY_TAIGA).add(Biomes.GROVE).add(Biomes.SNOWY_SLOPES).add(Biomes.JAGGED_PEAKS).add(Biomes.FROZEN_PEAKS)
                 .addOptionalTag(forgeTagKey("is_snowy"));
@@ -213,9 +213,9 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tag(IS_WASTELAND);
         tag(IS_RARE).add(Biomes.SUNFLOWER_PLAINS).add(Biomes.FLOWER_FOREST).add(Biomes.OLD_GROWTH_BIRCH_FOREST).add(Biomes.OLD_GROWTH_SPRUCE_TAIGA).add(Biomes.BAMBOO_JUNGLE).add(Biomes.SPARSE_JUNGLE).add(Biomes.ERODED_BADLANDS).add(Biomes.SAVANNA_PLATEAU).add(Biomes.WINDSWEPT_SAVANNA).add(Biomes.ICE_SPIKES).add(Biomes.WINDSWEPT_GRAVELLY_HILLS).add(Biomes.MUSHROOM_FIELDS).add(Biomes.DEEP_DARK);
 
-        tag(IS_RIVER).addTags(BiomeTags.IS_RIVER);
+        tag(IS_RIVER).addTag(BiomeTags.IS_RIVER);
         tag(IS_SHALLOW_OCEAN).add(Biomes.OCEAN).add(Biomes.LUKEWARM_OCEAN).add(Biomes.WARM_OCEAN).add(Biomes.COLD_OCEAN).add(Biomes.FROZEN_OCEAN);
-        tag(IS_DEEP_OCEAN).addTags(BiomeTags.IS_DEEP_OCEAN);
+        tag(IS_DEEP_OCEAN).addTag(BiomeTags.IS_DEEP_OCEAN);
         tag(IS_OCEAN).addTags(BiomeTags.IS_OCEAN).addTags(IS_SHALLOW_OCEAN).addTags(IS_DEEP_OCEAN);
         tag(IS_AQUATIC_ICY).add(Biomes.FROZEN_RIVER).add(Biomes.DEEP_FROZEN_OCEAN).add(Biomes.FROZEN_OCEAN);
         tag(IS_AQUATIC).addTag(IS_OCEAN).addTag(IS_RIVER);

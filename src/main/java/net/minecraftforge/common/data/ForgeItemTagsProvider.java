@@ -419,6 +419,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         copyColored(forgeBlockTagKey("glass"), forgeItemTagKey("glass"));
         copy(forgeBlockTagKey("glass_panes"), forgeItemTagKey("glass_panes"));
         copyColored(forgeBlockTagKey("glass_panes"), forgeItemTagKey("glass_panes"));
+        copy(forgeBlockTagKey("glass_panes/colorless"), forgeItemTagKey("glass_panes/colorless"));
         copy(forgeBlockTagKey("gravel"), forgeItemTagKey("gravel"));
         tag(forgeItemTagKey("gunpowder")).add(Items.GUNPOWDER);
         tag(forgeItemTagKey("heads")).add(Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.PLAYER_HEAD, Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.ZOMBIE_HEAD);
@@ -501,7 +502,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(forgeItemTagKey("tools/crossbows")).add(Items.CROSSBOW);
         tag(forgeItemTagKey("tools/fishing_rods")).add(Items.FISHING_ROD);
         tag(forgeItemTagKey("tools/tridents")).add(Items.TRIDENT);
-        tag(Tags.Items.TOOLS)
+        tag(forgeItemTagKey("tools"))
                 .addTags(ItemTags.SWORDS, ItemTags.AXES, ItemTags.PICKAXES, ItemTags.SHOVELS, ItemTags.HOES)
                 .addTags(forgeItemTagKey("tools/shields"), forgeItemTagKey("tools/bows"), forgeItemTagKey("tools/crossbows"), forgeItemTagKey("tools/fishing_rods"), forgeItemTagKey("tools/tridents"));
         tag(Tags.Items.ARMORS_HELMETS).add(Items.LEATHER_HELMET, Items.TURTLE_HELMET, Items.CHAINMAIL_HELMET, Items.IRON_HELMET, Items.GOLDEN_HELMET, Items.DIAMOND_HELMET, Items.NETHERITE_HELMET);
