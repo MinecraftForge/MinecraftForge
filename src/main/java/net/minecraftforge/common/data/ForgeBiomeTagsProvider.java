@@ -182,8 +182,8 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.JAGGED_PEAKS).add(Biomes.FROZEN_PEAKS).add(Biomes.STONY_PEAKS)
                 .addOptionalTag(forgeTagKey("is_peak"));
         tag(IS_MOUNTAIN)
-                .addTag(BiomeTags.IS_MOUNTAIN).addTag(IS_MOUNTAIN_PEAK).addTag(IS_MOUNTAIN_SLOPE)
-                .addOptionalTag(forgeTagKey("is_mountain"));
+                .addTag(BiomeTags.IS_MOUNTAIN).addTag(IS_MOUNTAIN_PEAK).addTag(IS_MOUNTAIN_SLOPE);
+                //.addOptionalTag(forgeTagKey("is_mountain")); // can't because forge:is_mountain contains savanna plateau, while c:is_mountain does not
 
         tag(IS_FOREST).addTag(BiomeTags.IS_FOREST);
         tag(IS_BIRCH_FOREST).add(Biomes.BIRCH_FOREST).add(Biomes.OLD_GROWTH_BIRCH_FOREST);

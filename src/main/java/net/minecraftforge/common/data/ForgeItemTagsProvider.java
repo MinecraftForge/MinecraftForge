@@ -192,8 +192,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.GUNPOWDER).add(Items.GUNPOWDER); // forge:gunpowder
         tag(Tags.Items.HIDDEN_FROM_RECIPE_VIEWERS);
         tag(Tags.Items.INGOTS)
-                .addTags(Tags.Items.INGOTS_COPPER, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_NETHERITE)
-                .addOptionalTag(forgeItemTagKey("ingots"));
+                .addTags(Tags.Items.INGOTS_COPPER, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_NETHERITE);
+                //.addOptionalTag(forgeItemTagKey("ingots")); // can't add because it would contain the contents of forge:ingots/brick and forge:ingots/nether_brick which are not in the c namespace
         tag(Tags.Items.INGOTS_COPPER)
                 .add(Items.COPPER_INGOT)
                 .addOptionalTag(forgeItemTagKey("ingots/copper"));

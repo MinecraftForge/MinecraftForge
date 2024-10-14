@@ -160,8 +160,8 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(SANDSTONE_STAIRS).addTags(SANDSTONE_RED_STAIRS, SANDSTONE_UNCOLORED_STAIRS);
 
         tag(STONES)
-                .add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.STONE, Blocks.DEEPSLATE, Blocks.TUFF)
-                .addOptionalTag(forgeTagKey("stone"));
+                .add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.STONE, Blocks.DEEPSLATE, Blocks.TUFF);
+                //.addOptionalTag(forgeTagKey("stone")); // can't add this because it would include infested/polished variants which aren't contained in Fabric's `c:stones`
         tag(STORAGE_BLOCKS)
                 .addTags(STORAGE_BLOCKS_BONE_MEAL, STORAGE_BLOCKS_COAL,
                 STORAGE_BLOCKS_COPPER, STORAGE_BLOCKS_DIAMOND, STORAGE_BLOCKS_DRIED_KELP,
@@ -169,7 +169,13 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
                 STORAGE_BLOCKS_LAPIS, STORAGE_BLOCKS_NETHERITE, STORAGE_BLOCKS_RAW_COPPER,
                 STORAGE_BLOCKS_RAW_GOLD, STORAGE_BLOCKS_RAW_IRON, STORAGE_BLOCKS_REDSTONE,
                 STORAGE_BLOCKS_SLIME, STORAGE_BLOCKS_WHEAT)
-                .addOptionalTag(forgeTagKey("storage_blocks"));
+                //.addOptionalTag(forgeTagKey("storage_blocks")); // can't add this because it would include contents from the non-common forge:storage_blocks/amethyst and forge:storage_blocks/quartz, which are not in the c namespace
+                .addOptionalTags(forgeTagKey("storage_blocks/coal"), forgeTagKey("storage_blocks/copper"),
+                        forgeTagKey("storage_blocks/diamond"), forgeTagKey("storage_blocks/emerald"),
+                        forgeTagKey("storage_blocks/gold"), forgeTagKey("storage_blocks/iron"),
+                        forgeTagKey("storage_blocks/lapis"), forgeTagKey("storage_blocks/netherite"),
+                        forgeTagKey("storage_blocks/raw_copper"), forgeTagKey("storage_blocks/raw_gold"),
+                        forgeTagKey("storage_blocks/raw_iron"), forgeTagKey("storage_blocks/redstone"));
         tag(STORAGE_BLOCKS_BONE_MEAL).add(Blocks.BONE_BLOCK);
         tag(STORAGE_BLOCKS_COAL)
                 .add(Blocks.COAL_BLOCK)
