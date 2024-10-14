@@ -96,6 +96,9 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .addOptionalTag(forgeTagKey("is_cold/end"));
         tag(IS_COLD).addTag(IS_COLD_OVERWORLD).addOptionalTag(IS_COLD_NETHER.location()).addTag(IS_COLD_END);
 
+        tag(IS_DEAD)
+                .addOptionalTag(forgeTagKey("is_dead"));
+
         tag(IS_SPARSE_VEGETATION_OVERWORLD)
                 .add(Biomes.WOODED_BADLANDS)
                 .add(Biomes.SAVANNA)
@@ -216,7 +219,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tag(IS_RIVER).addTag(BiomeTags.IS_RIVER);
         tag(IS_SHALLOW_OCEAN).add(Biomes.OCEAN).add(Biomes.LUKEWARM_OCEAN).add(Biomes.WARM_OCEAN).add(Biomes.COLD_OCEAN).add(Biomes.FROZEN_OCEAN);
         tag(IS_DEEP_OCEAN).addTag(BiomeTags.IS_DEEP_OCEAN);
-        tag(IS_OCEAN).addTags(BiomeTags.IS_OCEAN).addTags(IS_SHALLOW_OCEAN).addTags(IS_DEEP_OCEAN);
+        tag(IS_OCEAN).addTag(BiomeTags.IS_OCEAN).addTag(IS_SHALLOW_OCEAN).addTag(IS_DEEP_OCEAN);
         tag(IS_AQUATIC_ICY).add(Biomes.FROZEN_RIVER).add(Biomes.DEEP_FROZEN_OCEAN).add(Biomes.FROZEN_OCEAN);
         tag(IS_AQUATIC).addTag(IS_OCEAN).addTag(IS_RIVER);
 
@@ -291,49 +294,11 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tag(forgeTagKey("is_dense")).addTag(forgeTagKey("is_dense/overworld")).addOptionalTag(Tags.Biomes.IS_DENSE_NETHER.location()).addOptionalTag(Tags.Biomes.IS_DENSE_END.location());
         tag(forgeTagKey("is_wet")).addTag(forgeTagKey("is_wet/overworld")).addOptionalTag(Tags.Biomes.IS_WET_NETHER.location()).addOptionalTag(Tags.Biomes.IS_WET_END.location());
         tag(forgeTagKey("is_dry")).addTag(forgeTagKey("is_dry/overworld")).addTag(forgeTagKey("is_dry/nether")).addTag(forgeTagKey("is_dry/end"));
+        tag(forgeTagKey("is_dead"));
 
         tag(forgeTagKey("is_water")).addTag(BiomeTags.IS_OCEAN).addTag(BiomeTags.IS_RIVER);
         tag(forgeTagKey("is_mountain")).addTag(forgeTagKey("is_peak")).addTag(forgeTagKey("is_slope"));
         tag(forgeTagKey("is_underground")).addTag(forgeTagKey("is_cave"));
-
-
-//        tag(IS_MOUNTAIN_SLOPE).addOptionalTag(forgeRl("is_slope"));
-//        tag(IS_MOUNTAIN_PEAK).addOptionalTag(forgeRl("is_peak"));
-//        tagWithOptionalLegacy(IS_MOUNTAIN);
-//        tagWithOptionalLegacy(IS_HOT_OVERWORLD);
-//        tagWithOptionalLegacy(IS_HOT_NETHER);
-//        tagWithOptionalLegacy(IS_HOT);
-//        tagWithOptionalLegacy(IS_COLD_OVERWORLD);
-//        tagWithOptionalLegacy(IS_COLD_END);
-//        tagWithOptionalLegacy(IS_COLD);
-//        tagWithOptionalLegacy(IS_SPARSE_VEGETATION_OVERWORLD);
-//        tagWithOptionalLegacy(IS_SPARSE_VEGETATION);
-//        tag(IS_SPARSE_VEGETATION_OVERWORLD).addOptionalTag(forgeRl("is_sparse/overworld"));
-//        tag(IS_SPARSE_VEGETATION).addOptionalTag(forgeRl("is_sparse"));
-//        tag(IS_DENSE_VEGETATION_OVERWORLD).addOptionalTag(forgeRl("is_dense/overworld"));
-//        tag(IS_DENSE_END);
-//        tag(IS_DENSE_VEGETATION).addOptionalTag(forgeRl("is_dense"));
-//        tagWithOptionalLegacy(IS_WET_OVERWORLD);
-//        tagWithOptionalLegacy(IS_WET);
-//        tagWithOptionalLegacy(IS_DRY_OVERWORLD);
-//        tagWithOptionalLegacy(IS_DRY_NETHER);
-//        tagWithOptionalLegacy(IS_DRY_END);
-//        tagWithOptionalLegacy(IS_DRY);
-//        tagWithOptionalLegacy(IS_CONIFEROUS_TREE);
-//        tagWithOptionalLegacy(IS_DEAD);
-//        tagWithOptionalLegacy(IS_MUSHROOM);
-//        tagWithOptionalLegacy(IS_FLORAL);
-//        tag(IS_AQUATIC).addOptionalTag(forgeRl("is_water"));
-//        tagWithOptionalLegacy(IS_DESERT);
-//        tagWithOptionalLegacy(IS_PLAINS);
-//        tagWithOptionalLegacy(IS_SWAMP);
-//        tagWithOptionalLegacy(IS_SNOWY);
-//        tagWithOptionalLegacy(IS_WASTELAND);
-//        tagWithOptionalLegacy(IS_VOID);
-//        tagWithOptionalLegacy(IS_CAVE);
-//        tagWithOptionalLegacy(IS_END);
-//        tagWithOptionalLegacy(IS_NETHER);
-//        tagWithOptionalLegacy(IS_OVERWORLD);
     }
 
     @SafeVarargs
