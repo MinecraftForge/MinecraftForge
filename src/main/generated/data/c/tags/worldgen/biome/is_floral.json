@@ -3,10 +3,6 @@
     "#c:is_flower_forest",
     "minecraft:sunflower_plains",
     "minecraft:cherry_grove",
-    "minecraft:meadow",
-    {
-      "id": "#forge:is_floral",
-      "required": false
-    }
+    "minecraft:meadow"
   ]
 }

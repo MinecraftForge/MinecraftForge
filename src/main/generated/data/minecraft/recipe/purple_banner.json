@@ -7,7 +7,7 @@
       "item": "minecraft:purple_wool"
     },
     "|": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [

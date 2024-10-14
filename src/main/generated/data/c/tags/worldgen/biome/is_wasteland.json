@@ -1,8 +1,3 @@
 {
-  "values": [
-    {
-      "id": "#forge:is_wasteland",
-      "required": false
-    }
-  ]
+  "values": []
 }

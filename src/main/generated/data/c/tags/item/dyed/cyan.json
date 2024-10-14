@@ -11,14 +11,6 @@
     "minecraft:cyan_stained_glass",
     "minecraft:cyan_stained_glass_pane",
     "minecraft:cyan_terracotta",
-    "minecraft:cyan_wool",
-    {
-      "id": "#forge:glass/cyan",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/cyan",
-      "required": false
-    }
+    "minecraft:cyan_wool"
   ]
 }

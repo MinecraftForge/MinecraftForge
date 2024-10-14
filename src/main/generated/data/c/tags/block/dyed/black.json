@@ -12,14 +12,6 @@
     "minecraft:black_stained_glass_pane",
     "minecraft:black_terracotta",
     "minecraft:black_wall_banner",
-    "minecraft:black_wool",
-    {
-      "id": "#forge:glass/black",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/black",
-      "required": false
-    }
+    "minecraft:black_wool"
   ]
 }

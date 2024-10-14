@@ -12,14 +12,6 @@
     "minecraft:orange_stained_glass_pane",
     "minecraft:orange_terracotta",
     "minecraft:orange_wall_banner",
-    "minecraft:orange_wool",
-    {
-      "id": "#forge:glass/orange",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/orange",
-      "required": false
-    }
+    "minecraft:orange_wool"
   ]
 }

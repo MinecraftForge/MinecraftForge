@@ -1,9 +1,5 @@
 {
   "values": [
-    "#minecraft:is_end",
-    {
-      "id": "#forge:is_end",
-      "required": false
-    }
+    "#minecraft:is_end"
   ]
 }

@@ -2,7 +2,7 @@
   "values": [
     "minecraft:glass",
     {
-      "id": "#forge:glass_colorless",
+      "id": "#forge:glass/colorless",
       "required": false
     }
   ]

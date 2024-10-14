@@ -8,14 +8,6 @@
     {
       "id": "#forge:is_sparse/end",
       "required": false
-    },
-    {
-      "id": "#forge:is_sparse_vegetation",
-      "required": false
-    },
-    {
-      "id": "#forge:is_sparse",
-      "required": false
     }
   ]
 }

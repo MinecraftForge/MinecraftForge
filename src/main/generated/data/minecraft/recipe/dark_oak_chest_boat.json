@@ -4,7 +4,7 @@
   "group": "chest_boat",
   "ingredients": [
     {
-      "tag": "forge:chests/wooden"
+      "tag": "c:chests/wooden"
     },
     {
       "item": "minecraft:dark_oak_boat"

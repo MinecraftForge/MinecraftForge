@@ -5,10 +5,6 @@
     {
       "id": "#forge:is_hot/end",
       "required": false
-    },
-    {
-      "id": "#forge:is_hot",
-      "required": false
     }
   ]
 }

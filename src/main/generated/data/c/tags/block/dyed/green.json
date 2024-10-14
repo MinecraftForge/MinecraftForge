@@ -12,14 +12,6 @@
     "minecraft:green_stained_glass_pane",
     "minecraft:green_terracotta",
     "minecraft:green_wall_banner",
-    "minecraft:green_wool",
-    {
-      "id": "#forge:glass/green",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/green",
-      "required": false
-    }
+    "minecraft:green_wool"
   ]
 }

@@ -11,14 +11,6 @@
     "minecraft:lime_stained_glass",
     "minecraft:lime_stained_glass_pane",
     "minecraft:lime_terracotta",
-    "minecraft:lime_wool",
-    {
-      "id": "#forge:glass/lime",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/lime",
-      "required": false
-    }
+    "minecraft:lime_wool"
   ]
 }

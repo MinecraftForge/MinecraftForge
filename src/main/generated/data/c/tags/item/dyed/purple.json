@@ -11,14 +11,6 @@
     "minecraft:purple_stained_glass",
     "minecraft:purple_stained_glass_pane",
     "minecraft:purple_terracotta",
-    "minecraft:purple_wool",
-    {
-      "id": "#forge:glass/purple",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/purple",
-      "required": false
-    }
+    "minecraft:purple_wool"
   ]
 }

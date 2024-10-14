@@ -5,10 +5,6 @@
     "minecraft:granite",
     "minecraft:stone",
     "minecraft:deepslate",
-    "minecraft:tuff",
-    {
-      "id": "#forge:stone",
-      "required": false
-    }
+    "minecraft:tuff"
   ]
 }
