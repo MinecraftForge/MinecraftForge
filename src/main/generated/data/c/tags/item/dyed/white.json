@@ -11,14 +11,6 @@
     "minecraft:white_stained_glass",
     "minecraft:white_stained_glass_pane",
     "minecraft:white_terracotta",
-    "minecraft:white_wool",
-    {
-      "id": "#forge:glass/white",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/white",
-      "required": false
-    }
+    "minecraft:white_wool"
   ]
 }

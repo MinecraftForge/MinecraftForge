@@ -12,22 +12,6 @@
     "minecraft:magenta_stained_glass_pane",
     "minecraft:magenta_terracotta",
     "minecraft:magenta_wall_banner",
-    "minecraft:magenta_wool",
-    {
-      "id": "#forge:glass/magenta",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/magenta",
-      "required": false
-    },
-    {
-      "id": "#forge:glass/magenta",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/magenta",
-      "required": false
-    }
+    "minecraft:magenta_wool"
   ]
 }

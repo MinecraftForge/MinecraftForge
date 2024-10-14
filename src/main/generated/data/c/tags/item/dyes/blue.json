@@ -1,9 +1,5 @@
 {
   "values": [
-    "minecraft:blue_dye",
-    {
-      "id": "#forge:dyes/blue",
-      "required": false
-    }
+    "minecraft:blue_dye"
   ]
 }

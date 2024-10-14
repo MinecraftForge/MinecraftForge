@@ -11,14 +11,6 @@
     "minecraft:pink_stained_glass",
     "minecraft:pink_stained_glass_pane",
     "minecraft:pink_terracotta",
-    "minecraft:pink_wool",
-    {
-      "id": "#forge:glass/pink",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/pink",
-      "required": false
-    }
+    "minecraft:pink_wool"
   ]
 }

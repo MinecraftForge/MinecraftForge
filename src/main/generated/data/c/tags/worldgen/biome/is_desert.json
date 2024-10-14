@@ -1,9 +1,5 @@
 {
   "values": [
-    "minecraft:desert",
-    {
-      "id": "#forge:is_desert",
-      "required": false
-    }
+    "minecraft:desert"
   ]
 }

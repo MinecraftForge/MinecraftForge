@@ -9,7 +9,7 @@
       "item": "minecraft:stone_slab"
     },
     "I": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [

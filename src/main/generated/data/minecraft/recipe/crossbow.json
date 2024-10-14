@@ -3,16 +3,16 @@
   "category": "equipment",
   "key": {
     "#": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "$": {
       "item": "minecraft:tripwire_hook"
     },
     "&": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "~": {
-      "tag": "forge:string"
+      "tag": "c:strings"
     }
   },
   "pattern": [

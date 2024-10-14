@@ -1,9 +1,5 @@
 {
   "values": [
-    "#minecraft:is_nether",
-    {
-      "id": "#forge:is_nether",
-      "required": false
-    }
+    "#minecraft:is_nether"
   ]
 }

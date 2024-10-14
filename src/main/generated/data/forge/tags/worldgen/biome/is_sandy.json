@@ -1,6 +1,11 @@
 {
   "values": [
     "minecraft:desert",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands",
+    "minecraft:eroded_badlands",
+    "minecraft:beach",
+    "minecraft:desert",
     "minecraft:beach",
     "minecraft:badlands",
     "minecraft:wooded_badlands"

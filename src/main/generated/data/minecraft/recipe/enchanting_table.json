@@ -9,7 +9,7 @@
       "item": "minecraft:book"
     },
     "D": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:gems/diamond"
     }
   },
   "pattern": [

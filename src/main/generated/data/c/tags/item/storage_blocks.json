@@ -17,7 +17,51 @@
     "#c:storage_blocks/slime",
     "#c:storage_blocks/wheat",
     {
-      "id": "#forge:storage_blocks",
+      "id": "#forge:storage_blocks/coal",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/copper",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/diamond",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/emerald",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/gold",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/iron",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/lapis",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/netherite",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/raw_copper",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/raw_gold",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/raw_iron",
+      "required": false
+    },
+    {
+      "id": "#forge:storage_blocks/redstone",
       "required": false
     }
   ]

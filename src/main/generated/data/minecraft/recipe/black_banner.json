@@ -7,7 +7,7 @@
       "item": "minecraft:black_wool"
     },
     "|": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [
