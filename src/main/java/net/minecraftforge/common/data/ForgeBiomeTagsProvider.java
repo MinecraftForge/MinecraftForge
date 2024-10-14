@@ -110,8 +110,8 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
                 .add(Biomes.WINDSWEPT_GRAVELLY_HILLS)
                 .add(Biomes.SNOWY_SLOPES)
                 .add(Biomes.JAGGED_PEAKS)
-                .add(Biomes.FROZEN_PEAKS)
-                .addOptionalTag(forgeTagKey("is_sparse/overworld"));
+                .add(Biomes.FROZEN_PEAKS);
+                //.addOptionalTag(forgeTagKey("is_sparse/overworld")); // can't because forge:is_sparse/overworld contains dripstone caves and eroded badlands, while c:is_sparse_vegetation/overworld does not
         tag(IS_SPARSE_NETHER); // forge:is_sparse/nether
         tag(IS_SPARSE_END); // forge:is_sparse/end
         tag(IS_SPARSE_VEGETATION).addTag(IS_SPARSE_VEGETATION_OVERWORLD).addOptionalTag(IS_SPARSE_NETHER.location()).addOptionalTag(IS_SPARSE_END.location());
@@ -201,8 +201,8 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         tag(IS_SAVANNA).addTag(BiomeTags.IS_SAVANNA);
         tag(IS_JUNGLE).addTag(BiomeTags.IS_JUNGLE);
         tag(IS_SNOWY)
-                .add(Biomes.SNOWY_BEACH).add(Biomes.SNOWY_PLAINS).add(Biomes.ICE_SPIKES).add(Biomes.SNOWY_TAIGA).add(Biomes.GROVE).add(Biomes.SNOWY_SLOPES).add(Biomes.JAGGED_PEAKS).add(Biomes.FROZEN_PEAKS)
-                .addOptionalTag(forgeTagKey("is_snowy"));
+                .add(Biomes.SNOWY_BEACH, Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.SNOWY_TAIGA, Biomes.GROVE, Biomes.SNOWY_SLOPES, Biomes.JAGGED_PEAKS, Biomes.FROZEN_PEAKS);
+                //.addOptionalTag(forgeTagKey("is_snowy")); // can't add forge:is_snowy because it contains frozen ocean and frozen river, while c:is_snowy does not
         tag(IS_ICY).add(Biomes.ICE_SPIKES).add(Biomes.FROZEN_PEAKS);
         tag(IS_SWAMP).add(Biomes.SWAMP).add(Biomes.MANGROVE_SWAMP);
         tag(IS_OLD_GROWTH).add(Biomes.OLD_GROWTH_BIRCH_FOREST).add(Biomes.OLD_GROWTH_PINE_TAIGA).add(Biomes.OLD_GROWTH_SPRUCE_TAIGA);
