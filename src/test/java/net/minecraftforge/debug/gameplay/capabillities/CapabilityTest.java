@@ -79,7 +79,9 @@ public class CapabilityTest extends BaseTestMod {
 
         Function<ItemStack, CapabilityProviderHolder<MyProviderItem>> cap2 = i -> new CapabilityProviderHolder<>(
                 new MyProviderItem(i),
-                e -> {}
+                e -> {
+                    
+                }
         );
 
         event.register(Entity.class, ResourceLocation.fromNamespaceAndPath("mc", "test2"), obj -> cap.get());

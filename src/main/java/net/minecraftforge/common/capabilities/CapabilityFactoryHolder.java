@@ -45,6 +45,4 @@ public abstract class CapabilityFactoryHolder<T> {
         });
         return new Result(providerMap, runnables);
     }
-
-    public static class AsField<T> extends CapabilityFactoryHolder<T> {}
 }

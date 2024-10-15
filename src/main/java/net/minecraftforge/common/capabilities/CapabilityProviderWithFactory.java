@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * This stores {@link ICapabilityProvider} gathered from {@link CapabilityProviderHolder}
  * which is a CapabilityProvider factory, to remove the need for {@link net.minecraftforge.event.AttachCapabilitiesEvent}
  */
-public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B> {
+public abstract class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B> {
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
@@ -130,28 +130,5 @@ public class CapabilityProviderWithFactory<B extends ICapabilityProviderImpl<B>>
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         final CapabilityDispatcher disp = getCapabilities();
         return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
-    }
-
-    public static final class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProviderWithFactory<B> {
-        private final B owner;
-
-        public AsField(final B owner, Supplier<CapabilityFactoryHolder.AsField<B>> lazyCapabilityHolderSupplier, boolean isLazy) {
-            super(lazyCapabilityHolderSupplier::get, isLazy);
-            this.owner = owner;
-        }
-
-        public void initInternal() {
-            gatherCapabilities(getLazyCapabilityHolderSupplier().get());
-        }
-
-        @Nullable
-        public CompoundTag serializeInternal(HolderLookup.Provider registryAccess) {
-            return serializeCaps(registryAccess);
-        }
-
-        public void deserializeInternal(HolderLookup.Provider registryAccess, CompoundTag tag) {
-            deserializeCaps(registryAccess, tag);
-        }
-
     }
 }

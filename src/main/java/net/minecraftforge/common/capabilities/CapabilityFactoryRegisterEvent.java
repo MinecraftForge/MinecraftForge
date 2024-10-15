@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Use this to register {@link ICapabilityProvider}'s to {@link CapabilityProviderHolder}
+ * Use this to register {@link ICapabilityProvider}'s to {@link CapabilityProviderHolder}'s
  */
 public class CapabilityFactoryRegisterEvent extends Event {
     final Map<Class<?>, Map<ResourceLocation, ICapabilityFactory<?, ?>>> factory = new HashMap<>();
@@ -41,5 +41,4 @@ public class CapabilityFactoryRegisterEvent extends Event {
             throw new IllegalStateException("Duplicate CapabilityFactory registered for holder %s with id of %s".formatted(holder, resourceLocation));
         }
     }
-
 }
