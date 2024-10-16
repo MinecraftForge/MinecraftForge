@@ -144,7 +144,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.FOODS_COOKED_FISH).add(Items.COOKED_COD, Items.COOKED_SALMON);
         tag(Tags.Items.FOODS_SOUP).add(Items.BEETROOT_SOUP, Items.MUSHROOM_STEW, Items.RABBIT_STEW, Items.SUSPICIOUS_STEW);
         tag(Tags.Items.FOODS_CANDY);
-        tag(Tags.Items.FOODS_PIE).add(Items.PUMPKIN_PIE); // Todo: Move tag to `c:foods/pie` when Fabric#4144 is merged
+        tag(Tags.Items.FOODS_PIE).add(Items.PUMPKIN_PIE).addOptionalTag(forgeItemTagKey("foods/pie"));
         tag(Tags.Items.FOODS_EDIBLE_WHEN_PLACED).add(Items.CAKE);
         tag(Tags.Items.FOODS_FOOD_POISONING).add(Items.POISONOUS_POTATO, Items.PUFFERFISH, Items.SPIDER_EYE, Items.CHICKEN, Items.ROTTEN_FLESH);
         tag(Tags.Items.FOODS_GOLDEN).add(Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_CARROT);

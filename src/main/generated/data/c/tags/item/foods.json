@@ -15,7 +15,7 @@
     "#c:foods/cooked_fish",
     "#c:foods/soup",
     "#c:foods/candy",
-    "#forge:foods/pie",
+    "#c:foods/pie",
     "#c:foods/golden",
     "#c:foods/edible_when_placed",
     "#c:foods/food_poisoning"
