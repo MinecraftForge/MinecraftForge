@@ -37,6 +37,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '[2.2,2.3)'
     id 'eclipse'
+    id 'idea'
     id 'de.undercouch.download' version '5.1.3'
 }
 
@@ -57,12 +58,12 @@ ext {
     MCP_VERSION = '20220404.173914'
     SPI_VERSION = '4.0.15-4.x'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
-    COREMODS_VERSION = '5.0.1'
+    COREMODS_VERSION = '5.1.13'
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.1.3'
     SECUREJARHANDLER_VERSION = '1.0.8'
     BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
-    ASM_VERSION = '9.7'
+    ASM_VERSION = '9.7.1'
     INSTALLER_VERSION = '2.2.+'
     MIXIN_VERSION = '0.8.5'
     JARJAR_VERSION = '0.3.19'
@@ -1649,5 +1650,13 @@ if (System.env.TEAMCITY_VERSION) {
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
         }
+    }
+}
+
+idea {
+    module {
+        // IntelliJ IDEA does not do this by itself anymore...
+        downloadJavadoc = true
+        downloadSources = true
     }
 }
