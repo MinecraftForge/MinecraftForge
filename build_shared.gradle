@@ -74,3 +74,11 @@ eclipse {
     // Run when importing the project
     synchronizationTasks generateResources, copyEclipseSettings, eclipseClasspath, eclipseProject
 }
+
+idea {
+    module {
+        // IntelliJ IDEA does not do this by itself anymore...
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
