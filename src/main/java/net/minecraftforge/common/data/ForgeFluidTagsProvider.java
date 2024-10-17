@@ -34,7 +34,7 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
         tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
         tag(GASEOUS).addOptionalTag(forgeTagKey("gaseous"));
-        tag(HONEY).addOptionalTag(forgeTagKey("honey"));
+        tag(HONEY);
         tag(EXPERIENCE);
         tag(POTION).addOptionalTag(forgeTagKey("potion"));
         tag(SUSPICIOUS_STEW).addOptionalTag(forgeTagKey("suspicious_stew"));
