@@ -33,13 +33,14 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(WATER).add(net.minecraft.world.level.material.Fluids.WATER).add(net.minecraft.world.level.material.Fluids.FLOWING_WATER);
         tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
         tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
-        tag(GASEOUS);
+        tag(GASEOUS).addOptionalTag(forgeTagKey("gaseous"));
         tag(HONEY);
-        tag(POTION);
-        tag(SUSPICIOUS_STEW);
-        tag(MUSHROOM_STEW);
-        tag(RABBIT_STEW);
-        tag(BEETROOT_SOUP);
+        tag(EXPERIENCE);
+        tag(POTION).addOptionalTag(forgeTagKey("potion"));
+        tag(SUSPICIOUS_STEW).addOptionalTag(forgeTagKey("suspicious_stew"));
+        tag(MUSHROOM_STEW).addOptionalTag(forgeTagKey("mushroom_stew"));
+        tag(RABBIT_STEW).addOptionalTag(forgeTagKey("rabbit_stew"));
+        tag(BEETROOT_SOUP).addOptionalTag(forgeTagKey("beetroot_soup"));
         tag(HIDDEN_FROM_RECIPE_VIEWERS);
 
         // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
@@ -47,6 +48,12 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(forgeTagKey("milk"))
                 .addOptional(ForgeMod.MILK.getId())
                 .addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(forgeTagKey("gaseous"));
+        tag(forgeTagKey("potion"));
+        tag(forgeTagKey("suspicious_stew"));
+        tag(forgeTagKey("mushroom_stew"));
+        tag(forgeTagKey("rabbit_stew"));
+        tag(forgeTagKey("beetroot_soup"));
     }
 
     private static TagKey<Fluid> forgeTagKey(String path) {
