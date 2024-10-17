@@ -389,6 +389,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(forgeItemTagKey("crops/nether_wart")).add(Items.NETHER_WART);
         tag(forgeItemTagKey("crops/potato")).add(Items.POTATO);
         tag(forgeItemTagKey("crops/wheat")).add(Items.WHEAT);
+        tag(forgeItemTagKey("foods/pie")).add(Items.PUMPKIN_PIE);
         tag(forgeItemTagKey("dusts")).addTags(forgeItemTagKey("dusts/glowstone"), Tags.Items.DUSTS_PRISMARINE, forgeItemTagKey("dusts/redstone"));
         tag(forgeItemTagKey("dusts/glowstone")).add(Items.GLOWSTONE_DUST);
         tag(forgeItemTagKey("dusts/prismarine")).add(Items.PRISMARINE_SHARD);
