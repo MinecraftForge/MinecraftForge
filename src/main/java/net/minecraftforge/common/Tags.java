@@ -1093,6 +1093,12 @@ public class Tags {
          */
         public static final TagKey<Fluid> HONEY = cTag("honey");
         /**
+         * Holds all fluids related to experience.
+         * <p>(Standard unit for experience is 20mb per 1 experience. However, extraction from Bottle o' Enchanting
+         * should yield 250mb while smashing yields less)</p>
+         */
+        public static final TagKey<Fluid> EXPERIENCE = cTag("experience");
+        /**
          * Holds all fluids related to potions. The effects of the potion fluid should be read from NBT.
          * The effects and color of the potion fluid should be read from {@link net.minecraft.core.component.DataComponents#POTION_CONTENTS}
          * component that people should be attaching to the fluidstack of this fluid.

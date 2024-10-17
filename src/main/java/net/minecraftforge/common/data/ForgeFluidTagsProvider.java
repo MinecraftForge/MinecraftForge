@@ -35,6 +35,7 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
         tag(GASEOUS).addOptionalTag(forgeTagKey("gaseous"));
         tag(HONEY).addOptionalTag(forgeTagKey("honey"));
+        tag(EXPERIENCE);
         tag(POTION).addOptionalTag(forgeTagKey("potion"));
         tag(SUSPICIOUS_STEW).addOptionalTag(forgeTagKey("suspicious_stew"));
         tag(MUSHROOM_STEW).addOptionalTag(forgeTagKey("mushroom_stew"));
