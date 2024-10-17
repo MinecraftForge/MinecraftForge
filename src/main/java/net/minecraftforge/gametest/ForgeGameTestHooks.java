@@ -182,10 +182,10 @@ public class ForgeGameTestHooks {
         var batch = func.batchName();
         classes.add(batch);
 
-        int idx = batch.indexOf('.');
+        int idx = batch.lastIndexOf('.');
         while (idx != -1) {
             batch = batch.substring(0, idx);
-            idx = batch.indexOf('.');
+            idx = batch.lastIndexOf('.');
             classes.add(batch);
         }
     }

@@ -9,47 +9,62 @@ import cpw.mods.jarhandling.JarMetadata;
 import net.minecraftforge.forgespi.locating.IModFile;
 import java.lang.module.ModuleDescriptor;
 import java.util.Objects;
-
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public final class ModJarMetadata implements JarMetadata {
+    private static final String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name";
     private IModFile modFile;
+    private String name;
+    private String version;
     private ModuleDescriptor descriptor;
 
-    ModJarMetadata() {
-    }
+    ModJarMetadata() { }
 
     public void setModFile(IModFile file) {
         this.modFile = file;
+        var mods = this.modFile.getModFileInfo().getMods();
+
+        if (!mods.isEmpty()) {
+            var main = mods.get(0);
+            this.name = main.getModId();
+            this.version = main.getVersion().toString();
+        }
+
+        var jar = file.getSecureJar();
+        var aname = jar.moduleDataProvider().getManifest().getMainAttributes().getValue(AUTOMATIC_MODULE_NAME);
+        if (aname != null)
+            this.name = aname;
     }
 
     @Override
     public String name() {
-        return modFile.getModFileInfo().moduleName();
+        return this.name;
     }
 
     @Override
     public String version() {
-        return modFile.getModFileInfo().versionString();
+        return this.version;
     }
 
     @Override
     public ModuleDescriptor descriptor() {
-        if (descriptor != null) return descriptor;
+        if (descriptor != null)
+            return descriptor;
+
         var bld = ModuleDescriptor.newAutomaticModule(name())
-                .version(version())
-                .packages(modFile.getSecureJar().getPackages());
-        modFile.getSecureJar().getProviders().stream()
-                .filter(p -> !p.providers().isEmpty())
-                .forEach(p -> bld.provides(p.serviceName(), p.providers()));
-        modFile.getModFileInfo().usesServices().forEach(bld::uses);
+            .version(version())
+            .packages(modFile.getSecureJar().getPackages());
+
+        for (var provider : modFile.getSecureJar().getProviders()) {
+            if (provider.providers().isEmpty())
+                continue;
+
+            bld.provides(provider.serviceName(), provider.providers());
+        }
+
         descriptor = bld.build();
         return descriptor;
-    }
-
-    public IModFile modFile() {
-        return modFile;
     }
 
     @Override

@@ -22,13 +22,11 @@ public final class MinecraftLocator extends AbstractModProvider implements IModL
     @Override
     public List<IModLocator.ModFileOrException> scanMods() {
         var minecraft = FMLLoader.getLaunchHandler().getMinecraftPaths();
+        var paths = minecraft.toArray(Path[]::new);
 
         // Minecraft itself.
         var meta = new ModJarMetadata();
-        var mcjar = SecureJar.from(
-            jar -> meta,
-            minecraft.toArray(Path[]::new)
-        );
+        var mcjar = SecureJar.from(jar -> meta, paths);
         var mc = ModFileFactory.FACTORY.build(mcjar, this, MinecraftLocator::buildMinecraftTOML);
         meta.setModFile(mc);
 

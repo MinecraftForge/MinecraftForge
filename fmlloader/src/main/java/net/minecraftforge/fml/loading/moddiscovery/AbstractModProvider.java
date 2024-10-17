@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
+
 import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.LogMarkers;
@@ -22,9 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.lang.module.InvalidModuleDescriptorException;
+import java.lang.module.ModuleDescriptor;
+import java.lang.module.ModuleDescriptor.Version;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +38,9 @@ import java.util.jar.JarFile;
 
 @ApiStatus.Internal
 public abstract class AbstractModProvider implements IModProvider {
-    private static final   Logger LOGGER    = LogUtils.getLogger();
-    protected static final String MODS_TOML = "META-INF/mods.toml";
+    private static final   Logger LOGGER      = LogUtils.getLogger();
+    protected static final String MODS_TOML   = "META-INF/mods.toml";
+    protected static final String MODULE_INFO = "module-info.class";
 
     protected IModLocator.ModFileOrException createMod(Path path) {
         return createMod(path, false);
@@ -48,10 +54,7 @@ public abstract class AbstractModProvider implements IModProvider {
     @Nullable
     protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown, String defaultType) {
         var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(
-            jar -> jar.moduleDataProvider().findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
-            path
-        );
+        var sj = SecureJar.from(jar -> loadMetaFromJar(jar, mjm), path);
 
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
@@ -61,6 +64,8 @@ public abstract class AbstractModProvider implements IModProvider {
         if (sj.moduleDataProvider().findFile(MODS_TOML).isPresent()) {
             LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
             mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
+            // ModJarMetadata is only used when loading mods.toml mods as ModJarMetadata
+            mjm.setModFile(mod);
             if (mod.getModFileInfo().getFileProperties().containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
                 LOGGER.error(LogMarkers.SCAN, "Unable to load file \"{}\" because its mods.toml is requesting an invalid javafml loaderVersion (use \"*\" if you want to allow all versions) and is missing a forge modId dependency declaration (see the sample mods.toml in the MDK).", path);
                 return new IModLocator.ModFileOrException(null, new ModFileLoadingException("File \"%s\" is not a Forge mod and cannot be loaded. Look for a Forge version of this mod or consider alternative mods.".formatted(mod.getFileName())));
@@ -73,8 +78,49 @@ public abstract class AbstractModProvider implements IModProvider {
         } else
             return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Invalid mod file found " + path));
 
-        mjm.setModFile(mod);
         return new IModLocator.ModFileOrException(mod, null);
+    }
+
+    private static JarMetadata loadMetaFromJar(SecureJar jar, ModJarMetadata mjm) {
+        var info = jar.moduleDataProvider().open(MODULE_INFO).orElse(null);
+        if (info != null) {
+            try {
+                var desc = ModuleDescriptor.read(info, jar::getPackages);
+                var all = new HashSet<>(jar.getPackages());
+                all.removeAll(desc.packages());
+                if (!all.isEmpty()) {
+                    LOGGER.error("Invalid module-info, missing packages " + all);
+                } else {
+                    return new JarMetadata() {
+                        @Override
+                        public String name() {
+                            return desc.name();
+                        }
+
+                        @Override
+                        public String version() {
+                            return desc.version().map(Version::toString).or(desc::rawVersion).orElse(null);
+                        }
+
+                        @Override
+                        public ModuleDescriptor descriptor() {
+                            return desc;
+                        }
+                    };
+                }
+            } catch (InvalidModuleDescriptorException | IOException e) {
+                LOGGER.error("Failed to parse module-info.class, defaulting to manual open module", e);
+            } finally {
+                try {
+                    info.close();
+                } catch (IOException e) {}
+            }
+        }
+
+        if (jar.moduleDataProvider().findFile(MODS_TOML).isEmpty())
+            return JarMetadata.from(jar, jar.getPrimaryPath());
+
+        return mjm;
     }
 
     protected IModFileInfo manifestParser(final IModFile mod) {
