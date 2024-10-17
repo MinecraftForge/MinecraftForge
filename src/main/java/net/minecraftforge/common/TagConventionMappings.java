@@ -137,6 +137,8 @@ public final class TagConventionMappings {
 
             legacyToCommon(Registries.ITEM, forgeRl("ender_pearls"), Tags.Items.ENDER_PEARLS),
 
+            legacyToCommon(Registries.ITEM, forgeRl("foods/pie"), Tags.Items.FOODS_PIE),
+
             legacyToCommon(Registries.ITEM, forgeRl("gems"), Tags.Items.GEMS),
             legacyToCommon(Registries.ITEM, forgeRl("gems/diamond"), Tags.Items.GEMS_DIAMOND),
             legacyToCommon(Registries.ITEM, forgeRl("gems/emerald"), Tags.Items.GEMS_EMERALD),
