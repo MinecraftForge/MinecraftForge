@@ -6,7 +6,7 @@
       "item": "minecraft:honeycomb"
     },
     "S": {
-      "tag": "forge:string"
+      "tag": "c:strings"
     }
   },
   "pattern": [

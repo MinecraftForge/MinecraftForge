@@ -18,7 +18,7 @@
     "minecraft:red_stained_glass",
     "minecraft:black_stained_glass",
     {
-      "id": "#forge:glass_silica",
+      "id": "#forge:glass/silica",
       "required": false
     }
   ]

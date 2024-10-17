@@ -4,7 +4,7 @@
   "group": "wooden_fence_gate",
   "key": {
     "#": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     },
     "W": {
       "item": "minecraft:birch_planks"

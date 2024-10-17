@@ -12,14 +12,6 @@
     "minecraft:gray_stained_glass_pane",
     "minecraft:gray_terracotta",
     "minecraft:gray_wall_banner",
-    "minecraft:gray_wool",
-    {
-      "id": "#forge:glass/gray",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/gray",
-      "required": false
-    }
+    "minecraft:gray_wool"
   ]
 }

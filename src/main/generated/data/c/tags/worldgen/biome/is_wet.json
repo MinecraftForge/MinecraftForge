@@ -8,10 +8,6 @@
     {
       "id": "#forge:is_wet/end",
       "required": false
-    },
-    {
-      "id": "#forge:is_wet",
-      "required": false
     }
   ]
 }

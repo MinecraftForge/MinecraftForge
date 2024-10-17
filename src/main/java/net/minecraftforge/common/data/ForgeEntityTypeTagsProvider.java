@@ -9,6 +9,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.EntityTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,21 +26,21 @@ public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
     @Override
     public void addTags(HolderLookup.Provider lookupProvider) {
-        tag(BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
+        tag(BOSSES)
+                .add(EntityType.ENDER_DRAGON, EntityType.WITHER)
+                .addOptionalTag(forgeTagKey("bosses"));
         tag(MINECARTS).add(EntityType.MINECART, EntityType.CHEST_MINECART, EntityType.FURNACE_MINECART, EntityType.HOPPER_MINECART, EntityType.SPAWNER_MINECART, EntityType.TNT_MINECART, EntityType.COMMAND_BLOCK_MINECART);
         tag(BOATS).add(EntityType.BOAT, EntityType.CHEST_BOAT);
         tag(CAPTURING_NOT_SUPPORTED);
         tag(TELEPORTING_NOT_SUPPORTED);
 
-        // Backwards compat with pre-1.21 tags. Done after so optional tag is last for better readability.
+        // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
         // TODO: Remove backwards compat tag entries in 1.22
-        tag(BOSSES).addOptionalTag(forgeRl("bosses"));
-        tag(MINECARTS).addOptionalTag(forgeRl("minecarts"));
-        tag(BOATS).addOptionalTag(forgeRl("boats"));
+        tag(forgeTagKey("bosses")).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
     }
 
-    private static ResourceLocation forgeRl(String path) {
-        return ResourceLocation.fromNamespaceAndPath("forge", path);
+    private static TagKey<EntityType<?>> forgeTagKey(String path) {
+        return EntityTypeTags.create(ResourceLocation.fromNamespaceAndPath("forge", path));
     }
 
     @Override

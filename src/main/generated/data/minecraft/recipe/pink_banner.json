@@ -7,7 +7,7 @@
       "item": "minecraft:pink_wool"
     },
     "|": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [

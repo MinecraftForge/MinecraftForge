@@ -12,14 +12,6 @@
     "minecraft:brown_stained_glass_pane",
     "minecraft:brown_terracotta",
     "minecraft:brown_wall_banner",
-    "minecraft:brown_wool",
-    {
-      "id": "#forge:glass/brown",
-      "required": false
-    },
-    {
-      "id": "#forge:stained_glass/brown",
-      "required": false
-    }
+    "minecraft:brown_wool"
   ]
 }

@@ -16,6 +16,10 @@
     "minecraft:brown_stained_glass_pane",
     "minecraft:green_stained_glass_pane",
     "minecraft:red_stained_glass_pane",
-    "minecraft:black_stained_glass_pane"
+    "minecraft:black_stained_glass_pane",
+    {
+      "id": "#forge:glass_panes",
+      "required": false
+    }
   ]
 }

@@ -6,7 +6,7 @@
       "tag": "forge:cobblestone/normal"
     },
     "X": {
-      "tag": "forge:rods/wooden"
+      "tag": "c:rods/wooden"
     }
   },
   "pattern": [
