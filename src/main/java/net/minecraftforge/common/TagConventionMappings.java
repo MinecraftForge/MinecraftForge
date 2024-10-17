@@ -246,6 +246,12 @@ public final class TagConventionMappings {
 
             //region Fluids
             legacyToCommon(Registries.FLUID, forgeRl("milk"), Tags.Fluids.MILK),
+            legacyToCommon(Registries.FLUID, forgeRl("gaseous"), Tags.Fluids.GASEOUS),
+            legacyToCommon(Registries.FLUID, forgeRl("potion"), Tags.Fluids.POTION),
+            legacyToCommon(Registries.FLUID, forgeRl("suspicious_stew"), Tags.Fluids.SUSPICIOUS_STEW),
+            legacyToCommon(Registries.FLUID, forgeRl("mushroom_stew"), Tags.Fluids.MUSHROOM_STEW),
+            legacyToCommon(Registries.FLUID, forgeRl("rabbit_stew"), Tags.Fluids.RABBIT_STEW),
+            legacyToCommon(Registries.FLUID, forgeRl("beetroot_soup"), Tags.Fluids.BEETROOT_SOUP),
             //endregion
 
             //region Biomes
