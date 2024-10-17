@@ -243,6 +243,8 @@ public class Tags {
         public static final TagKey<Block> STORAGE_BLOCKS_REDSTONE = cTag("storage_blocks/redstone");
         public static final TagKey<Block> STORAGE_BLOCKS_SLIME = cTag("storage_blocks/slime");
         public static final TagKey<Block> STORAGE_BLOCKS_WHEAT = cTag("storage_blocks/wheat");
+        public static final TagKey<Block> STRIPPED_LOGS = cTag("stripped_logs");
+        public static final TagKey<Block> STRIPPED_WOODS = cTag("stripped_woods");
         public static final TagKey<Block> VILLAGER_JOB_SITES = cTag("villager_job_sites");
         //endregion
 
@@ -775,6 +777,8 @@ public class Tags {
         public static final TagKey<Item> STORAGE_BLOCKS_SLIME = cTag("storage_blocks/slime");
         public static final TagKey<Item> STORAGE_BLOCKS_WHEAT = cTag("storage_blocks/wheat");
         public static final TagKey<Item> STRINGS = cTag("strings");
+        public static final TagKey<Item> STRIPPED_LOGS = cTag("stripped_logs");
+        public static final TagKey<Item> STRIPPED_WOODS = cTag("stripped_woods");
         public static final TagKey<Item> VILLAGER_JOB_SITES = cTag("villager_job_sites");
 
         // Tools and Armors
