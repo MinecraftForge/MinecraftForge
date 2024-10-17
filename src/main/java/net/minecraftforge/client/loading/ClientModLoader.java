@@ -13,6 +13,7 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
+import net.minecraftforge.common.capabilities.CapabilityFactoryManager;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
@@ -113,6 +114,7 @@ public class ClientModLoader {
         if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
+            CapabilityFactoryManager.init();
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();

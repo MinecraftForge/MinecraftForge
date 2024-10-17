@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +50,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -83,6 +85,7 @@ import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -618,6 +621,23 @@ public final class ForgeHooks {
         if (ForgeMod.MILK.filter(milk -> milk == fluid).isPresent() || ForgeMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
             return ForgeMod.MILK_TYPE.get();
         throw new RuntimeException("Mod fluids must override getFluidType.");
+    }
+
+    /**
+     * Hook to handle saving Data for itemstack
+     * @param itemStack
+     * @param provider
+     */
+    public static void onItemStackSave(ItemStack itemStack, CompoundTag forgeCapData) {
+        if (itemStack.isEmpty()) return;
+        if (forgeCapData == null || forgeCapData.isEmpty()) return;
+        itemStack.set(ForgeMod.FORGE_DATA_COMPONENT.get(), CustomData.of(forgeCapData));
+    }
+
+    public static void onItemStackLoad(ItemStack itemstack, Consumer<CompoundTag> compoundTag) {
+        var c = itemstack.get(ForgeMod.FORGE_DATA_COMPONENT.get());
+        if (c != null)
+            compoundTag.accept(c.copyTag());
     }
 
     /*
