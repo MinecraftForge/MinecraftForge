@@ -326,6 +326,8 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.STRINGS)
                 .add(Items.STRING)
                 .addOptionalTag(forgeItemTagKey("strings"));
+        copy(Tags.Blocks.STRIPPED_LOGS, Tags.Items.STRIPPED_LOGS);
+        copy(Tags.Blocks.STRIPPED_WOODS, Tags.Items.STRIPPED_WOODS);
         tag(Tags.Items.VILLAGER_JOB_SITES).add(
                 Items.BARREL, Items.BLAST_FURNACE, Items.BREWING_STAND, Items.CARTOGRAPHY_TABLE,
                 Items.CAULDRON, Items.COMPOSTER, Items.FLETCHING_TABLE, Items.GRINDSTONE,

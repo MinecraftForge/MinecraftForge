@@ -216,6 +216,14 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
                 .addOptionalTag(forgeTagKey("storage_blocks/redstone"));
         tag(STORAGE_BLOCKS_SLIME).add(Blocks.SLIME_BLOCK);
         tag(STORAGE_BLOCKS_WHEAT).add(Blocks.HAY_BLOCK);
+        tag(Tags.Blocks.STRIPPED_LOGS).add(
+                Blocks.STRIPPED_ACACIA_LOG, Blocks.STRIPPED_BAMBOO_BLOCK, Blocks.STRIPPED_BIRCH_LOG,
+                Blocks.STRIPPED_CHERRY_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.STRIPPED_JUNGLE_LOG,
+                Blocks.STRIPPED_MANGROVE_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.STRIPPED_SPRUCE_LOG);
+        tag(Tags.Blocks.STRIPPED_WOODS).add(
+                Blocks.STRIPPED_ACACIA_WOOD, Blocks.STRIPPED_BIRCH_WOOD, Blocks.STRIPPED_CHERRY_WOOD,
+                Blocks.STRIPPED_DARK_OAK_WOOD, Blocks.STRIPPED_JUNGLE_WOOD, Blocks.STRIPPED_MANGROVE_WOOD,
+                Blocks.STRIPPED_OAK_WOOD, Blocks.STRIPPED_SPRUCE_WOOD);
         tag(VILLAGER_JOB_SITES).add(
                 Blocks.BARREL, Blocks.BLAST_FURNACE, Blocks.BREWING_STAND, Blocks.CARTOGRAPHY_TABLE,
                 Blocks.CAULDRON, Blocks.WATER_CAULDRON, Blocks.LAVA_CAULDRON, Blocks.POWDER_SNOW_CAULDRON,
