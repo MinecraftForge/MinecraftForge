@@ -6,7 +6,6 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.SkullModel;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -18,7 +17,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.Entity;
@@ -33,7 +31,6 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +50,7 @@ import java.util.function.Supplier;
  * @see EntityRenderersEvent.RegisterRenderers
  * @see EntityRenderersEvent.AddLayers
  */
-public abstract class EntityRenderersEvent extends Event implements IModBusEvent {
+public abstract class EntityRenderersEvent extends Event {
     @ApiStatus.Internal
     protected EntityRenderersEvent() {}
 
