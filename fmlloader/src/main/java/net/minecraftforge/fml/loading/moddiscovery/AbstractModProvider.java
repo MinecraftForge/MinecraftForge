@@ -35,9 +35,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public abstract class AbstractModProvider implements IModProvider {
+    private static final   boolean ENABLE_STRICT_MODULES = Boolean.getBoolean("forge.strict.modules");
     private static final   Logger LOGGER      = LogUtils.getLogger();
     protected static final String MODS_TOML   = "META-INF/mods.toml";
     protected static final String MODULE_INFO = "module-info.class";
@@ -54,7 +56,12 @@ public abstract class AbstractModProvider implements IModProvider {
     @Nullable
     protected IModLocator.ModFileOrException createMod(Path path, boolean ignoreUnknown, String defaultType) {
         var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(jar -> loadMetaFromJar(jar, mjm), path);
+        SecureJar sj = null;
+        try {
+            sj = SecureJar.from(jar -> loadMetaFromJar(jar, mjm), path);
+        } catch (Throwable t) {
+            return new IModLocator.ModFileOrException(null, new ModFileLoadingException("Failed to create secure jar for \"" + path + "\" - " + t.getMessage()));
+        }
 
         IModFile mod;
         var type = sj.moduleDataProvider().getManifest().getMainAttributes().getValue(ModFile.TYPE);
@@ -89,7 +96,11 @@ public abstract class AbstractModProvider implements IModProvider {
                 var all = new HashSet<>(jar.getPackages());
                 all.removeAll(desc.packages());
                 if (!all.isEmpty()) {
-                    LOGGER.error("Invalid module-info, missing packages " + all);
+                    var missing = all.stream().sorted().collect(Collectors.joining(", "));
+                    LOGGER.error("Invalid module-info, missing packages " + missing);
+                    throw new ModFileLoadingException("Invalid module-info, missing packages " + missing);
+                } else if (!ENABLE_STRICT_MODULES) { // TODO: Design API to allow mods to automatically open sealed modules.
+                    return JarMetadata.from(jar, jar.getPrimaryPath());
                 } else {
                     return new JarMetadata() {
                         @Override
@@ -109,7 +120,8 @@ public abstract class AbstractModProvider implements IModProvider {
                     };
                 }
             } catch (InvalidModuleDescriptorException | IOException e) {
-                LOGGER.error("Failed to parse module-info.class, defaulting to manual open module", e);
+                LOGGER.error("Failed to parse " + jar.getPrimaryPath() + " module-info", e);
+                throw new ModFileLoadingException("Invalid module-info: " + e.getMessage());
             } finally {
                 try {
                     info.close();

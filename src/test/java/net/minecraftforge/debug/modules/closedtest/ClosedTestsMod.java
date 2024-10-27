@@ -50,6 +50,19 @@ public class ClosedTestsMod extends BaseTestMod {
     }
 
     @GameTest(template = "forge:empty3x3x3")
+    public static void can_reflect_internal(GameTestHelper helper) throws ReflectiveOperationException {
+        try {
+            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internal.InternalUtils");
+            var method = cls.getDeclaredMethod("internalMethod");
+            method.invoke(null);
+            helper.succeed();
+        } catch (IllegalAccessException e) {
+            helper.fail("Failed to invoke internal method: " + e.getMessage());
+        }
+    }
+
+    /* Re-enable when we do not automatically open all modules.
+    @GameTest(template = "forge:empty3x3x3")
     public static void cant_reflect_internal(GameTestHelper helper) throws ReflectiveOperationException {
         try {
             var cls = Class.forName("net.minecraftforge.debug.modules.closed.internal.InternalUtils");
@@ -60,4 +73,5 @@ public class ClosedTestsMod extends BaseTestMod {
             helper.succeed();
         }
     }
+    */
 }
