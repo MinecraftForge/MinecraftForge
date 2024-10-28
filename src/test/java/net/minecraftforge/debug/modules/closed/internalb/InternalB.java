@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.modules.closed.internal;
+package net.minecraftforge.debug.modules.closed.internalb;
 
-public class InternalUtils {
+public class InternalB {
     public static void internalMethod() {
-        System.out.println("Internal method called");
+        System.out.println("Internal B method called");
     }
 }

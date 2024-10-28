@@ -5,7 +5,7 @@
       "conditions": {
         "allowOffhand": true,
         "breakingBlock": {
-          "blocks": "#forge:glass"
+          "blocks": "#c:glass_blocks"
         },
         "holdingItem": {
           "items": "#criterion_test:fish"

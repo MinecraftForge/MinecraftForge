@@ -13,6 +13,7 @@ dependencies {
     compileOnly(libs.nulls)
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
+    implementation(libs.unsafe)
 }
 
 java {
@@ -57,7 +58,7 @@ publishing {
             license PomUtils.Licenses.LGPLv2_1
         }
     }
-    
+
     repositories {
         maven gradleutils.publishingForgeMaven
     }

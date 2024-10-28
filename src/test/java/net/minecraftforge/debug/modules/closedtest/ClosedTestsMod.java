@@ -6,13 +6,18 @@
 package net.minecraftforge.debug.modules.closedtest;
 
 import java.lang.module.ModuleDescriptor;
+import java.util.jar.Manifest;
+
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.debug.modules.closed.ClosedMod;
 import net.minecraftforge.debug.modules.closed.api.PublicUtils;
+import net.minecraftforge.debug.modules.closed.internala.InternalA;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.test.BaseTestMod;
+import net.minecraftforge.test.ManifestProvider;
 import net.minecraftforge.test.ModuleProvider;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -30,6 +35,7 @@ public class ClosedTestsMod extends BaseTestMod {
     public void runData(GatherDataEvent event) {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(true, new ModuleProvider(out, module()));
+        event.getGenerator().addProvider(true, new ManifestProvider(out, MODID, manifest()));
     }
 
     private ModuleDescriptor module() {
@@ -42,6 +48,17 @@ public class ClosedTestsMod extends BaseTestMod {
             .build();
     }
 
+    private Manifest manifest() {
+        var ret = new Manifest();
+        // Add-Opens is respected by FMLModContainer, it should give us access to closed packages
+        ret.getMainAttributes().putValue("Add-Opens", ClosedMod.class.getPackageName() + '/' + InternalA.class.getPackageName());
+        return ret;
+    }
+
+    /*
+     * This attempted to access a class and method that IS exported by ClosedMod
+     * Should succeed with no issues
+     */
     @GameTest(template = "forge:empty3x3x3")
     public static void can_reflect_exported(GameTestHelper helper) throws ReflectiveOperationException {
         var method = PublicUtils.class.getDeclaredMethod("publicMethod");
@@ -49,10 +66,15 @@ public class ClosedTestsMod extends BaseTestMod {
         helper.succeed();
     }
 
+    /*
+     * This is opened by us having an Add-Opens entry in ClosedTest's manifest
+     * It is NOT exported/opened by ClosedMod
+     * Should succeed with no exceptions
+     */
     @GameTest(template = "forge:empty3x3x3")
-    public static void can_reflect_internal(GameTestHelper helper) throws ReflectiveOperationException {
+    public static void can_reflect_opened_internal(GameTestHelper helper) throws ReflectiveOperationException {
         try {
-            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internal.InternalUtils");
+            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internala.InternalA");
             var method = cls.getDeclaredMethod("internalMethod");
             method.invoke(null);
             helper.succeed();
@@ -61,11 +83,14 @@ public class ClosedTestsMod extends BaseTestMod {
         }
     }
 
-    /* Re-enable when we do not automatically open all modules.
+    /*
+     * This is NOT opened by us, and is NOT exported by ClosedTest
+     * This should error with IllegalAccessException because java is enforcing access control.
+     */
     @GameTest(template = "forge:empty3x3x3")
     public static void cant_reflect_internal(GameTestHelper helper) throws ReflectiveOperationException {
         try {
-            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internal.InternalUtils");
+            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internalb.InternalB");
             var method = cls.getDeclaredMethod("internalMethod");
             method.invoke(null);
             helper.fail("Invoked internal method without error");
@@ -73,5 +98,4 @@ public class ClosedTestsMod extends BaseTestMod {
             helper.succeed();
         }
     }
-    */
 }

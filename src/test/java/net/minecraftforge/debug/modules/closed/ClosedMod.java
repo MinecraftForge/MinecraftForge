@@ -7,10 +7,10 @@ package net.minecraftforge.debug.modules.closed;
 
 import java.lang.module.ModuleDescriptor;
 import java.util.Set;
-
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.debug.modules.closed.api.PublicUtils;
-import net.minecraftforge.debug.modules.closed.internal.InternalUtils;
+import net.minecraftforge.debug.modules.closed.internala.InternalA;
+import net.minecraftforge.debug.modules.closed.internalb.InternalB;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -34,7 +34,8 @@ public class ClosedMod extends BaseTestMod {
     private ModuleDescriptor module() {
         var self = ClosedMod.class.getPackageName();
         var api = PublicUtils.class.getPackageName();
-        var internal = InternalUtils.class.getPackageName();
+        var internalA = InternalA.class.getPackageName();
+        var internalB = InternalB.class.getPackageName();
         var forge = Set.of(
             "net.minecraftforge.javafmlmod",
             "net.minecraftforge.eventbus",
@@ -42,7 +43,7 @@ public class ClosedMod extends BaseTestMod {
             "net.minecraftforge.forge"
         );
         var bldr = ModuleDescriptor.newModule(self)
-            .packages(Set.of(self, api, internal))
+            .packages(Set.of(self, api, internalA, internalB))
             .opens(api)
             .exports(api)
             .opens(self, forge);

@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public abstract class AbstractModProvider implements IModProvider {
-    private static final   boolean ENABLE_STRICT_MODULES = Boolean.getBoolean("forge.strict.modules");
     private static final   Logger LOGGER      = LogUtils.getLogger();
     protected static final String MODS_TOML   = "META-INF/mods.toml";
     protected static final String MODULE_INFO = "module-info.class";
@@ -99,8 +98,6 @@ public abstract class AbstractModProvider implements IModProvider {
                     var missing = all.stream().sorted().collect(Collectors.joining(", "));
                     LOGGER.error("Invalid module-info, missing packages " + missing);
                     throw new ModFileLoadingException("Invalid module-info, missing packages " + missing);
-                } else if (!ENABLE_STRICT_MODULES) { // TODO: Design API to allow mods to automatically open sealed modules.
-                    return JarMetadata.from(jar, jar.getPrimaryPath());
                 } else {
                     return new JarMetadata() {
                         @Override
