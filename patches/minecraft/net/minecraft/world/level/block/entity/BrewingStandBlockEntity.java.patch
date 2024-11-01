@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -91,8 +_,8 @@
+@@ -91,8 +_,9 @@
  
     public static void m_155285_(Level p_155286_, BlockPos p_155287_, BlockState p_155288_, BrewingStandBlockEntity p_155289_) {
        ItemStack itemstack = p_155289_.f_58975_.get(4);
 -      if (p_155289_.f_58979_ <= 0 && itemstack.m_150930_(Items.f_42593_)) {
 -         p_155289_.f_58979_ = 20;
-+      if (p_155289_.f_58979_ <= 0 && (itemstack.m_150930_(Items.f_42593_) || net.minecraftforge.common.BrewingFuelRegistry.get(itemstack.m_41720_()) != 0)) {
-+         p_155289_.f_58979_ = net.minecraftforge.common.BrewingFuelRegistry.get(itemstack.m_41720_());
++      int itemFuelValue = net.minecraftforge.common.BrewingFuelRegistry.get(itemstack.m_41720_());
++      if (p_155289_.f_58979_ <= 0 && (itemstack.m_150930_(Items.f_42593_) || itemFuelValue != 0)) {
++         p_155289_.f_58979_ = itemFuelValue;
           itemstack.m_41774_(1);
           m_155232_(p_155286_, p_155287_, p_155288_);
        }
