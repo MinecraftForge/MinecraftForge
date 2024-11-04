@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.jar.Attributes;
 
 public class FMLModContainer extends ModContainer {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -92,17 +93,18 @@ public class FMLModContainer extends ModContainer {
      * resolved, or if a specified package does not exist, then the corresponding pair
      * is ignored.
      */
-    private void openModules(ModuleLayer layer, Module self, SecureJar jar) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
-        var manifest = jar.moduleDataProvider().getManifest();
-        var entry = manifest.getMainAttributes().getValue("Add-Opens");
-        if (entry != null)
-            addOpenOrExports(layer, self, true, entry);
-        entry = manifest.getMainAttributes().getValue("Add-Exports");
-        if (entry != null)
-            addOpenOrExports(layer, self, false, entry);
+    private static void openModules(ModuleLayer layer, Module self, SecureJar jar) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
+        var manifest = jar.moduleDataProvider().getManifest().getMainAttributes();
+        addOpenOrExports(layer, self, true, manifest);
+        addOpenOrExports(layer, self, false, manifest);
     }
 
-    private void addOpenOrExports(ModuleLayer layer, Module self, boolean open, String entry) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
+    private static void addOpenOrExports(ModuleLayer layer, Module self, boolean open, Attributes attrs) throws NoSuchMethodException, SecurityException, IllegalAccessException, InvocationTargetException {
+        var key = open ? "Add-Opens" : "Add-Exports";
+        var entry = attrs.getValue(key);
+        if (entry == null)
+            return;
+
         for (var pair : entry.split(" ")) {
             var pts = pair.trim().split("/");
             if (pts.length == 2) {
@@ -110,6 +112,8 @@ public class FMLModContainer extends ModContainer {
                 if (target == null || !target.getDescriptor().packages().contains(pts[1]))
                     continue;
                 addOpenOrExport(target, pts[1], self, open);
+            } else {
+                LOGGER.warn(LOADING, "Invalid {} entry in {}: {}", key, self.getName(), pair);
             }
         }
     }
