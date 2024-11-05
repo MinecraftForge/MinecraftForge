@@ -9,9 +9,7 @@ import java.lang.module.ModuleDescriptor;
 import java.util.jar.Manifest;
 
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.debug.modules.closed.ClosedMod;
 import net.minecraftforge.debug.modules.closed.api.PublicUtils;
-import net.minecraftforge.debug.modules.closed.internala.InternalA;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -51,7 +49,7 @@ public class ClosedTestsMod extends BaseTestMod {
     private Manifest manifest() {
         var ret = new Manifest();
         // Add-Opens is respected by FMLModContainer, it should give us access to closed packages
-        ret.getMainAttributes().putValue("Add-Opens", ClosedMod.class.getPackageName() + '/' + InternalA.class.getPackageName());
+        ret.getMainAttributes().putValue("Add-Opens", "net.minecraftforge.debug.modules.closed/net.minecraftforge.debug.modules.closed.internala" );
         return ret;
     }
 
