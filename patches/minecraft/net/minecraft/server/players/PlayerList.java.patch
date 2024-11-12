@@ -12,7 +12,7 @@
          servergamepacketlistenerimpl.send(new ClientboundPlayerAbilitiesPacket(p_11263_.getAbilities()));
          servergamepacketlistenerimpl.send(new ClientboundSetHeldSlotPacket(p_11263_.getInventory().selected));
          RecipeManager recipemanager = this.server.getRecipeManager();
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
          servergamepacketlistenerimpl.send(new ClientboundUpdateRecipesPacket(recipemanager.getSynchronizedItemProperties(), recipemanager.getSynchronizedStonecutterRecipes()));
          this.sendPlayerPermissionLevel(p_11263_);
          p_11263_.getStats().markAllDirty();
