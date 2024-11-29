@@ -33,6 +33,7 @@ import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -474,7 +475,7 @@ public class ForgeHooks
                     return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
 
                 return onServerChatSubmittedEvent(sender, getRawText(message), message, true);
-            });
+            }, Util.ioPool());
         }
 
         @NotNull
@@ -488,7 +489,7 @@ public class ForgeHooks
                         return onServerChatSubmittedEvent(sender, message.signedContent().plain(), message.signedContent().decorated(), false) == null;
 
                     return false;
-                }).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
+                }, Util.ioPool()).thenApply(canceled -> canceled == Boolean.TRUE ? null : message);
             }
 
             return this.decorate(sender, message.serverContent()).thenApply(component -> component == null ? null : message.withUnsignedContent(component));
