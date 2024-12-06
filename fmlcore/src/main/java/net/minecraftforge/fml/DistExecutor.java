@@ -25,7 +25,18 @@ import java.util.function.Supplier;
  * <li>When you want to call one thing on one side, another thing on the other and return a result {@link #safeRunForDist(Supplier, Supplier)}</li>
  * <li>When you want to run something on one side {@link #safeRunWhenOn(Dist, Supplier)}</li>
  * </ul>
+ *
+ * @deprecated Historically, this allowed for safe execution of code on the correct side by exploiting a low-level
+ * detail in Java 8, but in newer versions a simple if check is enough.
+ * <br>
+ * For example:
+ * <pre>{@code
+ * if (FMLEnvironment.dist.isClient()) {
+ *     // client code here
+ * }
+ * }</pre>
  */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public final class DistExecutor
 {
     private static final Logger LOGGER = LogManager.getLogger();

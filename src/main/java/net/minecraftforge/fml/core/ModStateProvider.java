@@ -6,9 +6,9 @@
 package net.minecraftforge.fml.core;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.IModLoadingState;
 import net.minecraftforge.fml.IModStateProvider;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingPhase;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModLoadingState;
@@ -21,9 +21,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Provider for the core FML mod loading states.
@@ -60,7 +63,7 @@ public class ModStateProvider implements IModStateProvider {
      */
     public static final ModLoadingState CONFIG_LOAD = ModLoadingState.of("CONFIG_LOAD", ModLoadingPhase.LOAD)
         .withInline(ml -> {
-            DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+            if (FMLEnvironment.dist.isClient()) ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get());
             ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         });
 
@@ -71,7 +74,7 @@ public class ModStateProvider implements IModStateProvider {
      * @see FMLCommonSetupEvent
      * @see ModLoadingStage#COMMON_SETUP
      */
-    public static  final ModLoadingState COMMON_SETUP = ModLoadingState.of("COMMON_SETUP", ModLoadingPhase.LOAD)
+    public static final ModLoadingState COMMON_SETUP = ModLoadingState.of("COMMON_SETUP", ModLoadingPhase.LOAD)
         .after(CONFIG_LOAD)
         .withTransition(new ParallelTransition(ModLoadingStage.COMMON_SETUP, FMLCommonSetupEvent::new));
 
@@ -83,14 +86,16 @@ public class ModStateProvider implements IModStateProvider {
      * @see FMLDedicatedServerSetupEvent
      * @see ModLoadingStage#SIDED_SETUP
      */
-    public static  final ModLoadingState SIDED_SETUP = ModLoadingState.of("SIDED_SETUP", ModLoadingPhase.LOAD)
+    public static final ModLoadingState SIDED_SETUP = ModLoadingState.of("SIDED_SETUP", ModLoadingPhase.LOAD)
         .after(COMMON_SETUP)
-        .withTransition(new ParallelTransition(ModLoadingStage.SIDED_SETUP,
-            DistExecutor.unsafeRunForDist(
-                () -> () -> FMLClientSetupEvent::new,
-                () -> () -> FMLDedicatedServerSetupEvent::new
-            )
-        ));
+        .withTransition(new ParallelTransition(ModLoadingStage.SIDED_SETUP, createSidedSetupEvent()));
+
+    private static BiFunction<ModContainer, ModLoadingStage, ParallelDispatchEvent> createSidedSetupEvent() {
+        if (FMLEnvironment.dist.isClient())
+            return FMLClientSetupEvent::new;
+        else
+            return FMLDedicatedServerSetupEvent::new;
+    }
 
     /**
      * First {@linkplain ModLoadingPhase#COMPLETE completion state}, for enqueuing {@link net.minecraftforge.fml.InterModComms}
@@ -99,7 +104,7 @@ public class ModStateProvider implements IModStateProvider {
      * @see InterModEnqueueEvent
      * @see ModLoadingStage#ENQUEUE_IMC
      */
-    public static  final ModLoadingState ENQUEUE_IMC = ModLoadingState.of("ENQUEUE_IMC", ModLoadingPhase.COMPLETE)
+    public static final ModLoadingState ENQUEUE_IMC = ModLoadingState.of("ENQUEUE_IMC", ModLoadingPhase.COMPLETE)
         .withTransition(new ParallelTransition(ModLoadingStage.ENQUEUE_IMC, InterModEnqueueEvent::new));
 
     /**
