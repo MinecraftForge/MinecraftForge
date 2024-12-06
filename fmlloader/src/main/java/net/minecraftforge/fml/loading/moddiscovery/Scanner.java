@@ -46,7 +46,7 @@ record Scanner(ModFile fileToScan, ModFileScanData result) {
         try (InputStream in = Files.newInputStream(path)) {
             ModClassVisitor mcv = new ModClassVisitor();
             ClassReader cr = new ClassReader(in);
-            cr.accept(mcv, 0);
+            cr.accept(mcv, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
             mcv.buildData(result.getClasses(), result.getAnnotations());
         } catch (IOException | IllegalArgumentException e) {
             // mark path bad
