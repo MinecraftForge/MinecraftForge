@@ -29,17 +29,27 @@ import java.util.List;
 public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     protected static final Logger LOGGER = LogUtils.getLogger();
 
-    protected final LaunchType type;
-    private final String prefix;
+    private final String name;
+    protected Dist dist = Dist.CLIENT;
+    protected boolean isData = false;
+    protected String module;
+    protected String main;
 
     protected CommonLaunchHandler(LaunchType type, String prefix) {
-        this.type = type;
-        this.prefix = prefix;
+        this(prefix + type.name());
+        this.dist = type.dist();
+        this.isData = type.data();
+        this.module = type.module();
+        this.main = type.main();
     }
 
-    @Override public String name() { return this.prefix + this.type.name(); }
-    public Dist getDist() { return this.type.dist(); }
-    public boolean isData() { return this.type.data(); }
+    protected CommonLaunchHandler(String name) {
+        this.name = name;
+    }
+
+    @Override public String name() { return this.name; }
+    public Dist getDist() { return this.dist; }
+    public boolean isData() { return this.isData; }
     public boolean isProduction() { return false; }
     public abstract String getNaming();
 
@@ -66,7 +76,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     }
 
     protected ServiceRunner makeService(final String[] arguments, final ModuleLayer gameLayer) {
-        return () -> runTarget(this.type.module(), this.type.main(), arguments, gameLayer);
+        return () -> runTarget(this.module, this.main, arguments, gameLayer);
     }
 
     protected record LaunchType(String name, String module, String main, Dist dist, boolean data) {};

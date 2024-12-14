@@ -41,3 +41,8 @@ src/*/generated/**/.cache/
 
 /ForgeRoot.ipr
 /ForgeRoot.iws
+
+# APT stuff
+/*/.gitignore
+/*/.factorypath
+/*/.apt_generated/

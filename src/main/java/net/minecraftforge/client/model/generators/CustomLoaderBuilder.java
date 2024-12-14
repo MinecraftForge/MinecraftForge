@@ -13,6 +13,16 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * In 1.21.4 Mojang exposed their data generators for their models. So it should be feasible to just use theirs.
+ * If you find something lacking feel free to open a PR so that we can extend it.
+ *
+ * This is the only class that doesn't seem to have a vanilla alternative however, it should be a simple helper
+ * function to replace this functionality for your custom models
+ *
+ * @deprecated Use Vanilla's providers {@link net.minecraft.client.data.models.ModelProvider}
+ */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public abstract class CustomLoaderBuilder<T extends ModelBuilder<T>>
 {
     protected final ResourceLocation loaderId;

@@ -23,6 +23,8 @@ plugins {
 dependencyResolutionManagement {
     versionCatalogs {
         libs {
+            plugin('apt', 'com.diffplug.eclipse.apt').version('4.2.0')
+
             library('forgespi', 'net.minecraftforge:forgespi:7.1.5') // Needs modlauncher
             library('modlauncher', 'net.minecraftforge:modlauncher:10.2.2') // Needs securemodules
             library('securemodules', 'net.minecraftforge:securemodules:2.2.20') // Needs unsafe
@@ -43,7 +45,7 @@ dependencyResolutionManagement {
             library('jimfs', 'com.google.jimfs:jimfs:1.3.0')
             bundle('jimfs', ['guava', 'failureaccess'])
 
-            version('bootstrap', '2.1.6')
+            version('bootstrap', '2.1.7')
             library('bootstrap',      'net.minecraftforge', 'bootstrap'     ).versionRef('bootstrap') // Needs modlauncher
             library('bootstrap-api',  'net.minecraftforge', 'bootstrap-api' ).versionRef('bootstrap')
             library('bootstrap-dev',  'net.minecraftforge', 'bootstrap-dev' ).versionRef('bootstrap')

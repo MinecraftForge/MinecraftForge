@@ -6,6 +6,7 @@
 package net.minecraftforge.data.loading;
 
 import net.minecraft.Util;
+import net.minecraft.client.ClientBootstrap;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -21,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
@@ -42,8 +42,9 @@ public class DatagenModLoader {
         return new DatagenModLoader(parser, client);
     }
 
+    @SuppressWarnings("unused")
     private final OptionParser parser;
-    private final boolean client;
+    private final OptionSpec<Void> client;
     private final OptionSpec<String> existing;
     private final OptionSpec<String> existingMod;
     private final OptionSpec<String> mod;
@@ -55,7 +56,7 @@ public class DatagenModLoader {
     private DatagenModLoader(OptionParser parser, boolean client) {
         this.gameDir = parser.accepts("gameDir").withRequiredArg().ofType(java.io.File.class).defaultsTo(new java.io.File(".")).required(); //Need by modlauncher, so lets just eat it
         this.parser = parser;
-        this.client = client;
+        this.client = !client ? null : parser.accepts("client", "Include client generators");
         this.existing = parser.accepts("existing", "Existing resource packs that generated resources can reference").withRequiredArg();
         this.existingMod = parser.accepts("existing-mod", "Existing mods that generated resources can reference the resource packs of").withRequiredArg();
         this.mod = parser.accepts("mod", "A modid to dump").withRequiredArg().withValuesSeparatedBy(",");
@@ -82,8 +83,13 @@ public class DatagenModLoader {
         if (patterns.contains("minecraft") && patterns.size() == 1)
             return true;
 
+        if (!genClient && this.client != null)
+            genClient = options.has(this.client);
+
         runningDataGen = true;
         Bootstrap.bootStrap();
+        if (genClient)
+            ClientBootstrap.bootstrap();
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         var lookupProvider = CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor());
 

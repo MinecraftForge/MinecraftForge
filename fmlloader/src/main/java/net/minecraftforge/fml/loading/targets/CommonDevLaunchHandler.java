@@ -22,6 +22,10 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         super(type, prefix);
     }
 
+    protected CommonDevLaunchHandler(String name) {
+        super(name);
+    }
+
     @Override public String getNaming() { return "mcp"; }
     @Override public boolean isProduction() { return false; }
 
@@ -29,13 +33,35 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         super.preLaunch(arguments, layer);
 
+        var args = ArgumentList.from(arguments);
+
+        if (this.module == null) {
+            var entry = args.get("launchEntry");
+            if (entry == null)
+                throw new IllegalArgumentException("When using " + this.name() + " launch target you must specify a --launchEntry argument");
+
+            args.remove("launchEntry");
+
+            int idx = entry.indexOf('/');
+            if (idx == -1) {
+                this.module = "minecraft";
+                this.main = entry;
+            } else {
+                this.module = entry.substring(0, idx);
+                this.main = entry.substring(idx + 1);
+            }
+
+            if (args.has("launchData")) {
+                args.remove("launchData");
+                this.isData = true;
+            }
+        }
+
         if (getDist().isDedicatedServer())
-            return arguments;
+            return args.getArguments();
 
         if (isData())
-            return arguments;
-
-        var args = ArgumentList.from(arguments);
+            return args.getArguments();
 
         String username = args.get("username");
         if (username != null) { // Replace '#' placeholders with random numbers

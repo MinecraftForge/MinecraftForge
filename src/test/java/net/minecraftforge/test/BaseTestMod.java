@@ -30,9 +30,15 @@ public abstract class BaseTestMod {
     protected final IEventBus modBus;
 
     public BaseTestMod(FMLJavaModLoadingContext context) {
-        // TODO: Some form of enable flag?
+        this(context, true);
+    }
 
+    public BaseTestMod(FMLJavaModLoadingContext context, boolean register) {
         this.modBus = context.getModEventBus();
+
+        if (!register)
+            return;
+
         modBus.register(this);
 
         Class<?> cls = getClass();

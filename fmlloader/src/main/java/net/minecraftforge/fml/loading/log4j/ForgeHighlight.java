@@ -18,9 +18,7 @@ import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * A wrapper for {@link HighlightConverter} that auto-disables ANSI when the terminal doesn't support it.

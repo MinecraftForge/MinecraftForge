@@ -97,13 +97,13 @@ final String S2S_TOOL = 'net.minecraftforge:Srg2Source:8.1.0:fatjar'
 configurations {
     // Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
     bootstrap  { transitive = false }
-    installer { 
+    installer {
         extendsFrom(bootstrap)
-        transitive = false 
+        transitive = false
     }
-    installerextra { 
+    installerextra {
         extendsFrom(bootstrap)
-        transitive = false 
+        transitive = false
     }
     api.extendsFrom(installer)
 }
@@ -117,9 +117,9 @@ dependencies {
     bootstrap(libs.securemodules) // Has Union file system in it
     bootstrap(libs.unsafe)        // Needed by securemodules
     bootstrap(libs.bundles.asm)   // Needed by securemodules
-    
+
     implementation(libs.jopt.simple) { version { strictly '5.0.4' } }
-    
+
     installer(libs.bootstrap)
     installer(libs.bootstrap.api) // Needed by securemodules
     installer(libs.accesstransformers)
@@ -227,6 +227,31 @@ patcher {
                  '--assetsDir', downloadAssets.output,
                  '--assetIndex', "{asset_index}"
         }
+
+        forge_client_data {
+            args '--launchTarget', 'forge_dev_client_data',
+                 '--mod', 'forge',
+                 '--all',
+                 '--validate',
+                 '--output', rootProject.file('src/main/generated/'),
+                 '--existing', sourceSets.main.resources.srcDirs[0],
+                 '--assetsDir', downloadAssets.output,
+                 '--assetIndex', "{asset_index}"
+        }
+
+        forge_client_data_test {
+            source sourceSets.test
+            args '--launchTarget', 'forge_dev',
+                 '--launchEntry', 'minecraft/net.minecraft.client.data.Main',
+                 '--launchData',
+                 '--mod', '.+',
+                 '--all',
+                 '--output', rootProject.file('src/test/generated/'),
+                 '--existing', sourceSets.main.resources.srcDirs[0],
+                 '--existing', sourceSets.test.resources.srcDirs[0],
+                 '--assetsDir', downloadAssets.output,
+                 '--assetIndex', "{asset_index}"
+        }
     }
 }
 
@@ -268,11 +293,11 @@ tasks.register('downloadCrowdin', Download) {
 tasks.userdevConfig.configure {
     configurations.installer.allDependencies.forEach {
         def dep = it.toString()
-        if (it instanceof ProjectDependency) 
+        if (it instanceof ProjectDependency)
             dep = "net.minecraftforge:$it.dependencyProject.name:$it.dependencyProject.version"
         libraries.add(dep)
     }
-    
+
     inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
     runs {
         client {
@@ -280,6 +305,13 @@ tasks.userdevConfig.configure {
             property 'forge.enableGameTest', 'true'
             args '--launchTarget', "forge_userdev_client"
             args '--version', 'MOD_DEV'
+            args '--assetIndex', '{asset_index}'
+            args '--assetsDir', '{assets_root}'
+        }
+
+        clientData {
+            environment 'MCP_MAPPINGS', '{mcp_mappings}'
+            args '--launchTarget', "forge_userdev_client_data"
             args '--assetIndex', '{asset_index}'
             args '--assetsDir', '{assets_root}'
         }
@@ -493,7 +525,7 @@ tasks.register('serverShimJar', Jar) {
         from {
             zipTree(downloadServerShim.output).find { it.name == 'MANIFEST.MF' }
         }
-        
+
         attributes('Class-Path': configurations.bootstrap.resolvedConfiguration.resolvedArtifacts.collect { "libraries/${Util.getMavenInfoFromDep(it).path}" }.join(' '))
     }
     archiveClassifier = 'shim'
@@ -586,7 +618,7 @@ tasks.register('checkJarCompatibility', CheckJarCompatibility) {
     baseLibraries.from(project.tasks.named('createJoinedSRG').flatMap { it.output })
 
     inputJar = project.tasks.named('reobfJar').flatMap { it.output }
-    
+
     commonLibraries.from(project.configurations.minecraftImplementation)
     commonLibraries.from(project.configurations.installer)
 }
@@ -607,11 +639,11 @@ tasks.register('launcherJson', LauncherJson).configure {
 
 tasks.register('installerJson', InstallerJson) {
     icon = rootProject.file('icon.ico')
-    
+
     // Json to install into the client's launcher
     dependsOn(launcherJson)
     input.from(launcherJson.output)
-    
+
     // Download Official Mappings
     dependsOn(downloadClientMappings, downloadServerMappings)
     input.from(downloadClientMappings.output, downloadServerMappings.output)
@@ -1059,7 +1091,7 @@ publishing {
             license gradleutils.pom.Licenses.LGPLv2_1
         }
     }
-    
+
     repositories {
         maven gradleutils.publishingForgeMaven
     }

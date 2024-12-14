@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.licenser'
     id 'net.minecraftforge.gradleutils'
+    alias(libs.plugins.apt)
 }
 
 apply from: rootProject.file('build_shared.gradle')
@@ -36,6 +37,7 @@ dependencies {
     implementation(libs.terminalconsoleappender)
     implementation(libs.jimfs)
 
+    // Needed because we have a custom log4j plugin, and they removed package scanning and require a data file to be generated
     implementation(libs.log4j.core)
     annotationProcessor(libs.bundles.log4j)
 
@@ -85,7 +87,7 @@ publishing {
             license PomUtils.Licenses.LGPLv2_1
         }
     }
-    
+
     repositories {
         maven gradleutils.publishingForgeMaven
     }
@@ -102,5 +104,23 @@ tasks.register('writeForgeVersionJson') {
 }
 
 tasks.named('generateResources').configure {
+    dependsOn('eclipseJdt')
+    dependsOn('eclipseJdtApt')
+    dependsOn('eclipseFactorypath')
     dependsOn('writeForgeVersionJson')
+}
+
+eclipse {
+    classpath {
+       // We need to set the default output directory for the log4j annotation processor
+       // Ideally we'd just set the value, but the eclipse plugin deduplicates the output directories
+       // So we have to do a hacky whenMerged
+       //defaultOutputDir = file('bin/main')
+       file.whenMerged {
+           entries.each { entry ->
+               if (entry.kind == 'output' && entry.hasProperty('path'))
+                   entry.path = 'bin/main'
+           }
+       }
+    }
 }

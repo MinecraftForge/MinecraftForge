@@ -94,14 +94,14 @@ public final class ForgeEventFactoryClient {
     /**
      * Post an event to the {@link ModLoader#get()} event bus
      */
-    private static <T extends Event & IModBusEvent> T postModBus(T e) {
+    private static <T extends Event & IModBusEvent> T fireModBus(T e) {
         ML.postEvent(e);
         return e;
     }
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?, ?>> renderers, Map<Model, EntityRenderer<? extends Player, ?>> playerRenderers, Context context) {
         // TODO: Why is this a ModLoader event...
-        postModBus(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
+        fireModBus(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, context));
     }
 
     public static boolean onScreenMouseReleased(Screen screen, double mouseX, double mouseY, int button) {
@@ -295,7 +295,12 @@ public final class ForgeEventFactoryClient {
 
     public static Map<Type, Function<EntityModelSet, SkullModelBase>> onCreateSkullModels() {
         var builder = ImmutableMap.<Type, Function<EntityModelSet, SkullModelBase>>builder();
-        postModBus(new EntityRenderersEvent.CreateSkullModels(builder));
+        fireModBus(new EntityRenderersEvent.CreateSkullModels(builder));
         return builder.build();
+    }
+
+    public static ModelEvent.RegisterModelStateDefinitions onRegisterModeStateDefinitions() {
+        // This is on the mod bus because it happens during the initial texture reload, which is while the Forge bus is shut down.
+        return fireModBus(new ModelEvent.RegisterModelStateDefinitions());
     }
 }

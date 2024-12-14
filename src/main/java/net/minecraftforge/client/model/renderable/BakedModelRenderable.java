@@ -35,7 +35,7 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
      * Constructs a {@link BakedModelRenderable} from the given model location.
      * The model is expected to have been baked ahead of time.
      *
-     * @see net.minecraftforge.client.event.ModelEvent.RegisterAdditional
+     * @see net.minecraftforge.client.event.ModelEvent.RegisterModelStateDefinitions
      */
     public static BakedModelRenderable of(ModelResourceLocation model) {
         return of(Minecraft.getInstance().getModelManager().getModel(model));

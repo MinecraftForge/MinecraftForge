@@ -28,7 +28,12 @@ import org.jetbrains.annotations.Nullable;
  * Can be manually constructed, created by static factory such as
  * {@link #allYRotations(ModelFile, int, boolean)}, or created by builder via
  * {@link #builder()}.
+ *
+ * In 1.21.4 Mojang exposed their data generators for their models. So it should be feasible to just use theirs.
+ * If you find something lacking feel free to open a PR so that we can extend it.
+ * @deprecated Use Vanilla's providers {@link net.minecraft.client.data.models.ModelProvider}
  */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public final class ConfiguredModel {
 
     /**

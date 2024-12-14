@@ -20,7 +20,12 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 /**
  * Builder for item models, adds the ability to build overrides via
  * {@link #override()}.
+ *
+ * In 1.21.4 Mojang exposed their data generators for their models. So it should be feasible to just use theirs.
+ * If you find something lacking feel free to open a PR so that we can extend it.
+ * @deprecated Use Vanilla's providers {@link net.minecraft.client.data.models.ModelProvider}
  */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     protected List<OverrideBuilder> overrides = new ArrayList<>();
@@ -37,7 +42,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     /**
      * Get an existing override builder
-     * 
+     *
      * @param index the index of the existing override builder
      * @return the override builder
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds

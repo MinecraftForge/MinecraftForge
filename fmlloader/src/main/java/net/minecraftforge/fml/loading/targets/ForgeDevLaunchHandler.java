@@ -14,12 +14,14 @@ sealed abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
         super(type, "forge_dev_");
     }
 
+    private ForgeDevLaunchHandler(String name) {
+        super(name);
+    }
+
     @Override
     public List<Path> getMinecraftPaths() {
-
-        // The extra jar is on the classpath, so try and pull it out of the legacy classpath
-        var legacyCP = findClassPath();
-        var extra = findJarOnClasspath(legacyCP, "client-extra");
+        // The client extra jar is on the classpath we can try locating it using the .mcassetsroot which vanilla uses for loading data
+        var extra = getPathFromResource("assets/.mcassetsroot");
         // Minecraft is an exploded directory, so find it.
         var minecraft = getPathFromResource("net/minecraft/client/Minecraft.class");
         var forge = getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
@@ -60,6 +62,12 @@ sealed abstract class ForgeDevLaunchHandler extends CommonDevLaunchHandler {
     public static final class ServerGameTest extends ForgeDevLaunchHandler {
         public ServerGameTest() {
             super(SERVER_GAMETEST);
+        }
+    }
+
+    public static final class Custom extends ForgeDevLaunchHandler {
+        public Custom() {
+            super("forge_dev");
         }
     }
 }

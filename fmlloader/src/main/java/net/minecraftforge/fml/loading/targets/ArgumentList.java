@@ -81,6 +81,10 @@ class ArgumentList {
             .toArray(String[]::new);
     }
 
+    public boolean has(String key) {
+        return this.values.containsKey(key);
+    }
+
     public boolean hasValue(String key) {
         return getOrDefault(key, null) != null;
     }

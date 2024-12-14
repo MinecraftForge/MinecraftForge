@@ -10,6 +10,12 @@ import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+/**
+ * In 1.21.4 Mojang exposed their data generators for their models. So it should be feasible to just use theirs.
+ * If you find something lacking feel free to open a PR so that we can extend it.
+ * @deprecated Use Vanilla's providers {@link net.minecraft.client.data.models.ModelProvider}
+ */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public abstract class ModelFile {
 
     protected ResourceLocation location;

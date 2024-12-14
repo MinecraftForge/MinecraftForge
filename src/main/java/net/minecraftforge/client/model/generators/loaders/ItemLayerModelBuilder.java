@@ -24,6 +24,11 @@ import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+/**
+ * In 1.21.4 Mojang exposed their data generators for their models. So it should be feasible to just use theirs.
+ * If you find something lacking feel free to open a PR so that we can extend it.
+ * @deprecated Use Vanilla's providers {@link net.minecraft.client.data.models.ModelProvider}
+ */
 public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T>
 {
     private static final ResourceLocation NAME = ResourceLocation.fromNamespaceAndPath("forge", "item_layers");

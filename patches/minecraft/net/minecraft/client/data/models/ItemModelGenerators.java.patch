@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/data/models/ItemModelGenerators.java
++++ b/net/minecraft/client/data/models/ItemModelGenerators.java
+@@ -852,6 +_,9 @@
+         this.declareCustomModelItem(Items.COD);
+         this.declareCustomModelItem(Items.FEATHER);
+         this.declareCustomModelItem(Items.LEAD);
++        // moved from validate to here, because it's just vanilla default blocks
++        if (this.itemModelOutput instanceof ModelProvider.ItemInfoCollector collector)
++            collector.generateDefaultBlockModels();
+     }
+ 
+     @OnlyIn(Dist.CLIENT)

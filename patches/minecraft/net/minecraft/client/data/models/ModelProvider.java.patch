@@ -1,0 +1,111 @@
+--- a/net/minecraft/client/data/models/ModelProvider.java
++++ b/net/minecraft/client/data/models/ModelProvider.java
+@@ -43,11 +_,11 @@
+ 
+     @Override
+     public CompletableFuture<?> run(CachedOutput p_376268_) {
+-        ModelProvider.ItemInfoCollector modelprovider$iteminfocollector = new ModelProvider.ItemInfoCollector();
+-        ModelProvider.BlockStateGeneratorCollector modelprovider$blockstategeneratorcollector = new ModelProvider.BlockStateGeneratorCollector();
++        ModelProvider.ItemInfoCollector modelprovider$iteminfocollector = new ModelProvider.ItemInfoCollector(this::getKnownItems);
++        ModelProvider.BlockStateGeneratorCollector modelprovider$blockstategeneratorcollector = new ModelProvider.BlockStateGeneratorCollector(this::getKnownBlocks);
+         ModelProvider.SimpleModelCollector modelprovider$simplemodelcollector = new ModelProvider.SimpleModelCollector();
+-        new BlockModelGenerators(modelprovider$blockstategeneratorcollector, modelprovider$iteminfocollector, modelprovider$simplemodelcollector).run();
+-        new ItemModelGenerators(modelprovider$iteminfocollector, modelprovider$simplemodelcollector).run();
++         getBlockModelGenerators(modelprovider$blockstategeneratorcollector, modelprovider$iteminfocollector, modelprovider$simplemodelcollector).run();
++         getItemModelGenerators(modelprovider$iteminfocollector, modelprovider$simplemodelcollector).run();
+         modelprovider$blockstategeneratorcollector.validate();
+         modelprovider$iteminfocollector.finalizeAndValidate();
+         return CompletableFuture.allOf(
+@@ -57,6 +_,22 @@
+         );
+     }
+ 
++    protected Stream<Block> getKnownBlocks() {
++         return BuiltInRegistries.BLOCK.stream().filter(block -> "minecraft".equals(block.builtInRegistryHolder().key().location().getNamespace()));
++    }
++
++    protected Stream<Item> getKnownItems() {
++        return BuiltInRegistries.ITEM.stream().filter(item -> "minecraft".equals(item.builtInRegistryHolder().key().location().getNamespace()));
++    }
++
++    protected BlockModelGenerators getBlockModelGenerators(BlockStateGeneratorCollector blocks, ItemInfoCollector items, SimpleModelCollector models) {
++        return new BlockModelGenerators(blocks, items, models);
++    }
++
++    protected ItemModelGenerators getItemModelGenerators(ItemInfoCollector items, SimpleModelCollector models) {
++        return new ItemModelGenerators(items, models);
++    }
++
+     static <T> CompletableFuture<?> saveAll(CachedOutput p_378816_, Function<T, Path> p_377914_, Map<T, ? extends Supplier<JsonElement>> p_377836_) {
+         return DataProvider.saveAll(p_378816_, Supplier::get, p_377914_, p_377836_);
+     }
+@@ -69,6 +_,15 @@
+     @OnlyIn(Dist.CLIENT)
+     public static class BlockStateGeneratorCollector implements Consumer<BlockStateGenerator> {
+         private final Map<Block, BlockStateGenerator> generators = new HashMap<>();
++        private final Supplier<Stream<Block>> known;
++
++        public BlockStateGeneratorCollector() {
++            this(() -> BuiltInRegistries.BLOCK.stream().filter(block -> "minecraft".equals(block.builtInRegistryHolder().key().location().getNamespace())));
++        }
++
++        public BlockStateGeneratorCollector(Supplier<Stream<Block>> known) {
++            this.known = known;
++        }
+ 
+         public void accept(BlockStateGenerator p_378147_) {
+             Block block = p_378147_.getBlock();
+@@ -79,7 +_,7 @@
+         }
+ 
+         public void validate() {
+-            Stream<Holder.Reference<Block>> stream = BuiltInRegistries.BLOCK.listElements().filter(p_376480_ -> true);
++            Stream<Holder.Reference<Block>> stream = known.get().map(Block::builtInRegistryHolder);
+             List<ResourceLocation> list = stream.filter(p_378423_ -> !this.generators.containsKey(p_378423_.value()))
+                 .map(p_378200_ -> p_378200_.key().location())
+                 .toList();
+@@ -97,6 +_,15 @@
+     public static class ItemInfoCollector implements ItemModelOutput {
+         private final Map<Item, ClientItem> itemInfos = new HashMap<>();
+         private final Map<Item, Item> copies = new HashMap<>();
++        private final Supplier<Stream<Item>> known;
++
++        public ItemInfoCollector() {
++            this(() -> BuiltInRegistries.ITEM.stream().filter(item -> "minecraft".equals(item.builtInRegistryHolder().key().location().getNamespace())));
++        }
++
++        public ItemInfoCollector(Supplier<Stream<Item>> known) {
++            this.known = known;
++        }
+ 
+         @Override
+         public void accept(Item p_376450_, ItemModel.Unbaked p_378513_) {
+@@ -115,7 +_,7 @@
+             this.copies.put(p_376965_, p_377438_);
+         }
+ 
+-        public void finalizeAndValidate() {
++        public void generateDefaultBlockModels() {
+             BuiltInRegistries.ITEM.forEach(p_378629_ -> {
+                 if (!this.copies.containsKey(p_378629_)) {
+                     if (p_378629_ instanceof BlockItem blockitem && !this.itemInfos.containsKey(blockitem)) {
+@@ -124,6 +_,8 @@
+                     }
+                 }
+             });
++        }
++        public void finalizeAndValidate() {
+             this.copies.forEach((p_376289_, p_375718_) -> {
+                 ClientItem clientitem = this.itemInfos.get(p_375718_);
+                 if (clientitem == null) {
+@@ -132,8 +_,8 @@
+                     this.register(p_376289_, clientitem);
+                 }
+             });
+-            List<ResourceLocation> list = BuiltInRegistries.ITEM
+-                .listElements()
++            List<ResourceLocation> list = known.get()
++                .map(item -> item.builtInRegistryHolder())
+                 .filter(p_377225_ -> !this.itemInfos.containsKey(p_377225_.value()))
+                 .map(p_378591_ -> p_378591_.key().location())
+                 .toList();

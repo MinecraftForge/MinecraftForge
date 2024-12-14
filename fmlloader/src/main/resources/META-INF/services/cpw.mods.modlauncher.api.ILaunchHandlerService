@@ -4,12 +4,16 @@ net.minecraftforge.fml.loading.targets.ForgeProdLaunchHandler$Server
 
 # Mod Developers
 net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Client
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$ClientData
+net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Custom
 net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Data
 net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$Server
 net.minecraftforge.fml.loading.targets.ForgeUserdevLaunchHandler$ServerGameTest
 
 #Working on Forge itself
 net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Client
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$ClientData
+net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Custom
 net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Data
 net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$Server
 net.minecraftforge.fml.loading.targets.ForgeDevLaunchHandler$ServerGameTest
