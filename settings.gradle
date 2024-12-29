@@ -60,7 +60,7 @@ dependencyResolutionManagement {
 
             // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
             library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
-            version('jline', '3.12.1')
+            version('jline', '3.25.1')
             library('jline-reader',       'org.jline', 'jline-reader'      ).versionRef('jline')
             library('jline-terminal',     'org.jline', 'jline-terminal'    ).versionRef('jline')
             library('jline-terminal-jna', 'org.jline', 'jline-terminal-jna').versionRef('jline') // Colors and tab completeion
