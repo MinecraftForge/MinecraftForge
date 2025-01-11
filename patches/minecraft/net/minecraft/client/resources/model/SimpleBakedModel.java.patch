@@ -1,55 +1,79 @@
 --- a/net/minecraft/client/resources/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
-@@ -29,6 +_,19 @@
+@@ -29,6 +_,17 @@
      private final boolean usesBlockLight;
      private final TextureAtlasSprite particleIcon;
      private final ItemTransforms transforms;
-+    /*
 +    protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
++    /*
 +    protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
 +    protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
 +    */
 +
-+    /* @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
-+    /*
++    /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
 +    @Deprecated
 +    public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_) {
 +        this(p_119489_, p_119490_, p_119491_, p_119492_, p_119493_, p_119494_, p_119495_, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +    }
-+    */
  
      public SimpleBakedModel(
          List<BakedQuad> p_119489_,
-@@ -38,6 +_,7 @@
+@@ -37,7 +_,8 @@
+         boolean p_119492_,
          boolean p_119493_,
          TextureAtlasSprite p_119494_,
-         ItemTransforms p_119495_
-+        //net.minecraftforge.client.RenderTypeGroup renderTypes
+-        ItemTransforms p_119495_
++        ItemTransforms p_119495_,
++        net.minecraftforge.client.RenderTypeGroup renderTypes
      ) {
          this.unculledFaces = p_119489_;
          this.culledFaces = p_119490_;
-@@ -46,6 +_,11 @@
+@@ -46,6 +_,15 @@
          this.usesBlockLight = p_119492_;
          this.particleIcon = p_119494_;
          this.transforms = p_119495_;
-+        /*
 +        this.blockRenderTypes = !renderTypes.isEmpty() ? net.minecraftforge.client.ChunkRenderTypeSet.of(renderTypes.block()) : null;
++        /*
 +        this.itemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entity()) : null;
 +        this.fabulousItemRenderTypes = !renderTypes.isEmpty() ? List.of(renderTypes.entityFabulous()) : null;
 +        */
++    }
++
++    public static BakedModel bakeElements(List<BlockElement> p_377425_, TextureSlots p_378525_, SpriteGetter p_375793_, ModelState p_376680_, boolean p_375745_, boolean p_376866_, boolean p_376846_, ItemTransforms p_376883_) {
++        return bakeElements(p_377425_, p_378525_, p_375793_, p_376680_, p_375745_, p_376866_, p_376846_, p_376883_, null);
      }
  
      public static BakedModel bakeElements(
+@@ -56,7 +_,8 @@
+         boolean p_375745_,
+         boolean p_376866_,
+         boolean p_376846_,
+-        ItemTransforms p_376883_
++        ItemTransforms p_376883_,
++        @Nullable net.minecraftforge.client.RenderTypeGroup renderType
+     ) {
+         TextureAtlasSprite textureatlassprite = findSprite(p_375793_, p_378525_, "particle");
+         SimpleBakedModel.Builder simplebakedmodel$builder = new SimpleBakedModel.Builder(p_375745_, p_376866_, p_376846_, p_376883_)
+@@ -77,6 +_,9 @@
+             }
+         }
+ 
++        if (renderType != null)
++            simplebakedmodel$builder.renderTypes(renderType);
++
+         return simplebakedmodel$builder.build();
+     }
+ 
 @@ -123,6 +_,27 @@
          return this.transforms;
      }
  
-+    /*
 +    @Override
 +    public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, net.minecraftforge.client.model.data.ModelData data) {
 +       return blockRenderTypes != null ? blockRenderTypes : BakedModel.super.getRenderTypes(state, rand, data);
 +    }
 +
++    /*
 +    @Override
 +    public List<net.minecraft.client.renderer.RenderType> getRenderTypes(net.minecraft.world.item.ItemStack itemStack, boolean fabulous) {
 +       if (!fabulous) {
@@ -68,17 +92,15 @@
      @OnlyIn(Dist.CLIENT)
      public static class Builder {
          private final ImmutableList.Builder<BakedQuad> unculledFaces = ImmutableList.builder();
-@@ -164,13 +_,21 @@
+@@ -164,13 +_,19 @@
              return this;
          }
  
-+        /*
 +        private net.minecraftforge.client.RenderTypeGroup renderTypes = net.minecraftforge.client.RenderTypeGroup.EMPTY;
 +        public SimpleBakedModel.Builder renderTypes(net.minecraftforge.client.RenderTypeGroup renderTypes) {
 +            this.renderTypes = renderTypes;
 +            return this;
 +        }
-+        */
 +
          public BakedModel build() {
              if (this.particleIcon == null) {
@@ -87,7 +109,7 @@
                  Map<Direction, List<BakedQuad>> map = Maps.transformValues(this.culledFaces, ImmutableList.Builder::build);
                  return new SimpleBakedModel(
 -                    this.unculledFaces.build(), new EnumMap<>(map), this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms
-+                    this.unculledFaces.build(), new EnumMap<>(map), this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms/*, this.renderTypes*/
++                    this.unculledFaces.build(), new EnumMap<>(map), this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms, this.renderTypes
                  );
              }
          }

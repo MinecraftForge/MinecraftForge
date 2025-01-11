@@ -128,7 +128,7 @@ public class AdditionalModelTest extends BaseTestMod {
         var key = new ModelResourceLocation(rl("cow_head"), "");
         var model = manager.getModel(key);
 
-        if (model == null)
+        if (model == null || model == manager.getMissingModel())
             helper.fail("Failed to retreive " + key + " block model");
 
         helper.succeed();
@@ -196,7 +196,7 @@ public class AdditionalModelTest extends BaseTestMod {
         }
 
         protected Stream<Block> getKnownBlocks() {
-            return Stream.of(PIG_HEAD.get(), COW_HEAD.get());
+            return Stream.of(COW_HEAD.get()); // We don't include PIG_HEAD because it doesn't need a blockstate file
         }
 
         protected Stream<Item> getKnownItems() {

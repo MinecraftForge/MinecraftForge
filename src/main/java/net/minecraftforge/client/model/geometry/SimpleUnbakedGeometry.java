@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
+import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.client.model.IModelBuilder;
 
 /**
@@ -21,10 +22,8 @@ public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> 
     public BakedModel bake(IGeometryBakingContext context, ModelBaker baker, TextureSlots textures, ModelState modelState) {
         var particle = baker.sprites().maybeMissing(textures, "particle");
 
-        //var renderTypeHint = context.getRenderTypeHint();
-        //var renderTypes = renderTypeHint != null ? context.getRenderType(renderTypeHint) : RenderTypeGroup.EMPTY;
         IModelBuilder<?> builder = IModelBuilder.of(context.useAmbientOcclusion(), context.useBlockLight(), context.isGui3d(),
-                context.getTransforms(), particle/*, renderTypes*/);
+                context.getTransforms(), particle, context.getRenderType());
 
         addQuads(context, builder, baker, textures, modelState);
 

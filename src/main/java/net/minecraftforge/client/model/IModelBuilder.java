@@ -11,6 +11,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.core.Direction;
+import net.minecraftforge.client.RenderTypeGroup;
+
 import java.util.List;
 
 /**
@@ -30,7 +32,18 @@ public interface IModelBuilder<T extends IModelBuilder<T>> {
         ItemTransforms transforms,
         TextureAtlasSprite particle
     ){
-        return new Simple(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, particle);
+        return of(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, particle, RenderTypeGroup.EMPTY);
+    }
+
+    static IModelBuilder<?> of(
+        boolean hasAmbientOcclusion,
+        boolean usesBlockLight,
+        boolean isGui3d,
+        ItemTransforms transforms,
+        TextureAtlasSprite particle,
+        RenderTypeGroup renderTypes
+    ){
+        return new Simple(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, particle, renderTypes);
     }
 
     /**
@@ -52,9 +65,10 @@ public interface IModelBuilder<T extends IModelBuilder<T>> {
 
         private Simple(
             boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d,
-            ItemTransforms transforms, TextureAtlasSprite particle
+            ItemTransforms transforms, TextureAtlasSprite particle, RenderTypeGroup renderTypes
         ) {
             this.builder = new SimpleBakedModel.Builder(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms).particle(particle);
+            this.builder.renderTypes(renderTypes);
         }
 
         @Override
@@ -69,7 +83,6 @@ public interface IModelBuilder<T extends IModelBuilder<T>> {
             return this;
         }
 
-        @Deprecated
         @Override
         public BakedModel build() {
             return builder.build();

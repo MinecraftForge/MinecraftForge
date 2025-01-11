@@ -68,4 +68,12 @@ public interface IGeometryBakingContext {
     default RenderTypeGroup getRenderType(ResourceLocation name) {
         return NamedRenderTypeManager.get(name);
     }
+
+    /**
+     * {@return a {@link RenderTypeGroup} from the {@link #getRenderTypeHint()}, or the empty group if not found.}
+     */
+    default RenderTypeGroup getRenderType() {
+        var hint = getRenderTypeHint();
+        return hint == null ? RenderTypeGroup.EMPTY : getRenderType(hint);
+    }
 }

@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/resources/model/ModelBaker.java
++++ b/net/minecraft/client/resources/model/ModelBaker.java
+@@ -13,4 +_,10 @@
+ 
+     @VisibleForDebug
+     ModelDebugName rootName();
++
++    /** Forge: Return the render type to use when baking this model, its a dirty hack to pass down this value to parents */
++    @org.jetbrains.annotations.Nullable
++    default net.minecraftforge.client.RenderTypeGroup renderType() {
++        return null;
++    }
+ }

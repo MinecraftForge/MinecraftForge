@@ -11,31 +11,26 @@ import net.minecraft.client.resources.model.ModelState;
 /**
  * Simple implementation of {@link ModelState}.
  */
-public final class SimpleModelState implements ModelState
-{
+public final class SimpleModelState implements ModelState {
     private final Transformation transformation;
     private final boolean uvLocked;
 
-    public SimpleModelState(Transformation transformation, boolean uvLocked)
-    {
+    public SimpleModelState(Transformation transformation, boolean uvLocked) {
         this.transformation = transformation;
         this.uvLocked = uvLocked;
     }
 
-    public SimpleModelState(Transformation transformation)
-    {
+    public SimpleModelState(Transformation transformation) {
         this(transformation, false);
     }
 
     @Override
-    public Transformation getRotation()
-    {
+    public Transformation getRotation() {
         return transformation;
     }
 
     @Override
-    public boolean isUvLocked()
-    {
+    public boolean isUvLocked() {
         return uvLocked;
     }
 }

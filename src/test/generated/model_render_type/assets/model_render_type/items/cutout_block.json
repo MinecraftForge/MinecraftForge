@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "model_render_type:item/cutout_block"
+  }
+}

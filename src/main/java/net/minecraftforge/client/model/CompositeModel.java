@@ -213,7 +213,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel> {
             }
 
             private void addLayer(RenderTypeGroup renderTypes, List<BakedQuad> quads) {
-                var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, particle/*, renderTypes*/);
+                var modelBuilder = IModelBuilder.of(isAmbientOcclusion, isSideLit, isGui3d, transforms, particle, renderTypes);
                 quads.forEach(modelBuilder::addUnculledFace);
                 children.add(modelBuilder.build());
             }

@@ -17,17 +17,22 @@
              this.parent = p_377823_.resolve(this.parentLocation);
          }
      }
-@@ -110,6 +_,9 @@
+@@ -110,14 +_,20 @@
      public BakedModel bake(
          TextureSlots p_378598_, ModelBaker p_378458_, ModelState p_111453_, boolean p_111455_, boolean p_377435_, ItemTransforms p_378085_
      ) {
 +        if (this.customData.getCustomGeometry() != null)
 +            return this.customData.getCustomGeometry().bake(customData, p_378458_, p_378598_, p_111453_);
 +
++        var wrapped = net.minecraftforge.client.ForgeHooksClient.wrapRenderType(p_378458_, this.customData.getRenderType());
++
          return this.elements.isEmpty() && this.parent != null
-             ? this.parent.bake(p_378598_, p_378458_, p_111453_, p_111455_, p_377435_, p_378085_)
-             : SimpleBakedModel.bakeElements(this.elements, p_378598_, p_378458_.sprites(), p_111453_, p_111455_, p_377435_, true, p_378085_);
-@@ -118,6 +_,7 @@
+-            ? this.parent.bake(p_378598_, p_378458_, p_111453_, p_111455_, p_377435_, p_378085_)
+-            : SimpleBakedModel.bakeElements(this.elements, p_378598_, p_378458_.sprites(), p_111453_, p_111455_, p_377435_, true, p_378085_);
++            ? this.parent.bake(p_378598_, wrapped, p_111453_, p_111455_, p_377435_, p_378085_)
++            : SimpleBakedModel.bakeElements(this.elements, p_378598_, p_378458_.sprites(), p_111453_, p_111455_, p_377435_, true, p_378085_, wrapped.renderType());
+     }
+ 
      @Nullable
      @VisibleForTesting
      List<BlockElement> getElements() {
