@@ -919,27 +919,29 @@ public class ForgeHooksClient {
     public static ModelBaker wrapRenderType(ModelBaker parent, RenderTypeGroup group) {
         if (group == null || group == RenderTypeGroup.EMPTY || parent.renderType() != null)
             return parent;
+        return new WrapedModelBaker(parent, group);
+    }
 
-        return new ModelBaker() {
-            @Override
-            public RenderTypeGroup renderType() {
-                return group;
-            }
+    // a record for performance reasons
+    private record WrapedModelBaker(ModelBaker parent, RenderTypeGroup group) implements ModelBaker {
+        @Override
+        public RenderTypeGroup renderType() {
+            return group;
+        }
 
-            @Override
-            public BakedModel bake(ResourceLocation name, ModelState state) {
-                return parent.bake(name, state);
-            }
+        @Override
+        public BakedModel bake(ResourceLocation name, ModelState state) {
+            return parent.bake(name, state);
+        }
 
-            @Override
-            public SpriteGetter sprites() {
-                return parent.sprites();
-            }
+        @Override
+        public SpriteGetter sprites() {
+            return parent.sprites();
+        }
 
-            @Override
-            public ModelDebugName rootName() {
-                return parent.rootName();
-            }
-        };
+        @Override
+        public ModelDebugName rootName() {
+            return parent.rootName();
+        }
     }
 }
