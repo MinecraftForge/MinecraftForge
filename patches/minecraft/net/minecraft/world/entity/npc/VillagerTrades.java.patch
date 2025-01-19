@@ -5,7 +5,9 @@
  
          public EmeraldsForVillagerTypeItem(int p_35669_, int p_35670_, int p_35671_, Map<VillagerType, Item> p_35672_) {
 -            BuiltInRegistries.VILLAGER_TYPE.stream().filter(p_35680_ -> !p_35672_.containsKey(p_35680_)).findAny().ifPresent(p_327046_ -> {
-+            BuiltInRegistries.VILLAGER_TYPE.stream().filter(p_35680_ -> !p_35672_.containsKey(p_35680_) && BuiltInRegistries.VILLAGER_TYPE.getKey(p_35680_).getNamespace().equals("minecraft")).findAny().ifPresent(p_327046_ -> {
++            // FORGE: Only check vanilla villager types so registering modded types doesn't crash
++            BuiltInRegistries.VILLAGER_TYPE.stream().filter(p_35680_ -> !p_35672_.containsKey(p_35680_)
++            && BuiltInRegistries.VILLAGER_TYPE.getKey(p_35680_).getNamespace().equals("minecraft")).findAny().ifPresent(p_327046_ -> {
                  throw new IllegalStateException("Missing trade for villager type: " + BuiltInRegistries.VILLAGER_TYPE.getKey(p_327046_));
              });
              this.trades = p_35672_;
