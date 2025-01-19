@@ -15,6 +15,7 @@
          public MerchantOffer getOffer(Entity p_219685_, RandomSource p_219686_) {
              if (p_219685_ instanceof VillagerDataHolder villagerdataholder) {
                  ItemCost itemcost = new ItemCost(this.trades.get(villagerdataholder.getVillagerData().getType()), this.cost);
++                // FORGE: Account for modded villager types by returning null if there is no trade
 +                if (itemcost.itemStack().isEmpty()) {
 +                    return null;
 +                }
