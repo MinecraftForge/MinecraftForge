@@ -1,9 +1,12 @@
 package net.minecraftforge.debug.gameplay.villager;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -33,10 +36,15 @@ public class VillagerTypeTestMod extends BaseTestMod {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void onTestForVillagerType(GameTestHelper helper) {
-        VillagerType type = helper.getLevel().registryAccess().lookupOrThrow(Registries.VILLAGER_TYPE).getValue(TEST_VILLAGER_TYPE.getId());
+        RegistryAccess access = helper.getLevel().registryAccess();
+        VillagerType type = access.lookupOrThrow(Registries.VILLAGER_TYPE).getValue(TEST_VILLAGER_TYPE.getId());
         if (type == null)
             helper.fail("Failed to find test_villager_type");
         helper.assertValueEqual(type, TEST_VILLAGER_TYPE.get(), "Loaded entry does not contain expected value");
+
+        Holder<Biome> biome = access.lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
+        helper.assertValueEqual(type, VillagerType.byBiome(biome), "VillagerType.byBiome did not return the expected value");
+
         helper.succeed();
     }
 }
