@@ -1,16 +1,11 @@
 --- a/net/minecraft/world/entity/npc/VillagerType.java
 +++ b/net/minecraft/world/entity/npc/VillagerType.java
-@@ -69,4 +_,14 @@
+@@ -69,4 +_,9 @@
      public static VillagerType byBiome(Holder<Biome> p_204074_) {
          return p_204074_.unwrapKey().map(BY_BIOME::get).orElse(PLAINS);
      }
 +
-+    /**
-+     * Register the VillagerType that will spawn in the given biome.
-+     *
-+     * @param biomeKey The biome key
-+     * @param villagerType The VillagerType
-+     */
++    /** FORGE: Registers the VillagerType that will spawn in the given biome.*/
 +    public static void registerBiomeType(ResourceKey<Biome> biomeKey, VillagerType villagerType) {
 +        BY_BIOME.put(biomeKey, villagerType);
 +    }

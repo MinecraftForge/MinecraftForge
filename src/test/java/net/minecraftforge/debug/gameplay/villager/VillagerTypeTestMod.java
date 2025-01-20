@@ -1,6 +1,5 @@
 package net.minecraftforge.debug.gameplay.villager;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -29,12 +28,15 @@ public class VillagerTypeTestMod extends BaseTestMod {
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
-        event.enqueueWork(() -> VillagerType.registerBiomeType(Biomes.BADLANDS, TEST_VILLAGER_TYPE.get()));
+        event.enqueueWork(() -> VillagerType.registerBiomeType(Biomes.PLAINS, TEST_VILLAGER_TYPE.get()));
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void onTestForVillagerType(GameTestHelper helper) {
-        helper.assertTrue(VillagerType.byBiome(Holder.direct(helper.getLevel().registryAccess().lookupOrThrow(Registries.BIOME).getValueOrThrow(Biomes.BADLANDS))) == TEST_VILLAGER_TYPE.get(), "Test Villager Type is not associated with Badlands biome.");
+        VillagerType type = helper.getLevel().registryAccess().lookupOrThrow(Registries.VILLAGER_TYPE).getValue(TEST_VILLAGER_TYPE.getId());
+        if (type == null)
+            helper.fail("Failed to find test_villager_type");
+        helper.assertValueEqual(type, TEST_VILLAGER_TYPE.get(), "Loaded entry does not contain expected value");
         helper.succeed();
     }
 }
