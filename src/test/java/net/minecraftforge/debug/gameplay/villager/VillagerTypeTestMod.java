@@ -41,7 +41,7 @@ public class VillagerTypeTestMod extends BaseTestMod {
         context.getModEventBus().addListener(this::onCommonSetup);
     }
 
-    public void onCommonSetup(FMLCommonSetupEvent event) {
+    private void onCommonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> VillagerType.registerBiomeType(Biomes.PLAINS, TEST_VILLAGER_TYPE.get()));
     }
 
@@ -64,7 +64,7 @@ public class VillagerTypeTestMod extends BaseTestMod {
     public static void emeralds_for_villager_type(GameTestHelper helper) {
         VillagerTrades.EmeraldsForVillagerTypeItem trade = new VillagerTrades.EmeraldsForVillagerTypeItem(1, 12, 30, Map.of(TEST_VILLAGER_TYPE.get(), Items.DIRT));
         Villager villager = new Villager(EntityType.VILLAGER, helper.getLevel(), TEST_VILLAGER_TYPE.get());
-        helper.assertValueEqual(Items.DIRT, trade.getOffer(villager, helper.getLevel().getRandom()), "Offer did not return the expected item");
+        helper.assertValueEqual(trade.getOffer(villager, helper.getLevel().getRandom()).getResult().getItem(), Items.EMERALD, "Offer did not return the expected item");
         Villager plains = new Villager(EntityType.VILLAGER, helper.getLevel(), VillagerType.PLAINS);
         helper.assertTrue(trade.getOffer(plains, helper.getLevel().getRandom()) == null, "Offer should not be available for a plains villager");
         helper.succeed();
