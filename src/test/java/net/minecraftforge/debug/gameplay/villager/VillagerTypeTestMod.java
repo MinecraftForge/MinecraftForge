@@ -35,7 +35,7 @@ public class VillagerTypeTestMod extends BaseTestMod {
     }
 
     @GameTest(template = "forge:empty3x3x3")
-    public static void onTestForVillagerType(GameTestHelper helper) {
+    public static void biome_type(GameTestHelper helper) {
         RegistryAccess access = helper.getLevel().registryAccess();
         VillagerType type = access.lookupOrThrow(Registries.VILLAGER_TYPE).getValue(TEST_VILLAGER_TYPE.getId());
         if (type == null)
