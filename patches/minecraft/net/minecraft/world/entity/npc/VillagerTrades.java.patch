@@ -8,11 +8,14 @@
              BuiltInRegistries.VILLAGER_TYPE.stream().filter(p_35680_ -> !p_35672_.containsKey(p_35680_)).findAny().ifPresent(p_327046_ -> {
                  throw new IllegalStateException("Missing trade for villager type: " + BuiltInRegistries.VILLAGER_TYPE.getKey(p_327046_));
              });
-@@ -1381,6 +_,7 @@
+@@ -1380,7 +_,9 @@
+         @Override
          public MerchantOffer getOffer(Entity p_219685_, RandomSource p_219686_) {
              if (p_219685_ instanceof VillagerDataHolder villagerdataholder) {
-                 ItemCost itemcost = new ItemCost(this.trades.get(villagerdataholder.getVillagerData().getType()), this.cost);
-+                if (itemcost.itemStack().isEmpty()) return null; // FORGE: Account for modded villager types by returning null if there is no trade
+-                ItemCost itemcost = new ItemCost(this.trades.get(villagerdataholder.getVillagerData().getType()), this.cost);
++                Item item = this.trades.get(villagerdataholder.getVillagerData().getType());
++                if (item == null) return null; // FORGE: Account for modded villager types by returning null if there is no trade
++                ItemCost itemcost = new ItemCost(item, this.cost);
                  return new MerchantOffer(itemcost, new ItemStack(Items.EMERALD), this.maxUses, this.villagerXp, 0.05F);
              } else {
                  return null;
