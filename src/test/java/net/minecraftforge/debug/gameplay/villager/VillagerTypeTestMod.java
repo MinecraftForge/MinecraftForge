@@ -19,7 +19,7 @@ import net.minecraftforge.test.BaseTestMod;
 @GameTestHolder("forge." + VillagerTypeTestMod.MOD_ID)
 @Mod(VillagerTypeTestMod.MOD_ID)
 public class VillagerTypeTestMod extends BaseTestMod {
-    public static final String MOD_ID = "villager_type_test_mod";
+    public static final String MOD_ID = "villager_type_test";
 
     private static final DeferredRegister<VillagerType> VILLAGER_TYPES = DeferredRegister.create(Registries.VILLAGER_TYPE, MOD_ID);
 
