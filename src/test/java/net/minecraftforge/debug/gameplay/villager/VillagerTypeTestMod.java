@@ -10,7 +10,11 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +24,8 @@ import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
+
+import java.util.Map;
 
 @GameTestHolder("forge." + VillagerTypeTestMod.MOD_ID)
 @Mod(VillagerTypeTestMod.MOD_ID)
@@ -50,6 +56,17 @@ public class VillagerTypeTestMod extends BaseTestMod {
         Holder<Biome> biome = access.lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
         helper.assertValueEqual(type, VillagerType.byBiome(biome), "VillagerType.byBiome did not return the expected value");
 
+        helper.succeed();
+    }
+
+    /** Test verifies NPE not thrown when looking up a villager type in the trade that doesn't contain that type.*/
+    @GameTest(template = "forge:empty3x3x3")
+    public static void emeralds_for_villager_type(GameTestHelper helper) {
+        VillagerTrades.EmeraldsForVillagerTypeItem trade = new VillagerTrades.EmeraldsForVillagerTypeItem(1, 12, 30, Map.of(TEST_VILLAGER_TYPE.get(), Items.DIRT));
+        Villager villager = new Villager(EntityType.VILLAGER, helper.getLevel(), TEST_VILLAGER_TYPE.get());
+        helper.assertValueEqual(Items.DIRT, trade.getOffer(villager, helper.getLevel().getRandom()), "Offer did not return the expected item");
+        Villager plains = new Villager(EntityType.VILLAGER, helper.getLevel(), VillagerType.PLAINS);
+        helper.assertTrue(trade.getOffer(plains, helper.getLevel().getRandom()) == null, "Offer should not be available for a plains villager");
         helper.succeed();
     }
 }
