@@ -54,7 +54,7 @@ public class VillagerTypeTestMod extends BaseTestMod {
         helper.assertValueEqual(type, TEST_VILLAGER_TYPE.get(), "Loaded entry does not contain expected value");
 
         Holder<Biome> biome = access.lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
-        helper.assertValueEqual(type, VillagerType.byBiome(biome), "VillagerType.byBiome did not return the expected value");
+        helper.assertValueEqual(VillagerType.byBiome(biome), TEST_VILLAGER_TYPE.get(), "VillagerType.byBiome did not return the expected value");
 
         helper.succeed();
     }
@@ -62,11 +62,20 @@ public class VillagerTypeTestMod extends BaseTestMod {
     /** Test verifies NPE not thrown when looking up a villager type in the trade that doesn't contain that type.*/
     @GameTest(template = "forge:empty3x3x3")
     public static void emeralds_for_villager_type(GameTestHelper helper) {
-        VillagerTrades.EmeraldsForVillagerTypeItem trade = new VillagerTrades.EmeraldsForVillagerTypeItem(1, 12, 30, Map.of(TEST_VILLAGER_TYPE.get(), Items.DIRT));
-        Villager villager = new Villager(EntityType.VILLAGER, helper.getLevel(), TEST_VILLAGER_TYPE.get());
-        helper.assertValueEqual(trade.getOffer(villager, helper.getLevel().getRandom()).getResult().getItem(), Items.EMERALD, "Offer did not return the expected item");
-        Villager plains = new Villager(EntityType.VILLAGER, helper.getLevel(), VillagerType.PLAINS);
-        helper.assertTrue(trade.getOffer(plains, helper.getLevel().getRandom()) == null, "Offer should not be available for a plains villager");
+        var trade = new VillagerTrades.EmeraldsForVillagerTypeItem(1, 12, 30, Map.of(TEST_VILLAGER_TYPE.get(), Items.DIRT));
+        var rnd = helper.getLevel().getRandom();
+
+        // Should be a successful trade for dirt for our test villager
+        var test = new Villager(EntityType.VILLAGER, helper.getLevel(), TEST_VILLAGER_TYPE.get());
+        var test_offer = trade.getOffer(test, rnd);
+        helper.assertFalse(test_offer == null, "Failed to retreive trade value for test profession");
+        helper.assertValueEqual(test_offer.getItemCostA().itemStack().getItem(), Items.DIRT, "Offer did not return the expected item");
+
+        var plains = new Villager(EntityType.VILLAGER, helper.getLevel(), VillagerType.PLAINS);
+        // This will NPE on unpatched code, we need to test that it returns null correctly
+        var plains_offer = trade.getOffer(plains, rnd);
+        helper.assertTrue(plains_offer == null, "Offer should not be available for a plains villager");
+
         helper.succeed();
     }
 }
