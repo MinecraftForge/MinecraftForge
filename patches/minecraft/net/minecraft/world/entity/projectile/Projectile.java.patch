@@ -8,7 +8,7 @@
  
      protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
          super(p_37248_, p_37249_);
-@@ -241,6 +_,29 @@
+@@ -241,6 +_,28 @@
      }
  
      protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult p_329816_) {
@@ -32,7 +32,6 @@
 +                    arrow.setPierceLevel((byte)0);
 +                this.onHit(p_329816_);
 +                return ProjectileDeflection.NONE;
-+                default:
 +        }
 +
          if (p_329816_.getType() == HitResult.Type.ENTITY) {
