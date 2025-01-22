@@ -643,10 +643,6 @@ public final class ForgeEventFactory {
         return fire(new ProjectileImpactEvent(projectile, ray)).getImpactResult();
     }
 
-    public static boolean onProjectileImpact(Projectile projectile, HitResult ray) {
-        return onProjectileImpactResult(projectile, ray) != ProjectileImpactEvent.ImpactResult.DEFAULT;
-    }
-
     public static @Nullable LootTable onLoadLootTable(ResourceLocation name, LootTable table) {
         var event = new LootTableLoadEvent(name, table);
         return post(event) ? null : event.getTable();

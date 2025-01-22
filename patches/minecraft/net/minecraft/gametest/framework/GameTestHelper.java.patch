@@ -9,3 +9,29 @@
      private final GameTestInfo testInfo;
      private boolean finalCheckAdded;
  
+@@ -996,5 +_,25 @@
+         if (either.right().isPresent()) {
+             this.fail("Failed to set biome for test");
+         }
++    }
++
++    /**
++     * Adds a cleanup handler that will be called when the test is done, pass or fail.
++     */
++    public void addCleanup(Consumer<Boolean> handler) {
++        this.testInfo.addListener(new GameTestListener() {
++            @Override
++            public void testPassed(GameTestInfo info, GameTestRunner runner) {
++                handler.accept(true);
++            }
++
++            @Override
++            public void testFailed(GameTestInfo info, GameTestRunner runner) {
++                handler.accept(false);
++            }
++
++            @Override public void testStructureLoaded(GameTestInfo info) { }
++            @Override public void testAddedForRerun(GameTestInfo oldInfo, GameTestInfo newInfo, GameTestRunner runner) { }
++        });
+     }
+ }

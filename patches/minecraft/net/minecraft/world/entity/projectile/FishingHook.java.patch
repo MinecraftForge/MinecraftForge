@@ -11,14 +11,6 @@
          if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0)) {
              return false;
          } else {
-@@ -256,6 +_,7 @@
- 
-     private void checkCollision() {
-         HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-+        if (hitresult.getType() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult))
-         this.hitTargetOrDeflectSelf(hitresult);
-     }
- 
 @@ -445,6 +_,7 @@
          Player player = this.getPlayerOwner();
          if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {

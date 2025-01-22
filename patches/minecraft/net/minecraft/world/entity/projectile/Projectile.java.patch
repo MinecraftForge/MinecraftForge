@@ -1,5 +1,56 @@
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
+@@ -43,6 +_,7 @@
+     private boolean hasBeenShot;
+     @Nullable
+     private Entity lastDeflectedBy;
++    private it.unimi.dsi.fastutil.ints.IntOpenHashSet ignoredEntities;
+ 
+     protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
+         super(p_37248_, p_37249_);
+@@ -241,6 +_,29 @@
+     }
+ 
+     protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult p_329816_) {
++        var result = net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResult(this, p_329816_);
++        switch (result) {
++            case DEFAULT:
++                break;
++            case SKIP_ENTITY:
++                if (p_329816_.getType() == HitResult.Type.ENTITY) {
++                    if (this.ignoredEntities == null)
++                        this.ignoredEntities = new it.unimi.dsi.fastutil.ints.IntOpenHashSet();
++                    this.ignoredEntities.add((((EntityHitResult)p_329816_).getEntity()).getId());
++                    return ProjectileDeflection.NONE;
++                }
++                break;
++            case STOP_AT_CURRENT_NO_DAMAGE:
++                this.discard();
++                return ProjectileDeflection.NONE;
++            case STOP_AT_CURRENT:
++                if (this instanceof AbstractArrow arrow)
++                    arrow.setPierceLevel((byte)0);
++                this.onHit(p_329816_);
++                return ProjectileDeflection.NONE;
++                default:
++        }
++
+         if (p_329816_.getType() == HitResult.Type.ENTITY) {
+             EntityHitResult entityhitresult = (EntityHitResult)p_329816_;
+             Entity entity = entityhitresult.getEntity();
+@@ -309,9 +_,12 @@
+     protected void onHitBlock(BlockHitResult p_37258_) {
+         BlockState blockstate = this.level().getBlockState(p_37258_.getBlockPos());
+         blockstate.onProjectileHit(this.level(), blockstate, p_37258_, this);
++        if (this.ignoredEntities != null)
++            this.ignoredEntities.clear();
+     }
+ 
+     protected boolean canHitEntity(Entity p_37250_) {
++        if (this.ignoredEntities != null && this.ignoredEntities.contains(p_37250_.getId())) return false;
+         if (!p_37250_.canBeHitByProjectile()) {
+             return false;
+         } else {
 @@ -359,7 +_,7 @@
      @Override
      public boolean mayInteract(ServerLevel p_364907_, BlockPos p_150168_) {
