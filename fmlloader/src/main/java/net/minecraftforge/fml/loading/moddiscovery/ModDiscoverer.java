@@ -11,6 +11,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
@@ -19,6 +20,8 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,17 +55,40 @@ public class ModDiscoverer {
         List<EarlyLoadingException.ExceptionData> discoveryErrorData = new ArrayList<>();
         boolean successfullyLoadedMods = true;
 
+        boolean distIsDedicatedServer = FMLLoader.getDist().isDedicatedServer();
         //Loop all mod locators to get the prime mods to load from.
         for (IModLocator locator : modLocatorList) {
             try {
                 LOGGER.debug(LogMarkers.SCAN,"Trying locator {}", locator);
                 var locatedFiles = locator.scanMods();
 
-                if (locatedFiles.stream().anyMatch(file -> !(file instanceof ModFile))) {
-                    LOGGER.error(LogMarkers.SCAN, "A mod locator returned a file which is not a ModFile instance!. They will be skipped!");
+                // Backported from 1.19.2 so we don't accidentally process any bad mod files when getting client-only mods
+                var badModFiles = locatedFiles.stream().filter(file -> !(file instanceof ModFile)).toList();
+                if (!badModFiles.isEmpty()) {
+                    LOGGER.error(LogMarkers.SCAN, "Locator {} returned {} files which is are not ModFile instances! They will be skipped!", locator, badModFiles.size());
+                    locatedFiles.removeAll(badModFiles);
                 }
 
+                if (distIsDedicatedServer) {
+                    var clientOnlyModFiles = locatedFiles.stream()
+                        .filter(file -> {
+                            // some mod files can have null infos, like javafml, mclanguage, lowcode, and fmlcore
+                            @Nullable var info = file.getModFileInfo();
+
+                            return info != null && (Boolean) info.getFileProperties().getOrDefault(ModFileInfo.CLIENT_SIDE_ONLY_PROP, Boolean.FALSE);
+                        })
+                        .toList();
+                    if (!clientOnlyModFiles.isEmpty()) {
+                        LOGGER.warn(LogMarkers.SCAN, "Locator {} returned {} files which are client-side-only mods, but we're on a dedicated server. They will be skipped!", locator, clientOnlyModFiles.size());
+                        locatedFiles.removeAll(clientOnlyModFiles);
+                    }
+                }
+
+                LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} valid mod files", locator, locatedFiles.size());
                 handleLocatedFiles(loadedFiles, locatedFiles);
+            } catch (InvalidModFileException imfe) {
+                // We don't generally expect this exception, since it should come from the candidates stream above and be handled in the Locator, but just in case.
+                LOGGER.error(LogMarkers.SCAN, "Locator {} found an invalid mod file {}", locator, imfe.getBrokenFile(), imfe);
             } catch (EarlyLoadingException exception) {
                 LOGGER.error(LogMarkers.SCAN, "Failed to load mods with locator {}", locator, exception);
                 discoveryErrorData.addAll(exception.getAllData());

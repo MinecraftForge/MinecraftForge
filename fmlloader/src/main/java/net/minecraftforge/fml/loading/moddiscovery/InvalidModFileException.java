@@ -18,4 +18,8 @@ public class InvalidModFileException extends RuntimeException
         super(String.format(Locale.ENGLISH, "%s (%s)", message, ((ModFileInfo)modFileInfo).getFile().getFileName()));
         this.modFileInfo = modFileInfo;
     }
+
+    public IModFileInfo getBrokenFile() {
+        return this.modFileInfo;
+    }
 }
