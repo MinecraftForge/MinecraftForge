@@ -43,6 +43,10 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final String license;
     private final List<String> usesServices;
 
+    public static final String CLIENT_SIDE_ONLY_PROP = "__FORGE_clientSideOnly";
+
+    private static final Map<String, Object> CLIENT_SIDE_ONLY_MAP = Map.of(CLIENT_SIDE_ONLY_PROP, Boolean.TRUE);
+
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
         this.modFile = modFile;
@@ -56,8 +60,21 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         this.license = config.<String>getConfigElement("license")
             .orElse("");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
+        boolean clientSideOnly = config.<Boolean>getConfigElement("clientSideOnly").orElse(false);
         this.usesServices = config.<List<String>>getConfigElement("services").orElse(List.of());
-        this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
+
+        var maybeProps = config.<Map<String, Object>>getConfigElement("properties");
+        if (clientSideOnly) {
+            if (maybeProps.isPresent()) {
+                this.properties = new HashMap<>(maybeProps.get());
+                this.properties.put(CLIENT_SIDE_ONLY_PROP, Boolean.TRUE);
+            } else {
+                this.properties = CLIENT_SIDE_ONLY_MAP;
+            }
+        } else {
+            this.properties = maybeProps.orElse(Collections.emptyMap());
+        }
+
         this.modFile.setFileProperties(this.properties);
         this.issueURL = config.<String>getConfigElement("issueTrackerURL").map(StringUtils::toURL).orElse(null);
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");

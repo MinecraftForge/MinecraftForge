@@ -12,6 +12,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.UniqueModListBuilder;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
@@ -20,6 +21,7 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IDependencyLocator;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -67,6 +69,7 @@ public class ModDiscoverer {
         boolean successfullyLoadedMods = true;
         List<IModFileInfo> brokenFiles = new ArrayList<>();
 
+        boolean distIsDedicatedServer = FMLLoader.getDist().isDedicatedServer();
         //Loop all mod locators to get the prime mods to load from.
         for (IModLocator locator : modLocatorList) {
             try {
@@ -84,8 +87,24 @@ public class ModDiscoverer {
                 if (!badModFiles.isEmpty()) {
                     LOGGER.error(LogMarkers.SCAN, "Locator {} returned {} files which is are not ModFile instances! They will be skipped!", locator, badModFiles.size());
                     brokenFiles.addAll(badModFiles.stream().map(IModFile::getModFileInfo).toList());
+                    locatedFiles.removeAll(badModFiles);
                 }
-                locatedFiles.removeAll(badModFiles);
+
+                if (distIsDedicatedServer) {
+                    var clientOnlyModFiles = locatedFiles.stream()
+                            .filter(file -> {
+                                // some mod files can have null infos, like javafml, mclanguage, lowcode, and fmlcore
+                                @Nullable var info = file.getModFileInfo();
+
+                                return info != null && (Boolean) info.getFileProperties().getOrDefault(ModFileInfo.CLIENT_SIDE_ONLY_PROP, Boolean.FALSE);
+                            })
+                            .toList();
+                    if (!clientOnlyModFiles.isEmpty()) {
+                        LOGGER.warn(LogMarkers.SCAN, "Locator {} returned {} files which are client-side-only mods, but we're on a dedicated server. They will be skipped!", locator, clientOnlyModFiles.size());
+                        locatedFiles.removeAll(clientOnlyModFiles);
+                    }
+                }
+
                 LOGGER.debug(LogMarkers.SCAN, "Locator {} found {} valid mod files", locator, locatedFiles.size());
                 handleLocatedFiles(loadedFiles, locatedFiles);
             } catch (InvalidModFileException imfe) {
