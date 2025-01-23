@@ -38,12 +38,12 @@
        }
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
     public static void explode(Level p_57434_, BlockPos p_57435_) {
        explode(p_57434_, p_57435_, (LivingEntity)null);
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   @Deprecated //Forge: Prefer using IForgeBlock#onCaughtFire
     private static void explode(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
        if (!p_57437_.isClientSide) {
           PrimedTnt primedtnt = new PrimedTnt(p_57437_, (double)p_57438_.getX() + 0.5D, (double)p_57438_.getY(), (double)p_57438_.getZ() + 0.5D, p_57439_);
