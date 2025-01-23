@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/entity/npc/VillagerTrades.java
++++ b/net/minecraft/world/entity/npc/VillagerTrades.java
+@@ -151,6 +_,7 @@
+       private final int f_35667_;
+ 
+       public EmeraldsForVillagerTypeItem(int p_35669_, int p_35670_, int p_35671_, Map<VillagerType, Item> p_35672_) {
++         if (false) // FORGE: Modders can add custom villager types, so remove this validation
+          BuiltInRegistries.f_256934_.m_123024_().filter((p_35680_) -> {
+             return !p_35672_.containsKey(p_35680_);
+          }).findAny().ifPresent((p_258962_) -> {
+@@ -165,7 +_,9 @@
+       @Nullable
+       public MerchantOffer m_213663_(Entity p_219685_, RandomSource p_219686_) {
+          if (p_219685_ instanceof VillagerDataHolder) {
+-            ItemStack itemstack = new ItemStack(this.f_35664_.get(((VillagerDataHolder)p_219685_).m_7141_().m_35560_()), this.f_35665_);
++            Item item = this.f_35664_.get(((VillagerDataHolder)p_219685_).m_7141_().m_35560_());
++            if (item == null) return null; // FORGE: Account for modded villager types by returning null if there is no trade
++            ItemStack itemstack = new ItemStack(item, this.f_35665_);
+             return new MerchantOffer(itemstack, new ItemStack(Items.f_42616_), this.f_35666_, this.f_35667_, 0.05F);
+          } else {
+             return null;

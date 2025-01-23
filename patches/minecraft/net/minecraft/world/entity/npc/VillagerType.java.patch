@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/entity/npc/VillagerType.java
++++ b/net/minecraft/world/entity/npc/VillagerType.java
+@@ -67,4 +_,9 @@
+    public static VillagerType m_204073_(Holder<Biome> p_204074_) {
+       return p_204074_.m_203543_().map(f_35827_::get).orElse(f_35821_);
+    }
++
++   /** FORGE: Registers the VillagerType that will spawn in the given biome. This method should be called during FMLCommonSetupEvent using event.enqueueWork() */
++    public static void registerBiomeType(ResourceKey<Biome> biomeKey, VillagerType villagerType) {
++       f_35827_.put(biomeKey, villagerType);
++    }
+ }
