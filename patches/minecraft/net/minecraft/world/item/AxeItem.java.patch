@@ -15,7 +15,7 @@
        ItemStack itemstack = p_40529_.m_43722_();
        Optional<BlockState> optional3 = Optional.empty();
        if (optional.isPresent()) {
-@@ -71,9 +_,20 @@
+@@ -71,9 +_,25 @@
        }
     }
  
@@ -34,5 +34,10 @@
 +   @Override
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_AXE_ACTIONS.contains(toolAction);
++   }
++
++   @Override
++   public boolean canDisableShield(ItemStack stack, ItemStack shield, net.minecraft.world.entity.LivingEntity entity, net.minecraft.world.entity.LivingEntity attacker) {
++      return true;
     }
  }
