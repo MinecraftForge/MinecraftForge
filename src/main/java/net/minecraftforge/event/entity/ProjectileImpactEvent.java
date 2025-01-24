@@ -64,8 +64,18 @@ public class ProjectileImpactEvent extends EntityEvent {
          */
         STOP_AT_CURRENT,
         /**
-         * Cancel the piercing aspect of the projectile, and do not damage the entity.
+         * Cancel the piercing aspect of the projectile, and does not call onHit. Be careful with this as it may cause unexpected behaviour.
+         * The projectile's onHit may have side effects. This only cancels the current impact, it may continue next tick.
          */
-        STOP_AT_CURRENT_NO_DAMAGE
+        STOP_AT_CURRENT_NO_HIT,
+        /**
+         * Calls discard on the projectile, and does not process the hit. Deprecated in favor of DISCARD_PROJECTILE as thats a better name
+         */
+        @Deprecated(forRemoval = true, since = "1.21.4")
+        STOP_AT_CURRENT_NO_DAMAGE,
+        /**
+         * Calls discard on the projectile, and does not process the hit.
+         */
+        DISCARD_PROJECTILE
     }
 }

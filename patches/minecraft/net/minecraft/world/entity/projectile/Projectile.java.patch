@@ -8,7 +8,7 @@
  
      protected Projectile(EntityType<? extends Projectile> p_37248_, Level p_37249_) {
          super(p_37248_, p_37249_);
-@@ -241,6 +_,28 @@
+@@ -241,6 +_,29 @@
      }
  
      protected ProjectileDeflection hitTargetOrDeflectSelf(HitResult p_329816_) {
@@ -24,13 +24,14 @@
 +                    return ProjectileDeflection.NONE;
 +                }
 +                break;
-+            case STOP_AT_CURRENT_NO_DAMAGE:
++            case DISCARD_PROJECTILE, STOP_AT_CURRENT_NO_DAMAGE:
 +                this.discard();
 +                return ProjectileDeflection.NONE;
 +            case STOP_AT_CURRENT:
++                this.onHit(p_329816_);
++            case STOP_AT_CURRENT_NO_HIT:
 +                if (this instanceof AbstractArrow arrow)
 +                    arrow.setPierceLevel((byte)0);
-+                this.onHit(p_329816_);
 +                return ProjectileDeflection.NONE;
 +        }
 +
