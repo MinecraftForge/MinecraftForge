@@ -135,15 +135,21 @@
           if (!this.level().isClientSide) {
              this.awardStat(Stats.ITEM_USED.get(this.useItem.getItem()));
           }
-@@ -864,6 +_,8 @@
+@@ -862,10 +_,13 @@
+          if (p_36383_ >= 3.0F) {
+             int i = 1 + Mth.floor(p_36383_);
              InteractionHand interactionhand = this.getUsedItemHand();
++            ItemStack currentItem = this.useItem;
              this.useItem.hurtAndBreak(i, this, (p_219739_) -> {
                 p_219739_.broadcastBreakEvent(interactionhand);
 +               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.useItem, interactionhand);
 +               stopUsingItem(); // Forge: fix MC-168573
              });
-             if (this.useItem.isEmpty()) {
+-            if (this.useItem.isEmpty()) {
++            if (currentItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
+                   this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                } else {
 @@ -882,10 +_,13 @@
  
     protected void actuallyHurt(DamageSource p_36312_, float p_36313_) {
