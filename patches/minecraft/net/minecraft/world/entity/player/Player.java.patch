@@ -135,15 +135,21 @@
           if (!this.m_9236_().f_46443_) {
              this.m_36246_(Stats.f_12982_.m_12902_(this.f_20935_.m_41720_()));
           }
-@@ -865,6 +_,8 @@
+@@ -863,10 +_,13 @@
+          if (p_36383_ >= 3.0F) {
+             int i = 1 + Mth.m_14143_(p_36383_);
              InteractionHand interactionhand = this.m_7655_();
++            ItemStack currentItem = this.f_20935_;
              this.f_20935_.m_41622_(i, this, (p_219739_) -> {
                 p_219739_.m_21190_(interactionhand);
 +               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.f_20935_, interactionhand);
 +               m_5810_(); // Forge: fix MC-168573
              });
-             if (this.f_20935_.m_41619_()) {
+-            if (this.f_20935_.m_41619_()) {
++            if (currentItem.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
+                   this.m_8061_(EquipmentSlot.MAINHAND, ItemStack.f_41583_);
+                } else {
 @@ -883,10 +_,13 @@
  
     protected void m_6475_(DamageSource p_36312_, float p_36313_) {
