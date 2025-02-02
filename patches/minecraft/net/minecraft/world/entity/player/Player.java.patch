@@ -135,10 +135,11 @@
           if (!this.level().isClientSide) {
              this.awardStat(Stats.ITEM_USED.get(this.useItem.getItem()));
           }
-@@ -862,10 +_,13 @@
+@@ -862,10 +_,15 @@
           if (p_36383_ >= 3.0F) {
              int i = 1 + Mth.floor(p_36383_);
              InteractionHand interactionhand = this.getUsedItemHand();
++            // FORGE: cache this.useItem -- if this.stopUsingItem() is called, it will be set to ItemStack.EMPTY
 +            ItemStack currentItem = this.useItem;
              this.useItem.hurtAndBreak(i, this, (p_219739_) -> {
                 p_219739_.broadcastBreakEvent(interactionhand);
@@ -146,6 +147,7 @@
 +               stopUsingItem(); // Forge: fix MC-168573
              });
 -            if (this.useItem.isEmpty()) {
++            // FORGE: use cached item since this.useItem could be ItemStack.EMPTY
 +            if (currentItem.isEmpty()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
                    this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
