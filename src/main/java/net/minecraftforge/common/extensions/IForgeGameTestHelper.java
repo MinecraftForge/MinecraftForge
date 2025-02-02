@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -62,7 +63,25 @@ public interface IForgeGameTestHelper {
             throw new GameTestAssertException(message.get());
     }
 
-    /** Backported from 1.20.6 */
+    default <N> void assertValueEqual(N expected, N actual, String name, String message) {
+        this.assertValueEqual(expected, actual, name, () -> message);
+    }
+
+    default <N> void assertValueEqual(N expected, N actual, String name, Supplier<String> message) {
+        if (!Objects.equals(expected, actual))
+            throw new GameTestAssertException("%s -- Expected %s to be %s, but was %s".formatted(message.get(), name, expected, actual));
+    }
+
+    default <N> void assertValueEqual(N[] expected, N[] actual, String name, String message) {
+        this.assertValueEqual(expected, actual, name, () -> message);
+    }
+
+    default <N> void assertValueEqual(N[] expected, N[] actual, String name, Supplier<String> message) {
+        if (!Objects.deepEquals(expected, actual))
+            throw new GameTestAssertException("%s -- Expected %s to be %s, but was %s".formatted(message.get(), name, Arrays.toString(expected), Arrays.toString(actual)));
+    }
+
+    // Backported from 1.20.6
     default <N> void assertValueEqual(N expected, N actual, String name) {
         if (!Objects.equals(expected, actual)) {
             throw new GameTestAssertException("Expected " + name + " to be " + expected + ", but was " + actual);
@@ -185,19 +204,49 @@ public interface IForgeGameTestHelper {
         }
 
         public void assertUnset() {
-            if (this.value != null)
-                throw new GameTestAssertException("Expected " + name + " to be null, but was " + this.value);
+            this.assertUnset((Supplier<String>) null);
+        }
+
+        public void assertUnset(String message) {
+            this.assertUnset(message != null ? () -> message : null);
+        }
+
+        public void assertUnset(Supplier<String> message) {
+            if (this.value != null) {
+                String s = message != null ? message.get() + " -- " : "";
+                throw new GameTestAssertException(s + "Expected " + name + " to be null, but was " + this.value);
+            }
         }
 
         public void assertSet() {
-            if (this.value == null)
-                throw new GameTestAssertException("Flag " + name + " was never set");
+            this.assertSet((Supplier<String>) null);
+        }
+
+        public void assertSet(String message) {
+            this.assertSet(message != null ? () -> message : null);
+        }
+
+        public void assertSet(Supplier<String> message) {
+            if (this.value == null) {
+                String s = message != null ? message.get() + " -- " : "";
+                throw new GameTestAssertException(s + "Flag " + name + " was never set");
+            }
         }
 
         public void assertEquals(T expected) {
-            assertSet();
-            if (expected != null && !expected.equals(this.value))
-                throw new GameTestAssertException("Expected " + name + " to be " + expected + ", but was " + this.value);
+            this.assertEquals(expected, (Supplier<String>) null);
+        }
+
+        public void assertEquals(T expected, String message) {
+            this.assertEquals(expected, message != null ? () -> message : null);
+        }
+
+        public void assertEquals(T expected, Supplier<String> message) {
+            assertSet(message);
+            if (expected != null && !expected.equals(this.value)) {
+                String s = message != null ? message.get() + " -- " : "";
+                throw new GameTestAssertException(s + "Expected " + name + " to be " + expected + ", but was " + this.value);
+            }
         }
     }
 
@@ -222,8 +271,28 @@ public interface IForgeGameTestHelper {
             return this.value == null ? -1 : this.value.longValue();
         }
 
+        public void assertEquals(int expected) {
+            super.assertEquals((long) expected);
+        }
+
         public void assertEquals(long expected) {
             super.assertEquals(expected);
+        }
+
+        public void assertEquals(int expected, String message) {
+            super.assertEquals((long) expected, message);
+        }
+
+        public void assertEquals(long expected, String message) {
+            super.assertEquals(expected, message);
+        }
+
+        public void assertEquals(int expected, Supplier<String> message) {
+            super.assertEquals((long) expected, message);
+        }
+
+        public void assertEquals(long expected, Supplier<String> message) {
+            super.assertEquals(expected, message);
         }
     }
 
@@ -242,6 +311,14 @@ public interface IForgeGameTestHelper {
 
         public void assertEquals(boolean expected) {
             super.assertEquals(expected);
+        }
+
+        public void assertEquals(boolean expected, String message) {
+            super.assertEquals(expected, message);
+        }
+
+        public void assertEquals(boolean expected, Supplier<String> message) {
+            super.assertEquals(expected, message);
         }
     }
 }
