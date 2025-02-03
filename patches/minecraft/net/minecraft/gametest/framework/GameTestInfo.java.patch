@@ -1,0 +1,11 @@
+--- a/net/minecraft/gametest/framework/GameTestInfo.java
++++ b/net/minecraft/gametest/framework/GameTestInfo.java
+@@ -265,7 +_,7 @@
+         BlockPos blockpos = this.getOrCalculateNorthwestCorner();
+         this.structureBlockEntity = StructureUtils.prepareTestStructure(this, blockpos, this.getRotation(), this.level);
+         this.structureBlockPos = this.structureBlockEntity.getBlockPos();
+-        StructureUtils.addCommandBlockAndButtonToStartTest(this.structureBlockPos, new BlockPos(1, 0, -1), this.getRotation(), this.level);
++        StructureUtils.addCommandBlockAndButtonToStartTest(this.structureBlockPos, new BlockPos(1, 0, -1), Rotation.NONE, this.level); // Forge: The control blocks are always in the North West Corner
+         StructureUtils.encaseStructure(this.getStructureBounds(), this.level, !this.testFunction.skyAccess());
+         this.listeners.forEach(p_127630_ -> p_127630_.testStructureLoaded(this));
+         return this;
