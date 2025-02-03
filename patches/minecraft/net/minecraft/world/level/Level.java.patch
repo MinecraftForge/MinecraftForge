@@ -163,7 +163,7 @@
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
 -        for (Direction direction : Direction.Plane.HORIZONTAL) {
-+        for (Direction direction : Direction.valuesView()) {
++        for (Direction direction : Direction.getUpdateOrder()) {
              BlockPos blockpos = p_46718_.relative(direction);
              if (this.hasChunkAt(blockpos)) {
                  BlockState blockstate = this.getBlockState(blockpos);

@@ -1,12 +1,17 @@
 --- a/net/minecraft/core/Direction.java
 +++ b/net/minecraft/core/Direction.java
-@@ -49,6 +_,10 @@
+@@ -49,6 +_,15 @@
      private final Vec3i normal;
      private final Vec3 normalVec3;
      private static final Direction[] VALUES = values();
 +    private static final List<Direction> VALUES_VIEW = java.util.Collections.unmodifiableList(Arrays.asList(VALUES));
 +    public static final List<Direction> valuesView() {
 +        return VALUES_VIEW;
++    }
++    // In vanilla updates are notified only on the horizontal plane, in Forge we also notify up and down
++    private static final List<Direction> UPDATE_ORDER = java.util.Collections.unmodifiableList(Stream.concat(Plane.HORIZONTAL.stream(), Plane.VERTICAL.stream()).toList());
++    public static final List<Direction> getUpdateOrder() {
++        return UPDATE_ORDER;
 +    }
      private static final Direction[] BY_3D_DATA = Arrays.stream(VALUES)
          .sorted(Comparator.comparingInt(p_235687_ -> p_235687_.data3d))
