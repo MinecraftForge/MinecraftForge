@@ -224,9 +224,49 @@
              }
 @@ -874,6 +_,18 @@
  
-    public BiomeManager getBiomeManager() {
-       return this.biomeManager;
-+   }
+-            if (p_151522_ instanceof EnderDragon) {
+-                for (EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).getSubEntities()) {
++            if (p_151522_.isMultipartEntity()) {
++                for (var enderdragonpart : p_151522_.getParts()) {
+                     if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
+                         list.add(enderdragonpart);
+                     }
+@@ -818,8 +_,8 @@
+                 }
+             }
+ 
+-            if (p_261454_ instanceof EnderDragon enderdragon) {
+-                for (EnderDragonPart enderdragonpart : enderdragon.getSubEntities()) {
++            if (p_261454_ .isMultipartEntity()) {
++                for (var enderdragonpart : p_261454_.getParts()) {
+                     T t = p_261885_.tryCast(enderdragonpart);
+                     if (t != null && p_261688_.test(t)) {
+                         p_262071_.add(t);
+@@ -958,16 +_,15 @@
+     public abstract Scoreboard getScoreboard();
+ 
+     public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
+-        for (Direction direction : Direction.Plane.HORIZONTAL) {
++        for (Direction direction : Direction.getUpdateOrder()) {
+             BlockPos blockpos = p_46718_.relative(direction);
+             if (this.hasChunkAt(blockpos)) {
+                 BlockState blockstate = this.getBlockState(blockpos);
+-                if (blockstate.is(Blocks.COMPARATOR)) {
+-                    this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
+-                } else if (blockstate.isRedstoneConductor(this, blockpos)) {
++                blockstate.onNeighborChange(this, blockpos, p_46718_);
++                if (blockstate.isRedstoneConductor(this, blockpos)) {
+                     blockpos = blockpos.relative(direction);
+                     blockstate = this.getBlockState(blockpos);
+-                    if (blockstate.is(Blocks.COMPARATOR)) {
++                    if (blockstate.getWeakChanges(this, blockpos)) {
+                         this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
+                     }
+                 }
+@@ -1078,6 +_,20 @@
+     }
+ 
+     public abstract PotionBrewing potionBrewing();
 +
 +   private double maxEntityRadius = 2.0D;
 +   @Override
