@@ -1,0 +1,22 @@
+--- a/net/minecraft/gametest/framework/ReportGameListener.java
++++ b/net/minecraft/gametest/framework/ReportGameListener.java
+@@ -151,7 +_,7 @@
+     private static BlockPos getBeaconPos(GameTestInfo p_344999_) {
+         BlockPos blockpos = p_344999_.getStructureBlockPos();
+         BlockPos blockpos1 = new BlockPos(-1, -2, -1);
+-        return StructureTemplate.transform(blockpos.offset(blockpos1), Mirror.NONE, p_344999_.getRotation(), blockpos);
++        return blockpos.offset(blockpos1); // Forge: The control blocks are always in the North West Corner
+     }
+ 
+     private static void updateBeaconGlass(GameTestInfo p_343978_, Block p_344076_) {
+@@ -167,8 +_,8 @@
+         ServerLevel serverlevel = p_177739_.getLevel();
+         BlockPos blockpos = p_177739_.getStructureBlockPos();
+         BlockPos blockpos1 = new BlockPos(-1, 0, -1);
+-        BlockPos blockpos2 = StructureTemplate.transform(blockpos.offset(blockpos1), Mirror.NONE, p_177739_.getRotation(), blockpos);
+-        serverlevel.setBlockAndUpdate(blockpos2, Blocks.LECTERN.defaultBlockState().rotate(p_177739_.getRotation()));
++        BlockPos blockpos2 = blockpos.offset(blockpos1); // Forge: The control blocks are always in the North West Corner
++        serverlevel.setBlockAndUpdate(blockpos2, Blocks.LECTERN.defaultBlockState());
+         BlockState blockstate = serverlevel.getBlockState(blockpos2);
+         ItemStack itemstack = createBook(p_177739_.getTestName(), p_177739_.isRequired(), p_177740_);
+         LecternBlock.tryPlaceBook(null, serverlevel, blockpos2, blockstate, itemstack);
