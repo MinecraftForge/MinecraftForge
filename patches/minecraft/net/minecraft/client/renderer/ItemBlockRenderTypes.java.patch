@@ -52,7 +52,7 @@
     public static RenderType m_109279_(ItemStack p_109280_, boolean p_109281_) {
        Item item = p_109280_.m_41720_();
        if (item instanceof BlockItem) {
-@@ -365,8 +_,73 @@
+@@ -365,8 +_,78 @@
     }
  
     public static RenderType m_109287_(FluidState p_109288_) {
@@ -124,6 +124,11 @@
 +
 +   private static net.minecraftforge.client.ChunkRenderTypeSet createSetFromPredicate(java.util.function.Predicate<RenderType> predicate) {
 +      return net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.m_110506_().stream().filter(predicate).toArray(RenderType[]::new));
++   }
++
++   /** Forge: Check if we are currently in fancy, to account for fast render types */
++   public static boolean isFancy() {
++      return f_109277_;
     }
  
     public static void m_109291_(boolean p_109292_) {

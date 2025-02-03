@@ -28,12 +28,16 @@
     }
  
     public List<BakedQuad> m_213637_(@Nullable BlockState p_235054_, @Nullable Direction p_235055_, RandomSource p_235056_) {
-@@ -70,6 +_,25 @@
+@@ -70,6 +_,38 @@
        return this.f_119487_;
     }
  
 +   @Override
 +   public net.minecraftforge.client.ChunkRenderTypeSet getRenderTypes(@org.jetbrains.annotations.NotNull BlockState state, @org.jetbrains.annotations.NotNull RandomSource rand, @org.jetbrains.annotations.NotNull net.minecraftforge.client.model.data.ModelData data) {
++      if (!net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy()) {
++         if (isRenderingCutout() && net.minecraftforge.client.ForgeHooksClient.isLeavesBlock(state))
++            return net.minecraftforge.client.ChunkRenderTypeSet.of(net.minecraft.client.renderer.RenderType.m_110451_());
++      }
 +      if (blockRenderTypes != null)
 +         return blockRenderTypes;
 +      return BakedModel.super.getRenderTypes(state, rand, data);
@@ -49,6 +53,15 @@
 +             return fabulousItemRenderTypes;
 +      }
 +      return BakedModel.super.getRenderTypes(itemStack, fabulous);
++   }
++
++   // Forge: Check if this model is rendering cutout or cutout-mipped, as leaves can use either
++   private @Nullable Boolean isRenderingCutout = null;
++   private boolean isRenderingCutout() {
++      if (isRenderingCutout == null)
++         isRenderingCutout = blockRenderTypes != null && (blockRenderTypes.contains(net.minecraft.client.renderer.RenderType.m_110457_()) || blockRenderTypes.contains(net.minecraft.client.renderer.RenderType.m_110463_()));
++
++      return isRenderingCutout;
 +   }
 +
     @OnlyIn(Dist.CLIENT)
