@@ -11,6 +11,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
@@ -106,6 +109,10 @@ public interface IForgeGameTestHelper {
                 return true;
             }
         };
+    }
+
+    default <E> HolderLookup.RegistryLookup<E> registryLookup(ResourceKey<? extends Registry<? extends E>> registryKey) {
+        return this.self().getLevel().registryAccess().lookupOrThrow(registryKey);
     }
 
     default ServerPlayer makeMockServerPlayer() {
