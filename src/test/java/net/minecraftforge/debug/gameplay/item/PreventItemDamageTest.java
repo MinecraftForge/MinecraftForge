@@ -7,11 +7,14 @@ package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -86,7 +89,14 @@ public class PreventItemDamageTest extends BaseTestMod {
         player.lookAt(EntityAnchorArgument.Anchor.EYES, enemy.position());
 
         // hit the player
-        player.hurt(enemy.damageSources().mobAttack(enemy), 5.0F);
+        var attack = helper.registryLookup(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MOB_ATTACK);
+        var damage = new DamageSource(attack, enemy) {
+            @Override
+            public boolean scalesWithDifficulty() {
+                return false;
+            }
+        };
+        player.hurt(damage, 5.0F);
 
         // ok, run the tests
         firedLivingEntityUseItem.assertEquals(true);
