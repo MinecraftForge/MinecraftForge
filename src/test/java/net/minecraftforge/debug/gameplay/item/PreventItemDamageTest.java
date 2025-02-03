@@ -103,6 +103,7 @@ public class PreventItemDamageTest extends BaseTestMod {
         firedPlayerDestroyItem.assertEquals(true);
         helper.assertValueEqual(initialDamage + 1, shield.getDamageValue(), "shield damage value", "Fake shield did not take precisely 1 damage! Check IForgeItem#damageItem.");
         helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND), shield, "player shield", "Fake shield was removed from player's hand! Check Player#hurtCurrentlyUsedShield.");
+        helper.assertValueNotEqual(player.getUseItem(), shield, "player use item", "Player should not be using the shield! The onBreak callback was never invoked. Check FakeShieldItem or IForgeItem#damageItem.");
         helper.succeed();
     }
 

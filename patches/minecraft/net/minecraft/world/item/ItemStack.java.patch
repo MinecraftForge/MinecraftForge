@@ -50,7 +50,7 @@
 +                p_341563_ -> {
 +                    if (p_41624_ instanceof Player player) {
 +                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
-+                        player.stopUsingItem(); // Forge: fix MC-168573
++                        if (player.getUseItem() == this) player.stopUsingItem(); // Forge: fix MC-168573
 +                    }
 +                    p_41624_.onEquippedItemBroken(p_341563_, p_335324_);
 +                }

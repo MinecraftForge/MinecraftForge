@@ -82,6 +82,24 @@ public interface IForgeGameTestHelper {
             throw new GameTestAssertException("%s -- Expected %s to be %s, but was %s".formatted(message.get(), name, Arrays.toString(expected), Arrays.toString(actual)));
     }
 
+    default <N> void assertValueNotEqual(N expected, N actual, String name, String message) {
+        this.assertValueNotEqual(expected, actual, name, () -> message);
+    }
+
+    default <N> void assertValueNotEqual(N expected, N actual, String name, Supplier<String> message) {
+        if (Objects.equals(expected, actual))
+            throw new GameTestAssertException("%s -- Expected %s to NOT be %s, but was".formatted(message.get(), name, expected));
+    }
+
+    default <N> void assertValueNotEqual(N[] expected, N[] actual, String name, String message) {
+        this.assertValueNotEqual(expected, actual, name, () -> message);
+    }
+
+    default <N> void assertValueNotEqual(N[] expected, N[] actual, String name, Supplier<String> message) {
+        if (!Objects.deepEquals(expected, actual))
+            throw new GameTestAssertException("%s -- Expected %s to NOT be %s, but was".formatted(message.get(), name, Arrays.toString(expected)));
+    }
+
     default <E> Registry<E> registryLookup(ResourceKey<? extends Registry<? extends E>> registryKey) {
         return this.self().getLevel().registryAccess().registryOrThrow(registryKey);
     }
