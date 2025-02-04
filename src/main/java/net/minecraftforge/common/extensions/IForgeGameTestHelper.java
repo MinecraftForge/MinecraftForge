@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -59,6 +60,13 @@ public interface IForgeGameTestHelper {
     default void assertFalse(boolean value, Supplier<String> message) {
         if (value)
             throw new GameTestAssertException(message.get());
+    }
+
+    /** Backported from 1.20.6 */
+    default <N> void assertValueEqual(N expected, N actual, String name) {
+        if (!Objects.equals(expected, actual)) {
+            throw new GameTestAssertException("Expected " + name + " to be " + expected + ", but was " + actual);
+        }
     }
 
     // Backported from 1.20.6
