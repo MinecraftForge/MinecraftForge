@@ -251,6 +251,42 @@ public abstract class BlockStateProvider implements DataProvider {
             models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType));
     }
 
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, String renderType, String renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, blockTexture(block), renderType, renderTypeFast);
+    }
+
+    public void logBlockWithRenderTypeAndFast(RotatedPillarBlock block, String renderType, String renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, blockTexture(block), extend(blockTexture(block), "_top"), renderType, renderTypeFast);
+    }
+
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, ResourceLocation baseName, String renderType, String renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, extend(baseName, "_side"), extend(baseName, "_end"), renderType, renderTypeFast);
+    }
+
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end, String renderType, String renderTypeFast) {
+        axisBlock(block,
+            models().cubeColumn(name(block), side, end).renderType(renderType, renderTypeFast),
+            models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType, renderTypeFast));
+    }
+
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, blockTexture(block), renderType, renderTypeFast);
+    }
+
+    public void logBlockWithRenderType(RotatedPillarBlock block, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, blockTexture(block), extend(blockTexture(block), "_top"), renderType, renderTypeFast);
+    }
+
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, ResourceLocation baseName, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        axisBlockWithRenderTypeAndFast(block, extend(baseName, "_side"), extend(baseName, "_end"), renderType, renderTypeFast);
+    }
+
+    public void axisBlockWithRenderTypeAndFast(RotatedPillarBlock block, ResourceLocation side, ResourceLocation end, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        axisBlock(block,
+            models().cubeColumn(name(block), side, end).renderType(renderType, renderTypeFast),
+            models().cubeColumnHorizontal(name(block) + "_horizontal", side, end).renderType(renderType, renderTypeFast));
+    }
+
     public void axisBlock(RotatedPillarBlock block, ModelFile vertical, ModelFile horizontal) {
         getVariantBuilder(block)
             .partialState().with(RotatedPillarBlock.AXIS, Axis.Y)
@@ -382,6 +418,38 @@ public abstract class BlockStateProvider implements DataProvider {
         stairsBlockInternalWithRenderType(block, name + "_stairs", side, bottom, top, renderType);
     }
 
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, ResourceLocation texture, String renderType, String renderTypeFast) {
+        stairsBlockWithRenderTypeAndFast(block, texture, texture, texture, renderType, renderTypeFast);
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, String name, ResourceLocation texture, String renderType, String renderTypeFast) {
+        stairsBlockWithRenderTypeAndFast(block, name, texture, texture, texture, renderType, renderTypeFast);
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top, String renderType, String renderTypeFast) {
+        stairsBlockInternalWithRenderTypeAndFast(block, key(block).toString(), side, bottom, top, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top, String renderType, String renderTypeFast) {
+        stairsBlockInternalWithRenderTypeAndFast(block, name + "_stairs", side, bottom, top, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        stairsBlockWithRenderTypeAndFast(block, texture, texture, texture, renderType, renderTypeFast);
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, String name, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        stairsBlockWithRenderTypeAndFast(block, name, texture, texture, texture, renderType, renderTypeFast);
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        stairsBlockInternalWithRenderTypeAndFast(block, key(block).toString(), side, bottom, top, renderType, renderTypeFast);
+    }
+
+    public void stairsBlockWithRenderTypeAndFast(StairBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        stairsBlockInternalWithRenderTypeAndFast(block, name + "_stairs", side, bottom, top, renderType, renderTypeFast);
+    }
+
     private void stairsBlockInternal(StairBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         ModelFile stairs = models().stairs(baseName, side, bottom, top);
         ModelFile stairsInner = models().stairsInner(baseName + "_inner", side, bottom, top);
@@ -393,6 +461,13 @@ public abstract class BlockStateProvider implements DataProvider {
         ModelFile stairs = models().stairs(baseName, side, bottom, top).renderType(renderType);
         ModelFile stairsInner = models().stairsInner(baseName + "_inner", side, bottom, top).renderType(renderType);
         ModelFile stairsOuter = models().stairsOuter(baseName + "_outer", side, bottom, top).renderType(renderType);
+        stairsBlock(block, stairs, stairsInner, stairsOuter);
+    }
+
+    private void stairsBlockInternalWithRenderTypeAndFast(StairBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        ModelFile stairs = models().stairs(baseName, side, bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile stairsInner = models().stairsInner(baseName + "_inner", side, bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile stairsOuter = models().stairsOuter(baseName + "_outer", side, bottom, top).renderType(renderType, renderTypeFast);
         stairsBlock(block, stairs, stairsInner, stairsOuter);
     }
 
@@ -533,6 +608,32 @@ public abstract class BlockStateProvider implements DataProvider {
             models().fenceSide(name + "_fence_side", texture).renderType(renderType));
     }
 
+    public void fenceBlockWithRenderTypeAndFast(FenceBlock block, ResourceLocation texture, String renderType, String renderTypeFast) {
+        String baseName = key(block).toString();
+        fourWayBlock(block,
+            models().fencePost(baseName + "_post", texture).renderType(renderType, renderTypeFast),
+            models().fenceSide(baseName + "_side", texture).renderType(renderType, renderTypeFast));
+    }
+
+    public void fenceBlockWithRenderTypeAndFast(FenceBlock block, String name, ResourceLocation texture, String renderType, String renderTypeFast) {
+        fourWayBlock(block,
+            models().fencePost(name + "_fence_post", texture).renderType(renderType, renderTypeFast),
+            models().fenceSide(name + "_fence_side", texture).renderType(renderType, renderTypeFast));
+    }
+
+    public void fenceBlockWithRenderTypeAndFast(FenceBlock block, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        String baseName = key(block).toString();
+        fourWayBlock(block,
+            models().fencePost(baseName + "_post", texture).renderType(renderType, renderTypeFast),
+            models().fenceSide(baseName + "_side", texture).renderType(renderType, renderTypeFast));
+    }
+
+    public void fenceBlockWithRenderTypeAndFast(FenceBlock block, String name, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        fourWayBlock(block,
+            models().fencePost(name + "_fence_post", texture).renderType(renderType, renderTypeFast),
+            models().fenceSide(name + "_fence_side", texture).renderType(renderType, renderTypeFast));
+    }
+
     public void fenceGateBlock(FenceGateBlock block, ResourceLocation texture) {
         fenceGateBlockInternal(block, key(block).toString(), texture);
     }
@@ -557,6 +658,22 @@ public abstract class BlockStateProvider implements DataProvider {
         fenceGateBlockInternalWithRenderType(block, name + "_fence_gate", texture, renderType);
     }
 
+    public void fenceGateBlockWithRenderTypeAndFast(FenceGateBlock block, ResourceLocation texture, String renderType, String renderTypeFast) {
+        fenceGateBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void fenceGateBlockWithRenderTypeAndFast(FenceGateBlock block, String name, ResourceLocation texture, String renderType, String renderTypeFast) {
+        fenceGateBlockInternalWithRenderTypeAndFast(block, name + "_fence_gate", texture, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void fenceGateBlockWithRenderTypeAndFast(FenceGateBlock block, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        fenceGateBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, renderType, renderTypeFast);
+    }
+
+    public void fenceGateBlockWithRenderTypeAndFast(FenceGateBlock block, String name, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        fenceGateBlockInternalWithRenderTypeAndFast(block, name + "_fence_gate", texture, renderType, renderTypeFast);
+    }
+
     private void fenceGateBlockInternal(FenceGateBlock block, String baseName, ResourceLocation texture) {
         ModelFile gate = models().fenceGate(baseName, texture);
         ModelFile gateOpen = models().fenceGateOpen(baseName + "_open", texture);
@@ -570,6 +687,14 @@ public abstract class BlockStateProvider implements DataProvider {
         ModelFile gateOpen = models().fenceGateOpen(baseName + "_open", texture).renderType(renderType);
         ModelFile gateWall = models().fenceGateWall(baseName + "_wall", texture).renderType(renderType);
         ModelFile gateWallOpen = models().fenceGateWallOpen(baseName + "_wall_open", texture).renderType(renderType);
+        fenceGateBlock(block, gate, gateOpen, gateWall, gateWallOpen);
+    }
+
+    private void fenceGateBlockInternalWithRenderTypeAndFast(FenceGateBlock block, String baseName, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        ModelFile gate = models().fenceGate(baseName, texture).renderType(renderType, renderTypeFast);
+        ModelFile gateOpen = models().fenceGateOpen(baseName + "_open", texture).renderType(renderType, renderTypeFast);
+        ModelFile gateWall = models().fenceGateWall(baseName + "_wall", texture).renderType(renderType, renderTypeFast);
+        ModelFile gateWallOpen = models().fenceGateWallOpen(baseName + "_wall_open", texture).renderType(renderType, renderTypeFast);
         fenceGateBlock(block, gate, gateOpen, gateWall, gateWallOpen);
     }
 
@@ -614,6 +739,22 @@ public abstract class BlockStateProvider implements DataProvider {
         wallBlockInternalWithRenderType(block, name + "_wall", texture, renderType);
     }
 
+    public void wallBlockWithRenderTypeAndFast(WallBlock block, ResourceLocation texture, String renderType, String renderTypeFast) {
+        wallBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void wallBlockWithRenderTypeAndFast(WallBlock block, String name, ResourceLocation texture, String renderType, String renderTypeFast) {
+        wallBlockInternalWithRenderTypeAndFast(block, name + "_wall", texture, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void wallBlockWithRenderTypeAndFast(WallBlock block, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        wallBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, renderType, renderTypeFast);
+    }
+
+    public void wallBlockWithRenderTypeAndFast(WallBlock block, String name, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        wallBlockInternalWithRenderTypeAndFast(block, name + "_wall", texture, renderType, renderTypeFast);
+    }
+
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture),
             models().wallSide(baseName + "_side", texture),
@@ -624,6 +765,12 @@ public abstract class BlockStateProvider implements DataProvider {
         wallBlock(block, models().wallPost(baseName + "_post", texture).renderType(renderType),
             models().wallSide(baseName + "_side", texture).renderType(renderType),
             models().wallSideTall(baseName + "_side_tall", texture).renderType(renderType));
+    }
+
+    private void wallBlockInternalWithRenderTypeAndFast(WallBlock block, String baseName, ResourceLocation texture, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        wallBlock(block, models().wallPost(baseName + "_post", texture).renderType(renderType, renderTypeFast),
+            models().wallSide(baseName + "_side", texture).renderType(renderType, renderTypeFast),
+            models().wallSideTall(baseName + "_side_tall", texture).renderType(renderType, renderTypeFast));
     }
 
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
@@ -678,6 +825,22 @@ public abstract class BlockStateProvider implements DataProvider {
         paneBlockInternalWithRenderType(block, name + "_pane", pane, edge, renderType);
     }
 
+    public void paneBlockWithRenderTypeAndFast(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge, String renderType, String renderTypeFast) {
+        paneBlockInternalWithRenderTypeAndFast(block, key(block).toString(), pane, edge, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void paneBlockWithRenderTypeAndFast(IronBarsBlock block, String name, ResourceLocation pane, ResourceLocation edge, String renderType, String renderTypeFast) {
+        paneBlockInternalWithRenderTypeAndFast(block, name + "_pane", pane, edge, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void paneBlockWithRenderTypeAndFast(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        paneBlockInternalWithRenderTypeAndFast(block, key(block).toString(), pane, edge, renderType, renderTypeFast);
+    }
+
+    public void paneBlockWithRenderTypeAndFast(IronBarsBlock block, String name, ResourceLocation pane, ResourceLocation edge, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        paneBlockInternalWithRenderTypeAndFast(block, name + "_pane", pane, edge, renderType, renderTypeFast);
+    }
+
     private void paneBlockInternal(IronBarsBlock block, String baseName, ResourceLocation pane, ResourceLocation edge) {
         ModelFile post = models().panePost(baseName + "_post", pane, edge);
         ModelFile side = models().paneSide(baseName + "_side", pane, edge);
@@ -693,6 +856,15 @@ public abstract class BlockStateProvider implements DataProvider {
         ModelFile sideAlt = models().paneSideAlt(baseName + "_side_alt", pane, edge).renderType(renderType);
         ModelFile noSide = models().paneNoSide(baseName + "_noside", pane).renderType(renderType);
         ModelFile noSideAlt = models().paneNoSideAlt(baseName + "_noside_alt", pane).renderType(renderType);
+        paneBlock(block, post, side, sideAlt, noSide, noSideAlt);
+    }
+
+    private void paneBlockInternalWithRenderTypeAndFast(IronBarsBlock block, String baseName, ResourceLocation pane, ResourceLocation edge, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        ModelFile post = models().panePost(baseName + "_post", pane, edge).renderType(renderType, renderTypeFast);
+        ModelFile side = models().paneSide(baseName + "_side", pane, edge).renderType(renderType, renderTypeFast);
+        ModelFile sideAlt = models().paneSideAlt(baseName + "_side_alt", pane, edge).renderType(renderType, renderTypeFast);
+        ModelFile noSide = models().paneNoSide(baseName + "_noside", pane).renderType(renderType, renderTypeFast);
+        ModelFile noSideAlt = models().paneNoSideAlt(baseName + "_noside_alt", pane).renderType(renderType, renderTypeFast);
         paneBlock(block, post, side, sideAlt, noSide, noSideAlt);
     }
 
@@ -735,6 +907,22 @@ public abstract class BlockStateProvider implements DataProvider {
         doorBlockInternalWithRenderType(block, name + "_door", bottom, top, renderType);
     }
 
+    public void doorBlockWithRenderTypeAndFast(DoorBlock block, ResourceLocation bottom, ResourceLocation top, String renderType, String renderTypeFast) {
+        doorBlockInternalWithRenderTypeAndFast(block, key(block).toString(), bottom, top, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void doorBlockWithRenderTypeAndFast(DoorBlock block, String name, ResourceLocation bottom, ResourceLocation top, String renderType, String renderTypeFast) {
+        doorBlockInternalWithRenderTypeAndFast(block, name + "_door", bottom, top, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void doorBlockWithRenderTypeAndFast(DoorBlock block, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        doorBlockInternalWithRenderTypeAndFast(block, key(block).toString(), bottom, top, renderType, renderTypeFast);
+    }
+
+    public void doorBlockWithRenderTypeAndFast(DoorBlock block, String name, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        doorBlockInternalWithRenderTypeAndFast(block, name + "_door", bottom, top, renderType, renderTypeFast);
+    }
+
     private void doorBlockInternal(DoorBlock block, String baseName, ResourceLocation bottom, ResourceLocation top) {
         ModelFile bottomLeft = models().doorBottomLeft(baseName + "_bottom_left", bottom, top);
         ModelFile bottomLeftOpen = models().doorBottomLeftOpen(baseName + "_bottom_left_open", bottom, top);
@@ -756,6 +944,18 @@ public abstract class BlockStateProvider implements DataProvider {
         ModelFile topLeftOpen = models().doorTopLeftOpen(baseName + "_top_left_open", bottom, top).renderType(renderType);
         ModelFile topRight = models().doorTopRight(baseName + "_top_right", bottom, top).renderType(renderType);
         ModelFile topRightOpen = models().doorTopRightOpen(baseName + "_top_right_open", bottom, top).renderType(renderType);
+        doorBlock(block, bottomLeft, bottomLeftOpen, bottomRight, bottomRightOpen, topLeft, topLeftOpen, topRight, topRightOpen);
+    }
+
+    private void doorBlockInternalWithRenderTypeAndFast(DoorBlock block, String baseName, ResourceLocation bottom, ResourceLocation top, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        ModelFile bottomLeft = models().doorBottomLeft(baseName + "_bottom_left", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile bottomLeftOpen = models().doorBottomLeftOpen(baseName + "_bottom_left_open", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile bottomRight = models().doorBottomRight(baseName + "_bottom_right", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile bottomRightOpen = models().doorBottomRightOpen(baseName + "_bottom_right_open", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile topLeft = models().doorTopLeft(baseName + "_top_left", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile topLeftOpen = models().doorTopLeftOpen(baseName + "_top_left_open", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile topRight = models().doorTopRight(baseName + "_top_right", bottom, top).renderType(renderType, renderTypeFast);
+        ModelFile topRightOpen = models().doorTopRightOpen(baseName + "_top_right_open", bottom, top).renderType(renderType, renderTypeFast);
         doorBlock(block, bottomLeft, bottomLeftOpen, bottomRight, bottomRightOpen, topLeft, topLeftOpen, topRight, topRightOpen);
     }
 
@@ -825,6 +1025,22 @@ public abstract class BlockStateProvider implements DataProvider {
         trapdoorBlockInternalWithRenderType(block, name + "_trapdoor", texture, orientable, renderType);
     }
 
+    public void trapdoorBlockWithRenderTypeAndFast(TrapDoorBlock block, ResourceLocation texture, boolean orientable, String renderType, String renderTypeFast) {
+        trapdoorBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, orientable, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void trapdoorBlockWithRenderTypeAndFast(TrapDoorBlock block, String name, ResourceLocation texture, boolean orientable, String renderType, String renderTypeFast) {
+        trapdoorBlockInternalWithRenderTypeAndFast(block, name + "_trapdoor", texture, orientable, ResourceLocation.tryParse(renderType), ResourceLocation.tryParse(renderTypeFast));
+    }
+
+    public void trapdoorBlockWithRenderTypeAndFast(TrapDoorBlock block, ResourceLocation texture, boolean orientable, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        trapdoorBlockInternalWithRenderTypeAndFast(block, key(block).toString(), texture, orientable, renderType, renderTypeFast);
+    }
+
+    public void trapdoorBlockWithRenderTypeAndFast(TrapDoorBlock block, String name, ResourceLocation texture, boolean orientable, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        trapdoorBlockInternalWithRenderTypeAndFast(block, name + "_trapdoor", texture, orientable, renderType, renderTypeFast);
+    }
+
     private void trapdoorBlockInternal(TrapDoorBlock block, String baseName, ResourceLocation texture, boolean orientable) {
         ModelFile bottom = orientable ? models().trapdoorOrientableBottom(baseName + "_bottom", texture) : models().trapdoorBottom(baseName + "_bottom", texture);
         ModelFile top = orientable ? models().trapdoorOrientableTop(baseName + "_top", texture) : models().trapdoorTop(baseName + "_top", texture);
@@ -836,6 +1052,13 @@ public abstract class BlockStateProvider implements DataProvider {
         ModelFile bottom = orientable ? models().trapdoorOrientableBottom(baseName + "_bottom", texture).renderType(renderType) : models().trapdoorBottom(baseName + "_bottom", texture).renderType(renderType);
         ModelFile top = orientable ? models().trapdoorOrientableTop(baseName + "_top", texture).renderType(renderType) : models().trapdoorTop(baseName + "_top", texture).renderType(renderType);
         ModelFile open = orientable ? models().trapdoorOrientableOpen(baseName + "_open", texture).renderType(renderType) : models().trapdoorOpen(baseName + "_open", texture).renderType(renderType);
+        trapdoorBlock(block, bottom, top, open, orientable);
+    }
+
+    private void trapdoorBlockInternalWithRenderTypeAndFast(TrapDoorBlock block, String baseName, ResourceLocation texture, boolean orientable, ResourceLocation renderType, ResourceLocation renderTypeFast) {
+        ModelFile bottom = orientable ? models().trapdoorOrientableBottom(baseName + "_bottom", texture).renderType(renderType, renderTypeFast) : models().trapdoorBottom(baseName + "_bottom", texture).renderType(renderType, renderTypeFast);
+        ModelFile top = orientable ? models().trapdoorOrientableTop(baseName + "_top", texture).renderType(renderType, renderTypeFast) : models().trapdoorTop(baseName + "_top", texture).renderType(renderType, renderTypeFast);
+        ModelFile open = orientable ? models().trapdoorOrientableOpen(baseName + "_open", texture).renderType(renderType, renderTypeFast) : models().trapdoorOpen(baseName + "_open", texture).renderType(renderType, renderTypeFast);
         trapdoorBlock(block, bottom, top, open, orientable);
     }
 

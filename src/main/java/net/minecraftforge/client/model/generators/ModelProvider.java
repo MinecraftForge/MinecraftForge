@@ -369,7 +369,8 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
     }
 
     public T leaves(String name, ResourceLocation texture) {
-        return singleTexture(name, BLOCK_FOLDER + "/leaves", "all", texture);
+        return singleTexture(name, BLOCK_FOLDER + "/leaves", "all", texture)
+            .renderType("cutout_mipped", "solid");
     }
 
     /**
