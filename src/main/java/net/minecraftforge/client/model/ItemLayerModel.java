@@ -45,12 +45,22 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
     private ImmutableList<Material> textures;
     private final Int2ObjectMap<ForgeFaceData> layerData;
     private final Int2ObjectMap<ResourceLocation> renderTypeNames;
+    private final Int2ObjectMap<ResourceLocation> renderTypeNamesFast;
 
     private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ForgeFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
         this.textures = textures;
         this.layerData = layerData;
         this.renderTypeNames = renderTypeNames;
+        this.renderTypeNamesFast = new Int2ObjectOpenHashMap<>();
+    }
+
+    private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ForgeFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames, Int2ObjectMap<ResourceLocation> renderTypeNamesFast)
+    {
+        this.textures = textures;
+        this.layerData = layerData;
+        this.renderTypeNames = renderTypeNames;
+        this.renderTypeNamesFast = renderTypeNamesFast;
     }
 
     @Override
@@ -82,7 +92,9 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             var quads = UnbakedGeometryHelper.bakeElements(unbaked, $ -> sprite, modelState, modelLocation);
             var renderTypeName = renderTypeNames.get(i);
             var renderTypes = renderTypeName != null ? context.getRenderType(renderTypeName) : null;
-            builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, quads);
+            var renderTypeNameFast = renderTypeNamesFast.get(i);
+            var renderTypesFast = renderTypeNameFast != null ? context.getRenderType(renderTypeNameFast) : null;
+            builder.addQuads(renderTypes != null ? renderTypes : normalRenderTypes, renderTypesFast != null ? renderTypesFast : RenderTypeGroup.EMPTY, quads);
         }
 
         return builder.build();
@@ -108,16 +120,34 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
                 }
             }
 
+            var renderTypeNamesFast = new Int2ObjectOpenHashMap<ResourceLocation>();
+            if (jsonObject.has("render_types_fast"))
+            {
+                var renderTypes = jsonObject.getAsJsonObject("render_types_fast");
+                for (Map.Entry<String, JsonElement> entry : renderTypes.entrySet())
+                {
+                    var renderType = new ResourceLocation(entry.getKey());
+                    for (var layer : entry.getValue().getAsJsonArray())
+                        if (renderTypeNamesFast.put(layer.getAsInt(), renderType) != null)
+                            throw new JsonParseException("Registered duplicate fast graphics render type for layer " + layer);
+                }
+            }
+
             var emissiveLayers = new Int2ObjectArrayMap<ForgeFaceData>();
             if(jsonObject.has("forge_data"))
             {
                 JsonObject forgeData = jsonObject.get("forge_data").getAsJsonObject();
-                readLayerData(forgeData, "layers", renderTypeNames, emissiveLayers, false);    
+                readLayerData(forgeData, "layers", renderTypeNames, renderTypeNamesFast, emissiveLayers, false);
             }
-            return new ItemLayerModel(null, emissiveLayers, renderTypeNames);
+            return new ItemLayerModel(null, emissiveLayers, renderTypeNames, renderTypeNamesFast);
         }
 
         protected void readLayerData(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectMap<ForgeFaceData> layerData, boolean logWarning)
+        {
+            this.readLayerData(jsonObject, name, renderTypeNames, new Int2ObjectOpenHashMap<>(), layerData, logWarning);
+        }
+
+        protected void readLayerData(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNamesFast, Int2ObjectMap<ForgeFaceData> layerData, boolean logWarning)
         {
             if (!jsonObject.has(name))
             {
