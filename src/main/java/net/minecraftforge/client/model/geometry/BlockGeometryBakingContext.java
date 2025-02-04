@@ -41,6 +41,8 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
     private Transformation rootTransform;
     @Nullable
     private ResourceLocation renderTypeHint;
+    @Nullable
+    private ResourceLocation renderTypeFastHint;
     private boolean gui3d = true;
 
     @ApiStatus.Internal
@@ -137,9 +139,23 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         return owner.parent != null ? owner.parent.customData.getRenderTypeHint() : null;
     }
 
+    @Nullable
+    @Override
+    public ResourceLocation getRenderTypeFastHint()
+    {
+        if (renderTypeFastHint != null)
+            return renderTypeFastHint;
+        return owner.parent != null ? owner.parent.customData.getRenderTypeFastHint() : null;
+    }
+
     public void setRenderTypeHint(ResourceLocation renderTypeHint)
     {
         this.renderTypeHint = renderTypeHint;
+    }
+
+    public void setRenderTypeFastHint(ResourceLocation renderTypeFastHint)
+    {
+        this.renderTypeFastHint = renderTypeFastHint;
     }
 
     public void setGui3d(boolean gui3d)
@@ -153,6 +169,7 @@ public class BlockGeometryBakingContext implements IGeometryBakingContext
         this.rootTransform = other.rootTransform;
         this.visibilityData.copyFrom(other.visibilityData);
         this.renderTypeHint = other.renderTypeHint;
+        this.renderTypeFastHint = other.renderTypeFastHint;
         this.gui3d = other.gui3d;
     }
 

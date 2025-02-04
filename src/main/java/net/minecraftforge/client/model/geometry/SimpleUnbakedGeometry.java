@@ -30,8 +30,10 @@ public abstract class SimpleUnbakedGeometry<T extends SimpleUnbakedGeometry<T>> 
 
         var renderTypeHint = context.getRenderTypeHint();
         var renderTypes = renderTypeHint != null ? context.getRenderType(renderTypeHint) : RenderTypeGroup.EMPTY;
+        var renderTypeFastHint = context.getRenderTypeFastHint();
+        var renderTypesFast = renderTypeFastHint != null ? context.getRenderType(renderTypeFastHint) : RenderTypeGroup.EMPTY;
         IModelBuilder<?> builder = IModelBuilder.of(context.useAmbientOcclusion(), context.useBlockLight(), context.isGui3d(),
-                context.getTransforms(), overrides, particle, renderTypes);
+                context.getTransforms(), overrides, particle, renderTypes, renderTypesFast);
 
         addQuads(context, builder, baker, spriteGetter, modelState, modelLocation);
 

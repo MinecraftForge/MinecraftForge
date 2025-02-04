@@ -76,6 +76,13 @@ public interface IGeometryBakingContext
     ResourceLocation getRenderTypeHint();
 
     /**
+     * @return a hint of the render type this model should use while using the
+     * {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics status}. Custom loaders may ignore this.
+     */
+    @Nullable
+    default ResourceLocation getRenderTypeFastHint() { return null; }
+
+    /**
      * Queries the visibility of a component of this model.
      *
      * @param component The component for which to query visibility

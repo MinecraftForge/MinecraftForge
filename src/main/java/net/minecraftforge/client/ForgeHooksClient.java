@@ -96,7 +96,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -1249,11 +1251,6 @@ public class ForgeHooksClient
        } else {
            return Direction.getNearest(nX, nY, nZ);
        }
-    }
-
-    private static final Object2BooleanOpenHashMap<Block> LEAVES = new Object2BooleanOpenHashMap<>();
-    public static boolean isLeavesBlock(BlockState state) {
-        return LEAVES.computeIfAbsent(state.getBlock(), block -> block instanceof LeavesBlock);
     }
 
     // Make sure the below method is only ever called once (by forge).
