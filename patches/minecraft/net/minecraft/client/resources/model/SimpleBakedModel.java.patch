@@ -1,27 +1,47 @@
 --- a/net/minecraft/client/resources/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
-@@ -26,8 +_,24 @@
+@@ -26,8 +_,44 @@
     protected final TextureAtlasSprite particleIcon;
     protected final ItemTransforms transforms;
     protected final ItemOverrides overrides;
++    /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
 +   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
++    /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
 +   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypesFast;
++    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
++    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypesFast;
++    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FABULOUS fabulous graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
++    /** Forge: If this model's {@linkplain #blockRenderTypes block render types} are rendering cutout, to account for older leaves model JSONs */
 +   protected final boolean isRenderingCutout;
  
-+   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
++   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
 +   @Deprecated
     public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_) {
 +      this(p_119489_, p_119490_, p_119491_, p_119492_, p_119493_, p_119494_, p_119495_, p_119496_, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +   }
 +
++   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup for fast graphics} **/
++   @Deprecated(forRemoval = true, since = "1.21.4")
 +   public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_, net.minecraftforge.client.RenderTypeGroup renderTypes) {
 +      this(p_119489_, p_119490_, p_119491_, p_119492_, p_119493_, p_119494_, p_119495_, p_119496_, renderTypes, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +   }
 +
-+   public SimpleBakedModel(List<BakedQuad> p_119489_, Map<Direction, List<BakedQuad>> p_119490_, boolean p_119491_, boolean p_119492_, boolean p_119493_, TextureAtlasSprite p_119494_, ItemTransforms p_119495_, ItemOverrides p_119496_, net.minecraftforge.client.RenderTypeGroup renderTypes, net.minecraftforge.client.RenderTypeGroup renderTypesFast) {
++   /** Constructor with {@link net.minecraftforge.client.RenderTypeGroup RenderTypeGroup} for fancy and fast graphics. Preferred over {@link net.minecraft.client.renderer.ItemBlockRenderTypes#setRenderLayer(net.minecraft.world.level.block.Block, net.minecraft.client.renderer.RenderType) ItemBlockRenderTypes.setRenderLayer(Block, RenderType)}. */
++   public SimpleBakedModel(
++       List<BakedQuad> p_119489_,
++       Map<Direction, List<BakedQuad>> p_119490_,
++       boolean p_119491_,
++       boolean p_119492_,
++       boolean p_119493_,
++       TextureAtlasSprite p_119494_,
++       ItemTransforms p_119495_,
++       ItemOverrides p_119496_,
++       net.minecraftforge.client.RenderTypeGroup renderTypes,
++       net.minecraftforge.client.RenderTypeGroup renderTypesFast
++   ) {
        this.unculledFaces = p_119489_;
        this.culledFaces = p_119490_;
        this.hasAmbientOcclusion = p_119491_;
@@ -82,7 +102,7 @@
     @OnlyIn(Dist.CLIENT)
     public static class Builder {
        private final List<BakedQuad> unculledFaces = Lists.newArrayList();
-@@ -116,11 +_,23 @@
+@@ -116,11 +_,45 @@
           return this;
        }
  
@@ -92,17 +112,39 @@
 +         return build(net.minecraftforge.client.RenderTypeGroup.EMPTY, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +      }
 +
-+      /** @deprecated Forge: Use {@linkplain #build(net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
-+      @Deprecated
++      /**
++       * Builds with the render type to be used for this model, which will be used for any graphics setting.
++       * <p>
++       * If you need to set a specific render type for
++       * {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics}, consider using
++       * {@link #build(net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup)
++       * renderTypes(RenderTypeGroup, RenderTypeGroup)} instead which allows choosing render types for both fancy and
++       * fast graphics.
++       *
++       * @apiNote If this model is for {@linkplain net.minecraft.world.level.block.LeavesBlock leaves} and if the
++       * given render type is either {@linkplain net.minecraft.client.renderer.RenderType#cutout() cutout} or
++       * {@linkplain net.minecraft.client.renderer.RenderType#cutoutMipped() cutout mipped}, it will be overridden
++       * with {@linkplain net.minecraft.client.renderer.RenderType#solid() solid} when fast graphics is enabled.
++       * @see #build(net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup)
++       * renderTypes(RenderTypeGroup, RenderTypeGroup)
++       */
 +      public BakedModel build(net.minecraftforge.client.RenderTypeGroup renderTypes) {
 +         return this.build(renderTypes, net.minecraftforge.client.RenderTypeGroup.EMPTY);
 +      }
 +
++      /**
++       * Builds with the render types to be used for this model: one for
++       * {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} and one for
++       * {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics}.
++       *
++       * @see #build(net.minecraftforge.client.RenderTypeGroup)
++       */
 +      public BakedModel build(net.minecraftforge.client.RenderTypeGroup renderTypes, net.minecraftforge.client.RenderTypeGroup renderTypesFast) {
           if (this.particleIcon == null) {
              throw new RuntimeException("Missing particle!");
           } else {
 -            return new SimpleBakedModel(this.unculledFaces, this.culledFaces, this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms, this.overrides);
++            // Forge: Account for render types in model JSONs
 +            return new SimpleBakedModel(this.unculledFaces, this.culledFaces, this.hasAmbientOcclusion, this.usesBlockLight, this.isGui3d, this.particleIcon, this.transforms, this.overrides, renderTypes, renderTypesFast);
           }
        }

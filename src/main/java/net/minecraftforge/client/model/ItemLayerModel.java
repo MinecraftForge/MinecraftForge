@@ -49,10 +49,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
 
     private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ForgeFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
-        this.textures = textures;
-        this.layerData = layerData;
-        this.renderTypeNames = renderTypeNames;
-        this.renderTypeFastNames = new Int2ObjectOpenHashMap<>();
+        this(textures, layerData, renderTypeNames, new Int2ObjectOpenHashMap<>());
     }
 
     private ItemLayerModel(@Nullable ImmutableList<Material> textures, Int2ObjectMap<ForgeFaceData> layerData, Int2ObjectMap<ResourceLocation> renderTypeNames, Int2ObjectMap<ResourceLocation> renderTypeFastNames)
@@ -147,6 +144,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             this.readLayerData(jsonObject, name, renderTypeNames, new Int2ObjectOpenHashMap<>(), layerData, logWarning);
         }
 
+        @Deprecated(forRemoval = true, since = "1.21.4")
         protected void readLayerData(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectOpenHashMap<ResourceLocation> renderTypeFastNames, Int2ObjectMap<ForgeFaceData> layerData, boolean logWarning)
         {
             if (!jsonObject.has(name))

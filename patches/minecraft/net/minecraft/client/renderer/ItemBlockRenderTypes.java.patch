@@ -52,16 +52,23 @@
     public static RenderType getRenderType(ItemStack p_109280_, boolean p_109281_) {
        Item item = p_109280_.getItem();
        if (item instanceof BlockItem) {
-@@ -389,8 +_,77 @@
+@@ -389,11 +_,79 @@
     }
  
     public static RenderType getRenderLayer(FluidState p_109288_) {
 -      RenderType rendertype = TYPE_BY_FLUID.get(p_109288_.getType());
 +      RenderType rendertype = FLUID_RENDER_TYPES.get(net.minecraftforge.registries.ForgeRegistries.FLUIDS.getDelegateOrThrow(p_109288_.getType()));
        return rendertype != null ? rendertype : RenderType.solid();
+    }
+ 
+    public static void setFancy(boolean p_109292_) {
+       renderCutout = p_109292_;
 +   }
 +
-+   // FORGE START
++   /** Forge: Check if we are running in {@linkplain net.minecraft.client.Minecraft#useFancyGraphics() fancy graphics} to account for fast graphics render types */
++   public static boolean isFancy() {
++      return renderCutout;
++   }
 +
 +   private static final net.minecraftforge.client.ChunkRenderTypeSet CUTOUT_MIPPED = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.cutoutMipped());
 +   private static final net.minecraftforge.client.ChunkRenderTypeSet SOLID = net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.solid());
@@ -79,7 +86,7 @@
 +   });
 +
 +   /** @deprecated Use {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)}. */
-+   @Deprecated(since = "1.19")
++   @Deprecated(since = "1.21.4", forRemoval = true)
 +   public static net.minecraftforge.client.ChunkRenderTypeSet getRenderLayers(BlockState state) {
 +      Block block = state.getBlock();
 +      if (block instanceof LeavesBlock) {
@@ -90,20 +97,20 @@
 +   }
 +
 +   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
-+   @Deprecated(since = "1.19")
++   @Deprecated(since = "1.21.4", forRemoval = true)
 +   public static void setRenderLayer(Block block, RenderType type) {
 +      com.google.common.base.Preconditions.checkArgument(type.getChunkLayerId() >= 0, "The argument must be a valid chunk render type returned by RenderType#chunkBufferLayers().");
 +      setRenderLayer(block, net.minecraftforge.client.ChunkRenderTypeSet.of(type));
 +   }
 +
 +   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
-+   @Deprecated(since = "1.19")
++   @Deprecated(since = "1.21.4", forRemoval = true)
 +   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
 +      setRenderLayer(block, createSetFromPredicate(predicate));
 +   }
 +
 +   /** @deprecated Set your render type in your block model's JSON (eg. {@code "render_type": "cutout"}) or override {@link net.minecraft.client.resources.model.BakedModel#getRenderTypes(BlockState, net.minecraft.util.RandomSource, net.minecraftforge.client.model.data.ModelData)} */
-+   @Deprecated(since = "1.19")
++   @Deprecated(since = "1.21.4", forRemoval = true)
 +   public static synchronized void setRenderLayer(Block block, net.minecraftforge.client.ChunkRenderTypeSet layers) {
 +      checkClientLoading();
 +      BLOCK_RENDER_TYPES.put(net.minecraftforge.registries.ForgeRegistries.BLOCKS.getDelegateOrThrow(block), layers);
@@ -124,10 +131,5 @@
 +
 +   private static net.minecraftforge.client.ChunkRenderTypeSet createSetFromPredicate(java.util.function.Predicate<RenderType> predicate) {
 +      return net.minecraftforge.client.ChunkRenderTypeSet.of(RenderType.chunkBufferLayers().stream().filter(predicate).toArray(RenderType[]::new));
-+   }
-+
-+   public static boolean isFancy() {
-+      return renderCutout;
     }
- 
-    public static void setFancy(boolean p_109292_) {
+ }

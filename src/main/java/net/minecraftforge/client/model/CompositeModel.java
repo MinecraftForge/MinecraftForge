@@ -257,7 +257,7 @@ public class CompositeModel implements IUnbakedGeometry<CompositeModel>
 
             public void addLayer(BakedModel model)
             {
-                flushQuads(RenderTypeGroup.EMPTY);
+                flushQuads(RenderTypeGroup.EMPTY, RenderTypeGroup.EMPTY);
                 children.add(model);
             }
 
