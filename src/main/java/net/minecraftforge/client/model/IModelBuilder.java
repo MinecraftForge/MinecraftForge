@@ -69,9 +69,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
                        ItemTransforms transforms, ItemOverrides overrides, TextureAtlasSprite particle,
                        RenderTypeGroup renderTypes)
         {
-            this.builder = new SimpleBakedModel.Builder(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, overrides).particle(particle);
-            this.renderTypes = renderTypes;
-            this.renderTypesFast = RenderTypeGroup.EMPTY;
+            this(hasAmbientOcclusion, usesBlockLight, isGui3d, transforms, overrides, particle, renderTypes, RenderTypeGroup.EMPTY);
         }
 
         private Simple(boolean hasAmbientOcclusion, boolean usesBlockLight, boolean isGui3d,
