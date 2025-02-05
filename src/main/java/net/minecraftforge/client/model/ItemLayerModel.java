@@ -59,7 +59,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
 
     public ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames)
     {
-        this(textures, emissiveLayers, renderTypeNames, false, false);
+        this(textures, emissiveLayers, renderTypeNames, new Int2ObjectOpenHashMap<>(), false, false);
     }
 
     private ItemLayerModel(@Nullable ImmutableList<Material> textures, IntSet emissiveLayers, Int2ObjectMap<ResourceLocation> renderTypeNames, boolean deprecatedLoader, boolean logWarning)
@@ -175,6 +175,7 @@ public class ItemLayerModel implements IUnbakedGeometry<ItemLayerModel>
             return this.readUnlit(jsonObject, name, renderTypeNames, new Int2ObjectOpenHashMap<>(), litLayers, logWarning);
         }
 
+        @Deprecated(forRemoval = true, since = "1.21.4")
         private boolean readUnlit(JsonObject jsonObject, String name, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames, Int2ObjectOpenHashMap<ResourceLocation> renderTypeNamesFast, IntOpenHashSet litLayers, boolean logWarning)
         {
             if (!jsonObject.has(name))

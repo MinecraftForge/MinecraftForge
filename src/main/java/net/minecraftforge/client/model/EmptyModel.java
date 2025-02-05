@@ -70,7 +70,7 @@ public class EmptyModel extends SimpleUnbakedGeometry<EmptyModel>
 
         public Baked()
         {
-            super(List.of(), Map.of(), false, false, false, UnitTextureAtlasSprite.INSTANCE, ItemTransforms.NO_TRANSFORMS, ItemOverrides.EMPTY, RenderTypeGroup.EMPTY);
+            super(List.of(), Map.of(), false, false, false, UnitTextureAtlasSprite.INSTANCE, ItemTransforms.NO_TRANSFORMS, ItemOverrides.EMPTY, RenderTypeGroup.EMPTY, RenderTypeGroup.EMPTY);
         }
 
         @Override
