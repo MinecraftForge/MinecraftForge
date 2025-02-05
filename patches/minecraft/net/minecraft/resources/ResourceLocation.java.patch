@@ -29,10 +29,11 @@
     public String toDebugFileName() {
        return this.toString().replace('/', '_').replace(':', '_');
     }
-@@ -244,5 +_,15 @@
+@@ -243,6 +_,55 @@
+ 
        public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
           return new JsonPrimitive(p_135855_.toString());
-       }
++      }
 +   }
 +
 +   /** Forge: Backport of Vanilla 1.21 method */
@@ -43,5 +44,44 @@
 +   /** Forge: Backport of Vanilla 1.21 method */
 +   public static ResourceLocation parse(String location) {
 +      return new ResourceLocation(location);
++   }
++
++   /** Forge: Backport of Vanilla 1.21 method */
++   public static ResourceLocation withDefaultNamespace(String path) {
++      return new ResourceLocation(DEFAULT_NAMESPACE, assertValidPath(DEFAULT_NAMESPACE, path), null);
++   }
++
++   /** Forge: Backport of Vanilla 1.21 method */
++   public static ResourceLocation bySeparator(String location, char separator) {
++      int i = location.indexOf(separator);
++      if (i >= 0) {
++         String s = location.substring(i + 1);
++         if (i != 0) {
++            String s1 = location.substring(0, i);
++            return new ResourceLocation(s1, s);
++         } else {
++            return withDefaultNamespace(s);
++         }
++      } else {
++         return withDefaultNamespace(location);
++      }
++   }
++
++   /** Forge: Backport of Vanilla 1.21 method */
++   public static @Nullable ResourceLocation tryBySeparator(String location, char separator) {
++      int i = location.indexOf(separator);
++      if (i >= 0) {
++         String s = location.substring(i + 1);
++         if (!isValidPath(s)) {
++            return null;
++         } else if (i != 0) {
++            String s1 = location.substring(0, i);
++            return isValidNamespace(s1) ? new ResourceLocation(s1, s, null) : null;
++         } else {
++            return new ResourceLocation(DEFAULT_NAMESPACE, s, null);
++         }
++      } else {
++         return isValidPath(location) ? new ResourceLocation(DEFAULT_NAMESPACE, location, null) : null;
+       }
     }
  }
