@@ -209,10 +209,10 @@ public class ItemLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoad
         json.add("render_types", renderTypes);
 
         JsonObject renderTypesFast = new JsonObject();
-        this.renderTypes.forEach((renderType, layers) -> {
+        this.renderTypesFast.forEach((renderTypeFast, layers) -> {
             JsonArray array = new JsonArray();
             layers.intStream().sorted().forEach(array::add);
-            renderTypesFast.add(renderType.toString(), array);
+            renderTypesFast.add(renderTypeFast.toString(), array);
         });
         json.add("render_types_fast", renderTypesFast);
 
