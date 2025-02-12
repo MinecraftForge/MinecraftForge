@@ -1,11 +1,17 @@
 --- a/net/minecraft/gametest/framework/StructureUtils.java
 +++ b/net/minecraft/gametest/framework/StructureUtils.java
-@@ -132,10 +_,16 @@
-             .orElseThrow(() -> new IllegalStateException("Missing test structure: " + p_311701_.getStructureName()))
+@@ -109,7 +_,8 @@
              .getSize();
          BoundingBox boundingbox = getStructureBoundingBox(p_311042_, vec3i, p_310584_);
--        BlockPos blockpos = getStartCorner(p_311701_, p_311042_, p_310584_, p_312330_);
-+        BlockPos blockpos = getStartCorner(p_311701_, p_311042_, Rotation.NONE, p_312330_); // Forge: The control blocks are always in the North West Corner
+         BlockPos blockpos;
+-        if (p_310584_ == Rotation.NONE) {
++        // Forge: The control blocks are always in the North West Corner
++        if (true || p_310584_ == Rotation.NONE) {
+             blockpos = p_311042_;
+         } else if (p_310584_ == Rotation.CLOCKWISE_90) {
+             blockpos = p_311042_.offset(vec3i.getZ() - 1, 0, 0);
+@@ -125,7 +_,13 @@
+ 
          forceLoadChunks(boundingbox, p_312330_);
          clearSpaceForStructure(boundingbox, p_312330_);
 -        return createStructureBlock(p_311701_, blockpos.below(), p_310584_, p_312330_);
