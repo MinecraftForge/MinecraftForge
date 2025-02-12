@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/GameTestInfo.java
 +++ b/net/minecraft/gametest/framework/GameTestInfo.java
-@@ -265,7 +_,7 @@
+@@ -261,7 +_,7 @@
          BlockPos blockpos = this.getOrCalculateNorthwestCorner();
          this.structureBlockEntity = StructureUtils.prepareTestStructure(this, blockpos, this.getRotation(), this.level);
          this.structureBlockPos = this.structureBlockEntity.getBlockPos();
