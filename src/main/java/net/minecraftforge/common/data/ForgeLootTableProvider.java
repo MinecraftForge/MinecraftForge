@@ -130,10 +130,10 @@ public final class ForgeLootTableProvider extends LootTableProvider {
                 } else if (invLootCondition instanceof CompositeLootItemCondition compositeLootItemCondition && findAndReplaceInComposite(compositeLootItemCondition, from, toolAction)) {
                     found = true;
                 }
+            } else if (lootCondition instanceof CompositeLootItemCondition compositeLootItemCondition && findAndReplaceInComposite(compositeLootItemCondition, from, toolAction)) {
+                found = true;
             }
         }
-
-
 
         return found;
     }
