@@ -8,11 +8,9 @@ MinecraftForge
 
 Forge is a free, open-source modding API all of your favourite mods use!
 
-| Version |    Support    |
-|---------| ------------- |
-| 1.20.x  |    Active     |
-| 1.19.4  |    Legacy     |
-| 1.19.2  |    Legacy     |
+| Version      | Support                     |
+|--------------|-----------------------------|
+| All versions | [Supported][Support-Policy] |
 
 * [Download]
 * [Forum]
@@ -32,7 +30,18 @@ You can download the installer for the *Recommended Build* or the
  
 For support and questions, visit [the Support Forum][Support-Forum] or [the Forge Discord server][Discord].
 
-[Here is a short video from Rorax showing how to install and setup Forge.](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
+## Required Java Versions
+
+We require the version of Java that Minecraft requires, which is currently:
+
+| Minecraft     | Java              |
+|---------------|-------------------|
+| 1.20.6+       | [21][Adoptium-21] |
+| 1.18 - 1.20.4 | [17][Adoptium-17] |
+| 1.17.1        | [16][Adoptium-16] |
+| 1.16.5-       | [8][Adoptium-8]   |
+
+**If you are on Windows and have difficulty using Java to launch JAR files, consider using [Jarfix by Johann Löfflmann][Jarfix].**
 
 # Creating Mods
 
@@ -62,7 +71,22 @@ Please ensure you have a valid email address associated with your GitHub account
  [becoming a patron](https://www.patreon.com/LexManos).*
 
 [Download]: https://files.minecraftforge.net/
-[Forum]: https://forums.minecraftforge.net
+
+[Adoptium-21]: https://adoptium.net/temurin/releases/?version=21
+[Adoptium-17]: https://adoptium.net/temurin/releases/?version=17
+[Adoptium-16]: https://adoptium.net/temurin/releases/?version=16
+[Adoptium-8]: https://adoptium.net/temurin/releases/?version=8
+[Jarfix]: https://johann.loefflmann.net/en/software/jarfix/index.html
+
+[Forum]: https://forums.minecraftforge.net/
 [Support-Forum]: https://forums.minecraftforge.net/forum/18-support-bug-reports/
-[Discord]: https://discord.minecraftforge.net
+[Support-Policy]: https://forums.minecraftforge.net/topic/144690-new-tiered-support-policy
+
+[Discord]: https://discord.minecraftforge.net/
+
 [Documentation]: https://docs.minecraftforge.net/en/1.19.2/
+[Getting-Started]: https://docs.minecraftforge.net/en/1.19.2/gettingstarted/
+[ForgeDev]: https://docs.minecraftforge.net/en/1.19.2/forgedev/
+[Pull-Requests]: https://docs.minecraftforge.net/en/1.19.2/forgedev/#making-changes-and-pull-requests
+
+[Patreon]: https://www.patreon.com/LexManos
