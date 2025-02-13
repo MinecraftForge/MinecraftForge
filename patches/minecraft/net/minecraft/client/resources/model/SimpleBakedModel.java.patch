@@ -4,17 +4,17 @@
     protected final TextureAtlasSprite particleIcon;
     protected final ItemTransforms transforms;
     protected final ItemOverrides overrides;
-+    /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
++   /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
 +   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypes;
-+    /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
++   /** Forge: Block render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
 +   protected final net.minecraftforge.client.ChunkRenderTypeSet blockRenderTypesFast;
-+    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
++   /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FANCY fancy graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypes;
-+    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
++   /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FAST fast graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> itemRenderTypesFast;
-+    /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FABULOUS fabulous graphics} */
++   /** Forge: Item render types to be used with {@linkplain net.minecraft.client.GraphicsStatus#FABULOUS fabulous graphics} */
 +   protected final List<net.minecraft.client.renderer.RenderType> fabulousItemRenderTypes;
-+    /** Forge: If this model's {@linkplain #blockRenderTypes block render types} are rendering cutout, to account for older leaves model JSONs */
++   /** Forge: If this model's {@linkplain #blockRenderTypes block render types} are rendering cutout, to account for older leaves model JSONs */
 +   protected final boolean isRenderingCutout;
  
 +   /** @deprecated Forge: Use {@linkplain #SimpleBakedModel(List, Map, boolean, boolean, boolean, TextureAtlasSprite, ItemTransforms, ItemOverrides, net.minecraftforge.client.RenderTypeGroup, net.minecraftforge.client.RenderTypeGroup) variant with RenderTypeGroup} **/
@@ -31,16 +31,16 @@
 +
 +   /** Constructor with {@link net.minecraftforge.client.RenderTypeGroup RenderTypeGroup} for fancy and fast graphics. Preferred over {@link net.minecraft.client.renderer.ItemBlockRenderTypes#setRenderLayer(net.minecraft.world.level.block.Block, net.minecraft.client.renderer.RenderType) ItemBlockRenderTypes.setRenderLayer(Block, RenderType)}. */
 +   public SimpleBakedModel(
-+       List<BakedQuad> p_119489_,
-+       Map<Direction, List<BakedQuad>> p_119490_,
-+       boolean p_119491_,
-+       boolean p_119492_,
-+       boolean p_119493_,
-+       TextureAtlasSprite p_119494_,
-+       ItemTransforms p_119495_,
-+       ItemOverrides p_119496_,
-+       net.minecraftforge.client.RenderTypeGroup renderTypes,
-+       net.minecraftforge.client.RenderTypeGroup renderTypesFast
++      List<BakedQuad> p_119489_,
++      Map<Direction, List<BakedQuad>> p_119490_,
++      boolean p_119491_,
++      boolean p_119492_,
++      boolean p_119493_,
++      TextureAtlasSprite p_119494_,
++      ItemTransforms p_119495_,
++      ItemOverrides p_119496_,
++      net.minecraftforge.client.RenderTypeGroup renderTypes,
++      net.minecraftforge.client.RenderTypeGroup renderTypesFast
 +   ) {
        this.unculledFaces = p_119489_;
        this.culledFaces = p_119490_;
