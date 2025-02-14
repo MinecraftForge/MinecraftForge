@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -184,6 +185,25 @@ public interface IForgeGameTestHelper {
                     self().setBlock(pos, block);
             }
         }
+    }
+
+    default void setAndAssertBlock(int x, int y, int z, Block block) {
+        this.setAndAssertBlock(x, y, z, block.defaultBlockState());
+    }
+
+    default void setAndAssertBlock(int x, int y, int z, BlockState state) {
+        this.setAndAssertBlock(new BlockPos(x, y, z), state);
+    }
+
+    default void setAndAssertBlock(BlockPos pos, Block block) {
+        this.setAndAssertBlock(pos, block.defaultBlockState());
+    }
+
+    default void setAndAssertBlock(BlockPos pos, BlockState state) {
+        this.assertTrue(
+                this.self().getLevel().setBlock(this.self().absolutePos(pos), state, Block.UPDATE_ALL),
+                () -> "Failed to set block at pos %s : %s".formatted(pos, state.getBlock())
+        );
     }
 
     default <T> Flag<T> flag(String name) {
