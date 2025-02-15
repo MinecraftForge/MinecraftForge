@@ -4,7 +4,7 @@
     {
       "condition": "minecraft:match_tool",
       "predicate": {
-        "items": "minecraft:shears"
+        "items": "#c:tools/shear"
       }
     },
     {
