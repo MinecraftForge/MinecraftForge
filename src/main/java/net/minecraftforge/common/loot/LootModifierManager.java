@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.HolderLookup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,10 +32,16 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final String FOLDER = "loot_modifiers";
 
-    private final RegistryAccess registries;
+    private final HolderLookup.Provider registries;
     private Map<ResourceLocation, IGlobalLootModifier> modifiers = ImmutableMap.of();
 
+    /** @deprecated Use {@link #LootModifierManager(HolderLookup.Provider)} */
+    @Deprecated(forRemoval = true, since = "1.21.1")
     public LootModifierManager(RegistryAccess registries) {
+        this((HolderLookup.Provider) registries);
+    }
+
+    public LootModifierManager(HolderLookup.Provider registries) {
         super(GSON, FOLDER);
         this.registries = registries;
     }
