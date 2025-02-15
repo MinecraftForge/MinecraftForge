@@ -29,7 +29,10 @@ public class ShearsLootTests extends BaseTestMod {
     public static final String MODID = "shears_loot";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final RegistryObject<Item> MODDED_SHEARS = ITEMS.register("modded_shears", ModdedShearsItem::new);
+    private static final RegistryObject<Item> MODDED_SHEARS = ITEMS.register("modded_shears", () -> new ShearsItem(new Item.Properties()
+            .component(DataComponents.TOOL, ShearsItem.createToolProperties())
+            .setId(ITEMS.key("modded_shears"))
+    ));
 
     public ShearsLootTests(FMLJavaModLoadingContext context) {
         super(context);
@@ -69,8 +72,6 @@ public class ShearsLootTests extends BaseTestMod {
         var center = new BlockPos(1, 1, 1);
 
         player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MODDED_SHEARS.get()));
-        helper.setAndAssertBlock(1, 0, 1, Blocks.DIRT); //top
-        helper.setAndAssertBlock(1, 2, 1, Blocks.DIRT); //bottom
 
         for (Block block : shearsDropBlocks) {
             helper.setAndAssertBlock(center, block);
@@ -78,15 +79,10 @@ public class ShearsLootTests extends BaseTestMod {
             player.gameMode.destroyBlock(helper.absolutePos(center));
 
             helper.assertItemEntityPresent(block.asItem(), center, 1.0);
+            helper.removeAllItemEntitiesInRange(center, 1.0);
         }
 
         helper.succeed();
-    }
-
-    private static final class ModdedShearsItem extends ShearsItem {
-        public ModdedShearsItem() {
-            super(new Item.Properties().setId(ITEMS.key("modded_shears")).component(DataComponents.TOOL, ShearsItem.createToolProperties()));
-        }
     }
 
 }

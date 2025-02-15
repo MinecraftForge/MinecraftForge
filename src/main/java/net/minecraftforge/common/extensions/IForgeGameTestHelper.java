@@ -16,7 +16,11 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -204,6 +208,13 @@ public interface IForgeGameTestHelper {
                 this.self().getLevel().setBlock(this.self().absolutePos(pos), state, Block.UPDATE_ALL),
                 () -> "Failed to set block at pos %s : %s".formatted(pos, state.getBlock())
         );
+    }
+
+    default void removeAllItemEntitiesInRange(BlockPos pos, double range) {
+        BlockPos blockpos = this.self().absolutePos(pos);
+        for (ItemEntity itemEntity : this.self().getLevel().getEntities(EntityType.ITEM, new AABB(blockpos).inflate(range), Entity::isAlive)) {
+            itemEntity.remove(Entity.RemovalReason.DISCARDED);
+        }
     }
 
     default <T> Flag<T> flag(String name) {
