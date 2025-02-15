@@ -72,13 +72,7 @@ public class AddReloadListenerEvent extends Event {
         return registryAccess;
     }
 
-    private static class WrappedStateAwareListener implements PreparableReloadListener {
-        private final PreparableReloadListener wrapped;
-
-        private WrappedStateAwareListener(final PreparableReloadListener wrapped) {
-            this.wrapped = wrapped;
-        }
-
+    private record WrappedStateAwareListener(PreparableReloadListener wrapped) implements PreparableReloadListener {
         @Override
         public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor) {
             if (ModLoader.isLoadingStateValid())
