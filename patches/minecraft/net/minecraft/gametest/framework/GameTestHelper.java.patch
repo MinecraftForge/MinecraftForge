@@ -9,7 +9,7 @@
     private final GameTestInfo testInfo;
     private boolean finalCheckAdded;
  
-@@ -870,26 +_,30 @@
+@@ -853,26 +_,30 @@
      }
  
      public BlockPos absolutePos(BlockPos p_177450_) {
@@ -45,8 +45,8 @@
 +        return StructureTemplate.transform(p_251543_.subtract(vec3), Mirror.NONE, this.testInfo.getRotation(), this.testInfo.getTestOrigin());
      }
  
-     public Rotation getTestRotation() {
-@@ -954,5 +_,25 @@
+     public void assertTrue(boolean p_249380_, String p_248720_) {
+@@ -933,5 +_,25 @@
          if (either.right().isPresent()) {
              this.fail("Failed to set biome for test");
          }
