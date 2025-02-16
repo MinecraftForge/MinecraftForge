@@ -242,12 +242,13 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -958,17 +_,19 @@
+@@ -958,17 +_,20 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
 -        for (Direction direction : Direction.Plane.HORIZONTAL) {
-+        for (Direction direction : Direction.getUpdateOrder()) {
++        var updateOrder = net.minecraftforge.common.ForgeConfig.SERVER.fixNeighborUpdateOrder.get() ? Direction.getUpdateOrder() : Direction.values();
++        for (Direction direction : updateOrder) {
              BlockPos blockpos = p_46718_.relative(direction);
              if (this.hasChunkAt(blockpos)) {
                  BlockState blockstate = this.getBlockState(blockpos);
