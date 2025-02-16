@@ -39,6 +39,15 @@
                                  );
                              return dataresult.map(p_326149_ -> Pair.of((HolderSet<E>)p_326149_, (T)p_326147_.getSecond()));
                          }
+@@ -90,7 +_,7 @@
+     }
+ 
+     private <T> DataResult<Pair<HolderSet<E>, T>> decodeWithoutRegistry(DynamicOps<T> p_206671_, T p_206672_) {
+-        return this.elementCodec.listOf().decode(p_206671_, p_206672_).flatMap(p_206666_ -> {
++        return this.homogenousListCodec.decode(p_206671_, p_206672_).flatMap(p_206666_ -> { // Forge: Match encodeWithoutRegistry's use of the homogenousListCodec
+             List<Holder.Direct<E>> list = new ArrayList<>();
+ 
+             for (Holder<E> holder : p_206666_.getFirst()) {
 @@ -106,6 +_,9 @@
      }
  
