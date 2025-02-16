@@ -1,15 +1,15 @@
 --- a/net/minecraft/gametest/framework/TestCommand.java
 +++ b/net/minecraft/gametest/framework/TestCommand.java
-@@ -296,7 +_,11 @@
-                 return Optional.empty();
-             } else {
-                 TestFunction testfunction = optional.get();
--                GameTestInfo gametestinfo = new GameTestInfo(testfunction, structureblockentity.getRotation(), p_328153_, p_330368_);
-+                // Forge: The rotation is stored in the structure block, and added in the GameTestInfo constructor.
-+                // So reverse it to find the manually specified rotation so the test runs the same every time.
-+                var steps = StructureUtils.getRotationStepsForRotation(structureblockentity.getRotation()) - StructureUtils.getRotationStepsForRotation(testfunction.rotation());
-+                if (steps < 0) steps += 4;
-+                GameTestInfo gametestinfo = new GameTestInfo(testfunction, StructureUtils.getRotationForRotationSteps(steps), p_328153_, p_330368_);
-                 gametestinfo.setStructureBlockPos(p_332856_);
-                 return !verifyStructureExists(p_328153_, gametestinfo.getStructureName()) ? Optional.empty() : Optional.of(gametestinfo);
-             }
+@@ -224,7 +_,11 @@
+          say(p_127930_, "Test function for test " + s + " could not be found", ChatFormatting.RED);
+       } else {
+          TestFunction testfunction = optional.get();
+-         GameTestInfo gametestinfo = new GameTestInfo(testfunction, structureblockentity.getRotation(), p_127930_);
++         // Forge: The rotation is stored in the structure block, and added in the GameTestInfo constructor.
++         // So reverse it to find the manually specified rotation so the test runs the same every time.
++         var steps = StructureUtils.getRotationStepsForRotation(structureblockentity.getRotation()) - StructureUtils.getRotationStepsForRotation(testfunction.getRotation());
++         if (steps < 0) steps += 4;
++         GameTestInfo gametestinfo = new GameTestInfo(testfunction, StructureUtils.getRotationForRotationSteps(steps), p_127930_);
+          gametestinfo.setRerunUntilFailed(p_309720_);
+          if (p_127932_ != null) {
+             p_127932_.addTestToTrack(gametestinfo);
