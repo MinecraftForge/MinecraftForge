@@ -9,6 +9,43 @@
      private final GameTestInfo testInfo;
      private boolean finalCheckAdded;
  
+@@ -870,26 +_,30 @@
+     }
+ 
+     public BlockPos absolutePos(BlockPos p_177450_) {
+-        BlockPos blockpos = this.testInfo.getStructureBlockPos();
++        // Forge: Use IForgeGameTestInfo#getTestOrigin to account for rotations and to mimic 1.21.3 behavior
++        BlockPos blockpos = this.testInfo.getTestOrigin();
+         BlockPos blockpos1 = blockpos.offset(p_177450_);
+         return StructureTemplate.transform(blockpos1, Mirror.NONE, this.testInfo.getRotation(), blockpos);
+     }
+ 
+     public BlockPos relativePos(BlockPos p_177453_) {
+-        BlockPos blockpos = this.testInfo.getStructureBlockPos();
++        // Forge: Use IForgeGameTestInfo#getTestOrigin to account for rotations and to mimic 1.21.3 behavior
++        BlockPos blockpos = this.testInfo.getTestOrigin();
+         Rotation rotation = this.testInfo.getRotation().getRotated(Rotation.CLOCKWISE_180);
+         BlockPos blockpos1 = StructureTemplate.transform(p_177453_, Mirror.NONE, rotation, blockpos);
+         return blockpos1.subtract(blockpos);
+     }
+ 
+     public Vec3 absoluteVec(Vec3 p_177228_) {
+-        Vec3 vec3 = Vec3.atLowerCornerOf(this.testInfo.getStructureBlockPos());
+-        return StructureTemplate.transform(vec3.add(p_177228_), Mirror.NONE, this.testInfo.getRotation(), this.testInfo.getStructureBlockPos());
++        // Forge: Use IForgeGameTestInfo#getTestOrigin to account for rotations and to mimic 1.21.3 behavior
++        Vec3 vec3 = Vec3.atLowerCornerOf(this.testInfo.getTestOrigin());
++        return StructureTemplate.transform(vec3.add(p_177228_), Mirror.NONE, this.testInfo.getRotation(), this.testInfo.getTestOrigin());
+     }
+ 
+     public Vec3 relativeVec(Vec3 p_251543_) {
+-        Vec3 vec3 = Vec3.atLowerCornerOf(this.testInfo.getStructureBlockPos());
+-        return StructureTemplate.transform(p_251543_.subtract(vec3), Mirror.NONE, this.testInfo.getRotation(), this.testInfo.getStructureBlockPos());
++        // Forge: Use IForgeGameTestInfo#getTestOrigin to account for rotations and to mimic 1.21.3 behavior
++        Vec3 vec3 = Vec3.atLowerCornerOf(this.testInfo.getTestOrigin());
++        return StructureTemplate.transform(p_251543_.subtract(vec3), Mirror.NONE, this.testInfo.getRotation(), this.testInfo.getTestOrigin());
+     }
+ 
+     public Rotation getTestRotation() {
 @@ -954,5 +_,25 @@
          if (either.right().isPresent()) {
              this.fail("Failed to set biome for test");

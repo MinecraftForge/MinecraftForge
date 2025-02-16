@@ -170,6 +170,8 @@
   "forge.configgui.forceSystemNanoTime": "Force System.nanoTime",
   "forge.configgui.useItemWithDurationZero": "Allow Use Item with Duration of 0",
   "forge.configgui.useItemWithDurationZero.tooltip": "Set this to true to enable living entities to use items with durations of 0. Fixes being able to use Eyes of Ender repeatedly by holding down the use button. Disabled by default as it could change interactions with items of existing mods.",
+  "forge.configgui.fixGameTestBlockPosAsserts": "Fix GameTest BlockPos Asserts",
+  "forge.configgui.fixGameTestBlockPosAsserts.tooltip": "Set this to true to fix BlockPos assertions in game tests to account for rotations and generally behave as they would in 1.21.3.\nThis is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.",
 
   "forge.configgui.zoomInMissingModelTextInGui.tooltip": "Toggle off to make missing model text in the gui fit inside the slot.",
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",
