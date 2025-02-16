@@ -1,13 +1,24 @@
 --- a/net/minecraft/world/level/storage/LevelSummary.java
 +++ b/net/minecraft/world/level/storage/LevelSummary.java
-@@ -277,6 +_,10 @@
-         }
-     }
+@@ -14,7 +_,7 @@
+ import net.minecraft.world.level.LevelSettings;
+ import org.apache.commons.lang3.StringUtils;
  
-+    public boolean isLifecycleExperimental() {
-+        return this.settings.getLifecycle().equals(com.mojang.serialization.Lifecycle.experimental());
+-public class LevelSummary implements Comparable<LevelSummary> {
++public class LevelSummary implements Comparable<LevelSummary>, net.minecraftforge.common.extensions.IForgeLevelSummary {
+     public static final Component PLAY_WORLD = Component.translatable("selectWorld.select");
+     private final LevelSettings settings;
+     private final LevelVersion levelVersion;
+@@ -275,6 +_,12 @@
+         public boolean canRecreate() {
+             return false;
+         }
 +    }
 +
++    // TODO Forge: Remove in 1.22. It is kept here for binary compatibility, but already exists in IForgeLevelSummary
++    @Deprecated(forRemoval = true, since = "1.21.4")
++    public boolean isLifecycleExperimental() {
++        return net.minecraftforge.common.extensions.IForgeLevelSummary.super.isLifecycleExperimental();
+     }
+ 
      public static class SymlinkLevelSummary extends LevelSummary {
-         private static final Component MORE_INFO_BUTTON = Component.translatable("symlink_warning.more_info");
-         private static final Component INFO = Component.translatable("symlink_warning.title").withColor(-65536);
