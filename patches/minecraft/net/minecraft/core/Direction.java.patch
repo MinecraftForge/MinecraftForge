@@ -1,0 +1,14 @@
+--- a/net/minecraft/core/Direction.java
++++ b/net/minecraft/core/Direction.java
+@@ -42,6 +_,11 @@
+    private final Direction.AxisDirection f_122344_;
+    private final Vec3i f_122345_;
+    private static final Direction[] f_122346_ = values();
++   // In vanilla updates are notified only on the horizontal plane, in Forge we also notify up and down
++   private static final Direction[] UPDATE_ORDER = Stream.concat(Plane.HORIZONTAL.m_122557_(), Plane.VERTICAL.m_122557_()).toArray(Direction[]::new);
++   public static final Direction[] getUpdateOrder() {
++      return UPDATE_ORDER.clone();
++   }
+    private static final Direction[] f_122348_ = Arrays.stream(f_122346_).sorted(Comparator.comparingInt((p_235687_) -> {
+       return p_235687_.f_122339_;
+    })).toArray((p_235681_) -> {
