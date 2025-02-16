@@ -78,9 +78,23 @@ public class ForgeConfig {
      */
     public static class Common {
 
+        public final ForgeConfigSpec.BooleanValue fixGameTestBlockPosAsserts;
+
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
                     .push("general");
+
+            migrationHelperMode = builder
+                    .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.")
+                    .translation("forge.configgui.migrationHelperMode")
+                    .defineEnum("logLegacyTagWarnings", MigrationHelperMode.OFF);
+
+            fixGameTestBlockPosAsserts = builder
+                    .comment("""
+                    Set this to true to fix BlockPos assertions in game tests to account for rotations and generally behave as they would in 1.21.3.
+                    This is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.""")
+                    .translation("forge.configgui.fixGameTestBlockPosAsserts")
+                    .define("fixGameTestBlockPosAsserts", true);
 
             builder.pop();
         }
