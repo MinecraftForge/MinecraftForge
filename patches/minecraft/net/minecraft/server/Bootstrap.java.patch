@@ -1,10 +1,15 @@
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
-@@ -53,6 +_,8 @@
+@@ -53,6 +_,13 @@
                 DispenseItemBehavior.m_123402_();
                 CauldronInteraction.m_175649_();
                 Registry.m_206101_();
 +               net.minecraftforge.registries.GameData.vanillaSnapshot();
++               // Forge: Hacky fix to ensure that NetworkConstants is loaded before mods are constructed.
++               // Many older mods use network internals that shouldn't be used, yet are exposed so they get used anyways.
++               // This can cause class-loading issues with ForgeMod loading NetworkConstants and HandshakeResolver.
++               // To ensure that doesn't happen, we load it here and now. This is not an issue in 1.20.2 and newer.
++               net.minecraftforge.network.NetworkHooks.init();
 +               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 m_135890_();
              }
