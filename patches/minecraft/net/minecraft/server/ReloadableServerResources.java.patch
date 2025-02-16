@@ -26,7 +26,7 @@
                  p_326196_ -> {
                      ReloadableServerResources reloadableserverresources = new ReloadableServerResources(p_326196_.compositeAccess(), p_250212_, p_249301_, p_251126_);
 +                    var listeners = new java.util.ArrayList<>(reloadableserverresources.listeners());
-+                    listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, p_330376_.compositeAccess()));
++                    listeners.addAll(net.minecraftforge.event.ForgeEventFactory.onResourceReload(reloadableserverresources, reloadableserverresources.registryLookup, p_330376_.compositeAccess()));
                      return SimpleReloadInstance.create(
 -                            p_248588_, reloadableserverresources.listeners(), p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
 +                            p_248588_, listeners, p_249136_, p_249601_, DATA_RELOAD_INITIAL_TASK, LOGGER.isDebugEnabled()
