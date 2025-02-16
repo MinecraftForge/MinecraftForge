@@ -1,17 +1,25 @@
 --- a/net/minecraft/resources/ResourceLocation.java
 +++ b/net/minecraft/resources/ResourceLocation.java
-@@ -38,10 +_,12 @@
+@@ -38,14 +_,20 @@
        }
     }
  
-+   /** Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
++   /** @deprecated Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
     public ResourceLocation(String p_135809_) {
        this(m_135832_(p_135809_, ':'));
     }
  
-+   /** Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
++   /** @deprecated Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
     public ResourceLocation(String p_135811_, String p_135812_) {
        this(new String[]{p_135811_, p_135812_});
+    }
+ 
++   /** @deprecated Forge: Consider using {@link #bySeparator(String, char)} instead, as Mojang removed this method in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
+    public static ResourceLocation m_135822_(String p_135823_, char p_135824_) {
+       return new ResourceLocation(m_135832_(p_135823_, p_135824_));
     }
 @@ -125,6 +_,12 @@
        return i;
@@ -119,7 +127,7 @@
 +      return this.withPath(this.f_135805_ + suffix);
 +   }
 +
-+   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a language key with a suffix. */
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a language key with a prefix and a suffix. */
 +   public String toLanguageKey(String prefix, String suffix) {
 +      return this.m_214296_(prefix) + "." + suffix;
     }
