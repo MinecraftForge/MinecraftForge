@@ -32,13 +32,50 @@
        }
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   // FORGE: BACKPORTS FROM 1.21
++
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String, String)}. */
 +   public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
 +      return new ResourceLocation(namespace, path);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String)}. */
 +   public static ResourceLocation parse(String location) {
 +      return new ResourceLocation(location);
++   }
++
++   /**
++    * Forge: This is a backported method from 1.21, and acts as an alternative to using {@link #parse(String)}. If you
++    * know for sure you are going to be using the {@linkplain #DEFAULT_NAMESPACE default namespace}
++    * ({@code "minecraft"}), use this.
++    */
++   public static ResourceLocation withDefaultNamespace(String path) {
++      return new ResourceLocation(f_179908_, assertValidPath(f_179908_, path), null);
++   }
++
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #of(String, char)}. */
++   public static ResourceLocation bySeparator(String location, char separator) {
++      return m_135822_(location, separator);
++   }
++
++   /**
++    * Forge: This is a backported method from 1.21, and is the same as {@link #bySeparator(String, char)} but returns
++    * {@code null} if a resource location cannot be created.
++    */
++   public static @Nullable ResourceLocation tryBySeparator(String location, char separator) {
++      int i = location.indexOf(separator);
++      if (i >= 0) {
++         String s = location.substring(i + 1);
++         if (!m_135841_(s)) {
++            return null;
++         } else if (i != 0) {
++            String s1 = location.substring(0, i);
++            return m_135843_(s1) ? new ResourceLocation(s1, s, null) : null;
++         } else {
++            return new ResourceLocation(f_179908_, s, null);
++         }
++      } else {
++         return m_135841_(location) ? new ResourceLocation(f_179908_, location, null) : null;
++      }
     }
  }
