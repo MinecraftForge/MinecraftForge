@@ -8,7 +8,9 @@ package net.minecraftforge.common.loot;
 import java.io.IOException;
 import java.util.*;
 
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
+import net.minecraft.core.HolderLookup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,10 +32,17 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final String FOLDER = "loot_modifiers";
 
+    private final HolderLookup.Provider registries;
     private Map<ResourceLocation, IGlobalLootModifier> modifiers = ImmutableMap.of();
 
+    @Deprecated(forRemoval = true, since = "1.20.6")
     public LootModifierManager() {
+        this(null);
+    }
+
+    public LootModifierManager(HolderLookup.Provider registries) {
         super(GSON, FOLDER);
+        this.registries = registries;
     }
 
     @Override
@@ -68,12 +77,13 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resources, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
+        var ops = this.registries != null ? registries.createSerializationContext(JsonOps.INSTANCE) : JsonOps.INSTANCE;
         resources.forEach((location, json) -> {
-            IGlobalLootModifier.DIRECT_CODEC.parse(JsonOps.INSTANCE, json)
+            IGlobalLootModifier.DIRECT_CODEC.parse(ops, json)
                 // log error if parse fails
-                .resultOrPartial(errorMsg -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, errorMsg))
+                .ifError(error -> LOGGER.warn("Could not decode GlobalLootModifier with json id {} - error: {}", location, error.message()))
                 // add loot modifier if parse succeeds
-                .ifPresent(modifier -> builder.put(location, modifier));
+                .ifSuccess(modifier -> builder.put(location, modifier));
         });
         this.modifiers = builder.build();
     }
