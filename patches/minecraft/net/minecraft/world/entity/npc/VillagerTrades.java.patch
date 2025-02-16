@@ -4,7 +4,7 @@
        private final int f_35667_;
  
        public EmeraldsForVillagerTypeItem(int p_35669_, int p_35670_, int p_35671_, Map<VillagerType, Item> p_35672_) {
-+         if (false) // FORGE: Modders can add custom villager types, so remove this validation
++         if (Boolean.valueOf(false)) // FORGE: Modders can add custom villager types, so remove this validation, weird condition is to make the compiler not strip this dead code, breaking some mixins (see #10402)
           Registry.f_122868_.m_123024_().filter((p_35680_) -> {
              return !p_35672_.containsKey(p_35680_);
           }).findAny().ifPresent((p_35677_) -> {
