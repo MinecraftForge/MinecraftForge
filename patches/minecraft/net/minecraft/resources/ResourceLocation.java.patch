@@ -29,45 +29,41 @@
     public String toDebugFileName() {
        return this.toString().replace('/', '_').replace(':', '_');
     }
-@@ -243,6 +_,55 @@
+@@ -243,6 +_,51 @@
  
        public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
           return new JsonPrimitive(p_135855_.toString());
 +      }
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String, String)}. */
 +   public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
 +      return new ResourceLocation(namespace, path);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String)}. */
 +   public static ResourceLocation parse(String location) {
 +      return new ResourceLocation(location);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /**
++    * Forge: This is a backported method from 1.21, and acts as an alternative to using {@link #parse(String)}. If you
++    * know for sure you are going to be using the {@linkplain #DEFAULT_NAMESPACE default namespace}
++    * ({@code "minecraft"}), use this.
++    */
 +   public static ResourceLocation withDefaultNamespace(String path) {
 +      return new ResourceLocation(DEFAULT_NAMESPACE, assertValidPath(DEFAULT_NAMESPACE, path), null);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #of(String, char)}. */
 +   public static ResourceLocation bySeparator(String location, char separator) {
-+      int i = location.indexOf(separator);
-+      if (i >= 0) {
-+         String s = location.substring(i + 1);
-+         if (i != 0) {
-+            String s1 = location.substring(0, i);
-+            return new ResourceLocation(s1, s);
-+         } else {
-+            return withDefaultNamespace(s);
-+         }
-+      } else {
-+         return withDefaultNamespace(location);
-+      }
++      return of(location, separator);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /**
++    * Forge: This is a backported method from 1.21, and is the same as {@link #bySeparator(String, char)} but returns
++    * {@code null} if a resource location cannot be created.
++    */
 +   public static @Nullable ResourceLocation tryBySeparator(String location, char separator) {
 +      int i = location.indexOf(separator);
 +      if (i >= 0) {
