@@ -47,6 +47,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -165,7 +166,8 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
             add("wheat_harvest", new WheatSeedsConverterModifier(
                 new LootItemCondition[] {
-                    MatchTool.toolMatches(ItemPredicate.Builder.item().of(Items.SHEARS)).build(),
+                    // the #forge:shears tag is used here to test parsing of tags in LootModiferManager
+                    MatchTool.toolMatches(ItemPredicate.Builder.item().of(Tags.Items.SHEARS)).build(),
                     LootItemBlockStatePropertyCondition.hasBlockStateProperties(Blocks.WHEAT).build()
                 },
                 3, Items.WHEAT_SEEDS, Items.WHEAT)
