@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/TestCommand.java
 +++ b/net/minecraft/gametest/framework/TestCommand.java
-@@ -311,7 +_,11 @@
+@@ -296,7 +_,11 @@
                  return Optional.empty();
              } else {
                  TestFunction testfunction = optional.get();

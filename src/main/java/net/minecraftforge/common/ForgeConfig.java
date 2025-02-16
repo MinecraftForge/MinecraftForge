@@ -81,13 +81,8 @@ public class ForgeConfig {
         public final ForgeConfigSpec.BooleanValue fixGameTestBlockPosAsserts;
 
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
+            builder.comment("General configuration settings")
                     .push("general");
-
-            migrationHelperMode = builder
-                    .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.")
-                    .translation("forge.configgui.migrationHelperMode")
-                    .defineEnum("logLegacyTagWarnings", MigrationHelperMode.OFF);
 
             fixGameTestBlockPosAsserts = builder
                     .comment("""

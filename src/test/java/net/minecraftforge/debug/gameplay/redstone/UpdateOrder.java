@@ -30,15 +30,11 @@ public class UpdateOrder extends BaseTestMod {
     public static final String MODID = "update_order";
     private static final int PISTON_DELAY = 4;
 
-    public UpdateOrder(FMLJavaModLoadingContext context) {
-        super(context);
-    }
-
     @GameTest(template = "update_order:update_order", rotationSteps = 0)
     public static void south(GameTestHelper helper) {
         var chestPos = new BlockPos(0, 1, 0);
         helper.assertBlockPresent(Blocks.CHEST, chestPos);
-        var chest = helper.<ChestBlockEntity>getBlockEntity(chestPos);
+        var chest = (ChestBlockEntity) helper.getBlockEntity(chestPos);
         chest.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
@@ -52,7 +48,7 @@ public class UpdateOrder extends BaseTestMod {
     public static void west(GameTestHelper helper) {
         var chestPos = new BlockPos(0, 1, 0);
         helper.assertBlockPresent(Blocks.CHEST, chestPos);
-        var chest = helper.<ChestBlockEntity>getBlockEntity(chestPos);
+        var chest = (ChestBlockEntity) helper.getBlockEntity(chestPos);
         chest.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
@@ -66,7 +62,7 @@ public class UpdateOrder extends BaseTestMod {
     public static void north(GameTestHelper helper) {
         var chestPos = new BlockPos(0, 1, 0);
         helper.assertBlockPresent(Blocks.CHEST, chestPos);
-        var chest = helper.<ChestBlockEntity>getBlockEntity(chestPos);
+        var chest = (ChestBlockEntity) helper.getBlockEntity(chestPos);
         chest.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(4, () -> {
@@ -80,7 +76,7 @@ public class UpdateOrder extends BaseTestMod {
     public static void east(GameTestHelper helper) {
         var chestPos = new BlockPos(0, 1, 0);
         helper.assertBlockPresent(Blocks.CHEST, chestPos);
-        var chest = helper.<ChestBlockEntity>getBlockEntity(chestPos);
+        var chest = (ChestBlockEntity) helper.getBlockEntity(chestPos);
         chest.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
@@ -98,7 +94,7 @@ public class UpdateOrder extends BaseTestMod {
         helper.assertBlockPresent(Blocks.BARREL, chestPos);
         helper.assertBlockPresent(Blocks.AIR, expectedPos);
         helper.assertBlockPresent(Blocks.AIR, unexpectedPos);
-        var chest = helper.<BarrelBlockEntity>getBlockEntity(chestPos);
+        var chest = (BarrelBlockEntity) helper.getBlockEntity(chestPos);
         chest.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(10, () -> { // There are a lot of things happening, give it a few ticks
