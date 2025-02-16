@@ -1,17 +1,25 @@
 --- a/net/minecraft/resources/ResourceLocation.java
 +++ b/net/minecraft/resources/ResourceLocation.java
-@@ -38,10 +_,12 @@
+@@ -38,14 +_,20 @@
        }
     }
  
-+   /** Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
++   /** @deprecated Forge: Consider using {@link #parse(String)} instead, as Mojang made this constructor private in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
     public ResourceLocation(String p_135809_) {
        this(m_135832_(p_135809_, ':'));
     }
  
-+   /** Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in Vanilla 1.21 */
++   /** @deprecated Forge: Consider using {@link #fromNamespaceAndPath(String, String)} instead, as Mojang made this constructor private in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
     public ResourceLocation(String p_135811_, String p_135812_) {
        this(new String[]{p_135811_, p_135812_});
+    }
+ 
++   /** @deprecated Forge: Consider using {@link #bySeparator(String, char)} instead, as Mojang removed this method in 1.21 */
++   @Deprecated(forRemoval = true, since = "1.20.6")
+    public static ResourceLocation m_135822_(String p_135823_, char p_135824_) {
+       return new ResourceLocation(m_135832_(p_135823_, p_135824_));
     }
 @@ -116,6 +_,12 @@
        return i;
@@ -26,19 +34,121 @@
     public String m_179910_() {
        return this.toString().replace('/', '_').replace(':', '_');
     }
-@@ -182,5 +_,15 @@
+@@ -182,5 +_,117 @@
        public JsonElement serialize(ResourceLocation p_135855_, Type p_135856_, JsonSerializationContext p_135857_) {
           return new JsonPrimitive(p_135855_.toString());
        }
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   // FORGE: BACKPORTS FROM 1.21
++
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String, String)}. */
 +   public static ResourceLocation fromNamespaceAndPath(String namespace, String path) {
 +      return new ResourceLocation(namespace, path);
 +   }
 +
-+   /** Forge: Backport of Vanilla 1.21 method */
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #ResourceLocation(String)}. */
 +   public static ResourceLocation parse(String location) {
 +      return new ResourceLocation(location);
++   }
++
++   /**
++    * Forge: This is a backported method from 1.21, and acts as an alternative to using {@link #parse(String)}. If you
++    * know for sure you are going to be using the {@linkplain #DEFAULT_NAMESPACE default namespace}
++    * ({@code "minecraft"}), use this.
++    */
++   public static ResourceLocation withDefaultNamespace(String path) {
++      return new ResourceLocation(f_179908_, assertValidPath(f_179908_, path), null);
++   }
++
++   /** Forge: This is a backported method from 1.21, and is the replacement for {@link #of(String, char)}. */
++   public static ResourceLocation bySeparator(String location, char separator) {
++      return m_135822_(location, separator);
++   }
++
++   /**
++    * Forge: This is a backported method from 1.21, and is the same as {@link #bySeparator(String, char)} but returns
++    * {@code null} if a resource location cannot be created.
++    */
++   public static @Nullable ResourceLocation tryBySeparator(String location, char separator) {
++      int i = location.indexOf(separator);
++      if (i >= 0) {
++         String s = location.substring(i + 1);
++         if (!m_135841_(s)) {
++            return null;
++         } else if (i != 0) {
++            String s1 = location.substring(0, i);
++            return m_135843_(s1) ? new ResourceLocation(s1, s, null) : null;
++         } else {
++            return new ResourceLocation(f_179908_, s, null);
++         }
++      } else {
++         return m_135841_(location) ? new ResourceLocation(f_179908_, location, null) : null;
++      }
++   }
++
++   // FORGE: BACKPORTS FROM 1.19.3
++
++   /** Forge: Dummy for {@link #ResourceLocation(String, String, ForgeDummy)} */
++   private interface ForgeDummy { }
++
++   /** Forge: Backported constructor from 1.19.3, which skips additional validations. */
++   private ResourceLocation(String namespace, String path, @Nullable ForgeDummy dummy) {
++      this.f_135804_ = namespace;
++      this.f_135805_ = path;
++   }
++
++   /** Forge: Backported method from 1.19.3 to handle path assertion without needing to use the constructor. */
++   private static String assertValidPath(String namespace, String path) {
++      if (!m_135841_(path)) {
++         throw new ResourceLocationException("Non [a-z0-9/._-] character in path of location: " + namespace + ":" + path);
++      } else {
++         return path;
++      }
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a new resource location with a different path. */
++   public ResourceLocation withPath(String path) {
++      return new ResourceLocation(this.f_135804_, assertValidPath(this.f_135804_, path), null);
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a new resource location with a modified path. */
++   public ResourceLocation withPath(java.util.function.UnaryOperator<String> pathFunction) {
++      return this.withPath(pathFunction.apply(this.f_135805_));
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a new resource location with a prefixed path. */
++   public ResourceLocation withPrefix(String prefix) {
++      return this.withPath(prefix + this.f_135805_);
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a new resource location with a suffixed path. */
++   public ResourceLocation withSuffix(String suffix) {
++      return this.withPath(this.f_135805_ + suffix);
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a language key with a prefix and a suffix. */
++   public String toLanguageKey(String prefix, String suffix) {
++      return this.toLanguageKey(prefix) + "." + suffix;
++   }
++
++   // FORGE: BACKPORTS FROM 1.19
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a language key. */
++   public String toLanguageKey() {
++      return this.f_135804_ + "." + this.f_135805_;
++   }
++
++   /**
++    * Forge: This is a backported method from 1.19.3, can be used to quickly create a language key, skipping the
++    * namespace if it is {@code "minecraft"}.
++    */
++   public String toShortLanguageKey() {
++      return this.f_135804_.equals("minecraft") ? this.f_135805_ : this.toLanguageKey();
++   }
++
++   /** Forge: This is a backported method from 1.19.3, can be used to quickly create a language key with a prefix. */
++   public String toLanguageKey(String prefix) {
++      return prefix + "." + this.toLanguageKey();
     }
  }
