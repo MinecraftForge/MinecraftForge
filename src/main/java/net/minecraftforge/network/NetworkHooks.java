@@ -47,6 +47,11 @@ public class NetworkHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    public static void init()
+    {
+        LOGGER.debug("Loading Network data for FML net version: {}", NetworkConstants.init());
+    }
+
     public static String getFMLVersion(final String ip)
     {
         return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NetworkConstants.NETVERSION) ? NetworkConstants.NETVERSION : ip.split("\0")[1] : NetworkConstants.NOVERSION;
