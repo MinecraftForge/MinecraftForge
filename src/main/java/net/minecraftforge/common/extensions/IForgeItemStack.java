@@ -410,8 +410,8 @@ public interface IForgeItemStack {
      * @param damage   The amount of damage the item will take before processing
      * @param random   The random used where the damage is taking place (typically from the level)
      * @param player   The player holding the item
-     * @param onBroken The callback for when an item is broken (use this if you plan on cancelling damage that will
-     *                 break an item)
+     * @param onBroken The callback for when an item is broken (<strong>In 1.20.6, this callback will set the stack's
+     *                 damage to 0! Make sure to change it back if you do not want it to be deleted.</strong>)
      * @return The amount of damage the item should take
      *
      * @apiNote If the item stack is not {@linkplain ItemStack#isDamageableItem() damageable}, this method will not be
