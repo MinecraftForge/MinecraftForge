@@ -144,7 +144,7 @@
              this.f_20935_.m_41622_(i, this, (p_36149_) -> {
                 p_36149_.m_21190_(interactionhand);
 +               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.f_20935_, interactionhand);
-+               this.m_5810_(); // Forge: fix MC-168573
++               if (this.f_20935_ == currentItem) this.m_5810_(); // Forge: fix MC-168573
              });
 -            if (this.f_20935_.m_41619_()) {
 +            // FORGE: use cached item since this.useItem could be ItemStack.EMPTY
