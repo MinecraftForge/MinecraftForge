@@ -124,6 +124,10 @@ public interface IForgeGameTestHelper {
     }
 
     default ServerPlayer makeMockServerPlayer() {
+        return makeMockServerPlayer(true);
+    }
+
+    default ServerPlayer makeMockServerPlayer(boolean creative) {
         var level = self().getLevel();
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
         var player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation()) {
@@ -132,7 +136,7 @@ public interface IForgeGameTestHelper {
             }
 
             public boolean isCreative() {
-                return true;
+                return creative;
             }
         };
         var connection = new Connection(PacketFlow.SERVERBOUND);
