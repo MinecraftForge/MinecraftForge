@@ -144,7 +144,7 @@
              this.useItem.hurtAndBreak(i, this, (p_219739_) -> {
                 p_219739_.broadcastBreakEvent(interactionhand);
 +               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.useItem, interactionhand);
-+               stopUsingItem(); // Forge: fix MC-168573
++               if (this.useItem == currentItem) stopUsingItem(); // Forge: fix MC-168573
              });
 -            if (this.useItem.isEmpty()) {
 +            // FORGE: use cached item since this.useItem could be ItemStack.EMPTY
