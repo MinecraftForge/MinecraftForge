@@ -48,7 +48,7 @@
              this.hurtAndBreak(p_41623_, p_41624_.getRandom(), p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null, () -> {
 +                if (p_41624_ instanceof Player player) {
 +                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(player, this, p_335324_);
-+                    player.stopUsingItem(); // Forge: fix MC-168573
++                    if (player.getUseItem() == this) player.stopUsingItem(); // Forge: fix MC-168573
 +                }
                  p_41624_.broadcastBreakEvent(p_335324_);
                  Item item = this.getItem();
