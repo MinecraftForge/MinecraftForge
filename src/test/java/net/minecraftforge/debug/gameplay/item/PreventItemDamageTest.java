@@ -152,8 +152,7 @@ public class PreventItemDamageTest extends BaseTestMod {
         // ok, run the tests
         firedLivingEntityUseItem.assertEquals(true);
         firedPlayerDestroyItem.assertEquals(true);
-        helper.assertValueEqual(shield.isEmpty(), true, "player shield empty", "Fake shield called onBreak callback, but is not broken! Check FakeShieldItem or IForgeItem#damageItem.");
-        helper.assertFalse(Objects.equals(player.getItemInHand(InteractionHand.MAIN_HAND), shield), () -> "Fake shield was not removed from player's hand! Check Player#hurtCurrentlyUsedShield.");
+        helper.assertFalse(shield.isEmpty(), () -> "Fake shield called onBreak callback, but was set to empty! Check FakeShieldItem or IForgeItem#damageItem.");
         helper.succeed();
     }
 
@@ -197,7 +196,6 @@ public class PreventItemDamageTest extends BaseTestMod {
         @Override
         public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
             if (this.breakOnDamage) {
-                stack.setCount(0);
                 onBroken.accept(entity);
             }
             return 1;
