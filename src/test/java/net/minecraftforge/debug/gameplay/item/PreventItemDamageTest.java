@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -30,20 +31,75 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 @Mod(PreventItemDamageTest.MOD_ID)
 @GameTestHolder("forge." + PreventItemDamageTest.MOD_ID)
 public class PreventItemDamageTest extends BaseTestMod {
     static final String MOD_ID = "prevent_item_damage";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final RegistryObject<FakeShieldItem> FAKE_SHIELD = ITEMS.register("fake_shield", FakeShieldItem::new);
+    private static final RegistryObject<FakeShieldItem> FAKE_SHIELD = ITEMS.register("fake_shield", () -> new FakeShieldItem(true));
+    private static final RegistryObject<FakeShieldItem> FAKE_UNBREAKING_SHIELD = ITEMS.register("fake_unbreaking_shield", () -> new FakeShieldItem(false));
 
     public PreventItemDamageTest() {
         this.testItem(() -> FAKE_SHIELD.get().getDefaultInstance());
+        this.testItem(() -> FAKE_UNBREAKING_SHIELD.get().getDefaultInstance());
     }
 
     @GameTest(template = "forge:empty3x3x3")
     public static void player_fake_shield_took_modified_damage(GameTestHelper helper) {
+        helper.makeFloor();
+
+        // setup player
+        var player = helper.makeMockPlayer(GameType.SURVIVAL);
+
+        // setup shield
+        var shield = FAKE_UNBREAKING_SHIELD.get().getDefaultInstance();
+
+        // setup events
+        var firedLivingEntityUseItem = helper.boolFlag("fired LivingEntityUseItemEvent");
+        helper.<LivingEntityUseItemEvent.Start>addEventListener(event -> {
+            if (event.getEntity() != player) return;
+
+            if (event.getItem() != shield)
+                helper.fail("Player is using an item, but it's not the fake shield! Check the game test impl.");
+
+            // Artificially pass 5 seconds from start of the shield
+            // This is because the first 5 ticks, the player is still vulnerable
+            firedLivingEntityUseItem.set(true);
+            event.setDuration(event.getDuration() - 100);
+        });
+
+        // start using shield
+        player.setItemInHand(InteractionHand.MAIN_HAND, shield);
+        player.startUsingItem(InteractionHand.MAIN_HAND);
+        int initialDamage = shield.getDamageValue();
+
+        // setup enemy
+        var enemy = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(2, 0, 2));
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, enemy.position());
+
+        // hit the player
+        var attack = helper.registry(Registries.DAMAGE_TYPE).getHolderOrThrow(DamageTypes.MOB_ATTACK);
+        var damage = new DamageSource(attack, enemy) {
+            @Override
+            public boolean scalesWithDifficulty() {
+                return false;
+            }
+        };
+        player.hurt(damage, 5.0F);
+
+        // ok, run the tests
+        firedLivingEntityUseItem.assertEquals(true);
+        helper.assertValueEqual(initialDamage + 1, shield.getDamageValue(), "shield damage value", "Fake shield did not take precisely 1 damage! Check IForgeItem#damageItem.");
+        helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND), shield, "player shield", "Fake shield was removed from player's hand! Check Player#hurtCurrentlyUsedShield.");
+        helper.succeed();
+    }
+
+    @GameTest(template = "forge:empty3x3x3")
+    public static void player_fake_shield_breaks(GameTestHelper helper) {
         helper.makeFloor();
 
         // setup player
@@ -78,7 +134,6 @@ public class PreventItemDamageTest extends BaseTestMod {
         // start using shield
         player.setItemInHand(InteractionHand.MAIN_HAND, shield);
         player.startUsingItem(InteractionHand.MAIN_HAND);
-        int initialDamage = shield.getDamageValue();
 
         // setup enemy
         var enemy = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(2, 0, 2));
@@ -97,8 +152,8 @@ public class PreventItemDamageTest extends BaseTestMod {
         // ok, run the tests
         firedLivingEntityUseItem.assertEquals(true);
         firedPlayerDestroyItem.assertEquals(true);
-        helper.assertValueEqual(initialDamage + 1, shield.getDamageValue(), "shield damage value", "Fake shield did not take precisely 1 damage! Check IForgeItem#damageItem.");
-        helper.assertValueEqual(player.getItemInHand(InteractionHand.MAIN_HAND), shield, "player shield", "Fake shield was removed from player's hand! Check Player#hurtCurrentlyUsedShield.");
+        helper.assertValueEqual(shield.isEmpty(), true, "player shield empty", "Fake shield called onBreak callback, but is not broken! Check FakeShieldItem or IForgeItem#damageItem.");
+        helper.assertFalse(Objects.equals(player.getItemInHand(InteractionHand.MAIN_HAND), shield), () -> "Fake shield was not removed from player's hand! Check Player#hurtCurrentlyUsedShield.");
         helper.succeed();
     }
 
@@ -132,13 +187,16 @@ public class PreventItemDamageTest extends BaseTestMod {
     }
 
     private static final class FakeShieldItem extends ShieldItem {
-        public FakeShieldItem() {
+        private final boolean breakOnDamage;
+
+        public FakeShieldItem(boolean breakOnDamage) {
             super(new Item.Properties().durability(10));
+            this.breakOnDamage = breakOnDamage;
         }
 
         @Override
         public int damageItem(ItemStack stack, int damage, RandomSource random, @Nullable ServerPlayer player, Runnable onBroken) {
-            onBroken.run();
+            if (this.breakOnDamage) onBroken.run();
             return 1;
         }
     }
