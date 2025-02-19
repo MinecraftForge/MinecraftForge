@@ -193,7 +193,7 @@
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
 -        for (Direction direction : Direction.Plane.HORIZONTAL) {
-+        var updateOrder = net.minecraftforge.common.ForgeConfig.SERVER.fixNeighborUpdateOrder.get() ? Direction.getUpdateOrder() : Direction.values();
++        var updateOrder = net.minecraftforge.common.ForgeConfig.SERVER.fixNeighborUpdateOrder.get() ? Direction.getUpdateOrder() : Direction.valuesView();
 +        for (Direction direction : updateOrder) {
              BlockPos blockpos = p_46718_.relative(direction);
              if (this.hasChunkAt(blockpos)) {
