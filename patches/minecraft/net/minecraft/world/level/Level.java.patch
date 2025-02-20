@@ -188,7 +188,7 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -958,16 +_,19 @@
+@@ -958,17 +_,18 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -206,13 +206,13 @@
                      blockpos = blockpos.relative(direction);
                      blockstate = this.getBlockState(blockpos);
 -                    if (blockstate.is(Blocks.COMPARATOR)) {
+-                        this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
 +                    if (blockstate.getWeakChanges(this, blockpos)) {
 +                        // Forge: Use IForgeBlockState#onNeighborChange, the default impl redirects to Level#neighborChanged
 +                        blockstate.onNeighborChange(this, blockpos, p_46718_);
-+                        if (false)
-                         this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                      }
                  }
+             }
 @@ -1078,6 +_,20 @@
      }
  
