@@ -221,7 +221,7 @@
  
     public void m_46717_(BlockPos p_46718_, Block p_46719_) {
 -      for(Direction direction : Direction.Plane.HORIZONTAL) {
-+      var updateOrder = net.minecraftforge.common.ForgeConfig.SERVER.fixNeighborUpdateOrder.get() ? Direction.getUpdateOrder() : Direction.values();
++      var updateOrder = net.minecraftforge.common.ForgeConfig.SERVER.fixNeighborUpdateOrder.get() ? Direction.getUpdateOrder() : Direction.valuesView();
 +      for(Direction direction : updateOrder) {
           BlockPos blockpos = p_46718_.m_121945_(direction);
           if (this.m_46805_(blockpos)) {
