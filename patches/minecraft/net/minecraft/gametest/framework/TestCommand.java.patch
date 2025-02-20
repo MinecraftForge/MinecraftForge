@@ -1,5 +1,13 @@
 --- a/net/minecraft/gametest/framework/TestCommand.java
 +++ b/net/minecraft/gametest/framework/TestCommand.java
+@@ -191,6 +_,7 @@
+       } else {
+          StructureBlockEntity structureblockentity = (StructureBlockEntity)serverlevel.getBlockEntity(blockpos1);
+          structureblockentity.placeStructure(serverlevel);
++         net.minecraftforge.gametest.ForgeGameTestHooks.removeBarriers(StructureUtils.getStructureBounds(structureblockentity), serverlevel);
+          String s = structureblockentity.getMetaData();
+          TestFunction testfunction = GameTestRegistry.getTestFunction(s);
+          say(serverlevel, "Reset succeded for: " + testfunction, ChatFormatting.GREEN);
 @@ -224,7 +_,11 @@
           say(p_127930_, "Test function for test " + s + " could not be found", ChatFormatting.RED);
        } else {

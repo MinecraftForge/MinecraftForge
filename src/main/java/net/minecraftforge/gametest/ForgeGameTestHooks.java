@@ -6,9 +6,13 @@
 package net.minecraftforge.gametest;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraft.gametest.framework.TestFunction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -188,5 +192,43 @@ public class ForgeGameTestHooks {
             idx = batch.indexOf('.');
             classes.add(batch);
         }
+    }
+
+    // Backported from 1.20.6
+    public static void encaseStructure(AABB p_330422_, ServerLevel p_331249_, boolean p_328180_) {
+        BlockPos blockpos = BlockPos.containing(p_330422_.minX, p_330422_.minY, p_330422_.minZ).offset(-1, 0, -1);
+        BlockPos blockpos1 = BlockPos.containing(p_330422_.maxX, p_330422_.maxY, p_330422_.maxZ);
+        BlockPos.betweenClosedStream(blockpos, blockpos1)
+            .forEach(
+                p_325964_ -> {
+                    boolean flag = p_325964_.getX() == blockpos.getX()
+                        || p_325964_.getX() == blockpos1.getX()
+                        || p_325964_.getZ() == blockpos.getZ()
+                        || p_325964_.getZ() == blockpos1.getZ();
+                    boolean flag1 = p_325964_.getY() == blockpos1.getY();
+                    if (flag || flag1 && p_328180_) {
+                        p_331249_.setBlockAndUpdate(p_325964_, Blocks.BARRIER.defaultBlockState());
+                    }
+                }
+            );
+    }
+
+    // Backported from 1.20.6
+    public static void removeBarriers(AABB p_336061_, ServerLevel p_334551_) {
+        BlockPos blockpos = BlockPos.containing(p_336061_.minX, p_336061_.minY, p_336061_.minZ).offset(-1, 0, -1);
+        BlockPos blockpos1 = BlockPos.containing(p_336061_.maxX, p_336061_.maxY, p_336061_.maxZ);
+        BlockPos.betweenClosedStream(blockpos, blockpos1)
+            .forEach(
+                p_325970_ -> {
+                    boolean flag = p_325970_.getX() == blockpos.getX()
+                        || p_325970_.getX() == blockpos1.getX()
+                        || p_325970_.getZ() == blockpos.getZ()
+                        || p_325970_.getZ() == blockpos1.getZ();
+                    boolean flag1 = p_325970_.getY() == blockpos1.getY();
+                    if (p_334551_.getBlockState(p_325970_).is(Blocks.BARRIER) && (flag || flag1)) {
+                        p_334551_.setBlockAndUpdate(p_325970_, Blocks.AIR.defaultBlockState());
+                    }
+                }
+            );
     }
 }

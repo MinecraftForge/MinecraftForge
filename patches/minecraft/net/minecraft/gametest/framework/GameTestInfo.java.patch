@@ -1,9 +1,18 @@
 --- a/net/minecraft/gametest/framework/GameTestInfo.java
 +++ b/net/minecraft/gametest/framework/GameTestInfo.java
-@@ -328,4 +_,24 @@
+@@ -261,6 +_,7 @@
+       this.structureBlockEntity = StructureUtils.prepareTestStructure(this, p_313154_, this.getRotation(), this.level);
+       this.structureBlockPos = this.structureBlockEntity.getBlockPos();
+       StructureUtils.addCommandBlockAndButtonToStartTest(this.structureBlockPos, new BlockPos(1, 0, -1), this.getRotation(), this.level);
++      net.minecraftforge.gametest.ForgeGameTestHooks.encaseStructure(this.getStructureBounds(), this.level, !this.testFunction.skyAccess());
+       this.listeners.forEach((p_127630_) -> {
+          p_127630_.testStructureLoaded(this);
+       });
+@@ -327,5 +_,25 @@
+ 
     public boolean rerunUntilFailed() {
        return this.rerunUntilFailed;
-    }
++   }
 +
 +
 +   // FORGE START
@@ -23,5 +32,5 @@
 +   @SuppressWarnings("DataFlowIssue") // Nullability moment
 +   public BlockPos getTestOrigin() {
 +      return this.useTestOrigin ? StructureUtils.getStructureOrigin(this.getStructureBlockEntity()) : this.getStructureBlockPos();
-+   }
+    }
  }
