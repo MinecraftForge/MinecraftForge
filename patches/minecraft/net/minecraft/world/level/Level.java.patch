@@ -201,7 +201,7 @@
     }
  
     @Nullable
-@@ -780,17 +_,20 @@
+@@ -780,16 +_,19 @@
     public abstract Scoreboard getScoreboard();
  
     public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -220,13 +220,12 @@
                 blockstate = this.getBlockState(blockpos);
 -               if (blockstate.is(Blocks.COMPARATOR)) {
 +               if (blockstate.getWeakChanges(this, blockpos)) {
-+                  // Forge: Replace Level#neighborChanged with BlockState#onNeighborChange. Boolean.valueOf(false) is used to account for problematic mixins (see #10402).
-+                  if (Boolean.valueOf(false))
-                   this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
++                  // Forge: Use IForgeBlockState#onNeighborChange, the default impl redirects to Level#neighborChanged
 +                  blockstate.onNeighborChange(this, blockpos, p_46718_);
++                  if (false)
+                   this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-          }
 @@ -874,6 +_,18 @@
  
     public BiomeManager getBiomeManager() {
