@@ -212,7 +212,7 @@
     }
  
     public boolean m_46753_(BlockPos p_46754_) {
-@@ -769,17 +_,20 @@
+@@ -769,16 +_,19 @@
     public abstract Scoreboard m_6188_();
  
     public void m_46717_(BlockPos p_46718_, Block p_46719_) {
@@ -231,13 +231,12 @@
                 blockstate = this.m_8055_(blockpos);
 -               if (blockstate.m_60713_(Blocks.f_50328_)) {
 +               if (blockstate.getWeakChanges(this, blockpos)) {
-+                  // Forge: Replace Level#neighborChanged with BlockState#onNeighborChange. Boolean.valueOf(false) is used to account for problematic mixins (see #10402).
-+                  if (Boolean.valueOf(false))
-                   this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
++                  // Forge: Use IForgeBlockState#onNeighborChange, the default impl redirects to Level#neighborChanged
 +                  blockstate.onNeighborChange(this, blockpos, p_46718_);
++                  if (false)
+                   this.m_213960_(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
-          }
 @@ -863,6 +_,18 @@
  
     public BiomeManager m_7062_() {
