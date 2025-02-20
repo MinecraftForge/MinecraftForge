@@ -201,7 +201,7 @@
     }
  
     @Nullable
-@@ -780,16 +_,19 @@
+@@ -780,17 +_,18 @@
     public abstract Scoreboard getScoreboard();
  
     public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -219,13 +219,13 @@
                 blockpos = blockpos.relative(direction);
                 blockstate = this.getBlockState(blockpos);
 -               if (blockstate.is(Blocks.COMPARATOR)) {
+-                  this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
 +               if (blockstate.getWeakChanges(this, blockpos)) {
 +                  // Forge: Use IForgeBlockState#onNeighborChange, the default impl redirects to Level#neighborChanged
 +                  blockstate.onNeighborChange(this, blockpos, p_46718_);
-+                  if (false)
-                   this.neighborChanged(blockstate, blockpos, p_46719_, p_46718_, false);
                 }
              }
+          }
 @@ -874,6 +_,18 @@
  
     public BiomeManager getBiomeManager() {
