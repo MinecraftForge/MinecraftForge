@@ -21,6 +21,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,27 +48,9 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * This event is fired from {@link ForgeEventFactory#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ *
+ * @param slot May be null if this player destroys the item by any use besides holding it.
  **/
-public class PlayerDestroyItemEvent extends PlayerEvent {
-    @NotNull
-    private final ItemStack original;
-    @Nullable
-    private final EquipmentSlot slot; // May be null if this player destroys the item by any use besides holding it.
-
-    public PlayerDestroyItemEvent(Player player, @NotNull ItemStack original, @Nullable EquipmentSlot slot) {
-        super(player);
-        this.original = original;
-        this.slot = slot;
-    }
-
-    @NotNull
-    public ItemStack getOriginal() {
-        return this.original;
-    }
-
-    @Nullable
-    public EquipmentSlot getSlot() {
-        return this.slot;
-    }
-
+public record PlayerDestroyItemEvent(Player entity, ItemStack original, @Nullable EquipmentSlot slot) implements PlayerEvent {
+    public static final EventBus<PlayerDestroyItemEvent> BUS = EventBus.create(PlayerDestroyItemEvent.class);
 }

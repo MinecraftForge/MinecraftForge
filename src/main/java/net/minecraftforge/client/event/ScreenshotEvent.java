@@ -9,10 +9,12 @@ import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Screenshot;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,42 +31,36 @@ import java.io.IOException;
  *
  * @see Screenshot
  */
-@Cancelable
-public class ScreenshotEvent extends Event
-{
+public final class ScreenshotEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<ScreenshotEvent> BUS = CancellableEventBus.create(ScreenshotEvent.class);
+
     public static final Component DEFAULT_CANCEL_REASON = Component.literal("Screenshot canceled");
 
     private final NativeImage image;
     private File screenshotFile;
 
-    private Component resultMessage = null;
+    private @Nullable Component resultMessage = null;
 
     @ApiStatus.Internal
-    public ScreenshotEvent(NativeImage image, File screenshotFile)
-    {
+    public ScreenshotEvent(NativeImage image, File screenshotFile) {
         this.image = image;
         this.screenshotFile = screenshotFile;
-        try
-        {
+        try {
             this.screenshotFile = screenshotFile.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
-        } catch (IOException ignored)
-        {
-        }
+        } catch (IOException ignored) {}
     }
 
     /**
      * {@return the in-memory image of the screenshot}
      */
-    public NativeImage getImage()
-    {
+    public NativeImage getImage() {
         return image;
     }
 
     /**
      * @return the file where the screenshot will be saved to
      */
-    public File getScreenshotFile()
-    {
+    public File getScreenshotFile() {
         return screenshotFile;
     }
 
@@ -73,16 +69,14 @@ public class ScreenshotEvent extends Event
      *
      * @param screenshotFile the new filepath
      */
-    public void setScreenshotFile(File screenshotFile)
-    {
+    public void setScreenshotFile(File screenshotFile) {
         this.screenshotFile = screenshotFile;
     }
 
     /**
      * {@return the custom cancellation message, or {@code null} if no custom message is set}
      */
-    public Component getResultMessage()
-    {
+    public @Nullable Component getResultMessage() {
         return resultMessage;
     }
 
@@ -92,8 +86,7 @@ public class ScreenshotEvent extends Event
      *
      * @param resultMessage the new result message
      */
-    public void setResultMessage(Component resultMessage)
-    {
+    public void setResultMessage(Component resultMessage) {
         this.resultMessage = resultMessage;
     }
 
@@ -105,8 +98,7 @@ public class ScreenshotEvent extends Event
      *
      * @return the cancel message for the player
      */
-    public Component getCancelMessage()
-    {
+    public Component getCancelMessage() {
         return getResultMessage() != null ? getResultMessage() : DEFAULT_CANCEL_REASON;
     }
 }

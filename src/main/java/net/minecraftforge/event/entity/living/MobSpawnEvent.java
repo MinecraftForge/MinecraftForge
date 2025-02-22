@@ -6,6 +6,10 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.*;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.event.MarkerEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,53 +40,29 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>
  * {@link AllowDespawn} is not related to the mob spawn event flow, as it fires when a despawn is attempted.
  */
-public abstract class MobSpawnEvent extends EntityEvent {
-    private final ServerLevelAccessor level;
-    private final double x;
-    private final double y;
-    private final double z;
-
-    @ApiStatus.Internal
-    protected MobSpawnEvent(Mob mob, ServerLevelAccessor level, double x, double y, double z) {
-        super(mob);
-        this.level = level;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    @Override
-    public Mob getEntity() {
-        return (Mob)super.getEntity();
-    }
+@MarkerEvent
+public sealed interface MobSpawnEvent implements EntityEvent {
+    Mob entity();
 
     /**
      * @return The level relating to the mob spawn action
      */
-    public ServerLevelAccessor getLevel() {
-        return this.level;
-    }
+    ServerLevelAccessor getLevel();
 
     /**
      * @return The x-coordinate relating to the mob spawn action
      */
-    public double getX() {
-        return this.x;
-    }
+    double getX();
 
     /**
      * @return The y-coordinate relating to the mob spawn action
      */
-    public double getY() {
-        return this.y;
-    }
+    double getY();
 
     /**
      * @return The z-coordinate relating to the mob spawn action
      */
-    public double getZ() {
-        return this.z;
-    }
+    double getZ();
 
     /**
      * This event is fired {@linkplain SpawnPlacements#checkSpawnRules when Spawn Placements (aka Spawn Rules) are checked}, before a mob attempts to spawn.<br>
@@ -100,45 +80,29 @@ public abstract class MobSpawnEvent extends EntityEvent {
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      * <p>
      * This event is not fired for mob spawners which utilize {@link CustomSpawnRules}, as they do not check spawn placements.
+     *
+     * @param entityType The type of entity that checks are being performed for.
+     * @param level The level relating to the mob spawn action
+     * @param pos The position where checks are being evaluated.
+     *
      * @apiNote If your modifications are for a single entity, and do not vary at runtime, use {@link SpawnPlacementRegisterEvent}.
      * @see SpawnPlacementRegisterEvent
      */
-    @HasResult
-    public static class SpawnPlacementCheck extends Event {
-        private final EntityType<?> entityType;
-        private final ServerLevelAccessor level;
-        private final EntitySpawnReason spawnReason;
-        private final BlockPos pos;
-        private final RandomSource random;
-        private final boolean defaultResult;
-
+    record SpawnPlacementCheck(
+            EntityType<?> entityType,
+            ServerLevelAccessor level,
+            EntitySpawnReason spawnReason,
+            BlockPos pos,
+            RandomSource random,
+            boolean defaultResult,
+            Result.Holder resultHolder
+    ) implements RecordEvent, HasResult.Record {
         /**
          * Internal.
          * @see {@link SpawnPlacements#checkSpawnRules} for the single call site of this event.
          */
         @ApiStatus.Internal
-        public SpawnPlacementCheck(EntityType<?> entityType, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random, boolean defaultResult) {
-            this.entityType = entityType;
-            this.level = level;
-            this.spawnReason = spawnReason;
-            this.pos = pos;
-            this.random = random;
-            this.defaultResult = defaultResult;
-        }
-
-        /**
-         * @return The type of entity that checks are being performed for.
-         */
-        public EntityType<?> getEntityType() {
-            return this.entityType;
-        }
-
-        /**
-         * @return The level relating to the mob spawn action
-         */
-        public ServerLevelAccessor getLevel() {
-            return this.level;
-        }
+        public SpawnPlacementCheck {}
 
         /**
          * Retrieves the type of mob spawn that is happening.
@@ -147,13 +111,6 @@ public abstract class MobSpawnEvent extends EntityEvent {
          */
         public EntitySpawnReason getSpawnReason() {
             return this.spawnReason;
-        }
-
-        /**
-         * @return The position where checks are being evaluated.
-         */
-        public BlockPos getPos() {
-            return this.pos;
         }
 
         /**

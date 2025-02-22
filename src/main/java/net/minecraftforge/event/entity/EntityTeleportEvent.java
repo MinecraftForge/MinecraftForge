@@ -12,8 +12,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -28,18 +28,25 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@Cancelable
-public class EntityTeleportEvent extends EntityEvent
-{
+public sealed class EntityTeleportEvent implements Cancellable, EntityEvent {
+    public static final CancellableEventBus<EntityTeleportEvent> BUS = CancellableEventBus.create(EntityTeleportEvent.class);
+
+    private final Entity entity;
+
     protected double targetX;
     protected double targetY;
     protected double targetZ;
 
     public EntityTeleportEvent(Entity entity, double targetX, double targetY, double targetZ) {
-        super(entity);
+        this.entity = entity;
         this.targetX = targetX;
         this.targetY = targetY;
         this.targetZ = targetZ;
+    }
+
+    @Override
+    public Entity entity() {
+        return entity;
     }
 
     public double getTargetX() { return targetX; }
@@ -49,10 +56,10 @@ public class EntityTeleportEvent extends EntityEvent
     public double getTargetZ() { return targetZ; }
     public void setTargetZ(double targetZ) { this.targetZ = targetZ; }
     public Vec3 getTarget() { return new Vec3(this.targetX, this.targetY, this.targetZ); }
-    public double getPrevX() { return getEntity().getX(); }
-    public double getPrevY() { return getEntity().getY(); }
-    public double getPrevZ() { return getEntity().getZ(); }
-    public Vec3 getPrev() { return getEntity().position(); }
+    public double getPrevX() { return entity().getX(); }
+    public double getPrevY() { return entity().getY(); }
+    public double getPrevZ() { return entity().getZ(); }
+    public Vec3 getPrev() { return entity().position(); }
 
     /**
      * EntityTeleportEvent.TeleportCommand is fired before a living entity is teleported
@@ -69,11 +76,10 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    @Cancelable
-    public static class TeleportCommand extends EntityTeleportEvent
-    {
-        public TeleportCommand(Entity entity, double targetX, double targetY, double targetZ)
-        {
+    public static final class TeleportCommand extends EntityTeleportEvent {
+        public static final CancellableEventBus<TeleportCommand> BUS = CancellableEventBus.create(TeleportCommand.class);
+
+        public TeleportCommand(Entity entity, double targetX, double targetY, double targetZ) {
             super(entity, targetX, targetY, targetZ);
         }
     }
@@ -93,11 +99,10 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    @Cancelable
-    public static class SpreadPlayersCommand extends EntityTeleportEvent
-    {
-        public SpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ)
-        {
+    public static final class SpreadPlayersCommand extends EntityTeleportEvent {
+        public static final CancellableEventBus<SpreadPlayersCommand> BUS = CancellableEventBus.create(SpreadPlayersCommand.class);
+
+        public SpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ) {
             super(entity, targetX, targetY, targetZ);
         }
     }
@@ -116,13 +121,12 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    @Cancelable
-    public static class EnderEntity extends EntityTeleportEvent
-    {
+    public static final class EnderEntity extends EntityTeleportEvent {
+        public static final CancellableEventBus<EnderEntity> BUS = CancellableEventBus.create(EnderEntity.class);
+
         private final LivingEntity entityLiving;
 
-        public EnderEntity(LivingEntity entity, double targetX, double targetY, double targetZ)
-        {
+        public EnderEntity(LivingEntity entity, double targetX, double targetY, double targetZ) {
             super(entity, targetX, targetY, targetZ);
             this.entityLiving = entity;
         }
@@ -147,17 +151,16 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    @Cancelable
-    public static class EnderPearl extends EntityTeleportEvent
-    {
+    public static final class EnderPearl extends EntityTeleportEvent {
+        public static final CancellableEventBus<EnderPearl> BUS = CancellableEventBus.create(EnderPearl.class);
+
         private final ServerPlayer player;
         private final ThrownEnderpearl pearlEntity;
         private float attackDamage;
         private final HitResult hitResult;
 
         @ApiStatus.Internal
-        public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, HitResult hitResult)
-        {
+        public EnderPearl(ServerPlayer entity, double targetX, double targetY, double targetZ, ThrownEnderpearl pearlEntity, float attackDamage, HitResult hitResult) {
             super(entity, targetX, targetY, targetZ);
             this.pearlEntity = pearlEntity;
             this.player = entity;
@@ -206,13 +209,12 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
-    @Cancelable
-    public static class ChorusFruit extends EntityTeleportEvent
-    {
+    public static final class ChorusFruit extends EntityTeleportEvent {
+        public static final CancellableEventBus<ChorusFruit> BUS = CancellableEventBus.create(ChorusFruit.class);
+
         private final LivingEntity entityLiving;
 
-        public ChorusFruit(LivingEntity entity, double targetX, double targetY, double targetZ)
-        {
+        public ChorusFruit(LivingEntity entity, double targetX, double targetY, double targetZ) {
             super(entity, targetX, targetY, targetZ);
             this.entityLiving = entity;
         }

@@ -10,8 +10,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.village.VillageSiege;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 
 /**
  * VillageSiegeEvent is fired just before a zombie siege finds a successful location in
@@ -23,39 +24,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@Cancelable
-public class VillageSiegeEvent extends Event
-{
-    private final VillageSiege siege;
-    private final Level level;
-    private final Player player;
-    private final Vec3 attemptedSpawnPos;
-
-    public VillageSiegeEvent(VillageSiege siege, Level level, Player player, Vec3 attemptedSpawnPos)
-    {
-       this.siege = siege;
-       this.level = level;
-       this.player = player;
-       this.attemptedSpawnPos = attemptedSpawnPos;
-    }
-
-    public VillageSiege getSiege()
-    {
-        return siege;
-    }
-
-    public Level getLevel()
-    {
-        return level;
-    }
-
-    public Player getPlayer()
-    {
-        return player;
-    }
-
-    public Vec3 getAttemptedSpawnPos()
-    {
-        return attemptedSpawnPos;
-    }
+public record VillageSiegeEvent(VillageSiege siege, Level level, Player player, Vec3 attemptedSpawnPos)
+        implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<VillageSiegeEvent> BUS = CancellableEventBus.create(VillageSiegeEvent.class);
 }

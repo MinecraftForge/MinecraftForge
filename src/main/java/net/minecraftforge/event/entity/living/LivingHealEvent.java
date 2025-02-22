@@ -7,8 +7,9 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingHealEvent is fired when an Entity is set to be healed. <br>
@@ -25,13 +26,14 @@ import net.minecraft.world.entity.LivingEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class LivingHealEvent extends LivingEvent
-{
+public final class LivingHealEvent implements Cancellable, LivingEvent {
+    public static final CancellableEventBus<LivingHealEvent> BUS = CancellableEventBus.create(LivingHealEvent.class);
+
+    private final LivingEntity entity;
     private float amount;
-    public LivingHealEvent(LivingEntity entity, float amount)
-    {
-        super(entity);
+
+    public LivingHealEvent(LivingEntity entity, float amount) {
+        this.entity = entity;
         this.setAmount(amount);
     }
 
@@ -43,5 +45,10 @@ public class LivingHealEvent extends LivingEvent
     public void setAmount(float amount)
     {
         this.amount = amount;
+    }
+
+    @Override
+    public LivingEntity entity() {
+        return entity;
     }
 }

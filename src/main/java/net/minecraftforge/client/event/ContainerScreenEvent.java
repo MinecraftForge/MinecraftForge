@@ -8,10 +8,9 @@ package net.minecraftforge.client.event;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for hooking into {@link AbstractContainerScreen} events.
@@ -23,20 +22,11 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Render.Foreground
  * @see Render.Background
  */
-public abstract class ContainerScreenEvent extends Event {
-    private final AbstractContainerScreen<?> containerScreen;
-
-    @ApiStatus.Internal
-    protected ContainerScreenEvent(AbstractContainerScreen<?> containerScreen) {
-        this.containerScreen = containerScreen;
-    }
-
+public sealed interface ContainerScreenEvent {
     /**
      * {@return the container screen}
      */
-    public AbstractContainerScreen<?> getContainerScreen() {
-        return containerScreen;
-    }
+    AbstractContainerScreen<?> containerScreen();
 
     /**
      * Fired every time an {@link AbstractContainerScreen} renders.
@@ -48,39 +38,21 @@ public abstract class ContainerScreenEvent extends Event {
      * @see Foreground
      * @see Background
      */
-    public static abstract class Render extends ContainerScreenEvent {
-        private final GuiGraphics guiGraphics;
-        private final int mouseX;
-        private final int mouseY;
-
-        @ApiStatus.Internal
-        protected Render(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY) {
-            super(guiContainer);
-            this.guiGraphics = guiGraphics;
-            this.mouseX = mouseX;
-            this.mouseY = mouseY;
-        }
-
+    sealed interface Render extends ContainerScreenEvent {
         /**
          * {@return the gui graphics used for rendering}
          */
-        public GuiGraphics getGuiGraphics() {
-            return guiGraphics;
-        }
+        GuiGraphics guiGraphics();
 
         /**
          * {@return the X coordinate of the mouse pointer}
          */
-        public int getMouseX() {
-            return mouseX;
-        }
+        int mouseX();
 
         /**
          * {@return the Y coordinate of the mouse pointer}
          */
-        public int getMouseY() {
-            return mouseY;
-        }
+        int mouseY();
 
         /**
          * Fired after the container screen's foreground layer and elements are drawn, but
@@ -94,11 +66,9 @@ public abstract class ContainerScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Foreground extends Render {
-            @ApiStatus.Internal
-            public Foreground(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY) {
-                super(guiContainer, guiGraphics, mouseX, mouseY);
-            }
+        record Foreground(AbstractContainerScreen<?> containerScreen, GuiGraphics guiGraphics, int mouseX, int mouseY)
+                implements Render, RecordEvent {
+            public static final EventBus<Foreground> BUS = EventBus.create(Foreground.class);
         }
 
         /**
@@ -110,11 +80,9 @@ public abstract class ContainerScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Background extends Render {
-            @ApiStatus.Internal
-            public Background(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY) {
-                super(guiContainer, guiGraphics, mouseX, mouseY);
-            }
+        record Background(AbstractContainerScreen<?> containerScreen, GuiGraphics guiGraphics, int mouseX, int mouseY)
+                implements Render, RecordEvent {
+            public static final EventBus<Background> BUS = EventBus.create(Background.class);
         }
     }
 }

@@ -9,9 +9,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 import com.mojang.blaze3d.audio.Channel;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Superclass for sound related events.
@@ -23,23 +21,8 @@ import org.jetbrains.annotations.ApiStatus;
  * @see PlaySoundEvent
  * @see SoundEngineLoadEvent
  */
-public abstract class SoundEvent extends Event
-{
-    private final SoundEngine engine;
-
-    @ApiStatus.Internal
-    protected SoundEvent(SoundEngine engine)
-    {
-        this.engine = engine;
-    }
-
-    /**
-     * {@return the sound engine}
-     */
-    public SoundEngine getEngine()
-    {
-        return engine;
-    }
+public sealed interface SoundEvent permits PlaySoundEvent, SoundEngineLoadEvent, SoundEvent.SoundSourceEvent {
+    SoundEngine engine();
 
     /**
      * Superclass for when a sound has started to play on an audio channel.
@@ -50,43 +33,20 @@ public abstract class SoundEvent extends Event
      * @see PlaySoundSourceEvent
      * @see PlayStreamingSourceEvent
      */
-    public static abstract class SoundSourceEvent extends SoundEvent
-    {
-        private final SoundInstance sound;
-        private final Channel channel;
-        private final String name;
-
-        @ApiStatus.Internal
-        protected SoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
-        {
-            super(engine);
-            this.name = sound.getLocation().getPath();
-            this.sound = sound;
-            this.channel = channel;
-        }
-
+    sealed interface SoundSourceEvent extends SoundEvent permits PlaySoundSourceEvent, PlayStreamingSourceEvent {
         /**
          * {@return the sound being played}
          */
-        public SoundInstance getSound()
-        {
-            return sound;
-        }
+        SoundInstance sound();
 
         /**
          * {@return the audio channel on which the sound is playing on}
          */
-        public Channel getChannel()
-        {
-            return channel;
-        }
+        Channel channel();
 
         /**
          * {@return the name of the sound being played} This is equivalent to the path of the location of the original sound.
          */
-        public String getName()
-        {
-            return name;
-        }
+        String name();
     }
 }

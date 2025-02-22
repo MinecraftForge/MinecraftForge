@@ -20,17 +20,15 @@ import net.minecraftforge.eventbus.api.Cancelable;
  *
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ZombieEvent extends EntityEvent {
+public sealed class ZombieEvent implements EntityEvent {
     private final Zombie zombie;
 
-    public ZombieEvent(Zombie zombie)
-    {
-        super(zombie);
+    public ZombieEvent(Zombie zombie) {
         this.zombie = zombie;
     }
 
     @Override
-    public Zombie getEntity()
+    public Zombie entity()
     {
         return this.zombie;
     }

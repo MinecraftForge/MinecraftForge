@@ -9,7 +9,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * EntityTravelToDimensionEvent is fired before an Entity travels to a dimension.<br>
@@ -23,19 +24,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@Cancelable
-public class EntityTravelToDimensionEvent extends EntityEvent
-{
-    private final ResourceKey<Level> dimension;
-
-    public EntityTravelToDimensionEvent(Entity entity, ResourceKey<Level> dimension)
-    {
-        super(entity);
-        this.dimension = dimension;
-    }
-
-    public ResourceKey<Level> getDimension()
-    {
-        return dimension;
-    }
+public record EntityTravelToDimensionEvent(Entity entity, ResourceKey<Level> dimension)
+        implements Cancellable, EntityEvent {
+    public static final CancellableEventBus<EntityTravelToDimensionEvent> BUS = CancellableEventBus.create(EntityTravelToDimensionEvent.class);
 }

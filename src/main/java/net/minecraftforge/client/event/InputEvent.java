@@ -9,9 +9,13 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.world.InteractionHand;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
+import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
@@ -24,10 +28,7 @@ import org.lwjgl.glfw.GLFW;
  * @see Key
  * @see InteractionKeyMappingTriggered
  */
-public abstract class InputEvent extends Event {
-    @ApiStatus.Internal
-    protected InputEvent() {}
-
+public sealed interface InputEvent {
     /**
      * Fired when a mouse button is pressed/released. Sub-events get fired {@link Pre before} and {@link Post after} this happens.
      *
@@ -38,27 +39,14 @@ public abstract class InputEvent extends Event {
      * @see Pre
      * @see Post
      */
-    public static abstract class MouseButton extends InputEvent {
-        private final int button;
-        private final int action;
-        private final int modifiers;
-
-        @ApiStatus.Internal
-        protected MouseButton(int button, int action, int modifiers) {
-            this.button = button;
-            this.action = action;
-            this.modifiers = modifiers;
-        }
-
+    sealed interface MouseButton extends InputEvent {
         /**
          * {@return the mouse button's input code}
          *
          * @see GLFW mouse constants starting with 'GLFW_MOUSE_BUTTON_'
          * @see <a href="https://www.glfw.org/docs/latest/group__buttons.html" target="_top">the online GLFW documentation</a>
          */
-        public int getButton() {
-            return this.button;
-        }
+        int button();
 
         /**
          * {@return the mouse button's action}
@@ -66,9 +54,8 @@ public abstract class InputEvent extends Event {
          * @see InputConstants#PRESS
          * @see InputConstants#RELEASE
          */
-        public int getAction() {
-            return this.action;
-        }
+        @MagicConstant(intValues = { InputConstants.PRESS, InputConstants.RELEASE })
+        int action();
 
         /**
          * {@return a bit field representing the active modifier keys}
@@ -81,9 +68,7 @@ public abstract class InputEvent extends Event {
          * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
          * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
-        public int getModifiers() {
-            return this.modifiers;
-        }
+        int modifiers();
 
         /**
          * Fired when a mouse button is pressed/released, <b>before</b> being processed by vanilla.
@@ -96,12 +81,8 @@ public abstract class InputEvent extends Event {
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        @Cancelable
-        public static class Pre extends MouseButton {
-            @ApiStatus.Internal
-            public Pre(int button, int action, int modifiers) {
-                super(button, action, modifiers);
-            }
+        record Pre(int button, int action, int modifiers) implements Cancellable, MouseButton, RecordEvent {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
         }
 
         /**
@@ -114,11 +95,8 @@ public abstract class InputEvent extends Event {
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        public static class Post extends MouseButton {
-            @ApiStatus.Internal
-            public Post(int button, int action, int modifiers) {
-                super(button, action, modifiers);
-            }
+        record Post(int button, int action, int modifiers) implements Cancellable, MouseButton, RecordEvent {
+            public static final CancellableEventBus<Post> BUS = CancellableEventBus.create(Post.class);
         }
     }
 
@@ -132,77 +110,26 @@ public abstract class InputEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
+     * @param deltaX the amount of change / delta of the mouse scroll in the vertical direction
+     * @param deltaY the amount of change / delta of the mouse scroll in the horizontal direction
+     * @param leftDown {@code true} if the left mouse button is pressed
+     * @param middleDown {@code true} if the right mouse button is pressed
+     * @param rightDown {@code true} if the middle mouse button is pressed
+     * @param mouseX the X position of the mouse cursor
+     * @param mouseY the Y position of the mouse cursor
+     *
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
-    @Cancelable
-    public static class MouseScrollingEvent extends InputEvent {
-        private final double deltaX;
-        private final double deltaY;
-        private final double mouseX;
-        private final double mouseY;
-        private final boolean leftDown;
-        private final boolean middleDown;
-        private final boolean rightDown;
-
-        @ApiStatus.Internal
-        public MouseScrollingEvent(double deltaX, double deltaY, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY) {
-            this.deltaX = deltaX;
-            this.deltaY = deltaY;
-            this.leftDown = leftDown;
-            this.middleDown = middleDown;
-            this.rightDown = rightDown;
-            this.mouseX = mouseX;
-            this.mouseY = mouseY;
-        }
-
-        /**
-         * {@return the amount of change / delta of the mouse scroll in the vertical direction}
-         */
-        public double getDeltaX() {
-            return this.deltaX;
-        }
-
-        /**
-         * {@return the amount of change / delta of the mouse scroll in the horizontal direction}
-         */
-        public double getDeltaY() {
-            return this.deltaY;
-        }
-
-        /**
-         * {@return {@code true} if the left mouse button is pressed}
-         */
-        public boolean isLeftDown() {
-            return this.leftDown;
-        }
-
-        /**
-         * {@return {@code true} if the right mouse button is pressed}
-         */
-        public boolean isRightDown() {
-            return this.rightDown;
-        }
-
-        /**
-         * {@return  {@code true} if the middle mouse button is pressed}
-         */
-        public boolean isMiddleDown() {
-            return this.middleDown;
-        }
-
-        /**
-         * {@return the X position of the mouse cursor}
-         */
-        public double getMouseX() {
-            return this.mouseX;
-        }
-
-        /**
-         * {@return the Y position of the mouse cursor}
-         */
-        public double getMouseY() {
-            return this.mouseY;
-        }
+    record MouseScrollingEvent(
+            double deltaX,
+            double deltaY,
+            boolean leftDown,
+            boolean middleDown,
+            boolean rightDown,
+            double mouseX,
+            double mouseY
+    ) implements Cancellable, InputEvent, RecordEvent {
+        public static final CancellableEventBus<MouseScrollingEvent> BUS = CancellableEventBus.create(MouseScrollingEvent.class);
     }
 
     /**
@@ -213,19 +140,8 @@ public abstract class InputEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Key extends InputEvent {
-        private final int key;
-        private final int scanCode;
-        private final int action;
-        private final int modifiers;
-
-        @ApiStatus.Internal
-        public Key(int key, int scanCode, int action, int modifiers) {
-            this.key = key;
-            this.scanCode = scanCode;
-            this.action = action;
-            this.modifiers = modifiers;
-        }
+    record Key(int key, int scanCode, int action, int modifiers) implements InputEvent, RecordEvent {
+        public static final EventBus<Key> BUS = EventBus.create(Key.class);
 
         /**
          * {@return the {@code GLFW} (platform-agnostic) key code}
@@ -234,7 +150,7 @@ public abstract class InputEvent extends Event {
          * @see GLFW key constants starting with {@code GLFW_KEY_}
          * @see <a href="https://www.glfw.org/docs/latest/group__keys.html" target="_top">the online GLFW documentation</a>
          */
-        public int getKey() {
+        public int key() {
             return this.key;
         }
 
@@ -247,7 +163,7 @@ public abstract class InputEvent extends Event {
          *
          * @see InputConstants#getKey(int, int)
          */
-        public int getScanCode() {
+        public int scanCode() {
             return this.scanCode;
         }
 
@@ -258,7 +174,7 @@ public abstract class InputEvent extends Event {
          * @see InputConstants#RELEASE
          * @see InputConstants#REPEAT
          */
-        public int getAction() {
+        public int action() {
             return this.action;
         }
 
@@ -273,7 +189,7 @@ public abstract class InputEvent extends Event {
          * @see GLFW#GLFW_KEY_NUM_LOCK NUM LOCK modifier key bit
          * @see <a href="https://www.glfw.org/docs/latest/group__mods.html" target="_top">the online GLFW documentation</a>
          */
-        public int getModifiers() {
+        public int modifiers() {
             return this.modifiers;
         }
     }
@@ -296,8 +212,9 @@ public abstract class InputEvent extends Event {
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     // TODO: Change the 'button' to sub events. - Lex 0422202
-    @Cancelable
-    public static class InteractionKeyMappingTriggered extends InputEvent {
+    final class InteractionKeyMappingTriggered extends MutableEvent implements Cancellable, InputEvent {
+        public static final CancellableEventBus<InteractionKeyMappingTriggered> BUS = CancellableEventBus.create(InteractionKeyMappingTriggered.class);
+
         private final int button;
         private final KeyMapping keyMapping;
         private final InteractionHand hand;

@@ -6,6 +6,7 @@
 package net.minecraftforge.event.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 
 /**
@@ -15,10 +16,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
  * You can obtain a reference to the server with this event.
  * @author cpw
  */
-public class ServerAboutToStartEvent extends ServerLifecycleEvent {
-
-    public ServerAboutToStartEvent(MinecraftServer server)
-    {
-        super(server);
-    }
+public record ServerAboutToStartEvent(MinecraftServer server) implements ServerLifecycleEvent {
+    public static final EventBus<ServerAboutToStartEvent> BUS = EventBus.create(ServerAboutToStartEvent.class);
 }

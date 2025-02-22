@@ -10,9 +10,8 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 import net.minecraftforge.client.event.sound.SoundEvent.SoundSourceEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when a <em>non-streaming</em> sound is being played. A non-streaming sound is loaded fully into memory
@@ -26,11 +25,9 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see PlayStreamingSourceEvent
  */
-public class PlaySoundSourceEvent extends SoundSourceEvent
-{
-    @ApiStatus.Internal
-    public PlaySoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
-    {
-        super(engine, sound, channel);
+public record PlaySoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel, String name)
+        implements RecordEvent, SoundSourceEvent {
+    public PlaySoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel) {
+        this(engine, sound, channel, sound.getLocation().getPath());
     }
 }

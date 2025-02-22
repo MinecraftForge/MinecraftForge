@@ -9,19 +9,41 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 import com.google.common.base.Preconditions;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * Base class for Noteblock Events
  *
  */
-public class NoteBlockEvent extends BlockEvent {
+public sealed class NoteBlockEvent extends MutableEvent implements BlockEvent {
+    private final Level level;
+    private final BlockPos pos;
+    private final BlockState state;
     private int noteId;
 
-    protected NoteBlockEvent(Level world, BlockPos pos, BlockState state, int note) {
-        super(world, pos, state);
+    @Override
+    public Level level() {
+        return level;
+    }
+
+    @Override
+    public BlockPos pos() {
+        return pos;
+    }
+
+    @Override
+    public BlockState state() {
+        return state;
+    }
+
+    protected NoteBlockEvent(Level level, BlockPos pos, BlockState state, int note) {
+        this.level = level;
+        this.pos = pos;
+        this.state = state;
         this.noteId = note;
     }
 
@@ -64,8 +86,9 @@ public class NoteBlockEvent extends BlockEvent {
      * Fired when a Noteblock plays it's note. You can override the note and instrument
      * Canceling this event will stop the note from playing.
      */
-    @Cancelable
-    public static class Play extends NoteBlockEvent {
+    public static final class Play extends NoteBlockEvent implements Cancellable {
+        public static final CancellableEventBus<NoteBlockEvent.Play> BUS = CancellableEventBus.create(NoteBlockEvent.Play.class);
+
         private NoteBlockInstrument instrument;
 
         public Play(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument) {
@@ -86,8 +109,9 @@ public class NoteBlockEvent extends BlockEvent {
      * Fired when a Noteblock is changed. You can adjust the note it will change to via {@link #setNote(Note, Octave)}.
      * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
      */
-    @Cancelable
-    public static class Change extends NoteBlockEvent {
+    public static final class Change extends NoteBlockEvent implements Cancellable {
+        public static final CancellableEventBus<NoteBlockEvent.Change> BUS = CancellableEventBus.create(NoteBlockEvent.Change.class);
+
         private final Note oldNote;
         private final Octave oldOctave;
 
@@ -111,7 +135,7 @@ public class NoteBlockEvent extends BlockEvent {
      * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
-    public static enum Note {
+    public enum Note {
         F_SHARP,
         G,
         G_SHARP,
@@ -137,7 +161,7 @@ public class NoteBlockEvent extends BlockEvent {
      * Together with {@link Note} it fully describes the note.
      *
      */
-    public static enum Octave {
+    public enum Octave {
         LOW,
         MID,
         HIGH; // only valid for F_SHARP

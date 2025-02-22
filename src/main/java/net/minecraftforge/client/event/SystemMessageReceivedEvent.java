@@ -6,8 +6,9 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -17,8 +18,9 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>If the event is cancelled, the message is not displayed in the chat message window.</p>
  *
  */
-@Cancelable
-public class SystemMessageReceivedEvent extends Event {
+public final class SystemMessageReceivedEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<SystemMessageReceivedEvent> BUS = CancellableEventBus.create(SystemMessageReceivedEvent.class);
+
     private Component message;
     private final boolean overlay;
 

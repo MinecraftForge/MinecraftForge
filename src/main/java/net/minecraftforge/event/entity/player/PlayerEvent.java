@@ -17,14 +17,16 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.MarkerEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -34,21 +36,19 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerEvent extends LivingEvent
-{
-    private final Player player;
-
-    public PlayerEvent(Player player)
-    {
-        super(player);
-        this.player = player;
-    }
-
+@MarkerEvent
+public sealed interface PlayerEvent extends LivingEvent
+        permits AdvancementEvent, AnvilRepairEvent, ArrowLooseEvent, AttackEntityEvent, CriticalHitEvent,
+                EntityItemPickupEvent, PermissionsChangedEvent, PlayerContainerEvent, PlayerDestroyItemEvent,
+                PlayerEvent.BreakSpeed, PlayerEvent.Clone, PlayerEvent.HarvestCheck, PlayerEvent.ItemCraftedEvent,
+                PlayerEvent.ItemPickupEvent, PlayerEvent.ItemSmeltedEvent, PlayerEvent.LoadFromFile,
+                PlayerEvent.NameFormat, PlayerEvent.PlayerChangeGameModeEvent, PlayerEvent.PlayerChangedDimensionEvent,
+                PlayerEvent.PlayerLoggedInEvent, PlayerEvent.PlayerLoggedOutEvent, PlayerEvent.PlayerRespawnEvent,
+                PlayerEvent.SaveToFile, PlayerEvent.StartTracking, PlayerEvent.StopTracking,
+                PlayerEvent.TabListNameFormat, PlayerSleepInBedEvent, PlayerWakeUpEvent, PlayerXpEvent,
+                TradeWithVillagerEvent {
     @Override
-    public Player getEntity()
-    {
-        return player;
-    }
+    Player entity();
 
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
@@ -66,14 +66,15 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class HarvestCheck extends PlayerEvent
-    {
+    final class HarvestCheck implements PlayerEvent {
+        public static final EventBus<HarvestCheck> BUS = EventBus.create(HarvestCheck.class);
+
+        private final Player player;
         private final BlockState state;
         private boolean success;
 
-        public HarvestCheck(Player player, BlockState state, boolean success)
-        {
-            super(player);
+        public HarvestCheck(Player player, BlockState state, boolean success) {
+            this.player = player;
             this.state = state;
             this.success = success;
         }
@@ -81,6 +82,9 @@ public class PlayerEvent extends LivingEvent
         public BlockState getTargetBlock() { return this.state; }
         public boolean canHarvest() { return this.success; }
         public void setCanHarvest(boolean success){ this.success = success; }
+
+        @Override
+        public Player entity() { return player; }
     }
 
     /**
@@ -102,18 +106,18 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @Cancelable
-    public static class BreakSpeed extends PlayerEvent
-    {
+    final class BreakSpeed implements Cancellable, PlayerEvent {
+        public static final CancellableEventBus<BreakSpeed> BUS = CancellableEventBus.create(BreakSpeed.class);
+
+        private final Player player;
         private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
         private final BlockState state;
         private final float originalSpeed;
         private float newSpeed = 0.0f;
         private final Optional<BlockPos> pos; // Y position of -1 notes unknown location
 
-        public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos)
-        {
-            super(player);
+        public BreakSpeed(Player player, BlockState state, float original, @Nullable BlockPos pos) {
+            this.player = player;
             this.state = state;
             this.originalSpeed = original;
             this.setNewSpeed(original);
@@ -125,6 +129,9 @@ public class PlayerEvent extends LivingEvent
         public float getNewSpeed() { return newSpeed; }
         public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
         public Optional<BlockPos> getPosition() { return this.pos; }
+
+        @Override
+        public Player entity() { return player; }
     }
 
     /**
@@ -143,14 +150,15 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class NameFormat extends PlayerEvent
-    {
+    final class NameFormat implements PlayerEvent {
+        public static final EventBus<NameFormat> BUS = EventBus.create(NameFormat.class);
+
+        private final Player player;
         private final Component username;
         private Component displayname;
 
-        public NameFormat(Player player, Component username)
-        {
-            super(player);
+        public NameFormat(Player player, Component username) {
+            this.player = player;
             this.username = username;
             this.setDisplayname(username);
         }
@@ -169,6 +177,9 @@ public class PlayerEvent extends LivingEvent
         {
             this.displayname = displayname;
         }
+
+        @Override
+        public Player entity() { return player; }
     }
 
     /**
@@ -186,14 +197,16 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class TabListNameFormat extends PlayerEvent
-    {
+    final class TabListNameFormat implements PlayerEvent {
+        public static final EventBus<TabListNameFormat> BUS = EventBus.create(TabListNameFormat.class);
+
+        private final Player player;
+
         @Nullable
         private Component displayName;
 
-        public TabListNameFormat(Player player)
-        {
-            super(player);
+        public TabListNameFormat(Player player) {
+            this.player = player;
         }
 
         @Nullable
@@ -206,86 +219,38 @@ public class PlayerEvent extends LivingEvent
         {
             this.displayName = displayName;
         }
+
+        @Override
+        public Player entity() { return player; }
     }
 
     /**
      * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
+     *
+     * @param original The old player that this new entity is a clone of.
+     * @param isWasDeath True if this event was fired because the player died. False if it was fired because the entity switched dimensions.
      */
-    public static class Clone extends PlayerEvent
-    {
-        private final Player original;
-        private final boolean wasDeath;
-
-        public Clone(Player _new, Player oldPlayer, boolean wasDeath)
-        {
-            super(_new);
-            this.original = oldPlayer;
-            this.wasDeath = wasDeath;
-        }
-
-        /**
-         * The old EntityPlayer that this new entity is a clone of.
-         */
-        public Player getOriginal()
-        {
-            return original;
-        }
-
-        /**
-         * True if this event was fired because the player died.
-         * False if it was fired because the entity switched dimensions.
-         */
-        public boolean isWasDeath()
-        {
-            return wasDeath;
-        }
+    record Clone(Player entity, Player original, boolean isWasDeath) implements PlayerEvent {
+        public static final EventBus<Clone> BUS = EventBus.create(Clone.class);
     }
 
     /**
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
      *
+     * @param target The Entity now being tracked.
      */
-    public static class StartTracking extends PlayerEvent {
-
-        private final Entity target;
-
-        public StartTracking(Player player, Entity target)
-        {
-            super(player);
-            this.target = target;
-        }
-
-        /**
-         * The Entity now being tracked.
-         */
-        public Entity getTarget()
-        {
-            return target;
-        }
+    record StartTracking(Player entity, Entity target) implements PlayerEvent {
+        public static final EventBus<StartTracking> BUS = EventBus.create(StartTracking.class);
     }
 
     /**
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
      *
+     * @param target The Entity no longer being tracked.
      */
-    public static class StopTracking extends PlayerEvent {
-
-        private final Entity target;
-
-        public StopTracking(Player player, Entity target)
-        {
-            super(player);
-            this.target = target;
-        }
-
-        /**
-         * The Entity no longer being tracked.
-         */
-        public Entity getTarget()
-        {
-            return target;
-        }
+    record StopTracking(Player entity, Entity target) implements PlayerEvent {
+        public static final EventBus<StopTracking> BUS = EventBus.create(StopTracking.class);
     }
 
     /**
@@ -293,44 +258,20 @@ public class PlayerEvent extends LivingEvent
      * player won't have been added to the world yet. Intended to
      * allow mods to load an additional file from the players directory
      * containing additional mod related player data.
+     *
+     * @param playerDirectory The directory where player data is being stored. Use this to locate your mod additional file.
+     * @param playerUUID The UUID is the standard for player related file storage. It is broken out here for convenience for quick file generation.
      */
-    public static class LoadFromFile extends PlayerEvent {
-        private final File playerDirectory;
-        private final String playerUUID;
-
-        public LoadFromFile(Player player, File originDirectory, String playerUUID)
-        {
-            super(player);
-            this.playerDirectory = originDirectory;
-            this.playerUUID = playerUUID;
-        }
+    record LoadFromFile(Player entity, File playerDirectory, String playerUUID) implements PlayerEvent {
+        public static final EventBus<LoadFromFile> BUS = EventBus.create(LoadFromFile.class);
 
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
          */
-        public File getPlayerFile(String suffix)
-        {
+        public File getPlayerFile(String suffix) {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
-        }
-
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public File getPlayerDirectory()
-        {
-            return playerDirectory;
-        }
-
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public String getPlayerUUID()
-        {
-            return playerUUID;
+            return new File(playerDirectory(), playerUUID() + "." +suffix);
         }
     }
     /**
@@ -345,180 +286,69 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
      * corrupt the world state.
+     *
+     * @param playerDirectory The directory where player data is being stored. Use this to locate your mod additional file.
+     * @param playerUUID The UUID is the standard for player related file storage. It is broken out here for convenience for quick file generation.
      */
-    public static class SaveToFile extends PlayerEvent {
-        private final File playerDirectory;
-        private final String playerUUID;
-
-        public SaveToFile(Player player, File originDirectory, String playerUUID)
-        {
-            super(player);
-            this.playerDirectory = originDirectory;
-            this.playerUUID = playerUUID;
-        }
-
+    record SaveToFile(Player entity, File playerDirectory, String playerUUID) implements PlayerEvent {
         /**
          * Construct and return a recommended file for the supplied suffix
          * @param suffix The suffix to use.
          */
-        public File getPlayerFile(String suffix)
-        {
+        public File getPlayerFile(String suffix) {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
-        }
-
-        /**
-         * The directory where player data is being stored. Use this
-         * to locate your mod additional file.
-         */
-        public File getPlayerDirectory()
-        {
-            return playerDirectory;
-        }
-
-        /**
-         * The UUID is the standard for player related file storage.
-         * It is broken out here for convenience for quick file generation.
-         */
-        public String getPlayerUUID()
-        {
-            return playerUUID;
+            return new File(playerDirectory(), playerUUID() + "." + suffix);
         }
     }
 
-    public static class ItemPickupEvent extends PlayerEvent {
-        /**
-         * Original EntityItem with current remaining stack size
-         */
-        private final ItemEntity originalEntity;
-        /**
-         * Clone item stack, containing the item and amount picked up
-         */
-        private final ItemStack stack;
-        public ItemPickupEvent(Player player, ItemEntity entPickedUp, ItemStack stack)
-        {
-            super(player);
-            this.originalEntity = entPickedUp;
-            this.stack = stack;
-        }
-
-        public ItemStack getStack() {
-            return stack;
-        }
-
-        public ItemEntity getOriginalEntity() {
-            return originalEntity;
-        }
+    /**
+     * @param originalEntity The original item entity with the current remaining stack size
+     * @param stack The clone item stack, containing the item and amount picked up
+     */
+    record ItemPickupEvent(Player entity, ItemEntity originalEntity, ItemStack stack) implements PlayerEvent {
+        public static final EventBus<ItemPickupEvent> BUS = EventBus.create(ItemPickupEvent.class);
     }
 
-    public static class ItemCraftedEvent extends PlayerEvent {
-        @NotNull
-        private final ItemStack crafting;
-        private final Container craftMatrix;
-        public ItemCraftedEvent(Player player, @NotNull ItemStack crafting, Container craftMatrix)
-        {
-            super(player);
-            this.crafting = crafting;
-            this.craftMatrix = craftMatrix;
-        }
-
-        @NotNull
-        public ItemStack getCrafting()
-        {
-            return this.crafting;
-        }
-
-        public Container getInventory()
-        {
-            return this.craftMatrix;
-        }
+    record ItemCraftedEvent(Player entity, ItemStack crafting, Container inventory) implements PlayerEvent {
+        public static final EventBus<ItemCraftedEvent> BUS = EventBus.create(ItemCraftedEvent.class);
     }
 
-    public static class ItemSmeltedEvent extends PlayerEvent {
-        @NotNull
-        private final ItemStack smelting;
-        public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting)
-        {
-            super(player);
-            this.smelting = crafting;
-        }
-
-        @NotNull
-        public ItemStack getSmelting()
-        {
-            return this.smelting;
-        }
+    record ItemSmeltedEvent(Player entity, ItemStack smelting) implements PlayerEvent {
+        public static final EventBus<ItemSmeltedEvent> BUS = EventBus.create(ItemSmeltedEvent.class);
     }
 
-    public static class PlayerLoggedInEvent extends PlayerEvent {
-        public PlayerLoggedInEvent(Player player)
-        {
-            super(player);
-        }
+    record PlayerLoggedInEvent(Player entity) implements PlayerEvent {
+        public static final EventBus<PlayerLoggedInEvent> BUS = EventBus.create(PlayerLoggedInEvent.class);
     }
 
-    public static class PlayerLoggedOutEvent extends PlayerEvent {
-        public PlayerLoggedOutEvent(Player player)
-        {
-            super(player);
-        }
+    record PlayerLoggedOutEvent(Player entity) implements PlayerEvent {
+        public static final EventBus<PlayerLoggedOutEvent> BUS = EventBus.create(PlayerLoggedOutEvent.class);
     }
 
-    public static class PlayerRespawnEvent extends PlayerEvent {
-        private final boolean endConquered;
-
-        public PlayerRespawnEvent(Player player, boolean endConquered)
-        {
-            super(player);
-            this.endConquered = endConquered;
-        }
-
-        /**
-         * Did this respawn event come from the player conquering the end?
-         * @return if this respawn was because the player conquered the end
-         */
-        public boolean isEndConquered()
-        {
-            return this.endConquered;
-        }
-
-
+    /**
+     * @param isEndConquered True if the respawn event came from the player conquering the end
+     */
+    record PlayerRespawnEvent(Player entity, boolean isEndConquered) implements PlayerEvent {
+        public static final EventBus<PlayerRespawnEvent> BUS = EventBus.create(PlayerRespawnEvent.class);
     }
 
-    public static class PlayerChangedDimensionEvent extends PlayerEvent {
-        private final ResourceKey<Level> fromDim;
-        private final ResourceKey<Level> toDim;
-        public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
-        {
-            super(player);
-            this.fromDim = fromDim;
-            this.toDim = toDim;
-        }
-
-        public ResourceKey<Level> getFrom()
-        {
-            return this.fromDim;
-        }
-
-        public ResourceKey<Level> getTo()
-        {
-            return this.toDim;
-        }
+    record PlayerChangedDimensionEvent(Player entity, ResourceKey<Level> from, ResourceKey<Level> to) implements PlayerEvent {
+        public static final EventBus<PlayerChangedDimensionEvent> BUS = EventBus.create(PlayerChangedDimensionEvent.class);
     }
 
     /**
      * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
      * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
      */
-    @Cancelable
-    public static class PlayerChangeGameModeEvent extends PlayerEvent
-    {
+    final class PlayerChangeGameModeEvent implements Cancellable, PlayerEvent {
+        public static final CancellableEventBus<PlayerChangeGameModeEvent> BUS = CancellableEventBus.create(PlayerChangeGameModeEvent.class);
+
+        private final Player player;
         private final GameType currentGameMode;
         private GameType newGameMode;
 
-        public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode)
-        {
-            super(player);
+        public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode) {
+            this.player = player;
             this.currentGameMode = currentGameMode;
             this.newGameMode = newGameMode;
         }
@@ -540,5 +370,8 @@ public class PlayerEvent extends LivingEvent
         {
             this.newGameMode = newGameMode;
         }
+
+        @Override
+        public Player entity() { return player; }
     }
 }

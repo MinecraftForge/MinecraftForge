@@ -11,10 +11,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ObjectiveArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired to allow mods to register client commands.
@@ -32,33 +31,12 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
+ * @param dispatcher the command dispatcher for registering commands to be executed on the client
+ * @param context the context to build the commands for
+ *
  * @see net.minecraftforge.event.RegisterCommandsEvent
  */
-public class RegisterClientCommandsEvent extends Event
-{
-    private final CommandDispatcher<CommandSourceStack> dispatcher;
-    private final CommandBuildContext context;
-
-    @ApiStatus.Internal
-    public RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
-    {
-        this.dispatcher = dispatcher;
-        this.context = context;
-    }
-
-    /**
-     * {@return the command dispatcher for registering commands to be executed on the client}
-     */
-    public CommandDispatcher<CommandSourceStack> getDispatcher()
-    {
-        return dispatcher;
-    }
-
-    /**
-     * {@return the context to build the commands for}
-     */
-    public CommandBuildContext getBuildContext()
-    {
-        return context;
-    }
+public record RegisterClientCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context)
+        implements RecordEvent {
+    public static final EventBus<RegisterClientCommandsEvent> BUS = EventBus.create(RegisterClientCommandsEvent.class);
 }

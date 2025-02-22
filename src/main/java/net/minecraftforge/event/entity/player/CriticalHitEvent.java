@@ -6,10 +6,14 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+
+import java.util.Objects;
 
 /**
  * This event is fired whenever a player attacks an Entity in
@@ -24,17 +28,19 @@ import net.minecraft.world.entity.player.Player;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@HasResult
-public class CriticalHitEvent extends PlayerEvent
-{
+public final class CriticalHitEvent extends MutableEvent implements PlayerEvent, HasResult {
+    public static final EventBus<CriticalHitEvent> BUS = EventBus.create(CriticalHitEvent.class);
+
+    private final Player player;
     private float damageModifier;
     private final float oldDamageModifier;
     private final Entity target;
     private final boolean vanillaCritical;
+    private Result result = Result.DEFAULT;
     
     public CriticalHitEvent(Player player, Entity target, float damageModifier, boolean vanillaCritical)
     {
-        super(player);
+        this.player = player;
         this.target = target;
         this.damageModifier = damageModifier;
         this.oldDamageModifier = damageModifier;
@@ -82,5 +88,21 @@ public class CriticalHitEvent extends PlayerEvent
     public boolean isVanillaCritical()
     {
         return vanillaCritical;
+    }
+
+    @Override
+    public Player entity() {
+        return player;
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        Objects.requireNonNull(result);
+        this.result = result;
     }
 }

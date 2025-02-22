@@ -11,10 +11,14 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Objects;
 
 /**
  * Fired before an entity renderer renders the nameplate of an entity.
@@ -31,8 +35,9 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see EntityRenderer
  */
-@Event.HasResult
-public class RenderNameTagEvent extends Event {
+public final class RenderNameTagEvent extends MutableEvent implements HasResult {
+    public static final EventBus<RenderNameTagEvent> BUS = EventBus.create(RenderNameTagEvent.class);
+
     private Component nameplateContent;
     private final EntityRenderState state;
     private final Component originalContent;
@@ -40,6 +45,7 @@ public class RenderNameTagEvent extends Event {
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;
+    private Result result = Result.DEFAULT;
 
     @ApiStatus.Internal
     public RenderNameTagEvent(EntityRenderState state, Component content, EntityRenderer<?, ?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
@@ -108,5 +114,16 @@ public class RenderNameTagEvent extends Event {
      */
     public int getPackedLight() {
         return this.packedLight;
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        Objects.requireNonNull(result);
+        this.result = result;
     }
 }

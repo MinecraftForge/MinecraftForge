@@ -9,9 +9,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingDeathEvent is fired when an Entity dies. <br>
@@ -31,18 +32,7 @@ import net.minecraft.world.entity.LivingEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class LivingDeathEvent extends LivingEvent
-{
-    private final DamageSource source;
-    public LivingDeathEvent(LivingEntity entity, DamageSource source)
-    {
-        super(entity);
-        this.source = source;
-    }
-
-    public DamageSource getSource()
-    {
-        return source;
-    }
+public record LivingDeathEvent(LivingEntity entity, DamageSource source)
+        implements Cancellable, LivingEvent {
+    public static final CancellableEventBus<LivingDeathEvent> BUS = CancellableEventBus.create(LivingDeathEvent.class);
 }

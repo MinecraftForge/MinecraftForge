@@ -13,36 +13,30 @@ import java.util.function.BooleanSupplier;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.Event;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfPosting;
 import net.minecraftforge.fml.LogicalSide;
 
-public class TickEvent extends Event {
-    public enum Type {
-        LEVEL, PLAYER, CLIENT, SERVER, RENDER;
+public sealed interface TickEvent {
+    enum Type {
+        LEVEL, PLAYER, CLIENT, SERVER, RENDER
     }
 
-    public enum Phase {
-        START, END;
-    }
+    Type type();
+    LogicalSide side();
 
-    public final Type type;
-    public final LogicalSide side;
-    public final Phase phase;
+    sealed interface ServerTickEvent extends TickEvent {
+        @Override
+        default Type type() {
+            return Type.SERVER;
+        }
 
-    public TickEvent(Type type, LogicalSide side, Phase phase) {
-        this.type = type;
-        this.side = side;
-        this.phase = phase;
-    }
-
-    public static class ServerTickEvent extends TickEvent {
-        private final BooleanSupplier haveTime;
-        private final MinecraftServer server;
-
-        protected ServerTickEvent(BooleanSupplier haveTime, MinecraftServer server, Phase phase) {
-            super(Type.SERVER, LogicalSide.SERVER, phase);
-            this.haveTime = haveTime;
-            this.server = server;
+        @Override
+        default LogicalSide side() {
+            return LogicalSide.SERVER;
         }
 
         /**
@@ -50,57 +44,69 @@ public class TickEvent extends Event {
          * additional tasks (usually IO related) during the current tick,
          * otherwise {@code false}
          */
-        public boolean haveTime() {
-            return this.haveTime.getAsBoolean();
+        default boolean haveTime() {
+            return haveTimeSupplier().getAsBoolean();
         }
+
+        BooleanSupplier haveTimeSupplier();
 
         /**
          * {@return the server instance}
          */
-        public MinecraftServer getServer() {
-            return server;
+        MinecraftServer server();
+
+        record Pre(BooleanSupplier haveTimeSupplier, MinecraftServer server) implements ServerTickEvent, RecordEvent {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
         }
 
-        public static class Pre extends ServerTickEvent {
-            public Pre(BooleanSupplier haveTime, MinecraftServer server) {
-                super(haveTime, server, Phase.START);
+        record Post(BooleanSupplier haveTimeSupplier, MinecraftServer server) implements ServerTickEvent, RecordEvent {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
+        }
+    }
+
+    sealed interface ClientTickEvent<T extends Event> extends TickEvent, SelfPosting<T> {
+        @Override
+        default Type type() {
+            return Type.CLIENT;
+        }
+
+        @Override
+        default LogicalSide side() {
+            return LogicalSide.CLIENT;
+        }
+
+        final class Pre extends MutableEvent implements ClientTickEvent<Pre> {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
+            public static final Pre INSTANCE = new Pre();
+
+            private Pre() {}
+
+            @Override
+            public EventBus<Pre> getDefaultBus() {
+                return BUS;
             }
         }
 
-        public static class Post extends ServerTickEvent {
-            public Post(BooleanSupplier haveTime, MinecraftServer server) {
-                super(haveTime, server, Phase.END);
+        final class Post extends MutableEvent implements ClientTickEvent<Post> {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
+            public static final Post INSTANCE = new Post();
+            
+            private Post() {}
+
+            @Override
+            public EventBus<Post> getDefaultBus() {
+                return BUS;
             }
         }
     }
 
-    public static class ClientTickEvent extends TickEvent {
-        protected ClientTickEvent(Phase phase) {
-            super(Type.CLIENT, LogicalSide.CLIENT, phase);
+    sealed interface LevelTickEvent extends TickEvent {
+        @Override
+        default Type type() {
+            return Type.LEVEL;
         }
 
-        public static class Pre extends ClientTickEvent {
-            public Pre() {
-                super(Phase.START);
-            }
-        }
-
-        public static class Post extends ClientTickEvent {
-            public Post() {
-                super(Phase.END);
-            }
-        }
-    }
-
-    public static class LevelTickEvent extends TickEvent {
-        public final Level level;
-        private final BooleanSupplier haveTime;
-
-        protected LevelTickEvent(LogicalSide side, Level level, BooleanSupplier haveTime, Phase phase) {
-            super(Type.LEVEL, side, phase);
-            this.level = level;
-            this.haveTime = haveTime;
-        }
+        Level level();
 
         /**
          * @return {@code true} whether the server has enough time to perform any
@@ -108,67 +114,69 @@ public class TickEvent extends Event {
          * otherwise {@code false}
          * @see ServerTickEvent#haveTime()
          */
-        public boolean haveTime() {
-            return this.haveTime.getAsBoolean();
+        default boolean haveTime() {
+            return haveTimeSupplier().getAsBoolean();
         }
 
-        public static class Pre extends LevelTickEvent {
-            public Pre(LogicalSide side, Level level, BooleanSupplier haveTime) {
-                super(side, level, haveTime, Phase.START);
-            }
+        BooleanSupplier haveTimeSupplier();
+
+        record Pre(LogicalSide side, Level level, BooleanSupplier haveTimeSupplier) implements LevelTickEvent, RecordEvent {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
         }
 
-        public static class Post extends LevelTickEvent {
-            public Post(LogicalSide side, Level level, BooleanSupplier haveTime) {
-                super(side, level, haveTime, Phase.END);
-            }
+        record Post(LogicalSide side, Level level, BooleanSupplier haveTimeSupplier) implements LevelTickEvent, RecordEvent {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
         }
     }
 
-    public static class PlayerTickEvent extends TickEvent {
-        public final Player player;
-
-        protected PlayerTickEvent(Player player, Phase phase) {
-            super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
-            this.player = player;
+    sealed interface PlayerTickEvent extends TickEvent {
+        @Override
+        default Type type() {
+            return Type.PLAYER;
         }
 
-        public static class Pre extends PlayerTickEvent {
+        Player player();
+
+        record Pre(Player player, LogicalSide side) implements RecordEvent, PlayerTickEvent {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
+
             public Pre(Player player) {
-                super(player, Phase.START);
+                this(player, getSide(player));
             }
         }
 
-        public static class Post extends PlayerTickEvent {
+        record Post(Player player, LogicalSide side) implements RecordEvent, PlayerTickEvent {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
             public Post(Player player) {
-                super(player, Phase.END);
+                this(player, getSide(player));
             }
+        }
+
+        private static LogicalSide getSide(Player player) {
+            return player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT;
         }
     }
 
-    public static class RenderTickEvent extends TickEvent {
-        private final DeltaTracker timer;
-
-        private RenderTickEvent(Phase phase, DeltaTracker timer) {
-            super(Type.RENDER, LogicalSide.CLIENT, phase);
-            this.timer = timer;
+    sealed interface RenderTickEvent extends TickEvent {
+        @Override
+        default Type type() {
+            return Type.RENDER;
         }
 
-        public DeltaTracker getTimer() {
-            return this.timer;
+        @Override
+        default LogicalSide side() {
+            return LogicalSide.CLIENT;
         }
 
-        public static class Pre extends RenderTickEvent {
-            public Pre(DeltaTracker timer) {
-                super(Phase.START, timer);
-            }
+        DeltaTracker timer();
+
+        record Pre(DeltaTracker timer) implements RenderTickEvent, RecordEvent {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
         }
 
-        public static class Post extends RenderTickEvent {
-            public Post(DeltaTracker timer) {
-                super(Phase.END, timer);
-            }
+        record Post(DeltaTracker timer) implements RenderTickEvent, RecordEvent {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
         }
-
     }
 }

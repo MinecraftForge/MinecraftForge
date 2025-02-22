@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,10 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ArrowNockEvent extends PlayerEvent {
+public final class ArrowNockEvent implements PlayerEvent {
+    public static final EventBus<ArrowNockEvent> BUS = EventBus.create(ArrowNockEvent.class);
+
+    private final Player player;
     private final ItemStack bow;
     private final InteractionHand hand;
     private final Level level;
@@ -29,7 +33,7 @@ public class ArrowNockEvent extends PlayerEvent {
     private InteractionResult action;
 
     public ArrowNockEvent(Player player, @NotNull ItemStack item, InteractionHand hand, Level level, boolean hasAmmo) {
-        super(player);
+        this.player = player;
         this.bow = item;
         this.hand = hand;
         this.level = level;
@@ -47,5 +51,10 @@ public class ArrowNockEvent extends PlayerEvent {
 
     public void setAction(InteractionResult action) {
         this.action = action;
+    }
+
+    @Override
+    public Player entity() {
+        return player;
     }
 }

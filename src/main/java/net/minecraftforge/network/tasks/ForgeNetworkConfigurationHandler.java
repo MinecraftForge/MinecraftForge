@@ -14,8 +14,7 @@ import net.minecraftforge.network.NetworkContext;
 
 @ApiStatus.Internal
 public class ForgeNetworkConfigurationHandler {
-    @SubscribeEvent
-    public void gatherInit(GatherLoginConfigurationTasksEvent event) {
+    public static void gatherInit(GatherLoginConfigurationTasksEvent event) {
         var ctx = NetworkContext.get(event.getConnection());
         if (ctx.getType() != ConnectionType.MODDED)
             return;

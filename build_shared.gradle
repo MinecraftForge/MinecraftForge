@@ -12,7 +12,7 @@ repositories {
     mavenCentral()
     maven gradleutils.forgeMaven
     maven gradleutils.minecraftLibsMaven
-    //mavenLocal()
+    mavenLocal()
 }
 
 tasks.withType(Javadoc).configureEach {

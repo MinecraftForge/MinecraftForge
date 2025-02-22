@@ -6,15 +6,14 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before the player's arm is rendered in first person. This is a more targeted version of {@link RenderHandEvent},
@@ -26,49 +25,22 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @param poseStack the pose stack used for rendering
+ * @param multiBufferSource the source of rendering buffers
+ * @param arm the arm being rendered
  */
-@Cancelable
-public class RenderArmEvent extends Event {
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-    private final HumanoidArm arm;
-
-    @ApiStatus.Internal
-    public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, HumanoidArm arm) {
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-        this.arm = arm;
-    }
-
-    /**
-     * {@return the arm being rendered}
-     */
-    public HumanoidArm getArm() {
-        return arm;
-    }
-
-    /**
-     * {@return the pose stack used for rendering}
-     */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    /**
-     * {@return the source of rendering buffers}
-     */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+public record RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, HumanoidArm arm)
+        implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<RenderArmEvent> BUS = CancellableEventBus.create(RenderArmEvent.class);
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
      *
      * @see LightTexture
      */
-    public int getPackedLight() {
+    @Override
+    public int packedLight() {
         return packedLight;
     }
 }

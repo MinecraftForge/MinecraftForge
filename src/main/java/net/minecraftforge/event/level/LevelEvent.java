@@ -23,8 +23,11 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.ForgeInternalHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -32,22 +35,13 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>
  * All children of this event are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}.
  */
-public class LevelEvent extends Event
-{
-    private final LevelAccessor level;
-
-    public LevelEvent(LevelAccessor level)
-    {
-        this.level = level;
-    }
-
+public sealed interface LevelEvent
+        permits LevelEvent.Load, LevelEvent.Unload, LevelEvent.Save, LevelEvent.CreateSpawnPosition,
+                LevelEvent.PotentialSpawns, ChunkEvent, SaplingGrowTreeEvent, SleepFinishedTimeEvent {
     /**
      * {@return the level this event is affecting}
      */
-    public LevelAccessor getLevel()
-    {
-        return level;
-    }
+    LevelAccessor level();
 
     /**
      * This event is fired whenever a level loads.
@@ -59,9 +53,8 @@ public class LevelEvent extends Event
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Load extends LevelEvent
-    {
-        public Load(LevelAccessor level) { super(level); }
+    record Load(LevelAccessor level) implements LevelEvent, RecordEvent {
+        public static final EventBus<LevelEvent.Load> BUS = EventBus.create(LevelEvent.Load.class);
     }
 
     /**
@@ -77,9 +70,8 @@ public class LevelEvent extends Event
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Unload extends LevelEvent
-    {
-        public Unload(LevelAccessor level) { super(level); }
+    record Unload(LevelAccessor level) implements LevelEvent, RecordEvent {
+        public static final EventBus<LevelEvent.Unload> BUS = EventBus.create(LevelEvent.Unload.class);
     }
 
     /**
@@ -92,9 +84,8 @@ public class LevelEvent extends Event
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Save extends LevelEvent
-    {
-        public Save(LevelAccessor level) { super(level); }
+    record Save(LevelAccessor level) implements LevelEvent, RecordEvent {
+        public static final EventBus<LevelEvent.Save> BUS = EventBus.create(LevelEvent.Save.class);
     }
 
     /**
@@ -109,21 +100,8 @@ public class LevelEvent extends Event
      *
      * @see ServerLevelData#isInitialized()
      */
-    @Cancelable
-    public static class CreateSpawnPosition extends LevelEvent
-    {
-        private final ServerLevelData settings;
-
-        public CreateSpawnPosition(LevelAccessor level, ServerLevelData settings)
-        {
-            super(level);
-            this.settings = settings;
-        }
-
-        public ServerLevelData getSettings()
-        {
-            return settings;
-        }
+    record CreateSpawnPosition(LevelAccessor level, ServerLevelData settings) implements Cancellable, LevelEvent, RecordEvent {
+        public static final CancellableEventBus<CreateSpawnPosition> BUS = CancellableEventBus.create(LevelEvent.CreateSpawnPosition.class);
     }
 
     /**
@@ -137,17 +115,17 @@ public class LevelEvent extends Event
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * Canceling the event will result in an empty list, meaning no entity will be spawned.</p>
      */
-    @Cancelable
-    public static class PotentialSpawns extends LevelEvent
-    {
+    final class PotentialSpawns extends MutableEvent implements Cancellable, LevelEvent {
+        public static final CancellableEventBus<PotentialSpawns> BUS = CancellableEventBus.create(PotentialSpawns.class);
+
+        private final LevelAccessor level;
         private final MobCategory mobcategory;
         private final BlockPos pos;
         private final List<MobSpawnSettings.SpawnerData> list;
         private final List<MobSpawnSettings.SpawnerData> view;
 
-        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList)
-        {
-            super(level);
+        public PotentialSpawns(LevelAccessor level, MobCategory category, BlockPos pos, WeightedRandomList<MobSpawnSettings.SpawnerData> oldList) {
+            this.level = level;
             this.pos = pos;
             this.mobcategory = category;
             if (!oldList.isEmpty())
@@ -156,6 +134,11 @@ public class LevelEvent extends Event
                 this.list = new ArrayList<>();
 
             this.view = Collections.unmodifiableList(list);
+        }
+
+        @Override
+        public LevelAccessor level() {
+            return level;
         }
 
         /**

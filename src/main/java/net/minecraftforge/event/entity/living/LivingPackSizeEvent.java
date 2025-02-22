@@ -5,17 +5,24 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
 import net.minecraft.world.entity.Mob;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
-@HasResult
-public class LivingPackSizeEvent extends LivingEvent
-{
+import java.util.Objects;
+
+public final class LivingPackSizeEvent extends MutableEvent implements LivingEvent, HasResult {
+    public static final EventBus<LivingPackSizeEvent> BUS = EventBus.create(LivingPackSizeEvent.class);
+
+    private final Mob entity;
+    private Result result = Result.DEFAULT;
     private int maxPackSize;
     
-    public LivingPackSizeEvent(Mob entity)
-    {
-        super(entity);
+    public LivingPackSizeEvent(Mob entity) {
+        this.entity = entity;
     }
 
     /**
@@ -34,5 +41,21 @@ public class LivingPackSizeEvent extends LivingEvent
     public void setMaxPackSize(int maxPackSize)
     {
         this.maxPackSize = maxPackSize;
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        Objects.requireNonNull(result);
+        this.result = result;
+    }
+
+    @Override
+    public LivingEntity entity() {
+        return null;
     }
 }

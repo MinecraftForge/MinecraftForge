@@ -9,7 +9,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -27,50 +26,47 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEvent extends Event {
-    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
+public sealed interface BlockEvent
+        permits BlockEvent.BlockToolModificationEvent, BlockEvent.BreakEvent, BlockEvent.CropGrowEvent,
+                BlockEvent.EntityPlaceEvent, BlockEvent.FarmlandTrampleEvent, BlockEvent.FluidPlaceBlockEvent,
+                BlockEvent.NeighborNotifyEvent, BlockEvent.PortalSpawnEvent, NoteBlockEvent, PistonEvent {
+    boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    private final LevelAccessor level;
-    private final BlockPos pos;
-    private final BlockState state;
-
-    public BlockEvent(LevelAccessor level, BlockPos pos, BlockState state) {
-        this.pos = pos;
-        this.level = level;
-        this.state = state;
-    }
-
-    public LevelAccessor getLevel() {
-        return level;
-    }
-
-    public BlockPos getPos() {
-        return pos;
-    }
-
-    public BlockState getState() {
-        return state;
-    }
+    LevelAccessor level();
+    BlockPos pos();
+    BlockState state();
 
     /**
      * Event that is fired when an Block is about to be broken by a player
      * Canceling this event will prevent the Block from being broken.
      */
-    @Cancelable
-    public static class BreakEvent extends BlockEvent {
+    final class BreakEvent extends MutableEvent implements Cancellable, BlockEvent {
+        public static final CancellableEventBus<BreakEvent> BUS = CancellableEventBus.create(BreakEvent.class);
+
+        private final LevelAccessor level;
+        private final BlockPos pos;
+        private final BlockState state;
+
         /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
         private final Player player;
         private int exp;
 
         public BreakEvent(Level level, BlockPos pos, BlockState state, Player player) {
-            super(level, pos, state);
+            this.level = level;
+            this.pos = pos;
+            this.state = state;
             this.player = player;
 
             if (state == null || !ForgeHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
@@ -82,6 +78,21 @@ public class BlockEvent extends Event {
                 int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(lookup.getOrThrow(Enchantments.SILK_TOUCH), player.getMainHandItem());
                 this.exp = state.getExpDrop(level, level.random, pos, fortuneLevel, silkTouchLevel);
             }
+        }
+
+        @Override
+        public LevelAccessor level() {
+            return level;
+        }
+
+        @Override
+        public BlockPos pos() {
+            return pos;
+        }
+
+        @Override
+        public BlockState state() {
+            return state;
         }
 
         public Player getPlayer() {
@@ -112,30 +123,25 @@ public class BlockEvent extends Event {
      *
      * If a Block Place event is cancelled, the block will not be placed.
      */
-    @Cancelable
-    public static class EntityPlaceEvent extends BlockEvent {
-        private final Entity entity;
-        private final BlockSnapshot blockSnapshot;
-        private final BlockState placedBlock;
-        private final BlockState placedAgainst;
+    record EntityPlaceEvent(
+            LevelAccessor level,
+            BlockPos pos,
+            BlockState state,
+            Entity entity,
+            BlockSnapshot blockSnapshot,
+            BlockState placedBlock,
+            BlockState placedAgainst
+    ) implements Cancellable, BlockEvent, RecordEvent {
+        public static final CancellableEventBus<EntityPlaceEvent> BUS = CancellableEventBus.create(EntityPlaceEvent.class);
 
-        public EntityPlaceEvent(@NotNull BlockSnapshot blockSnapshot, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
-            super(blockSnapshot.getLevel(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
-            this.entity = entity;
-            this.blockSnapshot = blockSnapshot;
-            this.placedBlock = !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
-            this.placedAgainst = placedAgainst;
+        public static EntityPlaceEvent of(BlockSnapshot blockSnapshot, BlockState placedAgainst, Entity entity) {
+            var placedBlock = !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
+            var ret = new EntityPlaceEvent(blockSnapshot.getLevel(), blockSnapshot.getPos(), placedBlock, entity, blockSnapshot, placedBlock, placedAgainst);
+            if (DEBUG)
+                System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", placedBlock, placedAgainst, entity);
 
-            if (DEBUG) {
-                System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
-            }
+            return ret;
         }
-
-        @Nullable
-        public Entity getEntity() { return entity; }
-        public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
-        public BlockState getPlacedBlock() { return placedBlock; }
-        public BlockState getPlacedAgainst() { return placedAgainst; }
     }
 
     /**
@@ -172,34 +178,18 @@ public class BlockEvent extends Event {
      * Fired when a physics update occurs on a block. This event acts as
      * a way for mods to detect physics updates, in the same way a BUD switch
      * does. This event is only called on the server.
+     *
+     * @param notifiedSides A list of directions from the base block that updates will occur upon.
+     * @param forceRedstoneUpdate If redstone update was forced during setBlock call (0x16 to flags)
      */
-    @Cancelable
-    public static class NeighborNotifyEvent extends BlockEvent {
-        private final EnumSet<Direction> notifiedSides;
-        private final boolean forceRedstoneUpdate;
-
-        public NeighborNotifyEvent(Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate) {
-            super(level, pos, state);
-            this.notifiedSides = notifiedSides;
-            this.forceRedstoneUpdate = forceRedstoneUpdate;
-        }
-
-        /**
-         * Gets a list of directions from the base block that updates will occur upon.
-         *
-         * @return list of notified directions
-         */
-        public EnumSet<Direction> getNotifiedSides() {
-            return notifiedSides;
-        }
-
-        /**
-         * Get if redstone update was forced during setBlock call (0x16 to flags)
-         * @return if the flag was set
-         */
-        public boolean getForceRedstoneUpdate() {
-            return forceRedstoneUpdate;
-        }
+    record NeighborNotifyEvent(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            EnumSet<Direction> notifiedSides,
+            boolean forceRedstoneUpdate
+    ) implements Cancellable, BlockEvent, RecordEvent {
+        public static final CancellableEventBus<NeighborNotifyEvent> BUS = CancellableEventBus.create(NeighborNotifyEvent.class);
     }
 
     /**
@@ -208,29 +198,9 @@ public class BlockEvent extends Event {
      * usually doesn't do that (like lava), and a result of DENY prevents creation
      * even if the liquid usually does do that (like water).
      */
-    @HasResult
-    public static class CreateFluidSourceEvent extends Event {
-        private final Level level;
-        private final BlockPos pos;
-        private final BlockState state;
-
-        public CreateFluidSourceEvent(Level level, BlockPos pos, BlockState state) {
-            this.level = level;
-            this.pos = pos;
-            this.state = state;
-        }
-
-        public Level getLevel() {
-            return level;
-        }
-
-        public BlockPos getPos() {
-            return pos;
-        }
-
-        public BlockState getState() {
-            return state;
-        }
+    record CreateFluidSourceEvent(Level level, BlockPos pos, BlockState state, Result.Holder resultHolder)
+            implements RecordEvent, HasResult.Record {
+        public static final EventBus<CreateFluidSourceEvent> BUS = EventBus.create(CreateFluidSourceEvent.class);
     }
 
     /**
@@ -241,14 +211,22 @@ public class BlockEvent extends Event {
      * {@link #getState()} will return the block that was originally going to be placed.
      * {@link #getPos()} will return the position of the block to be changed.
      */
-    @Cancelable
-    public static class FluidPlaceBlockEvent extends BlockEvent {
+    final class FluidPlaceBlockEvent extends MutableEvent implements Cancellable, BlockEvent {
+        public static final CancellableEventBus<FluidPlaceBlockEvent> BUS = CancellableEventBus.create(FluidPlaceBlockEvent.class);
+
+        private final LevelAccessor level;
+        private final BlockPos pos;
+        private final BlockState state;
+
         private final BlockPos liquidPos;
         private BlockState newState;
         private BlockState origState;
 
         public FluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state) {
-            super(level, pos, state);
+            this.level = level;
+            this.pos = pos;
+            this.state = state;
+
             this.liquidPos = liquidPos;
             this.newState = state;
             this.origState = level.getBlockState(pos);
@@ -278,17 +256,29 @@ public class BlockEvent extends Event {
         public BlockState getOriginalState() {
             return origState;
         }
+
+        @Override
+        public LevelAccessor level() {
+            return level;
+        }
+
+        @Override
+        public BlockPos pos() {
+            return pos;
+        }
+
+        @Override
+        public BlockState state() {
+            return state;
+        }
     }
 
     /**
-     * Fired when a crop block grows.  See subevents.
-     *
+     * Fired when a crop block grows.
+     * @see CropGrowEvent.Pre
+     * @see CropGrowEvent.Post
      */
-    public static class CropGrowEvent extends BlockEvent {
-        public CropGrowEvent(Level level, BlockPos pos, BlockState state) {
-            super(level, pos, state);
-        }
-
+    sealed interface CropGrowEvent extends BlockEvent {
         /**
          * Fired when any "growing age" blocks (for example cacti, chorus plants, or crops
          * in vanilla) attempt to advance to the next growth age state during a random tick.<br>
@@ -300,11 +290,9 @@ public class BlockEvent extends Event {
          * This event is not {@link Cancelable}.<br>
          * <br>
          */
-        @HasResult
-        public static class Pre extends CropGrowEvent {
-            public Pre(Level level, BlockPos pos, BlockState state) {
-                super(level, pos, state);
-            }
+        record Pre(Level level, BlockPos pos, BlockState state, Result.Holder resultHolder)
+                implements CropGrowEvent, RecordEvent, HasResult.Record {
+            public static final EventBus<Pre> BUS = EventBus.create(Pre.class);
         }
 
         /**
@@ -316,17 +304,8 @@ public class BlockEvent extends Event {
          * <br>
          * This event does not have a result. {@link HasResult}<br>
          */
-        public static class Post extends CropGrowEvent {
-            private final BlockState originalState;
-
-            public Post(Level level, BlockPos pos, BlockState original, BlockState state) {
-                super(level, pos, state);
-                originalState = original;
-            }
-
-            public BlockState getOriginalState() {
-                return originalState;
-            }
+        record Post(Level level, BlockPos pos, BlockState originalState, BlockState state) implements CropGrowEvent, RecordEvent {
+            public static final EventBus<Post> BUS = EventBus.create(Post.class);
         }
     }
 
@@ -334,44 +313,28 @@ public class BlockEvent extends Event {
      * Fired when when farmland gets trampled
      * This event is {@link Cancelable}
      */
-    @Cancelable
-    public static class FarmlandTrampleEvent extends BlockEvent {
-        private final Entity entity;
-        private final float fallDistance;
-
-        public FarmlandTrampleEvent(ServerLevel level, BlockPos pos, BlockState state, float fallDistance, Entity entity) {
-            super(level, pos, state);
-            this.entity = entity;
-            this.fallDistance = fallDistance;
-        }
-
-        public Entity getEntity() {
-            return entity;
-        }
-
-        public float getFallDistance() {
-            return fallDistance;
-        }
-
+    record FarmlandTrampleEvent(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            float fallDistance,
+            Entity entity
+    ) implements Cancellable, BlockEvent, RecordEvent {
+        public static final CancellableEventBus<FarmlandTrampleEvent> BUS = CancellableEventBus.create(FarmlandTrampleEvent.class);
     }
 
     /** Fired when an attempt is made to spawn a nether portal from
      * {@link BaseFireBlock#onPlace(BlockState, Level, BlockPos, BlockState, boolean)}.
-     *
+     * <br>
      * If cancelled, the portal will not be spawned.
      */
-    @Cancelable
-    public static class PortalSpawnEvent extends BlockEvent {
-        private final PortalShape size;
-
-        public PortalSpawnEvent(LevelAccessor level, BlockPos pos, BlockState state, PortalShape size) {
-            super(level, pos, state);
-            this.size = size;
-        }
-
-        public PortalShape getPortalSize() {
-            return size;
-        }
+    record PortalSpawnEvent(
+            LevelAccessor level,
+            BlockPos pos,
+            BlockState state,
+            PortalShape portalSize
+    ) implements Cancellable, BlockEvent, RecordEvent {
+        public static final CancellableEventBus<PortalSpawnEvent> BUS = CancellableEventBus.create(PortalSpawnEvent.class);
     }
 
     /**
@@ -384,8 +347,9 @@ public class BlockEvent extends Event {
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
      */
-    @Cancelable
-    public static class BlockToolModificationEvent extends BlockEvent {
+    final class BlockToolModificationEvent extends MutableEvent implements Cancellable, BlockEvent {
+        public static final CancellableEventBus<BlockToolModificationEvent> BUS = CancellableEventBus.create(BlockToolModificationEvent.class);
+
         private final UseOnContext context;
         private final ToolAction toolAction;
         private final boolean simulate;

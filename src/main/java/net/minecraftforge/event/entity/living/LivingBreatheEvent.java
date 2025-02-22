@@ -5,12 +5,12 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingBreatheEvent is fired whenever a living entity ticks.<br>
@@ -23,7 +23,11 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on {@link MinecraftForge#EVENT_BUS}
  */
-public class LivingBreatheEvent extends LivingEvent {
+public final class LivingBreatheEvent implements LivingEvent {
+    public static final EventBus<LivingBreatheEvent> BUS = EventBus.create(LivingBreatheEvent.class);
+
+    private final LivingEntity entity;
+
     private boolean canBreathe;
     private boolean canRefillAir;
     private int consumeAirAmount;
@@ -31,7 +35,7 @@ public class LivingBreatheEvent extends LivingEvent {
 
     @ApiStatus.Internal
     public LivingBreatheEvent(LivingEntity entity, boolean canBreathe, int consumeAirAmount, int refillAirAmount, boolean canRefillAir) {
-        super(entity);
+        this.entity = entity;
         this.canBreathe = canBreathe;
         this.canRefillAir = canRefillAir;
         this.consumeAirAmount = Math.max(consumeAirAmount, 0);
@@ -103,5 +107,10 @@ public class LivingBreatheEvent extends LivingEvent {
      */
     public void setRefillAirAmount(int refillAirAmount) {
         this.refillAirAmount = Math.max(refillAirAmount, 0);
+    }
+
+    @Override
+    public LivingEntity entity() {
+        return entity;
     }
 }

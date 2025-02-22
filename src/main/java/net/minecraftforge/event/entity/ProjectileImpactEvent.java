@@ -5,10 +5,12 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -22,14 +24,17 @@ import java.util.Objects;
  * You can also directly set the {@link ImpactResult} to change the impact behaviour.
  * @see #setImpactResult(ImpactResult)
  */
-public class ProjectileImpactEvent extends EntityEvent {
+public final class ProjectileImpactEvent implements EntityEvent {
+    public static final EventBus<ProjectileImpactEvent> BUS = EventBus.create(ProjectileImpactEvent.class);
+
+    private final Entity entity;
     private final HitResult ray;
     private final Projectile projectile;
 
     private ImpactResult result = ImpactResult.DEFAULT;
 
     public ProjectileImpactEvent(Projectile projectile, HitResult ray) {
-        super(projectile);
+        this.entity = projectile;
         this.ray = ray;
         this.projectile = projectile;
     }
@@ -48,6 +53,11 @@ public class ProjectileImpactEvent extends EntityEvent {
 
     public ImpactResult getImpactResult() {
         return result;
+    }
+
+    @Override
+    public Entity entity() {
+        return entity;
     }
 
     public enum ImpactResult {

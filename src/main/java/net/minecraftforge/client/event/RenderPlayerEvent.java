@@ -11,10 +11,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired when a player is being rendered.
@@ -24,55 +25,30 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
  */
-public abstract class RenderPlayerEvent extends Event {
-    private final PlayerRenderState state;
-    private final PlayerRenderer renderer;
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-
-    @ApiStatus.Internal
-    protected RenderPlayerEvent(PlayerRenderState state, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        this.state = state;
-        this.renderer = renderer;
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-    }
-
-    public PlayerRenderState getState() {
-        return this.state;
-    }
+public sealed interface RenderPlayerEvent {
+    PlayerRenderState state();
 
     /**
      * {@return the player entity renderer}
      */
-    public PlayerRenderer getRenderer() {
-        return renderer;
-    }
+    PlayerRenderer renderer();
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
+    PoseStack poseStack();
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+    MultiBufferSource multiBufferSource();
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
      *
      * @see LightTexture
      */
-    public int getPackedLight() {
-        return packedLight;
-    }
+    int packedLight();
 
     /**
      * Fired <b>before</b> the player is rendered.
@@ -85,12 +61,14 @@ public abstract class RenderPlayerEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class Pre extends RenderPlayerEvent {
-        @ApiStatus.Internal
-        public Pre(PlayerRenderState state, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-            super(state, renderer, poseStack, multiBufferSource, packedLight);
-        }
+    record Pre(
+            PlayerRenderState state,
+            PlayerRenderer renderer,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            int packedLight
+    ) implements Cancellable, RecordEvent, RenderPlayerEvent {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
     }
 
     /**
@@ -101,10 +79,13 @@ public abstract class RenderPlayerEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderPlayerEvent {
-        @ApiStatus.Internal
-        public Post(PlayerRenderState state, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-            super(state, renderer, poseStack, multiBufferSource, packedLight);
-        }
+    record Post(
+            PlayerRenderState state,
+            PlayerRenderer renderer,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            int packedLight
+    ) implements RecordEvent, RenderPlayerEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
     }
 }

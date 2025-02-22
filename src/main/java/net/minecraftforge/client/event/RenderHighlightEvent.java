@@ -13,10 +13,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before a selection highlight is rendered.
@@ -25,74 +26,36 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Block
  * @see Entity
  */
-@Cancelable
-public abstract class RenderHighlightEvent extends Event
-{
-    private final LevelRenderer levelRenderer;
-    private final Camera camera;
-    private final HitResult target;
-    private final float partialTick;
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-
-    @ApiStatus.Internal
-    protected RenderHighlightEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource)
-    {
-        this.levelRenderer = levelRenderer;
-        this.camera = camera;
-        this.target = target;
-        this.partialTick = partialTick;
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-    }
-
+public sealed interface RenderHighlightEvent {
     /**
      * {@return the level renderer}
      */
-    public LevelRenderer getLevelRenderer()
-    {
-        return levelRenderer;
-    }
+    LevelRenderer levelRenderer();
 
     /**
      * {@return the camera information}
      */
-    public Camera getCamera()
-    {
-        return camera;
-    }
+    Camera camera();
 
     /**
      * {@return the hit result which triggered the selection highlight}
      */
-    public HitResult getTarget()
-    {
-        return target;
-    }
+    HitResult target();
 
     /**
      * {@return the partial tick}
      */
-    public float getPartialTick()
-    {
-        return partialTick;
-    }
+    float partialTick();
 
     /**
      * {@return the pose stack used for rendering}
      */
-    public PoseStack getPoseStack()
-    {
-        return poseStack;
-    }
+    PoseStack poseStack();
 
     /**
      * {@return the source of rendering buffers}
      */
-    public MultiBufferSource getMultiBufferSource()
-    {
-        return multiBufferSource;
-    }
+    MultiBufferSource multiBufferSource();
 
     /**
      * Fired before a block's selection highlight is rendered.
@@ -103,22 +66,22 @@ public abstract class RenderHighlightEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class Block extends RenderHighlightEvent
-    {
-        @ApiStatus.Internal
-        public Block(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
-        {
-            super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
-        }
+    record Block(
+            LevelRenderer levelRenderer,
+            Camera camera,
+            BlockHitResult target,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource
+    ) implements Cancellable, RecordEvent, RenderHighlightEvent {
+        public static final CancellableEventBus<Block> BUS = CancellableEventBus.create(Block.class);
 
         /**
          * {@return the block hit result}
          */
         @Override
-        public BlockHitResult getTarget()
-        {
-            return (BlockHitResult) super.target;
+        public BlockHitResult target() {
+            return target;
         }
     }
 
@@ -130,21 +93,22 @@ public abstract class RenderHighlightEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Entity extends RenderHighlightEvent
-    {
-        @ApiStatus.Internal
-        public Entity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
-        {
-            super(levelRenderer, camera, target, partialTick, poseStack, bufferSource);
-        }
+    record Entity(
+            LevelRenderer levelRenderer,
+            Camera camera,
+            EntityHitResult target,
+            float partialTick,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource
+    ) implements RecordEvent, RenderHighlightEvent {
+        public static final EventBus<Entity> BUS = EventBus.create(Entity.class);
 
         /**
          * {@return the entity hit result}
          */
         @Override
-        public EntityHitResult getTarget()
-        {
-            return (EntityHitResult) super.target;
+        public EntityHitResult target() {
+            return target;
         }
     }
 }

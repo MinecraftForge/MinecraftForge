@@ -5,8 +5,13 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingStage;
+
+import java.util.function.Function;
 
 /**
  * This is the second of four commonly called events during mod core startup.
@@ -26,8 +31,10 @@ import net.minecraftforge.fml.ModLoadingStage;
  *
  * This is a parallel dispatch event.
  */
-public class FMLDedicatedServerSetupEvent extends ParallelDispatchEvent
-{
+public final class FMLDedicatedServerSetupEvent extends ParallelDispatchEvent implements SelfDestructing {
+    public static final Function<BusGroup, EventBus<FMLDedicatedServerSetupEvent>> BUS =
+            busGroup -> ParallelDispatchEvent.busSupplier(busGroup, FMLDedicatedServerSetupEvent.class);
+
     public FMLDedicatedServerSetupEvent(ModContainer container, ModLoadingStage stage)
     {
         super(container, stage);

@@ -10,8 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,17 +29,16 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class FurnaceFuelBurnTimeEvent extends Event
-{
+public final class FurnaceFuelBurnTimeEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<FurnaceFuelBurnTimeEvent> BUS = CancellableEventBus.create(FurnaceFuelBurnTimeEvent.class);
+
     @NotNull
     private final ItemStack itemStack;
     @Nullable
     private final RecipeType<?> recipeType;
     private int burnTime;
 
-    public FurnaceFuelBurnTimeEvent(@NotNull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
-    {
+    public FurnaceFuelBurnTimeEvent(@NotNull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType) {
         this.itemStack = itemStack;
         this.burnTime = burnTime;
         this.recipeType = recipeType;
@@ -72,7 +72,7 @@ public class FurnaceFuelBurnTimeEvent extends Event
         if (burnTime >= 0)
         {
             this.burnTime = burnTime;
-            setCanceled(true);
+            setCanceled(true); // Uh oh... only listeners can cancel the event, so this no longer works
         }
     }
 

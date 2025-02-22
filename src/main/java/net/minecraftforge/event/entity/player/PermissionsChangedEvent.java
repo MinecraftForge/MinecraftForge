@@ -5,39 +5,18 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event will fire when the player is opped or deopped.
  * <p>
  * This event is cancelable which will stop the op or deop from happening.
+ *
+ * @param newLevel The new permission level of the player
+ * @param oldLevel The old permission level of the player
  */
-@Cancelable
-public class PermissionsChangedEvent extends PlayerEvent
-{
-    private final int newLevel;
-    private final int oldLevel;
-
-    public PermissionsChangedEvent(ServerPlayer player, int newLevel, int oldLevel)
-    {
-        super(player);
-        this.oldLevel = oldLevel;
-        this.newLevel = newLevel;
-    }
-
-    /**
-     * @return The new permission level.
-     */
-    public int getNewLevel()
-    {
-        return newLevel;
-    }
-    /**
-     * @return The old permission level.
-     */
-    public int getOldLevel()
-    {
-        return oldLevel;
-    }
+public record PermissionsChangedEvent(Player entity, int newLevel, int oldLevel) implements Cancellable, PlayerEvent {
+    public static final CancellableEventBus<PermissionsChangedEvent> BUS = CancellableEventBus.create(PermissionsChangedEvent.class);
 }

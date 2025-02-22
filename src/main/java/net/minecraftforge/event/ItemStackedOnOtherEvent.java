@@ -12,8 +12,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -32,73 +33,21 @@ import org.jetbrains.annotations.ApiStatus;
  *  This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
  *  If the event is cancelled, the container's logic halts, the carried item and the slot will not be swapped, and handling is assumed to have been done by the mod.
  *  This also means that the two vanilla checks described above will not be called.
+ *
+ * @param carriedItem the stack being carried by the mouse. This may be empty!
+ * @param stackedOnItem the stack currently in the slot being clicked on. This may be empty!
+ * @param slot the slot being clicked on
+ * @param clickAction the click action being used. By default {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
+ * @param player the player doing the item swap attempt
+ * @param carriedSlotAccess a fake slot allowing the listener to see and change what item is being carried
  */
-@Cancelable
-public class ItemStackedOnOtherEvent extends Event
-{
-    private final ItemStack carriedItem;
-    private final ItemStack stackedOnItem;
-    private final Slot slot;
-    private final ClickAction action;
-    private final Player player;
-    private final SlotAccess carriedSlotAccess;
-
-    @ApiStatus.Internal
-    public ItemStackedOnOtherEvent(ItemStack carriedItem, ItemStack stackedOnItem, Slot slot, ClickAction action, Player player, SlotAccess carriedSlotAccess)
-    {
-        this.carriedItem = carriedItem;
-        this.stackedOnItem = stackedOnItem;
-        this.slot = slot;
-        this.action = action;
-        this.player = player;
-        this.carriedSlotAccess = carriedSlotAccess;
-    }
-
-    /**
-     * {@return the stack being carried by the mouse} This may be empty!
-     */
-    public ItemStack getCarriedItem()
-    {
-        return carriedItem;
-    }
-
-    /**
-     * {@return the stack currently in the slot being clicked on} This may be empty!
-     */
-    public ItemStack getStackedOnItem()
-    {
-        return stackedOnItem;
-    }
-
-    /**
-     * {@return the slot being clicked on}
-     */
-    public Slot getSlot()
-    {
-        return slot;
-    }
-
-    /**
-     * {@return the click action being used} By default {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
-     */
-    public ClickAction getClickAction()
-    {
-        return action;
-    }
-
-    /**
-     * {@return the player doing the item swap attempt}
-     */
-    public Player getPlayer()
-    {
-        return player;
-    }
-
-    /**
-     * {@return a fake slot allowing the listener to see and change what item is being carried}
-     */
-    public SlotAccess getCarriedSlotAccess()
-    {
-        return carriedSlotAccess;
-    }
+public record ItemStackedOnOtherEvent(
+        ItemStack carriedItem,
+        ItemStack stackedOnItem,
+        Slot slot,
+        ClickAction clickAction,
+        Player player,
+        SlotAccess carriedSlotAccess
+) implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<ItemStackedOnOtherEvent> BUS = CancellableEventBus.create(ItemStackedOnOtherEvent.class);
 }

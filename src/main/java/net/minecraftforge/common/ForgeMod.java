@@ -61,8 +61,11 @@ import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModi
 import net.minecraftforge.common.world.NoneBiomeModifier;
 import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
@@ -117,6 +120,7 @@ import com.mojang.serialization.MapCodec;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -381,13 +385,13 @@ public class ForgeMod {
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
-        final IEventBus modEventBus = context.getModEventBus();
+        var modEventBus = context.getModBusGroup();
         // Forge-provided datapack registries
         modEventBus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
             event.dataPackRegistry(ForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
             event.dataPackRegistry(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
         });
-        modEventBus.addListener(this::preInit);
+        FMLCommonSetupEvent.BUS.apply(modEventBus).addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::registerFluids);
         modEventBus.addListener(this::registerVanillaDisplayContexts);
@@ -399,15 +403,15 @@ public class ForgeMod {
         context.registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         context.registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         context.registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
-        modEventBus.register(ForgeConfig.class);
+        modEventBus.register(MethodHandles.lookup(), ForgeConfig.class);
 
         // Forge does not display problems when the remote is not matching.
         context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
         StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
 
-        MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
-        MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-        MinecraftForge.EVENT_BUS.register(new ForgeNetworkConfigurationHandler());
+        ServerAboutToStartEvent.BUS.addListener(VillagerTradingManager::loadTrades);
+        ForgeInternalHandler.register();
+        GatherLoginConfigurationTasksEvent.BUS.addListener(ForgeNetworkConfigurationHandler::gatherInit);
 
         ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 

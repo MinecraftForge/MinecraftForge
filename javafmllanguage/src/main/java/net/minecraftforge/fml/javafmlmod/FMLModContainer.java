@@ -5,11 +5,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.eventbus.EventBusErrorMessage;
-import net.minecraftforge.eventbus.api.BusBuilder;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.Event;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -36,7 +35,7 @@ public class FMLModContainer extends ModContainer {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker LOADING = MarkerManager.getMarker("LOADING");
     private final ModFileScanData scanResults;
-    private final IEventBus eventBus;
+    private final BusGroup busGroup;
     private Object modInstance;
     private final Class<?> modClass;
     private final FMLJavaModLoadingContext context = new FMLJavaModLoadingContext(this);
@@ -46,7 +45,7 @@ public class FMLModContainer extends ModContainer {
         LOGGER.debug(LOADING,"Creating FMLModContainer instance for {}", className);
         this.scanResults = modFileScanResults;
         activityMap.put(ModLoadingStage.CONSTRUCT, this::constructMod);
-        this.eventBus = BusBuilder.builder().setExceptionHandler(FMLModContainer::onEventFailed).setTrackPhases(false).markerType(IModBusEvent.class).useModLauncher().build();
+        this.busGroup = BusGroup.create(info.getModId(), IModBusEvent.class);
         this.contextExtension = () -> context;
         try {
             var moduleName = info.getOwningFile().moduleName();
@@ -128,10 +127,6 @@ public class FMLModContainer extends ModContainer {
         implAddExportsOrOpens.invoke(target, pkg, reader, open, /*syncVM*/true);
     }
 
-    private static void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable) {
-        LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
-    }
-
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
@@ -173,15 +168,17 @@ public class FMLModContainer extends ModContainer {
         return modInstance;
     }
 
-    public IEventBus getEventBus() {
-        return this.eventBus;
+    public BusGroup getBusGroup() {
+        return this.busGroup;
     }
 
     @Override
     protected <T extends Event & IModBusEvent> void acceptEvent(final T e) {
         try {
             LOGGER.trace(LOADING, "Firing event for modid {} : {}", this.getModId(), e);
-            this.eventBus.post(e);
+
+            getEventBus(e.getClass()).post(e);
+
             LOGGER.trace(LOADING, "Fired event for modid {} : {}", this.getModId(), e);
         } catch (Throwable t) {
             LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", e, this.getModId(), t);
@@ -191,11 +188,22 @@ public class FMLModContainer extends ModContainer {
 
     @Override
     public void dispatchConfigEvent(IConfigEvent event) {
-        this.eventBus.post(event.self());
+        getEventBus(event.self().getClass()).post(event.self());
     }
 
     @Override
     public String toString() {
         return "FMLModContainer[" + this.getModInfo().getModId() + ", " + this.getClass().getName() + "]";
+    }
+
+    /**
+     * A slow, hacky and temporary solution to get the EventBus for the event until FML is redesigned with the new EventBus in mind.
+     * <p>This may fail in a future EventBus release as it relies on an internal implementation detail.</p>
+     * <p>If you're trying to figure out how to add listeners to a mod bus event now, you need to use the BusGroup instead.</p>
+     * @see #getBusGroup()
+     */
+    @SuppressWarnings("unchecked")
+    public EventBus<Event> getEventBus(Class<? extends Event> eventClass) {
+        return (EventBus<Event>) EventBus.create(getBusGroup(), eventClass);
     }
 }

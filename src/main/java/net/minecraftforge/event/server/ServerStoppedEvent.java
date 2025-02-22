@@ -6,6 +6,7 @@
 package net.minecraftforge.event.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * Called after {@link ServerStoppingEvent} when the server has completely shut down.
@@ -14,9 +15,6 @@ import net.minecraft.server.MinecraftServer;
  *
  * @author cpw
  */
-public class ServerStoppedEvent extends ServerLifecycleEvent {
-    public ServerStoppedEvent(MinecraftServer server)
-    {
-        super(server);
-    }
+public record ServerStoppedEvent(MinecraftServer server) implements ServerLifecycleEvent {
+    public static final EventBus<ServerStoppedEvent> BUS = EventBus.create(ServerStoppedEvent.class);
 }

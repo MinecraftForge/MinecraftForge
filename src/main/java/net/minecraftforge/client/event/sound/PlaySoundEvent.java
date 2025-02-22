@@ -9,6 +9,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -27,17 +28,16 @@ import org.jetbrains.annotations.Nullable;
  * @see PlaySoundSourceEvent
  * @see PlayStreamingSourceEvent
  */
-public class PlaySoundEvent extends SoundEvent
-{
+public final class PlaySoundEvent extends MutableEvent implements SoundEvent {
+    private final SoundEngine engine;
     private final String name;
     private final SoundInstance originalSound;
     @Nullable
     private SoundInstance sound;
 
     @ApiStatus.Internal
-    public PlaySoundEvent(SoundEngine manager, SoundInstance sound)
-    {
-        super(manager);
+    public PlaySoundEvent(SoundEngine manager, SoundInstance sound) {
+        this.engine = manager;
         this.originalSound = sound;
         this.name = sound.getLocation().getPath();
         this.setSound(sound);
@@ -76,5 +76,10 @@ public class PlaySoundEvent extends SoundEvent
     public void setSound(@Nullable SoundInstance newSound)
     {
         this.sound = newSound;
+    }
+
+    @Override
+    public SoundEngine engine() {
+        return engine;
     }
 }

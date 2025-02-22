@@ -5,12 +5,11 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,7 +23,9 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see ViewportEvent.ComputeFov
  */
-public class ComputeFovModifierEvent extends Event {
+public final class ComputeFovModifierEvent extends MutableEvent {
+    public static final EventBus<ComputeFovModifierEvent> BUS = EventBus.create(ComputeFovModifierEvent.class);
+
     private final Player player;
     private final float fovModifier;
     private final float scale;

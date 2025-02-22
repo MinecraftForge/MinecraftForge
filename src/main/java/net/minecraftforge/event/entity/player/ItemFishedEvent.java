@@ -6,10 +6,12 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 import javax.annotation.Nonnegative;
 import java.util.List;
@@ -21,14 +23,15 @@ import java.util.List;
  * Canceling the event will cause the player to receive no items at all.
  * The hook will still take the damage specified
  */
-@Cancelable
-public class ItemFishedEvent extends PlayerEvent {
+public final class ItemFishedEvent implements Cancellable, PlayerEvent {
+    private final Player player;
+
     private final NonNullList<ItemStack> stacks = NonNullList.create();
     private final FishingHook hook;
     private int rodDamage;
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingHook hook) {
-        super(hook.getPlayerOwner());
+        this.player = hook.getPlayerOwner();
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;
@@ -66,5 +69,10 @@ public class ItemFishedEvent extends PlayerEvent {
      */
     public FishingHook getHookEntity() {
         return hook;
+    }
+
+    @Override
+    public Player entity() {
+        return player;
     }
 }

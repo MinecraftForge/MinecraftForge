@@ -19,9 +19,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.listener.Priority;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.filters.NetworkFilters;
 import net.minecraftforge.common.util.LogicalSidedProvider;
@@ -29,24 +30,31 @@ import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.command.ConfigCommand;
 
+import java.lang.invoke.MethodHandles;
+
 public class ForgeInternalHandler {
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onEntityJoinWorld(EntityJoinLevelEvent event) {
-        Entity entity = event.getEntity();
+    static void register() {
+        BusGroup.DEFAULT.register(MethodHandles.lookup(), new ForgeInternalHandler());
+    }
+
+    @SubscribeEvent(priority = Priority.HIGH)
+    public boolean onEntityJoinWorld(EntityJoinLevelEvent event) {
+        Entity entity = event.entity();
         if (entity.getClass().equals(ItemEntity.class)) {
             ItemStack stack = ((ItemEntity)entity).getItem();
             Item item = stack.getItem();
             if (item.hasCustomEntity(stack)) {
-                Entity newEntity = item.createEntity(event.getLevel(), entity, stack);
+                Entity newEntity = item.createEntity(event.level(), entity, stack);
                 if (newEntity != null) {
                     entity.discard();
-                    event.setCanceled(true);
                     @SuppressWarnings("resource")
-                    var executor = LogicalSidedProvider.WORKQUEUE.get(event.getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
-                    executor.schedule(new TickTask(0, () -> event.getLevel().addFreshEntity(newEntity)));
+                    var executor = LogicalSidedProvider.WORKQUEUE.get(event.level().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    executor.schedule(new TickTask(0, () -> event.level().addFreshEntity(newEntity)));
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     @SubscribeEvent
@@ -67,8 +75,8 @@ public class ForgeInternalHandler {
 
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload event) {
-        if (!event.getLevel().isClientSide())
-            FarmlandWaterManager.removeTickets(event.getChunk());
+        if (!event.level().isClientSide())
+            FarmlandWaterManager.removeTickets(event.chunk());
     }
 
     /*
@@ -81,7 +89,7 @@ public class ForgeInternalHandler {
 
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        UsernameCache.setUsername(event.getEntity().getUUID(), event.getEntity().getGameProfile().getName());
+        UsernameCache.setUsername(event.entity().getUUID(), event.entity().getGameProfile().getName());
     }
 
     @SubscribeEvent
@@ -109,10 +117,9 @@ public class ForgeInternalHandler {
         event.addListener(CreativeModeTabRegistry.getReloadListener());
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void builtinMobSpawnBlocker(EntityJoinLevelEvent event) {
-        if(event.getEntity() instanceof Mob mob && mob.isSpawnCancelled())
-            event.setCanceled(true);
+    @SubscribeEvent(priority = Priority.HIGHEST)
+    public boolean builtinMobSpawnBlocker(EntityJoinLevelEvent event) {
+        return event.entity() instanceof Mob mob && mob.isSpawnCancelled();
     }
 
     @SubscribeEvent

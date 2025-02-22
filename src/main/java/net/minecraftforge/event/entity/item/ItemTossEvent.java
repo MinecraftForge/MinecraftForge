@@ -5,9 +5,10 @@
 
 package net.minecraftforge.event.entity.item;
 
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * Event that is fired whenever a player tosses (Q) an item or drag-n-drops a
@@ -15,10 +16,10 @@ import net.minecraft.world.entity.player.Player;
  * stop the items from entering the world, but will not prevent them being
  * removed from the inventory - and thus removed from the system.
  */
-@Cancelable
-public class ItemTossEvent extends ItemEvent
-{
+public final class ItemTossEvent implements Cancellable, ItemEvent {
+    public static final CancellableEventBus<ItemTossEvent> BUS = CancellableEventBus.create(ItemTossEvent.class);
 
+    private final ItemEntity entity;
     private final Player player;
 
     /**
@@ -29,7 +30,7 @@ public class ItemTossEvent extends ItemEvent
      */
     public ItemTossEvent(ItemEntity entityItem, Player player)
     {
-        super(entityItem);
+        this.entity = entityItem;
         this.player = player;
     }
 
@@ -39,5 +40,10 @@ public class ItemTossEvent extends ItemEvent
     public Player getPlayer()
     {
         return player;
+    }
+
+    @Override
+    public ItemEntity entity() {
+        return entity;
     }
 }

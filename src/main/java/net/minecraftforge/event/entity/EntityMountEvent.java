@@ -8,7 +8,7 @@ package net.minecraftforge.event.entity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event gets fired whenever a entity mounts/dismounts another entity.<br>
@@ -23,48 +23,19 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  *
  */
-
-@Cancelable
-public class EntityMountEvent extends EntityEvent
-{
-
-    private final Entity entityMounting;
-    private final Entity entityBeingMounted;
-    private final Level level;
-
-    private final boolean isMounting;
-
-    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level level, boolean isMounting)
-    {
-        super(entityMounting);
-        this.entityMounting = entityMounting;
-        this.entityBeingMounted = entityBeingMounted;
-        this.level = level;
-        this.isMounting = isMounting;
-    }
-
-    public boolean isMounting()
-    {
-        return isMounting;
+public record EntityMountEvent(
+        Entity entityMounting,
+        Entity entityBeingMounted,
+        Level level,
+        boolean isMounting
+) implements Cancellable, EntityEvent {
+    @Override
+    public Entity entity() {
+        return entityMounting;
     }
 
     public boolean isDismounting()
     {
         return !isMounting;
-    }
-
-    public Entity getEntityMounting()
-    {
-        return entityMounting;
-    }
-
-    public Entity getEntityBeingMounted()
-    {
-        return entityBeingMounted;
-    }
-
-    public Level getLevel()
-    {
-        return level;
     }
 }

@@ -13,8 +13,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -28,10 +26,7 @@ import java.util.Map;
 /**
  * Houses events related to models.
  */
-public abstract class ModelEvent extends Event {
-    @ApiStatus.Internal
-    protected ModelEvent() { }
-
+public sealed interface ModelEvent {
     /**
      * Fired while the {@link ModelManager} is reloading models, after the model registry is set up, but before it's
      * passed to the {@link net.minecraft.client.renderer.block.BlockModelShaper} for caching.
@@ -47,31 +42,11 @@ public abstract class ModelEvent extends Event {
      *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     *
+     * @param modelBakery the model loader
+     * @param results the modifiable registry map of models and their model names
      */
-    public static class ModifyBakingResult extends ModelEvent implements IModBusEvent {
-        private final ModelBakery modelBakery;
-        private final ModelBakery.BakingResult results;
-
-        @ApiStatus.Internal
-        public ModifyBakingResult(ModelBakery modelBakery, ModelBakery.BakingResult results) {
-            this.modelBakery = modelBakery;
-            this.results = results;
-        }
-
-        /**
-         * @return the modifiable registry map of models and their model names
-         */
-        public ModelBakery.BakingResult getResults() {
-            return results;
-        }
-
-        /**
-         * @return the model loader
-         */
-        public ModelBakery getModelBakery() {
-            return modelBakery;
-        }
-    }
+    record ModifyBakingResult(ModelBakery modelBakery, ModelBakery.BakingResult results) implements ModelEvent, IModBusEvent {}
 
     /**
      * Fired when the {@link ModelManager} is notified of the resource manager reloading.
@@ -84,30 +59,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class BakingCompleted extends ModelEvent implements IModBusEvent {
-        private final ModelManager modelManager;
-        private final ModelBakery modelBakery;
-
-        @ApiStatus.Internal
-        public BakingCompleted(ModelManager modelManager, ModelBakery modelBakery) {
-            this.modelManager = modelManager;
-            this.modelBakery = modelBakery;
-        }
-
-        /**
-         * @return the model manager
-         */
-        public ModelManager getModelManager() {
-            return modelManager;
-        }
-
-        /**
-         * @return the model loader
-         */
-        public ModelBakery getModelBakery() {
-            return modelBakery;
-        }
-    }
+    record BakingCompleted(ModelManager modelManager, ModelBakery modelBakery) implements ModelEvent, IModBusEvent {}
 
     /**
      * Fired when the {@link net.minecraft.client.resources.model.BlockStateModelLoader BlockStateModelLoader} is notified of the resource manager reloading.
@@ -118,7 +70,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterModelStateDefinitions extends ModelEvent implements IModBusEvent {
+    final class RegisterModelStateDefinitions implements ModelEvent, IModBusEvent {
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> states = new HashMap<>();
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> view = Collections.unmodifiableMap(states);
 
@@ -148,7 +100,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent {
+    final class RegisterGeometryLoaders implements ModelEvent, IModBusEvent {
         private final Map<ResourceLocation, IGeometryLoader<?>> loaders;
 
         @ApiStatus.Internal

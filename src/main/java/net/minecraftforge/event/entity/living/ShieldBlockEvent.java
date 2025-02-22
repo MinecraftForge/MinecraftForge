@@ -9,6 +9,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * The ShieldBlockEvent is fired when an entity successfully blocks with a shield.<br>
@@ -17,17 +19,17 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * Note: The shield item stack "should" be available from {@link LivingEntity#getUseItem()}
  * at least for players.
  */
-@Cancelable
-public class ShieldBlockEvent extends LivingEvent
-{
+public final class ShieldBlockEvent implements Cancellable, LivingEvent {
+    public static final CancellableEventBus<ShieldBlockEvent> BUS = CancelableEventBus.create(ShieldBlockEvent.class);
+
+    private final LivingEntity blocker;
     private final DamageSource source;
     private final float originalBlocked;
     private float dmgBlocked;
     private boolean shieldTakesDamage = true;
 
-    public ShieldBlockEvent(LivingEntity blocker, DamageSource source, float blocked)
-    {
-        super(blocker);
+    public ShieldBlockEvent(LivingEntity blocker, DamageSource source, float blocked) {
+        this.blocker = blocker;
         this.source = source;
         this.originalBlocked = blocked;
         this.dmgBlocked = blocked;
@@ -84,4 +86,8 @@ public class ShieldBlockEvent extends LivingEvent
         this.shieldTakesDamage = damage;
     }
 
+    @Override
+    public LivingEntity entity() {
+        return blocker;
+    }
 }

@@ -10,7 +10,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -21,43 +22,16 @@ import net.minecraftforge.fml.LogicalSide;
  *
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS Forge event bus},
  * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
+ *
+ * @param source the damage source that caused the entity to die
+ * @param totem the totem of undying being used from the entity's inventory
+ * @param handHolding the hand holding the totem
  */
-@Cancelable
-public class LivingUseTotemEvent extends LivingEvent
-{
-    private final DamageSource source;
-    private final ItemStack totem;
-    private final InteractionHand hand;
-
-    public LivingUseTotemEvent(LivingEntity entity, DamageSource source, ItemStack totem, InteractionHand hand)
-    {
-        super(entity);
-        this.source = source;
-        this.totem = totem;
-        this.hand = hand;
-    }
-
-    /**
-     * {@return the damage source that caused the entity to die}
-     */
-    public DamageSource getSource()
-    {
-        return source;
-    }
-
-    /**
-     * {@return the totem of undying being used from the entity's inventory}
-     */
-    public ItemStack getTotem()
-    {
-        return totem;
-    }
-
-    /**
-     * {@return the hand holding the totem}
-     */
-    public InteractionHand getHandHolding()
-    {
-        return hand;
-    }
+public record LivingUseTotemEvent(
+        LivingEntity entity,
+        DamageSource source,
+        ItemStack totem,
+        InteractionHand handHolding
+) implements Cancellable, LivingEvent {
+    public static final CancellableEventBus<LivingUseTotemEvent> BUS = CancellableEventBus.create(LivingUseTotemEvent.class);
 }

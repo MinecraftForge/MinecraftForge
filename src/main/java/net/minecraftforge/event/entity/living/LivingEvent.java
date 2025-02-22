@@ -9,10 +9,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.MarkerEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,21 +24,13 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class LivingEvent extends EntityEvent
-{
-    private final LivingEntity livingEntity;
-
-    public LivingEvent(LivingEntity entity)
-    {
-        super(entity);
-        livingEntity = entity;
-    }
-
+@MarkerEvent
+public sealed interface LivingEvent extends EntityEvent
+        permits AnimalTameEvent, LivingAttackEvent, LivingDeathEvent, LivingEvent.LivingJumpEvent,
+                LivingEvent.LivingTickEvent, LivingEvent.LivingVisibilityEvent, LivingHealEvent, LivingPackSizeEvent,
+                LivingUseTotemEvent {
     @Override
-    public LivingEntity getEntity()
-    {
-        return livingEntity;
-    }
+    LivingEntity entity();
 
     /**
      * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
@@ -50,10 +44,8 @@ public class LivingEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @Cancelable
-    public static class LivingTickEvent extends LivingEvent
-    {
-        public LivingTickEvent(LivingEntity e){ super(e); }
+    record LivingTickEvent(LivingEntity entity) implements Cancellable, LivingEvent {
+        public static final CancellableEventBus<LivingTickEvent> BUS = CancellableEventBus.create(LivingTickEvent.class);
     }
 
     /**
@@ -70,20 +62,21 @@ public class LivingEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class LivingJumpEvent extends LivingEvent
-    {
-        public LivingJumpEvent(LivingEntity e){ super(e); }
+    record LivingJumpEvent(LivingEntity entity) implements LivingEvent {
+        public static final EventBus<LivingJumpEvent> BUS = EventBus.create(LivingJumpEvent.class);
     }
 
-    public static class LivingVisibilityEvent extends LivingEvent
-    {
+    final class LivingVisibilityEvent implements LivingEvent {
+        public static final EventBus<LivingVisibilityEvent> BUS = EventBus.create(LivingVisibilityEvent.class);
+
+        private final LivingEntity entity;
         private double visibilityModifier;
         @Nullable
         private final Entity lookingEntity;
 
         public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier)
         {
-            super(livingEntity);
+            this.entity = livingEntity;
             this.visibilityModifier = originalMultiplier;
             this.lookingEntity = lookingEntity;
         }
@@ -111,6 +104,11 @@ public class LivingEvent extends EntityEvent
         public Entity getLookingEntity()
         {
             return lookingEntity;
+        }
+
+        @Override
+        public LivingEntity entity() {
+            return entity;
         }
     }
 }

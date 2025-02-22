@@ -14,11 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.tags.ITagManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -318,8 +320,8 @@ public class DeferredRegister<T> {
      *
      * @param bus The Mod Specific event bus.
      */
-    public void register(IEventBus bus) {
-        bus.register(new EventDispatcher());
+    public void register(BusGroup busGroup) {
+        busGroup.register(MethodHandles.lookup(), new EventDispatcher());
     }
 
     /**

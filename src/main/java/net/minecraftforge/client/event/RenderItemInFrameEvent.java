@@ -11,10 +11,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired before an item stack is rendered in an item frame.
@@ -26,59 +26,29 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
+ * @param itemFrameState the item frame entity
+ * @param renderer the renderer for the item frame entity
+ * @param poseStack the pose stack used for rendering
+ * @param multiBufferSource the source of rendering buffers
+ *
  * @see ItemFrameRenderer
  */
-@Cancelable
-public class RenderItemInFrameEvent extends Event {
-    private final ItemFrameRenderState state;
-    private final ItemFrameRenderer<?> renderer;
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-
-    @ApiStatus.Internal
-    public RenderItemInFrameEvent(ItemFrameRenderState state, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        this.state = state;
-        this.renderer = renderItemFrame;
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-    }
-
-    /**
-     * {@return the item frame entity}
-     */
-    public ItemFrameRenderState getItemFrameState() {
-        return state;
-    }
-
-    /**
-     * {@return the renderer for the item frame entity}
-     */
-    public ItemFrameRenderer<?> getRenderer() {
-        return renderer;
-    }
-
-    /**
-     * {@return the pose stack used for rendering}
-     */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    /**
-     * {@return the source of rendering buffers}
-     */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+public record RenderItemInFrameEvent(
+        ItemFrameRenderState itemFrameState,
+        ItemFrameRenderer<?> renderer,
+        PoseStack poseStack,
+        MultiBufferSource multiBufferSource,
+        int packedLight
+) implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<RenderItemInFrameEvent> BUS = CancellableEventBus.create(RenderItemInFrameEvent.class);
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
      *
      * @see LightTexture
      */
-    public int getPackedLight() {
+    @Override
+    public int packedLight() {
         return packedLight;
     }
 }

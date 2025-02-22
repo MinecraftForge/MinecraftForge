@@ -10,8 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,30 +23,15 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}. <br>
  * <br>
  * Cancel this event to prevent Vanilla from posting the {@link GameEvent} to all nearby {@link net.minecraft.world.level.gameevent.GameEventListener GameEventListeners}.
+ *
+ * @param level The level the Vanilla {@link GameEvent} occurred.
+ * @param vanillaEvent The Vanilla event.
+ * @param position The position the event took place at.
+ * @param context the context of the vanilla event
  **/
-@Cancelable
-public class VanillaGameEvent extends Event
-{
-    private final Level level;
-    private final GameEvent vanillaEvent;
-    private final Vec3 position;
-    private final GameEvent.Context context;
-
-    public VanillaGameEvent(Level level, GameEvent vanillaEvent, Vec3 position, GameEvent.Context context)
-    {
-        this.level = level;
-        this.vanillaEvent = vanillaEvent;
-        this.position = position;
-        this.context = context;
-    }
-
-    /**
-     * @return The level the Vanilla {@link GameEvent} occurred.
-     */
-    public Level getLevel()
-    {
-        return level;
-    }
+public record VanillaGameEvent(Level level, GameEvent vanillaEvent, Vec3 position, GameEvent.Context context)
+        implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<VanillaGameEvent> BUS = CancellableEventBus.create(VanillaGameEvent.class);
 
     /**
      * @return The entity that was the source or "cause" of the {@link GameEvent}.
@@ -54,29 +40,5 @@ public class VanillaGameEvent extends Event
     public Entity getCause()
     {
         return context.sourceEntity();
-    }
-
-    /**
-     * @return The Vanilla event.
-     */
-    public GameEvent getVanillaEvent()
-    {
-        return vanillaEvent;
-    }
-
-    /**
-     * @return The position the event took place at.
-     */
-    public Vec3 getEventPosition()
-    {
-        return position;
-    }
-
-    /**
-     * @return the context of the vanilla event
-     */
-    public GameEvent.Context getContext()
-    {
-        return context;
     }
 }

@@ -9,9 +9,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
-import org.jetbrains.annotations.ApiStatus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
@@ -22,26 +21,8 @@ import org.jetbrains.annotations.ApiStatus;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkEvent extends LevelEvent
-{
-    private final ChunkAccess chunk;
-
-    public ChunkEvent(ChunkAccess chunk)
-    {
-        super(chunk.getWorldForge());
-        this.chunk = chunk;
-    }
-
-    public ChunkEvent(ChunkAccess chunk, LevelAccessor level)
-    {
-        super(level);
-        this.chunk = chunk;
-    }
-
-    public ChunkAccess getChunk()
-    {
-        return chunk;
-    }
+public sealed interface ChunkEvent extends LevelEvent permits ChunkDataEvent, ChunkEvent.Load, ChunkEvent.Unload {
+    ChunkAccess chunk();
 
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the level.<br>
@@ -56,15 +37,11 @@ public class ChunkEvent extends LevelEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends ChunkEvent
-    {
-        private final boolean newChunk;
+    record Load(LevelAccessor level, ChunkAccess chunk, boolean isNewChunk) implements ChunkEvent, RecordEvent {
+        public static final EventBus<ChunkEvent.Load> BUS = EventBus.create(ChunkEvent.Load.class);
 
-        @ApiStatus.Internal
-        public Load(ChunkAccess chunk, boolean newChunk)
-        {
-            super(chunk);
-            this.newChunk = newChunk;
+        public Load(ChunkAccess chunk, boolean newChunk) {
+            this(chunk.getWorldForge(), chunk, newChunk);
         }
 
         /**
@@ -74,9 +51,8 @@ public class ChunkEvent extends LevelEvent
          *
          * @return whether the Chunk is newly generated
          */
-        public boolean isNewChunk()
-        {
-            return newChunk;
+        public boolean isNewChunk() {
+            return isNewChunk;
         }
     }
 
@@ -91,11 +67,11 @@ public class ChunkEvent extends LevelEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Unload extends ChunkEvent
-    {
-        public Unload(ChunkAccess chunk)
-        {
-            super(chunk);
+    record Unload(LevelAccessor level, ChunkAccess chunk) implements ChunkEvent, RecordEvent {
+        public static final EventBus<ChunkEvent.Unload> BUS = EventBus.create(ChunkEvent.Unload.class);
+
+        public Unload(ChunkAccess chunk) {
+            this(chunk.getWorldForge(), chunk);
         }
     }
 }

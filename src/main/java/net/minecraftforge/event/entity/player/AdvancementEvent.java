@@ -10,23 +10,17 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MarkerEvent;
 
 /**
  * Base class used for advancement-related events. Should not be used directly.
  * @see AdvancementEarnEvent
  * @see AdvancementProgressEvent
  */
-public class AdvancementEvent extends PlayerEvent {
-    private final AdvancementHolder advancement;
-
-    public AdvancementEvent(Player player, AdvancementHolder advancement) {
-        super(player);
-        this.advancement = advancement;
-    }
-
-    public AdvancementHolder getAdvancement() {
-        return advancement;
-    }
+@MarkerEvent
+public sealed interface AdvancementEvent extends PlayerEvent {
+    AdvancementHolder advancement();
 
     /**
      * Fired when the player earns an advancement. An advancement is earned once its requirements are complete.
@@ -41,10 +35,8 @@ public class AdvancementEvent extends PlayerEvent {
      *
      * @see AdvancementProgress#isDone()
      */
-    public static class AdvancementEarnEvent extends AdvancementEvent {
-        public AdvancementEarnEvent(Player player, AdvancementHolder earned) {
-            super(player, earned);
-        }
+    record AdvancementEarnEvent(Player entity, AdvancementHolder advancement) implements AdvancementEvent {
+        public static final EventBus<AdvancementEarnEvent> BUS = EventBus.create(AdvancementEarnEvent.class);
     }
 
     /**
@@ -55,42 +47,22 @@ public class AdvancementEvent extends PlayerEvent {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.</p>
      *
+     * @param advancementProgress the progress of the advancement
+     * @param criterionName name of the criterion that was progressed
+     * @param progressType The type of progress for the criterion in this event
+     *
      * @see AdvancementEarnEvent
      * @see net.minecraft.server.PlayerAdvancements#award(Advancement, String)
      * @see net.minecraft.server.PlayerAdvancements#revoke(Advancement, String)
      */
-    public static class AdvancementProgressEvent extends AdvancementEvent {
-        private final AdvancementProgress advancementProgress;
-        private final String criterionName;
-        private final AdvancementEvent.AdvancementProgressEvent.ProgressType progressType;
-
-        public AdvancementProgressEvent(Player player, AdvancementHolder progressed, AdvancementProgress advancementProgress, String criterionName, AdvancementEvent.AdvancementProgressEvent.ProgressType progressType) {
-            super(player, progressed);
-            this.advancementProgress = advancementProgress;
-            this.criterionName = criterionName;
-            this.progressType = progressType;
-        }
-
-        /**
-         * {@return the progress of the advancement}
-         */
-        public AdvancementProgress getAdvancementProgress() {
-            return advancementProgress;
-        }
-
-        /**
-         * {@return name of the criterion that was progressed}
-         */
-        public String getCriterionName() {
-            return criterionName;
-        }
-
-        /**
-         * {@return The type of progress for the criterion in this event}
-         */
-        public ProgressType getProgressType() {
-            return progressType;
-        }
+    record AdvancementProgressEvent(
+            Player entity,
+            AdvancementHolder advancement,
+            AdvancementProgress advancementProgress,
+            String criterionName,
+            AdvancementEvent.AdvancementProgressEvent.ProgressType progressType
+    ) implements AdvancementEvent {
+        public static final EventBus<AdvancementProgressEvent> BUS = EventBus.create(AdvancementProgressEvent.class);
 
         public enum ProgressType {
             GRANT, REVOKE

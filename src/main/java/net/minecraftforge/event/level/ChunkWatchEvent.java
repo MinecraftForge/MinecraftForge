@@ -10,8 +10,8 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -25,37 +25,21 @@ import net.minecraftforge.fml.LogicalSide;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-public class ChunkWatchEvent extends Event {
-    private final ServerLevel level;
-    private final ServerPlayer player;
-    private final ChunkPos pos;
-
-    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel level) {
-        this.player = player;
-        this.pos = pos;
-        this.level = level;
-    }
-
+public sealed interface ChunkWatchEvent {
     /**
      * {@return the server player involved with the watch action}
      */
-    public ServerPlayer getPlayer() {
-        return this.player;
-    }
+    ServerPlayer player();
 
     /**
      * {@return the chunk position this watch event is affecting}
      */
-    public ChunkPos getPos() {
-        return this.pos;
-    }
+    ChunkPos pos();
 
     /**
      * {@return the server level containing the chunk}
      */
-    public ServerLevel getLevel() {
-        return this.level;
-    }
+    ServerLevel level();
 
     /**
      * This event is fired when chunk data is sent to the {@link ServerPlayer} (see {@link net.minecraft.server.network.PlayerChunkSender}).
@@ -67,16 +51,11 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Watch extends ChunkWatchEvent {
-        private final LevelChunk chunk;
+    record Watch(ServerPlayer player, ChunkPos pos, ServerLevel level, LevelChunk chunk) implements ChunkWatchEvent, RecordEvent {
+        public static final EventBus<Watch> BUS = EventBus.create(Watch.class);
 
         public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel level) {
-            super(player, chunk.getPos(), level);
-            this.chunk = chunk;
-        }
-
-        public LevelChunk getChunk() {
-            return this.chunk;
+            this(player, chunk.getPos(), level, chunk);
         }
     }
 
@@ -88,9 +67,7 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class UnWatch extends ChunkWatchEvent {
-        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level) {
-            super(player, pos, level);
-        }
+    record UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level) implements ChunkWatchEvent, RecordEvent {
+        public static final EventBus<UnWatch> BUS = EventBus.create(UnWatch.class);
     }
 }

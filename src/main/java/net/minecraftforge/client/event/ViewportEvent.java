@@ -12,8 +12,9 @@ import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ComputeCameraAngles
  * @see ComputeFov
  */
-public abstract class ViewportEvent extends Event {
+public sealed abstract class ViewportEvent extends MutableEvent {
     private final GameRenderer renderer;
     private final Camera camera;
     private final double partialTick;
@@ -72,8 +73,9 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class RenderFog extends ViewportEvent {
+    public static final class RenderFog extends ViewportEvent implements Cancellable {
+        public static final CancellableEventBus<RenderFog> BUS = CancellableEventBus.create(RenderFog.class);
+
         private final FogMode mode;
         private final FogType type;
         private float farPlaneDistance;
@@ -182,7 +184,9 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeFogColor extends ViewportEvent {
+    public static final class ComputeFogColor extends ViewportEvent implements Cancellable {
+        public static final CancellableEventBus<ComputeFogColor> BUS = CancellableEventBus.create(ComputeFogColor.class);
+
         private float red;
         private float green;
         private float blue;
@@ -254,7 +258,9 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeCameraAngles extends ViewportEvent {
+    public static final class ComputeCameraAngles extends ViewportEvent implements Cancellable {
+        public static final CancellableEventBus<ComputeCameraAngles> BUS = CancellableEventBus.create(ComputeCameraAngles.class);
+
         private float yaw;
         private float pitch;
         private float roll;
@@ -327,7 +333,9 @@ public abstract class ViewportEvent extends Event {
      *
      * @see ComputeFovModifierEvent
      */
-    public static class ComputeFov extends ViewportEvent {
+    public static final class ComputeFov extends ViewportEvent implements Cancellable {
+        public static final CancellableEventBus<ComputeFov> BUS = CancellableEventBus.create(ComputeFov.class);
+
         private final boolean usedConfiguredFov;
         private float fov;
 

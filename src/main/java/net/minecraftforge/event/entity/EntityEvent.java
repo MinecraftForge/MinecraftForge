@@ -8,7 +8,9 @@ package net.minecraftforge.event.entity;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MarkerEvent;
 
 /**
  * EntityEvent is fired when an event involving any Entity occurs.<br>
@@ -19,16 +21,12 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class EntityEvent extends Event {
-    private final Entity entity;
-
-    public EntityEvent(Entity entity) {
-        this.entity = entity;
-    }
-
-    public Entity getEntity() {
-        return entity;
-    }
+@MarkerEvent
+public sealed interface EntityEvent extends InheritableEvent
+        permits EntityEvent.EnteringSection, EntityEvent.EntityConstructing, EntityJoinLevelEvent,
+                EntityLeaveLevelEvent, EntityMobGriefingEvent, EntityMountEvent, EntityStruckByLightningEvent,
+                EntityTeleportEvent, EntityTravelToDimensionEvent, ProjectileImpactEvent {
+    Entity entity();
 
     /**
      * EntityConstructing is fired when an Entity is being created. <br>
@@ -40,10 +38,8 @@ public class EntityEvent extends Event {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EntityConstructing extends EntityEvent {
-        public EntityConstructing(Entity entity) {
-            super(entity);
-        }
+    record EntityConstructing(Entity entity) implements EntityEvent {
+        public static final EventBus<EntityConstructing> BUS = EventBus.create(EntityConstructing.class);
     }
 
     /**
@@ -58,15 +54,8 @@ public class EntityEvent extends Event {
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EnteringSection extends EntityEvent {
-        private final long packedOldPos;
-        private final long packedNewPos;
-
-        public EnteringSection(Entity entity, long packedOldPos, long packedNewPos) {
-            super(entity);
-            this.packedOldPos = packedOldPos;
-            this.packedNewPos = packedNewPos;
-        }
+    record EnteringSection(Entity entity, long packedOldPos, long packedNewPos) implements EntityEvent {
+        public static final EventBus<EnteringSection> BUS = EventBus.create(EnteringSection.class);
 
         /**
          * A packed version of the old section's position. This is to be used with the various methods in {@link SectionPos},

@@ -12,6 +12,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,17 +32,17 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class ArrowLooseEvent extends PlayerEvent
-{
+public final class ArrowLooseEvent implements Cancellable, PlayerEvent {
+    public static final CancellableEventBus<ArrowLooseEvent> BUS = CancellableEventBus.create(ArrowLooseEvent.class);
+
+    private final Player player;
     private final ItemStack bow;
     private final Level level;
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(Player player, @NotNull ItemStack bow, Level level, int charge, boolean hasAmmo)
-    {
-        super(player);
+    public ArrowLooseEvent(Player player, @NotNull ItemStack bow, Level level, int charge, boolean hasAmmo) {
+        this.player = player;
         this.bow = bow;
         this.level = level;
         this.charge = charge;
@@ -53,4 +55,9 @@ public class ArrowLooseEvent extends PlayerEvent
     public boolean hasAmmo() { return this.hasAmmo; }
     public int getCharge() { return this.charge; }
     public void setCharge(int charge) { this.charge = charge; }
+
+    @Override
+    public Player entity() {
+        return player;
+    }
 }
