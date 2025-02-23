@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/levelgen/feature/ChorusPlantFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/ChorusPlantFeature.java
+@@ -18,7 +_,8 @@
+         WorldGenLevel worldgenlevel = p_159521_.level();
+         BlockPos blockpos = p_159521_.origin();
+         RandomSource randomsource = p_159521_.random();
+-        if (worldgenlevel.isEmptyBlock(blockpos) && worldgenlevel.getBlockState(blockpos.below()).is(Blocks.END_STONE)) {
++        // Forge: check tag instead of end stone block
++        if (worldgenlevel.isEmptyBlock(blockpos) && worldgenlevel.getBlockState(blockpos.below()).is(net.minecraftforge.common.Tags.Blocks.CHORUS_GROWS_ON)) {
+             ChorusFlowerBlock.generatePlant(worldgenlevel, blockpos, randomsource, 8);
+             return true;
+         } else {

@@ -53,6 +53,7 @@ public class Tags {
         public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
         public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
 
+        public static final TagKey<Block> CHORUS_GROWS_ON = forgeTag("chorus_grows_on");
         public static final TagKey<Block> CHESTS_ENDER = forgeTag("chests/ender");
         public static final TagKey<Block> CHESTS_TRAPPED = forgeTag("chests/trapped");
         public static final TagKey<Block> COBBLESTONE_NORMAL = forgeTag("cobblestone/normal");
