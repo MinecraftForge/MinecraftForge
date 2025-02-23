@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/level/block/ChorusPlantBlock.java
++++ b/net/minecraft/world/level/block/ChorusPlantBlock.java
+@@ -30,7 +_,7 @@
+       BlockState blockstate3 = p_51711_.m_8055_(p_51712_.m_122029_());
+       BlockState blockstate4 = p_51711_.m_8055_(p_51712_.m_122019_());
+       BlockState blockstate5 = p_51711_.m_8055_(p_51712_.m_122024_());
+-      return this.m_49966_().m_61124_(f_55153_, Boolean.valueOf(blockstate.m_60713_(this) || blockstate.m_60713_(Blocks.f_50491_) || blockstate.m_60713_(Blocks.f_50259_))).m_61124_(f_55152_, Boolean.valueOf(blockstate1.m_60713_(this) || blockstate1.m_60713_(Blocks.f_50491_))).m_61124_(f_55148_, Boolean.valueOf(blockstate2.m_60713_(this) || blockstate2.m_60713_(Blocks.f_50491_))).m_61124_(f_55149_, Boolean.valueOf(blockstate3.m_60713_(this) || blockstate3.m_60713_(Blocks.f_50491_))).m_61124_(f_55150_, Boolean.valueOf(blockstate4.m_60713_(this) || blockstate4.m_60713_(Blocks.f_50491_))).m_61124_(f_55151_, Boolean.valueOf(blockstate5.m_60713_(this) || blockstate5.m_60713_(Blocks.f_50491_)));
++      return this.m_49966_().m_61124_(f_55153_, Boolean.valueOf(blockstate.m_60713_(this) || blockstate.m_60713_(Blocks.f_50491_) || blockstate.m_60713_(Blocks.f_50259_) || blockstate.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON))).m_61124_(f_55152_, Boolean.valueOf(blockstate1.m_60713_(this) || blockstate1.m_60713_(Blocks.f_50491_))).m_61124_(f_55148_, Boolean.valueOf(blockstate2.m_60713_(this) || blockstate2.m_60713_(Blocks.f_50491_))).m_61124_(f_55149_, Boolean.valueOf(blockstate3.m_60713_(this) || blockstate3.m_60713_(Blocks.f_50491_))).m_61124_(f_55150_, Boolean.valueOf(blockstate4.m_60713_(this) || blockstate4.m_60713_(Blocks.f_50491_))).m_61124_(f_55151_, Boolean.valueOf(blockstate5.m_60713_(this) || blockstate5.m_60713_(Blocks.f_50491_)));
+    }
+ 
+    public BlockState m_7417_(BlockState p_51728_, Direction p_51729_, BlockState p_51730_, LevelAccessor p_51731_, BlockPos p_51732_, BlockPos p_51733_) {
+@@ -38,7 +_,7 @@
+          p_51731_.m_186460_(p_51732_, this, 1);
+          return super.m_7417_(p_51728_, p_51729_, p_51730_, p_51731_, p_51732_, p_51733_);
+       } else {
+-         boolean flag = p_51730_.m_60713_(this) || p_51730_.m_60713_(Blocks.f_50491_) || p_51729_ == Direction.DOWN && p_51730_.m_60713_(Blocks.f_50259_);
++         boolean flag = p_51730_.m_60713_(this) || p_51730_.m_60713_(Blocks.f_50491_) || p_51729_ == Direction.DOWN && (p_51730_.m_60713_(Blocks.f_50259_) || p_51730_.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON));
+          return p_51728_.m_61124_(f_55154_.get(p_51729_), Boolean.valueOf(flag));
+       }
+    }
+@@ -63,13 +_,13 @@
+             }
+ 
+             BlockState blockstate2 = p_51725_.m_8055_(blockpos.m_7495_());
+-            if (blockstate2.m_60713_(this) || blockstate2.m_60713_(Blocks.f_50259_)) {
++            if (blockstate2.m_60713_(this) || blockstate2.m_60713_(Blocks.f_50259_) || blockstate2.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                return true;
+             }
+          }
+       }
+ 
+-      return blockstate.m_60713_(this) || blockstate.m_60713_(Blocks.f_50259_);
++      return blockstate.m_60713_(this) || blockstate.m_60713_(Blocks.f_50259_) || blockstate.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON);
+    }
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51735_) {
