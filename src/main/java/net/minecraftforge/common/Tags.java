@@ -45,6 +45,7 @@ public class Tags
         public static final TagKey<Block> CHESTS_ENDER = tag("chests/ender");
         public static final TagKey<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final TagKey<Block> CHESTS_WOODEN = tag("chests/wooden");
+        public static final TagKey<Block> CHORUS_ADDITIONALLY_GROWS_ON = tag("chorus_additionally_grows_on");
         public static final TagKey<Block> COBBLESTONE = tag("cobblestone");
         public static final TagKey<Block> COBBLESTONE_NORMAL = tag("cobblestone/normal");
         public static final TagKey<Block> COBBLESTONE_INFESTED = tag("cobblestone/infested");

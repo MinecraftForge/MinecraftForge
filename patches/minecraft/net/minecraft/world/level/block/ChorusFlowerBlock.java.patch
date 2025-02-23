@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -43,7 +_,7 @@
+@@ -43,11 +_,11 @@
        BlockPos blockpos = p_51704_.m_7494_();
        if (p_51703_.m_46859_(blockpos) && blockpos.m_123342_() < p_51703_.m_151558_()) {
           int i = p_51702_.m_61143_(f_51647_);
@@ -9,6 +9,20 @@
              boolean flag = false;
              boolean flag1 = false;
              BlockState blockstate = p_51703_.m_8055_(p_51704_.m_7495_());
+-            if (blockstate.m_60713_(Blocks.f_50259_)) {
++            if (blockstate.m_60713_(Blocks.f_50259_) || blockstate.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                flag = true;
+             } else if (blockstate.m_60713_(this.f_51648_)) {
+                int j = 1;
+@@ -55,7 +_,7 @@
+                for(int k = 0; k < 4; ++k) {
+                   BlockState blockstate1 = p_51703_.m_8055_(p_51704_.m_6625_(j + 1));
+                   if (!blockstate1.m_60713_(this.f_51648_)) {
+-                     if (blockstate1.m_60713_(Blocks.f_50259_)) {
++                     if (blockstate1.m_60713_(Blocks.f_50259_) || blockstate1.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                         flag1 = true;
+                      }
+                      break;
 @@ -99,7 +_,7 @@
              } else {
                 this.m_51658_(p_51703_, p_51704_);
@@ -18,3 +32,12 @@
           }
        }
     }
+@@ -134,7 +_,7 @@
+ 
+    public boolean m_7898_(BlockState p_51683_, LevelReader p_51684_, BlockPos p_51685_) {
+       BlockState blockstate = p_51684_.m_8055_(p_51685_.m_7495_());
+-      if (!blockstate.m_60713_(this.f_51648_) && !blockstate.m_60713_(Blocks.f_50259_)) {
++      if (!blockstate.m_60713_(this.f_51648_) && !blockstate.m_60713_(Blocks.f_50259_) && !blockstate.m_204336_(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+          if (!blockstate.m_60795_()) {
+             return false;
+          } else {

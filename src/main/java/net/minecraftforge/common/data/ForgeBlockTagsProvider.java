@@ -39,6 +39,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(CHESTS_ENDER).add(Blocks.ENDER_CHEST);
         tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
         tag(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
+        tag(CHORUS_ADDITIONALLY_GROWS_ON).addTags(END_STONES);
         tag(COBBLESTONE).addTags(COBBLESTONE_NORMAL, COBBLESTONE_INFESTED, COBBLESTONE_MOSSY, COBBLESTONE_DEEPSLATE);
         tag(COBBLESTONE_NORMAL).add(Blocks.COBBLESTONE);
         tag(COBBLESTONE_INFESTED).add(Blocks.INFESTED_COBBLESTONE);
