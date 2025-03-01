@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
 +++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
-@@ -65,7 +_,7 @@
+@@ -65,11 +_,11 @@
          BlockPos blockpos = p_220982_.above();
          if (p_220981_.isEmptyBlock(blockpos) && blockpos.getY() < p_220981_.getMaxBuildHeight()) {
              int i = p_220980_.getValue(AGE);
@@ -9,6 +9,20 @@
                  boolean flag = false;
                  boolean flag1 = false;
                  BlockState blockstate = p_220981_.getBlockState(p_220982_.below());
+-                if (blockstate.is(Blocks.END_STONE)) {
++                if (blockstate.is(Blocks.END_STONE) || blockstate.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                     flag = true;
+                 } else if (blockstate.is(this.plant)) {
+                     int j = 1;
+@@ -77,7 +_,7 @@
+                     for (int k = 0; k < 4; k++) {
+                         BlockState blockstate1 = p_220981_.getBlockState(p_220982_.below(j + 1));
+                         if (!blockstate1.is(this.plant)) {
+-                            if (blockstate1.is(Blocks.END_STONE)) {
++                            if (blockstate1.is(Blocks.END_STONE) || blockstate1.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                                 flag1 = true;
+                             }
+                             break;
 @@ -121,6 +_,7 @@
                  } else {
                      this.placeDeadFlower(p_220981_, p_220982_);
@@ -17,3 +31,12 @@
              }
          }
      }
+@@ -157,7 +_,7 @@
+     @Override
+     protected boolean canSurvive(BlockState p_51683_, LevelReader p_51684_, BlockPos p_51685_) {
+         BlockState blockstate = p_51684_.getBlockState(p_51685_.below());
+-        if (!blockstate.is(this.plant) && !blockstate.is(Blocks.END_STONE)) {
++        if (!blockstate.is(this.plant) && !blockstate.is(Blocks.END_STONE) && !blockstate.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+             if (!blockstate.isAir()) {
+                 return false;
+             } else {

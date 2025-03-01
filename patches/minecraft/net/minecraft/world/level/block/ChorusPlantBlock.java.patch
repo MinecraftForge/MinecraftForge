@@ -1,0 +1,36 @@
+--- a/net/minecraft/world/level/block/ChorusPlantBlock.java
++++ b/net/minecraft/world/level/block/ChorusPlantBlock.java
+@@ -50,7 +_,7 @@
+         BlockState blockstate5 = p_51711_.getBlockState(p_51712_.west());
+         Block block = p_312378_.getBlock();
+         return p_312378_.trySetValue(
+-                DOWN, Boolean.valueOf(blockstate.is(block) || blockstate.is(Blocks.CHORUS_FLOWER) || blockstate.is(Blocks.END_STONE))
++                DOWN, Boolean.valueOf(blockstate.is(block) || blockstate.is(Blocks.CHORUS_FLOWER) || blockstate.is(Blocks.END_STONE) || blockstate.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON))
+             )
+             .trySetValue(UP, Boolean.valueOf(blockstate1.is(block) || blockstate1.is(Blocks.CHORUS_FLOWER)))
+             .trySetValue(NORTH, Boolean.valueOf(blockstate2.is(block) || blockstate2.is(Blocks.CHORUS_FLOWER)))
+@@ -65,7 +_,7 @@
+             p_51731_.scheduleTick(p_51732_, this, 1);
+             return super.updateShape(p_51728_, p_51729_, p_51730_, p_51731_, p_51732_, p_51733_);
+         } else {
+-            boolean flag = p_51730_.is(this) || p_51730_.is(Blocks.CHORUS_FLOWER) || p_51729_ == Direction.DOWN && p_51730_.is(Blocks.END_STONE);
++            boolean flag = p_51730_.is(this) || p_51730_.is(Blocks.CHORUS_FLOWER) || p_51729_ == Direction.DOWN && (p_51730_.is(Blocks.END_STONE) || p_51730_.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON));
+             return p_51728_.setValue(PROPERTY_BY_DIRECTION.get(p_51729_), Boolean.valueOf(flag));
+         }
+     }
+@@ -91,13 +_,13 @@
+                 }
+ 
+                 BlockState blockstate2 = p_51725_.getBlockState(blockpos.below());
+-                if (blockstate2.is(this) || blockstate2.is(Blocks.END_STONE)) {
++                if (blockstate2.is(this) || blockstate2.is(Blocks.END_STONE) || blockstate2.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON)) {
+                     return true;
+                 }
+             }
+         }
+ 
+-        return blockstate.is(this) || blockstate.is(Blocks.END_STONE);
++        return blockstate.is(this) || blockstate.is(Blocks.END_STONE) || blockstate.is(net.minecraftforge.common.Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON);
+     }
+ 
+     @Override
