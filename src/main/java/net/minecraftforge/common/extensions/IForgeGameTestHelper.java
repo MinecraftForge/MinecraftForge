@@ -195,23 +195,24 @@ public interface IForgeGameTestHelper {
         }
     }
 
-    default void setAndAssertBlock(int x, int y, int z, Block block) {
-        this.setAndAssertBlock(x, y, z, block.defaultBlockState());
+    default BlockState setAndAssertBlock(int x, int y, int z, Block block) {
+        return this.setAndAssertBlock(x, y, z, block.defaultBlockState());
     }
 
-    default void setAndAssertBlock(int x, int y, int z, BlockState state) {
-        this.setAndAssertBlock(new BlockPos(x, y, z), state);
+    default BlockState setAndAssertBlock(int x, int y, int z, BlockState state) {
+        return this.setAndAssertBlock(new BlockPos(x, y, z), state);
     }
 
-    default void setAndAssertBlock(BlockPos pos, Block block) {
-        this.setAndAssertBlock(pos, block.defaultBlockState());
+    default BlockState setAndAssertBlock(BlockPos pos, Block block) {
+        return this.setAndAssertBlock(pos, block.defaultBlockState());
     }
 
-    default void setAndAssertBlock(BlockPos pos, BlockState state) {
+    default BlockState setAndAssertBlock(BlockPos pos, BlockState state) {
         this.assertTrue(
                 this.self().getLevel().setBlock(this.self().absolutePos(pos), state, Block.UPDATE_ALL),
                 () -> "Failed to set block at pos %s : %s".formatted(pos, state.getBlock())
         );
+        return state;
     }
 
     default void removeAllItemEntitiesInRange(BlockPos pos, double range) {
