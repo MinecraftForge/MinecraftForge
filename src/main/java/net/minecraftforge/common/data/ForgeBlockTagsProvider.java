@@ -55,6 +55,8 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(CHESTS_WOODEN)
                 .add(Blocks.CHEST, Blocks.TRAPPED_CHEST)
                 .addOptionalTag(forgeTagKey("chests/wooden"));
+        tag(CHORUS_ADDITIONALLY_GROWS_ON)
+                .addTag(END_STONES);
         tag(CLUSTERS).add(Blocks.AMETHYST_CLUSTER);
         tag(COBBLESTONES)
                 .addTags(COBBLESTONE_NORMAL, COBBLESTONE_INFESTED, COBBLESTONE_MOSSY, COBBLESTONE_DEEPSLATE)
