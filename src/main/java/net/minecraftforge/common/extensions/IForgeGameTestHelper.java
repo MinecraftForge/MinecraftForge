@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -157,6 +158,26 @@ public interface IForgeGameTestHelper {
                     self().setBlock(pos, block);
             }
         }
+    }
+
+    default BlockState setAndAssertBlock(int x, int y, int z, Block block) {
+        return this.setAndAssertBlock(x, y, z, block.defaultBlockState());
+    }
+
+    default BlockState setAndAssertBlock(int x, int y, int z, BlockState state) {
+        return this.setAndAssertBlock(new BlockPos(x, y, z), state);
+    }
+
+    default BlockState setAndAssertBlock(BlockPos pos, Block block) {
+        return this.setAndAssertBlock(pos, block.defaultBlockState());
+    }
+
+    default BlockState setAndAssertBlock(BlockPos pos, BlockState state) {
+        this.assertTrue(
+                this.self().getLevel().setBlock(this.self().absolutePos(pos), state, Block.UPDATE_ALL),
+                () -> "Failed to set block at pos %s : %s".formatted(pos, state.getBlock())
+        );
+        return state;
     }
 
     default <T> Flag<T> flag(String name) {
