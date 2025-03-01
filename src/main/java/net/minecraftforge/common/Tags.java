@@ -55,6 +55,7 @@ public class Tags {
 
         public static final TagKey<Block> CHESTS_ENDER = forgeTag("chests/ender");
         public static final TagKey<Block> CHESTS_TRAPPED = forgeTag("chests/trapped");
+        public static final TagKey<Block> CHORUS_ADDITIONALLY_GROWS_ON = forgeTag("chorus_additionally_grows_on");
         public static final TagKey<Block> COBBLESTONE_NORMAL = forgeTag("cobblestone/normal");
         public static final TagKey<Block> COBBLESTONE_INFESTED = forgeTag("cobblestone/infested");
         public static final TagKey<Block> COBBLESTONE_MOSSY = forgeTag("cobblestone/mossy");
