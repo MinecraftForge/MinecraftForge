@@ -680,6 +680,31 @@ public class ForgeEventFactory
         return event.getImpactResult();
     }
 
+    /**
+     * This sister method exists due to an oversight in the original introduction of adding
+     * {@link ProjectileImpactEvent.ImpactResult ImpactResult} to {@link ProjectileImpactEvent}. Prior to its addition,
+     * the cancelling of this event would call <i>all</i> behavior within the if-clause of the while loop to stop and
+     * then break out of the loop early. When the result was added, the default cancellation was changed to
+     * {@link ProjectileImpactEvent.ImpactResult#SKIP_ENTITY}, breaking the ability to use
+     * {@link Event#setCanceled(boolean)} to actually cancel the event logic.
+     * <p>
+     * While not entirely ideal, this preserves compatibility with older 1.20.1 mods that rely on the cancellation of
+     * the projectile impact event.
+     *
+     * @return The result of the event, or {@code null} if it was cancelled.
+     * @see <a href="https://github.com/MinecraftForge/MinecraftForge/pull/10481">PR #10481</a>
+     */
+    public static @Nullable ProjectileImpactEvent.ImpactResult onProjectileImpactResultNullable(Projectile projectile, HitResult ray)
+    {
+        ProjectileImpactEvent event = new ProjectileImpactEvent(projectile, ray);
+
+        // Remove this when the event is no longer cancelable
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return null;
+
+        return event.getImpactResult();
+    }
+
     public static boolean onProjectileImpact(Projectile projectile, HitResult ray)
     {
         return onProjectileImpactResult(projectile, ray) != ProjectileImpactEvent.ImpactResult.DEFAULT;
