@@ -259,6 +259,8 @@ modId="hide_neighbor_face_test"
 [[mods]]
 modId="living_get_projectile_event_test"
 [[mods]]
+modId="projectile_impact_event_legacy_cancel"
+[[mods]]
 modId="server_world_creation_test"
 [[mods]]
 modId="valid_railshape_test"
