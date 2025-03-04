@@ -18,7 +18,7 @@
           this.m_20095_();
        }
  
-@@ -186,9 +_,30 @@
+@@ -186,9 +_,35 @@
                 }
              }
  
@@ -27,7 +27,12 @@
 -               this.f_19812_ = true;
 +            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag) {
 +               var result = net.minecraftforge.event.ForgeEventFactory.onProjectileImpactResultNullable(this, hitresult);
-+               if (result == null) break;
++               if (result == null) {
++                  if (hitresult.m_6662_() != HitResult.Type.ENTITY)
++                     break;
++
++                  result = net.minecraftforge.event.entity.ProjectileImpactEvent.ImpactResult.SKIP_ENTITY;
++               }
 +               switch (result) {
 +                  case SKIP_ENTITY:
 +                     if (hitresult.m_6662_() != HitResult.Type.ENTITY) { // If there is no entity, we just return default behaviour
