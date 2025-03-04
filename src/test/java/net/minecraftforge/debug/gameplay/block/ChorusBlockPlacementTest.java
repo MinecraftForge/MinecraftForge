@@ -39,7 +39,7 @@ public class ChorusBlockPlacementTest extends BaseTestMod {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void custom_placeable_block(GameTestHelper helper) {
-        var custom = helper.setAndAssertBlock(BlockPos.ZERO, BLOCK.get());
+        var custom = helper.setAssertAndGetBlock(BlockPos.ZERO, BLOCK.get());
         helper.assertTrue(custom.is(Tags.Blocks.CHORUS_ADDITIONALLY_GROWS_ON), () -> "Block %s is not placeable on chorus".formatted(custom.getBlock()));
 
         helper.setAndAssertBlock(BlockPos.ZERO.above(), Blocks.CHORUS_FLOWER);
