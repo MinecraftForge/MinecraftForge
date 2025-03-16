@@ -210,18 +210,11 @@ public class Tags {
         public static final TagKey<Block> PLAYER_WORKSTATIONS_CRAFTING_TABLES = cTag("player_workstations/crafting_tables");
         public static final TagKey<Block> PLAYER_WORKSTATIONS_FURNACES = cTag("player_workstations/furnaces");
         public static final TagKey<Block> PUMPKINS = cTag("pumpkins");
-        /**
-         * For pumpkins that are not carved.
-         */
+        /** For pumpkins that are not carved. */
         public static final TagKey<Block> PUMPKINS_NORMAL = cTag("pumpkins/normal");
-        /**
-         * For pumpkins that are already carved but not a light source.
-         */
+        /** For pumpkins that are already carved but not a light source. */
         public static final TagKey<Block> PUMPKINS_CARVED = cTag("pumpkins/carved");
-
-        /**
-         * For pumpkins that are already carved and a light source.
-         */
+        /** For pumpkins that are already carved and a light source. */
         public static final TagKey<Block> PUMPKINS_JACK_O_LANTERNS = cTag("pumpkins/jack_o_lanterns");
         /**
          * Blocks should be included in this tag if their movement/relocation can cause serious issues such
@@ -762,18 +755,11 @@ public class Tags {
         public static final TagKey<Item> PLAYER_WORKSTATIONS_CRAFTING_TABLES = cTag("player_workstations/crafting_tables");
         public static final TagKey<Item> PLAYER_WORKSTATIONS_FURNACES = cTag("player_workstations/furnaces");
         public static final TagKey<Item> PUMPKINS = cTag("pumpkins");
-        /**
-         * For pumpkins that are not carved.
-         */
+        /** For pumpkins that are not carved. */
         public static final TagKey<Item> PUMPKINS_NORMAL = cTag("pumpkins/normal");
-        /**
-         * For pumpkins that are already carved but not a light source.
-         */
+        /** For pumpkins that are already carved but not a light source. */
         public static final TagKey<Item> PUMPKINS_CARVED = cTag("pumpkins/carved");
-
-        /**
-         * For pumpkins that are already carved and a light source.
-         */
+        /** For pumpkins that are already carved and a light source. */
         public static final TagKey<Item> PUMPKINS_JACK_O_LANTERNS = cTag("pumpkins/jack_o_lanterns");
         public static final TagKey<Item> RAW_MATERIALS = cTag("raw_materials");
         public static final TagKey<Item> RAW_MATERIALS_COPPER = cTag("raw_materials/copper");
