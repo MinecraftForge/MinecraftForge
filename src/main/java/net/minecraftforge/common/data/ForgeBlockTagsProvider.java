@@ -143,6 +143,10 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider {
         tag(ORES_IN_GROUND_STONE).add(Blocks.COAL_ORE, Blocks.COPPER_ORE, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE);
         tag(PLAYER_WORKSTATIONS_CRAFTING_TABLES).add(Blocks.CRAFTING_TABLE);
         tag(PLAYER_WORKSTATIONS_FURNACES).add(Blocks.FURNACE);
+        tag(PUMPKINS).addTags(PUMPKINS_NORMAL, PUMPKINS_CARVED, PUMPKINS_JACK_O_LANTERNS);
+        tag(PUMPKINS_NORMAL).add(Blocks.PUMPKIN);
+        tag(PUMPKINS_CARVED).add(Blocks.CARVED_PUMPKIN);
+        tag(PUMPKINS_JACK_O_LANTERNS).add(Blocks.JACK_O_LANTERN);
         tag(SAND).addTags(SAND_COLORLESS, SAND_RED); // forge:sand
         tag(RELOCATION_NOT_SUPPORTED);
         tag(ROPES);
