@@ -25,12 +25,12 @@ import com.mojang.blaze3d.framegraph.FramePass;
 @GameTestHolder("forge." + RenderFrameLayerTest.MODID)
 public class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     public RenderFrameLayerTest(FMLJavaModLoadingContext context) {
         super(context, ENABLED);
         if (ENABLED) {
-        	MinecraftForge.EVENT_BUS.addListener(RenderFrameLayerTest::renderTest);
+            MinecraftForge.EVENT_BUS.addListener(RenderFrameLayerTest::renderTest);
         }
         
     }
@@ -41,39 +41,39 @@ public class RenderFrameLayerTest extends BaseTestMod {
 
     @GameTest(template = "forge:empty3x3x3")
     public static void test_test(GameTestHelper helper) {
-    	helper.succeed();
+        helper.succeed();
     }
     
     @SubscribeEvent
     public static void renderTest(AddFramePassEvent event) {
-    	FramePass pass = event.createPass(rl(MODID));
-		event.bundle.main = pass.readsAndWrites(event.bundle.main);
-    	
-    	var pl = Minecraft.getInstance().gameRenderer.getMainCamera();
-    	pass.executes(() -> {
-    		PoseStack ps = new PoseStack();
-    		ps.translate(pl.getPosition().multiply(-1,-1,-1));
-    		ps.pushPose();
-        	var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        	var vc = buffSource.getBuffer(RenderType.lines());
-        	
-        	ShapeRenderer.renderLineBox(ps, vc, 0, -60, 0, 10, -50, 10, 1f, 1f, 1f, 1f);
-        	buffSource.endBatch();
-        	ps.popPose();
-    	});
-    	pass = event.createPass(rl(MODID+"2"));
-    	event.bundle.main = pass.readsAndWrites(event.bundle.main);
-    	
-    	pass.executes(() -> {
-    		PoseStack ps = new PoseStack();
-    		ps.translate(pl.getPosition().multiply(-1,-1,-1));
-    		ps.pushPose();
-        	var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        	var vc = buffSource.getBuffer(RenderType.lines());
-        	
-        	ShapeRenderer.renderLineBox(ps, vc, 1, -61, 1, 9, -49, 9, 1f, 1f, 1f, 1f);
-        	buffSource.endBatch();
-        	ps.popPose();
-    	});
+        FramePass pass = event.createPass(rl(MODID));
+        event.bundle.main = pass.readsAndWrites(event.bundle.main);
+        
+        var pl = Minecraft.getInstance().gameRenderer.getMainCamera();
+        pass.executes(() -> {
+            PoseStack ps = new PoseStack();
+            ps.translate(pl.getPosition().multiply(-1,-1,-1));
+            ps.pushPose();
+            var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            var vc = buffSource.getBuffer(RenderType.lines());
+            
+            ShapeRenderer.renderLineBox(ps, vc, 0, -60, 0, 10, -50, 10, 1f, 1f, 1f, 1f);
+            buffSource.endBatch();
+            ps.popPose();
+        });
+        pass = event.createPass(rl(MODID+"2"));
+        event.bundle.main = pass.readsAndWrites(event.bundle.main);
+        
+        pass.executes(() -> {
+            PoseStack ps = new PoseStack();
+            ps.translate(pl.getPosition().multiply(-1,-1,-1));
+            ps.pushPose();
+            var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
+            var vc = buffSource.getBuffer(RenderType.lines());
+            
+            ShapeRenderer.renderLineBox(ps, vc, 1, -61, 1, 9, -49, 9, 1f, 1f, 1f, 1f);
+            buffSource.endBatch();
+            ps.popPose();
+        });
     }
 }
