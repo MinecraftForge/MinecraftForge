@@ -51,7 +51,7 @@ public class AddFramePassEvent extends Event
      */
     public FramePass createPass(ResourceLocation rl, String other, Order order) 
     {
-        return builder.addOrderedPass(rl, other, order.ordinal());
+        return builder.addOrderedPass(rl.toString(), other, order.ordinal());
     }
     /**
      * Adds a frame pass relative to a different (possibly modded) pass. Beware of footguns.
@@ -63,7 +63,7 @@ public class AddFramePassEvent extends Event
      */
     public FramePass createPass(ResourceLocation rl, ResourceLocation other, Order order) 
     {
-        return builder.addOrderedPass(rl, other.toString(), order.ordinal());
+        return builder.addOrderedPass(rl.toString(), other.toString(), order.ordinal());
     }
     
     public static enum Order 
