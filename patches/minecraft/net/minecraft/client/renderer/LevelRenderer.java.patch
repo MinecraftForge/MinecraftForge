@@ -18,6 +18,14 @@
          CloudStatus cloudstatus = this.minecraft.options.getCloudsType();
          if (cloudstatus != CloudStatus.OFF) {
              float f2 = this.level.effects().getCloudHeight();
+@@ -499,6 +_,7 @@
+         }
+ 
+         this.addLateDebugPass(framegraphbuilder, vec3, fogparameters);
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onLastFramePassAddition(framegraphbuilder, targets);
+         profilerfiller.popPush("framegraph");
+         framegraphbuilder.execute(p_367325_, new FrameGraphBuilder.Inspector() {
+             @Override
 @@ -564,7 +_,11 @@
              double d2 = vec3.z();
              p_369478_.push("terrain");

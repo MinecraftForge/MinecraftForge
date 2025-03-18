@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.audio.Channel;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.DeltaTracker;
@@ -51,6 +52,7 @@ import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.resources.PlayerSkin.Model;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
@@ -302,5 +304,9 @@ public final class ForgeEventFactoryClient {
     public static ModelEvent.RegisterModelStateDefinitions onRegisterModeStateDefinitions() {
         // This is on the mod bus because it happens during the initial texture reload, which is while the Forge bus is shut down.
         return fireModBus(new ModelEvent.RegisterModelStateDefinitions());
+    }
+    
+    public static void onLastFramePassAddition(FrameGraphBuilder builder, LevelTargetBundle bundle) {
+    	post(new AddFramePassEvent(builder, bundle));
     }
 }

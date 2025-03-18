@@ -1,0 +1,23 @@
+--- a/com/mojang/blaze3d/framegraph/FrameGraphBuilder.java
++++ b/com/mojang/blaze3d/framegraph/FrameGraphBuilder.java
+@@ -26,6 +_,20 @@
+         this.passes.add(framegraphbuilder$pass);
+         return framegraphbuilder$pass;
+     }
++    
++    public FramePass addOrderedPass(net.minecraft.resources.ResourceLocation thisName, String otherName, int offset) {
++        FrameGraphBuilder.Pass newPass = new FrameGraphBuilder.Pass(this.passes.size(), thisName.toString());
++        if (!otherName.equals("")) {
++            for (int i = 0; i < this.passes.size(); i++) {
++                if (this.passes.get(i).name.equals(otherName)) {
++                    this.passes.add(i + offset, newPass);
++                    return newPass;
++                }
++            }
++        }
++        this.passes.add(newPass);
++        return newPass;
++    }
+ 
+     public <T> ResourceHandle<T> importExternal(String p_363754_, T p_369377_) {
+         FrameGraphBuilder.ExternalResource<T> externalresource = new FrameGraphBuilder.ExternalResource<>(p_363754_, null, p_369377_);
