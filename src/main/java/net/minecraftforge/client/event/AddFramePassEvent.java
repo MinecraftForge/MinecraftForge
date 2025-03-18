@@ -45,7 +45,7 @@ public class AddFramePassEvent extends Event
      * Adds a frame pass relative to a different pass.
      * 
      * @param rl Resource location for frame pass name. Use RLs to avoid duplicate names.
-     * @param other Use vanilla name of framepass to order against. See {@linkplain LevelRenderer.java}.
+     * @param other Use vanilla name of framepass to order against. See {@linkplain net.minecraft.client.renderer.LevelRenderer}.
      * @param order Self explanatory, BEFORE to come before, AFTER to come after.
      * @return Reference to pass to add modder rendering to.
      */
