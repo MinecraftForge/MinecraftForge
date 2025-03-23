@@ -1,23 +1,33 @@
 --- a/com/mojang/blaze3d/framegraph/FrameGraphBuilder.java
 +++ b/com/mojang/blaze3d/framegraph/FrameGraphBuilder.java
-@@ -26,6 +_,20 @@
-         this.passes.add(framegraphbuilder$pass);
+@@ -27,6 +_,30 @@
          return framegraphbuilder$pass;
      }
-+    
+ 
++    /** Forge: like {@link #addPass(String)}, but orders the new pass it against an existing pass */
 +    public FramePass addOrderedPass(String thisName, String otherName, int offset) {
-+        FrameGraphBuilder.Pass newPass = new FrameGraphBuilder.Pass(this.passes.size(), thisName.toString());
-+        if (!otherName.equals("")) {
-+            for (int i = 0; i < this.passes.size(); i++) {
-+                if (this.passes.get(i).name.equals(otherName)) {
-+                    this.passes.add(i + offset, newPass);
-+                    return newPass;
-+                }
-+            }
-+        }
-+        this.passes.add(newPass);
++        FrameGraphBuilder.Pass newPass = new FrameGraphBuilder.Pass(this.passes.size(), thisName);
++
++        // ensure other pass exists
++        int index = this.indexOfPass(otherName);
++        if (index == -1)
++            throw new IllegalArgumentException("Cannot create an ordered pass '%s' against non-existent pass '%s'".formatted(thisName, otherName));
++
++        this.passes.add(index + offset, newPass);
 +        return newPass;
 +    }
- 
++
++    /** Forge: Gets the index of a pass from {@link #passes}. */
++    public int indexOfPass(String name) {
++        for (int i = 0; i < this.passes.size(); i++) {
++            if (this.passes.get(i).name.equals(name)) {
++                return i;
++            }
++        }
++
++        return -1;
++    }
++
      public <T> ResourceHandle<T> importExternal(String p_363754_, T p_369377_) {
          FrameGraphBuilder.ExternalResource<T> externalresource = new FrameGraphBuilder.ExternalResource<>(p_363754_, null, p_369377_);
+         this.externalResources.add(externalresource);
