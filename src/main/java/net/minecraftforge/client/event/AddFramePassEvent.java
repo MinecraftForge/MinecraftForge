@@ -51,61 +51,6 @@ public class AddFramePassEvent extends Event {
     }
 
     /**
-     * Adds a frame pass relative to a different pass.
-     *
-     * @param rl    Resource location for frame pass name. Use RLs to avoid duplicate names.
-     * @param other Use vanilla name of frame pass to order against. See
-     *              {@linkplain net.minecraft.client.renderer.LevelRenderer}.
-     * @param order BEFORE to come before, AFTER to come after.
-     * @return Reference to pass to add modder rendering to.
-     * @throws IllegalArgumentException If the name is a duplicate or the other pass name is an empty string or does not
-     *                                  exist in the frame graph builder.
-     */
-    public FramePass createPass(ResourceLocation rl, String other, Order order) {
-        // ensure valid other pass name
-        if (other.isBlank())
-            throw new IllegalArgumentException("Cannot create an ordered path against a frame pass with an empty name!");
-
-        // ensure non-duplicate pass name
-        String name = rl.toString();
-        if (!this.addedNames.add(name)) // false if the set didn't change
-            throw new IllegalArgumentException("Cannot create a frame pass with a duplicate name: " + name);
-
-        return this.builder.addOrderedPass(name, other, order.ordinal());
-    }
-
-    /**
-     * Adds a frame pass relative to a different pass.
-     *
-     * <p>If you are targeting a modded pass, ensure that your mod is loaded {@code AFTER} the target mod as a
-     * dependency in {@code mods.toml}, or use a lower
-     * {@linkplain net.minecraftforge.eventbus.api.EventPriority event priority}.</p>
-     *
-     * @param rl    Resource location for frame pass name.
-     * @param other Use mod's RL of frame pass to order against.
-     * @param order BEFORE to come before, AFTER to come after.
-     * @return Reference to pass to add modder rendering to.
-     * @throws IllegalArgumentException If the name is a duplicate or the other pass does not exist in the frame graph
-     *                                  builder.
-     */
-    public FramePass createPass(ResourceLocation rl, ResourceLocation other, Order order) {
-        return this.createPass(rl, other.toString(), order);
-    }
-
-    /** @return If this event's builder has a pass with the given name. */
-    public boolean hasPass(ResourceLocation name) {
-        return this.hasPass(rlToString(name));
-    }
-
-    /**
-     * @return If this event's builder has a pass with the given name.
-     * @see #hasPass(ResourceLocation)
-     */
-    public boolean hasPass(String name) {
-        return this.builder.indexOfPass(name) > 0;
-    }
-
-    /**
      * Gets the string of a given resource location, removing the namespace if it is the
      * {@linkplain ResourceLocation#DEFAULT_NAMESPACE default namespace}. (i.e. {@code minecraft:foo} becomes
      * {@code foo}).
@@ -117,11 +62,4 @@ public class AddFramePassEvent extends Event {
         return ResourceLocation.DEFAULT_NAMESPACE.equals(rl.getNamespace()) ? rl.getPath() : rl.toString();
     }
 
-    /**
-     * When {@linkplain #createPass(ResourceLocation, String, Order) creating an ordered pass}, this enum dictates
-     * whether it should be placed before or after the declared existing pass.
-     */
-    public enum Order {
-        BEFORE, AFTER
-    }
 }

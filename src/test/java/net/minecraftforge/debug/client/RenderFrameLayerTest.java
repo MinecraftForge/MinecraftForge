@@ -25,7 +25,7 @@ import com.mojang.blaze3d.framegraph.FramePass;
 @GameTestHolder("forge." + RenderFrameLayerTest.MODID)
 public class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     public RenderFrameLayerTest(FMLJavaModLoadingContext context) {
         super(context, ENABLED);
