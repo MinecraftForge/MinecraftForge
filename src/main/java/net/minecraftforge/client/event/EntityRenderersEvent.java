@@ -172,11 +172,18 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * @return the skin renderer, or {@code null} if no renderer is registered for that skin name
          * @see #getSkins()
          */
+        @SuppressWarnings("unchecked")
+        public <R extends EntityRenderer<? extends Player>> @Nullable R getPlayerSkin(String skinName)
+        {
+            return (R) skinMap.get(skinName);
+        }
+
+        /** @deprecated Use getEntitySkin, return type down graded to EntityRenderer instead of LivingEntityRenderer */
         @Nullable
         @SuppressWarnings("unchecked")
         public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(String skinName)
         {
-            return (R) skinMap.get(skinName);
+            return skinMap.get(skinName) instanceof LivingEntityRenderer<?,?> renderer ? (R) renderer : null;
         }
 
         /**
@@ -187,11 +194,18 @@ public abstract class EntityRenderersEvent extends Event implements IModBusEvent
          * @param <R>        the type of the renderer
          * @return the renderer, or {@code null} if no renderer is registered for that entity type
          */
+        @SuppressWarnings("unchecked")
+        public <T extends Entity, R extends EntityRenderer<T>> @Nullable R getEntityRenderer(EntityType<? extends T> entityType)
+        {
+            return (R) renderers.get(entityType);
+        }
+
+        /** @deprecated Use getEntityRenderer, return type down graded to EntityRenderer instead of LivingEntityRenderer */
         @Nullable
         @SuppressWarnings("unchecked")
         public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType)
         {
-            return (R) renderers.get(entityType);
+            return renderers.get(entityType) instanceof LivingEntityRenderer<?,?> renderer ? (R) renderer : null;
         }
 
         /**
