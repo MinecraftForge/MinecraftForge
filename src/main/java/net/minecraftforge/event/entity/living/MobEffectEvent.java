@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class MobEffectEvent extends LivingEvent {
+public sealed class MobEffectEvent extends LivingEvent {
     @Nullable
     protected final MobEffectInstance effectInstance;
 
@@ -40,7 +40,7 @@ public class MobEffectEvent extends LivingEvent {
      * This Event does not have a result.
      */
     @Cancelable
-    public static class Remove extends MobEffectEvent {
+    public static final class Remove extends MobEffectEvent {
         private final MobEffect effect;
 
         public Remove(LivingEntity living, MobEffect effect) {
@@ -80,7 +80,7 @@ public class MobEffectEvent extends LivingEvent {
      * {@link Result#DEFAULT DEFAULT} will run vanilla logic to determine if this mob effect is applicable in {@link LivingEntity#canBeAffected}.
      */
     @HasResult
-    public static class Applicable extends MobEffectEvent {
+    public static final class Applicable extends MobEffectEvent {
         public Applicable(LivingEntity living, @NotNull MobEffectInstance effectInstance) {
             super(living, effectInstance);
         }
@@ -98,7 +98,7 @@ public class MobEffectEvent extends LivingEvent {
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Added extends MobEffectEvent {
+    public static final class Added extends MobEffectEvent {
         private final MobEffectInstance oldEffectInstance;
         private final Entity source;
 
@@ -139,7 +139,7 @@ public class MobEffectEvent extends LivingEvent {
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Expired extends MobEffectEvent {
+    public static final class Expired extends MobEffectEvent {
         public Expired(LivingEntity living, MobEffectInstance effect) {
             super(living, effect);
         }

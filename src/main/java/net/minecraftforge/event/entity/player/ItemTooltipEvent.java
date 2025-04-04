@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemTooltipEvent extends PlayerEvent
+public final class ItemTooltipEvent extends PlayerEvent
 {
     private final TooltipFlag flags;
     @NotNull

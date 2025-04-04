@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Player;
  * @author Mithion
  *
  */
-public class PlayerFlyableFallEvent extends PlayerEvent
+public final class PlayerFlyableFallEvent extends PlayerEvent
 {
     private float distance;
     private float multiplier;

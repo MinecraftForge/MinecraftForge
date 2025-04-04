@@ -61,7 +61,7 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Load extends LevelEvent {
+    public static final class Load extends LevelEvent {
         public Load(LevelAccessor level) { super(level); }
     }
 
@@ -77,7 +77,7 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Unload extends LevelEvent {
+    public static final class Unload extends LevelEvent {
         public Unload(LevelAccessor level) { super(level); }
     }
 
@@ -91,7 +91,7 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Save extends LevelEvent {
+    public static final class Save extends LevelEvent {
         public Save(LevelAccessor level) { super(level); }
     }
 
@@ -108,7 +108,7 @@ public class LevelEvent extends Event {
      * @see ServerLevelData#isInitialized()
      */
     @Cancelable
-    public static class CreateSpawnPosition extends LevelEvent {
+    public static final class CreateSpawnPosition extends LevelEvent {
         private final ServerLevelData settings;
 
         public CreateSpawnPosition(LevelAccessor level, ServerLevelData settings) {
@@ -133,7 +133,7 @@ public class LevelEvent extends Event {
      * Canceling the event will result in an empty list, meaning no entity will be spawned.</p>
      */
     @Cancelable
-    public static class PotentialSpawns extends LevelEvent {
+    public static final class PotentialSpawns extends LevelEvent {
         private final MobCategory mobcategory;
         private final BlockPos pos;
         private final List<Weighted<MobSpawnSettings.SpawnerData>> list;

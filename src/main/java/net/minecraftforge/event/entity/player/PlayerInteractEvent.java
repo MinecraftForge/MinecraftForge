@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
  * All subclasses are fired on {@link MinecraftForge#EVENT_BUS}.
  * See the individual documentation on each subevent for more details.
  **/
-public class PlayerInteractEvent extends PlayerEvent {
+public sealed class PlayerInteractEvent extends PlayerEvent {
     private final InteractionHand hand;
     private final BlockPos pos;
     @Nullable
@@ -61,7 +61,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link EntityInteract}.
      */
     @Cancelable
-    public static class EntityInteractSpecific extends PlayerInteractEvent {
+    public static final class EntityInteractSpecific extends PlayerInteractEvent {
         private final Vec3 localPos;
         private final Entity target;
 
@@ -100,7 +100,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link RightClickItem}.
      */
     @Cancelable
-    public static class EntityInteract extends PlayerInteractEvent {
+    public static final class EntityInteract extends PlayerInteractEvent {
         private final Entity target;
 
         public EntityInteract(Player player, InteractionHand hand, Entity target) {
@@ -127,10 +127,10 @@ public class PlayerInteractEvent extends PlayerEvent {
      * Note that handling things differently on the client vs server may cause desynchronizations!
      */
     @Cancelable
-    public static class RightClickBlock extends PlayerInteractEvent {
+    public static final class RightClickBlock extends PlayerInteractEvent {
         private Result useBlock = Result.DEFAULT;
         private Result useItem = Result.DEFAULT;
-        private BlockHitResult hitVec;
+        private final BlockHitResult hitVec;
 
         public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
             super(player, hand, pos, hitVec.getDirection());
@@ -195,7 +195,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then continue to other hands.
      */
     @Cancelable
-    public static class RightClickItem extends PlayerInteractEvent {
+    public static final class RightClickItem extends PlayerInteractEvent {
         public RightClickItem(Player player, InteractionHand hand) {
             super(player, hand, player.blockPosition(), null);
         }
@@ -206,7 +206,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * The server is not aware of when the client right clicks empty space with an empty hand, you will need to tell the server yourself.
      * This event cannot be canceled.
      */
-    public static class RightClickEmpty extends PlayerInteractEvent {
+    public static final class RightClickEmpty extends PlayerInteractEvent {
         public RightClickEmpty(Player player, InteractionHand hand) {
             super(player, hand, player.blockPosition(), null);
         }
@@ -228,7 +228,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
     @Cancelable
-    public static class LeftClickBlock extends PlayerInteractEvent {
+    public static final class LeftClickBlock extends PlayerInteractEvent {
         private Result useBlock = Result.DEFAULT;
         private Result useItem = Result.DEFAULT;
         private final Action action;
@@ -313,7 +313,7 @@ public class PlayerInteractEvent extends PlayerEvent {
      * The server is not aware of when the client left clicks empty space, you will need to tell the server yourself.
      * This event cannot be canceled.
      */
-    public static class LeftClickEmpty extends PlayerInteractEvent {
+    public static final class LeftClickEmpty extends PlayerInteractEvent {
         public LeftClickEmpty(Player player) {
             super(player, InteractionHand.MAIN_HAND, player.blockPosition(), null);
         }

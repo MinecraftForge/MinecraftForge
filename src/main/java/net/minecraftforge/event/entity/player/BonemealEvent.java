@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 @Cancelable
 @HasResult
 // TODO: Redesign BonemealEvent the whole thing, it doens't make sense.
-public class BonemealEvent extends PlayerEvent {
+public final class BonemealEvent extends PlayerEvent {
     private final Level level;
     private final BlockPos pos;
     private final BlockState block;

@@ -14,7 +14,7 @@ import net.minecraftforge.fml.ModLoadingStage;
  *
  * @author cpw
  */
-public class FMLLoadCompleteEvent extends ParallelDispatchEvent
+public final class FMLLoadCompleteEvent extends ParallelDispatchEvent
 {
     public FMLLoadCompleteEvent(final ModContainer container, final ModLoadingStage stage)
     {

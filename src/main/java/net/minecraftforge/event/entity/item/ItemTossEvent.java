@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
  * removed from the inventory - and thus removed from the system.
  */
 @Cancelable
-public class ItemTossEvent extends ItemEvent
+public final class ItemTossEvent extends ItemEvent
 {
 
     private final Player player;

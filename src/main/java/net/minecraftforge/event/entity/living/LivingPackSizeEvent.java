@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraft.world.entity.Mob;
 
 @HasResult
-public class LivingPackSizeEvent extends LivingEvent
+public final class LivingPackSizeEvent extends LivingEvent
 {
     private int maxPackSize;
     

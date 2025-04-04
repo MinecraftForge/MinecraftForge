@@ -18,7 +18,7 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * As this is a blocking event modders can also do things like load data. Need some example uses.
  */
-public class ConnectionStartEvent extends Event {
+public final class ConnectionStartEvent extends Event {
     private final Connection connection;
 
     @ApiStatus.Internal

@@ -24,7 +24,7 @@ import net.minecraftforge.fml.LogicalSide;
  * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
 @Cancelable
-public class LootTableLoadEvent extends Event
+public final class LootTableLoadEvent extends Event
 {
     private final ResourceLocation name;
     private LootTable table;

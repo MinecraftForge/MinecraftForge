@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 /**
  * Fired on {@link PackRepository} creation to allow mods to add new pack finders.
  */
-public class AddPackFindersEvent extends Event implements IModBusEvent {
+public final class AddPackFindersEvent extends Event implements IModBusEvent {
     private final PackType packType;
     private final Consumer<RepositorySource> sources;
 

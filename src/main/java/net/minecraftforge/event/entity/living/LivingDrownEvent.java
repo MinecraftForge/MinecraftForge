@@ -26,7 +26,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on {@link MinecraftForge#EVENT_BUS}
  **/
 @Cancelable
-public class LivingDrownEvent extends LivingEvent {
+public final class LivingDrownEvent extends LivingEvent {
     private boolean isDrowning;
     private float damageAmount;
     private int bubbleCount;

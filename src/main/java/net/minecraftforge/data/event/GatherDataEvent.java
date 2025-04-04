@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class GatherDataEvent extends Event implements IModBusEvent
+public final class GatherDataEvent extends Event implements IModBusEvent
 {
     private final DataGenerator dataGenerator;
     private final DataGeneratorConfig config;
@@ -54,7 +54,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
     public boolean includeReports() { return this.config.reports; }
     public boolean validate() { return this.config.validate; }
 
-    public static class DataGeneratorConfig {
+    public static final class DataGeneratorConfig {
         private final Set<String> mods;
         private final Path path;
         private final Collection<Path> inputs;

@@ -28,7 +28,7 @@ import net.minecraft.world.entity.LivingEntity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingFallEvent extends LivingEvent {
+public final class LivingFallEvent extends LivingEvent {
     private double distance;
     private float damageMultiplier;
 

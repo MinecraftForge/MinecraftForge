@@ -24,7 +24,7 @@ import java.util.Optional;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerSleepInBedEvent extends PlayerEvent
+public final class PlayerSleepInBedEvent extends PlayerEvent
 {
     private BedSleepingProblem result = null;
     private final Optional<BlockPos> pos;

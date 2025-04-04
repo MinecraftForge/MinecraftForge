@@ -23,7 +23,7 @@ import net.minecraftforge.fml.LogicalSide;
  * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
 @Cancelable
-public class LivingUseTotemEvent extends LivingEvent
+public final class LivingUseTotemEvent extends LivingEvent
 {
     private final DamageSource source;
     private final ItemStack totem;

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
-public class RenderArmEvent extends Event {
+public final class RenderArmEvent extends Event {
     private final PoseStack poseStack;
     private final MultiBufferSource multiBufferSource;
     private final int packedLight;

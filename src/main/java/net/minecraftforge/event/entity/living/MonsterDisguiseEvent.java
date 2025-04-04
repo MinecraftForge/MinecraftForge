@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event does not have a {@link Result}.
  */
 @Cancelable
-public class MonsterDisguiseEvent extends LivingEvent {
+public final class MonsterDisguiseEvent extends LivingEvent {
     private final Player player;
 
     public MonsterDisguiseEvent(Monster monster, Player player) {

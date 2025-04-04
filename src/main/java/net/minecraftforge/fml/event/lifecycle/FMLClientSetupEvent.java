@@ -23,7 +23,7 @@ import net.minecraftforge.fml.ModLoadingStage;
  *
  * This is a parallel dispatch event.
  */
-public class FMLClientSetupEvent extends ParallelDispatchEvent {
+public final class FMLClientSetupEvent extends ParallelDispatchEvent {
     public FMLClientSetupEvent(ModContainer container, ModLoadingStage stage) {
         super(container, stage);
     }

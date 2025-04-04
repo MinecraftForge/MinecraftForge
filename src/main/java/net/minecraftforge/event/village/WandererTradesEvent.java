@@ -36,7 +36,7 @@ public class WandererTradesEvent extends Event {
 
     public static class Pool {
         private int rolls;
-        private List<ItemListing> entries;
+        private final List<ItemListing> entries;
 
         public Pool(Pair<ItemListing[], Integer> data) {
             this.rolls = data.getRight();

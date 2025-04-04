@@ -25,7 +25,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDestroyBlockEvent extends LivingEvent
+public final class LivingDestroyBlockEvent extends LivingEvent
 {
     private final BlockPos pos;
     private final BlockState state;

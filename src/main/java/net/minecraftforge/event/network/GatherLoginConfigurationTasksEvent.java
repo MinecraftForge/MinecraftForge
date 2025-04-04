@@ -15,7 +15,7 @@ import net.minecraftforge.eventbus.api.Event;
  * Gathers tasks that need to be run during the initial login configuration.
  * @see net.minecraft.server.network.ServerConfigurationPacketListenerImpl#startConfiguration() startConfiguration
  */
-public class GatherLoginConfigurationTasksEvent extends Event {
+public final class GatherLoginConfigurationTasksEvent extends Event {
     private final Connection connection;
     private final Consumer<ConfigurationTask> add;
 

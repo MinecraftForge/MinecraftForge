@@ -22,7 +22,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @HasResult
-public class EntityMobGriefingEvent extends EntityEvent
+public final class EntityMobGriefingEvent extends EntityEvent
 {
     public EntityMobGriefingEvent(Entity entity)
     {

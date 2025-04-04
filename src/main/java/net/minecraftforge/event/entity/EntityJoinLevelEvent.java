@@ -27,7 +27,7 @@ import net.minecraftforge.fml.LogicalSide;
  * on both logical sides.
  **/
 @Cancelable
-public class EntityJoinLevelEvent extends EntityEvent {
+public final class EntityJoinLevelEvent extends EntityEvent {
     private final Level level;
     private final boolean loadedFromDisk;
 

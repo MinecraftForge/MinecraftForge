@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingMakeBrainEvent extends LivingEvent
+public final class LivingMakeBrainEvent extends LivingEvent
 {
     private final BrainBuilder<?> brainBuilder;
 

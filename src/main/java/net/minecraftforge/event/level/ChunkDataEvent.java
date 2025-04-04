@@ -25,7 +25,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkDataEvent extends ChunkEvent {
+public sealed class ChunkDataEvent extends ChunkEvent {
     private final SerializableChunkData data;
 
     public ChunkDataEvent(ChunkAccess chunk, SerializableChunkData data) {
@@ -53,8 +53,8 @@ public class ChunkDataEvent extends ChunkEvent {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends ChunkDataEvent {
-        private ChunkType status;
+    public static final class Load extends ChunkDataEvent {
+        private final ChunkType status;
 
         public Load(ChunkAccess chunk, SerializableChunkData data, ChunkType status) {
             super(chunk, data);
@@ -77,7 +77,7 @@ public class ChunkDataEvent extends ChunkEvent {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Save extends ChunkDataEvent {
+    public static final class Save extends ChunkDataEvent {
         public Save(ChunkAccess chunk, LevelAccessor world, SerializableChunkData data) {
             super(chunk, world, data);
         }

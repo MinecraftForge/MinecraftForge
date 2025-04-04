@@ -25,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @HasResult
-public class CriticalHitEvent extends PlayerEvent
+public final class CriticalHitEvent extends PlayerEvent
 {
     private float damageModifier;
     private final float oldDamageModifier;

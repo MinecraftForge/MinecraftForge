@@ -21,7 +21,7 @@ import net.minecraft.commands.Commands;
  *
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
-public class RegisterCommandsEvent extends Event
+public final class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final Commands.CommandSelection environment;

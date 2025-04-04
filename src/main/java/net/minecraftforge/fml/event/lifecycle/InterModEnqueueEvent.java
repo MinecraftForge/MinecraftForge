@@ -19,7 +19,7 @@ import net.minecraftforge.fml.ModLoadingStage;
  *
  * This is a parallel dispatch event.
  */
-public class InterModEnqueueEvent extends ParallelDispatchEvent
+public final class InterModEnqueueEvent extends ParallelDispatchEvent
 {
 
     public InterModEnqueueEvent(final ModContainer container, final ModLoadingStage stage)

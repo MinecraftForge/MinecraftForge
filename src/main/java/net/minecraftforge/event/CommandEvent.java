@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 @Cancelable
-public class CommandEvent extends Event
+public final class CommandEvent extends Event
 {
     private ParseResults<CommandSourceStack> parse;
     @Nullable

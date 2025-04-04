@@ -22,7 +22,7 @@ import java.util.List;
  * The hook will still take the damage specified
  */
 @Cancelable
-public class ItemFishedEvent extends PlayerEvent {
+public final class ItemFishedEvent extends PlayerEvent {
     private final NonNullList<ItemStack> stacks = NonNullList.create();
     private final FishingHook hook;
     private int rodDamage;

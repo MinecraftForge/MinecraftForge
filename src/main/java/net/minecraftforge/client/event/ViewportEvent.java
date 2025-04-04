@@ -30,7 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ComputeCameraAngles
  * @see ComputeFov
  */
-public abstract class ViewportEvent extends Event {
+public abstract sealed class ViewportEvent extends Event {
     private final GameRenderer renderer;
     private final Camera camera;
     private final double partialTick;
@@ -73,7 +73,7 @@ public abstract class ViewportEvent extends Event {
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class RenderFog extends ViewportEvent {
+    public static final class RenderFog extends ViewportEvent {
         private final FogMode mode;
         private final FogType type;
         private float farPlaneDistance;
@@ -182,7 +182,7 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeFogColor extends ViewportEvent {
+    public static final class ComputeFogColor extends ViewportEvent {
         private float red;
         private float green;
         private float blue;
@@ -254,7 +254,7 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeCameraAngles extends ViewportEvent {
+    public static final class ComputeCameraAngles extends ViewportEvent {
         private float yaw;
         private float pitch;
         private float roll;
@@ -327,7 +327,7 @@ public abstract class ViewportEvent extends Event {
      *
      * @see ComputeFovModifierEvent
      */
-    public static class ComputeFov extends ViewportEvent {
+    public static final class ComputeFov extends ViewportEvent {
         private final boolean usedConfiguredFov;
         private float fov;
 

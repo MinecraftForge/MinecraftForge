@@ -25,7 +25,7 @@ import java.util.function.Consumer;
  *   Tadpole -> Frog when it grows up
  *   Mushroom Cow -> Cow when sheared
  */
-public class LivingConversionEvent extends LivingEvent {
+public sealed class LivingConversionEvent extends LivingEvent {
     public LivingConversionEvent(LivingEntity entity) {
         super(entity);
     }
@@ -42,7 +42,7 @@ public class LivingConversionEvent extends LivingEvent {
      * If cancelled, the replacement will not occur
      */
     @Cancelable
-    public static class Pre extends LivingConversionEvent {
+    public static final class Pre extends LivingConversionEvent {
         private final EntityType<? extends LivingEntity> outcome;
         private final Consumer<Integer> timer;
 
@@ -79,7 +79,7 @@ public class LivingConversionEvent extends LivingEvent {
      * itself with another entity.
      * The old living entity is likely to be removed right after this event.
      */
-    public static class Post extends LivingConversionEvent {
+    public static final class Post extends LivingConversionEvent {
         private final LivingEntity outcome;
 
         public Post(LivingEntity entity, LivingEntity outcome) {

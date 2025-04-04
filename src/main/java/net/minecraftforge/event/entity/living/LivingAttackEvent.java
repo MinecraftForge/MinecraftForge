@@ -31,7 +31,7 @@ import net.minecraft.world.entity.LivingEntity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingAttackEvent extends LivingEvent
+public final class LivingAttackEvent extends LivingEvent
 {
     private final DamageSource source;
     private final float amount;

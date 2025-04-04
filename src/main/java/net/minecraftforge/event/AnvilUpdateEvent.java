@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
  * if the output is empty, and the event is not canceled, vanilla behavior will execute. <br>
  */
 @Cancelable
-public class AnvilUpdateEvent extends Event {
+public final class AnvilUpdateEvent extends Event {
     private final ItemStack left;
     private final ItemStack right;
     private final String name;

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * ItemStacks are the inputs/output from the anvil. They cannot be edited.
  */
-public class AnvilRepairEvent extends PlayerEvent
+public final class AnvilRepairEvent extends PlayerEvent
 {
     @NotNull
     private final ItemStack left; // The left side of the input

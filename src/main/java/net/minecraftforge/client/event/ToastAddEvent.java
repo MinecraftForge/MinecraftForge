@@ -22,7 +22,7 @@ import net.minecraftforge.fml.LogicalSide;
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
-public class ToastAddEvent extends Event {
+public final class ToastAddEvent extends Event {
     private final Toast toast;
 
     public ToastAddEvent(Toast toast) {
