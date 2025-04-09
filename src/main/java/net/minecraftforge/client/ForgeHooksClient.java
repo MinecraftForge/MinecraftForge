@@ -104,8 +104,11 @@ import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.MovementInputUpdateEvent;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterItemModelPropertiesEvent;
+import net.minecraftforge.client.event.RegisterItemModelsEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.RegisterSpecialModelRenderersEvent;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
@@ -777,6 +780,12 @@ public class ForgeHooksClient {
             throw new IllegalStateException("Client hooks initialized more than once");
         initializedClientHooks = true;
 
+        ModLoader.get().postEvent(new RegisterItemModelsEvent());
+        ModLoader.get().postEvent(new RegisterSpecialModelRenderersEvent());
+        ModLoader.get().postEvent(new RegisterColorHandlersEvent.Item());
+        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.Select());
+        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.Conditional());
+        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.RangeSelect());
         ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
         ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
         ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());

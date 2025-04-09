@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/item/properties/select/SelectItemModelProperties.java
++++ b/net/minecraft/client/renderer/item/properties/select/SelectItemModelProperties.java
+@@ -23,4 +_,8 @@
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("context_dimension"), ContextDimension.TYPE);
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("component"), ComponentContents.castType());
+     }
++
++    public static void register(ResourceLocation id, SelectItemModelProperty.Type<?, ?> codec) {
++        ID_MAPPER.put(id, codec);
++    }
+ }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/item/properties/conditional/ConditionalItemModelProperties.java
++++ b/net/minecraft/client/renderer/item/properties/conditional/ConditionalItemModelProperties.java
+@@ -27,4 +_,8 @@
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("view_entity"), IsViewEntity.MAP_CODEC);
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("component"), ComponentMatches.MAP_CODEC);
+     }
++
++    public static void register(ResourceLocation id, MapCodec<? extends ConditionalItemModelProperty> codec) {
++        ID_MAPPER.put(id, codec);
++    }
+ }

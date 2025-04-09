@@ -9,3 +9,13 @@
          Builder<Block, SpecialModelRenderer<?>> builder = ImmutableMap.builder();
          map.forEach((p_377014_, p_376072_) -> {
              SpecialModelRenderer<?> specialmodelrenderer = p_376072_.bake(p_378538_);
+@@ -188,5 +_,9 @@
+             }
+         });
+         return builder.build();
++    }
++
++    public static void register(ResourceLocation id, MapCodec<? extends SpecialModelRenderer.Unbaked> codec) {
++        ID_MAPPER.put(id, codec);
+     }
+ }

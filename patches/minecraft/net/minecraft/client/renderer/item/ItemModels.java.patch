@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/item/ItemModels.java
++++ b/net/minecraft/client/renderer/item/ItemModels.java
+@@ -23,4 +_,8 @@
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("select"), SelectItemModel.Unbaked.MAP_CODEC);
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("condition"), ConditionalItemModel.Unbaked.MAP_CODEC);
+     }
++
++    public static void register(ResourceLocation id, MapCodec<? extends ItemModel.Unbaked> codec) {
++        ID_MAPPER.put(id, codec);
++    }
+ }

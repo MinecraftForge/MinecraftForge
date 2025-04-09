@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/item/properties/numeric/RangeSelectItemModelProperties.java
++++ b/net/minecraft/client/renderer/item/properties/numeric/RangeSelectItemModelProperties.java
+@@ -24,4 +_,8 @@
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("use_duration"), UseDuration.MAP_CODEC);
+         ID_MAPPER.put(ResourceLocation.withDefaultNamespace("count"), Count.MAP_CODEC);
+     }
++
++    public static void register(ResourceLocation id, MapCodec<? extends RangeSelectItemModelProperty> codec) {
++        ID_MAPPER.put(id, codec);
++    }
+ }
