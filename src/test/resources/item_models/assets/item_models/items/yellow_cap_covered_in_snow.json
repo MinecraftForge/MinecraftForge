@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "model",
+    "model": "item/leather_helmet",
+    "tints": [
+      {
+        "type": "item_models:test",
+        "default": -1
+      }
+    ]
+  }
+}

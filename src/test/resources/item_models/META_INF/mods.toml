@@ -1,0 +1,6 @@
+[[dependencies.item_model]]
+modId="forge"
+mandatory=true
+versionRange="[0,]"
+ordering="AFTER"
+side="BOTH"

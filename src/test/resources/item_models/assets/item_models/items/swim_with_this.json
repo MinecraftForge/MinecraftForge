@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "property": "item_models:test",
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "item/tadpole_bucket"
+    },
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "item/water_bucket"
+    }
+  }
+}
