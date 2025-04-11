@@ -23,9 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public abstract class RegisterItemModelPropertiesEvent extends Event implements IModBusEvent
-{
-
+public abstract class RegisterItemModelPropertiesEvent extends Event implements IModBusEvent {
     @ApiStatus.Internal
     protected RegisterItemModelPropertiesEvent() {}
 
@@ -41,12 +39,8 @@ public abstract class RegisterItemModelPropertiesEvent extends Event implements 
      * @see SelectItemModelProperty
      * @see net.minecraft.client.renderer.item.SelectItemModel
      */
-    public static class Select extends RegisterItemModelPropertiesEvent
-    {
-
-        /**
-         * Register a {@linkplain SelectItemModelProperty.Type select property type} with a specific id.
-         */
+    public static class Select extends RegisterItemModelPropertiesEvent {
+        /** Register a {@linkplain SelectItemModelProperty.Type select property type} with a specific id. */
         public void register(ResourceLocation id, SelectItemModelProperty.Type<?, ?> codec) {
             SelectItemModelProperties.register(id, codec);
         }
@@ -63,12 +57,8 @@ public abstract class RegisterItemModelPropertiesEvent extends Event implements 
      * @see ConditionalItemModelProperty
      * @see net.minecraft.client.renderer.item.ConditionalItemModel
      */
-    public static class Conditional extends RegisterItemModelPropertiesEvent
-    {
-
-        /**
-         * Register a {@linkplain ConditionalItemModelProperty conditional property} {@linkplain MapCodec map codec} with a specific id.
-         */
+    public static class Conditional extends RegisterItemModelPropertiesEvent {
+        /** Register a {@linkplain ConditionalItemModelProperty conditional property} {@linkplain MapCodec map codec} with a specific id. */
         public void register(ResourceLocation id, MapCodec<? extends ConditionalItemModelProperty> codec) {
             ConditionalItemModelProperties.register(id, codec);
         }
@@ -85,12 +75,8 @@ public abstract class RegisterItemModelPropertiesEvent extends Event implements 
      * @see RangeSelectItemModelProperty
      * @see net.minecraft.client.renderer.item.RangeSelectItemModel
      */
-    public static class RangeSelect extends RegisterItemModelPropertiesEvent
-    {
-
-        /**
-         * Register an {@linkplain RangeSelectItemModelProperty range select property} {@linkplain MapCodec map codec} with a specific id.
-         */
+    public static class RangeSelect extends RegisterItemModelPropertiesEvent {
+        /** Register an {@linkplain RangeSelectItemModelProperty range select property} {@linkplain MapCodec map codec} with a specific id. */
         public void register(ResourceLocation id, MapCodec<? extends RangeSelectItemModelProperty> codec) {
             RangeSelectItemModelProperties.register(id, codec);
         }

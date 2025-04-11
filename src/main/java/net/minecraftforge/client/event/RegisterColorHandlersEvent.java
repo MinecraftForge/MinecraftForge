@@ -80,15 +80,11 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Item extends RegisterColorHandlersEvent
-    {
-
+    public static class Item extends RegisterColorHandlersEvent {
         @ApiStatus.Internal
         public Item() {}
 
-        /**
-         * Register an {@linkplain ItemTintSource item tint source} {@linkplain MapCodec map codec} with a specific id.
-         */
+        /** Register an {@linkplain ItemTintSource item tint source} {@linkplain MapCodec map codec} with a specific id. */
         public void register(ResourceLocation id, MapCodec<? extends ItemTintSource> codec) {
             ItemTintSources.ID_MAPPER.put(id, codec);
         }

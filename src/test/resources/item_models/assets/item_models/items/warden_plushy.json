@@ -1,9 +1,0 @@
-{
-  "model": {
-    "type": "special",
-    "base": "item/generated",
-    "model": {
-      "type": "item_models:test"
-    }
-  }
-}

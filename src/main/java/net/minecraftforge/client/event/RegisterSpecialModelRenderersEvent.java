@@ -21,15 +21,11 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see RegisterItemModelsEvent
  */
-public class RegisterSpecialModelRenderersEvent extends Event implements IModBusEvent
-{
-
+public class RegisterSpecialModelRenderersEvent extends Event implements IModBusEvent {
     @ApiStatus.Internal
     public RegisterSpecialModelRenderersEvent() {}
 
-    /**
-     * Register an {@linkplain SpecialModelRenderer.Unbaked unbaked special model renderer} {@linkplain MapCodec map codec} with a specific id.
-     */
+    /** Register an {@linkplain SpecialModelRenderer.Unbaked unbaked special model renderer} {@linkplain MapCodec map codec} with a specific id. */
     public void register(ResourceLocation id, MapCodec<? extends SpecialModelRenderer.Unbaked> codec) {
         SpecialModelRenderers.register(id, codec);
     }
