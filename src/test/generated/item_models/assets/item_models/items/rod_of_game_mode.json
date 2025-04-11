@@ -1,0 +1,26 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/blaze_rod"
+        },
+        "when": "creative"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/breeze_rod"
+        },
+        "when": "adventure"
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/stick"
+    },
+    "property": "item_models:test"
+  }
+}

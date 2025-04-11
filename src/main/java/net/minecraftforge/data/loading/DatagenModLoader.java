@@ -9,6 +9,7 @@ import net.minecraft.Util;
 import net.minecraft.client.ClientBootstrap;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.Bootstrap;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
@@ -91,6 +92,9 @@ public class DatagenModLoader {
         if (genClient)
             ClientBootstrap.bootstrap();
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
+        if (genClient) {
+            ForgeHooksClient.afterBootstrap();
+        }
         var lookupProvider = CompletableFuture.supplyAsync(VanillaRegistries::createLookup, Util.backgroundExecutor());
 
         var mods = new HashSet<String>();

@@ -48,6 +48,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -63,10 +64,13 @@ public class ItemModelsTest extends BaseTestMod {
     public static final RegistryObject<Item> TINT_SRC = item("yellow_cap_covered_in_snow");
     public static final RegistryObject<Item> SELECT = item("rod_of_game_mode");
     public static final RegistryObject<Item> CONDITIONAL = item("swim_with_this");
-    public static final RegistryObject<Item> RANGE = item("fullinventorymeter");
+    public static final RegistryObject<Item> RANGE = item("speedometer");
 
     public ItemModelsTest(FMLJavaModLoadingContext ctx) {
         super(ctx);
+        for (RegistryObject<Item> item: List.of(MODEL, SPECIAL_RENDERER, TINT_SRC, SELECT, CONDITIONAL, RANGE)) {
+            testItem(provider -> item.get().getDefaultInstance());
+        }
     }
 
     private static RegistryObject<Item> item(String name) {
@@ -222,7 +226,7 @@ public class ItemModelsTest extends BaseTestMod {
 
         @Override
         public float get(ItemStack stack, @Nullable ClientLevel lvl, @Nullable LivingEntity entity, int aNumberAgain) {
-            return entity instanceof Player player ? player.getInventory().getFreeSlot() : 0;
+            return entity != null ? (float) entity.getDeltaMovement().horizontalDistance() : 0;
         }
 
         @Override
@@ -258,19 +262,20 @@ public class ItemModelsTest extends BaseTestMod {
                             new SelectItemModel.SwitchCase<>(List.of(GameType.CREATIVE), plain(Items.BLAZE_ROD)),
                             new SelectItemModel.SwitchCase<>(List.of(GameType.ADVENTURE), plain(Items.BREEZE_ROD))));
                     itemModelOutput.accept(CONDITIONAL.get(), ItemModelUtils.conditional(new TestConditionalProperty(), plain(Items.TADPOLE_BUCKET), plain(Items.WATER_BUCKET)));
-                    itemModelOutput.accept(RANGE.get(), ItemModelUtils.rangeSelect(new TestRangeSelectProperty(), compass("24"),
-                            new RangeSelectItemModel.Entry(0, compass("8")),
-                            new RangeSelectItemModel.Entry(9, compass("12")),
-                            new RangeSelectItemModel.Entry(18, compass("16")),
-                            new RangeSelectItemModel.Entry(27, compass("20"))));
+                    ArrayList<RangeSelectItemModel.Entry> list = new ArrayList<>();
+                    for (int i = 1; i < 24; i++) {
+                        list.add(new RangeSelectItemModel.Entry(i * 0.015f, compass(i + 4)));
+                    }
+                    itemModelOutput.accept(RANGE.get(), ItemModelUtils.rangeSelect(new TestRangeSelectProperty(), compass(4), list));
                 }
 
                 private static ItemModel.Unbaked plain(Item item) {
                     return ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item));
                 }
 
-                private static ItemModel.Unbaked compass(String frame) {
-                    return ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(Items.RECOVERY_COMPASS, "_" + frame));
+                private static ItemModel.Unbaked compass(int frame) {
+                    return ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(Items.RECOVERY_COMPASS,
+                            (frame >= 10 ? "_" : "_0") + frame));
                 }
             };
         }

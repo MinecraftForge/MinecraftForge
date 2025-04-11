@@ -1,0 +1,11 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/leather_helmet",
+    "tints": [
+      {
+        "type": "item_models:test"
+      }
+    ]
+  }
+}

@@ -780,12 +780,6 @@ public class ForgeHooksClient {
             throw new IllegalStateException("Client hooks initialized more than once");
         initializedClientHooks = true;
 
-        ModLoader.get().postEvent(new RegisterItemModelsEvent());
-        ModLoader.get().postEvent(new RegisterSpecialModelRenderersEvent());
-        ModLoader.get().postEvent(new RegisterColorHandlersEvent.Item());
-        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.Select());
-        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.Conditional());
-        ModLoader.get().postEvent(new RegisterItemModelPropertiesEvent.RangeSelect());
         ModLoader.get().postEvent(new RegisterClientReloadListenersEvent(resourceManager));
         ModLoader.get().postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
         ModLoader.get().postEvent(new EntityRenderersEvent.RegisterRenderers());
@@ -853,6 +847,16 @@ public class ForgeHooksClient {
         }
 
         return new ForgeBlockModelData(transform, renderType, renderTypeFast, visibility);
+    }
+
+    public static void afterBootstrap() {
+        ModLoader modLoader = ModLoader.get();
+        modLoader.postEvent(new RegisterItemModelsEvent());
+        modLoader.postEvent(new RegisterSpecialModelRenderersEvent());
+        modLoader.postEvent(new RegisterColorHandlersEvent.Item());
+        modLoader.postEvent(new RegisterItemModelPropertiesEvent.Select());
+        modLoader.postEvent(new RegisterItemModelPropertiesEvent.Conditional());
+        modLoader.postEvent(new RegisterItemModelPropertiesEvent.RangeSelect());
     }
 
     /** This is a dirty fucking hack, but it needs to send in the top most render type. */

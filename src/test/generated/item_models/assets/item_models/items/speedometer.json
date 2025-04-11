@@ -1,0 +1,173 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_05"
+        },
+        "threshold": 0.015
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_06"
+        },
+        "threshold": 0.03
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_07"
+        },
+        "threshold": 0.044999998
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_08"
+        },
+        "threshold": 0.06
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_09"
+        },
+        "threshold": 0.074999996
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_10"
+        },
+        "threshold": 0.089999996
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_11"
+        },
+        "threshold": 0.105
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_12"
+        },
+        "threshold": 0.12
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_13"
+        },
+        "threshold": 0.13499999
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_14"
+        },
+        "threshold": 0.14999999
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_15"
+        },
+        "threshold": 0.16499999
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_16"
+        },
+        "threshold": 0.17999999
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_17"
+        },
+        "threshold": 0.195
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_18"
+        },
+        "threshold": 0.21
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_19"
+        },
+        "threshold": 0.225
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_20"
+        },
+        "threshold": 0.24
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_21"
+        },
+        "threshold": 0.255
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_22"
+        },
+        "threshold": 0.26999998
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_23"
+        },
+        "threshold": 0.285
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_24"
+        },
+        "threshold": 0.29999998
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_25"
+        },
+        "threshold": 0.315
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_26"
+        },
+        "threshold": 0.32999998
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/recovery_compass_27"
+        },
+        "threshold": 0.345
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/recovery_compass_04"
+    },
+    "property": "item_models:test"
+  }
+}

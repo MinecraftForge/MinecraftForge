@@ -13,6 +13,7 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
@@ -47,6 +48,7 @@ public class ClientModLoader {
         LanguageHook.loadForgeAndMCLangs();
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
         if (error == null) {
+            ForgeHooksClient.afterBootstrap();
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, true);
             ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
