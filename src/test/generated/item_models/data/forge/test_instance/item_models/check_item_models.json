@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:item_models/check_item_models",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

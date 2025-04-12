@@ -1,7 +1,6 @@
 package net.minecraftforge.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
@@ -24,6 +23,8 @@ import net.minecraft.client.renderer.special.NoDataSpecialModelRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.data.PackOutput;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -42,6 +43,8 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.gametest.GameTest;
+import net.minecraftforge.gametest.GameTestNamespace;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -52,8 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-// @GameTestNamespace("forge")
 @Mod(ItemModelsTest.MODID)
+@GameTestNamespace("forge")
 public class ItemModelsTest extends BaseTestMod {
     public static final String MODID = "item_models";
     private static final ResourceLocation RESOURCE_LOCATION = rl("test");
@@ -77,12 +80,28 @@ public class ItemModelsTest extends BaseTestMod {
         return ITEMS.register(name, () -> new Item(name(smodid(), name, new Item.Properties())));
     }
 
+    @GameTest
+    public static void check_item_models(GameTestHelper helper) {
+        getItemModelOfClass(helper, MODEL, TestItemModel.class);
+        getItemModelOfClass(helper, SPECIAL_RENDERER, SpecialModelWrapper.class);
+        getItemModelOfClass(helper, TINT_SRC, BlockModelWrapper.class);
+        getItemModelOfClass(helper, SELECT, SelectItemModel.class);
+        getItemModelOfClass(helper, CONDITIONAL, ConditionalItemModel.class);
+        getItemModelOfClass(helper, RANGE, RangeSelectItemModel.class);
+
+        helper.succeed();
+    }
+
+    private static void getItemModelOfClass(GameTestHelper helper, RegistryObject<Item> item, Class<? extends ItemModel> expected) {
+        Class<? extends ItemModel> modelClass = Minecraft.getInstance().getModelManager().getItemModel(item.getId()).getClass();
+        helper.assertTrue(modelClass.equals(expected), Component.literal("Expected model for ").append(item.get().getName())
+                .append(" to be " + expected.getName() + ", got " + modelClass.getName()));
+    }
+
     @SubscribeEvent
     public void runData(GatherDataEvent event) {
-        LogUtils.getLogger().info("about to register custom model provider");
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(event.includeClient(), new ModelProvider(out));
-        LogUtils.getLogger().info("registered custom model provider");
     }
 
     @SubscribeEvent
