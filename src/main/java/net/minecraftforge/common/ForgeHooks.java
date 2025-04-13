@@ -153,6 +153,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fluids.FluidType;
@@ -188,6 +189,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
@@ -204,6 +206,10 @@ public final class ForgeHooks {
 
     private ForgeHooks() {}
 
+    public static void fireLightingCalculatedEvent(ChunkAccess chunk) {
+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.LightingCalculated(chunk));
+    }
+    
     public static boolean canContinueUsing(@NotNull ItemStack from, @NotNull ItemStack to) {
         if (!from.isEmpty() && !to.isEmpty()) {
             return from.getItem().canContinueUsing(from, to);
