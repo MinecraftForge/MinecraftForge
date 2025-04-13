@@ -98,4 +98,23 @@ public class ChunkEvent extends LevelEvent
             super(chunk);
         }
     }
+    
+    /**
+     * ChunkEvent.LightingCalculated is fired when MinecraftForge flags that lighting is correct in a chunk.<br>
+     * This event is fired during light propagation in <br>
+     *
+     * ThreadedLevelLightEngine.CompletableFuture(). <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult} <br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class LightingCalculated extends ChunkEvent
+    {
+        public LightingCalculated(ChunkAccess chunk)
+        {
+            super(chunk);
+        }
+    }
 }
