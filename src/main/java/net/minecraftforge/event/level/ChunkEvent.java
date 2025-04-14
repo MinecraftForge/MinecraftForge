@@ -102,7 +102,7 @@ public class ChunkEvent extends LevelEvent {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class LightingCalculated extends ChunkEvent {
+    public static final class LightingCalculated extends ChunkEvent {
         public LightingCalculated(ChunkAccess chunk) {
             super(chunk);
         }
