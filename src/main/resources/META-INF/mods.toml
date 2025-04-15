@@ -5,13 +5,13 @@ logoFile="forge_logo.png"
 license="LGPL v2.1"
 
 [[mods]]
-    modId="forge"
-    version="${global.forgeVersion}"
-    updateJSONURL="https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
-    displayURL="https://minecraftforge.net/"
-    displayName="Forge"
-    credits="Anyone who has contributed on Github and supports our development"
-    authors="LexManos,cpw"
-    description='''
-    Forge, a broad compatibility API.
-    '''
+modId="forge"
+version="${global.forgeVersion}"
+updateJSONURL="https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
+displayURL="https://minecraftforge.net/"
+displayName="Forge"
+credits="Anyone who has contributed on Github and supports our development"
+authors="LexManos,cpw"
+description='''
+Forge, a broad compatibility API.
+'''
