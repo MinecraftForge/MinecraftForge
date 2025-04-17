@@ -152,8 +152,8 @@ public class PlayLevelSoundEvent extends Event {
     public static class AtEntity extends PlayLevelSoundEvent {
         private final Entity entity;
 
-        public AtEntity(Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
-            super(entity.level(), sound, source, volume, pitch);
+        public AtEntity(Level level, @Nullable Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
+            super(level, sound, source, volume, pitch);
             this.entity = entity;
         }
 

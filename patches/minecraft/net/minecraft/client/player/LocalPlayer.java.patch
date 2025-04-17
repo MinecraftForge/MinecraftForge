@@ -14,7 +14,7 @@
      public void playSound(SoundEvent p_108651_, float p_108652_, float p_108653_) {
 -        this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), p_108651_, this.getSoundSource(), p_108652_, p_108653_, false);
 +        var holder = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(p_108651_);
-+        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, holder, this.getSoundSource(), p_108652_, p_108653_);
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this.level(), this, holder, this.getSoundSource(), p_108652_, p_108653_);
 +        if (event.isCanceled() || event.getSound() == null) return;
 +        this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), event.getSound().get(), event.getSource(), event.getNewVolume(), event.getNewPitch(), false);
 +

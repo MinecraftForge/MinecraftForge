@@ -480,8 +480,8 @@ public final class ForgeEventFactory {
         return null;
     }
 
-    public static PlayLevelSoundEvent.AtEntity onPlaySoundAtEntity(Entity entity, Holder<SoundEvent> name, SoundSource category, float volume, float pitch) {
-        return fire(new PlayLevelSoundEvent.AtEntity(entity, name, category, volume, pitch));
+    public static PlayLevelSoundEvent.AtEntity onPlaySoundAtEntity(Level level, Entity entity, Holder<SoundEvent> name, SoundSource category, float volume, float pitch) {
+        return fire(new PlayLevelSoundEvent.AtEntity(level, entity, name, category, volume, pitch));
     }
 
     public static PlayLevelSoundEvent.AtPosition onPlaySoundAtPosition(Level level, double x, double y, double z, Holder<SoundEvent> name, SoundSource category, float volume, float pitch) {
