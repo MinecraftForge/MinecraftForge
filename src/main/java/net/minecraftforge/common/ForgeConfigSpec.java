@@ -830,14 +830,28 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         @Override
         public String toString() {
-            if (clazz == Integer.class) {
-                if (max.equals(Integer.MAX_VALUE)) {
-                    return "> " + min;
-                } else if (min.equals(Integer.MIN_VALUE)) {
-                    return "< " + max;
-                }
-            } // TODO add more special cases?
+            if (Number.class.isAssignableFrom(clazz)) {
+                @SuppressWarnings("unchecked")
+                Class<? extends Number> type = (Class<? extends Number>) clazz;
+                if (clazz == Integer.class) return toString(Integer.MAX_VALUE, Integer.MIN_VALUE);
+                if (clazz == Float.class) return toString(Float.MAX_VALUE, Float.MIN_VALUE);
+                if (clazz == Double.class) return toString(Double.MAX_VALUE, Double.MIN_VALUE);
+                if (clazz == Byte.class) return toString(Byte.MAX_VALUE, Byte.MIN_VALUE);
+                if (clazz == Short.class) return toString(Short.MAX_VALUE, Short.MIN_VALUE);
+                if (clazz == Long.class) return toString(Long.MAX_VALUE, Long.MIN_VALUE);
+            }
+
             return min + " ~ " + max;
+        }
+
+        private <T extends Number> String toString(T maxValue, T minValue) {
+            if (max.equals(maxValue)) {
+                return "> " + min;
+            } else if (min.equals(minValue)) {
+                return "< " + max;
+            } else {
+                return min + " ~ " + max;
+            }
         }
     }
 
