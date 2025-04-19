@@ -709,6 +709,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return ret;
         }
 
+        /**
+         * @deprecated Use {@code Consumer<Builder>} instead.
+         */
+        @Deprecated(since = "1.21.5", forRemoval = true)
         public interface BuilderConsumer {
             void accept(Builder builder);
         }
