@@ -15,7 +15,7 @@ import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.brewing.IBrewingRecipe;
 import net.minecraftforge.eventbus.api.Event;
 
-public class BrewingRecipeRegisterEvent extends Event {
+public final class BrewingRecipeRegisterEvent extends Event {
     private final PotionBrewing.Builder builder;
     private final FeatureFlagSet features;
 

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  * from 0-15 and indicates how many bookshelves surround the enchanting table. The {@link #itemStack} representing the item being
  * enchanted is also available.
  */
-public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Event
+public final class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final Level level;
     private final BlockPos pos;

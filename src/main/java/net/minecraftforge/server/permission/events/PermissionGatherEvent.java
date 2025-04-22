@@ -24,7 +24,7 @@ import java.util.*;
  *
  * <p><strong>Note:</strong> All PermissionNodes that you want to use, <strong>must</strong> be registered!</p>
  */
-public class PermissionGatherEvent extends Event
+public sealed class PermissionGatherEvent extends Event
 {
 
     /**
@@ -32,9 +32,9 @@ public class PermissionGatherEvent extends Event
      * <p>Note: Create a new instance when registering a PermissionHandler.
      * If you cache it, make sure that your PermissionHandler is actually used after this event.</p>
      */
-    public static class Handler extends PermissionGatherEvent
+    public static final class Handler extends PermissionGatherEvent
     {
-        private Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
+        private final Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
 
         public Handler()
         {
@@ -60,7 +60,7 @@ public class PermissionGatherEvent extends Event
     /**
      * Used to register your PermissionNodes, <strong>every node that you want to use, must be registered!</strong>
      */
-    public static class Nodes extends PermissionGatherEvent
+    public static final class Nodes extends PermissionGatherEvent
     {
         private final Set<PermissionNode<?>> nodes = new HashSet<>();
 

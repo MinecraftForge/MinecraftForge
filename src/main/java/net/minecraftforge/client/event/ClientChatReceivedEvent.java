@@ -29,7 +29,7 @@ import java.util.UUID;
  * @see ChatType
  */
 @Cancelable
-public class ClientChatReceivedEvent extends Event {
+public sealed class ClientChatReceivedEvent extends Event {
     private Component message;
     private final ChatType.Bound boundChatType;
     private final UUID sender;
@@ -94,7 +94,7 @@ public class ClientChatReceivedEvent extends Event {
      *
      * @see ChatType
      */
-    public static class Player extends ClientChatReceivedEvent {
+    public static final class Player extends ClientChatReceivedEvent {
         private final PlayerChatMessage playerChatMessage;
 
         @ApiStatus.Internal
@@ -119,7 +119,7 @@ public class ClientChatReceivedEvent extends Event {
      * So moved to it's own event. {@link SystemMessageReceivedEvent}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
-    public static class System extends ClientChatReceivedEvent {
+    public static final class System extends ClientChatReceivedEvent {
         private final boolean overlay;
 
         @ApiStatus.Internal

@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class AnimalTameEvent extends LivingEvent
+public final class AnimalTameEvent extends LivingEvent
 {
     private final Animal animal;
     private final Player tamer;

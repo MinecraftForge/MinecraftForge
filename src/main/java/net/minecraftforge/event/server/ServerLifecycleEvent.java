@@ -8,8 +8,8 @@ package net.minecraftforge.event.server;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.eventbus.api.Event;
 
-public class ServerLifecycleEvent extends Event
-{
+public sealed class ServerLifecycleEvent extends Event
+        permits ServerAboutToStartEvent, ServerStartedEvent, ServerStartingEvent, ServerStoppedEvent, ServerStoppingEvent {
 
     protected final MinecraftServer server;
 

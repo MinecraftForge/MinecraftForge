@@ -17,7 +17,7 @@ import net.minecraftforge.eventbus.api.Event;
  *
  * @author Curle
  */
-public class GameShuttingDownEvent extends Event
+public final class GameShuttingDownEvent extends Event
 {
     public GameShuttingDownEvent() {}
 }

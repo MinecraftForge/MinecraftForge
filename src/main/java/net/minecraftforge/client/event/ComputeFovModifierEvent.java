@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see ViewportEvent.ComputeFov
  */
-public class ComputeFovModifierEvent extends Event {
+public final class ComputeFovModifierEvent extends Event {
     private final Player player;
     private final float fovModifier;
     private final float scale;

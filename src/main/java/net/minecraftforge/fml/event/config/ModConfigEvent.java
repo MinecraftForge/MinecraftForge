@@ -10,7 +10,7 @@ import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
 
-public class ModConfigEvent extends Event implements IModBusEvent, IConfigEvent {
+public sealed class ModConfigEvent extends Event implements IModBusEvent, IConfigEvent {
     private final ModConfig config;
 
     ModConfigEvent(final ModConfig config) {
@@ -26,7 +26,7 @@ public class ModConfigEvent extends Event implements IModBusEvent, IConfigEvent 
      * Fired during mod and server loading, depending on {@link ModConfig.Type} of config file.
      * Any Config objects associated with this will be valid and can be queried directly.
      */
-    public static class Loading extends ModConfigEvent {
+    public static final class Loading extends ModConfigEvent {
         public Loading(final ModConfig config) {
             super(config);
         }
@@ -38,7 +38,7 @@ public class ModConfigEvent extends Event implements IModBusEvent, IConfigEvent 
      * and may not even be on the server or client threads. Ensure you properly synchronize
      * any resultant changes.
      */
-    public static class Reloading extends ModConfigEvent {
+    public static final class Reloading extends ModConfigEvent {
         public Reloading(final ModConfig config) {
             super(config);
         }
@@ -50,7 +50,7 @@ public class ModConfigEvent extends Event implements IModBusEvent, IConfigEvent 
      * server goes away, though it will fire on the dedicated server as well.
      * The config file will be saved after this event has fired.
      */
-    public static class Unloading extends ModConfigEvent {
+    public static final class Unloading extends ModConfigEvent {
         public Unloading(final ModConfig config) {
             super(config);
         }

@@ -17,7 +17,7 @@ import java.util.List;
  * before tags and crafting recipes are sent to the client. Send datapack data
  * to clients when this event fires.
  */
-public class OnDatapackSyncEvent extends Event {
+public final class OnDatapackSyncEvent extends Event {
     private final PlayerList playerList;
 
     @Nullable

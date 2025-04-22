@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
  * <p>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  */
-public class LivingGetProjectileEvent extends LivingEvent
+public final class LivingGetProjectileEvent extends LivingEvent
 {
     private final ItemStack projectileWeaponItemStack;
     private ItemStack projectileItemStack;

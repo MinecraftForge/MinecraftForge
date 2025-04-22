@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * @see LivingDamageEvent
  **/
 @net.minecraftforge.eventbus.api.Cancelable
-public class LivingHurtEvent extends LivingEvent
+public final class LivingHurtEvent extends LivingEvent
 {
     private final DamageSource source;
     private float amount;

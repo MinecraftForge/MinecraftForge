@@ -64,7 +64,7 @@ public class BlockEvent extends Event {
      * Canceling this event will prevent the Block from being broken.
      */
     @Cancelable
-    public static class BreakEvent extends BlockEvent {
+    public static final class BreakEvent extends BlockEvent {
         /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
         private final Player player;
         private int exp;
@@ -113,7 +113,7 @@ public class BlockEvent extends Event {
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
-    public static class EntityPlaceEvent extends BlockEvent {
+    public static sealed class EntityPlaceEvent extends BlockEvent {
         private final Entity entity;
         private final BlockSnapshot blockSnapshot;
         private final BlockState placedBlock;
@@ -146,7 +146,7 @@ public class BlockEvent extends Event {
      * block.
      */
     @Cancelable
-    public static class EntityMultiPlaceEvent extends EntityPlaceEvent {
+    public static final class EntityMultiPlaceEvent extends EntityPlaceEvent {
         private final List<BlockSnapshot> blockSnapshots;
 
         public EntityMultiPlaceEvent(@NotNull List<BlockSnapshot> blockSnapshots, @NotNull BlockState placedAgainst, @Nullable Entity entity) {
@@ -174,7 +174,7 @@ public class BlockEvent extends Event {
      * does. This event is only called on the server.
      */
     @Cancelable
-    public static class NeighborNotifyEvent extends BlockEvent {
+    public static final class NeighborNotifyEvent extends BlockEvent {
         private final EnumSet<Direction> notifiedSides;
         private final boolean forceRedstoneUpdate;
 
@@ -209,7 +209,7 @@ public class BlockEvent extends Event {
      * even if the liquid usually does do that (like water).
      */
     @HasResult
-    public static class CreateFluidSourceEvent extends Event {
+    public static final class CreateFluidSourceEvent extends Event {
         private final Level level;
         private final BlockPos pos;
         private final BlockState state;
@@ -242,10 +242,10 @@ public class BlockEvent extends Event {
      * {@link #getPos()} will return the position of the block to be changed.
      */
     @Cancelable
-    public static class FluidPlaceBlockEvent extends BlockEvent {
+    public static final class FluidPlaceBlockEvent extends BlockEvent {
         private final BlockPos liquidPos;
         private BlockState newState;
-        private BlockState origState;
+        private final BlockState origState;
 
         public FluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state) {
             super(level, pos, state);
@@ -284,7 +284,7 @@ public class BlockEvent extends Event {
      * Fired when a crop block grows.  See subevents.
      *
      */
-    public static class CropGrowEvent extends BlockEvent {
+    public static sealed class CropGrowEvent extends BlockEvent {
         public CropGrowEvent(Level level, BlockPos pos, BlockState state) {
             super(level, pos, state);
         }
@@ -301,7 +301,7 @@ public class BlockEvent extends Event {
          * <br>
          */
         @HasResult
-        public static class Pre extends CropGrowEvent {
+        public static final class Pre extends CropGrowEvent {
             public Pre(Level level, BlockPos pos, BlockState state) {
                 super(level, pos, state);
             }
@@ -316,7 +316,7 @@ public class BlockEvent extends Event {
          * <br>
          * This event does not have a result. {@link HasResult}<br>
          */
-        public static class Post extends CropGrowEvent {
+        public static final class Post extends CropGrowEvent {
             private final BlockState originalState;
 
             public Post(Level level, BlockPos pos, BlockState original, BlockState state) {
@@ -335,7 +335,7 @@ public class BlockEvent extends Event {
      * This event is {@link Cancelable}
      */
     @Cancelable
-    public static class FarmlandTrampleEvent extends BlockEvent {
+    public static final class FarmlandTrampleEvent extends BlockEvent {
         private final Entity entity;
         private final double fallDistance;
 
@@ -361,7 +361,7 @@ public class BlockEvent extends Event {
      * If cancelled, the portal will not be spawned.
      */
     @Cancelable
-    public static class PortalSpawnEvent extends BlockEvent {
+    public static final class PortalSpawnEvent extends BlockEvent {
         private final PortalShape size;
 
         public PortalSpawnEvent(LevelAccessor level, BlockPos pos, BlockState state, PortalShape size) {
@@ -385,7 +385,7 @@ public class BlockEvent extends Event {
      * from changing the block's state.
      */
     @Cancelable
-    public static class BlockToolModificationEvent extends BlockEvent {
+    public static final class BlockToolModificationEvent extends BlockEvent {
         private final UseOnContext context;
         private final ToolAction toolAction;
         private final boolean simulate;

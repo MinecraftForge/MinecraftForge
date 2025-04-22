@@ -66,7 +66,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class HarvestCheck extends PlayerEvent
+    public static final class HarvestCheck extends PlayerEvent
     {
         private final BlockState state;
         private boolean success;
@@ -103,7 +103,7 @@ public class PlayerEvent extends LivingEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class BreakSpeed extends PlayerEvent
+    public static final class BreakSpeed extends PlayerEvent
     {
         private static final BlockPos LEGACY_UNKNOWN = new BlockPos(0, -1, 0);
         private final BlockState state;
@@ -143,7 +143,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class NameFormat extends PlayerEvent
+    public static final class NameFormat extends PlayerEvent
     {
         private final Component username;
         private Component displayname;
@@ -186,7 +186,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class TabListNameFormat extends PlayerEvent
+    public static final class TabListNameFormat extends PlayerEvent
     {
         @Nullable
         private Component displayName;
@@ -212,7 +212,7 @@ public class PlayerEvent extends LivingEvent
      * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
-    public static class Clone extends PlayerEvent
+    public static final class Clone extends PlayerEvent
     {
         private final Player original;
         private final boolean wasDeath;
@@ -246,7 +246,7 @@ public class PlayerEvent extends LivingEvent
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
      *
      */
-    public static class StartTracking extends PlayerEvent {
+    public static final class StartTracking extends PlayerEvent {
 
         private final Entity target;
 
@@ -269,7 +269,7 @@ public class PlayerEvent extends LivingEvent
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
      *
      */
-    public static class StopTracking extends PlayerEvent {
+    public static final class StopTracking extends PlayerEvent {
 
         private final Entity target;
 
@@ -294,7 +294,7 @@ public class PlayerEvent extends LivingEvent
      * allow mods to load an additional file from the players directory
      * containing additional mod related player data.
      */
-    public static class LoadFromFile extends PlayerEvent {
+    public static final class LoadFromFile extends PlayerEvent {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -346,7 +346,7 @@ public class PlayerEvent extends LivingEvent
      * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
      * corrupt the world state.
      */
-    public static class SaveToFile extends PlayerEvent {
+    public static final class SaveToFile extends PlayerEvent {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -386,7 +386,7 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class ItemPickupEvent extends PlayerEvent {
+    public static final class ItemPickupEvent extends PlayerEvent {
         /**
          * Original EntityItem with current remaining stack size
          */
@@ -411,7 +411,7 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class ItemCraftedEvent extends PlayerEvent {
+    public static final class ItemCraftedEvent extends PlayerEvent {
         @NotNull
         private final ItemStack crafting;
         private final Container craftMatrix;
@@ -434,7 +434,7 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class ItemSmeltedEvent extends PlayerEvent {
+    public static final class ItemSmeltedEvent extends PlayerEvent {
         @NotNull
         private final ItemStack smelting;
         public ItemSmeltedEvent(Player player, @NotNull ItemStack crafting)
@@ -450,21 +450,21 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class PlayerLoggedInEvent extends PlayerEvent {
+    public static final class PlayerLoggedInEvent extends PlayerEvent {
         public PlayerLoggedInEvent(Player player)
         {
             super(player);
         }
     }
 
-    public static class PlayerLoggedOutEvent extends PlayerEvent {
+    public static final class PlayerLoggedOutEvent extends PlayerEvent {
         public PlayerLoggedOutEvent(Player player)
         {
             super(player);
         }
     }
 
-    public static class PlayerRespawnEvent extends PlayerEvent {
+    public static final class PlayerRespawnEvent extends PlayerEvent {
         private final boolean endConquered;
 
         public PlayerRespawnEvent(Player player, boolean endConquered)
@@ -485,7 +485,7 @@ public class PlayerEvent extends LivingEvent
 
     }
 
-    public static class PlayerChangedDimensionEvent extends PlayerEvent {
+    public static final class PlayerChangedDimensionEvent extends PlayerEvent {
         private final ResourceKey<Level> fromDim;
         private final ResourceKey<Level> toDim;
         public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
@@ -511,7 +511,7 @@ public class PlayerEvent extends LivingEvent
      * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
      */
     @Cancelable
-    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    public static final class PlayerChangeGameModeEvent extends PlayerEvent
     {
         private final GameType currentGameMode;
         private GameType newGameMode;

@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is cancelable which will stop the op or deop from happening.
  */
 @Cancelable
-public class PermissionsChangedEvent extends PlayerEvent
+public final class PermissionsChangedEvent extends PlayerEvent
 {
     private final int newLevel;
     private final int oldLevel;

@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 // TODO: Rename to BlockFeatureGrowEvent in 1.20
 @HasResult
 @Deprecated(forRemoval = true, since = "1.21.1") // Dont remove, rename
-public class SaplingGrowTreeEvent extends LevelEvent {
+public final class SaplingGrowTreeEvent extends LevelEvent {
     private final RandomSource randomSource;
     private final BlockPos pos;
     @Nullable

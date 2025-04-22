@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This event is called when a player picks up a potion from a brewing stand.
  */
-public class PlayerBrewedPotionEvent extends PlayerEvent
+public final class PlayerBrewedPotionEvent extends PlayerEvent
 {
     private final ItemStack stack;
 

@@ -21,7 +21,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
  * <br>
  * Fired on the Mod bus {@link IModBusEvent}.<br>
  **/
-public class EntityAttributeCreationEvent extends Event implements IModBusEvent {
+public final class EntityAttributeCreationEvent extends Event implements IModBusEvent {
     private final Map<EntityType<? extends LivingEntity>, AttributeSupplier> map;
 
     public EntityAttributeCreationEvent(Map<EntityType<? extends LivingEntity>, AttributeSupplier> map) {

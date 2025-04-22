@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class BabyEntitySpawnEvent extends Event {
+public final class BabyEntitySpawnEvent extends Event {
     private final Mob parentA;
     private final Mob parentB;
     private final Player causedByPlayer;

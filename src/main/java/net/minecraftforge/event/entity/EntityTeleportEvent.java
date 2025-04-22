@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class EntityTeleportEvent extends EntityEvent
+public sealed class EntityTeleportEvent extends EntityEvent
 {
     protected double targetX;
     protected double targetY;
@@ -70,7 +70,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class TeleportCommand extends EntityTeleportEvent
+    public static final class TeleportCommand extends EntityTeleportEvent
     {
         public TeleportCommand(Entity entity, double targetX, double targetY, double targetZ)
         {
@@ -94,7 +94,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class SpreadPlayersCommand extends EntityTeleportEvent
+    public static final class SpreadPlayersCommand extends EntityTeleportEvent
     {
         public SpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ)
         {
@@ -117,7 +117,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class EnderEntity extends EntityTeleportEvent
+    public static final class EnderEntity extends EntityTeleportEvent
     {
         private final LivingEntity entityLiving;
 
@@ -148,7 +148,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class EnderPearl extends EntityTeleportEvent
+    public static final class EnderPearl extends EntityTeleportEvent
     {
         private final ServerPlayer player;
         private final ThrownEnderpearl pearlEntity;
@@ -207,7 +207,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class ChorusFruit extends EntityTeleportEvent
+    public static final class ChorusFruit extends EntityTeleportEvent
     {
         private final LivingEntity entityLiving;
 

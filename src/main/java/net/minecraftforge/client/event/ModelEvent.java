@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Houses events related to models.
  */
-public abstract class ModelEvent extends Event {
+public abstract sealed class ModelEvent extends Event {
     @ApiStatus.Internal
     protected ModelEvent() { }
 
@@ -48,7 +48,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ModifyBakingResult extends ModelEvent implements IModBusEvent {
+    public static final class ModifyBakingResult extends ModelEvent implements IModBusEvent {
         private final ModelBakery modelBakery;
         private final ModelBakery.BakingResult results;
 
@@ -84,7 +84,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class BakingCompleted extends ModelEvent implements IModBusEvent {
+    public static final class BakingCompleted extends ModelEvent implements IModBusEvent {
         private final ModelManager modelManager;
         private final ModelBakery modelBakery;
 
@@ -118,7 +118,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterModelStateDefinitions extends ModelEvent implements IModBusEvent {
+    public static final class RegisterModelStateDefinitions extends ModelEvent implements IModBusEvent {
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> states = new HashMap<>();
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> view = Collections.unmodifiableMap(states);
 
@@ -148,7 +148,7 @@ public abstract class ModelEvent extends Event {
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent {
+    public static final class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent {
         private final Map<ResourceLocation, IGeometryLoader> loaders;
 
         @ApiStatus.Internal

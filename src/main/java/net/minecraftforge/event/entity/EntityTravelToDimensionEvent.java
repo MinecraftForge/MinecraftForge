@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class EntityTravelToDimensionEvent extends EntityEvent
+public final class EntityTravelToDimensionEvent extends EntityEvent
 {
     private final ResourceKey<Level> dimension;
 

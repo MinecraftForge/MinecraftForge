@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-public class ChunkTicketLevelUpdatedEvent extends Event
+public final class ChunkTicketLevelUpdatedEvent extends Event
 {
     private final ServerLevel level;
     private final long chunkPos;

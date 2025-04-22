@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
  Where all the events fore Gathering Components will exist.
  */
 
-public abstract class GatherComponentsEvent extends Event {
+public abstract sealed class GatherComponentsEvent extends Event {
     private final DataComponentMap.Builder components = DataComponentMap.builder();
     private final DataComponentMap originalComponents;
     private final Object owner;
@@ -54,7 +54,7 @@ public abstract class GatherComponentsEvent extends Event {
      *
      * References in {@link net.minecraft.world.item.Items} may not be valid at the current time.
      */
-    public static class Item extends GatherComponentsEvent {
+    public static final class Item extends GatherComponentsEvent {
         public Item(net.minecraft.world.item.Item item, DataComponentMap dataComponents) {
             super(item, dataComponents);
         }

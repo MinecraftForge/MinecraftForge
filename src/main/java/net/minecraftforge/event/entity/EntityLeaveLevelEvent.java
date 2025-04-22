@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * on both logical sides.
  **/
-public class EntityLeaveLevelEvent extends EntityEvent {
+public final class EntityLeaveLevelEvent extends EntityEvent {
     private final Level level;
 
     public EntityLeaveLevelEvent(Entity entity, Level level) {

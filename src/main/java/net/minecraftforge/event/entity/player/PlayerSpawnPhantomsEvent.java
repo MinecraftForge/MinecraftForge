@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * @see PlayerSpawnPhantomsEvent#setResult for the effects of each result.
  */
 @Event.HasResult
-public class PlayerSpawnPhantomsEvent extends PlayerEvent {
+public final class PlayerSpawnPhantomsEvent extends PlayerEvent {
     private int phantomsToSpawn;
 
     public PlayerSpawnPhantomsEvent(Player player, int phantomsToSpawn) {

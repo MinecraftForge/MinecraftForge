@@ -38,7 +38,7 @@ import java.util.Objects;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class PlayLevelSoundEvent extends Event {
+public sealed class PlayLevelSoundEvent extends Event {
     private final Level level;
     private final float originalVolume;
     private final float originalPitch;
@@ -149,11 +149,11 @@ public class PlayLevelSoundEvent extends Event {
      * <p>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AtEntity extends PlayLevelSoundEvent {
+    public static final class AtEntity extends PlayLevelSoundEvent {
         private final Entity entity;
 
-        public AtEntity(Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
-            super(entity.level(), sound, source, volume, pitch);
+        public AtEntity(Level level, @Nullable Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
+            super(level, sound, source, volume, pitch);
             this.entity = entity;
         }
 
@@ -176,7 +176,7 @@ public class PlayLevelSoundEvent extends Event {
      * <p>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AtPosition extends PlayLevelSoundEvent {
+    public static final class AtPosition extends PlayLevelSoundEvent {
         private final Vec3 position;
 
         public AtPosition(Level level, Vec3 position, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {

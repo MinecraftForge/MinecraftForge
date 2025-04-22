@@ -24,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
  * @see Key
  * @see InteractionKeyMappingTriggered
  */
-public abstract class InputEvent extends Event {
+public abstract sealed class InputEvent extends Event {
     @ApiStatus.Internal
     protected InputEvent() {}
 
@@ -38,7 +38,7 @@ public abstract class InputEvent extends Event {
      * @see Pre
      * @see Post
      */
-    public static abstract class MouseButton extends InputEvent {
+    public static abstract sealed class MouseButton extends InputEvent {
         private final int button;
         private final int action;
         private final int modifiers;
@@ -97,7 +97,7 @@ public abstract class InputEvent extends Event {
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
         @Cancelable
-        public static class Pre extends MouseButton {
+        public static final class Pre extends MouseButton {
             @ApiStatus.Internal
             public Pre(int button, int action, int modifiers) {
                 super(button, action, modifiers);
@@ -114,7 +114,7 @@ public abstract class InputEvent extends Event {
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        public static class Post extends MouseButton {
+        public static final class Post extends MouseButton {
             @ApiStatus.Internal
             public Post(int button, int action, int modifiers) {
                 super(button, action, modifiers);
@@ -135,7 +135,7 @@ public abstract class InputEvent extends Event {
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
-    public static class MouseScrollingEvent extends InputEvent {
+    public static final class MouseScrollingEvent extends InputEvent {
         private final double deltaX;
         private final double deltaY;
         private final double mouseX;
@@ -213,7 +213,7 @@ public abstract class InputEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Key extends InputEvent {
+    public static final class Key extends InputEvent {
         private final int key;
         private final int scanCode;
         private final int action;
@@ -297,7 +297,7 @@ public abstract class InputEvent extends Event {
      */
     // TODO: Change the 'button' to sub events. - Lex 0422202
     @Cancelable
-    public static class InteractionKeyMappingTriggered extends InputEvent {
+    public static final class InteractionKeyMappingTriggered extends InputEvent {
         private final int button;
         private final KeyMapping keyMapping;
         private final InteractionHand hand;

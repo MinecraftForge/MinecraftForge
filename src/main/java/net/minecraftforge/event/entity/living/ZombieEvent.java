@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  *
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ZombieEvent extends EntityEvent {
+public sealed class ZombieEvent extends EntityEvent {
     private final Zombie zombie;
 
     public ZombieEvent(Zombie zombie)
@@ -59,7 +59,7 @@ public class ZombieEvent extends EntityEvent {
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @HasResult
-    public static class SummonAidEvent extends ZombieEvent {
+    public static final class SummonAidEvent extends ZombieEvent {
         private Zombie customSummonedAid;
 
         private final Level level;

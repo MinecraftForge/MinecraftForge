@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import org.jetbrains.annotations.NotNull;
 
-public class LivingEntityUseItemEvent extends LivingEvent
+public sealed class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
     private int duration;
@@ -50,7 +50,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      *
      */
     @Cancelable
-    public static class Start extends LivingEntityUseItemEvent
+    public static final class Start extends LivingEntityUseItemEvent
     {
         public Start(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
@@ -65,7 +65,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      *
      */
     @Cancelable
-    public static class Tick extends LivingEntityUseItemEvent
+    public static final class Tick extends LivingEntityUseItemEvent
     {
         public Tick(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
@@ -86,7 +86,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      * The only vanilla item this would effect are bows, and it would cause them NOT to fire there arrow.
      */
     @Cancelable
-    public static class Stop extends LivingEntityUseItemEvent
+    public static final class Stop extends LivingEntityUseItemEvent
     {
         public Stop(LivingEntity entity, @NotNull ItemStack item, int duration)
         {
@@ -106,7 +106,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
      * The result item stack is the stack that is placed in the player's inventory in replacement of the stack that is currently being used.
      *
      */
-    public static class Finish extends LivingEntityUseItemEvent
+    public static final class Finish extends LivingEntityUseItemEvent
     {
         private ItemStack result;
         public Finish(LivingEntity entity, @NotNull ItemStack item, int duration, @NotNull ItemStack result)

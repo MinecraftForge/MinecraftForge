@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class LivingChangeTargetEvent extends LivingEvent {
+public final class LivingChangeTargetEvent extends LivingEvent {
     private final ILivingTargetType targetType;
     private final LivingEntity originalTarget;
     private LivingEntity newTarget;

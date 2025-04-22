@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * The event can be canceled, which will prevent the spawn point from being changed.
  */
 @Cancelable
-public class PlayerSetSpawnEvent extends PlayerEvent {
+public final class PlayerSetSpawnEvent extends PlayerEvent {
     private final @Nullable ServerPlayer.RespawnConfig config;
 
     @Deprecated(forRemoval = true, since = "1.21.5")

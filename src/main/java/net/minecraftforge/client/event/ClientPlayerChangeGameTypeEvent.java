@@ -21,7 +21,7 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class ClientPlayerChangeGameTypeEvent extends Event
+public final class ClientPlayerChangeGameTypeEvent extends Event
 {
     private final PlayerInfo info;
     private final GameType currentGameType;

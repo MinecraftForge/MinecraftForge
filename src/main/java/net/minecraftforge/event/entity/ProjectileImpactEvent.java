@@ -22,7 +22,7 @@ import java.util.Objects;
  * You can also directly set the {@link ImpactResult} to change the impact behaviour.
  * @see #setImpactResult(ImpactResult)
  */
-public class ProjectileImpactEvent extends EntityEvent {
+public final class ProjectileImpactEvent extends EntityEvent {
     private final HitResult ray;
     private final Projectile projectile;
 

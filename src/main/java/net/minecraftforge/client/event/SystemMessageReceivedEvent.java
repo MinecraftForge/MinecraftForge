@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  */
 @Cancelable
-public class SystemMessageReceivedEvent extends Event {
+public final class SystemMessageReceivedEvent extends Event {
     private Component message;
     private final boolean overlay;
 

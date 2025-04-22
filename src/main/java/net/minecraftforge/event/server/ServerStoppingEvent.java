@@ -12,7 +12,7 @@ import net.minecraft.server.MinecraftServer;
  *
  * @author cpw
  */
-public class ServerStoppingEvent extends ServerLifecycleEvent
+public final class ServerStoppingEvent extends ServerLifecycleEvent
 {
     public ServerStoppingEvent(MinecraftServer server)
     {

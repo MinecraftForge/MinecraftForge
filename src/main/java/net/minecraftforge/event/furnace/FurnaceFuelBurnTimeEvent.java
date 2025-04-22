@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class FurnaceFuelBurnTimeEvent extends Event
+public final class FurnaceFuelBurnTimeEvent extends Event
 {
     @NotNull
     private final ItemStack itemStack;
