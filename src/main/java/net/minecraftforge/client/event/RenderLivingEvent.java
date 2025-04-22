@@ -32,7 +32,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent
  * @see LivingEntityRenderer
  */
-public abstract class RenderLivingEvent<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends Event {
+public abstract sealed class RenderLivingEvent<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends Event {
     private final S state;
     private final LivingEntityRenderer<T, S, M> renderer;
     private final PoseStack poseStack;
@@ -100,7 +100,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, S extends Living
      * @param <M> the model for the living entity
      */
     @Cancelable
-    public static class Pre<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
+    public static final class Pre<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
         @ApiStatus.Internal
         public Pre(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);
@@ -118,7 +118,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, S extends Living
      * @param <T> the living entity that was rendered
      * @param <M> the model for the living entity
      */
-    public static class Post<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
+    public static final class Post<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
         @ApiStatus.Internal
         public Post(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);

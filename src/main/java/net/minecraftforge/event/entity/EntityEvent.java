@@ -40,7 +40,7 @@ public class EntityEvent extends Event {
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EntityConstructing extends EntityEvent {
+    public static final class EntityConstructing extends EntityEvent {
         public EntityConstructing(Entity entity) {
             super(entity);
         }
@@ -58,7 +58,7 @@ public class EntityEvent extends Event {
      * <br>
      * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EnteringSection extends EntityEvent {
+    public static final class EnteringSection extends EntityEvent {
         private final long packedOldPos;
         private final long packedNewPos;
 

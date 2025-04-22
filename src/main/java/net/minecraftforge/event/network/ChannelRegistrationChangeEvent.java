@@ -18,9 +18,9 @@ import net.minecraftforge.eventbus.api.Event;
  * It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
  * It just directly dispatches upon receipt.
  */
-public class ChannelRegistrationChangeEvent extends Event {
+public final class ChannelRegistrationChangeEvent extends Event {
     public enum Type {
-        REGISTER, UNREGISTER;
+        REGISTER, UNREGISTER
     }
 
     private final Connection source;

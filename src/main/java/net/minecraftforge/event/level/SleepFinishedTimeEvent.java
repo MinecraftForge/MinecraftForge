@@ -12,7 +12,7 @@ import net.minecraft.server.level.ServerLevel;
  *
  * setWakeUpTime(wakeUpTime) sets a new time that will be added to the dayTime.<br>
  */
-public class SleepFinishedTimeEvent extends LevelEvent
+public final class SleepFinishedTimeEvent extends LevelEvent
 {
     private long newTime;
     private final long minTime;

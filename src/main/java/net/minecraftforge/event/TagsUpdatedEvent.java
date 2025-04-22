@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Fired when tags are updated on either server or client. This event can be used to refresh data that depends on tags.
  */
-public class TagsUpdatedEvent extends Event
+public final class TagsUpdatedEvent extends Event
 {
     private final RegistryAccess registryAccess;
     private final UpdateCause updateCause;

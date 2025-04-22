@@ -25,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class AttackEntityEvent extends PlayerEvent
+public final class AttackEntityEvent extends PlayerEvent
 {
     private final Entity target;
     public AttackEntityEvent(Player player, Entity target)

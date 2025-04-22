@@ -15,7 +15,7 @@ import net.minecraft.server.MinecraftServer;
  *
  * @author cpw
  */
-public class ServerStartingEvent extends ServerLifecycleEvent
+public final class ServerStartingEvent extends ServerLifecycleEvent
 {
     public ServerStartingEvent(final MinecraftServer server)
     {

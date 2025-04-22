@@ -12,7 +12,7 @@ import net.minecraftforge.fml.ModLoadingStage;
  * Supplied as a param to your mod's constructor to get access
  * to the mod EventBus and various mod-specific objects.
  */
-public class FMLConstructModEvent extends ParallelDispatchEvent {
+public final class FMLConstructModEvent extends ParallelDispatchEvent {
     public FMLConstructModEvent(final ModContainer container, final ModLoadingStage stage) {
         super(container, stage);
     }

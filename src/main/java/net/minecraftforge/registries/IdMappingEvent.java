@@ -28,9 +28,9 @@ import java.util.Map;
  * <p>
  * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
  */
-public class IdMappingEvent extends Event
+public final class IdMappingEvent extends Event
 {
-    public static class ModRemapping
+    public static final class ModRemapping
     {
         public final ResourceLocation registry;
         public final ResourceLocation key;

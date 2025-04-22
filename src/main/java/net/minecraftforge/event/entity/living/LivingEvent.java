@@ -51,7 +51,7 @@ public class LivingEvent extends EntityEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class LivingTickEvent extends LivingEvent
+    public static final class LivingTickEvent extends LivingEvent
     {
         public LivingTickEvent(LivingEntity e){ super(e); }
     }
@@ -70,12 +70,12 @@ public class LivingEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class LivingJumpEvent extends LivingEvent
+    public static final class LivingJumpEvent extends LivingEvent
     {
         public LivingJumpEvent(LivingEntity e){ super(e); }
     }
 
-    public static class LivingVisibilityEvent extends LivingEvent
+    public static final class LivingVisibilityEvent extends LivingEvent
     {
         private double visibilityModifier;
         @Nullable

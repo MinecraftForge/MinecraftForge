@@ -23,7 +23,7 @@ import java.util.List;
  * @see DebugText
  * @see Chat
  */
-public abstract class CustomizeGuiOverlayEvent extends Event {
+public abstract sealed class CustomizeGuiOverlayEvent extends Event {
     private final Window window;
     private final GuiGraphics guiGraphics;
     private final float partialTick;
@@ -57,7 +57,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class BossEventProgress extends CustomizeGuiOverlayEvent {
+    public static final class BossEventProgress extends CustomizeGuiOverlayEvent {
         private final LerpingBossEvent bossEvent;
         private final int x;
         private final int y;
@@ -119,7 +119,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class DebugText extends CustomizeGuiOverlayEvent {
+    public static final class DebugText extends CustomizeGuiOverlayEvent {
         private final List<String> text;
 
         private final Side side;
@@ -159,7 +159,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Chat extends CustomizeGuiOverlayEvent {
+    public static final class Chat extends CustomizeGuiOverlayEvent {
         private int posX;
         private int posY;
 

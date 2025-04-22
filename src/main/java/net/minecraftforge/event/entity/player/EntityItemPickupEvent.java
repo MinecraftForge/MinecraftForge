@@ -22,7 +22,7 @@ import net.minecraft.world.entity.player.Player;
  */
 @Cancelable
 @Event.HasResult
-public class EntityItemPickupEvent extends PlayerEvent
+public final class EntityItemPickupEvent extends PlayerEvent
 {
     private final ItemEntity item;
 

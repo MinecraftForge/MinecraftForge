@@ -29,7 +29,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ItemFrameRenderer
  */
 @Cancelable
-public class RenderItemInFrameEvent extends Event {
+public final class RenderItemInFrameEvent extends Event {
     private final ItemFrameRenderState state;
     private final ItemFrameRenderer<?> renderer;
     private final PoseStack poseStack;

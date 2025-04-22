@@ -34,7 +34,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @net.minecraftforge.eventbus.api.Cancelable
-public class LivingDropsEvent extends LivingEvent {
+public final class LivingDropsEvent extends LivingEvent {
     private final DamageSource source;
     private final Collection<ItemEntity> drops;
     private final boolean recentlyHit;

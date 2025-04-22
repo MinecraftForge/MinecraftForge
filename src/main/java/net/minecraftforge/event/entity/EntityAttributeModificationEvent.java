@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * <br>
  * Fired on the Mod bus {@link IModBusEvent}.<br>
  **/
-public class EntityAttributeModificationEvent extends Event implements IModBusEvent {
+public final class EntityAttributeModificationEvent extends Event implements IModBusEvent {
     private final Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> entityAttributes;
     private final List<EntityType<? extends LivingEntity>> entityTypes;
 

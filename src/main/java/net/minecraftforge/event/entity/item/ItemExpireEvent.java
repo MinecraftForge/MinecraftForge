@@ -15,7 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
  * it will add more time to the entities life equal to extraLife.
  */
 @Cancelable
-public class ItemExpireEvent extends ItemEvent
+public final class ItemExpireEvent extends ItemEvent
 {
 
     private int extraLife;

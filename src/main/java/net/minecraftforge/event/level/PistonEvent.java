@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base piston event, use {@link PistonEvent.Post} and {@link PistonEvent.Pre}
  */
-public abstract class PistonEvent extends BlockEvent
+public abstract sealed class PistonEvent extends BlockEvent
 {
 
     private final Direction direction;
@@ -72,7 +72,7 @@ public abstract class PistonEvent extends BlockEvent
     /**
      * Fires after the piston has moved and set surrounding states. This will not fire if {@link PistonEvent.Pre} is cancelled.
      */
-    public static class Post extends PistonEvent
+    public static final class Post extends PistonEvent
     {
 
         public Post(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
@@ -86,7 +86,7 @@ public abstract class PistonEvent extends BlockEvent
      * Fires before the piston has updated block states. Cancellation prevents movement.
      */
     @Cancelable
-    public static class Pre extends PistonEvent
+    public static final class Pre extends PistonEvent
     {
 
         public Pre(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)

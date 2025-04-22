@@ -35,7 +35,7 @@ import com.google.common.base.Preconditions;
  * @see StructuresBecomeConfiguredFix
  * @see #register(String, StructuresBecomeConfiguredFix.Conversion)
  */
-public class RegisterStructureConversionsEvent extends Event
+public final class RegisterStructureConversionsEvent extends Event
 {
     private final Map<String, StructuresBecomeConfiguredFix.Conversion> map;
 

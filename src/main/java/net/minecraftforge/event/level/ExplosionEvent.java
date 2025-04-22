@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
  * Children do not use {@link HasResult}.<br>
  * Children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  */
-public class ExplosionEvent extends Event {
+public sealed class ExplosionEvent extends Event {
     private final Level level;
     private final Explosion explosion;
 
@@ -49,7 +49,7 @@ public class ExplosionEvent extends Event {
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      */
     @Cancelable
-    public static class Start extends ExplosionEvent {
+    public static final class Start extends ExplosionEvent {
         public Start(Level level, Explosion explosion) {
             super(level, explosion);
         }
@@ -61,7 +61,7 @@ public class ExplosionEvent extends Event {
      * This event does not use {@link HasResult}.<br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      */
-    public static class Detonate extends ExplosionEvent {
+    public static final class Detonate extends ExplosionEvent {
         private final List<BlockPos> blocks;
         private final List<Entity> entityList;
 

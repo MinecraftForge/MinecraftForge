@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ArrowNockEvent extends PlayerEvent {
+public final class ArrowNockEvent extends PlayerEvent {
     private final ItemStack bow;
     private final InteractionHand hand;
     private final Level level;

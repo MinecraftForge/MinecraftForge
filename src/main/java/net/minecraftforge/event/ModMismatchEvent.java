@@ -39,7 +39,7 @@ import java.util.stream.Stream;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * on both {@linkplain LogicalSide logical sides}.</p>
  */
-public class ModMismatchEvent extends Event implements IModBusEvent
+public final class ModMismatchEvent extends Event implements IModBusEvent
 {
     /**
      * The level being loaded. Useful for things like {@link net.minecraft.world.level.storage.DimensionDataStorage}

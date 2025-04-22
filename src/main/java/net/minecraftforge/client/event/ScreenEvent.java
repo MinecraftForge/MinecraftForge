@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  * @see MouseInput
  * @see KeyInput
  */
-public abstract class ScreenEvent extends Event {
+public abstract sealed class ScreenEvent extends Event {
     private final Screen screen;
 
     @ApiStatus.Internal
@@ -61,7 +61,7 @@ public abstract class ScreenEvent extends Event {
      * @see Init.Pre
      * @see Init.Post
      */
-    public static abstract class Init extends ScreenEvent {
+    public static abstract sealed class Init extends ScreenEvent {
         private final Consumer<GuiEventListener> add;
         private final Consumer<GuiEventListener> remove;
 
@@ -111,7 +111,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends Init {
+        public static final class Pre extends Init {
             @ApiStatus.Internal
             public Pre(Screen screen, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove) {
                 super(screen, list, add, remove);
@@ -126,7 +126,7 @@ public abstract class ScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Post extends Init {
+        public static final class Post extends Init {
             @ApiStatus.Internal
             public Post(Screen screen, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove) {
                 super(screen, list, add, remove);
@@ -141,7 +141,7 @@ public abstract class ScreenEvent extends Event {
      * @see Render.Pre
      * @see Render.Post
      */
-    public static abstract class Render extends ScreenEvent {
+    public static abstract sealed class Render extends ScreenEvent {
         private final GuiGraphics guiGraphics;
         private final int mouseX;
         private final int mouseY;
@@ -194,7 +194,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends Render {
+        public static final class Pre extends Render {
             @ApiStatus.Internal
             public Pre(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 super(screen, guiGraphics, mouseX, mouseY, partialTick);
@@ -209,7 +209,7 @@ public abstract class ScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Post extends Render {
+        public static final class Post extends Render {
             @ApiStatus.Internal
             public Post(Screen screen, GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 super(screen, guiGraphics, mouseX, mouseY, partialTick);
@@ -226,7 +226,7 @@ public abstract class ScreenEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class BackgroundRendered extends ScreenEvent {
+    public static final class BackgroundRendered extends ScreenEvent {
         private final GuiGraphics guiGraphics;
 
         @ApiStatus.Internal
@@ -255,7 +255,7 @@ public abstract class ScreenEvent extends Event {
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class RenderInventoryMobEffects extends ScreenEvent {
+    public static final class RenderInventoryMobEffects extends ScreenEvent {
         private final int availableSpace;
         private boolean compact;
         private int horizontalOffset;
@@ -320,7 +320,7 @@ public abstract class ScreenEvent extends Event {
      * @see MouseDragged
      * @see MouseScrolled
      */
-    private static abstract class MouseInput extends ScreenEvent {
+    private static abstract sealed class MouseInput extends ScreenEvent {
         private final double mouseX;
         private final double mouseY;
 
@@ -353,7 +353,7 @@ public abstract class ScreenEvent extends Event {
      * @see MouseButtonPressed.Pre
      * @see MouseButtonPressed.Post
      */
-    public static abstract class MouseButtonPressed extends MouseInput {
+    public static abstract sealed class MouseButtonPressed extends MouseInput {
         private final int button;
 
         @ApiStatus.Internal
@@ -383,7 +383,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends MouseButtonPressed {
+        public static final class Pre extends MouseButtonPressed {
             @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int button) {
                 super(screen, mouseX, mouseY, button);
@@ -406,7 +406,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @HasResult
-        public static class Post extends MouseButtonPressed {
+        public static final class Post extends MouseButtonPressed {
             private final boolean handled;
 
             @ApiStatus.Internal
@@ -431,7 +431,7 @@ public abstract class ScreenEvent extends Event {
      * @see MouseButtonReleased.Pre
      * @see MouseButtonReleased.Post
      */
-    public static abstract class MouseButtonReleased extends MouseInput {
+    public static abstract sealed class MouseButtonReleased extends MouseInput {
         private final int button;
 
         @ApiStatus.Internal
@@ -461,7 +461,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends MouseButtonReleased {
+        public static final class Pre extends MouseButtonReleased {
             @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int button) {
                 super(screen, mouseX, mouseY, button);
@@ -484,7 +484,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @HasResult
-        public static class Post extends MouseButtonReleased {
+        public static final class Post extends MouseButtonReleased {
             private final boolean handled;
 
             @ApiStatus.Internal
@@ -509,7 +509,7 @@ public abstract class ScreenEvent extends Event {
      * @see MouseDragged.Pre
      * @see MouseDragged.Post
      */
-    public static abstract class MouseDragged extends MouseInput {
+    public static abstract sealed class MouseDragged extends MouseInput {
         private final int mouseButton;
         private final double dragX;
         private final double dragY;
@@ -557,7 +557,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends MouseDragged {
+        public static final class Pre extends MouseDragged {
             @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
                 super(screen, mouseX, mouseY, mouseButton, dragX, dragY);
@@ -574,7 +574,7 @@ public abstract class ScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Post extends MouseDragged {
+        public static final class Post extends MouseDragged {
             @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
                 super(screen, mouseX, mouseY, mouseButton, dragX, dragY);
@@ -589,7 +589,7 @@ public abstract class ScreenEvent extends Event {
      * @see MouseScrolled.Pre
      * @see MouseScrolled.Post
      */
-    public static abstract class MouseScrolled extends MouseInput {
+    public static abstract sealed class MouseScrolled extends MouseInput {
         private final double deltaX;
         private final double deltaY;
 
@@ -625,7 +625,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends MouseScrolled {
+        public static final class Pre extends MouseScrolled {
             @ApiStatus.Internal
             public Pre(Screen screen, double mouseX, double mouseY, double deltaX, double deltaY) {
                 super(screen, mouseX, mouseY, deltaX, deltaY);
@@ -642,7 +642,7 @@ public abstract class ScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Post extends MouseScrolled {
+        public static final class Post extends MouseScrolled {
             @ApiStatus.Internal
             public Post(Screen screen, double mouseX, double mouseY, double deltaX, double deltaY) {
                 super(screen, mouseX, mouseY, deltaX, deltaY);
@@ -659,7 +659,7 @@ public abstract class ScreenEvent extends Event {
      * @see InputConstants
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_key" target="_top">the online GLFW documentation</a>
      */
-    private static abstract class KeyInput extends ScreenEvent {
+    private static abstract sealed class KeyInput extends ScreenEvent {
         private final int keyCode;
         private final int scanCode;
         private final int modifiers;
@@ -719,7 +719,7 @@ public abstract class ScreenEvent extends Event {
      * @see KeyPressed.Pre
      * @see KeyPressed.Post
      */
-    public static abstract class KeyPressed extends KeyInput {
+    public static abstract sealed class KeyPressed extends KeyInput {
         @ApiStatus.Internal
         public KeyPressed(Screen screen, int keyCode, int scanCode, int modifiers) {
             super(screen, keyCode, scanCode, modifiers);
@@ -736,7 +736,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends KeyPressed {
+        public static final class Pre extends KeyPressed {
             @ApiStatus.Internal
             public Pre(Screen screen, int keyCode, int scanCode, int modifiers) {
                 super(screen, keyCode, scanCode, modifiers);
@@ -754,7 +754,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Post extends KeyPressed {
+        public static final class Post extends KeyPressed {
             @ApiStatus.Internal
             public Post(Screen screen, int keyCode, int scanCode, int modifiers) {
                 super(screen, keyCode, scanCode, modifiers);
@@ -769,7 +769,7 @@ public abstract class ScreenEvent extends Event {
      * @see KeyReleased.Pre
      * @see KeyReleased.Post
      */
-    public static abstract class KeyReleased extends KeyInput {
+    public static abstract sealed class KeyReleased extends KeyInput {
         @ApiStatus.Internal
         public KeyReleased(Screen screen, int keyCode, int scanCode, int modifiers) {
             super(screen, keyCode, scanCode, modifiers);
@@ -786,7 +786,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends KeyReleased {
+        public static final class Pre extends KeyReleased {
             @ApiStatus.Internal
             public Pre(Screen screen, int keyCode, int scanCode, int modifiers) {
                 super(screen, keyCode, scanCode, modifiers);
@@ -804,7 +804,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Post extends KeyReleased {
+        public static final class Post extends KeyReleased {
             @ApiStatus.Internal
             public Post(Screen screen, int keyCode, int scanCode, int modifiers) {
                 super(screen, keyCode, scanCode, modifiers);
@@ -820,7 +820,7 @@ public abstract class ScreenEvent extends Event {
      * @see CharacterTyped.Post
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_char" target="_top">the online GLFW documentation</a>
      */
-    public static class CharacterTyped extends ScreenEvent {
+    public static sealed class CharacterTyped extends ScreenEvent {
         private final char codePoint;
         private final int modifiers;
 
@@ -864,7 +864,7 @@ public abstract class ScreenEvent extends Event {
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         @Cancelable
-        public static class Pre extends CharacterTyped {
+        public static final class Pre extends CharacterTyped {
             @ApiStatus.Internal
             public Pre(Screen screen, char codePoint, int modifiers) {
                 super(screen, codePoint, modifiers);
@@ -881,7 +881,7 @@ public abstract class ScreenEvent extends Event {
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Post extends CharacterTyped {
+        public static final class Post extends CharacterTyped {
             @ApiStatus.Internal
             public Post(Screen screen, char codePoint, int modifiers) {
                 super(screen, codePoint, modifiers);
@@ -902,7 +902,7 @@ public abstract class ScreenEvent extends Event {
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class Opening extends ScreenEvent {
+    public static final class Opening extends ScreenEvent {
         @Nullable
         private final Screen currentScreen;
         private Screen newScreen;
@@ -949,7 +949,7 @@ public abstract class ScreenEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Closing extends ScreenEvent {
+    public static final class Closing extends ScreenEvent {
         @ApiStatus.Internal
         public Closing(Screen screen) {
             super(screen);

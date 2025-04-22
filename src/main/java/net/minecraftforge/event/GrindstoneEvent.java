@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
-public abstract class GrindstoneEvent extends Event
+public abstract sealed class GrindstoneEvent extends Event
 {
     private final ItemStack top;
     private final ItemStack bottom;
@@ -79,7 +79,7 @@ public abstract class GrindstoneEvent extends Event
      * </ul>
      */
     @Cancelable
-    public static class OnPlaceItem extends GrindstoneEvent
+    public static final class OnPlaceItem extends GrindstoneEvent
     {
         private ItemStack output;
 
@@ -119,7 +119,7 @@ public abstract class GrindstoneEvent extends Event
      * if the amount of experience is larger than or equal 0, the vanilla behavior for calculating experience will not run. <br>
      */
     @Cancelable
-    public static class OnTakeItem extends GrindstoneEvent
+    public static final class OnTakeItem extends GrindstoneEvent
     {
         private ItemStack newTop = ItemStack.EMPTY;
         private ItemStack newBottom = ItemStack.EMPTY;

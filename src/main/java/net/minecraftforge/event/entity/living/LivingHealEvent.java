@@ -26,7 +26,7 @@ import net.minecraft.world.entity.LivingEntity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingHealEvent extends LivingEvent
+public final class LivingHealEvent extends LivingEvent
 {
     private float amount;
     public LivingHealEvent(LivingEntity entity, float amount)

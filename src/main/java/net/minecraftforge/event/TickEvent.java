@@ -16,13 +16,13 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
-public class TickEvent extends Event {
+public sealed class TickEvent extends Event {
     public enum Type {
-        LEVEL, PLAYER, CLIENT, SERVER, RENDER;
+        LEVEL, PLAYER, CLIENT, SERVER, RENDER
     }
 
     public enum Phase {
-        START, END;
+        START, END
     }
 
     public final Type type;
@@ -35,7 +35,7 @@ public class TickEvent extends Event {
         this.phase = phase;
     }
 
-    public static class ServerTickEvent extends TickEvent {
+    public static sealed class ServerTickEvent extends TickEvent {
         private final BooleanSupplier haveTime;
         private final MinecraftServer server;
 
@@ -61,38 +61,38 @@ public class TickEvent extends Event {
             return server;
         }
 
-        public static class Pre extends ServerTickEvent {
+        public static final class Pre extends ServerTickEvent {
             public Pre(BooleanSupplier haveTime, MinecraftServer server) {
                 super(haveTime, server, Phase.START);
             }
         }
 
-        public static class Post extends ServerTickEvent {
+        public static final class Post extends ServerTickEvent {
             public Post(BooleanSupplier haveTime, MinecraftServer server) {
                 super(haveTime, server, Phase.END);
             }
         }
     }
 
-    public static class ClientTickEvent extends TickEvent {
+    public static sealed class ClientTickEvent extends TickEvent {
         protected ClientTickEvent(Phase phase) {
             super(Type.CLIENT, LogicalSide.CLIENT, phase);
         }
 
-        public static class Pre extends ClientTickEvent {
+        public static final class Pre extends ClientTickEvent {
             public Pre() {
                 super(Phase.START);
             }
         }
 
-        public static class Post extends ClientTickEvent {
+        public static final class Post extends ClientTickEvent {
             public Post() {
                 super(Phase.END);
             }
         }
     }
 
-    public static class LevelTickEvent extends TickEvent {
+    public static sealed class LevelTickEvent extends TickEvent {
         public final Level level;
         private final BooleanSupplier haveTime;
 
@@ -112,20 +112,20 @@ public class TickEvent extends Event {
             return this.haveTime.getAsBoolean();
         }
 
-        public static class Pre extends LevelTickEvent {
+        public static final class Pre extends LevelTickEvent {
             public Pre(LogicalSide side, Level level, BooleanSupplier haveTime) {
                 super(side, level, haveTime, Phase.START);
             }
         }
 
-        public static class Post extends LevelTickEvent {
+        public static final class Post extends LevelTickEvent {
             public Post(LogicalSide side, Level level, BooleanSupplier haveTime) {
                 super(side, level, haveTime, Phase.END);
             }
         }
     }
 
-    public static class PlayerTickEvent extends TickEvent {
+    public static sealed class PlayerTickEvent extends TickEvent {
         public final Player player;
 
         protected PlayerTickEvent(Player player, Phase phase) {
@@ -133,20 +133,20 @@ public class TickEvent extends Event {
             this.player = player;
         }
 
-        public static class Pre extends PlayerTickEvent {
+        public static final class Pre extends PlayerTickEvent {
             public Pre(Player player) {
                 super(player, Phase.START);
             }
         }
 
-        public static class Post extends PlayerTickEvent {
+        public static final class Post extends PlayerTickEvent {
             public Post(Player player) {
                 super(player, Phase.END);
             }
         }
     }
 
-    public static class RenderTickEvent extends TickEvent {
+    public static sealed class RenderTickEvent extends TickEvent {
         private final DeltaTracker timer;
 
         private RenderTickEvent(Phase phase, DeltaTracker timer) {
@@ -158,13 +158,13 @@ public class TickEvent extends Event {
             return this.timer;
         }
 
-        public static class Pre extends RenderTickEvent {
+        public static final class Pre extends RenderTickEvent {
             public Pre(DeltaTracker timer) {
                 super(Phase.START, timer);
             }
         }
 
-        public static class Post extends RenderTickEvent {
+        public static final class Post extends RenderTickEvent {
             public Post(DeltaTracker timer) {
                 super(Phase.END, timer);
             }

@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired from {@link ForgeEventFactory#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerDestroyItemEvent extends PlayerEvent {
+public final class PlayerDestroyItemEvent extends PlayerEvent {
     @NotNull
     private final ItemStack original;
     @Nullable

@@ -25,7 +25,7 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @Cancelable
-public class RenderBlockScreenEffectEvent extends Event
+public final class RenderBlockScreenEffectEvent extends Event
 {
     /**
      * The type of the block overlay to be rendered.

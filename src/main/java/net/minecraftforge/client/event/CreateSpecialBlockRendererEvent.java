@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.Event;
 
-public class CreateSpecialBlockRendererEvent extends Event {
+public final class CreateSpecialBlockRendererEvent extends Event {
     private final Map<Block, SpecialModelRenderer.Unbaked> map;
 
     public CreateSpecialBlockRendererEvent(Map<Block, SpecialModelRenderer.Unbaked> map) {

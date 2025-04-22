@@ -15,7 +15,7 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
  * You can obtain a reference to the server with this event.
  * @author cpw
  */
-public class ServerAboutToStartEvent extends ServerLifecycleEvent {
+public final class ServerAboutToStartEvent extends ServerLifecycleEvent {
 
     public ServerAboutToStartEvent(MinecraftServer server)
     {

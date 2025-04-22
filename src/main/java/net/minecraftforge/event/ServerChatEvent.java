@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 @Cancelable
-public class ServerChatEvent extends Event {
+public final class ServerChatEvent extends Event {
     private final ServerPlayer player;
     private final String username;
     private final String rawText;

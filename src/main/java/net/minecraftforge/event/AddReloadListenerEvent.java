@@ -29,7 +29,7 @@ import java.util.concurrent.Executor;
  * The event is fired on each reload and lets modders add their own ReloadListeners, for server-side resources.
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
-public class AddReloadListenerEvent extends Event {
+public final class AddReloadListenerEvent extends Event {
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
     private final ReloadableServerResources serverResources;
 

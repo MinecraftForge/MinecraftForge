@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ArrowLooseEvent extends PlayerEvent
+public final class ArrowLooseEvent extends PlayerEvent
 {
     private final ItemStack bow;
     private final Level level;

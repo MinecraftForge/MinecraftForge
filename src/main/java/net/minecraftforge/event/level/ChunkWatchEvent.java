@@ -25,7 +25,7 @@ import net.minecraftforge.fml.LogicalSide;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-public class ChunkWatchEvent extends Event {
+public sealed class ChunkWatchEvent extends Event {
     private final ServerLevel level;
     private final ServerPlayer player;
     private final ChunkPos pos;
@@ -67,7 +67,7 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Watch extends ChunkWatchEvent {
+    public static final class Watch extends ChunkWatchEvent {
         private final LevelChunk chunk;
 
         public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel level) {
@@ -88,7 +88,7 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class UnWatch extends ChunkWatchEvent {
+    public static final class UnWatch extends ChunkWatchEvent {
         public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level) {
             super(player, pos, level);
         }

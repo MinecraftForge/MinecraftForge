@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
  * Cancel this event to prevent Vanilla from posting the {@link GameEvent} to all nearby {@link net.minecraft.world.level.gameevent.GameEventListener GameEventListeners}.
  **/
 @Cancelable
-public class VanillaGameEvent extends Event
+public final class VanillaGameEvent extends Event
 {
     private final Level level;
     private final GameEvent vanillaEvent;

@@ -16,7 +16,7 @@ import net.minecraftforge.common.MinecraftForge;
  * @see AdvancementEarnEvent
  * @see AdvancementProgressEvent
  */
-public class AdvancementEvent extends PlayerEvent {
+public sealed class AdvancementEvent extends PlayerEvent {
     private final AdvancementHolder advancement;
 
     public AdvancementEvent(Player player, AdvancementHolder advancement) {
@@ -41,7 +41,7 @@ public class AdvancementEvent extends PlayerEvent {
      *
      * @see AdvancementProgress#isDone()
      */
-    public static class AdvancementEarnEvent extends AdvancementEvent {
+    public static final class AdvancementEarnEvent extends AdvancementEvent {
         public AdvancementEarnEvent(Player player, AdvancementHolder earned) {
             super(player, earned);
         }
@@ -59,7 +59,7 @@ public class AdvancementEvent extends PlayerEvent {
      * @see net.minecraft.server.PlayerAdvancements#award(Advancement, String)
      * @see net.minecraft.server.PlayerAdvancements#revoke(Advancement, String)
      */
-    public static class AdvancementProgressEvent extends AdvancementEvent {
+    public static final class AdvancementProgressEvent extends AdvancementEvent {
         private final AdvancementProgress advancementProgress;
         private final String criterionName;
         private final AdvancementEvent.AdvancementProgressEvent.ProgressType progressType;

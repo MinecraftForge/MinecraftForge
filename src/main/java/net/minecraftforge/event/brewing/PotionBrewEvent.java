@@ -12,9 +12,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import org.jetbrains.annotations.NotNull;
 
-public class PotionBrewEvent extends Event
+public sealed class PotionBrewEvent extends Event
 {
-    private NonNullList<ItemStack> stacks;
+    private final NonNullList<ItemStack> stacks;
 
     protected PotionBrewEvent(NonNullList<ItemStack> stacks)
     {
@@ -59,7 +59,7 @@ public class PotionBrewEvent extends Event
      * If this event is canceled, and items have been modified, PotionBrewEvent.Post will automatically be fired.
      **/
     @Cancelable
-    public static class Pre extends PotionBrewEvent
+    public static final class Pre extends PotionBrewEvent
     {
         public Pre(NonNullList<ItemStack> stacks)
         {
@@ -80,7 +80,7 @@ public class PotionBrewEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Post extends PotionBrewEvent
+    public static final class Post extends PotionBrewEvent
     {
         public Post(NonNullList<ItemStack> stacks)
         {

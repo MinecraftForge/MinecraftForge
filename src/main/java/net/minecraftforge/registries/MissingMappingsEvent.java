@@ -18,7 +18,7 @@ import java.util.Locale;
 /**
  * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
  */
-public class MissingMappingsEvent extends Event
+public final class MissingMappingsEvent extends Event
 {
     private final ResourceKey<? extends Registry<?>> key;
     private final IForgeRegistry<?> registry;

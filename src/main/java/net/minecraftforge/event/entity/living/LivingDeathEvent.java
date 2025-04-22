@@ -32,7 +32,7 @@ import net.minecraft.world.entity.LivingEntity;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDeathEvent extends LivingEvent
+public final class LivingDeathEvent extends LivingEvent
 {
     private final DamageSource source;
     public LivingDeathEvent(LivingEntity entity, DamageSource source)

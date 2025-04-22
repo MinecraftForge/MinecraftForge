@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class VillageSiegeEvent extends Event
+public final class VillageSiegeEvent extends Event
 {
     private final VillageSiege siege;
     private final Level level;

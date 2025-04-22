@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingEquipmentChangeEvent extends LivingEvent {
+public final class LivingEquipmentChangeEvent extends LivingEvent {
     private final EquipmentSlot slot;
     private final ItemStack from;
     private final ItemStack to;

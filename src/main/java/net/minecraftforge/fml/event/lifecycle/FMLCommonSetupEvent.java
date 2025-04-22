@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @see DeferredWorkQueue to enqueue work to run on the main game thread after this event has
  * completed dispatch
  */
-public class FMLCommonSetupEvent extends ParallelDispatchEvent
+public final class FMLCommonSetupEvent extends ParallelDispatchEvent
 {
     public FMLCommonSetupEvent(final ModContainer container, final ModLoadingStage stage)
     {

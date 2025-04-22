@@ -24,7 +24,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * setResult(DEFAULT) causes game to check {@link Block#isBed(BlockState, BlockGetter, BlockPos, Entity)} instead
  */
 @HasResult
-public class SleepingLocationCheckEvent extends LivingEvent
+public final class SleepingLocationCheckEvent extends LivingEvent
 {
 
     private final BlockPos sleepingLocation;

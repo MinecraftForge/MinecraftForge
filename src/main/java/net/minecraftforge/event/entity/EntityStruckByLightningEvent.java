@@ -26,7 +26,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @net.minecraftforge.eventbus.api.Cancelable
-public class EntityStruckByLightningEvent extends EntityEvent
+public final class EntityStruckByLightningEvent extends EntityEvent
 {
     private final LightningBolt lightning;
 

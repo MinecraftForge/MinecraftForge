@@ -143,7 +143,7 @@
      public void playSeededSound(
          @Nullable Entity p_392657_, Entity p_394285_, Holder<SoundEvent> p_263412_, SoundSource p_263338_, float p_263352_, float p_263390_, long p_263403_
      ) {
-+        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_394285_, p_263412_, p_263338_, p_263352_, p_263390_);
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_394285_.level(), p_394285_, p_263412_, p_263338_, p_263352_, p_263390_);
 +        if (event.isCanceled() || event.getSound() == null) return;
 +        p_263412_ = event.getSound();
 +        p_263338_ = event.getSource();

@@ -22,7 +22,7 @@ import java.util.Optional;
  * setResult(DEFAULT) causes game to check !{@link Level#isDay()} instead.
  */
 @HasResult
-public class SleepingTimeCheckEvent extends PlayerEvent
+public final class SleepingTimeCheckEvent extends PlayerEvent
 {
     private final Optional<BlockPos> sleepingLocation;
 

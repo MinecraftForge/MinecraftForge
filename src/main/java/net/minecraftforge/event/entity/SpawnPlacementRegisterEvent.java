@@ -42,7 +42,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  *  Fired on the Mod bus {@link IModBusEvent}.<br>
  */
-public class SpawnPlacementRegisterEvent extends Event implements IModBusEvent {
+public final class SpawnPlacementRegisterEvent extends Event implements IModBusEvent {
     private final Map<EntityType<?>, MergedSpawnPredicate<?>> map;
 
     @ApiStatus.Internal

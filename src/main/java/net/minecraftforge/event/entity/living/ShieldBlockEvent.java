@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * at least for players.
  */
 @Cancelable
-public class ShieldBlockEvent extends LivingEvent {
+public final class ShieldBlockEvent extends LivingEvent {
     private final DamageSource source;
     private final float originalBlocked;
     private float dmgBlocked;

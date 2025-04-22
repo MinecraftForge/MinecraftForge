@@ -30,7 +30,7 @@ import net.minecraft.world.entity.LivingEntity;
  * @see LivingHurtEvent
  **/
 @Cancelable
-public class LivingDamageEvent extends LivingEvent
+public final class LivingDamageEvent extends LivingEvent
 {
     private final DamageSource source;
     private float amount;

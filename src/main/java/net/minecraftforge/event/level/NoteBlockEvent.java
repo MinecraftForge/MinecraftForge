@@ -17,7 +17,7 @@ import com.google.common.base.Preconditions;
  * Base class for Noteblock Events
  *
  */
-public class NoteBlockEvent extends BlockEvent {
+public sealed class NoteBlockEvent extends BlockEvent {
     private int noteId;
 
     protected NoteBlockEvent(Level world, BlockPos pos, BlockState state, int note) {
@@ -65,7 +65,7 @@ public class NoteBlockEvent extends BlockEvent {
      * Canceling this event will stop the note from playing.
      */
     @Cancelable
-    public static class Play extends NoteBlockEvent {
+    public static final class Play extends NoteBlockEvent {
         private NoteBlockInstrument instrument;
 
         public Play(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument) {
@@ -87,7 +87,7 @@ public class NoteBlockEvent extends BlockEvent {
      * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
      */
     @Cancelable
-    public static class Change extends NoteBlockEvent {
+    public static final class Change extends NoteBlockEvent {
         private final Note oldNote;
         private final Octave oldOctave;
 
@@ -111,7 +111,7 @@ public class NoteBlockEvent extends BlockEvent {
      * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
-    public static enum Note {
+    public enum Note {
         F_SHARP,
         G,
         G_SHARP,
@@ -137,7 +137,7 @@ public class NoteBlockEvent extends BlockEvent {
      * Together with {@link Note} it fully describes the note.
      *
      */
-    public static enum Octave {
+    public enum Octave {
         LOW,
         MID,
         HIGH; // only valid for F_SHARP

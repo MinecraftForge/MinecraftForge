@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 /**
  * Register new registries when you receive this event through {@link RegistryBuilder} and {@link #create(RegistryBuilder)}.
  */
-public class NewRegistryEvent extends Event implements IModBusEvent {
+public final class NewRegistryEvent extends Event implements IModBusEvent {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final List<RegistryData<?>> registries = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class NewRegistryEvent extends Event implements IModBusEvent {
             Consumer<IForgeRegistry<V>> onFill
     ) {}
 
-    private static class RegistryHolder<V> implements Supplier<IForgeRegistry<V>> {
+    private static final class RegistryHolder<V> implements Supplier<IForgeRegistry<V>> {
         IForgeRegistry<V> registry = null;
 
         @Override
