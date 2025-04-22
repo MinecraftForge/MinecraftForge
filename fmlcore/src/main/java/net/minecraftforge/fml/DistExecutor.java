@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  * }
  * }</pre>
  */
-@Deprecated(since = "1.21.4", forRemoval = true)
+@Deprecated(since = "1.21.5", forRemoval = true)
 public final class DistExecutor
 {
     private static final Logger LOGGER = LogManager.getLogger();
