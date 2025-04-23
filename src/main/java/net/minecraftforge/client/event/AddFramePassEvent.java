@@ -23,7 +23,7 @@ import java.util.Set;
  * <p>This event is fired on the {@linkplain net.minecraftforge.common.MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#CLIENT logical client}.
  */
-public class AddFramePassEvent extends Event {
+public final class AddFramePassEvent extends Event {
     private final FrameGraphBuilder builder;
     public final LevelTargetBundle bundle;
 
