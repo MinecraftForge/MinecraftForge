@@ -25,14 +25,10 @@ import com.mojang.blaze3d.framegraph.FramePass;
 @GameTestHolder("forge." + RenderFrameLayerTest.MODID)
 public class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";
-    private static final boolean ENABLED = true;
 
     public RenderFrameLayerTest(FMLJavaModLoadingContext context) {
-        super(context, ENABLED);
-        if (ENABLED) {
-            MinecraftForge.EVENT_BUS.addListener(RenderFrameLayerTest::renderTest);
-        }
-        
+        super(context);
+        MinecraftForge.EVENT_BUS.addListener(RenderFrameLayerTest::renderTest);
     }
     
     private static ResourceLocation rl(String path) {
@@ -40,33 +36,54 @@ public class RenderFrameLayerTest extends BaseTestMod {
     }
 
     @GameTest(template = "forge:empty3x3x3")
-    public static void test_test(GameTestHelper helper) {
-        helper.succeed();
+    public static void frame_passes_run(GameTestHelper helper) {
+        var passOne = helper.boolFlag("passOne");
+        var passTwo = helper.boolFlag("passOne");
+
+        helper.<AddFramePassEvent>addEventListener(event -> {
+            FramePass pass = event.createPass(rl(MODID + "test_1") );
+            event.bundle.main = pass.readsAndWrites(event.bundle.main);
+            pass.executes(() -> passOne.set(true));
+
+            pass = event.createPass(rl(MODID + "test_2"));
+            event.bundle.main = pass.readsAndWrites(event.bundle.main);
+            pass.executes(() -> passTwo.set(true));
+        });
+
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(passOne.getBool(), "Pass One was not executed");
+            helper.assertTrue(passTwo.getBool(), "Pass Two was not executed");
+            helper.succeed();
+        });
     }
-    
+
+    /**
+     * If this is working, two white line box cubes will be rendered at ground level in a superflat world around (0,0)
+     */
     @SubscribeEvent
     public static void renderTest(AddFramePassEvent event) {
+        var mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
         FramePass pass = event.createPass(rl(MODID));
         event.bundle.main = pass.readsAndWrites(event.bundle.main);
-        
-        var pl = Minecraft.getInstance().gameRenderer.getMainCamera();
+
         pass.executes(() -> {
             PoseStack ps = new PoseStack();
-            ps.translate(pl.getPosition().multiply(-1,-1,-1));
+            ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
             ps.pushPose();
             var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
             var vc = buffSource.getBuffer(RenderType.lines());
-            
+
             ShapeRenderer.renderLineBox(ps, vc, 0, -60, 0, 10, -50, 10, 1f, 1f, 1f, 1f);
             buffSource.endBatch();
             ps.popPose();
         });
+
         pass = event.createPass(rl(MODID+"2"));
         event.bundle.main = pass.readsAndWrites(event.bundle.main);
         
         pass.executes(() -> {
             PoseStack ps = new PoseStack();
-            ps.translate(pl.getPosition().multiply(-1,-1,-1));
+            ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
             ps.pushPose();
             var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
             var vc = buffSource.getBuffer(RenderType.lines());
