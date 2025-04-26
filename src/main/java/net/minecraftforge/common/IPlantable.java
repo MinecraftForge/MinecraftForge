@@ -25,6 +25,8 @@ public interface IPlantable {
         if (this == Blocks.LILY_PAD)       return PlantType.WATER;
         if (this == Blocks.RED_MUSHROOM)   return PlantType.CAVE;
         if (this == Blocks.BROWN_MUSHROOM) return PlantType.CAVE;
+        if (this == Blocks.CRIMSON_FUNGUS) return PlantType.FUNGUS;
+        if (this == Blocks.WARPED_FUNGUS)  return PlantType.FUNGUS;
         if (this == Blocks.NETHER_WART)    return PlantType.NETHER;
         if (this == Blocks.TALL_GRASS)     return PlantType.PLAINS;
         return PlantType.PLAINS;

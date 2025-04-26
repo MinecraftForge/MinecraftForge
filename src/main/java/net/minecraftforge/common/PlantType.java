@@ -27,6 +27,7 @@ public final class PlantType
     public static final PlantType WATER = get("water");
     public static final PlantType NETHER = get("nether");
     public static final PlantType CROP = get("crop");
+    public static final PlantType FUNGUS = get("fungus");
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}

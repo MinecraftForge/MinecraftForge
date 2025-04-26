@@ -108,7 +108,7 @@
      }
  
      public boolean hasDynamicShape() {
-@@ -556,5 +_,74 @@
+@@ -556,5 +_,76 @@
          public int hashCode() {
              return System.identityHashCode(this.first) * 31 + System.identityHashCode(this.second);
          }
@@ -154,6 +154,8 @@
 +             return state.is(BlockTags.SAND) || this == Blocks.TERRACOTTA || this instanceof GlazedTerracottaBlock;
 +        } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
 +             return this == Blocks.SOUL_SAND;
++        } else if (net.minecraftforge.common.PlantType.FUNGUS.equals(type)) {
++            return state.is(BlockTags.NYLIUM);
 +        } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
 +             return state.is(Blocks.FARMLAND);
 +        } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
