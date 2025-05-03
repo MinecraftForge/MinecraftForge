@@ -177,7 +177,7 @@
  
              for (CreativeModeTab creativemodetab : CreativeModeTabs.tabs()) {
 -                if (creativemodetab.getType() != CreativeModeTab.Type.SEARCH && creativemodetab.contains(p_281769_)) {
-+                if (creativemodetab.hasSearchBar() && creativemodetab.contains(p_281769_)) {
++                if (!creativemodetab.hasSearchBar() && creativemodetab.contains(p_281769_)) {
                      list1.add(i++, creativemodetab.getDisplayName().copy().withStyle(ChatFormatting.BLUE));
                  }
              }
