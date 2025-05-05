@@ -7,6 +7,7 @@ package net.minecraftforge.debug.gameplay.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.tags.BlockTags;
@@ -28,13 +29,14 @@ import static net.minecraft.world.level.block.Blocks.*;
 public class PlantTypePlacementTest extends BaseTestMod {
     static final String MOD_ID = "plant_type_placement";
     static BlockPos noOverlapOffset = BlockPos.ZERO;
-
+    static final int TEST_DELAY = 2;
     public PlantTypePlacementTest(FMLJavaModLoadingContext context) {
         super(context);
     }
 
     @GameTest
     public static void test_vanilla_plantables(GameTestHelper helper) {
+        noOverlapOffset = BlockPos.ZERO;
         // CROP PlantType. Includes AttachedStemBlocks, CropBlocks, and PITCHER_CROP
         var vanillaCropList = tagToList(helper, BlockTags.CROPS);
         iterateBlocks(helper, vanillaCropList, FARMLAND);
@@ -70,29 +72,6 @@ public class PlantTypePlacementTest extends BaseTestMod {
         var deadbushValid = tagMultiple(helper, BlockTags.SAND, BlockTags.DIRT, BlockTags.TERRACOTTA);
         iterateBlocks(helper, deadbush, deadbushValid);
 
-        // CAVE PlantType, can grow on any solid block apparently. Might as well test they don't adhere to nonsolid
-        generateLightCover(helper, noOverlapOffset);
-        generateLightCover(helper, noOverlapOffset.east());
-        helper.setAndAssertBlock(noOverlapOffset, STONE);
-        helper.setAndAssertBlock(noOverlapOffset.east(), GLASS);
-        helper.setAndAssertBlock(noOverlapOffset.above(), RED_MUSHROOM);
-        helper.setAndAssertBlock(noOverlapOffset.east().above(), RED_MUSHROOM);
-        helper.runAfterDelay(5, () -> {
-            helper.assertBlockPresent(RED_MUSHROOM, noOverlapOffset.above());
-            helper.assertBlockNotPresent(RED_MUSHROOM, noOverlapOffset.east().above());
-        });
-        generateLightCover(helper, noOverlapOffset);
-        generateLightCover(helper, noOverlapOffset.east());
-        helper.setAndAssertBlock(noOverlapOffset, STONE);
-        helper.setAndAssertBlock(noOverlapOffset.east(), GLASS);
-        helper.setAndAssertBlock(noOverlapOffset.above(), BROWN_MUSHROOM);
-        helper.setAndAssertBlock(noOverlapOffset.east().above(), BROWN_MUSHROOM);
-        helper.runAfterDelay(5, () -> {
-            helper.assertBlockPresent(BROWN_MUSHROOM, noOverlapOffset.above());
-            helper.assertBlockNotPresent(BROWN_MUSHROOM, noOverlapOffset.east().above());
-        });
-        noOverlapOffset = noOverlapOffset.north();
-
         // Cactus
         var sands = tagToList(helper, BlockTags.SAND);
         var offset = new BlockPos(noOverlapOffset);
@@ -101,14 +80,14 @@ public class PlantTypePlacementTest extends BaseTestMod {
             helper.setBlock(offset.below(), STONE);
             helper.setAndAssertBlock(offset.above(), CACTUS);
             BlockPos finalOffset = offset;
-            helper.runAfterDelay(5, () -> {
+            helper.runAfterDelay(TEST_DELAY, () -> {
                 helper.assertBlockPresent(CACTUS, finalOffset.above());
             });
             offset = offset.east(2);
         }
         noOverlapOffset = noOverlapOffset.north();
 
-        // Finally, BEACH (sugar cane)
+        // BEACH (sugar cane)
         var validCaneLand = new ArrayList<Block>();
         var validCaneLiquid = List.of(WATER, FROSTED_ICE);
         validCaneLand.addAll(sands); validCaneLand.addAll(dirts);
@@ -121,22 +100,48 @@ public class PlantTypePlacementTest extends BaseTestMod {
                 helper.setAndAssertBlock(offset.north(), liquid);
                 helper.setAndAssertBlock(offset.above(), SUGAR_CANE);
                 BlockPos finalOffset1 = offset;
-                helper.runAfterDelay(5, () -> {
+                helper.runAfterDelay(TEST_DELAY, () -> {
                     helper.assertBlockPresent(SUGAR_CANE, finalOffset1.above());
                 });
                 offset = offset.east();
             }
             offset = noOverlapOffset.north(4);
         }
-        helper.succeed();
-        noOverlapOffset = BlockPos.ZERO;
+        noOverlapOffset = offset.north(2);
+        // CAVE PlantType, can grow on any solid block apparently. Might as well test they don't adhere to nonsolid
+        generateLightCover(helper, noOverlapOffset);
+        generateLightCover(helper, noOverlapOffset.east(2));
+        helper.setAndAssertBlock(noOverlapOffset, STONE);
+        helper.setAndAssertBlock(noOverlapOffset.east(2), GLASS);
+        helper.runAfterDelay(1, () -> {
+            helper.setAndAssertBlock(noOverlapOffset.above(), RED_MUSHROOM);
+            helper.setAndAssertBlock(noOverlapOffset.east(2).above(), RED_MUSHROOM);
+        });
+        helper.runAfterDelay(TEST_DELAY, () -> {
+            helper.assertBlockPresent(RED_MUSHROOM, noOverlapOffset.above());
+            helper.assertBlockNotPresent(RED_MUSHROOM, noOverlapOffset.east(2).above());
+        });
+        noOverlapOffset = noOverlapOffset.north();
+        generateLightCover(helper, noOverlapOffset);
+        generateLightCover(helper, noOverlapOffset.east(2));
+        helper.setAndAssertBlock(noOverlapOffset, STONE);
+        helper.setAndAssertBlock(noOverlapOffset.east(2), GLASS);
+        helper.runAfterDelay(1, () -> {
+            helper.setAndAssertBlock(noOverlapOffset.above(), BROWN_MUSHROOM);
+            helper.setAndAssertBlock(noOverlapOffset.east(2).above(), BROWN_MUSHROOM);
+        });
+        helper.runAfterDelay(TEST_DELAY, ()  -> {
+            helper.assertBlockPresent(BROWN_MUSHROOM, noOverlapOffset.above());
+            helper.assertBlockNotPresent(BROWN_MUSHROOM, noOverlapOffset.east(2).above());
+            helper.succeed();
+        });
     }
 
     private static void placeAndCheck(GameTestHelper helper, BlockPos pos, Block land, Block plant) {
         helper.setAndAssertBlock(pos, land);
         helper.setBlock(pos.below(), STONE);
         helper.setAndAssertBlock(pos.above(), plant);
-        helper.runAfterDelay(5, () -> {
+        helper.runAfterDelay(TEST_DELAY, () -> {
             helper.assertBlockPresent(plant, pos.above());
         });
     }
@@ -178,18 +183,10 @@ public class PlantTypePlacementTest extends BaseTestMod {
     // make sure the mushrooms can actually be planted
     private static void generateLightCover(GameTestHelper helper, BlockPos landLocation) {
         BlockPos twoAbovePlant = landLocation.above(3);
-        helper.setBlock(twoAbovePlant, STONE);
-        helper.setBlock(twoAbovePlant.north(), STONE);
-        helper.setBlock(twoAbovePlant.north().east(), STONE);
-        helper.setBlock(twoAbovePlant.east(), STONE);
-        helper.setBlock(twoAbovePlant.east().south(), STONE);
-        helper.setBlock(twoAbovePlant.west(), STONE);
-        helper.setBlock(twoAbovePlant.west().north(), STONE);
-        helper.setBlock(twoAbovePlant.south(), STONE);
-        helper.setBlock(twoAbovePlant.south().west(), STONE);
-        helper.setBlock(twoAbovePlant.north(2), STONE);
-        helper.setBlock(twoAbovePlant.west(2), STONE);
-        helper.setBlock(twoAbovePlant.east(2), STONE);
-        helper.setBlock(twoAbovePlant.south(2), STONE);
+        for (int x = -5; x < 5; x++) {
+            for (int z = -5; z <5; z++) {
+                helper.setAndAssertBlock(twoAbovePlant.offset(new Vec3i(x, 0, z)), STONE);
+            }
+        }
     }
 }

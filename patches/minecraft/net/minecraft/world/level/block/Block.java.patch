@@ -159,7 +159,7 @@
 +        } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
 +             return state.is(Blocks.FARMLAND);
 +        } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
-+             return state.isFaceSturdy(world, pos, Direction.UP);
++             return state.isFaceSturdy(world, pos, Direction.UP) && state.canOcclude();
 +        } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
 +            return state.is(BlockTags.DIRT) || this == Blocks.FARMLAND;
 +        } else if (net.minecraftforge.common.PlantType.MOIST.equals(type)) {
