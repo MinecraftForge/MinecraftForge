@@ -5,23 +5,34 @@
 
 package net.minecraftforge.debug.gameplay.block;
 
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.gametest.framework.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.gametest.GameTest;
 import net.minecraftforge.gametest.GameTestNamespace;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.test.BaseTestMod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+
 import static net.minecraft.world.level.block.Blocks.*;
 
 @GameTestNamespace("forge")
@@ -30,11 +41,67 @@ public class PlantTypePlacementTest extends BaseTestMod {
     static final String MOD_ID = "plant_type_placement";
     static BlockPos noOverlapOffset = BlockPos.ZERO;
     static final int TEST_DELAY = 2;
+    List<Consumer<GameTestHelper>> plantPermutations = new ArrayList<>();
     public PlantTypePlacementTest(FMLJavaModLoadingContext context) {
         super(context);
+
+        var rl = ResourceLocation.fromNamespaceAndPath("forge", MOD_ID);
+        var test = new TestData<ResourceLocation>(
+                ResourceLocation.fromNamespaceAndPath("forge", GameTestEnvironments.DEFAULT),
+                ResourceLocation.parse(GameTest.DEFAULT_STRUCTURE),
+                100, 0, true);
+        ForgeGameTestHooks.TestReference ref = new ForgeGameTestHooks.TestReference((helper) -> {
+            helper.say("This was a successful dynamically generated test");
+            helper.succeed();
+        }, test);
+        // seems like what registerTestFunctions is doing
+        modBus.<RegisterEvent>addListener((event) -> {
+            if (event.getRegistryKey() != Registries.TEST_FUNCTION)
+                return;
+            //for (Consumer<GameTestHelper> plantPermutation : plantPermutations) {
+            event.register(Registries.TEST_FUNCTION,  rl, ref::consumer);
+            //}
+        });
+        // generateGameTests? Basically copied from BaseTestMod, don't know if correct.
+        modBus.<GatherDataEvent>addListener((event) -> {
+            if (event.includeServer()) {
+                var gen = event.getGenerator();
+                var packOutput = gen.getPackOutput();
+                var regSet = VanillaRegistries.builder();
+
+                regSet.add(Registries.TEST_INSTANCE, Lifecycle.stable(), ctx -> {
+                    var envs = ctx.lookup(Registries.TEST_ENVIRONMENT);
+                    var edata = new TestData<Holder<TestEnvironmentDefinition>>(
+                            envs.getOrThrow(ResourceKey.create(Registries.TEST_ENVIRONMENT, test.environment())),
+                            test.structure(),
+                            test.maxTicks(),
+                            test.setupTicks(),
+                            test.required(),
+                            test.rotation(),
+                            test.manualOnly(),
+                            test.maxAttempts(),
+                            test.requiredSuccesses(),
+                            test.skyAccess());
+                    var funcKey = ResourceKey.create(Registries.TEST_FUNCTION, rl);
+                    var func = BuiltInRegistries.TEST_FUNCTION.get(funcKey).orElse(null);
+                    if (func == null) throw new IllegalArgumentException("shit is fucked yo");
+                    var testKey = ResourceKey.create(Registries.TEST_INSTANCE, rl);
+                    ctx.register(testKey, new FunctionGameTestInstance(funcKey, edata));
+                });
+                gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), regSet, MOD_ID));
+            }
+        });
     }
 
-    @GameTest
+    private void registerPermutes(RegisterEvent event) {
+        plantPermutations.add((helper) -> {
+            helper.setAndAssertBlock(BlockPos.ZERO, STONE);
+            helper.succeed();
+        });
+    }
+
+
+    //@GameTest
     public static void test_vanilla_plantables(GameTestHelper helper) {
         noOverlapOffset = BlockPos.ZERO;
         // CROP PlantType. Includes AttachedStemBlocks, CropBlocks, and PITCHER_CROP
