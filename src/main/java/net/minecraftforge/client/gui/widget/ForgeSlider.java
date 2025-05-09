@@ -109,7 +109,10 @@ public class ForgeSlider extends AbstractSliderButton {
      * @param value The new slider value
      */
     public void setValue(double value) {
+        double oldValue = this.value;
         this.value = this.snapToNearest((value - this.minValue) / (this.maxValue - this.minValue));
+        if (!Mth.equal(oldValue, this.value))
+            this.applyValue();
         this.updateMessage();
     }
 
