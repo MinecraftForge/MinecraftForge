@@ -18,59 +18,33 @@
      private float scopeScale;
  
      public Gui(Minecraft p_330021_) {
-@@ -180,30 +_,33 @@
+@@ -180,14 +_,15 @@
          this.bossOverlay = new BossHealthOverlay(p_330021_);
          this.subtitleOverlay = new SubtitleOverlay(p_330021_);
          this.resetTitleTimes();
 -        LayeredDraw layereddraw = new LayeredDraw()
--            .add(this::renderCameraOverlays)
--            .add(this::renderCrosshair)
--            .add(this::renderHotbarAndDecorations)
--            .add(this::renderExperienceLevel)
--            .add(this::renderEffects)
--            .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
--        LayeredDraw layereddraw1 = new LayeredDraw()
--            .add(this::renderDemoOverlay)
--            .add((p_325315_, p_344521_) -> {
--                if (this.debugOverlay.showDebugScreen()) {
--                    this.debugOverlay.render(p_325315_);
--                }
--            })
--            .add(this::renderScoreboardSidebar)
--            .add(this::renderOverlayMessage)
--            .add(this::renderTitle)
--            .add(this::renderChat)
--            .add(this::renderTabList)
--            .add((p_325317_, p_342874_) -> this.subtitleOverlay.render(p_325317_));
 +        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw("camera_overlay", "crosshair", "hotbar", "experience", "effects", "potion_effects")
-+                .add(this::renderCameraOverlays)
-+                .add(this::renderCrosshair)
-+                .add(this::renderHotbarAndDecorations)
-+                .add(this::renderExperienceLevel)
-+                .add(this::renderEffects)
-+                .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
+             .add(this::renderCameraOverlays)
+             .add(this::renderCrosshair)
+             .add(this::renderHotbarAndDecorations)
+             .add(this::renderExperienceLevel)
+             .add(this::renderEffects)
+             .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
+-        LayeredDraw layereddraw1 = new LayeredDraw()
 +        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw).finish();
 +        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw("demo", "debug", "scoreboard", "hotbar_message", "title", "chat_overlay", "tab_list", "subtitle")
-+                .add(this::renderDemoOverlay)
-+                .add((p_325315_, p_344521_) -> {
-+                    if (this.debugOverlay.showDebugScreen()) {
-+                        this.debugOverlay.render(p_325315_);
-+                    }
-+                })
-+                .add(this::renderScoreboardSidebar)
-+                .add(this::renderOverlayMessage)
-+                .add(this::renderTitle)
-+                .add(this::renderChat)
-+                .add(this::renderTabList)
-+                .add((p_325317_, p_342874_) -> this.subtitleOverlay.render(p_325317_));
+             .add(this::renderDemoOverlay)
+             .add((p_325315_, p_344521_) -> {
+                 if (this.debugOverlay.showDebugScreen()) {
+@@ -200,10 +_,12 @@
+             .add(this::renderChat)
+             .add(this::renderTabList)
+             .add((p_325317_, p_342874_) -> this.subtitleOverlay.render(p_325317_));
 +        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw1).finish();
          this.layers
--            .add(layereddraw, () -> !p_330021_.options.hideGui)
--            .add(this::renderSleepOverlay)
--            .add(layereddraw1, () -> !p_330021_.options.hideGui);
-+                .add(layereddraw, () -> !p_330021_.options.hideGui)
-+                .add(this::renderSleepOverlay)
-+                .add(layereddraw1, () -> !p_330021_.options.hideGui);
+             .add(layereddraw, () -> !p_330021_.options.hideGui)
+             .add(this::renderSleepOverlay)
+             .add(layereddraw1, () -> !p_330021_.options.hideGui);
 +        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).finish();
      }
  
