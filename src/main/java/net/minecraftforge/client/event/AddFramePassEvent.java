@@ -50,16 +50,4 @@ public final class AddFramePassEvent extends Event {
         return this.builder.addPass(name);
     }
 
-    /**
-     * Gets the string of a given resource location, removing the namespace if it is the
-     * {@linkplain ResourceLocation#DEFAULT_NAMESPACE default namespace}. (i.e. {@code minecraft:foo} becomes
-     * {@code foo}).
-     *
-     * @param rl The location to convert to string
-     * @return The string representation
-     */
-    private static String rlToString(ResourceLocation rl) {
-        return ResourceLocation.DEFAULT_NAMESPACE.equals(rl.getNamespace()) ? rl.getPath() : rl.toString();
-    }
-
 }
