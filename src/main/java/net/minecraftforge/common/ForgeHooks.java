@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +46,11 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder.Reference;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -83,6 +87,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -100,6 +105,7 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -190,6 +196,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
@@ -209,7 +217,7 @@ public final class ForgeHooks {
     public static void fireLightingCalculatedEvent(ChunkAccess chunk) {
         MinecraftForge.EVENT_BUS.post(new ChunkEvent.LightingCalculated(chunk));
     }
-    
+
     public static boolean canContinueUsing(@NotNull ItemStack from, @NotNull ItemStack to) {
         if (!from.isEmpty() && !to.isEmpty()) {
             return from.getItem().canContinueUsing(from, to);
@@ -1262,5 +1270,47 @@ public final class ForgeHooks {
         }
 
         return value;
+    }
+
+    private static final Pattern EMPTY_SIZE_PATTERN = Pattern.compile("^empty(\\d+)x(\\d+)x(\\d+)$");
+
+    /*
+     *  Creates a empty structure of any size requested using the pattern `forge:empty(x)x(y)x(z)`
+     *
+     *  This is useful for game tests that need a structure, but want to create the contents in code.
+     */
+    public static Optional<StructureTemplate> createEmptyStructure(ResourceLocation name) {
+        if (name== null || !"forge".equals(name.getNamespace()))
+            return Optional.empty();
+
+        var match = EMPTY_SIZE_PATTERN.matcher(name.getPath());
+        if (!match.matches())
+            return Optional.empty();
+
+        var size = new BlockPos(Integer.parseInt(match.group(1)), Integer.parseInt(match.group(2)), Integer.parseInt(match.group(3)));
+
+        var blocks = new ListTag();
+        for (var pos : BlockPos.betweenClosed(BlockPos.ZERO, size)) {
+            blocks.add(CompoundTag.builder()
+                .tag("pos", pos.toListTag())
+                .build()
+            );
+        }
+
+        var ret = new StructureTemplate();
+        ret.load(new HolderGetter<Block>() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public Optional<Reference<Block>> get(ResourceKey<Block> key) {
+                return Optional.of(Blocks.AIR.builtInRegistryHolder());
+            }
+            @Override public Optional<Named<Block>> get(TagKey<Block> key) { return Optional.empty(); }
+        }, CompoundTag.builder()
+            .tag("size", size.toListTag())
+            .tag("blocks", blocks)
+            .build()
+        );
+
+        return Optional.of(ret);
     }
 }

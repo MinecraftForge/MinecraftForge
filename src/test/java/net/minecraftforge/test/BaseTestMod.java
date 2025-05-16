@@ -48,7 +48,7 @@ public abstract class BaseTestMod {
     private List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
     protected final IEventBus modBus;
 
-    private final List<Map<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>> dataRegistries = new ArrayList<>();
+    protected final List<Map<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>> dataRegistries = new ArrayList<>();
     protected final Set<DeferredRegisterData<?>> myDataRegistries = new HashSet<>();
 
     protected final Map<ResourceLocation, ForgeGameTestHooks.TestReference> tests;
@@ -182,7 +182,7 @@ public abstract class BaseTestMod {
         });
     }
 
-    private void registerTestFunctions(RegisterEvent event) {
+    protected void registerTestFunctions(RegisterEvent event) {
         if (event.getRegistryKey() != Registries.TEST_FUNCTION)
             return;
 

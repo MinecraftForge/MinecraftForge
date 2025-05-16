@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/vegitation_and_clay",
+  "max_ticks": 100,
+  "structure": "forge:empty12x3x3"
+}

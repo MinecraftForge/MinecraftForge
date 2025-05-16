@@ -148,7 +148,7 @@
 +            return state.is(Blocks.CACTUS) || state.is(BlockTags.SAND);
 +        } else if (plant.getBlock() == Blocks.SUGAR_CANE && this == Blocks.SUGAR_CANE) {
 +            return true;
-+        } else if (plantable instanceof BushBlock bush && bush.mayPlaceOn(state, world, pos)) {
++        } else if (plantable instanceof VegetationBlock veg && veg.mayPlaceOn(state, world, pos)) {
 +            return true;
 +        } else if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {
 +             return state.is(BlockTags.SAND) || state.is(BlockTags.TERRACOTTA) || state.is(BlockTags.DIRT);

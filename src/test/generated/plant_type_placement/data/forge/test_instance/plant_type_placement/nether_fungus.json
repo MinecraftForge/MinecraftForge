@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/nether_fungus",
+  "max_ticks": 100,
+  "structure": "forge:empty15x3x2"
+}

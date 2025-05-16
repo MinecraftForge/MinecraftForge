@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/bamboo",
+  "max_ticks": 100,
+  "structure": "forge:empty5x4x4"
+}

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/dry_vegitation",
+  "max_ticks": 100,
+  "structure": "forge:empty31x3x3"
+}

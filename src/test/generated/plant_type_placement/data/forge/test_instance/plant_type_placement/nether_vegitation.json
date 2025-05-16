@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/nether_vegitation",
+  "max_ticks": 100,
+  "structure": "forge:empty14x3x3"
+}
