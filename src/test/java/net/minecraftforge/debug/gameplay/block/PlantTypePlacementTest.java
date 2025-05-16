@@ -39,7 +39,7 @@ import static net.minecraft.world.level.block.Blocks.*;
 @GameTestNamespace("forge")
 @Mod(PlantTypePlacementTest.MOD_ID)
 public class PlantTypePlacementTest extends BaseTestMod {
-    private static final String MOD_ID = "plant_type_placement";
+    static final String MOD_ID = "plant_type_placement";
 
     private static final Map<TagKey<Block>, List<Block>> TAGS = Util.make(new HashMap<>(), map -> {
         map.put(BlockTags.DIRT,       List.of(DIRT, GRASS_BLOCK, PODZOL, COARSE_DIRT, MYCELIUM, ROOTED_DIRT, MOSS_BLOCK, PALE_MOSS_BLOCK, MUD, MUDDY_MANGROVE_ROOTS));
@@ -71,11 +71,11 @@ public class PlantTypePlacementTest extends BaseTestMod {
         map.put(PotatoBlock.class,       of(this::farmland, POTATOES));
         map.put(TorchflowerCropBlock.class, of(this::farmland, TORCHFLOWER_CROP));
 
-        //map.put(DoublePlantBlock.class,   List.of(LARGE_FERN, PITCHER_PLANT, TALL_GRASS));
-        map.put(PitcherCropBlock.class,    of(this::farmland, PITCHER_CROP));
-        //map.put(SmallDripleafBlock.class, List.of(SMALL_DRIPLEAF));
-        //map.put(TallFlowerBlock.class,    List.of(LILAC, PEONY, ROSE_BUSH, SUNFLOWER));
-        //map.put(TallSeagrassBlock.class,  List.of(TALL_SEAGRASS));
+        map.put(DoublePlantBlock.class,   of(this::todo, LARGE_FERN, PITCHER_PLANT, TALL_GRASS));
+        map.put(PitcherCropBlock.class,   of(this::farmland, PITCHER_CROP));
+        map.put(SmallDripleafBlock.class, of(this::todo, SMALL_DRIPLEAF));
+        map.put(TallFlowerBlock.class,    of(this::todo, LILAC, PEONY, ROSE_BUSH, SUNFLOWER));
+        map.put(TallSeagrassBlock.class,  of(this::todo, TALL_SEAGRASS));
 
         map.put(DryVegetationBlock.class, of(this::dry_vegitation, DEAD_BUSH));
         map.put(ShortDryGrassBlock.class, of(this::dry_vegitation, SHORT_DRY_GRASS));
@@ -89,7 +89,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         map.put(WitherRoseBlock.class, of(this::withrose, WITHER_ROSE));
 
         map.put(FungusBlock.class,        of(this::nether_fungus, CRIMSON_FUNGUS, WARPED_FUNGUS));
-        //map.put(LeafLitterBlock.class,    List.of(LEAF_LITTER));
+        map.put(LeafLitterBlock.class,    of(this::todo, LEAF_LITTER));
         map.put(MushroomBlock.class,      of(this::mushroom, BROWN_MUSHROOM, RED_MUSHROOM));
         map.put(NetherSproutsBlock.class, of(this::nether_vegitation, NETHER_SPROUTS));
         map.put(NetherWartBlock.class,    of(this::netherwart, NETHER_WART));
@@ -98,12 +98,12 @@ public class PlantTypePlacementTest extends BaseTestMod {
         map.put(SaplingBlock.class,           of(this::vegitation, ACACIA_SAPLING, BIRCH_SAPLING, CHERRY_SAPLING, DARK_OAK_SAPLING, JUNGLE_SAPLING, OAK_SAPLING, PALE_OAK_SAPLING, SPRUCE_SAPLING));
         map.put(MangrovePropaguleBlock.class, of(this::vegitation_and_clay, MANGROVE_PROPAGULE));
 
-        //map.put(SeagrassBlock.class,       List.of(SEAGRASS));
-        //map.put(SeaPickleBlock.class,      List.of(SEA_PICKLE));
+        map.put(SeagrassBlock.class,       of(this::todo, SEAGRASS));
+        map.put(SeaPickleBlock.class,      of(this::todo, SEA_PICKLE));
         map.put(StemBlock.class,           of(this::farmland, MELON_STEM, PUMPKIN_STEM));
         map.put(SweetBerryBushBlock.class, of(this::vegitation, SWEET_BERRY_BUSH));
         map.put(TallGrassBlock.class,      of(this::vegitation, FERN, SHORT_GRASS));
-        //map.put(WaterlilyBlock.class,      List.of(LILY_PAD));
+        map.put(WaterlilyBlock.class,      of(this::todo, LILY_PAD));
     });
 
     @SafeVarargs
@@ -114,16 +114,18 @@ public class PlantTypePlacementTest extends BaseTestMod {
         return ret;
     }
 
+    private void todo(GameTestHelper helper) {
+        // TODO: [Forge][Plant][Test] Implement the final tests for some vanilla blocks
+        //     DoublePlantBlock = UPPER == self LOWER == VEGITATION
+        //         SmallDripleafBlock = UPPER = self LOWER == SMALL_DRIPLEAF_PLACEABLE || water_source || VEGITATION
+        //         TallFlowerBlock
+        //         TallSeagrassBlock = UPPER = self LOWER == Solid Up Face && !MAGMA_BLOCK
 
-    //     DoublePlantBlock = UPPER == self LOWER == VEGITATION
-    //         SmallDripleafBlock = UPPER = self LOWER == SMALL_DRIPLEAF_PLACEABLE || water_source || VEGITATION
-    //         TallFlowerBlock
-    //         TallSeagrassBlock = UPPER = self LOWER == Solid Up Face && !MAGMA_BLOCK
-
-    //     LeafLitterBlock = Sturdy UP face
-    //     SeagrassBlock = Sturdy UP face && !MAGMA_BLOCK
-    //     SeaPickleBlock = Sturdy UP Face || Face UP != empty?
-    //     WaterlilyBlock = (Water Fluid || IceBlock) && self.fluid == Empty
+        //     LeafLitterBlock = Sturdy UP face
+        //     SeagrassBlock = Sturdy UP face && !MAGMA_BLOCK
+        //     SeaPickleBlock = Sturdy UP Face || Face UP != empty?
+        //     WaterlilyBlock = (Water Fluid || IceBlock) && self.fluid == Empty
+    }
 
     public PlantTypePlacementTest(FMLJavaModLoadingContext context) {
         super(context);
