@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public final class AddFramePassEvent extends Event {
     private final FrameGraphBuilder builder;
-    public final LevelTargetBundle bundle;
+    private final LevelTargetBundle bundle;
 
     private final Set<String> addedNames = new HashSet<>();
 
@@ -50,4 +50,7 @@ public final class AddFramePassEvent extends Event {
         return this.builder.addPass(name);
     }
 
+    public LevelTargetBundle getBundle() {
+        return bundle;
+    }
 }

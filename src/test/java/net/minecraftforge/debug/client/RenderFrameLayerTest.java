@@ -42,11 +42,11 @@ public class RenderFrameLayerTest extends BaseTestMod {
 
         helper.<AddFramePassEvent>addEventListener(event -> {
             FramePass pass = event.createPass(rl(MODID + "test_1") );
-            event.bundle.main = pass.readsAndWrites(event.bundle.main);
+            event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
             pass.executes(() -> passOne.set(true));
 
             pass = event.createPass(rl(MODID + "test_2"));
-            event.bundle.main = pass.readsAndWrites(event.bundle.main);
+            event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
             pass.executes(() -> passTwo.set(true));
         });
 
@@ -64,7 +64,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
     public static void renderTest(AddFramePassEvent event) {
         var mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
         FramePass pass = event.createPass(rl(MODID));
-        event.bundle.main = pass.readsAndWrites(event.bundle.main);
+        event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
 
         pass.executes(() -> {
             PoseStack ps = new PoseStack();
@@ -79,7 +79,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         });
 
         pass = event.createPass(rl(MODID+"2"));
-        event.bundle.main = pass.readsAndWrites(event.bundle.main);
+        event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
         
         pass.executes(() -> {
             PoseStack ps = new PoseStack();
