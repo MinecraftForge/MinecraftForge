@@ -11,6 +11,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
@@ -19,6 +20,7 @@ import java.util.function.BooleanSupplier;
 /**
  * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
+ * This class is effectively a mini-registry for layers. Add what you need during {@link net.minecraftforge.client.event.ModifyOverlayLayersEvent}
  */
 @FieldsAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -32,32 +34,33 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     private final boolean mayEdit;
     private boolean finalized = false;
 
-    public static final ResourceLocation     PRE_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
-    public static final ResourceLocation      CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
-    public static final ResourceLocation           CROSSHAIR = ResourceLocation.withDefaultNamespace("crosshair");
-    public static final ResourceLocation              HOTBAR = ResourceLocation.withDefaultNamespace("hotbar");
-    public static final ResourceLocation          EXPERIENCE = ResourceLocation.withDefaultNamespace("experience");
-    public static final ResourceLocation      POTION_EFFECTS = ResourceLocation.withDefaultNamespace("potion_effects");
-    public static final ResourceLocation        BOSS_OVERLAY = ResourceLocation.withDefaultNamespace("boss_overlay");
+    public static final ResourceLocation  PRE_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
+    public static final ResourceLocation   CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
+    public static final ResourceLocation        CROSSHAIR = ResourceLocation.withDefaultNamespace("crosshair");
+    public static final ResourceLocation           HOTBAR = ResourceLocation.withDefaultNamespace("hotbar");
+    public static final ResourceLocation       EXPERIENCE = ResourceLocation.withDefaultNamespace("experience");
+    public static final ResourceLocation   POTION_EFFECTS = ResourceLocation.withDefaultNamespace("potion_effects");
+    public static final ResourceLocation     BOSS_OVERLAY = ResourceLocation.withDefaultNamespace("boss_overlay");
 
-    public static final ResourceLocation    POST_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("post_sleep_phase");
-    public static final ResourceLocation        DEMO_OVERLAY = ResourceLocation.withDefaultNamespace("demo");
-    public static final ResourceLocation       DEBUG_OVERLAY = ResourceLocation.withDefaultNamespace("debug");
-    public static final ResourceLocation          SCOREBOARD = ResourceLocation.withDefaultNamespace("scoreboard");
-    public static final ResourceLocation      HOTBAR_MESSAGE = ResourceLocation.withDefaultNamespace("hotbar_message");
-    public static final ResourceLocation       TITLE_OVERLAY = ResourceLocation.withDefaultNamespace("title");
-    public static final ResourceLocation        CHAT_OVERLAY = ResourceLocation.withDefaultNamespace("chat_overlay");
-    public static final ResourceLocation            TAB_LIST = ResourceLocation.withDefaultNamespace("tab_list");
-    public static final ResourceLocation    SUBTITLE_OVERLAY = ResourceLocation.withDefaultNamespace("subtitle");
+    public static final ResourceLocation POST_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("post_sleep_phase");
+    public static final ResourceLocation     DEMO_OVERLAY = ResourceLocation.withDefaultNamespace("demo");
+    public static final ResourceLocation    DEBUG_OVERLAY = ResourceLocation.withDefaultNamespace("debug");
+    public static final ResourceLocation       SCOREBOARD = ResourceLocation.withDefaultNamespace("scoreboard");
+    public static final ResourceLocation   HOTBAR_MESSAGE = ResourceLocation.withDefaultNamespace("hotbar_message");
+    public static final ResourceLocation    TITLE_OVERLAY = ResourceLocation.withDefaultNamespace("title");
+    public static final ResourceLocation     CHAT_OVERLAY = ResourceLocation.withDefaultNamespace("chat_overlay");
+    public static final ResourceLocation         TAB_LIST = ResourceLocation.withDefaultNamespace("tab_list");
+    public static final ResourceLocation SUBTITLE_OVERLAY = ResourceLocation.withDefaultNamespace("subtitle");
 
-    public static final ResourceLocation       COMBINE_PHASE = ResourceLocation.withDefaultNamespace("combine_phase");
-    public static final ResourceLocation       SLEEP_OVERLAY = ResourceLocation.withDefaultNamespace("sleep_overlay");
+    public static final ResourceLocation    COMBINE_PHASE = ResourceLocation.withDefaultNamespace("combine_phase");
+    public static final ResourceLocation    SLEEP_OVERLAY = ResourceLocation.withDefaultNamespace("sleep_overlay");
 
     /**
      * Creates a stack of pre-named layers for vanilla.
      * Not intended for modder use. Use {@link ForgeLayeredDraw(ResourceLocation, Boolean, String...)} instead.
      * @param layers Head of varargs marks the phase, the remaining args mark pre-named layers.
      */
+    @ApiStatus.Internal
     public ForgeLayeredDraw(ResourceLocation rl, String... layers) {
         phase = rl;
         mayEdit = true;
@@ -67,8 +70,18 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
+     * Creates an empty draw list. Add entries with {@link ForgeLayeredDraw#add(ResourceLocation, Layer)}
+     * @param rl marker for which phase this is.
+     * @param mayEdit whether other mods are allowed to insert layers into this list.
+     */
+    public ForgeLayeredDraw(ResourceLocation rl, boolean mayEdit) {
+        phase = rl;
+        this.mayEdit = mayEdit;
+    }
+
+    /**
      * Creates a list of pre-defined names for layers to be added via {@link ForgeLayeredDraw#add(Layer)}
-     * @param rl Used as the marker for what specific LayeredDraw instance this is.
+     * @param rl Used as the marker for what specific LayeredDraw phase this is.
      * @param mayEdit Optionally fire ModifyOverlayLayers for this modded stack.
      * @param layers List of pre-named layers.
      */
@@ -78,16 +91,6 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         for (String layer : layers) {
             expected.add(ResourceLocation.fromNamespaceAndPath(rl.getPath(), layer));
         }
-    }
-
-    /**
-     * Creates an empty draw list. Add entries with {@link ForgeLayeredDraw#add(ResourceLocation, Layer)}
-     * @param rl marker for which mod this is.
-     * @param mayEdit whether other mods are allowed to insert layers into this list.
-     */
-    public ForgeLayeredDraw(ResourceLocation rl, boolean mayEdit) {
-        phase = rl;
-        this.mayEdit = mayEdit;
     }
 
     /**
@@ -107,7 +110,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Add a layer to the layer list. This layer will be at the end of the list, which means
      * it will be rendered last (on top) of already added layers.
-     * @param name
+     * @param name RL for other mods to order against.
      * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
      * @return this
      */
@@ -121,8 +124,8 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Adds an overlay layer to be rendered above the other provided layer.
      * To render "above" another layer means thisLayer will be rendered after otherLayer
      * If the current stack does not contain otherLayer, no changes will be made.
-     * @param thisLayer layer being added
-     * @param otherLayer layer being ordered against
+     * @param thisLayer name of the layer to be added
+     * @param otherLayer name of the layer being ordered against
      * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
      * @return this
      */
@@ -141,8 +144,8 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Adds an overlay layer to be rendered below the other provided layer.
      * To render "below" another layer means thisLayer will be rendered before otherLayer
      * If the current stack does not contain otherLayer, no changes will be made.
-     * @param thisLayer layer being added
-     * @param otherLayer layer being ordered against
+     * @param thisLayer name of the layer to be added
+     * @param otherLayer name of the layer being ordered against
      * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
      * @return this
      */
@@ -170,9 +173,9 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Add a new layer that will only be rendered when the condition is met. The layer will be added
      * at the end of the list, which means it will render last (on top) of already added layers
-     * @param name
-     * @param layer
-     * @param condition
+     * @param name name of the layer to be added
+     * @param layer render code of the layer to be added.
+     * @param condition coni
      * @return this
      */
     public ForgeLayeredDraw addWithCondition(ResourceLocation name, Layer layer, BooleanSupplier condition) {

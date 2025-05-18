@@ -14,7 +14,7 @@
      private float autosaveIndicatorValue;
      private float lastAutosaveIndicatorValue;
 -    private final LayeredDraw layers = new LayeredDraw();
-+    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw("pre_sleep_layers", "sleep", "post_sleep_layers");
++    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_PHASE, "pre_sleep_layers", "sleep", "post_sleep_layers");
      private float scopeScale;
  
      public Gui(Minecraft p_330021_) {
@@ -23,7 +23,7 @@
          this.subtitleOverlay = new SubtitleOverlay(p_330021_);
          this.resetTitleTimes();
 -        LayeredDraw layereddraw = new LayeredDraw()
-+        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw("camera_overlay", "crosshair", "hotbar", "experience", "effects", "potion_effects")
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_PHASE, "crosshair", "hotbar", "experience", "effects", "potion_effects")
              .add(this::renderCameraOverlays)
              .add(this::renderCrosshair)
              .add(this::renderHotbarAndDecorations)
@@ -31,8 +31,8 @@
              .add(this::renderEffects)
              .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
 -        LayeredDraw layereddraw1 = new LayeredDraw()
-+        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw).finish();
-+        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw("demo", "debug", "scoreboard", "hotbar_message", "title", "chat_overlay", "tab_list", "subtitle")
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw).computeOrder();
++        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_PHASE,"demo", "debug", "scoreboard", "hotbar_message", "title", "chat_overlay", "tab_list", "subtitle")
              .add(this::renderDemoOverlay)
              .add((p_325315_, p_344521_) -> {
                  if (this.debugOverlay.showDebugScreen()) {
@@ -40,12 +40,12 @@
              .add(this::renderChat)
              .add(this::renderTabList)
              .add((p_325317_, p_342874_) -> this.subtitleOverlay.render(p_325317_));
-+        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw1).finish();
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layereddraw1).computeOrder();
          this.layers
              .add(layereddraw, () -> !p_330021_.options.hideGui)
              .add(this::renderSleepOverlay)
              .add(layereddraw1, () -> !p_330021_.options.hideGui);
-+        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).finish();
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).computeOrder();
      }
  
      public void resetTitleTimes() {
