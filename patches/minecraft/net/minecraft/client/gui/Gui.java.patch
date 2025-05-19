@@ -23,7 +23,7 @@
          this.subtitleOverlay = new SubtitleOverlay(p_330021_);
          this.resetTitleTimes();
 -        LayeredDraw layereddraw = new LayeredDraw()
-+        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_PHASE, "crosshair", "hotbar", "experience", "effects", "potion_effects")
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_PHASE, "crosshair", "hotbar", "experience", "effects", "potion_effects", "boss_overlay")
              .add(this::renderCameraOverlays)
              .add(this::renderCrosshair)
              .add(this::renderHotbarAndDecorations)

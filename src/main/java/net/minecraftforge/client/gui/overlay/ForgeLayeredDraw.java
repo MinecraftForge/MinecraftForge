@@ -20,19 +20,19 @@ import java.util.function.BooleanSupplier;
 /**
  * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
- * This class is effectively a mini-registry for layers. Add what you need during {@link net.minecraftforge.client.event.ModifyOverlayLayersEvent}
+ * This class is effectively a pseudo-registry for Layers. Add what you need during {@link net.minecraftforge.client.event.ModifyOverlayLayersEvent}
+ * After being computed, it is too late to order against vanilla layers. Do it during the event.
  */
 @FieldsAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public final class ForgeLayeredDraw extends LayeredDraw {
-    private final Deque<ResourceLocation> expected = new ArrayDeque<>();
     private int count = 0;
     private final Map<ResourceLocation, Layer> namedLayers = new HashMap<>();
     private final List<ResourceLocation> order = new LinkedList<>();
     private final ResourceLocation phase;
     private final boolean mayEdit;
-    private boolean finalized = false;
+    private boolean computed = false;
 
     public static final ResourceLocation  PRE_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
     public static final ResourceLocation   CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
@@ -65,7 +65,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         phase = rl;
         mayEdit = true;
         for (String layer : layers) {
-            expected.add(ResourceLocation.withDefaultNamespace(layer));
+            order.add(ResourceLocation.withDefaultNamespace(layer));
         }
     }
 
@@ -89,7 +89,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         phase = rl;
         this.mayEdit = mayEdit;
         for (String layer : layers) {
-            expected.add(ResourceLocation.fromNamespaceAndPath(rl.getPath(), layer));
+            order.add(ResourceLocation.fromNamespaceAndPath(rl.getPath(), layer));
         }
     }
 
@@ -102,9 +102,15 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      */
     @Override
     public LayeredDraw add(Layer layer) {
-        return add(expected.isEmpty() ?
-                ResourceLocation.fromNamespaceAndPath("unknown", String.valueOf(count++))
-                : expected.remove(), layer);
+        if (count > order.size()) {
+            throw new IllegalStateException("Ran out of pre-named layers to use during " + phase);
+        }
+        if (computed) {
+            LogUtils.getLogger().error("Phase {} is already computed. It's too late to use pre-named layers.", phase);
+        } else {
+            namedLayers.put(order.get(count++), layer);
+        }
+        return this;
     }
 
     /**
@@ -135,7 +141,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
             namedLayers.put(thisLayer, layer);
             order.add(loc+1, thisLayer);
         } else {
-            warn(otherLayer);
+            layerNotPresentWarning(otherLayer);
         }
         return this;
     }
@@ -155,7 +161,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
             namedLayers.put(thisLayer, layer);
             order.add(loc, thisLayer);
         } else {
-            warn(otherLayer);
+            layerNotPresentWarning(otherLayer);
         }
         return this;
     }
@@ -166,7 +172,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @return the resulting Layer. May now be treated as any other layer.
      */
     public Layer asLayer() {
-        if (!finalized) LogUtils.getLogger().warn("{} was converted to a layer before its internal layer order was computed. If it isn't being added or rendered, this is why.", phase);
+        if (!computed) LogUtils.getLogger().warn("{} was converted to a layer before its internal layer order was computed. If it isn't being added or rendered, this is why.", phase);
         return this::render;
     }
 
@@ -195,7 +201,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
                 if (condition.getAsBoolean()) res.render(guiGraphics, deltaTracker);
             });
         } else {
-            warn(target);
+            layerNotPresentWarning(target);
         }
         return this;
     }
@@ -208,18 +214,25 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Propagate the layer order down to the inner render list after providing modders an opportunity to alter the list as they wish.
      * Must be called at some point for layers to be rendered and ought to be (but does not have to be) called before
      * calling {@link ForgeLayeredDraw#asLayer()}
+     * @apiNote Original order is erased. Modders should only be calling this on their own stacks.
+     * @return this
      */
     public ForgeLayeredDraw computeOrder() {
-        if (mayEdit) ForgeEventFactoryClient.onComputeLayerOrder(this);
-        if (!expected.isEmpty()) LogUtils.getLogger().warn("Found {} unbound layer names when computing layer order during phase {}.", expected.size(), phase);
+        if (mayEdit && !computed) {
+            ForgeEventFactoryClient.onComputeLayerOrder(this);
+        }
+        if (namedLayers.size() < order.size()) {
+            LogUtils.getLogger().warn("Found {} unbound pre-defined layer names when computing {} order.", order.size() - namedLayers.size(), phase);
+        }
         for (ResourceLocation resourceLocation : order) {
             super.add(namedLayers.get(resourceLocation));
         }
-        finalized = true;
+        order.clear();
+        computed = true;
         return this;
     }
 
-    private void warn(ResourceLocation layer) {
+    private void layerNotPresentWarning(ResourceLocation layer) {
         LogUtils.getLogger().warn("Layer {} is not present in overlay phase {}", layer, phase);
     }
 }

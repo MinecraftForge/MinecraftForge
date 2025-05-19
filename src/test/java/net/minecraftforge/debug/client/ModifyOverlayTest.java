@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.client;
 
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModifyOverlayLayersEvent;
 import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
@@ -16,238 +17,206 @@ import net.minecraftforge.gametest.GameTest;
 import net.minecraftforge.gametest.GameTestNamespace;
 import net.minecraftforge.test.BaseTestMod;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.*;
 
 @GameTestNamespace("forge")
 @Mod(ModifyOverlayTest.MODID)
 public class ModifyOverlayTest extends BaseTestMod {
     public static final String MODID = "modify_overlay_test";
-    private static final int DISABLED_MODE = 0;
-    private static final int ADD_MODE = 1;
-    private static final int NOT_ADDED_MODE = 2;
-    private static final int ORDER_MODE = 3;
-    private static final int ADD_CONDITION_MODE = 4;
-    private static final int STACK_INSERT_MODE = 5;
-    private static final int STACK_INSERT_CONDITION_MODE = 6;
 
-    private static final IForgeGameTestHelper.BoolFlag was_ran_flag = new IForgeGameTestHelper.BoolFlag("layer_was_ran_flag");
-    private static final IForgeGameTestHelper.IntFlag counterFlag = new IForgeGameTestHelper.IntFlag("count_flag");
-    private static final IForgeGameTestHelper.IntFlag testSelector = new IForgeGameTestHelper.IntFlag("selector_flag");
-    private static final ForgeLayeredDraw myStack = new ForgeLayeredDraw(name("my_stack"), true);
-    private static final ForgeLayeredDraw myUneditableStack = new ForgeLayeredDraw(name("my_uneditable_stack"), false);
-    private static final IForgeGameTestHelper.BoolFlag init_success_flag = new IForgeGameTestHelper.BoolFlag("init_success_flag");
-    private static final IForgeGameTestHelper.BoolFlag init_fail_flag = new IForgeGameTestHelper.BoolFlag("init_fail_flag");
+    private static final ResourceLocation myEditableStackPhase = name("my_stack");
+    private static final ForgeLayeredDraw myStack = new ForgeLayeredDraw(myEditableStackPhase, true);
+    private static final ResourceLocation myUneditableStackPhase = name("my_uneditable_stack");
+    private static final ForgeLayeredDraw myUneditableStack = new ForgeLayeredDraw(myUneditableStackPhase, false);
 
+    private static final Layer notAddedLayer = (gg,tr) -> {};
+    private static final Layer layerA = (gg,tr) -> {};
+    private static final ResourceLocation layerAName = name("layer_a");
+    private static final Layer layerB = (gg,tr) -> {};
+    private static final ResourceLocation layerBName = name("layer_b");
+    private static final Layer layerC = (gg,tr) -> {};
+    private static final ResourceLocation layerCName = name("layer_c");
+
+    private static Layer myStackLayer = null;
+    private static Layer myOtherStackLayer = null;
+
+
+    private static final IForgeGameTestHelper.BoolFlag detectConditionFlag = new IForgeGameTestHelper.BoolFlag("det_cond_flag");
+    private static final IForgeGameTestHelper.BoolFlag detectConditionStackFlag = new IForgeGameTestHelper.BoolFlag("det_cond_stack_flag");
+    private static final IForgeGameTestHelper.BoolFlag enableConditionFlag = new IForgeGameTestHelper.BoolFlag("en_cond_flag");
+    private static final IForgeGameTestHelper.BoolFlag enableConditionStackFlag = new IForgeGameTestHelper.BoolFlag("en_cond_stack_flag");
+
+    private static final Map<ResourceLocation, ForgeLayeredDraw> drawStacks = new HashMap<>();
 
     public ModifyOverlayTest(FMLJavaModLoadingContext context) {
         super(context);
-        init_success_flag.set(false);
-        init_fail_flag.set(false);
         context.getModEventBus().addListener(this::overlayTestListener);
     }
 
     @GameTest
-    public static void test_overlay_addition(GameTestHelper helper) {
-        // Test that we can add layers in general.
-        helper.assertFalse(was_ran_flag.getBool(), "was_ran_flag was already set when attempting this test. It should not have been.");
-        testSelector.set(ADD_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE);
-            if (was_ran_flag.getBool()) {
-                was_ran_flag.set(false);
-                helper.succeed();
-            } else {
-                was_ran_flag.set(false); // Shouldn't need to reset this but... just in case.
-                helper.fail("was_ran_flag was not set when it should have been.");
-            }
+    public static void overlay_addition(GameTestHelper helper) {
+        ForgeLayeredDraw stack = drawStacks.get(PRE_SLEEP_PHASE);
+        IForgeGameTestHelper.BoolFlag insertFlag = helper.boolFlag("test_overlay_addition_flag");
+        Layer renderCode = (gg, tr) -> {
+            insertFlag.set(true);
+        };
+        List<Layer> internalLayersList = null;
+        int priorSize = 0;
+        try {
+            internalLayersList = getInternalLayersList(stack);
+            priorSize = internalLayersList.size();
+        } catch (Exception e) {
+            helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
+        }
+        stack.add(name("test_add_new_layer"), renderCode).computeOrder();
+        helper.assertTrue(internalLayersList.size() == priorSize + 1, "Our layer was not added during compute.");
+        List<Layer> finalInternalLayersList = internalLayersList;
+        helper.runAfterDelay(5, () -> {
+            boolean flag = finalInternalLayersList.remove(renderCode); // undo our addition.
+            helper.assertTrue(insertFlag.getBool(), "Our render function never ran.");
+            helper.assertTrue(flag, "Somehow, a different rendering function was inserted. Wat");
+            helper.succeed();
         });
     }
 
     @GameTest
-    public static void test_not_present_in_stack(GameTestHelper helper) {
+    public static void not_present_in_stack(GameTestHelper helper) {
         // Test that we can't order against non-existent layers.
-        helper.assertFalse(was_ran_flag.getBool(), "was_ran_flag was already set when attempting this test. It should not have been");
-        testSelector.set(NOT_ADDED_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE); // Have to reset here since the layer isn't supposed to run.
-            if (was_ran_flag.getBool()) {
-                was_ran_flag.set(false);
-                helper.fail("was_ran_flag was set when it should not have been.");
-            } else {
-                was_ran_flag.set(false); // Shouldn't need to reset this but... just in case.
-                helper.succeed();
-            }
-        });
-    }
-
-    @GameTest
-    public static void test_add_condition(GameTestHelper helper) {
-        // Test that we can add conditions to pre-existing layers.
-        helper.assertFalse(was_ran_flag.getBool(), "was_ran_flag was already set when attempting this test, it should not have been.");
-        testSelector.set(ADD_CONDITION_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE);
-            if (was_ran_flag.getBool()) {
-                was_ran_flag.set(false);
-                helper.succeed();
-            } else {
-                was_ran_flag.set(false);
-                helper.fail("was_ran_flag was not set when it should have been.");
-            }
-        });
-    }
-
-    @GameTest
-    public static void test_ordered_layers(GameTestHelper helper) {
-        // Test that layers are in the correct order.
-        counterFlag.set(0);
-        testSelector.set(ORDER_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE);
-            if (counterFlag.getInt() == 3) {
-                was_ran_flag.set(false);
-                helper.succeed();
-            } else {
-                was_ran_flag.set(false);
-                helper.fail(String.format("Counter was %d when it should have been 3", counterFlag.getInt()));
-            }
-        });
-    }
-
-    @GameTest
-    public static void test_editable_status(GameTestHelper helper) {
-        helper.assertTrue(init_success_flag.getBool(), "Init flag wasn't set, editable ForgeLayeredDraw can't have been added.");
-        helper.assertFalse(init_fail_flag.getBool(), "Init flag was set, an uneditable ForgeLayeredDraw was actually editable.");
+        var stack = drawStacks.get(PRE_SLEEP_PHASE);
+        List<Layer> internalLayersList = null;
+        try {
+            internalLayersList = getInternalLayersList(stack);
+        } catch (Exception e) {
+            helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
+        }
+        helper.assertFalse(internalLayersList.remove(notAddedLayer), "Found our layer when we shouldn't have. Not good!");
         helper.succeed();
     }
 
     @GameTest
-    public static void test_full_stack_insertion(GameTestHelper helper) {
-        helper.assertFalse(was_ran_flag.getBool(), "was_ran_flag was already set when attempting this test, it should not have been.");
-        testSelector.set(STACK_INSERT_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE);
-            if (was_ran_flag.getBool()) {
-                was_ran_flag.set(false);
-                helper.succeed();
-            } else {
-                was_ran_flag.set(false);
-                helper.fail("was_ran_flag was not set when it should have been.");
-            }
+    public static void add_condition(GameTestHelper helper) {
+        // Test that we can add conditions to pre-existing layers.
+        helper.assertFalse(detectConditionFlag.getBool(), "Conditional rendering ran when it shouldn't have.");
+        enableConditionFlag.set(true);
+        helper.runAfterDelay(5, () -> {
+            boolean result = detectConditionFlag.getBool();// Just in case of weird race conditions.
+            enableConditionFlag.set(false);
+            helper.assertTrue(result, "");
+            helper.succeed();
         });
     }
 
     @GameTest
-    public static void test_full_stack_condition(GameTestHelper helper) {
-        helper.assertFalse(was_ran_flag.getBool(), "was_ran_flag was already set when attempting this test, it should not have been.");
-        testSelector.set(STACK_INSERT_CONDITION_MODE);
-        helper.runAfterDelay(1, () -> {
-            testSelector.set(DISABLED_MODE);
-            if (was_ran_flag.getBool()) {
-                was_ran_flag.set(false);
-                helper.succeed();
-            } else {
-                was_ran_flag.set(false);
-                helper.fail("was_ran_flag was not set when it should have been.");
-            }
+    public static void ordered_layers(GameTestHelper helper) {
+        // Test that layers are in the correct order.
+        var stack = drawStacks.get(PRE_SLEEP_PHASE);
+        List<Layer> internalLayersList = null;
+        Map<ResourceLocation, Layer> check = null;
+        try {
+            Class<?> cls = stack.getClass();
+            var field = cls.getDeclaredField("namedLayers");
+            field.setAccessible(true);
+            check = (Map<ResourceLocation, Layer>) field.get(stack);
+            internalLayersList = getInternalLayersList(stack);
+        } catch (Exception e) {
+            helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
+        }
+        int locationOfPotionEffects = internalLayersList.indexOf(check.get(POTION_EFFECTS));
+        int locationOfLayerA = internalLayersList.indexOf(check.get(layerAName));
+        int locationOfLayerB = internalLayersList.indexOf(check.get(layerBName));
+        int locationOfLayerC = internalLayersList.indexOf(check.get(layerCName));
+        helper.assertTrue(locationOfPotionEffects == locationOfLayerA - 1, "Layer offset from vanilla -> A was incorrect");
+        helper.assertTrue(locationOfLayerB == locationOfLayerA + 1, "Layer offset from A -> B was incorrect");
+        helper.assertTrue(locationOfLayerC == locationOfLayerB + 1, "Layer offset from B -> C was incorrect");
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void editable_status(GameTestHelper helper) {
+        var phases = new ResourceLocation[]{PRE_SLEEP_PHASE, COMBINE_PHASE, POST_SLEEP_PHASE, myEditableStackPhase};
+        helper.assertTrue(drawStacks.size() == phases.length, "");
+        for (ResourceLocation phase : phases) {
+            helper.assertTrue(drawStacks.containsKey(phase), "Did not find " + phase + " added when it should have been present.");
+        }
+        helper.assertFalse(drawStacks.containsKey(myUneditableStackPhase), myUneditableStackPhase + " was editable when it should not have been.");
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void full_stack_insertion(GameTestHelper helper) {
+        // Test that both our new stacks are added into the COMBINE_PHASE. Technically already tested, but let's make sure.
+        var stack = drawStacks.get(COMBINE_PHASE);
+        List<Layer> internalLayersList = null;
+        try {
+            internalLayersList = getInternalLayersList(stack);
+        } catch (Exception e) {
+            helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
+        }
+        helper.assertTrue(internalLayersList.contains(myStackLayer), "Stack as layer was not added into COMBINE_PHASE");
+        helper.assertFalse(internalLayersList.contains(myOtherStackLayer), "Stack as layer with added condition should NOT be identical");
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void full_stack_condition(GameTestHelper helper) {
+        helper.assertFalse(detectConditionStackFlag.getBool(), "Conditional rendering ran when it shouldn't have.");
+        enableConditionStackFlag.set(true);
+        helper.runAfterDelay(5, () -> {
+            boolean result = detectConditionStackFlag.getBool();// Just in case of weird race conditions.
+            enableConditionStackFlag.set(false);
+            helper.assertTrue(result, "");
+            helper.succeed();
         });
     }
 
 
     private void overlayTestListener(ModifyOverlayLayersEvent event) {
+        if (drawStacks.containsKey(event.getLayeredDraw().getPhase())) {
+            throw new IllegalStateException("Multiple events fired from single ForgeLayeredDraw");
+        }
+        drawStacks.put(event.getLayeredDraw().getPhase(), event.getLayeredDraw());
         if (event.isPhase(PRE_SLEEP_PHASE)) {
             var layeredDraw = event.getLayeredDraw();
-            // Test if layers may be added. If it never runs, test_add_flag will never set.
-            layeredDraw.add(name("test_add"), (graphics, tracker) -> {
-                if (isMode(ADD_MODE)) {
-                    testSelector.set(DISABLED_MODE);
-                    was_ran_flag.set(true);
-                }
-            });
-            layeredDraw.addAbove(name("i_won_t_exist"), SCOREBOARD, (gg, tr) -> {
-                // Shouldn't render because SCOREBOARD is not in PRE_SLEEP_PHASE. Also should not reset selector flag, same reason.
-                if (isMode(NOT_ADDED_MODE)) {
-                    testSelector.set(DISABLED_MODE);
-                    was_ran_flag.set(true);
-                }
-            });
+            layeredDraw.addAbove(name("i_won_t_exist"), SCOREBOARD, notAddedLayer);
             // Test if layers may be ordered against other layers.
-            // Side effect of impl. is that we must add the middle node before we can try to order against it.
-            layeredDraw.add(name("node_b"), (gg, tr) -> {
-                // a -> [b] -> c
-                if (isMode(ORDER_MODE)) {
-                    if (counterFlag.getInt() == 1) {
-                        counterFlag.set(counterFlag.getInt() + 1);
-                    } else {
-                        was_ran_flag.set(true);
-                    }
-
-                }
-            });
-            layeredDraw.addAbove(name("node_c"), name("node_b"), (gg, tr) -> {
-                // a -> b -> [c]
-                if (isMode(ORDER_MODE)) {
-                    testSelector.set(DISABLED_MODE);
-                    if (counterFlag.getInt() == 2) {
-                        counterFlag.set(counterFlag.getInt() + 1);
-                    } else {
-                        was_ran_flag.set(true);
-                    }
-                }
-            });
-            layeredDraw.addBelow(name("node_a"), name("node_b"), (gg, tr) -> {
-                // [a] -> b -> c
-                if (isMode(ORDER_MODE)) {
-                    if (counterFlag.getInt() == 0) {
-                        counterFlag.set(counterFlag.getInt()+1);
-                    } else {
-                        was_ran_flag.set(true);
-                    }
-                }
-            });
-
-            // Test if layers may have conditions attached.
-            layeredDraw.addConditionTo(POTION_EFFECTS, () -> {
-                if(isMode(ADD_CONDITION_MODE)) {
-                    was_ran_flag.set(true);
-                    testSelector.set(DISABLED_MODE);
+            // Layers have to be present to be ordered against, of course, but we tested for that already above.
+            layeredDraw.addAbove(layerBName, POTION_EFFECTS, layerB);
+            layeredDraw.addAbove(layerCName, layerBName, layerC);
+            layeredDraw.addBelow(layerAName, layerBName, layerA);
+            layeredDraw.addConditionTo(BOSS_OVERLAY, () -> {
+                if (enableConditionFlag.getBool()) {
+                    detectConditionFlag.set(true);
                     return true;
                 } else {
+                    detectConditionFlag.set(false);
                     return false;
                 }
             });
         }
         if (event.isPhase(COMBINE_PHASE)) { // COMBINE_PHASE probably needs a new name so ppl don't get confused.
             // myStack may be edited, so this will fire a new event.
-            var myStackLayer = myStack.computeOrder().asLayer();
-
+            myStackLayer = myStack.computeOrder().asLayer();
             // myUneditableStack is not an editable stack, so we need to add to it now
             myUneditableStack.add(name("my_uneditable_inner_layer"), (gg, tr) -> {
-                was_ran_flag.set(true);
-                testSelector.set(DISABLED_MODE);
+                detectConditionStackFlag.set(true);
             });
             myUneditableStack.computeOrder(); // compute and add to COMBINE_PHASE.
+            myOtherStackLayer = myUneditableStack.asLayer();
             // Demonstrates that entire stacks can have conditions once converted to layers.
             event.getLayeredDraw()
-                    .addWithCondition(name("my_uneditable_stack"),
-                    myUneditableStack.asLayer(),
-                    () -> isMode(STACK_INSERT_CONDITION_MODE))
-                    .add(myStackLayer);
-            // IMPORTANT: Structure of COMBINE_PHASE is now PRE -> sleep_overlay -> POST -> myUneditStack -> myStack
-        }
-        if (event.isPhase(name("my_stack"))) {
-            // Check that our new stack is editable (fired the event)
-            init_success_flag.set(true);
-            event.getLayeredDraw().add(name("my_stack_as_layer"), (gg, tr) -> {
-                if (isMode(STACK_INSERT_MODE)) { // and that the layers we add are indeed visible.
-                    was_ran_flag.set(true);
-                    testSelector.set(DISABLED_MODE);
-                }
-            });
-        }
-        if (event.isPhase(name("my_uneditable_stack"))) {
-            // Shouldn't run since this stack isn't editable outside our initialization.
-            init_fail_flag.set(true);
+                    .addWithCondition(name("my_uneditable_stack"), myOtherStackLayer, () -> {
+                        if (enableConditionStackFlag.getBool()) {
+                            return true;
+                        } else {
+                            detectConditionStackFlag.set(false);
+                            return false;
+                        }
+                    })
+                    .add(name("my_stack_layer"), myStackLayer);
         }
     }
 
@@ -255,7 +224,11 @@ public class ModifyOverlayTest extends BaseTestMod {
         return ResourceLocation.fromNamespaceAndPath(MODID, name);
     }
 
-    private static boolean isMode(int target) {
-        return testSelector.getInt() == target;
+    @SuppressWarnings("unchecked")
+    private static List<Layer> getInternalLayersList(ForgeLayeredDraw stack) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+        Class<?> cls = stack.getClass().getSuperclass();
+        var layersField = cls.getDeclaredField("layers");
+        layersField.setAccessible(true);
+        return (List<Layer>) layersField.get(stack);
     }
 }
