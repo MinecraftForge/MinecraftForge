@@ -20,7 +20,7 @@ import java.util.function.BooleanSupplier;
 /**
  * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
- * This class is effectively a pseudo-registry for Layers. Add what you need during {@link net.minecraftforge.client.event.ModifyOverlayLayersEvent}
+ * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain net.minecraftforge.client.event.ModifyOverlayLayersEvent}
  * After being computed, it is too late to order against vanilla layers. Do it during the event.
  */
 @FieldsAreNonnullByDefault
@@ -57,7 +57,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
 
     /**
      * Creates a stack of pre-named layers for vanilla.
-     * Not intended for modder use. Use {@link ForgeLayeredDraw(ResourceLocation, Boolean, String...)} instead.
+     * Not intended for modder use. Use {@linkplain ForgeLayeredDraw(ResourceLocation, Boolean, String...)} instead.
      * @param layers Head of varargs marks the phase, the remaining args mark pre-named layers.
      */
     @ApiStatus.Internal
@@ -70,7 +70,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
-     * Creates an empty draw list. Add entries with {@link ForgeLayeredDraw#add(ResourceLocation, Layer)}
+     * Creates an empty draw list. Add entries with {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)}
      * @param rl marker for which phase this is.
      * @param mayEdit whether other mods are allowed to insert layers into this list.
      */
@@ -80,7 +80,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
-     * Creates a list of pre-defined names for layers to be added via {@link ForgeLayeredDraw#add(Layer)}
+     * Creates a list of pre-defined names for layers to be added via {@linkplain ForgeLayeredDraw#add(Layer)}
      * @param rl Used as the marker for what specific LayeredDraw phase this is.
      * @param mayEdit Optionally fire ModifyOverlayLayers for this modded stack.
      * @param layers List of pre-named layers.
@@ -94,10 +94,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
-     * Adds a layer with an already known name provided by {@link ForgeLayeredDraw(ResourceLocation, Boolean, String...)}
+     * Adds a layer with an already known name provided by {@linkplain ForgeLayeredDraw(ResourceLocation, Boolean, String...)}
      * The layer will be rendered last (on top) of already added layers.
-     * Use {@link ForgeLayeredDraw#add(ResourceLocation, Layer)} for adding individual layers.
-     * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
+     * Use {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)} for adding individual layers.
+     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain net.minecraft.client.gui.Gui}
      * @return this
      */
     @Override
@@ -117,7 +117,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Add a layer to the layer list. This layer will be at the end of the list, which means
      * it will be rendered last (on top) of already added layers.
      * @param name RL for other mods to order against.
-     * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
+     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain net.minecraft.client.gui.Gui}
      * @return this
      */
     public ForgeLayeredDraw add(ResourceLocation name, Layer layer) {
@@ -132,7 +132,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param thisLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
+     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain net.minecraft.client.gui.Gui}
      * @return this
      */
     public ForgeLayeredDraw addAbove(ResourceLocation thisLayer, ResourceLocation otherLayer, Layer layer) {
@@ -152,7 +152,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param thisLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@link Layer} and example usages in {@link net.minecraft.client.gui.Gui}
+     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain net.minecraft.client.gui.Gui}
      * @return this
      */
     public ForgeLayeredDraw addBelow(ResourceLocation thisLayer, ResourceLocation otherLayer, Layer layer) {
@@ -181,7 +181,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * at the end of the list, which means it will render last (on top) of already added layers
      * @param name name of the layer to be added
      * @param layer render code of the layer to be added.
-     * @param condition coni
+     * @param condition supplier for the condition
      * @return this
      */
     public ForgeLayeredDraw addWithCondition(ResourceLocation name, Layer layer, BooleanSupplier condition) {
@@ -191,8 +191,8 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Add a condition to a pre-existing layer, its render order is not changed.
      * If the target is not present, no changes are made.
-     * @param target
-     * @param condition
+     * @param target name of layer to add a condition to
+     * @param condition supplier for the condition
      * @return this
      */
     public ForgeLayeredDraw addConditionTo(ResourceLocation target, BooleanSupplier condition) {
@@ -206,6 +206,9 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         return this;
     }
 
+    /**
+     * @return phase name of this ForgeLayeredDraw instance
+     */
     public ResourceLocation getPhase() {
         return phase;
     }
@@ -213,7 +216,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Propagate the layer order down to the inner render list after providing modders an opportunity to alter the list as they wish.
      * Must be called at some point for layers to be rendered and ought to be (but does not have to be) called before
-     * calling {@link ForgeLayeredDraw#asLayer()}
+     * calling {@linkplain ForgeLayeredDraw#asLayer()}
      * @apiNote Original order is erased. Modders should only be calling this on their own stacks.
      * @return this
      */
