@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:function",
-  "environment": "minecraft:default",
-  "function": "forge:modify_overlay_test/overlay_addition",
-  "max_ticks": 100,
-  "structure": "forge:empty3x3x3"
-}

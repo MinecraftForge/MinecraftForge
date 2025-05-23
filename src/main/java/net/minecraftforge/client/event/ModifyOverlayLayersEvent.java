@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -13,8 +12,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when a {@link ForgeLayeredDraw} is computed using {@link ForgeLayeredDraw#computeOrder() if editing is enabled.
- * This can be used to add to
+ * Fired when the {@linkplain ForgeLayeredDraw#COMBINE_PHASE}'s order is resolved during{@link ForgeLayeredDraw#resolveLayers().
+ * This can be used to add additional or move gui layers and entire layer stacks as needed.
  *
  * <p> This event is not {@linkplain net.minecraftforge.eventbus.api.Cancelable cancellable} and does not {@linkplain net.minecraftforge.eventbus.api.Event.HasResult have a result}</p>
  *
@@ -37,14 +36,5 @@ public final class ModifyOverlayLayersEvent extends Event implements IModBusEven
     @NotNull
     public ForgeLayeredDraw getLayeredDraw() {
         return layeredDraw;
-    }
-
-    /**
-     * Helper method to check which layered draw's compute this is.
-     * @param target rl to test against.
-     * @return true if this layered draw matches the provided rl
-     */
-    public boolean isPhase(ResourceLocation target) {
-        return layeredDraw.getPhase().equals(target);
     }
 }
