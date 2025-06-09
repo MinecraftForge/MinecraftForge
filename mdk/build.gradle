@@ -22,17 +22,13 @@ minecraft {
     // official   MCVersion             Official field/method names from Mojang mapping files
     // parchment  YYYY.MM.DD-MCVersion  Open community-sourced parameter names and javadocs layered on top of official
     //
-    // You must be aware of the Mojang license when using the 'official' or 'parchment' mappings.
-    // See more information here: https://github.com/MinecraftForge/MCPConfig/blob/master/Mojang.md
-    //
     // Parchment is an unofficial project maintained by ParchmentMC, separate from MinecraftForge
     // Additional setup is needed to use their mappings: https://parchmentmc.org/docs/getting-started
     //
-    // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: mapping_channel, version: mapping_version
-    
-    // Tell FG to not automtically create the reobf tasks, as we now use Official mappings at runtime, If you don't use them at dev time then you'll have to fix your reobf yourself.
+
+    // Forge 1.20.6 and newer use official mappings at runtime, so we shouldn't reobf from official to SRG
     reobf = false
 
     // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
@@ -50,8 +46,7 @@ minecraft {
     // By default, the folder name of a run configuration is the name of the Gradle project containing it.
     // generateRunFolders = true
 
-    // This property enables access transformers for use in development.
-    // They will be applied to the Minecraft artifact.
+    // This property enables access transformers for use in development, applied to the Minecraft artifact.
     // The access transformer file can be anywhere in the project.
     // However, it must be at "META-INF/accesstransformer.cfg" in the final mod jar to be loaded by Forge.
     // This default location is a best practice to automatically put the file in the right place in the final jar.
@@ -72,9 +67,6 @@ minecraft {
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
 
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
         }
 
@@ -213,8 +205,7 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-// IntelliJ no longer downloads javadocs and sources by default.
-// This tells Gradle to force IDEA to do it.
+// IntelliJ no longer downloads javadocs and sources by default, this tells Gradle to force IntelliJ to do it.
 idea.module { downloadJavadoc = downloadSources = true }
 
 eclipse {
@@ -224,8 +215,7 @@ eclipse {
     synchronizationTasks 'genEclipseRuns'
 }
 
-// Merge the resources and classes into the same directory. 
-// This is done because java expects modules to be in a single directory.
+// Merge the resources and classes into the same directory, because Java expects modules to be in a single directory.
 // And if we have it in multiple we have to do performance intensive hacks like having the UnionFileSystem
 // This will eventually be migrated to ForgeGradle so modders don't need to manually do it. But that is later.
 sourceSets.each {
