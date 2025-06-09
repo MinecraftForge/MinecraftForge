@@ -67,6 +67,8 @@ minecraft {
 //            property 'forge.logging.markers', 'REGISTRIES'
 
             property 'forge.logging.console.level', 'debug'
+
+//            arg "-mixin.config=${mod_id}.mixins.json"
         }
 
         client {
