@@ -605,7 +605,7 @@ public class ForgeHooksClient {
                                                            ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
         var modRenderers = new ArrayList<PictureInPictureRenderer<?>>();
         RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(modRenderers, bufferSource));
-        var seen = new HashSet<Class<? extends PictureInPictureRenderState>>();
+        var seen = HashSet.newHashSet(renderers.size());
         for (var renderer : renderers)
             seen.add(renderer.getRenderStateClass());
         for (var renderer : modRenderers) {
