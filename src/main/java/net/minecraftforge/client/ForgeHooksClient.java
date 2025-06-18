@@ -154,6 +154,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -599,12 +600,18 @@ public class ForgeHooksClient {
         ModLoader.get().postEvent(new RegisterKeyMappingsEvent(options));
     }
 
-    public static void onRegisterPictureInPictureRenderers(MultiBufferSource.BufferSource bufferSource,
+    public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,
+                                                           MultiBufferSource.BufferSource bufferSource,
                                                            ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
         var modRenderers = new ArrayList<PictureInPictureRenderer<?>>();
         RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(modRenderers, bufferSource));
-        for (PictureInPictureRenderer<?> pictureInPictureRenderer : modRenderers) {
-            builder.put(pictureInPictureRenderer.getRenderStateClass(), pictureInPictureRenderer);
+        var seen = new HashSet<Class<? extends PictureInPictureRenderState>>();
+        for (var renderer : renderers)
+            seen.add(renderer.getRenderStateClass());
+        for (var renderer : modRenderers) {
+            var key = renderer.getRenderStateClass();
+            if (seen.add(key))
+                builder.put(key, renderer);
         }
     }
 

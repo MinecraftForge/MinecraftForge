@@ -7,7 +7,6 @@ import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
-import java.util.function.Function;
 
 public final class RegisterPictureInPictureRendererEvent extends MutableEvent {
     public static final EventBus<RegisterPictureInPictureRendererEvent> BUS = EventBus.create(RegisterPictureInPictureRendererEvent.class);
@@ -21,7 +20,11 @@ public final class RegisterPictureInPictureRendererEvent extends MutableEvent {
         this.bufferSource = bufferSource;
     }
 
-    public void register(Function<MultiBufferSource.BufferSource, PictureInPictureRenderer<?>> function) {
-        this.renderers.add(function.apply(this.bufferSource));
+    public MultiBufferSource.BufferSource getBufferSource() {
+        return bufferSource;
+    }
+
+    public void register(PictureInPictureRenderer<?> renderer) {
+        this.renderers.add(renderer);
     }
 }
