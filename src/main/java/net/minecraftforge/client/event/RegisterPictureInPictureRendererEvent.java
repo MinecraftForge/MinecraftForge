@@ -2,19 +2,15 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.function.Function;
 
-public final class RegisterPictureInPictureRendererEvent implements IModBusEvent
-{
-    public static EventBus<RegisterPictureInPictureRendererEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterPictureInPictureRendererEvent.class);
-    }
+public final class RegisterPictureInPictureRendererEvent extends MutableEvent {
+    public static final EventBus<RegisterPictureInPictureRendererEvent> BUS = EventBus.create(RegisterPictureInPictureRendererEvent.class);
 
     private final List<PictureInPictureRenderer<?>> renderers;
     private final MultiBufferSource.BufferSource bufferSource;

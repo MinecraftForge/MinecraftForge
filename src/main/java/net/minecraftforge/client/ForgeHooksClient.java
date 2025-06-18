@@ -27,6 +27,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -598,9 +599,13 @@ public class ForgeHooksClient {
         ModLoader.get().postEvent(new RegisterKeyMappingsEvent(options));
     }
 
-    public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,
-                                                           MultiBufferSource.BufferSource bufferSource) {
-        ModLoader.get().postEvent(new RegisterPictureInPictureRendererEvent(renderers, bufferSource));
+    public static void onRegisterPictureInPictureRenderers(MultiBufferSource.BufferSource bufferSource,
+                                                           ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
+        var modRenderers = new ArrayList<PictureInPictureRenderer<?>>();
+        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(modRenderers, bufferSource));
+        for (PictureInPictureRenderer<?> pictureInPictureRenderer : modRenderers) {
+            builder.put(pictureInPictureRenderer.getRenderStateClass(), pictureInPictureRenderer);
+        }
     }
 
     @Nullable
