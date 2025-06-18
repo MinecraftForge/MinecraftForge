@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/render/GuiRenderer.java
++++ b/net/minecraft/client/gui/render/GuiRenderer.java
+@@ -129,7 +_,7 @@
+         this.renderState = p_408891_;
+         this.bufferSource = p_410441_;
+         Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder = ImmutableMap.builder();
+-
++        net.minecraftforge.client.ForgeHooksClient.onRegisterPictureInPictureRenderers(p_410565_, p_410441_);
+         for (PictureInPictureRenderer<?> pictureinpicturerenderer : p_410565_) {
+             builder.put((Class<? extends PictureInPictureRenderState>)pictureinpicturerenderer.getRenderStateClass(), pictureinpicturerenderer);
+         }
