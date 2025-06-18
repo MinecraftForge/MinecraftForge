@@ -19,7 +19,7 @@ import java.awt.Color;
 @Mod(RegisterPictureInPictureRendererEventTest.MODID)
 public class RegisterPictureInPictureRendererEventTest
 {
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     public static final String MODID = "pip_registration_event_test";
 
@@ -33,7 +33,6 @@ public class RegisterPictureInPictureRendererEventTest
     // this will draw a blue box outline in red in the top left corner of a screen.
     private void onScreenBackground(ScreenEvent.BackgroundRendered event) {
         var window = Minecraft.getInstance().getWindow();
-        System.out.println(event.getScreen().getClass());
         event.getGuiGraphics().getRenderState().submitPicturesInPictureState(new TestPipRendererState(
                 event.getGuiGraphics(),
                 10,
@@ -46,7 +45,6 @@ public class RegisterPictureInPictureRendererEventTest
     private void registerTestPip(RegisterPictureInPictureRendererEvent event) {
         event.register(new TestPipRenderer(event.getBufferSource()));
     }
-
 
     static class TestPipRenderer extends PictureInPictureRenderer<TestPipRendererState> {
 
@@ -73,18 +71,15 @@ public class RegisterPictureInPictureRendererEventTest
             graphics.fill(x1, y2, x2, y2 + 2, red);
             graphics.fill(x1, y1, x1 + 2, y2, red);
             graphics.fill(x2, y1, x2 + 2, y2 + 2, red);
-
-
         }
 
         @Override
-        protected String getTextureLabel()
-        {
+        protected String getTextureLabel() {
             return "test_pip_renderer";
         }
     }
 
-    record TestPipRendererState(GuiGraphics graphics, int x0, int y0, int x1, int y1, ScreenRectangle scissorArea, ScreenRectangle bounds) implements  PictureInPictureRenderState {
+    record TestPipRendererState(GuiGraphics graphics, int x0, int y0, int x1, int y1, ScreenRectangle scissorArea, ScreenRectangle bounds) implements PictureInPictureRenderState {
         public TestPipRendererState(GuiGraphics graphics, int x0, int y0, int x1, int y1, ScreenRectangle scissorArea) {
             this(graphics, x0, y0, x1, y1, scissorArea, PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
         }

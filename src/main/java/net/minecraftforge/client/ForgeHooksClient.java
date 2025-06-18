@@ -603,16 +603,7 @@ public class ForgeHooksClient {
     public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,
                                                            MultiBufferSource.BufferSource bufferSource,
                                                            ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
-        var modRenderers = new ArrayList<PictureInPictureRenderer<?>>();
-        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(modRenderers, bufferSource));
-        var seen = HashSet.newHashSet(renderers.size());
-        for (var renderer : renderers)
-            seen.add(renderer.getRenderStateClass());
-        for (var renderer : modRenderers) {
-            var key = renderer.getRenderStateClass();
-            if (seen.add(key))
-                builder.put(key, renderer);
-        }
+        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(renderers, bufferSource, builder));
     }
 
     @Nullable

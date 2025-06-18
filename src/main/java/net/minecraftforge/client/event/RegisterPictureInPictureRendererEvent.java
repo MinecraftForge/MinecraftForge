@@ -1,6 +1,8 @@
 package net.minecraftforge.client.event;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
@@ -8,6 +10,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -23,11 +26,13 @@ public final class RegisterPictureInPictureRendererEvent extends MutableEvent im
 
     private final List<PictureInPictureRenderer<?>> renderers;
     private final MultiBufferSource.BufferSource bufferSource;
+    private final ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder;
 
     @ApiStatus.Internal
-    public RegisterPictureInPictureRendererEvent(List<PictureInPictureRenderer<?>> renderers, MultiBufferSource.BufferSource bufferSource) {
+    public RegisterPictureInPictureRendererEvent(List<PictureInPictureRenderer<?>> renderers, MultiBufferSource.BufferSource bufferSource, ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
         this.renderers = renderers;
         this.bufferSource = bufferSource;
+        this.builder = builder;
     }
 
     public MultiBufferSource.BufferSource getBufferSource() {
@@ -35,6 +40,11 @@ public final class RegisterPictureInPictureRendererEvent extends MutableEvent im
     }
 
     public void register(PictureInPictureRenderer<?> renderer) {
-        this.renderers.add(renderer);
+        var seen = HashSet.newHashSet(renderers.size());
+        for (var r : renderers)
+            seen.add(r.getRenderStateClass());
+        var key = renderer.getRenderStateClass();
+        if (seen.add(key))
+            this.builder.put(key, renderer);
     }
 }
