@@ -4,11 +4,21 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
+import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
-public final class RegisterPictureInPictureRendererEvent extends MutableEvent {
+/**
+ * Used for registering custom picture in picture renderers.
+ * <p>
+ * Fired at the beginning of the loading screen when starting minecraft.
+ * Cannot be used to replace vanilla picture in picture renderers.
+ * This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}
+ * This event is not cancelable.
+ */
+public final class RegisterPictureInPictureRendererEvent extends MutableEvent implements SelfDestructing {
     public static final EventBus<RegisterPictureInPictureRendererEvent> BUS = EventBus.create(RegisterPictureInPictureRendererEvent.class);
 
     private final List<PictureInPictureRenderer<?>> renderers;
