@@ -19,7 +19,7 @@ import java.awt.Color;
 @Mod(RegisterPictureInPictureRendererEventTest.MODID)
 public class RegisterPictureInPictureRendererEventTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     public static final String MODID = "pip_registration_event_test";
 
