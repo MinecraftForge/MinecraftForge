@@ -71,3 +71,11 @@
          SignableCommand<ClientSuggestionProvider> signablecommand = SignableCommand.of(this.commands.parse(p_250092_, this.suggestionsProvider));
          if (signablecommand.arguments().isEmpty()) {
              this.send(new ServerboundChatCommandPacket(p_250092_));
+@@ -2641,6 +_,7 @@
+     }
+ 
+     public void sendUnattendedCommand(String p_407213_, @Nullable Screen p_406262_) {
++        if (net.minecraftforge.client.ClientCommandHandler.runCommand(p_407213_)) return;
+         switch (this.verifyCommand(p_407213_)) {
+             case NO_ISSUES:
+                 this.send(new ServerboundChatCommandPacket(p_407213_));
