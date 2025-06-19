@@ -37,16 +37,15 @@
              if (contextchain != null) {
                  executeCommandInContext(
                      commandsourcestack,
-@@ -395,8 +_,11 @@
-     public void sendCommands(ServerPlayer p_82096_) {
+@@ -396,7 +_,10 @@
          Map<CommandNode<CommandSourceStack>, CommandNode<CommandSourceStack>> map = new HashMap<>();
          RootCommandNode<CommandSourceStack> rootcommandnode = new RootCommandNode<>();
-+        // FORGE: Clean any modded command content if the client is vanilla
-+        rootcommandnode = net.minecraftforge.server.command.CommandHelper.filterCommandList(p_82096_.connection.getConnection(), rootcommandnode);
          map.put(this.dispatcher.getRoot(), rootcommandnode);
 -        fillUsableCommands(this.dispatcher.getRoot(), rootcommandnode, p_82096_.createCommandSourceStack(), map);
 +        // FORGE: Use our own command node merging method to handle redirect nodes properly, see issue #7551
 +        net.minecraftforge.server.command.CommandHelper.mergeCommandNode(this.dispatcher.getRoot(), rootcommandnode, map, p_82096_.createCommandSourceStack(), ctx -> 0, suggest -> suggest);
++        // FORGE: Clean any modded command content if the client is vanilla
++        rootcommandnode = net.minecraftforge.server.command.CommandHelper.filterCommandList(p_82096_.connection.getConnection(), rootcommandnode);
          p_82096_.connection.send(new ClientboundCommandsPacket(rootcommandnode, COMMAND_NODE_INSPECTOR));
      }
  
