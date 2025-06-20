@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,26 +13,51 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.client.event.RegisterPictureInPictureRendererEvent;
 
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.gametest.GameTest;
+import net.minecraftforge.test.BaseTestMod;
 
 import java.awt.Color;
+import java.util.Map;
 
 
 @Mod(RegisterPictureInPictureRendererEventTest.MODID)
-public class RegisterPictureInPictureRendererEventTest
-{
-    private static final boolean ENABLED = false;
-
+public class RegisterPictureInPictureRendererEventTest  extends BaseTestMod {
     public static final String MODID = "pip_registration_event_test";
 
-    public RegisterPictureInPictureRendererEventTest() {
-        if(ENABLED) {
+    public RegisterPictureInPictureRendererEventTest(FMLJavaModLoadingContext context) {
+        super(context, false, false);
             RegisterPictureInPictureRendererEvent.BUS.addListener(this::registerTestPip);
             ScreenEvent.BackgroundRendered.BUS.addListener(this::onScreenBackground);
-        }
+
+    }
+
+    @GameTest(name = MODID)
+    public static void testPip(GameTestHelper helper) throws IllegalAccessException, NoSuchFieldException {
+        // Get the GameRenderer instance
+        var gameRenderer = Minecraft.getInstance().gameRenderer;
+
+        // Get the guiRenderer field from GameRenderer class
+        var guiRendererField = gameRenderer.getClass().getDeclaredField("guiRenderer");
+        guiRendererField.setAccessible(true);
+
+        // Get the guiRenderer instance
+        var guiRenderer = guiRendererField.get(gameRenderer);
+
+        // Get the pictureInPictureRenderers field from GuiRenderer class
+        var pictureInPictureRenderersField = guiRenderer.getClass().getDeclaredField("pictureInPictureRenderers");
+        pictureInPictureRenderersField.setAccessible(true);
+
+        // Get the pictureInPictureRenderers map
+        Map<?,?> pictureInPictureRenderers = (Map<?, ?>) pictureInPictureRenderersField.get(guiRenderer);
+
+        helper.assertTrue(pictureInPictureRenderers.containsKey(TestPipRendererState.class), "PictureInPictureRenderer was registered");
+        helper.succeed();
     }
 
     // this will draw a blue box outline in red in the top left corner of a screen.
