@@ -13,7 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -30,69 +30,27 @@ import org.jetbrains.annotations.ApiStatus;
  *  This event (and items stacking on others in general) is fired on both {@linkplain LogicalSide sides}, but only on {@linkplain LogicalSide#CLIENT the client} in the creative menu.
  *  Practically, that means that listeners of this event should require the player to be in survival mode if using capabilities that are not synced.
  *  <p>
- *  This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+ *  This event is {@linkplain Cancellable cancellable}.
  *  If the event is cancelled, the container's logic halts, the carried item and the slot will not be swapped, and handling is assumed to have been done by the mod.
  *  This also means that the two vanilla checks described above will not be called.
+ *
+ * @param getCarriedItem The stack being carried by the mouse, which may be empty
+ * @param getStackedOnItem The stack currently in the slot being clicked on, which may be empty
+ * @param getSlot The slot being clicked on
+ * @param getClickAction The click action being used. By default, {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
+ * @param getPlayer The player doing the item swap attempt
+ * @param getCarriedSlotAccess A fake slot allowing the listener to see and change what item is being carried
  */
-public final class ItemStackedOnOtherEvent extends MutableEvent implements Cancellable {
+public record ItemStackedOnOtherEvent(
+        ItemStack getCarriedItem,
+        ItemStack getStackedOnItem,
+        Slot getSlot,
+        ClickAction getClickAction,
+        Player getPlayer,
+        SlotAccess getCarriedSlotAccess
+) implements Cancellable, RecordEvent {
     public static final CancellableEventBus<ItemStackedOnOtherEvent> BUS = CancellableEventBus.create(ItemStackedOnOtherEvent.class);
 
-    private final ItemStack carriedItem;
-    private final ItemStack stackedOnItem;
-    private final Slot slot;
-    private final ClickAction action;
-    private final Player player;
-    private final SlotAccess carriedSlotAccess;
-
     @ApiStatus.Internal
-    public ItemStackedOnOtherEvent(ItemStack carriedItem, ItemStack stackedOnItem, Slot slot, ClickAction action, Player player, SlotAccess carriedSlotAccess) {
-        this.carriedItem = carriedItem;
-        this.stackedOnItem = stackedOnItem;
-        this.slot = slot;
-        this.action = action;
-        this.player = player;
-        this.carriedSlotAccess = carriedSlotAccess;
-    }
-
-    /**
-     * {@return the stack being carried by the mouse} This may be empty!
-     */
-    public ItemStack getCarriedItem() {
-        return carriedItem;
-    }
-
-    /**
-     * {@return the stack currently in the slot being clicked on} This may be empty!
-     */
-    public ItemStack getStackedOnItem() {
-        return stackedOnItem;
-    }
-
-    /**
-     * {@return the slot being clicked on}
-     */
-    public Slot getSlot() {
-        return slot;
-    }
-
-    /**
-     * {@return the click action being used} By default {@linkplain ClickAction#PRIMARY} corresponds to left-click, and {@linkplain ClickAction#SECONDARY} is right-click.
-     */
-    public ClickAction getClickAction() {
-        return action;
-    }
-
-    /**
-     * {@return the player doing the item swap attempt}
-     */
-    public Player getPlayer() {
-        return player;
-    }
-
-    /**
-     * {@return a fake slot allowing the listener to see and change what item is being carried}
-     */
-    public SlotAccess getCarriedSlotAccess() {
-        return carriedSlotAccess;
-    }
+    public ItemStackedOnOtherEvent {}
 }

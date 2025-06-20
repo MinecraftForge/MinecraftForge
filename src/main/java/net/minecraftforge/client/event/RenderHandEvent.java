@@ -10,9 +10,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
@@ -20,63 +19,36 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Fired before a hand is rendered in the first person view.
  *
- * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the hand will not be rendered.</p>
+ * <p>This event is {@linkplain Cancellable cancellable}. If this event is cancelled, then the hand will not be rendered.</p>
  *
- * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @param getHand The hand being rendered
+ * @param getPoseStack The pose stack used for rendering
+ * @param getMultiBufferSource The source of rendering buffers
+ * @param getPartialTick The partial tick
+ * @param getInterpolatedPitch The interpolated pitch of the player entity
+ * @param getSwingProgress The swing progress of the hand being rendered
+ * @param getEquipProgress The progress of the equip animation, from {@code 0.0} to {@code 1.0}
+ * @param getItemStack The item stack to be rendered
  *
  * @see RenderArmEvent
  */
-public final class RenderHandEvent extends MutableEvent implements Cancellable {
+public record RenderHandEvent(
+        InteractionHand getHand,
+        PoseStack getPoseStack,
+        MultiBufferSource getMultiBufferSource,
+        int getPackedLight,
+        float getPartialTick,
+        float getInterpolatedPitch,
+        float getSwingProgress,
+        float getEquipProgress,
+        ItemStack getItemStack
+) implements Cancellable, RecordEvent {
     public static final CancellableEventBus<RenderHandEvent> BUS = CancellableEventBus.create(RenderHandEvent.class);
 
-    private final InteractionHand hand;
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-    private final float partialTick;
-    private final float interpolatedPitch;
-    private final float swingProgress;
-    private final float equipProgress;
-    private final ItemStack stack;
-
     @ApiStatus.Internal
-    public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight,
-                           float partialTick, float interpolatedPitch,
-                           float swingProgress, float equipProgress, ItemStack stack)
-    {
-        this.hand = hand;
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-        this.partialTick = partialTick;
-        this.interpolatedPitch = interpolatedPitch;
-        this.swingProgress = swingProgress;
-        this.equipProgress = equipProgress;
-        this.stack = stack;
-    }
-
-    /**
-     * {@return the hand being rendered}
-     */
-    public InteractionHand getHand() {
-        return hand;
-    }
-
-    /**
-     * {@return the pose stack used for rendering}
-     */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    /**
-     * {@return the source of rendering buffers}
-     */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+    public RenderHandEvent {}
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
@@ -84,41 +56,6 @@ public final class RenderHandEvent extends MutableEvent implements Cancellable {
      * @see LightTexture
      */
     public int getPackedLight() {
-        return packedLight;
-    }
-
-    /**
-     * {@return the partial tick}
-     */
-    public float getPartialTick() {
-        return partialTick;
-    }
-
-    /**
-     * {@return the interpolated pitch of the player entity}
-     */
-    public float getInterpolatedPitch() {
-        return interpolatedPitch;
-    }
-
-    /**
-     * {@return the swing progress of the hand being rendered}
-     */
-    public float getSwingProgress() {
-        return swingProgress;
-    }
-
-    /**
-     * {@return the progress of the equip animation, from {@code 0.0} to {@code 1.0}}
-     */
-    public float getEquipProgress() {
-        return equipProgress;
-    }
-
-    /**
-     * {@return the item stack to be rendered}
-     */
-    public ItemStack getItemStack() {
-        return stack;
+        return getPackedLight;
     }
 }

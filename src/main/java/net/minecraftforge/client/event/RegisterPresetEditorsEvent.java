@@ -9,6 +9,7 @@ import java.util.Map;
 
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -24,12 +25,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 /**
  * <p>Event for registering {@link PresetEditor} screen factories for world presets.</p>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterPresetEditorsEvent implements IModBusEvent {
+public final class RegisterPresetEditorsEvent implements SelfDestructing, IModBusEvent {
     public static EventBus<RegisterPresetEditorsEvent> getBus(BusGroup modBusGroup) {
         return IModBusEvent.getBus(modBusGroup, RegisterPresetEditorsEvent.class);
     }

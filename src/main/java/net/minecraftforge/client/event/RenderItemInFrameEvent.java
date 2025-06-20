@@ -10,9 +10,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.entity.state.ItemFrameRenderState;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,59 +20,28 @@ import org.jetbrains.annotations.ApiStatus;
  * Fired before an item stack is rendered in an item frame.
  * This can be used to prevent normal rendering or add custom rendering.
  *
- * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If the event is cancelled, then the item stack will not be rendered</p>
+ * <p>This event is {@linkplain Cancellable cancellable}. If the event is cancelled, then the item stack will not be rendered</p>
  *
- * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @param getItemFrameState The item frame entity
+ * @param getRenderer The renderer for the item frame entity
+ * @param getPoseStack The pose stack used for rendering
+ * @param getMultiBufferSource The source of rendering buffers
  *
  * @see ItemFrameRenderer
  */
-public final class RenderItemInFrameEvent extends MutableEvent implements Cancellable {
+public record RenderItemInFrameEvent(
+        ItemFrameRenderState getItemFrameState,
+        ItemFrameRenderer<?> getRenderer,
+        PoseStack getPoseStack,
+        MultiBufferSource getMultiBufferSource,
+        int getPackedLight
+) implements Cancellable, RecordEvent {
     public static final CancellableEventBus<RenderItemInFrameEvent> BUS = CancellableEventBus.create(RenderItemInFrameEvent.class);
 
-    private final ItemFrameRenderState state;
-    private final ItemFrameRenderer<?> renderer;
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-
     @ApiStatus.Internal
-    public RenderItemInFrameEvent(ItemFrameRenderState state, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        this.state = state;
-        this.renderer = renderItemFrame;
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-    }
-
-    /**
-     * {@return the item frame entity}
-     */
-    public ItemFrameRenderState getItemFrameState() {
-        return state;
-    }
-
-    /**
-     * {@return the renderer for the item frame entity}
-     */
-    public ItemFrameRenderer<?> getRenderer() {
-        return renderer;
-    }
-
-    /**
-     * {@return the pose stack used for rendering}
-     */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    /**
-     * {@return the source of rendering buffers}
-     */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+    public RenderItemInFrameEvent {}
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
@@ -81,6 +49,6 @@ public final class RenderItemInFrameEvent extends MutableEvent implements Cancel
      * @see LightTexture
      */
     public int getPackedLight() {
-        return packedLight;
+        return getPackedLight;
     }
 }

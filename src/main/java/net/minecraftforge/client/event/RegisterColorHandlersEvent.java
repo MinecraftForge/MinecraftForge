@@ -12,10 +12,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+
+import java.util.ArrayList;
 
 /**
  * Fired for registering block and item color handlers at the appropriate time.
@@ -76,15 +80,16 @@ public abstract sealed class RegisterColorHandlersEvent implements IModBusEvent 
      * Allows registration of custom {@link ColorResolver} implementations to be used with
      * {@link net.minecraft.world.level.BlockAndTintGetter#getBlockTint(BlockPos, ColorResolver)}.
      */
-    public static final class ColorResolvers extends RegisterColorHandlersEvent {
+    @NullMarked
+    public static final class ColorResolvers extends RegisterColorHandlersEvent implements SelfDestructing {
         public static EventBus<ColorResolvers> getBus(BusGroup modBusGroup) {
             return IModBusEvent.getBus(modBusGroup, ColorResolvers.class);
         }
 
-        private final ImmutableList.Builder<ColorResolver> builder;
+        private final ArrayList<ColorResolver> builder;
 
         @ApiStatus.Internal
-        public ColorResolvers(ImmutableList.Builder<ColorResolver> builder) {
+        public ColorResolvers(ArrayList<ColorResolver> builder) {
             this.builder = builder;
         }
 

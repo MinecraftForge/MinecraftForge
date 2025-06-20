@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
@@ -22,7 +21,9 @@ import java.util.Map;
  * Provides a lookup by dimension type.
  */
 public final class DimensionSpecialEffectsManager {
-    private static ImmutableMap<ResourceLocation, DimensionSpecialEffects> EFFECTS;
+    private DimensionSpecialEffectsManager() {}
+
+    private static Map<ResourceLocation, DimensionSpecialEffects> EFFECTS;
     private static DimensionSpecialEffects DEFAULT_EFFECTS;
 
     /**
@@ -38,7 +39,7 @@ public final class DimensionSpecialEffectsManager {
         DEFAULT_EFFECTS = preRegisterVanillaEffects(effects);
         var event = new RegisterDimensionSpecialEffectsEvent(effects);
         ModLoader.get().postEventWrapContainerInModOrder(event);
-        EFFECTS = ImmutableMap.copyOf(effects);
+        EFFECTS = Map.copyOf(effects);
     }
 
     /**
@@ -53,6 +54,4 @@ public final class DimensionSpecialEffectsManager {
         effects.put(BuiltinDimensionTypes.END_EFFECTS, new DimensionSpecialEffects.EndEffects());
         return overworldEffects;
     }
-
-    private DimensionSpecialEffectsManager() { }
 }

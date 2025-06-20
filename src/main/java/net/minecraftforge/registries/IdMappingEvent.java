@@ -7,12 +7,12 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +55,7 @@ public final class IdMappingEvent extends MutableEvent {
         this.isFrozen = isFrozen;
         this.remaps = Maps.newHashMap();
         remaps.forEach((name, rm) -> {
-            List<ModRemapping> tmp = Lists.newArrayList();
+            List<ModRemapping> tmp = new ArrayList<>();
             rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value.currId, value.newId)));
             tmp.sort(Comparator.comparingInt(o -> o.newId));
             this.remaps.put(name, ImmutableList.copyOf(tmp));

@@ -8,50 +8,24 @@ package net.minecraftforge.event;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.server.ReloadableServerResources;
-import net.minecraftforge.common.MinecraftForge;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 
 /**
  * Commands are rebuilt whenever {@link ReloadableServerResources} is recreated.
  * You can use this event to register your commands whenever the {@link Commands} class in constructed.
  *
- * The event is fired on the {@link MinecraftForge#EVENT_BUS}
+ * @param getDispatcher The command dispatcher for registering commands to be executed on the client
+ * @param getCommandSelection The environment the command is being registered for
+ * @param getBuildContext The context to build the commands for
  */
-public final class RegisterCommandsEvent extends MutableEvent {
+public record RegisterCommandsEvent(
+        CommandDispatcher<CommandSourceStack> getDispatcher,
+        Commands.CommandSelection getCommandSelection,
+        CommandBuildContext getBuildContext
+) implements RecordEvent {
     public static final EventBus<RegisterCommandsEvent> BUS = EventBus.create(RegisterCommandsEvent.class);
-
-    private final CommandDispatcher<CommandSourceStack> dispatcher;
-    private final Commands.CommandSelection environment;
-    private final CommandBuildContext context;
-    
-    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment, CommandBuildContext context) {
-        this.dispatcher = dispatcher;
-        this.environment = environment;
-        this.context = context;
-    }
-
-    /**
-     * {@return the command dispatcher for registering commands to be executed on the client}
-     */
-    public CommandDispatcher<CommandSourceStack> getDispatcher() {
-        return dispatcher;
-    }
-
-    /**
-     * {@return the environment the command is being registered for}
-     */
-    public Commands.CommandSelection getCommandSelection() {
-        return environment;
-    }
-
-    /**
-     * {@return the context to build the commands for}
-     */
-    public CommandBuildContext getBuildContext() {
-        return context;
-    }
 }

@@ -10,43 +10,20 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.village.VillageSiege;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * VillageSiegeEvent is fired just before a zombie siege finds a successful location in
  * {@code VillageSiege#tryToSetupSiege(ServerLevel)}, to give mods the chance to stop the siege.<br>
  * <br>
- * Canceling this event stops the siege.<br>
+ * Cancelling this event stops the siege.<br>
  */
-public final class VillageSiegeEvent extends MutableEvent implements Cancellable {
+public record VillageSiegeEvent(
+        VillageSiege getSiege,
+        Level getLevel,
+        Player getPlayer,
+        Vec3 getAttemptedSpawnPos
+) implements Cancellable, RecordEvent {
     public static final CancellableEventBus<VillageSiegeEvent> BUS = CancellableEventBus.create(VillageSiegeEvent.class);
-
-    private final VillageSiege siege;
-    private final Level level;
-    private final Player player;
-    private final Vec3 attemptedSpawnPos;
-
-    public VillageSiegeEvent(VillageSiege siege, Level level, Player player, Vec3 attemptedSpawnPos) {
-       this.siege = siege;
-       this.level = level;
-       this.player = player;
-       this.attemptedSpawnPos = attemptedSpawnPos;
-    }
-
-    public VillageSiege getSiege() {
-        return siege;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public Vec3 getAttemptedSpawnPos() {
-        return attemptedSpawnPos;
-    }
 }

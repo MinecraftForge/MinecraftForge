@@ -9,10 +9,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
@@ -20,12 +22,11 @@ import java.util.Map;
  * Allows users to register custom shaders to be used when the player spectates a certain kind of entity.
  * Vanilla examples of this are the green effect for creepers and the invert effect for endermen.
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterEntitySpectatorShadersEvent implements IModBusEvent {
+@NullMarked
+public final class RegisterEntitySpectatorShadersEvent implements SelfDestructing, IModBusEvent {
     public static EventBus<RegisterEntitySpectatorShadersEvent> getBus(BusGroup modBusGroup) {
         return IModBusEvent.getBus(modBusGroup, RegisterEntitySpectatorShadersEvent.class);
     }

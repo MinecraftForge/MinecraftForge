@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -60,12 +61,10 @@ public abstract sealed class EntityRenderersEvent implements IModBusEvent {
     /**
      * Fired for registering layer definitions at the appropriate time.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class RegisterLayerDefinitions extends EntityRenderersEvent {
+    public static final class RegisterLayerDefinitions extends EntityRenderersEvent implements SelfDestructing {
         public static EventBus<RegisterLayerDefinitions> getBus(BusGroup modBusGroup) {
             return IModBusEvent.getBus(modBusGroup, RegisterLayerDefinitions.class);
         }
@@ -92,12 +91,10 @@ public abstract sealed class EntityRenderersEvent implements IModBusEvent {
      * For registering entity renderer layers to existing entity renderers (whether vanilla or registered through this
      * event), listen for the {@link AddLayers} event instead.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     *
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class RegisterRenderers extends EntityRenderersEvent {
+    public static final class RegisterRenderers extends EntityRenderersEvent implements SelfDestructing {
         public static EventBus<RegisterRenderers> getBus(BusGroup modBusGroup) {
             return IModBusEvent.getBus(modBusGroup, RegisterRenderers.class);
         }

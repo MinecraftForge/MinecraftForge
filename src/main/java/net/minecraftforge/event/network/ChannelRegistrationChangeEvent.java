@@ -11,40 +11,28 @@ import java.util.Set;
 import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 
 /**
  * Fired when the channel registration (see minecraft custom channel documentation) changes.
  * <br>
  * It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
  * It just directly dispatches upon receipt.
+ *
+ * @param getType The type of change, either {@link Type#REGISTER} or {@link Type#UNREGISTER}
  */
-public final class ChannelRegistrationChangeEvent extends MutableEvent {
+public record ChannelRegistrationChangeEvent(
+        Connection getSource,
+        Type getType,
+        Set<ResourceLocation> getChannels
+) implements RecordEvent {
     public static final EventBus<ChannelRegistrationChangeEvent> BUS = EventBus.create(ChannelRegistrationChangeEvent.class);
 
     public enum Type {
         REGISTER, UNREGISTER
     }
 
-    private final Connection source;
-    private final Type changeType;
-    private final Set<ResourceLocation> channels;
-
-    public ChannelRegistrationChangeEvent(Connection source, Type changeType, Set<ResourceLocation> channels) {
-        this.source = source;
-        this.changeType = changeType;
-        this.channels = Collections.unmodifiableSet(channels);
-    }
-
-    public Type getType() {
-        return changeType;
-    }
-
-    public Connection getSource() {
-        return source;
-    }
-
-    public Set<ResourceLocation> getChannels() {
-        return channels;
+    public ChannelRegistrationChangeEvent {
+        getChannels = Collections.unmodifiableSet(getChannels);
     }
 }

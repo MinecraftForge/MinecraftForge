@@ -9,9 +9,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,48 +20,24 @@ import org.jetbrains.annotations.ApiStatus;
  * and can be used to replace the rendering of the player's arm, such as for rendering armor on the arm or outright
  * replacing the arm with armor.
  *
- * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
- * If this event is cancelled, then the arm will not be rendered.</p>
+ * <p>This event is {@linkplain Cancellable cancellable}. If this event is cancelled, then the arm will not be rendered.</p>
  *
- * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @param getPoseStack The pose stack used for rendering
+ * @param getMultiBufferSource The source of rendering buffers
+ * @param getArm The arm being rendered
  */
-public final class RenderArmEvent extends MutableEvent implements Cancellable {
+public record RenderArmEvent(
+        PoseStack getPoseStack,
+        MultiBufferSource getMultiBufferSource,
+        int getPackedLight,
+        HumanoidArm getArm
+) implements Cancellable, RecordEvent {
     public static final CancellableEventBus<RenderArmEvent> BUS = CancellableEventBus.create(RenderArmEvent.class);
 
-    private final PoseStack poseStack;
-    private final MultiBufferSource multiBufferSource;
-    private final int packedLight;
-    private final HumanoidArm arm;
-
     @ApiStatus.Internal
-    public RenderArmEvent(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, HumanoidArm arm) {
-        this.poseStack = poseStack;
-        this.multiBufferSource = multiBufferSource;
-        this.packedLight = packedLight;
-        this.arm = arm;
-    }
-
-    /**
-     * {@return the arm being rendered}
-     */
-    public HumanoidArm getArm() {
-        return arm;
-    }
-
-    /**
-     * {@return the pose stack used for rendering}
-     */
-    public PoseStack getPoseStack() {
-        return poseStack;
-    }
-
-    /**
-     * {@return the source of rendering buffers}
-     */
-    public MultiBufferSource getMultiBufferSource() {
-        return multiBufferSource;
-    }
+    public RenderArmEvent {}
 
     /**
      * {@return the amount of packed (sky and block) light for rendering}
@@ -70,6 +45,6 @@ public final class RenderArmEvent extends MutableEvent implements Cancellable {
      * @see LightTexture
      */
     public int getPackedLight() {
-        return packedLight;
+        return getPackedLight;
     }
 }
