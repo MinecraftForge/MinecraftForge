@@ -127,3 +127,18 @@
              j1 += clienttooltipcomponent2.getHeight(p_283128_) + (j2 == 0 ? 2 : 0);
          }
  
+@@ -1217,6 +_,14 @@
+ 
+     public void submitProfilerChartRenderState(List<ResultField> p_408565_, int p_410147_, int p_406156_, int p_407365_, int p_408180_) {
+         this.guiRenderState.submitPicturesInPictureState(new GuiProfilerChartRenderState(p_408565_, p_410147_, p_406156_, p_407365_, p_408180_, this.scissorStack.peek()));
++    }
++
++    public GuiRenderState getRenderState() {
++        return this.guiRenderState;
++    }
++
++    public GuiGraphics.ScissorStack getScissorStack() {
++        return this.scissorStack;
+     }
+ 
+     @OnlyIn(Dist.CLIENT)

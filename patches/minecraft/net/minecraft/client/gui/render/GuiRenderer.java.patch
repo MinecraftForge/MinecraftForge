@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/render/GuiRenderer.java
++++ b/net/minecraft/client/gui/render/GuiRenderer.java
+@@ -134,6 +_,7 @@
+             builder.put((Class<? extends PictureInPictureRenderState>)pictureinpicturerenderer.getRenderStateClass(), pictureinpicturerenderer);
+         }
+ 
++        net.minecraftforge.client.ForgeHooksClient.onRegisterPictureInPictureRenderers(p_410565_, p_410441_, builder);
+         this.pictureInPictureRenderers = builder.buildOrThrow();
+     }
+ 

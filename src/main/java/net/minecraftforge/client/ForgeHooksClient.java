@@ -26,6 +26,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
+import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
+import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -96,6 +98,7 @@ import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.ClientPauseChangeEvent;
 import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
+import net.minecraftforge.client.event.RegisterPictureInPictureRendererEvent;
 import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -151,6 +154,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -594,6 +598,12 @@ public class ForgeHooksClient {
 
     public static void onRegisterKeyMappings(Options options) {
         ModLoader.get().postEvent(new RegisterKeyMappingsEvent(options));
+    }
+
+    public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,
+                                                           MultiBufferSource.BufferSource bufferSource,
+                                                           ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
+        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(renderers, bufferSource, builder));
     }
 
     @Nullable
