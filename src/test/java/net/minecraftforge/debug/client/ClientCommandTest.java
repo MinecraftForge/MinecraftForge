@@ -1,30 +1,34 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.debug.client;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
+import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.gametest.GameTest;
+import net.minecraftforge.gametest.GameTestNamespace;
 
 /**
  * run /testClickEvent to create a clickable chat message to print player locations.
  * run /playerPos to run the client command to print player location
  */
+@GameTestNamespace("forge")
 @Mod(ClientCommandTest.MODID)
-public class ClientCommandTest
-{
-    private static final boolean ENABLED = false;
-
+public class ClientCommandTest {
     public static final String MODID = "client_command_test";
 
     public ClientCommandTest() {
-        if (ENABLED) {
-            RegisterClientCommandsEvent.BUS.addListener(this::addCommand);
-        }
+        RegisterClientCommandsEvent.BUS.addListener(this::addCommand);
     }
 
     private void addCommand(RegisterClientCommandsEvent event) {
@@ -42,6 +46,14 @@ public class ClientCommandTest
                                     return 1;
                                 }
                         ));
+    }
+
+    @GameTest(name = MODID)
+    public static void testCommand(GameTestHelper helper) {
+        var mc = Minecraft.getInstance();
+        var packetHandler = mc.getConnection();
+        packetHandler.sendUnattendedCommand("playerPos", null);
+        helper.assertTrue(mc.gui.getChat().getRecentChat().peekLast().equals(mc.player.position().toString()), "Client command executed successfully" );
     }
 
     private void testClickEvent() {
