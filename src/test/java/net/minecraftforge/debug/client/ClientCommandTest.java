@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod(ClientCommandTest.MODID)
 public class ClientCommandTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     public static final String MODID = "client_command_test";
 
