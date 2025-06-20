@@ -6,6 +6,7 @@
 package net.minecraftforge.debug.client;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -15,8 +16,13 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
 import net.minecraftforge.gametest.GameTestNamespace;
+import net.minecraftforge.test.BaseTestMod;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * run /testClickEvent to create a clickable chat message to print player locations.
@@ -24,10 +30,11 @@ import net.minecraftforge.gametest.GameTestNamespace;
  */
 @GameTestNamespace("forge")
 @Mod(ClientCommandTest.MODID)
-public class ClientCommandTest {
+public class ClientCommandTest extends BaseTestMod {
     public static final String MODID = "client_command_test";
 
-    public ClientCommandTest() {
+    public ClientCommandTest(FMLJavaModLoadingContext context) {
+        super(context, false, false);
         RegisterClientCommandsEvent.BUS.addListener(this::addCommand);
     }
 
@@ -49,11 +56,18 @@ public class ClientCommandTest {
     }
 
     @GameTest(name = MODID)
-    public static void testCommand(GameTestHelper helper) {
+    public static void testCommand(GameTestHelper helper) throws IllegalAccessException {
         var mc = Minecraft.getInstance();
         var packetHandler = mc.getConnection();
         packetHandler.sendUnattendedCommand("playerPos", null);
-        helper.assertTrue(mc.gui.getChat().getRecentChat().peekLast().equals(mc.player.position().toString()), "Client command executed successfully" );
+        var storeState = mc.gui.getChat().storeState();
+        Field messageField = storeState.getClass().getDeclaredFields()[0];
+        messageField.setAccessible(true);
+        List<GuiMessage> messages = (List<GuiMessage>) messageField.get(storeState);
+        List<String> messageStrings = messages.stream().map(guiMessage -> guiMessage.content().getString()).toList();
+        var success = messageStrings.contains(mc.player.position().toString());
+        helper.assertTrue(success, "Client command executed successfully");
+        helper.succeed();
     }
 
     private void testClickEvent() {
