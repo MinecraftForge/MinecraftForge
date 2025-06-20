@@ -145,7 +145,9 @@ dependencies {
     // Forge 1.21.6+ uses EventBus 7, which shifts most of its runtime validation to compile-time via an annotation processor
     // to improve performance in production environments. This line is required to enable said compile-time validation
     // in your development environment, helping you catch issues early.
-    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0-beta.8'
+    // This relies on more obscure Java compiler APIs that may surface bugs. Update your JDK, report bugs to the OpenJDK
+    // project and/or comment out this line if you encounter issues.
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0-beta.9'
 
     // Example mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime

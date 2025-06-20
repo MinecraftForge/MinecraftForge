@@ -32,8 +32,8 @@ dependencyResolutionManagement {
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.2')
             library('coremods', 'net.minecraftforge:coremods:5.2.6')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.4') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:7.0-beta.8')
-            library('eventbus-validator', 'net.minecraftforge:eventbus-validator:7.0-beta.8')
+            library('eventbus', 'net.minecraftforge:eventbus:7.0-beta.9')
+            library('eventbus-validator', 'net.minecraftforge:eventbus-validator:7.0-beta.9')
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
 
             library('mixin', 'org.spongepowered:mixin:0.8.7')

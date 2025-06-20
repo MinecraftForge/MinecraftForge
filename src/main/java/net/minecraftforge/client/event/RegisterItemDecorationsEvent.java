@@ -11,6 +11,7 @@ import net.minecraftforge.client.IItemDecorator;
 
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,12 +24,10 @@ import java.util.Map;
 /**
  * Allows users to register custom {@linkplain IItemDecorator IItemDecorator} to Items.
  *
- * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
- *
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterItemDecorationsEvent implements IModBusEvent {
+public final class RegisterItemDecorationsEvent implements SelfDestructing, IModBusEvent {
     public static EventBus<RegisterItemDecorationsEvent> getBus(BusGroup modBusGroup) {
         return IModBusEvent.getBus(modBusGroup, RegisterItemDecorationsEvent.class);
     }
