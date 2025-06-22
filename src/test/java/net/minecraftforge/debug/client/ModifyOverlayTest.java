@@ -7,7 +7,7 @@ package net.minecraftforge.debug.client;
 
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.ModifyOverlayLayersEvent;
+import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.extensions.IForgeGameTestHelper;
 import net.minecraftforge.fml.common.Mod;
@@ -135,7 +135,7 @@ public class ModifyOverlayTest extends BaseTestMod {
     }
 
 
-    private void overlayTestListener(ModifyOverlayLayersEvent event) {
+    private void overlayTestListener(AddGuiOverlayLayersEvent event) {
         drawStack = event.getLayeredDraw();
         var layeredDraw = event.getLayeredDraw();
         layeredDraw.addAbove(name("i_won_t_exist"), name("non_existent_target_layer"), notAddedLayer);

@@ -20,12 +20,12 @@ import org.jetbrains.annotations.NotNull;
  * <p> This event is fired on the {@linkplain IModBusEvent mod event bus},
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide logical client}.</p>
  */
-public final class ModifyOverlayLayersEvent extends Event implements IModBusEvent {
+public final class AddGuiOverlayLayersEvent extends Event implements IModBusEvent {
     @NotNull
     private final ForgeLayeredDraw layeredDraw;
 
     @ApiStatus.Internal
-    public ModifyOverlayLayersEvent(ForgeLayeredDraw layeredDraw) {
+    public AddGuiOverlayLayersEvent(ForgeLayeredDraw layeredDraw) {
         this.layeredDraw = layeredDraw;
     }
 

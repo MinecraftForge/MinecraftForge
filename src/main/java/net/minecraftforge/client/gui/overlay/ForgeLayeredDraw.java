@@ -13,7 +13,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
-import net.minecraftforge.client.event.ModifyOverlayLayersEvent;
+import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ import java.util.function.BooleanSupplier;
 /**
  * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
- * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain ModifyOverlayLayersEvent}
+ * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain AddGuiOverlayLayersEvent}
  * After being resolved, it is too late to order against vanilla layers. Do it during the event.
  */
 @FieldsAreNonnullByDefault
