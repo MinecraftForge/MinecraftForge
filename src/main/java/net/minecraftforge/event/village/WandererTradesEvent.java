@@ -48,7 +48,7 @@ public class WandererTradesEvent extends MutableEvent implements InheritableEven
 
         public Pool(List<ItemListing> entries, int rolls) {
             this.rolls = rolls;
-            this.entries = entries;
+            this.entries = new ArrayList<>(entries);
         }
 
         public int getRolls() {
