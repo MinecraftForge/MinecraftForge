@@ -31,10 +31,11 @@ import java.util.function.BooleanSupplier;
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public final class ForgeLayeredDraw extends LayeredDraw {
-    private int count = 0;
+    private static int unknown = 0;
     private final Map<ResourceLocation, Layer> namedLayers = new HashMap<>();
     private final Map<ResourceLocation, Map.Entry<LayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
     private final List<ResourceLocation> order = new LinkedList<>();
+    private final List<ResourceLocation> expectedNames = new ArrayList<>();
     private final ResourceLocation phase;
 
     public static final ResourceLocation  PRE_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
@@ -72,7 +73,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     @ApiStatus.Internal
     public ForgeLayeredDraw(ResourceLocation phase, List<ResourceLocation> layers) {
         this.phase = phase;
-        order.addAll(layers);
+        expectedNames.addAll(layers);
     }
 
     /**
@@ -93,10 +94,8 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     @ApiStatus.Internal
     @Override
     public ForgeLayeredDraw add(LayeredDraw layeredDraw, BooleanSupplier booleanSupplier) {
-        ResourceLocation name = count >= order.size() ? null : order.get(count++);
-        if (name == null) {
-            name = ResourceLocation.fromNamespaceAndPath("unknown_layereddraw_", String.valueOf(count));
-        }
+        ResourceLocation name = getName();
+        order.add(name);
         subLayerStacks.put(name, Map.entry(layeredDraw, booleanSupplier));
         return this;
     }
@@ -124,10 +123,8 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     @ApiStatus.Internal
     @Override
     public LayeredDraw add(Layer layer) {
-        ResourceLocation name = count >= order.size() ? null : order.get(count++);
-        if (name == null) {
-            name = ResourceLocation.fromNamespaceAndPath("unknown_layer_", String.valueOf(count));
-        }
+        ResourceLocation name = getName();
+        order.add(name);
         namedLayers.put(name, layer);
         return this;
     }
@@ -152,10 +149,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @return this
      */
     public ForgeLayeredDraw putAbove(ResourceLocation target, ResourceLocation destination) {
-        var stack = findLayer(destination);
-        if (stack != null) {
-            stack.order.remove(target); // Prevent duplicates.
-            int loc = stack.order.indexOf(destination);
+        var destLayer = findLayer(destination);
+        if (destLayer != null) {
+            destLayer.order.remove(target); // Prevent duplicates.
+            int loc = destLayer.order.indexOf(destination);
             order.add(loc+1, target);
         } else {
             LogUtils.getLogger().warn("{} is not an available entry. Cannot put {} above {}", target, target, destination);
@@ -273,7 +270,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
             ForgeEventFactoryClient.onComputeLayerOrder(this);
         }
         if (namedLayers.size() + subLayerStacks.size() < order.size()) {
-            LogUtils.getLogger().warn("Found {} unbound pre-defined layer names when resolving gui overlay order.", order.size() - namedLayers.size());
+            LogUtils.getLogger().warn("Found {} unbound pre-defined layer names when resolving gui overlay order. This is not an error, but potentially indicates a mod directly modifying Gui instead of using this api.", order.size() - namedLayers.size());
         }
         resolveNested();
         order.clear();
@@ -299,7 +296,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     private void layerNotPresentWarning(ResourceLocation layer) {
-        LogUtils.getLogger().warn("Named layer {} is not present in LayeredDraw {}", layer, phase);
+        LogUtils.getLogger().warn("Could not find layer {}, no layer modifications have been made.", layer);
     }
 
     /**
@@ -318,5 +315,9 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         } else {
             return this;
         }
+    }
+
+    private ResourceLocation getName() {
+        return expectedNames.isEmpty() ? ResourceLocation.fromNamespaceAndPath("unknown", "layer_" + unknown++) : expectedNames.removeFirst();
     }
 }
