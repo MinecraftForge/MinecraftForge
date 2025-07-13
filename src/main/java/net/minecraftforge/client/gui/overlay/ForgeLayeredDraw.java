@@ -26,6 +26,8 @@ import java.util.function.BooleanSupplier;
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
  * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain AddGuiOverlayLayersEvent}
  * After being resolved, it is too late to order against vanilla layers. Do it during the event.
+ * Layer and LayeredDraws are expected to be uniquely named.
+ * Changes will not be made if a Layer/LayeredDraw addition would result in a duplicate.
  */
 @FieldsAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -108,8 +110,12 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @return this
      */
     public ForgeLayeredDraw add(ResourceLocation name, ForgeLayeredDraw layeredDraw, BooleanSupplier supplier) {
-        subLayerStacks.put(name, Map.entry(layeredDraw, supplier));
-        order.add(name);
+        if (findLayer(name) == null) {
+            subLayerStacks.put(name, Map.entry(layeredDraw, supplier));
+            order.add(name);
+        } else {
+            layerAlreadyPresentWarning(name);
+        }
         return this;
     }
 
@@ -137,8 +143,12 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @return this
      */
     public ForgeLayeredDraw add(ResourceLocation name, Layer layer) {
-        namedLayers.put(name, layer);
-        order.add(name);
+        if (findLayer(name) == null) {
+            namedLayers.put(name, layer);
+            order.add(name);
+        } else {
+            layerAlreadyPresentWarning(name);
+        }
         return this;
     }
 
@@ -297,6 +307,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
 
     private void layerNotPresentWarning(ResourceLocation layer) {
         LogUtils.getLogger().warn("Could not find layer {}, no layer modifications have been made.", layer);
+    }
+
+    private void layerAlreadyPresentWarning(ResourceLocation layer) {
+        LogUtils.getLogger().warn("Layer {} was already present and cannot be overwritten. Consider using addConditionTo to cancel the layer and order after it.", layer);
     }
 
     /**
