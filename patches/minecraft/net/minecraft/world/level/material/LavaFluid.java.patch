@@ -40,7 +40,7 @@
     }
  
 +   private boolean isFlammable(LevelReader level, BlockPos pos, Direction face) {
-+      return pos.m_123342_() >= level.m_141937_() && pos.m_123342_() < level.m_151558_() && !level.m_46805_(pos) ? false : level.m_8055_(pos).isFlammable(level, pos, face);
++      return pos.m_123342_() >= level.m_141937_() && pos.m_123342_() < level.m_151558_() && !level.m_46805_(pos) ? false : level.m_8055_(pos).m_278200_() && level.m_8055_(pos).isFlammable(level, pos, face);
 +   }
 +
     @Nullable
