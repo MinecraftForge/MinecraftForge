@@ -1,11 +1,12 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -72,10 +_,10 @@
+@@ -72,10 +_,11 @@
      private static final int MAX_PARTICLES_PER_LAYER = 16384;
      private static final List<ParticleRenderType> RENDER_ORDER = List.of(ParticleRenderType.TERRAIN_SHEET, ParticleRenderType.PARTICLE_SHEET_OPAQUE, ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT);
      protected ClientLevel level;
 -    private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newIdentityHashMap();
 +    private final Map<ParticleRenderType, Queue<Particle>> particles = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(RENDER_ORDER));
++    public final @org.jetbrains.annotations.UnmodifiableView Map<ParticleRenderType, Queue<Particle>> particlesView = java.util.Collections.unmodifiableMap(particles);
      private final Queue<TrackingEmitter> trackingEmitters = Queues.newArrayDeque();
      private final RandomSource random = RandomSource.create();
 -    private final Int2ObjectMap<ParticleProvider<?>> providers = new Int2ObjectOpenHashMap<>();
