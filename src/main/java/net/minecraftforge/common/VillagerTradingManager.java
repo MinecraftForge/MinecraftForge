@@ -25,8 +25,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class VillagerTradingManager {
-    private static final Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> VANILLA_TRADES = new HashMap<>();
-    private static final List<Pair<ItemListing[], Integer>> WANDERER_TRADES = new ArrayList<>();
+    private static final Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> VANILLA_TRADES = HashMap.newHashMap(VillagerTrades.TRADES.size());
+    private static final List<Pair<ItemListing[], Integer>> WANDERER_TRADES = new ArrayList<>(VillagerTrades.WANDERING_TRADER_TRADES);
 
     static {
         VillagerTrades.TRADES.forEach((key, value) -> {
@@ -36,7 +36,6 @@ public class VillagerTradingManager {
             }
             VANILLA_TRADES.put(key, copy);
         });
-        WANDERER_TRADES.addAll(VillagerTrades.WANDERING_TRADER_TRADES);
     }
 
     static void loadTrades(ServerAboutToStartEvent e) {
@@ -46,6 +45,9 @@ public class VillagerTradingManager {
 
     /** Posts the WandererTradesEvent. */
     private static void postWandererEvent() {
+        if (!WandererTradesEvent.BUS.hasListeners())
+            return;
+
         var event = WandererTradesEvent.BUS.fire(new WandererTradesEvent(WANDERER_TRADES));
         VillagerTrades.WANDERING_TRADER_TRADES.clear();
         for (var pool : event.getPools())
@@ -54,6 +56,9 @@ public class VillagerTradingManager {
 
     /** Posts a VillagerTradesEvent for each registered profession. */
     private static void postVillagerEvents() {
+        if (!VillagerTradesEvent.BUS.hasListeners())
+            return;
+
         // TODO [VillagerType][1.21.5] Villager Professions are stored as keys in vanilla now? Re-evaluate this.
         for (VillagerProfession value : ForgeRegistries.VILLAGER_PROFESSIONS) {
             var prof = ForgeRegistries.VILLAGER_PROFESSIONS.getResourceKey(value).orElseThrow();
