@@ -14,7 +14,7 @@
      private float autosaveIndicatorValue;
      private float lastAutosaveIndicatorValue;
 -    private final LayeredDraw layers = new LayeredDraw();
-+    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_PHASE, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_LIST);
++    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.VANILLA_ROOT, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_LIST);
      private float scopeScale;
  
      public Gui(Minecraft p_330021_) {
@@ -23,7 +23,7 @@
          this.subtitleOverlay = new SubtitleOverlay(p_330021_);
          this.resetTitleTimes();
 -        LayeredDraw layereddraw = new LayeredDraw()
-+        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_PHASE, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_LIST)
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_STACK, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_LIST)
              .add(this::renderCameraOverlays)
              .add(this::renderCrosshair)
              .add(this::renderHotbarAndDecorations)
@@ -31,7 +31,7 @@
              .add(this::renderEffects)
              .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
 -        LayeredDraw layereddraw1 = new LayeredDraw()
-+        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_PHASE,net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_LIST)
++        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_STACK,net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_LIST)
              .add(this::renderDemoOverlay)
              .add((p_325315_, p_344521_) -> {
                  if (this.debugOverlay.showDebugScreen()) {

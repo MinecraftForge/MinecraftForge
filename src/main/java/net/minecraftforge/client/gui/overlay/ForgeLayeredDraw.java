@@ -25,9 +25,11 @@ import java.util.function.BooleanSupplier;
  * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
  * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain AddGuiOverlayLayersEvent}
- * After being resolved, it is too late to order against vanilla layers. Do it during the event.
- * Layer and LayeredDraws are expected to be uniquely named.
- * Changes will not be made if a Layer/LayeredDraw addition would result in a duplicate.
+ * Layers must be uniquely named per ForgeLayeredDraw, but may be duplicated across different instances.
+ * Any change which would result in a duplicate will not be applied.
+ * All methods which return a {@linkplain ForgeLayeredDraw} will return its caller's instance.
+ * To select a specific instance, use {@linkplain ForgeLayeredDraw#locateStack(ResourceLocation)} before adding
+ * or use the methods that include a stack identifier.
  */
 @FieldsAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -38,9 +40,9 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     private final Map<ResourceLocation, Map.Entry<LayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
     private final List<ResourceLocation> order = new LinkedList<>();
     private final List<ResourceLocation> expectedNames = new ArrayList<>();
-    private final ResourceLocation phase;
+    private final ResourceLocation name;
 
-    public static final ResourceLocation  PRE_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
+    public static final ResourceLocation  PRE_SLEEP_STACK = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
     public static final ResourceLocation   CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
     public static final ResourceLocation        CROSSHAIR = ResourceLocation.withDefaultNamespace("crosshair");
     public static final ResourceLocation           HOTBAR = ResourceLocation.withDefaultNamespace("hotbar");
@@ -48,7 +50,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     public static final ResourceLocation   POTION_EFFECTS = ResourceLocation.withDefaultNamespace("potion_effects");
     public static final ResourceLocation     BOSS_OVERLAY = ResourceLocation.withDefaultNamespace("boss_overlay");
 
-    public static final ResourceLocation POST_SLEEP_PHASE = ResourceLocation.withDefaultNamespace("post_sleep_phase");
+    public static final ResourceLocation POST_SLEEP_STACK = ResourceLocation.withDefaultNamespace("post_sleep_phase");
     public static final ResourceLocation     DEMO_OVERLAY = ResourceLocation.withDefaultNamespace("demo");
     public static final ResourceLocation    DEBUG_OVERLAY = ResourceLocation.withDefaultNamespace("debug");
     public static final ResourceLocation       SCOREBOARD = ResourceLocation.withDefaultNamespace("scoreboard");
@@ -58,63 +60,61 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     public static final ResourceLocation         TAB_LIST = ResourceLocation.withDefaultNamespace("tab_list");
     public static final ResourceLocation SUBTITLE_OVERLAY = ResourceLocation.withDefaultNamespace("subtitle");
 
-    public static final ResourceLocation    COMBINE_PHASE = ResourceLocation.withDefaultNamespace("combine_phase");
+    public static final ResourceLocation     VANILLA_ROOT = ResourceLocation.withDefaultNamespace("vanilla_root");
     public static final ResourceLocation    SLEEP_OVERLAY = ResourceLocation.withDefaultNamespace("sleep_overlay");
 
 
     public static final ImmutableList<ResourceLocation> PRE_LIST = ImmutableList.of(CAMERA_OVERLAY, CROSSHAIR, HOTBAR, EXPERIENCE, POTION_EFFECTS, BOSS_OVERLAY);
     public static final ImmutableList<ResourceLocation> POST_LIST = ImmutableList.of(DEMO_OVERLAY, DEBUG_OVERLAY, SCOREBOARD, HOTBAR_MESSAGE, TITLE_OVERLAY, CHAT_OVERLAY, TAB_LIST, SUBTITLE_OVERLAY);
-    public static final ImmutableList<ResourceLocation> COMBINE_LIST = ImmutableList.of(PRE_SLEEP_PHASE, SLEEP_OVERLAY, POST_SLEEP_PHASE);
+    public static final ImmutableList<ResourceLocation> COMBINE_LIST = ImmutableList.of(PRE_SLEEP_STACK, SLEEP_OVERLAY, POST_SLEEP_STACK);
 
     /**
      * Creates a stack of pre-named layers for vanilla.
      * Not intended for modder use. Use {@linkplain ForgeLayeredDraw(ResourceLocation, Boolean, String...)} instead.
-     * @param phase Phase indicator
+     * @param name Stack identifier
      * @param layers locations of layers to add
      */
     @ApiStatus.Internal
-    public ForgeLayeredDraw(ResourceLocation phase, List<ResourceLocation> layers) {
-        this.phase = phase;
+    public ForgeLayeredDraw(ResourceLocation name, List<ResourceLocation> layers) {
+        this.name = name;
         expectedNames.addAll(layers);
     }
 
     /**
      * Creates an empty draw list. Add entries with {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)}
-     * @param phase marker for which phase this is.
+     * @param name marker for which phase this is.
      */
-    public ForgeLayeredDraw(ResourceLocation phase) {
-        this.phase = phase;
+    public ForgeLayeredDraw(ResourceLocation name) {
+        this.name = name;
     }
 
     /**
      * Adds a full, pre-named draw stack.
-     * Modders should be using {@linkplain ForgeLayeredDraw#add(ResourceLocation, ForgeLayeredDraw, BooleanSupplier)}
      * @param layeredDraw layer stack to be added.
      * @param booleanSupplier requirement for it to render.
+     * @deprecated Modders should be using {@linkplain ForgeLayeredDraw#add(ResourceLocation, LayeredDraw, BooleanSupplier)}
      * @return this
      */
-    @ApiStatus.Internal
+    @Deprecated
     @Override
     public ForgeLayeredDraw add(LayeredDraw layeredDraw, BooleanSupplier booleanSupplier) {
-        ResourceLocation name = getName();
-        order.add(name);
-        subLayerStacks.put(name, Map.entry(layeredDraw, booleanSupplier));
-        return this;
+        return add(getNextPreName(), layeredDraw, booleanSupplier);
     }
 
     /**
      * Adds a full draw stack with its provided condition.
+     * Use {@linkplain ForgeLayeredDraw#putAbove} and {@linkplain ForgeLayeredDraw#putBelow} for fine location adjustment.
      * @param name RL of the name to identify this stack with.
      * @param layeredDraw the draw stack
      * @param supplier condition for this stack to render
      * @return this
      */
-    public ForgeLayeredDraw add(ResourceLocation name, ForgeLayeredDraw layeredDraw, BooleanSupplier supplier) {
-        if (findLayer(name) == null) {
+    public ForgeLayeredDraw add(ResourceLocation name, LayeredDraw layeredDraw, BooleanSupplier supplier) {
+        if (isNameAvailable(name)) {
             subLayerStacks.put(name, Map.entry(layeredDraw, supplier));
             order.add(name);
         } else {
-            layerAlreadyPresentWarning(name);
+            nameTakenWarning(name);
         }
         return this;
     }
@@ -122,16 +122,14 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Adds a layer with an already known name provided by {@linkplain ForgeLayeredDraw(ResourceLocation, List)}
      * The layer will be rendered last (on top) of already added layers.
-     * Use {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)} for adding individual layers.
      * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @deprecated Use {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)} for adding individual layers.
      * @return this
      */
-    @ApiStatus.Internal
+    @Deprecated
     @Override
     public LayeredDraw add(Layer layer) {
-        ResourceLocation name = getName();
-        order.add(name);
-        namedLayers.put(name, layer);
+        add(getNextPreName(), layer);
         return this;
     }
 
@@ -142,49 +140,75 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
      * @return this
      */
+    public ForgeLayeredDraw add(ResourceLocation targetStack, ResourceLocation name, Layer layer) {
+        locateStack(targetStack).ifPresentOrElse((stack) -> stack.add(name, layer), () -> stackNotPresentWarning(targetStack));
+        return this;
+    }
+
+    /**
+     * Helper method, assumes the intended draw stack instance is the caller.
+     * Use any of the non-deprecated add methods if you want a specific instance,
+     * or call {@linkplain ForgeLayeredDraw#locateStack(ResourceLocation)} to get a reference to an instance.
+     * @param name RL of layer to add
+     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @return this
+     */
     public ForgeLayeredDraw add(ResourceLocation name, Layer layer) {
-        if (findLayer(name) == null) {
+        if (isNameAvailable(name)) {
             namedLayers.put(name, layer);
             order.add(name);
         } else {
-            layerAlreadyPresentWarning(name);
+            nameTakenWarning(name);
         }
         return this;
     }
 
     /**
      * Use to specify where your custom draw stack should go. Can also be used to re-order layers.
+     * Both target and destination must be in the same draw stack.
+     * @param expectedStack Which ForgeLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain ForgeLayeredDraw#move(ResourceLocation, ResourceLocation, LayerOffset)}
      * @param target layer name to move
      * @param destination layer name to order against
      * @return this
      */
-    public ForgeLayeredDraw putAbove(ResourceLocation target, ResourceLocation destination) {
-        var destLayer = findLayer(destination);
-        if (destLayer != null) {
-            destLayer.order.remove(target); // Prevent duplicates.
-            int loc = destLayer.order.indexOf(destination);
-            order.add(loc+1, target);
-        } else {
-            LogUtils.getLogger().warn("{} is not an available entry. Cannot put {} above {}", target, target, destination);
-        }
+    public ForgeLayeredDraw putAbove(ResourceLocation expectedStack, ResourceLocation target, ResourceLocation destination) {
+        locateStack(expectedStack).ifPresentOrElse((stack) -> stack.move(target, destination, LayerOffset.ABOVE), () -> stackNotPresentWarning(expectedStack));
         return this;
     }
 
     /**
      * Use to specify where your custom draw stack should go. Can also be used to re-order layers.
+     * Both target and destination must be in the same draw stack.
+     * @param expectedStack Which ForgeLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain ForgeLayeredDraw#move(ResourceLocation, ResourceLocation, LayerOffset)}
      * @param target layer name to move
      * @param destination layer name to order against
      * @return this
      */
-    public ForgeLayeredDraw putBelow(ResourceLocation target, ResourceLocation destination) {
-        var stack = findLayer(target);
-        if (stack != null) {
-            stack.order.remove(target); // Prevent duplicates.
-            int loc = stack.order.indexOf(destination);
-            order.add(loc, target);
-        } else {
-            LogUtils.getLogger().warn("{} is not an available entry. Cannot put {} below {}", target, target, destination);
+    public ForgeLayeredDraw putBelow(ResourceLocation expectedStack, ResourceLocation target, ResourceLocation destination) {
+        locateStack(expectedStack).ifPresentOrElse((stack) -> stack.move(target, destination, LayerOffset.BELOW), () -> stackNotPresentWarning(expectedStack));
+        return this;
+    }
+
+    /**
+     * Helper method, assumes the intended draw stack instance is the caller.
+     * Moves pre-existing names around within the order.
+     * @param target Layer being moved.
+     * @param destination Layer being ordered against
+     * @param offset Self-explanatory
+     * @return this
+     */
+    public ForgeLayeredDraw move(ResourceLocation target, ResourceLocation destination, LayerOffset offset) {
+        if (!order.contains(target)) {
+            layerNotPresentWarning(target);
+            return this;
         }
+        int loc = order.indexOf(destination);
+        if (loc == -1) {
+            layerNotPresentWarning(destination);
+            return this;
+        }
+        order.remove(target);
+        order.add(loc + (offset == LayerOffset.ABOVE ? 1 : 0), target);
         return this;
     }
 
@@ -192,81 +216,113 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Adds an overlay layer to be rendered above the other provided layer.
      * To render "above" another layer means thisLayer will be rendered after otherLayer
      * If the current stack does not contain otherLayer, no changes will be made.
-     * @param thisLayer name of the layer to be added
+     * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
      * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addAbove(ResourceLocation thisLayer, ResourceLocation otherLayer, Layer layer) {
-        ForgeLayeredDraw stack = findLayer(otherLayer);
-        if (stack != null) {
-            stack.namedLayers.put(thisLayer, layer);
-            stack.order.add(stack.order.indexOf(otherLayer)+1, thisLayer);
-        } else {
-            layerNotPresentWarning(otherLayer);
-        }
+    public ForgeLayeredDraw addAbove(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+        locateStack(expectedStack).ifPresentOrElse((stack) -> {
+            if (!stack.isNameAvailable(otherLayer)) {
+                stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.ABOVE);
+            } else {
+                layerNotPresentWarning(otherLayer);
+            }
+        }, () -> stackNotPresentWarning(expectedStack));
         return this;
+    }
+
+    /**
+     * Helper method, assumes intended draw stack is the caller
+     */
+    public ForgeLayeredDraw addAbove(ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+        return addAbove(name, newLayer, otherLayer, layer);
     }
 
     /**
      * Adds an overlay layer to be rendered below the other provided layer.
      * To render "below" another layer means thisLayer will be rendered before otherLayer
      * If the current stack does not contain otherLayer, no changes will be made.
-     * @param thisLayer name of the layer to be added
+     * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
      * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addBelow(ResourceLocation thisLayer, ResourceLocation otherLayer, Layer layer) {
-        ForgeLayeredDraw stack = findLayer(otherLayer);
-        if (stack != null) {
-            stack.namedLayers.put(thisLayer, layer);
-            stack.order.add(stack.order.indexOf(otherLayer), thisLayer);
-        } else {
-            layerNotPresentWarning(otherLayer);
-        }
+    public ForgeLayeredDraw addBelow(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+        locateStack(expectedStack).ifPresentOrElse((stack) -> {
+            if (!stack.isNameAvailable(otherLayer)) {
+                stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.BELOW);
+            } else {
+                layerNotPresentWarning(otherLayer);
+            }
+        }, () -> stackNotPresentWarning(expectedStack));
         return this;
+    }
+
+    /**
+     * Helper method, assumes intended draw stack is the caller
+     */
+    public ForgeLayeredDraw addBelow(ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+        return addBelow(name, newLayer, otherLayer, layer);
     }
 
     /**
      * Add a new layer that will only be rendered when the condition is met. The layer will be added
      * at the end of the list, which means it will render last (on top) of already added layers
      * @param name name of the layer to be added
-     * @param layer render code of the layer to be added.
+     * @param layer render code of layer being added
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addWithCondition(ResourceLocation name, Layer layer, BooleanSupplier condition) {
-        return add(name, layer).addConditionTo(name, condition);
-    }
-
-    /**
-     * Add a condition to a pre-existing layer, its render order is not changed.
-     * If the target is not present, no changes are made.
-     * @param target name of layer to add a condition to
-     * @param condition supplier for the condition
-     * @return this
-     */
-    public ForgeLayeredDraw addConditionTo(ResourceLocation target, BooleanSupplier condition) {
-        var stack = findLayer(target);
-        if (stack == null) {
-            layerNotPresentWarning(target);
-        } else {
-            stack.namedLayers.computeIfPresent(target,
-                    (name, layer) -> (guiGraphics, deltaTracker) -> {
-                        if (condition.getAsBoolean()) {
-                            layer.render(guiGraphics, deltaTracker);
-                        }
-                    });
-        }
+    public ForgeLayeredDraw addWithCondition(ResourceLocation targetStack, ResourceLocation name, Layer layer, BooleanSupplier condition) {
+        locateStack(targetStack).ifPresentOrElse((stack) -> stack.addWithCondition(name, layer, condition), () -> stackNotPresentWarning(targetStack));
         return this;
     }
 
     /**
-     * @return phase name of this ForgeLayeredDraw instance
+     * Assumes the correct stack is the caller of this method, otherwise functions the same as other method.
+     * @param name name of layer to be added
+     * @param layer render code of layer being added
+     * @param condition supplier for the condition
+     * @return this
      */
-    public ResourceLocation getPhase() {
-        return phase;
+    public ForgeLayeredDraw addWithCondition(ResourceLocation name, Layer layer, BooleanSupplier condition) {
+        add(name, layer).addConditionTo(name, condition);
+        return this;
+    }
+
+    /**
+     * Add a condition to a pre-existing layer in the specified stack, its render order is not changed.
+     * If the target is not present, no changes are made.
+     * @param targetStack name of the draw stack the target is expected to be in
+     * @param targetLayer name of layer to add a condition to
+     * @param condition supplier for the condition
+     * @return this
+     */
+    public ForgeLayeredDraw addConditionTo(ResourceLocation targetStack, ResourceLocation targetLayer, BooleanSupplier condition) {
+        locateStack(targetStack).ifPresentOrElse((stack) -> stack.addConditionTo(targetLayer, condition), () -> stackNotPresentWarning(targetStack));
+        return this;
+    }
+
+    /**
+     * Assumes the correct stack is the caller of this method.
+     * Use {@linkplain ForgeLayeredDraw#addConditionTo(ResourceLocation, ResourceLocation, BooleanSupplier)}
+     * if you do not have a reference to the draw stack you want.
+     * @param targetLayer name of layer to add condition to
+     * @param condition supplier for the condition
+     * @return this
+     */
+    public ForgeLayeredDraw addConditionTo(ResourceLocation targetLayer, BooleanSupplier condition) {
+        var result = namedLayers.computeIfPresent(targetLayer,
+                (name, layer) -> (guiGraphics, deltaTracker) -> {
+                    if (condition.getAsBoolean()) {
+                        layer.render(guiGraphics, deltaTracker);
+                    }
+                });
+        if (result == null) {
+            layerNotPresentWarning(targetLayer);
+        }
+        return this;
     }
 
     /**
@@ -288,14 +344,17 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
-     * Resolve the layer order per stack, recursively per each sub stack.
-     * Parent layer stack {@linkplain ForgeLayeredDraw#COMBINE_PHASE} holds the results.
+     * Resolve the layer order per stack, recursively as needed.
+     * Parent layer stack {@linkplain ForgeLayeredDraw#VANILLA_ROOT} holds the results.
      */
     private void resolveNested() {
         for (ResourceLocation layerName : order) {
             if (subLayerStacks.containsKey(layerName)) {
                 var entry = subLayerStacks.get(layerName);
-                ((ForgeLayeredDraw) entry.getKey()).resolveNested();
+                if (entry.getKey() instanceof ForgeLayeredDraw resolveable) {
+                    resolveable.resolveNested();
+                    // Although unlikely, a LayeredDraw could be in the list, and we can't call resolveNested on one.
+                }
                 super.add((gg, tr) -> {
                     if (entry.getValue().getAsBoolean()) entry.getKey().render(gg,tr);
                 });
@@ -305,33 +364,63 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         }
     }
 
-    private void layerNotPresentWarning(ResourceLocation layer) {
-        LogUtils.getLogger().warn("Could not find layer {}, no layer modifications have been made.", layer);
-    }
-
-    private void layerAlreadyPresentWarning(ResourceLocation layer) {
-        LogUtils.getLogger().warn("Layer {} was already present and cannot be overwritten. Consider using addConditionTo to cancel the layer and order after it.", layer);
-    }
-
     /**
-     * Locate which stack the target is in.
-     * @param target targetted layer
-     * @return the stack which contains the layer, or null if not present.
+     * Attempt to locate a particular draw stack. Search starts at caller's instance. For global search call on VANILLA_ROOT
+     * i.e. {@linkplain net.minecraftforge.client.event.AddGuiOverlayLayersEvent#getLayeredDraw()}
+     * Entries which don't extend ForgeLayeredDraw may not have the proper fields to support internal list adjustment, so they are skipped.
+     * @param targetStack Name of ForgeLayeredDraw to find
+     * @return Filled Optional if target exists, empty otherwise.
      */
-    @Nullable
-    private ForgeLayeredDraw findLayer(ResourceLocation target) {
-        if (!namedLayers.containsKey(target) && !subLayerStacks.containsKey(target)) {
+    public Optional<ForgeLayeredDraw> locateStack(ResourceLocation targetStack) {
+        if (!name.equals(targetStack)) {
             for (Map.Entry<LayeredDraw, BooleanSupplier> value : subLayerStacks.values()) {
-                var res = ((ForgeLayeredDraw) value.getKey()).findLayer(target);
-                if (res != null) return res;
+                if (value.getKey() instanceof ForgeLayeredDraw searchable) {
+                    var res = searchable.locateStack(targetStack);
+                    if(res.isPresent()) return res;
+                }
             }
-            return null;
+            return Optional.empty();
         } else {
-            return this;
+            return Optional.of(this);
         }
     }
 
-    private ResourceLocation getName() {
+    @Nullable
+    public LayeredDraw getChild(ResourceLocation childName) {
+        return locateStack(childName).orElse(null);
+    }
+
+    @Nullable
+    public Layer getLayer(ResourceLocation layerName) {
+        return namedLayers.get(layerName);
+    }
+
+    private ResourceLocation getNextPreName() {
         return expectedNames.isEmpty() ? ResourceLocation.fromNamespaceAndPath("unknown", "layer_" + unknown++) : expectedNames.removeFirst();
+    }
+
+    public ResourceLocation getName() {
+        return name;
+    }
+
+    private void stackNotPresentWarning(ResourceLocation stackName) {
+        LogUtils.getLogger().warn("Target stack {} was not present anywhere. Is your ResourceLocation correct?", stackName);
+    }
+
+    private void layerNotPresentWarning(ResourceLocation layer) {
+        LogUtils.getLogger().warn("Expected layer {} was not found in stack {}, no layer modifications have been made.", layer, name);
+    }
+
+    private void nameTakenWarning(ResourceLocation layer) {
+        LogUtils.getLogger().warn("Name {} was already present in {} and cannot be re-used.", layer, name);
+    }
+
+    private boolean isNameAvailable(ResourceLocation name) {
+        return !namedLayers.containsKey(name) && !subLayerStacks.containsKey(name);
+    }
+
+    public enum LayerOffset {
+        ABOVE,
+        BELOW
     }
 }

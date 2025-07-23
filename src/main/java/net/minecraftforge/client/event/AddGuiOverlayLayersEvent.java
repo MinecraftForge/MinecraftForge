@@ -12,7 +12,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when the {@linkplain ForgeLayeredDraw#COMBINE_PHASE}'s order is resolved during{@link ForgeLayeredDraw#resolveLayers().
+ * Fired when the {@linkplain ForgeLayeredDraw#VANILLA_ROOT}'s order is resolved during{@link ForgeLayeredDraw#resolveLayers().
  * This can be used to add additional or move gui layers and entire layer stacks as needed.
  *
  * <p> This event is not {@linkplain net.minecraftforge.eventbus.api.Cancelable cancellable} and does not {@linkplain net.minecraftforge.eventbus.api.Event.HasResult have a result}</p>

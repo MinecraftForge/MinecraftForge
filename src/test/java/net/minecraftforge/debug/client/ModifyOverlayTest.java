@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -18,6 +19,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import static net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.*;
 
@@ -59,7 +61,7 @@ public class ModifyOverlayTest extends BaseTestMod {
         } catch (Exception e) {
             helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
         }
-        helper.assertFalse(internalLayersList.remove(notAddedLayer), "Found our layer when we shouldn't have. Not good!");
+        helper.assertFalse(internalLayersList.contains(notAddedLayer), "Found our layer when we shouldn't have. Not good!");
         helper.succeed();
     }
 
@@ -83,13 +85,14 @@ public class ModifyOverlayTest extends BaseTestMod {
         Map<ResourceLocation, Layer> check = null;
         try {
             Class<?> cls = drawStack.getClass();
-            var field = cls.getDeclaredField("namedLayers");
-            var method = cls.getDeclaredMethod("findLayer", ResourceLocation.class);
-            method.setAccessible(true);
+            var field = cls.getDeclaredField("subLayerStacks");
+            var field1 = cls.getDeclaredField("namedLayers");
             field.setAccessible(true);
-            var selection = (ForgeLayeredDraw) method.invoke(drawStack, POTION_EFFECTS);
-            check = (Map<ResourceLocation, Layer>) field.get(selection);
-            internalLayersList = getInternalLayersList(selection);
+            field1.setAccessible(true);
+            Map<ResourceLocation, Map.Entry<LayeredDraw, BooleanSupplier>> VROOT = ((Map<ResourceLocation, Map.Entry<LayeredDraw, BooleanSupplier>>) field.get(drawStack));
+            var PSS = ((ForgeLayeredDraw) VROOT.get(PRE_SLEEP_STACK).getKey());
+            check = ((Map<ResourceLocation, Layer>) field1.get(PSS));
+            internalLayersList = getInternalLayersList(PSS);
         } catch (Exception e) {
             helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
         }
@@ -104,26 +107,8 @@ public class ModifyOverlayTest extends BaseTestMod {
     }
 
     @GameTest
-    public static void full_stack_insertion(GameTestHelper helper) {
-        // Test that both our new stacks are added into the COMBINE_PHASE.
-        boolean is_present = false;
-        try {
-            Class<?> cls = drawStack.getClass();
-            var field = cls.getDeclaredField("namedLayers");
-            var method = cls.getDeclaredMethod("findLayer", ResourceLocation.class);
-            method.setAccessible(true);
-            field.setAccessible(true);
-            var selection = (ForgeLayeredDraw) method.invoke(drawStack, myStackName);
-            is_present = selection != null; // won't be null if it's present.
-        } catch (Exception e) {
-            helper.fail("Failed whilst reflecting into LayeredDraw.");
-        }
-        helper.assertTrue(is_present, "Our new stack wasn't added");
-        helper.succeed();
-    }
-
-    @GameTest
     public static void full_stack_condition(GameTestHelper helper) {
+        // Test conditional rendering & whether a full stack can be added in the first place.
         helper.assertFalse(detectConditionStackFlag.getBool(), "Conditional rendering ran when it shouldn't have.");
         enableConditionStackFlag.set(true);
         helper.runAfterDelay(5, () -> {
@@ -138,13 +123,14 @@ public class ModifyOverlayTest extends BaseTestMod {
     private void overlayTestListener(AddGuiOverlayLayersEvent event) {
         drawStack = event.getLayeredDraw();
         var layeredDraw = event.getLayeredDraw();
-        layeredDraw.addAbove(name("i_won_t_exist"), name("non_existent_target_layer"), notAddedLayer);
+        layeredDraw.addAbove(VANILLA_ROOT, name("i_won_t_exist"), name("non_existent_target_layer"), notAddedLayer);
+        var pEffects = layeredDraw.locateStack(PRE_SLEEP_STACK).get();
         // Test if layers may be ordered against other layers.
         // Layers have to be present to be ordered against, of course, but we tested for that already above.
-        layeredDraw.addAbove(layerBName, POTION_EFFECTS, layerB);
-        layeredDraw.addAbove(layerCName, layerBName, layerC);
-        layeredDraw.addBelow(layerAName, layerBName, layerA);
-        layeredDraw.addConditionTo(BOSS_OVERLAY, () -> {
+        pEffects.addAbove(layerBName, POTION_EFFECTS, layerB);
+        pEffects.addAbove(layerCName, layerBName, layerC);
+        layeredDraw.addBelow(PRE_SLEEP_STACK, layerAName, layerBName, layerA);
+        layeredDraw.addConditionTo(PRE_SLEEP_STACK, BOSS_OVERLAY, () -> {
             if (enableConditionFlag.getBool()) {
                 detectConditionFlag.set(true);
                 return true;

@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:function",
-  "environment": "minecraft:default",
-  "function": "forge:modify_overlay_test/full_stack_insertion",
-  "max_ticks": 100,
-  "structure": "forge:empty3x3x3"
-}
