@@ -9,20 +9,19 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.listener.EventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WorldWorkerManager {
-    private static final List<IWorker> workers = new ArrayList<>();
+    private static final ArrayList<IWorker> workers = new ArrayList<>();
     private static long startTime = -1;
     private static int index = 0;
     private static EventListener tickStartListener;
     private static EventListener tickEndListener;
 
-    public static void startTick() {
+    private static void startTick() {
         startTime = System.currentTimeMillis();
     }
 
-    public static void endTick() {
+    private static void endTick() {
         index = 0;
         IWorker task = getNext();
         if (task == null) {
@@ -47,9 +46,6 @@ public class WorldWorkerManager {
         }
     }
 
-    /**
-     * @deprecated Use {@link #startTick()} or {@link #endTick()} instead.
-     */
     @Deprecated(forRemoval = true, since = "1.21.8")
     public static void tick(boolean start) {
         if (start) startTick();
