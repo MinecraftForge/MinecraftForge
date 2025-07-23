@@ -25,8 +25,10 @@ public class WorldWorkerManager {
     public static void endTick() {
         index = 0;
         IWorker task = getNext();
-        if (task == null)
+        if (task == null) {
+            clear();
             return;
+        }
 
         long time = 50 - (System.currentTimeMillis() - startTime);
         if (time < 10)
