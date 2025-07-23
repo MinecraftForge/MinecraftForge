@@ -7,6 +7,7 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,21 +22,38 @@ import net.minecraft.core.NonNullList;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class VillagerTradingManager {
-    private static final Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> VANILLA_TRADES = HashMap.newHashMap(VillagerTrades.TRADES.size());
-    private static final List<Pair<ItemListing[], Integer>> WANDERER_TRADES = new ArrayList<>(VillagerTrades.WANDERING_TRADER_TRADES);
+    private static final Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> VANILLA_TRADES;
+    private static final List<Pair<ItemListing[], Integer>> WANDERER_TRADES;
 
     static {
-        VillagerTrades.TRADES.forEach((key, value) -> {
-            Int2ObjectMap<ItemListing[]> copy = new Int2ObjectOpenHashMap<>();
-            for (var ent : value.int2ObjectEntrySet()) {
-                copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length));
-            }
-            VANILLA_TRADES.put(key, copy);
-        });
+        // If client, the ServerAboutToStartEvent will be fired each time a world is loaded, whereas if server, we know
+        // it will only be fired once at server start.
+        var isClient = FMLEnvironment.dist.isClient();
+
+        // Only populate the collections of the static final fields if there might be listeners for the events
+        if (isClient || VillagerTradesEvent.BUS.hasListeners()) {
+            VANILLA_TRADES = HashMap.newHashMap(VillagerTrades.TRADES.size());
+            VillagerTrades.TRADES.forEach((key, value) -> {
+                Int2ObjectMap<ItemListing[]> copy = new Int2ObjectOpenHashMap<>();
+                for (var ent : value.int2ObjectEntrySet()) {
+                    copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length));
+                }
+                VANILLA_TRADES.put(key, copy);
+            });
+        } else {
+            VANILLA_TRADES = Collections.emptyMap();
+        }
+
+        if (isClient || WandererTradesEvent.BUS.hasListeners()) {
+            WANDERER_TRADES = new ArrayList<>(VillagerTrades.WANDERING_TRADER_TRADES);
+        } else {
+            WANDERER_TRADES = Collections.emptyList();
+        }
     }
 
     static void loadTrades(ServerAboutToStartEvent e) {
