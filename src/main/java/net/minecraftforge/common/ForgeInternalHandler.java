@@ -19,7 +19,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.listener.Priority;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -57,16 +56,6 @@ public final class ForgeInternalHandler {
             }
         }
         return false;
-    }
-
-    @SubscribeEvent
-    static void onServerTick(ServerTickEvent.Pre event) {
-        WorldWorkerManager.tick(true);
-    }
-
-    @SubscribeEvent
-    static void onServerTick(ServerTickEvent.Post event) {
-        WorldWorkerManager.tick(false);
     }
 
 //    @SubscribeEvent
