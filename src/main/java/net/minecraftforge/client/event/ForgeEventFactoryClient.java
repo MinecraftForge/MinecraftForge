@@ -8,6 +8,8 @@ package net.minecraftforge.client.event;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -278,5 +280,9 @@ public final class ForgeEventFactoryClient {
 
     public static ComputeFovModifierEvent fireFovModifierEvent(Player entity, float modifier, float scale) {
         return fire(new ComputeFovModifierEvent(entity, modifier, scale));
+    }
+
+    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+        fireModBus(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }
