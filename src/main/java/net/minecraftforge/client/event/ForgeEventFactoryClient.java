@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -305,7 +306,11 @@ public final class ForgeEventFactoryClient {
         // This is on the mod bus because it happens during the initial texture reload, which is while the Forge bus is shut down.
         return fireModBus(new ModelEvent.RegisterModelStateDefinitions());
     }
-    
+
+    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+        fireModBus(new AddGuiOverlayLayersEvent(layeredDraw));
+    }
+
     public static void onLastFramePassAddition(FrameGraphBuilder builder, LevelTargetBundle bundle) {
     	post(new AddFramePassEvent(builder, bundle));
     }
