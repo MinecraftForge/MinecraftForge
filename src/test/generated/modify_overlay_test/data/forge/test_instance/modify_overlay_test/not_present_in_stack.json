@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:modify_overlay_test/not_present_in_stack",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

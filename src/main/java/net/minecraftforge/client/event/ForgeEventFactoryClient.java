@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.TickEvent;
@@ -282,5 +283,9 @@ public final class ForgeEventFactoryClient {
     public static ModelEvent.RegisterModelStateDefinitions onRegisterModeStateDefinitions() {
         // This is on the mod bus because it happens during the initial texture reload, which is while the Forge bus is shut down.
         return fireModBus(new ModelEvent.RegisterModelStateDefinitions());
+    }
+
+    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+        fireModBus(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }

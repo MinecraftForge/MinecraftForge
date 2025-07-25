@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -151,7 +_,7 @@
+@@ -148,7 +_,7 @@
      public float vignetteBrightness = 1.0F;
      private int toolHighlightTimer;
      private ItemStack lastToolHighlight = ItemStack.EMPTY;
@@ -9,16 +9,50 @@
      private final SubtitleOverlay subtitleOverlay;
      private final SpectatorGui spectatorGui;
      private final PlayerTabOverlay tabList;
-@@ -377,7 +_,7 @@
+@@ -168,7 +_,7 @@
+     private int lastBubblePopSoundPlayed;
+     private float autosaveIndicatorValue;
+     private float lastAutosaveIndicatorValue;
+-    private final LayeredDraw layers = new LayeredDraw();
++    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.VANILLA_ROOT, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_LIST);
+     private float scopeScale;
+ 
+     public Gui(Minecraft p_330021_) {
+@@ -180,14 +_,14 @@
+         this.bossOverlay = new BossHealthOverlay(p_330021_);
+         this.subtitleOverlay = new SubtitleOverlay(p_330021_);
+         this.resetTitleTimes();
+-        LayeredDraw layereddraw = new LayeredDraw()
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_STACK, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_LIST)
+             .add(this::renderCameraOverlays)
+             .add(this::renderCrosshair)
+             .add(this::renderHotbarAndDecorations)
+             .add(this::renderExperienceLevel)
+             .add(this::renderEffects)
+             .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
+-        LayeredDraw layereddraw1 = new LayeredDraw()
++        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_STACK,net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_LIST)
+             .add(this::renderDemoOverlay)
+             .add((p_325315_, p_344521_) -> {
+                 if (this.debugOverlay.showDebugScreen()) {
+@@ -204,6 +_,7 @@
+             .add(layereddraw, () -> !p_330021_.options.hideGui)
+             .add(this::renderSleepOverlay)
+             .add(layereddraw1, () -> !p_330021_.options.hideGui);
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).resolveLayers();
+     }
+ 
+     public void resetTitleTimes() {
+@@ -347,7 +_,7 @@
+             Window window = this.minecraft.getWindow();
              int i = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
              int j = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
-             p_329202_.nextStratum();
 -            this.chat.render(p_329202_, this.tickCount, i, j, false);
 +            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(p_329202_, this.chat, window, i, j, this.tickCount);
          }
      }
  
-@@ -472,6 +_,8 @@
+@@ -445,6 +_,8 @@
  
              for (MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
                  Holder<MobEffect> holder = mobeffectinstance.getEffect();
@@ -27,15 +61,15 @@
                  if (mobeffectinstance.showIcon()) {
                      int k = p_282812_.guiWidth();
                      int l = 1;
-@@ -502,6 +_,7 @@
+@@ -475,6 +_,7 @@
                          }
                      }
  
 +                    if (renderer.renderGuiIcon(mobeffectinstance, this, p_282812_, k, l, 0, f)) continue;
-                     p_282812_.blitSprite(RenderPipelines.GUI_TEXTURED, getMobEffectSprite(holder), k + 3, l + 3, 18, 18, ARGB.white(f));
-                 }
-             }
-@@ -598,6 +_,10 @@
+                     TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
+                     int l1 = k;
+                     int k1 = l;
+@@ -625,6 +_,10 @@
      }
  
      private void renderSelectedItemName(GuiGraphics p_283501_) {
@@ -46,7 +80,7 @@
          Profiler.get().push("selectedItemName");
          if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
              MutableComponent mutablecomponent = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
-@@ -605,9 +_,13 @@
+@@ -632,9 +_,13 @@
                  mutablecomponent.withStyle(ChatFormatting.ITALIC);
              }
  
@@ -62,7 +96,7 @@
              if (!this.minecraft.gameMode.canHurtPlayer()) {
                  k += 14;
              }
-@@ -618,7 +_,7 @@
+@@ -645,7 +_,7 @@
              }
  
              if (l > 0) {
@@ -71,7 +105,7 @@
              }
          }
  
-@@ -1148,7 +_,7 @@
+@@ -1154,7 +_,7 @@
              ItemStack itemstack = this.minecraft.player.getInventory().getSelectedItem();
              if (itemstack.isEmpty()) {
                  this.toolHighlightTimer = 0;
