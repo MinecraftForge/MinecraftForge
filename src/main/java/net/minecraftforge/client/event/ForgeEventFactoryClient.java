@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.ModLoader;
@@ -253,5 +254,9 @@ public final class ForgeEventFactoryClient {
 
     public static void onRenderScreenBackground(Screen screen, GuiGraphics guiGraphics) {
         fire(new ScreenEvent.BackgroundRendered(screen, guiGraphics));
+    }
+
+    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+        postModBus(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }

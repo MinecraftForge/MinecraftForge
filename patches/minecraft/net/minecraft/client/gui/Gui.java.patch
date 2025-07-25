@@ -9,6 +9,50 @@
      private final SubtitleOverlay subtitleOverlay;
      private final SpectatorGui spectatorGui;
      private final PlayerTabOverlay tabList;
+@@ -150,7 +_,7 @@
+     private long healthBlinkTime;
+     private float autosaveIndicatorValue;
+     private float lastAutosaveIndicatorValue;
+-    private final LayeredDraw layers = new LayeredDraw();
++    private final LayeredDraw layers = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.VANILLA_ROOT, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.COMBINE_LIST);
+     private float scopeScale;
+ 
+     public Gui(Minecraft p_330021_) {
+@@ -162,16 +_,16 @@
+         this.bossOverlay = new BossHealthOverlay(p_330021_);
+         this.subtitleOverlay = new SubtitleOverlay(p_330021_);
+         this.resetTitleTimes();
+-        LayeredDraw layereddraw = new LayeredDraw()
++        LayeredDraw layereddraw = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_SLEEP_STACK, net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.PRE_LIST)
+             .add(this::renderCameraOverlays)
+             .add(this::renderCrosshair)
+             .add(this::renderHotbarAndDecorations)
+             .add(this::renderExperienceLevel)
+             .add(this::renderEffects)
+-            .add((p_325313_, p_325314_) -> this.bossOverlay.render(p_325313_));
+-        LayeredDraw layereddraw1 = new LayeredDraw()
++            .add((p_325313_, p_342678_) -> this.bossOverlay.render(p_325313_));
++        LayeredDraw layereddraw1 = new net.minecraftforge.client.gui.overlay.ForgeLayeredDraw(net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_SLEEP_STACK,net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.POST_LIST)
+             .add(this::renderDemoOverlay)
+-            .add((p_325315_, p_325316_) -> {
++            .add((p_325315_, p_344521_) -> {
+                 if (this.debugOverlay.showDebugScreen()) {
+                     this.debugOverlay.render(p_325315_);
+                 }
+@@ -181,11 +_,12 @@
+             .add(this::renderTitle)
+             .add(this::renderChat)
+             .add(this::renderTabList)
+-            .add((p_325317_, p_325318_) -> this.subtitleOverlay.render(p_325317_));
++            .add((p_325317_, p_342874_) -> this.subtitleOverlay.render(p_325317_));
+         this.layers
+             .add(layereddraw, () -> !p_330021_.options.hideGui)
+             .add(this::renderSleepOverlay)
+             .add(layereddraw1, () -> !p_330021_.options.hideGui);
++        ((net.minecraftforge.client.gui.overlay.ForgeLayeredDraw) layers).resolveLayers();
+     }
+ 
+     public void resetTitleTimes() {
 @@ -320,7 +_,7 @@
              Window window = this.minecraft.getWindow();
              int i = Mth.floor(this.minecraft.mouseHandler.xpos() * (double)window.getGuiScaledWidth() / (double)window.getScreenWidth());
