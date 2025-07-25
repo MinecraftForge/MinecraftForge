@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -262,5 +263,9 @@ public final class ForgeEventFactoryClient {
 
     public static void onRenderTickEnd(DeltaTracker timer) {
         post(new TickEvent.RenderTickEvent.Post(timer));
+    }
+
+    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+        postModBus(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }
