@@ -283,6 +283,6 @@ public final class ForgeEventFactoryClient {
     }
 
     public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
-        fireModBus(new AddGuiOverlayLayersEvent(layeredDraw));
+        postModBus(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }
