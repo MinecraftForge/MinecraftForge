@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/SharedSuggestionProvider.java
++++ b/net/minecraft/commands/SharedSuggestionProvider.java
+@@ -87,7 +_,7 @@
+                     p_82948_.accept(t);
+                 }
+             } else if (matchesSubStr(p_82946_, resourcelocation.getNamespace())
+-                || resourcelocation.getNamespace().equals("minecraft") && matchesSubStr(p_82946_, resourcelocation.getPath())) {
++                || matchesSubStr(p_82946_, resourcelocation.getPath())) { // Forge: Removed "minecraft" namespace requirement for path searching to allow modded path suggestions to show up
+                 p_82948_.accept(t);
+             }
+         }
