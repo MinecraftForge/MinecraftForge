@@ -21,8 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +40,7 @@ import com.mojang.serialization.Lifecycle;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -417,18 +416,12 @@ public class ForgeHooks
     @NotNull
     public static ChatDecorator getServerChatSubmittedDecorator()
     {
-        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-            ClassLoader classLoader = ForgeHooks.class.getClassLoader();
-            Thread t = new Thread(r);
-            t.setContextClassLoader(classLoader);
-            return t;
-        });
         return (sender, message) -> CompletableFuture.supplyAsync(() -> {
             if (sender == null)
                 return message; // Vanilla should never get here with the patches we use, but let's be safe with dumb mods
 
             return onServerChatSubmittedEvent(sender, getRawText(message), message);
-        }, executor);
+        }, Util.backgroundExecutor());
     }
 
     static final Pattern URL_PATTERN = Pattern.compile(
