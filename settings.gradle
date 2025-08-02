@@ -10,7 +10,7 @@ buildscript {
     dependencies {
         classpath('com.google.code.gson:gson') {
             version {
-                strictly '2.10.1'
+                strictly '2.11.0'
             }
         }
     }
@@ -84,19 +84,19 @@ dependencyResolutionManagement {
 
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
-            library('gson', 'com.google.code.gson:gson:2.10.1')
-            library('guava', 'com.google.guava:guava:32.1.2-jre')
-            library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
+            library('gson', 'com.google.code.gson:gson:2.11.0')
+            library('guava', 'com.google.guava:guava:33.3.1-jre')
+            library('failureaccess', 'com.google.guava:failureaccess:1.0.2')
 
-            version('log4j', '2.22.1')
+            version('log4j', '2.24.3')
             library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
             library('log4j-core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
             bundle('log4j', ['log4j-api', 'log4j-core'])
 
-            library('apache-commons', 'org.apache.commons:commons-lang3:3.14.0')
-            library('mojang-logging', 'com.mojang:logging:1.2.7')
+            library('apache-commons', 'org.apache.commons:commons-lang3:3.17.0')
+            library('mojang-logging', 'com.mojang:logging:1.5.10')
             library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
-            library('commons-io', 'commons-io:commons-io:2.15.1')
+            library('commons-io', 'commons-io:commons-io:2.17.0')
 
             version('lwjgl', '3.3.3')
             library('lwjgl',        'org.lwjgl', 'lwjgl'       ).versionRef('lwjgl')
