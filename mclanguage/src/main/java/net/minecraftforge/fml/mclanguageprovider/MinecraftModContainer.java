@@ -8,8 +8,6 @@ package net.minecraftforge.fml.mclanguageprovider;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.Objects;
-
 public class MinecraftModContainer extends ModContainer {
     private static final String MCMODINSTANCE = "minecraft, the mod";
 
@@ -20,7 +18,7 @@ public class MinecraftModContainer extends ModContainer {
 
     @Override
     public boolean matches(final Object mod) {
-        return Objects.equals(mod, MCMODINSTANCE);
+        return MCMODINSTANCE.equals(mod);
     }
 
     @Override

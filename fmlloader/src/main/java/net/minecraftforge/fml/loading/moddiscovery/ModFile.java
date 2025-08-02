@@ -39,14 +39,13 @@ import java.util.jar.Manifest;
 public class ModFile implements IModFile {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final String jarVersion;
-    private final ModFileFactory.ModFileInfoParser parser;
     private Map<String, Object> fileProperties;
     private List<IModLanguageProvider> loaders;
     private Throwable scanError;
     private final SecureJar jar;
     private final Type modFileType;
     private final IModProvider provider;
-    private       IModFileInfo modFileInfo;
+    private final IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
@@ -62,12 +61,11 @@ public class ModFile implements IModFile {
     public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser, String type) {
         this.provider = provider;
         this.jar = jar;
-        this.parser = parser;
 
         var manifest = this.jar.moduleDataProvider().getManifest();
         modFileType = Type.valueOf(type);
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
-        this.modFileInfo = ModFileParser.readModList(this, this.parser);
+        this.modFileInfo = ModFileParser.readModList(this, parser);
     }
 
     @Override
@@ -99,7 +97,6 @@ public class ModFile implements IModFile {
     }
 
     public boolean identifyMods() {
-        this.modFileInfo = ModFileParser.readModList(this, this.parser);
         if (this.modFileInfo == null) return this.getType() != Type.MOD;
         LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);

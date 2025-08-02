@@ -10,7 +10,6 @@ import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.function.Supplier;
 import static net.minecraftforge.fml.Logging.LOADING;
 
 public class MinecraftModLanguageProvider implements IModLanguageProvider {
-    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public String name() {
         return "minecraft";
@@ -45,7 +44,7 @@ public class MinecraftModLanguageProvider implements IModLanguageProvider {
                 final Class<?> mcModClass = Class.forName(getClass().getModule(), "net.minecraftforge.fml.mclanguageprovider.MinecraftModContainer");
                 return (T)mcModClass.getConstructor(IModInfo.class).newInstance(info);
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                LOGGER.fatal(LOADING,"Unable to load MinecraftModContainer, wut?", e);
+                LogManager.getLogger().fatal(LOADING, "Unable to load MinecraftModContainer, wut?", e);
                 throw new RuntimeException(e);
             }
         }
