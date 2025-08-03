@@ -71,7 +71,7 @@ sourceSets {
     }
 }
 
-final String SPEC_VERSION = gradleutils.gitInfo.tag
+final String SPEC_VERSION = gitversion.info.tag
 
 // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
 // ForgeMC is a unique identifier for every MC version we have supported.

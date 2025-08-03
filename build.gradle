@@ -4,7 +4,7 @@ import net.minecraftforge.gradleutils.PomUtils
 plugins {
     id 'net.minecraftforge.licenser' version '1.0.1'
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '[2.3.0,2.4.0)'
+    id 'net.minecraftforge.gradleutils' version '[2.6.4,2.7)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
     id 'net.minecraftforge.gradle.patcher' version '[6.0.22,6.2)' apply false
@@ -16,8 +16,7 @@ plugins {
 Util.init() //Init all our extension methods!
 
 ext {
-    GIT_INFO = gradleutils.gitInfo
-    VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
+    VERSION = gitversion.getMCTagOffsetBranch(MC_VERSION)
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 }
 
