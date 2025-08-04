@@ -1,20 +1,20 @@
 --- a/com/mojang/blaze3d/systems/GpuDevice.java
 +++ b/com/mojang/blaze3d/systems/GpuDevice.java
-@@ -25,7 +_,17 @@
+@@ -26,7 +_,17 @@
+         @Nullable Supplier<String> p_394357_, int p_395623_, TextureFormat p_395807_, int p_395802_, int p_396157_, int p_408810_, int p_407070_
+     );
  
-     GpuTexture createTexture(@Nullable Supplier<String> p_394357_, TextureFormat p_395807_, int p_395623_, int p_395802_, int p_396157_);
- 
-+    /** Forge: same as {@link #createTexture(Supplier, TextureFormat, int, int, int)} but with stencil support */
-+    default GpuTexture createTexture(@Nullable Supplier<String> p_394357_, TextureFormat p_395807_, int p_395623_, int p_395802_, int p_396157_, boolean stencil) {
-+        return this.createTexture(p_394357_, p_395807_, p_395623_, p_395802_, p_396157_);
++    /** Forge: same as {@link #createTexture(Supplier, int, TextureFormat, int, int, int)} but with stencil support */
++    default GpuTexture createTexture(@Nullable Supplier<String> p_394357_, int p_395623_, TextureFormat p_395807_, int p_395802_, int p_396157_, int p_408810_, int p_407070_, boolean stencil) {
++        return this.createTexture(p_394357_, p_395623_, p_395807_, p_395802_, p_396157_, p_408810_, p_407070_);
 +    }
 +
-     GpuTexture createTexture(@Nullable String p_391798_, TextureFormat p_393333_, int p_391800_, int p_395600_, int p_394065_);
+     GpuTexture createTexture(@Nullable String p_391798_, int p_391800_, TextureFormat p_393333_, int p_395600_, int p_394065_, int p_408732_, int p_407125_);
 +
-+    /** Forge: same as {@link #createTexture(String, TextureFormat, int, int, int)} but with stencil support */
-+    default GpuTexture createTexture(@Nullable String p_391798_, TextureFormat p_393333_, int p_391800_, int p_395600_, int p_394065_, boolean stencil) {
-+        return this.createTexture(p_391798_, p_393333_, p_391800_, p_395600_, p_394065_);
++    /** Forge: same as {@link #createTexture(String, int, TextureFormat, int, int, int)} but with stencil support */
++    default GpuTexture createTexture(@Nullable String p_391798_, int p_391800_, TextureFormat p_393333_, int p_395600_, int p_394065_, int p_408732_, int p_407125_, boolean stencil) {
++        return this.createTexture(p_391798_, p_391800_, p_393333_, p_395600_, p_394065_, p_408732_, p_407125_);
 +    }
  
-     GpuBuffer createBuffer(@Nullable Supplier<String> p_395215_, BufferType p_392847_, BufferUsage p_391478_, int p_397054_);
+     GpuTextureView createTextureView(GpuTexture p_409045_);
  

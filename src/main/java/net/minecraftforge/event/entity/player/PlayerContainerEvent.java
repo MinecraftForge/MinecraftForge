@@ -7,33 +7,35 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
-public class PlayerContainerEvent extends PlayerEvent
-{
+public sealed class PlayerContainerEvent extends PlayerEvent {
+    public static final EventBus<PlayerContainerEvent> BUS = EventBus.create(PlayerContainerEvent.class);
+
     private final AbstractContainerMenu container;
-    public PlayerContainerEvent(Player player, AbstractContainerMenu container)
-    {
+
+    public PlayerContainerEvent(Player player, AbstractContainerMenu container) {
         super(player);
         this.container = container;
     }
 
-    public static class Open extends PlayerContainerEvent
-    {
-        public Open(Player player, AbstractContainerMenu container)
-        {
-            super(player, container);
-        }
-    }
-    public static class Close extends PlayerContainerEvent
-    {
-        public Close(Player player, AbstractContainerMenu container)
-        {
+    public static final class Open extends PlayerContainerEvent {
+        public static final EventBus<Open> BUS = EventBus.create(Open.class);
+
+        public Open(Player player, AbstractContainerMenu container) {
             super(player, container);
         }
     }
 
-    public AbstractContainerMenu getContainer()
-    {
+    public static final class Close extends PlayerContainerEvent {
+        public static final EventBus<Close> BUS = EventBus.create(Close.class);
+
+        public Close(Player player, AbstractContainerMenu container) {
+            super(player, container);
+        }
+    }
+
+    public AbstractContainerMenu getContainer() {
         return container;
     }
 }

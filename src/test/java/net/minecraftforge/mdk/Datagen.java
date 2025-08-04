@@ -21,7 +21,7 @@ public class Datagen {
     static final String MOD_ID = "mdk_datagen";
 
     public Datagen(FMLJavaModLoadingContext context) {
-        context.getModEventBus().addListener(Datagen::gatherData);
+        GatherDataEvent.getBus(context.getModBusGroup()).addListener(Datagen::gatherData);
     }
 
     private static void gatherData(GatherDataEvent event) {
@@ -30,7 +30,7 @@ public class Datagen {
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.TYPE, new PackMetadataSection(
                 Component.literal("${mod_id} resources"),
-                DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
+                DetectedVersion.BUILT_IN.packVersion(PackType.CLIENT_RESOURCES),
                 Optional.empty()
             ))
         );

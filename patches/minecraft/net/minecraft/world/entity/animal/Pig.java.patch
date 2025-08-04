@@ -1,18 +1,18 @@
 --- a/net/minecraft/world/entity/animal/Pig.java
 +++ b/net/minecraft/world/entity/animal/Pig.java
-@@ -205,13 +_,14 @@
+@@ -206,13 +_,14 @@
  
      @Override
      public void thunderHit(ServerLevel p_29473_, LightningBolt p_29474_) {
 -        if (p_29473_.getDifficulty() != Difficulty.PEACEFUL) {
 +        if (p_29473_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIFIED_PIGLIN, (timer) -> {})) {
-             ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, ConversionParams.single(this, false, true), p_390653_ -> {
+             ZombifiedPiglin zombifiedpiglin = this.convertTo(EntityType.ZOMBIFIED_PIGLIN, ConversionParams.single(this, false, true), p_405460_ -> {
                  if (this.getMainHandItem().isEmpty()) {
-                     p_390653_.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+                     p_405460_.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
                  }
  
-                 p_390653_.setPersistenceRequired();
-+                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, p_390653_);
+                 p_405460_.setPersistenceRequired();
++                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, p_405460_);
              });
              if (zombifiedpiglin == null) {
                  super.thunderHit(p_29473_, p_29474_);

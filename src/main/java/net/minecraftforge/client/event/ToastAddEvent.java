@@ -7,8 +7,9 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.gui.components.toasts.Toast;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -21,15 +22,6 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-@Cancelable
-public class ToastAddEvent extends Event {
-    private final Toast toast;
-
-    public ToastAddEvent(Toast toast) {
-        this.toast = toast;
-    }
-
-    public Toast getToast() {
-        return toast;
-    }
+public record ToastAddEvent(Toast getToast) implements Cancellable, RecordEvent {
+    public static final CancellableEventBus<ToastAddEvent> BUS = CancellableEventBus.create(ToastAddEvent.class);
 }

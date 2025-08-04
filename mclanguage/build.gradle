@@ -10,7 +10,7 @@ plugins {
 apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
-    compileOnly(libs.nulls)
+    compileOnly(libs.jetbrains.annotations)
     implementation(project(':fmlloader'))
     implementation(project(':fmlcore'))
 }

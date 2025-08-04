@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/DimensionSpecialEffects.java
 +++ b/net/minecraft/client/renderer/DimensionSpecialEffects.java
-@@ -36,7 +_,7 @@
+@@ -32,7 +_,7 @@
      }
  
      public static DimensionSpecialEffects forType(DimensionType p_108877_) {

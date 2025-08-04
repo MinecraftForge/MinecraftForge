@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * Fired when the ender dragon or wither attempts to destroy a block and when ever a zombie attempts to break a door. Basically a event version of {@link Block#canEntityDestroy(BlockState, BlockGetter, BlockPos, Entity)}<br>
@@ -24,14 +25,13 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class LivingDestroyBlockEvent extends LivingEvent
-{
+public final class LivingDestroyBlockEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingDestroyBlockEvent> BUS = CancellableEventBus.create(LivingDestroyBlockEvent.class);
+
     private final BlockPos pos;
     private final BlockState state;
     
-    public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state)
-    {
+    public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state) {
         super(entity);
         this.pos = pos;
         this.state = state;

@@ -8,7 +8,8 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.extensions.IForgeItem;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event is fired on the forge bus before an Monster detects that a player is looking at them.
@@ -19,8 +20,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <p>
  * This event does not have a {@link Result}.
  */
-@Cancelable
-public class MonsterDisguiseEvent extends LivingEvent {
+public final class MonsterDisguiseEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<MonsterDisguiseEvent> BUS = CancellableEventBus.create(MonsterDisguiseEvent.class);
+
     private final Player player;
 
     public MonsterDisguiseEvent(Monster monster, Player player) {
@@ -37,6 +39,6 @@ public class MonsterDisguiseEvent extends LivingEvent {
 
     @Override
     public Monster getEntity() {
-        return (Monster)super.getEntity();
+        return (Monster) super.getEntity();
     }
 }

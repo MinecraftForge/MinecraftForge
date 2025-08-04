@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
 +++ b/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
-@@ -22,7 +_,7 @@
+@@ -20,7 +_,7 @@
              case ClientActivePlayersTooltip.ActivePlayersTooltip clientactiveplayerstooltip$activeplayerstooltip -> new ClientActivePlayersTooltip(
                  clientactiveplayerstooltip$activeplayerstooltip
              );

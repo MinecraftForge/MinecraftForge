@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -17,17 +16,14 @@ import java.util.stream.Stream;
  * Parent type to all ModLifecycle events. This is based on Forge EventBus. They fire through the
  * ModContainer's eventbus instance.
  */
-public class ModLifecycleEvent extends Event implements IModBusEvent
-{
+public class ModLifecycleEvent implements IModBusEvent {
     private final ModContainer container;
 
-    public ModLifecycleEvent(ModContainer container)
-    {
+    public ModLifecycleEvent(ModContainer container) {
         this.container = container;
     }
 
-    public final String description()
-    {
+    public final String description() {
        String cn = getClass().getName();
        return cn.substring(cn.lastIndexOf('.')+1);
     }

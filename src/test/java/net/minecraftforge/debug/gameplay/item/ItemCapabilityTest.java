@@ -25,7 +25,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -52,11 +51,10 @@ public class ItemCapabilityTest extends BaseTestMod {
     );
 
     public ItemCapabilityTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
     }
 
-    @SubscribeEvent
-    public static void onEvent(AttachCapabilitiesEvent<ItemStack> event) {
+    private static void onEvent(AttachCapabilitiesEvent<ItemStack> event) {
         if (event.getObject().getItem() == Items.COPPER_INGOT) {
             event.addCapability(
                     ResourceLocation.fromNamespaceAndPath("forge", "test"),
@@ -67,8 +65,7 @@ public class ItemCapabilityTest extends BaseTestMod {
 
     @GameTest
     public static void item_capability(GameTestHelper helper) {
-
-        helper.registerEventListener(ItemCapabilityTest.class);
+        helper.addEventListener(AttachCapabilitiesEvent.ItemStacks.BUS, ItemCapabilityTest::onEvent);
 
         ItemStack stack = new ItemStack(Items.COPPER_INGOT);
         AtomicReference<IEnergyStorage> storageAtomicReference = new AtomicReference<>();

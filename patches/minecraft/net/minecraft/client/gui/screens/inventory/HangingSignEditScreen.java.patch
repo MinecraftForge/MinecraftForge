@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/HangingSignEditScreen.java
-@@ -16,7 +_,7 @@
+@@ -15,7 +_,7 @@
      private static final Vector3f TEXT_SCALE = new Vector3f(1.0F, 1.0F, 1.0F);
      private static final int TEXTURE_WIDTH = 16;
      private static final int TEXTURE_HEIGHT = 16;

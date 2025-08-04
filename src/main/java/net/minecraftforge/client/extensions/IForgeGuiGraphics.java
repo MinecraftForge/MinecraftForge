@@ -6,7 +6,7 @@
 package net.minecraftforge.client.extensions;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -80,31 +80,31 @@ public interface IForgeGuiGraphics {
 
         // Draw Border
         // Top Left
-        self().blit(RenderType::guiTextured, texture, x,                            y,                            0, u,                            v,                            leftBorder,  topBorder, 256, 256);
+        self().blit(RenderPipelines.GUI_TEXTURED, texture, x,                            y,                            0, u,                            v,                            leftBorder,  topBorder, 256, 256);
         // Top Right
-        self().blit(RenderType::guiTextured, texture, x + leftBorder + canvasWidth, y,                            0, u + leftBorder + fillerWidth, v,                            rightBorder, topBorder, 256, 256);
+        self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + canvasWidth, y,                            0, u + leftBorder + fillerWidth, v,                            rightBorder, topBorder, 256, 256);
         // Bottom Left
-        self().blit(RenderType::guiTextured, texture, x,                            y + topBorder + canvasHeight, 0, u,                            v + topBorder + fillerHeight, leftBorder,  bottomBorder, 256, 256);
+        self().blit(RenderPipelines.GUI_TEXTURED, texture, x,                            y + topBorder + canvasHeight, 0, u,                            v + topBorder + fillerHeight, leftBorder,  bottomBorder, 256, 256);
         // Bottom Right
-        self().blit(RenderType::guiTextured, texture, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, 0, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, 256, 256);
+        self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, 0, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, 256, 256);
 
         for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++) {
             // Top Border
-            self().blit(RenderType::guiTextured, texture, x + leftBorder + (i * fillerWidth), y,                            0, u + leftBorder, v,                            (i == xPasses ? remainderWidth : fillerWidth), topBorder,    256, 256);
+            self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + (i * fillerWidth), y,                            0, u + leftBorder, v,                            (i == xPasses ? remainderWidth : fillerWidth), topBorder,    256, 256);
             // Bottom Border
-            self().blit(RenderType::guiTextured, texture, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, 0, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, 256, 256);
+            self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, 0, u + leftBorder, v + topBorder + fillerHeight, (i == xPasses ? remainderWidth : fillerWidth), bottomBorder, 256, 256);
 
             // Throw in some filler for good measure
             for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++)
-                self().blit(RenderType::guiTextured, texture, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), 0, u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
+                self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), 0, u + leftBorder, v + topBorder, (i == xPasses ? remainderWidth : fillerWidth), (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
         }
 
         // Side Borders
         for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
             // Left Border
-            self().blit(RenderType::guiTextured, texture, x,                            y + topBorder + (j * fillerHeight), 0, u,                            v + topBorder, leftBorder,  (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
+            self().blit(RenderPipelines.GUI_TEXTURED, texture, x,                            y + topBorder + (j * fillerHeight), 0, u,                            v + topBorder, leftBorder,  (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
             // Right Border
-            self().blit(RenderType::guiTextured, texture, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), 0, u + leftBorder + fillerWidth, v + topBorder, rightBorder, (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
+            self().blit(RenderPipelines.GUI_TEXTURED, texture, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), 0, u + leftBorder + fillerWidth, v + topBorder, rightBorder, (j == yPasses ? remainderHeight : fillerHeight), 256, 256);
         }
     }
 
@@ -123,7 +123,7 @@ public interface IForgeGuiGraphics {
             if (centerX) x += (w - boundsWidth) / 2;
         }
 
-        //self().blit(RenderType::guiTextured, texture, x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
-        self().blit(RenderType::guiTextured, texture, x, y, 0.0f, 0.0f, boundsWidth, boundsHeight, boundsWidth, boundsHeight);
+        //self().blit(RenderPipelines.GUI_TEXTURED, texture, x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
+        self().blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0.0f, 0.0f, boundsWidth, boundsHeight, boundsWidth, boundsHeight);
     }
 }

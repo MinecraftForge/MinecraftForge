@@ -10,8 +10,9 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -25,7 +26,9 @@ import net.minecraftforge.fml.LogicalSide;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-public class ChunkWatchEvent extends Event {
+public sealed class ChunkWatchEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<ChunkWatchEvent> BUS = EventBus.create(ChunkWatchEvent.class);
+
     private final ServerLevel level;
     private final ServerPlayer player;
     private final ChunkPos pos;
@@ -67,7 +70,9 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Watch extends ChunkWatchEvent {
+    public static final class Watch extends ChunkWatchEvent {
+        public static final EventBus<Watch> BUS = EventBus.create(Watch.class);
+
         private final LevelChunk chunk;
 
         public Watch(ServerPlayer player, LevelChunk chunk, ServerLevel level) {
@@ -88,7 +93,9 @@ public class ChunkWatchEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class UnWatch extends ChunkWatchEvent {
+    public static final class UnWatch extends ChunkWatchEvent {
+        public static final EventBus<UnWatch> BUS = EventBus.create(UnWatch.class);
+
         public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level) {
             super(player, pos, level);
         }

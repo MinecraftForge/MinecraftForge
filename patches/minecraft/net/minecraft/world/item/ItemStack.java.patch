@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -99,7 +_,7 @@
+@@ -96,7 +_,7 @@
  import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.slf4j.Logger;
  
 -public final class ItemStack implements DataComponentHolder {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements DataComponentHolder, net.minecraftforge.common.extensions.IForgeItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider.ItemStacks implements DataComponentHolder, net.minecraftforge.common.extensions.IForgeItemStack {
      private static final List<Component> OP_NBT_WARNING = List.of(
          Component.translatable("item.op_warning.line1").withStyle(ChatFormatting.RED, ChatFormatting.BOLD),
          Component.translatable("item.op_warning.line2").withStyle(ChatFormatting.RED),
-@@ -269,13 +_,16 @@
+@@ -266,13 +_,16 @@
      }
  
      private ItemStack(ItemLike p_331826_, int p_332766_, PatchedDataComponentMap p_333722_) {
-+        super(ItemStack.class, true);
++        super(true);
          this.item = p_331826_.asItem();
          this.count = p_332766_;
          this.components = p_333722_;
@@ -22,11 +22,11 @@
      }
  
      private ItemStack(@Nullable Void p_282703_) {
-+        super(ItemStack.class, false);
++        super(false);
          this.item = null;
          this.components = new PatchedDataComponentMap(DataComponentMap.EMPTY);
      }
-@@ -361,13 +_,22 @@
+@@ -353,13 +_,22 @@
      }
  
      public InteractionResult useOn(UseOnContext p_41662_) {
@@ -50,7 +50,7 @@
              if (player != null && interactionresult instanceof InteractionResult.Success interactionresult$success && interactionresult$success.wasItemInteraction()) {
                  player.awardStat(Stats.ITEM_USED.get(item));
              }
-@@ -468,18 +_,26 @@
+@@ -444,18 +_,26 @@
      }
  
      public void hurtAndBreak(int p_220158_, ServerLevel p_342197_, @Nullable ServerPlayer p_220160_, Consumer<Item> p_343361_) {
@@ -78,7 +78,7 @@
              return p_362423_ > 0 ? EnchantmentHelper.processDurabilityChange(p_364910_, this, p_362423_) : p_362423_;
          }
      }
-@@ -515,7 +_,13 @@
+@@ -495,7 +_,13 @@
                  p_41623_,
                  serverlevel,
                  p_41624_ instanceof ServerPlayer serverplayer ? serverplayer : null,
@@ -93,7 +93,7 @@
              );
          }
      }
-@@ -838,6 +_,7 @@
+@@ -818,6 +_,7 @@
              List<Component> list = Lists.newArrayList();
              list.add(this.getStyledHoverName());
              this.addDetailsToTooltip(p_331329_, tooltipdisplay, p_41652_, p_41653_, list::add);
@@ -101,7 +101,7 @@
              return list;
          }
      }
-@@ -1134,6 +_,7 @@
+@@ -1061,6 +_,7 @@
          this.getItem().onUseTick(p_41732_, p_41733_, this, p_41734_);
      }
  

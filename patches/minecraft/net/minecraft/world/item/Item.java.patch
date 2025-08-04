@@ -94,7 +94,7 @@
      public static class Properties {
          private static final DependantName<Item, String> BLOCK_DESCRIPTION_ID = p_367498_ -> Util.makeDescriptionId("block", p_367498_.location());
          private static final DependantName<Item, String> ITEM_DESCRIPTION_ID = p_367603_ -> Util.makeDescriptionId("item", p_367603_.location());
-@@ -584,6 +_,11 @@
+@@ -588,6 +_,11 @@
          @Nullable
          MapItemSavedData mapData(MapId p_335695_);
  
@@ -106,7 +106,7 @@
          static Item.TooltipContext of(@Nullable final Level p_332083_) {
              return p_332083_ == null ? EMPTY : new Item.TooltipContext() {
                  @Override
-@@ -599,6 +_,11 @@
+@@ -603,6 +_,11 @@
                  @Override
                  public MapItemSavedData mapData(MapId p_330171_) {
                      return p_332083_.getMapData(p_330171_);

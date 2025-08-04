@@ -32,7 +32,7 @@ public class UpdateOrder extends BaseTestMod {
     private static final int PISTON_DELAY = 4;
 
     public UpdateOrder(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
     }
 
     @GameTest(structure = "update_order:update_order")

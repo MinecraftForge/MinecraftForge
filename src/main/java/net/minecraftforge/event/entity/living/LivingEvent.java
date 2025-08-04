@@ -9,10 +9,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,19 +23,18 @@ import org.jetbrains.annotations.Nullable;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class LivingEvent extends EntityEvent
-{
+public class LivingEvent extends EntityEvent {
+    public static final EventBus<LivingEvent> BUS = EventBus.create(LivingEvent.class);
+
     private final LivingEntity livingEntity;
 
-    public LivingEvent(LivingEntity entity)
-    {
+    public LivingEvent(LivingEntity entity) {
         super(entity);
         livingEntity = entity;
     }
 
     @Override
-    public LivingEntity getEntity()
-    {
+    public LivingEntity getEntity() {
         return livingEntity;
     }
 
@@ -50,10 +50,10 @@ public class LivingEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @Cancelable
-    public static class LivingTickEvent extends LivingEvent
-    {
-        public LivingTickEvent(LivingEntity e){ super(e); }
+    public static final class LivingTickEvent extends LivingEvent implements Cancellable {
+        public static final CancellableEventBus<LivingTickEvent> BUS = CancellableEventBus.create(LivingTickEvent.class);
+
+        public LivingTickEvent(LivingEntity e) { super(e); }
     }
 
     /**
@@ -70,19 +70,20 @@ public class LivingEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class LivingJumpEvent extends LivingEvent
-    {
-        public LivingJumpEvent(LivingEntity e){ super(e); }
+    public static final class LivingJumpEvent extends LivingEvent {
+        public static final EventBus<LivingJumpEvent> BUS = EventBus.create(LivingJumpEvent.class);
+
+        public LivingJumpEvent(LivingEntity e) { super(e); }
     }
 
-    public static class LivingVisibilityEvent extends LivingEvent
-    {
+    public static final class LivingVisibilityEvent extends LivingEvent {
+        public static final EventBus<LivingVisibilityEvent> BUS = EventBus.create(LivingVisibilityEvent.class);
+
         private double visibilityModifier;
         @Nullable
         private final Entity lookingEntity;
 
-        public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier)
-        {
+        public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier) {
             super(livingEntity);
             this.visibilityModifier = originalMultiplier;
             this.lookingEntity = lookingEntity;
@@ -91,16 +92,14 @@ public class LivingEvent extends EntityEvent
         /**
          * @param mod Is multiplied with the current modifier
          */
-        public void modifyVisibility(double mod)
-        {
+        public void modifyVisibility(double mod) {
             visibilityModifier *= mod;
         }
 
         /**
          * @return The current modifier
          */
-        public double getVisibilityModifier()
-        {
+        public double getVisibilityModifier() {
             return visibilityModifier;
         }
 
@@ -108,8 +107,7 @@ public class LivingEvent extends EntityEvent
          * @return The entity trying to see this LivingEntity, if available
          */
         @Nullable
-        public Entity getLookingEntity()
-        {
+        public Entity getLookingEntity() {
             return lookingEntity;
         }
     }

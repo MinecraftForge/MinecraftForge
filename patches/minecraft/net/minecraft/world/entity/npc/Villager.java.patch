@@ -16,5 +16,5 @@
 -        if (p_35409_.getDifficulty() != Difficulty.PEACEFUL) {
 +        if (p_35409_.getDifficulty() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.WITCH, (timer) -> {})) {
              LOGGER.info("Villager {} was struck by lightning {}.", this, p_35410_);
-             Witch witch = this.convertTo(EntityType.WITCH, ConversionParams.single(this, false, false), p_390723_ -> {
-                 p_390723_.finalizeSpawn(p_35409_, p_35409_.getCurrentDifficultyAt(p_390723_.blockPosition()), EntitySpawnReason.CONVERSION, null);
+             Witch witch = this.convertTo(EntityType.WITCH, ConversionParams.single(this, false, false), p_405546_ -> {
+                 p_405546_.finalizeSpawn(p_35409_, p_35409_.getCurrentDifficultyAt(p_405546_.blockPosition()), EntitySpawnReason.CONVERSION, null);

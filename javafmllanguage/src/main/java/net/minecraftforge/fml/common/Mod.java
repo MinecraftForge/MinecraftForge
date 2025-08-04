@@ -12,9 +12,10 @@ import java.lang.annotation.Target;
 import java.util.function.Supplier;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.Bindings;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This defines a Mod to FML.
@@ -24,12 +25,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Mod
-{
+public @interface Mod {
     /**
      * The unique mod identifier for this mod.
-     * <b>Required to be lowercased in the english locale for compatibility. Will be truncated to 64 characters long.</b>
-     *
+     * <b>Required to be lowercased in the English locale for compatibility. Will be truncated to 64 characters long.</b>
+     * <br>
      * This will be used to identify your mod for third parties (other mods), it will be used to identify your mod for registries such as block and item registries.
      * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
@@ -61,32 +61,40 @@ public @interface Mod
         String modid() default "";
 
         /**
-         * Specify an alternative bus to listen to
+         * Specify an alternative bus to listen to.
+         * <br>
+         * If you know all listeners in this class are for a specific bus, you can set it here to speed up registration.
          *
          * @return the bus you wish to listen to
          */
-        Bus bus() default Bus.FORGE;
+        Bus bus() default Bus.BOTH;
 
         enum Bus {
             /**
-             * The main Forge Event Bus.
-             *
-             * <p>See {@code MinecraftForge#EVENT_BUS}</p>
+             * The main BusGroup that most game events are fired on.
              */
             FORGE(Bindings.getForgeBus()),
+
             /**
-             * The mod specific Event bus.
-             * @see FMLJavaModLoadingContext#getModEventBus()
+             * The mod-specific event BusGroup, usually for mod lifecycle events.
+             * @see FMLJavaModLoadingContext#getModBusGroup()
              */
-            MOD(()-> FMLJavaModLoadingContext.get().getModEventBus());
+            MOD(()-> FMLJavaModLoadingContext.get().getModBusGroup()),
 
-            private final Supplier<IEventBus> busSupplier;
+            /**
+             * Both the {@link #FORGE} and {@link #MOD} buses. This is slower to register events in your class but
+             * allows you to listen to events from different BusGroup types without needing separate classes annotated
+             * with {@link EventBusSubscriber}.
+             */
+            BOTH(() -> null);
 
-            Bus(final Supplier<IEventBus> eventBusSupplier) {
+            private final Supplier<@Nullable BusGroup> busSupplier;
+
+            Bus(Supplier<@Nullable BusGroup> eventBusSupplier) {
                 this.busSupplier = eventBusSupplier;
             }
 
-            public Supplier<IEventBus> bus() {
+            public Supplier<@Nullable BusGroup> bus() {
                 return busSupplier;
             }
         }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
-@@ -66,7 +_,7 @@
+@@ -67,7 +_,7 @@
          .stream()
          .flatMap(p_218093_ -> p_218093_.getStateDefinition().getPossibleStates().stream())
          .collect(ImmutableSet.toImmutableSet());
@@ -9,7 +9,7 @@
  
      private static Set<BlockState> getBlockStates(Block p_218074_) {
          return ImmutableSet.copyOf(p_218074_.getStateDefinition().getPossibleStates());
-@@ -79,7 +_,6 @@
+@@ -80,7 +_,6 @@
      private static PoiType register(Registry<PoiType> p_218085_, ResourceKey<PoiType> p_218086_, Set<BlockState> p_218087_, int p_218088_, int p_218089_) {
          PoiType poitype = new PoiType(p_218087_, p_218088_, p_218089_);
          Registry.register(p_218085_, p_218086_, poitype);

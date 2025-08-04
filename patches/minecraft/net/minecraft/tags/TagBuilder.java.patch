@@ -9,10 +9,37 @@
      private final List<TagEntry> entries = new ArrayList<>();
  
      public static TagBuilder create() {
-@@ -34,5 +_,30 @@
+@@ -15,24 +_,48 @@
+         return List.copyOf(this.entries);
+     }
+ 
+-    public TagBuilder add(TagEntry p_215903_) {
+-        this.entries.add(p_215903_);
+-        return this;
+-    }
+-
+     public TagBuilder addElement(ResourceLocation p_215901_) {
+-        return this.add(TagEntry.element(p_215901_));
++        this.entries.add(TagEntry.element(p_215901_));
++        return this;
+     }
+ 
+     public TagBuilder addOptionalElement(ResourceLocation p_215906_) {
+-        return this.add(TagEntry.optionalElement(p_215906_));
++        this.entries.add(TagEntry.optionalElement(p_215906_));
++        return this;
+     }
+ 
+     public TagBuilder addTag(ResourceLocation p_215908_) {
+-        return this.add(TagEntry.tag(p_215908_));
++        this.entries.add(TagEntry.tag(p_215908_));
++        return this;
+     }
  
      public TagBuilder addOptionalTag(ResourceLocation p_215910_) {
-         return this.add(TagEntry.optionalTag(p_215910_));
+-        return this.add(TagEntry.optionalTag(p_215910_));
++        this.entries.add(TagEntry.optionalTag(p_215910_));
++        return this;
 +    }
 +
 +    /** Forge: Used for datagen */

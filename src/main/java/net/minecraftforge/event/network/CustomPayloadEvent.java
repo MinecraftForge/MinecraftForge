@@ -15,49 +15,29 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.network.ForgePayload;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-// TODO make this not an event, and instead move it to a callback in the Channel itself.
-// But also expose it as a generic listener event for anyone who cares about it but is outside out channel control system.
-public class CustomPayloadEvent extends Event {
-    private final ResourceLocation channel;
-    private final Object payload;
-    private final FriendlyByteBuf data;
-    private final Context source;
-    private final int loginIndex;
+/**
+ * This is fired when a CustomPayload packet is received. It will first be offered to any Channels registered for its name.
+ * If they do not handle it, then it is fired on its BUS.
+ */
+public record CustomPayloadEvent(
+    ResourceLocation getChannel,
+    Object getPayloadObject,
+    @Nullable FriendlyByteBuf getPayload,
+    Context getSource,
+    int getLoginIndex
+) implements RecordEvent {
+    public static final EventBus<CustomPayloadEvent> BUS = EventBus.create(CustomPayloadEvent.class);
 
     public CustomPayloadEvent(ResourceLocation channel, Object payload, Context source, int loginIndex) {
-        this.channel = channel;
-        this.payload = payload;
-        this.data = payload instanceof ForgePayload forge ? forge.data() : null;
-        this.source = source;
-        this.loginIndex = loginIndex;
-    }
-
-    public ResourceLocation getChannel() {
-        return this.channel;
-    }
-
-    @Nullable
-    public FriendlyByteBuf getPayload() {
-        return data;
-    }
-
-    public Object getPayloadObject() {
-        return this.payload;
-    }
-
-    public int getLoginIndex() {
-        return loginIndex;
-    }
-
-    public Context getSource() {
-        return source;
+        this(channel, payload, payload instanceof ForgePayload forge ? forge.data() : null, source, loginIndex);
     }
 
     /**

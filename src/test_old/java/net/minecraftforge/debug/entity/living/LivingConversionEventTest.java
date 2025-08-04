@@ -14,25 +14,21 @@ import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("living_conversion_event_test")
-public class LivingConversionEventTest
-{
-    public LivingConversionEventTest()
-    {
-        MinecraftForge.EVENT_BUS.addListener(this::canLivingConversion);
-        MinecraftForge.EVENT_BUS.addListener(this::onLivingConversion);
+public class LivingConversionEventTest {
+    public LivingConversionEventTest() {
+        LivingConversionEvent.Pre.BUS.addListener(this::canLivingConversion);
+        LivingConversionEvent.Post.BUS.addListener(this::onLivingConversion);
     }
 
-    public void canLivingConversion(LivingConversionEvent.Pre event)
-    {
-        if (event.getEntity() instanceof Piglin)
-        {
-            event.setCanceled(true);
+    public boolean canLivingConversion(LivingConversionEvent.Pre event) {
+        if (event.getEntity() instanceof Piglin) {
             event.setConversionTimer(0);
+            return true;
         }
+        return false;
     }
 
-    public void onLivingConversion(LivingConversionEvent.Post event)
-    {
+    public void onLivingConversion(LivingConversionEvent.Post event) {
         if (event.getEntity() instanceof Villager)
             event.getEntity().addEffect(new MobEffectInstance(MobEffects.LUCK, 20));
     }

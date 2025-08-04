@@ -9,16 +9,17 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nullable;
 
-/**
- Where all the events fore Gathering Components will exist.
- */
+/** Where all the events for Gathering Components will exist */
+public abstract sealed class GatherComponentsEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<GatherComponentsEvent> BUS = EventBus.create(GatherComponentsEvent.class);
 
-public abstract class GatherComponentsEvent extends Event {
     private final DataComponentMap.Builder components = DataComponentMap.builder();
     private final DataComponentMap originalComponents;
     private final Object owner;
@@ -54,7 +55,9 @@ public abstract class GatherComponentsEvent extends Event {
      *
      * References in {@link net.minecraft.world.item.Items} may not be valid at the current time.
      */
-    public static class Item extends GatherComponentsEvent {
+    public static final class Item extends GatherComponentsEvent {
+        public static final EventBus<Item> BUS = EventBus.create(Item.class);
+
         public Item(net.minecraft.world.item.Item item, DataComponentMap dataComponents) {
             super(item, dataComponents);
         }

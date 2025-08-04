@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/entity/Leashable.java
++++ b/net/minecraft/world/entity/Leashable.java
+@@ -186,7 +_,8 @@
+ 
+     static <E extends Entity & Leashable> float angularFriction(E p_408063_) {
+         if (p_408063_.onGround()) {
+-            return p_408063_.level().getBlockState(p_408063_.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.91F;
++            var pos = p_408063_.getBlockPosBelowThatAffectsMyMovement();
++            return p_408063_.level().getBlockState(pos).getFriction(p_408063_.level(), pos, p_408063_) * 0.91F;
+         } else {
+             return p_408063_.isInLiquid() ? 0.8F : 0.91F;
+         }

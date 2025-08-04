@@ -12,7 +12,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
@@ -33,8 +34,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@net.minecraftforge.eventbus.api.Cancelable
-public class LivingDropsEvent extends LivingEvent {
+public final class LivingDropsEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingDropsEvent> BUS = CancellableEventBus.create(LivingDropsEvent.class);
+
     private final DamageSource source;
     private final Collection<ItemEntity> drops;
     private final boolean recentlyHit;

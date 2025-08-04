@@ -1,0 +1,67 @@
+--- a/net/minecraft/data/tags/TagAppender.java
++++ b/net/minecraft/data/tags/TagAppender.java
+@@ -8,7 +_,7 @@
+ import net.minecraft.tags.TagBuilder;
+ import net.minecraft.tags.TagKey;
+ 
+-public interface TagAppender<E, T> {
++public interface TagAppender<E, T> extends net.minecraftforge.common.extensions.IForgeTagAppender<E, T> {
+     TagAppender<E, T> add(E p_406816_);
+ 
+     default TagAppender<E, T> add(E... p_406204_) {
+@@ -32,6 +_,10 @@
+     TagAppender<E, T> addOptionalTag(TagKey<T> p_406169_);
+ 
+     static <T> TagAppender<ResourceKey<T>, T> forBuilder(final TagBuilder p_407840_) {
++        return forBuilder(p_407840_, "unknown");
++    }
++
++    static <T> TagAppender<ResourceKey<T>, T> forBuilder(final TagBuilder p_407840_, String source) {
+         return new TagAppender<ResourceKey<T>, T>() {
+             public TagAppender<ResourceKey<T>, T> add(ResourceKey<T> p_406023_) {
+                 p_407840_.addElement(p_406023_.location());
+@@ -54,6 +_,21 @@
+                 p_407840_.addOptionalTag(p_407223_.location());
+                 return this;
+             }
++
++            @Override
++            public TagBuilder getInternalBuilder() {
++                return p_407840_;
++            }
++
++            @Override
++            public String getSourceName() {
++                return source;
++            }
++
++            @Override
++            public TagAppender<ResourceKey<T>, T> remove(ResourceKey<T> value) {
++                return this.remove(value.location());
++            }
+         };
+     }
+ 
+@@ -81,6 +_,22 @@
+             @Override
+             public TagAppender<U, T> addOptionalTag(TagKey<T> p_409695_) {
+                 tagappender.addOptionalTag(p_409695_);
++                return this;
++            }
++
++            @Override
++            public TagBuilder getInternalBuilder() {
++                return tagappender.getInternalBuilder();
++            }
++
++            @Override
++            public String getSourceName() {
++                return tagappender.getSourceName();
++            }
++
++            @Override
++            public TagAppender<U, T> remove(U value) {
++                tagappender.remove(p_409081_.apply(value));
+                 return this;
+             }
+         };

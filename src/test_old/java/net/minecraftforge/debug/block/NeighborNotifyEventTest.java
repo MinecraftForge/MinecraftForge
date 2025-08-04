@@ -8,7 +8,7 @@ package net.minecraftforge.debug.block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.level.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,16 +17,15 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("neighbor_notify_event_test")
 @Mod.EventBusSubscriber
-public class NeighborNotifyEventTest
-{
-    private static Logger logger = LogManager.getLogger(NeighborNotifyEventTest.class);
+public final class NeighborNotifyEventTest {
+    private static final Logger LOGGER = LogManager.getLogger(NeighborNotifyEventTest.class);
 
     @SubscribeEvent
-    public static void onNeighborNotify(NeighborNotifyEvent event)
-    {
+    public static boolean onNeighborNotify(NeighborNotifyEvent event) {
         if (event.getState().getBlock() == Blocks.COMPARATOR) {
-            logger.info("{} with face information: {}", event.getPos().toString(), event.getNotifiedSides());
-            event.setCanceled(true);
+            LOGGER.info("{} with face information: {}", event.getPos().toString(), event.getNotifiedSides());
+            return true;
         }
+        return false;
     }
 }

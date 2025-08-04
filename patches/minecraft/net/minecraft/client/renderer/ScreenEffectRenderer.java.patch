@@ -1,33 +1,32 @@
 --- a/net/minecraft/client/renderer/ScreenEffectRenderer.java
 +++ b/net/minecraft/client/renderer/ScreenEffectRenderer.java
-@@ -27,17 +_,24 @@
-         Player player = p_110719_.player;
-         if (!player.noPhysics) {
-             BlockState blockstate = getViewBlockingState(player);
--            if (blockstate != null) {
--                renderTex(p_110719_.getBlockRenderer().getBlockModelShaper().getParticleIcon(blockstate), p_110720_, p_378238_);
-+            var overlay = getOverlayBlock(player);
-+            if (overlay != null) {
-+                if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight())) {
-+                    renderTex(p_110719_.getBlockRenderer().getBlockModelShaper().getParticleIcon(overlay.getLeft(), p_110719_.level, overlay.getRight()), p_110720_, p_378238_);
-+                }
-             }
-         }
- 
-         if (!p_110719_.player.isSpectator()) {
-             if (p_110719_.player.isEyeInFluid(FluidTags.WATER)) {
-+                if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, p_110720_))
-                 renderWater(p_110719_, p_110720_, p_378238_);
-+            } else if (!player.getEyeInFluidType().isAir()) {
-+                net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(player.getEyeInFluidType()).renderOverlay(p_110719_, p_110720_, p_378238_);
+@@ -55,18 +_,24 @@
+         Player player = this.minecraft.player;
+         if (this.minecraft.options.getCameraType().isFirstPerson() && !p_409640_) {
+             if (!player.noPhysics) {
+-                BlockState blockstate = getViewBlockingState(player);
++                var overlay = getOverlayBlock(player);
++                BlockState blockstate = overlay == null ? null : overlay.getLeft();
+                 if (blockstate != null) {
++                    if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, posestack, net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
+                     renderTex(this.minecraft.getBlockRenderer().getBlockModelShaper().getParticleIcon(blockstate), posestack, this.bufferSource);
+                 }
              }
  
-             if (p_110719_.player.isOnFire()) {
-+                if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, p_110720_))
-                 renderFire(p_110720_, p_378238_);
+             if (!this.minecraft.player.isSpectator()) {
+                 if (this.minecraft.player.isEyeInFluid(FluidTags.WATER)) {
++                    if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, posestack))
+                     renderWater(this.minecraft, posestack, this.bufferSource);
++                } else if (!player.getEyeInFluidType().isAir()) {
++                    net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(player.getEyeInFluidType()).renderOverlay(this.minecraft, posestack, this.bufferSource);
+                 }
+ 
+                 if (this.minecraft.player.isOnFire()) {
++                    if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, posestack))
+                     renderFire(posestack, this.bufferSource);
+                 }
              }
-         }
-@@ -45,6 +_,12 @@
+@@ -116,6 +_,12 @@
  
      @Nullable
      private static BlockState getViewBlockingState(Player p_110717_) {
@@ -40,7 +39,7 @@
          BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
  
          for (int i = 0; i < 8; i++) {
-@@ -54,7 +_,7 @@
+@@ -125,7 +_,7 @@
              blockpos$mutableblockpos.set(d0, d1, d2);
              BlockState blockstate = p_110717_.level().getBlockState(blockpos$mutableblockpos);
              if (blockstate.getRenderShape() != RenderShape.INVISIBLE && blockstate.isViewBlocking(p_110717_.level(), blockpos$mutableblockpos)) {
@@ -49,7 +48,7 @@
              }
          }
  
-@@ -82,6 +_,10 @@
+@@ -153,6 +_,10 @@
      }
  
      private static void renderWater(Minecraft p_110726_, PoseStack p_110727_, MultiBufferSource p_376402_) {
@@ -60,7 +59,7 @@
          BlockPos blockpos = BlockPos.containing(p_110726_.player.getX(), p_110726_.player.getEyeY(), p_110726_.player.getZ());
          float f = LightTexture.getBrightness(p_110726_.player.level().dimensionType(), p_110726_.player.level().getMaxLocalRawBrightness(blockpos));
          int i = ARGB.colorFromFloat(0.1F, f, f, f);
-@@ -94,7 +_,7 @@
+@@ -165,7 +_,7 @@
          float f7 = -p_110726_.player.getYRot() / 64.0F;
          float f8 = p_110726_.player.getXRot() / 64.0F;
          Matrix4f matrix4f = p_110727_.last().pose();

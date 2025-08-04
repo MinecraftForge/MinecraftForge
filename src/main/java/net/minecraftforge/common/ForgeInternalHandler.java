@@ -19,73 +19,72 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.network.ConnectionStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.listener.Priority;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.filters.NetworkFilters;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.command.ConfigCommand;
+import org.jetbrains.annotations.ApiStatus;
 
-public class ForgeInternalHandler {
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onEntityJoinWorld(EntityJoinLevelEvent event) {
+import java.lang.invoke.MethodHandles;
+
+@ApiStatus.Internal
+public final class ForgeInternalHandler {
+    static void register() {
+        BusGroup.DEFAULT.register(MethodHandles.lookup(), ForgeInternalHandler.class);
+    }
+
+    @SubscribeEvent(priority = Priority.HIGH)
+    static boolean onEntityJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
-        if (entity.getClass().equals(ItemEntity.class)) {
+        if (entity.getClass() == ItemEntity.class) {
             ItemStack stack = ((ItemEntity)entity).getItem();
             Item item = stack.getItem();
             if (item.hasCustomEntity(stack)) {
                 Entity newEntity = item.createEntity(event.getLevel(), entity, stack);
                 if (newEntity != null) {
                     entity.discard();
-                    event.setCanceled(true);
                     @SuppressWarnings("resource")
                     var executor = LogicalSidedProvider.WORKQUEUE.get(event.getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
                     executor.schedule(new TickTask(0, () -> event.getLevel().addFreshEntity(newEntity)));
+                    return true;
                 }
             }
         }
-    }
-
-    @SubscribeEvent
-    public void onServerTick(ServerTickEvent.Pre event) {
-        WorldWorkerManager.tick(true);
-    }
-
-    @SubscribeEvent
-    public void onServerTick(ServerTickEvent.Post event) {
-        WorldWorkerManager.tick(false);
+        return false;
     }
 
 //    @SubscribeEvent
-//    public void checkSettings(ClientTickEvent event) {
+//    static void checkSettings(ClientTickEvent event) {
 //        if (event.phase == Phase.END)
 //            CloudRenderer.updateCloudSettings();
 //    }
 
     @SubscribeEvent
-    public void onChunkUnload(ChunkEvent.Unload event) {
+    static void onChunkUnload(ChunkEvent.Unload event) {
         if (!event.getLevel().isClientSide())
             FarmlandWaterManager.removeTickets(event.getChunk());
     }
 
     /*
     @SubscribeEvent
-    public void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+    static void playerChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getPlayer() instanceof ServerPlayerEntity)
             DimensionManager.rebuildPlayerMap(((ServerPlayerEntity)event.getPlayer()).server.getPlayerList(), true);
     }
     */
 
     @SubscribeEvent
-    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+    static void playerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         UsernameCache.setUsername(event.getEntity().getUUID(), event.getEntity().getGameProfile().getName());
     }
 
     @SubscribeEvent
-    public void onCommandsRegister(RegisterCommandsEvent event) {
+    static void onCommandsRegister(RegisterCommandsEvent event) {
         new ForgeCommand(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
     }
@@ -93,7 +92,7 @@ public class ForgeInternalHandler {
     private static LootModifierManager INSTANCE;
 
     @SubscribeEvent
-    public void onResourceReload(AddReloadListenerEvent event) {
+    static void onResourceReload(AddReloadListenerEvent event) {
         INSTANCE = new LootModifierManager(event.getRegistries());
         event.addListener(INSTANCE);
     }
@@ -105,30 +104,27 @@ public class ForgeInternalHandler {
     }
 
     @SubscribeEvent
-    public void resourceReloadListeners(AddReloadListenerEvent event) {
+    static void resourceReloadListeners(AddReloadListenerEvent event) {
         event.addListener(CreativeModeTabRegistry.getReloadListener());
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void builtinMobSpawnBlocker(EntityJoinLevelEvent event) {
-        if(event.getEntity() instanceof Mob mob && mob.isSpawnCancelled())
-            event.setCanceled(true);
+    @SubscribeEvent(priority = Priority.HIGHEST)
+    static boolean builtinMobSpawnBlocker(EntityJoinLevelEvent event) {
+        return event.getEntity() instanceof Mob mob && mob.isSpawnCancelled();
     }
 
     @SubscribeEvent
-    public void onConnectionStart(ConnectionStartEvent event) {
+    static void onConnectionStart(ConnectionStartEvent event) {
         NetworkFilters.injectIfNecessary(event.getConnection());
     }
 
     @SubscribeEvent
-    public void serverStopping(ServerStoppingEvent evt) {
+    static void serverStopping(ServerStoppingEvent evt) {
         WorldWorkerManager.clear();
     }
 
     @SubscribeEvent
-    public void registerPermissionNodes(PermissionGatherEvent.Nodes event) {
+    static void registerPermissionNodes(PermissionGatherEvent.Nodes event) {
         event.addNodes(ForgeMod.USE_SELECTORS_PERMISSION);
     }
-
 }
-

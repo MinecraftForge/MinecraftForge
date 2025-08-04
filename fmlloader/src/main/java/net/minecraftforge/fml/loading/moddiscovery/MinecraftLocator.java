@@ -43,10 +43,10 @@ public final class MinecraftLocator extends AbstractModProvider implements IModL
         mods.set("modId", "minecraft");
         mods.set("version", FMLLoader.versionInfo().mcVersion());
         mods.set("displayName", "Minecraft");
-        mods.set("logoFile", "mcplogo.png");
-        mods.set("credits", "Mojang, deobfuscated by MCP");
-        mods.set("authors", "MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs");
-        mods.set("description", "Minecraft, decompiled and deobfuscated with MCP technology");
+        //mods.set("logoFile", "mcplogo.png");
+        //mods.set("credits", "Mojang, deobfuscated by MCP");
+        //mods.set("authors", "MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs");
+        mods.set("description", "The base Minecraft game, published by Mojang decompiled and deobfuscated by Forge");
         conf.set("mods", List.of(mods));
 
         var configWrapper = new NightConfigWrapper(conf);

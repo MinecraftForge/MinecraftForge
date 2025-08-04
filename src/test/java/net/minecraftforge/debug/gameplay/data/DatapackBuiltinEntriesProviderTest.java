@@ -25,7 +25,6 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ForgeBiomeModifiers;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -52,11 +51,11 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     };
 
     public DatapackBuiltinEntriesProviderTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
-    @SubscribeEvent
-    public void onDataGen(GatherDataEvent event) {
+    private void gatherData(GatherDataEvent event) {
         var gen = event.getGenerator();
         var packOutput = gen.getPackOutput();
         /* Adds the DataPackBuiltinEntriesProvider to the data generator

@@ -6,9 +6,9 @@
 package net.minecraftforge.fluids.capability;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
@@ -20,29 +20,26 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FluidHandlerBlockEntity extends BlockEntity
-{
+public class FluidHandlerBlockEntity extends BlockEntity {
     protected FluidTank tank = new FluidTank(FluidType.BUCKET_VOLUME);
 
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
-    public FluidHandlerBlockEntity(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
-    {
+    public FluidHandlerBlockEntity(@NotNull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
     }
 
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
-        super.loadAdditional(tag, provider);
-        tank.readFromNBT(tag);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        tank.readFrom(input);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider)
-    {
-        super.saveAdditional(tag, provider);
-        tank.writeToNBT(tag);
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        tank.writeTo(output);
     }
 
     @Override

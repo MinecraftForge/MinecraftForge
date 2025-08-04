@@ -6,6 +6,7 @@
 package net.minecraftforge.event.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * Called after {@link ServerAboutToStartEvent} and before {@link ServerStartedEvent}.
@@ -15,11 +16,10 @@ import net.minecraft.server.MinecraftServer;
  *
  * @author cpw
  */
-public class ServerStartingEvent extends ServerLifecycleEvent
-{
-    public ServerStartingEvent(final MinecraftServer server)
-    {
+public final class ServerStartingEvent extends ServerLifecycleEvent {
+    public static final EventBus<ServerStartingEvent> BUS = EventBus.create(ServerStartingEvent.class);
+
+    public ServerStartingEvent(final MinecraftServer server) {
         super(server);
     }
-
 }

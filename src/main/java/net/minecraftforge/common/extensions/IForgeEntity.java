@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.function.BiPredicate;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractBoat;
@@ -22,6 +23,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraftforge.common.SoundAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
@@ -35,16 +38,21 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
 
     @Override
     default void deserializeNBT(HolderLookup.Provider registryAccess, CompoundTag nbt) {
-        self().load(nbt);
+        try (var problems = new ProblemReporter.ScopedCollector(self().problemPath(), Entity.LOGGER)) {
+            self().load(TagValueInput.create(problems, registryAccess, nbt));
+        }
     }
 
     @Override
     default CompoundTag serializeNBT(HolderLookup.Provider registryAccess) {
-        var ret = new CompoundTag();
-        var id = self().getEncodeId();
-        if (id != null)
-            ret.putString("id", self().getEncodeId());
-        return self().saveWithoutId(ret);
+        try (var problems = new ProblemReporter.ScopedCollector(self().problemPath(), Entity.LOGGER)) {
+            var output = TagValueOutput.createWithContext(problems, registryAccess);
+            var id = self().getEncodeId();
+            if (id != null)
+                output.putString("id", id);
+            self().saveWithoutId(output);
+            return output.buildResult();
+        }
     }
 
     boolean canUpdate();

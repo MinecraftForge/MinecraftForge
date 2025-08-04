@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraftforge.common.Tags.Enchantments.*;
 
 @ApiStatus.Internal
-public final class ForgeEnchantmentTagsProvider extends EnchantmentTagsProvider {
+public final class ForgeEnchantmentTagsProvider extends net.minecraft.data.tags.EnchantmentTagsProvider {
     public ForgeEnchantmentTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, "forge", existingFileHelper);
     }

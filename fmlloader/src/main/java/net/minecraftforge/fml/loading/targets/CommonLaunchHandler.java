@@ -84,7 +84,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     protected static final LaunchType CLIENT_DATA     = new LaunchType("client_data", "minecraft", "net.minecraft.client.data.Main", Dist.CLIENT, true);
     protected static final LaunchType DATA            = new LaunchType("data",   "minecraft", "net.minecraft.data.Main", Dist.CLIENT, true);
     protected static final LaunchType SERVER          = new LaunchType("server", "minecraft", "net.minecraft.server.Main", Dist.DEDICATED_SERVER, false);
-    protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "net.minecraftforge.forge", "net.minecraftforge.gametest.GameTestMain", Dist.DEDICATED_SERVER, false);
+    protected static final LaunchType SERVER_GAMETEST = new LaunchType("server_gametest", "minecraft", "net.minecraft.gametest.Main", Dist.DEDICATED_SERVER, false);
 
     protected void runTarget(String module, String target, final String[] arguments, final ModuleLayer layer) throws Throwable {
         var mod = layer.findModule(module).orElse(null);

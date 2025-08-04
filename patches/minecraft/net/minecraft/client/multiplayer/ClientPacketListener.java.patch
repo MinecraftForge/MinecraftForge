@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
-@@ -477,6 +_,7 @@
+@@ -528,6 +_,7 @@
  
          this.minecraft.debugRenderer.clear();
          this.minecraft.player.resetPos();
@@ -8,7 +8,7 @@
          this.minecraft.player.setId(p_105030_.playerId());
          this.level.addEntity(this.minecraft.player);
          this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
-@@ -1263,6 +_,8 @@
+@@ -1315,6 +_,8 @@
              localplayer1.getAttributes().assignBaseValues(localplayer.getAttributes());
          }
  
@@ -17,27 +17,27 @@
          this.level.addEntity(localplayer1);
          localplayer1.input = new KeyboardInput(this.minecraft.options);
          this.minecraft.gameMode.adjustPlayer(localplayer1);
-@@ -1407,7 +_,7 @@
-         PacketUtils.ensureRunningOnSameThread(p_104976_, this, this.minecraft);
-         BlockPos blockpos = p_104976_.getPos();
-         this.minecraft.level.getBlockEntity(blockpos, p_104976_.getType()).ifPresent(p_389343_ -> {
--            p_389343_.loadWithComponents(p_104976_.getTag(), this.registryAccess);
-+            p_389343_.onDataPacket(connection, p_104976_, this.registryAccess);
-             if (p_389343_ instanceof CommandBlockEntity && this.minecraft.screen instanceof CommandBlockEditScreen) {
-                 ((CommandBlockEditScreen)this.minecraft.screen).updateGui();
-             }
-@@ -1567,7 +_,9 @@
+@@ -1462,7 +_,7 @@
+             ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(p_404890_.problemPath(), LOGGER);
+ 
+             try {
+-                p_404890_.loadWithComponents(TagValueInput.create(problemreporter$scopedcollector, this.registryAccess, p_104976_.getTag()));
++                p_404890_.onDataPacket(connection, TagValueInput.create(problemreporter$scopedcollector, this.registryAccess, p_104976_.getTag()), this.registryAccess);
+             } catch (Throwable throwable1) {
+                 try {
+                     problemreporter$scopedcollector.close();
+@@ -1630,7 +_,9 @@
      @Override
      public void handleCommands(ClientboundCommandsPacket p_104990_) {
          PacketUtils.ensureRunningOnSameThread(p_104990_, this, this.minecraft);
--        this.commands = new CommandDispatcher<>(p_104990_.getRoot(CommandBuildContext.simple(this.registryAccess, this.enabledFeatures)));
+-        this.commands = new CommandDispatcher<>(p_104990_.getRoot(CommandBuildContext.simple(this.registryAccess, this.enabledFeatures), COMMAND_NODE_BUILDER));
 +        var context = CommandBuildContext.simple(this.registryAccess, this.enabledFeatures);
-+        this.commands = new CommandDispatcher<>(p_104990_.getRoot(context));
++        this.commands = new CommandDispatcher<>(p_104990_.getRoot(context, COMMAND_NODE_BUILDER));
 +        this.commands = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.commands, context);
      }
  
      @Override
-@@ -1668,6 +_,7 @@
+@@ -1731,6 +_,7 @@
          if (this.minecraft.screen instanceof RecipeUpdateListener recipeupdatelistener) {
              recipeupdatelistener.recipesUpdated();
          }
@@ -45,7 +45,7 @@
      }
  
      @Override
-@@ -1706,6 +_,8 @@
+@@ -1769,6 +_,8 @@
          this.fuelValues = FuelValues.vanillaBurnTimes(this.registryAccess, this.enabledFeatures);
          List<ItemStack> list1 = List.copyOf(CreativeModeTabs.searchTab().getDisplayItems());
          this.searchTrees.updateCreativeTags(list1);
@@ -54,7 +54,7 @@
      }
  
      @Override
-@@ -2548,6 +_,8 @@
+@@ -2617,6 +_,8 @@
      }
  
      public void sendChat(String p_249888_) {
@@ -63,11 +63,19 @@
          Instant instant = Instant.now();
          long i = Crypt.SaltSupplier.getLong();
          LastSeenMessagesTracker.Update lastseenmessagestracker$update = this.lastSeenMessages.generateAndApplyUpdate();
-@@ -2556,6 +_,7 @@
+@@ -2625,6 +_,7 @@
      }
  
      public void sendCommand(String p_250092_) {
 +        if (net.minecraftforge.client.ClientCommandHandler.runCommand(p_250092_)) return;
-         SignableCommand<SharedSuggestionProvider> signablecommand = SignableCommand.of(this.parseCommand(p_250092_));
+         SignableCommand<ClientSuggestionProvider> signablecommand = SignableCommand.of(this.commands.parse(p_250092_, this.suggestionsProvider));
          if (signablecommand.arguments().isEmpty()) {
              this.send(new ServerboundChatCommandPacket(p_250092_));
+@@ -2641,6 +_,7 @@
+     }
+ 
+     public void sendUnattendedCommand(String p_407213_, @Nullable Screen p_406262_) {
++        if (net.minecraftforge.client.ClientCommandHandler.runCommand(p_407213_)) return;
+         switch (this.verifyCommand(p_407213_)) {
+             case NO_ISSUES:
+                 this.send(new ServerboundChatCommandPacket(p_407213_));

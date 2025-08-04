@@ -10,45 +10,40 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(RenderLocalPlayerTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class RenderLocalPlayerTest
-{
+public final class RenderLocalPlayerTest {
     public static final String MODID = "render_local_player_test";
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onItemRightClickEntity(final PlayerInteractEvent.EntityInteract event)
-    {
-        if (ENABLED && event.getItemStack().getItem() == Items.STICK)
-        {
+    public static boolean onItemRightClickEntity(final PlayerInteractEvent.EntityInteract event) {
+        if (ENABLED && event.getItemStack().getItem() == Items.STICK) {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getCameraEntity() == mc.player)
-            {
+            if (mc.getCameraEntity() == mc.player) {
                 mc.setCameraEntity(event.getTarget());
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
+                return true;
             }
         }
+        return false;
     }
 
     @SubscribeEvent
-    public static void onItemRightClick(final PlayerInteractEvent.RightClickItem event)
-    {
-        if (ENABLED && event.getItemStack().getItem() == Items.STICK)
-        {
+    public static boolean onItemRightClick(final PlayerInteractEvent.RightClickItem event) {
+        if (ENABLED && event.getItemStack().getItem() == Items.STICK) {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getCameraEntity() != mc.player)
-            {
+            if (mc.getCameraEntity() != mc.player) {
                 mc.setCameraEntity(mc.player);
 
                 event.setCancellationResult(InteractionResult.SUCCESS);
-                event.setCanceled(true);
+                return true;
             }
         }
+        return false;
     }
 }

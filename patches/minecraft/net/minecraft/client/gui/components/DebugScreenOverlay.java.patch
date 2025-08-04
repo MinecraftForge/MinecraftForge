@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -134,9 +_,9 @@
+@@ -139,9 +_,9 @@
      @Nullable
      private CompletableFuture<LevelChunk> serverChunk;
      private boolean renderDebug;
@@ -13,7 +13,7 @@
      private final LocalSampleLogger frameTimeLogger = new LocalSampleLogger(1);
      private final LocalSampleLogger tickTimeLogger = new LocalSampleLogger(TpsDebugDimensions.values().length);
      private final LocalSampleLogger pingLogger = new LocalSampleLogger(1);
-@@ -179,14 +_,18 @@
+@@ -183,15 +_,19 @@
          this.clientChunk = null;
      }
  
@@ -29,13 +29,14 @@
 +    protected void drawText(ProfilerFiller profilerfiller, GuiGraphics p_281427_) {
          this.drawGameInformation(p_281427_);
          this.drawSystemInformation(p_281427_);
+         p_281427_.nextStratum();
 +    }
 +
 +    protected void drawFPSCharts(ProfilerFiller profilerfiller, GuiGraphics p_281427_) {
          this.profilerPieChart.setBottomOffset(10);
          if (this.renderFpsCharts) {
              int i = p_281427_.guiWidth();
-@@ -199,7 +_,9 @@
+@@ -204,7 +_,9 @@
  
              this.profilerPieChart.setBottomOffset(this.tpsChart.getFullHeight());
          }
@@ -45,7 +46,7 @@
          if (this.renderNetworkCharts) {
              int l = p_281427_.guiWidth();
              int i1 = l / 2;
-@@ -215,12 +_,22 @@
+@@ -220,12 +_,22 @@
          try (Zone zone = profilerfiller.zone("profilerPie")) {
              this.profilerPieChart.render(p_281427_);
          }
@@ -70,7 +71,7 @@
          list.add("");
          boolean flag = this.minecraft.getSingleplayerServer() != null;
          list.add(
-@@ -234,11 +_,18 @@
+@@ -239,11 +_,18 @@
                  + (this.renderNetworkCharts ? " visible" : " hidden")
          );
          list.add("For help: press F3 + Q");
@@ -90,7 +91,7 @@
          this.renderLines(p_281261_, list, false);
      }
  
-@@ -592,6 +_,7 @@
+@@ -597,6 +_,7 @@
                  list.add("");
                  list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
                  list.add(String.valueOf(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())));

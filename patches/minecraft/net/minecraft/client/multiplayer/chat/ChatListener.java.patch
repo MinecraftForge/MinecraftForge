@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/chat/ChatListener.java
 +++ b/net/minecraft/client/multiplayer/chat/ChatListener.java
-@@ -123,7 +_,9 @@
+@@ -124,7 +_,9 @@
          Instant instant = Instant.now();
          this.handleMessage(null, () -> {
              Component component = p_251256_.decorate(p_250375_);
@@ -11,7 +11,7 @@
              this.narrateChatMessage(p_251256_, p_250375_);
              this.logSystemMessage(component, instant);
              this.previousMessageTime = Util.getMillis();
-@@ -142,12 +_,16 @@
+@@ -143,12 +_,16 @@
              MessageSignature messagesignature = p_249430_.signature();
              FilterMask filtermask = p_249430_.filterMask();
              if (filtermask.isEmpty()) {
@@ -30,7 +30,7 @@
                      this.narrateChatMessage(p_251766_, component);
                  }
              }
-@@ -180,6 +_,8 @@
+@@ -181,6 +_,8 @@
  
      public void handleSystemMessage(Component p_240522_, boolean p_240642_) {
          if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(this.guessChatUUID(p_240522_))) {
@@ -38,4 +38,4 @@
 +            if (p_240522_ == null) return;
              if (p_240642_) {
                  this.minecraft.gui.setOverlayMessage(p_240522_, false);
-             } else {
+                 this.minecraft.getNarrator().saySystemQueued(p_240522_);

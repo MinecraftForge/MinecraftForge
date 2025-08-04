@@ -99,12 +99,7 @@
                                      }
                                  }
                              )
-@@ -106,11 +_,16 @@
- 
-     protected TagsProvider.TagAppender<T> tag(TagKey<T> p_206425_) {
-         TagBuilder tagbuilder = this.getOrCreateRawBuilder(p_206425_);
--        return new TagsProvider.TagAppender<>(tagbuilder);
-+        return new TagsProvider.TagAppender<>(tagbuilder, modId);
+@@ -105,7 +_,12 @@
      }
  
      protected TagBuilder getOrCreateRawBuilder(TagKey<T> p_236452_) {
@@ -118,51 +113,19 @@
      }
  
      public CompletableFuture<TagsProvider.TagLookup<T>> contentsGetter() {
-@@ -125,11 +_,26 @@
+@@ -118,6 +_,15 @@
+             this.addTags(p_274768_);
+             return (HolderLookup.Provider)p_274768_;
          });
-     }
- 
--    public static class TagAppender<T> {
++    }
++
++
 +    private boolean missing(TagEntry reference) {
 +        // Optional tags should not be validated
-+
 +        if (reference.isRequired()) {
 +           return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
 +        }
 +        return false;
-+     }
-+
-+    public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
-         private final TagBuilder builder;
-+        private final String modid;
- 
-         protected TagAppender(TagBuilder p_256426_) {
-+            this(p_256426_, "vanilla");
-+        }
-+
-+        protected TagAppender(TagBuilder p_256426_, String modid) {
-             this.builder = p_256426_;
-+            this.modid = modid;
-         }
- 
-         public final TagsProvider.TagAppender<T> add(ResourceKey<T> p_256138_) {
-@@ -167,6 +_,19 @@
-         public TagsProvider.TagAppender<T> addOptionalTag(ResourceLocation p_176842_) {
-             this.builder.addOptionalTag(p_176842_);
-             return this;
-+        }
-+
-+        public TagsProvider.TagAppender<T> add(TagEntry tag) {
-+            builder.add(tag);
-+            return this;
-+        }
-+
-+        public TagBuilder getInternalBuilder() {
-+            return builder;
-+        }
-+
-+        public String getModID() {
-+            return modid;
-         }
      }
  
+     @FunctionalInterface

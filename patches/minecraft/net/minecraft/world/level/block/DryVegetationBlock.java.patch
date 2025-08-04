@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/DryVegetationBlock.java
 +++ b/net/minecraft/world/level/block/DryVegetationBlock.java
-@@ -13,7 +_,7 @@
+@@ -12,7 +_,7 @@
  import net.minecraft.world.phys.shapes.CollisionContext;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
@@ -8,4 +8,4 @@
 +public class DryVegetationBlock extends VegetationBlock implements net.minecraftforge.common.IForgeShearable {
      public static final MapCodec<DryVegetationBlock> CODEC = simpleCodec(DryVegetationBlock::new);
      private static final VoxelShape SHAPE = Block.column(12.0, 0.0, 13.0);
-     private static final int IDLE_SOUND_CHANCE = 150;
+ 

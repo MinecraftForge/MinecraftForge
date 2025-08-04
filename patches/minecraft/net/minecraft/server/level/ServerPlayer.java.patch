@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -190,7 +_,8 @@
+@@ -196,7 +_,8 @@
  import net.minecraft.world.scores.criteria.ObjectiveCriteria;
  import org.slf4j.Logger;
  
@@ -10,15 +10,15 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -800,6 +_,7 @@
+@@ -813,6 +_,7 @@
  
      @Override
      public void die(DamageSource p_9035_) {
 +        if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_9035_)) return;
          this.gameEvent(GameEvent.ENTITY_DIE);
-         boolean flag = this.serverLevel().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
+         boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES);
          if (flag) {
-@@ -979,6 +_,7 @@
+@@ -1010,6 +_,7 @@
  
      @Nullable
      public ServerPlayer teleport(TeleportTransition p_361322_) {
@@ -26,7 +26,7 @@
          if (this.isRemoved()) {
              return null;
          } else {
-@@ -1006,7 +_,7 @@
+@@ -1037,7 +_,7 @@
                  PlayerList playerlist = this.server.getPlayerList();
                  playerlist.sendPlayerPermissionLevel(this);
                  serverlevel1.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
@@ -35,15 +35,15 @@
                  ProfilerFiller profilerfiller = Profiler.get();
                  profilerfiller.push("moving");
                  if (resourcekey == Level.OVERWORLD && serverlevel.dimension() == Level.NETHER) {
-@@ -1030,6 +_,7 @@
-                 this.lastSentExp = -1;
+@@ -1062,6 +_,7 @@
                  this.lastSentHealth = -1.0F;
                  this.lastSentFood = -1;
+                 this.teleportSpectators(p_361322_, serverlevel1);
 +                net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, resourcekey, p_361322_.newLevel().dimension());
                  return this;
              }
          }
-@@ -1070,6 +_,9 @@
+@@ -1102,6 +_,9 @@
  
      @Override
      public Either<Player.BedSleepingProblem, Unit> startSleepInBed(BlockPos p_9115_) {
@@ -53,7 +53,7 @@
          Direction direction = this.level().getBlockState(p_9115_).getValue(HorizontalDirectionalBlock.FACING);
          if (this.isSleeping() || !this.isAlive()) {
              return Either.left(Player.BedSleepingProblem.OTHER_PROBLEM);
-@@ -1081,7 +_,7 @@
+@@ -1113,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
          } else {
              this.setRespawnPosition(new ServerPlayer.RespawnConfig(this.level().dimension(), p_9115_, this.getYRot(), false), true);
@@ -62,7 +62,7 @@
                  return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                  if (!this.isCreative()) {
-@@ -1127,6 +_,7 @@
+@@ -1159,6 +_,7 @@
      }
  
      private boolean bedInRange(BlockPos p_9117_, Direction p_9118_) {
@@ -70,7 +70,7 @@
          return this.isReachableBedBlock(p_9117_) || this.isReachableBedBlock(p_9117_.relative(p_9118_.getOpposite()));
      }
  
-@@ -1225,6 +_,7 @@
+@@ -1262,6 +_,7 @@
                  this.connection.send(new ClientboundOpenScreenPacket(abstractcontainermenu.containerId, abstractcontainermenu.getType(), p_9033_.getDisplayName()));
                  this.initMenu(abstractcontainermenu);
                  this.containerMenu = abstractcontainermenu;
@@ -78,7 +78,7 @@
                  return OptionalInt.of(this.containerCounter);
              }
          }
-@@ -1274,6 +_,7 @@
+@@ -1311,6 +_,7 @@
      public void doCloseContainer() {
          this.containerMenu.removed(this);
          this.inventoryMenu.transferState(this.containerMenu);
@@ -86,14 +86,14 @@
          this.containerMenu = this.inventoryMenu;
      }
  
-@@ -1497,6 +_,15 @@
+@@ -1536,6 +_,15 @@
          this.setShoulderEntityLeft(p_9016_.getShoulderEntityLeft());
          this.setShoulderEntityRight(p_9016_.getShoulderEntityRight());
          this.setLastDeathLocation(p_9016_.getLastDeathLocation());
 +
 +        //Copy over a section of the Entity Data from the old player.
 +        //Allows mods to specify data that persists after players respawn.
-+        CompoundTag old = p_9016_.getPersistentData();
++        var old = p_9016_.getPersistentData();
 +        if (old.contains(PERSISTED_NBT_TAG))
 +            getPersistentData().put(PERSISTED_NBT_TAG, old.get(PERSISTED_NBT_TAG));
 +        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_9016_, !p_9017_);
@@ -102,7 +102,7 @@
      }
  
      @Override
-@@ -1596,6 +_,7 @@
+@@ -1635,6 +_,7 @@
  
      public boolean setGameMode(GameType p_143404_) {
          boolean flag = this.isSpectator();
@@ -110,7 +110,7 @@
          if (!this.gameMode.changeGameModeForPlayer(p_143404_)) {
              return false;
          } else {
-@@ -1756,6 +_,9 @@
+@@ -1787,6 +_,9 @@
      public void setCamera(@Nullable Entity p_9214_) {
          Entity entity = this.getCamera();
          this.camera = (Entity)(p_9214_ == null ? this : p_9214_);
@@ -120,7 +120,7 @@
          if (entity != this.camera) {
              if (this.camera.level() instanceof ServerLevel serverlevel) {
                  this.teleportTo(
-@@ -1794,7 +_,11 @@
+@@ -1825,7 +_,11 @@
  
      @Nullable
      public Component getTabListDisplayName() {
@@ -133,7 +133,7 @@
      }
  
      public int getTabListOrder() {
-@@ -1829,6 +_,7 @@
+@@ -1860,6 +_,7 @@
      }
  
      public void setRespawnPosition(@Nullable ServerPlayer.RespawnConfig p_396560_, boolean p_9162_) {
@@ -141,7 +141,7 @@
          if (p_9162_ && p_396560_ != null && !p_396560_.isSamePosition(this.respawnConfig)) {
              this.sendSystemMessage(SPAWN_SET_MESSAGE);
          }
-@@ -1938,9 +_,12 @@
+@@ -1969,9 +_,12 @@
  
      public boolean drop(boolean p_182295_) {
          Inventory inventory = this.getInventory();
@@ -155,7 +155,7 @@
      }
  
      @Override
-@@ -2044,6 +_,75 @@
+@@ -2075,6 +_,75 @@
      @Nullable
      public BlockPos getRaidOmenPosition() {
          return this.raidOmenPosition;

@@ -5,17 +5,20 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.shaders.FogShape;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
+import org.joml.Vector4f;
 
 /**
  * Fired for hooking into the entity view rendering in {@link GameRenderer}.
@@ -30,7 +33,9 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ComputeCameraAngles
  * @see ComputeFov
  */
-public abstract class ViewportEvent extends Event {
+public abstract sealed class ViewportEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<ViewportEvent> BUS = EventBus.create(ViewportEvent.class);
+
     private final GameRenderer renderer;
     private final Camera camera;
     private final double partialTick;
@@ -72,30 +77,28 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class RenderFog extends ViewportEvent {
-        private final FogMode mode;
+    public static final class RenderFog extends ViewportEvent implements Cancellable {
+        public static final CancellableEventBus<RenderFog> BUS = CancellableEventBus.create(RenderFog.class);
+
         private final FogType type;
-        private float farPlaneDistance;
-        private float nearPlaneDistance;
-        private FogShape fogShape;
+        private final FogData data;
+        private final Vector4f color;
 
         @SuppressWarnings("resource")
         @ApiStatus.Internal
-        public RenderFog(FogMode mode, FogType type, Camera camera, float partialTicks, float nearPlaneDistance, float farPlaneDistance, FogShape fogShape) {
+        public RenderFog(FogType type, Camera camera, float partialTicks, FogData data, Vector4f color) {
             super(Minecraft.getInstance().gameRenderer, camera, partialTicks);
-            this.mode = mode;
             this.type = type;
-            setFarPlaneDistance(farPlaneDistance);
-            setNearPlaneDistance(nearPlaneDistance);
-            setFogShape(fogShape);
+            this.data = data;
+            this.color = color;
         }
 
-        /**
-         * {@return the mode of fog being rendered}
-         */
-        public FogMode getMode() {
-            return mode;
+        public FogData getData() {
+            return data;
+        }
+
+        public Vector4f getColor() {
+            return color;
         }
 
         /**
@@ -109,21 +112,14 @@ public abstract class ViewportEvent extends Event {
          * {@return the distance to the far plane where the fog ends}
          */
         public float getFarPlaneDistance() {
-            return farPlaneDistance;
+            return this.getData().renderDistanceEnd;
         }
 
         /**
          * {@return the distance to the near plane where the fog starts}
          */
         public float getNearPlaneDistance() {
-            return nearPlaneDistance;
-        }
-
-        /**
-         * {@return the shape of the fog being rendered}
-         */
-        public FogShape getFogShape() {
-            return fogShape;
+            return this.getData().renderDistanceStart;
         }
 
         /**
@@ -133,7 +129,7 @@ public abstract class ViewportEvent extends Event {
          * @see #scaleFarPlaneDistance(float)
          */
         public void setFarPlaneDistance(float distance) {
-            farPlaneDistance = distance;
+            getData().renderDistanceEnd = distance;
         }
 
         /**
@@ -143,16 +139,7 @@ public abstract class ViewportEvent extends Event {
          * @see #scaleNearPlaneDistance(float)
          */
         public void setNearPlaneDistance(float distance) {
-            nearPlaneDistance = distance;
-        }
-
-        /**
-         * Sets the new shape of the fog being rendered. The new shape will only take effect if the event is cancelled.
-         *
-         * @param shape the new shape of the fog
-         */
-        public void setFogShape(FogShape shape) {
-            fogShape = shape;
+            getData().renderDistanceStart = distance;
         }
 
         /**
@@ -161,7 +148,7 @@ public abstract class ViewportEvent extends Event {
          * @param factor the factor to scale the far plane distance by
          */
         public void scaleFarPlaneDistance(float factor) {
-            farPlaneDistance *= factor;
+            getData().renderDistanceEnd *= factor;
         }
 
         /**
@@ -170,7 +157,7 @@ public abstract class ViewportEvent extends Event {
          * @param factor the factor to scale the near plane distance by
          */
         public void scaleNearPlaneDistance(float factor) {
-            nearPlaneDistance *= factor;
+            getData().renderDistanceStart *= factor;
         }
     }
 
@@ -182,7 +169,9 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeFogColor extends ViewportEvent {
+    public static final class ComputeFogColor extends ViewportEvent {
+        public static final EventBus<ComputeFogColor> BUS = EventBus.create(ComputeFogColor.class);
+
         private float red;
         private float green;
         private float blue;
@@ -254,7 +243,9 @@ public abstract class ViewportEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ComputeCameraAngles extends ViewportEvent {
+    public static final class ComputeCameraAngles extends ViewportEvent {
+        public static final EventBus<ComputeCameraAngles> BUS = EventBus.create(ComputeCameraAngles.class);
+
         private float yaw;
         private float pitch;
         private float roll;
@@ -327,7 +318,9 @@ public abstract class ViewportEvent extends Event {
      *
      * @see ComputeFovModifierEvent
      */
-    public static class ComputeFov extends ViewportEvent {
+    public static final class ComputeFov extends ViewportEvent {
+        public static final EventBus<ComputeFov> BUS = EventBus.create(ComputeFov.class);
+
         private final boolean usedConfiguredFov;
         private float fov;
 

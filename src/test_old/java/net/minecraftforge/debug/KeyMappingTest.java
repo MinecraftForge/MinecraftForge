@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 
@@ -29,17 +29,14 @@ public class KeyMappingTest
         // respective mod, so the user wants them on the same physical key.
         static KeyMapping stickKey = new KeyMapping("stick_key", InputConstants.KEY_BACKSLASH, KeyMapping.CATEGORY_MISC);
         static KeyMapping rockKey = new KeyMapping("rock_key", InputConstants.KEY_BACKSLASH, KeyMapping.CATEGORY_MISC);
-        @SubscribeEvent
-        public static void init(FMLConstructModEvent event) {
-            MinecraftForge.EVENT_BUS.addListener(ClientStuff::tick);
-        }
+
         @SubscribeEvent
         public static void initKeys(RegisterKeyMappingsEvent event) {
             event.register(stickKey);
             event.register(rockKey);
         }
-        public static void tick(TickEvent.ClientTickEvent event) {
-            if(event.phase != TickEvent.Phase.START) return;
+        @SubscribeEvent
+        public static void tick(TickEvent.ClientTickEvent.Post event) {
             if(stickKey.consumeClick()) {
                 Player player = Minecraft.getInstance().player;
                 if(player != null && player.getMainHandItem().is(Items.STICK))

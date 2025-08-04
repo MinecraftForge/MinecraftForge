@@ -3,7 +3,7 @@
 @@ -9,8 +_,14 @@
  import net.minecraft.world.level.block.entity.BannerPatterns;
  
- public class BannerPatternTagsProvider extends TagsProvider<BannerPattern> {
+ public class BannerPatternTagsProvider extends KeyTagProvider<BannerPattern> {
 +    /** @deprecated Forge: Use the {@linkplain #BannerPatternTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +    @Deprecated
      public BannerPatternTagsProvider(PackOutput p_256451_, CompletableFuture<HolderLookup.Provider> p_256420_) {

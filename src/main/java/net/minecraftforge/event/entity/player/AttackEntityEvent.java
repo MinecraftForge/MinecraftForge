@@ -6,9 +6,10 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
@@ -24,18 +25,17 @@ import net.minecraft.world.entity.player.Player;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class AttackEntityEvent extends PlayerEvent
-{
+public final class AttackEntityEvent extends PlayerEvent implements Cancellable {
+    public static final CancellableEventBus<AttackEntityEvent> BUS = CancellableEventBus.create(AttackEntityEvent.class);
+
     private final Entity target;
-    public AttackEntityEvent(Player player, Entity target)
-    {
+
+    public AttackEntityEvent(Player player, Entity target) {
         super(player);
         this.target = target;
     }
 
-    public Entity getTarget()
-    {
+    public Entity getTarget() {
         return target;
     }
 }

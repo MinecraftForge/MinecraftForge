@@ -16,16 +16,14 @@ import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraftforge.client.event.RegisterPresetEditorsEvent;
 import net.minecraftforge.fml.ModLoader;
 
-public final class PresetEditorManager
-{
+public final class PresetEditorManager {
     private PresetEditorManager() {} // Utility class
 
     private static Map<ResourceKey<WorldPreset>, PresetEditor> editors = Map.of();
 
     @SuppressWarnings("deprecation")
     @ApiStatus.Internal
-    static void init()
-    {
+    static void init() {
         // Start with the vanilla entries
         Map<ResourceKey<WorldPreset>, PresetEditor> gatheredEditors = new HashMap<>();
         // Vanilla's map uses Optional<ResourceKey>s as its keys.
@@ -41,7 +39,7 @@ public final class PresetEditorManager
         RegisterPresetEditorsEvent event = new RegisterPresetEditorsEvent(gatheredEditors);
         ModLoader.get().postEventWrapContainerInModOrder(event);
 
-        editors = gatheredEditors;
+        editors = Map.copyOf(gatheredEditors);
     }
 
     /**
@@ -50,8 +48,7 @@ public final class PresetEditorManager
      * @param key ResourceKey for the specified WorldPreset/PresetEditor.
      */
     @Nullable
-    public static PresetEditor get(ResourceKey<WorldPreset> key)
-    {
+    public static PresetEditor get(ResourceKey<WorldPreset> key) {
         return editors.get(key);
     }
 }

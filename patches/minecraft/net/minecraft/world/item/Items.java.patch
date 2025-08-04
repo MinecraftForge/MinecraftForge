@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -2097,7 +_,25 @@
+@@ -2155,7 +_,25 @@
      }
  
      public static Item registerBlock(Block p_252092_, Block... p_248886_) {
@@ -27,7 +27,7 @@
  
          for (Block block : p_248886_) {
              Item.BY_BLOCK.put(block, item);
-@@ -2136,10 +_,6 @@
+@@ -2194,10 +_,6 @@
  
      public static Item registerItem(ResourceKey<Item> p_364577_, Function<Item.Properties, Item> p_366144_, Item.Properties p_369845_) {
          Item item = p_366144_.apply(p_369845_.setId(p_364577_));

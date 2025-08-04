@@ -1,42 +1,42 @@
 --- a/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
-@@ -106,6 +_,7 @@
+@@ -107,6 +_,7 @@
          int i = this.leftPos;
          int j = this.topPos;
-         super.render(p_283479_, p_283661_, p_281248_, p_281886_);
-+        net.minecraftforge.client.event.ForgeEventFactoryClient.onContainerRenderBackground(this, p_283479_, p_283661_, p_281248_);
-         p_283479_.pose().pushPose();
-         p_283479_.pose().translate(i, j, 0.0F);
-         Slot slot = this.hoveredSlot;
-@@ -117,6 +_,8 @@
+         super.render(p_409971_, p_409213_, p_408205_, p_408282_);
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onContainerRenderBackground(this, p_409971_, p_409213_, p_408205_);
+         p_409971_.pose().pushMatrix();
+         p_409971_.pose().translate(i, j);
+         this.renderLabels(p_409971_, p_409213_, p_408205_);
+@@ -119,6 +_,8 @@
              this.onStopHovering(slot);
          }
  
-+        net.minecraftforge.client.event.ForgeEventFactoryClient.onContainerRenderForeground(this, p_283479_, p_283661_, p_281248_);
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onContainerRenderForeground(this, p_409971_, p_409213_, p_408205_);
 +
-         this.renderLabels(p_283479_, p_283661_, p_281248_);
-         ItemStack itemstack = this.draggingItem.isEmpty() ? this.menu.getCarried() : this.draggingItem;
-         if (!itemstack.isEmpty()) {
-@@ -197,7 +_,7 @@
+         p_409971_.pose().popMatrix();
+     }
+ 
+@@ -202,7 +_,7 @@
              ItemStack itemstack = this.hoveredSlot.getItem();
              if (this.menu.getCarried().isEmpty() || this.showTooltipWithItemInHand(itemstack)) {
-                 p_283594_.renderTooltip(
+                 p_283594_.setTooltipForNextFrame(
 -                    this.font, this.getTooltipFromContainerItem(itemstack), itemstack.getTooltipImage(), p_282171_, p_281909_, itemstack.get(DataComponents.TOOLTIP_STYLE)
 +                    this.font, this.getTooltipFromContainerItem(itemstack), itemstack.getTooltipImage(), itemstack, p_282171_, p_281909_
                  );
              }
          }
-@@ -215,7 +_,8 @@
-         p_282567_.pose().pushPose();
-         p_282567_.pose().translate(0.0F, 0.0F, 232.0F);
+@@ -218,7 +_,8 @@
+ 
+     private void renderFloatingItem(GuiGraphics p_282567_, ItemStack p_281330_, int p_281772_, int p_281689_, @Nullable String p_282568_) {
          p_282567_.renderItem(p_281330_, p_281772_, p_281689_);
 -        p_282567_.renderItemDecorations(this.font, p_281330_, p_281772_, p_281689_ - (this.draggingItem.isEmpty() ? 0 : 8), p_282568_);
 +        var font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(p_281330_).getFont(p_281330_, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.ITEM_COUNT);
 +        p_282567_.renderItemDecorations(font == null ? this.font : font, p_281330_, p_281772_, p_281689_ - (this.draggingItem.isEmpty() ? 0 : 8), p_282568_);
-         p_282567_.pose().popPose();
      }
  
-@@ -321,7 +_,8 @@
+     protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) {
+@@ -319,7 +_,8 @@
          if (super.mouseClicked(p_97748_, p_97749_, p_97750_)) {
              return true;
          } else {
@@ -46,7 +46,7 @@
              Slot slot = this.getHoveredSlot(p_97748_, p_97749_);
              long i = Util.getMillis();
              this.doubleclick = this.lastClickSlot == slot && i - this.lastClickTime < 250L && this.lastClickButton == p_97750_;
-@@ -332,6 +_,7 @@
+@@ -330,6 +_,7 @@
                  int j = this.leftPos;
                  int k = this.topPos;
                  boolean flag1 = this.hasClickedOutside(p_97748_, p_97749_, j, k, p_97750_);
@@ -54,7 +54,7 @@
                  int l = -1;
                  if (slot != null) {
                      l = slot.index;
-@@ -357,7 +_,7 @@
+@@ -355,7 +_,7 @@
                          }
                      } else if (!this.isQuickCrafting) {
                          if (this.menu.getCarried().isEmpty()) {
@@ -63,7 +63,7 @@
                                  this.slotClicked(slot, l, p_97750_, ClickType.CLONE);
                              } else {
                                  boolean flag2 = l != -999
-@@ -385,7 +_,7 @@
+@@ -383,7 +_,7 @@
                                  this.quickCraftingType = 0;
                              } else if (p_97750_ == 1) {
                                  this.quickCraftingType = 1;
@@ -72,7 +72,7 @@
                                  this.quickCraftingType = 2;
                              }
                          }
-@@ -461,10 +_,13 @@
+@@ -459,10 +_,13 @@
  
      @Override
      public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
@@ -86,7 +86,7 @@
          int k = -1;
          if (slot != null) {
              k = slot.index;
-@@ -481,7 +_,7 @@
+@@ -479,7 +_,7 @@
                          if (slot2 != null
                              && slot2.mayPickup(this.minecraft.player)
                              && slot2.hasItem()
@@ -116,7 +116,7 @@
              this.onClose();
              return true;
          } else {
-@@ -698,4 +_,11 @@
+@@ -698,6 +_,13 @@
  
          super.onClose();
      }
@@ -127,4 +127,6 @@
 +    public int getGuiTop() { return topPos; }
 +    public int getXSize() { return imageWidth; }
 +    public int getYSize() { return imageHeight; }
- }
+ 
+     @OnlyIn(Dist.CLIENT)
+     record SnapbackData(ItemStack item, Vector2i start, Vector2i end, long time) {

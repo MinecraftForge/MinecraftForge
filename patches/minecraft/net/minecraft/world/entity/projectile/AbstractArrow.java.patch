@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/AbstractArrow.java
 +++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
-@@ -79,6 +_,7 @@
+@@ -76,6 +_,7 @@
      private ItemStack pickupItemStack = this.getDefaultPickupItem();
      @Nullable
      private ItemStack firedFromWeapon = null;
@@ -8,16 +8,16 @@
  
      protected AbstractArrow(EntityType<? extends AbstractArrow> p_332730_, Level p_335646_) {
          super(p_332730_, p_335646_);
-@@ -192,7 +_,7 @@
+@@ -189,7 +_,7 @@
              this.shakeTime--;
          }
  
--        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW)) {
-+        if (this.isInWaterOrRain() || blockstate.is(Blocks.POWDER_SNOW) || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
+-        if (this.isInWaterOrRain()) {
++        if (this.isInWaterOrRain() || this.isInFluidType((fluidType, height) -> this.canFluidExtinguish(fluidType))) {
              this.clearFire();
          }
  
-@@ -569,7 +_,7 @@
+@@ -566,7 +_,7 @@
      protected boolean canHitEntity(Entity p_36743_) {
          return p_36743_ instanceof Player && this.getOwner() instanceof Player player && !player.canHarmPlayer((Player)p_36743_)
              ? false

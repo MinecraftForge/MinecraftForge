@@ -13,8 +13,10 @@ import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
 /**
  * VillagerTradesEvent is fired during the {@link ServerAboutToStartEvent}. It is used to gather the trade lists for each profession.
@@ -26,7 +28,9 @@ import net.minecraftforge.event.server.ServerAboutToStartEvent;
  * <p>Levels outside of this range do nothing, as specified by {@link VillagerData#canLevelUp(int)} which is called before attempting to level up.</p>
  * <p>To add trades to the merchant, simply add new trades to the list.</p>
  */
-public class VillagerTradesEvent extends Event {
+public class VillagerTradesEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<VillagerTradesEvent> BUS = EventBus.create(VillagerTradesEvent.class);
+
     protected Int2ObjectMap<List<ItemListing>> trades;
     protected ResourceKey<VillagerProfession> type;
 

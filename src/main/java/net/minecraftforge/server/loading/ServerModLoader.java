@@ -5,10 +5,10 @@
 
 package net.minecraftforge.server.loading;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.logging.CrashReportExtender;
 import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.server.LanguageHook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +42,7 @@ public class ServerModLoader
             LOGGER.warn(Logging.LOADING, "Mods loaded with {} warnings", warnings.size());
             warnings.forEach(warning -> LOGGER.warn(Logging.LOADING, warning.formatToString()));
         }
-        MinecraftForge.EVENT_BUS.start();
+        BusGroup.DEFAULT.startup();
     }
 
     public static boolean hasErrors() {

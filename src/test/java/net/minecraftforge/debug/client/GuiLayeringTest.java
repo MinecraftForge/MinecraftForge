@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Random;
@@ -32,7 +32,7 @@ public class GuiLayeringTest {
     public static class ClientEvents {
         @SuppressWarnings("unused")
         @SubscribeEvent
-        public static void guiOpen(ScreenEvent.Init event) {
+        public static void guiOpen(ScreenEvent.Init.Post event) {
             if (event.getScreen() instanceof AbstractContainerScreen && ENABLED) {
                 event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
                     Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));

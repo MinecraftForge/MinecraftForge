@@ -5,7 +5,7 @@
  
      public void handleBlockBreakAction(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(player, p_215120_, p_215122_, p_215121_);
-+        if (event.isCanceled() || (!this.isCreative() && event.getResult().isDenied())) {
++        if (event == null) {
 +           return;
 +        }
          if (!this.player.canInteractWithBlock(p_215120_, 1.0)) {
@@ -15,7 +15,7 @@
                  float f = 1.0F;
                  BlockState blockstate = this.level.getBlockState(p_215120_);
                  if (!blockstate.isAir()) {
-+                    if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++                    if (!event.getUseBlock().isDenied()) {
                      EnchantmentHelper.onHitBlock(
                          this.level,
                          this.player.getMainHandItem(),
@@ -107,8 +107,8 @@
          } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
 +        }
 +
-+        var event = net.minecraftforge.event.ForgeEventFactory.onRightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
-+        if (event.isCanceled()) return event.getCancellationResult();
++        var event = new net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock(p_9266_, p_9269_, blockpos, p_9270_);
++        if (net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock.BUS.post(event)) return event.getCancellationResult();
 +        if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider menuprovider = blockstate.getMenuProvider(p_9267_, blockpos);
              if (menuprovider != null) {
@@ -118,7 +118,7 @@
              }
          } else {
 +            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+            if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++            if (!event.getUseItem().isDenied()) {
 +                InteractionResult result = p_9268_.onItemUseFirst(useoncontext);
 +                if (result != InteractionResult.PASS) return result;
 +            }
@@ -127,7 +127,7 @@
 +            flag1 &= !(p_9266_.getMainHandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_) && p_9266_.getOffhandItem().doesSneakBypassUse(p_9267_, blockpos, p_9266_));
              ItemStack itemstack = p_9268_.copy();
 -            if (!flag1) {
-+            if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
++            if (event.getUseBlock().isAllowed() || (!event.getUseBlock().isDenied() && !flag1)) {
                  InteractionResult interactionresult = blockstate.useItemOn(p_9266_.getItemInHand(p_9269_), p_9267_, p_9266_, p_9269_, p_9270_);
                  if (interactionresult.consumesAction()) {
                      CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(p_9266_, blockpos, itemstack);
@@ -137,8 +137,8 @@
  
 -            if (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_)) {
 -                UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_))) {
-+                if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
++            if (event.getUseItem().isAllowed() || (!p_9268_.isEmpty() && !p_9266_.getCooldowns().isOnCooldown(p_9268_))) {
++                if (event.getUseItem().isDenied()) return InteractionResult.PASS;
                  InteractionResult interactionresult2;
                  if (p_9266_.hasInfiniteMaterials()) {
                      int i = p_9268_.getCount();

@@ -16,7 +16,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
-import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -36,7 +36,7 @@ import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -49,16 +49,16 @@ public class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
 
     public ConditionalRecipeTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
-    @SubscribeEvent
     public void gatherData(GatherDataEvent event) {
         var gen = event.getGenerator();
         gen.addProvider(event.includeServer(), new Recipes.Runner(gen.getPackOutput(), event.getLookupProvider()));
         var testBlockTags = new TestBlockTags(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
         gen.addProvider(event.includeServer(), testBlockTags);
-        gen.addProvider(event.includeServer(), new TestItemTags(gen.getPackOutput(), event.getLookupProvider(), testBlockTags.contentsGetter(), event.getExistingFileHelper()));
+        gen.addProvider(event.includeServer(), new TestItemTags(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
     }
 
     private static <C extends RecipeInput, T extends Recipe<C>> void assertFalse(GameTestHelper helper, RecipeType<T> type, C container) {
@@ -183,9 +183,9 @@ public class ConditionalRecipeTest extends BaseTestMod {
         }
     }
 
-    public static class TestItemTags extends ItemTagsProvider {
-        public TestItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTagProvider, ExistingFileHelper existingFileHelper) {
-            super(output, lookupProvider, blockTagProvider, MODID, existingFileHelper);
+    public static class TestItemTags extends VanillaItemTagsProvider {
+        public TestItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+            super(output, lookupProvider, MODID, existingFileHelper);
         }
 
         @Override

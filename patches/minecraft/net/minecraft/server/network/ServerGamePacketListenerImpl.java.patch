@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1156,9 +_,10 @@
+@@ -1168,9 +_,10 @@
              switch (serverboundplayeractionpacket$action) {
                  case SWAP_ITEM_WITH_OFFHAND:
                      if (!this.player.isSpectator()) {
@@ -8,13 +8,13 @@
 -                        this.player.setItemInHand(InteractionHand.OFF_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND));
 -                        this.player.setItemInHand(InteractionHand.MAIN_HAND, itemstack);
 +                        var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this.player);
-+                        if (event.isCanceled()) return;
++                        if (event == null) return;
 +                        this.player.setItemInHand(InteractionHand.OFF_HAND, event.getItemSwappedToOffHand());
 +                        this.player.setItemInHand(InteractionHand.MAIN_HAND, event.getItemSwappedToMainHand());
                          this.player.stopUsingItem();
                      }
  
-@@ -1356,8 +_,9 @@
+@@ -1368,8 +_,9 @@
                  }
  
                  CompletableFuture<FilteredText> completablefuture = this.filterTextPacket(playerchatmessage.signedContent());
@@ -25,7 +25,7 @@
                      PlayerChatMessage playerchatmessage1 = playerchatmessage.withUnsignedContent(component).filter(p_296589_.mask());
                      this.broadcastChatMessage(playerchatmessage1);
                  });
-@@ -1693,7 +_,7 @@
+@@ -1699,7 +_,7 @@
  
                              @Override
                              public void onInteraction(InteractionHand p_143682_, Vec3 p_143683_) {
@@ -34,7 +34,7 @@
                              }
  
                              @Override
-@@ -1991,6 +_,7 @@
+@@ -2011,6 +_,7 @@
  
      @Override
      public void handleCustomPayload(ServerboundCustomPayloadPacket p_329963_) {

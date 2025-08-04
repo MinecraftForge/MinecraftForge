@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GrindstoneEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("grindstone_event_test")
@@ -22,8 +22,7 @@ public class GrindstoneEventTest {
     }
 
     @SubscribeEvent
-    public void onGrindstonePlace(GrindstoneEvent.OnPlaceItem event)
-    {
+    public boolean onGrindstonePlace(GrindstoneEvent.OnPlaceItem event) {
         // TODO 1.20: This will not work once IForgeItem#canGrindstoneRepair is changed to have items opt-in to being able to place
         //  rather than the current opt-out (the hook will no longer fire after the change). Fix?
         // all of these "recipes" are slot sensitive, the top and bottom must match exactly for the behavior to change
@@ -62,15 +61,14 @@ public class GrindstoneEventTest {
         }
 
         // canceling the event will prevent disenchanting an iron sword in the top slot
-        if (topItem.is(Items.IRON_SWORD) && bottomItem.is(Items.AIR))
-        {
-            event.setCanceled(true);
+        if (topItem.is(Items.IRON_SWORD) && bottomItem.is(Items.AIR)) {
+            return true;
         }
+        return false;
     }
 
     @SubscribeEvent
-    public void onGrindstoneTake(GrindstoneEvent.OnTakeItem event)
-    {
+    public void onGrindstoneTake(GrindstoneEvent.OnTakeItem event) {
         ItemStack topItem = event.getTopItem();
         ItemStack bottomItem = event.getBottomItem();
         // only shrink stacks by 1 for the lapis + netherite "recipe"

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -87,6 +_,17 @@
+@@ -88,6 +_,17 @@
          OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
          OptionSpec<Path> optionspec14 = optionparser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
          OptionSpec<String> optionspec15 = optionparser.nonOptions();
@@ -18,7 +18,7 @@
  
          try {
              OptionSet optionset = optionparser.parse(p_129699_);
-@@ -95,6 +_,14 @@
+@@ -96,6 +_,14 @@
                  return;
              }
  
@@ -33,7 +33,7 @@
              Path path = optionset.valueOf(optionspec14);
              if (path != null) {
                  writePidFile(path);
-@@ -109,24 +_,29 @@
+@@ -110,24 +_,29 @@
              Bootstrap.validate();
              Util.startTimerHackThread();
              Path path1 = Paths.get("server.properties");
@@ -70,7 +70,7 @@
              LevelStorageSource levelstoragesource = LevelStorageSource.createDefault(file1.toPath());
              LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.validateAndCreateAccess(s);
              Dynamic<?> dynamic;
-@@ -177,6 +_,10 @@
+@@ -178,6 +_,10 @@
  
              PackRepository packrepository = ServerPacksSource.createPackRepository(levelstoragesource$levelstorageaccess);
  
@@ -81,7 +81,7 @@
              WorldStem worldstem;
              try {
                  WorldLoader.InitConfig worldloader$initconfig = loadOrCreateConfig(dedicatedserversettings.getProperties(), dynamic1, flag, packrepository);
-@@ -216,6 +_,16 @@
+@@ -217,6 +_,16 @@
                                          worlddimensions = dedicatedserverproperties.createDimensions(p_358511_.datapackWorldgen());
                                      }
  
@@ -98,13 +98,13 @@
                                      WorldDimensions.Complete worlddimensions$complete = worlddimensions.bake(registry);
                                      Lifecycle lifecycle = worlddimensions$complete.lifecycle().add(p_358511_.datapackWorldgen().allRegistriesLifecycle());
                                      return new WorldLoader.DataLoadOutput<>(
-@@ -254,9 +_,20 @@
+@@ -255,9 +_,20 @@
              }
  
              levelstoragesource$levelstorageaccess.saveDataTag(registryaccess$frozen, worlddata);
 -            final DedicatedServer dedicatedserver = MinecraftServer.spin(
 +            final MinecraftServer dedicatedserver = MinecraftServer.spin(
-                 p_296433_ -> {
+                 p_405123_ -> {
 -                    DedicatedServer dedicatedserver1 = new DedicatedServer(
 +                    MinecraftServer dedicatedserver1;
 +                    // TODO: [Forge][GameTest] URGENT !!! FIX GAME TESTS !!!
@@ -118,10 +118,10 @@
 +                    } else {
 +                     */
 +                    dedicatedserver1 = new DedicatedServer(
-                         p_296433_,
+                         p_405123_,
                          levelstoragesource$levelstorageaccess,
                          packrepository,
-@@ -270,8 +_,8 @@
+@@ -271,8 +_,8 @@
                      dedicatedserver1.setDemo(optionset.has(optionspec2));
                      dedicatedserver1.setId(optionset.valueOf(optionspec12));
                      boolean flag2 = !optionset.has(optionspec) && !optionset.valuesOf(optionspec15).contains("nogui");
@@ -131,8 +131,8 @@
 +                        ds.showGui();
                      }
  
-                     return dedicatedserver1;
-@@ -280,7 +_,10 @@
+                     GameTestTicker.SINGLETON.startTicking();
+@@ -282,7 +_,10 @@
              Thread thread = new Thread("Server Shutdown Thread") {
                  @Override
                  public void run() {

@@ -9,9 +9,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.GatherComponentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -24,9 +22,8 @@ public class GatherComponentsEventTest extends BaseTestMod {
     public static final String MOD_ID = "gather_components_test_event";
 
     public GatherComponentsEventTest(FMLJavaModLoadingContext context) {
-        super(context);
-        IEventBus bus = MinecraftForge.EVENT_BUS;
-        bus.addListener(this::onItem);
+        super(context, false, false);
+        GatherComponentsEvent.Item.BUS.addListener(this::onItem);
     }
 
     public void onItem(GatherComponentsEvent.Item itemEvent) {

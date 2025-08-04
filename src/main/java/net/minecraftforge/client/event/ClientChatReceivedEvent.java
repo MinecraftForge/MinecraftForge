@@ -10,8 +10,10 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import java.util.UUID;
@@ -28,8 +30,9 @@ import java.util.UUID;
  *
  * @see ChatType
  */
-@Cancelable
-public class ClientChatReceivedEvent extends Event {
+public sealed class ClientChatReceivedEvent extends MutableEvent implements Cancellable, InheritableEvent {
+    public static final CancellableEventBus<ClientChatReceivedEvent> BUS = CancellableEventBus.create(ClientChatReceivedEvent.class);
+
     private Component message;
     private final ChatType.Bound boundChatType;
     private final UUID sender;
@@ -75,7 +78,7 @@ public class ClientChatReceivedEvent extends Event {
     /**
      * {@return {@code true} if the message was sent by the system, {@code false} otherwise}
      *
-     * @Deprecated Mojang made ChatType a registry, which isn't always accessible when the System messages are sent.
+     * @deprecated Mojang made ChatType a registry, which isn't always accessible when the System messages are sent.
      * So moved to it's own event. {@link SystemMessageReceivedEvent}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
@@ -94,7 +97,9 @@ public class ClientChatReceivedEvent extends Event {
      *
      * @see ChatType
      */
-    public static class Player extends ClientChatReceivedEvent {
+    public static final class Player extends ClientChatReceivedEvent {
+        public static final CancellableEventBus<Player> BUS = CancellableEventBus.create(Player.class);
+
         private final PlayerChatMessage playerChatMessage;
 
         @ApiStatus.Internal
@@ -119,7 +124,9 @@ public class ClientChatReceivedEvent extends Event {
      * So moved to it's own event. {@link SystemMessageReceivedEvent}
      */
     @Deprecated(forRemoval = true, since = "1.21.1")
-    public static class System extends ClientChatReceivedEvent {
+    public static final class System extends ClientChatReceivedEvent {
+        public static final CancellableEventBus<System> BUS = CancellableEventBus.create(System.class);
+
         private final boolean overlay;
 
         @ApiStatus.Internal

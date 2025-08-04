@@ -27,7 +27,7 @@ public class ModLoadSortingTest extends BaseTestMod {
     private static boolean afterHasInit;
 
     public ModLoadSortingTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
         afterHasInit = ModLoadSortingAfter.hasInit;
         beforeHasInit = ModLoadSortingBefore.hasInit;
     }

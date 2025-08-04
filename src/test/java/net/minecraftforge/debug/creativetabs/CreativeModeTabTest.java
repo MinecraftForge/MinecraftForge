@@ -20,7 +20,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
@@ -39,10 +38,10 @@ public class CreativeModeTabTest {
         if (!ENABLED)
             return;
 
-        IEventBus modEventBus = context.getModEventBus();
+        var modBus = context.getModBusGroup();
 
-        modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabRegister);
-        modEventBus.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
+        RegisterEvent.getBus(modBus).addListener(CreativeModeTabTest::onCreativeModeTabRegister);
+        BuildCreativeModeTabContentsEvent.getBus(modBus).addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
     }
 
     private static void onCreativeModeTabRegister(RegisterEvent event) {

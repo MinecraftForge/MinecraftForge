@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml.core;
 
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.IModStateTransition;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -17,10 +16,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 
-record  ParallelTransition(ModLoadingStage stage, BiFunction<ModContainer, ModLoadingStage, ParallelDispatchEvent> event) implements IModStateTransition {
+record ParallelTransition(ModLoadingStage stage, BiFunction<ModContainer, ModLoadingStage, ParallelDispatchEvent> event) implements IModStateTransition {
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Event & IModBusEvent> EventGenerator<T> eventFunction() {
+    public <T extends IModBusEvent> EventGenerator<T> eventFunction() {
         return EventGenerator.fromFunction(mod -> (T)event.apply(mod, stage));
     }
 

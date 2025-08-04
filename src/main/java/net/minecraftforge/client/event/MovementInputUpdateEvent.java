@@ -9,7 +9,7 @@ import net.minecraft.client.player.ClientInput;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -21,7 +21,9 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class MovementInputUpdateEvent extends PlayerEvent {
+public final class MovementInputUpdateEvent extends PlayerEvent {
+    public static final EventBus<MovementInputUpdateEvent> BUS = EventBus.create(MovementInputUpdateEvent.class);
+
     private final ClientInput input;
 
     @ApiStatus.Internal

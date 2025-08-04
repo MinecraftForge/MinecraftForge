@@ -5,7 +5,6 @@
 
 package net.minecraftforge.client;
 
-import com.google.common.collect.ImmutableList;
 import net.minecraft.client.color.block.BlockTintCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.ColorResolver;
@@ -13,22 +12,23 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Manager for custom {@link ColorResolver} instances, collected via {@link RegisterColorHandlersEvent.ColorResolvers}.
  */
-public final class ColorResolverManager
-{
+public final class ColorResolverManager {
+    private ColorResolverManager() {}
 
-    private static ImmutableList<ColorResolver> colorResolvers;
+    private static List<ColorResolver> colorResolvers;
 
     @ApiStatus.Internal
-    public static void init()
-    {
-        ImmutableList.Builder<ColorResolver> builder = ImmutableList.builder();
+    public static void init() {
+        var builder = new ArrayList<ColorResolver>();
         ModLoader.get().postEvent(new RegisterColorHandlersEvent.ColorResolvers(builder));
-        colorResolvers = builder.build();
+        colorResolvers = List.copyOf(builder);
     }
 
     /**
@@ -37,15 +37,9 @@ public final class ColorResolverManager
      * @param level the level to use
      * @param target the map to populate
      */
-    public static void registerBlockTintCaches(ClientLevel level, Map<ColorResolver, BlockTintCache> target)
-    {
-        for (var resolver : colorResolvers)
-        {
+    public static void registerBlockTintCaches(ClientLevel level, Map<ColorResolver, BlockTintCache> target) {
+        for (var resolver : colorResolvers) {
             target.put(resolver, new BlockTintCache(pos -> level.calculateBlockTint(pos, resolver)));
         }
-    }
-
-    private ColorResolverManager()
-    {
     }
 }

@@ -1,5 +1,15 @@
 --- a/net/minecraft/client/renderer/block/model/multipart/MultiPartModel.java
 +++ b/net/minecraft/client/renderer/block/model/multipart/MultiPartModel.java
+@@ -26,6 +_,9 @@
+     private final BlockState blockState;
+     @Nullable
+     private List<BlockStateModel> models;
++    private boolean cacheKey = false;
++    @Nullable
++    private java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> cache;
+ 
+     MultiPartModel(MultiPartModel.SharedBakedState p_391554_, BlockState p_397918_) {
+         this.shared = p_391554_;
 @@ -38,6 +_,11 @@
      }
  
@@ -12,12 +22,12 @@
      public void collectParts(RandomSource p_391247_, List<BlockModelPart> p_397207_) {
          if (this.models == null) {
              this.models = this.shared.selectModels(this.blockState);
-@@ -51,6 +_,20 @@
+@@ -51,6 +_,33 @@
          }
      }
  
 +    @Override
-+    public void collectParts(RandomSource rand, List<BlockModelPart> dest, net.minecraftforge.client.model.data.ModelData extraData, net.minecraft.client.renderer.RenderType renderType) {
++    public void collectParts(RandomSource rand, List<BlockModelPart> dest, net.minecraftforge.client.model.data.ModelData extraData, net.minecraft.client.renderer.chunk.ChunkSectionLayer renderType) {
 +        if (this.models == null) {
 +            this.models = this.shared.selectModels(this.blockState);
 +        }
@@ -28,6 +38,19 @@
 +            rand.setSeed(i);
 +            blockstatemodel.collectParts(rand, dest, extraData, renderType);
 +        }
++    }
++
++    @Override
++    public java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> getRenderTypes(BlockState state, RandomSource rand, net.minecraftforge.client.model.data.ModelData data) {
++        if (this.models == null)
++            this.models = this.shared.selectModels(this.blockState);
++        if (this.cache == null || this.cacheKey != net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy()) {
++            var tmp = java.util.EnumSet.noneOf(net.minecraft.client.renderer.chunk.ChunkSectionLayer.class);
++            for (var model : this.models)
++                tmp.addAll(model.getRenderTypes(state, rand, data));
++            this.cache = tmp;
++        }
++        return !this.cache.isEmpty() ? this.cache : BlockStateModel.super.getRenderTypes(state, rand, data);
 +    }
 +
      @OnlyIn(Dist.CLIENT)

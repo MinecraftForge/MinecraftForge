@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/inventory/EffectsInInventory.java
 +++ b/net/minecraft/client/gui/screens/inventory/EffectsInInventory.java
-@@ -48,12 +_,16 @@
+@@ -47,12 +_,16 @@
          Collection<MobEffectInstance> collection = this.minecraft.player.getActiveEffects();
          if (!collection.isEmpty() && j >= 32) {
              boolean flag = j >= 120;
 +            var event = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenEffectSize(this.screen, j, !flag, i);
-+            if (event.isCanceled()) return;
++            if (event == null) return;
 +            flag = !event.isCompact();
 +            i = event.getHorizontalOffset();
              int k = 33;
@@ -18,7 +18,7 @@
              this.renderBackgrounds(p_362146_, i, k, iterable, flag);
              this.renderIcons(p_362146_, i, k, iterable, flag);
              if (flag) {
-@@ -99,6 +_,11 @@
+@@ -98,6 +_,11 @@
          int i = this.screen.topPos;
  
          for (MobEffectInstance mobeffectinstance : p_361981_) {
@@ -28,9 +28,9 @@
 +                continue;
 +            }
              Holder<MobEffect> holder = mobeffectinstance.getEffect();
-             TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(holder);
-             p_367085_.blitSprite(RenderType::guiTextured, textureatlassprite, p_367644_ + (p_368681_ ? 6 : 7), i + 7, 18, 18);
-@@ -110,6 +_,11 @@
+             ResourceLocation resourcelocation = Gui.getMobEffectSprite(holder);
+             p_367085_.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, p_367644_ + (p_368681_ ? 6 : 7), i + 7, 18, 18);
+@@ -109,6 +_,11 @@
          int i = this.screen.topPos;
  
          for (MobEffectInstance mobeffectinstance : p_365480_) {
@@ -40,9 +40,9 @@
 +                continue;
 +            }
              Component component = this.getEffectName(mobeffectinstance);
-             p_361851_.drawString(this.screen.getFont(), component, p_367468_ + 10 + 18, i + 6, 16777215);
+             p_361851_.drawString(this.screen.getFont(), component, p_367468_ + 10 + 18, i + 6, -1);
              Component component1 = MobEffectUtil.formatDuration(mobeffectinstance, 1.0F, this.minecraft.level.tickRateManager().tickrate());
-@@ -125,5 +_,9 @@
+@@ -124,5 +_,9 @@
          }
  
          return mutablecomponent;

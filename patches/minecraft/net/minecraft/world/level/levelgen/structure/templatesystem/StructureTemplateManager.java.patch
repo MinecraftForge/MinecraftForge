@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
++++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplateManager.java
+@@ -76,6 +_,7 @@
+         }
+ 
+         builder.add(new StructureTemplateManager.Source(this::loadFromResource, this::listResources));
++        builder.add(new StructureTemplateManager.Source(net.minecraftforge.common.ForgeHooks::createEmptyStructure, Stream::empty));
+         this.sources = builder.build();
+     }
+ 

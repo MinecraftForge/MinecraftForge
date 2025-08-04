@@ -5,12 +5,8 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.FlowerBlock;
-import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.AttachedStemBlock;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 
@@ -18,6 +14,8 @@ public interface IPlantable {
     default PlantType getPlantType(BlockGetter level, BlockPos pos) {
         if (this instanceof AttachedStemBlock) return PlantType.CROP;
         if (this instanceof CropBlock)     return PlantType.CROP;
+        if (this == Blocks.MANGROVE_PROPAGULE) return PlantType.MOIST;
+        if (this instanceof AzaleaBlock) return PlantType.MOIST;
         if (this instanceof SaplingBlock)  return PlantType.PLAINS;
         if (this instanceof FlowerBlock)   return PlantType.PLAINS;
         if (this == Blocks.PITCHER_CROP)   return PlantType.CROP;
@@ -25,6 +23,8 @@ public interface IPlantable {
         if (this == Blocks.LILY_PAD)       return PlantType.WATER;
         if (this == Blocks.RED_MUSHROOM)   return PlantType.CAVE;
         if (this == Blocks.BROWN_MUSHROOM) return PlantType.CAVE;
+        if (this == Blocks.CRIMSON_FUNGUS) return PlantType.FUNGUS;
+        if (this == Blocks.WARPED_FUNGUS)  return PlantType.FUNGUS;
         if (this == Blocks.NETHER_WART)    return PlantType.NETHER;
         if (this == Blocks.TALL_GRASS)     return PlantType.PLAINS;
         return PlantType.PLAINS;

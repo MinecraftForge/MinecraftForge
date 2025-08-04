@@ -1,15 +1,15 @@
 --- a/com/mojang/blaze3d/vertex/VertexFormat.java
 +++ b/com/mojang/blaze3d/vertex/VertexFormat.java
-@@ -20,7 +_,7 @@
+@@ -21,7 +_,7 @@
  
  @OnlyIn(Dist.CLIENT)
  @DontObfuscate
 -public class VertexFormat {
 +public class VertexFormat implements net.minecraftforge.client.extensions.IForgeVertexFormat {
      public static final int UNKNOWN_ELEMENT = -1;
-     private final List<VertexFormatElement> elements;
-     private final List<String> names;
-@@ -31,6 +_,7 @@
+     private static final boolean USE_STAGING_BUFFER_WORKAROUND = Util.getPlatform() == Util.OS.WINDOWS && Util.isAarch64();
+     @Nullable
+@@ -35,6 +_,7 @@
      private GpuBuffer immediateDrawVertexBuffer;
      @Nullable
      private GpuBuffer immediateDrawIndexBuffer;
@@ -17,7 +17,7 @@
  
      VertexFormat(List<VertexFormatElement> p_343616_, List<String> p_345241_, IntList p_345522_, int p_344162_) {
          this.elements = p_343616_;
-@@ -43,6 +_,11 @@
+@@ -47,6 +_,11 @@
              int j = vertexformatelement != null ? p_343616_.indexOf(vertexformatelement) : -1;
              this.offsetsByElement[i] = j != -1 ? p_345522_.getInt(j) : -1;
          }
@@ -29,8 +29,8 @@
      }
  
      public static VertexFormat.Builder builder() {
-@@ -146,6 +_,9 @@
- 
+@@ -169,6 +_,9 @@
+         );
          return this.immediateDrawIndexBuffer;
      }
 +

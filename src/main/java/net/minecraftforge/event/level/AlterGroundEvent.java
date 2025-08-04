@@ -11,8 +11,8 @@ import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -24,7 +24,9 @@ import org.jetbrains.annotations.ApiStatus;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
  */
-public class AlterGroundEvent extends Event {
+public final class AlterGroundEvent extends MutableEvent {
+    public static final EventBus<AlterGroundEvent> BUS = EventBus.create(AlterGroundEvent.class);
+
     private final LevelSimulatedReader level;
     private final RandomSource random;
     private final BlockPos pos;

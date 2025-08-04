@@ -11,8 +11,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -29,7 +29,11 @@ import java.util.function.Supplier;
  * This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.
  */
-public final class BuildCreativeModeTabContentsEvent extends Event implements IModBusEvent, CreativeModeTab.Output {
+public final class BuildCreativeModeTabContentsEvent implements IModBusEvent, CreativeModeTab.Output {
+    public static EventBus<BuildCreativeModeTabContentsEvent> getBus(BusGroup modBusGroup) {
+        return IModBusEvent.getBus(modBusGroup, BuildCreativeModeTabContentsEvent.class);
+    }
+
     private final CreativeModeTab tab;
     private final CreativeModeTab.ItemDisplayParameters parameters;
     private final MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility> entries;

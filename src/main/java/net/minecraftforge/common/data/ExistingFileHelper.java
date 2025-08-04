@@ -159,9 +159,6 @@ public class ExistingFileHelper {
      *         otherwise
      */
     public boolean exists(ResourceLocation loc, PackType packType) {
-        if (!enable) {
-            return true;
-        }
         return generated.get(packType).contains(loc) || getManager(packType).getResource(loc).isPresent();
     }
 
@@ -261,7 +258,9 @@ public class ExistingFileHelper {
 
     /**
      * @return {@code true} if validation is enabled, {@code false} otherwise
+     * @deprecated  Validation is always enabled, check things as you deem fit.
      */
+    @Deprecated(forRemoval = true, since = "1.21.5")
     public boolean isEnabled() {
         return enable;
     }

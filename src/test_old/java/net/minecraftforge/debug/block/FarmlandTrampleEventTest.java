@@ -6,17 +6,14 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("farmland_trample_test")
 @Mod.EventBusSubscriber
-public class FarmlandTrampleEventTest
-{
+public final class FarmlandTrampleEventTest {
     @SubscribeEvent
-    public static void onFarmlandTrampled(BlockEvent.FarmlandTrampleEvent event)
-    {
-        if(event.getEntity().isCrouching())
-            event.setCanceled(true);
+    public static void onFarmlandTrampled(BlockEvent.FarmlandTrampleEvent event) {
+        return event.getEntity().isCrouching();
     }
 }

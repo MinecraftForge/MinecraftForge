@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-@@ -167,4 +_,27 @@
-         p_329140_.remove("lock");
-         p_329140_.remove("Items");
+@@ -164,4 +_,27 @@
+         p_407613_.discard("lock");
+         p_407613_.discard("Items");
      }
 +
 +    private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());

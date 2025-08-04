@@ -9,8 +9,9 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,9 @@ import org.jetbrains.annotations.Nullable;
  * @see LoggingOut
  * @see Clone
  **/
-public abstract class ClientPlayerNetworkEvent extends Event {
+public abstract sealed class ClientPlayerNetworkEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<ClientPlayerNetworkEvent> BUS = EventBus.create(ClientPlayerNetworkEvent.class);
+
     private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;
     private final Connection connection;
@@ -67,7 +70,9 @@ public abstract class ClientPlayerNetworkEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class LoggingIn extends ClientPlayerNetworkEvent {
+    public static final class LoggingIn extends ClientPlayerNetworkEvent {
+        public static final EventBus<LoggingIn> BUS = EventBus.create(LoggingIn.class);
+
         @ApiStatus.Internal
         public LoggingIn(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
             super(controller, player, networkManager);
@@ -84,7 +89,9 @@ public abstract class ClientPlayerNetworkEvent extends Event {
      */
     @SuppressWarnings("NullableProblems")
     // Shush IntelliJ, we override non-nullables as nullables in this specific event; see later comment
-    public static class LoggingOut extends ClientPlayerNetworkEvent {
+    public static final class LoggingOut extends ClientPlayerNetworkEvent {
+        public static final EventBus<LoggingOut> BUS = EventBus.create(LoggingOut.class);
+
         @ApiStatus.Internal
         public LoggingOut(@Nullable final MultiPlayerGameMode controller, @Nullable final LocalPlayer player, @Nullable final Connection networkManager) {
             //noinspection ConstantConditions we know these are nullable, but we don't want to annotate the super as nullable since this is the only event with nullables
@@ -133,7 +140,9 @@ public abstract class ClientPlayerNetworkEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Clone extends ClientPlayerNetworkEvent {
+    public static final class Clone extends ClientPlayerNetworkEvent {
+        public static final EventBus<Clone> BUS = EventBus.create(Clone.class);
+
         private final LocalPlayer oldPlayer;
 
         @ApiStatus.Internal

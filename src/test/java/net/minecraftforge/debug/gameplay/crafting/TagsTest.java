@@ -22,7 +22,7 @@ public class TagsTest extends BaseTestMod {
     public static final String MODID = "tags_test";
 
     public TagsTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
     }
 
     @GameTest

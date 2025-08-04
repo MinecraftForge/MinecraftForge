@@ -5,8 +5,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 
 import java.util.Optional;
@@ -36,7 +34,7 @@ public record ModLoadingState(
     Optional<IModStateTransition> transition
 ) implements IModLoadingState {
     @Override
-    public <T extends Event & IModBusEvent> Optional<CompletableFuture<Void>> buildTransition(
+    public Optional<CompletableFuture<Void>> buildTransition(
         final Executor syncExecutor,
         final Executor parallelExecutor,
         final ProgressMeter progressBar,

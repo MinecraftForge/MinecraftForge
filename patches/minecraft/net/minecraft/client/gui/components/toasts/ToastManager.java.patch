@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/toasts/ToastManager.java
 +++ b/net/minecraft/client/gui/components/toasts/ToastManager.java
-@@ -127,6 +_,7 @@
+@@ -146,6 +_,7 @@
      }
  
      public void addToast(Toast p_360768_) {

@@ -11,7 +11,11 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +24,9 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class MobEffectEvent extends LivingEvent {
+public sealed class MobEffectEvent extends LivingEvent {
+    public static final EventBus<MobEffectEvent> BUS = EventBus.create(MobEffectEvent.class);
+
     @Nullable
     protected final MobEffectInstance effectInstance;
 
@@ -39,8 +45,9 @@ public class MobEffectEvent extends LivingEvent {
      * This Event is {@link Cancelable}. If canceled, the effect will not be removed.
      * This Event does not have a result.
      */
-    @Cancelable
-    public static class Remove extends MobEffectEvent {
+    public static final class Remove extends MobEffectEvent implements Cancellable {
+        public static final CancellableEventBus<Remove> BUS = CancellableEventBus.create(Remove.class);
+
         private final MobEffect effect;
 
         public Remove(LivingEntity living, MobEffect effect) {
@@ -79,8 +86,11 @@ public class MobEffectEvent extends LivingEvent {
      * {@link Result#DENY DENY} will not apply this mob effect.
      * {@link Result#DEFAULT DEFAULT} will run vanilla logic to determine if this mob effect is applicable in {@link LivingEntity#canBeAffected}.
      */
-    @HasResult
-    public static class Applicable extends MobEffectEvent {
+    public static final class Applicable extends MobEffectEvent implements HasResult {
+        public static final EventBus<Applicable> BUS = EventBus.create(Applicable.class);
+
+        private Result result = Result.DEFAULT;
+
         public Applicable(LivingEntity living, @NotNull MobEffectInstance effectInstance) {
             super(living, effectInstance);
         }
@@ -90,6 +100,16 @@ public class MobEffectEvent extends LivingEvent {
         public MobEffectInstance getEffectInstance() {
             return super.getEffectInstance();
         }
+
+        @Override
+        public Result getResult() {
+            return result;
+        }
+
+        @Override
+        public void setResult(Result result) {
+            this.result = result;
+        }
     }
 
     /**
@@ -98,7 +118,9 @@ public class MobEffectEvent extends LivingEvent {
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Added extends MobEffectEvent {
+    public static final class Added extends MobEffectEvent {
+        public static final EventBus<Added> BUS = EventBus.create(Added.class);
+
         private final MobEffectInstance oldEffectInstance;
         private final Entity source;
 
@@ -139,7 +161,9 @@ public class MobEffectEvent extends LivingEvent {
      * This event is not {@link Cancelable}.
      * This event does not have a result.
      */
-    public static class Expired extends MobEffectEvent {
+    public static final class Expired extends MobEffectEvent {
+        public static final EventBus<Expired> BUS = EventBus.create(Expired.class);
+
         public Expired(LivingEntity living, MobEffectInstance effect) {
             super(living, effect);
         }

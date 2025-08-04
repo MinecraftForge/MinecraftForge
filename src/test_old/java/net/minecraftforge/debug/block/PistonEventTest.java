@@ -28,8 +28,7 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.level.PistonEvent;
 import net.minecraftforge.event.level.PistonEvent.PistonMoveType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -48,8 +47,7 @@ import java.util.Objects;
  */
 @Mod.EventBusSubscriber(modid = PistonEventTest.MODID)
 @Mod(value = PistonEventTest.MODID)
-public class PistonEventTest
-{
+public final class PistonEventTest {
     static final boolean ENABLE_PISTON_EVENT_LOGGING = false;
 
     public static final String MODID = "piston_event_test";
@@ -60,23 +58,20 @@ public class PistonEventTest
     private static final RegistryObject<Block> SHIFT_ON_MOVE = BLOCKS.register(blockName, () -> new Block(Block.Properties.of().mapColor(MapColor.STONE)));
     private static final RegistryObject<Item> SHIFT_ON_MOVE_ITEM = ITEMS.register(blockName, () -> new BlockItem(SHIFT_ON_MOVE.get(), new Item.Properties()));
 
-    public PistonEventTest()
-    {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        BLOCKS.register(modBus);
-        ITEMS.register(modBus);
-        modBus.addListener(this::gatherData);
-        modBus.addListener(this::addCreative);
+    public PistonEventTest(FMLJavaModLoadingContext context) {
+        var modBusGroup = context.getModBusGroup();
+        BLOCKS.register(modBusGroup);
+        ITEMS.register(modBusGroup);
     }
 
-    private void addCreative(BuildCreativeModeTabContentsEvent event)
-    {
+    @SubscribeEvent
+    private static void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS)
             event.accept(SHIFT_ON_MOVE_ITEM);
     }
 
     @SubscribeEvent
-    public static void pistonPre(PistonEvent.Pre event)
+    public static boolean pistonPre(PistonEvent.Pre event)
     {
         if (event.getPistonMoveType() == PistonMoveType.EXTEND)
         {
@@ -111,7 +106,7 @@ public class PistonEventTest
             }
 
             // Block pushing cobblestone (directly, indirectly works)
-            event.setCanceled(event.getLevel().getBlockState(event.getFaceOffsetPos()).getBlock() == Blocks.COBBLESTONE);
+            return event.getLevel().getBlockState(event.getFaceOffsetPos()).getBlock() == Blocks.COBBLESTONE;
         }
         else
         {
@@ -130,7 +125,7 @@ public class PistonEventTest
             }
 
             // Offset twice to see if retraction will pull cobblestone
-            event.setCanceled(event.getLevel().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
+            return event.getLevel().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky;
         }
     }
 
@@ -144,6 +139,7 @@ public class PistonEventTest
         }
     }
 
+    @SubscribeEvent
     public void gatherData(GatherDataEvent event)
     {
         DataGenerator gen = event.getGenerator();

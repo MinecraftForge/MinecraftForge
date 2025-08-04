@@ -9,7 +9,8 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event is fired when an {@link Animal} is tamed. <br>
@@ -18,26 +19,23 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is {@link net.minecraftforge.eventbus.api.Cancelable}. If canceled, taming the animal will fail.
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@Cancelable
-public class AnimalTameEvent extends LivingEvent
-{
+public final class AnimalTameEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<AnimalTameEvent> BUS = CancellableEventBus.create(AnimalTameEvent.class);
+
     private final Animal animal;
     private final Player tamer;
 
-    public AnimalTameEvent(Animal animal, Player tamer)
-    {
+    public AnimalTameEvent(Animal animal, Player tamer) {
         super(animal);
         this.animal = animal;
         this.tamer = tamer;
     }
 
-    public Animal getAnimal()
-    {
+    public Animal getAnimal() {
         return animal;
     }
 
-    public Player getTamer()
-    {
+    public Player getTamer() {
         return tamer;
     }
 }

@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/chunk/RenderSectionRegion.java
++++ b/net/minecraft/client/renderer/chunk/RenderSectionRegion.java
+@@ -90,4 +_,9 @@
+     public static int index(int p_409495_, int p_409337_, int p_407713_, int p_409077_, int p_406510_, int p_408332_) {
+         return p_409077_ - p_409495_ + (p_406510_ - p_409337_) * 3 + (p_408332_ - p_407713_) * 3 * 3;
+     }
++
++    @Override
++    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
++       return level.getModelDataManager();
++    }
+ }

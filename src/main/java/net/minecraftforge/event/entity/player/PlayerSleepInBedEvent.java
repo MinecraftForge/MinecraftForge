@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Player.BedSleepingProblem;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 import java.util.Optional;
 
@@ -24,34 +25,30 @@ import java.util.Optional;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerSleepInBedEvent extends PlayerEvent
-{
+public final class PlayerSleepInBedEvent extends PlayerEvent {
+    public static final EventBus<PlayerSleepInBedEvent> BUS = EventBus.create(PlayerSleepInBedEvent.class);
+
     private BedSleepingProblem result = null;
     private final Optional<BlockPos> pos;
 
-    public PlayerSleepInBedEvent(Player player, Optional<BlockPos> pos)
-    {
+    public PlayerSleepInBedEvent(Player player, Optional<BlockPos> pos) {
         super(player);
         this.pos = pos;
     }
 
-    public BedSleepingProblem getResultStatus()
-    {
+    public BedSleepingProblem getResultStatus() {
         return result;
     }
 
-    public void setResult(BedSleepingProblem result)
-    {
+    public void setResult(BedSleepingProblem result) {
         this.result = result;
     }
 
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos.orElse(null);
     }
 
     public Optional<BlockPos> getOptionalPos() {
         return pos;
     }
-
 }

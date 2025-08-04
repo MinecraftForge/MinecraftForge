@@ -22,7 +22,7 @@ public class SimpleFont {
     private final int textureNumber;
     private final int lineSpacing;
     private final int descent;
-    private final int GLYPH_COUNT = 127-32;
+    private static final int GLYPH_COUNT = 127 - 32;
     private final Glyph[] glyphs;
 
     private record Glyph(char c, int charwidth, int[] pos, float[] uv) {
@@ -120,7 +120,7 @@ public class SimpleFont {
                 case '\n', '\t' -> 0;
                 case ' ' -> glyphs[0].charwidth();
                 default -> {
-                    if (c - 32 < this.GLYPH_COUNT && c > 32) {
+                    if (c - 32 < GLYPH_COUNT && c > 32) {
                         yield this.glyphs[c - 32].charwidth();
                     } else {
                         yield 0;
@@ -151,7 +151,7 @@ public class SimpleFont {
                     case '\t' -> new Pos(pos.x()+font.glyphs[0].charwidth() * 4, pos.y(), pos.minx());
                     case ' ' -> new Pos(pos.x()+font.glyphs[0].charwidth(), pos.y(), pos.minx());
                     default -> {
-                        if (c-32 < font.GLYPH_COUNT && c > 32) {
+                        if (c-32 < GLYPH_COUNT && c > 32) {
                             pos = font.glyphs[c - 32].loadQuad(pos, colour(), bb);
                         }
                         yield pos;

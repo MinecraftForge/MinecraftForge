@@ -6,10 +6,10 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingFallEvent is fired when an Entity is set to be falling.<br>
@@ -27,8 +27,9 @@ import net.minecraft.world.entity.LivingEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class LivingFallEvent extends LivingEvent {
+public final class LivingFallEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingFallEvent> BUS = CancellableEventBus.create(LivingFallEvent.class);
+
     private double distance;
     private float damageMultiplier;
 

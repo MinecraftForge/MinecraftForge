@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -93,6 +_,8 @@
+@@ -94,6 +_,8 @@
  
      @Override
      public InteractionResult interact(Player p_38232_, InteractionHand p_38233_) {
@@ -9,7 +9,7 @@
          return this.interactWithContainerVehicle(p_38232_);
      }
  
-@@ -163,5 +_,27 @@
+@@ -164,5 +_,27 @@
      @Override
      public void clearItemStacks() {
          this.itemStacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);

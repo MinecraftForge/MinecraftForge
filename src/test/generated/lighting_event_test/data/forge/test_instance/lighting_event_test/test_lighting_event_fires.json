@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:lighting_event_test/test_lighting_event_fires",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

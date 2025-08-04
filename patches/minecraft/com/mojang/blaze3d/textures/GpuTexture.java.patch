@@ -6,6 +6,6 @@
  @DontObfuscate
 -public abstract class GpuTexture implements AutoCloseable {
 +public abstract class GpuTexture implements AutoCloseable, net.minecraftforge.client.extensions.IForgeGpuTexture {
-     private final TextureFormat format;
-     private final int width;
-     private final int height;
+     public static final int USAGE_COPY_DST = 1;
+     public static final int USAGE_COPY_SRC = 2;
+     public static final int USAGE_TEXTURE_BINDING = 4;

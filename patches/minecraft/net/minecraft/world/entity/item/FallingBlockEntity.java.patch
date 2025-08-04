@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/world/entity/item/FallingBlockEntity.java
-@@ -155,7 +_,7 @@
+@@ -159,7 +_,7 @@
              if (this.level() instanceof ServerLevel serverlevel && (this.isAlive() || this.forceTickAfterTeleportToDuplicate)) {
                  BlockPos blockpos = this.blockPosition();
                  boolean flag = this.blockState.getBlock() instanceof ConcretePowderBlock;
@@ -9,7 +9,7 @@
                  double d0 = this.getDeltaMovement().lengthSqr();
                  if (flag && d0 > 1.0) {
                      BlockHitResult blockhitresult = this.level()
-@@ -168,7 +_,7 @@
+@@ -172,7 +_,7 @@
                                  this
                              )
                          );

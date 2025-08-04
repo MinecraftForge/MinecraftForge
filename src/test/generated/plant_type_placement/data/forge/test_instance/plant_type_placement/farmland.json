@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/farmland",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x4"
+}

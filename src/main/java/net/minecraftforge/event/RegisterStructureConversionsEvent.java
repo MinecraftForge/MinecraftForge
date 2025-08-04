@@ -8,13 +8,14 @@ package net.minecraftforge.event;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.datafix.fixes.StructuresBecomeConfiguredFix;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 import java.util.Locale;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Fired for registering structure conversions for pre-1.18.2 worlds. This is used by {@link StructuresBecomeConfiguredFix}
@@ -35,15 +36,16 @@ import com.google.common.base.Preconditions;
  * @see StructuresBecomeConfiguredFix
  * @see #register(String, StructuresBecomeConfiguredFix.Conversion)
  */
-public class RegisterStructureConversionsEvent extends Event
-{
+public final class RegisterStructureConversionsEvent extends MutableEvent {
+    public static final EventBus<RegisterStructureConversionsEvent> BUS = EventBus.create(RegisterStructureConversionsEvent.class);
+
     private final Map<String, StructuresBecomeConfiguredFix.Conversion> map;
 
     /**
      * @hidden For internal use only.
      */
-    public RegisterStructureConversionsEvent(Map<String, StructuresBecomeConfiguredFix.Conversion> map)
-    {
+    @ApiStatus.Internal
+    public RegisterStructureConversionsEvent(Map<String, StructuresBecomeConfiguredFix.Conversion> map) {
         this.map = map;
     }
 
@@ -89,15 +91,13 @@ public class RegisterStructureConversionsEvent extends Event
      * @throws IllegalArgumentException if the old structure ID is not in full lowercase, or if a conversion for that
      *                                  structure ID has already been registered previously
      */
-    public void register(String oldStructureID, StructuresBecomeConfiguredFix.Conversion conversion)
-    {
+    public void register(String oldStructureID, StructuresBecomeConfiguredFix.Conversion conversion) {
         Preconditions.checkNotNull(oldStructureID, "Original structure ID must not be null");
         Preconditions.checkArgument(oldStructureID.toLowerCase(Locale.ROOT).equals(oldStructureID),
                 "Original structure ID should be in all lowercase");
         Preconditions.checkNotNull(conversion, "Structure conversion must not be null");
         Preconditions.checkNotNull(conversion.fallback(), "Fallback structure ID in structure conversion must not be null");
-        if (map.putIfAbsent(oldStructureID.toLowerCase(Locale.ROOT), conversion) != null)
-        {
+        if (map.putIfAbsent(oldStructureID.toLowerCase(Locale.ROOT), conversion) != null) {
             throw new IllegalArgumentException("Conversion has already been registered for structure " + oldStructureID);
         }
     }

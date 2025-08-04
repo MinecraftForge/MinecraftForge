@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BrainBuilder;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * LivingMakeBrainEvent is fired whenever a new {@link net.minecraft.world.entity.ai.Brain} instance is created using {@link LivingEntity#makeBrain(Dynamic)}.<br>
@@ -31,18 +31,18 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingMakeBrainEvent extends LivingEvent
-{
+public final class LivingMakeBrainEvent extends LivingEvent {
+    public static final EventBus<LivingMakeBrainEvent> BUS = EventBus.create(LivingMakeBrainEvent.class);
+
     private final BrainBuilder<?> brainBuilder;
 
-    public LivingMakeBrainEvent(LivingEntity entity, BrainBuilder<?> brainBuilder)
-    {
+    public LivingMakeBrainEvent(LivingEntity entity, BrainBuilder<?> brainBuilder) {
         super(entity);
         this.brainBuilder = brainBuilder;
     }
 
-    public <E extends LivingEntity> BrainBuilder<E> getTypedBrainBuilder(E ignoredEntity)
-    {
+    @SuppressWarnings("unchecked")
+    public <E extends LivingEntity> BrainBuilder<E> getTypedBrainBuilder(E ignoredEntity) {
         return (BrainBuilder<E>) this.brainBuilder;
     }
 }

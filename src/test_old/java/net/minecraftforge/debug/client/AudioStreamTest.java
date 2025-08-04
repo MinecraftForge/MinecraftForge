@@ -31,29 +31,25 @@ import java.util.concurrent.CompletableFuture;
  * When the message "sine wave" is sent in chat, this should play a sine wave of 220Hz at the player's current position.
  */
 @Mod(AudioStreamTest.MOD_ID)
-public class AudioStreamTest
-{
+public class AudioStreamTest {
     private static final boolean ENABLED = true;
     static final String MOD_ID = "audio_stream_test";
 
-    public AudioStreamTest()
-    {
-        if (ENABLED && FMLLoader.getDist().isClient())
-        {
-            MinecraftForge.EVENT_BUS.addListener(ClientHandler::onClientChatEvent);
+    public AudioStreamTest() {
+        if (ENABLED && FMLLoader.getDist().isClient()) {
+            ClientChatEvent.BUS.addListener(ClientHandler::onClientChatEvent);
         }
     }
 
-    public static class ClientHandler
-    {
-        public static void onClientChatEvent(ClientChatEvent event)
-        {
-            if (event.getMessage().equalsIgnoreCase("sine wave"))
-            {
+    public static class ClientHandler {
+        public static boolean onClientChatEvent(ClientChatEvent event) {
+            if (event.getMessage().equalsIgnoreCase("sine wave")) {
                 event.setCanceled(true);
                 var mc = Minecraft.getInstance();
                 mc.getSoundManager().play(new SineSound(mc.player.position()));
+                return true;
             }
+            return false;
         }
     }
 

@@ -11,8 +11,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,7 +27,9 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
  */
-public abstract class RenderPlayerEvent extends Event {
+public abstract sealed class RenderPlayerEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<RenderPlayerEvent> BUS = EventBus.create(RenderPlayerEvent.class);
+
     private final PlayerRenderState state;
     private final PlayerRenderer renderer;
     private final PoseStack poseStack;
@@ -85,8 +90,9 @@ public abstract class RenderPlayerEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class Pre extends RenderPlayerEvent {
+    public static final class Pre extends RenderPlayerEvent implements Cancellable {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
         @ApiStatus.Internal
         public Pre(PlayerRenderState state, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);
@@ -101,7 +107,9 @@ public abstract class RenderPlayerEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderPlayerEvent {
+    public static final class Post extends RenderPlayerEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
         @ApiStatus.Internal
         public Post(PlayerRenderState state, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);

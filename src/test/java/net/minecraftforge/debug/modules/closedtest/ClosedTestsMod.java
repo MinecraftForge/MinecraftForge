@@ -10,7 +10,6 @@ import java.util.jar.Manifest;
 
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.debug.modules.closed.api.PublicUtils;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -26,11 +25,11 @@ public class ClosedTestsMod extends BaseTestMod {
     public static final String MODID = "closed_module_test";
 
     public ClosedTestsMod(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
-    @SubscribeEvent
-    public void runData(GatherDataEvent event) {
+    public void gatherData(GatherDataEvent event) {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(true, new ModuleProvider(out, module()));
         event.getGenerator().addProvider(true, new ManifestProvider(out, MODID, manifest()));

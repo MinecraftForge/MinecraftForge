@@ -20,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -41,10 +40,10 @@ public class PacketTest extends BaseTestMod {
     protected static final Logger LOGGER = LogUtils.getLogger();
 
     public PacketTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
+        FMLCommonSetupEvent.getBus(modBus).addListener(this::commonSetup);
     }
 
-    @SubscribeEvent
     public void commonSetup(final FMLCommonSetupEvent event) {
         TestChannel.registerMessages();
     }

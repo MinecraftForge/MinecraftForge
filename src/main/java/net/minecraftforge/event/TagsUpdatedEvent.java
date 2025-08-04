@@ -6,19 +6,20 @@
 package net.minecraftforge.event;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
 /**
  * Fired when tags are updated on either server or client. This event can be used to refresh data that depends on tags.
  */
-public class TagsUpdatedEvent extends Event
-{
+public final class TagsUpdatedEvent extends MutableEvent {
+    public static final EventBus<TagsUpdatedEvent> BUS = EventBus.create(TagsUpdatedEvent.class);
+
     private final RegistryAccess registryAccess;
     private final UpdateCause updateCause;
     private final boolean integratedServer;
 
-    public TagsUpdatedEvent(RegistryAccess registryAccess, boolean fromClientPacket, boolean isIntegratedServerConnection)
-    {
+    public TagsUpdatedEvent(RegistryAccess registryAccess, boolean fromClientPacket, boolean isIntegratedServerConnection) {
         this.registryAccess = registryAccess;
         this.updateCause = fromClientPacket ? UpdateCause.CLIENT_PACKET_RECEIVED : UpdateCause.SERVER_DATA_LOAD;
         this.integratedServer = isIntegratedServerConnection;
@@ -27,16 +28,14 @@ public class TagsUpdatedEvent extends Event
     /**
      * @return The dynamic registries that have had their tags rebound.
      */
-    public RegistryAccess getRegistryAccess()
-    {
+    public RegistryAccess getRegistryAccess() {
         return registryAccess;
     }
 
     /**
      * @return the cause for this tag update
      */
-    public UpdateCause getUpdateCause()
-    {
+    public UpdateCause getUpdateCause() {
         return updateCause;
     }
 
@@ -44,16 +43,14 @@ public class TagsUpdatedEvent extends Event
      * Whether static data (which in single player is shared between server and client thread) should be updated as a
      * result of this event. Effectively this means that in single player only the server-side updates this data.
      */
-    public boolean shouldUpdateStaticData()
-    {
+    public boolean shouldUpdateStaticData() {
         return updateCause == UpdateCause.SERVER_DATA_LOAD || !integratedServer;
     }
 
     /**
      * Represents the cause for a tag update.
      */
-    public enum UpdateCause
-    {
+    public enum UpdateCause {
         /**
          * The tag update is caused by the server loading datapack data. Note that in single player this still happens
          * on the client thread.

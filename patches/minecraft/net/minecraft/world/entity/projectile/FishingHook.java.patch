@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
-@@ -240,8 +_,8 @@
+@@ -251,8 +_,8 @@
      private boolean shouldStopFishing(Player p_37137_) {
          ItemStack itemstack = p_37137_.getMainHandItem();
          ItemStack itemstack1 = p_37137_.getOffhandItem();
@@ -11,7 +11,7 @@
          if (!p_37137_.isRemoved() && p_37137_.isAlive() && (flag || flag1) && !(this.distanceToSqr(p_37137_) > 1024.0)) {
              return false;
          } else {
-@@ -252,6 +_,7 @@
+@@ -263,6 +_,7 @@
  
      private void checkCollision() {
          HitResult hitresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
@@ -19,7 +19,7 @@
          this.hitTargetOrDeflectSelf(hitresult);
      }
  
-@@ -441,6 +_,7 @@
+@@ -452,6 +_,7 @@
          Player player = this.getPlayerOwner();
          if (!this.level().isClientSide && player != null && !this.shouldStopFishing(player)) {
              int i = 0;
@@ -27,7 +27,7 @@
              if (this.hookedIn != null) {
                  this.pullEntity(this.hookedIn);
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, Collections.emptyList());
-@@ -451,10 +_,16 @@
+@@ -462,10 +_,16 @@
                      .withParameter(LootContextParams.ORIGIN, this.position())
                      .withParameter(LootContextParams.TOOL, p_37157_)
                      .withParameter(LootContextParams.THIS_ENTITY, this)
@@ -36,15 +36,15 @@
                      .create(LootContextParamSets.FISHING);
                  LootTable loottable = this.level().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
                  List<ItemStack> list = loottable.getRandomItems(lootparams);
-+                event = net.minecraftforge.event.ForgeEventFactory.onPlayerFishedItem(list, this.onGround() ? 2 : 1, this);
-+                if (event.isCanceled()) {
++                event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.onGround() ? 2 : 1, this);
++                if (net.minecraftforge.event.entity.player.ItemFishedEvent.BUS.post(event)) {
 +                    this.discard();
 +                    return event.getRodDamage();
 +                }
                  CriteriaTriggers.FISHING_ROD_HOOKED.trigger((ServerPlayer)player, p_37157_, this, list);
  
                  for (ItemStack itemstack : list) {
-@@ -484,7 +_,7 @@
+@@ -495,7 +_,7 @@
              }
  
              this.discard();

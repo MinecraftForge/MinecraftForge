@@ -8,9 +8,11 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.Nullable;
 
-public class LootingLevelEvent extends LivingEvent {
+public final class LootingLevelEvent extends LivingEvent {
+    public static final EventBus<LootingLevelEvent> BUS = EventBus.create(LootingLevelEvent.class);
 
     @Nullable
     private final DamageSource damageSource;

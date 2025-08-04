@@ -5,8 +5,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 
 import java.util.Optional;
@@ -61,14 +59,13 @@ public interface IModLoadingState {
     /**
      * Builds the transition task for this state with a blank pre-sync and post-sync task.
      *
-     * @param <T>              a type of event fired on the mod-specific event bus
      * @param syncExecutor     a synchronous executor
      * @param parallelExecutor a parallel executor
      * @param progressBar      a progress meter for tracking progress
      * @return a transition task for this state
      * @see #buildTransition(Executor, Executor, ProgressMeter, Function, Function)
      */
-    default <T extends Event & IModBusEvent> Optional<CompletableFuture<Void>> buildTransition(
+    default Optional<CompletableFuture<Void>> buildTransition(
         final Executor syncExecutor,
         final Executor parallelExecutor,
         final ProgressMeter progressBar
@@ -83,7 +80,6 @@ public interface IModLoadingState {
      * Builds the transition task for this state. The pre-sync and post-sync task functions allow the transition builder
      * to run these tasks on the same executor as the actual event dispatch and pre/post hooks.
      *
-     * @param <T>              a type of event fired on the mod-specific event bus
      * @param syncExecutor     a synchronous executor
      * @param parallelExecutor a parallel executor
      * @param progressBar      a progress meter for tracking progress
@@ -91,7 +87,6 @@ public interface IModLoadingState {
      * @param postSyncTask     a function which returns a task to run after event post-dispatch hook
      * @return a transition task for this state
      */
-    <T extends Event & IModBusEvent>
     Optional<CompletableFuture<Void>> buildTransition(final Executor syncExecutor,
                                                       final Executor parallelExecutor,
                                                       final ProgressMeter progressBar,

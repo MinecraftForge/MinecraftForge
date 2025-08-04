@@ -8,17 +8,20 @@ package net.minecraftforge.event;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.GrindstoneMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
-public abstract class GrindstoneEvent extends Event
-{
+public abstract sealed class GrindstoneEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<GrindstoneEvent> BUS = EventBus.create(GrindstoneEvent.class);
+
     private final ItemStack top;
     private final ItemStack bottom;
     private int xp;
 
-    protected GrindstoneEvent(ItemStack top, ItemStack bottom, int xp)
-    {
+    protected GrindstoneEvent(ItemStack top, ItemStack bottom, int xp) {
         this.top = top;
         this.bottom = bottom;
         this.xp = xp;
@@ -27,16 +30,14 @@ public abstract class GrindstoneEvent extends Event
     /**
      * @return The item in the top input grindstone slot. <br>
      */
-    public ItemStack getTopItem()
-    {
+    public ItemStack getTopItem() {
         return top;
     }
 
     /**
      * @return The item in the bottom input grindstone slot. <br>
      */
-    public ItemStack getBottomItem()
-    {
+    public ItemStack getBottomItem() {
         return bottom;
     }
 
@@ -44,8 +45,7 @@ public abstract class GrindstoneEvent extends Event
      * This is the experience amount determined by the event. It will be {@code -1} unless {@link #setXp(int)} is called. <br>
      * @return The experience amount given to the player. <br>
      */
-    public int getXp()
-    {
+    public int getXp() {
         return xp;
     }
 
@@ -53,8 +53,7 @@ public abstract class GrindstoneEvent extends Event
      * Sets the experience amount. <br>
      * @param xp The experience amount given to the player. <br>
      */
-    public void setXp(int xp)
-    {
+    public void setXp(int xp) {
         this.xp = xp;
     }
 
@@ -78,13 +77,12 @@ public abstract class GrindstoneEvent extends Event
      *     </ul>
      * </ul>
      */
-    @Cancelable
-    public static class OnPlaceItem extends GrindstoneEvent
-    {
+    public static final class OnPlaceItem extends GrindstoneEvent implements Cancellable {
+        public static final CancellableEventBus<OnPlaceItem> BUS = CancellableEventBus.create(OnPlaceItem.class);
+
         private ItemStack output;
 
-        public OnPlaceItem(ItemStack top, ItemStack bottom, int xp)
-        {
+        public OnPlaceItem(ItemStack top, ItemStack bottom, int xp) {
             super(top, bottom, xp);
             this.output = ItemStack.EMPTY;
         }
@@ -96,8 +94,7 @@ public abstract class GrindstoneEvent extends Event
          * If this event is cancelled, this output stack is discarded. <br>
          * @return The item to set in the output grindstone slot. <br>
          */
-        public ItemStack getOutput()
-        {
+        public ItemStack getOutput() {
             return output;
         }
 
@@ -105,8 +102,7 @@ public abstract class GrindstoneEvent extends Event
          * Sets the output slot to a specific itemstack.
          * @param output The stack to change the output to.
          */
-        public void setOutput(ItemStack output)
-        {
+        public void setOutput(ItemStack output) {
             this.output = output;
         }
     }
@@ -118,30 +114,27 @@ public abstract class GrindstoneEvent extends Event
      * If the event is canceled, vanilla behavior will not run, and no inputs will be consumed. <br>
      * if the amount of experience is larger than or equal 0, the vanilla behavior for calculating experience will not run. <br>
      */
-    @Cancelable
-    public static class OnTakeItem extends GrindstoneEvent
-    {
+    public static final class OnTakeItem extends GrindstoneEvent implements Cancellable {
+        public static final CancellableEventBus<OnTakeItem> BUS = CancellableEventBus.create(OnTakeItem.class);
+
         private ItemStack newTop = ItemStack.EMPTY;
         private ItemStack newBottom = ItemStack.EMPTY;
 
-        public OnTakeItem(ItemStack top, ItemStack bottom, int xp)
-        {
+        public OnTakeItem(ItemStack top, ItemStack bottom, int xp) {
             super(top, bottom, xp);
         }
 
         /**
          * @return The item in that will be in the top input grindstone slot after the event. <br>
          */
-        public ItemStack getNewTopItem()
-        {
+        public ItemStack getNewTopItem() {
             return newTop;
         }
 
         /**
          * @return The item in that will be in the bottom input grindstone slot after the event. <br>
          */
-        public ItemStack getNewBottomItem()
-        {
+        public ItemStack getNewBottomItem() {
             return newBottom;
         }
 
@@ -149,8 +142,7 @@ public abstract class GrindstoneEvent extends Event
          * Sets the itemstack in the top slot. <br>
          * @param newTop
          */
-        public void setNewTopItem(ItemStack newTop)
-        {
+        public void setNewTopItem(ItemStack newTop) {
             this.newTop = newTop;
         }
 
@@ -158,8 +150,7 @@ public abstract class GrindstoneEvent extends Event
          * Sets the itemstack in the bottom slot. <br>
          * @param newBottom
          */
-        public void setNewBottomItem(ItemStack newBottom)
-        {
+        public void setNewBottomItem(ItemStack newBottom) {
             this.newBottom = newBottom;
         }
 
@@ -167,8 +158,7 @@ public abstract class GrindstoneEvent extends Event
          * This is the experience amount that will be returned by the event. <br>
          * @return The experience amount given to the player. <br>
          */
-        public int getXp()
-        {
+        public int getXp() {
             return super.getXp();
         }
     }

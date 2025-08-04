@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
 +++ b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-@@ -176,11 +_,12 @@
+@@ -178,11 +_,12 @@
          .build();
  
      public static AttributeSupplier getSupplier(EntityType<? extends LivingEntity> p_22298_) {

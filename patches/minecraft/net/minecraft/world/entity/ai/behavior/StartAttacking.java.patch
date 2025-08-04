@@ -6,7 +6,7 @@
                              } else {
 -                                p_258778_.set(livingentity);
 +                                var changeTargetEvent = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetBehavior(p_359049_, livingentity);
-+                                if (changeTargetEvent.isCanceled())
++                                if (changeTargetEvent == null)
 +                                    return false;
 +
 +                                p_258778_.set(changeTargetEvent.getNewTarget());

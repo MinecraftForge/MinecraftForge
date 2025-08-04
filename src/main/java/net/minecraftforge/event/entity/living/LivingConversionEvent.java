@@ -7,7 +7,10 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 import java.util.function.Consumer;
 
@@ -25,7 +28,9 @@ import java.util.function.Consumer;
  *   Tadpole -> Frog when it grows up
  *   Mushroom Cow -> Cow when sheared
  */
-public class LivingConversionEvent extends LivingEvent {
+public sealed class LivingConversionEvent extends LivingEvent implements InheritableEvent {
+    public static final EventBus<LivingConversionEvent> BUS = EventBus.create(LivingConversionEvent.class);
+
     public LivingConversionEvent(LivingEntity entity) {
         super(entity);
     }
@@ -41,8 +46,9 @@ public class LivingConversionEvent extends LivingEvent {
      * This event is {@link Cancelable}
      * If cancelled, the replacement will not occur
      */
-    @Cancelable
-    public static class Pre extends LivingConversionEvent {
+    public static final class Pre extends LivingConversionEvent implements Cancellable {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
         private final EntityType<? extends LivingEntity> outcome;
         private final Consumer<Integer> timer;
 
@@ -79,7 +85,9 @@ public class LivingConversionEvent extends LivingEvent {
      * itself with another entity.
      * The old living entity is likely to be removed right after this event.
      */
-    public static class Post extends LivingConversionEvent {
+    public static final class Post extends LivingConversionEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
         private final LivingEntity outcome;
 
         public Post(LivingEntity entity, LivingEntity outcome) {

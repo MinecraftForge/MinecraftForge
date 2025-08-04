@@ -7,7 +7,7 @@
 -                        if (this.findRandomSpawnPos(p_27008_, new BlockPos(this.spawnX, this.spawnY, this.spawnZ)) != null) {
 +                        Vec3 siegeLocation = this.findRandomSpawnPos(p_27008_, new BlockPos(this.spawnX, this.spawnY, this.spawnZ));
 +                        if (siegeLocation != null) {
-+                            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, p_27008_, player, siegeLocation)))
++                            if (net.minecraftforge.event.village.VillageSiegeEvent.BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, p_27008_, player, siegeLocation)))
 +                                return false;
                              this.nextSpawnTime = 0;
                              this.zombiesToSpawn = 20;

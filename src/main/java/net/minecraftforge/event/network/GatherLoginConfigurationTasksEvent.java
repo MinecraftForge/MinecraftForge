@@ -9,13 +9,16 @@ import java.util.function.Consumer;
 
 import net.minecraft.network.Connection;
 import net.minecraft.server.network.ConfigurationTask;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
 /**
  * Gathers tasks that need to be run during the initial login configuration.
  * @see net.minecraft.server.network.ServerConfigurationPacketListenerImpl#startConfiguration() startConfiguration
  */
-public class GatherLoginConfigurationTasksEvent extends Event {
+public final class GatherLoginConfigurationTasksEvent extends MutableEvent {
+    public static final EventBus<GatherLoginConfigurationTasksEvent> BUS = EventBus.create(GatherLoginConfigurationTasksEvent.class);
+
     private final Connection connection;
     private final Consumer<ConfigurationTask> add;
 

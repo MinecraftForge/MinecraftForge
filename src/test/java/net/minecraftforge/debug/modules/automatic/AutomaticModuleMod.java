@@ -18,7 +18,7 @@ public class AutomaticModuleMod extends BaseTestMod {
     public static final String MODID = "automatic_module";
 
     public AutomaticModuleMod(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
     }
 
     @GameTest

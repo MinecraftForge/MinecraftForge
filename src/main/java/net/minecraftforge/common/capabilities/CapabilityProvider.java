@@ -11,8 +11,13 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,22 +31,100 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
 
-    private final @NotNull Class<B> baseClass;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
-    private boolean                       isLazy             = false;
+    private final boolean                 isLazy;
     private Supplier<ICapabilityProvider> lazyParentSupplier = null;
     private CompoundTag                   lazyData           = null;
     private HolderLookup.Provider         registryAccess     = null;
     private boolean initialized = false;
 
-    protected CapabilityProvider(Class<B> baseClass) {
-        this(baseClass, false);
+    public static class Entities extends CapabilityProvider<Entity> {
+        protected Entities() {
+            super(false);
+        }
+
+        protected Entities(boolean isLazy) {
+            super(isLazy);
+        }
+
+        @Override
+        protected AttachCapabilitiesEvent<Entity> fireAttachCapabilitiesEvent(Entity provider) {
+            return AttachCapabilitiesEvent.Entities.BUS.fire(new AttachCapabilitiesEvent.Entities(provider));
+        }
+
+        @Override
+        protected boolean shouldFireAttachCapabilitiesEvent() {
+            return AttachCapabilitiesEvent.Entities.BUS.hasListeners();
+        }
     }
 
-    protected CapabilityProvider(final Class<B> baseClass, final boolean isLazy) {
-        this.baseClass = baseClass;
+    public static class BlockEntities extends CapabilityProvider<BlockEntity> {
+        protected BlockEntities() {
+            super(false);
+        }
+
+        protected BlockEntities(boolean isLazy) {
+            super(isLazy);
+        }
+
+        @Override
+        protected AttachCapabilitiesEvent<BlockEntity> fireAttachCapabilitiesEvent(BlockEntity provider) {
+            return AttachCapabilitiesEvent.BlockEntities.BUS.fire(new AttachCapabilitiesEvent.BlockEntities(provider));
+        }
+
+        @Override
+        protected boolean shouldFireAttachCapabilitiesEvent() {
+            return AttachCapabilitiesEvent.BlockEntities.BUS.hasListeners();
+        }
+    }
+
+    public static class ItemStacks extends CapabilityProvider<ItemStack> {
+        protected ItemStacks() {
+            super(false);
+        }
+
+        protected ItemStacks(boolean isLazy) {
+            super(isLazy);
+        }
+
+        @Override
+        protected AttachCapabilitiesEvent<ItemStack> fireAttachCapabilitiesEvent(ItemStack provider) {
+            return AttachCapabilitiesEvent.ItemStacks.BUS.fire(new AttachCapabilitiesEvent.ItemStacks(provider));
+        }
+
+        @Override
+        protected boolean shouldFireAttachCapabilitiesEvent() {
+            return AttachCapabilitiesEvent.ItemStacks.BUS.hasListeners();
+        }
+    }
+
+    public static class Levels extends CapabilityProvider<Level> {
+        protected Levels() {
+            super(false);
+        }
+
+        protected Levels(boolean isLazy) {
+            super(isLazy);
+        }
+
+        @Override
+        protected AttachCapabilitiesEvent<Level> fireAttachCapabilitiesEvent(Level provider) {
+            return AttachCapabilitiesEvent.Levels.BUS.fire(new AttachCapabilitiesEvent.Levels(provider));
+        }
+
+        @Override
+        protected boolean shouldFireAttachCapabilitiesEvent() {
+            return AttachCapabilitiesEvent.Levels.BUS.hasListeners();
+        }
+    }
+
+    protected CapabilityProvider() {
+        this.isLazy = false;
+    }
+
+    protected CapabilityProvider(boolean isLazy) {
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
     }
 
@@ -50,10 +133,20 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     }
 
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent) {
+        if (!shouldFireAttachCapabilitiesEvent()) {
+            this.initialized = true;
+            return;
+        }
+
         gatherCapabilities(() -> parent);
     }
 
     protected final void gatherCapabilities(@Nullable Supplier<ICapabilityProvider> parent) {
+        if (!shouldFireAttachCapabilitiesEvent()) {
+            this.initialized = true;
+            return;
+        }
+
         if (isLazy && !initialized) {
             lazyParentSupplier = parent == null ? () -> null : parent;
             return;
@@ -62,8 +155,11 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         doGatherCapabilities(parent == null ? null : parent.get());
     }
 
+    protected abstract AttachCapabilitiesEvent<?> fireAttachCapabilitiesEvent(B provider);
+    protected abstract boolean shouldFireAttachCapabilitiesEvent();
+
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(fireAttachCapabilitiesEvent(getProvider()), parent);
         this.initialized = true;
     }
 
@@ -144,16 +240,16 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
      * Special implementation for cases which have a superclass and can't extend CapabilityProvider directly.
      * See {@link LevelChunk}
      */
-    public static class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B> {
+    public static abstract class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B> {
         private final B owner;
 
-        public AsField(Class<B> baseClass, B owner) {
-            super(baseClass);
+        public AsField(B owner) {
+            super();
             this.owner = owner;
         }
 
-        public AsField(Class<B> baseClass, B owner, boolean isLazy) {
-            super(baseClass, isLazy);
+        public AsField(B owner, boolean isLazy) {
+            super(isLazy);
             this.owner = owner;
         }
 
@@ -175,6 +271,26 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         B getProvider() {
             return owner;
         }
-    };
+
+        public static class LevelChunks extends AsField<LevelChunk> {
+            public LevelChunks(LevelChunk owner) {
+                super(owner);
+            }
+
+            public LevelChunks(LevelChunk owner, boolean isLazy) {
+                super(owner, isLazy);
+            }
+
+            @Override
+            protected AttachCapabilitiesEvent<LevelChunk> fireAttachCapabilitiesEvent(LevelChunk provider) {
+                return AttachCapabilitiesEvent.LevelChunks.BUS.fire(new AttachCapabilitiesEvent.LevelChunks(provider));
+            }
+
+            @Override
+            protected boolean shouldFireAttachCapabilitiesEvent() {
+                return AttachCapabilitiesEvent.LevelChunks.BUS.hasListeners();
+            }
+        }
+    }
 
 }

@@ -1,22 +1,22 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -173,6 +_,7 @@
+@@ -172,6 +_,7 @@
              this.unregisterListeners(p_298135_);
              this.progressChanged.add(p_298135_);
              flag = true;
 +            net.minecraftforge.event.ForgeEventFactory.onAdvancementGrant(this.player, p_298135_, advancementprogress, p_135990_);
              if (!flag1 && advancementprogress.isDone()) {
                  p_298135_.value().rewards().grant(this.player);
-                 p_298135_.value().display().ifPresent(p_358518_ -> {
-@@ -180,6 +_,7 @@
-                         this.playerList.broadcastSystemMessage(p_358518_.getType().createAnnouncement(p_298135_, this.player), false);
+                 p_298135_.value().display().ifPresent(p_405125_ -> {
+@@ -179,6 +_,7 @@
+                         this.playerList.broadcastSystemMessage(p_405125_.getType().createAnnouncement(p_298135_, this.player), false);
                      }
                  });
 +                net.minecraftforge.event.ForgeEventFactory.onAdvancementEarned(this.player, p_298135_);
              }
          }
  
-@@ -198,6 +_,7 @@
+@@ -197,6 +_,7 @@
              this.registerListeners(p_297905_);
              this.progressChanged.add(p_297905_);
              flag = true;

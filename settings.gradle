@@ -10,14 +10,14 @@ buildscript {
     dependencies {
         classpath('com.google.code.gson:gson') {
             version {
-                strictly '2.10.1'
+                strictly '2.11.0'
             }
         }
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
 dependencyResolutionManagement {
@@ -32,12 +32,13 @@ dependencyResolutionManagement {
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.2')
             library('coremods', 'net.minecraftforge:coremods:5.2.6')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.4') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:6.2.27')
-            library('typetools', 'net.jodah:typetools:0.6.3') // Needed by EventBus because of lambdas
+            library('eventbus', 'net.minecraftforge:eventbus:7.0-beta.10')
+            library('eventbus-validator', 'net.minecraftforge:eventbus-validator:7.0-beta.10')
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
 
             library('mixin', 'org.spongepowered:mixin:0.8.7')
-            library('nulls', 'org.jetbrains:annotations:24.1.0') // Got to have our null annotations!
+            library('jetbrains-annotations', 'org.jetbrains:annotations:24.1.0') // for ApiStatus annotations
+            library('jspecify', 'org.jspecify:jspecify:1.0.0') // for nullability annotations
             library('slf4j-api', 'org.slf4j:slf4j-api:2.0.7')
             library('maven-artifact', 'org.apache.maven:maven-artifact:3.8.8')
 
@@ -52,7 +53,7 @@ dependencyResolutionManagement {
             library('bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim').versionRef('bootstrap')
 
             // ASM it's used for so many of our hacks
-            version('asm', '9.7.1')
+            version('asm', '9.8')
             library('asm',          'org.ow2.asm', 'asm'         ).versionRef('asm')
             library('asm-tree',     'org.ow2.asm', 'asm-tree'    ).versionRef('asm')
             library('asm-util',     'org.ow2.asm', 'asm-util'    ).versionRef('asm')
@@ -83,19 +84,19 @@ dependencyResolutionManagement {
 
             // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
             // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
-            library('gson', 'com.google.code.gson:gson:2.10.1')
-            library('guava', 'com.google.guava:guava:32.1.2-jre')
-            library('failureaccess', 'com.google.guava:failureaccess:1.0.1')
+            library('gson', 'com.google.code.gson:gson:2.11.0')
+            library('guava', 'com.google.guava:guava:33.3.1-jre')
+            library('failureaccess', 'com.google.guava:failureaccess:1.0.2')
 
-            version('log4j', '2.22.1')
+            version('log4j', '2.24.3')
             library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
             library('log4j-core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
             bundle('log4j', ['log4j-api', 'log4j-core'])
 
-            library('apache-commons', 'org.apache.commons:commons-lang3:3.14.0')
-            library('mojang-logging', 'com.mojang:logging:1.2.7')
+            library('apache-commons', 'org.apache.commons:commons-lang3:3.17.0')
+            library('mojang-logging', 'com.mojang:logging:1.5.10')
             library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
-            library('commons-io', 'commons-io:commons-io:2.15.1')
+            library('commons-io', 'commons-io:commons-io:2.17.0')
 
             version('lwjgl', '3.3.3')
             library('lwjgl',        'org.lwjgl', 'lwjgl'       ).versionRef('lwjgl')

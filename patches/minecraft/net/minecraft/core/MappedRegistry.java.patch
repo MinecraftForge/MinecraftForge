@@ -1,5 +1,14 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
+@@ -30,6 +_,8 @@
+ import net.minecraft.util.RandomSource;
+ 
+ public class MappedRegistry<T> implements WritableRegistry<T> {
++    private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
++    private static final org.apache.logging.log4j.Marker MARKER = net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
+     private final ResourceKey<? extends Registry<T>> key;
+     private final ObjectList<Holder.Reference<T>> byId = new ObjectArrayList<>(256);
+     private final Reference2IntMap<T> toId = Util.make(new Reference2IntOpenHashMap<>(), p_308420_ -> p_308420_.defaultReturnValue(-1));
 @@ -85,6 +_,7 @@
  
      @Override
@@ -35,6 +44,32 @@
                  }
  
                  if (this.allTags.isBound()) {
+@@ -304,8 +_,9 @@
+                         .sorted()
+                         .toList();
+                     if (!list1.isEmpty()) {
+-                        throw new IllegalStateException("Unbound tags in registry " + this.key() + ": " + list1);
+-                    } else {
++                        LOGGER.debug(MARKER, "Unbound tags in registry " + this.key() + ": " + list1);
++                        bindAllUnboundTagsToEmpty();
++                    } /* else */ {
+                         this.allTags = MappedRegistry.TagSet.fromMap(this.frozenTags);
+                         this.refreshTagsInHolders();
+                         return this;
+@@ -315,6 +_,13 @@
+         }
+     }
+ 
++    private void bindAllUnboundTagsToEmpty() {
++        for (var tag : this.frozenTags.values()) {
++            if (!tag.isBound())
++                tag.bind(List.of());
++        }
++    }
++
+     @Override
+     public Holder.Reference<T> createIntrusiveHolder(T p_205915_) {
+         if (this.unregisteredIntrusiveHolders == null) {
 @@ -389,6 +_,31 @@
          };
      }

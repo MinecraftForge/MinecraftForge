@@ -10,8 +10,8 @@ import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -29,13 +29,15 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterParticleProvidersEvent extends Event implements IModBusEvent
-{
+public final class RegisterParticleProvidersEvent implements IModBusEvent {
+    public static EventBus<RegisterParticleProvidersEvent> getBus(BusGroup modBusGroup) {
+        return IModBusEvent.getBus(modBusGroup, RegisterParticleProvidersEvent.class);
+    }
+
     private final ParticleEngine particleEngine;
 
     @ApiStatus.Internal
-    public RegisterParticleProvidersEvent(ParticleEngine particleEngine)
-    {
+    public RegisterParticleProvidersEvent(ParticleEngine particleEngine) {
         this.particleEngine = particleEngine;
     }
 
@@ -67,8 +69,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
      * @param sprite Sprite function responsible for providing that ParticleType's particles.
      */
     @SuppressWarnings("deprecation")
-    public <T extends ParticleOptions> void registerSprite(ParticleType<T> type, ParticleProvider.Sprite<T> sprite)
-    {
+    public <T extends ParticleOptions> void registerSprite(ParticleType<T> type, ParticleProvider.Sprite<T> sprite) {
         particleEngine.register(type, sprite);
     }
 
@@ -84,9 +85,7 @@ public class RegisterParticleProvidersEvent extends Event implements IModBusEven
      * @param registration SpriteParticleRegistration function responsible for providing that ParticleType's particles.
      */
     @SuppressWarnings("deprecation")
-    public <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, ParticleEngine.SpriteParticleRegistration<T> registration)
-    {
+    public <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type, ParticleEngine.SpriteParticleRegistration<T> registration) {
         particleEngine.register(type, registration);
     }
-
 }

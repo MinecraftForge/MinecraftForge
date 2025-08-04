@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -58,6 +_,7 @@
+@@ -54,6 +_,7 @@
      private boolean fading;
      private long fadeInStart;
      private final LogoRenderer logoRenderer;
@@ -8,7 +8,7 @@
  
      public TitleScreen() {
          this(false);
-@@ -111,11 +_,15 @@
+@@ -106,11 +_,15 @@
          int j = this.width - i - 2;
          int k = 24;
          int l = this.height / 4 + 48;
@@ -24,7 +24,7 @@
  
          l = this.createTestWorldButton(l, 24);
          SpriteIconButton spriteiconbutton = this.addRenderableWidget(
-@@ -180,7 +_,7 @@
+@@ -175,7 +_,7 @@
          }).bounds(this.width / 2 - 100, i = p_96764_ + p_96765_, 200, 20).tooltip(tooltip).build()).active = flag;
          this.addRenderableWidget(
                  Button.builder(Component.translatable("menu.online"), p_325369_ -> this.minecraft.setScreen(new RealmsMainScreen(this)))
@@ -33,22 +33,22 @@
                      .tooltip(tooltip)
                      .build()
              )
-@@ -304,10 +_,18 @@
-                 s = s + I18n.get("menu.modded");
-             }
+@@ -295,9 +_,18 @@
+             s = s + I18n.get("menu.modded");
+         }
  
--            p_282860_.drawString(this.font, s, 2, this.height - 10, 16777215 | i);
-+            net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brd, brdline) ->
-+                p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), 16777215 | i)
-+            );
+-        p_282860_.drawString(this.font, s, 2, this.height - 10, ARGB.color(f, -1));
++        final float f_f = f;
++        net.minecraftforge.internal.BrandingControl.forEachLine(true, true, (brd, brdline) ->
++            p_282860_.drawString(this.font, brd, 2, this.height - ( 10 + brdline * (this.font.lineHeight + 1)), ARGB.color(f_f, -1))
++        );
 +
-+            net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brd, brdline) ->
-+                p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), 16777215 | i)
-+            );
++        net.minecraftforge.internal.BrandingControl.forEachAboveCopyrightLine((brd, brdline) ->
++            p_282860_.drawString(this.font, brd, this.width - font.width(brd), this.height - (10 + (brdline + 1) * ( this.font.lineHeight + 1)), ARGB.color(f_f, -1))
++        );
 +
-             if (this.realmsNotificationsEnabled() && f >= 1.0F) {
-                 this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
-             }
+         if (this.realmsNotificationsEnabled() && f >= 1.0F) {
+             this.realmsNotificationsScreen.render(p_282860_, p_281753_, p_283539_, p_282628_);
 +            if (f >= 1.0f) this.modUpdateNotification.render(p_282860_, p_281753_, p_283539_, p_282628_);
          }
      }

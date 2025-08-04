@@ -7,6 +7,7 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * This event is fired when a living entity attempts to get a projectile with the
@@ -20,13 +21,13 @@ import net.minecraft.world.item.ItemStack;
  * <p>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  */
-public class LivingGetProjectileEvent extends LivingEvent
-{
+public final class LivingGetProjectileEvent extends LivingEvent {
+    public static final EventBus<LivingGetProjectileEvent> BUS = EventBus.create(LivingGetProjectileEvent.class);
+
     private final ItemStack projectileWeaponItemStack;
     private ItemStack projectileItemStack;
 
-    public LivingGetProjectileEvent(LivingEntity livingEntity, ItemStack projectileWeaponItemStack, ItemStack ammo)
-    {
+    public LivingGetProjectileEvent(LivingEntity livingEntity, ItemStack projectileWeaponItemStack, ItemStack ammo) {
         super(livingEntity);
         this.projectileWeaponItemStack = projectileWeaponItemStack;
         this.projectileItemStack = ammo;
@@ -37,8 +38,7 @@ public class LivingGetProjectileEvent extends LivingEvent
      * an itemstack of a {@link net.minecraft.world.item.ProjectileWeaponItem}, but it's possible for that to not be the
      * case if modder uses a different implementation of {@link LivingEntity#getProjectile(ItemStack)}.
      */
-    public ItemStack getProjectileWeaponItemStack()
-    {
+    public ItemStack getProjectileWeaponItemStack() {
         return this.projectileWeaponItemStack;
     }
 
@@ -47,8 +47,7 @@ public class LivingGetProjectileEvent extends LivingEvent
      * behaviour, but it's possible for thatnot to be the case if a modder uses a different implementation of
      * {@link LivingEntity#getProjectile(ItemStack)}.
      */
-    public ItemStack getProjectileItemStack()
-    {
+    public ItemStack getProjectileItemStack() {
         return this.projectileItemStack;
     }
 
@@ -63,8 +62,7 @@ public class LivingGetProjectileEvent extends LivingEvent
      * {@link LivingEntity#level} is client-side, you will want to make a conditional to always set the item stack to
      * what you'd want it to be to avoid client-server desyncs.
      */
-    public void setProjectileItemStack(ItemStack projectileItemStack)
-    {
+    public void setProjectileItemStack(ItemStack projectileItemStack) {
         this.projectileItemStack = projectileItemStack;
     }
 }

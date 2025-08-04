@@ -6,7 +6,7 @@
 package net.minecraftforge.debug.entity.player;
 
 import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

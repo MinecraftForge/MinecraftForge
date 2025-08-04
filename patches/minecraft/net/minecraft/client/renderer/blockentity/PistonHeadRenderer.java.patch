@@ -5,14 +5,15 @@
          BlockPos p_112459_, BlockState p_112460_, PoseStack p_112461_, MultiBufferSource p_112462_, Level p_112463_, boolean p_112464_, int p_112465_
      ) {
 -        RenderType rendertype = ItemBlockRenderTypes.getMovingBlockRenderType(p_112460_);
+-        VertexConsumer vertexconsumer = p_112462_.getBuffer(rendertype);
+-        List<BlockModelPart> list = this.blockRenderer.getBlockModel(p_112460_).collectParts(RandomSource.create(p_112460_.getSeed(p_112459_)));
 +        var model = this.blockRenderer.getBlockModel(p_112460_);
 +        var rand = RandomSource.create(p_112460_.getSeed(p_112459_));
 +        var data = net.minecraftforge.client.model.data.ModelData.EMPTY;
 +        for (var rendertype : model.getRenderTypes(p_112460_, rand, data)) {
 +           rand = RandomSource.create(p_112460_.getSeed(p_112459_)); // Reset rand to keep
-         VertexConsumer vertexconsumer = p_112462_.getBuffer(rendertype);
--        List<BlockModelPart> list = this.blockRenderer.getBlockModel(p_112460_).collectParts(RandomSource.create(p_112460_.getSeed(p_112459_)));
-+        List<BlockModelPart> list = model.collectParts(rand, data, net.minecraftforge.client.RenderTypeHelper.getMovingBlockRenderType(rendertype));
++           VertexConsumer vertexconsumer = p_112462_.getBuffer(net.minecraftforge.client.RenderTypeHelper.getMovingBlockRenderType(rendertype));
++           List<BlockModelPart> list = model.collectParts(rand, data, rendertype);
          this.blockRenderer.getModelRenderer().tesselateBlock(p_112463_, list, p_112460_, p_112459_, p_112461_, vertexconsumer, p_112464_, p_112465_);
 +        }
      }

@@ -27,18 +27,9 @@ public class EventNetworkChannel extends Channel<FriendlyByteBuf> {
         super(instance);
     }
 
-    public <T extends CustomPayloadEvent> EventNetworkChannel addListener(Consumer<T> eventListener) {
+    public EventNetworkChannel addListener(Consumer<CustomPayloadEvent> eventListener) {
         instance.addListener(eventListener);
         return this;
-    }
-
-    public EventNetworkChannel registerObject(Object object) {
-        instance.registerObject(object);
-        return this;
-    }
-
-    public void unregisterObject(Object object) {
-        instance.unregisterObject(object);
     }
 
     @Override

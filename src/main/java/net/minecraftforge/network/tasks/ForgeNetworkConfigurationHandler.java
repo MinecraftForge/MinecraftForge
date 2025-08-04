@@ -8,14 +8,14 @@ package net.minecraftforge.network.tasks;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkContext;
 
 @ApiStatus.Internal
-public class ForgeNetworkConfigurationHandler {
-    @SubscribeEvent
-    public void gatherInit(GatherLoginConfigurationTasksEvent event) {
+public final class ForgeNetworkConfigurationHandler {
+    private ForgeNetworkConfigurationHandler() {}
+
+    public static void gatherInit(GatherLoginConfigurationTasksEvent event) {
         var ctx = NetworkContext.get(event.getConnection());
         if (ctx.getType() != ConnectionType.MODDED)
             return;

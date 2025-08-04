@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +28,9 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingEquipmentChangeEvent extends LivingEvent {
+public final class LivingEquipmentChangeEvent extends LivingEvent {
+    public static final EventBus<LivingEquipmentChangeEvent> BUS = EventBus.create(LivingEquipmentChangeEvent.class);
+
     private final EquipmentSlot slot;
     private final ItemStack from;
     private final ItemStack to;

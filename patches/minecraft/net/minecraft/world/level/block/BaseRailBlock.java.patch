@@ -38,8 +38,8 @@
 +    @Deprecated
      public abstract Property<RailShape> getShapeProperty();
  
-     @Override
-@@ -167,5 +_,15 @@
+     protected RailShape rotate(RailShape p_409491_, Rotation p_408760_) {
+@@ -299,5 +_,15 @@
      @Override
      protected FluidState getFluidState(BlockState p_152158_) {
          return p_152158_.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(p_152158_);

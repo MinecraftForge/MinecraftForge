@@ -13,7 +13,7 @@ apply from: rootProject.file('build_shared.gradle')
 configurations.forEach{ it.transitive = false }
 
 dependencies {
-    compileOnly(libs.nulls)
+    compileOnly(libs.jetbrains.annotations)
 
     api(libs.bundles.asm) // Needed by all the black magic
     api(libs.forgespi)
@@ -41,7 +41,7 @@ dependencies {
     implementation(libs.log4j.core)
     annotationProcessor(libs.bundles.log4j)
 
-    testCompileOnly(libs.nulls)
+    testCompileOnly(libs.jetbrains.annotations)
     testRuntimeOnly(libs.bootstrap)
 }
 

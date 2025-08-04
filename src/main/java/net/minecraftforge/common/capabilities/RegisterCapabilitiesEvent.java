@@ -7,9 +7,10 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.Objects;
 
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.objectweb.asm.Type;
 
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
@@ -19,7 +20,11 @@ import net.minecraftforge.fml.event.IModBusEvent;
  * @deprecated Use {@link AutoRegisterCapability} annotation on your class.
  */
 @Deprecated(forRemoval = true, since = "1.21")
-public final class RegisterCapabilitiesEvent extends Event implements IModBusEvent {
+public final class RegisterCapabilitiesEvent implements IModBusEvent {
+    public static EventBus<RegisterCapabilitiesEvent> getBus(BusGroup modBusGroup) {
+        return IModBusEvent.getBus(modBusGroup, RegisterCapabilitiesEvent.class);
+    }
+
     /**
      * Registers a capability to be consumed by others.
      * APIs who define the capability should call this.

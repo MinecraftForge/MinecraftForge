@@ -10,7 +10,7 @@
      private DyeColor(final int p_41046_, final String p_41047_, final int p_41048_, final MapColor p_285297_, final int p_41050_, final int p_41051_) {
          this.id = p_41046_;
 @@ -60,6 +_,8 @@
-         this.textColor = p_41051_;
+         this.textColor = ARGB.opaque(p_41051_);
          this.textureDiffuseColor = ARGB.opaque(p_41048_);
          this.fireworkColor = p_41050_;
 +        this.dyesTag = net.minecraft.tags.ItemTags.create("c", "dyes/" + p_41047_);

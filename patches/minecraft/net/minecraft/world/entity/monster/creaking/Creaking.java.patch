@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/creaking/Creaking.java
 +++ b/net/minecraft/world/entity/monster/creaking/Creaking.java
-@@ -488,7 +_,7 @@
+@@ -489,7 +_,7 @@
              for (Player player : list) {
                  if (this.canAttack(player) && !this.isAlliedTo(player)) {
                      flag1 = true;

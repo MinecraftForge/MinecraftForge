@@ -18,7 +18,6 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.gametest.GameTest;
@@ -41,10 +40,10 @@ public class NetworkDatapackRegistryTest extends BaseTestMod {
     private static final RegistryObject<DataObject> REGISTRY_ENTRY = REGISTRY.register("test_entry", () -> new DataObject(TEST_VALUE));
 
     public NetworkDatapackRegistryTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
+        DataPackRegistryEvent.NewRegistry.getBus(modBus).addListener(this::onNewDatapackRegistry);
     }
 
-    @SubscribeEvent
     public void onNewDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY_KEY, DataObject.DIRECT_CODEC, DataObject.DIRECT_CODEC);
     }

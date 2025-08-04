@@ -12,7 +12,7 @@ import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -33,7 +33,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -97,12 +96,12 @@ public class ModelRenderLayerTest extends BaseTestMod {
     public static final RegistryObject<BlockItem> OLD_LEAVES_ITEM = ITEMS.register(OLD_LEAVES_NAME, () -> new BlockItem(OLD_LEAVES.get(), new Item.Properties().setId(ITEMS.key(OLD_LEAVES_NAME))));
 
     public ModelRenderLayerTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
         testItem(lookup -> new ItemStack(ITEM.get()));
     }
 
-    @SubscribeEvent
-    public void runData(GatherDataEvent event) {
+    public void gatherData(GatherDataEvent event) {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(event.includeClient(), new ModelProvider(out));
     }
@@ -121,11 +120,11 @@ public class ModelRenderLayerTest extends BaseTestMod {
 
         ItemBlockRenderTypes.setFancy(true);
         var layer = model.getRenderTypes(state, random, ModelData.EMPTY);
-        helper.assertTrue(layer.contains(RenderType.cutout()), "Block model does not contain the correct render type for fancy graphics. Expected: cutout");
+        helper.assertTrue(layer.contains(ChunkSectionLayer.CUTOUT), "Block model does not contain the correct render type for fancy graphics. Expected: cutout");
 
         ItemBlockRenderTypes.setFancy(false);
         layer = model.getRenderTypes(state, random, ModelData.EMPTY);
-        helper.assertTrue(layer.contains(RenderType.solid()), "Block model does not contain the correct render type for fast graphics. Expected: solid");
+        helper.assertTrue(layer.contains(ChunkSectionLayer.SOLID), "Block model does not contain the correct render type for fast graphics. Expected: solid");
 
         helper.succeed();
     }
@@ -145,11 +144,11 @@ public class ModelRenderLayerTest extends BaseTestMod {
 
         ItemBlockRenderTypes.setFancy(true);
         var layer = model.getRenderTypes(state, random, ModelData.EMPTY);
-        helper.assertTrue(layer.contains(RenderType.cutoutMipped()), "Block model does not contain the correct render type for fancy graphics. Expected: cutout_mipped");
+        helper.assertTrue(layer.contains(ChunkSectionLayer.CUTOUT_MIPPED), "Block model does not contain the correct render type for fancy graphics. Expected: cutout_mipped");
 
         ItemBlockRenderTypes.setFancy(false);
         layer = model.getRenderTypes(state, random, ModelData.EMPTY);
-        helper.assertTrue(layer.contains(RenderType.solid()), "Block model does not contain the correct render type for fast graphics. Expected: solid");
+        helper.assertTrue(layer.contains(ChunkSectionLayer.SOLID), "Block model does not contain the correct render type for fast graphics. Expected: solid");
 
         helper.succeed();
     }

@@ -5,19 +5,22 @@
 
 package net.minecraftforge.event;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * A simple marker event that notifies when the game is about to close.
  * Fires once on the physical client and physical server.
  * Does not fire for the Integrated Server on a physical Client.
- *
+ * <br>
  * On the client, the GL Context is still valid when the event is fired.
  * Fired on the FORGE event bus.
  *
  * @author Curle
  */
-public class GameShuttingDownEvent extends Event
-{
-    public GameShuttingDownEvent() {}
+@NullMarked
+public record GameShuttingDownEvent() implements SelfDestructing, RecordEvent {
+    public static final EventBus<GameShuttingDownEvent> BUS = EventBus.create(GameShuttingDownEvent.class);
 }

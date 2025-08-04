@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -139,6 +_,7 @@
+@@ -140,6 +_,7 @@
          }
  
          this.addBehaviourGoals();
@@ -8,19 +8,19 @@
      }
  
      protected void addBehaviourGoals() {
-@@ -273,6 +_,11 @@
+@@ -275,6 +_,11 @@
  
      @Override
      public boolean causeFallDamage(double p_391990_, float p_149499_, DamageSource p_149501_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_391990_, p_149499_);
-+        if (event.isCanceled()) return false;
++        if (event == null) return false;
 +        p_391990_ = event.getDistance();
 +        p_149499_ = event.getDamageMultiplier();
 +
          if (p_391990_ > 1.0) {
              this.playSound(SoundEvents.HORSE_LAND, 0.4F, 1.0F);
          }
-@@ -344,9 +_,9 @@
+@@ -346,9 +_,9 @@
      protected void playStepSound(BlockPos p_30584_, BlockState p_30585_) {
          if (!p_30585_.liquid()) {
              BlockState blockstate = this.level().getBlockState(p_30584_.above());
@@ -32,7 +32,7 @@
              }
  
              if (this.isVehicle() && this.canGallop) {
-@@ -766,6 +_,7 @@
+@@ -771,6 +_,7 @@
              float f1 = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
              this.setDeltaMovement(this.getDeltaMovement().add(-0.4F * f * p_248808_, 0.0, 0.4F * f1 * p_248808_));
          }
@@ -40,7 +40,7 @@
      }
  
      protected void playJumpSound() {
-@@ -1010,6 +_,26 @@
+@@ -1013,6 +_,26 @@
  
      public boolean hasInventoryChanged(Container p_149512_) {
          return this.inventory != p_149512_;

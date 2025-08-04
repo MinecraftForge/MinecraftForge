@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/MinecartFurnace.java
 +++ b/net/minecraft/world/entity/vehicle/MinecartFurnace.java
-@@ -148,4 +_,9 @@
+@@ -149,4 +_,9 @@
      public BlockState getDefaultDisplayBlockState() {
          return Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.NORTH).setValue(FurnaceBlock.LIT, this.hasFuel());
      }

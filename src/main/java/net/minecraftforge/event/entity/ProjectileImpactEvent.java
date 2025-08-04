@@ -9,6 +9,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -22,7 +23,9 @@ import java.util.Objects;
  * You can also directly set the {@link ImpactResult} to change the impact behaviour.
  * @see #setImpactResult(ImpactResult)
  */
-public class ProjectileImpactEvent extends EntityEvent {
+public final class ProjectileImpactEvent extends EntityEvent {
+    public static final EventBus<ProjectileImpactEvent> BUS = EventBus.create(ProjectileImpactEvent.class);
+
     private final HitResult ray;
     private final Projectile projectile;
 

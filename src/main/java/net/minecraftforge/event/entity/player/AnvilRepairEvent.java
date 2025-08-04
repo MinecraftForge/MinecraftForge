@@ -7,6 +7,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,8 +17,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * ItemStacks are the inputs/output from the anvil. They cannot be edited.
  */
-public class AnvilRepairEvent extends PlayerEvent
-{
+public final class AnvilRepairEvent extends PlayerEvent {
+    public static final EventBus<AnvilRepairEvent> BUS = EventBus.create(AnvilRepairEvent.class);
+
     @NotNull
     private final ItemStack left; // The left side of the input
     @NotNull
@@ -26,8 +28,7 @@ public class AnvilRepairEvent extends PlayerEvent
     private final ItemStack output; // Set this to set the output stack
     private float breakChance; // Anvil's chance to break (reduced by 1 durability) when this is complete. Default is 12% (0.12f)
 
-    public AnvilRepairEvent(Player player, @NotNull ItemStack left, @NotNull ItemStack right, @NotNull ItemStack output)
-    {
+    public AnvilRepairEvent(Player player, @NotNull ItemStack left, @NotNull ItemStack right, @NotNull ItemStack output) {
         super(player);
         this.output = output;
         this.left = left;

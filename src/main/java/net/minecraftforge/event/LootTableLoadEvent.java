@@ -8,8 +8,9 @@ package net.minecraftforge.event;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -23,30 +24,26 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
-@Cancelable
-public class LootTableLoadEvent extends Event
-{
+public final class LootTableLoadEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<LootTableLoadEvent> BUS = CancellableEventBus.create(LootTableLoadEvent.class);
+
     private final ResourceLocation name;
     private LootTable table;
 
-    public LootTableLoadEvent(ResourceLocation name, LootTable table)
-    {
+    public LootTableLoadEvent(ResourceLocation name, LootTable table) {
         this.name = name;
         this.table = table;
     }
 
-    public ResourceLocation getName()
-    {
+    public ResourceLocation getName() {
         return this.name;
     }
 
-    public LootTable getTable()
-    {
+    public LootTable getTable() {
         return this.table;
     }
 
-    public void setTable(LootTable table)
-    {
+    public void setTable(LootTable table) {
         this.table = table;
     }
 }

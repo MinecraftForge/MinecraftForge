@@ -25,7 +25,7 @@ import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.NotNull;
@@ -122,9 +122,9 @@ public class CapabilitiesTest
     public static class ClientEvents
     {
         @SubscribeEvent
-        public static void clientTick(TickEvent.ClientTickEvent event)
+        public static void clientTick(TickEvent.ClientTickEvent.Post event)
         {
-            if (event.phase == TickEvent.Phase.END && Minecraft.getInstance().level != null)
+            if (Minecraft.getInstance().level != null)
             {
                 while(messages.size() > 0)
                 {

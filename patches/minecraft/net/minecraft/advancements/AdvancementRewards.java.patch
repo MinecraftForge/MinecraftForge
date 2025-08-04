@@ -1,7 +1,7 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -40,6 +_,7 @@
-         LootParams lootparams = new LootParams.Builder(p_9990_.serverLevel())
+@@ -43,6 +_,7 @@
+         LootParams lootparams = new LootParams.Builder(serverlevel)
              .withParameter(LootContextParams.THIS_ENTITY, p_9990_)
              .withParameter(LootContextParams.ORIGIN, p_9990_.position())
 +            .withLuck(p_9990_.getLuck())

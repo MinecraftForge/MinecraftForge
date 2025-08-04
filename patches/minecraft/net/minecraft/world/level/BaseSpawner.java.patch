@@ -1,25 +1,25 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -148,13 +_,15 @@
+@@ -156,13 +_,15 @@
  
-                         entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
-                         if (entity instanceof Mob mob) {
--                            if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, EntitySpawnReason.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
-+                            if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, EntitySpawnReason.SPAWNER, spawndata, this)) {
-                                 continue;
-                             }
+                             entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), randomsource.nextFloat() * 360.0F, 0.0F);
+                             if (entity instanceof Mob mob) {
+-                                if (spawndata.getCustomSpawnRules().isEmpty() && !mob.checkSpawnRules(p_151312_, EntitySpawnReason.SPAWNER) || !mob.checkSpawnObstruction(p_151312_)) {
++                                if (!net.minecraftforge.event.ForgeEventFactory.checkSpawnPositionSpawner(mob, p_151312_, EntitySpawnReason.SPAWNER, spawndata, this)) {
+                                     continue;
+                                 }
  
-                             boolean flag1 = spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().getString("id").isPresent();
--                            if (flag1) {
--                                ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), EntitySpawnReason.SPAWNER, null);
-+                            // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
-+                            var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, compoundtag, this);
-+                            if (!event.isCanceled() && flag1) {
-+                                ((Mob)entity).finalizeSpawn(p_151312_, event.getDifficulty(), EntitySpawnReason.SPAWNER, null);
-                             }
+                                 boolean flag1 = spawndata.getEntityToSpawn().size() == 1 && spawndata.getEntityToSpawn().getString("id").isPresent();
+-                                if (flag1) {
+-                                    ((Mob)entity).finalizeSpawn(p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), EntitySpawnReason.SPAWNER, null);
++                                // Forge: Patch in FinalizeSpawn for spawners so it may be fired unconditionally, instead of only when vanilla normally would trigger it.
++                                var event = net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawnSpawner(mob, p_151312_, p_151312_.getCurrentDifficultyAt(entity.blockPosition()), null, valueinput, this);
++                                if (event != null && flag1) {
++                                    mob.finalizeSpawn(p_151312_, event.getDifficulty(), EntitySpawnReason.SPAWNER, null);
+                                 }
  
-                             spawndata.getEquipment().ifPresent(mob::equip);
-@@ -270,5 +_,15 @@
+                                 spawndata.getEquipment().ifPresent(mob::equip);
+@@ -280,5 +_,15 @@
  
      public double getoSpin() {
          return this.oSpin;

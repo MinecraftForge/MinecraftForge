@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/hoglin/Hoglin.java
 +++ b/net/minecraft/world/entity/monster/hoglin/Hoglin.java
-@@ -169,7 +_,7 @@
+@@ -170,7 +_,7 @@
          HoglinAi.updateActivity(this);
          if (this.isConverting()) {
              this.timeInOverworld++;
@@ -9,7 +9,7 @@
                  this.makeSound(SoundEvents.HOGLIN_CONVERTED_TO_ZOMBIFIED);
                  this.finishConversion();
              }
-@@ -267,7 +_,10 @@
+@@ -268,7 +_,10 @@
          this.convertTo(
              EntityType.ZOGLIN,
              ConversionParams.single(this, true, false),

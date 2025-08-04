@@ -5,9 +5,13 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.function.Consumer;
 
@@ -27,10 +31,12 @@ import java.util.function.Consumer;
  * @see DeferredWorkQueue to enqueue work to run on the main game thread after this event has
  * completed dispatch
  */
-public class FMLCommonSetupEvent extends ParallelDispatchEvent
-{
-    public FMLCommonSetupEvent(final ModContainer container, final ModLoadingStage stage)
-    {
+public final class FMLCommonSetupEvent extends ParallelDispatchEvent implements SelfDestructing {
+    public static EventBus<FMLCommonSetupEvent> getBus(BusGroup modBusGroup) {
+        return IModBusEvent.getBus(modBusGroup, FMLCommonSetupEvent.class);
+    }
+
+    public FMLCommonSetupEvent(final ModContainer container, final ModLoadingStage stage) {
         super(container, stage);
     }
 }

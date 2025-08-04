@@ -1,47 +1,35 @@
 --- a/net/minecraft/client/renderer/chunk/SectionCompiler.java
 +++ b/net/minecraft/client/renderer/chunk/SectionCompiler.java
-@@ -43,6 +_,7 @@
+@@ -42,6 +_,7 @@
      }
  
-     public SectionCompiler.Results compile(SectionPos p_344383_, RenderChunkRegion p_342669_, VertexSorting p_342522_, SectionBufferBuilderPack p_343546_) {
+     public SectionCompiler.Results compile(SectionPos p_344383_, RenderSectionRegion p_409909_, VertexSorting p_342522_, SectionBufferBuilderPack p_343546_) {
 +        var modelDataMap = net.minecraft.client.Minecraft.getInstance().level.getModelDataManager().getAt(p_344383_);
          SectionCompiler.Results sectioncompiler$results = new SectionCompiler.Results();
          BlockPos blockpos = p_344383_.origin();
          BlockPos blockpos1 = blockpos.offset(15, 15, 15);
-@@ -74,10 +_,14 @@
+@@ -73,10 +_,14 @@
              }
  
              if (blockstate.getRenderShape() == RenderShape.MODEL) {
--                RenderType rendertype2 = ItemBlockRenderTypes.getChunkRenderType(blockstate);
+-                ChunkSectionLayer chunksectionlayer2 = ItemBlockRenderTypes.getChunkRenderType(blockstate);
 +                var model = this.blockRenderer.getBlockModel(blockstate);
 +                var data = modelDataMap.getOrDefault(blockpos2, net.minecraftforge.client.model.data.ModelData.EMPTY);
-+                data = model.getModelData(p_342669_, blockpos2, blockstate, data);
++                data = model.getModelData(p_409909_, blockpos2, blockstate, data);
 +                randomsource.setSeed(blockstate.getSeed(blockpos2)); // Forge: We set this on purpose twice so that getRenderTypes can have the same RNG as collectParts
-+                for (RenderType rendertype2 : model.getRenderTypes(blockstate, randomsource, data)) {
-                 BufferBuilder bufferbuilder1 = this.getOrBeginLayer(map, p_343546_, rendertype2);
++                for (ChunkSectionLayer chunksectionlayer2 : model.getRenderTypes(blockstate, randomsource, data)) {
+                 BufferBuilder bufferbuilder1 = this.getOrBeginLayer(map, p_343546_, chunksectionlayer2);
                  randomsource.setSeed(blockstate.getSeed(blockpos2));
 -                this.blockRenderer.getBlockModel(blockstate).collectParts(randomsource, list);
-+                model.collectParts(randomsource, list, data, rendertype2);
++                model.collectParts(randomsource, list, data, chunksectionlayer2);
                  posestack.pushPose();
                  posestack.translate(
                      SectionPos.sectionRelative(blockpos2.getX()), SectionPos.sectionRelative(blockpos2.getY()), SectionPos.sectionRelative(blockpos2.getZ())
-@@ -85,6 +_,7 @@
-                 this.blockRenderer.renderBatched(blockstate, blockpos2, p_342669_, posestack, bufferbuilder1, true, list);
+@@ -84,6 +_,7 @@
+                 this.blockRenderer.renderBatched(blockstate, blockpos2, p_409909_, posestack, bufferbuilder1, true, list);
                  posestack.popPose();
                  list.clear();
 +                }
              }
          }
  
-@@ -119,9 +_,10 @@
-     private <E extends BlockEntity> void handleBlockEntity(SectionCompiler.Results p_343713_, E p_343478_) {
-         BlockEntityRenderer<E> blockentityrenderer = this.blockEntityRenderer.getRenderer(p_343478_);
-         if (blockentityrenderer != null) {
--            p_343713_.blockEntities.add(p_343478_);
-             if (blockentityrenderer.shouldRenderOffScreen(p_343478_)) {
-                 p_343713_.globalBlockEntities.add(p_343478_);
-+            } else {
-+                p_343713_.blockEntities.add(p_343478_); //FORGE: Fix MC-112730
-             }
-         }
-     }

@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/renderer/block/model/SingleVariant.java
++++ b/net/minecraft/client/renderer/block/model/SingleVariant.java
+@@ -12,9 +_,13 @@
+ @OnlyIn(Dist.CLIENT)
+ public class SingleVariant implements BlockStateModel {
+     private final BlockModelPart model;
++    private final java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> layer;
++    private final java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> layerFast;
+ 
+     public SingleVariant(BlockModelPart p_394592_) {
+         this.model = p_394592_;
++        this.layer = this.model.layer() == null ? null : java.util.EnumSet.of(this.model.layer());
++        this.layerFast = this.model.layerFast() == null ? null : java.util.EnumSet.of(this.model.layerFast());
+     }
+ 
+     @Override
+@@ -25,6 +_,12 @@
+     @Override
+     public TextureAtlasSprite particleIcon() {
+         return this.model.particleIcon();
++    }
++
++    @Override
++    public java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> getRenderTypes(net.minecraft.world.level.block.state.BlockState state, RandomSource rand, net.minecraftforge.client.model.data.ModelData data) {
++        var type = net.minecraft.client.renderer.ItemBlockRenderTypes.isFancy() ? layer : layerFast;
++        return type != null ? type : BlockStateModel.super.getRenderTypes(state, rand, data);
+     }
+ 
+     @OnlyIn(Dist.CLIENT)

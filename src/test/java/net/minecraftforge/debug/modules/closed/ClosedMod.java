@@ -11,7 +11,6 @@ import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.debug.modules.closed.api.PublicUtils;
 import net.minecraftforge.debug.modules.closed.internala.InternalA;
 import net.minecraftforge.debug.modules.closed.internalb.InternalB;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.test.BaseTestMod;
@@ -22,11 +21,11 @@ public class ClosedMod extends BaseTestMod {
     public static final String MODID = "closed_module";
 
     public ClosedMod(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
-    @SubscribeEvent
-    public void runData(GatherDataEvent event) {
+    private void gatherData(GatherDataEvent event) {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(true, new ModuleProvider(out, module()));
     }

@@ -28,7 +28,7 @@
 -        int p_111076_
 +        int p_111076_,
 +        net.minecraftforge.client.model.data.ModelData modelData,
-+        @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.RenderType renderType
++        @org.jetbrains.annotations.Nullable net.minecraft.client.renderer.chunk.ChunkSectionLayer renderType
      ) {
 -        for (BlockModelPart blockmodelpart : p_397754_.collectParts(RandomSource.create(42L))) {
 +        for (BlockModelPart blockmodelpart : p_397754_.collectParts(RandomSource.create(42L), modelData, renderType)) {

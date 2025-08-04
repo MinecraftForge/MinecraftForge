@@ -28,7 +28,9 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
     public void addTags(HolderLookup.Provider lookupProvider) {
         tag(WATER).add(net.minecraft.world.level.material.Fluids.WATER).add(net.minecraft.world.level.material.Fluids.FLOWING_WATER);
         tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
-        tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(MILK)
+            .addOptional(ForgeMod.MILK.getKey().location())
+            .addOptional(ForgeMod.FLOWING_MILK.getKey().location());
         tag(GASEOUS);
         tag(HONEY);
         tag(POTION);
@@ -41,8 +43,8 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
         // TODO: Remove backwards compat tag entries in 1.22
         tag(forgeTagKey("milk"))
-                .addOptional(ForgeMod.MILK.getId())
-                .addOptional(ForgeMod.FLOWING_MILK.getId());
+            .addOptional(ForgeMod.MILK.getKey().location())
+            .addOptional(ForgeMod.FLOWING_MILK.getKey().location());
     }
 
     private static TagKey<Fluid> forgeTagKey(String path) {

@@ -9,7 +9,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,8 +18,9 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * The event can be canceled, which will prevent the spawn point from being changed.
  */
-@Cancelable
-public class PlayerSetSpawnEvent extends PlayerEvent {
+public final class PlayerSetSpawnEvent extends PlayerEvent implements Cancellable {
+    public static final CancellableEventBus<PlayerSetSpawnEvent> BUS = CancellableEventBus.create(PlayerSetSpawnEvent.class);
+
     private final @Nullable ServerPlayer.RespawnConfig config;
 
     @Deprecated(forRemoval = true, since = "1.21.5")

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:client_command_test/client_command_test",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

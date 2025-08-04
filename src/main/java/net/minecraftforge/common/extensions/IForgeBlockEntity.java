@@ -6,7 +6,6 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -31,15 +31,15 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
 
     /**
      * Called when you receive a TileEntityData packet for the location this TileEntity is currently in. On the client,
-     * the NetworkManager will always be the remote server. On the server, it will be whomever is responsible for
+     * the Connection will always be the remote server. On the server, it will be whomever is responsible for
      * sending the packet.
      *
      * @param connection The Connection the packet originated from
-     * @param pkt        The data packet
+     * @param data       The data from the packet, with registry access context
      * @param lookup     The holder lookup provider
      */
-    default void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookup) {
-        this.self().loadWithComponents(pkt.getTag(), lookup);
+    default void onDataPacket(Connection connection, ValueInput data, HolderLookup.Provider lookup) {
+        this.self().loadWithComponents(data);
     }
 
     /**
@@ -49,8 +49,8 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
      *
      * @param tag The {@link CompoundTag} sent from {@link BlockEntity#getUpdateTag()}
      */
-     default void handleUpdateTag(CompoundTag tag, HolderLookup.Provider holders) {
-         self().loadWithComponents(tag, holders);
+     default void handleUpdateTag(ValueInput tag, HolderLookup.Provider holders) {
+         self().loadWithComponents(tag);
      }
 
      default void onChunkUnloaded(){}

@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/renderer/block/model/SimpleModelWrapper.java
++++ b/net/minecraft/client/renderer/block/model/SimpleModelWrapper.java
+@@ -13,14 +_,19 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public record SimpleModelWrapper(QuadCollection quads, boolean useAmbientOcclusion, TextureAtlasSprite particleIcon) implements BlockModelPart {
++public record SimpleModelWrapper(QuadCollection quads, boolean useAmbientOcclusion, TextureAtlasSprite particleIcon, net.minecraft.client.renderer.chunk.ChunkSectionLayer layer, net.minecraft.client.renderer.chunk.ChunkSectionLayer layerFast) implements BlockModelPart {
+     public static SimpleModelWrapper bake(ModelBaker p_395631_, ResourceLocation p_396950_, ModelState p_396899_) {
+         ResolvedModel resolvedmodel = p_395631_.getModel(p_396950_);
+         TextureSlots textureslots = resolvedmodel.getTopTextureSlots();
+         boolean flag = resolvedmodel.getTopAmbientOcclusion();
+         TextureAtlasSprite textureatlassprite = resolvedmodel.resolveParticleSprite(textureslots, p_395631_);
+         QuadCollection quadcollection = resolvedmodel.bakeTopGeometry(textureslots, p_395631_, p_396899_);
+-        return new SimpleModelWrapper(quadcollection, flag, textureatlassprite);
++        var ctx = resolvedmodel.getContext();
++        return new SimpleModelWrapper(quadcollection, flag, textureatlassprite, ctx.getRenderType().block(), ctx.getRenderTypeFast().block());
++    }
++
++    public SimpleModelWrapper(QuadCollection quads, boolean useAmbientOcclusion, TextureAtlasSprite particleIcon) {
++        this(quads, useAmbientOcclusion, particleIcon, null, null);
+     }
+ 
+     @Override

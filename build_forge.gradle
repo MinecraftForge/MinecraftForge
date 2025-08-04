@@ -71,7 +71,7 @@ sourceSets {
     }
 }
 
-final String SPEC_VERSION = gradleutils.gitInfo.tag
+final String SPEC_VERSION = gitversion.info.tag
 
 // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
 // ForgeMC is a unique identifier for every MC version we have supported.
@@ -124,7 +124,7 @@ dependencies {
     installer(libs.bootstrap.api) // Needed by securemodules
     installer(libs.accesstransformers)
     installer(libs.eventbus)
-    installer(libs.typetools) // Dep of EventBus
+    installer(libs.jspecify) // Dep of EventBus
     installer(libs.forgespi)
     installer(libs.coremods)
     installer(libs.nashorn) // Dep of Coremods
@@ -147,6 +147,8 @@ dependencies {
 
     runtimeOnly(libs.bootstrap)
     runtimeOnly(libs.bootstrap.dev)
+
+    annotationProcessor(libs.eventbus.validator)
 }
 
 tasks.named('extractRangeMap').configure {
@@ -166,7 +168,7 @@ patcher {
 
     runs {
         forge_client {
-            property 'eventbus.checkTypesOnDispatch', 'true'
+            property 'eventbus.api.strictRuntimeChecks', 'true'
             property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
 
             args '--launchTarget', 'forge_dev_client',

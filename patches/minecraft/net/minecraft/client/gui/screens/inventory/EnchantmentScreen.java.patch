@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
-@@ -109,7 +_,7 @@
+@@ -106,7 +_,7 @@
                  int l1 = 86 - this.font.width(s);
                  FormattedText formattedtext = EnchantmentNames.getInstance().getRandomName(this.font, l1);
-                 int i2 = 6839882;
+                 int i2 = -9937334;
 -                if ((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.hasInfiniteMaterials()) {
 +                if (((k < l + 1 || this.minecraft.player.experienceLevel < k1) && !this.minecraft.player.hasInfiniteMaterials())  || this.menu.enchantClue[l] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels{
-                     p_282430_.blitSprite(RenderType::guiTextured, ENCHANTMENT_SLOT_DISABLED_SPRITE, i1, j + 14 + 19 * l, 108, 19);
-                     p_282430_.blitSprite(RenderType::guiTextured, DISABLED_LEVEL_SPRITES[l], i1 + 1, j + 15 + 19 * l, 16, 16);
-                     p_282430_.drawWordWrap(this.font, formattedtext, j1, j + 16 + 19 * l, l1, (i2 & 16711422) >> 1, false);
-@@ -175,13 +_,16 @@
+                     p_282430_.blitSprite(RenderPipelines.GUI_TEXTURED, ENCHANTMENT_SLOT_DISABLED_SPRITE, i1, j + 14 + 19 * l, 108, 19);
+                     p_282430_.blitSprite(RenderPipelines.GUI_TEXTURED, DISABLED_LEVEL_SPRITES[l], i1 + 1, j + 15 + 19 * l, 16, 16);
+                     p_282430_.drawWordWrap(this.font, formattedtext, j1, j + 16 + 19 * l, l1, ARGB.opaque((i2 & 16711422) >> 1), false);
+@@ -157,13 +_,16 @@
                  .registryAccess()
                  .lookupOrThrow(Registries.ENCHANTMENT)
                  .get(this.menu.enchantClue[j]);

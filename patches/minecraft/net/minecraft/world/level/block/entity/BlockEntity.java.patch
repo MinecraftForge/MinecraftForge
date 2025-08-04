@@ -1,19 +1,19 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -32,7 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
+@@ -34,7 +_,7 @@
+ import net.minecraft.world.level.storage.ValueOutput;
  import org.slf4j.Logger;
  
 -public abstract class BlockEntity {
-+public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<BlockEntity> implements net.minecraftforge.common.extensions.IForgeBlockEntity {
++public abstract class BlockEntity extends net.minecraftforge.common.capabilities.CapabilityProvider.BlockEntities implements net.minecraftforge.common.extensions.IForgeBlockEntity {
      private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
      private static final Logger LOGGER = LogUtils.getLogger();
      private final BlockEntityType<?> type;
-@@ -44,10 +_,12 @@
+@@ -46,10 +_,12 @@
      private DataComponentMap components = DataComponentMap.EMPTY;
  
      public BlockEntity(BlockEntityType<?> p_155228_, BlockPos p_155229_, BlockState p_155230_) {
-+        super(BlockEntity.class);
++        super();
          this.type = p_155228_;
          this.worldPosition = p_155229_.immutable();
          this.validateBlockState(p_155230_);
@@ -22,7 +22,7 @@
      }
  
      private void validateBlockState(BlockState p_345558_) {
-@@ -57,7 +_,7 @@
+@@ -59,7 +_,7 @@
      }
  
      public boolean isValidBlockState(BlockState p_345570_) {
@@ -31,24 +31,23 @@
      }
  
      public static BlockPos getPosFromTag(ChunkPos p_396083_, CompoundTag p_187473_) {
-@@ -89,6 +_,8 @@
+@@ -91,6 +_,7 @@
      }
  
-     protected void loadAdditional(CompoundTag p_331149_, HolderLookup.Provider p_333170_) {
-+        var caps = p_331149_.getCompound("ForgeCaps");
-+        if (getCapabilities() != null && caps.isPresent()) deserializeCaps(p_333170_, caps.get());
+     protected void loadAdditional(ValueInput p_409136_) {
++        if (getCapabilities() != null) p_409136_.read("ForgeCaps", CompoundTag.CODEC).ifPresent(caps -> deserializeCaps(p_409136_.lookup(), caps));
      }
  
-     public final void loadWithComponents(CompoundTag p_331756_, HolderLookup.Provider p_335164_) {
-@@ -101,6 +_,7 @@
+     public final void loadWithComponents(ValueInput p_409893_) {
+@@ -103,6 +_,7 @@
      }
  
-     protected void saveAdditional(CompoundTag p_187471_, HolderLookup.Provider p_327783_) {
-+        if (getCapabilities() != null) p_187471_.put("ForgeCaps", serializeCaps(p_327783_));
+     protected void saveAdditional(ValueOutput p_407573_) {
++        if (getCapabilities() != null) p_407573_.storeNullable("ForgeCaps", CompoundTag.CODEC, serializeCaps(this.level.registryAccess()));
      }
  
      public final CompoundTag saveWithFullMetadata(HolderLookup.Provider p_331193_) {
-@@ -210,6 +_,13 @@
+@@ -238,6 +_,13 @@
  
      public void setRemoved() {
          this.remove = true;

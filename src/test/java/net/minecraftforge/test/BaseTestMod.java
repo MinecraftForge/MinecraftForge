@@ -5,6 +5,7 @@
 
 package net.minecraftforge.test;
 
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -35,70 +36,83 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.DeferredRegisterData;
 import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.unsafe.UnsafeHacks;
 
 public abstract class BaseTestMod {
-    private List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
-    protected final IEventBus modBus;
+    private final List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
+    protected final BusGroup modBus;
 
-    private final List<Map<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>> dataRegistries = new ArrayList<>();
+    protected final List<Map<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>> dataRegistries = new ArrayList<>();
     protected final Set<DeferredRegisterData<?>> myDataRegistries = new HashSet<>();
 
     protected final Map<ResourceLocation, ForgeGameTestHooks.TestReference> tests;
 
     public BaseTestMod(FMLJavaModLoadingContext context) {
-        this(context, true);
+        this(context, true, true);
     }
 
-    public BaseTestMod(FMLJavaModLoadingContext context, boolean register) {
-        this.modBus = context.getModEventBus();
+    public BaseTestMod(FMLJavaModLoadingContext context, boolean registerSelf, boolean registerDeferred) {
+        this.modBus = context.getModBusGroup();
 
-        if (!register) {
-            this.tests = Collections.emptyMap();
-            return;
-        }
-
-        modBus.register(this);
+        if (registerSelf)
+            modBus.register(LookupHelper.INSTANCE.in(this.getClass()), this);
 
         tests = ForgeGameTestHooks.gatherTests(getClass(), this);
 
-        Class<?> cls = getClass();
-        while (cls != BaseTestMod.class) {
-            var data = new LinkedHashMap<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>();
-            for (var field : cls.getDeclaredFields()) {
-                if (!Modifier.isStatic(field.getModifiers()))
-                    continue;
+        if (registerDeferred) {
+            Class<?> cls = getClass();
+            while (cls != BaseTestMod.class) {
+                var data = new LinkedHashMap<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>();
+                for (var field : cls.getDeclaredFields()) {
+                    if (!Modifier.isStatic(field.getModifiers()))
+                        continue;
 
-                if (field.getType() == DeferredRegister.class) {
-                    DeferredRegister<?> dr = getField(field, null);
-                    dr.register(modBus);
-                } else if (field.getType() == DeferredRegisterData.class) {
-                    DeferredRegisterData<?> dr = getField(field, null);
-                    data.put(dr.getRegistryKey(), dr);
-                    if (cls == getClass())
-                        myDataRegistries.add(dr);
+                    if (field.getType() == DeferredRegister.class) {
+                        DeferredRegister<?> dr = getField(field, null);
+                        dr.register(modBus);
+                    } else if (field.getType() == DeferredRegisterData.class) {
+                        DeferredRegisterData<?> dr = getField(field, null);
+                        data.put(dr.getRegistryKey(), dr);
+                        if (cls == getClass())
+                            myDataRegistries.add(dr);
+                    }
                 }
+
+                if (!data.isEmpty())
+                    dataRegistries.addFirst(data);
+
+                cls = cls.getSuperclass();
             }
 
-            if (!data.isEmpty())
-                dataRegistries.addFirst(data);
-
-            cls = cls.getSuperclass();
+            if (!myDataRegistries.isEmpty())
+                GatherDataEvent.getBus(modBus).addListener(this::generateDataRegistries);
         }
 
-        if (!myDataRegistries.isEmpty())
-            modBus.addListener(this::generateDataRegistries);
-
         if (!tests.isEmpty()) {
-            modBus.addListener(this::registerTestFunctions);
-            modBus.addListener(this::generateGameTests);
+            RegisterEvent.getBus(modBus).addListener(this::registerTestFunctions);
+            GatherDataEvent.getBus(modBus).addListener(this::generateGameTests);
+        }
+    }
+
+
+    private final class LookupHelper {
+        private static final Lookup INSTANCE;
+        static {
+            try {
+                var lookupField = Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                UnsafeHacks.setAccessible(lookupField);
+                INSTANCE = (Lookup) lookupField.get(null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -182,7 +196,7 @@ public abstract class BaseTestMod {
         });
     }
 
-    private void registerTestFunctions(RegisterEvent event) {
+    protected void registerTestFunctions(RegisterEvent event) {
         if (event.getRegistryKey() != Registries.TEST_FUNCTION)
             return;
 

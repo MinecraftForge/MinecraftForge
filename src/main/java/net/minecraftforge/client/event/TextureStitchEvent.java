@@ -6,8 +6,8 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -19,21 +19,18 @@ import org.jetbrains.annotations.ApiStatus;
  * @see TextureStitchEvent.Post
  * @see TextureAtlas
  */
-public class TextureStitchEvent extends Event implements IModBusEvent
-{
+public sealed class TextureStitchEvent extends MutableEvent implements IModBusEvent, InheritableEvent {
     private final TextureAtlas atlas;
 
     @ApiStatus.Internal
-    public TextureStitchEvent(TextureAtlas atlas)
-    {
+    public TextureStitchEvent(TextureAtlas atlas) {
         this.atlas = atlas;
     }
 
     /**
      * {@return the texture atlas}
      */
-    public TextureAtlas getAtlas()
-    {
+    public TextureAtlas getAtlas() {
         return atlas;
     }
 
@@ -80,11 +77,9 @@ public class TextureStitchEvent extends Event implements IModBusEvent
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends TextureStitchEvent
-    {
+    public static final class Post extends TextureStitchEvent {
         @ApiStatus.Internal
-        public Post(TextureAtlas map)
-        {
+        public Post(TextureAtlas map) {
             super(map);
         }
     }

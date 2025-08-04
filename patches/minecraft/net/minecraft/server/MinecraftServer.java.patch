@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -273,7 +_,7 @@
+@@ -274,7 +_,7 @@
  
      public static <S extends MinecraftServer> S spin(Function<Thread, S> p_129873_) {
          AtomicReference<S> atomicreference = new AtomicReference<>();
@@ -9,7 +9,7 @@
          thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> LOGGER.error("Uncaught exception in server thread", p_177910_));
          if (Runtime.getRuntime().availableProcessors() > 4) {
              thread.setPriority(8);
-@@ -379,6 +_,7 @@
+@@ -380,6 +_,7 @@
          this.readScoreboard(dimensiondatastorage);
          this.commandStorage = new CommandStorage(dimensiondatastorage);
          WorldBorder worldborder = serverlevel.getWorldBorder();
@@ -17,7 +17,7 @@
          if (!serverleveldata.isInitialized()) {
              try {
                  setInitialSpawn(serverlevel, serverleveldata, worldoptions.generateBonusChest(), flag);
-@@ -428,6 +_,7 @@
+@@ -429,6 +_,7 @@
                  );
                  worldborder.addListener(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.getWorldBorder()));
                  this.levels.put(resourcekey1, serverlevel1);
@@ -25,7 +25,7 @@
              }
          }
  
-@@ -439,6 +_,7 @@
+@@ -440,6 +_,7 @@
              p_177898_.setSpawn(BlockPos.ZERO.above(80), 0.0F);
          } else {
              ServerChunkCache serverchunkcache = p_177897_.getChunkSource();
@@ -33,7 +33,7 @@
              ChunkPos chunkpos = new ChunkPos(serverchunkcache.randomState().sampler().findSpawnPosition());
              int i = serverchunkcache.getGenerator().getSpawnHeight(p_177897_);
              if (i < p_177897_.getMinY()) {
-@@ -621,6 +_,7 @@
+@@ -622,6 +_,7 @@
          for (ServerLevel serverlevel2 : this.getAllLevels()) {
              if (serverlevel2 != null) {
                  try {
@@ -41,7 +41,7 @@
                      serverlevel2.close();
                  } catch (IOException ioexception1) {
                      LOGGER.error("Exception closing the level", (Throwable)ioexception1);
-@@ -667,9 +_,11 @@
+@@ -668,9 +_,11 @@
                  throw new IllegalStateException("Failed to initialize server");
              }
  
@@ -53,7 +53,7 @@
  
              while (this.running) {
                  long i;
-@@ -721,6 +_,8 @@
+@@ -722,6 +_,8 @@
                  this.isReady = true;
                  JvmProfiler.INSTANCE.onServerTick(this.smoothedTickTimeMillis);
              }
@@ -62,7 +62,7 @@
          } catch (Throwable throwable2) {
              LOGGER.error("Encountered an unexpected exception", throwable2);
              CrashReport crashreport = constructOrExtractCrashReport(throwable2);
-@@ -732,6 +_,7 @@
+@@ -733,6 +_,7 @@
                  LOGGER.error("We were unable to save this crash report to disk.");
              }
  
@@ -70,7 +70,7 @@
              this.onServerCrash(crashreport);
          } finally {
              try {
-@@ -744,6 +_,7 @@
+@@ -745,6 +_,7 @@
                      this.services.profileCache().clearExecutor();
                  }
  
@@ -78,7 +78,7 @@
                  this.onServerExit();
              }
          }
-@@ -933,12 +_,14 @@
+@@ -934,12 +_,14 @@
              }
          }
  
@@ -93,7 +93,7 @@
          }
  
          this.ticksUntilAutosave--;
-@@ -956,6 +_,7 @@
+@@ -957,6 +_,7 @@
          this.smoothedTickTimeMillis = this.smoothedTickTimeMillis * 0.8F + (float)k / (float)TimeUtil.NANOSECONDS_PER_MILLISECOND * 0.19999999F;
          this.logTickMethodTime(i);
          profilerfiller.pop();
@@ -101,7 +101,7 @@
      }
  
      private void autoSave() {
-@@ -1005,7 +_,8 @@
+@@ -1006,7 +_,8 @@
              Optional.of(serverstatus$players),
              Optional.of(ServerStatus.Version.current()),
              Optional.ofNullable(this.statusIcon),
@@ -111,7 +111,7 @@
          );
      }
  
-@@ -1036,7 +_,8 @@
+@@ -1037,7 +_,8 @@
          this.getFunctions().tick();
          profilerfiller.popPush("levels");
  
@@ -121,7 +121,7 @@
              profilerfiller.push(() -> serverlevel + " " + serverlevel.dimension().location());
              if (this.tickCount % 20 == 0) {
                  profilerfiller.push("timeSync");
-@@ -1045,6 +_,7 @@
+@@ -1046,6 +_,7 @@
              }
  
              profilerfiller.push("tick");
@@ -129,7 +129,7 @@
  
              try {
                  serverlevel.tick(p_129954_);
-@@ -1053,16 +_,18 @@
+@@ -1054,16 +_,18 @@
                  serverlevel.fillReportDetails(crashreport);
                  throw new ReportedException(crashreport);
              }
@@ -149,7 +149,7 @@
              GameTestTicker.SINGLETON.tick();
          }
  
-@@ -1163,7 +_,7 @@
+@@ -1164,7 +_,7 @@
  
      @DontObfuscate
      public String getServerModName() {
@@ -158,7 +158,7 @@
      }
  
      public SystemReport fillSystemReport(SystemReport p_177936_) {
-@@ -1515,6 +_,7 @@
+@@ -1516,6 +_,7 @@
                  this.functionManager.replaceLibrary(this.resources.managers.getFunctionLibrary());
                  this.structureTemplateManager.onResourceManagerReload(this.resources.resourceManager);
                  this.fuelValues = FuelValues.vanillaBurnTimes(this.registries.compositeAccess(), this.worldData.enabledFeatures());
@@ -166,7 +166,7 @@
              }, this);
          if (this.isSameThread()) {
              this.managedBlock(completablefuture::isDone);
-@@ -1524,12 +_,15 @@
+@@ -1525,12 +_,15 @@
      }
  
      public static WorldDataConfiguration configurePackRepository(PackRepository p_248681_, WorldDataConfiguration p_331931_, boolean p_249869_, boolean p_330480_) {
@@ -183,7 +183,7 @@
          } else {
              Set<String> set = Sets.newLinkedHashSet();
  
-@@ -2033,6 +_,48 @@
+@@ -2038,6 +_,48 @@
  
      public ServerLinks serverLinks() {
          return ServerLinks.EMPTY;

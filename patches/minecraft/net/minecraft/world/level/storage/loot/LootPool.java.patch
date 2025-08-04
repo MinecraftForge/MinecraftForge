@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootPool.java
 +++ b/net/minecraft/world/level/storage/loot/LootPool.java
-@@ -33,10 +_,13 @@
+@@ -34,10 +_,13 @@
                  LootItemCondition.DIRECT_CODEC.listOf().optionalFieldOf("conditions", List.of()).forGetter(p_297008_ -> p_297008_.conditions),
                  LootItemFunctions.ROOT_CODEC.listOf().optionalFieldOf("functions", List.of()).forGetter(p_297009_ -> p_297009_.functions),
                  NumberProviders.CODEC.fieldOf("rolls").forGetter(p_297004_ -> p_297004_.rolls),
@@ -15,7 +15,7 @@
      private final List<LootPoolEntryContainer> entries;
      private final List<LootItemCondition> conditions;
      private final Predicate<LootContext> compositeCondition;
-@@ -44,13 +_,21 @@
+@@ -45,13 +_,21 @@
      private final BiFunction<ItemStack, LootContext, ItemStack> compositeFunction;
      private NumberProvider rolls;
      private NumberProvider bonusRolls;
@@ -38,7 +38,7 @@
      ) {
          this.entries = p_298341_;
          this.conditions = p_297697_;
-@@ -59,6 +_,8 @@
+@@ -60,6 +_,8 @@
          this.compositeFunction = LootItemFunctions.compose(p_299722_);
          this.rolls = p_165131_;
          this.bonusRolls = p_165132_;
@@ -47,7 +47,7 @@
      }
  
      private void addRandomItem(Consumer<ItemStack> p_79059_, LootContext p_79060_) {
-@@ -126,12 +_,35 @@
+@@ -127,12 +_,35 @@
          return new LootPool.Builder();
      }
  
@@ -83,7 +83,7 @@
  
          public LootPool.Builder setRolls(NumberProvider p_165134_) {
              this.rolls = p_165134_;
-@@ -162,8 +_,18 @@
+@@ -163,8 +_,18 @@
              return this;
          }
  

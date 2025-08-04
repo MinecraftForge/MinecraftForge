@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -877,6 +_,11 @@
+@@ -887,6 +_,11 @@
      private final float spawnDimensionsScale;
      private final FeatureFlagSet requiredFeatures;
  
@@ -12,7 +12,7 @@
      private static <T extends Entity> EntityType<T> register(ResourceKey<EntityType<?>> p_368406_, EntityType.Builder<T> p_363129_) {
          return Registry.register(BuiltInRegistries.ENTITY_TYPE, p_368406_, p_363129_.build(p_368406_));
      }
-@@ -911,7 +_,8 @@
+@@ -921,7 +_,8 @@
          int p_273451_,
          String p_367006_,
          Optional<ResourceKey<LootTable>> p_364691_,
@@ -22,7 +22,7 @@
      ) {
          this.factory = p_273268_;
          this.category = p_272918_;
-@@ -927,6 +_,10 @@
+@@ -937,6 +_,10 @@
          this.descriptionId = p_367006_;
          this.lootTable = p_364691_;
          this.requiredFeatures = p_273518_;
@@ -33,7 +33,7 @@
      }
  
      @Nullable
-@@ -1181,14 +_,26 @@
+@@ -1197,14 +_,26 @@
      }
  
      public int clientTrackingRange() {
@@ -60,7 +60,7 @@
          return this != PLAYER
              && this != LLAMA_SPIT
              && this != WITHER
-@@ -1244,6 +_,12 @@
+@@ -1260,6 +_,12 @@
          return OP_ONLY_CUSTOM_DATA.contains(this);
      }
  
@@ -73,7 +73,7 @@
      public static class Builder<T extends Entity> {
          private final EntityType.EntityFactory<T> factory;
          private final MobCategory category;
-@@ -1262,6 +_,10 @@
+@@ -1278,6 +_,10 @@
              ResourceKey.create(Registries.LOOT_TABLE, p_358877_.location().withPrefix("entities/"))
          );
          private final DependantName<EntityType<?>, String> descriptionId = p_358878_ -> Util.makeDescriptionId("entity", p_358878_.location());
@@ -84,7 +84,7 @@
  
          private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
              this.factory = p_20696_;
-@@ -1375,6 +_,30 @@
+@@ -1391,6 +_,30 @@
              return this;
          }
  
@@ -115,7 +115,7 @@
          public EntityType<T> build(ResourceKey<EntityType<?>> p_369693_) {
              if (this.serialize) {
                  Util.fetchChoiceType(References.ENTITY_TREE, p_369693_.location().toString());
-@@ -1394,7 +_,8 @@
+@@ -1410,7 +_,8 @@
                  this.updateInterval,
                  this.descriptionId.get(p_369693_),
                  this.lootTable.get(p_369693_),

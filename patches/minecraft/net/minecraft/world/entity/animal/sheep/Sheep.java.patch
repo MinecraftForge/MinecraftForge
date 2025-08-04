@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/sheep/Sheep.java
 +++ b/net/minecraft/world/entity/animal/sheep/Sheep.java
-@@ -156,7 +_,7 @@
+@@ -137,7 +_,7 @@
      @Override
      public InteractionResult mobInteract(Player p_397056_, InteractionHand p_391211_) {
          ItemStack itemstack = p_397056_.getItemInHand(p_391211_);
@@ -9,7 +9,7 @@
              if (this.level() instanceof ServerLevel serverlevel && this.readyForShearing()) {
                  this.shear(serverlevel, SoundSource.PLAYERS, itemstack);
                  this.gameEvent(GameEvent.SHEAR, p_397056_);
-@@ -172,12 +_,27 @@
+@@ -153,12 +_,27 @@
  
      @Override
      public void shear(ServerLevel p_397708_, SoundSource p_395553_, ItemStack p_396000_) {
@@ -37,7 +37,7 @@
                  for (int i = 0; i < p_393350_.getCount(); i++) {
                      ItemEntity itementity = this.spawnAtLocation(p_397779_, p_393350_.copyWithCount(1), 1.0F);
                      if (itementity != null) {
-@@ -192,8 +_,14 @@
+@@ -173,8 +_,14 @@
                      }
                  }
              }

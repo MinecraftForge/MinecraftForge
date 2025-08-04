@@ -1,14 +1,14 @@
 --- a/net/minecraft/data/registries/VanillaRegistries.java
 +++ b/net/minecraft/data/registries/VanillaRegistries.java
-@@ -88,6 +_,7 @@
-         .add(Registries.TEST_INSTANCE, GameTestInstances::bootstrap)
+@@ -90,6 +_,7 @@
          .add(Registries.FROG_VARIANT, FrogVariants::bootstrap)
-         .add(Registries.CAT_VARIANT, CatVariants::bootstrap);
+         .add(Registries.CAT_VARIANT, CatVariants::bootstrap)
+         .add(Registries.DIALOG, Dialogs::bootstrap);
 +    public static final List<? extends net.minecraft.resources.ResourceKey<? extends net.minecraft.core.Registry<?>>> DATAPACK_REGISTRY_KEYS = BUILDER.getEntryKeys();
  
      private static void validateThatAllBiomeFeaturesHaveBiomeFilter(HolderLookup.Provider p_256242_) {
          validateThatAllBiomeFeaturesHaveBiomeFilter(p_256242_.lookupOrThrow(Registries.PLACED_FEATURE), p_256242_.lookupOrThrow(Registries.BIOME));
-@@ -119,5 +_,9 @@
+@@ -121,5 +_,9 @@
          HolderLookup.Provider holderlookup$provider = BUILDER.build(registryaccess$frozen);
          validateThatAllBiomeFeaturesHaveBiomeFilter(holderlookup$provider);
          return holderlookup$provider;

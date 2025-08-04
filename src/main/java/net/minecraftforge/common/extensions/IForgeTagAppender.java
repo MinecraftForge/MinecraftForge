@@ -5,129 +5,140 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 
-public interface IForgeTagAppender<T>
-{
-    private TagsProvider.TagAppender<T> self() {
-        return (TagsProvider.TagAppender<T>) this;
+public interface IForgeTagAppender<E, T> {
+    private TagAppender<E, T> self() {
+        return (TagAppender<E, T>)this;
     }
 
+    /**
+     * Gets the backing TagBuilder, will throw an exception if its not set.
+     * This is only available during data generation, and if they use TagAppender.forBuilder
+     */
+    default TagBuilder getInternalBuilder() {
+        throw new IllegalStateException("Could not determine internal tag builder");
+    }
+
+    default String getSourceName() {
+        return "unknown";
+    }
+
+    /**
+     * Adds a registry entry to the tag json's remove list. Callable during datageneration.
+     *
+     * @param entry The entry to remove
+     * @return The builder for chaining
+     */
+    default TagAppender<E, T> remove(final E entry) {
+        throw new UnsupportedOperationException("TagAppender.remove is not implemented in class: " + this.getClass());
+    }
+
+    /**
+     * Adds multiple registry entries to the tag json's remove list. Callable during datageneration.
+     *
+     * @param entries The entries to remove
+     * @return The builder for chaining
+     */
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> addTags(TagKey<T>... values) {
-        TagsProvider.TagAppender<T> builder = self();
+    default TagAppender<E, T> remove(final E first, final E...entries) {
+        this.remove(first);
+        for (E entry : entries)
+            this.remove(entry);
+        return self();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    default TagAppender<E, T> addTags(TagKey<T>... values) {
+        var builder = self();
         for (TagKey<T> value : values) {
             builder.addTag(value);
         }
         return builder;
     }
 
-    default TagsProvider.TagAppender<T> addOptionalTag(TagKey<T> value) {
-        return self().addOptionalTag(value.location());
+    default TagAppender<E, T> addOptional(ResourceLocation location) {
+        self().getInternalBuilder().addOptionalElement(location);
+        return self();
     }
 
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> addOptionalTags(TagKey<T>... values) {
-        TagsProvider.TagAppender<T> builder = self();
-        for (TagKey<T> value : values) {
-            builder.addOptionalTag(value.location());
-        }
+    default TagAppender<E, T>addOptionalTags(TagKey<T>... values) {
+        var builder = self();
+        for (var value : values)
+            builder.addOptionalTag(value);
         return builder;
     }
 
-    default TagsProvider.TagAppender<T> replace() {
+    default TagAppender<E, T> replace() {
         return replace(true);
     }
 
-    default TagsProvider.TagAppender<T> replace(boolean value) {
+    default TagAppender<E, T> replace(boolean value) {
         self().getInternalBuilder().replace(value);
         return self();
     }
 
     /**
-     * Adds a single element's ID to the tag json's remove list. Callable during datageneration.
+     * Adds a single element's ID to the tag json's remove list. Only available during data generation.
      * @param location The ID of the element to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> remove(final ResourceLocation location)
-    {
-        TagsProvider.TagAppender<T> builder = self();
-        builder.getInternalBuilder().removeElement(location, builder.getModID());
+    default TagAppender<E, T> remove(final ResourceLocation location) {
+        var builder = self();
+        builder.getInternalBuilder().removeElement(location, builder.getSourceName());
         return builder;
     }
 
     /**
-     * Adds multiple elements' IDs to the tag json's remove list. Callable during datageneration.
+     * Adds multiple elements' IDs to the tag json's remove list. Only available during data generation.
      * @param locations The IDs of the elements to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> remove(final ResourceLocation first, final ResourceLocation... locations)
-    {
+    default TagAppender<E, T> remove(final ResourceLocation first, final ResourceLocation... locations) {
         this.remove(first);
-        for (ResourceLocation location : locations)
-        {
+        for (var location : locations)
             this.remove(location);
-        }
         return self();
     }
 
     /**
-     * Adds a resource key to the tag json's remove list. Callable during datageneration.
+     * Adds a resource key to the tag json's remove list. Only available during data generation.
      *
      * @param resourceKey The resource key of the element to remove
      * @return The appender for chaining
      */
-    default TagsProvider.TagAppender<T> remove(final ResourceKey<T> resourceKey)
-    {
+    default TagAppender<E, T> remove(final ResourceKey<T> resourceKey) {
         this.remove(resourceKey.location());
         return self();
     }
 
     /**
-     * Adds multiple resource keys to the tag json's remove list. Callable during datageneration.
-     *
-     * @param resourceKeys The resource keys of the elements to remove
-     * @return The appender for chaining
-     */
-    @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> remove(final ResourceKey<T> firstResourceKey, final ResourceKey<T>... resourceKeys)
-    {
-        this.remove(firstResourceKey.location());
-        for (ResourceKey<T> resourceKey : resourceKeys)
-        {
-            this.remove(resourceKey.location());
-        }
-        return self();
-    }
-
-    /**
-     * Adds a tag to the tag json's remove list. Callable during datageneration.
+     * Adds a tag to the tag json's remove list. Only available during data generation.
      * @param tag The ID of the tag to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> remove(TagKey<T> tag)
-    {
-        TagsProvider.TagAppender<T> builder = self();
-        builder.getInternalBuilder().removeTag(tag.location(), builder.getModID());
+    default TagAppender<E, T> remove(TagKey<T> tag) {
+        var builder = self();
+        builder.getInternalBuilder().removeTag(tag.location(), builder.getSourceName());
         return builder;
     }
 
     /**
-     * Adds multiple tags to the tag json's remove list. Callable during datageneration.
+     * Adds multiple tags to the tag json's remove list. Only available during data generation.
      * @param tags The IDs of the tags to remove
      * @return The builder for chaining
      */
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> remove(TagKey<T> first, TagKey<T>...tags)
-    {
+    default TagAppender<E, T> remove(TagKey<T> first, TagKey<T>...tags) {
         this.remove(first);
-        for (TagKey<T> tag : tags)
-        {
+        for (var tag : tags)
             this.remove(tag);
-        }
         return self();
     }
 }

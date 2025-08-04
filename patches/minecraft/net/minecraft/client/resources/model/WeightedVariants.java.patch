@@ -16,7 +16,7 @@
      }
  
      @Override
-@@ -27,8 +_,18 @@
+@@ -27,8 +_,23 @@
      }
  
      @Override
@@ -30,8 +30,13 @@
 +    }
 +
 +    @Override
-+    public void collectParts(RandomSource random, List<BlockModelPart> dest, net.minecraftforge.client.model.data.ModelData data, net.minecraft.client.renderer.RenderType renderType) {
++    public void collectParts(RandomSource random, List<BlockModelPart> dest, net.minecraftforge.client.model.data.ModelData data, net.minecraft.client.renderer.chunk.ChunkSectionLayer renderType) {
 +        this.list.getRandomOrThrow(random).collectParts(random, dest, data, renderType);
++    }
++
++    @Override
++    public java.util.Collection<net.minecraft.client.renderer.chunk.ChunkSectionLayer> getRenderTypes(net.minecraft.world.level.block.state.BlockState state, RandomSource random, net.minecraftforge.client.model.data.ModelData data) {
++        return this.list.getRandomOrThrow(random).getRenderTypes(state, random, data);
      }
  
      @OnlyIn(Dist.CLIENT)

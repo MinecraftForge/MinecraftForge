@@ -23,7 +23,7 @@
              if (!list1.isEmpty()) {
                  return AbstractContainerMenu.getRedstoneSignalFromContainer((Container)list1.get(0));
              }
-@@ -292,6 +_,6 @@
+@@ -188,6 +_,6 @@
  
      @Override
      protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_52469_) {

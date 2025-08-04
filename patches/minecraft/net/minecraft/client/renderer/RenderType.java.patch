@@ -1,15 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderType.java
 +++ b/net/minecraft/client/renderer/RenderType.java
-@@ -633,9 +_,20 @@
-             .createCompositeState(false)
-     );
-     private static final ImmutableList<RenderType> CHUNK_BUFFER_LAYERS = ImmutableList.of(solid(), cutoutMipped(), cutout(), translucent(), tripwire());
-+    static {
-+        int i = 0;
-+        for (var layer : CHUNK_BUFFER_LAYERS)
-+            layer.chunkLayerId = i++;
-+    }
-+
+@@ -521,6 +_,11 @@
      private final int bufferSize;
      private final boolean affectsCrumbling;
      private final boolean sortOnUpload;
@@ -21,7 +12,7 @@
  
      public static RenderType solid() {
          return SOLID;
-@@ -820,7 +_,7 @@
+@@ -701,7 +_,7 @@
      }
  
      public static RenderType text(ResourceLocation p_110498_) {
@@ -30,7 +21,7 @@
      }
  
      public static RenderType textBackground() {
-@@ -828,19 +_,19 @@
+@@ -709,19 +_,19 @@
      }
  
      public static RenderType textIntensity(ResourceLocation p_173238_) {
@@ -54,7 +45,7 @@
      }
  
      public static RenderType textBackgroundSeeThrough() {
-@@ -848,7 +_,7 @@
+@@ -729,7 +_,7 @@
      }
  
      public static RenderType textIntensitySeeThrough(ResourceLocation p_173241_) {

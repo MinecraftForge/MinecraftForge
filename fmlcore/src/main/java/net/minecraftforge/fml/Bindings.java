@@ -5,7 +5,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 
@@ -29,7 +29,7 @@ public class Bindings {
     /**
      * @return A supplier of net.minecraftforge.common.MinecraftForge#EVENT_BUS
      */
-    public static Supplier<IEventBus> getForgeBus() {
+    public static Supplier<BusGroup> getForgeBus() {
         return PROVIDER.getForgeBusSupplier();
     }
 

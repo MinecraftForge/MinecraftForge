@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/RegistryDataLoader.java
 +++ b/net/minecraft/resources/RegistryDataLoader.java
-@@ -88,7 +_,7 @@
+@@ -89,7 +_,7 @@
          Lifecycle lifecycle = p_326161_.map(KnownPack::isVanilla).map(p_326166_ -> Lifecycle.stable()).orElse(Lifecycle.experimental());
          return new RegistrationInfo(p_326161_, lifecycle);
      });
@@ -9,7 +9,7 @@
          new RegistryDataLoader.RegistryData<>(Registries.DIMENSION_TYPE, DimensionType.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
-@@ -128,7 +_,7 @@
+@@ -130,7 +_,7 @@
      public static final List<RegistryDataLoader.RegistryData<?>> DIMENSION_REGISTRIES = List.of(
          new RegistryDataLoader.RegistryData<>(Registries.LEVEL_STEM, LevelStem.CODEC)
      );
@@ -18,8 +18,8 @@
          new RegistryDataLoader.RegistryData<>(Registries.BIOME, Biome.NETWORK_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.CHAT_TYPE, ChatType.DIRECT_CODEC),
          new RegistryDataLoader.RegistryData<>(Registries.TRIM_PATTERN, TrimPattern.DIRECT_CODEC),
-@@ -151,6 +_,10 @@
-         new RegistryDataLoader.RegistryData<>(Registries.TEST_INSTANCE, GameTestInstance.DIRECT_CODEC)
+@@ -154,6 +_,10 @@
+         new RegistryDataLoader.RegistryData<>(Registries.DIALOG, Dialog.DIRECT_CODEC)
      );
  
 +    public static java.util.stream.Stream<RegistryDataLoader.RegistryData<?>> getWorldGenAndDimensionStream() {
@@ -29,7 +29,7 @@
      public static RegistryAccess.Frozen load(
          ResourceManager p_252046_, List<HolderLookup.RegistryLookup<?>> p_250344_, List<RegistryDataLoader.RegistryData<?>> p_366741_
      ) {
-@@ -267,7 +_,7 @@
+@@ -270,7 +_,7 @@
  
      private static <E> void loadElementFromResource(
          WritableRegistry<E> p_330991_,
@@ -38,10 +38,10 @@
          RegistryOps<JsonElement> p_332135_,
          ResourceKey<E> p_332850_,
          Resource p_335244_,
-@@ -275,7 +_,23 @@
+@@ -278,7 +_,23 @@
      ) throws IOException {
          try (Reader reader = p_335244_.openAsReader()) {
-             JsonElement jsonelement = JsonParser.parseReader(reader);
+             JsonElement jsonelement = StrictJsonParser.parse(reader);
 -            DataResult<E> dataresult = p_333909_.parse(p_332135_, jsonelement);
 +
 +            var result = p_333909_.decode(p_332135_, jsonelement);
@@ -63,7 +63,7 @@
              E e = dataresult.getOrThrow();
              p_330991_.register(p_332850_, e, p_332222_);
          }
-@@ -290,6 +_,7 @@
+@@ -293,6 +_,7 @@
      ) {
          FileToIdConverter filetoidconverter = FileToIdConverter.registry(p_331358_.key());
          RegistryOps<JsonElement> registryops = RegistryOps.create(JsonOps.INSTANCE, p_333035_);
@@ -71,7 +71,7 @@
  
          for (Entry<ResourceLocation, Resource> entry : filetoidconverter.listMatchingResources(p_335634_).entrySet()) {
              ResourceLocation resourcelocation = entry.getKey();
-@@ -298,7 +_,7 @@
+@@ -301,7 +_,7 @@
              RegistrationInfo registrationinfo = REGISTRATION_INFO_CACHE.apply(resource.knownPackInfo());
  
              try {
@@ -80,7 +80,7 @@
              } catch (Exception exception) {
                  p_335074_.put(
                      resourcekey,
-@@ -321,7 +_,8 @@
+@@ -324,7 +_,8 @@
          RegistryDataLoader.NetworkedRegistryData registrydataloader$networkedregistrydata = p_331925_.get(p_332518_.key());
          if (registrydataloader$networkedregistrydata != null) {
              RegistryOps<Tag> registryops = RegistryOps.create(NbtOps.INSTANCE, p_329253_);
@@ -90,7 +90,7 @@
              FileToIdConverter filetoidconverter = FileToIdConverter.registry(p_332518_.key());
  
              for (RegistrySynchronization.PackedRegistryEntry registrysynchronization$packedregistryentry : registrydataloader$networkedregistrydata.elements) {
-@@ -343,7 +_,7 @@
+@@ -346,7 +_,7 @@
  
                      try {
                          Resource resource = p_332010_.getResourceOrThrow(resourcelocation);

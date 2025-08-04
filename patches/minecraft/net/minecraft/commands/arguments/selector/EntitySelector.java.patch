@@ -4,7 +4,7 @@
      }
  
      private void checkPermissions(CommandSourceStack p_121169_) throws CommandSyntaxException {
--        if (this.usesSelector && !p_121169_.hasPermission(2)) {
+-        if (this.usesSelector && !p_121169_.allowsSelectors()) {
 +        if (this.usesSelector && !net.minecraftforge.common.ForgeHooks.canUseEntitySelectors(p_121169_)) {
              throw EntityArgument.ERROR_SELECTORS_NOT_ALLOWED.create();
          }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/monster/Shulker.java
 +++ b/net/minecraft/world/entity/monster/Shulker.java
-@@ -381,6 +_,12 @@
+@@ -382,6 +_,12 @@
                      && this.level().noCollision(this, new AABB(blockpos1).deflate(1.0E-6))) {
                      Direction direction = this.findAttachableSurface(blockpos1);
                      if (direction != null) {
-+                        net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
-+                        if (event.isCanceled()) direction = null;
++                        var event = new net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
++                        if (net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity.BUS.post(event)) direction = null;
 +                        blockpos1 = BlockPos.containing(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 +                    }
 +

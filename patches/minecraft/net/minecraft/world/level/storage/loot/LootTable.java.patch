@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/loot/LootTable.java
 +++ b/net/minecraft/world/level/storage/loot/LootTable.java
-@@ -40,7 +_,7 @@
+@@ -41,7 +_,7 @@
              p_327557_ -> p_327557_.group(
                      LootContextParamSets.CODEC.lenientOptionalFieldOf("type", DEFAULT_PARAM_SET).forGetter(p_297013_ -> p_297013_.paramSet),
                      ResourceLocation.CODEC.optionalFieldOf("random_sequence").forGetter(p_297014_ -> p_297014_.randomSequence),
@@ -9,7 +9,7 @@
                      LootItemFunctions.ROOT_CODEC.listOf().optionalFieldOf("functions", List.of()).forGetter(p_297010_ -> p_297010_.functions)
                  )
                  .apply(p_327557_, LootTable::new)
-@@ -57,7 +_,7 @@
+@@ -58,7 +_,7 @@
      LootTable(ContextKeySet p_365565_, Optional<ResourceLocation> p_298628_, List<LootPool> p_298771_, List<LootItemFunction> p_301234_) {
          this.paramSet = p_365565_;
          this.randomSequence = p_298628_;
@@ -18,7 +18,7 @@
          this.functions = p_301234_;
          this.compositeFunction = LootItemFunctions.compose(p_301234_);
      }
-@@ -80,10 +_,12 @@
+@@ -81,10 +_,12 @@
          };
      }
  
@@ -31,7 +31,7 @@
      public void getRandomItemsRaw(LootContext p_79132_, Consumer<ItemStack> p_79133_) {
          LootContext.VisitedEntry<?> visitedentry = LootContext.createVisitedEntry(this);
          if (p_79132_.pushVisitedElement(visitedentry)) {
-@@ -100,15 +_,15 @@
+@@ -101,15 +_,15 @@
      }
  
      public void getRandomItems(LootParams p_287748_, long p_287729_, Consumer<ItemStack> p_287583_) {
@@ -50,7 +50,7 @@
      }
  
      public ObjectArrayList<ItemStack> getRandomItems(LootParams p_345012_, RandomSource p_344559_) {
-@@ -125,7 +_,8 @@
+@@ -126,7 +_,8 @@
  
      private ObjectArrayList<ItemStack> getRandomItems(LootContext p_230923_) {
          ObjectArrayList<ItemStack> objectarraylist = new ObjectArrayList<>();
@@ -60,7 +60,7 @@
          return objectarraylist;
      }
  
-@@ -214,6 +_,68 @@
+@@ -215,6 +_,68 @@
  
      public static LootTable.Builder lootTable() {
          return new LootTable.Builder();

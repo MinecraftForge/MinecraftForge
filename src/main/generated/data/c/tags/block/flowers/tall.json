@@ -6,7 +6,7 @@
     "minecraft:rose_bush",
     "minecraft:pitcher_plant",
     {
-      "id": "minecraft:tall_flowers",
+      "id": "#minecraft:tall_flowers",
       "required": false
     }
   ]

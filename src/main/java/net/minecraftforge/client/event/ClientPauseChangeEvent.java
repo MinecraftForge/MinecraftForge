@@ -6,10 +6,13 @@
 package net.minecraftforge.client.event;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -21,7 +24,9 @@ import net.minecraftforge.fml.LogicalSide;
  * @see ClientPauseChangeEvent.Pre
  * @see ClientPauseChangeEvent.Post
  */
-public abstract class ClientPauseChangeEvent extends Event {
+public abstract sealed class ClientPauseChangeEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<ClientPauseChangeEvent> BUS = EventBus.create(ClientPauseChangeEvent.class);
+
     private final boolean pause;
 
     public ClientPauseChangeEvent(boolean pause) {
@@ -37,8 +42,8 @@ public abstract class ClientPauseChangeEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class Pre extends ClientPauseChangeEvent {
+    public static final class Pre extends ClientPauseChangeEvent implements Cancellable {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
 
         public Pre(boolean pause) {
             super(pause);
@@ -53,7 +58,8 @@ public abstract class ClientPauseChangeEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends ClientPauseChangeEvent {
+    public static final class Post extends ClientPauseChangeEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
 
         public Post(boolean pause) {
             super(pause);

@@ -19,12 +19,3 @@
      }
  
      @Override
-@@ -36,7 +_,7 @@
-             this.connection.disconnect(DISCONNECT_REASON);
-         } else {
-             this.hasRequestedStatus = true;
--            this.connection.send(new ClientboundStatusResponsePacket(this.status));
-+            this.connection.send(new ClientboundStatusResponsePacket(this.status, this.statusCache));
-         }
-     }
- 

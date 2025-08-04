@@ -5,7 +5,7 @@
  import net.minecraft.world.scores.Scoreboard;
  
 -public abstract class Level implements LevelAccessor, UUIDLookup<Entity>, AutoCloseable {
-+public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, UUIDLookup<Entity>, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
++public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider.Levels implements LevelAccessor, UUIDLookup<Entity>, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, ResourceLocation.withDefaultNamespace("the_nether"));
@@ -25,7 +25,7 @@
          long p_270248_,
          int p_270466_
      ) {
-+        super(Level.class);
++        super();
          this.levelData = p_270739_;
          this.dimensionTypeRegistration = p_270240_;
          final DimensionType dimensiontype = p_270240_.value();
@@ -158,7 +158,7 @@
                      T t = p_261885_.tryCast(enderdragonpart);
                      if (t != null && p_261688_.test(t)) {
                          p_262071_.add(t);
-@@ -942,17 +_,16 @@
+@@ -946,17 +_,16 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(BlockPos p_46718_, Block p_46719_) {
@@ -181,7 +181,7 @@
                      }
                  }
              }
-@@ -1054,6 +_,20 @@
+@@ -1058,6 +_,20 @@
      }
  
      public abstract PotionBrewing potionBrewing();

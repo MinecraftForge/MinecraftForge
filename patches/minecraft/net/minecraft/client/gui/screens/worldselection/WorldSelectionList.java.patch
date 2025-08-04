@@ -11,13 +11,13 @@
 @@ -400,6 +_,7 @@
              p_281612_.drawString(this.minecraft.font, s1, p_282820_ + 32 + 3, p_283181_ + 9 + 3, -8355712);
              p_281612_.drawString(this.minecraft.font, component, p_282820_ + 32 + 3, p_283181_ + 9 + 9 + 3, -8355712);
-             p_281612_.blit(RenderType::guiTextured, this.icon.textureLocation(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
+             p_281612_.blit(RenderPipelines.GUI_TEXTURED, this.icon.textureLocation(), p_282820_, p_283181_, 0.0F, 0.0F, 32, 32, 32, 32);
 +            renderExperimentalWarning(p_281612_, p_283204_, p_283025_, p_283181_, p_282820_);
              if (this.minecraft.options.touchscreen().get() || p_283396_) {
                  p_281612_.fill(p_282820_, p_283181_, p_282820_ + 32, p_283181_ + 32, -1601138544);
                  int j = p_283204_ - p_282820_;
-@@ -446,6 +_,19 @@
-                     p_281612_.blitSprite(RenderType::guiTextured, resourcelocation, p_282820_, p_283181_, 32, 32);
+@@ -450,6 +_,19 @@
+                     p_281612_.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, p_282820_, p_283181_, 32, 32);
                  }
              }
 +        }
@@ -26,11 +26,11 @@
 +        private void renderExperimentalWarning(GuiGraphics guiGraphics, int mouseX, int mouseY, int top, int left) {
 +           if (this.summary.isLifecycleExperimental()) {
 +              int leftStart = left + WorldSelectionList.this.getRowWidth();
-+              guiGraphics.blit(RenderType::guiTextured, WorldSelectionList.FORGE_EXPERIMENTAL_WARNING_ICON, leftStart - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
++              guiGraphics.blit(RenderPipelines.GUI_TEXTURED, WorldSelectionList.FORGE_EXPERIMENTAL_WARNING_ICON, leftStart - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
 +              if (WorldSelectionList.this.getEntryAtPosition(mouseX, mouseY) == this && mouseX > leftStart - 36 && mouseX < leftStart) {
 +                 var font = Minecraft.getInstance().font;
 +                 List<net.minecraft.util.FormattedCharSequence> tooltip = font.split(Component.translatable("forge.experimentalsettings.tooltip"), 200);
-+                 guiGraphics.renderTooltip(font, tooltip, mouseX, mouseY);
++                 guiGraphics.setTooltipForNextFrame(font, tooltip, mouseX, mouseY);
 +              }
 +           }
          }

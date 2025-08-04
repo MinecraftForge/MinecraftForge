@@ -5,12 +5,12 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingBreatheEvent is fired whenever a living entity ticks.<br>
@@ -23,7 +23,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on {@link MinecraftForge#EVENT_BUS}
  */
-public class LivingBreatheEvent extends LivingEvent {
+public final class LivingBreatheEvent extends LivingEvent {
+    public static final EventBus<LivingBreatheEvent> BUS = EventBus.create(LivingBreatheEvent.class);
+
     private boolean canBreathe;
     private boolean canRefillAir;
     private int consumeAirAmount;

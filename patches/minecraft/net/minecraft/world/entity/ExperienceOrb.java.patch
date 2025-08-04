@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ExperienceOrb.java
 +++ b/net/minecraft/world/entity/ExperienceOrb.java
-@@ -109,7 +_,8 @@
+@@ -137,7 +_,8 @@
              this.applyEffectsFromBlocks();
              float f = 0.98F;
              if (this.onGround()) {
@@ -10,7 +10,7 @@
              }
  
              this.setDeltaMovement(this.getDeltaMovement().scale(f));
-@@ -247,6 +_,7 @@
+@@ -279,6 +_,7 @@
      public void playerTouch(Player p_20792_) {
          if (p_20792_ instanceof ServerPlayer serverplayer) {
              if (p_20792_.takeXpDelay == 0) {

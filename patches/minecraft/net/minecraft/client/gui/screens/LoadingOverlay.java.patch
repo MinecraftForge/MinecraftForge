@@ -9,7 +9,7 @@
      @Override
      public void render(GuiGraphics p_281839_, int p_282704_, int p_283650_, float p_283394_) {
          int i = p_281839_.guiWidth();
-@@ -95,6 +_,7 @@
+@@ -97,6 +_,7 @@
              f2 = 1.0F;
          }
  
@@ -17,7 +17,7 @@
          int l2 = (int)(p_281839_.guiWidth() * 0.5);
          int i1 = (int)(p_281839_.guiHeight() * 0.5);
          double d0 = Math.min(p_281839_.guiWidth() * 0.75, (double)p_281839_.guiHeight()) * 0.25;
-@@ -110,12 +_,14 @@
+@@ -112,12 +_,14 @@
          if (f < 1.0F) {
              this.drawProgressBar(p_281839_, i / 2 - k1, i2 - 5, i / 2 + k1, i2 + 5, 1.0F - Mth.clamp(f, 0.0F, 1.0F));
          }
@@ -32,7 +32,7 @@
              try {
                  this.reload.checkExceptions();
                  this.onFinish.accept(Optional.empty());
-@@ -123,7 +_,6 @@
+@@ -125,7 +_,6 @@
                  this.onFinish.accept(Optional.of(throwable));
              }
  

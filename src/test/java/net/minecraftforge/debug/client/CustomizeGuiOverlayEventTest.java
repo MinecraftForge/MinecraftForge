@@ -6,7 +6,6 @@
 package net.minecraftforge.debug.client;
 
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(CustomizeGuiOverlayEventTest.MODID)
@@ -18,8 +17,8 @@ public class CustomizeGuiOverlayEventTest
 
     public CustomizeGuiOverlayEventTest() {
         if(ENABLED) {
-            MinecraftForge.EVENT_BUS.addListener(this::onRenderOverlaychat);
-            MinecraftForge.EVENT_BUS.addListener(this::onRenderOverlayDebug);
+            CustomizeGuiOverlayEvent.Chat.BUS.addListener(this::onRenderOverlaychat);
+            CustomizeGuiOverlayEvent.DebugText.BUS.addListener(this::onRenderOverlayDebug);
         }
     }
 

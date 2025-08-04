@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractBoat.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractBoat.java
-@@ -47,7 +_,7 @@
+@@ -48,7 +_,7 @@
  import net.minecraft.world.phys.shapes.Shapes;
  import net.minecraft.world.phys.shapes.VoxelShape;
  
@@ -9,7 +9,7 @@
      private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_LEFT = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Boolean> DATA_ID_PADDLE_RIGHT = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.BOOLEAN);
      private static final EntityDataAccessor<Integer> DATA_ID_BUBBLE_TIME = SynchedEntityData.defineId(AbstractBoat.class, EntityDataSerializers.INT);
-@@ -424,7 +_,7 @@
+@@ -427,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(l1, k1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -18,7 +18,7 @@
                          f = Math.max(f, fluidstate.getHeight(this.level(), blockpos$mutableblockpos));
                      }
  
-@@ -470,7 +_,7 @@
+@@ -473,7 +_,7 @@
                                      voxelshape,
                                      BooleanOp.AND
                                  )) {
@@ -27,7 +27,7 @@
                                  k1++;
                              }
                          }
-@@ -499,7 +_,7 @@
+@@ -502,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(k1, l1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -36,7 +36,7 @@
                          float f = l1 + fluidstate.getHeight(this.level(), blockpos$mutableblockpos);
                          this.waterLevel = Math.max((double)f, this.waterLevel);
                          flag |= aabb.minY < f;
-@@ -529,7 +_,7 @@
+@@ -532,7 +_,7 @@
                  for (int i2 = i1; i2 < j1; i2++) {
                      blockpos$mutableblockpos.set(k1, l1, i2);
                      FluidState fluidstate = this.level().getFluidState(blockpos$mutableblockpos);
@@ -45,7 +45,7 @@
                          && d0 < blockpos$mutableblockpos.getY() + fluidstate.getHeight(this.level(), blockpos$mutableblockpos)) {
                          if (!fluidstate.isSource()) {
                              return AbstractBoat.Status.UNDER_FLOWING_WATER;
-@@ -732,7 +_,7 @@
+@@ -735,7 +_,7 @@
          if (!this.isPassenger()) {
              if (p_361999_) {
                  this.resetFallDistance();
@@ -54,7 +54,7 @@
                  this.fallDistance -= (float)p_361830_;
              }
          }
-@@ -756,7 +_,7 @@
+@@ -759,7 +_,7 @@
  
      @Override
      protected boolean canAddPassenger(Entity p_366021_) {

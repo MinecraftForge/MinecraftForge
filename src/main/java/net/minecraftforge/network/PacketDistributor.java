@@ -158,11 +158,11 @@ public record PacketDistributor<T>(BiFunction<PacketDistributor<T>, T, Consumer<
     }
 
     private Consumer<Packet<?>> trackingEntity(Entity entity) {
-        return p -> ((ServerChunkCache)entity.getCommandSenderWorld().getChunkSource()).broadcast(entity, p);
+        return p -> ((ServerChunkCache)entity.level().getChunkSource()).broadcast(entity, p);
     }
 
     private Consumer<Packet<?>> trackingEntityAndSelf(Entity entity) {
-        return p -> ((ServerChunkCache)entity.getCommandSenderWorld().getChunkSource()).broadcastAndSend(entity, p);
+        return p -> ((ServerChunkCache)entity.level().getChunkSource()).broadcastAndSend(entity, p);
     }
 
     @SuppressWarnings("resource")

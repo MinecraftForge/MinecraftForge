@@ -16,35 +16,29 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeAdvancementProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
 import net.minecraftforge.gametest.GameTestNamespace;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
 import java.util.List;
-import java.util.Objects;
 
 @Mod(CriterionTest.MOD_ID)
 @GameTestNamespace("forge")
@@ -56,8 +50,9 @@ public final class CriterionTest extends BaseTestMod {
     public static final ResourceLocation TEST_ADVANCEMENT_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, TEST_CRITERION_ID);
 
     public CriterionTest(FMLJavaModLoadingContext context) {
-        super(context);
-        MinecraftForge.EVENT_BUS.addListener(this::onBlockBreak);
+        super(context, false, true);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
+        BlockEvent.BreakEvent.BUS.addListener(this::onBlockBreak);
     }
 
     @GameTest
@@ -105,20 +100,19 @@ public final class CriterionTest extends BaseTestMod {
         }
     }
 
-    @SubscribeEvent
-    public void onGatherData(GatherDataEvent event) {
+    private void gatherData(GatherDataEvent event) {
         var tag = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MOD_ID, "fish"));
 
-        event.getGenerator().addProvider(true, new TagsProvider<Item>(event.getGenerator().getPackOutput(), Registries.ITEM, event.getLookupProvider(), MOD_ID, event.getExistingFileHelper()) {
+        event.getGenerator().addProvider(true, new VanillaItemTagsProvider(event.getGenerator().getPackOutput(), event.getLookupProvider(), MOD_ID, event.getExistingFileHelper()) {
             @Override
             protected void addTags(HolderLookup.Provider lookup) {
                 this.tag(tag)
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.COD))))
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.SALMON))))
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.TROPICAL_FISH))))
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.PUFFERFISH))))
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.COOKED_COD))))
-                    .add(TagEntry.element(Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(Items.COOKED_SALMON))))
+                    .add(Items.COD)
+                    .add(Items.SALMON)
+                    .add(Items.TROPICAL_FISH)
+                    .add(Items.PUFFERFISH)
+                    .add(Items.COOKED_COD)
+                    .add(Items.COOKED_SALMON)
                 ;
             }
         });

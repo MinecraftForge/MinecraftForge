@@ -5,7 +5,7 @@
 
 package net.minecraftforge.fml.config;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
 import net.minecraftforge.fml.Bindings;
 
 import java.util.function.Function;
@@ -29,7 +29,7 @@ public interface IConfigEvent {
     ModConfig getConfig();
 
     @SuppressWarnings("unchecked")
-    default <T extends Event & IConfigEvent> T self() {
+    default <T extends InheritableEvent & IConfigEvent> T self() {
         return (T) this;
     }
 }

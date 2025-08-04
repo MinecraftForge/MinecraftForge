@@ -7,7 +7,7 @@ package net.minecraftforge.debug;
 
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.event.level.AlterGroundEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("alter_ground_event_test")

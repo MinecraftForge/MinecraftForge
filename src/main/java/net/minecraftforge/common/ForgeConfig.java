@@ -5,7 +5,6 @@
 
 package net.minecraftforge.common;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -16,7 +15,7 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.apache.logging.log4j.Logger;
 
 public class ForgeConfig {
-    private static final Logger LOGGER = LogManager.getLogger();
+    static final Logger LOGGER = LogManager.getLogger();
 
     public static class Server {
         public final BooleanValue removeErroringBlockEntities;
@@ -152,13 +151,11 @@ public class ForgeConfig {
         SERVER = specPair.getLeft();
     }
 
-    @SubscribeEvent
-    public static void onLoad(final ModConfigEvent.Loading configEvent) {
+    static void onLoad(final ModConfigEvent.Loading configEvent) {
         LOGGER.debug(Logging.FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
     }
 
-    @SubscribeEvent
-    public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
+    static void onFileChange(final ModConfigEvent.Reloading configEvent) {
         LOGGER.debug(Logging.FORGEMOD, "Forge config just got changed on the file system!");
     }
 

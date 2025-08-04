@@ -8,7 +8,8 @@ package net.minecraftforge.event.entity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event gets fired whenever a entity mounts/dismounts another entity.<br>
@@ -23,10 +24,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  *
  */
-
-@Cancelable
-public class EntityMountEvent extends EntityEvent
-{
+public final class EntityMountEvent extends EntityEvent implements Cancellable {
+    public static final CancellableEventBus<EntityMountEvent> BUS = CancellableEventBus.create(EntityMountEvent.class);
 
     private final Entity entityMounting;
     private final Entity entityBeingMounted;
@@ -34,8 +33,7 @@ public class EntityMountEvent extends EntityEvent
 
     private final boolean isMounting;
 
-    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level level, boolean isMounting)
-    {
+    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level level, boolean isMounting) {
         super(entityMounting);
         this.entityMounting = entityMounting;
         this.entityBeingMounted = entityBeingMounted;
@@ -43,28 +41,23 @@ public class EntityMountEvent extends EntityEvent
         this.isMounting = isMounting;
     }
 
-    public boolean isMounting()
-    {
+    public boolean isMounting() {
         return isMounting;
     }
 
-    public boolean isDismounting()
-    {
+    public boolean isDismounting() {
         return !isMounting;
     }
 
-    public Entity getEntityMounting()
-    {
+    public Entity getEntityMounting() {
         return entityMounting;
     }
 
-    public Entity getEntityBeingMounted()
-    {
+    public Entity getEntityBeingMounted() {
         return entityBeingMounted;
     }
 
-    public Level getLevel()
-    {
+    public Level getLevel() {
         return level;
     }
 }

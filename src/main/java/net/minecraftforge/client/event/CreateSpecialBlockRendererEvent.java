@@ -9,9 +9,12 @@ import java.util.Map;
 
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
-public class CreateSpecialBlockRendererEvent extends Event {
+public final class CreateSpecialBlockRendererEvent extends MutableEvent {
+    public static final EventBus<CreateSpecialBlockRendererEvent> BUS = EventBus.create(CreateSpecialBlockRendererEvent.class);
+
     private final Map<Block, SpecialModelRenderer.Unbaked> map;
 
     public CreateSpecialBlockRendererEvent(Map<Block, SpecialModelRenderer.Unbaked> map) {

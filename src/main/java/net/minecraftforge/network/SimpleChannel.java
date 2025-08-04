@@ -61,6 +61,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      *
      * @param type Type of message
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M> MessageBuilder<M, FriendlyByteBuf> messageBuilder(Class<M> type) {
         return messageBuilder(type, nextIndex());
@@ -72,6 +73,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      * @param type Type of message
      * @param discriminator Manually configured discriminator, Must be a positive number.
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M> MessageBuilder<M, FriendlyByteBuf> messageBuilder(Class<M> type, int discriminator) {
         return messageBuilder(type, discriminator, (NetworkProtocol<FriendlyByteBuf>)null);
@@ -83,6 +85,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      * @param type Type of message
      * @param protocol The protocol that this packet is allowed to be sent/received in, Use enforce strict state handling to prevent spoofing.
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, NetworkProtocol<B> protocol) {
         return messageBuilder(type, nextIndex(), protocol);
@@ -95,6 +98,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      * @param direction a impl direction which will be asserted before any processing of this message occurs. Use to
      *                  enforce strict sided handling to prevent spoofing.
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, NetworkDirection<B> direction) {
         return messageBuilder(type, nextIndex(), direction.protocol()).direction(direction.direction());
@@ -107,6 +111,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      * @param discriminator Manually configured discriminator, Must be a positive number.
      * @param protocol The protocol that this packet is allowed to be sent/received in, Use enforce strict state handling to prevent spoofing.
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int discriminator, NetworkProtocol<B> protocol) {
         checkBuilt();
@@ -121,6 +126,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
      * @param direction a impl direction which will be asserted before any processing of this message occurs. Use to
      *                  enforce strict sided handling to prevent spoofing.
      * @param <M> Type of type
+     * @deprecated Use {@link SimpleConnection} which is much simpler.
      */
     public <M, B extends FriendlyByteBuf> MessageBuilder<M, B> messageBuilder(Class<M> type, int discriminator, NetworkDirection<B> direction) {
         return messageBuilder(type, discriminator, direction.protocol()).direction(direction.direction());
@@ -140,6 +146,9 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
             throw new IllegalStateException("SimpleChannel builder is fully built, can not modify it any more");
     }
 
+    /**
+     * @deprecated Use {@link SimpleConnection} which is much simpler. TODO: [Forge][Networking] Make private when we kill MessageBuilder functions.
+     */
     public static class MessageBuilder<MSG, BUF extends FriendlyByteBuf> {
         private final SimpleChannel channel;
         private final Class<MSG> type;

@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientHandshakePacketListenerImpl.java
-@@ -209,6 +_,7 @@
+@@ -208,6 +_,7 @@
          Component component = this.wasTransferredTo ? CommonComponents.TRANSFER_CONNECT_FAILED : CommonComponents.CONNECT_FAILED;
          if (this.serverData != null && this.serverData.isRealm()) {
-             this.minecraft.setScreen(new DisconnectedRealmsScreen(this.parent, component, p_342266_.reason()));
+             this.minecraft.setScreen(new DisconnectedScreen(this.parent, component, p_342266_.reason(), CommonComponents.GUI_BACK));
 +        } else if (net.minecraftforge.client.ForgeHooksClient.onClientDisconnect(this.connection, this.minecraft, this.parent, p_342266_.reason())) {
          } else {
              this.minecraft.setScreen(new DisconnectedScreen(this.parent, component, p_342266_));
          }
-@@ -233,6 +_,7 @@
+@@ -232,6 +_,7 @@
  
      @Override
      public void handleCustomQuery(ClientboundCustomQueryPacket p_104545_) {

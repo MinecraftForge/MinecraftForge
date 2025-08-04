@@ -1,54 +1,53 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -124,6 +_,9 @@
+@@ -127,6 +_,9 @@
      private Leashable.LeashData leashData;
-     private BlockPos restrictCenter = BlockPos.ZERO;
-     private float restrictRadius = -1.0F;
+     private BlockPos homePosition = BlockPos.ZERO;
+     private int homeRadius = -1;
 +    @Nullable
 +    private EntitySpawnReason spawnReason;
 +    private boolean spawnCancelled = false;
  
      protected Mob(EntityType<? extends Mob> p_21368_, Level p_21369_) {
          super(p_21368_, p_21369_);
-@@ -220,7 +_,10 @@
+@@ -223,7 +_,10 @@
      }
  
      public void setTarget(@Nullable LivingEntity p_21544_) {
 -        this.target = p_21544_;
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetMob(this, p_21544_);
-+        if (!event.isCanceled()) {
++        if (event != null) {
 +            this.target = event.getNewTarget();
 +        }
      }
  
      @Override
-@@ -356,6 +_,10 @@
+@@ -363,6 +_,10 @@
          if (this.isNoAi()) {
-             p_21484_.putBoolean("NoAI", this.isNoAi());
+             p_409238_.putBoolean("NoAI", this.isNoAi());
          }
 +
 +        if (this.spawnReason != null) {
-+            p_21484_.putString("forge:spawn_type", this.spawnReason.name());
++            p_409238_.putString("forge:spawn_type", this.spawnReason.name());
 +        }
      }
  
      @Override
-@@ -370,6 +_,14 @@
-         this.lootTable = p_21450_.read("DeathLootTable", LootTable.KEY_CODEC);
-         this.lootTableSeed = p_21450_.getLongOr("DeathLootTableSeed", 0L);
-         this.setNoAi(p_21450_.getBooleanOr("NoAI", false));
+@@ -381,6 +_,13 @@
+         this.lootTable = p_408489_.read("DeathLootTable", LootTable.KEY_CODEC);
+         this.lootTableSeed = p_408489_.getLongOr("DeathLootTableSeed", 0L);
+         this.setNoAi(p_408489_.getBooleanOr("NoAI", false));
 +
-+        p_21450_.getString("forge:spawn_type").ifPresent(type -> {
++        p_408489_.getString("forge:spawn_type").ifPresent(type -> {
 +            try {
 +                this.spawnReason = EntitySpawnReason.valueOf(type);
 +            } catch (Exception ex) {
-+                p_21450_.remove("forge:spawn_type");
 +            }
 +        });
      }
  
      @Override
-@@ -422,7 +_,7 @@
+@@ -435,7 +_,7 @@
              && this.canPickUpLoot()
              && this.isAlive()
              && !this.dead
@@ -57,22 +56,22 @@
              Vec3i vec3i = this.getPickupReach();
  
              for (ItemEntity itementity : this.level()
-@@ -583,6 +_,14 @@
+@@ -600,6 +_,14 @@
              this.discard();
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity entity = this.level().getNearestPlayer(this, -1.0);
 +            var result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this, (ServerLevel)this.level());
-+            if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
++            if (result.isDenied()) {
 +                noActionTime = 0;
 +                entity = null;
-+            } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
++            } else if (result.isAllowed()) {
 +                this.discard();
 +                entity = null;
 +            }
              if (entity != null) {
                  double d0 = entity.distanceToSqr(this);
                  int i = this.getType().getCategory().getDespawnDistance();
-@@ -973,6 +_,16 @@
+@@ -994,6 +_,16 @@
          }
      }
  
@@ -89,7 +88,7 @@
      @Nullable
      public SpawnGroupData finalizeSpawn(ServerLevelAccessor p_21434_, DifficultyInstance p_21435_, EntitySpawnReason p_369316_, @Nullable SpawnGroupData p_21437_) {
          RandomSource randomsource = p_21434_.getRandom();
-@@ -984,6 +_,7 @@
+@@ -1005,6 +_,7 @@
          }
  
          this.setLeftHanded(randomsource.nextFloat() < 0.05F);
@@ -97,7 +96,7 @@
          return p_21437_;
      }
  
-@@ -1288,15 +_,25 @@
+@@ -1314,15 +_,25 @@
          return false;
      }
  
@@ -124,7 +123,7 @@
      @VisibleForTesting
      public void removeFreeWill() {
          this.removeAllGoals(p_341273_ -> true);
-@@ -1324,6 +_,41 @@
+@@ -1350,6 +_,41 @@
      public ItemStack getPickResult() {
          SpawnEggItem spawneggitem = SpawnEggItem.byId(this.getType());
          return spawneggitem == null ? null : new ItemStack(spawneggitem);

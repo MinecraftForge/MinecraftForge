@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/TestCommand.java
 +++ b/net/minecraft/gametest/framework/TestCommand.java
-@@ -490,7 +_,12 @@
+@@ -485,7 +_,12 @@
                  return Optional.empty();
              } else {
                  Holder.Reference<GameTestInstance> reference = optional.get();

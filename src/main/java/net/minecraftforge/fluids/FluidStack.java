@@ -9,12 +9,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -105,6 +104,25 @@ public class FluidStack {
         return stack;
     }
 
+    public static FluidStack loadFluidStackFrom(ValueInput input) {
+        if (input == null)
+            return EMPTY;
+        input.getStringOr("FluidName", null);
+        var fluidNameString = input.getString("FluidName");
+        if (fluidNameString.isEmpty())
+            return EMPTY;
+
+        ResourceLocation fluidName = ResourceLocation.parse(fluidNameString.get());
+        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+        if (fluid == null)
+            return EMPTY;
+
+        FluidStack stack = new FluidStack(fluid, input.getIntOr("Amount", 0));
+
+        input.read("Tag", CompoundTag.CODEC).ifPresent(tag -> stack.tag = tag);
+        return stack;
+    }
+
     public CompoundTag writeToNBT(CompoundTag nbt) {
         nbt.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
         nbt.putInt("Amount", amount);
@@ -112,6 +130,14 @@ public class FluidStack {
         if (tag != null)
             nbt.put("Tag", tag);
         return nbt;
+    }
+
+    public void writeTo(ValueOutput output) {
+        output.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
+        output.putInt("Amount", amount);
+
+        if (tag != null)
+            output.store("Tag", CompoundTag.CODEC, tag);
     }
 
     public final Fluid getFluid() {

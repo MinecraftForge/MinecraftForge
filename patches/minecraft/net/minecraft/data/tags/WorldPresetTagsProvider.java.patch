@@ -3,7 +3,7 @@
 @@ -9,8 +_,14 @@
  import net.minecraft.world.level.levelgen.presets.WorldPresets;
  
- public class WorldPresetTagsProvider extends TagsProvider<WorldPreset> {
+ public class WorldPresetTagsProvider extends KeyTagProvider<WorldPreset> {
 +    /** @deprecated Forge: Use the {@linkplain #WorldPresetTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
 +    @Deprecated
      public WorldPresetTagsProvider(PackOutput p_255701_, CompletableFuture<HolderLookup.Provider> p_255974_) {

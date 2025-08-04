@@ -24,7 +24,7 @@
      public AdvancementTabType getType() {
          return this.type;
      }
-@@ -148,8 +_,8 @@
+@@ -145,8 +_,8 @@
              return null;
          } else {
              for (AdvancementTabType advancementtabtype : AdvancementTabType.values()) {

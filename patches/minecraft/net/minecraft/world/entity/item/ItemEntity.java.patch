@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -56,6 +_,10 @@
+@@ -53,6 +_,10 @@
      @Nullable
      private UUID target;
      public final float bobOffs;
@@ -11,7 +11,7 @@
  
      public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
          super(p_31991_, p_31992_);
-@@ -74,6 +_,7 @@
+@@ -71,6 +_,7 @@
          this.setPos(p_149664_, p_149665_, p_149666_);
          this.setDeltaMovement(p_149668_, p_149669_, p_149670_);
          this.setItem(p_149667_);
@@ -19,7 +19,7 @@
      }
  
      private ItemEntity(ItemEntity p_31994_) {
-@@ -82,6 +_,7 @@
+@@ -79,6 +_,7 @@
          this.copyPosition(p_31994_);
          this.age = p_31994_.age;
          this.bobOffs = p_31994_.bobOffs;
@@ -27,7 +27,7 @@
      }
  
      @Override
-@@ -127,6 +_,7 @@
+@@ -117,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -35,7 +35,7 @@
          if (this.getItem().isEmpty()) {
              this.discard();
          } else {
-@@ -139,6 +_,10 @@
+@@ -129,6 +_,10 @@
              this.yo = this.getY();
              this.zo = this.getZ();
              Vec3 vec3 = this.getDeltaMovement();
@@ -46,7 +46,7 @@
              if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
                  this.setUnderwaterMovement();
              } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
-@@ -161,7 +_,8 @@
+@@ -151,7 +_,8 @@
                  this.applyEffectsFromBlocks();
                  float f = 0.98F;
                  if (this.onGround()) {
@@ -56,7 +56,7 @@
                  }
  
                  this.setDeltaMovement(this.getDeltaMovement().multiply(f, 0.98, f));
-@@ -193,7 +_,16 @@
+@@ -183,7 +_,16 @@
                  }
              }
  
@@ -74,7 +74,7 @@
                  this.discard();
              }
          }
-@@ -301,7 +_,7 @@
+@@ -291,7 +_,7 @@
              this.health = (int)(this.health - p_362683_);
              this.gameEvent(GameEvent.ENTITY_DAMAGE, p_364841_.getEntity());
              if (this.health <= 0) {
@@ -83,23 +83,23 @@
                  this.discard();
              }
  
-@@ -319,6 +_,7 @@
-         p_32050_.putShort("Health", (short)this.health);
-         p_32050_.putShort("Age", (short)this.age);
-         p_32050_.putShort("PickupDelay", (short)this.pickupDelay);
-+        p_32050_.putInt("Lifespan", this.lifespan);
-         p_32050_.storeNullable("Thrower", UUIDUtil.CODEC, this.thrower);
-         p_32050_.storeNullable("Owner", UUIDUtil.CODEC, this.target);
+@@ -309,6 +_,7 @@
+         p_408006_.putShort("Health", (short)this.health);
+         p_408006_.putShort("Age", (short)this.age);
+         p_408006_.putShort("PickupDelay", (short)this.pickupDelay);
++        p_408006_.putInt("Lifespan", this.lifespan);
+         EntityReference.store(this.thrower, p_408006_, "Thrower");
+         p_408006_.storeNullable("Owner", UUIDUtil.CODEC, this.target);
          if (!this.getItem().isEmpty()) {
-@@ -332,6 +_,7 @@
-         this.health = p_32034_.getShortOr("Health", (short)5);
-         this.age = p_32034_.getShortOr("Age", (short)0);
-         this.pickupDelay = p_32034_.getShortOr("PickupDelay", (short)0);
-+        p_32034_.getInt("Lifespan").ifPresent(lifespan -> this.lifespan = lifespan);
-         this.target = p_32034_.read("Owner", UUIDUtil.CODEC).orElse(null);
-         this.thrower = p_32034_.read("Thrower", UUIDUtil.CODEC).orElse(null);
-         this.cachedThrower = null;
-@@ -345,10 +_,17 @@
+@@ -321,6 +_,7 @@
+         this.health = p_408031_.getShortOr("Health", (short)5);
+         this.age = p_408031_.getShortOr("Age", (short)0);
+         this.pickupDelay = p_408031_.getShortOr("PickupDelay", (short)0);
++        this.lifespan = p_408031_.getIntOr("Lifespan", this.lifespan);
+         this.target = p_408031_.read("Owner", UUIDUtil.CODEC).orElse(null);
+         this.thrower = EntityReference.read(p_408031_, "Thrower");
+         this.setItem(p_408031_.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
+@@ -332,10 +_,17 @@
      @Override
      public void playerTouch(Player p_32040_) {
          if (!this.level().isClientSide) {
@@ -118,7 +118,7 @@
                  p_32040_.take(this, i);
                  if (itemstack.isEmpty()) {
                      this.discard();
-@@ -442,7 +_,7 @@
+@@ -428,7 +_,7 @@
  
      public void makeFakeItem() {
          this.setNeverPickUp();

@@ -33,7 +33,7 @@ public final class ShieldDisablingTest extends BaseTestMod {
     public static final String MOD_ID = "shield_disabling";
 
     public ShieldDisablingTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
     }
 
     @GameTest
@@ -54,7 +54,7 @@ public final class ShieldDisablingTest extends BaseTestMod {
 
         // setup player
         var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        helper.<LivingEntityUseItemEvent.Start>addEventListener(event -> {
+        helper.addEventListener(LivingEntityUseItemEvent.Start.BUS, event -> {
             // Artificially pass 5 seconds from start of the shield
             // This is because the first 5 ticks, the player is still vulnerable
             if (event.getEntity() == player) {

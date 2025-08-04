@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 @@ -371,6 +_,8 @@
-                 this.screen.setTooltipForNextRenderPass(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText));
+                 p_281406_.setTooltipForNextFrame(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText), p_283567_, p_282864_);
              }
  
 +            net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.screen, serverData, p_281406_, p_281363_, p_282921_, p_283596_, p_283567_ - p_281363_, p_282864_ - p_282921_);

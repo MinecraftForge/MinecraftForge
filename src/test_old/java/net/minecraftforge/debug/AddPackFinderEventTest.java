@@ -11,7 +11,7 @@ import net.minecraft.server.packs.PathPackResources.PathResourcesSupplier;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -21,11 +21,11 @@ public class AddPackFinderEventTest {
     private static final boolean ENABLE = false;
     public static final String MODID = "add_pack_finders_test";
 
-    public AddPackFinderEventTest() {
+    public AddPackFinderEventTest(FMLJavaModLoadingContext context) {
         if (!ENABLE)
             return;
 
-        FMLJavaModLoadingContext.get().getModEventBus().register(this);
+        context.getModBusGroup().register(MethodHandles.lookup(), this);
     }
 
     @SubscribeEvent

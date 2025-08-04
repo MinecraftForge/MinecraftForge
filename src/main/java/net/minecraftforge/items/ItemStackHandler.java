@@ -7,13 +7,20 @@ package net.minecraftforge.items;
 
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
+    private static final Logger LOGGER = LogUtils.getLogger();
     protected NonNullList<ItemStack> stacks;
 
     public ItemStackHandler() {
@@ -139,14 +146,18 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider lookup) {
-        var tag = new CompoundTag();
-        ContainerHelper.saveAllItems(tag, this.stacks, lookup);
-        return tag;
+        try (var problems = new ProblemReporter.ScopedCollector(LOGGER)) {
+            var output = TagValueOutput.createWithContext(problems, lookup);
+            ContainerHelper.saveAllItems(output, this.stacks);
+            return output.buildResult();
+        }
     }
 
     @Override
     public void deserializeNBT(HolderLookup.Provider lookup, CompoundTag nbt) {
-        ContainerHelper.loadAllItems(nbt, stacks, lookup);
+        try (var problems = new ProblemReporter.ScopedCollector(LOGGER)) {
+            ContainerHelper.loadAllItems(TagValueInput.create(problems, lookup, nbt), stacks);
+        }
         onLoad();
     }
 

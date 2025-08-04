@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -28,8 +29,8 @@ public final class RenderTypeHelper {
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(BlockState)}.
      */
     @NotNull
-    public static RenderType getEntityRenderType(RenderType chunkRenderType) {
-        return chunkRenderType == RenderType.translucent() ? Sheets.translucentItemSheet() : Sheets.cutoutBlockSheet();
+    public static RenderType getEntityRenderType(ChunkSectionLayer layer) {
+        return layer == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentItemSheet() : Sheets.cutoutBlockSheet();
     }
 
     /**
@@ -39,10 +40,17 @@ public final class RenderTypeHelper {
      * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getMovingBlockRenderType(BlockState)}.
      */
     @NotNull
-    public static RenderType getMovingBlockRenderType(RenderType renderType) {
-        if (renderType == RenderType.translucent())
-            return RenderType.translucentMovingBlock();
-        return renderType;
+    public static RenderType getMovingBlockRenderType(ChunkSectionLayer layer) {
+        if (layer == null)
+            return RenderType.solid();
+
+        return switch (layer) {
+            case SOLID -> RenderType.solid();
+            case CUTOUT_MIPPED -> RenderType.cutoutMipped();
+            case CUTOUT -> RenderType.cutout();
+            case TRANSLUCENT -> RenderType.translucentMovingBlock();
+            case TRIPWIRE -> RenderType.tripwire();
+        };
     }
 
     /**
@@ -55,8 +63,8 @@ public final class RenderTypeHelper {
     public static RenderType getFallbackItemRenderType(ItemStack stack, BlockStateModel model) {
         if (stack.getItem() instanceof BlockItem blockItem) {
             var renderTypes = model.getRenderTypes(blockItem.getBlock().defaultBlockState(), RandomSource.create(42), ModelData.EMPTY);
-            if (renderTypes.contains(RenderType.translucent()))
-                return getEntityRenderType(RenderType.translucent());
+            if (renderTypes.contains(ChunkSectionLayer.TRANSLUCENT))
+                return getEntityRenderType(ChunkSectionLayer.TRANSLUCENT);
             return Sheets.cutoutBlockSheet();
         }
         return Sheets.translucentItemSheet();

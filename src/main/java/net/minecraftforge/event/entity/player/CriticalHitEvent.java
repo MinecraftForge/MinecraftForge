@@ -6,8 +6,8 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
@@ -24,16 +24,14 @@ import net.minecraft.world.entity.player.Player;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@HasResult
-public class CriticalHitEvent extends PlayerEvent
-{
+public final class CriticalHitEvent extends PlayerEvent implements HasResult {
     private float damageModifier;
     private final float oldDamageModifier;
     private final Entity target;
     private final boolean vanillaCritical;
+    private Result result = Result.DEFAULT;
     
-    public CriticalHitEvent(Player player, Entity target, float damageModifier, boolean vanillaCritical)
-    {
+    public CriticalHitEvent(Player player, Entity target, float damageModifier, boolean vanillaCritical) {
         super(player);
         this.target = target;
         this.damageModifier = damageModifier;
@@ -44,8 +42,7 @@ public class CriticalHitEvent extends PlayerEvent
     /**
     * The Entity that was damaged by the player.
     */
-    public Entity getTarget()
-    {
+    public Entity getTarget() {
         return target;
     }
     
@@ -53,8 +50,7 @@ public class CriticalHitEvent extends PlayerEvent
     * This set the damage multiplier for the hit.
     * If you set it to 0, then the particles are still generated but damage is not done.
     */
-    public void setDamageModifier(float mod)
-    {
+    public void setDamageModifier(float mod) {
         this.damageModifier = mod;
     }
     
@@ -62,8 +58,7 @@ public class CriticalHitEvent extends PlayerEvent
     * The damage modifier for the hit.<br>
     * This is by default 1.5F for ciritcal hits and 1F for normal hits .
     */
-    public float getDamageModifier()
-    {
+    public float getDamageModifier() {
         return this.damageModifier;
     }
 
@@ -71,16 +66,24 @@ public class CriticalHitEvent extends PlayerEvent
     * The orignal damage modifier for the hit wthout any changes.<br>
     * This is 1.5F for ciritcal hits and 1F for normal hits .
     */
-    public float getOldDamageModifier()
-    {
+    public float getOldDamageModifier() {
         return this.oldDamageModifier;
     }
     
     /**
     * Returns true if this hit was critical by vanilla
     */
-    public boolean isVanillaCritical()
-    {
+    public boolean isVanillaCritical() {
         return vanillaCritical;
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        this.result = result;
     }
 }

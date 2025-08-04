@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -253,6 +_,10 @@
+@@ -261,6 +_,10 @@
          return transform(p_74565_, p_74564_.getMirror(), p_74564_.getRotation(), p_74564_.getRotationPivot());
      }
  
@@ -11,25 +11,29 @@
      public boolean placeInWorld(
          ServerLevelAccessor p_230329_, BlockPos p_230330_, BlockPos p_230331_, StructurePlaceSettings p_230332_, RandomSource p_230333_, int p_230334_
      ) {
-@@ -275,7 +_,7 @@
+@@ -282,7 +_,7 @@
+                 int l = Integer.MIN_VALUE;
                  int i1 = Integer.MIN_VALUE;
                  int j1 = Integer.MIN_VALUE;
+-                List<StructureTemplate.StructureBlockInfo> list4 = processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list);
++                List<StructureTemplate.StructureBlockInfo> list4 = processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this);
  
--                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list)) {
-+                for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_230329_, p_230330_, p_230331_, p_230332_, list, this)) {
-                     BlockPos blockpos = structuretemplate$structureblockinfo.pos;
-                     if (boundingbox == null || boundingbox.isInside(blockpos)) {
-                         FluidState fluidstate = p_230332_.shouldApplyWaterlogging() ? p_230329_.getFluidState(blockpos) : null;
-@@ -385,7 +_,7 @@
+                 try (ProblemReporter.ScopedCollector problemreporter$scopedcollector = new ProblemReporter.ScopedCollector(LOGGER)) {
+                     for (StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : list4) {
+@@ -406,10 +_,10 @@
+                             p_230330_,
+                             p_230332_.getMirror(),
+                             p_230332_.getRotation(),
+-                            p_230332_.getRotationPivot(),
+                             boundingbox,
+                             p_230332_.shouldFinalizeEntities(),
+-                            problemreporter$scopedcollector
++                            problemreporter$scopedcollector,
++                            p_230332_
+                         );
+                     }
                  }
- 
-                 if (!p_230332_.isIgnoreEntities()) {
--                    this.placeEntities(p_230329_, p_230330_, p_230332_.getMirror(), p_230332_.getRotation(), p_230332_.getRotationPivot(), boundingbox, p_230332_.shouldFinalizeEntities());
-+                    this.addEntitiesToWorld(p_230329_, p_230330_, p_230332_);
-                 }
- 
-                 return true;
-@@ -425,12 +_,21 @@
+@@ -451,12 +_,21 @@
          );
      }
  
@@ -52,7 +56,7 @@
      ) {
          List<StructureTemplate.StructureBlockInfo> list = new ArrayList<>();
          List<StructureTemplate.StructureBlockInfo> list1 = new ArrayList<>();
-@@ -446,7 +_,7 @@
+@@ -472,7 +_,7 @@
  
              while (structuretemplate$structureblockinfo1 != null && iterator.hasNext()) {
                  structuretemplate$structureblockinfo1 = iterator.next()
@@ -61,23 +65,15 @@
              }
  
              if (structuretemplate$structureblockinfo1 != null) {
-@@ -462,21 +_,25 @@
-         return list1;
-     }
- 
-+    private void addEntitiesToWorld(ServerLevelAccessor p_74524_, BlockPos p_74525_, StructurePlaceSettings placementIn) {
-+        placeEntities(p_74524_, p_74525_, placementIn.getMirror(), placementIn.getRotation(), placementIn.getBoundingBox(), placementIn.shouldFinalizeEntities(), placementIn);
-+    }
-+
-     private void placeEntities(
-         ServerLevelAccessor p_74524_,
+@@ -493,17 +_,17 @@
          BlockPos p_74525_,
          Mirror p_74526_,
          Rotation p_74527_,
 -        BlockPos p_74528_,
          @Nullable BoundingBox p_74529_,
--        boolean p_74530_
-+        boolean p_74530_,
+         boolean p_74530_,
+-        ProblemReporter p_408312_
++        ProblemReporter p_408312_,
 +        StructurePlaceSettings placementIn
      ) {
 -        for (StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : this.entityInfoList) {
@@ -93,7 +89,7 @@
                  ListTag listtag = new ListTag();
                  listtag.add(DoubleTag.valueOf(vec31.x));
                  listtag.add(DoubleTag.valueOf(vec31.y));
-@@ -496,6 +_,24 @@
+@@ -523,6 +_,24 @@
              }
          }
      }
@@ -116,5 +112,5 @@
 +     }
 +
  
-     private static Optional<Entity> createEntityIgnoreException(ServerLevelAccessor p_74544_, CompoundTag p_74545_) {
+     private static Optional<Entity> createEntityIgnoreException(ProblemReporter p_410558_, ServerLevelAccessor p_74544_, CompoundTag p_74545_) {
          try {

@@ -70,6 +70,11 @@ Please ensure you have a valid email address associated with your GitHub account
  to use and modify. However, it costs money to run such a large project as this, so please consider 
  [becoming a patron][Patreon].*
 
+### Thanks
+[![YourKit](https://www.yourkit.com/images/yklogo.png)](https://www.yourkit.com/)
+
+YourKit for providing us accesss to their [YourKit Java Profiler] which helps identify bottlenecks and places for improvment.
+
 [Contributing]: ./CONTRIBUTING.md
 [CLA]: https://cla-assistant.io/MinecraftForge/MinecraftForge
 
@@ -93,3 +98,4 @@ Please ensure you have a valid email address associated with your GitHub account
 [Pull-Requests]: https://docs.minecraftforge.net/en/latest/forgedev/#making-changes-and-pull-requests
 
 [Patreon]: https://www.patreon.com/LexManos
+[YourKit Java Profiler]: https://www.yourkit.com/java/profiler/

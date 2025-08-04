@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/player/LocalPlayer.java
 +++ b/net/minecraft/client/player/LocalPlayer.java
-@@ -303,6 +_,7 @@
+@@ -297,6 +_,7 @@
          ServerboundPlayerActionPacket.Action serverboundplayeractionpacket$action = p_108701_
              ? ServerboundPlayerActionPacket.Action.DROP_ALL_ITEMS
              : ServerboundPlayerActionPacket.Action.DROP_ITEM;
@@ -8,14 +8,14 @@
          ItemStack itemstack = this.getInventory().removeFromSelected(p_108701_);
          this.connection.send(new ServerboundPlayerActionPacket(serverboundplayeractionpacket$action, BlockPos.ZERO, Direction.DOWN));
          return !itemstack.isEmpty();
-@@ -483,7 +_,11 @@
+@@ -478,7 +_,11 @@
  
      @Override
      public void playSound(SoundEvent p_108651_, float p_108652_, float p_108653_) {
 -        this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), p_108651_, this.getSoundSource(), p_108652_, p_108653_, false);
 +        var holder = net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(p_108651_);
-+        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this, holder, this.getSoundSource(), p_108652_, p_108653_);
-+        if (event.isCanceled() || event.getSound() == null) return;
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this.level(), this, holder, this.getSoundSource(), p_108652_, p_108653_);
++        if (event == null || event.getSound() == null) return;
 +        this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), event.getSound().get(), event.getSource(), event.getNewVolume(), event.getNewPitch(), false);
 +
      }
@@ -76,7 +76,7 @@
      }
  
      private boolean vehicleCanSprint(Entity p_265184_) {
-@@ -1169,6 +_,18 @@
+@@ -1169,6 +_,17 @@
      @Override
      public float getVisualRotationYInDegrees() {
          return this.getYRot();
@@ -89,7 +89,6 @@
 +        this.yRotLast = old.yRotLast;
 +        this.xRotLast = old.xRotLast;
 +        this.lastOnGround = old.lastOnGround;
-+        this.wasShiftKeyDown = old.wasShiftKeyDown;
 +        this.wasSprinting = old.wasSprinting;
 +        this.positionReminder = old.positionReminder;
      }

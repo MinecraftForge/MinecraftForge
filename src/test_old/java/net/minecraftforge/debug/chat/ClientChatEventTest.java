@@ -7,18 +7,18 @@ package net.minecraftforge.debug.chat;
 
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 
 @Mod("client_chat_event_test")
 @Mod.EventBusSubscriber
-public class ClientChatEventTest
-{
+public final class ClientChatEventTest {
     @SubscribeEvent
-    public static void onPlayerAttemptChat(ClientChatEvent event)
-    {
-        if (event.getMessage().equals("Cancel"))
-            event.setCanceled(true);
-        else if (event.getMessage().equals("Replace this text"))
+    public static boolean onPlayerAttemptChat(ClientChatEvent event) {
+        if (event.getMessage().equals("Cancel")) {
+            return true;
+        } else if (event.getMessage().equals("Replace this text")) {
             event.setMessage("Text replaced.");
+            return false;
+        }
     }
 }

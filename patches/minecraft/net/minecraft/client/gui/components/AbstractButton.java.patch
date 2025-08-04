@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/components/AbstractButton.java
 +++ b/net/minecraft/client/gui/components/AbstractButton.java
-@@ -39,7 +_,7 @@
+@@ -38,7 +_,7 @@
              this.getHeight(),
              ARGB.white(this.alpha)
          );
--        int i = this.active ? 16777215 : 10526880;
+-        int i = ARGB.color(this.alpha, this.active ? -1 : -6250336);
 +        int i = getFGColor();
-         this.renderString(p_281670_, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
+         this.renderString(p_281670_, minecraft.font, i);
      }
  

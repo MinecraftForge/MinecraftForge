@@ -49,7 +49,7 @@ public class PreventItemDamageTest extends BaseTestMod {
     private static final RegistryObject<FakeShieldItem> FAKE_SHIELD = ITEMS.register("fake_shield", FakeShieldItem::new);
 
     public PreventItemDamageTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
         this.testItem(lookup -> FAKE_SHIELD.get().getDefaultInstance());
     }
 
@@ -66,7 +66,7 @@ public class PreventItemDamageTest extends BaseTestMod {
         // setup events
         var firedLivingEntityUseItem = helper.boolFlag("fired LivingEntityUseItemEvent");
         var firedPlayerDestroyItem = helper.boolFlag("fired PlayerDestroyItemEvent");
-        helper.<LivingEntityUseItemEvent.Start>addEventListener(event -> {
+        helper.addEventListener(LivingEntityUseItemEvent.Start.BUS, event -> {
             if (event.getEntity() != player) return;
 
             helper.assertTrue(event.getItem() == shield, () -> "Player is using an item, but it's not the fake shield! Check the game test impl.");
@@ -76,7 +76,7 @@ public class PreventItemDamageTest extends BaseTestMod {
             firedLivingEntityUseItem.set(true);
             event.setDuration(event.getDuration() - 100);
         });
-        helper.<PlayerDestroyItemEvent>addEventListener(event -> {
+        helper.addEventListener(PlayerDestroyItemEvent.BUS, event -> {
             if (event.getEntity() != player) return;
 
             helper.assertTrue(event.getOriginal() == shield, () -> "Player destroyed an item, but it's not the fake shield! Check the game test impl.");

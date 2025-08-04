@@ -269,7 +269,6 @@ public class GameData {
                 // Tags will be bound later when tag data is reloaded/synced
                 if (named.isFrozen())
                     named.unfreeze();
-                named.bindAllUnboundTagsToEmpty();
                 named.freeze();
             } else if (reg instanceof MappedRegistry maped)
                 maped.freeze();
@@ -621,7 +620,7 @@ public class GameData {
                 ForgeRegistry<?> reg = STAGING.getRegistry(name);
                 Object2IntMap<ResourceLocation> missingIds = m.getValue();
                 MissingMappingsEvent event = reg.getMissingEvent(name, missingIds);
-                MinecraftForge.EVENT_BUS.post(event);
+                MissingMappingsEvent.BUS.post(event);
 
                 List<MissingMappingsEvent.Mapping<?>> lst = event.getAllMappings(reg.getRegistryKey()).stream()
                         .filter(e -> e.action == MissingMappingsEvent.Action.DEFAULT)
@@ -701,7 +700,7 @@ public class GameData {
     }
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, IdMappingEvent.IdRemapping>> remaps, final boolean isFreezing) {
-        MinecraftForge.EVENT_BUS.post(new IdMappingEvent(remaps, isFreezing));
+        IdMappingEvent.BUS.post(new IdMappingEvent(remaps, isFreezing));
     }
 
     //Has to be split because of generics, Yay!

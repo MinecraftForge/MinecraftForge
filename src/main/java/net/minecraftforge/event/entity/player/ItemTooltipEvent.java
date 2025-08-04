@@ -12,11 +12,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ItemTooltipEvent extends PlayerEvent
-{
+public final class ItemTooltipEvent extends PlayerEvent {
+    public static final EventBus<ItemTooltipEvent> BUS = EventBus.create(ItemTooltipEvent.class);
+
     private final TooltipFlag flags;
     @NotNull
     private final ItemStack itemStack;

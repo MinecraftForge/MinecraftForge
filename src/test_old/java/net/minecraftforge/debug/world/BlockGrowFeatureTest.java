@@ -7,7 +7,7 @@ package net.minecraftforge.debug.world;
 
 import net.minecraft.data.worldgen.features.TreeFeatures;
 import net.minecraftforge.event.level.SaplingGrowTreeEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 

@@ -22,11 +22,11 @@ import net.minecraftforge.test.BaseTestMod;
 public class ForcedChunkLoadingTest extends BaseTestMod {
     static final String MOD_ID = "forced_chunk_loading";
 
-    public ForcedChunkLoadingTest(FMLJavaModLoadingContext context) {
-        super(context);
-    }
-
     private static final int MAX_CHUNK_LOCATION_ATTEMPTS = 5;
+
+    public ForcedChunkLoadingTest(FMLJavaModLoadingContext context) {
+        super(context, false, false);
+    }
 
     @GameTest
     public static void force_far_away_chunk(GameTestHelper helper) {

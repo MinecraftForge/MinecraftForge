@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
-@@ -114,6 +_,8 @@
+@@ -113,6 +_,8 @@
      private final Set<TagKey<Item>> visibleTags = new HashSet<>();
      private final boolean displayOperatorCreativeTab;
      private final EffectsInInventory effects;
@@ -9,7 +9,7 @@
  
      public CreativeModeInventoryScreen(LocalPlayer p_344408_, FeatureFlagSet p_260074_, boolean p_259569_) {
          super(new CreativeModeInventoryScreen.ItemPickerMenu(p_344408_), p_344408_.getInventory(), CommonComponents.EMPTY);
-@@ -162,7 +_,7 @@
+@@ -161,7 +_,7 @@
      private void refreshCurrentTabContents(Collection<ItemStack> p_261591_) {
          int i = this.menu.getRowIndexForScroll(this.scrollOffs);
          this.menu.items.clear();
@@ -18,7 +18,7 @@
              this.refreshSearchResults();
          } else {
              this.menu.items.addAll(p_261591_);
-@@ -330,6 +_,35 @@
+@@ -329,6 +_,35 @@
      protected void init() {
          if (this.minecraft.player.hasInfiniteMaterials()) {
              super.init();
@@ -54,7 +54,7 @@
              this.searchBox = new EditBox(this.font, this.leftPos + 82, this.topPos + 6, 80, 9, Component.translatable("itemGroup.search"));
              this.searchBox.setMaxLength(50);
              this.searchBox.setBordered(false);
-@@ -376,7 +_,7 @@
+@@ -375,7 +_,7 @@
      public boolean charTyped(char p_98521_, int p_98522_) {
          if (this.ignoreTextInput) {
              return false;
@@ -63,7 +63,7 @@
              return false;
          } else {
              String s = this.searchBox.getValue();
-@@ -395,7 +_,7 @@
+@@ -394,7 +_,7 @@
      @Override
      public boolean keyPressed(int p_98547_, int p_98548_, int p_98549_) {
          this.ignoreTextInput = false;
@@ -72,7 +72,7 @@
              if (this.minecraft.options.keyChat.matches(p_98547_, p_98548_)) {
                  this.ignoreTextInput = true;
                  this.selectTab(CreativeModeTabs.searchTab());
-@@ -431,6 +_,7 @@
+@@ -430,6 +_,7 @@
      }
  
      private void refreshSearchResults() {
@@ -80,7 +80,7 @@
          this.menu.items.clear();
          this.visibleTags.clear();
          String s = this.searchBox.getValue();
-@@ -443,10 +_,10 @@
+@@ -442,10 +_,10 @@
                  SearchTree<ItemStack> searchtree;
                  if (s.startsWith("#")) {
                      s = s.substring(1);
@@ -93,17 +93,17 @@
                  }
  
                  this.menu.items.addAll(searchtree.search(s.toLowerCase(Locale.ROOT)));
-@@ -478,7 +_,8 @@
+@@ -477,7 +_,8 @@
      @Override
      protected void renderLabels(GuiGraphics p_283168_, int p_281774_, int p_281466_) {
          if (selectedTab.showTitle()) {
--            p_283168_.drawString(this.font, selectedTab.getDisplayName(), 8, 6, 4210752, false);
+-            p_283168_.drawString(this.font, selectedTab.getDisplayName(), 8, 6, -12566464, false);
 +            com.mojang.blaze3d.opengl.GlStateManager._disableBlend();
 +            p_283168_.drawString(this.font, selectedTab.getDisplayName(), 8, 6, selectedTab.getLabelColor(), false);
          }
      }
  
-@@ -488,7 +_,7 @@
+@@ -487,7 +_,7 @@
              double d0 = p_98531_ - this.leftPos;
              double d1 = p_98532_ - this.topPos;
  
@@ -112,7 +112,7 @@
                  if (this.checkTabClicked(creativemodetab, d0, d1)) {
                      return true;
                  }
-@@ -510,7 +_,7 @@
+@@ -509,7 +_,7 @@
              double d1 = p_98623_ - this.topPos;
              this.scrolling = false;
  
@@ -121,7 +121,7 @@
                  if (this.checkTabClicked(creativemodetab, d0, d1)) {
                      this.selectTab(creativemodetab);
                      return true;
-@@ -604,13 +_,15 @@
+@@ -603,13 +_,15 @@
              this.originalSlots = null;
          }
  
@@ -138,31 +138,22 @@
  
              this.refreshSearchResults();
          } else {
-@@ -673,7 +_,15 @@
+@@ -673,7 +_,14 @@
          super.render(p_283000_, p_281317_, p_282770_, p_281295_);
-         this.effects.render(p_283000_, p_281317_, p_282770_, p_281295_);
+         this.effects.renderTooltip(p_283000_, p_281317_, p_282770_);
  
 -        for (CreativeModeTab creativemodetab : CreativeModeTabs.tabs()) {
 +        if (this.pages.size() != 1) {
 +            Component page = Component.literal(String.format("%d / %d", this.pages.indexOf(this.currentPage) + 1, this.pages.size()));
-+            p_283000_.pose().pushPose();
-+            p_283000_.pose().translate(0F, 0F, 300F);
++            p_283000_.pose().pushMatrix();
 +            p_283000_.drawString(font, page.getVisualOrderText(), leftPos + (imageWidth / 2) - (font.width(page) / 2), topPos - 44, -1);
-+            p_283000_.pose().popPose();
++            p_283000_.pose().popMatrix();
 +        }
 +
 +        for (CreativeModeTab creativemodetab : currentPage.getVisibleTabs()) {
              if (this.checkTabHovering(p_283000_, creativemodetab, p_281317_, p_282770_)) {
                  break;
              }
-@@ -685,6 +_,7 @@
-             p_283000_.renderTooltip(this.font, TRASH_SLOT_TOOLTIP, p_281317_, p_282770_);
-         }
- 
-+        com.mojang.blaze3d.systems.RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-         this.renderTooltip(p_283000_, p_281317_, p_282770_);
-     }
- 
 @@ -697,7 +_,7 @@
      public List<Component> getTooltipFromContainerItem(ItemStack p_281769_) {
          boolean flag = this.hoveredSlot != null && this.hoveredSlot instanceof CreativeModeInventoryScreen.CustomCreativeSlot;
@@ -177,7 +168,7 @@
  
              for (CreativeModeTab creativemodetab : CreativeModeTabs.tabs()) {
 -                if (creativemodetab.getType() != CreativeModeTab.Type.SEARCH && creativemodetab.contains(p_281769_)) {
-+                if (creativemodetab.hasSearchBar() && creativemodetab.contains(p_281769_)) {
++                if (!creativemodetab.hasSearchBar() && creativemodetab.contains(p_281769_)) {
                      list1.add(i++, creativemodetab.getDisplayName().copy().withStyle(ChatFormatting.BLUE));
                  }
              }
@@ -191,7 +182,7 @@
                  this.renderTabButton(p_282663_, creativemodetab);
              }
 @@ -745,6 +_,7 @@
-             p_282663_.blitSprite(RenderType::guiTextured, resourcelocation, j, k + (int)((i - k - 17) * this.scrollOffs), 12, 15);
+             p_282663_.blitSprite(RenderPipelines.GUI_TEXTURED, resourcelocation, j, k + (int)((i - k - 17) * this.scrollOffs), 12, 15);
          }
  
 +        if (currentPage.getVisibleTabs().contains(selectedTab)) //Forge: only display tab selection when the selected tab is on the current page
@@ -232,10 +223,10 @@
          }
  
 +        com.mojang.blaze3d.opengl.GlStateManager._enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
-         p_283590_.blitSprite(RenderType::guiTextured, aresourcelocation[Mth.clamp(i, 0, aresourcelocation.length)], j, k, 26, 32);
-         p_283590_.pose().pushPose();
-         p_283590_.pose().translate(0.0F, 0.0F, 100.0F);
-@@ -855,6 +_,14 @@
+         p_283590_.blitSprite(RenderPipelines.GUI_TEXTURED, aresourcelocation[Mth.clamp(i, 0, aresourcelocation.length)], j, k, 26, 32);
+         int l = j + 13 - 8;
+         int i1 = k + 16 - 8 + (flag1 ? 1 : -1);
+@@ -850,6 +_,14 @@
          }
      }
  
@@ -250,7 +241,7 @@
      @OnlyIn(Dist.CLIENT)
      static class CustomCreativeSlot extends Slot {
          public CustomCreativeSlot(Container p_98633_, int p_98634_, int p_98635_, int p_98636_) {
-@@ -1036,6 +_,22 @@
+@@ -1031,6 +_,22 @@
          @Override
          public boolean mayPickup(Player p_98665_) {
              return this.target.mayPickup(p_98665_);

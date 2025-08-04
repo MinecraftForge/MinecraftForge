@@ -4,8 +4,8 @@
                      file2 = new File(file1, p_92297_);
                  }
  
-+                var event = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenshot(p_389141_, file2);
-+                if (event.isCanceled()) {
++                var event = new net.minecraftforge.client.event.ScreenshotEvent(p_389141_, file2);
++                if (net.minecraftforge.client.event.ScreenshotEvent.BUS.post(event)) {
 +                    p_92301_.accept(event.getCancelMessage());
 +                    return;
 +                }

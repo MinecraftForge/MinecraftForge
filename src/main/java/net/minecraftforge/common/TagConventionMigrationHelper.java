@@ -28,7 +28,7 @@ public final class TagConventionMigrationHelper {
     private static final ArrayList<TagKey<?>> FOUND_LEGACY_TAGS = new ArrayList<>();
 
     static void init() {
-        MinecraftForge.EVENT_BUS.addListener(TagConventionMigrationHelper::onServerStarting);
+        ServerStartingEvent.BUS.addListener(TagConventionMigrationHelper::onServerStarting);
     }
 
     public static void onServerStarting(ServerStartingEvent event) {

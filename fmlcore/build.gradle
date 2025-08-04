@@ -10,9 +10,10 @@ plugins {
 apply from: rootProject.file('build_shared.gradle')
 
 dependencies {
-    compileOnly(libs.nulls)
+    compileOnly(libs.jetbrains.annotations)
 
     api(libs.eventbus)
+    annotationProcessor(libs.eventbus.validator)
 
     implementation(project(':fmlloader'))
     implementation(libs.commons.io)

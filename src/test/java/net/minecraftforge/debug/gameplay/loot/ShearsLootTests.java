@@ -42,7 +42,7 @@ public class ShearsLootTests extends BaseTestMod {
     ));
 
     public ShearsLootTests(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
         this.testItem(lookup -> MODDED_SHEARS.get().getDefaultInstance());
     }
 

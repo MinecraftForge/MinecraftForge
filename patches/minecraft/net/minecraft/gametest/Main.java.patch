@@ -1,0 +1,11 @@
+--- a/net/minecraft/gametest/Main.java
++++ b/net/minecraft/gametest/Main.java
+@@ -7,6 +_,8 @@
+ public class Main {
+     @DontObfuscate
+     public static void main(String[] p_393417_) throws Exception {
++        System.setProperty("forge.enableGameTest", "true");
++        System.setProperty("forge.gameTestServer", "true");
+         SharedConstants.tryDetectVersion();
+         GameTestMainUtil.runGameTestServer(p_393417_, p_393535_ -> {});
+     }

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:pip_test/was_registered",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

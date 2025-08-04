@@ -7,6 +7,7 @@ package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
 import net.minecraftforge.fml.ModLoader;
@@ -43,13 +44,13 @@ public final class NamedRenderTypeManager {
      * Pre-registers vanilla render types.
      */
     private static void preRegisterVanillaRenderTypes(Map<ResourceLocation, RenderTypeGroup> blockRenderTypes) {
-        blockRenderTypes.put(rl("solid"), new RenderTypeGroup(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get()));
-        blockRenderTypes.put(rl("cutout"), new RenderTypeGroup(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
+        blockRenderTypes.put(rl("solid"), new RenderTypeGroup(ChunkSectionLayer.SOLID, ForgeRenderTypes.ITEM_LAYERED_SOLID.get()));
+        blockRenderTypes.put(rl("cutout"), new RenderTypeGroup(ChunkSectionLayer.CUTOUT, ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
         // Generally entity/item rendering shouldn't use mipmaps, so cutout_mipped has them off by default. To enforce them, use cutout_mipped_all.
-        blockRenderTypes.put(rl("cutout_mipped"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
-        blockRenderTypes.put(rl("cutout_mipped_all"), new RenderTypeGroup(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get()));
-        blockRenderTypes.put(rl("translucent"), new RenderTypeGroup(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
-        blockRenderTypes.put(rl("tripwire"), new RenderTypeGroup(RenderType.tripwire(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
+        blockRenderTypes.put(rl("cutout_mipped"), new RenderTypeGroup(ChunkSectionLayer.CUTOUT_MIPPED, ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get()));
+        blockRenderTypes.put(rl("cutout_mipped_all"), new RenderTypeGroup(ChunkSectionLayer.CUTOUT_MIPPED, ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get()));
+        blockRenderTypes.put(rl("translucent_moving_block"), new RenderTypeGroup(ChunkSectionLayer.TRANSLUCENT, ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
+        blockRenderTypes.put(rl("tripwire"), new RenderTypeGroup(ChunkSectionLayer.TRIPWIRE, ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
     }
 
     private static ResourceLocation rl(String paht) {

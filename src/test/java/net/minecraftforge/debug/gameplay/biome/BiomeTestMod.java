@@ -48,6 +48,6 @@ public class BiomeTestMod extends BaseTestMod {
     });
 
     public BiomeTestMod(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
     }
 }

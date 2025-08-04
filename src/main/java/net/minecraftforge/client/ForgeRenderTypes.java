@@ -6,13 +6,15 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.opengl.GlConst;
-import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.platform.DestFactor;
 import com.mojang.blaze3d.platform.SourceFactor;
+import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.textures.GpuTextureView;
 import com.mojang.blaze3d.textures.TextureFormat;
 
 import net.minecraft.Util;
@@ -25,14 +27,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.earlydisplay.DisplayWindow;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.opengl.GL30C;
 
@@ -56,7 +55,7 @@ public enum ForgeRenderTypes {
      * @see ForgeRenderTypes#getTextSeeThrough
      * @see ForgeRenderTypes#getTextIntensitySeeThrough
      */
-    public static TriState enableTextTextureLinearFiltering = TriState.FALSE;
+    public static boolean enableTextTextureLinearFiltering = false;
 
     @SuppressWarnings("deprecation")
     private static ResourceLocation blockAtlas() {
@@ -230,7 +229,7 @@ public enum ForgeRenderTypes {
                           false,
                           RenderPipelines.ENTITY_TRANSLUCENT,
                           CompositeState.builder()
-                                        .setTextureState(new TextureStateShard(textureLocation, TriState.FALSE, false))
+                                        .setTextureState(new TextureStateShard(textureLocation, false))
                                         .setLightmapState(LIGHTMAP)
                                         .setOverlayState(OVERLAY)
                                         .createCompositeState(true));
@@ -244,7 +243,7 @@ public enum ForgeRenderTypes {
                           true,
                           RenderPipelines.ENTITY_TRANSLUCENT,
                           CompositeState.builder()
-                                        .setTextureState(new TextureStateShard(textureLocation, TriState.FALSE, false))
+                                        .setTextureState(new TextureStateShard(textureLocation, false))
                                         .setLightmapState(NO_LIGHTMAP)
                                         .setOverlayState(OVERLAY)
                                         .createCompositeState(true));
@@ -258,7 +257,7 @@ public enum ForgeRenderTypes {
                           false,
                           RenderPipelines.ENTITY_TRANSLUCENT,
                           CompositeState.builder()
-                                        .setTextureState(new TextureStateShard(textureLocation, TriState.FALSE, false))
+                                        .setTextureState(new TextureStateShard(textureLocation, false))
                                         .setLightmapState(NO_LIGHTMAP)
                                         .setOverlayState(OVERLAY)
                                         .createCompositeState(true));
@@ -273,7 +272,7 @@ public enum ForgeRenderTypes {
                     false,
                     RenderPipelines.ENTITY_SOLID,
                     CompositeState.builder()
-                                  .setTextureState(new TextureStateShard(locationIn, TriState.FALSE, false))
+                                  .setTextureState(new TextureStateShard(locationIn, false))
                                   .setLightmapState(LIGHTMAP)
                                   .setOverlayState(OVERLAY)
                                   .createCompositeState(true)
@@ -289,7 +288,7 @@ public enum ForgeRenderTypes {
                     false,
                     RenderPipelines.ENTITY_CUTOUT,
                     CompositeState.builder()
-                                  .setTextureState(new TextureStateShard(locationIn, TriState.FALSE, false))
+                                  .setTextureState(new TextureStateShard(locationIn, false))
                                   .setLightmapState(LIGHTMAP)
                                   .setOverlayState(OVERLAY)
                                   .createCompositeState(true)
@@ -305,7 +304,7 @@ public enum ForgeRenderTypes {
                     false,
                     RenderPipelines.ENTITY_SMOOTH_CUTOUT,
                     CompositeState.builder()
-                                  .setTextureState(new TextureStateShard(locationIn, TriState.FALSE, true))
+                                  .setTextureState(new TextureStateShard(locationIn, true))
                                   .setLightmapState(LIGHTMAP)
                                   .setOverlayState(OVERLAY)
                                   .createCompositeState(true)
@@ -321,7 +320,7 @@ public enum ForgeRenderTypes {
                     true,
                     RenderPipelines.ITEM_ENTITY_TRANSLUCENT_CULL,
                     CompositeState.builder()
-                                  .setTextureState(new TextureStateShard(locationIn, TriState.FALSE, false))
+                                  .setTextureState(new TextureStateShard(locationIn, false))
                                   .setLightmapState(LIGHTMAP)
                                   .setOverlayState(OVERLAY)
                                   .createCompositeState(true)
@@ -367,7 +366,7 @@ public enum ForgeRenderTypes {
                     true,
                     RenderPipelines.TEXT_POLYGON_OFFSET,
                     CompositeState.builder()
-                                  .setTextureState(new CustomizableTextureState(locationIn, () -> enableTextTextureLinearFiltering, () -> false))
+                                  .setTextureState(new CustomizableTextureState(locationIn,  false))
                                   .setLightmapState(LIGHTMAP)
                                   .createCompositeState(false)
             );
@@ -438,7 +437,7 @@ public enum ForgeRenderTypes {
                     true,
                     RenderPipelines.TRANSLUCENT_PARTICLE,
                     CompositeState.builder()
-                                  .setTextureState(new TextureStateShard(locationIn, TriState.FALSE, false))
+                                  .setTextureState(new TextureStateShard(locationIn, false))
                                   .setOutputState(PARTICLES_TARGET)
                                   .setLightmapState(LIGHTMAP)
                                   .createCompositeState(true)
@@ -467,41 +466,35 @@ public enum ForgeRenderTypes {
     }
 
     private static class CustomizableTextureState extends TextureStateShard {
-        // [VEN] Here to make init shorter
-        private static final Supplier<TriState> BLUR_STATE = () -> enableTextTextureLinearFiltering;
-        private static final Supplier<Boolean> MIP_ON_STATE = () -> true;
-        private static final Supplier<Boolean> MIP_OFF_STATE = () -> false;
         private CustomizableTextureState(ResourceLocation resLoc, boolean mipmap) {
-            this(resLoc, BLUR_STATE, mipmap ? MIP_ON_STATE : MIP_OFF_STATE);
-        }
-
-        private CustomizableTextureState(ResourceLocation resLoc, Supplier<TriState> blur, Supplier<Boolean> mipmap) {
-            super(resLoc, blur.get(), mipmap.get());
+            super(resLoc, mipmap);
             this.setupState = () -> {
-                this.blur = blur.get();
-                this.mipmap = mipmap.get();
                 TextureManager manager = Minecraft.getInstance().getTextureManager();
                 var texture = manager.getTexture(resLoc);
-                texture.setFilter(this.blur, this.mipmap);
-                RenderSystem.setShaderTexture(0, texture.getTexture());
+                texture.setFilter(enableTextTextureLinearFiltering, this.mipmap);
+                RenderSystem.setShaderTexture(0, texture.getTextureView());
             };
         }
     }
 
     private static class LoadingOverlayTextureState extends TextureStateShard {
         private static final ResourceLocation LOADING_TEXTURE = ResourceLocation.fromNamespaceAndPath("forge", "loading_overlay");
-        private final GlTexture texture;
+        private final GpuTexture texture;
+        private final GpuTextureView textureView;
 
         private LoadingOverlayTextureState(DisplayWindow window) {
-            super(LOADING_TEXTURE, TriState.DEFAULT, false);
-            this.texture = new GlTexture(LOADING_TEXTURE.toString(), TextureFormat.RGBA8,
-                    window.context().width(), window.context().height(), 0,
-                    window.getFramebufferTextureId()) {};
+            super(LOADING_TEXTURE, false);
+
+            GpuDevice gpu = RenderSystem.getDevice();
+            this.texture = gpu.createTexture(LOADING_TEXTURE.toString(), 5, TextureFormat.RGBA8,
+                    window.context().width(), window.context().height(),
+                    1, window.getFramebufferTextureId());
+            this.textureView = gpu.createTextureView(this.texture);
 
             this.setupState = () -> {
                 GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_NEAREST);
                 GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_NEAREST);
-                RenderSystem.setShaderTexture(0, texture);
+                RenderSystem.setShaderTexture(0, this.textureView);
             };
         }
     }

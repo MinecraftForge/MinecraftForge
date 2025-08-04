@@ -7,7 +7,9 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * EntityMobGriefingEvent is fired when mob griefing is about to occur and allows an event listener to specify whether it should or not.<br>
@@ -21,11 +23,22 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * </ul>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@HasResult
-public class EntityMobGriefingEvent extends EntityEvent
-{
-    public EntityMobGriefingEvent(Entity entity)
-    {
+public final class EntityMobGriefingEvent extends EntityEvent implements HasResult {
+    public static final EventBus<EntityMobGriefingEvent> BUS = EventBus.create(EntityMobGriefingEvent.class);
+
+    private Result result = Result.DEFAULT;
+
+    public EntityMobGriefingEvent(Entity entity) {
         super(entity);
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        this.result = result;
     }
 }

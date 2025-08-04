@@ -45,7 +45,7 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -55,6 +55,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -79,14 +80,8 @@ public class AdditionalModelTest extends BaseTestMod {
     private static final RegistryObject<Item> PIG_HEAD_ITEM = ITEMS.register("pig_head", () -> new Item(new Item.Properties().setId(ITEMS.key("pig_head"))));
 
     public AdditionalModelTest(FMLJavaModLoadingContext context) {
-        super(context, false);
-
-        modBus.register(this);
-
-        if (FMLLoader.getLaunchHandler().isData()) {
-            BLOCKS.register(modBus);
-            ITEMS.register(modBus);
-        }
+        super(context, false, FMLLoader.getLaunchHandler().isData());
+        modBus.register(MethodHandles.lookup(), this);
     }
 
     @SubscribeEvent
@@ -94,7 +89,6 @@ public class AdditionalModelTest extends BaseTestMod {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(event.includeClient(), new ModelProvider(out));
     }
-
 
     @SubscribeEvent
     public void onRegisterAdditional(ModelEvent.RegisterModelStateDefinitions event) {
@@ -135,7 +129,8 @@ public class AdditionalModelTest extends BaseTestMod {
         pig.addLayer(new RenderLayer<>(pig) {
             @Override
             public void render(PoseStack stack, MultiBufferSource source, int light, PigRenderState state, float xRot, float yRot) {
-                this.getParentModel().getAnyDescendantWithName("head").ifPresent(part -> {
+                var part = this.getParentModel().root().createPartLookup().apply("head");
+                if (part != null) {
                     var manager = Minecraft.getInstance().getModelManager();
                     var resolver = Minecraft.getInstance().getItemModelResolver();
                     stack.pushPose();
@@ -148,7 +143,7 @@ public class AdditionalModelTest extends BaseTestMod {
                     var renderState = new ItemStackRenderState();
                     model.update(renderState, new ItemStack(Items.STONE), resolver, ItemDisplayContext.FIXED, null, null, 0);
                     stack.popPose();
-                });
+                }
             }
         });
 
@@ -158,7 +153,8 @@ public class AdditionalModelTest extends BaseTestMod {
         cow.addLayer(new RenderLayer<>(cow) {
             @Override
             public void render(PoseStack stack, MultiBufferSource source, int light, LivingEntityRenderState state, float xRot, float yRot) {
-                this.getParentModel().getAnyDescendantWithName("head").ifPresent(part -> {
+                var part = this.getParentModel().root().createPartLookup().apply("head");
+                if (part != null) {
                     var manager = Minecraft.getInstance().getModelManager();
 
                     stack.pushPose();
@@ -174,7 +170,7 @@ public class AdditionalModelTest extends BaseTestMod {
                     var consumer = source.getBuffer(RenderType.solid());
                     ModelBlockRenderer.renderModel(stack.last(), consumer, model, 1.0F, 1.0F, 1.0F, light, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
                     stack.popPose();
-                });
+                }
             }
         });
     }

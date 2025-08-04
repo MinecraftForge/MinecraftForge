@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -138,4 +_,13 @@
+@@ -145,4 +_,13 @@
          @Override
          void close();
      }

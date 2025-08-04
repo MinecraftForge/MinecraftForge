@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
 +++ b/net/minecraft/commands/synchronization/ArgumentTypeInfos.java
-@@ -66,6 +_,20 @@
+@@ -67,6 +_,20 @@
  public class ArgumentTypeInfos {
      private static final Map<Class<?>, ArgumentTypeInfo<?, ?>> BY_CLASS = Maps.newHashMap();
  

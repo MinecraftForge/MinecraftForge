@@ -9,7 +9,6 @@ import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,34 +16,28 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("player_game_mode_event_test")
 @Mod.EventBusSubscriber()
-public class PlayerGameModeEventTest
-{
+public final class PlayerGameModeEventTest {
     private static final boolean ENABLE = false;
     private static final Logger LOGGER = LogManager.getLogger(PlayerGameModeEventTest.class);
 
     @SubscribeEvent
-    public static void onPlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event)
-    {
-        if (!ENABLE) return;
+    public static boolean onPlayerChangeGameModeEvent(PlayerEvent.PlayerChangeGameModeEvent event) {
+        if (!ENABLE) return false;
         LOGGER.info("{} changed game mode. Current GameType: {}. New Game Type: {}", event.getEntity(), event.getCurrentGameMode(), event.getNewGameMode());
         // prevent changing to SURVIVAL
-        if (event.getNewGameMode() == GameType.SURVIVAL)
-        {
-            event.setCanceled(true);
-        }
-        else if (event.getNewGameMode() == GameType.SPECTATOR)
-        {
+        if (event.getNewGameMode() == GameType.SURVIVAL) {
+            return true;
+        } else if (event.getNewGameMode() == GameType.SPECTATOR) {
             // when changing to SPECTATOR, change to SURVIVAL instead
             event.setNewGameMode(GameType.SURVIVAL);
         }
+        return false;
     }
 
     @Mod.EventBusSubscriber(modid="player_game_mode_event_test", value=Dist.CLIENT, bus=Mod.EventBusSubscriber.Bus.FORGE)
-    public static class PlayerGameModeEventTestClientForgeEvents
-    {
+    public static class PlayerGameModeEventTestClientForgeEvents {
         @SubscribeEvent
-        public static void onClientPlayerChangeGameModeEvent(ClientPlayerChangeGameTypeEvent event)
-        {
+        public static void onClientPlayerChangeGameModeEvent(ClientPlayerChangeGameTypeEvent event) {
             if (!ENABLE) return;
             LOGGER.info("Client notified of changed game mode from '{}'. Current GameType: {}. New Game Type: {}", event.getInfo().getProfile(), event.getCurrentGameType(), event.getNewGameType());
         }

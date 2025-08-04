@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.server.packs.resources.ReloadInstance;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.fml.StartupMessageManager;
@@ -33,7 +34,7 @@ import java.util.function.Supplier;
  * It is somewhat a copy of the superclass render method.
  */
 public class ForgeLoadingOverlay extends LoadingOverlay {
-    private static final boolean ENABLE = Boolean.parseBoolean("forge.enableForgeLoadingOverlay");
+    private static final boolean ENABLE = false; //Boolean.parseBoolean("forge.enableForgeLoadingOverlay");
     private final Minecraft minecraft;
     private final ReloadInstance reload;
     private final DisplayWindow displayWindow;
@@ -60,6 +61,10 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
     protected boolean renderContents(GuiGraphics gui, float fade) {
         if (!ENABLE)
             return true;
+        /* This should render the framebuffer but it doesnt work in 1.21.6's rendering changes.
+         * The proper way to fix this is to just kill off the display window when Vanilla gets to this phase, and render our extra elements normally.
+         * TODO: [Forge][Rendering] Render only out elements from the loading screen
+         *
         progress.setAbsolute(Mth.clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
 
         int alpha = (int)(fade * 255);
@@ -72,39 +77,12 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         var fbHeight = this.minecraft.getWindow().getHeight();
         GL30C.glViewport(0, 0, fbWidth, fbHeight);
 
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, fade);
-        Matrix4f pos = gui.pose().last().pose();
-        /*
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlConst.GL_SRC_ALPHA, GlConst.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShader(CoreShaders.POSITION_TEX_COLOR);
-        RenderSystem.setShaderTexture(0, displayWindow.getFramebufferTextureId());
-        GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_NEAREST);
-        GL30C.glTexParameterIi(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_NEAREST);
-        */
-
         var buf = gui.getBufferSource().getBuffer(earlyBuffer);
         buf.addVertex(pos, 0,     0,      0f).setUv(0, 0).setColor(1f, 1f, 1f, fade);
         buf.addVertex(pos, 0,     height, 0f).setUv(0, 1).setColor(1f, 1f, 1f, fade);
         buf.addVertex(pos, width, height, 0f).setUv(1, 1).setColor(1f, 1f, 1f, fade);
         buf.addVertex(pos, width, 0,      0f).setUv(1, 0).setColor(1f, 1f, 1f, fade);
-        /*
-        BufferUploader.drawWithShader(buf.buildOrThrow());
-
-        // I dont know what exactly this does, but without it the screen flickers black.
-        // So as a hack we just render the mojang logo as a 0x0 cube
-        // TODO: Remove this when early screen is re-written to not be a texture based renderer
-        var logo = gui.getBufferSource().getBuffer(RenderType.mojangLogo());
-        logo.addVertex(pos, 0, 0, 0f).setUv(0, 0).setColor(1f, 1f, 1f, fade);
-        logo.addVertex(pos, 0, 0, 0f).setUv(0, 1).setColor(1f, 1f, 1f, fade);
-        logo.addVertex(pos, 0, 0, 0f).setUv(1, 1).setColor(1f, 1f, 1f, fade);
-        logo.addVertex(pos, 0, 0, 0f).setUv(1, 0).setColor(1f, 1f, 1f, fade);
-
-
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableBlend();
         */
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1f);
 
         return false;
     }

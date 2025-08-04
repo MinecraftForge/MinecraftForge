@@ -19,28 +19,21 @@ import net.minecraftforge.fml.common.Mod;
  * game difficulty is set to anything other than hard.</p>
  */
 @Mod("potentialspawnsevent_test")
-public class PotentialSpawnsEventTest
-{
+public final class PotentialSpawnsEventTest {
     public static final boolean ENABLED = false;
 
-    public PotentialSpawnsEventTest()
-    {
-        if (ENABLED)
-        {
-            MinecraftForge.EVENT_BUS.addListener(PotentialSpawnsEventTest::onlySpawnHostileMobs);
+    public PotentialSpawnsEventTest() {
+        if (ENABLED) {
+            LevelEvent.PotentialSpawns.BUS.addListener(PotentialSpawnsEventTest::onlySpawnHostileMobs);
         }
     }
 
-    public static void onlySpawnHostileMobs(LevelEvent.PotentialSpawns event)
-    {
+    public static void onlySpawnHostileMobs(LevelEvent.PotentialSpawns event) {
         LevelAccessor level = event.getLevel();
         BlockPos pos = event.getPos();
         Difficulty difficulty = level.getCurrentDifficultyAt(pos).getDifficulty();
         MobCategory category = event.getMobCategory();
 
-        if (category == MobCategory.MONSTER && difficulty != Difficulty.HARD)
-        {
-            event.setCanceled(true);
-        }
+        return category == MobCategory.MONSTER && difficulty != Difficulty.HARD;
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/special/SpecialModelRenderers.java
 +++ b/net/minecraft/client/renderer/special/SpecialModelRenderers.java
-@@ -180,6 +_,8 @@
+@@ -181,6 +_,8 @@
              map.put(Blocks.TRAPPED_CHEST, GIFT_CHEST);
          }
  

@@ -56,7 +56,6 @@ public class FMLLoader {
 
         checkPackage(ITransformationService.class, "4.0", "ModLauncher");
         accessTransformer  = getPlugin(env, "accesstransformer",  "1.0", "AccessTransformer");
-        /*eventBus       =*/ getPlugin(env, "eventbus",           "1.0", "EventBus");
         runtimeDistCleaner = getPlugin(env, "runtimedistcleaner", "1.0", "RuntimeDistCleaner");
         coreModProvider = getSingleService(ICoreModProvider.class, "CoreMod");
         LOGGER.debug(CORE, "FML found CoreMod version : {}", JarVersionLookupHandler.getInfo(coreModProvider.getClass()).impl().version().orElse("MISSING"));

@@ -1,44 +1,46 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -135,7 +_,7 @@
+@@ -139,7 +_,7 @@
  import org.jetbrains.annotations.Contract;
  import org.slf4j.Logger;
  
--public abstract class LivingEntity extends Entity implements Attackable {
-+public abstract class LivingEntity extends Entity implements Attackable, net.minecraftforge.common.extensions.IForgeLivingEntity {
+-public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter {
++public abstract class LivingEntity extends Entity implements Attackable, WaypointTransmitter, net.minecraftforge.common.extensions.IForgeLivingEntity {
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final String TAG_ACTIVE_EFFECTS = "active_effects";
-     private static final ResourceLocation SPEED_MODIFIER_POWDER_SNOW_ID = ResourceLocation.withDefaultNamespace("powder_snow");
-@@ -171,6 +_,8 @@
+     public static final String TAG_ATTRIBUTES = "attributes";
+@@ -183,6 +_,8 @@
+     protected static final EntityDimensions SLEEPING_DIMENSIONS = EntityDimensions.fixed(0.2F, 0.2F).withEyeHeight(0.2F);
      public static final float EXTRA_RENDER_CULLING_SIZE_WITH_BIG_HAT = 0.5F;
      public static final float DEFAULT_BABY_SCALE = 0.5F;
-     public static final String ATTRIBUTES_FIELD = "attributes";
 +    /** Forge: Use a variant that calls {@link ItemStack#isMonsterDisguise(Player, net.minecraft.world.entity.monster.Monster)} and {@link net.minecraftforge.event.entity.living.MonsterDisguiseEvent} */
 +    @Deprecated
      public static final Predicate<LivingEntity> PLAYER_NOT_WEARING_DISGUISE_ITEM = p_390518_ -> {
          if (p_390518_ instanceof Player player) {
              ItemStack itemstack = player.getItemBySlot(EquipmentSlot.HEAD);
-@@ -254,7 +_,8 @@
+@@ -267,7 +_,7 @@
+         this.reapplyPosition();
          this.setYRot((float)(Math.random() * (float) (Math.PI * 2)));
          this.yHeadRot = this.getYRot();
-         NbtOps nbtops = NbtOps.INSTANCE;
--        this.brain = this.makeBrain(new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap()))));
-+        var dyn = new Dynamic<>(nbtops, nbtops.createMap(ImmutableMap.of(nbtops.createString("memories"), nbtops.emptyMap())));
-+        this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain(dyn), dyn);
+-        this.brain = this.makeBrain(EMPTY_BRAIN);
++        this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain(EMPTY_BRAIN), EMPTY_BRAIN);
      }
  
      @Contract(
-@@ -315,7 +_,8 @@
+@@ -328,9 +_,10 @@
              .add(Attributes.EXPLOSION_KNOCKBACK_RESISTANCE)
              .add(Attributes.WATER_MOVEMENT_EFFICIENCY)
              .add(Attributes.MOVEMENT_EFFICIENCY)
--            .add(Attributes.ATTACK_KNOCKBACK);
+-            .add(Attributes.ATTACK_KNOCKBACK)
+             .add(Attributes.CAMERA_DISTANCE)
+-            .add(Attributes.WAYPOINT_TRANSMIT_RANGE);
 +            .add(Attributes.ATTACK_KNOCKBACK)
++            .add(Attributes.WAYPOINT_TRANSMIT_RANGE)
 +            .add(Attributes.JUMP_STRENGTH);
      }
  
      @Override
-@@ -342,7 +_,8 @@
+@@ -357,7 +_,8 @@
  
                  double d7 = Math.min(0.2F + d6 / 15.0, 2.5);
                  int i = (int)(150.0 * d7);
@@ -48,15 +50,15 @@
              }
          }
  
-@@ -352,6 +_,7 @@
+@@ -367,6 +_,7 @@
          }
      }
  
 +    @Deprecated //FORGE: Use canDrownInFluidType instead
-     public final boolean canBreatheUnderwater() {
+     public boolean canBreatheUnderwater() {
          return this.getType().is(EntityTypeTags.CAN_BREATHE_UNDER_WATER);
      }
-@@ -396,6 +_,10 @@
+@@ -411,6 +_,10 @@
                  }
              }
  
@@ -67,7 +69,7 @@
              if (this.isEyeInFluid(FluidTags.WATER)
                  && !serverlevel1.getBlockState(BlockPos.containing(this.getX(), this.getEyeY(), this.getZ())).is(Blocks.BUBBLE_COLUMN)) {
                  boolean flag1 = !this.canBreatheUnderwater() && !MobEffectUtil.hasWaterBreathing(this) && (!flag || !((Player)this).getAbilities().invulnerable);
-@@ -731,6 +_,9 @@
+@@ -757,6 +_,9 @@
          } else {
              ItemEntity itementity = this.createItemStackToDrop(p_395943_, p_393118_, p_392158_);
              if (itementity != null) {
@@ -77,19 +79,16 @@
                  this.level().addFreshEntity(itementity);
              }
  
-@@ -773,7 +_,10 @@
+@@ -798,7 +_,7 @@
                  this.setPosToBed(p_390515_);
              }
          }, this::clearSleepingPos);
--        p_21096_.getCompound("Brain").ifPresent(p_390523_ -> this.brain = this.makeBrain(new Dynamic<>(NbtOps.INSTANCE, p_390523_)));
-+        p_21096_.getCompound("Brain").ifPresent(p_390523_ -> {
-+            var dyn = new Dynamic<>(NbtOps.INSTANCE, p_390523_);
-+            this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain(dyn), dyn);
-+        });
-         this.lastHurtByPlayer = EntityReference.read(p_21096_, "last_hurt_by_player");
-         this.lastHurtByPlayerMemoryTime = p_21096_.getIntOr("last_hurt_by_player_memory_time", 0);
-         this.lastHurtByMob = EntityReference.read(p_21096_, "last_hurt_by_mob");
-@@ -790,8 +_,10 @@
+-        p_406679_.read("Brain", Codec.PASSTHROUGH).ifPresent(p_405289_ -> this.brain = this.makeBrain((Dynamic<?>)p_405289_));
++        p_406679_.read("Brain", Codec.PASSTHROUGH).ifPresent(p_405289_ -> this.brain = net.minecraftforge.common.ForgeHooks.onLivingMakeBrain(this, this.makeBrain((Dynamic<?>)p_405289_), (Dynamic<?>)p_405289_));
+         this.lastHurtByPlayer = EntityReference.read(p_406679_, "last_hurt_by_player");
+         this.lastHurtByPlayerMemoryTime = p_406679_.getIntOr("last_hurt_by_player_memory_time", 0);
+         this.lastHurtByMob = EntityReference.read(p_406679_, "last_hurt_by_mob");
+@@ -816,8 +_,10 @@
                      Holder<MobEffect> holder = iterator.next();
                      MobEffectInstance mobeffectinstance = this.activeEffects.get(holder);
                      if (!mobeffectinstance.tickServer(serverlevel, this, () -> this.onEffectUpdated(mobeffectinstance, true, null))) {
@@ -100,7 +99,7 @@
                      } else if (mobeffectinstance.getDuration() % 600 == 0) {
                          this.onEffectUpdated(mobeffectinstance, false, null);
                      }
-@@ -871,6 +_,7 @@
+@@ -897,6 +_,7 @@
              }
          }
  
@@ -108,7 +107,7 @@
          return d0;
      }
  
-@@ -945,6 +_,7 @@
+@@ -971,6 +_,7 @@
          } else {
              MobEffectInstance mobeffectinstance = this.activeEffects.get(p_147208_.getEffect());
              boolean flag = false;
@@ -116,7 +115,7 @@
              if (mobeffectinstance == null) {
                  this.activeEffects.put(p_147208_.getEffect(), p_147208_);
                  this.onEffectAdded(p_147208_, p_147209_);
-@@ -961,6 +_,10 @@
+@@ -987,6 +_,10 @@
      }
  
      public boolean canBeAffected(MobEffectInstance p_21197_) {
@@ -127,7 +126,7 @@
          if (this.getType().is(EntityTypeTags.IMMUNE_TO_INFESTED)) {
              return !p_21197_.is(MobEffects.INFESTED);
          } else if (this.getType().is(EntityTypeTags.IMMUNE_TO_OOZING)) {
-@@ -994,6 +_,9 @@
+@@ -1020,6 +_,9 @@
      }
  
      public boolean removeEffect(Holder<MobEffect> p_335910_) {
@@ -137,7 +136,7 @@
          MobEffectInstance mobeffectinstance = this.removeEffectNoUpdate(p_335910_);
          if (mobeffectinstance != null) {
              this.onEffectsRemoved(List.of(mobeffectinstance));
-@@ -1038,6 +_,9 @@
+@@ -1064,6 +_,9 @@
              this.effectsDirty = true;
  
              for (MobEffectInstance mobeffectinstance : p_364717_) {
@@ -147,7 +146,7 @@
                  mobeffectinstance.getEffect().value().removeAttributeModifiers(this.getAttributes());
  
                  for (Entity entity : this.getPassengers()) {
-@@ -1078,6 +_,10 @@
+@@ -1111,6 +_,10 @@
      }
  
      public void heal(float p_21116_) {
@@ -158,7 +157,7 @@
          float f = this.getHealth();
          if (f > 0.0F) {
              this.setHealth(f + p_21116_);
-@@ -1098,6 +_,9 @@
+@@ -1131,6 +_,9 @@
  
      @Override
      public boolean hurtServer(ServerLevel p_361743_, DamageSource p_361865_, float p_365677_) {
@@ -168,18 +167,18 @@
          if (this.isInvulnerableTo(p_361743_, p_361865_)) {
              return false;
          } else if (this.isDeadOrDying()) {
-@@ -1244,6 +_,10 @@
+@@ -1277,6 +_,10 @@
                          }
  
                          float f = blocksattacks.resolveBlockedDamage(p_392511_, p_394545_, d0);
 +                        var ev = net.minecraftforge.event.ForgeEventFactory.onShieldBlock(this, p_392511_, f, itemstack);
-+                        if (ev.isCanceled()) return 0.0F;
++                        if (ev == null) return 0.0F;
 +                        f = ev.getBlockedDamage();
 +                        if (ev.shieldTakesDamage())
                          blocksattacks.hurtBlockingItem(this.level(), itemstack, this, this.getUsedItemHand(), f);
                          if (!p_392511_.is(DamageTypeTags.IS_PROJECTILE) && p_392511_.getDirectEntity() instanceof LivingEntity livingentity) {
                              this.blockUsingItem(p_396198_, livingentity);
-@@ -1278,7 +_,7 @@
+@@ -1311,7 +_,7 @@
          Entity entity = p_378258_.getEntity();
          if (entity instanceof Player player) {
              this.setLastHurtByPlayer(player, 100);
@@ -188,7 +187,7 @@
              if (wolf.getOwnerReference() != null) {
                  this.setLastHurtByPlayer(wolf.getOwnerReference().getUUID(), 100);
              } else {
-@@ -1308,7 +_,7 @@
+@@ -1341,7 +_,7 @@
              for (InteractionHand interactionhand : InteractionHand.values()) {
                  ItemStack itemstack1 = this.getItemInHand(interactionhand);
                  deathprotection = itemstack1.get(DataComponents.DEATH_PROTECTION);
@@ -197,7 +196,7 @@
                      itemstack = itemstack1.copy();
                      itemstack1.shrink(1);
                      break;
-@@ -1372,6 +_,7 @@
+@@ -1405,6 +_,7 @@
      }
  
      public void die(DamageSource p_21014_) {
@@ -205,7 +204,7 @@
          if (!this.isRemoved() && !this.dead) {
              Entity entity = p_21014_.getEntity();
              LivingEntity livingentity = this.getKillCredit();
-@@ -1407,10 +_,10 @@
+@@ -1440,10 +_,10 @@
          if (this.level() instanceof ServerLevel serverlevel) {
              boolean flag = false;
              if (p_21269_ instanceof WitherBoss) {
@@ -218,7 +217,7 @@
                          this.level().setBlock(blockpos, blockstate, 3);
                          flag = true;
                      }
-@@ -1425,6 +_,7 @@
+@@ -1458,6 +_,7 @@
      }
  
      protected void dropAllDeathLoot(ServerLevel p_342160_, DamageSource p_21192_) {
@@ -226,7 +225,7 @@
          boolean flag = this.lastHurtByPlayerMemoryTime > 0;
          if (this.shouldDropLoot() && p_342160_.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
              this.dropFromLootTable(p_342160_, p_21192_, flag);
-@@ -1433,6 +_,11 @@
+@@ -1466,6 +_,11 @@
  
          this.dropEquipment(p_342160_);
          this.dropExperience(p_342160_, p_21192_.getEntity());
@@ -238,7 +237,7 @@
      }
  
      protected void dropEquipment(ServerLevel p_365823_) {
-@@ -1440,7 +_,8 @@
+@@ -1473,7 +_,8 @@
  
      protected void dropExperience(ServerLevel p_370040_, @Nullable Entity p_342525_) {
          if (!this.wasExperienceConsumed() && (this.isAlwaysExperienceDropper() || this.lastHurtByPlayerMemoryTime > 0 && this.shouldDropExperience() && p_370040_.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT))) {
@@ -248,19 +247,19 @@
          }
      }
  
-@@ -1517,6 +_,11 @@
+@@ -1550,6 +_,11 @@
      }
  
      public void knockback(double p_147241_, double p_147242_, double p_147243_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingKnockBack(this, (float) p_147241_, p_147242_, p_147243_);
-+        if (event.isCanceled()) return;
++        if (event == null) return;
 +        p_147241_ = event.getStrength();
 +        p_147242_ = event.getRatioX();
 +        p_147243_ = event.getRatioZ();
          p_147241_ *= 1.0 - this.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
          if (!(p_147241_ <= 0.0)) {
              this.hasImpulse = true;
-@@ -1594,6 +_,13 @@
+@@ -1627,6 +_,13 @@
          } else {
              BlockPos blockpos = this.blockPosition();
              BlockState blockstate = this.getInBlockState();
@@ -274,18 +273,18 @@
              if (blockstate.is(BlockTags.CLIMBABLE)) {
                  this.lastClimbablePos = Optional.of(blockpos);
                  return true;
-@@ -1648,6 +_,10 @@
+@@ -1681,6 +_,10 @@
  
      @Override
      public boolean causeFallDamage(double p_393354_, float p_147187_, DamageSource p_147189_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_393354_, p_147187_);
-+        if (event.isCanceled()) return false;
++        if (event == null) return false;
 +        p_393354_ = event.getDistance();
 +        p_147187_ = event.getDamageMultiplier();
          boolean flag = super.causeFallDamage(p_393354_, p_147187_, p_147189_);
          int i = this.calculateFallDamage(p_393354_, p_147187_);
          if (i > 0) {
-@@ -1678,9 +_,10 @@
+@@ -1711,9 +_,10 @@
              int i = Mth.floor(this.getX());
              int j = Mth.floor(this.getY() - 0.2F);
              int k = Mth.floor(this.getZ());
@@ -298,7 +297,7 @@
                  this.playSound(soundtype.getFallSound(), soundtype.getVolume() * 0.5F, soundtype.getPitch() * 0.75F);
              }
          }
-@@ -1738,9 +_,9 @@
+@@ -1771,9 +_,9 @@
                  float f2 = f1 - p_21194_;
                  if (f2 > 0.0F && f2 < 3.4028235E37F) {
                      if (this instanceof ServerPlayer) {
@@ -310,7 +309,7 @@
                      }
                  }
              }
-@@ -1768,6 +_,8 @@
+@@ -1801,6 +_,8 @@
  
      protected void actuallyHurt(ServerLevel p_365124_, DamageSource p_21240_, float p_21241_) {
          if (!this.isInvulnerableTo(p_365124_, p_21240_)) {
@@ -319,7 +318,7 @@
              p_21241_ = this.getDamageAfterArmorAbsorb(p_21240_, p_21241_);
              p_21241_ = this.getDamageAfterMagicAbsorb(p_21240_, p_21241_);
              float f1 = Math.max(p_21241_ - this.getAbsorptionAmount(), 0.0F);
-@@ -1777,6 +_,7 @@
+@@ -1810,6 +_,7 @@
                  serverplayer.awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(f * 10.0F));
              }
  
@@ -327,7 +326,7 @@
              if (f1 != 0.0F) {
                  this.getCombatTracker().recordDamage(p_21240_, f1);
                  this.setHealth(this.getHealth() - f1);
-@@ -1836,6 +_,8 @@
+@@ -1869,6 +_,8 @@
      }
  
      public void swing(InteractionHand p_21012_, boolean p_21013_) {
@@ -336,7 +335,7 @@
          if (!this.swinging || this.swingTime >= this.getCurrentSwingDuration() / 2 || this.swingTime < 0) {
              this.swingTime = -1;
              this.swinging = true;
-@@ -1960,9 +_,10 @@
+@@ -1993,9 +_,10 @@
      }
  
      private void swapHandItems() {
@@ -344,13 +343,13 @@
 -        this.setItemSlot(EquipmentSlot.OFFHAND, this.getItemBySlot(EquipmentSlot.MAINHAND));
 -        this.setItemSlot(EquipmentSlot.MAINHAND, itemstack);
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingSwapHandItems(this);
-+        if (event.isCanceled()) return;
++        if (event == null) return;
 +        this.setItemSlot(EquipmentSlot.OFFHAND, event.getItemSwappedToOffHand());
 +        this.setItemSlot(EquipmentSlot.MAINHAND, event.getItemSwappedToMainHand());
      }
  
      @Override
-@@ -2168,15 +_,18 @@
+@@ -2201,15 +_,18 @@
              }
  
              this.hasImpulse = true;
@@ -371,7 +370,7 @@
      }
  
      protected float getWaterSlowDown() {
-@@ -2199,8 +_,8 @@
+@@ -2232,8 +_,8 @@
  
      public void travel(Vec3 p_21280_) {
          FluidState fluidstate = this.level().getFluidState(this.blockPosition());
@@ -382,7 +381,7 @@
          } else if (this.isFallFlying()) {
              this.travelFallFlying(p_21280_);
          } else {
-@@ -2210,7 +_,7 @@
+@@ -2263,7 +_,7 @@
  
      private void travelInAir(Vec3 p_362087_) {
          BlockPos blockpos = this.getBlockPosBelowThatAffectsMyMovement();
@@ -391,7 +390,7 @@
          float f1 = f * 0.91F;
          Vec3 vec3 = this.handleRelativeFrictionAndCalculateMovement(p_362087_, f);
          double d0 = vec3.y;
-@@ -2233,10 +_,18 @@
+@@ -2286,10 +_,18 @@
          }
      }
  
@@ -411,7 +410,7 @@
          if (this.isInWater()) {
              float f = this.isSprinting() ? 0.9F : this.getWaterSlowDown();
              float f1 = 0.02F;
-@@ -2254,6 +_,7 @@
+@@ -2307,6 +_,7 @@
                  f = 0.96F;
              }
  
@@ -419,7 +418,7 @@
              this.moveRelative(f1, p_362114_);
              this.move(MoverType.SELF, this.getDeltaMovement());
              Vec3 vec3 = this.getDeltaMovement();
-@@ -2412,7 +_,7 @@
+@@ -2465,7 +_,7 @@
              double d0 = Mth.clamp(p_21298_.x, -0.15F, 0.15F);
              double d1 = Mth.clamp(p_21298_.z, -0.15F, 0.15F);
              double d2 = Math.max(p_21298_.y, -0.15F);
@@ -428,7 +427,7 @@
                  d2 = 0.0;
              }
  
-@@ -2445,6 +_,7 @@
+@@ -2498,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -436,7 +435,7 @@
          super.tick();
          this.updatingUsingItem();
          this.updateSwimAmount();
-@@ -2576,6 +_,7 @@
+@@ -2629,6 +_,7 @@
              ItemStack itemstack = this.lastEquipmentItems.get(equipmentslot);
              ItemStack itemstack1 = this.getItemBySlot(equipmentslot);
              if (this.equipmentHasChanged(itemstack, itemstack1)) {
@@ -444,7 +443,7 @@
                  if (map == null) {
                      map = Maps.newEnumMap(EquipmentSlot.class);
                  }
-@@ -2711,6 +_,10 @@
+@@ -2764,6 +_,10 @@
          profilerfiller.push("jump");
          if (this.jumping && this.isAffectedByFluids()) {
              double d3;
@@ -455,7 +454,7 @@
              if (this.isInLava()) {
                  d3 = this.getFluidHeight(FluidTags.LAVA);
              } else {
-@@ -2721,15 +_,22 @@
+@@ -2774,15 +_,22 @@
              double d4 = this.getFluidJumpThreshold();
              if (!flag || this.onGround() && !(d3 > d4)) {
                  if (!this.isInLava() || this.onGround() && !(d3 > d4)) {
@@ -480,7 +479,7 @@
              }
          } else {
              this.noJumpDelay = 0;
-@@ -3041,8 +_,11 @@
+@@ -3098,8 +_,11 @@
  
      private void updatingUsingItem() {
          if (this.isUsingItem()) {
@@ -493,7 +492,7 @@
                  this.updateUsingItem(this.useItem);
              } else {
                  this.stopUsingItem();
-@@ -3086,8 +_,12 @@
+@@ -3143,8 +_,12 @@
      }
  
      protected void updateUsingItem(ItemStack p_147201_) {
@@ -507,7 +506,7 @@
              this.completeUsingItem();
          }
      }
-@@ -3115,8 +_,10 @@
+@@ -3172,8 +_,10 @@
      public void startUsingItem(InteractionHand p_21159_) {
          ItemStack itemstack = this.getItemInHand(p_21159_);
          if (!itemstack.isEmpty() && !this.isUsingItem()) {
@@ -519,7 +518,7 @@
              if (!this.level().isClientSide) {
                  this.setLivingEntityFlag(1, true);
                  this.setLivingEntityFlag(2, p_21159_ == InteractionHand.OFF_HAND);
-@@ -3168,6 +_,9 @@
+@@ -3225,6 +_,9 @@
              vec31 = vec31.xRot(-this.getXRot() * (float) (Math.PI / 180.0));
              vec31 = vec31.yRot(-this.getYRot() * (float) (Math.PI / 180.0));
              vec31 = vec31.add(this.getX(), this.getEyeY(), this.getZ());
@@ -529,7 +528,7 @@
              this.level()
                  .addParticle(
                      new ItemParticleOption(ParticleTypes.ITEM, p_21061_),
-@@ -3188,7 +_,9 @@
+@@ -3245,7 +_,9 @@
                  this.releaseUsingItem();
              } else {
                  if (!this.useItem.isEmpty() && this.isUsingItem()) {
@@ -539,7 +538,7 @@
                      if (itemstack != this.useItem) {
                          this.setItemInHand(interactionhand, itemstack);
                      }
-@@ -3218,7 +_,13 @@
+@@ -3275,7 +_,13 @@
          ItemStack itemstack = this.getItemInHand(this.getUsedItemHand());
          if (!this.useItem.isEmpty() && ItemStack.isSameItem(itemstack, this.useItem)) {
              this.useItem = itemstack;
@@ -553,7 +552,7 @@
              if (this.useItem.useOnRelease()) {
                  this.updatingUsingItem();
              }
-@@ -3228,6 +_,7 @@
+@@ -3285,6 +_,7 @@
      }
  
      public void stopUsingItem() {
@@ -561,7 +560,7 @@
          if (!this.level().isClientSide) {
              boolean flag = this.isUsingItem();
              this.setLivingEntityFlag(1, false);
-@@ -3396,8 +_,8 @@
+@@ -3453,8 +_,8 @@
          }
  
          BlockState blockstate = this.level().getBlockState(p_21141_);
@@ -572,12 +571,12 @@
          }
  
          this.setPose(Pose.SLEEPING);
-@@ -3412,15 +_,15 @@
+@@ -3469,15 +_,15 @@
      }
  
      private boolean checkBedExists() {
--        return this.getSleepingPos().map(p_374931_ -> this.level().getBlockState(p_374931_).getBlock() instanceof BedBlock).orElse(false);
-+        return this.getSleepingPos().map(p_341272_ -> net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_341272_)).orElse(false);
+-        return this.getSleepingPos().map(p_405281_ -> this.level().getBlockState(p_405281_).getBlock() instanceof BedBlock).orElse(false);
++        return this.getSleepingPos().map(p_405281_ -> net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, p_405281_)).orElse(false);
      }
  
      public void stopSleeping() {
@@ -591,7 +590,7 @@
                  Vec3 vec31 = BedBlock.findStandUpPosition(this.getType(), this.level(), p_261435_, direction, this.getYRot()).orElseGet(() -> {
                      BlockPos blockpos = p_261435_.above();
                      return new Vec3(blockpos.getX() + 0.5, blockpos.getY() + 0.1, blockpos.getZ() + 0.5);
-@@ -3441,7 +_,9 @@
+@@ -3498,7 +_,9 @@
      @Nullable
      public Direction getBedOrientation() {
          BlockPos blockpos = this.getSleepingPos().orElse(null);
@@ -602,7 +601,7 @@
      }
  
      @Override
-@@ -3450,7 +_,7 @@
+@@ -3507,7 +_,7 @@
      }
  
      public ItemStack getProjectile(ItemStack p_21272_) {
@@ -611,7 +610,7 @@
      }
  
      private static byte entityEventForEquipmentBreak(EquipmentSlot p_21267_) {
-@@ -3506,6 +_,8 @@
+@@ -3563,6 +_,8 @@
      }
  
      public final EquipmentSlot getEquipmentSlotForItem(ItemStack p_147234_) {
@@ -620,7 +619,7 @@
          Equippable equippable = p_147234_.get(DataComponents.EQUIPPABLE);
          return equippable != null && this.canUseSlot(equippable.slot()) ? equippable.slot() : EquipmentSlot.MAINHAND;
      }
-@@ -3641,5 +_,42 @@
+@@ -3726,5 +_,42 @@
      }
  
      public record Fallsounds(SoundEvent small, SoundEvent big) {

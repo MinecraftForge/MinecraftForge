@@ -10,8 +10,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ICapabilityProvider
-{
+public interface ICapabilityProvider {
     /**
      * Retrieves the Optional handler for the capability requested on the specific side.
      * The return value <strong>CAN</strong> be the same for multiple faces.

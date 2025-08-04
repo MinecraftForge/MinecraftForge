@@ -108,7 +108,7 @@
      }
  
      public boolean hasDynamicShape() {
-@@ -556,5 +_,74 @@
+@@ -556,5 +_,78 @@
          public int hashCode() {
              return System.identityHashCode(this.first) * 31 + System.identityHashCode(this.second);
          }
@@ -148,18 +148,22 @@
 +            return state.is(Blocks.CACTUS) || state.is(BlockTags.SAND);
 +        } else if (plant.getBlock() == Blocks.SUGAR_CANE && this == Blocks.SUGAR_CANE) {
 +            return true;
-+        } else if (plantable instanceof BushBlock bush && bush.mayPlaceOn(state, world, pos)) {
++        } else if (plantable instanceof VegetationBlock veg && veg.mayPlaceOn(state, world, pos)) {
 +            return true;
 +        } else if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {
-+             return state.is(BlockTags.SAND) || this == Blocks.TERRACOTTA || this instanceof GlazedTerracottaBlock;
++             return state.is(BlockTags.SAND) || state.is(BlockTags.TERRACOTTA) || state.is(BlockTags.DIRT);
 +        } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
 +             return this == Blocks.SOUL_SAND;
++        } else if (net.minecraftforge.common.PlantType.FUNGUS.equals(type)) {
++            return state.is(BlockTags.NYLIUM) || this == Blocks.MYCELIUM || this == Blocks.SOUL_SOIL;
 +        } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
 +             return state.is(Blocks.FARMLAND);
 +        } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
-+             return state.isFaceSturdy(world, pos, Direction.UP);
++             return state.isFaceSturdy(world, pos, Direction.UP) && state.canOcclude();
 +        } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
-+             return state.is(BlockTags.DIRT) || this == Blocks.FARMLAND;
++            return state.is(BlockTags.DIRT) || this == Blocks.FARMLAND;
++        } else if (net.minecraftforge.common.PlantType.MOIST.equals(type)) {
++            return state.is(BlockTags.DIRT) || this == Blocks.CLAY || this == Blocks.FARMLAND;
 +        } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
 +             return (state.is(Blocks.WATER) || state.getBlock() instanceof IceBlock) && world.getFluidState(pos.relative(facing)).isEmpty();
 +        } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {

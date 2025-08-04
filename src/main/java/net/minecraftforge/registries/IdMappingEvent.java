@@ -7,11 +7,12 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -25,20 +26,17 @@ import java.util.Map;
  * Note: you cannot change the IDs that have been allocated, but you might want to use
  * this event to update caches or other in-mod artifacts that might be impacted by an ID
  * change.
- * <p>
- * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
  */
-public class IdMappingEvent extends Event
-{
-    public static class ModRemapping
-    {
+public final class IdMappingEvent extends MutableEvent {
+    public static final EventBus<IdMappingEvent> BUS = EventBus.create(IdMappingEvent.class);
+
+    public static final class ModRemapping {
         public final ResourceLocation registry;
         public final ResourceLocation key;
         public final int oldId;
         public final int newId;
 
-        private ModRemapping(ResourceLocation registry, ResourceLocation key, int oldId, int newId)
-        {
+        private ModRemapping(ResourceLocation registry, ResourceLocation key, int oldId, int newId) {
             this.registry = registry;
             this.key = key;
             this.oldId = oldId;
@@ -53,13 +51,11 @@ public class IdMappingEvent extends Event
 
     private final boolean isFrozen;
 
-    public IdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, IdRemapping>> remaps, boolean isFrozen)
-    {
+    public IdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, IdRemapping>> remaps, boolean isFrozen) {
         this.isFrozen = isFrozen;
         this.remaps = Maps.newHashMap();
-        remaps.forEach((name, rm) ->
-        {
-            List<ModRemapping> tmp = Lists.newArrayList();
+        remaps.forEach((name, rm) -> {
+            List<ModRemapping> tmp = new ArrayList<>();
             rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value.currId, value.newId)));
             tmp.sort(Comparator.comparingInt(o -> o.newId));
             this.remaps.put(name, ImmutableList.copyOf(tmp));
@@ -67,18 +63,15 @@ public class IdMappingEvent extends Event
         this.keys = ImmutableSet.copyOf(this.remaps.keySet());
     }
 
-    public ImmutableSet<ResourceLocation> getRegistries()
-    {
+    public ImmutableSet<ResourceLocation> getRegistries() {
         return this.keys;
     }
 
-    public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry)
-    {
+    public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry) {
         return this.remaps.get(registry);
     }
 
-    public boolean isFrozen()
-    {
+    public boolean isFrozen() {
         return isFrozen;
     }
 }

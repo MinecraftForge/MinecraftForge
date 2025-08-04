@@ -5,10 +5,12 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event is called when a player collides with a EntityItem on the ground.
@@ -20,20 +22,28 @@ import net.minecraft.world.entity.player.Player;
  *
  *  setResult(ALLOW) is the same as the old setHandled()
  */
-@Cancelable
-@Event.HasResult
-public class EntityItemPickupEvent extends PlayerEvent
-{
-    private final ItemEntity item;
+public final class EntityItemPickupEvent extends PlayerEvent implements Cancellable, HasResult {
+    public static final CancellableEventBus<EntityItemPickupEvent> BUS = CancellableEventBus.create(EntityItemPickupEvent.class);
 
-    public EntityItemPickupEvent(Player player, ItemEntity item)
-    {
+    private final ItemEntity item;
+    private Result result = Result.DEFAULT;
+
+    public EntityItemPickupEvent(Player player, ItemEntity item) {
         super(player);
         this.item = item;
     }
 
-    public ItemEntity getItem()
-    {
+    public ItemEntity getItem() {
         return item;
+    }
+
+    @Override
+    public Result getResult() {
+        return this.result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        this.result = result;
     }
 }

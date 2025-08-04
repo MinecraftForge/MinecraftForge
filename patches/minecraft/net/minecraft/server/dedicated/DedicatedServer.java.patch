@@ -63,7 +63,7 @@
  
      @Override
      public void stopServer() {
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
++        net.minecraftforge.event.GameShuttingDownEvent.BUS.post(new net.minecraftforge.event.GameShuttingDownEvent());
          super.stopServer();
 +        if (this.dediLanPinger != null) {
 +            this.dediLanPinger.interrupt();

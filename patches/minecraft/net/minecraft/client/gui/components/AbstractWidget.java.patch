@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/AbstractWidget.java
 +++ b/net/minecraft/client/gui/components/AbstractWidget.java
-@@ -250,6 +_,25 @@
+@@ -236,6 +_,25 @@
          this.focused = p_93693_;
      }
  
@@ -11,7 +11,7 @@
 +
 +    public int getFGColor() {
 +        if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
-+        return this.active ? 16777215 : 10526880; // White : Light Grey
++        return net.minecraft.util.ARGB.color(this.alpha, this.active ? -1 : -6250336); // White : Light Grey
 +    }
 +
 +    public void setFGColor(int color) {

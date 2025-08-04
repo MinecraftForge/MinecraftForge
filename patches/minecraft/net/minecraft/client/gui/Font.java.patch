@@ -7,5 +7,5 @@
 -public class Font {
 +public class Font implements net.minecraftforge.client.extensions.IForgeFont {
      private static final float EFFECT_DEPTH = 0.01F;
-     public static final float SHADOW_DEPTH = 0.03F;
-     public static final int NO_SHADOW = 0;
+     private static final float OVER_EFFECT_DEPTH = 0.01F;
+     private static final float UNDER_EFFECT_DEPTH = -0.01F;

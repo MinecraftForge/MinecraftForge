@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,9 @@ import org.jetbrains.annotations.NotNull;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ArrowNockEvent extends PlayerEvent {
+public final class ArrowNockEvent extends PlayerEvent {
+    public static final EventBus<ArrowNockEvent> BUS = EventBus.create(ArrowNockEvent.class);
+
     private final ItemStack bow;
     private final InteractionHand hand;
     private final Level level;

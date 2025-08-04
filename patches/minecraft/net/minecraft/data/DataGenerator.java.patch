@@ -9,7 +9,7 @@
      public DataGenerator(Path p_251724_, WorldVersion p_250554_, boolean p_251323_) {
          this.rootOutputFolder = p_251724_;
 @@ -38,6 +_,7 @@
-                 LOGGER.debug("Generator {} already run for version {}", p_254418_, this.version.getName());
+                 LOGGER.debug("Generator {} already run for version {}", p_254418_, this.version.name());
              } else {
                  LOGGER.info("Starting provider: {}", p_254418_);
 +                net.minecraftforge.fml.StartupMessageManager.addModMessage("Generating: " + p_254418_);

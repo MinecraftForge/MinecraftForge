@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -142,7 +_,7 @@
+@@ -171,7 +_,7 @@
      }
  
      public static int block(int p_109884_) {

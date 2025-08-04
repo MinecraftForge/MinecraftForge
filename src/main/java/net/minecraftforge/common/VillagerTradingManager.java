@@ -46,7 +46,7 @@ public class VillagerTradingManager {
 
     /** Posts the WandererTradesEvent. */
     private static void postWandererEvent() {
-        var event = MinecraftForge.EVENT_BUS.fire(new WandererTradesEvent(WANDERER_TRADES));
+        var event = WandererTradesEvent.BUS.fire(new WandererTradesEvent(WANDERER_TRADES));
         VillagerTrades.WANDERING_TRADER_TRADES.clear();
         for (var pool : event.getPools())
             VillagerTrades.WANDERING_TRADER_TRADES.add(Pair.of(pool.getEntries().toArray(ItemListing[]::new), pool.getRolls()));
@@ -65,7 +65,7 @@ public class VillagerTradingManager {
             for (var entry : trades.int2ObjectEntrySet())
                 Arrays.stream(entry.getValue()).forEach(mutableTrades.get(entry.getIntKey())::add);
 
-            MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
+            VillagerTradesEvent.BUS.post(new VillagerTradesEvent(mutableTrades, prof));
             Int2ObjectMap<ItemListing[]> newTrades = new Int2ObjectOpenHashMap<>();
             for (var entry : mutableTrades.int2ObjectEntrySet())
                 newTrades.put(entry.getIntKey(), entry.getValue().toArray(new ItemListing[0]));

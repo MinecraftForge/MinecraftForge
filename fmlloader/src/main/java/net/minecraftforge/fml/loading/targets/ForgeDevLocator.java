@@ -96,14 +96,14 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
 
             // Find resource directories for every mod in this group
             var paths = new LinkedHashSet<Path>();
-            for (var modid : modids) {
+            for (var modid : modids.stream().sorted().toList()) {
                 var rsc = path.resolve(modid);
                 if (Files.exists(rsc))
                     paths.add(rsc);
             }
 
             var root = memory.getPath(modids.iterator().next()); // use the first modid as our root
-            buildModsToml(paths, modids, root);
+            buildModsToml(paths, modids, root, pkg.startsWith("net/minecraftforge/debug/client/"));
             buildPackMeta(paths, root);
             moveModuleInfo(paths, root);
 
@@ -187,7 +187,7 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
     }
 
     // Builds or update the mods.toml file for all @Mods in this package
-    private static void buildModsToml(Set<Path> resources, Set<String> modids, Path root) {
+    private static void buildModsToml(Set<Path> resources, Set<String> modids, Path root, boolean clientOnly) {
         var toml = resources.stream()
             .map(p -> p.resolve(MODS_TOML))
             .filter(Files::exists)
@@ -205,7 +205,8 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
         var defaults = Map.of(
             "modLoader", "javafml",
             "loaderVersion", "[0,)",
-            "license", "Doesnt fucking matter"
+            "license", "Doesnt fucking matter",
+            "clientSideOnly", clientOnly
         );
 
         for (var key : defaults.keySet()) {

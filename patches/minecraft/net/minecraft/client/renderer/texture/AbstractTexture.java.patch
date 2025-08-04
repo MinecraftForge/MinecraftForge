@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/AbstractTexture.java
 +++ b/net/minecraft/client/renderer/texture/AbstractTexture.java
-@@ -30,6 +_,8 @@
+@@ -27,6 +_,8 @@
          if (this.texture == null) {
              throw new IllegalStateException("Texture does not exist, can't get change its filter before something initializes it");
          } else {
@@ -9,9 +9,9 @@
              this.texture.setTextureFilter(p_117961_ ? FilterMode.LINEAR : FilterMode.NEAREST, p_117962_);
          }
      }
-@@ -40,6 +_,19 @@
-             this.texture.close();
-             this.texture = null;
+@@ -50,6 +_,19 @@
+             this.textureView.close();
+             this.textureView = null;
          }
 +    }
 +

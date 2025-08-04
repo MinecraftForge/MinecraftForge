@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -203,4 +_,12 @@
+@@ -206,4 +_,12 @@
      private static TagKey<Block> create(String p_203847_) {
          return TagKey.create(Registries.BLOCK, ResourceLocation.withDefaultNamespace(p_203847_));
      }

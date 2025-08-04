@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
-@@ -266,21 +_,28 @@
+@@ -265,21 +_,28 @@
      }
  
      protected void convertToZombieType(EntityType<? extends Zombie> p_34311_) {
@@ -8,7 +8,7 @@
          this.convertTo(
              p_34311_,
              ConversionParams.single(this, true, true),
--            p_375145_ -> p_375145_.handleAttributes(p_375145_.level().getCurrentDifficultyAt(p_375145_.blockPosition()).getSpecialMultiplier())
+-            p_405517_ -> p_405517_.handleAttributes(p_405517_.level().getCurrentDifficultyAt(p_405517_.blockPosition()).getSpecialMultiplier())
 +            p_375145_ -> {
 +                p_375145_.handleAttributes(p_375145_.level().getCurrentDifficultyAt(p_375145_.blockPosition()).getSpecialMultiplier());
 +                net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, p_375145_);
@@ -30,7 +30,7 @@
              if (!this.isSilent()) {
                  p_369430_.levelEvent(null, 1026, this.blockPosition(), 0);
              }
-@@ -302,19 +_,26 @@
+@@ -301,19 +_,26 @@
                  livingentity = (LivingEntity)p_363403_.getEntity();
              }
  

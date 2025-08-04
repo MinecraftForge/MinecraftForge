@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/BlockPos.java
++++ b/net/minecraft/core/BlockPos.java
+@@ -31,7 +_,7 @@
+ import org.slf4j.Logger;
+ 
+ @Immutable
+-public class BlockPos extends Vec3i {
++public class BlockPos extends Vec3i implements net.minecraftforge.common.extensions.IForgeBlockPos {
+     public static final Codec<BlockPos> CODEC = Codec.INT_STREAM
+         .<BlockPos>comapFlatMap(
+             p_325638_ -> Util.fixedSize(p_325638_, 3).map(p_175270_ -> new BlockPos(p_175270_[0], p_175270_[1], p_175270_[2])),

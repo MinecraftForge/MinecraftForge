@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -114,7 +_,6 @@
+@@ -112,7 +_,6 @@
  
      @Override
      public void setTarget(@Nullable LivingEntity p_32537_) {
@@ -8,7 +8,7 @@
          AttributeInstance attributeinstance = this.getAttribute(Attributes.MOVEMENT_SPEED);
          if (p_32537_ == null) {
              this.targetChangeTime = 0;
-@@ -128,6 +_,7 @@
+@@ -126,6 +_,7 @@
                  attributeinstance.addTransientModifier(SPEED_MODIFIER_ATTACKING);
              }
          }
@@ -16,7 +16,7 @@
      }
  
      @Override
-@@ -203,7 +_,7 @@
+@@ -199,7 +_,7 @@
      }
  
      boolean isBeingStaredBy(Player p_368759_) {
@@ -25,19 +25,19 @@
      }
  
      @Override
-@@ -281,8 +_,10 @@
+@@ -277,8 +_,10 @@
          boolean flag = blockstate.blocksMotion();
          boolean flag1 = blockstate.getFluidState().is(FluidTags.WATER);
          if (flag && !flag1) {
-+            net.minecraftforge.event.entity.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_32544_, p_32545_, p_32546_);
-+            if (event.isCanceled()) return false;
++            var event = net.minecraftforge.event.ForgeEventFactory.onEnderManTeleport(this, p_32544_, p_32545_, p_32546_);
++            if (event == null) return false;
              Vec3 vec3 = this.position();
 -            boolean flag2 = this.randomTeleport(p_32544_, p_32545_, p_32546_, true);
 +            boolean flag2 = this.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
              if (flag2) {
                  this.level().gameEvent(GameEvent.TELEPORT, vec3, GameEvent.Context.of(this));
                  if (!this.isSilent()) {
-@@ -437,7 +_,7 @@
+@@ -433,7 +_,7 @@
              if (this.enderman.getCarriedBlock() == null) {
                  return false;
              } else {
@@ -46,7 +46,7 @@
              }
          }
  
-@@ -455,7 +_,7 @@
+@@ -451,7 +_,7 @@
              BlockState blockstate2 = this.enderman.getCarriedBlock();
              if (blockstate2 != null) {
                  blockstate2 = Block.updateFromNeighbourShapes(blockstate2, this.enderman.level(), blockpos);
@@ -55,7 +55,7 @@
                      level.setBlock(blockpos, blockstate2, 3);
                      level.gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this.enderman, blockstate2));
                      this.enderman.setCarriedBlock(null);
-@@ -467,6 +_,7 @@
+@@ -463,6 +_,7 @@
              return p_32562_.isAir()
                  && !p_32563_.isAir()
                  && !p_32563_.is(Blocks.BEDROCK)
@@ -63,7 +63,7 @@
                  && p_32563_.isCollisionShapeFullBlock(p_32559_, p_32564_)
                  && p_32561_.canSurvive(p_32559_, p_32560_)
                  && p_32559_.getEntities(this.enderman, AABB.unitCubeFromLowerCorner(Vec3.atLowerCornerOf(p_32560_))).isEmpty();
-@@ -576,7 +_,7 @@
+@@ -572,7 +_,7 @@
              if (this.enderman.getCarriedBlock() != null) {
                  return false;
              } else {

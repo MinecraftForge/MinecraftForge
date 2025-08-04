@@ -22,7 +22,7 @@ public class ModLoadSortingBefore extends BaseTestMod {
     static boolean hasInit = false;
 
     public ModLoadSortingBefore(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, false);
         try {
             Thread.sleep(Duration.ofSeconds(1));
         } catch (InterruptedException e) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -197,7 +_,7 @@
+@@ -191,7 +_,7 @@
      }
  
      public void onClose() {
@@ -9,37 +9,37 @@
      }
  
      protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(T p_169406_) {
-@@ -311,8 +_,10 @@
+@@ -339,8 +_,10 @@
          this.width = p_96608_;
          this.height = p_96609_;
          if (!this.initialized) {
-+            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget)))
++            if (!net.minecraftforge.client.event.ScreenEvent.Init.Pre.BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget)))
              this.init();
              this.setInitialFocus();
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
++            net.minecraftforge.client.event.ScreenEvent.Init.Post.BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
          } else {
              this.repositionElements();
          }
-@@ -325,8 +_,10 @@
+@@ -353,8 +_,10 @@
      protected void rebuildWidgets() {
          this.clearWidgets();
          this.clearFocus();
-+        if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget)))
++        if (!net.minecraftforge.client.event.ScreenEvent.Init.Pre.BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Pre(this, this.children, this::addEventWidget, this::removeWidget)))
          this.init();
          this.setInitialFocus();
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
++        net.minecraftforge.client.event.ScreenEvent.Init.Post.BUS.post(new net.minecraftforge.client.event.ScreenEvent.Init.Post(this, this.children, this::addEventWidget, this::removeWidget));
      }
  
-     @Override
-@@ -353,6 +_,7 @@
+     protected void fadeWidgets(float p_409453_) {
+@@ -389,6 +_,7 @@
  
-         this.renderBlurredBackground();
+         this.renderBlurredBackground(p_283688_);
          this.renderMenuBackground(p_283688_);
 +        net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderScreenBackground(this, p_283688_);
      }
  
-     protected void renderBlurredBackground() {
-@@ -453,6 +_,19 @@
+     protected void renderBlurredBackground(GuiGraphics p_407253_) {
+@@ -492,6 +_,19 @@
      }
  
      public void onFilesDrop(List<Path> p_96591_) {

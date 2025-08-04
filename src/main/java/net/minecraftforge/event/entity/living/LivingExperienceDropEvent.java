@@ -7,7 +7,8 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,29 +16,26 @@ import org.jetbrains.annotations.Nullable;
  * the amount of experience points dropped or completely prevent dropping of experience
  * by canceling the event.
  */
-@Cancelable
-public class LivingExperienceDropEvent extends LivingEvent
-{
+public final class LivingExperienceDropEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingExperienceDropEvent> BUS = CancellableEventBus.create(LivingExperienceDropEvent.class);
+
     @Nullable private final Player attackingPlayer;
     private final int originalExperiencePoints;
 
     private int droppedExperiencePoints;
 
-    public LivingExperienceDropEvent(LivingEntity entity, @Nullable Player attackingPlayer, int originalExperience)
-    {
+    public LivingExperienceDropEvent(LivingEntity entity, @Nullable Player attackingPlayer, int originalExperience) {
         super(entity);
 
         this.attackingPlayer = attackingPlayer;
         this.originalExperiencePoints = this.droppedExperiencePoints = originalExperience;
     }
 
-    public int getDroppedExperience()
-    {
+    public int getDroppedExperience() {
         return droppedExperiencePoints;
     }
 
-    public void setDroppedExperience(int droppedExperience)
-    {
+    public void setDroppedExperience(int droppedExperience) {
         this.droppedExperiencePoints = droppedExperience;
     }
 
@@ -45,13 +43,11 @@ public class LivingExperienceDropEvent extends LivingEvent
      * @return The player that last attacked the entity and thus caused the experience. This can be null, in case the player has since logged out.
      */
     @Nullable
-    public Player getAttackingPlayer()
-    {
+    public Player getAttackingPlayer() {
         return attackingPlayer;
     }
 
-    public int getOriginalExperience()
-    {
+    public int getOriginalExperience() {
         return originalExperiencePoints;
     }
 }

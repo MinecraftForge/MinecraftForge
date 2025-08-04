@@ -27,8 +27,11 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -37,7 +40,9 @@ import org.jetbrains.annotations.UnmodifiableView;
  * <p>
  * All children of this event are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}.
  */
-public class LevelEvent extends Event {
+public class LevelEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<LevelEvent> BUS = EventBus.create(LevelEvent.class);
+
     private final LevelAccessor level;
 
     public LevelEvent(LevelAccessor level) {
@@ -61,7 +66,9 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Load extends LevelEvent {
+    public static final class Load extends LevelEvent {
+        public static final EventBus<Load> BUS = EventBus.create(Load.class);
+
         public Load(LevelAccessor level) { super(level); }
     }
 
@@ -77,7 +84,9 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * on both logical sides.
      **/
-    public static class Unload extends LevelEvent {
+    public static final class Unload extends LevelEvent {
+        public static final EventBus<Unload> BUS = EventBus.create(Unload.class);
+
         public Unload(LevelAccessor level) { super(level); }
     }
 
@@ -91,7 +100,9 @@ public class LevelEvent extends Event {
      * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
-    public static class Save extends LevelEvent {
+    public static final class Save extends LevelEvent {
+        public static final EventBus<Save> BUS = EventBus.create(Save.class);
+
         public Save(LevelAccessor level) { super(level); }
     }
 
@@ -107,8 +118,9 @@ public class LevelEvent extends Event {
      *
      * @see ServerLevelData#isInitialized()
      */
-    @Cancelable
-    public static class CreateSpawnPosition extends LevelEvent {
+    public static final class CreateSpawnPosition extends LevelEvent implements Cancellable {
+        public static final CancellableEventBus<CreateSpawnPosition> BUS = CancellableEventBus.create(CreateSpawnPosition.class);
+
         private final ServerLevelData settings;
 
         public CreateSpawnPosition(LevelAccessor level, ServerLevelData settings) {
@@ -132,8 +144,9 @@ public class LevelEvent extends Event {
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * Canceling the event will result in an empty list, meaning no entity will be spawned.</p>
      */
-    @Cancelable
-    public static class PotentialSpawns extends LevelEvent {
+    public static final class PotentialSpawns extends LevelEvent implements Cancellable {
+        public static final CancellableEventBus<PotentialSpawns> BUS = CancellableEventBus.create(PotentialSpawns.class);
+
         private final MobCategory mobcategory;
         private final BlockPos pos;
         private final List<Weighted<MobSpawnSettings.SpawnerData>> list;

@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -67,7 +67,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock.Type;
 import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
 import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 @ApiStatus.Internal
 public final class ForgeEventFactoryClient {
@@ -76,27 +75,10 @@ public final class ForgeEventFactoryClient {
     private ForgeEventFactoryClient() {}
 
     /**
-     * Post an event to the {@link MinecraftForge#EVENT_BUS}
-     * @return true if the event is {@link Cancelable} and has been canceled
-     */
-    private static boolean post(Event e) {
-        return MinecraftForge.EVENT_BUS.post(e);
-    }
-
-    /**
-     * Post an event to the {@link MinecraftForge#EVENT_BUS}, then return the event object
-     * @return the event object passed in and possibly modified by listeners
-     */
-    private static <E extends Event> E fire(E e) {
-        return MinecraftForge.EVENT_BUS.fire(e);
-    }
-
-    /**
      * Post an event to the {@link ModLoader#get()} event bus
      */
-    private static <T extends Event & IModBusEvent> T fireModBus(T e) {
-        ML.postEvent(e);
-        return e;
+    private static <T extends IModBusEvent> T fireModBus(T e) {
+        return ML.postEventWithReturn(e);
     }
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?, ?>> renderers, Map<Model, EntityRenderer<? extends Player, ?>> playerRenderers, Context context) {
@@ -105,192 +87,190 @@ public final class ForgeEventFactoryClient {
     }
 
     public static boolean onScreenMouseReleased(Screen screen, double mouseX, double mouseY, int button) {
-        if (post(new ScreenEvent.MouseButtonReleased.Pre(screen, mouseX, mouseY, button)))
+        if (ScreenEvent.MouseButtonReleased.Pre.BUS.post(new ScreenEvent.MouseButtonReleased.Pre(screen, mouseX, mouseY, button)))
             return true;
 
         var ret = screen.mouseReleased(mouseX, mouseY, button);
-        var result = fire(new ScreenEvent.MouseButtonReleased.Post(screen, mouseX, mouseY, button, ret)).getResult();
-        return result == Event.Result.DEFAULT ? ret : result == Event.Result.ALLOW;
+        var result = ScreenEvent.MouseButtonReleased.Post.BUS.fire(new ScreenEvent.MouseButtonReleased.Post(screen, mouseX, mouseY, button, ret)).getResult();
+        return result == Result.DEFAULT ? ret : result == Result.ALLOW;
     }
 
     public static boolean onScreenMouseClicked(Screen screen, double mouseX, double mouseY, int button) {
-        var ret = post(new ScreenEvent.MouseButtonPressed.Pre(screen, mouseX, mouseY, button));
+        var ret = ScreenEvent.MouseButtonPressed.Pre.BUS.post(new ScreenEvent.MouseButtonPressed.Pre(screen, mouseX, mouseY, button));
         if (!ret)
             ret = screen.mouseClicked(mouseX, mouseY, button);
 
-        var result = fire(new ScreenEvent.MouseButtonPressed.Post(screen, mouseX, mouseY, button, ret)).getResult();
-        return result == Event.Result.DEFAULT ? ret : result == Event.Result.ALLOW;
+        var result = ScreenEvent.MouseButtonPressed.Post.BUS.fire(new ScreenEvent.MouseButtonPressed.Post(screen, mouseX, mouseY, button, ret)).getResult();
+        return result == Result.DEFAULT ? ret : result == Result.ALLOW;
     }
 
     public static boolean onMouseButtonPre(int button, int action, int mods) {
-        return post(new InputEvent.MouseButton.Pre(button, action, mods));
+        return InputEvent.MouseButton.Pre.BUS.post(new InputEvent.MouseButton.Pre(button, action, mods));
     }
 
     public static void onMouseButtonPost(int button, int action, int mods) {
-        post(new InputEvent.MouseButton.Post(button, action, mods));
+        InputEvent.MouseButton.Post.BUS.post(new InputEvent.MouseButton.Post(button, action, mods));
     }
 
     public static boolean onScreenMouseScrollPre(Screen guiScreen, double mouseX, double mouseY, double deltaX, double deltaY) {
-        return post(new ScreenEvent.MouseScrolled.Pre(guiScreen, mouseX, mouseY, deltaX, deltaY));
+        return ScreenEvent.MouseScrolled.Pre.BUS.post(new ScreenEvent.MouseScrolled.Pre(guiScreen, mouseX, mouseY, deltaX, deltaY));
     }
 
     public static void onScreenMouseScrollPost(Screen guiScreen, double mouseX, double mouseY, double deltaX, double deltaY) {
-        post(new ScreenEvent.MouseScrolled.Post(guiScreen, mouseX, mouseY, deltaX, deltaY));
+        ScreenEvent.MouseScrolled.Post.BUS.post(new ScreenEvent.MouseScrolled.Post(guiScreen, mouseX, mouseY, deltaX, deltaY));
     }
 
     public static boolean onMouseScroll(MouseHandler mouseHelper, double deltaX, double deltaY) {
-        return post(new InputEvent.MouseScrollingEvent(deltaX, deltaY, mouseHelper.isLeftPressed(), mouseHelper.isMiddlePressed(), mouseHelper.isRightPressed(), mouseHelper.xpos(), mouseHelper.ypos()));
+        return InputEvent.MouseScrollingEvent.BUS.post(new InputEvent.MouseScrollingEvent(deltaX, deltaY, mouseHelper.isLeftPressed(), mouseHelper.isMiddlePressed(), mouseHelper.isRightPressed(), mouseHelper.xpos(), mouseHelper.ypos()));
     }
 
     public static boolean onScreenMouseDragPre(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        return post(new ScreenEvent.MouseDragged.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
+        return ScreenEvent.MouseDragged.Pre.BUS.post(new ScreenEvent.MouseDragged.Pre(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
     }
 
     public static boolean onScreenMouseDragPost(Screen guiScreen, double mouseX, double mouseY, int mouseButton, double dragX, double dragY) {
-        return post(new ScreenEvent.MouseDragged.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
+        return ScreenEvent.MouseDragged.Post.BUS.post(new ScreenEvent.MouseDragged.Post(guiScreen, mouseX, mouseY, mouseButton, dragX, dragY));
     }
 
     public static @Nullable Screen onScreenOpening(Screen old, Screen screen) {
          var event = new ScreenEvent.Opening(old, screen);
-         if (post(event))
+         if (ScreenEvent.Opening.BUS.post(event))
              return null;
          return event.getNewScreen();
     }
 
     public static void onScreenClose(Screen screen) {
-        post(new ScreenEvent.Closing(screen));
+        ScreenEvent.Closing.BUS.post(new ScreenEvent.Closing(screen));
     }
 
     public static void onPlaySoundSource(SoundEngine engine, SoundInstance sound, Channel channel) {
-        post(new PlaySoundSourceEvent(engine, sound, channel));
+        PlaySoundSourceEvent.BUS.post(new PlaySoundSourceEvent(engine, sound, channel));
     }
 
     public static void onPlayStreamingSource(SoundEngine engine, SoundInstance sound, Channel channel) {
-        post(new PlayStreamingSourceEvent(engine, sound, channel));
-    }
-
-    public static ScreenshotEvent onScreenshot(NativeImage image, File screenshotFile) {
-        return fire(new ScreenshotEvent(image, screenshotFile));
+        PlayStreamingSourceEvent.BUS.post(new PlayStreamingSourceEvent(engine, sound, channel));
     }
 
     public static boolean onScreenKeyPressedPre(Screen screen, int keyCode, int scanCode, int modifiers) {
-        return post(new ScreenEvent.KeyPressed.Pre(screen, keyCode, scanCode, modifiers));
+        return ScreenEvent.KeyPressed.Pre.BUS.post(new ScreenEvent.KeyPressed.Pre(screen, keyCode, scanCode, modifiers));
     }
 
     public static boolean onScreenKeyPressedPost(Screen screen, int keyCode, int scanCode, int modifiers) {
-        return post(new ScreenEvent.KeyPressed.Post(screen, keyCode, scanCode, modifiers));
+        return ScreenEvent.KeyPressed.Post.BUS.post(new ScreenEvent.KeyPressed.Post(screen, keyCode, scanCode, modifiers));
     }
 
     public static boolean onScreenKeyReleasedPre(Screen screen, int keyCode, int scanCode, int modifiers) {
-        return post(new ScreenEvent.KeyReleased.Pre(screen, keyCode, scanCode, modifiers));
+        return ScreenEvent.KeyReleased.Pre.BUS.post(new ScreenEvent.KeyReleased.Pre(screen, keyCode, scanCode, modifiers));
     }
 
     public static boolean onScreenKeyReleasedPost(Screen screen, int keyCode, int scanCode, int modifiers) {
-        return post(new ScreenEvent.KeyReleased.Post(screen, keyCode, scanCode, modifiers));
+        return ScreenEvent.KeyReleased.Post.BUS.post(new ScreenEvent.KeyReleased.Post(screen, keyCode, scanCode, modifiers));
     }
 
     public static boolean onScreenCharTypedPre(Screen screen, char codePoint, int modifiers) {
-        return post(new ScreenEvent.CharacterTyped.Pre(screen, codePoint, modifiers));
+        return ScreenEvent.CharacterTyped.Pre.BUS.post(new ScreenEvent.CharacterTyped.Pre(screen, codePoint, modifiers));
     }
 
     public static boolean onScreenCharTypedPost(Screen screen, char codePoint, int modifiers) {
-        return post(new ScreenEvent.CharacterTyped.Post(screen, codePoint, modifiers));
+        return ScreenEvent.CharacterTyped.Post.BUS.post(new ScreenEvent.CharacterTyped.Post(screen, codePoint, modifiers));
     }
 
-    public static InputEvent.InteractionKeyMappingTriggered onClickInput(int button, KeyMapping keyBinding, InteractionHand hand) {
-        return fire(new InputEvent.InteractionKeyMappingTriggered(button, keyBinding, hand));
+    public static boolean onClickInputPickBlock(KeyMapping keyBinding) {
+        var event = new InputEvent.InteractionKeyMappingTriggered(2, keyBinding, InteractionHand.MAIN_HAND);
+        return InputEvent.InteractionKeyMappingTriggered.BUS.post(event);
     }
 
     public static void onContainerRenderBackground(AbstractContainerScreen<?> screen, GuiGraphics graphics, int mouseX, int mouseY) {
-        post(new ContainerScreenEvent.Render.Background(screen, graphics, mouseX, mouseY));
+        ContainerScreenEvent.Render.Background.BUS.post(new ContainerScreenEvent.Render.Background(screen, graphics, mouseX, mouseY));
     }
 
     public static void onContainerRenderForeground(AbstractContainerScreen<?> screen, GuiGraphics graphics, int mouseX, int mouseY) {
-        post(new ContainerScreenEvent.Render.Foreground(screen, graphics, mouseX, mouseY));
+        ContainerScreenEvent.Render.Foreground.BUS.post(new ContainerScreenEvent.Render.Foreground(screen, graphics, mouseX, mouseY));
     }
 
     public static void firePlayerLogin(MultiPlayerGameMode pc, LocalPlayer player, Connection networkManager) {
-        post(new ClientPlayerNetworkEvent.LoggingIn(pc, player, networkManager));
+        ClientPlayerNetworkEvent.LoggingIn.BUS.post(new ClientPlayerNetworkEvent.LoggingIn(pc, player, networkManager));
     }
 
     public static void firePlayerLogout(@Nullable MultiPlayerGameMode pc, @Nullable LocalPlayer player) {
-        post(new ClientPlayerNetworkEvent.LoggingOut(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
+        ClientPlayerNetworkEvent.LoggingOut.BUS.post(new ClientPlayerNetworkEvent.LoggingOut(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
     }
 
     public static void firePlayerRespawn(MultiPlayerGameMode pc, LocalPlayer oldPlayer, LocalPlayer newPlayer, Connection networkManager) {
-        post(new ClientPlayerNetworkEvent.Clone(pc, oldPlayer, newPlayer, networkManager));
+        ClientPlayerNetworkEvent.Clone.BUS.post(new ClientPlayerNetworkEvent.Clone(pc, oldPlayer, newPlayer, networkManager));
     }
 
     public static ViewportEvent.ComputeFov fireComputeFov(GameRenderer renderer, Camera camera, double partialTick, float fov, boolean usedConfiguredFov) {
-        return fire(new ViewportEvent.ComputeFov(renderer, camera, partialTick, fov, usedConfiguredFov));
+        return ViewportEvent.ComputeFov.BUS.fire(new ViewportEvent.ComputeFov(renderer, camera, partialTick, fov, usedConfiguredFov));
     }
 
     public static ViewportEvent.ComputeCameraAngles fireComputeCameraAngles(GameRenderer renderer, Camera camera, float partial) {
-        return fire(new ViewportEvent.ComputeCameraAngles(renderer, camera, partial, camera.getYRot(), camera.getXRot(), 0));
+        return ViewportEvent.ComputeCameraAngles.BUS.fire(new ViewportEvent.ComputeCameraAngles(renderer, camera, partial, camera.getYRot(), camera.getXRot(), 0));
     }
 
     public static <T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> boolean onRenderLivingPre(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return post(new RenderLivingEvent.Pre<T, S, M>(state, renderer, poseStack, multiBufferSource, packedLight));
+        return RenderLivingEvent.Pre.BUS.post(new RenderLivingEvent.Pre<T, S, M>(state, renderer, poseStack, multiBufferSource, packedLight));
     }
 
     public static <T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> boolean onRenderLivingPost(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return post(new RenderLivingEvent.Post<T, S, M>(state, renderer, poseStack, multiBufferSource, packedLight));
+        return RenderLivingEvent.Post.BUS.post(new RenderLivingEvent.Post<T, S, M>(state, renderer, poseStack, multiBufferSource, packedLight));
     }
 
     public static boolean onRenderPlayerPre(PlayerRenderState player, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return post(new RenderPlayerEvent.Pre(player, renderer, poseStack, multiBufferSource, packedLight));
+        return RenderPlayerEvent.Pre.BUS.post(new RenderPlayerEvent.Pre(player, renderer, poseStack, multiBufferSource, packedLight));
     }
 
     public static boolean onRenderPlayerPost(PlayerRenderState player, PlayerRenderer renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return post(new RenderPlayerEvent.Post(player, renderer, poseStack, multiBufferSource, packedLight));
+        return RenderPlayerEvent.Post.BUS.post(new RenderPlayerEvent.Post(player, renderer, poseStack, multiBufferSource, packedLight));
     }
 
     public static boolean onRenderArm(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, HumanoidArm arm) {
-        return post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, arm));
+        return RenderArmEvent.BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, arm));
     }
 
     public static boolean onRenderItemInFrame(ItemFrameRenderState state, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return post(new RenderItemInFrameEvent(state, renderItemFrame, poseStack, multiBufferSource, packedLight));
+        return RenderItemInFrameEvent.BUS.post(new RenderItemInFrameEvent(state, renderItemFrame, poseStack, multiBufferSource, packedLight));
     }
 
     public static RenderNameTagEvent fireRenderNameTagEvent(EntityRenderState state, Component content, EntityRenderer<?, ?> entityRenderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
-        return fire(new RenderNameTagEvent(state, content, entityRenderer, poseStack, multiBufferSource, packedLight));
+        return RenderNameTagEvent.BUS.fire(new RenderNameTagEvent(state, content, entityRenderer, poseStack, multiBufferSource, packedLight));
     }
 
     public static void onRenderScreenBackground(Screen screen, GuiGraphics guiGraphics) {
-        fire(new ScreenEvent.BackgroundRendered(screen, guiGraphics));
+        ScreenEvent.BackgroundRendered.BUS.post(new ScreenEvent.BackgroundRendered(screen, guiGraphics));
     }
 
     public static void onRenderTickStart(DeltaTracker timer) {
-        post(new TickEvent.RenderTickEvent.Pre(timer));
+        TickEvent.RenderTickEvent.Pre.BUS.post(new TickEvent.RenderTickEvent.Pre(timer));
     }
 
     public static void onRenderTickEnd(DeltaTracker timer) {
-        post(new TickEvent.RenderTickEvent.Post(timer));
+        TickEvent.RenderTickEvent.Post.BUS.post(new TickEvent.RenderTickEvent.Post(timer));
     }
 
     public static RenderTooltipEvent.Background onRenderTooltipBackground(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components, @Nullable ResourceLocation backgroundPrefix) {
-        return fire(new RenderTooltipEvent.Background(stack, graphics, x, y, font, components, backgroundPrefix));
+        return RenderTooltipEvent.Background.BUS.fire(new RenderTooltipEvent.Background(stack, graphics, x, y, font, components, backgroundPrefix));
     }
 
     public static boolean onToastAdd(Toast toast) {
-        return post(new ToastAddEvent(toast));
+        return ToastAddEvent.BUS.post(new ToastAddEvent(toast));
     }
 
-    public static ScreenEvent.RenderInventoryMobEffects onScreenEffectSize(Screen screen, int availableSpace, boolean compact, int horizontalOffset) {
-        return fire(new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset));
+    public static @Nullable ScreenEvent.RenderInventoryMobEffects onScreenEffectSize(Screen screen, int availableSpace, boolean compact, int horizontalOffset) {
+        var event = new ScreenEvent.RenderInventoryMobEffects(screen, availableSpace, compact, horizontalOffset);
+        return ScreenEvent.RenderInventoryMobEffects.BUS.post(event) ? null : event;
     }
 
     public static void onRecipesUpdated(ClientRecipeBook book) {
-        post(new RecipesUpdatedEvent(book));
+        RecipesUpdatedEvent.BUS.post(new RecipesUpdatedEvent(book));
     }
 
     public static ComputeFovModifierEvent fireFovModifierEvent(Player entity, float modifier, float scale) {
-        return fire(new ComputeFovModifierEvent(entity, modifier, scale));
+        return ComputeFovModifierEvent.BUS.fire(new ComputeFovModifierEvent(entity, modifier, scale));
     }
 
     public static void onCreateSpecialBlockRenderers(Map<Block, SpecialModelRenderer.Unbaked> map) {
-        post(new CreateSpecialBlockRendererEvent(map));
+        CreateSpecialBlockRendererEvent.BUS.post(new CreateSpecialBlockRendererEvent(map));
     }
 
     public static Map<Type, Function<EntityModelSet, SkullModelBase>> onCreateSkullModels() {

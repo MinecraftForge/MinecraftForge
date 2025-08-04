@@ -17,34 +17,34 @@
  
      private boolean isLit() {
 @@ -121,10 +_,10 @@
-         super.loadAdditional(p_335441_, p_330623_);
+         super.loadAdditional(p_405853_);
          this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-         ContainerHelper.loadAllItems(p_335441_, this.items, p_330623_);
--        this.cookingTimer = p_335441_.getShortOr("cooking_time_spent", (short)0);
--        this.cookingTotalTime = p_335441_.getShortOr("cooking_total_time", (short)0);
--        this.litTimeRemaining = p_335441_.getShortOr("lit_time_remaining", (short)0);
--        this.litTotalTime = p_335441_.getShortOr("lit_total_time", (short)0);
-+        this.cookingTimer = p_335441_.getIntOr("cooking_time_spent", (short)0);
-+        this.cookingTotalTime = p_335441_.getIntOr("cooking_total_time", (short)0);
-+        this.litTimeRemaining = p_335441_.getIntOr("lit_time_remaining", (short)0);
-+        this.litTotalTime = p_335441_.getIntOr("lit_total_time", (short)0);
+         ContainerHelper.loadAllItems(p_405853_, this.items);
+-        this.cookingTimer = p_405853_.getShortOr("cooking_time_spent", (short)0);
+-        this.cookingTotalTime = p_405853_.getShortOr("cooking_total_time", (short)0);
+-        this.litTimeRemaining = p_405853_.getShortOr("lit_time_remaining", (short)0);
+-        this.litTotalTime = p_405853_.getShortOr("lit_total_time", (short)0);
++        this.cookingTimer = p_405853_.getIntOr("cooking_time_spent", (short)0);
++        this.cookingTotalTime = p_405853_.getIntOr("cooking_total_time", (short)0);
++        this.litTimeRemaining = p_405853_.getIntOr("lit_time_remaining", (short)0);
++        this.litTotalTime = p_405853_.getIntOr("lit_total_time", (short)0);
          this.recipesUsed.clear();
-         this.recipesUsed.putAll(p_335441_.read("RecipesUsed", RECIPES_USED_CODEC).orElse(Map.of()));
+         this.recipesUsed.putAll(p_405853_.read("RecipesUsed", RECIPES_USED_CODEC).orElse(Map.of()));
      }
 @@ -132,10 +_,10 @@
      @Override
-     protected void saveAdditional(CompoundTag p_187452_, HolderLookup.Provider p_330192_) {
-         super.saveAdditional(p_187452_, p_330192_);
--        p_187452_.putShort("cooking_time_spent", (short)this.cookingTimer);
--        p_187452_.putShort("cooking_total_time", (short)this.cookingTotalTime);
--        p_187452_.putShort("lit_time_remaining", (short)this.litTimeRemaining);
--        p_187452_.putShort("lit_total_time", (short)this.litTotalTime);
-+        p_187452_.putInt("cooking_time_spent", this.cookingTimer);
-+        p_187452_.putInt("cooking_total_time", this.cookingTotalTime);
-+        p_187452_.putInt("lit_time_remaining", this.litTimeRemaining);
-+        p_187452_.putInt("lit_total_time", this.litTotalTime);
-         ContainerHelper.saveAllItems(p_187452_, this.items, p_330192_);
-         p_187452_.store("RecipesUsed", RECIPES_USED_CODEC, this.recipesUsed);
+     protected void saveAdditional(ValueOutput p_406502_) {
+         super.saveAdditional(p_406502_);
+-        p_406502_.putShort("cooking_time_spent", (short)this.cookingTimer);
+-        p_406502_.putShort("cooking_total_time", (short)this.cookingTotalTime);
+-        p_406502_.putShort("lit_time_remaining", (short)this.litTimeRemaining);
+-        p_406502_.putShort("lit_total_time", (short)this.litTotalTime);
++        p_406502_.putInt("cooking_time_spent", this.cookingTimer);
++        p_406502_.putInt("cooking_total_time", this.cookingTotalTime);
++        p_406502_.putInt("lit_time_remaining", this.litTimeRemaining);
++        p_406502_.putInt("lit_total_time", this.litTotalTime);
+         ContainerHelper.saveAllItems(p_406502_, this.items);
+         p_406502_.store("RecipesUsed", RECIPES_USED_CODEC, this.recipesUsed);
      }
 @@ -161,27 +_,31 @@
              }

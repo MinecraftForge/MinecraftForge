@@ -1,0 +1,10 @@
+--- a/net/minecraft/gametest/framework/GameTestMainUtil.java
++++ b/net/minecraft/gametest/framework/GameTestMainUtil.java
+@@ -69,6 +_,7 @@
+ 
+             Bootstrap.bootStrap();
+             Util.startTimerHackThread();
++            net.minecraftforge.server.loading.ServerModLoader.load();
+             String s = optionset.valueOf(universe);
+             createOrResetDir(s);
+             p_393652_.accept(s);

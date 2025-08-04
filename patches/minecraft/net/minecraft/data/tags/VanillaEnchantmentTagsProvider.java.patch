@@ -1,0 +1,13 @@
+--- a/net/minecraft/data/tags/VanillaEnchantmentTagsProvider.java
++++ b/net/minecraft/data/tags/VanillaEnchantmentTagsProvider.java
+@@ -12,6 +_,10 @@
+         super(p_335915_, p_330302_);
+     }
+ 
++    public VanillaEnchantmentTagsProvider(PackOutput p_335915_, CompletableFuture<HolderLookup.Provider> p_330302_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_335915_, p_330302_, modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_331944_) {
+         this.tooltipOrder(

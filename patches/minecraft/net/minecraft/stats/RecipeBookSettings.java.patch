@@ -1,31 +1,24 @@
 --- a/net/minecraft/stats/RecipeBookSettings.java
 +++ b/net/minecraft/stats/RecipeBookSettings.java
-@@ -14,7 +_,7 @@
-     public static final StreamCodec<FriendlyByteBuf, RecipeBookSettings> STREAM_CODEC = StreamCodec.ofMember(
-         RecipeBookSettings::write, RecipeBookSettings::read
-     );
--    private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = ImmutableMap.of(
-+    private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = new java.util.HashMap<>(ImmutableMap.of(
-         RecipeBookType.CRAFTING,
-         Pair.of("isGuiOpen", "isFilteringCraftable"),
-         RecipeBookType.FURNACE,
-@@ -23,7 +_,7 @@
-         Pair.of("isBlastingFurnaceGuiOpen", "isBlastingFurnaceFilteringCraftable"),
-         RecipeBookType.SMOKER,
-         Pair.of("isSmokerGuiOpen", "isSmokerFilteringCraftable")
--    );
-+    ));
-     private final Map<RecipeBookType, RecipeBookSettings.TypeSettings> states;
+@@ -12,6 +_,7 @@
+ import net.minecraft.network.codec.StreamCodec;
+ import net.minecraft.world.inventory.RecipeBookType;
  
-     private RecipeBookSettings(Map<RecipeBookType, RecipeBookSettings.TypeSettings> p_12730_) {
-@@ -146,5 +_,10 @@
-         public RecipeBookSettings.TypeSettings setFiltering(boolean p_366242_) {
-             return new RecipeBookSettings.TypeSettings(this.open, p_366242_);
++// TODO: [Forge][Custom Recipe Book Types - Add Optional<Map<RecipeBookType, TypeSettings>> to network codecs
+ public final class RecipeBookSettings {
+     public static final StreamCodec<FriendlyByteBuf, RecipeBookSettings> STREAM_CODEC = StreamCodec.composite(
+         RecipeBookSettings.TypeSettings.STREAM_CODEC,
+@@ -148,5 +_,13 @@
+                     .apply(p_407394_, RecipeBookSettings.TypeSettings::new)
+             );
          }
 +    }
 +
 +    // FORGE -- called automatically on Enum creation - used for serialization
-+    public static void addTagsForType(RecipeBookType type, String openTag, String filteringTag) {
-+        TAG_FIELDS.put(type, Pair.of(openTag, filteringTag));
++    public static void register(RecipeBookType type) {
++        String name = type.name().toLowerCase(java.util.Locale.ROOT).replace("_","");
++        var codec = TypeSettings.codec("is" + name + "GuiOpen", "is" + name + "FilteringCraftable");
++        //TAG_FIELDS.put(type, Pair.of(openTag, filteringTag));
++        throw new IllegalStateException("This is not implemented yet, poke Forge if you actually use this");
      }
  }

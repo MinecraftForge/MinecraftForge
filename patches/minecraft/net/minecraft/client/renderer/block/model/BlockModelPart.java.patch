@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/block/model/BlockModelPart.java
++++ b/net/minecraft/client/renderer/block/model/BlockModelPart.java
+@@ -10,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface BlockModelPart {
++public interface BlockModelPart extends net.minecraftforge.client.extensions.IForgeBlockModelPart {
+     List<BakedQuad> getQuads(@Nullable Direction p_395320_);
+ 
+     boolean useAmbientOcclusion();

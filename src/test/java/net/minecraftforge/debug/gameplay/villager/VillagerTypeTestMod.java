@@ -38,8 +38,8 @@ public class VillagerTypeTestMod extends BaseTestMod {
     private static final RegistryObject<VillagerType> TEST_VILLAGER_TYPE = VILLAGER_TYPES.register("test_villager_type", () -> new VillagerType());
 
     public VillagerTypeTestMod(FMLJavaModLoadingContext context) {
-        super(context);
-        context.getModEventBus().addListener(this::onCommonSetup);
+        super(context, false, true);
+        FMLCommonSetupEvent.getBus(this.modBus).addListener(this::onCommonSetup);
     }
 
     private void onCommonSetup(final FMLCommonSetupEvent event) {

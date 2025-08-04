@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/LightningBolt.java
 +++ b/net/minecraft/world/entity/LightningBolt.java
-@@ -39,6 +_,7 @@
+@@ -40,6 +_,7 @@
      private ServerPlayer cause;
      private final Set<Entity> hitEntities = Sets.newHashSet();
      private int blocksSetOnFire;
@@ -8,7 +8,7 @@
  
      public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
          super(p_20865_, p_20866_);
-@@ -65,6 +_,14 @@
+@@ -66,6 +_,14 @@
          this.cause = p_20880_;
      }
  
@@ -23,7 +23,7 @@
      private void powerLightningRod() {
          BlockPos blockpos = this.getStrikePosition();
          BlockState blockstate = this.level().getBlockState(blockpos);
-@@ -163,6 +_,7 @@
+@@ -164,6 +_,7 @@
                      );
  
                  for (Entity entity : list1) {

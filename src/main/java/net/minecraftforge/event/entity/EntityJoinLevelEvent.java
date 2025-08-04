@@ -9,7 +9,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
@@ -26,8 +27,9 @@ import net.minecraftforge.fml.LogicalSide;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * on both logical sides.
  **/
-@Cancelable
-public class EntityJoinLevelEvent extends EntityEvent {
+public final class EntityJoinLevelEvent extends EntityEvent implements Cancellable {
+    public static final CancellableEventBus<EntityJoinLevelEvent> BUS = CancellableEventBus.create(EntityJoinLevelEvent.class);
+
     private final Level level;
     private final boolean loadedFromDisk;
 

@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -32,7 +31,8 @@ public class ChorusBlockPlacementTest extends BaseTestMod {
     private static final RegistryObject<Block> BLOCK = BLOCKS.register("placeable_on_chorus", () -> new Block(Block.Properties.of().setId(BLOCKS.key("placeable_on_chorus"))));
 
     public ChorusBlockPlacementTest(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
     @GameTest
@@ -47,8 +47,7 @@ public class ChorusBlockPlacementTest extends BaseTestMod {
         });
     }
 
-    @SubscribeEvent
-    public void runData(GatherDataEvent event) {
+    private void gatherData(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeServer(), new BlockTags(event));
     }
 

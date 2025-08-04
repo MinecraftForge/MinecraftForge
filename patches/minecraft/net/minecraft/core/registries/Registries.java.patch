@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/registries/Registries.java
 +++ b/net/minecraft/core/registries/Registries.java
-@@ -266,10 +_,14 @@
+@@ -275,10 +_,14 @@
      }
  
      public static String elementsDirPath(ResourceKey<? extends Registry<?>> p_343743_) {

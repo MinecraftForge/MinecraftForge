@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Bogged.java
 +++ b/net/minecraft/world/entity/monster/Bogged.java
-@@ -71,7 +_,7 @@
+@@ -72,7 +_,7 @@
      @Override
      protected InteractionResult mobInteract(Player p_335303_, InteractionHand p_335145_) {
          ItemStack itemstack = p_335303_.getItemInHand(p_335145_);
@@ -9,7 +9,7 @@
              if (this.level() instanceof ServerLevel serverlevel) {
                  this.shear(serverlevel, SoundSource.PLAYERS, itemstack);
                  this.gameEvent(GameEvent.SHEAR, p_335303_);
-@@ -138,5 +_,17 @@
+@@ -139,5 +_,17 @@
      @Override
      public boolean readyForShearing() {
          return !this.isSheared() && this.isAlive();

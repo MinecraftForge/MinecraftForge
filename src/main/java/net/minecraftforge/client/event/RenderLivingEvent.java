@@ -13,8 +13,11 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -32,7 +35,9 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent
  * @see LivingEntityRenderer
  */
-public abstract class RenderLivingEvent<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends Event {
+public abstract sealed class RenderLivingEvent<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends MutableEvent implements InheritableEvent {
+    public static final EventBus<RenderLivingEvent> BUS = EventBus.create(RenderLivingEvent.class);
+
     private final S state;
     private final LivingEntityRenderer<T, S, M> renderer;
     private final PoseStack poseStack;
@@ -99,8 +104,9 @@ public abstract class RenderLivingEvent<T extends LivingEntity, S extends Living
      * @param <T> the living entity that is being rendered
      * @param <M> the model for the living entity
      */
-    @Cancelable
-    public static class Pre<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
+    public static final class Pre<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> implements Cancellable {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
         @ApiStatus.Internal
         public Pre(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);
@@ -118,7 +124,9 @@ public abstract class RenderLivingEvent<T extends LivingEntity, S extends Living
      * @param <T> the living entity that was rendered
      * @param <M> the model for the living entity
      */
-    public static class Post<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
+    public static final class Post<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends RenderLivingEvent<T, S, M> {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
         @ApiStatus.Internal
         public Post(S state, LivingEntityRenderer<T, S, M> renderer, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
             super(state, renderer, poseStack, multiBufferSource, packedLight);

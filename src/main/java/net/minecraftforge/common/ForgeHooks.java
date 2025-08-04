@@ -21,8 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -45,8 +43,11 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder.Reference;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
@@ -83,6 +84,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -100,6 +102,7 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -121,11 +124,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraftforge.common.crafting.conditions.ConditionCodec;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.BrainBuilder;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.common.util.MutableHashedLinkedMap;
+import net.minecraftforge.common.util.*;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -151,10 +150,11 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.NoteBlockEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModList;
@@ -188,6 +188,9 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
@@ -204,6 +207,10 @@ public final class ForgeHooks {
 
     private ForgeHooks() {}
 
+    public static void fireLightingCalculatedEvent(ChunkAccess chunk) {
+        ChunkEvent.LightingCalculated.BUS.post(new ChunkEvent.LightingCalculated(chunk));
+    }
+
     public static boolean canContinueUsing(@NotNull ItemStack from, @NotNull ItemStack to) {
         if (!from.isEmpty() && !to.isEmpty()) {
             return from.getItem().canContinueUsing(from, to);
@@ -219,37 +226,39 @@ public final class ForgeHooks {
     }
 
     public static Brain<?> onLivingMakeBrain(LivingEntity entity, Brain<?> originalBrain, Dynamic<?> dynamic) {
+        if (!LivingMakeBrainEvent.BUS.hasListeners())
+            return originalBrain;
+
         BrainBuilder<?> brainBuilder = originalBrain.createBuilder();
-        LivingMakeBrainEvent event = new LivingMakeBrainEvent(entity, brainBuilder);
-        MinecraftForge.EVENT_BUS.post(event);
+        LivingMakeBrainEvent.BUS.post(new LivingMakeBrainEvent(entity, brainBuilder));
         return brainBuilder.makeBrain(dynamic);
     }
 
     public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
-        return entity instanceof Player || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+        return entity instanceof Player || !LivingAttackEvent.BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
     public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
-        return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+        return !LivingAttackEvent.BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
     public static boolean onLivingUseTotem(LivingEntity entity, DamageSource damageSource, ItemStack totem, InteractionHand hand) {
-        return !MinecraftForge.EVENT_BUS.post(new LivingUseTotemEvent(entity, damageSource, totem, hand));
+        return !LivingUseTotemEvent.BUS.post(new LivingUseTotemEvent(entity, damageSource, totem, hand));
     }
 
     public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount) {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+        return LivingHurtEvent.BUS.post(event) ? 0 : event.getAmount();
     }
 
     public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
         LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+        return LivingDamageEvent.BUS.post(event) ? 0 : event.getAmount();
     }
 
     public static InteractionResult onInteractEntityAt(Entity entity, Player player, Vec3 vec3d, InteractionHand hand) {
-        var ret = ForgeEventFactory.onEntityInteractSpecific(player, entity, hand, vec3d);
-        if (ret.isCanceled())
+        var ret = new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d);
+        if (PlayerInteractEvent.EntityInteractSpecific.BUS.post(ret))
             return ret.getCancellationResult();
         return entity.interactAt(player, vec3d, hand);
     }
@@ -267,7 +276,7 @@ public final class ForgeHooks {
 
     public static double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier){
         LivingEvent.LivingVisibilityEvent event = new LivingEvent.LivingVisibilityEvent(entity, lookingEntity, originalMultiplier);
-        MinecraftForge.EVENT_BUS.post(event);
+        LivingEvent.LivingVisibilityEvent.BUS.post(event);
         return Math.max(0,event.getVisibilityModifier());
     }
 
@@ -296,33 +305,33 @@ public final class ForgeHooks {
     }
 
     public static void onLivingJump(LivingEntity entity) {
-        MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
+        LivingJumpEvent.BUS.post(new LivingJumpEvent(entity));
     }
 
     @SuppressWarnings("resource")
     @Nullable
     public static ItemEntity onPlayerTossEvent(@NotNull Player player, @NotNull ItemStack item, boolean includeName) {
-        player.captureDrops(Lists.newArrayList());
+        player.captureDrops(new ArrayList<>());
         ItemEntity ret = player.drop(item, false, includeName);
         player.captureDrops(null);
 
         if (ret == null)
             return null;
 
-        ItemTossEvent event = new ItemTossEvent(ret, player);
-        if (MinecraftForge.EVENT_BUS.post(event))
+        var event = new ItemTossEvent(ret, player);
+        if (ItemTossEvent.BUS.post(event))
             return null;
 
         if (!player.level().isClientSide)
-            player.getCommandSenderWorld().addFreshEntity(event.getEntity());
+            player.level().addFreshEntity(event.getEntity());
         return event.getEntity();
     }
 
     @Nullable
     public static Component onServerChatSubmittedEvent(ServerPlayer player, Component message) {
         var plain = message.getContents() instanceof LiteralContents literalContents ? literalContents.text() : "";
-        ServerChatEvent event = new ServerChatEvent(player, plain, message);
-        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getMessage();
+        var event = new ServerChatEvent(player, plain, message);
+        return ServerChatEvent.BUS.post(event) ? null : event.getMessage();
     }
 
     static final Pattern URL_PATTERN = Pattern.compile(
@@ -425,12 +434,11 @@ public final class ForgeHooks {
             level.sendBlockUpdated(pos, state, state, 3);
         }
 
-        var event = new BlockEvent.BreakEvent(level, pos, state, entityPlayer);
-        event.setCanceled(preCancelEvent);
-        MinecraftForge.EVENT_BUS.post(event);
+        var event = new BlockEvent.BreakEvent(level, pos, state, entityPlayer, preCancelEvent ? Result.DENY : Result.DEFAULT);
+        var eventIsDenied = BlockEvent.BreakEvent.BUS.fire(event).getResult().isDenied();
 
-        // Handle if the event is canceled
-        if (event.isCanceled()) {
+        // Handle if the event is cancelled
+        if (eventIsDenied) {
             // Let the client know the block still exists
             entityPlayer.connection.send(new ClientboundBlockUpdatePacket(level, pos));
 
@@ -442,7 +450,7 @@ public final class ForgeHooks {
                     entityPlayer.connection.send(pkt);
             }
         }
-        return event.isCanceled() ? -1 : event.getExpToDrop();
+        return eventIsDenied ? -1 : event.getExpToDrop();
     }
 
     public static InteractionResult onPlaceItemIntoWorld(@NotNull UseOnContext context) {
@@ -480,12 +488,12 @@ public final class ForgeHooks {
             if (blockSnapshots.size() > 1)
                 eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
             else if (blockSnapshots.size() == 1)
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.getFirst(), side);
 
             if (eventResult) {
                 ret = InteractionResult.FAIL; // cancel placement
                 // revert back all captured blocks
-                for (BlockSnapshot blocksnapshot : Lists.reverse(blockSnapshots)) {
+                for (BlockSnapshot blocksnapshot : blockSnapshots.reversed()) {
                     level.restoringBlockSnapshots = true;
                     blocksnapshot.restore(true, false);
                     level.restoringBlockSnapshots = false;
@@ -513,7 +521,7 @@ public final class ForgeHooks {
 
     public static boolean onAnvilChange(AnvilMenu container, @NotNull ItemStack left, @NotNull ItemStack right, Container outputSlot, String name, long baseCost, Player player) {
         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
-        if (MinecraftForge.EVENT_BUS.post(e)) return false;
+        if (AnvilUpdateEvent.BUS.post(e)) return false;
         if (e.getOutput().isEmpty()) return true;
 
         outputSlot.setItem(0, e.getOutput());
@@ -525,8 +533,8 @@ public final class ForgeHooks {
     public static boolean onGrindstoneTake(Container inputSlots, ContainerLevelAccess access, Function<Level, Integer> xpFunction) {
         access.execute((l,p) -> {
             int xp = xpFunction.apply(l);
-            GrindstoneEvent.OnTakeItem e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp);
-            if (MinecraftForge.EVENT_BUS.post(e))
+            var e = new GrindstoneEvent.OnTakeItem(inputSlots.getItem(0), inputSlots.getItem(1), xp);
+            if (GrindstoneEvent.OnTakeItem.BUS.post(e))
                 return;
 
             if (l instanceof ServerLevel server)
@@ -564,14 +572,14 @@ public final class ForgeHooks {
     }
 
     public static boolean onPlayerAttackTarget(Player player, Entity target) {
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
+        if (AttackEntityEvent.BUS.post(new AttackEntityEvent(player, target))) return false;
         ItemStack stack = player.getMainHandItem();
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
     }
 
     public static InteractionResult onItemRightClick(Player player, InteractionHand hand) {
-        var evt = ForgeEventFactory.onRightClickItem(player, hand);
-        return evt.isCanceled() ? evt.getCancellationResult() : null;
+        var evt = new PlayerInteractEvent.RightClickItem(player, hand);
+        return PlayerInteractEvent.RightClickItem.BUS.post(evt) ? evt.getCancellationResult() : null;
     }
 
     public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType) {
@@ -579,7 +587,7 @@ public final class ForgeHooks {
             return currentGameType;
 
         var evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
-        if (MinecraftForge.EVENT_BUS.post(evt))
+        if (PlayerEvent.PlayerChangeGameModeEvent.BUS.post(evt))
             return currentGameType;
 
         return evt.getNewGameMode();
@@ -640,19 +648,19 @@ public final class ForgeHooks {
     }
 
     public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def) {
-        var result = MinecraftForge.EVENT_BUS.fire(new BlockEvent.CropGrowEvent.Pre(level,pos,state)).getResult();
+        var result = BlockEvent.CropGrowEvent.Pre.BUS.fire(new BlockEvent.CropGrowEvent.Pre(level, pos, state)).getResult();
         return (result.isAllowed() || (def && result.isDefault()));
     }
 
     public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state) {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(level, pos, state, level.getBlockState(pos)));
+        BlockEvent.CropGrowEvent.Post.BUS.post(new BlockEvent.CropGrowEvent.Post(level, pos, state, level.getBlockState(pos)));
     }
 
     @Nullable
     public static CriticalHitEvent getCriticalHit(Player player, Entity target, boolean vanillaCritical, float damageModifier) {
         CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
-        MinecraftForge.EVENT_BUS.post(hitResult);
-        if (hitResult.getResult() == Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == Event.Result.DEFAULT))
+        CriticalHitEvent.BUS.post(hitResult);
+        if (hitResult.getResult().isAllowed() || (vanillaCritical && hitResult.getResult().isDefault()))
             return hitResult;
         return null;
     }
@@ -661,9 +669,8 @@ public final class ForgeHooks {
      * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
      */
     public static ItemStack getProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile) {
-        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getProjectileItemStack();
+        var event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
+        return LivingGetProjectileEvent.BUS.fire(event).getProjectileItemStack();
     }
 
     /**
@@ -703,8 +710,8 @@ public final class ForgeHooks {
     }
 
     public static int onNoteChange(Level level, BlockPos pos, BlockState state, int old, int _new) {
-        NoteBlockEvent.Change event = new NoteBlockEvent.Change(level, pos, state, old, _new);
-        if (MinecraftForge.EVENT_BUS.post(event))
+        var event = new NoteBlockEvent.Change(level, pos, state, old, _new);
+        if (NoteBlockEvent.Change.BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
     }
@@ -948,14 +955,14 @@ public final class ForgeHooks {
                 return true;
 
             var mask = player.getItemBySlot(EquipmentSlot.HEAD);
-            return !mask.isMonsterDisguise(player, monster) || MinecraftForge.EVENT_BUS.post(new MonsterDisguiseEvent(monster, player));
+            return !mask.isMonsterDisguise(player, monster) || MonsterDisguiseEvent.BUS.post(new MonsterDisguiseEvent(monster, player));
         };
     }
 
     private static final Lazy<Map<String, StructuresBecomeConfiguredFix.Conversion>> FORGE_CONVERSION_MAP = Lazy.concurrentOf(() -> {
         Map<String, StructuresBecomeConfiguredFix.Conversion> map = new HashMap<>();
-        MinecraftForge.EVENT_BUS.post(new RegisterStructureConversionsEvent(map));
-        return ImmutableMap.copyOf(map);
+        RegisterStructureConversionsEvent.BUS.post(new RegisterStructureConversionsEvent(map));
+        return Map.copyOf(map);
     });
 
     // DO NOT CALL from within RegisterStructureConversionsEvent, otherwise you'll get a deadlock
@@ -1018,8 +1025,8 @@ public final class ForgeHooks {
             entity.setAirSupply(entity.getAirSupply() - breatheEvent.getConsumeAirAmount());
 
         if (entity.getAirSupply() <= -20) {
-            var drownEvent = ForgeEventFactory.onLivingDrown(entity, entity.getAirSupply() <= -20, 2.0F, 8);
-            if (!drownEvent.isCanceled() && drownEvent.isDrowning()) {
+            var drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20, 2.0F, 8);
+            if (!LivingDrownEvent.BUS.post(drownEvent) && drownEvent.isDrowning()) {
                 entity.setAirSupply(0);
                 Vec3 vec3 = entity.getDeltaMovement();
 
@@ -1115,7 +1122,7 @@ public final class ForgeHooks {
 
         // Should we always fire this, even if the channel consumed the packet?
         if (!event.getSource().getPacketHandled()) {
-            MinecraftForge.EVENT_BUS.post(event);
+            CustomPayloadEvent.BUS.fire(event);
             return event.getSource().getPacketHandled();
         }
 
@@ -1256,5 +1263,47 @@ public final class ForgeHooks {
         }
 
         return value;
+    }
+
+    private static final Pattern EMPTY_SIZE_PATTERN = Pattern.compile("^empty(\\d+)x(\\d+)x(\\d+)$");
+
+    /*
+     *  Creates a empty structure of any size requested using the pattern `forge:empty(x)x(y)x(z)`
+     *
+     *  This is useful for game tests that need a structure, but want to create the contents in code.
+     */
+    public static Optional<StructureTemplate> createEmptyStructure(ResourceLocation name) {
+        if (name== null || !"forge".equals(name.getNamespace()))
+            return Optional.empty();
+
+        var match = EMPTY_SIZE_PATTERN.matcher(name.getPath());
+        if (!match.matches())
+            return Optional.empty();
+
+        var size = new BlockPos(Integer.parseInt(match.group(1)), Integer.parseInt(match.group(2)), Integer.parseInt(match.group(3)));
+
+        var blocks = new ListTag();
+        for (var pos : BlockPos.betweenClosed(BlockPos.ZERO, size)) {
+            blocks.add(CompoundTag.builder()
+                .tag("pos", pos.toListTag())
+                .build()
+            );
+        }
+
+        var ret = new StructureTemplate();
+        ret.load(new HolderGetter<Block>() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public Optional<Reference<Block>> get(ResourceKey<Block> key) {
+                return Optional.of(Blocks.AIR.builtInRegistryHolder());
+            }
+            @Override public Optional<Named<Block>> get(TagKey<Block> key) { return Optional.empty(); }
+        }, CompoundTag.builder()
+            .tag("size", size.toListTag())
+            .tag("blocks", blocks)
+            .build()
+        );
+
+        return Optional.of(ret);
     }
 }

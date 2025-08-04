@@ -10,8 +10,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundChatPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -25,8 +26,9 @@ import org.jetbrains.annotations.ApiStatus;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-@Cancelable
-public class ServerChatEvent extends Event {
+public final class ServerChatEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<ServerChatEvent> BUS = CancellableEventBus.create(ServerChatEvent.class);
+
     private final ServerPlayer player;
     private final String username;
     private final String rawText;

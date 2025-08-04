@@ -9,7 +9,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>
@@ -30,13 +31,13 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  * @see LivingDamageEvent
  **/
-@net.minecraftforge.eventbus.api.Cancelable
-public class LivingHurtEvent extends LivingEvent
-{
+public final class LivingHurtEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingHurtEvent> BUS = CancellableEventBus.create(LivingHurtEvent.class);
+
     private final DamageSource source;
     private float amount;
-    public LivingHurtEvent(LivingEntity entity, DamageSource source, float amount)
-    {
+
+    public LivingHurtEvent(LivingEntity entity, DamageSource source, float amount) {
         super(entity);
         this.source = source;
         this.amount = amount;

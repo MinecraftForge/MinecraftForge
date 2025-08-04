@@ -9,8 +9,9 @@ import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,28 +25,25 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-@Cancelable
-public class CommandEvent extends Event
-{
+public final class CommandEvent extends MutableEvent implements Cancellable {
+    public static final CancellableEventBus<CommandEvent> BUS = CancellableEventBus.create(CommandEvent.class);
+
     private ParseResults<CommandSourceStack> parse;
     @Nullable
     private Throwable exception;
 
-    public CommandEvent(ParseResults<CommandSourceStack> parse)
-    {
+    public CommandEvent(ParseResults<CommandSourceStack> parse) {
         this.parse = parse;
     }
 
     /**
      * {@return the parsed command results}
      */
-    public ParseResults<CommandSourceStack> getParseResults()
-    {
+    public ParseResults<CommandSourceStack> getParseResults() {
         return this.parse;
     }
 
-    public void setParseResults(ParseResults<CommandSourceStack> parse)
-    {
+    public void setParseResults(ParseResults<CommandSourceStack> parse) {
         this.parse = parse;
     }
 
@@ -53,13 +51,11 @@ public class CommandEvent extends Event
      * {@return an exception to be thrown when performing the command, starts null}
      */
     @Nullable
-    public Throwable getException()
-    {
+    public Throwable getException() {
         return this.exception;
     }
 
-    public void setException(@Nullable Throwable exception)
-    {
+    public void setException(@Nullable Throwable exception) {
         this.exception = exception;
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -431,12 +_,12 @@
+@@ -440,12 +_,12 @@
              if (screen != null) {
                  try {
                      if (p_90897_ != 1 && p_90897_ != 2) {
@@ -15,7 +15,7 @@
                              return;
                          }
                      }
-@@ -495,6 +_,7 @@
+@@ -504,6 +_,7 @@
                      }
                  }
              }
@@ -23,7 +23,7 @@
          }
      }
  
-@@ -504,10 +_,10 @@
+@@ -513,10 +_,10 @@
              if (screen != null && this.minecraft.getOverlay() == null) {
                  try {
                      if (Character.isBmpCodePoint(p_90891_)) {

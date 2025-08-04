@@ -15,8 +15,8 @@
              ResourceLocation resourcelocation1 = p_377980_.fileToId(resourcelocation);
  
              try (Reader reader = entry.getValue().openAsReader()) {
--                p_376362_.parse(p_378080_, JsonParser.parseReader(reader)).ifSuccess(p_370131_ -> {
-+                var json = JsonParser.parseReader(reader);
+-                p_376362_.parse(p_378080_, StrictJsonParser.parse(reader)).ifSuccess(p_370131_ -> {
++                var json = StrictJsonParser.parse(reader);
 +                json = net.minecraftforge.common.ForgeHooks.readConditional(p_378080_, json);
 +                if (json == null) {
 +                    LOGGER.debug("Skipping loading {} as its conditions were not met", resourcelocation);

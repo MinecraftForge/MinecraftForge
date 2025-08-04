@@ -9,9 +9,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
@@ -20,18 +22,18 @@ import net.minecraftforge.eventbus.api.Cancelable;
  *
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class ZombieEvent extends EntityEvent {
+public sealed class ZombieEvent extends EntityEvent {
+    public static final EventBus<ZombieEvent> BUS = EventBus.create(ZombieEvent.class);
+
     private final Zombie zombie;
 
-    public ZombieEvent(Zombie zombie)
-    {
+    public ZombieEvent(Zombie zombie) {
         super(zombie);
         this.zombie = zombie;
     }
 
     @Override
-    public Zombie getEntity()
-    {
+    public Zombie getEntity() {
         return this.zombie;
     }
 
@@ -58,8 +60,9 @@ public class ZombieEvent extends EntityEvent {
      *
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @HasResult
-    public static class SummonAidEvent extends ZombieEvent {
+    public static final class SummonAidEvent extends ZombieEvent implements HasResult {
+        public static final EventBus<SummonAidEvent> BUS = EventBus.create(SummonAidEvent.class);
+
         private Zombie customSummonedAid;
 
         private final Level level;
@@ -68,9 +71,9 @@ public class ZombieEvent extends EntityEvent {
         private final int z;
         private final LivingEntity attacker;
         private final double summonChance;
+        private Result result = Result.DEFAULT;
 
-        public SummonAidEvent(Zombie zombie, Level level, int x, int y, int z, LivingEntity attacker, double summonChance)
-        {
+        public SummonAidEvent(Zombie zombie, Level level, int x, int y, int z, LivingEntity attacker, double summonChance) {
             super(zombie);
             this.level = level;
             this.x = x;
@@ -91,5 +94,15 @@ public class ZombieEvent extends EntityEvent {
         public int getZ() { return z; }
         public LivingEntity getAttacker() { return attacker; }
         public double getSummonChance() { return summonChance; }
+
+        @Override
+        public Result getResult() {
+            return result;
+        }
+
+        @Override
+        public void setResult(Result result) {
+            this.result = result;
+        }
     }
 }

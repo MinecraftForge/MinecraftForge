@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -104,6 +_,15 @@
+@@ -105,6 +_,15 @@
          this.setHealth(this.getMaxHealth());
          this.noPhysics = true;
          this.phaseManager = new EnderDragonPhaseManager(this);
@@ -16,7 +16,7 @@
      }
  
      public void setDragonFight(EndDragonFight p_287736_) {
-@@ -152,8 +_,26 @@
+@@ -153,8 +_,26 @@
          p_330342_.define(DATA_PHASE, EnderDragonPhase.HOVERING.getId());
      }
  
@@ -43,7 +43,7 @@
          this.processFlappingMovement();
          if (this.level().isClientSide) {
              this.setHealth(this.getHealth());
-@@ -440,7 +_,7 @@
+@@ -441,7 +_,7 @@
                      BlockPos blockpos = new BlockPos(k1, l1, i2);
                      BlockState blockstate = p_363273_.getBlockState(blockpos);
                      if (!blockstate.isAir() && !blockstate.is(BlockTags.DRAGON_TRANSPARENT)) {
@@ -52,7 +52,7 @@
                              flag1 = p_363273_.removeBlock(blockpos, false) || flag1;
                          } else {
                              flag = true;
-@@ -534,7 +_,8 @@
+@@ -535,7 +_,8 @@
  
          if (this.level() instanceof ServerLevel serverlevel) {
              if (this.dragonDeathTime > 150 && this.dragonDeathTime % 5 == 0 && serverlevel.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
@@ -62,7 +62,7 @@
              }
  
              if (this.dragonDeathTime == 1 && !this.isSilent()) {
-@@ -552,7 +_,8 @@
+@@ -553,7 +_,8 @@
  
          if (this.dragonDeathTime == 200 && this.level() instanceof ServerLevel serverlevel1) {
              if (serverlevel1.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT)) {
@@ -72,7 +72,7 @@
              }
  
              if (this.dragonFight != null) {
-@@ -860,6 +_,7 @@
+@@ -861,6 +_,7 @@
      @Override
      public void recreateFromPacket(ClientboundAddEntityPacket p_218825_) {
          super.recreateFromPacket(p_218825_);
@@ -80,7 +80,7 @@
          EnderDragonPart[] aenderdragonpart = this.getSubEntities();
  
          for (int i = 0; i < aenderdragonpart.length; i++) {
-@@ -875,5 +_,15 @@
+@@ -876,5 +_,15 @@
      @Override
      protected float sanitizeScale(float p_333905_) {
          return 1.0F;

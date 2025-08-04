@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -41,7 +_,7 @@
+@@ -42,7 +_,7 @@
  import net.minecraft.world.level.storage.loot.BuiltInLootTables;
  import net.minecraft.world.phys.Vec3;
  
@@ -9,7 +9,7 @@
      private static final EntityDataAccessor<Byte> DATA_PUMPKIN_ID = SynchedEntityData.defineId(SnowGolem.class, EntityDataSerializers.BYTE);
      private static final byte PUMPKIN_FLAG = 16;
      private static final boolean DEFAULT_PUMPKIN = true;
-@@ -94,7 +_,7 @@
+@@ -95,7 +_,7 @@
                  this.hurtServer(serverlevel, this.damageSources().onFire(), 1.0F);
              }
  
@@ -18,7 +18,7 @@
                  return;
              }
  
-@@ -105,7 +_,7 @@
+@@ -106,7 +_,7 @@
                  int k = Mth.floor(this.getY());
                  int l = Mth.floor(this.getZ() + (i / 2 % 2 * 2 - 1) * 0.25F);
                  BlockPos blockpos = new BlockPos(j, k, l);
@@ -27,7 +27,7 @@
                      this.level().setBlockAndUpdate(blockpos, blockstate);
                      this.level().gameEvent(GameEvent.BLOCK_PLACE, blockpos, GameEvent.Context.of(this, blockstate));
                  }
-@@ -135,7 +_,7 @@
+@@ -136,7 +_,7 @@
      @Override
      protected InteractionResult mobInteract(Player p_29920_, InteractionHand p_29921_) {
          ItemStack itemstack = p_29920_.getItemInHand(p_29921_);
@@ -36,7 +36,7 @@
              if (this.level() instanceof ServerLevel serverlevel) {
                  this.shear(serverlevel, SoundSource.PLAYERS, itemstack);
                  this.gameEvent(GameEvent.SHEAR, p_29920_);
-@@ -195,4 +_,18 @@
+@@ -196,4 +_,18 @@
      public Vec3 getLeashOffset() {
          return new Vec3(0.0, 0.75F * this.getEyeHeight(), this.getBbWidth() * 0.4F);
      }

@@ -9,8 +9,10 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -23,7 +25,9 @@ import java.util.List;
  * @see DebugText
  * @see Chat
  */
-public abstract class CustomizeGuiOverlayEvent extends Event {
+public abstract sealed class CustomizeGuiOverlayEvent extends MutableEvent implements Cancellable, InheritableEvent {
+    public static final CancellableEventBus<CustomizeGuiOverlayEvent> BUS = CancellableEventBus.create(CustomizeGuiOverlayEvent.class);
+
     private final Window window;
     private final GuiGraphics guiGraphics;
     private final float partialTick;
@@ -56,8 +60,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    @Cancelable
-    public static class BossEventProgress extends CustomizeGuiOverlayEvent {
+    public static final class BossEventProgress extends CustomizeGuiOverlayEvent {
+        public static final CancellableEventBus<BossEventProgress> BUS = CancellableEventBus.create(BossEventProgress.class);
+
         private final LerpingBossEvent bossEvent;
         private final int x;
         private final int y;
@@ -119,7 +124,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class DebugText extends CustomizeGuiOverlayEvent {
+    public static final class DebugText extends CustomizeGuiOverlayEvent {
+        public static final CancellableEventBus<DebugText> BUS = CancellableEventBus.create(DebugText.class);
+
         private final List<String> text;
 
         private final Side side;
@@ -159,7 +166,9 @@ public abstract class CustomizeGuiOverlayEvent extends Event {
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Chat extends CustomizeGuiOverlayEvent {
+    public static final class Chat extends CustomizeGuiOverlayEvent {
+        public static final CancellableEventBus<Chat> BUS = CancellableEventBus.create(Chat.class);
+
         private int posX;
         private int posY;
 

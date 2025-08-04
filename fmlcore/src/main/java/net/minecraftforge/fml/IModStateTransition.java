@@ -5,7 +5,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 
@@ -20,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface IModStateTransition {
     /** Magic value to allow me to optimize the futures list by ignoring the default value without making old methods nullable. */
-    public static final BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> NULL_HOOK = (e, g) -> CompletableFuture.completedFuture(null);
+    BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> NULL_HOOK = (e, g) -> CompletableFuture.completedFuture(null);
 
     static IModStateTransition buildNoopTransition() {
         return ModStateTransitionHelper.NOOP;
@@ -51,7 +50,7 @@ public interface IModStateTransition {
     }
 
     @Nullable
-    default <T extends Event & IModBusEvent> EventGenerator<T> eventFunction() {
+    default <T extends IModBusEvent> EventGenerator<T> eventFunction() {
         return null;
     }
 
@@ -74,8 +73,8 @@ public interface IModStateTransition {
     @Deprecated(since = "1.21.3", forRemoval = true)
     default BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<Void>> postDispatchHook() { return NULL_HOOK; }
 
-    interface EventGenerator<T extends Event & IModBusEvent> extends Function<ModContainer, T> {
-        static <FN extends Event & IModBusEvent> EventGenerator<FN> fromFunction(Function<ModContainer, FN> fn) {
+    interface EventGenerator<T extends IModBusEvent> extends Function<ModContainer, T> {
+        static <FN extends IModBusEvent> EventGenerator<FN> fromFunction(Function<ModContainer, FN> fn) {
             return fn::apply;
         }
     }

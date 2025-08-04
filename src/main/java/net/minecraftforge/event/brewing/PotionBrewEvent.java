@@ -8,36 +8,35 @@ package net.minecraftforge.event.brewing;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 
-public class PotionBrewEvent extends Event
-{
-    private NonNullList<ItemStack> stacks;
+public sealed abstract class PotionBrewEvent extends MutableEvent implements InheritableEvent {
+    public static final EventBus<PotionBrewEvent> BUS = EventBus.create(PotionBrewEvent.class);
 
-    protected PotionBrewEvent(NonNullList<ItemStack> stacks)
-    {
+    private final NonNullList<ItemStack> stacks;
+
+    protected PotionBrewEvent(NonNullList<ItemStack> stacks) {
         this.stacks = stacks;
     }
 
     @NotNull
-    public ItemStack getItem(int index)
-    {
+    public ItemStack getItem(int index) {
         if (index < 0 || index >= stacks.size()) return ItemStack.EMPTY;
         return stacks.get(index);
     }
 
-    public void setItem(int index, @NotNull ItemStack stack)
-    {
-        if (index < stacks.size())
-        {
+    public void setItem(int index, @NotNull ItemStack stack) {
+        if (index < stacks.size()) {
             stacks.set(index, stack);
         }
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return stacks.size();
     }
 
@@ -58,11 +57,10 @@ public class PotionBrewEvent extends Event
      * <br>
      * If this event is canceled, and items have been modified, PotionBrewEvent.Post will automatically be fired.
      **/
-    @Cancelable
-    public static class Pre extends PotionBrewEvent
-    {
-        public Pre(NonNullList<ItemStack> stacks)
-        {
+    public static final class Pre extends PotionBrewEvent implements Cancellable {
+        public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
+        public Pre(NonNullList<ItemStack> stacks) {
             super(stacks);
         }
     }
@@ -80,10 +78,10 @@ public class PotionBrewEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Post extends PotionBrewEvent
-    {
-        public Post(NonNullList<ItemStack> stacks)
-        {
+    public static final class Post extends PotionBrewEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
+        public Post(NonNullList<ItemStack> stacks) {
             super(stacks);
         }
     }

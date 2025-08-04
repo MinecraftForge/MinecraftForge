@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LevelRenderer.java
 +++ b/net/minecraft/client/renderer/LevelRenderer.java
-@@ -113,7 +_,7 @@
+@@ -121,7 +_,7 @@
      private final SkyRenderer skyRenderer = new SkyRenderer();
      private final CloudRenderer cloudRenderer = new CloudRenderer();
      private final WorldBorderRenderer worldBorderRenderer = new WorldBorderRenderer();
@@ -9,28 +9,16 @@
      @Nullable
      private ClientLevel level;
      private final SectionOcclusionGraph sectionOcclusionGraph = new SectionOcclusionGraph();
-@@ -483,7 +_,7 @@
-             postchain1.addToFrame(framegraphbuilder, i, j, this.targets, null);
+@@ -480,7 +_,7 @@
+             postchain1.addToFrame(framegraphbuilder, i, j, this.targets);
          }
  
--        this.addParticlesPass(framegraphbuilder, p_109604_, f, fogparameters);
-+        this.addParticlesPass(framegraphbuilder, p_109604_, f, fogparameters, frustum);
+-        this.addParticlesPass(framegraphbuilder, p_109604_, f, p_407881_);
++        this.addParticlesPass(framegraphbuilder, p_109604_, f, p_407881_, frustum);
          CloudStatus cloudstatus = this.minecraft.options.getCloudsType();
          if (cloudstatus != CloudStatus.OFF) {
-             float f2 = this.level.effects().getCloudHeight();
-@@ -561,7 +_,11 @@
-             double d2 = vec3.z();
-             p_369478_.push("terrain");
-             this.renderSectionLayer(RenderType.solid(), d0, d1, d2, p_361439_, p_369924_);
-+            // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
-+            var atlas = this.minecraft.getModelManager().getAtlas(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS);
-+            atlas.setBlurMipmap(false, this.minecraft.options.mipmapLevels().get() > 0);
-             this.renderSectionLayer(RenderType.cutoutMipped(), d0, d1, d2, p_361439_, p_369924_);
-+            atlas.restoreLastBlurMipmap();
-             this.renderSectionLayer(RenderType.cutout(), d0, d1, d2, p_361439_, p_369924_);
-             if (this.level.effects().constantAmbientLight()) {
-                 Lighting.setupNetherLevel();
-@@ -586,7 +_,7 @@
+             Optional<Integer> optional = this.level.dimensionType().cloudHeight();
+@@ -577,7 +_,7 @@
              multibuffersource$buffersource.endLastBatch();
              this.checkPoseStack(posestack);
              p_369478_.popPush("blockentities");
@@ -39,7 +27,7 @@
              multibuffersource$buffersource.endLastBatch();
              this.checkPoseStack(posestack);
              multibuffersource$buffersource.endBatch(RenderType.solid());
-@@ -600,8 +_,8 @@
+@@ -591,8 +_,8 @@
              multibuffersource$buffersource.endBatch(Sheets.hangingSignSheet());
              multibuffersource$buffersource.endBatch(Sheets.chestSheet());
              this.renderBuffers.outlineBufferSource().endOutlineBatch();
@@ -50,10 +38,10 @@
              }
  
              p_369478_.popPush("debug");
-@@ -629,8 +_,8 @@
-             this.renderSectionLayer(RenderType.translucent(), d0, d1, d2, p_361439_, p_369924_);
+@@ -620,8 +_,8 @@
+             chunksectionstorender.renderGroup(ChunkSectionLayerGroup.TRANSLUCENT);
              p_369478_.popPush("string");
-             this.renderSectionLayer(RenderType.tripwire(), d0, d1, d2, p_361439_, p_369924_);
+             chunksectionstorender.renderGroup(ChunkSectionLayerGroup.TRIPWIRE);
 -            if (p_362593_) {
 -                this.renderBlockOutline(p_364769_, multibuffersource$buffersource, posestack, true);
 +            if (renderOutline) {
@@ -61,16 +49,16 @@
              }
  
              multibuffersource$buffersource.endBatch();
-@@ -638,7 +_,7 @@
+@@ -629,7 +_,7 @@
          });
      }
  
--    private void addParticlesPass(FrameGraphBuilder p_366471_, Camera p_363128_, float p_365755_, FogParameters p_363695_) {
-+    private void addParticlesPass(FrameGraphBuilder p_366471_, Camera p_363128_, float p_365755_, FogParameters p_363695_, Frustum frustum) {
+-    private void addParticlesPass(FrameGraphBuilder p_366471_, Camera p_363128_, float p_365755_, GpuBufferSlice p_405857_) {
++    private void addParticlesPass(FrameGraphBuilder p_366471_, Camera p_363128_, float p_365755_, GpuBufferSlice p_405857_, Frustum frustum) {
          FramePass framepass = p_366471_.addPass("particles");
          if (this.targets.particles != null) {
              this.targets.particles = framepass.readsAndWrites(this.targets.particles);
-@@ -655,7 +_,7 @@
+@@ -646,7 +_,7 @@
                  resourcehandle1.get().copyDepthFrom(resourcehandle.get());
              }
  
@@ -79,7 +67,7 @@
          });
      }
  
-@@ -725,9 +_,9 @@
+@@ -716,9 +_,9 @@
                              || p_365712_.isDetached()
                              || p_365712_.getEntity() instanceof LivingEntity && ((LivingEntity)p_365712_.getEntity()).isSleeping()
                      )
@@ -91,7 +79,7 @@
                          flag = true;
                      }
                  }
-@@ -767,9 +_,10 @@
+@@ -758,9 +_,10 @@
          }
      }
  
@@ -104,15 +92,15 @@
          Vec3 vec3 = p_369847_.getPosition();
          double d0 = vec3.x();
          double d1 = vec3.y();
-@@ -779,6 +_,7 @@
-             List<BlockEntity> list = sectionrenderdispatcher$rendersection.getCompiled().getRenderableBlockEntities();
+@@ -770,6 +_,7 @@
+             List<BlockEntity> list = sectionrenderdispatcher$rendersection.getSectionMesh().getRenderableBlockEntities();
              if (!list.isEmpty()) {
                  for (BlockEntity blockentity : list) {
 +                    if (!frustum.isVisible(blockentity.getRenderBoundingBox())) continue;
                      BlockPos blockpos = blockentity.getBlockPos();
                      MultiBufferSource multibuffersource = p_362022_;
                      p_366168_.pushPose();
-@@ -798,6 +_,9 @@
+@@ -789,6 +_,9 @@
                          }
                      }
  
@@ -122,10 +110,10 @@
                      this.blockEntityRenderDispatcher.render(blockentity, p_367074_, p_366168_, multibuffersource);
                      p_366168_.popPose();
                  }
-@@ -806,13 +_,18 @@
- 
-         synchronized (this.globalBlockEntities) {
-             for (BlockEntity blockentity1 : this.globalBlockEntities) {
+@@ -802,13 +_,18 @@
+             if (blockentity1.isRemoved()) {
+                 iterator.remove();
+             } else {
 +                if (!frustum.isVisible(blockentity1.getRenderBoundingBox())) continue;
                  BlockPos blockpos1 = blockentity1.getBlockPos();
                  p_366168_.pushPose();
@@ -141,7 +129,7 @@
      }
  
      private void renderBlockDestroyAnimation(PoseStack p_366956_, Camera p_369324_, MultiBufferSource.BufferSource p_365998_) {
-@@ -831,14 +_,14 @@
+@@ -827,14 +_,14 @@
                      p_366956_.translate(blockpos.getX() - d0, blockpos.getY() - d1, blockpos.getZ() - d2);
                      PoseStack.Pose posestack$pose = p_366956_.last();
                      VertexConsumer vertexconsumer = new SheetedDecalTextureGenerator(p_365998_.getBuffer(ModelBakery.DESTROY_TYPES.get(i)), posestack$pose, 1.0F);
@@ -158,7 +146,7 @@
          if (this.minecraft.hitResult instanceof BlockHitResult blockhitresult) {
              if (blockhitresult.getType() != HitResult.Type.MISS) {
                  BlockPos blockpos = blockhitresult.getBlockPos();
-@@ -849,6 +_,9 @@
+@@ -845,6 +_,9 @@
                          return;
                      }
  
@@ -168,7 +156,7 @@
                      Vec3 vec3 = p_367935_.getPosition();
                      Boolean obool = this.minecraft.options.highContrastBlockOutline().get();
                      if (obool) {
-@@ -864,6 +_,8 @@
+@@ -860,6 +_,8 @@
                      p_367206_.endLastBatch();
                  }
              }
@@ -177,7 +165,7 @@
          }
      }
  
-@@ -1359,7 +_,7 @@
+@@ -1344,7 +_,7 @@
          } else {
              int i = p_398213_.packedBrightness(p_109538_, p_109540_);
              int j = LightTexture.block(i);
@@ -186,7 +174,7 @@
              if (j < k) {
                  int l = LightTexture.sky(i);
                  return LightTexture.pack(k, l);
-@@ -1422,6 +_,22 @@
+@@ -1406,6 +_,22 @@
  
      public CloudRenderer getCloudRenderer() {
          return this.cloudRenderer;

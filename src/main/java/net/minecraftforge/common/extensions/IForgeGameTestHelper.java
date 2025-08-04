@@ -43,7 +43,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
 
 public interface IForgeGameTestHelper {
     private GameTestHelper self() {
@@ -168,17 +169,17 @@ public interface IForgeGameTestHelper {
     /**
      * Registers an event listener that will be unregistered when the test is finished running.
      */
-    default <E extends Event> void addEventListener(Consumer<E> consumer) {
-        MinecraftForge.EVENT_BUS.addListener(consumer);
-        self().addCleanup(success -> MinecraftForge.EVENT_BUS.unregister(consumer));
+    default <E extends InheritableEvent> void addEventListener(EventBus<E> bus, Consumer<E> consumer) {
+        var key = bus.addListener(consumer);
+        self().addCleanup(success -> bus.removeListener(key));
     }
 
     /**
      * Registers an event listener that will be unregistered when the test is finished running.
      */
     default void registerEventListener(Object handler) {
-        MinecraftForge.EVENT_BUS.register(handler);
-        self().addCleanup(success -> MinecraftForge.EVENT_BUS.unregister(handler));
+        var keys = MinecraftForge.EVENT_BUS.register(handler);
+        self().addCleanup(success -> MinecraftForge.EVENT_BUS.unregister(keys));
     }
 
     /**

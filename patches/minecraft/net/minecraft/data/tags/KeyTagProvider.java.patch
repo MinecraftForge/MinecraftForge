@@ -1,0 +1,16 @@
+--- a/net/minecraft/data/tags/KeyTagProvider.java
++++ b/net/minecraft/data/tags/KeyTagProvider.java
+@@ -13,8 +_,12 @@
+         super(p_407442_, p_405854_, p_409645_);
+     }
+ 
++    protected KeyTagProvider(PackOutput p_407442_, ResourceKey<? extends Registry<T>> p_405854_, CompletableFuture<HolderLookup.Provider> p_409645_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_407442_, p_405854_, p_409645_, modId, existingFileHelper);
++    }
++
+     protected TagAppender<ResourceKey<T>, T> tag(TagKey<T> p_406138_) {
+         TagBuilder tagbuilder = this.getOrCreateRawBuilder(p_406138_);
+-        return TagAppender.forBuilder(tagbuilder);
++        return TagAppender.forBuilder(tagbuilder, this.modId);
+     }
+ }

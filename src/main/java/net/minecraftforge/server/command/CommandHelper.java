@@ -15,6 +15,15 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.Connection;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.ConnectionType;
+import net.minecraftforge.network.NetworkContext;
+
 import java.util.Map;
 import java.util.function.Function;
 
@@ -92,5 +101,20 @@ public final class CommandHelper {
         CommandNode<T> resultNode = resultBuilder.build();
         mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
         return resultNode;
+    }
+
+    /**
+     * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
+     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
+     */
+    public static RootCommandNode<CommandSourceStack> filterCommandList(Connection connection, RootCommandNode<CommandSourceStack> root) {
+        if (NetworkContext.get(connection).getType() != ConnectionType.VANILLA)
+            return root;
+
+        return CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
+            ArgumentTypeInfo<?, ?> info = ArgumentTypeInfos.byClass(argType);
+            ResourceLocation id = BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getKey(info);
+            return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
+        });
     }
 }

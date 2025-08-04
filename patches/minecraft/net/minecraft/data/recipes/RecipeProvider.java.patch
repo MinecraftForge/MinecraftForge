@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -735,7 +_,7 @@
+@@ -759,7 +_,7 @@
          RecipeBuilder create(RecipeProvider p_363045_, ItemLike p_362746_, ItemLike p_364674_);
      }
  
@@ -9,7 +9,7 @@
          private final PackOutput packOutput;
          private final CompletableFuture<HolderLookup.Provider> registries;
  
-@@ -755,13 +_,13 @@
+@@ -779,13 +_,13 @@
                          final List<CompletableFuture<?>> list = new ArrayList<>();
                          RecipeOutput recipeoutput = new RecipeOutput() {
                              @Override
@@ -26,7 +26,7 @@
                                      }
                                  }
                              }
-@@ -776,7 +_,9 @@
+@@ -800,7 +_,9 @@
                                  AdvancementHolder advancementholder = Advancement.Builder.recipeAdvancement()
                                      .addCriterion("impossible", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()))
                                      .build(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
@@ -37,7 +37,7 @@
                              }
  
                              private void saveRecipe(ResourceKey<Recipe<?>> p_368864_, Recipe<?> p_368184_) {
-@@ -787,16 +_,19 @@
+@@ -811,16 +_,19 @@
                                  );
                              }
  

@@ -9,7 +9,7 @@
      );
      public static final Block DETECTOR_RAIL = register(
          "detector_rail", DetectorRailBlock::new, BlockBehaviour.Properties.of().noCollission().strength(0.7F).sound(SoundType.METAL)
-@@ -6697,14 +_,5 @@
+@@ -6685,14 +_,5 @@
  
      private static Block register(String p_50796_, BlockBehaviour.Properties p_362760_) {
          return register(p_50796_, Block::new, p_362760_);

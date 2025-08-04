@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
-@@ -858,6 +_,16 @@
+@@ -855,6 +_,17 @@
          protected void breed() {
              ServerLevel serverlevel = this.level;
              Fox fox = (Fox)this.animal.getBreedOffspring(serverlevel, this.partner);
-+            var event = net.minecraftforge.event.ForgeEventFactory.onBabySpawn(animal, partner, fox);
++            var event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(animal, partner, fox);
++            var eventWasCancelled = net.minecraftforge.event.entity.living.BabyEntitySpawnEvent.BUS.post(event);
 +            fox = (Fox)event.getChild();
-+            if (event.isCanceled()) {
++            if (eventWasCancelled) {
 +                //Reset the "inLove" state for the animals
 +                this.animal.setAge(6000);
 +                this.partner.setAge(6000);
@@ -17,7 +18,7 @@
              if (fox != null) {
                  ServerPlayer serverplayer = this.animal.getLoveCause();
                  ServerPlayer serverplayer1 = this.partner.getLoveCause();
-@@ -941,7 +_,7 @@
+@@ -938,7 +_,7 @@
          }
  
          protected void onReachedTarget() {
@@ -26,7 +27,7 @@
                  BlockState blockstate = Fox.this.level().getBlockState(this.blockPos);
                  if (blockstate.is(Blocks.SWEET_BERRY_BUSH)) {
                      this.pickSweetBerries(blockstate);
-@@ -1000,7 +_,7 @@
+@@ -997,7 +_,7 @@
  
          @Override
          public boolean canUse() {

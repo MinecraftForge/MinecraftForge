@@ -8,7 +8,6 @@ package net.minecraftforge.registries;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -26,9 +25,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagLoader;
 import net.minecraft.util.RandomSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +46,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistry {
-    static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker MARKER = ForgeRegistry.REGISTRIES;
     private final ForgeRegistry<T> delegate;
     @Nullable
     private final Function<T, Holder.Reference<T>> intrusiveHolderCallback;
@@ -314,8 +316,10 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
             .sorted()
             .toList();
 
-        if (!unbound.isEmpty())
-            throw new IllegalStateException("Unbound tags in registry " + this.key() + ": " + unbound);
+        if (!unbound.isEmpty()) {
+            LOGGER.debug(MARKER, "Unbound tags in registry " + this.key() + ": " + unbound);
+            this.bindAllUnboundTagsToEmpty();
+        }
 
         this.frozenTags = MappedRegistry.TagSet.fromMap(this.tags);
         this.delegate.onBindTags(this.tags);
@@ -379,8 +383,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
             tag.bind(List.of());
     }
 
-    void bindAllUnboundTagsToEmpty() {
-        this.validateWrite();
+    private void bindAllUnboundTagsToEmpty() {
         for (var tag : this.tags.values()) {
             if (!tag.isBound())
                 tag.bind(List.of());

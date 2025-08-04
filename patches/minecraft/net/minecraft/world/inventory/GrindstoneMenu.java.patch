@@ -45,7 +45,7 @@
  
      private ItemStack computeResult(ItemStack p_335167_, ItemStack p_329934_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onGrindstoneChange(p_335167_, p_329934_, this.resultSlots, -1);
-+        if (event.isCanceled()) {
++        if (event == null) {
 +            this.xp = -1;
 +            return ItemStack.EMPTY;
 +        } else if (!event.getOutput().isEmpty()) {

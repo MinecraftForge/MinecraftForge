@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/animal/horse/Llama.java
 +++ b/net/minecraft/world/entity/animal/horse/Llama.java
-@@ -374,6 +_,10 @@
+@@ -375,6 +_,10 @@
  
      @Override
      public boolean causeFallDamage(double p_396436_, float p_149538_, DamageSource p_149540_) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_396436_, p_149538_);
-+        if (event.isCanceled()) return false;
++        if (event == null) return false;
 +        p_396436_ = event.getDistance();
 +        p_149538_ = event.getDamageMultiplier();
          int i = this.calculateFallDamage(p_396436_, p_149538_);

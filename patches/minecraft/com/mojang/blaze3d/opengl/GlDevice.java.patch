@@ -1,53 +1,74 @@
 --- a/com/mojang/blaze3d/opengl/GlDevice.java
 +++ b/com/mojang/blaze3d/opengl/GlDevice.java
-@@ -80,11 +_,25 @@
- 
-     @Override
-     public GpuTexture createTexture(@Nullable Supplier<String> p_397830_, TextureFormat p_394839_, int p_394481_, int p_391831_, int p_395609_) {
--        return this.createTexture(this.debugLabels.exists() && p_397830_ != null ? p_397830_.get() : null, p_394839_, p_394481_, p_391831_, p_395609_);
-+        return this.createTexture(p_397830_, p_394839_, p_394481_, p_391831_, p_395609_, false);
+@@ -89,8 +_,15 @@
+     public GpuTexture createTexture(
+         @Nullable Supplier<String> p_397830_, int p_394481_, TextureFormat p_394839_, int p_391831_, int p_395609_, int p_407582_, int p_408928_
+     ) {
++        return createTexture(p_397830_, p_394481_, p_394839_, p_391831_, p_395609_, p_407582_, p_408928_, false);
 +    }
 +
-+    /** @see GpuDevice#createTexture(Supplier, TextureFormat, int, int, int, boolean) */
 +    @Override
-+    public GpuTexture createTexture(@Nullable Supplier<String> p_397830_, TextureFormat p_394839_, int p_394481_, int p_391831_, int p_395609_, boolean stencil) {
-+        return this.createTexture(this.debugLabels.exists() && p_397830_ != null ? p_397830_.get() : null, p_394839_, p_394481_, p_391831_, p_395609_, stencil);
++    public GpuTexture createTexture(
++            @Nullable Supplier<String> p_397830_, int p_394481_, TextureFormat p_394839_, int p_391831_, int p_395609_, int p_407582_, int p_408928_, boolean stencil
++        ) {
+         return this.createTexture(
+-            this.debugLabels.exists() && p_397830_ != null ? p_397830_.get() : null, p_394481_, p_394839_, p_391831_, p_395609_, p_407582_, p_408928_
++            this.debugLabels.exists() && p_397830_ != null ? p_397830_.get() : null, p_394481_, p_394839_, p_391831_, p_395609_, p_407582_, p_408928_, stencil
+         );
      }
  
-     @Override
-     public GpuTexture createTexture(@Nullable String p_394142_, TextureFormat p_394951_, int p_395535_, int p_393944_, int p_392329_) {
-+        return this.createTexture(p_394142_, p_394951_, p_395535_, p_393944_, p_392329_, false);
+@@ -98,6 +_,15 @@
+     public GpuTexture createTexture(
+         @Nullable String p_394142_, int p_395535_, TextureFormat p_394951_, int p_393944_, int p_392329_, int p_408015_, int p_406483_
+     ) {
++        return createTexture(p_394142_, p_395535_, p_394951_, p_393944_, p_392329_, p_408015_, p_406483_, false);
 +    }
 +
-+    /** @see GpuDevice#createTexture(String, TextureFormat, int, int, int, boolean) */
 +    @Override
-+    public GpuTexture createTexture(@Nullable String p_394142_, TextureFormat p_394951_, int p_395535_, int p_393944_, int p_392329_, boolean stencil) {
++    public GpuTexture createTexture(
++        @Nullable String p_394142_, int p_395535_, TextureFormat p_394951_, int p_393944_, int p_392329_, int p_408015_, int p_406483_, boolean stencil
++    ) {
 +        // Forge: stencil rendering is only for depth
 +        stencil &= p_394951_.hasDepthAspect();
-         if (p_392329_ < 1) {
+         if (p_406483_ < 1) {
              throw new IllegalArgumentException("mipLevels must be at least 1");
-         } else {
-@@ -106,11 +_,14 @@
-                 GlStateManager._texImage2D(
-                     3553,
-                     j,
-+                    stencil ? org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8 :
-                     GlConst.toGlInternalId(p_394951_),
-                     p_395535_ >> j,
-                     p_393944_ >> j,
-                     0,
-+                    stencil ? org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL :
-                     GlConst.toGlExternalId(p_394951_),
-+                    stencil ? org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV :
-                     GlConst.toGlType(p_394951_),
-                     null
-                 );
-@@ -122,7 +_,7 @@
-             } else if (k != 0) {
-                 throw new IllegalStateException("OpenGL error " + k);
+         } else if (p_408015_ < 1) {
+@@ -148,11 +_,14 @@
+                         GlStateManager._texImage2D(
+                             k,
+                             l,
++                            stencil ? org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8 :
+                             GlConst.toGlInternalId(p_394951_),
+                             p_393944_ >> l,
+                             p_392329_ >> l,
+                             0,
++                            stencil ? org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL :
+                             GlConst.toGlExternalId(p_394951_),
++                            stencil ? org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV :
+                             GlConst.toGlType(p_394951_),
+                             null
+                         );
+@@ -163,11 +_,14 @@
+                     GlStateManager._texImage2D(
+                         j,
+                         i1,
++                        stencil ? org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8 :
+                         GlConst.toGlInternalId(p_394951_),
+                         p_393944_ >> i1,
+                         p_392329_ >> i1,
+                         0,
++                        stencil ? org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL :
+                         GlConst.toGlExternalId(p_394951_),
++                        stencil ? org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV :
+                         GlConst.toGlType(p_394951_),
+                         null
+                     );
+@@ -180,7 +_,7 @@
+             } else if (j1 != 0) {
+                 throw new IllegalStateException("OpenGL error " + j1);
              } else {
--                GlTexture gltexture = new GlTexture(p_394142_, p_394951_, p_395535_, p_393944_, p_392329_, i);
-+                GlTexture gltexture = new GlTexture(p_394142_, p_394951_, p_395535_, p_393944_, p_392329_, i, stencil);
+-                GlTexture gltexture = new GlTexture(p_395535_, p_394142_, p_394951_, p_393944_, p_392329_, p_408015_, p_406483_, i);
++                GlTexture gltexture = new GlTexture(p_395535_, p_394142_, p_394951_, p_393944_, p_392329_, p_408015_, p_406483_, i, stencil);
                  this.debugLabels.applyLabel(gltexture);
                  return gltexture;
              }

@@ -12,13 +12,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.tags.ITagManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -316,10 +318,11 @@ public class DeferredRegister<T> {
      * Adds our event handler to the specified event bus, this MUST be called in order for this class to function.
      * See {@link DeferredRegister the example usage}.
      *
-     * @param bus The Mod Specific event bus.
+     * @param modBusGroup The mod-specific event bus group, obtained from {@link FMLModContainer#getModBusGroup()} or
+     *                    your language provider's equivalent.
      */
-    public void register(IEventBus bus) {
-        bus.register(new EventDispatcher());
+    public void register(BusGroup modBusGroup) {
+        modBusGroup.register(EventDispatcher.LOOKUP, new EventDispatcher());
     }
 
     /**
@@ -372,7 +375,9 @@ public class DeferredRegister<T> {
         return value;
     }
 
-    private class EventDispatcher {
+    private final class EventDispatcher {
+        private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
+
         @SubscribeEvent
         public void handleEvent(RegisterEvent event) {
             if (event.getRegistryKey().equals(registryKey)) {

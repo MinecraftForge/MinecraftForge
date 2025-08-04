@@ -8,7 +8,8 @@ package net.minecraftforge.registries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,11 @@ import java.util.function.Supplier;
  * @see #register(ResourceKey, ResourceLocation, Supplier)
  * @see #register(ResourceKey, Consumer)
  */
-public class RegisterEvent extends Event implements IModBusEvent {
+public class RegisterEvent implements IModBusEvent {
+    public static EventBus<RegisterEvent> getBus(BusGroup modBusGroup) {
+        return IModBusEvent.getBus(modBusGroup, RegisterEvent.class);
+    }
+
     @NotNull
     private final ResourceKey<? extends Registry<?>> registryKey;
     @Nullable

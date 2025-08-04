@@ -1,0 +1,26 @@
+--- a/net/minecraft/data/tags/VanillaItemTagsProvider.java
++++ b/net/minecraft/data/tags/VanillaItemTagsProvider.java
+@@ -19,6 +_,10 @@
+         super(p_275657_, Registries.ITEM, p_275712_, p_405065_ -> p_405065_.builtInRegistryHolder().key());
+     }
+ 
++    public VanillaItemTagsProvider(PackOutput p_275657_, CompletableFuture<HolderLookup.Provider> p_275712_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_275657_, Registries.ITEM, p_275712_, p_405065_ -> p_405065_.builtInRegistryHolder().key(), modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_255639_) {
+         (new BlockItemTagsProvider() {
+@@ -459,6 +_,12 @@
+         @Override
+         public TagAppender<Block, Block> addOptionalTag(TagKey<Block> p_407315_) {
+             this.itemAppender.addOptionalTag(blockTagToItemTag(p_407315_));
++            return this;
++        }
++
++        @Override
++        public TagAppender<Block, Block> remove(Block value) {
++            this.itemAppender.remove(Objects.requireNonNull(value.asItem()));
+             return this;
+         }
+     }

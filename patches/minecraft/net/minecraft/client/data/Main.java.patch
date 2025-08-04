@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/data/Main.java
 +++ b/net/minecraft/client/data/Main.java
-@@ -30,13 +_,18 @@
+@@ -31,13 +_,18 @@
          OptionSpec<Void> optionspec1 = optionparser.accepts("client", "Include client generators");
          OptionSpec<Void> optionspec2 = optionparser.accepts("all", "Include all generators");
          OptionSpec<String> optionspec3 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
@@ -15,7 +15,7 @@
              boolean flag1 = flag || optionset.has(optionspec1);
              Bootstrap.bootStrap();
              ClientBootstrap.bootstrap();
-+            if (!loader.run(optionset, path, input, flag, flag1, flag, flag, false))
++            if (!loader.run(optionset, path, input, flag, flag1, flag, flag, true))
 +                return;
              DataGenerator datagenerator = new DataGenerator(path, SharedConstants.getCurrentVersion(), true);
              addClientProviders(datagenerator, flag1);

@@ -1,33 +1,6 @@
 --- a/net/minecraft/world/entity/animal/wolf/Wolf.java
 +++ b/net/minecraft/world/entity/animal/wolf/Wolf.java
-@@ -88,7 +_,7 @@
- import net.minecraft.world.level.pathfinder.PathType;
- import net.minecraft.world.phys.Vec3;
- 
--public class Wolf extends TamableAnimal implements NeutralMob {
-+public class Wolf extends TamableAnimal implements NeutralMob, net.minecraftforge.common.IForgeShearable {
-     private static final EntityDataAccessor<Boolean> DATA_INTERESTED_ID = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.BOOLEAN);
-     private static final EntityDataAccessor<Integer> DATA_COLLAR_COLOR = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
-     private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Wolf.class, EntityDataSerializers.INT);
-@@ -464,7 +_,7 @@
-                     return InteractionResult.SUCCESS;
-                 }
- 
--                if (!itemstack.is(Items.SHEARS)
-+                if (!itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)
-                     || !this.isOwnedBy(p_391202_)
-                     || !this.isWearingBodyArmor()
-                     || EnchantmentHelper.has(this.getBodyArmorItem(), EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) && !p_391202_.isCreative()) {
-@@ -491,6 +_,8 @@
-                     return interactionresult;
-                 }
- 
-+                // Forge: moved to onSheared
-+                if (true) return InteractionResult.PASS;
-                 itemstack.hurtAndBreak(1, p_391202_, getSlotForHand(p_391687_));
-                 this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
-                 ItemStack itemstack1 = this.getBodyArmorItem();
-@@ -518,7 +_,7 @@
+@@ -503,7 +_,7 @@
      }
  
      private void tryToTame(Player p_397321_) {
@@ -36,27 +9,3 @@
              this.tame(p_397321_);
              this.navigation.stop();
              this.setTarget(null);
-@@ -713,5 +_,23 @@
-             super(false);
-             this.type = p_391612_;
-         }
-+    }
-+
-+    @Override
-+    public boolean isShearable(ItemStack item, Level world, BlockPos pos) {
-+        return this.isWearingBodyArmor();
-+    }
-+
-+    @Override
-+    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
-+        if (!this.isWearingBodyArmor() || (player != null && !this.isOwnedBy(player)) ||
-+            (EnchantmentHelper.has(this.getBodyArmorItem(), EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE) && (player == null || !player.isCreative()))
-+        )
-+            return java.util.Collections.emptyList();
-+
-+        this.playSound(SoundEvents.ARMOR_UNEQUIP_WOLF);
-+        var armor = this.getBodyArmorItem();
-+        this.setBodyArmorItem(ItemStack.EMPTY);
-+        return java.util.List.of(armor);
-     }
- }

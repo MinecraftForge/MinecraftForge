@@ -9,7 +9,7 @@
 +                (double)spreadplayerscommand$position.getSpawnY(p_138731_, p_138733_),
 +                (double)Mth.floor(spreadplayerscommand$position.z) + 0.5D
 +            );
-+            if (!event.isCanceled())
++            if (event != null)
              entity.teleportTo(
                  p_138731_,
 -                Mth.floor(spreadplayerscommand$position.x) + 0.5,

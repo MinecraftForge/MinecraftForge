@@ -9,16 +9,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import io.netty.channel.ChannelHandler;
-import net.minecraft.commands.CommandBuildContext;
-import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.commands.synchronization.ArgumentTypeInfo;
-import net.minecraft.commands.synchronization.ArgumentTypeInfos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.ConnectionType;
@@ -27,7 +19,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.brigadier.tree.RootCommandNode;
 
 /**
  * A filter for impl packets, used to filter/modify parts of vanilla impl messages that
@@ -39,7 +30,6 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter {
         super(
             ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
             .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
-            .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
             // TODO Filter tags
             //.put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
             .build()
@@ -65,22 +55,6 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter {
                 })
                 .forEach(snapshot -> newPacket.getValues().add(snapshot));
         return newPacket;
-    }
-
-    /**
-     * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
-     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
-     */
-    @NotNull
-    private static ClientboundCommandsPacket filterCommandList(ClientboundCommandsPacket packet) {
-        CommandBuildContext commandBuildContext = Commands.createValidationContext(VanillaRegistries.createLookup());
-        RootCommandNode<SharedSuggestionProvider> root = packet.getRoot(commandBuildContext);
-        RootCommandNode<SharedSuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
-            ArgumentTypeInfo<?, ?> info = ArgumentTypeInfos.byClass(argType);
-            ResourceLocation id = BuiltInRegistries.COMMAND_ARGUMENT_TYPE.getKey(info);
-            return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
-        });
-        return new ClientboundCommandsPacket(newRoot);
     }
 
     /**

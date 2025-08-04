@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/model/geom/LayerDefinitions.java
 +++ b/net/minecraft/client/model/geom/LayerDefinitions.java
-@@ -497,6 +_,7 @@
+@@ -505,6 +_,7 @@
                  builder.put(ModelLayers.createHangingSignModelName(p_374591_, hangingsignrenderer$attachmenttype), layerdefinition60);
              }
          });

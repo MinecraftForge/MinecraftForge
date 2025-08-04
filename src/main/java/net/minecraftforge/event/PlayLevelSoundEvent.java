@@ -13,8 +13,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
@@ -37,8 +40,9 @@ import java.util.Objects;
  * <p>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@Cancelable
-public class PlayLevelSoundEvent extends Event {
+public sealed class PlayLevelSoundEvent extends MutableEvent implements Cancellable, InheritableEvent {
+    public static final CancellableEventBus<PlayLevelSoundEvent> BUS = CancellableEventBus.create(PlayLevelSoundEvent.class);
+
     private final Level level;
     private final float originalVolume;
     private final float originalPitch;
@@ -149,11 +153,13 @@ public class PlayLevelSoundEvent extends Event {
      * <p>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AtEntity extends PlayLevelSoundEvent {
+    public static final class AtEntity extends PlayLevelSoundEvent {
+        public static final EventBus<AtEntity> BUS = EventBus.create(AtEntity.class);
+
         private final Entity entity;
 
-        public AtEntity(Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
-            super(entity.level(), sound, source, volume, pitch);
+        public AtEntity(Level level, @Nullable Entity entity, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {
+            super(level, sound, source, volume, pitch);
             this.entity = entity;
         }
 
@@ -176,7 +182,9 @@ public class PlayLevelSoundEvent extends Event {
      * <p>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      */
-    public static class AtPosition extends PlayLevelSoundEvent {
+    public static final class AtPosition extends PlayLevelSoundEvent {
+        public static final EventBus<AtPosition> BUS = EventBus.create(AtPosition.class);
+
         private final Vec3 position;
 
         public AtPosition(Level level, Vec3 position, Holder<SoundEvent> sound, SoundSource source, float volume, float pitch) {

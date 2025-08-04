@@ -11,8 +11,6 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.client.renderer.RenderType;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -264,24 +262,29 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             if (barTop < this.top)
                 barTop = this.top;
 
+            guiGraphics.fill(barLeft, this.top, barLeft + barWidth, this.bottom, barBgColor);
+            guiGraphics.fill(barLeft, barTop, barLeft + barWidth, barTop + barHeight, barColor);
+            guiGraphics.fill(barLeft, barTop + barHeight - 1, barLeft + barWidth - 1, barTop, barBorderColor);
+            /*
             var source = guiGraphics.getBufferSource();
-            var buf = source.getBuffer(RenderType.gui());
+            var buf = source.getBuffer(RenderPipelines.GUI);
             buf.addVertex(barLeft,            this.bottom, 0.0F).setColor(barBgColor);
             buf.addVertex(barLeft + barWidth, this.bottom, 0.0F).setColor(barBgColor);
             buf.addVertex(barLeft + barWidth, this.top,    0.0F).setColor(barBgColor);
             buf.addVertex(barLeft,            this.top,    0.0F).setColor(barBgColor);
 
-            buf = source.getBuffer(RenderType.gui());
+            buf = source.getBuffer(RenderPipelines.GUI);
             buf.addVertex(barLeft,            barTop + barHeight, 0.0F).setColor(barColor);
             buf.addVertex(barLeft + barWidth, barTop + barHeight, 0.0F).setColor(barColor);
             buf.addVertex(barLeft + barWidth, barTop,             0.0F).setColor(barColor);
             buf.addVertex(barLeft,            barTop,             0.0F).setColor(barColor);
 
-            buf = source.getBuffer(RenderType.gui());
+            buf = source.getBuffer(RenderPipelines.GUI);
             buf.addVertex(barLeft,                barTop + barHeight - 1, 0.0F).setColor(barBorderColor);
             buf.addVertex(barLeft + barWidth - 1, barTop + barHeight - 1, 0.0F).setColor(barBorderColor);
             buf.addVertex(barLeft + barWidth - 1, barTop,                 0.0F).setColor(barBorderColor);
             buf.addVertex(barLeft,                barTop,                 0.0F).setColor(barBorderColor);
+            */
         }
     }
 

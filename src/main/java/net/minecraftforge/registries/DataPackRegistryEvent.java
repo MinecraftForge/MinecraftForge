@@ -12,18 +12,17 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class DataPackRegistryEvent extends Event implements IModBusEvent
-{
+public sealed abstract class DataPackRegistryEvent implements IModBusEvent {
     @ApiStatus.Internal
-    public DataPackRegistryEvent() {}
+    protected DataPackRegistryEvent() {}
 
     /**
      * Fired when datapack registries can be registered.
@@ -36,8 +35,11 @@ public class DataPackRegistryEvent extends Event implements IModBusEvent
      * This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * on both {@linkplain LogicalSide logical sides}.
      */
-    public static final class NewRegistry extends DataPackRegistryEvent
-    {
+    public static final class NewRegistry extends DataPackRegistryEvent {
+        public static EventBus<NewRegistry> getBus(BusGroup modBusGroup) {
+            return IModBusEvent.getBus(modBusGroup, NewRegistry.class);
+        }
+
         private final List<DataPackRegistryData<?>> registryDataList = new ArrayList<>();
 
         @ApiStatus.Internal
@@ -54,8 +56,7 @@ public class DataPackRegistryEvent extends Event implements IModBusEvent
          * @param codec the codec to be used for loading data from datapacks on servers
          * @see #dataPackRegistry(ResourceKey, Codec, Codec)
          */
-        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec)
-        {
+        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec) {
             this.dataPackRegistry(registryKey, codec, null);
         }
 
@@ -76,15 +77,12 @@ public class DataPackRegistryEvent extends Event implements IModBusEvent
          * The data will be synced using the network codec and accessible via {@link ClientPacketListener#registryAccess()}.
          * @see #dataPackRegistry(ResourceKey, Codec)
          */
-        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec)
-        {
+        public <T> void dataPackRegistry(ResourceKey<Registry<T>> registryKey, Codec<T> codec, @Nullable Codec<T> networkCodec) {
             this.registryDataList.add(new DataPackRegistryData<>(new RegistryDataLoader.RegistryData<>(registryKey, codec, false), networkCodec));
         }
 
-        void process()
-        {
-            for (DataPackRegistryData<?> registryData : this.registryDataList)
-            {
+        void process() {
+            for (DataPackRegistryData<?> registryData : this.registryDataList) {
                 DataPackRegistriesHooks.addRegistryCodec(registryData);
             }
         }

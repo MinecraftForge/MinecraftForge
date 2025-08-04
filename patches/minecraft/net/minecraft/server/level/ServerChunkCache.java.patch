@@ -11,7 +11,7 @@
                  ChunkAccess chunkaccess1 = chunkholder.getChunkIfPresent(ChunkStatus.FULL);
                  if (chunkaccess1 != null) {
                      this.storeInCache(i, chunkaccess1, ChunkStatus.FULL);
-@@ -621,5 +_,17 @@
+@@ -624,5 +_,17 @@
                  return super.pollTask();
              }
          }

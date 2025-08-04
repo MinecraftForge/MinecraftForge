@@ -8,6 +8,8 @@ package net.minecraftforge.event.enchanting;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,8 +20,9 @@ import org.jetbrains.annotations.NotNull;
  * from 0-15 and indicates how many bookshelves surround the enchanting table. The {@link #itemStack} representing the item being
  * enchanted is also available.
  */
-public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Event
-{
+public final class EnchantmentLevelSetEvent extends MutableEvent {
+    public static final EventBus<EnchantmentLevelSetEvent> BUS = EventBus.create(EnchantmentLevelSetEvent.class);
+
     private final Level level;
     private final BlockPos pos;
     private final int enchantRow;
@@ -29,8 +32,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
     private final int originalLevel;
     private int enchantLevel;
 
-    public EnchantmentLevelSetEvent(Level level, BlockPos pos, int enchantRow, int power, @NotNull ItemStack itemStack, int enchantLevel)
-    {
+    public EnchantmentLevelSetEvent(Level level, BlockPos pos, int enchantRow, int power, @NotNull ItemStack itemStack, int enchantLevel) {
         this.level = level;
         this.pos = pos;
         this.enchantRow = enchantRow;
@@ -45,8 +47,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the world object
      */
-    public Level getLevel()
-    {
+    public Level getLevel() {
         return level;
     }
 
@@ -55,8 +56,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the pos of the enchantment table
      */
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 
@@ -65,8 +65,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the row for which the enchantment level is being set
      */
-    public int getEnchantRow()
-    {
+    public int getEnchantRow() {
         return enchantRow;
     }
 
@@ -75,8 +74,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the power (# of bookshelves) for the enchanting table
      */
-    public int getPower()
-    {
+    public int getPower() {
         return power;
     }
 
@@ -86,8 +84,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      * @return the item being enchanted
      */
     @NotNull
-    public ItemStack getItem()
-    {
+    public ItemStack getItem() {
         return itemStack;
     }
 
@@ -96,8 +93,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the original level of the enchantment for this row (0-30)
      */
-    public int getOriginalLevel()
-    {
+    public int getOriginalLevel() {
         return originalLevel;
     }
 
@@ -106,8 +102,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @return the level of the enchantment for this row (0-30)
      */
-    public int getEnchantLevel()
-    {
+    public int getEnchantLevel() {
         return enchantLevel;
     }
 
@@ -116,8 +111,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      *
      * @param level the new level of the enchantment (0-30)
      */
-    public void setEnchantLevel(int level)
-    {
+    public void setEnchantLevel(int level) {
         this.enchantLevel = level;
     }
 }

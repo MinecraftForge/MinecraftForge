@@ -10,16 +10,21 @@ import java.util.Objects;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 /**
  * Represents a captured snapshot of a block which will not change
@@ -29,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
  * can exist multiple times for any given Block.
  */
 public class BlockSnapshot {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
 
     private final ResourceKey<Level> dim;
@@ -65,7 +71,7 @@ public class BlockSnapshot {
 
     @Nullable
     private static CompoundTag getBlockEntityTag(@Nullable BlockEntity te, HolderLookup.Provider lookup) {
-        return te == null ? null : te.saveCustomAndMetadata(lookup);
+        return te == null ? null : te.saveWithFullMetadata(lookup);
     }
 
     public BlockState getCurrentBlock() {
@@ -127,7 +133,10 @@ public class BlockSnapshot {
         if (getTag() != null) {
             te = world.getBlockEntity(pos);
             if (te != null) {
-                te.loadWithComponents(nbt, world.registryAccess());
+                try (var problems = new ProblemReporter.ScopedCollector(te.problemPath(), LOGGER)) {
+                    te.loadWithComponents(TagValueInput.create(problems, world.registryAccess(), getTag()));
+                }
+
                 te.setChanged();
             }
         }

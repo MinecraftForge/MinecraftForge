@@ -21,7 +21,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.test.BaseTestMod;
 import net.minecraftforge.fml.common.Mod;
@@ -46,11 +45,11 @@ public class ConditionalLootPools extends BaseTestMod {
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(name(MODID, "test", BlockBehaviour.Properties.of())));
 
     public ConditionalLootPools(FMLJavaModLoadingContext context) {
-        super(context);
+        super(context, false, true);
+        GatherDataEvent.getBus(modBus).addListener(this::gatherData);
     }
 
-    @SubscribeEvent
-    public void runData(GatherDataEvent event) {
+    public void gatherData(GatherDataEvent event) {
         event.getGenerator().addProvider(event.includeServer(), new LootProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
     }
 

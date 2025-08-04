@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/LargeFireball.java
 +++ b/net/minecraft/world/entity/projectile/LargeFireball.java
-@@ -30,7 +_,7 @@
+@@ -31,7 +_,7 @@
      protected void onHit(HitResult p_37218_) {
          super.onHit(p_37218_);
          if (this.level() instanceof ServerLevel serverlevel) {

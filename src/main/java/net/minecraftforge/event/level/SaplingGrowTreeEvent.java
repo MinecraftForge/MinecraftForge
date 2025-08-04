@@ -13,8 +13,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.common.util.HasResult;
+import net.minecraftforge.common.util.Result;
+import net.minecraftforge.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,13 +30,15 @@ import org.jetbrains.annotations.Nullable;
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
  */
 // TODO: Rename to BlockFeatureGrowEvent in 1.20
-@HasResult
 @Deprecated(forRemoval = true, since = "1.21.1") // Dont remove, rename
-public class SaplingGrowTreeEvent extends LevelEvent {
+public final class SaplingGrowTreeEvent extends LevelEvent implements HasResult {
+    public static final EventBus<SaplingGrowTreeEvent> BUS = EventBus.create(SaplingGrowTreeEvent.class);
+
     private final RandomSource randomSource;
     private final BlockPos pos;
     @Nullable
     private Holder<ConfiguredFeature<?, ?>> feature;
+    private Result result = Result.DEFAULT;
 
     public SaplingGrowTreeEvent(LevelAccessor level, RandomSource randomSource, BlockPos pos, @Nullable Holder<ConfiguredFeature<?, ?>> feature) {
         super(level);
@@ -78,5 +81,15 @@ public class SaplingGrowTreeEvent extends LevelEvent {
      */
     public void setFeature(ResourceKey<ConfiguredFeature<?, ?>> featureKey) {
         this.feature = this.getLevel().registryAccess().lookupOrThrow(Registries.CONFIGURED_FEATURE).get(featureKey).orElse(null);
+    }
+
+    @Override
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(Result result) {
+        this.result = result;
     }
 }

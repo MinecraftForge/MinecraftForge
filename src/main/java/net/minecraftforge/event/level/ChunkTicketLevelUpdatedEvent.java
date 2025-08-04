@@ -8,8 +8,8 @@ package net.minecraftforge.event.level;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +29,9 @@ import org.jetbrains.annotations.Nullable;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
-public class ChunkTicketLevelUpdatedEvent extends Event
-{
+public final class ChunkTicketLevelUpdatedEvent extends MutableEvent {
+    public static final EventBus<ChunkTicketLevelUpdatedEvent> BUS = EventBus.create(ChunkTicketLevelUpdatedEvent.class);
+
     private final ServerLevel level;
     private final long chunkPos;
     private final int oldTicketLevel;
@@ -38,8 +39,7 @@ public class ChunkTicketLevelUpdatedEvent extends Event
     @Nullable
     private final ChunkHolder chunkHolder;
 
-    public ChunkTicketLevelUpdatedEvent(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder)
-    {
+    public ChunkTicketLevelUpdatedEvent(ServerLevel level, long chunkPos, int oldTicketLevel, int newTicketLevel, @Nullable ChunkHolder chunkHolder) {
         this.level = level;
         this.chunkPos = chunkPos;
         this.oldTicketLevel = oldTicketLevel;
@@ -50,32 +50,28 @@ public class ChunkTicketLevelUpdatedEvent extends Event
     /**
      * {@return the server level containing the chunk}
      */
-    public ServerLevel getLevel()
-    {
+    public ServerLevel getLevel() {
         return this.level;
     }
 
     /**
      * {@return the long representation of the chunk position the ticket level changed for}
      */
-    public long getChunkPos()
-    {
+    public long getChunkPos() {
         return this.chunkPos;
     }
 
     /**
      * {@return the previous ticket level the chunk had}
      */
-    public int getOldTicketLevel()
-    {
+    public int getOldTicketLevel() {
         return this.oldTicketLevel;
     }
 
     /**
      * {@return the new ticket level for the chunk}
      */
-    public int getNewTicketLevel()
-    {
+    public int getNewTicketLevel() {
         return this.newTicketLevel;
     }
 
@@ -83,8 +79,7 @@ public class ChunkTicketLevelUpdatedEvent extends Event
      * {@return chunk that had its ticket level updated}
      */
     @Nullable
-    public ChunkHolder getChunkHolder()
-    {
+    public ChunkHolder getChunkHolder() {
         return this.chunkHolder;
     }
 }

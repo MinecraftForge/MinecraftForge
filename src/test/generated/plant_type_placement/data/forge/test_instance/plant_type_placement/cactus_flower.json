@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:plant_type_placement/cactus_flower",
+  "max_ticks": 100,
+  "structure": "forge:empty3x4x3"
+}

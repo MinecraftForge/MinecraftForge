@@ -5,7 +5,7 @@
          @Nullable LookAt p_365991_
      ) throws CommandSyntaxException {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportCommand(p_139016_, p_139018_, p_139019_, p_139020_);
-+        if (event.isCanceled()) return;
++        if (event == null) return;
 +        p_139018_ = event.getTargetX(); p_139019_ = event.getTargetY(); p_139020_ = event.getTargetZ();
          BlockPos blockpos = BlockPos.containing(p_139018_, p_139019_, p_139020_);
          if (!Level.isInSpawnableBounds(blockpos)) {

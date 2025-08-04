@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/ThrownEnderpearl.java
-@@ -122,6 +_,13 @@
+@@ -119,6 +_,13 @@
                  Vec3 vec3 = this.oldPosition();
                  if (entity instanceof ServerPlayer serverplayer) {
                      if (serverplayer.connection.isAcceptingMessages()) {
 +                        var event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayer, this.getX(), this.getY(), this.getZ(), this, 5.0F, p_37504_);
-+                        if (event.isCanceled()) {
++                        if (event == null) {
 +                            this.discard();
 +                            return;
 +                        }
@@ -14,12 +14,12 @@
                          if (this.random.nextFloat() < 0.05F && serverlevel.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
                              Endermite endermite = EntityType.ENDERMITE.create(serverlevel, EntitySpawnReason.TRIGGERED);
                              if (endermite != null) {
-@@ -148,7 +_,7 @@
+@@ -145,7 +_,7 @@
                          if (serverplayer1 != null) {
                              serverplayer1.resetFallDistance();
                              serverplayer1.resetCurrentImpulseContext();
--                            serverplayer1.hurtServer(serverplayer.serverLevel(), this.damageSources().enderPearl(), 5.0F);
-+                            serverplayer1.hurtServer(serverplayer.serverLevel(), this.damageSources().enderPearl(), event.getAttackDamage());
+-                            serverplayer1.hurtServer(serverplayer.level(), this.damageSources().enderPearl(), 5.0F);
++                            serverplayer1.hurtServer(serverplayer.level(), this.damageSources().enderPearl(), event.getAttackDamage());
                          }
  
                          this.playSound(serverlevel, vec3);

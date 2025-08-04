@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
-@@ -109,8 +_,9 @@
-             renderLeash(p_114488_, p_114489_, entityrenderstate$leashstate);
+@@ -113,8 +_,9 @@
+             }
          }
  
 -        if (p_370221_.nameTag != null) {
@@ -12,16 +12,16 @@
          }
      }
  
-@@ -278,7 +_,7 @@
+@@ -252,7 +_,7 @@
          }
  
          p_367427_.distanceToCameraSq = this.entityRenderDispatcher.distanceToSqr(p_367571_);
--        boolean flag = p_367427_.distanceToCameraSq < 4096.0 && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
-+        boolean flag = net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_367571_, p_367427_.distanceToCameraSq) && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
-         if (flag) {
+-        boolean flag1 = p_367427_.distanceToCameraSq < 4096.0 && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
++        boolean flag1 = net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_367571_, p_367427_.distanceToCameraSq) && this.shouldShowName(p_367571_, p_367427_.distanceToCameraSq);
+         if (flag1) {
              p_367427_.nameTag = this.getNameTag(p_367571_);
              p_367427_.nameTagAttachment = p_367571_.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, p_367571_.getYRot(p_363243_));
-@@ -372,6 +_,7 @@
+@@ -387,6 +_,7 @@
      }
  
      protected void extractAdditionalHitboxes(T p_392955_, Builder<HitboxRenderState> p_395671_, float p_395030_) {

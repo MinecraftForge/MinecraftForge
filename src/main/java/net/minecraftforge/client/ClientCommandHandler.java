@@ -16,6 +16,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSource;
@@ -39,7 +40,7 @@ public class ClientCommandHandler {
     private static CommandDispatcher<CommandSourceStack> commands = null;
 
     public static void init() {
-        MinecraftForge.EVENT_BUS.addListener(ClientCommandHandler::handleClientPlayerLogin);
+        ClientPlayerNetworkEvent.LoggingIn.BUS.addListener(ClientCommandHandler::handleClientPlayerLogin);
     }
 
     private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggingIn event) {
@@ -56,24 +57,24 @@ public class ClientCommandHandler {
      * with server commands in suggestions
      */
     @ApiStatus.Internal
-    public static CommandDispatcher<SharedSuggestionProvider> mergeServerCommands(CommandDispatcher<SharedSuggestionProvider> serverCommands, CommandBuildContext buildContext) {
+    public static <T extends SharedSuggestionProvider> CommandDispatcher<T> mergeServerCommands(CommandDispatcher<T> serverCommands, CommandBuildContext buildContext) {
         CommandDispatcher<CommandSourceStack> commandsTemp = new CommandDispatcher<>();
-        MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commandsTemp, buildContext));
+        RegisterClientCommandsEvent.BUS.post(new RegisterClientCommandsEvent(commandsTemp, buildContext));
 
         // Copies the client commands into another RootCommandNode so that redirects can't be used with server commands
         commands = new CommandDispatcher<>();
         copy(commandsTemp.getRoot(), commands.getRoot());
 
         // Copies the server commands into another RootCommandNode so that redirects can't be used with client commands
-        RootCommandNode<SharedSuggestionProvider> serverCommandsRoot = serverCommands.getRoot();
-        CommandDispatcher<SharedSuggestionProvider> newServerCommands = new CommandDispatcher<>();
+        RootCommandNode<T> serverCommandsRoot = serverCommands.getRoot();
+        CommandDispatcher<T> newServerCommands = new CommandDispatcher<>();
         copy(serverCommandsRoot, newServerCommands.getRoot());
 
         // Copies the client side commands into the server side commands to be used for suggestions
         CommandHelper.mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (context) -> 0, (suggestions) -> {
             @SuppressWarnings("unchecked")
-            var shared = (SuggestionProvider<SharedSuggestionProvider>)(SuggestionProvider<?>)suggestions;
-            var suggestionProvider = SuggestionProviders.safelySwap(shared);
+            var shared = (SuggestionProvider<T>)(SuggestionProvider<?>)suggestions;
+            var suggestionProvider = shared; //SuggestionProviders.safelySwap(shared);
             if (suggestionProvider == SuggestionProviders.ASK_SERVER) {
                 suggestionProvider = (context, builder) -> {
                     ClientCommandSourceStack source = getSource();

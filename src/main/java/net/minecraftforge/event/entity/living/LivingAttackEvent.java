@@ -8,9 +8,10 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
@@ -30,13 +31,13 @@ import net.minecraft.world.entity.LivingEntity;
  *<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
-public class LivingAttackEvent extends LivingEvent
-{
+public final class LivingAttackEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingAttackEvent> BUS = CancellableEventBus.create(LivingAttackEvent.class);
+
     private final DamageSource source;
     private final float amount;
-    public LivingAttackEvent(LivingEntity entity, DamageSource source, float amount)
-    {
+
+    public LivingAttackEvent(LivingEntity entity, DamageSource source, float amount) {
         super(entity);
         this.source = source;
         this.amount = amount;

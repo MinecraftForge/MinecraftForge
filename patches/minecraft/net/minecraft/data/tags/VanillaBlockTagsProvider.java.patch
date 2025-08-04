@@ -1,0 +1,13 @@
+--- a/net/minecraft/data/tags/VanillaBlockTagsProvider.java
++++ b/net/minecraft/data/tags/VanillaBlockTagsProvider.java
+@@ -16,6 +_,10 @@
+         super(p_256406_, Registries.BLOCK, p_256525_, p_255627_ -> p_255627_.builtInRegistryHolder().key());
+     }
+ 
++    public VanillaBlockTagsProvider(PackOutput p_256406_, CompletableFuture<HolderLookup.Provider> p_256525_, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++        super(p_256406_, Registries.BLOCK, p_256525_, p_255627_ -> p_255627_.builtInRegistryHolder().key(), modId, existingFileHelper);
++    }
++
+     @Override
+     protected void addTags(HolderLookup.Provider p_255662_) {
+         (new BlockItemTagsProvider() {

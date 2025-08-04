@@ -6,9 +6,10 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingDamageEvent is fired just before damage is applied to entity.<br>
@@ -29,13 +30,13 @@ import net.minecraft.world.entity.LivingEntity;
  * This event does not have a result. {@link HasResult}<br>
  * @see LivingHurtEvent
  **/
-@Cancelable
-public class LivingDamageEvent extends LivingEvent
-{
+public final class LivingDamageEvent extends LivingEvent implements Cancellable {
+    public static final CancellableEventBus<LivingDamageEvent> BUS = CancellableEventBus.create(LivingDamageEvent.class);
+
     private final DamageSource source;
     private float amount;
-    public LivingDamageEvent(LivingEntity entity, DamageSource source, float amount)
-    {
+
+    public LivingDamageEvent(LivingEntity entity, DamageSource source, float amount) {
         super(entity);
         this.source = source;
         this.amount = amount;

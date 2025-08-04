@@ -7,7 +7,7 @@ package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("player_name_event_test")

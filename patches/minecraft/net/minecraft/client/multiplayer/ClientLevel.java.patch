@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -126,6 +_,7 @@
+@@ -130,6 +_,7 @@
          p_389331_.put(BiomeColors.FOLIAGE_COLOR_RESOLVER, new BlockTintCache(p_194177_ -> this.calculateBlockTint(p_194177_, BiomeColors.FOLIAGE_COLOR_RESOLVER)));
          p_389331_.put(BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER, new BlockTintCache(p_389335_ -> this.calculateBlockTint(p_389335_, BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER)));
          p_389331_.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache(p_194168_ -> this.calculateBlockTint(p_194168_, BiomeColors.WATER_COLOR_RESOLVER)));
@@ -8,7 +8,7 @@
      });
      private final ClientChunkCache chunkSource;
      private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
-@@ -134,6 +_,8 @@
+@@ -139,6 +_,8 @@
      private final int seaLevel;
      private boolean tickDayTime;
      private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
@@ -17,7 +17,7 @@
  
      public void handleBlockChangedAck(int p_233652_) {
          this.blockStatePredictionHandler.endPredictionsUpTo(p_233652_, this);
-@@ -200,6 +_,8 @@
+@@ -217,6 +_,8 @@
          this.serverSimulationDistance = p_364305_;
          this.updateSkyBrightness();
          this.prepareWeather();
@@ -26,7 +26,7 @@
      }
  
      public void queueLightUpdate(Runnable p_194172_) {
-@@ -282,6 +_,7 @@
+@@ -299,6 +_,7 @@
          p_104640_.setOldPosAndRot();
          p_104640_.tickCount++;
          Profiler.get().push(() -> BuiltInRegistries.ENTITY_TYPE.getKey(p_104640_.getType()).toString());
@@ -34,7 +34,7 @@
          p_104640_.tick();
          Profiler.get().pop();
  
-@@ -333,8 +_,10 @@
+@@ -350,8 +_,10 @@
      }
  
      public void addEntity(Entity p_104741_) {
@@ -45,12 +45,12 @@
      }
  
      public void removeEntity(int p_171643_, Entity.RemovalReason p_171644_) {
-@@ -516,6 +_,12 @@
+@@ -532,6 +_,12 @@
          float p_263349_,
          long p_263408_
      ) {
 +        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtPosition(this, p_263372_, p_263404_, p_263365_, p_263335_, p_263417_, p_263416_, p_263349_);
-+        if (event.isCanceled() || event.getSound() == null) return;
++        if (event == null || event.getSound() == null) return;
 +        p_263335_ = event.getSound();
 +        p_263417_ = event.getSource();
 +        p_263416_ = event.getNewVolume();
@@ -58,12 +58,12 @@
          if (p_394722_ == this.minecraft.player) {
              this.playSound(p_263372_, p_263404_, p_263365_, p_263335_.value(), p_263417_, p_263416_, p_263349_, false, p_263408_);
          }
-@@ -525,6 +_,12 @@
+@@ -541,6 +_,12 @@
      public void playSeededSound(
          @Nullable Entity p_263536_, Entity p_396496_, Holder<SoundEvent> p_263518_, SoundSource p_263487_, float p_263538_, float p_263524_, long p_263509_
      ) {
-+        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_263536_, p_263518_, p_263487_, p_263538_, p_263524_);
-+        if (event.isCanceled() || event.getSound() == null) return;
++        var event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(this.minecraft.level, p_263536_, p_263518_, p_263487_, p_263538_, p_263524_);
++        if (event == null || event.getSound() == null) return;
 +        p_263518_ = event.getSound();
 +        p_263487_ = event.getSource();
 +        p_263538_ = event.getNewVolume();
@@ -71,7 +71,7 @@
          if (p_263536_ == this.minecraft.player) {
              this.minecraft.getSoundManager().play(new EntityBoundSoundInstance(p_263518_.value(), p_263487_, p_263538_, p_263524_, p_396496_, p_263509_));
          }
-@@ -975,6 +_,16 @@
+@@ -991,6 +_,16 @@
          this.connection.registerForCleaning(p_396040_);
      }
  
@@ -88,7 +88,7 @@
      @OnlyIn(Dist.CLIENT)
      public static class ClientLevelData implements WritableLevelData {
          private final boolean hardcore;
-@@ -1063,6 +_,7 @@
+@@ -1079,6 +_,7 @@
          }
  
          public void setDifficulty(Difficulty p_104852_) {
@@ -96,7 +96,7 @@
              this.difficulty = p_104852_;
          }
  
-@@ -1105,6 +_,12 @@
+@@ -1121,6 +_,12 @@
                      break;
                  default:
              }
@@ -109,7 +109,7 @@
          }
  
          public void onTrackingEnd(Entity p_171716_) {
-@@ -1117,6 +_,15 @@
+@@ -1133,6 +_,15 @@
                      ClientLevel.this.dragonParts.removeAll(Arrays.asList(enderdragon.getSubEntities()));
                      break;
                  default:
