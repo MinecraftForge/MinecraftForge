@@ -53,14 +53,14 @@
 
 @@ -226,10 +227,9 @@
                 flag7 = true;
-                BlockPos blockpos = p_228796_2_.func_177972_a(direction);
+                BlockPos blockpos = p_217638_2_.func_177972_a(direction);
                 TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
 -               if (!flag) {
--                  Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
+-                  Block block = p_217638_1_.func_180495_p(blockpos).func_177230_c();
 -                  if (block == Blocks.field_150359_w || block instanceof StainedGlassBlock) {
 -                     textureatlassprite2 = this.field_187501_d;
 +               if (atextureatlassprite[2] != null) {
-+                  if (p_228796_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_228796_1_, blockpos, p_228796_4_)) {
++                  if (p_217638_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_217638_1_, blockpos, p_217638_4_)) {
 +                     textureatlassprite2 = atextureatlassprite[2];
                    }
                 }
