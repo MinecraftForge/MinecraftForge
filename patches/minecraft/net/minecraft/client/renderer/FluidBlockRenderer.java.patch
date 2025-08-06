@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/renderer/FluidBlockRenderer.java
 +++ b/net/minecraft/client/renderer/FluidBlockRenderer.java
 @@ -58,8 +58,9 @@
- 
+
     public boolean func_217638_a(IEnviromentBlockReader p_217638_1_, BlockPos p_217638_2_, BufferBuilder p_217638_3_, IFluidState p_217638_4_) {
        boolean flag = p_217638_4_.func_206884_a(FluidTags.field_206960_b);
 -      TextureAtlasSprite[] atextureatlassprite = flag ? this.field_178272_a : this.field_178271_b;
@@ -35,7 +35,7 @@
 +               p_217638_3_.func_181662_b(d0 + 0.0D, d1 + (double)f8, d2 + 1.0D).func_181666_a(f24, f25, f26, alpha).func_187315_a((double)f13, (double)f17).func_187314_a(k, l).func_181675_d();
              }
           }
- 
+
 @@ -168,10 +169,10 @@
              float f37 = 0.5F * f;
              float f38 = 0.5F * f1;
@@ -50,8 +50,22 @@
 +            p_217638_3_.func_181662_b(d0 + 1.0D, d1, d2 + 1.0D).func_181666_a(f37, f38, f40, alpha).func_187315_a((double)f32, (double)f36).func_187314_a(j2, k2).func_181675_d();
              flag7 = true;
           }
- 
-@@ -245,15 +246,15 @@
+
+@@ -175,10 +176,9 @@
+                flag7 = true;
+                BlockPos blockpos = p_228796_2_.func_177972_a(direction);
+                TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
+-               if (!flag) {
+-                  Block block = p_228796_1_.func_180495_p(blockpos).func_177230_c();
+-                  if (block == Blocks.field_150359_w || block instanceof StainedGlassBlock) {
+-                     textureatlassprite2 = this.field_187501_d;
++               if (atextureatlassprite[2] != null) {
++                  if (p_228796_1_.func_180495_p(blockpos).shouldDisplayFluidOverlay(p_228796_1_, blockpos, p_228796_4_)) {
++                     textureatlassprite2 = atextureatlassprite[2];
+                   }
+                }
+
+@@ -245,15 +245,15 @@
                 float f28 = 1.0F * f27 * f;
                 float f29 = 1.0F * f27 * f1;
                 float f30 = 1.0F * f27 * f2;
@@ -59,15 +73,16 @@
 -               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
 -               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
 -               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
-+               p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
-                if (textureatlassprite2 != this.field_187501_d) {
+-               if (textureatlassprite2 != this.field_187501_d) {
 -                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
 -                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
 -                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
 -                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, 1.0F).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d3, d1 + (double)f33, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f47).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
++                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
++               if (textureatlassprite2 != atextureatlassprite[2]) {
 +                  p_217638_3_.func_181662_b(d3, d1 + 0.0D, d4).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f45, (double)f49).func_187314_a(j1, k1).func_181675_d();
 +                  p_217638_3_.func_181662_b(d5, d1 + 0.0D, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f49).func_187314_a(j1, k1).func_181675_d();
 +                  p_217638_3_.func_181662_b(d5, d1 + (double)f35, d6).func_181666_a(f28, f29, f30, alpha).func_187315_a((double)f46, (double)f48).func_187314_a(j1, k1).func_181675_d();
