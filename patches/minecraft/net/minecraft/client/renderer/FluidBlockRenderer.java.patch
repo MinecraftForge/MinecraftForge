@@ -51,7 +51,7 @@
              flag7 = true;
           }
 
-@@ -175,10 +176,9 @@
+@@ -226,10 +227,9 @@
                 flag7 = true;
                 BlockPos blockpos = p_228796_2_.func_177972_a(direction);
                 TextureAtlasSprite textureatlassprite2 = atextureatlassprite[1];
