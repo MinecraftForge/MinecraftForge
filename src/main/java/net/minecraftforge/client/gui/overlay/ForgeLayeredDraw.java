@@ -5,12 +5,13 @@
 
 package net.minecraftforge.client.gui.overlay;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.logging.LogUtils;
 import net.minecraft.FieldsAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.LayeredDraw;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -34,19 +35,18 @@ import java.util.function.BooleanSupplier;
 @FieldsAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public final class ForgeLayeredDraw extends LayeredDraw {
-    private static int unknown = 0;
-    private final Map<ResourceLocation, Layer> namedLayers = new HashMap<>();
-    private final Map<ResourceLocation, Map.Entry<LayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
+public final class ForgeLayeredDraw implements ForgeLayer {
+    private final Map<ResourceLocation, ForgeLayer> namedLayers = new HashMap<>();
+    private final Map<ResourceLocation, Map.Entry<ForgeLayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
     private final List<ResourceLocation> order = new LinkedList<>();
-    private final List<ResourceLocation> expectedNames = new ArrayList<>();
+    private final List<ForgeLayer> bakedLayers = new ArrayList<>();
     private final ResourceLocation name;
 
     public static final ResourceLocation  PRE_SLEEP_STACK = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
     public static final ResourceLocation   CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
     public static final ResourceLocation        CROSSHAIR = ResourceLocation.withDefaultNamespace("crosshair");
-    public static final ResourceLocation           HOTBAR = ResourceLocation.withDefaultNamespace("hotbar");
-    public static final ResourceLocation       EXPERIENCE = ResourceLocation.withDefaultNamespace("experience");
+    public static final ResourceLocation   CHANGE_STRATUM = ResourceLocation.withDefaultNamespace("stratum_change");
+    public static final ResourceLocation HOTBAR_AND_DECOS = ResourceLocation.withDefaultNamespace("hotbar");
     public static final ResourceLocation   POTION_EFFECTS = ResourceLocation.withDefaultNamespace("potion_effects");
     public static final ResourceLocation     BOSS_OVERLAY = ResourceLocation.withDefaultNamespace("boss_overlay");
 
@@ -63,42 +63,14 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     public static final ResourceLocation     VANILLA_ROOT = ResourceLocation.withDefaultNamespace("vanilla_root");
     public static final ResourceLocation    SLEEP_OVERLAY = ResourceLocation.withDefaultNamespace("sleep_overlay");
 
-
-    public static final ImmutableList<ResourceLocation> PRE_LIST = ImmutableList.of(CAMERA_OVERLAY, CROSSHAIR, HOTBAR, EXPERIENCE, POTION_EFFECTS, BOSS_OVERLAY);
-    public static final ImmutableList<ResourceLocation> POST_LIST = ImmutableList.of(DEMO_OVERLAY, DEBUG_OVERLAY, SCOREBOARD, HOTBAR_MESSAGE, TITLE_OVERLAY, CHAT_OVERLAY, TAB_LIST, SUBTITLE_OVERLAY);
-    public static final ImmutableList<ResourceLocation> COMBINE_LIST = ImmutableList.of(PRE_SLEEP_STACK, SLEEP_OVERLAY, POST_SLEEP_STACK);
+    private static final ForgeLayeredDraw instance = new ForgeLayeredDraw(VANILLA_ROOT);
 
     /**
-     * Creates a stack of pre-named layers for vanilla.
-     * Not intended for modder use. Use {@linkplain ForgeLayeredDraw(ResourceLocation, Boolean, String...)} instead.
-     * @param name Stack identifier
-     * @param layers locations of layers to add
-     */
-    @ApiStatus.Internal
-    public ForgeLayeredDraw(ResourceLocation name, List<ResourceLocation> layers) {
-        this.name = name;
-        expectedNames.addAll(layers);
-    }
-
-    /**
-     * Creates an empty draw list. Add entries with {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)}
+     * Creates an empty draw list. Add entries with {@linkplain ForgeLayeredDraw#add(ResourceLocation, ForgeLayer)}
      * @param name marker for which phase this is.
      */
     public ForgeLayeredDraw(ResourceLocation name) {
         this.name = name;
-    }
-
-    /**
-     * Adds a full, pre-named draw stack.
-     * @param layeredDraw layer stack to be added.
-     * @param booleanSupplier requirement for it to render.
-     * @deprecated Modders should be using {@linkplain ForgeLayeredDraw#add(ResourceLocation, LayeredDraw, BooleanSupplier)}
-     * @return this
-     */
-    @Deprecated
-    @Override
-    public ForgeLayeredDraw add(LayeredDraw layeredDraw, BooleanSupplier booleanSupplier) {
-        return add(getNextPreName(), layeredDraw, booleanSupplier);
     }
 
     /**
@@ -109,7 +81,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @param supplier condition for this stack to render
      * @return this
      */
-    public ForgeLayeredDraw add(ResourceLocation name, LayeredDraw layeredDraw, BooleanSupplier supplier) {
+    public ForgeLayeredDraw add(ResourceLocation name, ForgeLayeredDraw layeredDraw, BooleanSupplier supplier) {
         if (isNameAvailable(name)) {
             subLayerStacks.put(name, Map.entry(layeredDraw, supplier));
             order.add(name);
@@ -120,27 +92,13 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     /**
-     * Adds a layer with an already known name provided by {@linkplain ForgeLayeredDraw(ResourceLocation, List)}
-     * The layer will be rendered last (on top) of already added layers.
-     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
-     * @deprecated Use {@linkplain ForgeLayeredDraw#add(ResourceLocation, Layer)} for adding individual layers.
-     * @return this
-     */
-    @Deprecated
-    @Override
-    public LayeredDraw add(Layer layer) {
-        add(getNextPreName(), layer);
-        return this;
-    }
-
-    /**
      * Add a layer to the layer list. This layer will be at the end of the list, which means
      * it will be rendered last (on top) of already added layers.
      * @param name RL for other mods to order against.
-     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw add(ResourceLocation targetStack, ResourceLocation name, Layer layer) {
+    public ForgeLayeredDraw add(ResourceLocation targetStack, ResourceLocation name, ForgeLayer layer) {
         locateStack(targetStack).ifPresentOrElse((stack) -> stack.add(name, layer), () -> stackNotPresentWarning(targetStack));
         return this;
     }
@@ -150,10 +108,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * Use any of the non-deprecated add methods if you want a specific instance,
      * or call {@linkplain ForgeLayeredDraw#locateStack(ResourceLocation)} to get a reference to an instance.
      * @param name RL of layer to add
-     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw add(ResourceLocation name, Layer layer) {
+    public ForgeLayeredDraw add(ResourceLocation name, ForgeLayer layer) {
         if (isNameAvailable(name)) {
             namedLayers.put(name, layer);
             order.add(name);
@@ -218,10 +176,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addAbove(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+    public ForgeLayeredDraw addAbove(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, ForgeLayer layer) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> {
             if (!stack.isNameAvailable(otherLayer)) {
                 stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.ABOVE);
@@ -235,7 +193,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Helper method, assumes intended draw stack is the caller
      */
-    public ForgeLayeredDraw addAbove(ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+    public ForgeLayeredDraw addAbove(ResourceLocation newLayer, ResourceLocation otherLayer, ForgeLayer layer) {
         return addAbove(name, newLayer, otherLayer, layer);
     }
 
@@ -245,10 +203,10 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain Layer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addBelow(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+    public ForgeLayeredDraw addBelow(ResourceLocation expectedStack, ResourceLocation newLayer, ResourceLocation otherLayer, ForgeLayer layer) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> {
             if (!stack.isNameAvailable(otherLayer)) {
                 stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.BELOW);
@@ -262,7 +220,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     /**
      * Helper method, assumes intended draw stack is the caller
      */
-    public ForgeLayeredDraw addBelow(ResourceLocation newLayer, ResourceLocation otherLayer, Layer layer) {
+    public ForgeLayeredDraw addBelow(ResourceLocation newLayer, ResourceLocation otherLayer, ForgeLayer layer) {
         return addBelow(name, newLayer, otherLayer, layer);
     }
 
@@ -274,7 +232,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addWithCondition(ResourceLocation targetStack, ResourceLocation name, Layer layer, BooleanSupplier condition) {
+    public ForgeLayeredDraw addWithCondition(ResourceLocation targetStack, ResourceLocation name, ForgeLayer layer, BooleanSupplier condition) {
         locateStack(targetStack).ifPresentOrElse((stack) -> stack.addWithCondition(name, layer, condition), () -> stackNotPresentWarning(targetStack));
         return this;
     }
@@ -286,7 +244,7 @@ public final class ForgeLayeredDraw extends LayeredDraw {
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addWithCondition(ResourceLocation name, Layer layer, BooleanSupplier condition) {
+    public ForgeLayeredDraw addWithCondition(ResourceLocation name, ForgeLayer layer, BooleanSupplier condition) {
         add(name, layer).addConditionTo(name, condition);
         return this;
     }
@@ -335,9 +293,6 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         if (!order.isEmpty()) {
             ForgeEventFactoryClient.onComputeLayerOrder(this);
         }
-        if (namedLayers.size() + subLayerStacks.size() < order.size()) {
-            LogUtils.getLogger().warn("Found {} unbound pre-defined layer names when resolving gui overlay order. This is not an error, but potentially indicates a mod directly modifying Gui instead of using this api.", order.size() - namedLayers.size());
-        }
         resolveNested();
         order.clear();
         return this;
@@ -351,29 +306,25 @@ public final class ForgeLayeredDraw extends LayeredDraw {
         for (ResourceLocation layerName : order) {
             if (subLayerStacks.containsKey(layerName)) {
                 var entry = subLayerStacks.get(layerName);
-                if (entry.getKey() instanceof ForgeLayeredDraw resolveable) {
-                    resolveable.resolveNested();
-                    // Although unlikely, a LayeredDraw could be in the list, and we can't call resolveNested on one.
-                }
-                super.add((gg, tr) -> {
+                entry.getKey().resolveNested();
+                bakedLayers.add((gg, tr) -> {
                     if (entry.getValue().getAsBoolean()) entry.getKey().render(gg,tr);
                 });
             } else {
-                super.add(namedLayers.get(layerName));
+                bakedLayers.add(namedLayers.get(layerName));
             }
         }
     }
 
     /**
      * Attempt to locate a particular draw stack. Search starts at caller's instance. For global search call on VANILLA_ROOT
-     * i.e. {@linkplain net.minecraftforge.client.event.AddGuiOverlayLayersEvent#getLayeredDraw()}
      * Entries which don't extend ForgeLayeredDraw may not have the proper fields to support internal list adjustment, so they are skipped.
      * @param targetStack Name of ForgeLayeredDraw to find
      * @return Filled Optional if target exists, empty otherwise.
      */
     public Optional<ForgeLayeredDraw> locateStack(ResourceLocation targetStack) {
         if (!name.equals(targetStack)) {
-            for (Map.Entry<LayeredDraw, BooleanSupplier> value : subLayerStacks.values()) {
+            for (Map.Entry<ForgeLayeredDraw, BooleanSupplier> value : subLayerStacks.values()) {
                 if (value.getKey() instanceof ForgeLayeredDraw searchable) {
                     var res = searchable.locateStack(targetStack);
                     if(res.isPresent()) return res;
@@ -386,17 +337,13 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     }
 
     @Nullable
-    public LayeredDraw getChild(ResourceLocation childName) {
+    public ForgeLayeredDraw getChild(ResourceLocation childName) {
         return locateStack(childName).orElse(null);
     }
 
     @Nullable
-    public Layer getLayer(ResourceLocation layerName) {
+    public ForgeLayer getLayer(ResourceLocation layerName) {
         return namedLayers.get(layerName);
-    }
-
-    private ResourceLocation getNextPreName() {
-        return expectedNames.isEmpty() ? ResourceLocation.fromNamespaceAndPath("unknown", "layer_" + unknown++) : expectedNames.removeFirst();
     }
 
     public ResourceLocation getName() {
@@ -422,5 +369,42 @@ public final class ForgeLayeredDraw extends LayeredDraw {
     public enum LayerOffset {
         ABOVE,
         BELOW
+    }
+
+    @ApiStatus.Internal
+    public static void beginRender(GuiGraphics gg, DeltaTracker dt) {
+        instance.render(gg,dt);
+    }
+
+    @ApiStatus.Internal
+    public void render(GuiGraphics gg, DeltaTracker dt) {
+        for (ForgeLayer bakedLayer : bakedLayers) {
+            bakedLayer.render(gg, dt);
+        }
+    }
+
+    @ApiStatus.Internal
+    public static void init(Gui gui, Minecraft minecraft) {
+        var preSleepDraw = new ForgeLayeredDraw(PRE_SLEEP_STACK)
+            .add(CAMERA_OVERLAY, gui::renderCameraOverlays)
+            .add(CROSSHAIR, gui::renderCrosshair)
+            .add(CHANGE_STRATUM, (gg, dt) -> gg.nextStratum())
+            .add(HOTBAR_AND_DECOS, gui::renderHotbarAndDecorations)
+            .add(POTION_EFFECTS, gui::renderEffects)
+            .add(BOSS_OVERLAY, gui::renderBossOverlay);
+        var postSleepDraw = new ForgeLayeredDraw(POST_SLEEP_STACK)
+            .add(DEMO_OVERLAY, gui::renderDemoOverlay)
+            .add(DEBUG_OVERLAY, gui::renderDebugOverlay)
+            .add(SCOREBOARD, gui::renderScoreboardSidebar)
+            .add(HOTBAR_MESSAGE, gui::renderOverlayMessage)
+            .add(TITLE_OVERLAY, gui::renderTitle)
+            .add(CHAT_OVERLAY, gui::renderChat)
+            .add(TAB_LIST, gui::renderTabList)
+            .add(SUBTITLE_OVERLAY, gui::renderSubtitleOverlay);
+        instance
+            .add(PRE_SLEEP_STACK, preSleepDraw, () -> !minecraft.options.hideGui)
+            .add(SLEEP_OVERLAY, gui::renderSleepOverlay)
+            .add(POST_SLEEP_STACK, postSleepDraw, () -> !minecraft.options.hideGui);
+        instance.resolveLayers();
     }
 }
