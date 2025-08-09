@@ -27,7 +27,6 @@
 /projects/**/run/
 /projects/**/*.launch
 /repo/
-/buildSrc
 src/generated/resources/.cache/
 
 #Patch rejects
@@ -40,5 +39,8 @@ changelog.txt
 *.7z
 /logs/
 
-gradle.properties
-!/mdk/gradle.properties
+/projects/forge/rejects/
+
+# Srg2Source causes import bugs on these patches. If you intentionnally change these, remove the ignore.
+/patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch
+/patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch
