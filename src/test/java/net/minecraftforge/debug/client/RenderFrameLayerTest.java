@@ -4,53 +4,39 @@
  */
 package net.minecraftforge.debug.client;
  
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.client.renderer.LevelTargetBundle;
+import net.minecraftforge.client.FramePassManager;
 import net.minecraftforge.client.event.AddFramePassEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.common.extensions.IForgeGameTestHelper;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTestHolder;
+import net.minecraftforge.gametest.GameTest;
+import net.minecraftforge.gametest.GameTestNamespace;
 import net.minecraftforge.test.BaseTestMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
-import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.resources.ResourceLocation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.framegraph.FramePass;
 
 
+@GameTestNamespace("forge")
 @Mod(RenderFrameLayerTest.MODID)
-@GameTestHolder("forge." + RenderFrameLayerTest.MODID)
 public class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";
-
+    private static final IForgeGameTestHelper.BoolFlag passOne = new IForgeGameTestHelper.BoolFlag("pass_one_flag");
+    private static final IForgeGameTestHelper.BoolFlag passTwo = new IForgeGameTestHelper.BoolFlag("pass_two_flag");
     public RenderFrameLayerTest(FMLJavaModLoadingContext context) {
-        super(context);
-        MinecraftForge.EVENT_BUS.addListener(RenderFrameLayerTest::renderTest);
-    }
-    
-    private static ResourceLocation rl(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path);
+        super(context, false, false);
+        AddFramePassEvent.getBus(context.getModBusGroup()).addListener(RenderFrameLayerTest::renderTest);
     }
 
-    @GameTest(template = "forge:empty3x3x3")
+    @GameTest
     public static void frame_passes_run(GameTestHelper helper) {
-        var passOne = helper.boolFlag("passOne");
-        var passTwo = helper.boolFlag("passOne");
-
-        helper.<AddFramePassEvent>addEventListener(event -> {
-            FramePass pass = event.createPass(rl(MODID + "test_1") );
-            event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
-            pass.executes(() -> passOne.set(true));
-
-            pass = event.createPass(rl(MODID + "test_2"));
-            event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
-            pass.executes(() -> passTwo.set(true));
-        });
-
-        helper.runAfterDelay(2, () -> {
+        passOne.set(false); passTwo.set(false); // pass#executes will reset to true if they run
+        helper.runAfterDelay(4, () -> {
             helper.assertTrue(passOne.getBool(), "Pass One was not executed");
             helper.assertTrue(passTwo.getBool(), "Pass Two was not executed");
             helper.succeed();
@@ -63,34 +49,47 @@ public class RenderFrameLayerTest extends BaseTestMod {
     @SubscribeEvent
     public static void renderTest(AddFramePassEvent event) {
         var mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        FramePass pass = event.createPass(rl(MODID));
-        event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
+        FramePassManager.ForgePassDefinition def = new FramePassManager.ForgePassDefinition() {
+            @Override
+            public void targets(LevelTargetBundle bundle, FramePass pass) {
+                bundle.main = pass.readsAndWrites(bundle.main);
+            }
 
-        pass.executes(() -> {
-            PoseStack ps = new PoseStack();
-            ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
-            ps.pushPose();
-            var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            var vc = buffSource.getBuffer(RenderType.lines());
+            @Override
+            public void executes() {
+                PoseStack ps = new PoseStack();
+                passOne.set(true);
+                ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
+                ps.pushPose();
+                var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
+                var vc = buffSource.getBuffer(RenderType.lines());
 
-            ShapeRenderer.renderLineBox(ps, vc, 0, -60, 0, 10, -50, 10, 1f, 1f, 1f, 1f);
-            buffSource.endBatch();
-            ps.popPose();
-        });
+                ShapeRenderer.renderLineBox(ps, vc, 0, -60, 0, 10, -50, 10, 1f, 1f, 1f, 1f);
+                buffSource.endBatch();
+                ps.popPose();
+            }
+        };
+        event.addPass(rl(MODID), def);
+        FramePassManager.ForgePassDefinition def2 = new FramePassManager.ForgePassDefinition() {
+            @Override
+            public void targets(LevelTargetBundle bundle, FramePass pass) {
+                bundle.main = pass.readsAndWrites(bundle.main);
+            }
 
-        pass = event.createPass(rl(MODID+"2"));
-        event.getBundle().main = pass.readsAndWrites(event.getBundle().main);
-        
-        pass.executes(() -> {
-            PoseStack ps = new PoseStack();
-            ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
-            ps.pushPose();
-            var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            var vc = buffSource.getBuffer(RenderType.lines());
-            
-            ShapeRenderer.renderLineBox(ps, vc, 1, -61, 1, 9, -49, 9, 1f, 1f, 1f, 1f);
-            buffSource.endBatch();
-            ps.popPose();
-        });
+            @Override
+            public void executes() {
+                PoseStack ps = new PoseStack();
+                passTwo.set(true);
+                ps.translate(mainCamera.getPosition().multiply(-1,-1,-1));
+                ps.pushPose();
+                var buffSource = Minecraft.getInstance().renderBuffers().bufferSource();
+                var vc = buffSource.getBuffer(RenderType.lines());
+
+                ShapeRenderer.renderLineBox(ps, vc, 1, -61, 1, 9, -49, 9, 1f, 1f, 1f, 1f);
+                buffSource.endBatch();
+                ps.popPose();
+            }
+        };
+        event.addPass(rl(MODID+"_two"), def2);
     }
 }

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:render_frame_layer_test/frame_passes_run",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}
