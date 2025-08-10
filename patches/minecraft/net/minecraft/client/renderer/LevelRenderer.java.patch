@@ -9,6 +9,14 @@
      @Nullable
      private ClientLevel level;
      private final SectionOcclusionGraph sectionOcclusionGraph = new SectionOcclusionGraph();
+@@ -161,6 +_,7 @@
+         this.entityRenderDispatcher = p_234246_;
+         this.blockEntityRenderDispatcher = p_234247_;
+         this.renderBuffers = p_234248_;
++        net.minecraftforge.client.event.ForgeEventFactoryClient.onInitLevelRenderer();
+     }
+ 
+     public void tickParticles(Camera p_369538_) {
 @@ -480,7 +_,7 @@
              postchain1.addToFrame(framegraphbuilder, i, j, this.targets);
          }
@@ -18,6 +26,14 @@
          CloudStatus cloudstatus = this.minecraft.options.getCloudsType();
          if (cloudstatus != CloudStatus.OFF) {
              Optional<Integer> optional = this.level.dimensionType().cloudHeight();
+@@ -497,6 +_,7 @@
+         }
+ 
+         this.addLateDebugPass(framegraphbuilder, vec3, p_407881_);
++        net.minecraftforge.client.FramePassManager.insertForgePasses(framegraphbuilder, targets); // Forge: Modded passes are inserted here.
+         profilerfiller.popPush("framegraph");
+         framegraphbuilder.execute(p_367325_, new FrameGraphBuilder.Inspector() {
+             @Override
 @@ -577,7 +_,7 @@
              multibuffersource$buffersource.endLastBatch();
              this.checkPoseStack(posestack);
