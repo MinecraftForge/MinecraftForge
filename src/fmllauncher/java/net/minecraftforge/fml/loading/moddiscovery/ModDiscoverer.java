@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading.moddiscovery;
@@ -32,6 +18,7 @@ import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,6 +32,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSigner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,6 +45,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,6 +57,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 
 public class ModDiscoverer {
+    private static final Path INVALID_PATH = Paths.get("This", "Path", "Should", "Never", "Exist", "Because", "That", "Would", "Be", "Stupid", "CON", "AUX", "/dev/null");
     private static final Logger LOGGER = LogManager.getLogger();
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
@@ -168,20 +159,23 @@ public class ModDiscoverer {
 
         @Override
         public Path findPath(final IModFile modFile, final String... path) {
-            String[] newPath = Arrays.copyOf(path, path.length);
-            if (path.length == 2 && Objects.equals(path[1], "mods.toml")) {
-                final URI jarFileURI;
-                try {
-                    jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
-                    if (Objects.equals(jarFileURI.getScheme(), "jar")) {
-                        // Initialize the filesystem for the forge jar, because otherwise this barfs?
-                        FileSystems.newFileSystem(jarFileURI, new HashMap<>());
+            if (path.length == 2 && Objects.equals(path[0], "META-INF")) {
+                if (Objects.equals(path[1], "mods.toml")) {
+                    final URI jarFileURI;
+                    try {
+                        jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
+                        if (Objects.equals(jarFileURI.getScheme(), "jar")) {
+                            // Initialize the filesystem for the forge jar, because otherwise this barfs?
+                            FileSystems.newFileSystem(jarFileURI, new HashMap<>());
+                        }
+                    } catch (URISyntaxException | IOException e) {
+                        LOGGER.fatal(SCAN, "Unable to read minecraft default mod");
+                        throw new RuntimeException(e);
                     }
-                } catch (URISyntaxException | IOException e) {
-                    LOGGER.fatal(SCAN, "Unable to read minecraft default mod");
-                    throw new RuntimeException(e);
+                    return Paths.get(jarFileURI);
+                } else if (Objects.equals(path[1], "coremods.json")) {
+                    return INVALID_PATH;
                 }
-                return Paths.get(jarFileURI);
             }
             if (Files.isDirectory(mcJar)) return findPathDirectory(modFile, path);
             return findPathJar(modFile, path);
@@ -213,6 +207,24 @@ public class ModDiscoverer {
                 e.printStackTrace();
             }
             LOGGER.debug(SCAN,"Scan finished: {}", modFile);
+        }
+
+        @Override
+        public Pair<Optional<Manifest>, Optional<CodeSigner[]>> findManifestAndSigners(final Path file) {
+            if (Files.isDirectory(mcJar)) {
+                return Pair.of(Optional.empty(), Optional.empty());
+            }
+            try (JarFile jf = new JarFile(mcJar.toFile())) {
+                final Manifest manifest = jf.getManifest();
+                if (manifest!=null) {
+                    final JarEntry jarEntry = jf.getJarEntry(JarFile.MANIFEST_NAME);
+                    LamdbaExceptionUtils.uncheck(() -> AbstractJarFileLocator.ENSURE_INIT.invoke(jf));
+                    return Pair.of(Optional.of(manifest), Optional.ofNullable(jarEntry.getCodeSigners()));
+                }
+            } catch (IOException ioe) {
+                return Pair.of(Optional.empty(), Optional.empty());
+            }
+            return Pair.of(Optional.empty(), Optional.empty());
         }
 
         @Override

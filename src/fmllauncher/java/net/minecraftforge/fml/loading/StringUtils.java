@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
@@ -42,17 +28,26 @@ public class StringUtils
     }
 
     public static URL toURL(final String string) {
-        try
-        {
-            return new URL(string);
-        }
-        catch (MalformedURLException e)
-        {
+        if (string == null || string.trim().isEmpty() || string.contains("myurl.me") || string.contains("example.invalid"))
+            return null;
+
+        try {
+            return new URL(string); }
+        catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static String parseStringFormat(final String input, final Map<String, String> properties) {
         return StrSubstitutor.replace(input, properties);
+    }
+
+    public static String binToHex(final byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(Integer.toHexString((bytes[i]&0xf0) >>4));
+            sb.append(Integer.toHexString(bytes[i]&0x0f));
+        }
+        return sb.toString();
     }
 }

@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading.moddiscovery;
@@ -79,7 +65,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
         if (Files.exists(found)) return found;
         // then try left path (classes)
         return mods.get(modFile).getRight().stream().map(p->p.resolve(target)).filter(Files::exists).
-                findFirst().orElse(found.resolve(target));
+                findFirst().orElse(found);
     }
 
     @Override
@@ -92,6 +78,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     private void scanIndividualPath(final Path path, Consumer<Path> pathConsumer) {
+        if (!Files.exists(path)) return;
         LOGGER.debug(SCAN, "Scanning exploded target {}", path.toString());
         try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);

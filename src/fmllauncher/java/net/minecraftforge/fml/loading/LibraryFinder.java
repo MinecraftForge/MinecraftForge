@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
@@ -54,8 +40,9 @@ public class LibraryFinder {
         try {
             Path path;
             final URI uri = resource.toURI();
-            if (uri.getRawSchemeSpecificPart().contains("!")) {
-                path = Paths.get(new URI(uri.getRawSchemeSpecificPart().split("!")[0]));
+            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!/")) {
+                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf("!/");
+                path = Paths.get(new URI(uri.getRawSchemeSpecificPart().substring(0, lastExcl)));
             } else {
                 path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
             }
@@ -79,7 +66,7 @@ public class LibraryFinder {
 
     static Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup, final String type) {
         Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion+"-"+mcpVersion));
-        Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion));
+        Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion+"-"+mcpVersion));
         Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
         LOGGER.debug(CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
         LOGGER.debug(CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));

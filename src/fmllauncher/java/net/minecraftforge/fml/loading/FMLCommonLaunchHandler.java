@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
@@ -75,8 +61,8 @@ public abstract class FMLCommonLaunchHandler
         Arrays.stream(FMLLoader.getMCPaths()).forEach(builder::addTransformationPath);
         additionalLibraries.forEach(builder::addTransformationPath);
         FMLLoader.getLanguageLoadingProvider().getLibraries().forEach(builder::addTransformationPath);
-        builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
+        builder.setResourceEnumeratorLocator(getClassLoaderResourceEnumerationFunction());
     }
 
     public void setup(final IEnvironment environment, final Map<String, ?> arguments)
@@ -128,16 +114,17 @@ public abstract class FMLCommonLaunchHandler
     }
 
 
-    protected Function<String, Optional<URL>> getClassLoaderLocatorFunction() {
-        return input->Optional.ofNullable(FMLLoader.getLoadingModList().findURLForResource(input));
+    protected Function<String, Enumeration<URL>> getClassLoaderResourceEnumerationFunction() {
+        return input->FMLLoader.getLoadingModList().findAllURLsForResource(input);
     }
 
     protected Function<URLConnection, Optional<Manifest>> getClassLoaderManifestLocatorFunction() {
-        return input -> {
-            if (input instanceof ModJarURLHandler.ModJarURLConnection) {
-                return ((ModJarURLHandler.ModJarURLConnection) input).getManifest();
+        return urlConnection -> {
+            if (urlConnection instanceof ModJarURLHandler.ModJarURLConnection) {
+                return ((ModJarURLHandler.ModJarURLConnection) urlConnection).getManifest();
+            } else {
+                return Optional.empty();
             }
-            return Optional.empty();
         };
     }
 
@@ -154,4 +141,8 @@ public abstract class FMLCommonLaunchHandler
     public boolean isProduction() {
         return false;
     }
+
+    public boolean isData() {
+        return false;
+    };
 }

@@ -1,26 +1,13 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +41,14 @@ public class FMLConfig
                 autosave().autoreload().
                 writingMode(WritingMode.REPLACE).
                 build();
-        configData.load();
+        try
+        {
+            configData.load();
+        }
+        catch (ParsingException e)
+        {
+            throw new RuntimeException("Failed to load FML config from " + configFile.toString(), e);
+        }
         if (!configSpec.isCorrect(configData)) {
             LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->

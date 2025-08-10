@@ -117,7 +117,7 @@ project(':clean') {
             clean_server {
                 taskName 'clean_server'
 
-                main 'net.minecraft.server.Main'
+                main 'net.minecraft.server.MinecraftServer'
                 workingDirectory project.file('run')
             }
         }
@@ -219,7 +219,7 @@ project(':forge') {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
-        srgPatches = false
+        srgPatches = true
         accessTransformers.from file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         sideAnnotationStrippers.from file("$rootDir/src/main/resources/forge.sas")
 

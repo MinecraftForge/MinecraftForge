@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.common.asm;
@@ -73,9 +59,9 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
-        AtomicBoolean changes = new AtomicBoolean();
+        final AtomicBoolean changes = new AtomicBoolean();
         //Must be public static finals, and non-array objects
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
 
@@ -107,7 +93,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
                 changes.compareAndSet(false, prev != f.access);
             });
         }
-        return changes.get();
+        return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
 }

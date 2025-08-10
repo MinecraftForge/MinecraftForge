@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading.progress;
@@ -22,9 +8,8 @@ package net.minecraftforge.fml.loading.progress;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -40,9 +25,14 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.BiConsumer;
+import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
@@ -58,8 +48,10 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private Thread renderThread = new Thread(this::renderThreadFunc);
 
     private boolean running = true;
+    private GLFWFramebufferSizeCallback framebufferSizeCallback;
+    private int[] fbSize;
 
-    private void initWindow() {
+    private void initWindow(@Nullable String mcVersion) {
         GLFWErrorCallback.createPrint(System.err).set();
 
         long glfwInitBegin = System.nanoTime();
@@ -72,6 +64,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             LogManager.getLogger().fatal("WARNING : glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
         }
 
+        // Clear the Last Exception (#7285 - Prevent Vanilla throwing an IllegalStateException due to invalid controller mappings)
+        handleLastGLFWError((error, description) -> LogManager.getLogger().error(String.format("Suppressing Last GLFW error: [0x%X]%s", error, description)));
+
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
@@ -81,10 +76,21 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+        if (mcVersion != null)
+        {
+            // this emulates what we would get without early progress window
+            // as vanilla never sets these, so GLFW uses the first window title
+            // set them explicitly to avoid it using "FML early loading progress" as the class
+            String vanillaWindowTitle = "Minecraft* " + mcVersion;
+            glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
+            glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
+        }
+
         window = glfwCreateWindow(screenWidth, screenHeight, "FML early loading progress", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create the GLFW window"); // ignore it and make the GUI optional?
         }
+        framebufferSizeCallback = GLFWFramebufferSizeCallback.create(this::fbResize);
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
@@ -92,42 +98,60 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             IntBuffer monPosLeft = stack.mallocInt(1);
             IntBuffer monPosTop = stack.mallocInt(1);
             glfwGetWindowSize(window, pWidth, pHeight);
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            glfwGetMonitorPos(glfwGetPrimaryMonitor(), monPosLeft, monPosTop);
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
-                    (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
-            );
-            IntBuffer iconWidth = stack.mallocInt(1);
-            IntBuffer iconHeight = stack.mallocInt(1);
-            IntBuffer iconChannels = stack.mallocInt(1);
-            final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
-            byte[] icon;
-            try {
-                icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
-                final ByteBuffer iconBuf = stack.malloc(icon.length);
-                iconBuf.put(icon);
-                ((Buffer)iconBuf).position(0);
-                final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
-                if (imgBuffer == null) {
-                    throw new NullPointerException("Failed to load window icon"); // fall down to catch block
-                }
-                glfwImages.position(0);
-                glfwImages.width(iconWidth.get(0));
-                glfwImages.height(iconHeight.get(0));
-                ((Buffer)imgBuffer).position(0);
-                glfwImages.pixels(imgBuffer);
-                glfwImages.position(0);
-                glfwSetWindowIcon(window, glfwImages);
-                STBImage.stbi_image_free(imgBuffer);
-            } catch (NullPointerException | IOException e) {
-                System.err.println("Failed to load forge logo");
+
+            // try to center the window, this is a best-effort as there may not be
+            // a primary monitor and we might not even be on the primary monitor...
+            long primaryMonitor = glfwGetPrimaryMonitor();
+            if (primaryMonitor != NULL)
+            {
+                GLFWVidMode vidmode = glfwGetVideoMode(primaryMonitor);
+                glfwGetMonitorPos(primaryMonitor, monPosLeft, monPosTop);
+                glfwSetWindowPos(
+                        window,
+                        (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
+                        (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
+                );
+            }
+
+            if (!System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")) {
+                setWindowIcon(stack);
             }
         }
+        int[] w = new int[1];
+        int[] h = new int[1];
+        glfwGetFramebufferSize(window, w, h);
+        fbSize = new int[] {w[0], h[0]};
+        glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwShowWindow(window);
         glfwPollEvents();
+    }
+
+    private void setWindowIcon(MemoryStack stack) {
+        IntBuffer iconWidth = stack.mallocInt(1);
+        IntBuffer iconHeight = stack.mallocInt(1);
+        IntBuffer iconChannels = stack.mallocInt(1);
+        final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
+        byte[] icon;
+        try {
+            icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
+            final ByteBuffer iconBuf = stack.malloc(icon.length);
+            iconBuf.put(icon);
+            ((Buffer) iconBuf).position(0);
+            final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
+            if (imgBuffer == null) {
+                throw new NullPointerException("Failed to load window icon"); // fall down to catch block
+            }
+            glfwImages.position(0);
+            glfwImages.width(iconWidth.get(0));
+            glfwImages.height(iconHeight.get(0));
+            ((Buffer) imgBuffer).position(0);
+            glfwImages.pixels(imgBuffer);
+            glfwImages.position(0);
+            glfwSetWindowIcon(window, glfwImages);
+            STBImage.stbi_image_free(imgBuffer);
+        } catch (NullPointerException | IOException e) {
+            System.err.println("Failed to load forge logo");
+        }
     }
 
     private void renderProgress() {
@@ -210,6 +234,24 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         return j << 16 | k << 8 | l;
     }
 
+    private void fbResize(long window, int width, int height) {
+        if (window == this.window && width != 0 && height != 0) {
+            fbSize = new int[] {width, height};
+        }
+    }
+
+    private void handleLastGLFWError(BiConsumer<Integer, String> handler) {
+        try (MemoryStack memorystack = MemoryStack.stackPush()) {
+            PointerBuffer pointerbuffer = memorystack.mallocPointer(1);
+            int error = GLFW.glfwGetError(pointerbuffer);
+            if (error != GLFW_NO_ERROR) {
+                long pDescription = pointerbuffer.get();
+                String description = pDescription == 0L ? "" : MemoryUtil.memUTF8(pDescription);
+                handler.accept(error, description);
+            }
+        }
+    }
+
     private void renderMessages() {
         List<Pair<Integer, StartupMessageManager.Message>> messages = StartupMessageManager.getMessages();
         for (int i = 0; i < messages.size(); i++) {
@@ -220,6 +262,12 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             renderMessage(msg.getText(), msg.getTypeColour(), ((screenHeight - 15) / 20) - i, fade);
         }
         renderMemoryInfo();
+    }
+
+    @Override
+    public void updateFBSize(final IntConsumer width, final IntConsumer height) {
+        width.accept(this.fbSize[0]);
+        height.accept(this.fbSize[1]);
     }
 
     private static final float[] memorycolour = new float[] { 0.0f, 0.0f, 0.0f};
@@ -272,8 +320,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     }
 
     @Override
-    public Runnable start() {
-        initWindow();
+    public Runnable start(@Nullable String mcVersion) {
+        initWindow(mcVersion);
         renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
         renderThread.start();
         return org.lwjgl.glfw.GLFW::glfwPollEvents;
@@ -298,11 +346,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwSwapInterval(0);
         glfwSwapBuffers(window);
         glfwSwapInterval(1);
+        final GLFWFramebufferSizeCallback previous = glfwSetFramebufferSizeCallback(window, null);
+        previous.free();
         return window;
-    }
-
-    @Override
-    public boolean replacedWindow() {
-        return running; // TODO is this method necessary? it's only used to prevent the vanilla icon set, which we do want as it only occurs after handoff
     }
 }

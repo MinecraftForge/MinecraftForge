@@ -1,24 +1,11 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +16,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.Manifest;
 
@@ -41,6 +29,18 @@ public class ModJarURLHandler extends URLStreamHandler
     @Override
     protected URLConnection openConnection(URL url) {
         return new ModJarURLConnection(url);
+    }
+
+    @Override
+    protected int hashCode(final URL u) {
+        return Objects.hash(u.getHost(), u.getFile());
+    }
+
+    @Override
+    protected boolean equals(final URL u1, final URL u2) {
+        return Objects.equals(u1.getProtocol(), u2.getProtocol())
+                && Objects.equals(u1.getHost(), u2.getHost())
+                && Objects.equals(u1.getFile(), u2.getFile());
     }
 
     static class ModJarURLConnection extends URLConnection {
@@ -81,6 +81,12 @@ public class ModJarURLHandler extends URLStreamHandler
             } catch (IOException e) {
                 return -1L;
             }
+        }
+
+        // Used to cache protectiondomains by "top level object" aka the modid
+        @Override
+        public URL getURL() {
+            return LamdbaExceptionUtils.uncheck(()->new URL("modjar://"+modid));
         }
 
         public Optional<Manifest> getManifest() {
