@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/SharedSuggestionProvider.java
 +++ b/net/minecraft/commands/SharedSuggestionProvider.java
-@@ -82,7 +_,7 @@
+@@ -79,7 +_,7 @@
              if (m_82949_(p_82946_, s)) {
                 p_82948_.accept(t);
              }
