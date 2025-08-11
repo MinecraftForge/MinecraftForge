@@ -7,7 +7,6 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,39 +20,25 @@ import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class VillagerTradingManager {
-    private static final Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> VANILLA_TRADES;
-    private static final List<Pair<ItemListing[], Integer>> WANDERER_TRADES;
+    private static final Lazy<Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>>> VANILLA_TRADES = Lazy.of(VillagerTradingManager::copyVanillaTrades);
+    private static final Lazy<List<Pair<ItemListing[], Integer>>> WANDERER_TRADES = Lazy.of(() -> new ArrayList<Pair<ItemListing[], Integer>>(VillagerTrades.WANDERING_TRADER_TRADES));
 
-    static {
-        // If client, the ServerAboutToStartEvent will be fired each time a world is loaded, whereas if server, we know
-        // it will only be fired once at server start.
-        var isClient = FMLEnvironment.dist.isClient();
-
-        // Only populate the collections of the static final fields if there might be listeners for the events
-        if (isClient || VillagerTradesEvent.BUS.hasListeners()) {
-            VANILLA_TRADES = HashMap.newHashMap(VillagerTrades.TRADES.size());
-            VillagerTrades.TRADES.forEach((key, value) -> {
-                Int2ObjectMap<ItemListing[]> copy = new Int2ObjectOpenHashMap<>();
-                for (var ent : value.int2ObjectEntrySet()) {
-                    copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length));
-                }
-                VANILLA_TRADES.put(key, copy);
-            });
-        } else {
-            VANILLA_TRADES = Collections.emptyMap();
-        }
-
-        if (isClient || WandererTradesEvent.BUS.hasListeners()) {
-            WANDERER_TRADES = new ArrayList<>(VillagerTrades.WANDERING_TRADER_TRADES);
-        } else {
-            WANDERER_TRADES = Collections.emptyList();
-        }
+    private static Map<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>> copyVanillaTrades() {
+        var ret = new HashMap<ResourceKey<VillagerProfession>, Int2ObjectMap<ItemListing[]>>();
+        VillagerTrades.TRADES.forEach((key, value) -> {
+            Int2ObjectMap<ItemListing[]> copy = new Int2ObjectOpenHashMap<>();
+            for (var ent : value.int2ObjectEntrySet()) {
+                copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length));
+            }
+            ret.put(key, copy);
+        });
+        return ret;
     }
 
     static void loadTrades(ServerAboutToStartEvent e) {
@@ -65,8 +50,7 @@ public class VillagerTradingManager {
     private static void postWandererEvent() {
         if (!WandererTradesEvent.BUS.hasListeners())
             return;
-
-        var event = WandererTradesEvent.BUS.fire(new WandererTradesEvent(WANDERER_TRADES));
+        var event = WandererTradesEvent.BUS.fire(new WandererTradesEvent(WANDERER_TRADES.get()));
         VillagerTrades.WANDERING_TRADER_TRADES.clear();
         for (var pool : event.getPools())
             VillagerTrades.WANDERING_TRADER_TRADES.add(Pair.of(pool.getEntries().toArray(ItemListing[]::new), pool.getRolls()));
@@ -76,11 +60,11 @@ public class VillagerTradingManager {
     private static void postVillagerEvents() {
         if (!VillagerTradesEvent.BUS.hasListeners())
             return;
-
         // TODO [VillagerType][1.21.5] Villager Professions are stored as keys in vanilla now? Re-evaluate this.
+        var vanilla = VANILLA_TRADES.get();
         for (VillagerProfession value : ForgeRegistries.VILLAGER_PROFESSIONS) {
             var prof = ForgeRegistries.VILLAGER_PROFESSIONS.getResourceKey(value).orElseThrow();
-            Int2ObjectMap<ItemListing[]> trades = VANILLA_TRADES.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
+            Int2ObjectMap<ItemListing[]> trades = vanilla.getOrDefault(prof, new Int2ObjectOpenHashMap<>());
             Int2ObjectMap<List<ItemListing>> mutableTrades = new Int2ObjectOpenHashMap<>();
             for (int i = 1; i < 6; i++)
                 mutableTrades.put(i, NonNullList.create());
