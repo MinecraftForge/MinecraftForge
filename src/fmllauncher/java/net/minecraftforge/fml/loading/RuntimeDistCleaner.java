@@ -1,20 +1,6 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2019.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 package net.minecraftforge.fml.loading;
@@ -62,7 +48,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     }
 
     @Override
-    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
+    public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
         AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
@@ -74,16 +60,16 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         if (classNode.interfaces != null )
         {
             unpack(classNode.visibleAnnotations).stream()
-                .filter(ann->Objects.equals(ann.desc, ONLYIN))
-                .filter(ann->ann.values.indexOf("_interface") != -1)
-                .filter(ann->!Objects.equals(((String[])ann.values.get(ann.values.indexOf("value") + 1))[1], DIST))
-                .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
-                .forEach(intf -> {
-                    if (classNode.interfaces.remove(intf)) {
-                        LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
-                        changes.compareAndSet(false, true);
-                    }
-                });
+                    .filter(ann->Objects.equals(ann.desc, ONLYIN))
+                    .filter(ann->ann.values.indexOf("_interface") != -1)
+                    .filter(ann->!Objects.equals(((String[])ann.values.get(ann.values.indexOf("value") + 1))[1], DIST))
+                    .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
+                    .forEach(intf -> {
+                        if (classNode.interfaces.remove(intf)) {
+                            LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
+                            changes.compareAndSet(false, true);
+                        }
+                    });
 
             //Remove Class level @OnlyIn/@OnlyIns annotations, this is important if anyone gets ambitious and tries to reflect an annotation with _interface set.
             if (classNode.visibleAnnotations != null) {
@@ -127,7 +113,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
 
         // remove dynamic synthetic lambda methods that are inside of removed methods
         for (List<Handle> dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles();
-            !dynamicLambdaHandles.isEmpty(); dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles())
+             !dynamicLambdaHandles.isEmpty(); dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles())
         {
             lambdaGatherer = new LambdaGatherer();
             methods = classNode.methods.iterator();
@@ -147,7 +133,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 }
             }
         }
-        return changes.get();
+        return changes.get() ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
     @SuppressWarnings("unchecked")
@@ -155,9 +141,9 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         if (anns == null) return Collections.emptyList();
         List<AnnotationNode> ret = anns.stream().filter(ann->Objects.equals(ann.desc, ONLYIN)).collect(Collectors.toList());
         anns.stream().filter(ann->Objects.equals(ann.desc, ONLYINS) && ann.values != null)
-            .map( ann -> (List<AnnotationNode>)ann.values.get(ann.values.indexOf("value") + 1))
-            .filter(v -> v != null)
-            .forEach(v -> v.forEach(ret::add));
+                .map( ann -> (List<AnnotationNode>)ann.values.get(ann.values.indexOf("value") + 1))
+                .filter(v -> v != null)
+                .forEach(v -> v.forEach(ret::add));
         return ret;
     }
 
@@ -196,7 +182,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         private final List<Handle> dynamicLambdaHandles = new ArrayList<>();
 
         public LambdaGatherer() {
-            super(Opcodes.ASM7);
+            super(Opcodes.ASM9);
         }
 
         public void accept(MethodNode method) {
