@@ -5,9 +5,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-        classpath 'org.ow2.asm:asm:7.1'
-        classpath 'org.ow2.asm:asm-tree:7.1'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.197'
+        classpath 'org.ow2.asm:asm:7.2'
+        classpath 'org.ow2.asm:asm-tree:7.2'
     }
 }
 import groovy.json.JsonSlurper
@@ -111,6 +111,7 @@ project(':clean') {
 }
 
 project(':forge') {
+    evaluationDependsOn(findProject(':clean') != null ? ':clean' : ':mcp')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
