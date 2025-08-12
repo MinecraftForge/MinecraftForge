@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  push:
+    branches: [ '1.15.x' ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: MinecraftForge/SharedActions/.github/workflows/gradle.yml@main
+    with:
+      java: 8
+      gradle_tasks: 'setup build publish'
+      artifact_name: 'forge'
+    secrets:
+      DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      PROMOTE_ARTIFACT_WEBHOOK: ${{ secrets.PROMOTE_ARTIFACT_WEBHOOK }}
+      PROMOTE_ARTIFACT_USERNAME: ${{ secrets.PROMOTE_ARTIFACT_USERNAME }}
+      PROMOTE_ARTIFACT_PASSWORD: ${{ secrets.PROMOTE_ARTIFACT_PASSWORD }}
+      MAVEN_USER: ${{ secrets.MAVEN_USER }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+      # Unused for now until we upgrade gradle
+      # SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+      # SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
+      # SIGN_KEYSTORE_PASSWORD: ${{ secrets.SIGN_KEYSTORE_PASSWORD }}
+      # SIGN_KEYSTORE_DATA: ${{ secrets.SIGN_KEYSTORE_DATA }}

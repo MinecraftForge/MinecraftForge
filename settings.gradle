@@ -1,10 +1,13 @@
 rootProject.name = 'Forge'
 
 include ':mcp'
-include ':clean'
 include ':forge'
 
 project(":mcp").projectDir = file("projects/mcp")
-if (false && !System.env.TEAMCITY_VERSION)
-project(":clean").projectDir = file("projects/clean")
 project(":forge").projectDir = file("projects/forge")
+
+
+if (false) {
+    include ':clean'
+    project(":clean").projectDir = file("projects/clean")
+}
