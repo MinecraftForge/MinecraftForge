@@ -19,17 +19,16 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-
-import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraftforge.versions.forge.ForgeVersion;
 
 public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 {
@@ -39,9 +38,9 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 
     private GuiModList parent;
 
-    public GuiSlotModList(GuiModList parent, int listWidth)
+    public GuiSlotModList(GuiModList parent, int listWidth, int top, int bottom)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 91 + 4, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
         this.listWidth = listWidth;
         this.refreshList();
@@ -59,7 +58,7 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
         return this.listWidth;
     }
 
-    void refreshList() {
+    public void refreshList() {
         this.clearEntries();
         parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
@@ -70,7 +69,7 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
         this.parent.renderBackground();
     }
 
-    class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
+    public class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
         private final ModInfo modInfo;
         private final GuiModList parent;
 
@@ -94,7 +93,7 @@ public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
                 Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
                 GlStateManager.color4f(1, 1, 1, 1);
                 GlStateManager.pushMatrix();
-                AbstractGui.blit(getRight() - (height / 2 + 4), GuiSlotModList.this.getTop() + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                AbstractGui.blit(getLeft() + width - 12, top + entryHeight / 4, vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 GlStateManager.popMatrix();
             }
         }

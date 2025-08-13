@@ -30,8 +30,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.minecraft.util.Util;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,17 +39,18 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.widget.list.ExtendedList;
+import net.minecraft.client.gui.RenderComponentsUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.RenderComponentsUtil;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -65,6 +64,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
@@ -95,7 +95,9 @@ public class GuiModList extends Screen
         }
     }
 
-    private Screen mainMenu;
+    private static final int PADDING = 6;
+
+    private Screen parentScreen;
 
     private GuiSlotModList modList;
     private InfoPanel modInfo;
@@ -115,12 +117,12 @@ public class GuiModList extends Screen
     private SortType sortType = SortType.NORMAL;
 
     /**
-     * @param mainMenu
+     * @param parentScreen
      */
-    public GuiModList(Screen mainMenu)
+    public GuiModList(Screen parentScreen)
     {
         super(new TranslationTextComponent("fml.menu.mods.title"));
-        this.mainMenu = mainMenu;
+        this.parentScreen = parentScreen;
         this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
@@ -132,7 +134,7 @@ public class GuiModList extends Screen
 
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn)
         {
-            super(mcIn, widthIn, heightIn, topIn, modList.getLeft() + 10);
+            super(mcIn, widthIn, heightIn, topIn, modList.getLeft() + PADDING);
         }
 
         void setInfo(List<String> lines, ResourceLocation logoPath, Size2i logoDims)
@@ -195,8 +197,8 @@ public class GuiModList extends Screen
                 GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                 // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
                 int headerHeight = 50;
-                GuiUtils.drawInscribedRect(left, relativeY, width - 5, headerHeight, logoDims.width, logoDims.height, false, true);
-                relativeY += headerHeight;
+                GuiUtils.drawInscribedRect(left + PADDING, relativeY, width - (PADDING * 2), headerHeight, logoDims.width, logoDims.height, false, true);
+                relativeY += headerHeight + PADDING;
             }
 
             for (ITextComponent line : lines)
@@ -204,7 +206,7 @@ public class GuiModList extends Screen
                 if (line != null)
                 {
                     GlStateManager.enableBlend();
-                    GuiModList.this.font.drawStringWithShadow(line.getFormattedText(), left + 4, relativeY, 0xFFFFFF);
+                    GuiModList.this.font.drawStringWithShadow(line.getFormattedText(), left + PADDING, relativeY, 0xFFFFFF);
                     GlStateManager.disableAlphaTest();
                     GlStateManager.disableBlend();
                 }
@@ -271,22 +273,28 @@ public class GuiModList extends Screen
         }
         listWidth = Math.max(Math.min(listWidth, width/3), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
-        this.modList = new GuiSlotModList(this, listWidth);
-        this.modList.setLeftPos(6);
 
-        int modInfoWidth = this.width - this.listWidth - 20;
-        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - 40, 10);
-
+        int modInfoWidth = this.width - this.listWidth - (PADDING * 3);
         int doneButtonWidth = Math.min(modInfoWidth, 200);
-        this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
-                I18n.format("gui.done"), b -> GuiModList.this.minecraft.displayGuiScreen(GuiModList.this.mainMenu)));
-        this.addButton(this.openModsFolderButton = new Button(6, this.height - 24, this.listWidth, 20,
+        int y = this.height - 20 - PADDING;
+        this.addButton(new Button(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, 20,
+                I18n.format("gui.done"), b -> GuiModList.this.onClose()));
+        this.addButton(this.openModsFolderButton = new Button(6, y, this.listWidth, 20,
                 I18n.format("fml.menu.mods.openmodsfolder"), b -> Util.getOSType().openFile(FMLPaths.MODSDIR.get().toFile())));
-        this.addButton(this.configButton = new Button(6, this.height - 48, this.listWidth, 20,
+        y -= 20 + PADDING;
+        this.addButton(this.configButton = new Button(6, y, this.listWidth, 20,
                 I18n.format("fml.menu.mods.config"), b -> GuiModList.this.displayModConfig()));
         this.configButton.active = false;
 
-        search = new TextFieldWidget(getFontRenderer(), 8, modList.getBottom() + 17, listWidth - 4, 14, I18n.format("fml.menu.mods.search"));
+        y -= 14 + PADDING + 1;
+        search = new TextFieldWidget(getFontRenderer(), PADDING + 1, y, listWidth - 2, 14, I18n.format("fml.menu.mods.search"));
+
+        int fullButtonHeight = PADDING + 20 + PADDING;
+        this.modList = new GuiSlotModList(this, listWidth, fullButtonHeight, search.y - getFontRenderer().FONT_HEIGHT - PADDING);
+        this.modList.setLeftPos(6);
+
+        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
+
         children.add(search);
         children.add(modList);
         children.add(modInfo);
@@ -294,12 +302,12 @@ public class GuiModList extends Screen
         search.setCanLoseFocus(true);
 
         final int width = listWidth / numButtons;
-        int x = 6, y = 10;
-        addButton(SortType.NORMAL.button = new Button(x, y, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)));
+        int x = PADDING;
+        addButton(SortType.NORMAL.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)));
         x += width + buttonMargin;
-        addButton(SortType.A_TO_Z.button = new Button(x, y, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)));
+        addButton(SortType.A_TO_Z.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)));
         x += width + buttonMargin;
-        addButton(SortType.Z_TO_A.button = new Button(x, y, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)));
+        addButton(SortType.Z_TO_A.button = new Button(x, PADDING, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)));
         resortMods(SortType.NORMAL);
         updateCache();
     }
@@ -375,8 +383,8 @@ public class GuiModList extends Screen
             this.modInfo.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
-        int x = ((modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
-        getFontRenderer().drawString(text, x, modList.getBottom() + 5, 0xFFFFFF);
+        int x = modList.getLeft() + ((modList.getRight() - modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
+        getFontRenderer().drawString(text, x, search.y - getFontRenderer().FONT_HEIGHT, 0xFFFFFF);
         this.search.render(mouseX, mouseY, partialTicks);
         super.render(mouseX, mouseY, partialTicks);
     }
@@ -424,7 +432,16 @@ public class GuiModList extends Screen
                 if (logo != null)
                 {
 
-                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Size2i(logo.getWidth(), logo.getHeight()));
+                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo) {
+
+                        @Override
+                        public void updateDynamicTexture() {
+                            this.bindTexture();
+                            NativeImage td = this.getTextureData();
+                            // Use custom "blur" value which controls texture filtering (nearest-neighbor vs linear)
+                            this.getTextureData().uploadTextureSub(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), selectedMod.getLogoBlur(), false, false);
+                        }
+                    }), new Size2i(logo.getWidth(), logo.getHeight()));
                 }
             }
             catch (IOException e) { }
@@ -450,6 +467,9 @@ public class GuiModList extends Screen
         if (vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED)
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url == null ? "" : vercheck.url));
 
+        String license = selectedMod.getOwningFile().getLicense();
+        if(license != null)
+            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", selectedMod.getOwningFile().getLicense()));
         lines.add(null);
         lines.add(selectedMod.getDescription());
 
@@ -482,5 +502,11 @@ public class GuiModList extends Screen
         if (sort != SortType.NORMAL)
             resortMods(sort);
         updateCache();
+    }
+
+    @Override
+    public void onClose()
+    {
+        this.minecraft.displayGuiScreen(this.parentScreen);
     }
 }
