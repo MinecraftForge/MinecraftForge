@@ -884,4 +884,8 @@ public class ForgeHooksClient {
             return parent.compute(p_395456_);
         }
     }
+
+    public static void addFramePass(ResourceLocation rl, FramePassManager.PassDefinition definition) {
+        FramePassManager.addPass(rl, definition);
+    }
 }

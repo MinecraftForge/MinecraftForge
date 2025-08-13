@@ -30,7 +30,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
     private static final IForgeGameTestHelper.BoolFlag passTwo = new IForgeGameTestHelper.BoolFlag("pass_two_flag");
     public RenderFrameLayerTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
-        AddFramePassEvent.getBus(context.getModBusGroup()).addListener(RenderFrameLayerTest::renderTest);
+        AddFramePassEvent.BUS.addListener(RenderFrameLayerTest::renderTest);
     }
 
     @GameTest
@@ -46,10 +46,9 @@ public class RenderFrameLayerTest extends BaseTestMod {
     /**
      * If this is working, two white line box cubes will be rendered at ground level in a superflat world around (0,0)
      */
-    @SubscribeEvent
     public static void renderTest(AddFramePassEvent event) {
         var mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        FramePassManager.ForgePassDefinition def = new FramePassManager.ForgePassDefinition() {
+        FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
             public void targets(LevelTargetBundle bundle, FramePass pass) {
                 bundle.main = pass.readsAndWrites(bundle.main);
@@ -70,7 +69,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
             }
         };
         event.addPass(rl(MODID), def);
-        FramePassManager.ForgePassDefinition def2 = new FramePassManager.ForgePassDefinition() {
+        FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
             public void targets(LevelTargetBundle bundle, FramePass pass) {
                 bundle.main = pass.readsAndWrites(bundle.main);
