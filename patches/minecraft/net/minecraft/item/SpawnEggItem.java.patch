@@ -22,7 +22,6 @@
 +   /** @deprecated Forge: call {@link net.minecraftforge.common.ForgeSpawnEggItem#fromEntityType(EntityType)} instead */
 +   @Deprecated
     @Nullable
-+   @OnlyIn(Dist.CLIENT)
     public static SpawnEggItem func_200889_b(@Nullable EntityType<?> p_200889_0_) {
        return field_195987_b.get(p_200889_0_);
     }
