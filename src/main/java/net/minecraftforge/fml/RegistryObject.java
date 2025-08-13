@@ -22,10 +22,10 @@ package net.minecraftforge.fml;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.IRegistryDelegate;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import java.util.Objects;
@@ -60,6 +60,10 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         return new RegistryObject<>(name, registry);
     }
 
+    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final ResourceLocation name, final Class<T> baseType, String modid) {
+        return new RegistryObject<>(name, baseType, modid);
+    }
+
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
 
     private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
@@ -90,14 +94,41 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         });
     }
 
+    @SuppressWarnings("unchecked")
+    private <V extends IForgeRegistryEntry<V>> RegistryObject(final ResourceLocation name, final Class<V> baseType, final String modid)
+    {
+        this.name = name;
+        final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
+        ObjectHolderRegistry.addHandler(new Consumer<Predicate<ResourceLocation>>()
+        {
+            private IForgeRegistry<V> registry;
+
+            @Override
+            public void accept(Predicate<ResourceLocation> pred)
+            {
+                if (registry == null)
+                {
+                    this.registry = RegistryManager.ACTIVE.getRegistry(baseType);
+                    if (registry == null)
+                        throw new IllegalStateException("Unable to find registry for type " + baseType.getName() + " for mod \"" + modid + "\". Check the 'caused by' to see futher stack.", callerStack);
+                }
+                if (pred.test(registry.getRegistryName()))
+                    RegistryObject.this.value = registry.containsKey(RegistryObject.this.name) ? (T)registry.getValue(RegistryObject.this.name) : null;
+            }
+        });
+    }
+
     /**
      * Directly retrieves the wrapped Registry Object. This value will automatically be updated when the backing registry is updated.
+     * Will throw NPE if the value is null, use isPresent to check first. Or use any of the other guarded functions.
      */
-    @Nullable
     @Override
+    @Nonnull
     public T get()
     {
-        return this.value;
+        T ret = this.value;
+        Objects.requireNonNull(ret, () -> "Registry Object not present: " + this.name);
+        return ret;
     }
 
     public void updateReference(IForgeRegistry<? extends T> registry)
@@ -105,7 +136,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
         this.value = registry.getValue(getId());
     }
 
-    public ResourceLocation getId() 
+    public ResourceLocation getId()
     {
         return this.name;
     }
@@ -128,7 +159,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * @return {@code true} if there is a mod object present, otherwise {@code false}
      */
     public boolean isPresent() {
-        return get() != null;
+        return this.value != null;
     }
 
     /**
@@ -140,7 +171,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * null
      */
     public void ifPresent(Consumer<? super T> consumer) {
-        if (get() != null)
+        if (isPresent())
             consumer.accept(get());
     }
 
@@ -212,7 +243,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
             return Objects.requireNonNull(mapper.apply(get()));
         }
     }
-    
+
     /**
      * If a mod object is present, lazily apply the provided mapping function to it,
      * returning a supplier for the transformed result. If this object is empty, or the
@@ -275,7 +306,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
      * {@code exceptionSupplier} is null
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (get() != null) {
+        if (isPresent()) {
             return get();
         } else {
             throw exceptionSupplier.get();

@@ -26,12 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
 
-
-import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * Main interface for the registry system. Use this to query the registry system.
  *
@@ -72,6 +66,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.
      */
+    @FunctionalInterface
     interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
         void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
@@ -81,6 +76,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry is cleared. This is done before a registry is reloaded from client
      * or server.
      */
+    @FunctionalInterface
     interface ClearCallback<V extends IForgeRegistryEntry<V>>
     {
         void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
@@ -89,6 +85,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
+    @FunctionalInterface
     interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
@@ -97,6 +94,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Callback fired when the registry contents are validated.
      */
+    @FunctionalInterface
     interface ValidateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceLocation key, V obj);
@@ -105,6 +103,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Callback fired when the registry is done processing. Used to calculate state ID maps.
      */
+    @FunctionalInterface
     interface BakeCallback<V extends IForgeRegistryEntry<V>>
     {
         void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
@@ -113,6 +112,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
      */
+    @FunctionalInterface
     interface DummyFactory<V extends IForgeRegistryEntry<V>>
     {
         V createDummy(ResourceLocation key);
@@ -121,6 +121,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      *
      */
+    @FunctionalInterface
     interface MissingFactory<V extends IForgeRegistryEntry<V>>
     {
         V createMissing(ResourceLocation key, boolean isNetwork);
