@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[24,]"
 issueTrackerURL="http://www.minecraftforge.net/"
 logoFile="forge_logo.png"
+license="LGPL v2.1"
 
 [[mods]]
     modId="forge"
