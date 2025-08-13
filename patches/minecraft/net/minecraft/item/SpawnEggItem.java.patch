@@ -15,7 +15,7 @@
        field_195987_b.put(p_i48465_1_, this);
     }
  
-@@ -121,7 +124,10 @@
+@@ -121,6 +124,8 @@
        return p_195983_1_ == 0 ? this.field_195988_c : this.field_195989_d;
     }
  
@@ -24,4 +24,3 @@
     @Nullable
     public static SpawnEggItem func_200889_b(@Nullable EntityType<?> p_200889_0_) {
        return field_195987_b.get(p_200889_0_);
-    }
