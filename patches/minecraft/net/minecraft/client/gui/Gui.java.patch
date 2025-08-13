@@ -21,7 +21,7 @@
  
      public void render(GuiGraphics p_282884_, DeltaTracker p_342095_) {
          if (this.minecraft.screen == null || !(this.minecraft.screen instanceof ReceivingLevelScreen)) {
-+            if (true) {
++            if (Boolean.valueOf(true)) {
 +                net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.beginRender(p_282884_, p_342095_);
 +                return;
 +            }
@@ -57,7 +57,7 @@
 @@ -598,6 +_,10 @@
      }
  
-     private void renderSelectedItemName(GuiGraphics p_283501_) {
+     public void renderSelectedItemName(GuiGraphics p_283501_) {
 +        renderSelectedItemName(p_283501_, 0);
 +    }
 +
@@ -90,7 +90,7 @@
              }
          }
  
-@@ -1148,7 +_,7 @@
+@@ -1146,7 +_,7 @@
              ItemStack itemstack = this.minecraft.player.getInventory().getSelectedItem();
              if (itemstack.isEmpty()) {
                  this.toolHighlightTimer = 0;

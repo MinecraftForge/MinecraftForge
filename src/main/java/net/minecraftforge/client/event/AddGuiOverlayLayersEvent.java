@@ -11,6 +11,7 @@ import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.event.IModBusEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -23,7 +24,8 @@ import org.jspecify.annotations.NullMarked;
  * @param getLayedDraw The provided {@linkplain ForgeLayeredDraw#instance}. By default will be {@linkplain ForgeLayeredDraw#VANILLA_ROOT}.
  */
 @NullMarked
-public record AddGuiOverlayLayersEvent(ForgeLayeredDraw getLayeredDraw) implements IModBusEvent, RecordEvent, SelfDestructing {
+@ApiStatus.Internal
+public record AddGuiOverlayLayersEvent(ForgeLayeredDraw getLayeredDraw) implements IModBusEvent, SelfDestructing, RecordEvent {
     public static EventBus<AddGuiOverlayLayersEvent> getBus(BusGroup modBusGroup) {
         return IModBusEvent.getBus(modBusGroup, AddGuiOverlayLayersEvent.class);
     }
