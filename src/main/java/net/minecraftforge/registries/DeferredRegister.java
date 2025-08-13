@@ -152,6 +152,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
             bus.addListener(this::createRegistry);
         }
     }
+
     /**
      * @return The unmodifiable view of registered entries. Useful for bulk operations on all values.
      */
