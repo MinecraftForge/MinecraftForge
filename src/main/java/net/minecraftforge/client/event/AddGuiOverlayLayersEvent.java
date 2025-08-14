@@ -24,8 +24,10 @@ import org.jspecify.annotations.NullMarked;
  * @param getLayedDraw The provided {@linkplain ForgeLayeredDraw#instance}. By default will be {@linkplain ForgeLayeredDraw#VANILLA_ROOT}.
  */
 @NullMarked
-@ApiStatus.Internal
 public record AddGuiOverlayLayersEvent(ForgeLayeredDraw getLayeredDraw) implements IModBusEvent, SelfDestructing, RecordEvent {
+    @ApiStatus.Internal
+    public AddGuiOverlayLayersEvent {}
+
     public static EventBus<AddGuiOverlayLayersEvent> getBus(BusGroup modBusGroup) {
         return IModBusEvent.getBus(modBusGroup, AddGuiOverlayLayersEvent.class);
     }
