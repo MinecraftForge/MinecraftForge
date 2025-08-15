@@ -41,7 +41,7 @@ import org.objectweb.asm.ClassReader
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
-    id 'org.ajoberstar.grgit' version '3.1.1'
+    id 'org.ajoberstar.grgit' version '4.1.1'
     id 'de.undercouch.download' version '3.3.0'
     id 'com.github.ben-manes.versions' version '0.22.0'
 }
@@ -404,6 +404,8 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
+        installer 'org.ow2.asm:asm-util:6.2'
+        installer 'org.ow2.asm:asm-analysis:6.2'
         installer 'cpw.mods:modlauncher:4.1.+'
         installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:1.0.+:shadowed'
@@ -411,6 +413,7 @@ project(':forge') {
         installer 'net.minecraftforge:forgespi:1.5.+'
         installer 'net.minecraftforge:coremods:1.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
+        installer 'org.spongepowered:mixin:0.8.5'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'
         installer 'org.jline:jline:3.12.+'
