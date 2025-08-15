@@ -71,3 +71,5 @@ loaderVersion="[28,)"
     modId="forgedebugmultilayermodel"
 [[mods]]
     modId="stencil_backport_test"
+[[mods]]
+    modId="music_disc_test"

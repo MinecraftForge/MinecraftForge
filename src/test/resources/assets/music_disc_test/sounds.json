@@ -1,0 +1,10 @@
+{
+  "test_sound_event": {
+    "sounds": [
+      {
+        "name": "minecraft:music/game/nuance2",
+        "stream": true
+      }
+    ]
+  }
+}
