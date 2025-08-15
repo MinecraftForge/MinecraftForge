@@ -129,7 +129,7 @@
        case 1010:
           if (Item.func_150899_d(p_180439_4_) instanceof MusicDiscItem) {
 -            this.func_184377_a(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_);
-+            this.playRecord(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_, (MusicDiscItem) Item.func_150899_d(p_180439_2_));
++            this.playRecord(((MusicDiscItem)Item.func_150899_d(p_180439_4_)).func_185075_h(), p_180439_3_, (MusicDiscItem) Item.func_150899_d(p_180439_4_));
           } else {
              this.func_184377_a((SoundEvent)null, p_180439_3_);
           }
