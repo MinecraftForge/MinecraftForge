@@ -71,3 +71,5 @@ loaderVersion="[28,)"
     modId="forgedebugmultilayermodel"
 [[mods]]
     modId="stencil_backport_test"
+[[mods]]
+    modId="forge_spawnegg_test"
