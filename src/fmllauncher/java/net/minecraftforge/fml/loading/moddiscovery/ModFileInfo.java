@@ -58,7 +58,7 @@ public class ModFileInfo implements IModFileInfo
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.license = config.<String>getOptional("license")
-                .orElse(null);
+                .orElse("Unknown");
         this.showAsResourcePack = config.<Boolean>getOrElse("showAsResourcePack", false);
         this.properties = config.<UnmodifiableConfig>getOptional("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
