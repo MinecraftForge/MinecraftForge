@@ -63,7 +63,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.license = config.<String>getConfigElement("license")
-                .orElse(null);
+                .orElse("Unknown");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
         this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
@@ -128,7 +128,6 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         return this.config.getConfigList(key);
     }
 
-    @Override
     public String getLicense() {
         return license;
     }
