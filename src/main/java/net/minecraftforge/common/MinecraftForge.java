@@ -11,6 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.eventbus.api.BusBuilder;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.IConfigSpec;
@@ -30,11 +31,15 @@ import java.util.function.Supplier;
 public class MinecraftForge {
     /**
      * The EventBus for all the Forge Events.
-     *
+     * <br>
      * Events marked with {@link net.minecraftforge.fml.event.IModBusEvent}
      * belong on the ModBus and not this bus
      */
-    public static final IEventBus EVENT_BUS = BusBuilder.builder().startShutdown().useModLauncher().build();
+    public static final IEventBus EVENT_BUS = BusBuilder.builder()
+            .startShutdown()
+            .useModLauncher()
+            .setPhasesToTrack(EventPriority.MONITOR)
+            .build();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
     private static final Logger LOGGER = LogManager.getLogger();

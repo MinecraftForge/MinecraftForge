@@ -29,7 +29,7 @@ import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.command.ConfigCommand;
 
-public class ForgeInternalHandler {
+public final class ForgeInternalHandler {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onEntityJoinWorld(EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
@@ -111,8 +111,8 @@ public class ForgeInternalHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void builtinMobSpawnBlocker(EntityJoinLevelEvent event) {
-        if(event.getEntity() instanceof Mob mob && mob.isSpawnCancelled())
-            event.setCanceled(true);
+        if (event.getEntity() instanceof Mob mob && mob.isSpawnCancelled())
+            event.cancel();
     }
 
     @SubscribeEvent
