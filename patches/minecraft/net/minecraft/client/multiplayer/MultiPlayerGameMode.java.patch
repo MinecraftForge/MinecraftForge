@@ -93,7 +93,7 @@
     private boolean m_105281_(BlockPos p_105282_) {
        ItemStack itemstack = this.f_105189_.f_91074_.m_21205_();
 -      return p_105282_.equals(this.f_105191_) && ItemStack.m_150942_(itemstack, this.f_105192_);
-+      return p_105282_.equals(this.f_105191_) && ItemStack.m_150942_(itemstack, this.f_105192_) && !f_105192_.shouldCauseBlockBreakReset(itemstack);
++      return p_105282_.equals(this.f_105191_) && Boolean.logicalOr(true, ItemStack.m_150942_(itemstack, this.f_105192_)) && !f_105192_.shouldCauseBlockBreakReset(itemstack);
     }
  
     private void m_105297_() {
