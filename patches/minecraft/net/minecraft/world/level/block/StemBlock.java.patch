@@ -1,6 +1,12 @@
 --- a/net/minecraft/world/level/block/StemBlock.java
 +++ b/net/minecraft/world/level/block/StemBlock.java
-@@ -69,9 +_,11 @@
+@@ -64,14 +_,16 @@
+ 
+     @Override
+     protected boolean mayPlaceOn(BlockState p_57053_, BlockGetter p_57054_, BlockPos p_57055_) {
+-        return p_57053_.is(Blocks.FARMLAND);
++        return p_57053_.getBlock() instanceof net.minecraft.world.level.block.FarmBlock;
+     }
  
      @Override
      protected void randomTick(BlockState p_222538_, ServerLevel p_222539_, BlockPos p_222540_, RandomSource p_222541_) {
@@ -13,6 +19,15 @@
                  int i = p_222538_.getValue(AGE);
                  if (i < 7) {
                      p_222538_ = p_222538_.setValue(AGE, i + 1);
+@@ -80,7 +_,7 @@
+                     Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(p_222541_);
+                     BlockPos blockpos = p_222540_.relative(direction);
+                     BlockState blockstate = p_222539_.getBlockState(blockpos.below());
+-                    if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.is(Blocks.FARMLAND) || blockstate.is(BlockTags.DIRT))) {
++                    if (p_222539_.getBlockState(blockpos).isAir() && (blockstate.getBlock() instanceof net.minecraft.world.level.block.FarmBlock || blockstate.is(BlockTags.DIRT))) {
+                         Registry<Block> registry = p_222539_.registryAccess().lookupOrThrow(Registries.BLOCK);
+                         Optional<Block> optional = registry.getOptional(this.fruit);
+                         Optional<Block> optional1 = registry.getOptional(this.attachedStem);
 @@ -90,6 +_,7 @@
                          }
                      }

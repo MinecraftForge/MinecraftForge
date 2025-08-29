@@ -9,6 +9,15 @@
      protected VegetationBlock(BlockBehaviour.Properties p_395394_) {
          super(p_395394_);
      }
+@@ -21,7 +_,7 @@
+     protected abstract MapCodec<? extends VegetationBlock> codec();
+ 
+     protected boolean mayPlaceOn(BlockState p_395950_, BlockGetter p_394817_, BlockPos p_393668_) {
+-        return p_395950_.is(BlockTags.DIRT) || p_395950_.is(Blocks.FARMLAND);
++        return p_395950_.is(BlockTags.DIRT) || p_395950_.getBlock() instanceof net.minecraft.world.level.block.FarmBlock;
+     }
+ 
+     @Override
 @@ -43,6 +_,9 @@
      @Override
      protected boolean canSurvive(BlockState p_397664_, LevelReader p_395119_, BlockPos p_393561_) {

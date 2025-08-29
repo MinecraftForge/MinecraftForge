@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CactusFlowerBlock.java
++++ b/net/minecraft/world/level/block/CactusFlowerBlock.java
+@@ -31,7 +_,7 @@
+     protected boolean mayPlaceOn(BlockState p_395694_, BlockGetter p_391810_, BlockPos p_391352_) {
+         BlockState blockstate = p_391810_.getBlockState(p_391352_);
+         return blockstate.is(Blocks.CACTUS)
+-            || blockstate.is(Blocks.FARMLAND)
++            || blockstate.getBlock() instanceof net.minecraft.world.level.block.FarmBlock
+             || blockstate.isFaceSturdy(p_391810_, p_391352_, Direction.UP, SupportType.CENTER);
+     }
+ }

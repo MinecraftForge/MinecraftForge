@@ -355,7 +355,7 @@ public interface IForgeBlock {
     * @return True if the soil should be considered fertile.
     */
     default boolean isFertile(BlockState state, BlockGetter level, BlockPos pos) {
-        if (state.is(Blocks.FARMLAND))
+        if (state.getBlock() instanceof FarmBlock)
             return state.getValue(FarmBlock.MOISTURE) > 0;
 
         return  false;

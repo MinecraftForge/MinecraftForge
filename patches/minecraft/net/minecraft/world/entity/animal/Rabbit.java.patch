@@ -9,3 +9,12 @@
                      return false;
                  }
  
+@@ -604,7 +_,7 @@
+         @Override
+         protected boolean isValidTarget(LevelReader p_29785_, BlockPos p_29786_) {
+             BlockState blockstate = p_29785_.getBlockState(p_29786_);
+-            if (blockstate.is(Blocks.FARMLAND) && this.wantsToRaid && !this.canRaid) {
++            if (blockstate.getBlock() instanceof net.minecraft.world.level.block.FarmBlock && this.wantsToRaid && !this.canRaid) {
+                 blockstate = p_29785_.getBlockState(p_29786_.above());
+                 if (blockstate.getBlock() instanceof CarrotBlock && ((CarrotBlock)blockstate.getBlock()).isMaxAge(blockstate)) {
+                     this.canRaid = true;

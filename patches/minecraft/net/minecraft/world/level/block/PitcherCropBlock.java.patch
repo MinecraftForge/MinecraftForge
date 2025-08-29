@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PitcherCropBlock.java
++++ b/net/minecraft/world/level/block/PitcherCropBlock.java
+@@ -107,7 +_,7 @@
+ 
+     @Override
+     protected boolean mayPlaceOn(BlockState p_277418_, BlockGetter p_277461_, BlockPos p_277608_) {
+-        return p_277418_.is(Blocks.FARMLAND);
++        return p_277418_.getBlock() instanceof  net.minecraft.world.level.block.FarmBlock;
+     }
+ 
+     @Override
