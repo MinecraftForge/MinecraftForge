@@ -94,7 +94,7 @@
        ItemStack itemstack = this.f_105189_.f_91074_.m_21205_();
 -      return p_105282_.equals(this.f_105191_) && ItemStack.m_150942_(itemstack, this.f_105192_);
 +      // FORGE: Remove this method call, but keep the bytecode intact for hacks that target it
-+      if (Boolean.valueOf(false))
++      if (Boolean.FALSE)
 +         ItemStack.m_150942_(itemstack, this.f_105192_);
 +      return p_105282_.equals(this.f_105191_) && !f_105192_.shouldCauseBlockBreakReset(itemstack);
     }
