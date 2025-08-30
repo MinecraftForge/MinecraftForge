@@ -88,12 +88,14 @@
     }
  
     public void tick() {
-@@ -263,7 +_,7 @@
+@@ -263,7 +_,9 @@
  
     private boolean sameDestroyTarget(BlockPos p_105282_) {
        ItemStack itemstack = this.minecraft.player.getMainHandItem();
 -      return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameTags(itemstack, this.destroyingItem);
-+      return p_105282_.equals(this.destroyBlockPos) && ItemStack.isSameItemSameTags(itemstack, this.destroyingItem) && !destroyingItem.shouldCauseBlockBreakReset(itemstack);
++      if (Boolean.FALSE)
++          ItemStack.isSameItemSameTags(itemstack, this.destroyingItem);
++      return p_105282_.equals(this.destroyBlockPos) && !destroyingItem.shouldCauseBlockBreakReset(itemstack);
     }
  
     private void ensureHasSentCarriedItem() {
