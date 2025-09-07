@@ -65,6 +65,7 @@ public class MinecraftLocator extends AbstractModProvider implements IModLocator
         // We haven't changed this in years, and I can't be asked right now to special case this one file in the path.
         final var conf = Config.inMemory();
         conf.set("modLoader", "minecraft");
+        conf.set("mandatory", "true"); // This field is required to make ModVersion constructor happy, no longer used in Forge for newer MC
         conf.set("loaderVersion", "1");
         conf.set("license", "Mojang Studios, All Rights Reserved");
         final var mods = Config.inMemory();
