@@ -35,7 +35,6 @@ import java.util.List;
  *
  * @see RenderTooltipEvent.GatherComponents
  * @see RenderTooltipEvent.Pre
- * @see RenderTooltipEvent.Background
  */
 public abstract sealed class RenderTooltipEvent extends MutableEvent implements InheritableEvent {
     public static final EventBus<RenderTooltipEvent> BUS = EventBus.create(RenderTooltipEvent.class);
@@ -119,7 +118,7 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      * If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
-     * the corresponding {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Background} to not be fired.</p>
+     * the corresponding {@link RenderTooltipEvent.Pre} to not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -204,11 +203,10 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
 
     /**
      * Fired <b>before</b> the tooltip is rendered.
-     * This can be used to modify the positioning and font of the tooltip.
+     * This can be used to modify the positioning, font, and background of the tooltip.
      *
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * If this event is cancelled, then the tooltip will not be rendered and the corresponding
-     * {@link RenderTooltipEvent.Background} will not be fired.</p>
+     * If this event is cancelled, then the tooltip will not be rendered.
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -219,14 +217,20 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
         private final int screenWidth;
         private final int screenHeight;
         private final ClientTooltipPositioner positioner;
+        @Nullable
+        private ResourceLocation background;
+        @Nullable
+        private final ResourceLocation originalBackground;
 
         @ApiStatus.Internal
-        public Pre(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, int screenWidth, int screenHeight, @NotNull Font font, @NotNull List<ClientTooltipComponent> components, @NotNull ClientTooltipPositioner positioner)
+        public Pre(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, int screenWidth, int screenHeight, @NotNull Font font, @NotNull List<ClientTooltipComponent> components, @NotNull ClientTooltipPositioner positioner, @Nullable ResourceLocation background)
         {
             super(stack, graphics, x, y, font, components);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.positioner = positioner;
+            this.background = background;
+            this.originalBackground = background;
         }
 
         /**
@@ -282,9 +286,31 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
         {
             this.y = y;
         }
+
+        /**
+         * @return the potentially modified background's prefix, can be null for default
+         */
+        public @Nullable ResourceLocation getBackground() {
+            return background;
+        }
+
+        /**
+         * Sets the new prefix for the background texture
+         */
+        public void setBackground(@Nullable ResourceLocation background) {
+            this.background = background;
+        }
+
+        /**
+         * @return the original tooltip background's prefix, can be null for default
+         */
+        public @Nullable ResourceLocation getOriginalBackground() {
+            return originalBackground;
+        }
     }
 
     /**
+     * @see Pre is now provided the context for the background. This event will no longer exist!
      * Fired when the tooltip background prefix is determined.
      * This can be used to modify the textures to be used for the tooltip background.
      *
@@ -293,38 +319,38 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class Background extends RenderTooltipEvent {
-        public static final EventBus<Background> BUS = EventBus.create(Background.class);
-
-        private final ResourceLocation originalBackground;
-        private ResourceLocation background;
-
-        @ApiStatus.Internal
-        public Background(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, @NotNull Font fr, @NotNull List<ClientTooltipComponent> components, @Nullable ResourceLocation background) {
-            super(stack, graphics, x, y, fr, components);
-            this.originalBackground = background;
-            this.background = background;
-        }
-
-        /**
-         * Sets the new prefix for the background texture
-         */
-        public void setBackground(ResourceLocation background) {
-            this.background = background;
-        }
-
-        /**
-         * @return the potentially modified background's prefix, can be null for default
-         */
-        public ResourceLocation getBackground() {
-            return this.background;
-        }
-
-        /**
-         * @return the original tooltip background's prefix, can be null for default
-         */
-        public ResourceLocation getOriginalBackground() {
-            return originalBackground;
-        }
-    }
+//    public static final class Background extends RenderTooltipEvent {
+//        public static final EventBus<Background> BUS = EventBus.create(Background.class);
+//
+//        private final ResourceLocation originalBackground;
+//        private ResourceLocation background;
+//
+//        @ApiStatus.Internal
+//        public Background(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, @NotNull Font fr, @NotNull List<ClientTooltipComponent> components, @Nullable ResourceLocation background) {
+//            super(stack, graphics, x, y, fr, components);
+//            this.originalBackground = background;
+//            this.background = background;
+//        }
+//
+//        /**
+//         * Sets the new prefix for the background texture
+//         */
+//        public void setBackground(ResourceLocation background) {
+//            this.background = background;
+//        }
+//
+//        /**
+//         * @return the potentially modified background's prefix, can be null for default
+//         */
+//        public ResourceLocation getBackground() {
+//            return this.background;
+//        }
+//
+//        /**
+//         * @return the original tooltip background's prefix, can be null for default
+//         */
+//        public ResourceLocation getOriginalBackground() {
+//            return originalBackground;
+//        }
+//    }
 }
