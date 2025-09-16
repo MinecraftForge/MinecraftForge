@@ -100,7 +100,10 @@ public class ModFile implements IModFile {
         if (this.modFileInfo == null) return this.getType() != Type.MOD;
         LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
-        this.coreMods.forEach(mi-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {}", mi.getPath()));
+        if (!this.coreMods.isEmpty())
+            LOGGER.warn("Mod file {} contains javascript coremods! JS CoreMods are deprecated and will be removed in a future release. Consider using Mixin or ModLauncher transformers.", this.getFileName());
+        for (var mi : this.coreMods)
+            LOGGER.debug(LogMarkers.LOADING, "Found coremod {}", mi.getPath());
         this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
         return true;
     }
