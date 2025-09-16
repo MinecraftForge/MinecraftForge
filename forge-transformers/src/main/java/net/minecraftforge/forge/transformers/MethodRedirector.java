@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ final class MethodRedirector implements ITransformer<ClassNode> {
             ASMAPI.MethodType.VIRTUAL,
             "finalizeSpawn",
             "(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;",
-            GSON.fromJson(new InputStreamReader(MethodRedirector.class.getResourceAsStream("coremods/finalize_spawn_targets.json")), Target[].class),
+            GSON.fromJson(new InputStreamReader(sneak(() -> MethodRedirector.class.getModule().getResourceAsStream("coremods/finalize_spawn_targets.json"))), Target[].class),
             insn -> ASMAPI.buildMethodCall(
                 ASMAPI.MethodType.STATIC,
                 "net/minecraftforge/event/ForgeEventFactory",
@@ -42,6 +43,14 @@ final class MethodRedirector implements ITransformer<ClassNode> {
             )
         )
     };
+
+    private static <T> T sneak(Callable<T> callable) {
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     record Replacement(
         ASMAPI.MethodType type,
