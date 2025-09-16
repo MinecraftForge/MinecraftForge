@@ -28,7 +28,7 @@ public record ForgeModTransformers(String name) implements ITransformationServic
     @Override
     @SuppressWarnings("rawtypes")
     public @NotNull List<ITransformer> transformers() {
-        var transformers = new ArrayList<ITransformer>(FieldToMethodTransformer.getAll());
+        List<ITransformer> transformers = FieldToMethodTransformer.getAll();
         transformers.add(new MethodRedirector());
         return transformers;
     }

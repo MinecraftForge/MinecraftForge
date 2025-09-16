@@ -48,8 +48,9 @@ record FieldToMethodTransformer(String className, Map<String, String> fields) im
         )
     );
 
-    static List<FieldToMethodTransformer> getAll() {
-        var ret = new ArrayList<FieldToMethodTransformer>(TARGETS.size());
+    @SuppressWarnings("rawtypes")
+    static List<ITransformer> getAll() {
+        var ret = new ArrayList<ITransformer>(TARGETS.size());
         for (var entry : TARGETS.entrySet()) {
             ret.add(new FieldToMethodTransformer(entry.getKey(), entry.getValue()));
         }
