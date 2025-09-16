@@ -29,7 +29,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 // NOTE: THIS IS A SINGLETON!
-final class MethodRedirector implements ITransformer<ClassNode> {
+record MethodRedirector() implements ITransformer<ClassNode> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
 
@@ -69,10 +69,6 @@ final class MethodRedirector implements ITransformer<ClassNode> {
         @SerializedName("class") String className,
         String[] methods
     ) { }
-
-    static final MethodRedirector INSTANCE = new MethodRedirector();
-
-    private MethodRedirector() { }
 
     @Override
     public @NotNull TransformerVoteResult castVote(ITransformerVotingContext context) {

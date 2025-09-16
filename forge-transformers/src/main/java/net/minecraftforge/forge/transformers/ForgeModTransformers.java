@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class ForgeModTransformers implements ITransformationService {
-    @Override
-    public @NotNull String name() {
-        return "forge";
+public record ForgeModTransformers(String name) implements ITransformationService {
+    public ForgeModTransformers() {
+        this("forge");
     }
 
     @Override
@@ -30,7 +29,7 @@ public class ForgeModTransformers implements ITransformationService {
     @SuppressWarnings("rawtypes")
     public @NotNull List<ITransformer> transformers() {
         var transformers = new ArrayList<ITransformer>(FieldToMethodTransformer.getAll());
-        transformers.add(MethodRedirector.INSTANCE);
+        transformers.add(new MethodRedirector());
         return transformers;
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-final class FieldToMethodTransformer implements ITransformer<ClassNode> {
+record FieldToMethodTransformer(String className, Map<String, String> fields) implements ITransformer<ClassNode> {
     // TODO [Forge][Transformer] Make this properly data driven or configurable.
     //      It was hard-coded like this before when using JS CoreMods, though.
     static final Map<String, Map<String, String>> TARGETS = Map.of(
@@ -56,14 +56,6 @@ final class FieldToMethodTransformer implements ITransformer<ClassNode> {
         return ret;
     }
 
-    private final String className;
-    private final Map<String, String> fields;
-
-    FieldToMethodTransformer(String className, Map<String, String> fields) {
-        this.className = className;
-        this.fields = fields;
-    }
-
     @Override
     public @NotNull ClassNode transform(ClassNode input, ITransformerVotingContext context) {
         for (var entry : this.fields.entrySet()) {
@@ -80,6 +72,6 @@ final class FieldToMethodTransformer implements ITransformer<ClassNode> {
 
     @Override
     public @NotNull Set<Target> targets() {
-        return Set.of(new Target(className, "", "", TargetType.CLASS));
+        return Set.of(Target.targetClass(this.className));
     }
 }
