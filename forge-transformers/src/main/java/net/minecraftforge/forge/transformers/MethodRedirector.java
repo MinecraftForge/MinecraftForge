@@ -1,4 +1,4 @@
-package net.minecraftforge.internal.transformer;
+package net.minecraftforge.forge.transformers;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;

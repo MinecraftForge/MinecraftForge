@@ -1,0 +1,73 @@
+import net.minecraftforge.gradleutils.PomUtils
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.minecraftforge.licenser'
+    id 'net.minecraftforge.gradleutils'
+    alias(libs.plugins.apt)
+}
+
+apply from: rootProject.file('build_shared.gradle')
+
+configurations.forEach{ it.transitive = false }
+
+dependencies {
+    compileOnly(libs.jetbrains.annotations)
+
+    implementation(libs.bundles.asm) // Needed by all the black magic
+    implementation(libs.log4j.api)
+    implementation(libs.gson)
+    implementation(libs.modlauncher)
+    implementation(libs.coremods) // Used for ASMAPI (for now)
+
+    testCompileOnly(libs.jetbrains.annotations)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    withSourcesJar()
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+            'Automatic-Module-Name': 'net.minecraftforge.forge.transformers',
+            'Forge-Module-Layer':    'boot'
+        ] as LinkedHashMap)
+        attributes([
+            'Specification-Title':   'Forge Transformers',
+            'Specification-Vendor':  'Forge Development LLC',
+            'Specification-Version': '1',
+            'Implementation-Title':  'Forge Transformers',
+            'Implementation-Vendor': 'Forge Development LLC',
+            'Implementation-Version': FORGE_VERSION
+        ] as LinkedHashMap, 'net/minecraftforge/forge/transformers/')
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+license {
+    header = rootProject.file('LICENSE-header.txt')
+}
+
+publishing {
+    publications.register('mavenJava', MavenPublication) {
+        from components.java
+        artifactId = 'forge-transformers'
+        pom {
+            name = project.name
+            description = 'Forge-specific transformers unrelated to the FML project.'
+            url = 'https://github.com/MinecraftForge/MinecraftForge'
+            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
+            license PomUtils.Licenses.LGPLv2_1
+        }
+    }
+
+    repositories {
+        maven gradleutils.publishingForgeMaven
+    }
+}

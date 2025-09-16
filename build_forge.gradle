@@ -142,6 +142,7 @@ dependencies {
     installer(project(':javafmllanguage'))
     installer(project(':lowcodelanguage'))
     installer(project(':mclanguage'))
+    installer(project(':forge-transformers'))
 
     installerextra("${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:srg2off")
 
@@ -997,7 +998,7 @@ if (project.hasProperty('UPDATE_MAPPINGS')) {
 
 tasks.named('javadoc', Javadoc).configure {
     description 'Generates the combined javadocs for the FML projects and the main Forge project'
-    var includedProjects = [ ':fmlcore', ':fmlloader', ':javafmllanguage', ':mclanguage' ]
+    var includedProjects = [ ':fmlcore', ':fmlloader', ':javafmllanguage', ':mclanguage', ':forge-transformers' ]
     source includedProjects.collect { project(it).sourceSets.main.allJava }
     classpath = classpath + files(includedProjects.collect { project(it).sourceSets.main.compileClasspath })
 

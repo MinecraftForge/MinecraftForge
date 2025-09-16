@@ -1,4 +1,4 @@
-package net.minecraftforge.internal.transformer;
+package net.minecraftforge.forge.transformers;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
