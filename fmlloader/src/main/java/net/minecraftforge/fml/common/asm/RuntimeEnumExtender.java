@@ -68,6 +68,11 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName()))
             return ComputeFlags.NO_REWRITE;
 
+        if (!classNode.name.startsWith("net/minecraft/")) {
+            LOGGER.warn("IExtensibleEnum found on non-Minecraft class: {}", classType.getClassName());
+            LOGGER.warn("This behaviour is deprecated for removal and will have no effect in a future MC release. Please use a record with static final field instances instead.");
+        }
+
         Type array = Type.getType("[" + classType.getDescriptor());
         String arrayDesc = array.getDescriptor();
 
