@@ -56,6 +56,9 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
         String internalName = classType.getInternalName();
         if (internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/"))
             return NAY;
+
+        if (internalName.startsWith("net/minecraftforge/") && !internalName.endsWith("/ForgeCapabilities"))
+            return NAY;
         
         return YAY;
     }
