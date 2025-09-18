@@ -6,6 +6,9 @@
 package net.minecraftforge.common.capabilities;
 
 import net.minecraftforge.fml.common.asm.CapabilityTokenSubclass;
+import org.objectweb.asm.Type;
+
+import java.lang.constant.ClassDesc;
 
 /**
  * Inspired by {@link com.google.common.reflect.TypeToken TypeToken}, use a subclass to capture
@@ -26,8 +29,24 @@ public abstract class CapabilityToken<T> {
         throw new RuntimeException("This will be implemented by a transformer");
     }
 
+    /**
+     * @deprecated Use {@link #of(Class)} or {@link #of(ClassDesc)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.21.8")
+    public CapabilityToken() {}
+
     @Override
     public String toString() {
-        return "CapabilityToken[" + getType() + "]";
+        return "CapabilityToken[" + getType() + ']';
     }
+
+    public static <T> CapabilityToken<T> of(Class<T> clazz) {
+        return new CapabilityTokenDesc<>(Type.getInternalName(clazz));
+    }
+
+    public static <T> CapabilityToken<T> of(ClassDesc classDesc) {
+        var descriptorString = classDesc.descriptorString();
+        return new CapabilityTokenDesc<>(descriptorString.substring(1, descriptorString.length() - 1));
+    }
+
 }

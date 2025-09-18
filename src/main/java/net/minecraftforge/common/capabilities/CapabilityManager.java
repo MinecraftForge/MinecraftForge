@@ -30,7 +30,8 @@ public final class CapabilityManager {
      * this Capability is requested.
      */
     public static <T> Capability<T> get(CapabilityToken<T> type) {
-        return get(type.getType(), null, false);
+        var typeString = type instanceof CapabilityTokenDesc<?> desc ? desc.internalName : type.getType();
+        return get(typeString, null, false);
     }
 
     /**
@@ -46,7 +47,8 @@ public final class CapabilityManager {
      * distinguish between them. It is generally not safe to return your generic implementation for the root type when this is requested.
      */
     public static <T> Capability<T> get(CapabilityToken<T> type, ResourceLocation name) {
-        return get(type.getType(), name, false);
+        var typeString = type instanceof CapabilityTokenDesc<?> desc ? desc.internalName : type.getType();
+        return get(typeString, name, false);
     }
 
     @SuppressWarnings("unchecked")
