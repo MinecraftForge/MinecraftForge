@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 
+// Todo: Remove this in 1.21.9+
 /**
  * Implements getType() in CapabilityToken subclasses.
  *
