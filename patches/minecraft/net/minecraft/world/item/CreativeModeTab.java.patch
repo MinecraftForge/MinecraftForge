@@ -89,7 +89,7 @@
          private ResourceLocation backgroundTexture = CreativeModeTab.DEFAULT_BACKGROUND;
 +        private boolean hasSearchBar = false;
 +        private int searchBarWidth = 89;
-+        private int labelColor = 4210752;
++        private int labelColor = 0xff404040;
 +        private int slotColor = -2130706433;
 +        private java.util.function.Function<CreativeModeTab.Builder, CreativeModeTab> tabFactory =
 +            builder -> new CreativeModeTab(builder.row, builder.column, builder.type, builder.displayName, builder.iconGenerator, builder.displayItemsGenerator, builder);
