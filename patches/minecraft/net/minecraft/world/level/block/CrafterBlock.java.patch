@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/block/CrafterBlock.java
++++ b/net/minecraft/world/level/block/CrafterBlock.java
+@@ -185,12 +_,15 @@
+         ServerLevel p_336186_, BlockPos p_312358_, CrafterBlockEntity p_309887_, ItemStack p_310474_, BlockState p_310667_, RecipeHolder<?> p_329387_
+     ) {
+         Direction direction = p_310667_.getValue(ORIENTATION).front();
++        var itemhandler = net.minecraftforge.items.VanillaInventoryCodeHooks.getItemHandler(p_336186_, p_312358_.relative(direction), direction.getOpposite()).orElse(null);
+         Container container = HopperBlockEntity.getContainerAt(p_336186_, p_312358_.relative(direction));
+         ItemStack itemstack = p_310474_.copy();
+         if (container != null && (container instanceof CrafterBlockEntity || p_310474_.getCount() > container.getMaxStackSize(p_310474_))) {
+             while (!itemstack.isEmpty()) {
+                 ItemStack itemstack2 = itemstack.copyWithCount(1);
+                 ItemStack itemstack1 = HopperBlockEntity.addItem(p_309887_, container, itemstack2, direction.getOpposite());
++                if (itemhandler != null && !itemstack1.isEmpty()) // Vanilla insert failed, try IItemHandler
++                    itemstack1 = net.minecraftforge.items.ItemHandlerHelper.insertItem(itemhandler, itemstack1, false);
+                 if (!itemstack1.isEmpty()) {
+                     break;
+                 }
+@@ -201,10 +_,14 @@
+             while (!itemstack.isEmpty()) {
+                 int i = itemstack.getCount();
+                 itemstack = HopperBlockEntity.addItem(p_309887_, container, itemstack, direction.getOpposite());
++                if (itemhandler != null && i == itemstack.getCount()) // Vanilla insert failed, try IItemHandler
++                    itemstack = net.minecraftforge.items.ItemHandlerHelper.insertItem(itemhandler, itemstack, false);
+                 if (i == itemstack.getCount()) {
+                     break;
+                 }
+             }
++        } else {
++            itemstack = net.minecraftforge.items.ItemHandlerHelper.insertItem(itemhandler, itemstack, false);
+         }
+ 
+         if (!itemstack.isEmpty()) {
