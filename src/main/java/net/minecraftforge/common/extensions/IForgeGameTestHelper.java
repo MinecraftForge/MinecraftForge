@@ -13,13 +13,19 @@ import java.util.function.Supplier;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -33,13 +39,19 @@ import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.eventbus.api.Event;
 
 public interface IForgeGameTestHelper {
     private GameTestHelper self() {
         return (GameTestHelper) this;
+    }
+
+    default GameTestAssertException throwing(String message) {
+        return new GameTestAssertException(Component.literal(message).getString());
     }
 
     default void say(String message) {
@@ -190,6 +202,55 @@ public interface IForgeGameTestHelper {
                 () -> "Failed to set block at pos %s : %s".formatted(pos, state.getBlock())
         );
         return state;
+    }
+
+    default void removeAllItemEntitiesInRange(BlockPos pos, double range) {
+        BlockPos blockpos = this.self().absolutePos(pos);
+        for (ItemEntity itemEntity : this.self().getLevel().getEntities(EntityType.ITEM, new AABB(blockpos).inflate(range), Entity::isAlive)) {
+            itemEntity.remove(Entity.RemovalReason.DISCARDED);
+        }
+    }
+
+    default void assertContainerContains(BlockPos pos, Item item, int expected) {
+        BaseContainerBlockEntity basecontainerblockentity = self().getBlockEntity(pos);
+        var actual = basecontainerblockentity.countItem(item);
+        assertTrue(actual == expected, () -> "Failed to find %s x %d in container at %s, found %d".formatted(item, expected, pos, actual));
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, Item item) {
+        assertItemHandlerContains(pos, null, item);
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, @Nullable Direction side, Item item) {
+        assertFalse(countItemHandler(self(), pos, side, item) == 0, () -> "Failed to find any %s in IItemHandler at %s".formatted(item, pos));
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, Item item, int expected) {
+        assertItemHandlerContains(pos, null, item, expected);
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, @Nullable Direction side, Item item, int expected) {
+        int actual = countItemHandler(self(), pos, side, item);
+        assertTrue(actual == expected, () -> "Failed to find %s x %d in IItemHandler at %s, found %d".formatted(item, expected, pos, actual));
+    }
+
+    private static int countItemHandler(GameTestHelper self, BlockPos pos, @Nullable Direction side, Item item) {
+        var blockEntity = self.getBlockEntity(pos);
+        var handler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElseThrow(
+                () -> self.throwing("Block at %s has no item handler capability on side %s".formatted(pos, side)));
+
+        int actual = 0;
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
+            var stack = handler.getStackInSlot(slot);
+            if (stack.getItem().equals(item))
+                actual += stack.getCount();
+        }
+        return actual;
+    }
+
+    default void tickBlock(BlockPos pos) {
+        var blentity = self().getBlockEntity(pos);
+        if (blentity.getBlockState() != null) self().getLevel().scheduleTick(pos, blentity.getBlockState().getBlock(), 1);
     }
 
     default <T> Flag<T> flag(String name) {
