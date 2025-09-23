@@ -36,8 +36,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
-import java.util.Set;
-
 
 @Mod(CrafterBlockTest.MOD_ID)
 @GameTestHolder("forge." + CrafterBlockTest.MOD_ID)
@@ -62,14 +60,9 @@ public class CrafterBlockTest extends BaseTestMod {
         helper.setBlock(BlockPos.ZERO, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.UP_NORTH));
         var crafter = (CrafterBlockEntity) helper.getBlockEntity(BlockPos.ZERO);
         crafter.setItem(0, new ItemStack(Blocks.OAK_LOG));
-//        helper.tickBlock(BlockPos.ZERO);
-        helper.runAfterDelay(1, () -> {
-            helper.setBlock(BlockPos.ZERO.east(), Blocks.REDSTONE_BLOCK);
-        });
-        helper.runAfterDelay(5, () -> {
-            helper.assertContainerContains(chestPos, Blocks.OAK_PLANKS.asItem(), 4);
-            helper.succeed();
-        });
+        helper.tickBlock(BlockPos.ZERO);
+        helper.assertContainerContains(chestPos, Blocks.OAK_PLANKS.asItem(), 4);
+        helper.succeed();
     }
 
     // Make sure they can add items to IItemHandler BlockEntities that are not WorldlyContainers.
@@ -80,14 +73,9 @@ public class CrafterBlockTest extends BaseTestMod {
         helper.setBlock(BlockPos.ZERO, Blocks.CRAFTER.defaultBlockState().setValue(BlockStateProperties.ORIENTATION, FrontAndTop.UP_NORTH));
         var crafter = (CrafterBlockEntity) helper.getBlockEntity(BlockPos.ZERO);
         crafter.setItem(0, new ItemStack(Blocks.OAK_LOG));
-//        helper.tickBlock(BlockPos.ZERO);
-        helper.runAfterDelay(1, () -> {
-            helper.setBlock(BlockPos.ZERO.east(), Blocks.REDSTONE_BLOCK);
-        });
-        helper.runAfterDelay(5, () -> {
-            helper.assertItemHandlerContains(chestPos, Blocks.OAK_PLANKS.asItem(), 4);
-            helper.succeed();
-        });
+        helper.tickBlock(BlockPos.ZERO);
+        helper.assertItemHandlerContains(chestPos, Blocks.OAK_PLANKS.asItem(), 4);
+        helper.succeed();
     }
 
     private static class SimpleIItemHandlerBlock extends BaseEntityBlock {
