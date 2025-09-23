@@ -20,6 +20,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,7 @@ import com.mojang.authlib.GameProfile;
 
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
@@ -41,8 +43,11 @@ import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.eventbus.api.Event;
 
 public interface IForgeGameTestHelper {
@@ -251,6 +256,43 @@ public interface IForgeGameTestHelper {
         for (ItemEntity itemEntity : this.self().getLevel().getEntities(EntityType.ITEM, new AABB(blockpos).inflate(range), Entity::isAlive)) {
             itemEntity.remove(Entity.RemovalReason.DISCARDED);
         }
+    }
+
+    default void assertContainerContains(BlockPos pos, Item item, int expected) {
+        BaseContainerBlockEntity basecontainerblockentity = self().getBlockEntity(pos, BaseContainerBlockEntity.class);
+        var actual = basecontainerblockentity.countItem(item);
+        assertTrue(actual == expected, () -> "Failed to find %s x %d in container at %s, found %d".formatted(item, expected, pos, actual));
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, Item item) {
+        assertItemHandlerContains(pos, null, item);
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, @Nullable Direction side, Item item) {
+        assertFalse(countItemHandler(self(), pos, side, item) == 0, () -> "Failed to find any %s in IItemHandler at %s".formatted(item, pos));
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, Item item, int expected) {
+        assertItemHandlerContains(pos, null, item, expected);
+    }
+
+    default void assertItemHandlerContains(BlockPos pos, @Nullable Direction side, Item item, int expected) {
+        int actual = countItemHandler(self(), pos, side, item);
+        assertTrue(actual == expected, () -> "Failed to find %s x %d in IItemHandler at %s, found %d".formatted(item, expected, pos, actual));
+    }
+
+    private static int countItemHandler(GameTestHelper self, BlockPos pos, @Nullable Direction side, Item item) {
+        var blockEntity = self.getBlockEntity(pos, BlockEntity.class);
+        var handler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElseThrow(
+                () -> self.throwing("Block at %s has no item handler capability on side %s".formatted(pos, side)));
+
+        int actual = 0;
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
+            var stack = handler.getStackInSlot(slot);
+            if (stack.getItem().equals(item))
+                actual += stack.getCount();
+        }
+        return actual;
     }
 
     default <T> Flag<T> flag(String name) {
