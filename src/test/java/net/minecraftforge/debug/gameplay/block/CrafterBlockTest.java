@@ -54,7 +54,7 @@ public class CrafterBlockTest extends BaseTestMod {
     });
 
     public CrafterBlockTest(FMLJavaModLoadingContext context) {
-        super(context, false, true);
+        super(context);
     }
 
     // Make sure they can add items to vanilla containers.
