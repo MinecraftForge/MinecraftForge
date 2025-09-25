@@ -36,6 +36,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
+import java.util.Set;
+
 
 @Mod(CrafterBlockTest.MOD_ID)
 @GameTestHolder("forge." + CrafterBlockTest.MOD_ID)
@@ -43,10 +45,10 @@ public class CrafterBlockTest extends BaseTestMod {
     static final String MOD_ID = "crafter_block";
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MOD_ID);
-    private static final RegistryObject<Block> IITEM_BLOCK = BLOCKS.register("iitem", () -> new SimpleIItemHandlerBlock(Block.Properties.of()));
+    private static final RegistryObject<Block> IITEM_BLOCK = BLOCKS.register("iitem", () -> new SimpleIItemHandlerBlock(Block.Properties.of().setId(BLOCKS.key("iitem"))));
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MOD_ID);
-    private static final RegistryObject<BlockEntityType<SimpleIItemHandler>> IITEM_BLOCK_TYPE = BLOCK_TYPES.register("iitem", () -> BlockEntityType.Builder.of(SimpleIItemHandler::new, IITEM_BLOCK.get()).build(null));
+    private static final RegistryObject<BlockEntityType<SimpleIItemHandler>> IITEM_BLOCK_TYPE = BLOCK_TYPES.register("iitem", () -> new BlockEntityType<>(SimpleIItemHandler::new, Set.of(IITEM_BLOCK.get())));
 
     public CrafterBlockTest(FMLJavaModLoadingContext context) {
         super(context);
