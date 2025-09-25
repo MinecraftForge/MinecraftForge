@@ -263,9 +263,9 @@ public interface IForgeGameTestHelper {
         return actual;
     }
 
-    default void tickBlock(BlockPos pos) {
+    default void tickBlock(BlockPos pos) { // #10667 backport, why doesn't this tick the crafter?
         var blentity = self().getBlockEntity(pos);
-        if (blentity.getBlockState() != null) self().getLevel().scheduleTick(pos, blentity.getBlockState().getBlock(), 1);
+        blentity.getBlockState().tick(self().getLevel(), pos, self().getLevel().random);
     }
 
     default <T> Flag<T> flag(String name) {
