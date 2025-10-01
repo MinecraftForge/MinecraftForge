@@ -36,39 +36,36 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class ModDiscoverer {
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private final List<IModLocator>          modLocatorList;
-    private final List<IDependencyLocator>   dependencyLocatorList;
+    private ModDiscoverer() {}
 
-    public ModDiscoverer(Map<String, ?> arguments) {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
+    @SuppressWarnings("removal")
+    public static ModValidator discoverMods(Map<String, ?> arguments) {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODDIRECTORYFACTORY.get(), v->ModsFolderLocator::new);
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v-> StartupNotificationManager.locatorConsumer().orElseGet(()-> s->{}));
         final var moduleLayerManager = Launcher.INSTANCE.environment().findModuleLayerManager().orElseThrow();
         ServiceLoader<IModLocator> modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
         ServiceLoader<IDependencyLocator> dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
-        modLocatorList = ServiceLoaderUtils.streamWithErrorHandling(modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
+        List<IModLocator> modLocatorList = ServiceLoaderUtils.streamWithErrorHandling(modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).toList();
         for (IModLocator iModLocator : modLocatorList) {
             iModLocator.initArguments(arguments);
         }
-        dependencyLocatorList = ServiceLoaderUtils.streamWithErrorHandling(dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
+        List<IDependencyLocator> dependencyLocatorList = ServiceLoaderUtils.streamWithErrorHandling(dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).toList();
         for (IDependencyLocator l : dependencyLocatorList) {
             l.initArguments(arguments);
         }
-        if (LOGGER.isDebugEnabled(LogMarkers.CORE))
-        {
+        if (LOGGER.isDebugEnabled(LogMarkers.CORE)) {
             LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", modLocatorList.stream()
-                                                                       .map(modLocator -> "(%s:%s)".formatted(modLocator.name(),
-                                                                         modLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
+                    .map(modLocator -> "(%s:%s)".formatted(modLocator.name(),
+                            modLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
 
             LOGGER.debug(LogMarkers.CORE, "Found Dependency Locators : {}", dependencyLocatorList.stream()
-                                                                       .map(dependencyLocator -> "(%s:%s)".formatted(dependencyLocator.name(),
-                                                                         dependencyLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
+                    .map(dependencyLocator -> "(%s:%s)".formatted(dependencyLocator.name(),
+                            dependencyLocator.getClass().getPackage().getImplementationVersion())).collect(Collectors.joining(",")));
         }
-    }
 
-    @SuppressWarnings("removal")
-    public ModValidator discoverMods() {
-        LOGGER.debug(LogMarkers.SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", modLocatorList.size());
+        LOGGER.debug(LogMarkers.SCAN, "Scanning for mods and other resources to load. We know {} ways to find mods", modLocatorList.size());
         List<ModFile> loadedFiles = new ArrayList<>();
         List<EarlyLoadingException.ExceptionData> discoveryErrorData = new ArrayList<>();
         boolean successfullyLoadedMods = true;
