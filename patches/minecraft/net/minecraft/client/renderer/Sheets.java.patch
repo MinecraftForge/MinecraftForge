@@ -30,7 +30,7 @@
 +    }
 +
 +    static {
-+        if (net.minecraftforge.fml.ModLoader.isLoadingStateValid() && !net.minecraftforge.fml.ModLoader.get().hasCompletedState("LOAD_REGISTRIES")) {
++        if (net.minecraftforge.fml.ModLoader.isLoadingStateValid() && !net.minecraftforge.fml.ModLoader.get().hasCompletedState(net.minecraftforge.common.ForgeStatesProvider.LOAD_REGISTRIES)) {
 +            com.mojang.logging.LogUtils.getLogger().error(
 +                    "net.minecraft.client.renderer.Sheets loaded too early, modded registry-based materials may not work correctly",
 +                    new IllegalStateException("net.minecraft.client.renderer.Sheets loaded too early")

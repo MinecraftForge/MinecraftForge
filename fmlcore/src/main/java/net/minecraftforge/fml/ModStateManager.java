@@ -41,11 +41,13 @@ public class ModStateManager {
     }
 
     public IModLoadingState findState(final String stateName) {
-        return stateMap.values()
+        var result = stateMap.values()
                 .stream()
                 .flatMap(List::stream)
                 .filter(mls -> mls.name().equals(stateName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown IModLoadingState: " + stateName));
+                .orElse(null);
+        if (result != null) return result;
+        else throw new IllegalArgumentException("Unknown IModLoadingState: " + stateName);
     }
 }
