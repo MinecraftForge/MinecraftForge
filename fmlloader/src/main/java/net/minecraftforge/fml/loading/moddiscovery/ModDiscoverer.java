@@ -35,10 +35,8 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 @ApiStatus.Internal
-public class ModDiscoverer {
+public final class ModDiscoverer {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final ServiceLoader<IModLocator> modLocators;
-    private final ServiceLoader<IDependencyLocator> dependencyLocators;
     private final List<IModLocator>          modLocatorList;
     private final List<IDependencyLocator>   dependencyLocatorList;
 
@@ -46,13 +44,13 @@ public class ModDiscoverer {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODDIRECTORYFACTORY.get(), v->ModsFolderLocator::new);
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v-> StartupNotificationManager.locatorConsumer().orElseGet(()-> s->{}));
         final var moduleLayerManager = Launcher.INSTANCE.environment().findModuleLayerManager().orElseThrow();
-        modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
-        dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
-        modLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
+        ServiceLoader<IModLocator> modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
+        ServiceLoader<IDependencyLocator> dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
+        modLocatorList = ServiceLoaderUtils.streamWithErrorHandling(modLocators, sce->LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
         for (IModLocator iModLocator : modLocatorList) {
             iModLocator.initArguments(arguments);
         }
-        dependencyLocatorList = ServiceLoaderUtils.streamServiceLoader(()-> dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
+        dependencyLocatorList = ServiceLoaderUtils.streamWithErrorHandling(dependencyLocators, sce->LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
         for (IDependencyLocator l : dependencyLocatorList) {
             l.initArguments(arguments);
         }

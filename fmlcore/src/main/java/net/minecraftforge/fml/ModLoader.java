@@ -113,16 +113,16 @@ public class ModLoader {
 
     private static String computeLanguageList() {
         return "\n" + FMLLoader.getLanguageLoadingProvider()
-                .applyForEach(lp -> lp.name() + "@" + lp.getClass().getPackage().getImplementationVersion())
+                .applyForEach(lp -> lp.name() + '@' + lp.getClass().getPackage().getImplementationVersion())
                 .collect(Collectors.joining("\n\t\t", "\t\t", ""));
     }
 
     private static String computeModLauncherServiceList() {
         final List<Map<String, String>> mods = FMLLoader.modLauncherModList();
-        return "\n"+mods.stream().map(mod->mod.getOrDefault("file","nofile")+
-                " "+mod.getOrDefault("name", "missing")+
-                " "+mod.getOrDefault("type","NOTYPE")+
-                " "+mod.getOrDefault("description", "")).
+        return "\n" + mods.stream().map(mod -> mod.getOrDefault("file","nofile") +
+                ' ' + mod.getOrDefault("name", "missing") +
+                ' ' + mod.getOrDefault("type","NOTYPE") +
+                ' ' + mod.getOrDefault("description", "")).
                 collect(Collectors.joining("\n\t\t","\t\t",""));
     }
 
