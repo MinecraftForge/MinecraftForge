@@ -52,7 +52,9 @@ public class ModValidator {
     }
 
     private static List<ModFile> lst(List<ModFile> files) {
-        return files == null ? new ArrayList<>() : files;
+        if (files == null) return new ArrayList<>();
+        if (files instanceof ArrayList<ModFile>) return files;
+        return new ArrayList<>(files);
     }
 
     public void stage1Validation() {
