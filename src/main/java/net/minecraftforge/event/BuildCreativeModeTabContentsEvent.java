@@ -13,10 +13,10 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.util.MutableHashedLinkedMap;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.function.Supplier;
 
@@ -26,9 +26,13 @@ import java.util.function.Supplier;
  * <p>
  * This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.
  */
-public final class BuildCreativeModeTabContentsEvent implements IModBusEvent, CreativeModeTab.Output {
+@NullMarked
+public final class BuildCreativeModeTabContentsEvent extends MutableEvent implements CreativeModeTab.Output {
+    public static final EventBus<BuildCreativeModeTabContentsEvent> BUS = EventBus.create(BuildCreativeModeTabContentsEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<BuildCreativeModeTabContentsEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, BuildCreativeModeTabContentsEvent.class);
+        return BUS;
     }
 
     private final CreativeModeTab tab;

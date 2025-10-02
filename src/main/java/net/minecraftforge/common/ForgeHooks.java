@@ -1066,7 +1066,7 @@ public final class ForgeHooks {
             entries.put(stack, vis);
         });
 
-        ModLoader.postEvent(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
+        BuildCreativeModeTabContentsEvent.BUS.post(new BuildCreativeModeTabContentsEvent(tab, tabKey, params, entries));
 
         for (var entry : entries)
             output.accept(entry.getKey(), entry.getValue());
