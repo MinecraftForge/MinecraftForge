@@ -269,7 +269,7 @@ public class ForgeHooksClient {
     }
 
     public static void onTextureStitchedPost(TextureAtlas map) {
-        ModLoader.postEvent(new TextureStitchEvent.Post(map));
+        TextureStitchEvent.Post.BUS.post(new TextureStitchEvent.Post(map));
     }
 
     public static void onBlockColorsInit(BlockColors blockColors) {

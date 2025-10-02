@@ -8,8 +8,8 @@ package net.minecraftforge.client.event;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -31,8 +31,7 @@ public sealed interface TextureStitchEvent {
     //  * <p>Fired <b>before</b> a texture atlas is stitched together.
     //  * This can be used to add custom sprites to be stitched into the atlas.</p>
     //  *
-    //  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
-    //  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+    //  * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
     //  */
     // public static class Pre extends TextureStitchEvent {
     //     private final Set<ResourceLocation> sprites;
@@ -61,9 +60,12 @@ public sealed interface TextureStitchEvent {
      *
      * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    record Post(TextureAtlas getAtlas) implements TextureStitchEvent, IModBusEvent {
+    record Post(TextureAtlas getAtlas) implements RecordEvent, TextureStitchEvent {
+        public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<Post> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, Post.class);
+            return BUS;
         }
 
         @ApiStatus.Internal
