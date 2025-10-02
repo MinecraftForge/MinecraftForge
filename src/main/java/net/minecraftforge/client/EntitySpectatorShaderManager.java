@@ -8,9 +8,9 @@ package net.minecraftforge.client;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.RegisterEntitySpectatorShadersEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,24 +20,24 @@ import java.util.Map;
  * <p>
  * Provides a lookup.
  */
+@NullMarked
 public final class EntitySpectatorShaderManager {
     private EntitySpectatorShaderManager() {}
 
-    private static Map<EntityType<?>, ResourceLocation> SHADERS;
+    private static @Nullable Map<EntityType<?>, ResourceLocation> SHADERS;
 
     /**
      * Finds the path to the spectator mode shader used for the specified entity type, or null if none is registered.
      */
-    @Nullable
-    public static ResourceLocation get(EntityType<?> entityType) {
+    public static @Nullable ResourceLocation get(EntityType<?> entityType) {
+        assert SHADERS != null;
         return SHADERS.get(entityType);
     }
 
     @ApiStatus.Internal
     public static void init() {
         var shaders = new HashMap<EntityType<?>, ResourceLocation>();
-        var event = new RegisterEntitySpectatorShadersEvent(shaders);
-        ModLoader.postEventWrapContainerInModOrder(event);
+        RegisterEntitySpectatorShadersEvent.BUS.post(new RegisterEntitySpectatorShadersEvent(shaders));
         SHADERS = Map.copyOf(shaders);
     }
 }
