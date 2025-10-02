@@ -4,7 +4,7 @@
          this.soundManager = p_120236_;
          this.options = p_120237_;
          this.soundBuffers = new SoundBufferLibrary(p_249332_);
-+        net.minecraftforge.fml.ModLoader.postEvent(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
++        net.minecraftforge.client.event.sound.SoundEngineLoadEvent.BUS.post(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
      }
  
      public void reload() {
@@ -12,7 +12,7 @@
  
          this.destroy();
          this.loadLibrary();
-+        net.minecraftforge.fml.ModLoader.postEvent(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
++        net.minecraftforge.client.event.sound.SoundEngineLoadEvent.BUS.post(new net.minecraftforge.client.event.sound.SoundEngineLoadEvent(this));
      }
  
      private synchronized void loadLibrary() {
