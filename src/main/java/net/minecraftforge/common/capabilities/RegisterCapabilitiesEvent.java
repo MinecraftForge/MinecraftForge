@@ -9,9 +9,9 @@ import java.util.Objects;
 
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
+import org.jspecify.annotations.NullMarked;
 import org.objectweb.asm.Type;
-
-import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * This event fires when it is time to register your capabilities.
@@ -20,9 +20,13 @@ import net.minecraftforge.fml.event.IModBusEvent;
  * @deprecated Use {@link AutoRegisterCapability} annotation on your class.
  */
 @Deprecated(forRemoval = true, since = "1.21")
-public final class RegisterCapabilitiesEvent implements IModBusEvent {
+@NullMarked
+public record RegisterCapabilitiesEvent() implements RecordEvent {
+    public static final EventBus<RegisterCapabilitiesEvent> BUS = EventBus.create(RegisterCapabilitiesEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterCapabilitiesEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterCapabilitiesEvent.class);
+        return BUS;
     }
 
     /**
