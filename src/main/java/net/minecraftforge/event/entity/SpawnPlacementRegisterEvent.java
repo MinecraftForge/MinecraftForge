@@ -18,7 +18,8 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.listener.Priority;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -26,24 +27,23 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * This event allows each {@link EntityType} to have a {@link SpawnPlacements.SpawnPredicate} registered or modified.
  * Spawn Predicates are checked whenever an {@link Entity} of the given {@link EntityType} spawns in the world naturally.
- *
- * If registering your own entity's spawn placements, you should use {@link SpawnPlacementRegisterEvent#register(EntityType, SpawnPlacements.Type, Heightmap.Types, SpawnPlacements.SpawnPredicate, Operation)}
+ * <br>
+ * If registering your own entity's spawn placements, you should use {@link SpawnPlacementRegisterEvent#register(EntityType, SpawnPlacementType, Heightmap.Types, SpawnPlacements.SpawnPredicate, Operation)}
  * So that you ensure that your entity has a heightmap type and placement type registered.
- *
+ * <br>
  * If modifying vanilla or another mod's spawn placements, you can use three operations:
- *  REPLACE: checked first, the last mod to replace the predicate wipes out all other predicates. Listen with a low {@link EventPriority} if you need to do this.
- *  OR: checked second, only one of these predicates must pass along with the original predicate
- *  AND: checked third, these predicates must all pass along with the original predicate
- *
- * <p>
- * This event is not {@linkplain Cancelable cancellable} and does not {@linkplain Event.HasResult have a result}.
- * <p>
- *
- *  Fired on the Mod bus {@link IModBusEvent}.<br>
+ * <ul>
+ *     <li>REPLACE: checked first, the last mod to replace the predicate wipes out all other predicates. Listen with a low {@link Priority} if you need to do this.</li>
+ *     <li>OR: checked second, only one of these predicates must pass along with the original predicate</li>
+ *     <li>AND: checked third, these predicates must all pass along with the original predicate</li>
+ * </ul>
  */
-public final class SpawnPlacementRegisterEvent implements IModBusEvent {
+public final class SpawnPlacementRegisterEvent extends MutableEvent {
+    public static final EventBus<SpawnPlacementRegisterEvent> BUS = EventBus.create(SpawnPlacementRegisterEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<SpawnPlacementRegisterEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, SpawnPlacementRegisterEvent.class);
+        return BUS;
     }
 
     private final Map<EntityType<?>, MergedSpawnPredicate<?>> map;
@@ -151,7 +151,7 @@ public final class SpawnPlacementRegisterEvent implements IModBusEvent {
         }
 
         @ApiStatus.Internal
-        public SpawnPlacements.SpawnPredicate<T> build() {
+        public final SpawnPlacements.SpawnPredicate<T> build() {
             if (replacementPredicate != null) {
                 return replacementPredicate;
             }
