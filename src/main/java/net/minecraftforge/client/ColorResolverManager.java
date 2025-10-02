@@ -9,7 +9,6 @@ import net.minecraft.client.color.block.BlockTintCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ public final class ColorResolverManager {
     @ApiStatus.Internal
     public static void init() {
         var builder = new ArrayList<ColorResolver>();
-        ModLoader.postEvent(new RegisterColorHandlersEvent.ColorResolvers(builder));
+        RegisterColorHandlersEvent.ColorResolvers.BUS.post(new RegisterColorHandlersEvent.ColorResolvers(builder));
         colorResolvers = List.copyOf(builder);
     }
 

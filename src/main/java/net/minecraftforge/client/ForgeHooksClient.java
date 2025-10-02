@@ -273,7 +273,7 @@ public class ForgeHooksClient {
     }
 
     public static void onBlockColorsInit(BlockColors blockColors) {
-        ModLoader.postEvent(new RegisterColorHandlersEvent.Block(blockColors));
+        RegisterColorHandlersEvent.Block.BUS.post(new RegisterColorHandlersEvent.Block(blockColors));
     }
 
     public static Model getArmorModel(HumanoidRenderState state, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default) {
