@@ -14,30 +14,28 @@ import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public sealed abstract class DataPackRegistryEvent implements IModBusEvent {
-    @ApiStatus.Internal
-    protected DataPackRegistryEvent() {}
-
+public sealed interface DataPackRegistryEvent {
     /**
      * Fired when datapack registries can be registered.
      * Datapack registries are registries which can only load entries through JSON files from datapacks.
      * <p>
      * Data JSONs will be loaded from {@code data/<datapack_namespace>/modid/registryname/}, where {@code modid} is the namespace of the registry key.
      * <p>
-     * This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
-     * <p>
-     * This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * on both {@linkplain LogicalSide logical sides}.
+     * This event is fired on both {@linkplain LogicalSide logical sides}.
      */
-    public static final class NewRegistry extends DataPackRegistryEvent {
+    final class NewRegistry extends MutableEvent implements DataPackRegistryEvent {
+        public static final EventBus<NewRegistry> BUS = EventBus.create(NewRegistry.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<NewRegistry> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, NewRegistry.class);
+            return BUS;
         }
 
         private final List<DataPackRegistryData<?>> registryDataList = new ArrayList<>();

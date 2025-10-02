@@ -12,7 +12,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.registries.tags.ITagManager;
@@ -20,7 +19,6 @@ import net.minecraftforge.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -322,7 +320,9 @@ public class DeferredRegister<T> {
      *                    your language provider's equivalent.
      */
     public void register(BusGroup modBusGroup) {
-        modBusGroup.register(EventDispatcher.LOOKUP, new EventDispatcher());
+        var dispatcher = new EventDispatcher();
+        RegisterEvent.getBus(modBusGroup).addListener(dispatcher::handleEvent);
+        NewRegistryEvent.BUS.addListener(dispatcher::createRegistry);
     }
 
     /**
@@ -376,9 +376,6 @@ public class DeferredRegister<T> {
     }
 
     private final class EventDispatcher {
-        private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-
-        @SubscribeEvent
         public void handleEvent(RegisterEvent event) {
             if (event.getRegistryKey().equals(registryKey)) {
                 seenRegisterEvent = true;
@@ -392,7 +389,6 @@ public class DeferredRegister<T> {
             }
         }
 
-        @SubscribeEvent
         public void createRegistry(NewRegistryEvent event) {
             if (registryFactory != null)
                 event.create(registryFactory.get(), DeferredRegister.this::onFill);

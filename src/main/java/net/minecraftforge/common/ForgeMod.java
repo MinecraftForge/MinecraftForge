@@ -386,7 +386,7 @@ public class ForgeMod {
 
         BusGroup modBusGroup = context.getModBusGroup();
         // Forge-provided datapack registries
-        DataPackRegistryEvent.NewRegistry.getBus(modBusGroup).addListener(event -> {
+        DataPackRegistryEvent.NewRegistry.BUS.addListener(event -> {
             event.dataPackRegistry(ForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
             event.dataPackRegistry(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
         });
@@ -395,7 +395,7 @@ public class ForgeMod {
         var registerEventBus = RegisterEvent.getBus(modBusGroup);
         registerEventBus.addListener(ForgeMod::registerFluids);
         registerEventBus.addListener(ForgeMod::registerVanillaDisplayContexts);
-        EntityAttributeModificationEvent.getBus(modBusGroup).addListener(ForgeMod::onRegisterAttributes);
+        EntityAttributeModificationEvent.BUS.addListener(ForgeMod::onRegisterAttributes);
         ForgeDeferredRegistriesSetup.setup(modBusGroup);
         for (var reg : registries)
             reg.register(modBusGroup);

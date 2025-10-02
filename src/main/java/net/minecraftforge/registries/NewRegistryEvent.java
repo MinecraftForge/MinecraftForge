@@ -16,16 +16,19 @@ import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
  * Register new registries when you receive this event through {@link RegistryBuilder} and {@link #create(RegistryBuilder)}.
  */
-public final class NewRegistryEvent implements IModBusEvent {
+public final class NewRegistryEvent extends MutableEvent {
+    public static final EventBus<NewRegistryEvent> BUS = EventBus.create(NewRegistryEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<NewRegistryEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, NewRegistryEvent.class);
+        return BUS;
     }
 
     private static final Logger LOGGER = LogUtils.getLogger();
