@@ -792,7 +792,7 @@ public final class ForgeHooks {
     public static void modifyAttributes() {
         EntityAttributeCreationEvent.BUS.post(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> finalMap = new HashMap<>();
-        ModLoader.postEvent(new EntityAttributeModificationEvent(finalMap));
+        EntityAttributeModificationEvent.BUS.post(new EntityAttributeModificationEvent(finalMap));
 
         finalMap.forEach((k, v) -> {
             AttributeSupplier supplier = DefaultAttributes.getSupplier(k);
