@@ -41,7 +41,7 @@ public class CreativeModeTabTest {
         var modBus = context.getModBusGroup();
 
         RegisterEvent.getBus(modBus).addListener(CreativeModeTabTest::onCreativeModeTabRegister);
-        BuildCreativeModeTabContentsEvent.getBus(modBus).addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
+        BuildCreativeModeTabContentsEvent.BUS.addListener(CreativeModeTabTest::onCreativeModeTabBuildContents);
     }
 
     private static void onCreativeModeTabRegister(RegisterEvent event) {

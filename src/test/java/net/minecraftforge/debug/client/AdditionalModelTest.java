@@ -42,7 +42,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -52,7 +51,6 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.test.BaseTestMod;
 
-import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -78,16 +76,16 @@ public class AdditionalModelTest extends BaseTestMod {
 
     public AdditionalModelTest(FMLJavaModLoadingContext context) {
         super(context, false, FMLLoader.getLaunchHandler().isData());
-        modBus.register(MethodHandles.lookup(), this);
+        GatherDataEvent.getBus(modBus).addListener(this::runData);
+        ModelEvent.RegisterModelStateDefinitions.BUS.addListener(this::onRegisterAdditional);
+        EntityRenderersEvent.AddLayers.BUS.addListener(this::onAddLayers);
     }
 
-    @SubscribeEvent
     public void runData(GatherDataEvent event) {
         var out = event.getGenerator().getPackOutput();
         event.getGenerator().addProvider(event.includeClient(), new ModelProvider(out));
     }
 
-    @SubscribeEvent
     public void onRegisterAdditional(ModelEvent.RegisterModelStateDefinitions event) {
         // Our fake blocks are only created during data gen, so we have to add a fake mapper
         event.register(rl("cow_head"), COW_HEAD_STATE);
@@ -119,7 +117,6 @@ public class AdditionalModelTest extends BaseTestMod {
     }
 
     // An example on how to render both the item and block model variants
-    @SubscribeEvent
     public void onAddLayers(EntityRenderersEvent.AddLayers event) {
         // Pigs get a block on their head, this is a test of going through the ItemModel loader
         LivingEntityRenderer<Pig, PigRenderState, PigModel> pig = event.getEntityRenderer(EntityType.PIG);
