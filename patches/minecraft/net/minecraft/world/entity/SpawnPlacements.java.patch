@@ -28,7 +28,7 @@
 +    public static void fireSpawnPlacementEvent() {
 +        Map<EntityType<?>, net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<?>> map = Maps.newHashMap();
 +        DATA_BY_TYPE.forEach((type, data) -> map.put(type, new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.MergedSpawnPredicate<>(data.predicate, data.placement, data.heightMap)));
-+        net.minecraftforge.fml.ModLoader.postEvent(new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent(map));
++        net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.BUS.post(new net.minecraftforge.event.entity.SpawnPlacementRegisterEvent(map));
 +        map.forEach(((entityType, merged) -> DATA_BY_TYPE.put(entityType, new SpawnPlacements.Data(merged.getHeightmapType(), merged.getSpawnType(), merged.build()))));
      }
  }
