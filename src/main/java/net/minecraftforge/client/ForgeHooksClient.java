@@ -615,7 +615,7 @@ public class ForgeHooksClient {
     }
 
     public static void onRegisterParticleProviders(ParticleResources particles) {
-        ModLoader.postEvent(new RegisterParticleProvidersEvent(particles));
+        RegisterParticleProvidersEvent.BUS.post(new RegisterParticleProvidersEvent(particles));
     }
 
     public static void onRegisterKeyMappings(Options options) {

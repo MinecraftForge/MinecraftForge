@@ -11,11 +11,11 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Fired for registering particle providers at the appropriate time.
@@ -23,14 +23,15 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>{@link ParticleType}s must be registered during {@link RegisterEvent} as usual;
  * this event is only for the {@link ParticleProvider}s.</p>
  *
- * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
- *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterParticleProvidersEvent implements IModBusEvent {
+@NullMarked
+public final class RegisterParticleProvidersEvent extends MutableEvent {
+    public static EventBus<RegisterParticleProvidersEvent> BUS = EventBus.create(RegisterParticleProvidersEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterParticleProvidersEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterParticleProvidersEvent.class);
+        return BUS;
     }
 
     private final ParticleResources particles;
