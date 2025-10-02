@@ -10,7 +10,7 @@ import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 
 import java.util.function.Consumer;
 
@@ -19,9 +19,12 @@ import java.util.function.Consumer;
  *
  * @param getPackType the {@link PackType} of the pack repository being constructed.
  */
-public record AddPackFindersEvent(PackType getPackType, Consumer<RepositorySource> sourceAdder) implements IModBusEvent {
+public record AddPackFindersEvent(PackType getPackType, Consumer<RepositorySource> sourceAdder) implements RecordEvent {
+    public static final EventBus<AddPackFindersEvent> BUS = EventBus.create(AddPackFindersEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<AddPackFindersEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, AddPackFindersEvent.class);
+        return BUS;
     }
 
     /**

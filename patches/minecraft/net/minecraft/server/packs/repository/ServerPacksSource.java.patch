@@ -6,7 +6,7 @@
      public static PackRepository createPackRepository(Path p_251569_, DirectoryValidator p_300268_) {
 -        return new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
 +        var ret = new PackRepository(new ServerPacksSource(p_300268_), new FolderRepositorySource(p_251569_, PackType.SERVER_DATA, PackSource.WORLD, p_300268_));
-+        net.minecraftforge.fml.ModLoader.postEvent(new net.minecraftforge.event.AddPackFindersEvent(PackType.SERVER_DATA, ret::addPackFinder));
++        net.minecraftforge.event.AddPackFindersEvent.BUS.post(new net.minecraftforge.event.AddPackFindersEvent(PackType.SERVER_DATA, ret::addPackFinder));
 +        return ret;
      }
  

@@ -942,9 +942,8 @@ public final class ForgeEventFactory {
         PlayerInteractEvent.RightClickEmpty.BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
     }
 
-    // TODO: Remove from mod bus - Lex 04222024
     public static void addPackFindersServer(Consumer<RepositorySource> consumer) {
-        ModLoader.postEvent(new AddPackFindersEvent(PackType.SERVER_DATA, consumer));
+        net.minecraftforge.event.AddPackFindersEvent.BUS.post(new AddPackFindersEvent(PackType.SERVER_DATA, consumer));
     }
 
     public static boolean onEntityJoinLevel(Entity entity, Level level) {
