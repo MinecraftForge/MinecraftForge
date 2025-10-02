@@ -273,8 +273,7 @@ public final class ForgeEventFactoryClient {
     }
 
     public static ModelEvent.RegisterModelStateDefinitions onRegisterModeStateDefinitions() {
-        // This is on the mod bus because it happens during the initial texture reload, which is while the Forge bus is shut down.
-        return ModLoader.postEventWithReturn(new ModelEvent.RegisterModelStateDefinitions());
+        return ModelEvent.RegisterModelStateDefinitions.BUS.fire(new ModelEvent.RegisterModelStateDefinitions());
     }
 
     public static void onInitLevelRenderer() {

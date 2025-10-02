@@ -359,11 +359,11 @@ public class ForgeHooksClient {
     }
 
     public static void onModifyBakingResult(ModelBakery modelBakery, ModelBakery.BakingResult results) {
-        ModLoader.postEvent(new ModelEvent.ModifyBakingResult(modelBakery, results));
+        ModelEvent.ModifyBakingResult.BUS.post(new ModelEvent.ModifyBakingResult(modelBakery, results));
     }
 
     public static void onModelBake(ModelManager modelManager, ModelBakery modelBakery) {
-        ModLoader.postEvent(new ModelEvent.BakingCompleted(modelManager, modelBakery));
+        ModelEvent.BakingCompleted.BUS.post(new ModelEvent.BakingCompleted(modelManager, modelBakery));
     }
 
     public static TextureAtlasSprite[] getFluidSprites(BlockAndTintGetter level, BlockPos pos, FluidState fluidStateIn) {

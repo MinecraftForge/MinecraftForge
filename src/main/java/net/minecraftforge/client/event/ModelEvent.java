@@ -15,6 +15,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraftforge.client.model.geometry.IGeometryLoader;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -45,9 +47,12 @@ public sealed interface ModelEvent {
      * @param getResults the modifiable registry map of models and their model names
      */
     record ModifyBakingResult(ModelBakery getModelBakery, ModelBakery.BakingResult getResults)
-            implements IModBusEvent, ModelEvent {
+            implements RecordEvent, ModelEvent {
+        public static final EventBus<ModifyBakingResult> BUS = EventBus.create(ModifyBakingResult.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<ModifyBakingResult> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, ModifyBakingResult.class);
+            return BUS;
         }
 
         @ApiStatus.Internal
@@ -66,9 +71,12 @@ public sealed interface ModelEvent {
      * @param getModelBakery the model loader
      */
     record BakingCompleted(ModelManager getModelManager, ModelBakery getModelBakery)
-            implements IModBusEvent, ModelEvent {
+            implements RecordEvent, ModelEvent {
+        public static final EventBus<BakingCompleted> BUS = EventBus.create(BakingCompleted.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<BakingCompleted> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, BakingCompleted.class);
+            return BUS;
         }
 
         @ApiStatus.Internal
@@ -83,16 +91,19 @@ public sealed interface ModelEvent {
      *
      * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    final class RegisterModelStateDefinitions implements IModBusEvent, ModelEvent {
+    final class RegisterModelStateDefinitions extends MutableEvent implements ModelEvent {
+        public static final EventBus<RegisterModelStateDefinitions> BUS = EventBus.create(RegisterModelStateDefinitions.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<RegisterModelStateDefinitions> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, RegisterModelStateDefinitions.class);
+            return BUS;
         }
 
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> states = new HashMap<>();
         private final Map<ResourceLocation, StateDefinition<Block, BlockState>> view = Collections.unmodifiableMap(states);
 
         @ApiStatus.Internal
-        public RegisterModelStateDefinitions() { }
+        public RegisterModelStateDefinitions() {}
 
         /**
          * Returns a read only view of the extra registered models
