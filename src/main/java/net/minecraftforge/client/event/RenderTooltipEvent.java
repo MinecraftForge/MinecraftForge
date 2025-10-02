@@ -116,12 +116,11 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      * Fired when a tooltip gathers the {@link TooltipComponent}s to be rendered, before any text wrapping or processing.
      * The list of components and the maximum width of the tooltip can be modified through this event.
      *
-     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * <p>This event is {@linkplain Cancellable cancellable}.
      * If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
      * the corresponding {@link RenderTooltipEvent.Pre} to not be fired.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * Fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static final class GatherComponents extends MutableEvent implements Cancellable {
         public static final CancellableEventBus<GatherComponents> BUS = CancellableEventBus.create(GatherComponents.class);
@@ -205,11 +204,10 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      * Fired <b>before</b> the tooltip is rendered.
      * This can be used to modify the positioning, font, and background of the tooltip.
      *
-     * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
+     * <p>This event is {@linkplain Cancellable cancellable}.
      * If this event is cancelled, then the tooltip will not be rendered.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * Fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static final class Pre extends RenderTooltipEvent implements Cancellable {
         public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
@@ -308,49 +306,4 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
             return originalBackground;
         }
     }
-
-    /**
-     * @see Pre is now provided the context for the background. This event will no longer exist!
-     * Fired when the tooltip background prefix is determined.
-     * This can be used to modify the textures to be used for the tooltip background.
-     *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
-     */
-//    public static final class Background extends RenderTooltipEvent {
-//        public static final EventBus<Background> BUS = EventBus.create(Background.class);
-//
-//        private final ResourceLocation originalBackground;
-//        private ResourceLocation background;
-//
-//        @ApiStatus.Internal
-//        public Background(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, @NotNull Font fr, @NotNull List<ClientTooltipComponent> components, @Nullable ResourceLocation background) {
-//            super(stack, graphics, x, y, fr, components);
-//            this.originalBackground = background;
-//            this.background = background;
-//        }
-//
-//        /**
-//         * Sets the new prefix for the background texture
-//         */
-//        public void setBackground(ResourceLocation background) {
-//            this.background = background;
-//        }
-//
-//        /**
-//         * @return the potentially modified background's prefix, can be null for default
-//         */
-//        public ResourceLocation getBackground() {
-//            return this.background;
-//        }
-//
-//        /**
-//         * @return the original tooltip background's prefix, can be null for default
-//         */
-//        public ResourceLocation getOriginalBackground() {
-//            return originalBackground;
-//        }
-//    }
 }
