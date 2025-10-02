@@ -9,11 +9,11 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -22,12 +22,15 @@ import java.util.function.Function;
  * Allows users to register custom {@link net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent}
  * factories for their {@link net.minecraft.world.inventory.tooltip.TooltipComponent} types.
  *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterClientTooltipComponentFactoriesEvent implements SelfDestructing, IModBusEvent {
+@NullMarked
+public final class RegisterClientTooltipComponentFactoriesEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterClientTooltipComponentFactoriesEvent> BUS = EventBus.create(RegisterClientTooltipComponentFactoriesEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterClientTooltipComponentFactoriesEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterClientTooltipComponentFactoriesEvent.class);
+        return BUS;
     }
 
     private final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> factories;
