@@ -619,7 +619,7 @@ public class ForgeHooksClient {
     }
 
     public static void onRegisterKeyMappings(Options options) {
-        ModLoader.postEvent(new RegisterKeyMappingsEvent(options));
+        RegisterKeyMappingsEvent.BUS.post(new RegisterKeyMappingsEvent(options));
     }
 
     public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,

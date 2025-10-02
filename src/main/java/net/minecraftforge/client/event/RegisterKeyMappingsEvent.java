@@ -9,22 +9,25 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Options;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Allows users to register custom {@link net.minecraft.client.KeyMapping key mappings}.
  *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterKeyMappingsEvent implements SelfDestructing, IModBusEvent {
+@NullMarked
+public final class RegisterKeyMappingsEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterKeyMappingsEvent> BUS = EventBus.create(RegisterKeyMappingsEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterKeyMappingsEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterKeyMappingsEvent.class);
+        return BUS;
     }
 
     private final Options options;
