@@ -800,8 +800,8 @@ public class ForgeHooksClient {
         initializedClientHooks = true;
 
         ModLoader.postEvent(new RegisterClientReloadListenersEvent(resourceManager));
-        ModLoader.postEvent(new EntityRenderersEvent.RegisterLayerDefinitions());
-        ModLoader.postEvent(new EntityRenderersEvent.RegisterRenderers());
+        EntityRenderersEvent.RegisterLayerDefinitions.BUS.post(new EntityRenderersEvent.RegisterLayerDefinitions());
+        EntityRenderersEvent.RegisterRenderers.BUS.post(new EntityRenderersEvent.RegisterRenderers());
         TextureAtlasSpriteLoaderManager.init();
         ClientTooltipComponentManager.init();
         EntitySpectatorShaderManager.init();

@@ -76,8 +76,7 @@ public final class ForgeEventFactoryClient {
     private ForgeEventFactoryClient() {}
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?, ?>> renderers, Map<PlayerModelType, AvatarRenderer<AbstractClientPlayer>> playerRenderers, Map<PlayerModelType, AvatarRenderer<ClientMannequin>> mannequinRenderers, Context context) {
-        // TODO: Why is this a ModLoader event...
-        ModLoader.postEvent(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, mannequinRenderers, context));
+        EntityRenderersEvent.AddLayers.BUS.post(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, mannequinRenderers, context));
     }
 
     public static boolean onScreenMouseReleased(Screen screen, double mouseX, double mouseY, MouseButtonEvent event) {
@@ -269,7 +268,7 @@ public final class ForgeEventFactoryClient {
 
     public static Map<Type, Function<EntityModelSet, SkullModelBase>> onCreateSkullModels() {
         var builder = ImmutableMap.<Type, Function<EntityModelSet, SkullModelBase>>builder();
-        ModLoader.postEvent(new EntityRenderersEvent.CreateSkullModels(builder));
+        EntityRenderersEvent.CreateSkullModels.BUS.post(new EntityRenderersEvent.CreateSkullModels(builder));
         return builder.build();
     }
 

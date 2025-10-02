@@ -35,12 +35,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 import java.util.Set;
@@ -51,30 +52,30 @@ import java.util.function.Supplier;
  * Fired for on different events/actions relating to {@linkplain EntityRenderer entity renderers}.
  * See the various subclasses for listening to different events.
  *
- * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>These events are fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see EntityRenderersEvent.RegisterLayerDefinitions
  * @see EntityRenderersEvent.RegisterRenderers
  * @see EntityRenderersEvent.AddLayers
+ * @see EntityRenderersEvent.CreateSkullModels
  */
-public abstract sealed class EntityRenderersEvent implements IModBusEvent {
-    @ApiStatus.Internal
-    protected EntityRenderersEvent() {}
-
+public sealed interface EntityRenderersEvent {
     /**
      * Fired for registering layer definitions at the appropriate time.
      *
-     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * <p>This event is fired on only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class RegisterLayerDefinitions extends EntityRenderersEvent implements SelfDestructing {
+    @NullMarked
+    record RegisterLayerDefinitions() implements SelfDestructing, RecordEvent, EntityRenderersEvent {
+        public static final EventBus<RegisterLayerDefinitions> BUS = EventBus.create(RegisterLayerDefinitions.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<RegisterLayerDefinitions> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, RegisterLayerDefinitions.class);
+            return BUS;
         }
 
         @ApiStatus.Internal
-        public RegisterLayerDefinitions() {}
+        public RegisterLayerDefinitions {}
 
         /**
          * Registers a layer definition supplier with the given {@link ModelLayerLocation}.
@@ -95,16 +96,19 @@ public abstract sealed class EntityRenderersEvent implements IModBusEvent {
      * For registering entity renderer layers to existing entity renderers (whether vanilla or registered through this
      * event), listen for the {@link AddLayers} event instead.
      *
-     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class RegisterRenderers extends EntityRenderersEvent implements SelfDestructing {
+    @NullMarked
+    record RegisterRenderers() implements SelfDestructing, RecordEvent, EntityRenderersEvent {
+        public static final EventBus<RegisterRenderers> BUS = EventBus.create(RegisterRenderers.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<RegisterRenderers> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, RegisterRenderers.class);
+            return BUS;
         }
 
         @ApiStatus.Internal
-        public RegisterRenderers() {}
+        public RegisterRenderers {}
 
         /**
          * Registers an entity renderer for the given entity type.
@@ -131,14 +135,14 @@ public abstract sealed class EntityRenderersEvent implements IModBusEvent {
      * Fired for registering entity renderer layers at the appropriate time, after the entity and player renderers maps
      * have been created.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     *
-     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class AddLayers extends EntityRenderersEvent {
+    final class AddLayers extends MutableEvent implements EntityRenderersEvent {
+        public static final EventBus<AddLayers> BUS = EventBus.create(AddLayers.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<AddLayers> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, AddLayers.class);
+            return BUS;
         }
 
         private final Map<EntityType<?>, EntityRenderer<?, ?>> renderers;
@@ -222,14 +226,14 @@ public abstract sealed class EntityRenderersEvent implements IModBusEvent {
     /**
      * Fired for registering additional {@linkplain net.minecraft.client.model.SkullModelBase skull models} at the appropriate time.
      *
-     * <p>This event is not {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.</p>
-     *
-     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+     * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class CreateSkullModels extends EntityRenderersEvent {
+    final class CreateSkullModels extends MutableEvent implements EntityRenderersEvent {
+        public static final EventBus<CreateSkullModels> BUS = EventBus.create(CreateSkullModels.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<CreateSkullModels> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, CreateSkullModels.class);
+            return BUS;
         }
 
         private final ImmutableMap.Builder<Type, Function<EntityModelSet, SkullModelBase>> builder;
