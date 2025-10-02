@@ -9,10 +9,9 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -21,13 +20,14 @@ import java.util.Map;
 /**
  * Allows users to register custom {@link DimensionSpecialEffects} for their dimensions.
  *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
 @NullMarked
-public final class RegisterDimensionSpecialEffectsEvent implements SelfDestructing, IModBusEvent {
+public final class RegisterDimensionSpecialEffectsEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterDimensionSpecialEffectsEvent> BUS = EventBus.create(RegisterDimensionSpecialEffectsEvent.class);
+
     public static EventBus<RegisterDimensionSpecialEffectsEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterDimensionSpecialEffectsEvent.class);
+        return BUS;
     }
 
     private final Map<ResourceLocation, DimensionSpecialEffects> effects;

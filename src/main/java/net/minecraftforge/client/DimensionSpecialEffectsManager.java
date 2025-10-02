@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public final class DimensionSpecialEffectsManager {
         var effects = new HashMap<ResourceLocation, DimensionSpecialEffects>();
         DEFAULT_EFFECTS = preRegisterVanillaEffects(effects);
         var event = new RegisterDimensionSpecialEffectsEvent(effects);
-        ModLoader.postEventWrapContainerInModOrder(event);
+        RegisterDimensionSpecialEffectsEvent.BUS.post(event);
         EFFECTS = Map.copyOf(effects);
     }
 
