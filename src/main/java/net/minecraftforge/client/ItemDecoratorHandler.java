@@ -18,7 +18,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
-import net.minecraftforge.fml.ModLoader;
 
 @ApiStatus.Internal
 public final class ItemDecoratorHandler {
@@ -37,8 +36,7 @@ public final class ItemDecoratorHandler {
 
     public static void init() {
         var decorators = new HashMap<Item, List<IItemDecorator>>();
-        var event = new RegisterItemDecorationsEvent(decorators);
-        ModLoader.postEventWrapContainerInModOrder(event);
+        RegisterItemDecorationsEvent.BUS.post(new RegisterItemDecorationsEvent(decorators));
         var builder = new ImmutableMap.Builder<Item, ItemDecoratorHandler>();
         for (var entry : decorators.entrySet()) {
             Item item = entry.getKey();
