@@ -799,7 +799,7 @@ public class ForgeHooksClient {
             throw new IllegalStateException("Client hooks initialized more than once");
         initializedClientHooks = true;
 
-        ModLoader.postEvent(new RegisterClientReloadListenersEvent(resourceManager));
+        RegisterClientReloadListenersEvent.BUS.post(new RegisterClientReloadListenersEvent(resourceManager));
         EntityRenderersEvent.RegisterLayerDefinitions.BUS.post(new EntityRenderersEvent.RegisterLayerDefinitions());
         EntityRenderersEvent.RegisterRenderers.BUS.post(new EntityRenderersEvent.RegisterRenderers());
         TextureAtlasSpriteLoaderManager.init();

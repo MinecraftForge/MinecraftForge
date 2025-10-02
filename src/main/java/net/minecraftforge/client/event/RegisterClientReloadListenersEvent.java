@@ -11,11 +11,11 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 /**
  * Fired to allow mods to register their reload listeners on the client-side resource manager.
@@ -23,12 +23,15 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * <p>For registering reload listeners on the server-side resource manager, see {@link AddReloadListenerEvent}.</p>
  *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterClientReloadListenersEvent implements SelfDestructing, IModBusEvent {
+@NullMarked
+public final class RegisterClientReloadListenersEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterClientReloadListenersEvent> BUS = EventBus.create(RegisterClientReloadListenersEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterClientReloadListenersEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterClientReloadListenersEvent.class);
+        return BUS;
     }
 
     private final ReloadableResourceManager resourceManager;
