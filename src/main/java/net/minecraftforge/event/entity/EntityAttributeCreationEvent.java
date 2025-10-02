@@ -13,18 +13,19 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 
 /**
  * EntityAttributeCreationEvent.<br>
  * Use this event to register attributes for your own EntityTypes.
  * This event is fired after registration and before common setup.
- * <br>
- * Fired on the Mod bus {@link IModBusEvent}.<br>
  **/
-public final class EntityAttributeCreationEvent implements IModBusEvent {
+public final class EntityAttributeCreationEvent extends MutableEvent {
+    public static final EventBus<EntityAttributeCreationEvent> BUS = EventBus.create(EntityAttributeCreationEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<EntityAttributeCreationEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, EntityAttributeCreationEvent.class);
+        return BUS;
     }
 
     private final Map<EntityType<? extends LivingEntity>, AttributeSupplier> map;

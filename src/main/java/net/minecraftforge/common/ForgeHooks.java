@@ -790,7 +790,7 @@ public final class ForgeHooks {
 
     @Deprecated
     public static void modifyAttributes() {
-        ModLoader.postEvent(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
+        EntityAttributeCreationEvent.BUS.post(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> finalMap = new HashMap<>();
         ModLoader.postEvent(new EntityAttributeModificationEvent(finalMap));
 
