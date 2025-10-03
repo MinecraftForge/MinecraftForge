@@ -21,6 +21,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -125,9 +126,13 @@ public sealed interface ModelEvent {
      *
      * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    final class RegisterGeometryLoaders implements IModBusEvent, ModelEvent {
+    @NullMarked
+    final class RegisterGeometryLoaders extends MutableEvent implements ModelEvent {
+        public static final EventBus<RegisterGeometryLoaders> BUS = EventBus.create(RegisterGeometryLoaders.class);
+
+        @Deprecated(forRemoval = true, since = "1.21.9")
         public static EventBus<RegisterGeometryLoaders> getBus(BusGroup modBusGroup) {
-            return IModBusEvent.getBus(modBusGroup, RegisterGeometryLoaders.class);
+            return BUS;
         }
 
         private final Map<ResourceLocation, IGeometryLoader> loaders;
@@ -139,13 +144,11 @@ public sealed interface ModelEvent {
 
         /**
          * Registers a new geometry loader.
+         * @param resourceLocation The namespace should match your mod's namespace, such as your mod ID
          */
-        public void register(String name, IGeometryLoader loader) {
-            @SuppressWarnings("removal")
-            var namespace = ModLoadingContext.get().getActiveNamespace();
-            var key = ResourceLocation.fromNamespaceAndPath(namespace, name);
-            Preconditions.checkArgument(!loaders.containsKey(key), "Geometry loader already registered: " + key);
-            loaders.put(key, loader);
+        public void register(ResourceLocation resourceLocation, IGeometryLoader loader) {
+            Preconditions.checkArgument(!loaders.containsKey(resourceLocation), "Geometry loader already registered: " + resourceLocation);
+            loaders.put(resourceLocation, loader);
         }
     }
 }

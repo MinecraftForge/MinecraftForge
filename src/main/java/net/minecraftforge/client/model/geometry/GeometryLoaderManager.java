@@ -5,14 +5,13 @@
 
 package net.minecraftforge.client.model.geometry;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  * Provides a lookup.
  */
 public final class GeometryLoaderManager {
-    private static ImmutableMap<ResourceLocation, IGeometryLoader> LOADERS;
+    private static Map<ResourceLocation, IGeometryLoader> LOADERS;
     private static String LOADER_LIST;
 
     /**
@@ -42,11 +41,10 @@ public final class GeometryLoaderManager {
     @ApiStatus.Internal
     public static void init() {
         var loaders = new HashMap<ResourceLocation, IGeometryLoader>();
-        var event = new ModelEvent.RegisterGeometryLoaders(loaders);
-        ModLoader.postEventWrapContainerInModOrder(event);
-        LOADERS = ImmutableMap.copyOf(loaders);
+        ModelEvent.RegisterGeometryLoaders.BUS.post(new ModelEvent.RegisterGeometryLoaders(loaders));
+        LOADERS = Map.copyOf(loaders);
         LOADER_LIST = loaders.keySet().stream().map(ResourceLocation::toString).collect(Collectors.joining(", "));
     }
 
-    private GeometryLoaderManager() { }
+    private GeometryLoaderManager() {}
 }
