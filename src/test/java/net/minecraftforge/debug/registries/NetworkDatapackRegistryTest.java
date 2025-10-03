@@ -41,7 +41,7 @@ public class NetworkDatapackRegistryTest extends BaseTestMod {
 
     public NetworkDatapackRegistryTest(FMLJavaModLoadingContext context) {
         super(context, false, true);
-        DataPackRegistryEvent.NewRegistry.getBus(modBus).addListener(this::onNewDatapackRegistry);
+        DataPackRegistryEvent.NewRegistry.BUS.addListener(this::onNewDatapackRegistry);
     }
 
     public void onNewDatapackRegistry(DataPackRegistryEvent.NewRegistry event) {

@@ -11,7 +11,6 @@ import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.gui.overlay.ForgeLayer;
 import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import net.minecraftforge.common.extensions.IForgeGameTestHelper;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -120,7 +119,6 @@ public class ModifyOverlayTest extends BaseTestMod {
         });
     }
 
-    @SubscribeEvent
     private void overlayTestListener(AddGuiOverlayLayersEvent event) {
         drawStack = event.getLayeredDraw();
         var layeredDraw = event.getLayeredDraw();

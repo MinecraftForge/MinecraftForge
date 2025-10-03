@@ -9,7 +9,6 @@ import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +36,6 @@ import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
@@ -62,8 +60,10 @@ public abstract class BaseTestMod {
     public BaseTestMod(FMLJavaModLoadingContext context, boolean registerSelf, boolean registerDeferred) {
         this.modBus = context.getModBusGroup();
 
-        if (registerSelf)
+        if (registerSelf) {
             modBus.register(LookupHelper.INSTANCE.in(this.getClass()), this);
+            BuildCreativeModeTabContentsEvent.BUS.addListener(this::onCreativeModeTabBuildContents);
+        }
 
         tests = ForgeGameTestHooks.gatherTests(getClass(), this);
 
@@ -103,7 +103,7 @@ public abstract class BaseTestMod {
     }
 
 
-    private final class LookupHelper {
+    private static final class LookupHelper {
         private static final Lookup INSTANCE;
         static {
             try {
@@ -153,7 +153,6 @@ public abstract class BaseTestMod {
         this.testItems.add(supplier);
     }
 
-    @SubscribeEvent
     protected void onCreativeModeTabBuildContents(BuildCreativeModeTabContentsEvent event) {
         var entries = event.getEntries();
         var lookup = event.getParameters().holders();
