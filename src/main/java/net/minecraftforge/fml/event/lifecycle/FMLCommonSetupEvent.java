@@ -17,14 +17,14 @@ import java.util.function.Consumer;
 
 /**
  * This is the first of four commonly called events during mod initialization.
- *
+ * <br><br>
  * Called after {@link net.minecraftforge.registries.RegisterEvent} events have been fired and before 
  * {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent} during mod startup.
- *
+ * <br><br>
  * Either register your listener using {@link net.minecraftforge.fml.javafmlmod.AutomaticEventSubscriber} and
- * {@link net.minecraftforge.eventbus.api.SubscribeEvent} or
- * {@link net.minecraftforge.eventbus.api.IEventBus#addListener(Consumer)} in your constructor.
- *
+ * {@link net.minecraftforge.eventbus.api.listener.SubscribeEvent} or
+ * {@link net.minecraftforge.eventbus.api.bus.EventBus#addListener(Consumer)} in your constructor.
+ * <br><br>
  * Most non-specific mod setup will be performed here. Note that this is a parallel dispatched event - you cannot
  * interact with game state in this event.
  *

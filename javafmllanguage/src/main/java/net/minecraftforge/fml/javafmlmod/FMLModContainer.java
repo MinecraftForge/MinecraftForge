@@ -43,7 +43,7 @@ public class FMLModContainer extends ModContainer {
         LOGGER.debug(LOADING,"Creating FMLModContainer instance for {}", className);
         this.scanResults = modFileScanResults;
         activityMap.put(ModLoadingStage.CONSTRUCT, this::constructMod);
-        this.eventBusGroup = BusGroup.create("modBusFor" + info.getModId());
+        this.eventBusGroup = BusGroup.create("modBusFor" + info.getModId(), IModBusEvent.class);
         this.contextExtension = () -> context;
         try {
             var moduleName = info.getOwningFile().moduleName();
@@ -193,6 +193,6 @@ public class FMLModContainer extends ModContainer {
 
     @Override
     public String toString() {
-        return "FMLModContainer[" + this.getModInfo().getModId() + ", " + this.getClass().getName() + "]";
+        return "FMLModContainer[" + this.getModInfo().getModId() + ", " + this.getClass().getName() + ']';
     }
 }
