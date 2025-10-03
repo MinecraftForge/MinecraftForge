@@ -283,11 +283,13 @@ public class AutomaticEventSubscriber {
                         : BusGroup.DEFAULT;
             } else if (strict) {
                 String solution = "Please remove the bus() param from your @EventBusSubscriber annotation so that both bus groups are used, or move this event listener to another class.";
-                if (busGroup == BusGroup.DEFAULT && IModBusEvent.class.isAssignableFrom(eventType)) { // requested forge bus and has IModBusEvent
+                var isDefaultBusGroup = busGroup == BusGroup.DEFAULT;
+                var isModBusEvent = IModBusEvent.class.isAssignableFrom(eventType);
+                if (isDefaultBusGroup && isModBusEvent) { // requested forge bus and has IModBusEvent
                     throw fail(method, "Event type " + eventType.getName()
                             + " is on the mod BusGroup but you are asking to register it on the default BusGroup (BusGroup.DEFAULT/EventBusSubscriber.Bus.FORGE). "
                             + solution);
-                } else if (busGroup != BusGroup.DEFAULT && !IModBusEvent.class.isAssignableFrom(eventType)) { // requested mod bus and does not have IModBusEvent
+                } else if (!isDefaultBusGroup && !isModBusEvent) { // requested mod bus and does not have IModBusEvent
                     throw fail(method, "Event type " + eventType.getName()
                             + " is on the default BusGroup but you are asking to register it on the mod BusGroup (context.getModBusGroup()/EventBusSubscriber.Bus.MOD). "
                             + solution);
