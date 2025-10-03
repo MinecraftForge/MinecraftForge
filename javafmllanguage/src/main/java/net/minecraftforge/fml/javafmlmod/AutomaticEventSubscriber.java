@@ -48,11 +48,13 @@ import java.util.stream.Collectors;
  * annotations and passes the class instances to the {@link Bus}
  * defined by the annotation. Defaults to {@code MinecraftForge#EVENT_BUS}
  */
-public class AutomaticEventSubscriber {
+public final class AutomaticEventSubscriber {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type AUTO_SUBSCRIBER = Type.getType(EventBusSubscriber.class);
     private static final Type MOD_TYPE = Type.getType(Mod.class);
     private static final Type ONLY_IN_TYPE = Type.getType(OnlyIn.class);
+    private static final List<EnumData> DEFAULT_SIDES = List.of(new EnumData(null, "CLIENT"), new EnumData(null, "DEDICATED_SERVER"));
+    private static final EnumData DEFAULT_BUS = new EnumData(null, "BOTH");
 
     public static void inject(ModContainer mod, ModFileScanData scanData, ClassLoader loader) {
         if (scanData == null) return;
@@ -71,9 +73,6 @@ public class AutomaticEventSubscriber {
             .filter(data -> MOD_TYPE.equals(data.annotationType()))
             .collect(Collectors.toMap(a -> a.clazz().getClassName(), a -> (String)a.annotationData().get("value")));
 
-        var defaultSides = List.of(new EnumData(null, "CLIENT"), new EnumData(null, "DEDICATED_SERVER"));
-        var defaultBus = new EnumData(null, "FORGE");
-
         for (var data : targets) {
             if (!FMLEnvironment.production && onlyIns.contains(data.clazz().getClassName())) {
                 throw new RuntimeException("Found @OnlyIn on @EventBusSubscriber class " + data.clazz().getClassName() + " - this is not allowed as it causes crashes. Remove the OnlyIn and set value=Dist.CLIENT in the EventBusSubscriber annotation instead");
@@ -82,13 +81,13 @@ public class AutomaticEventSubscriber {
             var modId = modids.getOrDefault(data.clazz().getClassName(), mod.getModId());
             modId = value(data, "modid", modId);
 
-            var sidesValue = value(data, "value", defaultSides);
+            var sidesValue = value(data, "value", DEFAULT_SIDES);
             var sides = sidesValue.stream()
                 .map(EnumData::value)
                 .map(Dist::valueOf)
                 .collect(Collectors.toSet());
 
-            var busName = value(data, "bus", defaultBus).value();
+            var busName = value(data, "bus", DEFAULT_BUS).value();
             var busTarget = Bus.valueOf(busName);
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try {
@@ -282,7 +281,7 @@ public class AutomaticEventSubscriber {
                         ? FMLJavaModLoadingContext.get().getModBusGroup()
                         : BusGroup.DEFAULT;
             } else if (strict) {
-                String solution = "Please remove the bus() param from your @EventBusSubscriber annotation so that both bus groups are used, or move this event listener to another class.";
+                String solution = "To fix this, remove the bus param from your @EventBusSubscriber annotation or move this event listener to another class.";
                 var isDefaultBusGroup = busGroup == BusGroup.DEFAULT;
                 var isModBusEvent = IModBusEvent.class.isAssignableFrom(eventType);
                 if (isDefaultBusGroup && isModBusEvent) { // requested forge bus and has IModBusEvent
