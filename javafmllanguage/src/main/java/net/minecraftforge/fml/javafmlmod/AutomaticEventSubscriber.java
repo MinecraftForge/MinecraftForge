@@ -173,7 +173,7 @@ public class AutomaticEventSubscriber {
                 Class<? extends Event> eventType = (Class<? extends Event>) parameterTypes[0];
                 var subscribeEventAnnotation = method.getAnnotation(SubscribeEvent.class);
 
-                registerListener(busGroup, paramCount, returnType, eventType, subscribeEventAnnotation, method);
+                registerListener(busGroup, paramCount, returnType, eventType, subscribeEventAnnotation, method, false);
                 listenersCount++;
 
                 if (firstValidListenerEventType == null)
@@ -259,7 +259,7 @@ public class AutomaticEventSubscriber {
                             throw fail(method, "Return type boolean is only valid for cancellable events");
                     }
 
-                    registerListener(busGroup, paramCount, returnType, eventType, subscribeEventAnnotation, method);
+                    registerListener(busGroup, paramCount, returnType, eventType, subscribeEventAnnotation, method, true);
                     listenersCount++;
 
                     if (firstValidListenerEventType == null)
@@ -276,11 +276,22 @@ public class AutomaticEventSubscriber {
         @SuppressWarnings({"unchecked", "rawtypes"})
         private static EventListener registerListener(@Nullable BusGroup busGroup,
                                                       int paramCount, Class<?> returnType, Class<? extends Event> eventType,
-                                                      SubscribeEvent subscribeEventAnnotation, Method method) {
+                                                      SubscribeEvent subscribeEventAnnotation, Method method, boolean strict) {
             if (busGroup == null) {
                 busGroup = IModBusEvent.class.isAssignableFrom(eventType)
                         ? FMLJavaModLoadingContext.get().getModBusGroup()
                         : BusGroup.DEFAULT;
+            } else if (strict) {
+                String solution = "Please remove the bus() param from your @EventBusSubscriber annotation so that both bus groups are used, or move this event listener to another class.";
+                if (busGroup == BusGroup.DEFAULT && IModBusEvent.class.isAssignableFrom(eventType)) { // requested forge bus and has IModBusEvent
+                    throw fail(method, "Event type " + eventType.getName()
+                            + " is on the mod BusGroup but you are asking to register it on the default BusGroup (BusGroup.DEFAULT/EventBusSubscriber.Bus.FORGE). "
+                            + solution);
+                } else if (busGroup != BusGroup.DEFAULT && !IModBusEvent.class.isAssignableFrom(eventType)) { // requested mod bus and does not have IModBusEvent
+                    throw fail(method, "Event type " + eventType.getName()
+                            + " is on the default BusGroup but you are asking to register it on the mod BusGroup (context.getModBusGroup()/EventBusSubscriber.Bus.MOD). "
+                            + solution);
+                }
             }
 
             // determine the listener type from its parameters and return type
