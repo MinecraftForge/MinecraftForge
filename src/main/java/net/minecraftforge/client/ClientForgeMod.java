@@ -17,7 +17,7 @@ import net.minecraftforge.client.model.obj.ObjLoader;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD, modid = "forge")
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "forge")
 public class ClientForgeMod {
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
