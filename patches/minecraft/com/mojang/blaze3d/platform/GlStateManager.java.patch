@@ -1,5 +1,17 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
+@@ -96,6 +_,11 @@
+         BLEND.mode.enable();
+     }
+ 
++    public static boolean _getBlendState() {
++        RenderSystem.assertOnRenderThread();
++        return BLEND.mode.enabled;
++    }
++
+     public static void _blendFunc(int p_84329_, int p_84330_) {
+         RenderSystem.assertOnRenderThread();
+         if (p_84329_ != BLEND.srcRgb || p_84330_ != BLEND.dstRgb) {
 @@ -493,9 +_,17 @@
          }
      }
