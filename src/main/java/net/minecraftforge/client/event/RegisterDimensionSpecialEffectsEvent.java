@@ -26,6 +26,7 @@ import java.util.Map;
 public final class RegisterDimensionSpecialEffectsEvent extends MutableEvent implements SelfDestructing {
     public static final EventBus<RegisterDimensionSpecialEffectsEvent> BUS = EventBus.create(RegisterDimensionSpecialEffectsEvent.class);
 
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterDimensionSpecialEffectsEvent> getBus(BusGroup modBusGroup) {
         return BUS;
     }
