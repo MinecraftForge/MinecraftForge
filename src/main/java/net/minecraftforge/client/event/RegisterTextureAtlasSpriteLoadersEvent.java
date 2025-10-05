@@ -12,22 +12,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Allows users to register custom {@link ITextureAtlasSpriteLoader texture atlas sprite loaders}.
  *
- * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
- * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterTextureAtlasSpriteLoadersEvent implements SelfDestructing, IModBusEvent {
+public final class RegisterTextureAtlasSpriteLoadersEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterTextureAtlasSpriteLoadersEvent> BUS = EventBus.create(RegisterTextureAtlasSpriteLoadersEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterTextureAtlasSpriteLoadersEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterTextureAtlasSpriteLoadersEvent.class);
+        return BUS;
     }
 
     private final BiMap<ResourceLocation, ITextureAtlasSpriteLoader> loaders;
@@ -39,12 +39,11 @@ public final class RegisterTextureAtlasSpriteLoadersEvent implements SelfDestruc
 
     /**
      * Registers a custom {@link ITextureAtlasSpriteLoader sprite loader}.
+     * @param resourceLocation The namespace should match your mod's namespace, such as your mod ID
      */
-    public void register(String name, ITextureAtlasSpriteLoader loader) {
-        @SuppressWarnings("removal")
-        var key = ResourceLocation.fromNamespaceAndPath(ModLoadingContext.get().getActiveNamespace(), name);
-        Preconditions.checkArgument(!loaders.containsKey(key), "Sprite loader already registered: " + key);
+    public void register(ResourceLocation resourceLocation, ITextureAtlasSpriteLoader loader) {
+        Preconditions.checkArgument(!loaders.containsKey(resourceLocation), "Sprite loader already registered: " + resourceLocation);
         Preconditions.checkArgument(!loaders.containsValue(loader), "Sprite loader already registered as " + loaders.inverse().get(loader));
-        loaders.put(key, loader);
+        loaders.put(resourceLocation, loader);
     }
 }

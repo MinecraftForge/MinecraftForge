@@ -10,7 +10,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,8 +38,7 @@ public final class TextureAtlasSpriteLoaderManager {
     @ApiStatus.Internal
     public static void init() {
         var loaders = HashBiMap.<ResourceLocation, ITextureAtlasSpriteLoader>create();
-        var event = new RegisterTextureAtlasSpriteLoadersEvent(loaders);
-        ModLoader.postEventWrapContainerInModOrder(event);
+        RegisterTextureAtlasSpriteLoadersEvent.BUS.post(new RegisterTextureAtlasSpriteLoadersEvent(loaders));
         LOADERS = ImmutableBiMap.copyOf(loaders);
     }
 
