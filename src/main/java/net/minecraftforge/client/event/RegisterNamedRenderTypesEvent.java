@@ -13,9 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.RenderTypeGroup;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.IModBusEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -25,9 +25,12 @@ import java.util.Map;
  *
  * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public final class RegisterNamedRenderTypesEvent implements IModBusEvent {
+public final class RegisterNamedRenderTypesEvent extends MutableEvent implements SelfDestructing {
+    public static final EventBus<RegisterNamedRenderTypesEvent> BUS = EventBus.create(RegisterNamedRenderTypesEvent.class);
+
+    @Deprecated(forRemoval = true, since = "1.21.9")
     public static EventBus<RegisterNamedRenderTypesEvent> getBus(BusGroup modBusGroup) {
-        return IModBusEvent.getBus(modBusGroup, RegisterNamedRenderTypesEvent.class);
+        return BUS;
     }
 
     private final Map<ResourceLocation, RenderTypeGroup> renderTypes;
@@ -40,26 +43,24 @@ public final class RegisterNamedRenderTypesEvent implements IModBusEvent {
     /**
      * Registers a named {@link RenderTypeGroup}.
      *
-     * @param name             The name
+     * @param resourceLocation The namespace should match your mod's namespace, such as your mod ID
      * @param blockRenderType  What ChunkSectionLayer to render in
      * @param entityRenderType A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY}
      */
-    public void register(String name, ChunkSectionLayer blockRenderType, RenderType entityRenderType) {
-        register(name, blockRenderType, entityRenderType, entityRenderType);
+    public void register(ResourceLocation resourceLocation, ChunkSectionLayer blockRenderType, RenderType entityRenderType) {
+        register(resourceLocation, blockRenderType, entityRenderType, entityRenderType);
     }
 
     /**
      * Registers a named {@link RenderTypeGroup}.
      *
-     * @param name                     The name
+     * @param key                      The namespace should match your mod's namespace, such as your mod ID
      * @param blockRenderType          What ChunkSectionLayer to render in
      * @param entityRenderType         A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY}
      * @param fabulousEntityRenderType A {@link RenderType} using {@link DefaultVertexFormat#NEW_ENTITY} for use when
      *                                 "fabulous" rendering is enabled
      */
-    public void register(String name, ChunkSectionLayer blockRenderType, RenderType entityRenderType, RenderType fabulousEntityRenderType) {
-        @SuppressWarnings("removal")
-        var key = ResourceLocation.fromNamespaceAndPath(ModLoadingContext.get().getActiveNamespace(), name);
+    public void register(ResourceLocation key, ChunkSectionLayer blockRenderType, RenderType entityRenderType, RenderType fabulousEntityRenderType) {
         Preconditions.checkArgument(!renderTypes.containsKey(key), "Render type already registered: " + key);
         Preconditions.checkArgument(entityRenderType.format() == DefaultVertexFormat.NEW_ENTITY, "The entity render type must use the NEW_ENTITY vertex format.");
         Preconditions.checkArgument(fabulousEntityRenderType.format() == DefaultVertexFormat.NEW_ENTITY, "The fabulous entity render type must use the NEW_ENTITY vertex format.");

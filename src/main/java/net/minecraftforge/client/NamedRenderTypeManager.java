@@ -5,12 +5,10 @@
 
 package net.minecraftforge.client;
 
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
-import net.minecraftforge.fml.ModLoader;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
@@ -22,7 +20,7 @@ import java.util.Map;
  * Provides a lookup.
  */
 public final class NamedRenderTypeManager {
-    private static ImmutableMap<ResourceLocation, RenderTypeGroup> RENDER_TYPES;
+    private static Map<ResourceLocation, RenderTypeGroup> RENDER_TYPES;
 
     /**
      * Finds the {@link RenderTypeGroup} for a given name, or the {@link RenderTypeGroup#EMPTY empty group} if not found.
@@ -35,9 +33,8 @@ public final class NamedRenderTypeManager {
     public static void init() {
         var renderTypes = new HashMap<ResourceLocation, RenderTypeGroup>();
         preRegisterVanillaRenderTypes(renderTypes);
-        var event = new RegisterNamedRenderTypesEvent(renderTypes);
-        ModLoader.postEventWrapContainerInModOrder(event);
-        RENDER_TYPES = ImmutableMap.copyOf(renderTypes);
+        RegisterNamedRenderTypesEvent.BUS.post(new RegisterNamedRenderTypesEvent(renderTypes));
+        RENDER_TYPES = Map.copyOf(renderTypes);
     }
 
     /**
@@ -53,9 +50,9 @@ public final class NamedRenderTypeManager {
         blockRenderTypes.put(rl("tripwire"), new RenderTypeGroup(ChunkSectionLayer.TRIPWIRE, ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get()));
     }
 
-    private static ResourceLocation rl(String paht) {
-        return ResourceLocation.withDefaultNamespace(paht);
+    private static ResourceLocation rl(String path) {
+        return ResourceLocation.withDefaultNamespace(path);
     }
 
-    private NamedRenderTypeManager() { }
+    private NamedRenderTypeManager() {}
 }
