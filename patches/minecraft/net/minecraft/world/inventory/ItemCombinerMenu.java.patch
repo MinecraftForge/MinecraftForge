@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/inventory/ItemCombinerMenu.java
 +++ b/net/minecraft/world/inventory/ItemCombinerMenu.java
-@@ -108,7 +_,9 @@
+@@ -108,7 +_,11 @@
  
     public boolean m_6875_(Player p_39780_) {
        return this.f_39770_.m_39299_((p_39785_, p_39786_) -> {
 -         return !this.m_8039_(p_39785_.m_8055_(p_39786_)) ? false : p_39780_.m_20275_((double)p_39786_.m_123341_() + 0.5D, (double)p_39786_.m_123342_() + 0.5D, (double)p_39786_.m_123343_() + 0.5D) <= 64.0D;
 +         // Vanilla uses 64 which is 8*8. Default reach is 4.5 so add 3.5 padding
++         // magic number so required Mixins can still target here
++         double reachOld = 64.0;
 +         double reach = p_39780_.m_21133_(net.minecraftforge.common.ForgeMod.BLOCK_REACH.get()) + 3.5;
 +         return !this.m_8039_(p_39785_.m_8055_(p_39786_)) ? false : p_39780_.m_20275_((double)p_39786_.m_123341_() + 0.5D, (double)p_39786_.m_123342_() + 0.5D, (double)p_39786_.m_123343_() + 0.5D) <= reach * reach;
        }, true);

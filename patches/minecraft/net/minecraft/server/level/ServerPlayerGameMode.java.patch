@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayerGameMode.java
 +++ b/net/minecraft/server/level/ServerPlayerGameMode.java
-@@ -124,7 +_,11 @@
+@@ -124,7 +_,14 @@
     }
  
     public void m_214168_(BlockPos p_215120_, ServerboundPlayerActionPacket.Action p_215121_, Direction p_215122_, int p_215123_, int p_215124_) {
@@ -9,7 +9,10 @@
 +      if (event.isCanceled() || (!this.m_9295_() && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY)) {
 +         return;
 +      }
-+      if (!this.f_9245_.canReachRaw(p_215120_, 1.5)) { // Vanilla uses ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE which is 6*6, default Block reach is 4.5 so add 1.5 padding
++
++      boolean canReachUnmodded = this.testPlayerCanReach(p_215120_);
++      boolean canReachModded = this.f_9245_.canReach(p_215120_, 1.5); // Vanilla uses ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE which is 6*6, default Block reach is 4.5, so add 1.5 padding
++      if (canReachUnmodded == canReachModded ? !this.f_9245_.canReachRaw(p_215120_, 1.5) : !canReachModded) {
           this.m_215125_(p_215120_, false, p_215124_, "too far");
        } else if (p_215120_.m_123342_() >= p_215123_) {
           this.f_9245_.f_8906_.m_9829_(new ClientboundBlockUpdatePacket(p_215120_, this.f_9244_.m_8055_(p_215120_)));
@@ -21,6 +24,18 @@
                 blockstate.m_60686_(this.f_9244_, p_215120_, this.f_9245_);
                 f = blockstate.m_60625_(this.f_9245_, this.f_9245_.m_9236_(), p_215120_);
              }
+@@ -209,6 +_,11 @@
+       }
+    }
+ 
++   private boolean testPlayerCanReach(BlockPos pos) {
++      // don't mixin into this
++      return this.f_9245_.canReach(pos, 1.5);
++   }
++
+    public void m_215116_(BlockPos p_215117_, int p_215118_, String p_215119_) {
+       if (this.m_9280_(p_215117_)) {
+          this.m_215125_(p_215117_, true, p_215118_, p_215119_);
 @@ -221,7 +_,8 @@
  
     public boolean m_9280_(BlockPos p_9281_) {

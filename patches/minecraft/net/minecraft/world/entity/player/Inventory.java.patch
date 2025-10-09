@@ -43,12 +43,14 @@
              crashreportcategory.m_128159_("Item ID", Item.m_41393_(p_36042_.m_41720_()));
              crashreportcategory.m_128159_("Item data", p_36042_.m_41773_());
              crashreportcategory.m_128165_("Item name", () -> {
-@@ -530,7 +_,9 @@
+@@ -530,7 +_,11 @@
        if (this.f_35978_.m_213877_()) {
           return false;
        } else {
 -         return !(p_36009_.m_20280_(this.f_35978_) > 64.0D);
 +         // Vanilla uses 64 which is 8*8. Default reach is 3.0 so add 5.0 padding
++         // magic number so required Mixins can still target here
++         double reachOld = 64.0;
 +         double reach = p_36009_.m_21133_(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get()) + 5.0;
 +         return !(p_36009_.m_20280_(this.f_35978_) > reach * reach);
        }

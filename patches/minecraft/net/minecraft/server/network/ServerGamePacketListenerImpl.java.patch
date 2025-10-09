@@ -26,12 +26,14 @@
                 this.f_9743_.m_5810_();
              }
  
-@@ -1035,7 +_,7 @@
+@@ -1035,7 +_,9 @@
           Vec3 vec3 = blockhitresult.m_82450_();
           BlockPos blockpos = blockhitresult.m_82425_();
           Vec3 vec31 = Vec3.m_82512_(blockpos);
 -         if (!(this.f_9743_.m_146892_().m_82557_(vec31) > f_215198_)) {
-+         if (this.f_9743_.canReachRaw(blockpos, 1.5)) { // Vanilla uses eye-to-center distance < ServerGamePacketListenerImpl which is 6*6, default block reach is 4.5, so add 1.5 padding
++          boolean canReachUnmodded = this.testPlayerCanReach(blockpos);
++          boolean canReachModded = this.f_9743_.canReach(blockpos, 1.5); // Vanilla uses eye-to-center distance < ServerGamePacketListenerImpl which is 6*6, default block reach is 4.5, so add 1.5 padding
++         if (canReachUnmodded == canReachModded ? this.f_9743_.canReachRaw(blockpos, 1.5) : canReachModded) {
              Vec3 vec32 = vec3.m_82546_(vec31);
              double d0 = 1.0000001D;
              if (Math.abs(vec32.m_7096_()) < 1.0000001D && Math.abs(vec32.m_7098_()) < 1.0000001D && Math.abs(vec32.m_7094_()) < 1.0000001D) {
@@ -44,6 +46,17 @@
                       InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
                       if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                          Component component = Component.m_237110_("build.tooHigh", i - 1).m_130940_(ChatFormatting.RED);
+@@ -1066,6 +_,10 @@
+       }
+    }
+ 
++   private boolean testPlayerCanReach(BlockPos pos) {
++      return this.f_9743_.canReach(pos, 1.5);
++   }
++
+    public void m_5760_(ServerboundUseItemPacket p_9932_) {
+       PacketUtils.m_131359_(p_9932_, this, this.f_9743_.m_284548_());
+       this.m_215201_(p_9932_.m_238013_());
 @@ -1187,10 +_,13 @@
                 }
  

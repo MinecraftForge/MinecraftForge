@@ -1,11 +1,13 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -67,7 +_,9 @@
+@@ -67,7 +_,11 @@
  
     protected static boolean m_38889_(ContainerLevelAccess p_38890_, Player p_38891_, Block p_38892_) {
        return p_38890_.m_39299_((p_38916_, p_38917_) -> {
 -         return !p_38916_.m_8055_(p_38917_).m_60713_(p_38892_) ? false : p_38891_.m_20275_((double)p_38917_.m_123341_() + 0.5D, (double)p_38917_.m_123342_() + 0.5D, (double)p_38917_.m_123343_() + 0.5D) <= 64.0D;
 +         // Vanilla uses 64 which is 8*8. Default reach is 4.5 so add 3.5 padding
++         // magic number so required Mixins can still target here
++         double reachOld = 64.0;
 +         double reach = p_38891_.m_21133_(net.minecraftforge.common.ForgeMod.BLOCK_REACH.get()) + 3.5;
 +         return !p_38916_.m_8055_(p_38917_).m_60713_(p_38892_) ? false : p_38891_.m_20275_((double)p_38917_.m_123341_() + 0.5D, (double)p_38917_.m_123342_() + 0.5D, (double)p_38917_.m_123343_() + 0.5D) <= reach * reach;
        }, true);
