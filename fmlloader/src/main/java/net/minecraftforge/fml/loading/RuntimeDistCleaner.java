@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-public class RuntimeDistCleaner implements ILaunchPluginService {
+public final class RuntimeDistCleaner implements ILaunchPluginService {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Marker DISTXFORM = MarkerFactory.getMarker("DISTXFORM");
     private static String DIST;
@@ -50,6 +50,10 @@ public class RuntimeDistCleaner implements ILaunchPluginService {
 
         String internalName = classType.getInternalName();
         if (internalName.startsWith("net/minecraftforge/"))
+            return NAY;
+
+        // No Vanilla classes use @OnlyIn(Dist.SERVER), so we can skip them entirely when we're running on a client
+        if (FMLEnvironment.dist.isClient() && (internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/")))
             return NAY;
 
         return YAY;
