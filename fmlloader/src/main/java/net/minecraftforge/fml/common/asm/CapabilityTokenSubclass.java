@@ -56,11 +56,8 @@ public final class CapabilityTokenSubclass implements ILaunchPluginService {
         if (internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/"))
             return NAY;
 
-        // The only relevant targets in Forge's codebase are CapabilityToken and ForgeCapabilities, skip everything else
-        if (internalName.startsWith("net/minecraftforge/")) {
-            var forgeCaps = "net/minecraftforge/common/capabilities/ForgeCapabilities";
-            return (internalName.equals(forgeCaps) || internalName.equals(CAP_INJECT)) ? YAY : NAY;
-        }
+        if (internalName.startsWith("net/minecraftforge/common/capabilities/"))
+            return YAY;
         
         return internalName.contains("$") ? YAY : NAY; // Anonymous subclasses only
     }
