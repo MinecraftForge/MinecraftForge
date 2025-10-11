@@ -117,7 +117,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      * @param <M> the model for the living entity
      */
     @Cancelable
-    public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    public static final class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         @ApiStatus.Internal
         public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
@@ -137,7 +137,7 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
      * @param <T> the living entity that was rendered
      * @param <M> the model for the living entity
      */
-    public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
+    public static final class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
         @ApiStatus.Internal
         public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)

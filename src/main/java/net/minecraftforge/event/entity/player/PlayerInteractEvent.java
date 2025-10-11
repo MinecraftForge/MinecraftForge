@@ -140,7 +140,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = Result.DEFAULT;
         private Result useItem = Result.DEFAULT;
-        private BlockHitResult hitVec;
+        private final BlockHitResult hitVec;
 
         public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
             super(player, hand, pos, hitVec.getDirection());

@@ -45,7 +45,7 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Block extends RegisterColorHandlersEvent
+    public static final class Block extends RegisterColorHandlersEvent
     {
         private final BlockColors blockColors;
 
@@ -88,7 +88,7 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Item extends RegisterColorHandlersEvent
+    public static final class Item extends RegisterColorHandlersEvent
     {
         private final ItemColors itemColors;
         private final BlockColors blockColors;
@@ -135,7 +135,7 @@ public abstract class RegisterColorHandlersEvent extends Event implements IModBu
      * Allows registration of custom {@link ColorResolver} implementations to be used with
      * {@link net.minecraft.world.level.BlockAndTintGetter#getBlockTint(BlockPos, ColorResolver)}.
      */
-    public static class ColorResolvers extends RegisterColorHandlersEvent
+    public static final class ColorResolvers extends RegisterColorHandlersEvent
     {
         private final ImmutableList.Builder<ColorResolver> builder;
 

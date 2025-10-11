@@ -48,7 +48,7 @@ public abstract class ModelEvent extends Event
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class ModifyBakingResult extends ModelEvent implements IModBusEvent
+    public static final class ModifyBakingResult extends ModelEvent implements IModBusEvent
     {
         private final Map<ResourceLocation, BakedModel> models;
         private final ModelBakery modelBakery;
@@ -88,7 +88,7 @@ public abstract class ModelEvent extends Event
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class BakingCompleted extends ModelEvent implements IModBusEvent
+    public static final class BakingCompleted extends ModelEvent implements IModBusEvent
     {
         private final ModelManager modelManager;
         private final Map<ResourceLocation, BakedModel> models;
@@ -136,7 +136,7 @@ public abstract class ModelEvent extends Event
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterAdditional extends ModelEvent implements IModBusEvent
+    public static final class RegisterAdditional extends ModelEvent implements IModBusEvent
     {
         private final Set<ResourceLocation> models;
 
@@ -163,7 +163,7 @@ public abstract class ModelEvent extends Event
      * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent
+    public static final class RegisterGeometryLoaders extends ModelEvent implements IModBusEvent
     {
         private final Map<ResourceLocation, IGeometryLoader<?>> loaders;
 

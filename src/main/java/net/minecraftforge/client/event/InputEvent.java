@@ -105,7 +105,7 @@ public abstract class InputEvent extends Event
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
         @Cancelable
-        public static class Pre extends MouseButton
+        public static final class Pre extends MouseButton
         {
             @ApiStatus.Internal
             public Pre(int button, int action, int modifiers)
@@ -124,7 +124,7 @@ public abstract class InputEvent extends Event
          *
          * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
          */
-        public static class Post extends MouseButton
+        public static final class Post extends MouseButton
         {
             @ApiStatus.Internal
             public Post(int button, int action, int modifiers)
@@ -147,7 +147,7 @@ public abstract class InputEvent extends Event
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_mouse_button" target="_top">the online GLFW documentation</a>
      */
     @Cancelable
-    public static class MouseScrollingEvent extends InputEvent
+    public static final class MouseScrollingEvent extends InputEvent
     {
         private final double scrollDelta;
         private final double mouseX;
@@ -224,7 +224,7 @@ public abstract class InputEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Key extends InputEvent
+    public static final class Key extends InputEvent
     {
         private final int key;
         private final int scanCode;
@@ -313,7 +313,7 @@ public abstract class InputEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class InteractionKeyMappingTriggered extends InputEvent
+    public static final class InteractionKeyMappingTriggered extends InputEvent
     {
         private final int button;
         private final KeyMapping keyMapping;

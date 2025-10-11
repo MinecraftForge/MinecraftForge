@@ -62,7 +62,7 @@ public abstract class RenderGuiEvent extends Event
      * @see Post
      */
     @Cancelable
-    public static class Pre extends RenderGuiEvent
+    public static final class Pre extends RenderGuiEvent
     {
         @ApiStatus.Internal
         public Pre(Window window, GuiGraphics guiGraphics, float partialTick)
@@ -79,7 +79,7 @@ public abstract class RenderGuiEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderGuiEvent
+    public static final class Post extends RenderGuiEvent
     {
         @ApiStatus.Internal
         public Post(Window window, GuiGraphics guiGraphics, float partialTick)

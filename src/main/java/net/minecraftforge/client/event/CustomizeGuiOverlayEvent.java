@@ -62,7 +62,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class BossEventProgress extends CustomizeGuiOverlayEvent
+    public static final class BossEventProgress extends CustomizeGuiOverlayEvent
     {
         private final LerpingBossEvent bossEvent;
         private final int x;
@@ -131,7 +131,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class DebugText extends CustomizeGuiOverlayEvent
+    public static final class DebugText extends CustomizeGuiOverlayEvent
     {
         private final ArrayList<String> left;
         private final ArrayList<String> right;
@@ -169,7 +169,7 @@ public abstract class CustomizeGuiOverlayEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Chat extends CustomizeGuiOverlayEvent
+    public static final class Chat extends CustomizeGuiOverlayEvent
     {
         private int posX;
         private int posY;

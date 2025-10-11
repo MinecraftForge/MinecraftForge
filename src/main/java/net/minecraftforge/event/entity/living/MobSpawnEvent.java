@@ -116,7 +116,7 @@ public abstract class MobSpawnEvent extends EntityEvent
      * @see SpawnPlacementRegisterEvent
      */
     @HasResult
-    public static class SpawnPlacementCheck extends Event
+    public static final class SpawnPlacementCheck extends Event
     {
         private final EntityType<?> entityType;
         private final ServerLevelAccessor level;
@@ -269,7 +269,7 @@ public abstract class MobSpawnEvent extends EntityEvent
      * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
      */
     @Cancelable
-    public static class FinalizeSpawn extends MobSpawnEvent
+    public static final class FinalizeSpawn extends MobSpawnEvent
     {
         private final MobSpawnType spawnType;
         @Nullable

@@ -98,7 +98,7 @@ public class ClientChatReceivedEvent extends Event
      *
      * @see ChatType
      */
-    public static class Player extends ClientChatReceivedEvent
+    public static final class Player extends ClientChatReceivedEvent
     {
         private final PlayerChatMessage playerChatMessage;
 
@@ -128,7 +128,7 @@ public class ClientChatReceivedEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class System extends ClientChatReceivedEvent
+    public static final class System extends ClientChatReceivedEvent
     {
         private final boolean overlay;
 

@@ -102,7 +102,7 @@ public abstract class ContainerScreenEvent extends Event
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Foreground extends Render
+        public static final class Foreground extends Render
         {
             @ApiStatus.Internal
             public Foreground(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY)
@@ -120,7 +120,7 @@ public abstract class ContainerScreenEvent extends Event
          * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
-        public static class Background extends Render
+        public static final class Background extends Render
         {
             @ApiStatus.Internal
             public Background(AbstractContainerScreen<?> guiContainer, GuiGraphics guiGraphics, int mouseX, int mouseY)

@@ -27,7 +27,7 @@ public class LivingSwapItemsEvent extends LivingEvent
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      */
     @Cancelable
-    public static class Hands extends LivingSwapItemsEvent
+    public static final class Hands extends LivingSwapItemsEvent
     {
         private ItemStack toMainHand;
         private ItemStack toOffHand;
