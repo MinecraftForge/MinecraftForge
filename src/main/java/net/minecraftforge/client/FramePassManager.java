@@ -8,6 +8,7 @@ package net.minecraftforge.client;
 import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.framegraph.FramePass;
 import net.minecraft.client.renderer.LevelTargetBundle;
+import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -27,18 +28,18 @@ public class FramePassManager {
 
     // Note: Pass order is determined automatically within FrameGraphBuilder. It's unclear what must be done to guarantee ordering.
     @ApiStatus.Internal
-    public static void insertForgePasses(FrameGraphBuilder graphBuilder, LevelTargetBundle bundle) {
+    public static void insertForgePasses(FrameGraphBuilder graphBuilder, LevelTargetBundle bundle, LevelRenderState state) {
         for (PassInfo info : addedPasses) {
             FramePass pass = graphBuilder.addPass(info.name);
             PassDefinition forgePass = info.pass;
             forgePass.targets(bundle, pass);
-            pass.executes(forgePass::executes);
+            pass.executes(() -> forgePass.executes(state));
         }
     }
 
     public interface PassDefinition {
         void targets(LevelTargetBundle bundle, FramePass pass);
-        void executes();
+        void executes(LevelRenderState state);
     }
 
     private record PassInfo(String name, PassDefinition pass){}
