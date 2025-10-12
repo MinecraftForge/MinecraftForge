@@ -38,7 +38,16 @@ public class FramePassManager {
     }
 
     public interface PassDefinition {
+        /**
+         * Use to define which targets your pass will bind against. Additionally, this method should be used for extracting
+         * render states if necessary.
+         * A FramePass must bind to at least ONE target. Otherwise, you get freaky issues.
+         */
         void targets(LevelTargetBundle bundle, FramePass pass);
+
+        /**
+         * Use to define what your pass does during the render stage.
+         */
         void executes(LevelRenderState state);
     }
 
