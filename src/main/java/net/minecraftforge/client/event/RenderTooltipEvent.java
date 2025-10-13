@@ -32,7 +32,7 @@ import java.util.List;
  * @see RenderTooltipEvent.Pre
  * @see RenderTooltipEvent.Color
  */
-public abstract sealed class RenderTooltipEvent extends Event
+public abstract class RenderTooltipEvent extends Event
 {
     @NotNull
     protected final ItemStack itemStack;
@@ -119,7 +119,7 @@ public abstract sealed class RenderTooltipEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static final class GatherComponents extends Event
+    public static class GatherComponents extends Event
     {
         private final ItemStack itemStack;
         private final int screenWidth;
@@ -208,7 +208,7 @@ public abstract sealed class RenderTooltipEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static final class Pre extends RenderTooltipEvent
+    public static non-sealed class Pre extends RenderTooltipEvent
     {
         private final int screenWidth;
         private final int screenHeight;
@@ -287,7 +287,7 @@ public abstract sealed class RenderTooltipEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static final class Color extends RenderTooltipEvent
+    public static non-sealed class Color extends RenderTooltipEvent
     {
         private final int originalBackground;
         private final int originalBorderStart;
