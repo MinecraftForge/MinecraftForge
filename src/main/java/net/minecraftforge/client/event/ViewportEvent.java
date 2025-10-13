@@ -30,7 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see ComputeCameraAngles
  * @see ComputeFov
  */
-public abstract class ViewportEvent extends Event
+public abstract sealed class ViewportEvent extends Event
 {
     private final GameRenderer renderer;
     private final Camera camera;

@@ -52,7 +52,7 @@ import java.util.function.Supplier;
  * @see EntityRenderersEvent.RegisterRenderers
  * @see EntityRenderersEvent.AddLayers
  */
-public abstract class EntityRenderersEvent extends Event implements IModBusEvent
+public abstract sealed class EntityRenderersEvent extends Event implements IModBusEvent
 {
     @ApiStatus.Internal
     protected EntityRenderersEvent()

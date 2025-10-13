@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
  * @see LoggingOut
  * @see Clone
  **/
-public abstract class ClientPlayerNetworkEvent extends Event
+public abstract sealed class ClientPlayerNetworkEvent extends Event
 {
     private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;

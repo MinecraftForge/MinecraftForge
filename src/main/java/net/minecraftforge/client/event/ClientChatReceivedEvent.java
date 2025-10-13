@@ -29,7 +29,7 @@ import java.util.UUID;
  * @see ChatType
  */
 @Cancelable
-public class ClientChatReceivedEvent extends Event
+public sealed class ClientChatReceivedEvent extends Event
 {
     private Component message;
     private final ChatType.Bound boundChatType;

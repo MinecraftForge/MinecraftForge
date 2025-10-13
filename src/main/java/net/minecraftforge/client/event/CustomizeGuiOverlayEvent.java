@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * @see DebugText
  * @see Chat
  */
-public abstract class CustomizeGuiOverlayEvent extends Event
+public abstract sealed class CustomizeGuiOverlayEvent extends Event
 {
     private final Window window;
     private final GuiGraphics guiGraphics;

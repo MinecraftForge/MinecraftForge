@@ -31,7 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent
  * @see LivingEntityRenderer
  */
-public abstract class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
+public abstract sealed class RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>> extends Event
 {
     private final LivingEntity entity;
     private final LivingEntityRenderer<T, M> renderer;

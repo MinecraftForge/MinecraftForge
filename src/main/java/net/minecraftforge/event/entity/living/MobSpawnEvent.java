@@ -41,7 +41,7 @@ import net.minecraftforge.fml.LogicalSide;
  * <p>
  * {@link AllowDespawn} is not related to the mob spawn event flow, as it fires when a despawn is attempted.
  */
-public abstract class MobSpawnEvent extends EntityEvent
+public abstract sealed class MobSpawnEvent extends EntityEvent
 {
     private final ServerLevelAccessor level;
     private final double x;
@@ -221,7 +221,7 @@ public abstract class MobSpawnEvent extends EntityEvent
      * @see {@link SpawnPlacementCheck} To modify the result of spawn placements at runtime.
      */
     @HasResult
-    public static class PositionCheck extends MobSpawnEvent
+    public static non-sealed class PositionCheck extends MobSpawnEvent
     {
         @Nullable
         private final BaseSpawner spawner;
@@ -419,7 +419,7 @@ public abstract class MobSpawnEvent extends EntityEvent
     // TODO: 1.20 Move to standalone class, as it is unrelated to the complex mob spawning flow.
     // Such a refactor will allow the BaseSpawner and MobSpawnType params to be hoisted to MobSpawnEvent.
     @HasResult
-    public static class AllowDespawn extends MobSpawnEvent
+    public static non-sealed class AllowDespawn extends MobSpawnEvent
     {
         public AllowDespawn(Mob mob, ServerLevelAccessor level)
         {

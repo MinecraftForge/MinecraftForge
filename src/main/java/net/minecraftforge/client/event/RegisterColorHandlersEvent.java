@@ -30,7 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RegisterColorHandlersEvent.Block
  * @see RegisterColorHandlersEvent.Item
  */
-public abstract class RegisterColorHandlersEvent extends Event implements IModBusEvent
+public abstract sealed class RegisterColorHandlersEvent extends Event implements IModBusEvent
 {
     @ApiStatus.Internal
     protected RegisterColorHandlersEvent()

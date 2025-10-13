@@ -20,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Pre
  * @see Post
  */
-public abstract class RenderGuiEvent extends Event
+public abstract sealed class RenderGuiEvent extends Event
 {
     private final Window window;
     private final GuiGraphics guiGraphics;

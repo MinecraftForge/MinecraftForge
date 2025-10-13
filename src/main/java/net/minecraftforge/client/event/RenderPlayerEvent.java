@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
  */
-public abstract class RenderPlayerEvent extends PlayerEvent
+public abstract sealed class RenderPlayerEvent extends PlayerEvent
 {
     private final PlayerRenderer renderer;
     private final float partialTick;

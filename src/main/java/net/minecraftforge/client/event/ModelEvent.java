@@ -25,7 +25,7 @@ import java.util.Set;
 /**
  * Houses events related to models.
  */
-public abstract class ModelEvent extends Event
+public abstract sealed class ModelEvent extends Event
 {
     @ApiStatus.Internal
     protected ModelEvent()

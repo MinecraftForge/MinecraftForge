@@ -36,7 +36,7 @@ import java.util.function.Consumer;
  * @see MouseInput
  * @see KeyInput
  */
-public abstract class ScreenEvent extends Event
+public abstract sealed class ScreenEvent extends Event
 {
     private final Screen screen;
 
@@ -65,7 +65,7 @@ public abstract class ScreenEvent extends Event
      * @see Init.Pre
      * @see Init.Post
      */
-    public static abstract class Init extends ScreenEvent
+    public static abstract sealed class Init extends ScreenEvent
     {
         private final Consumer<GuiEventListener> add;
         private final Consumer<GuiEventListener> remove;
@@ -154,7 +154,7 @@ public abstract class ScreenEvent extends Event
      * @see Render.Pre
      * @see Render.Post
      */
-    public static abstract class Render extends ScreenEvent
+    public static abstract sealed class Render extends ScreenEvent
     {
         private final GuiGraphics guiGraphics;
         private final int mouseX;
@@ -354,7 +354,7 @@ public abstract class ScreenEvent extends Event
      * @see MouseDragged
      * @see MouseScrolled
      */
-    private static abstract class MouseInput extends ScreenEvent
+    private static abstract sealed class MouseInput extends ScreenEvent
     {
         private final double mouseX;
         private final double mouseY;
@@ -391,7 +391,7 @@ public abstract class ScreenEvent extends Event
      * @see MouseButtonPressed.Pre
      * @see MouseButtonPressed.Post
      */
-    public static abstract class MouseButtonPressed extends MouseInput
+    public static abstract sealed class MouseButtonPressed extends MouseInput
     {
         private final int button;
 
@@ -477,7 +477,7 @@ public abstract class ScreenEvent extends Event
      * @see MouseButtonReleased.Pre
      * @see MouseButtonReleased.Post
      */
-    public static abstract class MouseButtonReleased extends MouseInput
+    public static abstract sealed class MouseButtonReleased extends MouseInput
     {
         private final int button;
 
@@ -563,7 +563,7 @@ public abstract class ScreenEvent extends Event
      * @see MouseDragged.Pre
      * @see MouseDragged.Post
      */
-    public static abstract class MouseDragged extends MouseInput
+    public static abstract sealed class MouseDragged extends MouseInput
     {
         private final int mouseButton;
         private final double dragX;
@@ -652,7 +652,7 @@ public abstract class ScreenEvent extends Event
      * @see MouseScrolled.Pre
      * @see MouseScrolled.Post
      */
-    public static abstract class MouseScrolled extends MouseInput
+    public static abstract sealed class MouseScrolled extends MouseInput
     {
         private final double scrollDelta;
 
@@ -720,7 +720,7 @@ public abstract class ScreenEvent extends Event
      * @see InputConstants
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_key" target="_top">the online GLFW documentation</a>
      */
-    private static abstract class KeyInput extends ScreenEvent
+    private static abstract sealed class KeyInput extends ScreenEvent
     {
         private final int keyCode;
         private final int scanCode;
@@ -785,7 +785,7 @@ public abstract class ScreenEvent extends Event
      * @see KeyPressed.Pre
      * @see KeyPressed.Post
      */
-    public static abstract class KeyPressed extends KeyInput
+    public static abstract sealed class KeyPressed extends KeyInput
     {
         @ApiStatus.Internal
         public KeyPressed(Screen screen, int keyCode, int scanCode, int modifiers)
@@ -841,7 +841,7 @@ public abstract class ScreenEvent extends Event
      * @see KeyReleased.Pre
      * @see KeyReleased.Post
      */
-    public static abstract class KeyReleased extends KeyInput
+    public static abstract sealed class KeyReleased extends KeyInput
     {
         @ApiStatus.Internal
         public KeyReleased(Screen screen, int keyCode, int scanCode, int modifiers)
@@ -898,7 +898,7 @@ public abstract class ScreenEvent extends Event
      * @see CharacterTyped.Post
      * @see <a href="https://www.glfw.org/docs/latest/input_guide.html#input_char" target="_top">the online GLFW documentation</a>
      */
-    public static class CharacterTyped extends ScreenEvent
+    public static sealed class CharacterTyped extends ScreenEvent
     {
         private final char codePoint;
         private final int modifiers;

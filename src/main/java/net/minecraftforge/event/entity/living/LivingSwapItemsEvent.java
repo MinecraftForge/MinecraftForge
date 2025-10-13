@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import org.jetbrains.annotations.ApiStatus;
 
-public class LivingSwapItemsEvent extends LivingEvent
+public sealed class LivingSwapItemsEvent extends LivingEvent
 {
 
     @ApiStatus.Internal

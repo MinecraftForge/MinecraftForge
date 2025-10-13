@@ -21,7 +21,7 @@ import java.util.Set;
  * @see TextureStitchEvent.Post
  * @see TextureAtlas
  */
-public class TextureStitchEvent extends Event implements IModBusEvent
+public sealed class TextureStitchEvent extends Event implements IModBusEvent
 {
     private final TextureAtlas atlas;
 

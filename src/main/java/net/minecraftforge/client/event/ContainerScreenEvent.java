@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Render.Foreground
  * @see Render.Background
  */
-public abstract class ContainerScreenEvent extends Event
+public abstract sealed class ContainerScreenEvent extends Event
 {
     private final AbstractContainerScreen<?> containerScreen;
 
@@ -51,7 +51,7 @@ public abstract class ContainerScreenEvent extends Event
      * @see Foreground
      * @see Background
      */
-    public static abstract class Render extends ContainerScreenEvent
+    public static abstract sealed class Render extends ContainerScreenEvent
     {
         private final GuiGraphics guiGraphics;
         private final int mouseX;

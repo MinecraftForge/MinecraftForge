@@ -24,7 +24,7 @@ import org.lwjgl.glfw.GLFW;
  * @see Key
  * @see InteractionKeyMappingTriggered
  */
-public abstract class InputEvent extends Event
+public abstract sealed class InputEvent extends Event
 {
     @ApiStatus.Internal
     protected InputEvent()
@@ -41,7 +41,7 @@ public abstract class InputEvent extends Event
      * @see Pre
      * @see Post
      */
-    public static abstract class MouseButton extends InputEvent
+    public static abstract sealed class MouseButton extends InputEvent
     {
         private final int button;
         private final int action;

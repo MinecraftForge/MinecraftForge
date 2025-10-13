@@ -32,7 +32,7 @@ import java.util.List;
  * @see RenderTooltipEvent.Pre
  * @see RenderTooltipEvent.Color
  */
-public abstract class RenderTooltipEvent extends Event
+public abstract sealed class RenderTooltipEvent extends Event
 {
     @NotNull
     protected final ItemStack itemStack;

@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Entity
  */
 @Cancelable
-public abstract class RenderHighlightEvent extends Event
+public abstract sealed class RenderHighlightEvent extends Event
 {
     private final LevelRenderer levelRenderer;
     private final Camera camera;
