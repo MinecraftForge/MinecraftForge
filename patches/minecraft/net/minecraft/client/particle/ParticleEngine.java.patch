@@ -1,14 +1,23 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -26,7 +_,7 @@
- public class ParticleEngine {
-     private static final List<ParticleRenderType> RENDER_ORDER = List.of(ParticleRenderType.SINGLE_QUADS, ParticleRenderType.ITEM_PICKUP, ParticleRenderType.ELDER_GUARDIANS);
-     protected ClientLevel level;
--    private final Map<ParticleRenderType, ParticleGroup<?>> particles = Maps.newIdentityHashMap();
-+    private final Map<ParticleRenderType, ParticleGroup<?>> particles = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(RENDER_ORDER));
-     private final Queue<TrackingEmitter> trackingEmitters = Queues.newArrayDeque();
-     private final Queue<Particle> particlesToAdd = Queues.newArrayDeque();
+@@ -32,10 +_,17 @@
      private final Object2IntOpenHashMap<ParticleLimit> trackedParticleCounts = new Object2IntOpenHashMap<>();
+     private final ParticleResources resourceManager;
+     private final RandomSource random = RandomSource.create();
++    private final Map<ParticleRenderType, net.minecraftforge.client.event.RegisterParticleGroupEvent.ParticleGroupFactory> factories;
++    private final List<ParticleRenderType> particleRenderOrder;
+ 
+     public ParticleEngine(ClientLevel p_107299_, ParticleResources p_423228_) {
+         this.level = p_107299_;
+         this.resourceManager = p_423228_;
++        var factories = new java.util.HashMap<ParticleRenderType, net.minecraftforge.client.event.RegisterParticleGroupEvent.ParticleGroupFactory>();
++        var renderOrder = new java.util.ArrayList<>(RENDER_ORDER);
++        net.minecraftforge.client.event.RegisterParticleGroupEvent.BUS.post(new net.minecraftforge.client.event.RegisterParticleGroupEvent(factories, renderOrder));
++        this.factories = java.util.Collections.unmodifiableMap(factories);
++        this.particleRenderOrder = List.copyOf(renderOrder);
+     }
+ 
+     public void createTrackingEmitter(Entity p_107330_, ParticleOptions p_107331_) {
 @@ -63,7 +_,7 @@
      private <T extends ParticleOptions> Particle makeParticle(
          T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_
@@ -18,12 +27,21 @@
          return particleprovider == null
              ? null
              : particleprovider.createParticle(p_107396_, this.level, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_, this.random);
+@@ -113,6 +_,8 @@
+             return new ItemPickupParticleGroup(this);
+         } else if (p_428647_ == ParticleRenderType.ELDER_GUARDIANS) {
+             return new ElderGuardianParticleGroup(this);
++        }  else if (factories.containsKey(p_428647_)) {
++            return factories.get(p_428647_).createGroup(this);
+         } else {
+             return (ParticleGroup<?>)(p_428647_ == ParticleRenderType.NO_RENDER ? new NoRenderParticleGroup(this) : new QuadParticleGroup(this, p_428647_));
+         }
 @@ -123,7 +_,7 @@
      }
  
      public void extract(ParticlesRenderState p_423938_, Frustum p_424803_, Camera p_430521_, float p_426823_) {
 -        for (ParticleRenderType particlerendertype : RENDER_ORDER) {
-+        for (ParticleRenderType particlerendertype : this.particles.keySet()) { // Forge: allow custom ParticleRenderType's
++        for (ParticleRenderType particlerendertype : particleRenderOrder) { // Forge: allow custom ParticleRenderType's
              ParticleGroup<?> particlegroup = this.particles.get(particlerendertype);
              if (particlegroup != null && !particlegroup.isEmpty()) {
                  p_423938_.add(particlegroup.extractRenderState(p_424803_, p_430521_, p_426823_));
