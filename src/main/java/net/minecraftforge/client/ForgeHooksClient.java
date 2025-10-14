@@ -729,20 +729,6 @@ public class ForgeHooksClient {
         return font.split(text, maxWidth).stream().map(ClientTooltipComponent::create);
     }
 
-    public static Comparator<ParticleRenderType> makeParticleRenderTypeComparator(List<ParticleRenderType> renderOrder) {
-        Comparator<ParticleRenderType> vanillaComparator = Comparator.comparingInt(renderOrder::indexOf);
-        return (typeOne, typeTwo) -> {
-            boolean vanillaOne = renderOrder.contains(typeOne);
-            boolean vanillaTwo = renderOrder.contains(typeTwo);
-
-            if (vanillaOne && vanillaTwo)
-                return vanillaComparator.compare(typeOne, typeTwo);
-            if (!vanillaOne && !vanillaTwo)
-                return Integer.compare(System.identityHashCode(typeOne), System.identityHashCode(typeTwo));
-            return vanillaOne ? -1 : 1;
-        };
-    }
-
     public static boolean isBlockInSolidLayer(BlockState state) {
         var model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
         return model.getRenderTypes(state, RandomSource.create(), ModelData.EMPTY).contains(ChunkSectionLayer.SOLID);

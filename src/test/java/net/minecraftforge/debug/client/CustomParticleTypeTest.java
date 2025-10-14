@@ -4,10 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.client.event.RegisterParticleGroupEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -27,15 +25,15 @@ public class CustomParticleTypeTest extends BaseTestMod {
 
     public CustomParticleTypeTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
-        RegisterParticleGroupEvent.BUS.addListener((event) -> {
-            event.register(CUSTOM_TYPE, engine -> new TestParticleGroup(engine, CUSTOM_TYPE));
-            event.register(CUSTOM_TYPE_TWO, engine -> new TestParticleGroup(engine, CUSTOM_TYPE_TWO));
-        });
     }
 
     @GameTest
     public static void is_custom_group(GameTestHelper helper) {
         helper.addRecordListener(TickEvent.ClientTickEvent.Pre.BUS, CustomParticleTypeTest::onClientTick);
+        try {
+            ParticleEngine.registerParticleGroup(CUSTOM_TYPE, engine -> new TestParticleGroup(engine, CUSTOM_TYPE));
+            ParticleEngine.registerParticleGroup(CUSTOM_TYPE_TWO, engine -> new TestParticleGroup(engine, CUSTOM_TYPE_TWO));
+        } catch (IllegalArgumentException ignored) {} // OK to call multiple times.
         helper.runAfterDelay(20, () -> {
             // Wait a little bit so there are some particles around.
             // If the particles (field) map contains our types, then we know they were added successfully and the test is OK.
