@@ -32,7 +32,7 @@ public class CustomParticleTypeTest extends BaseTestMod {
         helper.addRecordListener(TickEvent.ClientTickEvent.Pre.BUS, CustomParticleTypeTest::onClientTick);
         try {
             ParticleEngine.registerParticleGroup(CUSTOM_TYPE, engine -> new TestParticleGroup(engine, CUSTOM_TYPE));
-            ParticleEngine.registerParticleGroup(CUSTOM_TYPE_TWO, engine -> new TestParticleGroup(engine, CUSTOM_TYPE_TWO));
+            ParticleEngine.registerParticleGroup(CUSTOM_TYPE_TWO, engine -> new OtherTestParticleGroup(engine, CUSTOM_TYPE_TWO));
         } catch (IllegalArgumentException ignored) {} // OK to call multiple times.
         helper.runAfterDelay(20, () -> {
             // Wait a little bit so there are some particles around.
@@ -44,7 +44,7 @@ public class CustomParticleTypeTest extends BaseTestMod {
                 var val = ((Map<ParticleRenderType, ParticleGroup<?>>) field.get(engine));
                 var isPresentOne = val.get(CUSTOM_TYPE);
                 var isPresentTwo = val.get(CUSTOM_TYPE_TWO);
-                if (isPresentOne != null && isPresentTwo != null) helper.succeed();
+                if (isPresentTwo instanceof OtherTestParticleGroup && isPresentOne instanceof TestParticleGroup) helper.succeed();
                 else helper.fail("Particle types were not present when CustomParticleTypeTest checked");
             } catch (Exception e) {
                 helper.fail("Unable to get particle field from ParticleEngine, was it renamed or removed?");
@@ -54,6 +54,11 @@ public class CustomParticleTypeTest extends BaseTestMod {
 
     private static class TestParticleGroup extends QuadParticleGroup {
         public TestParticleGroup(ParticleEngine p_422302_, ParticleRenderType p_427417_) {
+            super(p_422302_, p_427417_);
+        }
+    }
+    private static class OtherTestParticleGroup extends QuadParticleGroup {
+        public OtherTestParticleGroup(ParticleEngine p_422302_, ParticleRenderType p_427417_) {
             super(p_422302_, p_427417_);
         }
     }
