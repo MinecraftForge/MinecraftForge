@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -32,6 +_,8 @@
-     private final Object2IntOpenHashMap<ParticleLimit> trackedParticleCounts = new Object2IntOpenHashMap<>();
-     private final ParticleResources resourceManager;
-     private final RandomSource random = RandomSource.create();
-+    private static final Map<ParticleRenderType, java.util.function.Function<ParticleEngine, ParticleGroup<?>>> factories = new java.util.HashMap<>();
-+    private static final List<ParticleRenderType> particleRenderOrder = new java.util.ArrayList<>(RENDER_ORDER);
- 
-     public ParticleEngine(ClientLevel p_107299_, ParticleResources p_423228_) {
-         this.level = p_107299_;
 @@ -63,7 +_,7 @@
      private <T extends ParticleOptions> Particle makeParticle(
          T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_
@@ -27,10 +18,14 @@
          } else {
              return (ParticleGroup<?>)(p_428647_ == ParticleRenderType.NO_RENDER ? new NoRenderParticleGroup(this) : new QuadParticleGroup(this, p_428647_));
          }
-@@ -122,8 +_,16 @@
+@@ -122,8 +_,20 @@
          this.trackedParticleCounts.addTo(p_423291_, p_172283_);
      }
  
++
++    private static final Map<ParticleRenderType, java.util.function.Function<ParticleEngine, ParticleGroup<?>>> factories = new java.util.HashMap<>();
++    private static final List<ParticleRenderType> particleRenderOrder = new java.util.ArrayList<>(RENDER_ORDER);
++
 +    // Forge: allow custom particle groups
 +    public static void registerParticleGroup(ParticleRenderType type, java.util.function.Function<ParticleEngine, ParticleGroup<?>> factory) {
 +        if (factories.putIfAbsent(type, factory) != null) {
