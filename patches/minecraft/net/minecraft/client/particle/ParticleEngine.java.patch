@@ -29,7 +29,7 @@
 +    // Forge: allow custom particle groups
 +    public static void registerParticleGroup(ParticleRenderType type, java.util.function.Function<ParticleEngine, ParticleGroup<?>> factory) {
 +        if (factories.putIfAbsent(type, factory) != null) {
-+            throw new IllegalArgumentException(type.name() + " already has a factory registered.");
++            throw new IllegalArgumentException(type.name() + " already has a factory registered. Previous factory was " + factories.get(type) + ". This factory was " + factory);
 +        }
 +        particleRenderOrder.add(type);
 +    }

@@ -22,6 +22,7 @@ public class CustomParticleTypeTest extends BaseTestMod {
     public static final String MOD_ID = "custom_particle_type_test";
     private static final ParticleRenderType CUSTOM_TYPE = new ParticleRenderType("GRP_ONE");
     private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType("GRP_TWO");
+    private static final ParticleRenderType CUSTOM_TYPE_DUP = new ParticleRenderType("GRP_DUP");
 
     public CustomParticleTypeTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
@@ -50,6 +51,19 @@ public class CustomParticleTypeTest extends BaseTestMod {
                 helper.fail("Unable to get particle field from ParticleEngine, was it renamed or removed?");
             }
         });
+    }
+
+    @GameTest
+    public static void prevent_duplicate_group(GameTestHelper helper) {
+        boolean flag = false;
+        try {
+            ParticleEngine.registerParticleGroup(CUSTOM_TYPE_DUP, engine -> new TestParticleGroup(engine, CUSTOM_TYPE_DUP));
+            ParticleEngine.registerParticleGroup(CUSTOM_TYPE_DUP, engine -> new TestParticleGroup(engine, CUSTOM_TYPE_DUP));
+        } catch (IllegalArgumentException e) {
+            flag = true;
+        }
+        helper.assertTrue(flag, "Test did not catch duplicate particle group registration.");
+        helper.succeed();
     }
 
     private static class TestParticleGroup extends QuadParticleGroup {
