@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.debug.client;
 
 import net.minecraft.client.Minecraft;
@@ -42,13 +47,14 @@ public class CustomParticleTypeTest extends BaseTestMod {
             try {
                 Field field = ParticleEngine.class.getDeclaredField("particles");
                 field.setAccessible(true);
+                @SuppressWarnings("unchecked")
                 var val = ((Map<ParticleRenderType, ParticleGroup<?>>) field.get(engine));
                 var isPresentOne = val.get(CUSTOM_TYPE);
                 var isPresentTwo = val.get(CUSTOM_TYPE_TWO);
                 if (isPresentTwo instanceof OtherTestParticleGroup && isPresentOne instanceof TestParticleGroup) helper.succeed();
                 else helper.fail("Particle types were not present when CustomParticleTypeTest checked");
             } catch (Exception e) {
-                helper.fail("Unable to get particle field from ParticleEngine, was it renamed or removed?");
+                helper.fail("Unable to get 'particles' field from ParticleEngine, was it renamed or removed?");
             }
         });
     }
