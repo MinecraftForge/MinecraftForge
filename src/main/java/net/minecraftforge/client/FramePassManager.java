@@ -48,7 +48,8 @@ public class FramePassManager {
         /**
          * Use to define what your pass does during the render stage.
          */
-        void executes(LevelRenderState state);
+        default void executes(LevelRenderState state) {executes();};
+        default void executes(){};
     }
 
     private record PassInfo(String name, PassDefinition pass){}
