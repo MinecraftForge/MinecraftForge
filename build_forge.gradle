@@ -839,10 +839,17 @@ tasks.register('filterJarNewSRG', FilterNewJar).configure {
     blacklist = filterJarNew.blacklist
 }
 
-tasks.named('universalJar').configure {
+tasks.named('universalJar', Jar) {
     dependsOn downloadCrowdin
     from zipTree(downloadCrowdin.dest).matching {
         include 'assets/forge/lang/*.json'
+    }
+
+    final Map<String, String> replaceProperties = Map.of('forge_version', (String) version)
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties + [project: project]
     }
 
     from(EXTRA_TXTS)
@@ -983,15 +990,6 @@ license {
 
 tasks.register('genAllData') {
     dependsOn 'forge_data', 'forge_test_data'
-}
-
-tasks.named('processResources', ProcessResources) {
-    final Map<String, String> replaceProperties = Map.of('forge_version', (String) version)
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties + [project: project]
-    }
 }
 
 if (project.hasProperty('UPDATE_MAPPINGS')) {
