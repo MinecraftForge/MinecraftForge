@@ -985,6 +985,15 @@ tasks.register('genAllData') {
     dependsOn 'forge_data', 'forge_test_data'
 }
 
+tasks.named('processResources', ProcessResources) {
+    final Map<String, String> replaceProperties = Map.of('forge_version', (String) version)
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
 if (project.hasProperty('UPDATE_MAPPINGS')) {
     extractRangeMap {
         sources.from sourceSets.test.java.srcDirs
