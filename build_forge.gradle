@@ -845,7 +845,7 @@ tasks.named('universalJar', Jar) {
         include 'assets/forge/lang/*.json'
     }
 
-    final Map<String, String> replaceProperties = Map.of('forge_version', (String) version)
+    final Map<String, String> replaceProperties = Map.of('forge_version', FORGE_VERSION)
     inputs.properties replaceProperties
 
     filesMatching(['META-INF/mods.toml']) {
