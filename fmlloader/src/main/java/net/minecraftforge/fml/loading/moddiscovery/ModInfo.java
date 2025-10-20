@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
+import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -73,6 +74,7 @@ public record ModInfo(
         }
 
         ArtifactVersion version = config.<String>getConfigElement("version")
+                .map(s -> StringSubstitutor.replace(s, owningFile.getFile()))
                 .map(DefaultArtifactVersion::new)
                 .orElse(DEFAULT_VERSION);
 

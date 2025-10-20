@@ -6,7 +6,7 @@ license="LGPL v2.1"
 
 [[mods]]
 modId="forge"
-version="${forge_version}"
+version="${global.forgeVersion}"
 updateJSONURL="https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json"
 displayURL="https://minecraftforge.net/"
 displayName="Forge"

@@ -5,6 +5,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -38,6 +39,7 @@ import java.util.jar.Manifest;
 public class ModFile implements IModFile {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final String jarVersion;
+    private Map<String, Object> fileProperties;
     private List<IModLanguageProvider> loaders;
     private Throwable scanError;
     private final SecureJar jar;
@@ -67,10 +69,9 @@ public class ModFile implements IModFile {
     }
 
     @Override
-    public Supplier<Map<String, Object>> getSubstitutionMap() {
-        return Map::of;
+    public Supplier<Map<String,Object>> getSubstitutionMap() {
+        return () -> ImmutableMap.<String,Object>builder().put("jarVersion", jarVersion).putAll(fileProperties).build();
     }
-
     @Override
     public Type getType() {
         return modFileType;
@@ -150,7 +151,7 @@ public class ModFile implements IModFile {
     }
 
     public void setFileProperties(Map<String, Object> fileProperties) {
-        LOGGER.warn(LogMarkers.LOADING, "Setting file properties for the purposes of runtime mods.toml string substitution is no longer supported.");
+        this.fileProperties = fileProperties;
     }
 
     @Override

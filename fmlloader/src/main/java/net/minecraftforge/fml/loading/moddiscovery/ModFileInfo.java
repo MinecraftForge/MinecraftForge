@@ -101,6 +101,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
             this.properties = config.<Map<String, Object>>getConfigElement("properties")
                     .orElse(Collections.emptyMap());
         }
+        this.modFile.setFileProperties(this.properties);
 
         final List<? extends IConfigurable> modConfigs = config.getConfigList("mods");
         if (modConfigs == null || modConfigs.isEmpty())

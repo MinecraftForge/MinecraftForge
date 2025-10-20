@@ -839,17 +839,10 @@ tasks.register('filterJarNewSRG', FilterNewJar).configure {
     blacklist = filterJarNew.blacklist
 }
 
-tasks.named('universalJar', Jar) {
+tasks.named('universalJar').configure {
     dependsOn downloadCrowdin
     from zipTree(downloadCrowdin.dest).matching {
         include 'assets/forge/lang/*.json'
-    }
-
-    final Map<String, String> replaceProperties = Map.of('forge_version', FORGE_VERSION)
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties + [project: project]
     }
 
     from(EXTRA_TXTS)
