@@ -49,6 +49,11 @@ public class FramePassManager {
          * Use to define what your pass does during the render stage.
          */
         default void executes(LevelRenderState state) {executes();};
+
+        /**
+         * Use to define what your pass does during the render stage, prefer {@link PassDefinition#executes(LevelRenderState)}.
+         */
+        @Deprecated()
         default void executes(){};
     }
 
