@@ -35,7 +35,6 @@ import java.util.List;
  *
  * @see RenderTooltipEvent.GatherComponents
  * @see RenderTooltipEvent.Pre
- * @see RenderTooltipEvent.Background
  */
 @NullMarked
 public abstract sealed class RenderTooltipEvent extends MutableEvent implements InheritableEvent {
@@ -117,7 +116,7 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      *
      * <p>This event is {@linkplain Cancellable cancellable}.
      * If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
-     * the corresponding {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Background} to not be fired.</p>
+     * the corresponding {@link RenderTooltipEvent.Pre} to not be fired.</p>
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -195,11 +194,10 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
 
     /**
      * Fired <b>before</b> the tooltip is rendered.
-     * This can be used to modify the positioning and font of the tooltip.
+     * This can be used to modify the positioning, font, and background of the tooltip.
      *
      * <p>This event is {@linkplain Cancellable cancellable}.
-     * If this event is cancelled, then the tooltip will not be rendered and the corresponding
-     * {@link RenderTooltipEvent.Background} will not be fired.</p>
+     * If this event is cancelled, then the tooltip will not be rendered
      *
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
@@ -210,13 +208,19 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
         private final int screenWidth;
         private final int screenHeight;
         private final ClientTooltipPositioner positioner;
+        @Nullable
+        private ResourceLocation background;
+        @Nullable
+        private ResourceLocation originalBackground;
 
         @ApiStatus.Internal
-        public Pre(ItemStack stack, GuiGraphics graphics, int x, int y, int screenWidth, int screenHeight, Font font, List<ClientTooltipComponent> components, ClientTooltipPositioner positioner) {
+        public Pre(ItemStack stack, GuiGraphics graphics, int x, int y, int screenWidth, int screenHeight, Font font, List<ClientTooltipComponent> components, ClientTooltipPositioner positioner, @Nullable ResourceLocation background) {
             super(stack, graphics, x, y, font, components);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.positioner = positioner;
+            this.background = background;
+            this.originalBackground = background;
         }
 
         /**
@@ -265,27 +269,6 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
          */
         public void setY(int y) {
             this.y = y;
-        }
-    }
-
-    /**
-     * Fired when the tooltip background prefix is determined.
-     * This can be used to modify the textures to be used for the tooltip background.
-     *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
-     * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
-     */
-    public static final class Background extends RenderTooltipEvent {
-        public static final EventBus<Background> BUS = EventBus.create(Background.class);
-
-        private final @Nullable ResourceLocation originalBackground;
-        private @Nullable ResourceLocation background;
-
-        @ApiStatus.Internal
-        public Background(ItemStack stack, GuiGraphics graphics, int x, int y, Font fr, List<ClientTooltipComponent> components, @Nullable ResourceLocation background) {
-            super(stack, graphics, x, y, fr, components);
-            this.originalBackground = background;
-            this.background = background;
         }
 
         /**

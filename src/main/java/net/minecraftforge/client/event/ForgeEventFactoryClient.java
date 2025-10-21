@@ -244,10 +244,6 @@ public final class ForgeEventFactoryClient {
         TickEvent.RenderTickEvent.Post.BUS.post(new TickEvent.RenderTickEvent.Post(timer));
     }
 
-    public static RenderTooltipEvent.Background onRenderTooltipBackground(@NotNull ItemStack stack, GuiGraphics graphics, int x, int y, @NotNull Font font, @NotNull List<ClientTooltipComponent> components, @Nullable ResourceLocation backgroundPrefix) {
-        return RenderTooltipEvent.Background.BUS.fire(new RenderTooltipEvent.Background(stack, graphics, x, y, font, components, backgroundPrefix));
-    }
-
     public static boolean onToastAdd(Toast toast) {
         return ToastAddEvent.BUS.post(new ToastAddEvent(toast));
     }
