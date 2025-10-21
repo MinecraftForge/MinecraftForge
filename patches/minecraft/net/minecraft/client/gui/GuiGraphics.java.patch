@@ -117,7 +117,7 @@
              if (k > i) {
                  i = k;
              }
-@@ -1008,16 +_,16 @@
+@@ -1008,16 +_,17 @@
  
          int l1 = i;
          int i2 = j;
@@ -127,7 +127,8 @@
          int i1 = vector2ic.y();
          this.pose.pushMatrix();
 -        TooltipRenderUtil.renderTooltipBackground(this, l, i1, i, j, p_409298_);
-+        TooltipRenderUtil.renderTooltipBackground(this, l, i1, i, j, preEvent.getBackground());
++        var background = net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderTooltipBackground(this.tooltipStack, this, l, i1, preEvent.getFont(), p_282716_, preEvent.getBackground());
++        TooltipRenderUtil.renderTooltipBackground(this, l, i1, i, j, background.getBackground());
          int j1 = i1;
  
          for (int k1 = 0; k1 < p_282716_.size(); k1++) {
