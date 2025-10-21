@@ -51,7 +51,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
     public static void renderTest(AddFramePassEvent event) {
         FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
-            public void targets(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
@@ -72,7 +72,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         event.addPass(rl(MODID), def);
         FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
-            public void targets(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
