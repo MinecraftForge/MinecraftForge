@@ -34,8 +34,11 @@ public class GatherComponentsEventTest extends BaseTestMod {
 
     @GameTest
     public static void is_food(GameTestHelper helper) {
-        helper.assertTrue(Items.IRON_NUGGET.components().has(DataComponents.FOOD), "Iron Nugget is not edible, failed to apply DataComponents.FOOD to it.");
-        helper.assertFalse(Items.IRON_INGOT.components().has(DataComponents.FOOD), "Iron Ingot is edible, should not have DataComponents.FOOD");
-        helper.succeed();
+        helper.runAfterDelay(5, () -> {
+            helper.assertTrue(Items.IRON_NUGGET.components().has(DataComponents.FOOD), "Iron Nugget is not edible, failed to apply DataComponents.FOOD to it.");
+            helper.assertFalse(Items.IRON_INGOT.components().has(DataComponents.FOOD), "Iron Ingot is edible, should not have DataComponents.FOOD");
+            helper.succeed();
+        });
+
     }
 }
