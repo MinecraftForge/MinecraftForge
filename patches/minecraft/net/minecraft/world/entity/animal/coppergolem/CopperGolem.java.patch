@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/entity/animal/coppergolem/CopperGolem.java
++++ b/net/minecraft/world/entity/animal/coppergolem/CopperGolem.java
+@@ -216,7 +_,7 @@
+         }
+ 
+         Level level = this.level();
+-        if (itemstack.is(Items.SHEARS) && this.readyForShearing()) {
++        if (false && itemstack.is(Items.SHEARS) && this.readyForShearing()) { // Forge: Moved to onSheared
+             if (level instanceof ServerLevel serverlevel) {
+                 this.shear(serverlevel, SoundSource.PLAYERS, itemstack);
+                 this.gameEvent(GameEvent.SHEAR, p_430585_);
+@@ -429,6 +_,18 @@
+         ItemStack itemstack = this.getItemBySlot(EQUIPMENT_SLOT_ANTENNA);
+         this.setItemSlot(EQUIPMENT_SLOT_ANTENNA, ItemStack.EMPTY);
+         this.spawnAtLocation(p_428037_, itemstack, 1.5F);
++    }
++
++    @Override
++    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
++        if (world instanceof ServerLevel server) {
++            server.playSound(null, this, SoundEvents.COPPER_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++            var ret = new java.util.ArrayList<ItemStack>();
++            ret.add(this.getItemBySlot(EQUIPMENT_SLOT_ANTENNA));
++            this.setItemSlot(EQUIPMENT_SLOT_ANTENNA, ItemStack.EMPTY);
++            return ret;
++        }
++        return java.util.Collections.emptyList();
+     }
+ 
+     @Override
