@@ -16,7 +16,7 @@
 +    }
 +
 +    @Override
-+    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
++    public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
 +        if (world instanceof ServerLevel server) {
 +            server.playSound(null, this, SoundEvents.COPPER_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
 +            var ret = new java.util.ArrayList<ItemStack>();
