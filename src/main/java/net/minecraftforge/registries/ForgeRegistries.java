@@ -104,44 +104,44 @@ public class ForgeRegistries
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#ENTITY_DATA_SERIALIZERS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = DEFERRED_ENTITY_DATA_SERIALIZERS.makeRegistrySupplier(GameData::getDataSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = DEFERRED_ENTITY_DATA_SERIALIZERS.makeRegistry(GameData::getDataSerializersRegistryBuilder);
     static final DeferredRegister<Codec<? extends IGlobalLootModifier>> DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS.location().getNamespace());
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#GLOBAL_LOOT_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.makeRegistrySupplier(GameData::getGLMSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<Codec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = DEFERRED_GLOBAL_LOOT_MODIFIER_SERIALIZERS.makeRegistry(GameData::getGLMSerializersRegistryBuilder);
     static final DeferredRegister<Codec<? extends BiomeModifier>> DEFERRED_BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.BIOME_MODIFIER_SERIALIZERS, Keys.BIOME_MODIFIER_SERIALIZERS.location().getNamespace());
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#BIOME_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistrySupplier(GameData::getBiomeModifierSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<Codec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = DEFERRED_BIOME_MODIFIER_SERIALIZERS.makeRegistry(GameData::getBiomeModifierSerializersRegistryBuilder);
     static final DeferredRegister<Codec<? extends StructureModifier>> DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS = DeferredRegister.create(Keys.STRUCTURE_MODIFIER_SERIALIZERS, Keys.STRUCTURE_MODIFIER_SERIALIZERS.location().getNamespace());
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#STRUCTURE_MODIFIER_SERIALIZERS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.makeRegistrySupplier(GameData::getStructureModifierSerializersRegistryBuilder);
+    public static final Supplier<IForgeRegistry<Codec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = DEFERRED_STRUCTURE_MODIFIER_SERIALIZERS.makeRegistry(GameData::getStructureModifierSerializersRegistryBuilder);
     static final DeferredRegister<FluidType> DEFERRED_FLUID_TYPES = DeferredRegister.create(Keys.FLUID_TYPES, Keys.FLUID_TYPES.location().getNamespace());
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#FLUID_TYPES} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = DEFERRED_FLUID_TYPES.makeRegistrySupplier(GameData::getFluidTypeRegistryBuilder);
+    public static final Supplier<IForgeRegistry<FluidType>> FLUID_TYPES = DEFERRED_FLUID_TYPES.makeRegistry(GameData::getFluidTypeRegistryBuilder);
     static final DeferredRegister<HolderSetType> DEFERRED_HOLDER_SET_TYPES = DeferredRegister.create(Keys.HOLDER_SET_TYPES, "forge");
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#HOLDER_SET_TYPES} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistrySupplier(GameData::makeUnsavedAndUnsynced);
+    public static final Supplier<IForgeRegistry<HolderSetType>> HOLDER_SET_TYPES = DEFERRED_HOLDER_SET_TYPES.makeRegistry(GameData::makeUnsavedAndUnsynced);
 
     static final DeferredRegister<ItemDisplayContext> DEFERRED_DISPLAY_CONTEXTS = DeferredRegister.create(Keys.DISPLAY_CONTEXTS, "forge");
     /**
      * Calling {@link Supplier#get()} before {@link NewRegistryEvent} is fired will result in a null registry returned.
      * Use {@link Keys#DISPLAY_CONTEXTS} to create a {@link DeferredRegister}.
      */
-    public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = DEFERRED_DISPLAY_CONTEXTS.makeRegistrySupplier(GameData::getItemDisplayContextRegistryBuilder);
+    public static final Supplier<IForgeRegistry<ItemDisplayContext>> DISPLAY_CONTEXTS = DEFERRED_DISPLAY_CONTEXTS.makeRegistry(GameData::getItemDisplayContextRegistryBuilder);
 
     public static final class Keys {
         //Vanilla

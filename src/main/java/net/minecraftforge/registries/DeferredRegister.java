@@ -204,9 +204,9 @@ public class DeferredRegister<T>
      * @return A supplier of the {@link IForgeRegistry} created by the builder.
      * Will always return null until after the {@link NewRegistryEvent} event fires.
      */
-    public Supplier<IForgeRegistry<T>> makeRegistrySupplier(final Supplier<RegistryBuilder<T>> sup)
+    public Supplier<IForgeRegistry<T>> makeRegistry(final Supplier<RegistryBuilder<T>> sup)
     {
-        return makeRegistrySupplier(this.registryKey.location(), sup);
+        return makeRegistry(this.registryKey.location(), sup);
     }
 
     /**
@@ -218,9 +218,9 @@ public class DeferredRegister<T>
      * @return A {@link DeferredForgeRegistry} holding a supplier of the {@link IForgeRegistry} created by the builder.
      * This ensures that the {@link IForgeRegistry} can be used to register {@link RegistryObject RegistryObjects} before a {@link NewRegistryEvent} is fired.
      */
-    public IForgeRegistry<T> makeRegistry(final Supplier<RegistryBuilder<T>> sup)
+    public IForgeRegistry<T> makeRegistryEagerly(final Supplier<RegistryBuilder<T>> sup)
     {
-        return makeRegistry(this.registryKey.location(), sup);
+        return makeRegistryEagerly(this.registryKey.location(), sup);
     }
 
     /**
@@ -367,12 +367,12 @@ public class DeferredRegister<T>
         return Objects.requireNonNull(this.registryKey).location();
     }
 
-    private Supplier<IForgeRegistry<T>> makeRegistrySupplier(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
-        IForgeRegistry<T> reg = makeRegistry(registryName, sup);
+    private Supplier<IForgeRegistry<T>> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
+        IForgeRegistry<T> reg = makeRegistryEagerly(registryName, sup);
         return () -> reg;
     }
 
-    private IForgeRegistry<T> makeRegistry(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
+    private IForgeRegistry<T> makeRegistryEagerly(final ResourceLocation registryName, final Supplier<RegistryBuilder<T>> sup) {
         if (registryName == null)
             throw new IllegalStateException("Cannot create a registry without specifying a registry name");
         if (RegistryManager.ACTIVE.getRegistry(registryName) != null || this.registryFactory != null)
