@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:shears_behavior/custom_shears_shear_copper_golem_poppy",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}
