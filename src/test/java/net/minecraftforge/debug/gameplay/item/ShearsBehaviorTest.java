@@ -51,7 +51,7 @@ public class ShearsBehaviorTest extends BaseTestMod {
         var cowPos = new BlockPos(0, 1, 1);
         helper.setBlock(fencePos, Blocks.OAK_FENCE);
         var cow = helper.spawnWithNoFreeWill(EntityType.COW, cowPos);
-        var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), fencePos);
+        var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), helper.absolutePos(fencePos));
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
 
@@ -79,7 +79,7 @@ public class ShearsBehaviorTest extends BaseTestMod {
         var cowPos = new BlockPos(0, 1, 1);
         helper.setBlock(fencePos, Blocks.OAK_FENCE);
         var cow = helper.spawnWithNoFreeWill(EntityType.COW, cowPos);
-        var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), fencePos);
+        var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), helper.absolutePos(fencePos));
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
 
@@ -90,11 +90,11 @@ public class ShearsBehaviorTest extends BaseTestMod {
         var result = player.interactOn(knot, InteractionHand.MAIN_HAND);
 
         // assert
-        helper.succeedOnTickWhen(1, () -> { // wait one tick for leash to update
-            //helper.assertTrue(result.consumesAction(), "Using custom shears on leash knot should result in consume action"); //it is also not true for vanilla shears
-            helper.assertTrue(!cow.isLeashed(), "Cow should be unleashed by sheared knot");
-            helper.assertItemEntityPresent(Items.LEAD);
-        });
+        helper.assertTrue(result.consumesAction(), "Using custom shears on leash knot should result in consume action");
+        helper.assertTrue(!cow.isLeashed(), "Cow should be unleashed by sheared knot");
+        helper.assertItemEntityPresent(Items.LEAD);
+
+        helper.succeed();
     }
 
     @GameTest
