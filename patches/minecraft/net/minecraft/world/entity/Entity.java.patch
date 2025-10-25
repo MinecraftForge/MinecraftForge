@@ -238,7 +238,12 @@
              p_409579_.addFreshEntity(itementity);
              return itementity;
          }
-@@ -2127,7 +_,7 @@
+@@ -2123,11 +_,11 @@
+         }
+ 
+         ItemStack itemstack = p_19978_.getItemInHand(p_19979_);
+-        if (itemstack.is(Items.SHEARS) && this.shearOffAllLeashConnections(p_19978_)) {
++        if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST) && this.shearOffAllLeashConnections(p_19978_)) {
              itemstack.hurtAndBreak(1, p_19978_, p_19979_);
              return InteractionResult.SUCCESS;
          } else if (this instanceof Mob mob
