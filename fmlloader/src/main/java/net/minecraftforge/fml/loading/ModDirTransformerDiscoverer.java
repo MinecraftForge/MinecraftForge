@@ -44,7 +44,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
     public void earlyInitialization(final String launchTarget, final String[] arguments) {
         boolean isMixinEnabledInDev = false;
         for (String arg : arguments) {
-            if (arg.startsWith("-mixin.config")) {
+            if (arg.startsWith("-mixin.config") || arg.startsWith("--mixin.config")) {
                 isMixinEnabledInDev = true;
                 break;
             }
