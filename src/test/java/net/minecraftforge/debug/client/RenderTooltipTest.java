@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Forge Development LLC and contributors
+ * SPDX-License-Identifier: LGPL-2.1-only
+ */
+
 package net.minecraftforge.debug.client;
 
 import net.minecraft.client.Minecraft;
@@ -5,10 +10,8 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.TickEvent;
@@ -37,13 +40,18 @@ public class RenderTooltipTest extends BaseTestMod {
                 gg.setTooltipForNextFrame(Minecraft.getInstance().font, (ItemStack) possibleChoices[itemStack], 50, 50);
             }, () -> testMode) ;
         });
+    }
 
-        RenderTooltipEvent.Pre.BUS.addListener(event -> {
+    @SuppressWarnings("all")
+    @GameTest
+    public static void stack_present_in_pre(GameTestHelper helper) {
+        testMode = true;
+        shouldOpen = 1;
+        helper.addEventListener(RenderTooltipEvent.Pre.BUS, event -> {
             lastItemstackSeenInEvent = event.getItemStack();
         });
 
-        TickEvent.RenderTickEvent.Pre.BUS.addListener(event -> {
-            // renderTooltip only runs if a screen is open so we have to open SOMETHING at SOME POINT for this test to work.
+        helper.addRecordListener(TickEvent.RenderTickEvent.Pre.BUS, (event) -> {
             if (shouldOpen == 1) {
                 Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
                 shouldOpen = 2;
@@ -52,12 +60,6 @@ public class RenderTooltipTest extends BaseTestMod {
                 shouldOpen = 0;
             }
         });
-    }
-
-    @GameTest
-    public static void stack_present_in_pre(GameTestHelper helper) {
-        testMode = true;
-        shouldOpen = 1;
         itemStack = new Random().nextInt(possibleChoices.length);
         helper.runAfterDelay(10, () -> {
             testMode = false;

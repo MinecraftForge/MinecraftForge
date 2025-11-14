@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:render_tooltip_test/stack_present_in_pre",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}
