@@ -748,6 +748,7 @@ public class Tags {
          */
         public static final TagKey<Item> MUSIC_DISCS = cTag("music_discs");
         public static final TagKey<Item> NUGGETS = cTag("nuggets");
+        public static final TagKey<Item> NUGGETS_COPPER = cTag("nuggets/copper");
         public static final TagKey<Item> NUGGETS_GOLD = cTag("nuggets/gold");
         public static final TagKey<Item> NUGGETS_IRON = cTag("nuggets/iron");
         public static final TagKey<Item> ORES = cTag("ores");

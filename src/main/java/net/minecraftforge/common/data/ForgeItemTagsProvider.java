@@ -195,8 +195,10 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
                 .add(Items.NETHER_STAR)
                 .addOptionalTag(forgeItemTagKey("nether_stars"));
         tag(Tags.Items.NUGGETS)
-                .addTags(Tags.Items.NUGGETS_GOLD, Tags.Items.NUGGETS_IRON)
+                .addTags(Tags.Items.NUGGETS_GOLD, Tags.Items.NUGGETS_IRON, Tags.Items.NUGGETS_COPPER)
                 .addOptionalTag(forgeItemTagKey("nuggets"));
+        tag(Tags.Items.NUGGETS_COPPER)
+                .add(Items.COPPER_NUGGET);
         tag(Tags.Items.NUGGETS_IRON)
                 .add(Items.IRON_NUGGET)
                 .addOptionalTag(forgeItemTagKey("nuggets/iron"));
