@@ -28,7 +28,8 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
     private static final Set<String> SERVICES = Set.of(
         "cpw.mods.modlauncher.api.ITransformationService",
         "net.minecraftforge.forgespi.locating.IModLocator",
-        "net.minecraftforge.forgespi.locating.IDependencyLocator"
+        "net.minecraftforge.forgespi.locating.IDependencyLocator",
+        "net.minecraftforge.fml.loading.ImmediateWindowProvider"
     );
 
     @Override
