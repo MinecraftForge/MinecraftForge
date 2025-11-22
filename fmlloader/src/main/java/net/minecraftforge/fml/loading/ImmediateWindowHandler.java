@@ -5,6 +5,8 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.Launcher;
+import cpw.mods.modlauncher.api.IModuleLayerManager;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.apache.logging.log4j.LogManager;
@@ -30,9 +32,12 @@ public class ImmediateWindowHandler {
             provider = new DummyProvider();
             LOGGER.info("ImmediateWindowProvider not loading because splash screen is disabled");
         } else {
+            final var serviceLayer = Launcher.INSTANCE.findLayerManager()
+                    .flatMap(manager -> manager.getLayer(IModuleLayerManager.Layer.SERVICE))
+                    .orElseThrow(() -> new IllegalStateException("Couldn't find SERVICE layer"));
             final var providername = FMLConfig.getConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_PROVIDER);
             LOGGER.info("Loading ImmediateWindowProvider {}", providername);
-            final var maybeProvider = ServiceLoader.load(ImmediateWindowProvider.class)
+            final var maybeProvider = ServiceLoader.load(serviceLayer, ImmediateWindowProvider.class)
                     .stream()
                     .map(ServiceLoader.Provider::get)
                     .filter(p -> Objects.equals(p.name(), providername))
