@@ -136,8 +136,7 @@ public class ModStateProvider implements IModStateProvider {
      *
      * @see ModLoadingStage#DONE
      */
-    public static final ModLoadingState DONE = ModLoadingState.of("DONE", ModLoadingPhase.DONE)
-            .withInline(ml -> BusGroup.DEFAULT.trim());
+    public static final ModLoadingState DONE = ModLoadingState.of("DONE", ModLoadingPhase.DONE).empty();
 
     @Override
     public List<IModLoadingState> getAllStates() {
