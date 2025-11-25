@@ -10,7 +10,6 @@ import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
-import org.jspecify.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -163,7 +162,7 @@ public abstract class ModContainer {
      * @return the mod bus group for this specific mod, or null if there is none.
      *         Leave null if you use {@link BusGroup#DEFAULT} for your mod lifecycle events.
      */
-    public @Nullable BusGroup getModBusGroup() {
+    public BusGroup getModBusGroup() {
         return null;
     }
 

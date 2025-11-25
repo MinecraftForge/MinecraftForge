@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import cpw.mods.jarhandling.SecureJar;
-import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -169,7 +168,7 @@ public class FMLModContainer extends ModContainer {
     }
 
     @Override
-    public @NonNull BusGroup getModBusGroup() {
+    public BusGroup getModBusGroup() {
         return this.eventBusGroup;
     }
 
