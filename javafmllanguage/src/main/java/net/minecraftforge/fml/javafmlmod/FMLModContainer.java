@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import cpw.mods.jarhandling.SecureJar;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -47,8 +48,9 @@ public class FMLModContainer extends ModContainer {
         this.contextExtension = () -> context;
         try {
             var moduleName = info.getOwningFile().moduleName();
-            var module = gameLayer.findModule(moduleName)
-                .orElseThrow(() -> new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer));
+            var module = gameLayer.findModule(moduleName).orElse(null);
+            if (module == null)
+                throw new IllegalStateException("Failed to find " + moduleName + " in " + gameLayer);
 
             openModules(gameLayer, module, info.getOwningFile().getFile().getSecureJar());
 
@@ -166,7 +168,8 @@ public class FMLModContainer extends ModContainer {
         return modInstance;
     }
 
-    public BusGroup getModBusGroup() {
+    @Override
+    public @NonNull BusGroup getModBusGroup() {
         return this.eventBusGroup;
     }
 

@@ -233,7 +233,18 @@ public class ModLoader {
         for (IModLoadingState mls : stateList) {
             dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
         }
+
+        var modBusGroups = Set.of(
+                modList.getLoadedMods().stream()
+                        .map(ModContainer::getModBusGroup)
+                        .filter(Objects::nonNull)
+                        .toArray(BusGroup[]::new)
+        );
+        for (var modBusGroup : modBusGroups) {
+            parallelExecutor.execute(modBusGroup::trim);
+        }
         parallelExecutor.execute(BusGroup.DEFAULT::trim);
+
         statusConsumer.accept("Mod loading complete - %d mods loaded".formatted(this.modList.size()));
         progress.complete();
     }

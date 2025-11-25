@@ -5,10 +5,12 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -156,6 +158,14 @@ public abstract class ModContainer {
      * @return the mod object instance
      */
     public abstract Object getMod();
+
+    /**
+     * @return the mod bus group for this specific mod, or null if there is none.
+     *         Leave null if you use {@link BusGroup#DEFAULT} for your mod lifecycle events.
+     */
+    public @Nullable BusGroup getModBusGroup() {
+        return null;
+    }
 
     /**
      * Accept an arbitrary event for processing by the mod. Probably posted to an event bus in the lower level container.
