@@ -381,6 +381,8 @@ public class BiomeDictionary
         {
             makeBestGuess(biome);
             FMLLog.log.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), !getBiomeInfo(biome).types.isEmpty() ? getBiomeInfo(biome).types : "could not guess types");
+            if (Boolean.valueOf(false))
+                getTypes(biome);
         }
     }
 
