@@ -1,0 +1,18 @@
+--- a/net/minecraft/core/Direction.java
++++ b/net/minecraft/core/Direction.java
+@@ -42,6 +_,15 @@
+    private final Direction.AxisDirection f_122344_;
+    private final Vec3i f_122345_;
+    private static final Direction[] f_122346_ = values();
++   private static final java.util.List<Direction> VALUES_VIEW = java.util.Collections.unmodifiableList(Arrays.asList(f_122346_));
++   public static final java.util.List<Direction> valuesView() {
++      return VALUES_VIEW;
++   }
++   // In vanilla updates are notified only on the horizontal plane, in Forge we also notify up and down
++   private static final java.util.List<Direction> UPDATE_ORDER = Stream.concat(Plane.HORIZONTAL.m_122557_(), Plane.VERTICAL.m_122557_()).toList();
++   public static final java.util.List<Direction> getUpdateOrder() {
++      return UPDATE_ORDER;
++   }
+    private static final Map<String, Direction> f_122347_ = Arrays.stream(f_122346_).collect(Collectors.toMap(Direction::m_122433_, (p_122426_) -> {
+       return p_122426_;
+    }));
