@@ -14,9 +14,12 @@ import net.minecraftforge.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
- * Fired after the player's movement inputs are updated.
- * <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ * Fired after the local player's movement inputs are updated during a tick.
+ * May be used to modify the provided {@linkplain net.minecraft.client.player.ClientInput#moveVector} state for some movement overrides.
  *
+ *  <p>This event is fired only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
+ *
+ * @param getEntity the local player
  * @param getInput the player's movement inputs
  */
 public record MovementInputUpdateEvent(Player getEntity, ClientInput getInput) implements RecordEvent, PlayerEvent {
