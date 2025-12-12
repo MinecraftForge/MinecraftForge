@@ -22,7 +22,7 @@ import java.util.Optional;
  * This event has a result. {@link HasResult}<br>
  *
  * setResult(ALLOW) informs game that player can sleep at this time.<br>
- * setResult(DEFAULT) causes game to check !{@link Level#isDay()} instead.
+ * setResult(DEFAULT) causes game to check {@link net.minecraft.world.attribute.BedRule#canSleep()} instead.
  */
 public final class SleepingTimeCheckEvent extends MutableEvent implements PlayerEvent, HasResult {
     public static final EventBus<SleepingTimeCheckEvent> BUS = EventBus.create(SleepingTimeCheckEvent.class);

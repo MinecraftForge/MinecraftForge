@@ -54,7 +54,7 @@
          if (!this.isSleeping() && this.isAlive()) {
              BedRule bedrule = this.level().environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, p_9115_);
 -            boolean flag = bedrule.canSleep(this.level());
-+            boolean flag = !net.minecraftforge.event.ForgeEventFactory.onSleepingTimeCheck(this, optAt, bedrule);
++            boolean flag = net.minecraftforge.event.ForgeEventFactory.onSleepingTimeCheck(this, optAt, bedrule);
              boolean flag1 = bedrule.canSetSpawn(this.level());
              if (!flag1 && !flag) {
                  return Either.left(bedrule.asProblem());

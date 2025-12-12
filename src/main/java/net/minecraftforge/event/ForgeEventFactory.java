@@ -593,7 +593,7 @@ public final class ForgeEventFactory {
 
         var canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
-            return !rule.canSleep(player.level());
+            return rule.canSleep(player.level());
         else
             return canContinueSleep == Result.ALLOW;
     }
