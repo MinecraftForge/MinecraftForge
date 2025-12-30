@@ -47,6 +47,8 @@ public class FMLLoginWrapper {
     }
 
     private <T extends NetworkEvent> void wrapperReceived(final T packet) {
+        // we don't care about channel registration change events on this channel
+        if (packet instanceof NetworkEvent.ChannelRegistrationChangeEvent) return;
         final NetworkEvent.Context wrappedContext = packet.getSource().get();
         final PacketBuffer payload = packet.getPayload();
         ResourceLocation targetNetworkReceiver = FMLNetworkConstants.FML_HANDSHAKE_RESOURCE;
