@@ -172,6 +172,10 @@ public class SimpleChannel
         private Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators;
         private Optional<NetworkDirection> networkDirection;
 
+        private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
+            return forType(channel, type, id, null)
+        }
+
         private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id, NetworkDirection networkDirection) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
             builder.channel = channel;

@@ -74,6 +74,11 @@ public class IndexedMessageCodec
         private Optional<BiConsumer<MSG, Integer>> loginIndexSetter;
         private Optional<Function<MSG, Integer>> loginIndexGetter;
 
+        public MessageHandler(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer)
+        {
+            this(index, messageType, encoder, decoder, messageConsumer, Optional.empty());
+        }
+
         public MessageHandler(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer, final Optional<NetworkDirection> networkDirection)
         {
             this.index = index;
@@ -160,6 +165,10 @@ public class IndexedMessageCodec
         }
         NetworkHooks.validatePacketDirection(context.get().getDirection(), messageHandler.networkDirection, context.get().getNetworkManager());
         tryDecode(payload, context, payloadIndex, messageHandler);
+    }
+
+    <MSG> MessageHandler<MSG> addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
+        return addCodecIndex(index, messageType, encoder, decoder, messageConsumer, Optional.empty());
     }
 
     <MSG> MessageHandler<MSG> addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer, final Optional<NetworkDirection> networkDirection) {
