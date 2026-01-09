@@ -320,7 +320,7 @@
      public boolean isPushedByFluid() {
          return true;
      }
-@@ -3594,9 +_,17 @@
+@@ -3594,9 +_,20 @@
          return Mth.lerp(p_344421_, this.yRotO, this.yRot);
      }
  
@@ -332,18 +332,25 @@
 +        else return false;
 +     }
 +
-+     public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
++    // Forge: cache field to prevent allocating a new map every tick
++    private it.unimi.dsi.fastutil.objects. @Nullable Object2ObjectMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>> fluidPushCalcs;
++
++    public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
          if (this.touchingUnloadedChunk()) {
 -            return false;
 +            return;
          } else {
              AABB aabb = this.getBoundingBox().deflate(0.001);
              int i = Mth.floor(aabb.minX);
-@@ -3611,25 +_,28 @@
+@@ -3611,25 +_,32 @@
              Vec3 vec3 = Vec3.ZERO;
              int k1 = 0;
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+            var interimCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>>(net.minecraftforge.fluids.FluidType.SIZE.get() - 1);
++            if (fluidPushCalcs == null) {
++                fluidPushCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<>(2);
++            } else if (!fluidPushCalcs.isEmpty()) {
++                fluidPushCalcs.clear();
++            }
  
              for (int l1 = i; l1 < j; l1++) {
                  for (int i2 = k; i2 < l; i2++) {
@@ -358,7 +365,7 @@
                                  flag1 = true;
 -                                d0 = Math.max(d1 - aabb.minY, d0);
 -                                if (flag) {
-+                                var interim = interimCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.ZERO, 0));
++                                var interim = fluidPushCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.ZERO, 0));
 +                                interim.setLeft(Math.max(d1 - aabb.minY, interim.getLeft()));
 +                                if (this.isPushedByFluid(fluidType)) {
                                      Vec3 vec31 = fluidstate.getFlow(this.level(), blockpos$mutableblockpos);
@@ -382,7 +389,7 @@
 -            if (vec3.length() > 0.0) {
 -                if (k1 > 0) {
 -                    vec3 = vec3.scale(1.0 / k1);
-+            interimCalcs.forEach((fluidType, interim) -> {
++            fluidPushCalcs.forEach((fluidType, interim) -> {
 +            if (interim.getMiddle().length() > 0.0D) {
 +                if (interim.getRight() > 0) {
 +                    interim.setMiddle(interim.getMiddle().scale(1.0D / (double)interim.getRight()));
