@@ -320,7 +320,7 @@
      public boolean isPushedByFluid() {
          return true;
      }
-@@ -3570,9 +_,17 @@
+@@ -3594,9 +_,26 @@
          return Mth.lerp(p_344421_, this.yRotO, this.yRot);
      }
  
@@ -330,20 +330,32 @@
 +        if(p_204032_ == FluidTags.WATER) return this.isInFluidType(net.minecraftforge.common.ForgeMod.WATER_TYPE.get());
 +        else if (p_204032_ == FluidTags.LAVA) return this.isInFluidType(net.minecraftforge.common.ForgeMod.LAVA_TYPE.get());
 +        else return false;
-+     }
++    }
 +
-+     public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
++    private static final class FluidCalcs {
++        double height = 0.0D;
++        Vec3 direction = Vec3.ZERO;
++        int count = 0;
++        double height(double height) {
++            return (this.height = this.height >= height ? this.height : height);
++        }
++    }
++
++    public void updateFluidHeightAndDoFluidPushing(Predicate<FluidState> shouldUpdate) {
          if (this.touchingUnloadedChunk()) {
 -            return false;
 +            return;
          } else {
              AABB aabb = this.getBoundingBox().deflate(0.001);
              int i = Mth.floor(aabb.minX);
-@@ -3587,25 +_,28 @@
-             Vec3 vec3 = Vec3.ZERO;
-             int k1 = 0;
+@@ -3608,28 +_,32 @@
+             double d0 = 0.0;
+             boolean flag = this.isPushedByFluid();
+             boolean flag1 = false;
+-            Vec3 vec3 = Vec3.ZERO;
+-            int k1 = 0;
              BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-+            var interimCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, org.apache.commons.lang3.tuple.MutableTriple<Double, Vec3, Integer>>(net.minecraftforge.fluids.FluidType.SIZE.get() - 1);
++            it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs> fluidPushCalcs = null;
  
              for (int l1 = i; l1 < j; l1++) {
                  for (int i2 = k; i2 < l; i2++) {
@@ -357,60 +369,51 @@
                              if (d1 >= aabb.minY) {
                                  flag1 = true;
 -                                d0 = Math.max(d1 - aabb.minY, d0);
--                                if (flag) {
-+                                var interim = interimCalcs.computeIfAbsent(fluidType, t -> org.apache.commons.lang3.tuple.MutableTriple.of(0.0D, Vec3.ZERO, 0));
-+                                interim.setLeft(Math.max(d1 - aabb.minY, interim.getLeft()));
-+                                if (this.isPushedByFluid(fluidType)) {
++                                if (fluidPushCalcs == null)
++                                    fluidPushCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs>(2);
++                                var interim = fluidPushCalcs.computeIfAbsent(fluidType, type -> new FluidCalcs());
++                                d0 = interim.height(d1 - aabb.minY);
++                                flag = this.isPushedByFluid(fluidType);
+                                 if (flag) {
                                      Vec3 vec31 = fluidstate.getFlow(this.level(), blockpos$mutableblockpos);
--                                    if (d0 < 0.4) {
--                                        vec31 = vec31.scale(d0);
-+                                    if (interim.getLeft() < 0.4D) {
-+                                       vec31 = vec31.scale(interim.getLeft());
+                                     if (d0 < 0.4) {
+                                         vec31 = vec31.scale(d0);
                                      }
  
 -                                    vec3 = vec3.add(vec31);
 -                                    k1++;
-+                                    interim.setMiddle(interim.getMiddle().add(vec31));
-+                                    interim.setRight(interim.getRight() + 1);
++                                    interim.direction = interim.direction.add(vec31);
++                                    interim.count++;
                                  }
                              }
                          }
-@@ -3613,27 +_,28 @@
+@@ -3637,6 +_,10 @@
                  }
              }
  
--            if (vec3.length() > 0.0) {
--                if (k1 > 0) {
--                    vec3 = vec3.scale(1.0 / k1);
-+            interimCalcs.forEach((fluidType, interim) -> {
-+            if (interim.getMiddle().length() > 0.0D) {
-+                if (interim.getRight() > 0) {
-+                    interim.setMiddle(interim.getMiddle().scale(1.0D / (double)interim.getRight()));
-                 }
- 
-                 if (!(this instanceof Player)) {
--                    vec3 = vec3.normalize();
-+                    interim.setMiddle(interim.getMiddle().normalize());
++            if (fluidPushCalcs == null) return;
++            for (var entry : fluidPushCalcs.entrySet()) {
++            var vec3 = entry.getValue().direction;
++            var k1 = entry.getValue().count;
+             if (vec3.length() > 0.0) {
+                 if (k1 > 0) {
+                     vec3 = vec3.scale(1.0 / k1);
+@@ -3647,6 +_,7 @@
                  }
  
                  Vec3 vec32 = this.getDeltaMovement();
--                vec3 = vec3.scale(p_204033_);
-+                interim.setMiddle(interim.getMiddle().scale(this.getFluidMotionScale(fluidType)));
++                var p_204033_ = this.getFluidMotionScale(entry.getKey());
+                 vec3 = vec3.scale(p_204033_);
                  double d2 = 0.003;
--                if (Math.abs(vec32.x) < 0.003 && Math.abs(vec32.z) < 0.003 && vec3.length() < 0.0045000000000000005) {
--                    vec3 = vec3.normalize().scale(0.0045000000000000005);
-+                if (Math.abs(vec32.x) < 0.003 && Math.abs(vec32.z) < 0.003 && interim.getMiddle().length() < 0.0045000000000000005) {
-+                    interim.setMiddle(interim.getMiddle().normalize().scale(0.0045000000000000005));
-                 }
- 
--                this.setDeltaMovement(this.getDeltaMovement().add(vec3));
-+                this.setDeltaMovement(this.getDeltaMovement().add(interim.getMiddle()));
+                 if (Math.abs(vec32.x) < 0.003 && Math.abs(vec32.z) < 0.003 && vec3.length() < 0.0045000000000000005) {
+@@ -3656,8 +_,8 @@
+                 this.setDeltaMovement(this.getDeltaMovement().add(vec3));
              }
  
 -            this.fluidHeight.put(p_204032_, d0);
 -            return flag1;
-+            this.setFluidTypeHeight(fluidType, interim.getLeft());
-+            });
++            this.setFluidTypeHeight(entry.getKey(), entry.getValue().height);
++            }
          }
      }
  
