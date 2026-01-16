@@ -526,10 +526,14 @@
 -            }
 -
 -            this.m_20256_(this.m_20184_().m_82549_(vec3));
+-         }
+-
+-         this.f_19799_.put(p_204032_, d0);
+-         return flag1;
 +         if (fluidPushCalcs == null) return;
-+         for (var entry : fluidPushCalcs.entrySet()) {
-+            var vec3 = entry.getValue().direction;
-+            var k1 = entry.getValue().count;
++         fluidPushCalcs.forEach((fluidType, interim) -> {
++            var vec3 = interim.direction;
++            var k1 = interim.count;
 +            if (vec3.m_82553_() > 0.0) {
 +               if (k1 > 0) {
 +                  vec3 = vec3.m_82490_(1.0 / k1);
@@ -540,7 +544,7 @@
 +               }
 +
 +               Vec3 vec32 = this.m_20184_();
-+               var p_204033_ = this.getFluidMotionScale(entry.getKey());
++               var p_204033_ = this.getFluidMotionScale(fluidType);
 +               vec3 = vec3.m_82490_(p_204033_);
 +               double d2 = 0.003;
 +               if (Math.abs(vec32.f_82479_) < 0.003 && Math.abs(vec32.f_82481_) < 0.003 && vec3.m_82553_() < 0.0045000000000000005) {
@@ -550,11 +554,8 @@
 +               this.m_20256_(this.m_20184_().m_82549_(vec3));
 +            }
 +
-+            this.setFluidTypeHeight(entry.getKey(), entry.getValue().height);
-          }
--
--         this.f_19799_.put(p_204032_, d0);
--         return flag1;
++            this.setFluidTypeHeight(fluidType, interim.height);
++         });
        }
     }
  
