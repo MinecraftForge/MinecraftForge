@@ -422,7 +422,7 @@
           });
        }
  
-@@ -2980,42 +_,68 @@
+@@ -2980,9 +_,31 @@
        this.f_19859_ = this.m_146908_();
     }
  
@@ -453,16 +453,10 @@
 -         return false;
 +         return;
        } else {
--         AABB aabb = this.m_20191_().m_82406_(0.001D);
-+         AABB aabb = this.m_20191_().m_82406_(0.001);
+          AABB aabb = this.m_20191_().m_82406_(0.001D);
           int i = Mth.m_14107_(aabb.f_82288_);
-          int j = Mth.m_14165_(aabb.f_82291_);
-          int k = Mth.m_14107_(aabb.f_82289_);
-          int l = Mth.m_14165_(aabb.f_82292_);
-          int i1 = Mth.m_14107_(aabb.f_82290_);
-          int j1 = Mth.m_14165_(aabb.f_82293_);
--         double d0 = 0.0D;
-+         double d0 = 0.0;
+@@ -2994,28 +_,32 @@
+          double d0 = 0.0D;
           boolean flag = this.m_6063_();
           boolean flag1 = false;
 -         Vec3 vec3 = Vec3.f_82478_;
@@ -470,31 +464,26 @@
           BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 +         it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs> fluidPushCalcs = null;
  
--         for(int l1 = i; l1 < j; ++l1) {
--            for(int i2 = k; i2 < l; ++i2) {
--               for(int j2 = i1; j2 < j1; ++j2) {
-+         for (int l1 = i; l1 < j; l1++) {
-+            for (int i2 = k; i2 < l; i2++) {
-+               for (int j2 = i1; j2 < j1; j2++) {
+          for(int l1 = i; l1 < j; ++l1) {
+             for(int i2 = k; i2 < l; ++i2) {
+                for(int j2 = i1; j2 < j1; ++j2) {
                    blockpos$mutableblockpos.m_122178_(l1, i2, j2);
                    FluidState fluidstate = this.m_9236_().m_6425_(blockpos$mutableblockpos);
 -                  if (fluidstate.m_205070_(p_204032_)) {
--                     double d1 = (double)((float)i2 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos));
 +                  net.minecraftforge.fluids.FluidType fluidType = fluidstate.getFluidType();
 +                  if (!fluidType.isAir() && shouldUpdate.test(fluidstate)) {
-+                     double d1 = i2 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos);
+                      double d1 = (double)((float)i2 + fluidstate.m_76155_(this.m_9236_(), blockpos$mutableblockpos));
                       if (d1 >= aabb.f_82289_) {
                          flag1 = true;
 -                        d0 = Math.max(d1 - aabb.f_82289_, d0);
 +                        if (fluidPushCalcs == null)
-+                           fluidPushCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs>(2);
++                            fluidPushCalcs = new it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap<net.minecraftforge.fluids.FluidType, FluidCalcs>(2);
 +                        var interim = fluidPushCalcs.computeIfAbsent(fluidType, type -> new FluidCalcs());
 +                        d0 = interim.height(d1 - aabb.f_82289_);
 +                        flag = this.isPushedByFluid(fluidType);
                          if (flag) {
                             Vec3 vec31 = fluidstate.m_76179_(this.m_9236_(), blockpos$mutableblockpos);
--                           if (d0 < 0.4D) {
-+                           if (d0 < 0.4) {
+                            if (d0 < 0.4D) {
                                vec31 = vec31.m_82490_(d0);
                             }
  
@@ -505,56 +494,32 @@
                          }
                       }
                    }
-@@ -3023,27 +_,32 @@
+@@ -3023,6 +_,10 @@
              }
           }
  
--         if (vec3.m_82553_() > 0.0D) {
--            if (k1 > 0) {
--               vec3 = vec3.m_82490_(1.0D / (double)k1);
--            }
--
--            if (!(this instanceof Player)) {
--               vec3 = vec3.m_82541_();
--            }
--
--            Vec3 vec32 = this.m_20184_();
--            vec3 = vec3.m_82490_(p_204033_ * 1.0D);
--            double d2 = 0.003D;
--            if (Math.abs(vec32.f_82479_) < 0.003D && Math.abs(vec32.f_82481_) < 0.003D && vec3.m_82553_() < 0.0045000000000000005D) {
--               vec3 = vec3.m_82541_().m_82490_(0.0045000000000000005D);
--            }
--
--            this.m_20256_(this.m_20184_().m_82549_(vec3));
--         }
--
--         this.f_19799_.put(p_204032_, d0);
--         return flag1;
 +         if (fluidPushCalcs == null) return;
 +         fluidPushCalcs.forEach((fluidType, interim) -> {
-+            var vec3 = interim.direction;
-+            var k1 = interim.count;
-+            if (vec3.m_82553_() > 0.0) {
-+               if (k1 > 0) {
-+                  vec3 = vec3.m_82490_(1.0 / k1);
-+               }
-+
-+               if (!(this instanceof Player)) {
-+                  vec3 = vec3.m_82541_();
-+               }
-+
-+               Vec3 vec32 = this.m_20184_();
-+               var p_204033_ = this.getFluidMotionScale(fluidType);
-+               vec3 = vec3.m_82490_(p_204033_);
-+               double d2 = 0.003;
-+               if (Math.abs(vec32.f_82479_) < 0.003 && Math.abs(vec32.f_82481_) < 0.003 && vec3.m_82553_() < 0.0045000000000000005) {
-+                  vec3 = vec3.m_82541_().m_82490_(0.0045000000000000005);
-+               }
-+
-+               this.m_20256_(this.m_20184_().m_82549_(vec3));
-+            }
-+
-+            this.setFluidTypeHeight(fluidType, interim.height);
++         var vec3 = interim.direction;
++         var k1 = interim.count;
+          if (vec3.m_82553_() > 0.0D) {
+             if (k1 > 0) {
+                vec3 = vec3.m_82490_(1.0D / (double)k1);
+@@ -3033,6 +_,7 @@
+             }
+ 
+             Vec3 vec32 = this.m_20184_();
++            var p_204033_ = this.getFluidMotionScale(fluidType);
+             vec3 = vec3.m_82490_(p_204033_ * 1.0D);
+             double d2 = 0.003D;
+             if (Math.abs(vec32.f_82479_) < 0.003D && Math.abs(vec32.f_82481_) < 0.003D && vec3.m_82553_() < 0.0045000000000000005D) {
+@@ -3042,8 +_,8 @@
+             this.m_20256_(this.m_20184_().m_82549_(vec3));
+          }
+ 
+-         this.f_19799_.put(p_204032_, d0);
+-         return flag1;
++         this.setFluidTypeHeight(fluidType, interim.height);
 +         });
        }
     }
