@@ -69,7 +69,7 @@ public class LoadingModList {
             ModFile mod = modFile.getFile();
             for (var at : mod.getAccessTransformers()) {
                 if (!Files.exists(at)) {
-                    var message = String.format("Invalid mod file: %s Missing Access Transformer: %s", modFile.getFile().getFileName(), at);
+                    var message = "Invalid mod file: " + modFile.getFile().getFileName() + ". Missing Access Transformer: " + at;
                     errors.add(new ExceptionData(message));
                     LOGGER.error(message);
                 } else
