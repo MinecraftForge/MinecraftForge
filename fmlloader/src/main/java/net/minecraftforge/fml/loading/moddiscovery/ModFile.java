@@ -118,7 +118,7 @@ public class ModFile implements IModFile {
             var paths = new ArrayList<Path>(cfg.size());
             for (var path : cfg)
                 paths.add(getSecureJar().getPath(path.replace('\\', '/')));
-            this.accessTransformers = Collections.unmodifiableList(paths);
+            this.accessTransformers = List.copyOf(paths);
         }
 
         return true;
