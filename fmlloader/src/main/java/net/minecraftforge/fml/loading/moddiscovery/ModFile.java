@@ -49,6 +49,7 @@ public class ModFile implements IModFile {
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
     private Path accessTransformer;
+    private List<Path> accessTransformers = Collections.emptyList();
 
     static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
@@ -91,14 +92,35 @@ public class ModFile implements IModFile {
         return modFileInfo.getMods();
     }
 
+    @Deprecated(forRemoval = true, since = "1.21.11")
     public Optional<Path> getAccessTransformer() {
-        return Optional.ofNullable(Files.exists(accessTransformer) ? accessTransformer : null);
+        return Optional.ofNullable(accessTransformer);
+    }
+
+    public List<Path> getAccessTransformers() {
+        return this.accessTransformers;
     }
 
     public boolean identifyMods() {
         if (this.modFileInfo == null) return this.getType() != Type.MOD;
         LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFileName(), this.modFileInfo.requiredLanguageLoaders());
-        this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
+        var cfg = this.modFileInfo.getConfig()
+            .<List<String>>getConfigElement("accessTransformers")
+            .orElse(null);
+
+        if (cfg == null) {
+            var path = findResource("META-INF", "accesstransformer.cfg");
+            if (Files.exists(path)) {
+                this.accessTransformer = path;
+                this.accessTransformers = List.of(path);
+            }
+        } else if (!cfg.isEmpty()) {
+            var paths = new ArrayList<Path>(cfg.size());
+            for (var path : cfg)
+                paths.add(getSecureJar().getPath(path.replace('\\', '/')));
+            this.accessTransformers = Collections.unmodifiableList(paths);
+        }
+
         return true;
     }
 

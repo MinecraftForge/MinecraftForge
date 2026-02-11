@@ -43,6 +43,12 @@ authors="${mod_authors}" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''${mod_description}'''
+
+# Access Transformers
+# Optional, if not specified Forge will attempt to find the default META-INF/accesstransformer.cfg
+# Specifying a empty list is recommended to opt-out of the default for slightly better loading performance.
+#accessTransformers = []
+
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.${mod_id}]] #optional
     # the modid of the dependency
