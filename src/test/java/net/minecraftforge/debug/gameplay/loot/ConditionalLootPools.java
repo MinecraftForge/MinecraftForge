@@ -39,7 +39,7 @@ import java.util.concurrent.CompletableFuture;
 
 @GameTestNamespace("forge")
 @Mod(ConditionalLootPools.MODID)
-public class ConditionalLootPools extends BaseTestMod {
+public final class ConditionalLootPools extends BaseTestMod {
     public static final String MODID = "conditional_loot_test";
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);

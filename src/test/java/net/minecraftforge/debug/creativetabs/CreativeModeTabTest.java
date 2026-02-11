@@ -25,7 +25,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.RegisterEvent;
 
 @Mod(CreativeModeTabTest.MOD_ID)
-public class CreativeModeTabTest {
+public final class CreativeModeTabTest {
     public static final String MOD_ID = "creative_mode_tab_test";
     private static final boolean ENABLED = true;
 

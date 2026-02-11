@@ -21,7 +21,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 
 @Mod(ClosedTestsMod.MODID)
 @GameTestNamespace("forge")
-public class ClosedTestsMod extends BaseTestMod {
+public final class ClosedTestsMod extends BaseTestMod {
     public static final String MODID = "closed_module_test";
 
     public ClosedTestsMod(FMLJavaModLoadingContext context) {

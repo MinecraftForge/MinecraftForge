@@ -17,7 +17,7 @@ import net.minecraftforge.test.BaseTestMod;
 import net.minecraftforge.test.ModuleProvider;
 
 @Mod(ClosedMod.MODID)
-public class ClosedMod extends BaseTestMod {
+public final class ClosedMod extends BaseTestMod {
     public static final String MODID = "closed_module";
 
     public ClosedMod(FMLJavaModLoadingContext context) {

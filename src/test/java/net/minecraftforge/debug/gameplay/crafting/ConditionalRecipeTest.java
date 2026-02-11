@@ -43,7 +43,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(ConditionalRecipeTest.MODID)
-public class ConditionalRecipeTest extends BaseTestMod {
+public final class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
 
     public ConditionalRecipeTest(FMLJavaModLoadingContext context) {

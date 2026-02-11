@@ -19,7 +19,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(ForcedChunkLoadingTest.MOD_ID)
-public class ForcedChunkLoadingTest extends BaseTestMod {
+public final class ForcedChunkLoadingTest extends BaseTestMod {
     static final String MOD_ID = "forced_chunk_loading";
 
     private static final int MAX_CHUNK_LOCATION_ATTEMPTS = 5;

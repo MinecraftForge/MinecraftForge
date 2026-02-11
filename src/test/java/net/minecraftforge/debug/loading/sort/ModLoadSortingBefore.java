@@ -16,7 +16,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.test.BaseTestMod;
 
 @Mod(ModLoadSortingBefore.MODID)
-public class ModLoadSortingBefore extends BaseTestMod {
+public final class ModLoadSortingBefore extends BaseTestMod {
     static final String MODID = "load_sort_before";
     protected static final Logger LOGGER = LogUtils.getLogger();
     static boolean hasInit = false;

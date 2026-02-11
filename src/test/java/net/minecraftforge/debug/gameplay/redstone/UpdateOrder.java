@@ -27,7 +27,7 @@ import net.minecraftforge.gametest.GameTestNamespace;
  */
 @Mod(UpdateOrder.MODID)
 @GameTestNamespace("forge")
-public class UpdateOrder extends BaseTestMod {
+public final class UpdateOrder extends BaseTestMod {
     public static final String MODID = "update_order";
     private static final int PISTON_DELAY = 4;
 

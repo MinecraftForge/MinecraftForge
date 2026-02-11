@@ -25,7 +25,7 @@ import static net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.*;
 
 @GameTestNamespace("forge")
 @Mod(ModifyOverlayTest.MODID)
-public class ModifyOverlayTest extends BaseTestMod {
+public final class ModifyOverlayTest extends BaseTestMod {
     public static final String MODID = "modify_overlay_test";
 
     private static final Identifier myStackName = name("my_stack_name");

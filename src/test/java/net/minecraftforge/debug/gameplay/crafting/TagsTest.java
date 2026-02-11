@@ -18,7 +18,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(TagsTest.MODID)
 @GameTestNamespace("forge")
-public class TagsTest extends BaseTestMod {
+public final class TagsTest extends BaseTestMod {
     public static final String MODID = "tags_test";
 
     public TagsTest(FMLJavaModLoadingContext context) {

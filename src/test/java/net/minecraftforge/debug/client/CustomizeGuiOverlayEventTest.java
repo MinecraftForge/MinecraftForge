@@ -9,7 +9,7 @@ import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(CustomizeGuiOverlayEventTest.MODID)
-public class CustomizeGuiOverlayEventTest
+public final class CustomizeGuiOverlayEventTest
 {
     private static final boolean ENABLED = false;
 

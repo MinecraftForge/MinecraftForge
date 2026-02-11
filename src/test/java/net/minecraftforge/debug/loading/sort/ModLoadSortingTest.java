@@ -18,7 +18,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(ModLoadSortingTest.MODID)
-public class ModLoadSortingTest extends BaseTestMod {
+public final class ModLoadSortingTest extends BaseTestMod {
     static final String MODID = "load_sort_test";
 
     protected static final Logger LOGGER = LogUtils.getLogger();

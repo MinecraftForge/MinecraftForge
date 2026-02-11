@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 
 @GameTestNamespace("forge")
 @Mod(PreventItemDamageTest.MOD_ID)
-public class PreventItemDamageTest extends BaseTestMod {
+public final class PreventItemDamageTest extends BaseTestMod {
     static final String MOD_ID = "prevent_item_damage";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);

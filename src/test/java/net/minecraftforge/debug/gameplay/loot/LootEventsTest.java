@@ -43,7 +43,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(LootEventsTest.MODID)
 @GameTestNamespace("forge")
-public class LootEventsTest extends BaseTestMod {
+public final class LootEventsTest extends BaseTestMod {
     public static final String MODID = "loot_events";
     @SuppressWarnings("unused")
     private static Logger LOGGER = LogManager.getLogger();

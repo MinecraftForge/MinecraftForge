@@ -24,7 +24,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(ChorusBlockPlacementTest.MOD_ID)
-public class ChorusBlockPlacementTest extends BaseTestMod {
+public final class ChorusBlockPlacementTest extends BaseTestMod {
     static final String MOD_ID = "chorus_block_placement";
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);

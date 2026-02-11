@@ -81,7 +81,7 @@ import java.util.function.Supplier;
 
 @GameTestNamespace("forge")
 @Mod(GlobalLootModifiersTest.MODID)
-public class GlobalLootModifiersTest extends BaseTestMod {
+public final class GlobalLootModifiersTest extends BaseTestMod {
     public static final String MODID = "global_loot_test";
 
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);

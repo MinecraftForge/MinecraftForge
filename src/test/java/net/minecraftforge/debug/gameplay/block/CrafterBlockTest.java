@@ -39,7 +39,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(CrafterBlockTest.MOD_ID)
-public class CrafterBlockTest extends BaseTestMod {
+public final class CrafterBlockTest extends BaseTestMod {
     static final String MOD_ID = "crafter_block";
 
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MOD_ID);

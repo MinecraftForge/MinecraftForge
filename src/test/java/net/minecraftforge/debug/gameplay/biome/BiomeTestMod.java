@@ -24,7 +24,7 @@ import net.minecraftforge.test.BaseTestMod;
 import java.util.List;
 
 @Mod(BiomeTestMod.MOD_ID)
-public class BiomeTestMod extends BaseTestMod {
+public final class BiomeTestMod extends BaseTestMod {
     public static final String MOD_ID = "biome_test";
 
     public static final DeferredRegisterData<ConfiguredFeature<?, ?>> CONFIGURED_FEATURES = DeferredRegisterData.create(Registries.CONFIGURED_FEATURE, MOD_ID);

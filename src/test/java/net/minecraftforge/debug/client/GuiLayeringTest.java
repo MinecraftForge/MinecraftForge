@@ -22,7 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Random;
 
 @Mod(GuiLayeringTest.MODID)
-public class GuiLayeringTest {
+public final class GuiLayeringTest {
     private static final boolean ENABLED = false;
 
     private static final Random RANDOM = new Random();

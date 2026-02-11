@@ -18,7 +18,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(GatherComponentsEventTest.MOD_ID)
-public class GatherComponentsEventTest extends BaseTestMod {
+public final class GatherComponentsEventTest extends BaseTestMod {
     public static final String MOD_ID = "gather_components_test_event";
 
     public GatherComponentsEventTest(FMLJavaModLoadingContext context) {

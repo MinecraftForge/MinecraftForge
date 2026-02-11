@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 
 @GameTestNamespace("forge")
 @Mod(ItemCapabilityTest.MOD_ID)
-public class ItemCapabilityTest extends BaseTestMod {
+public final class ItemCapabilityTest extends BaseTestMod {
     public static final String MOD_ID = "item_caps";
 
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, MOD_ID);

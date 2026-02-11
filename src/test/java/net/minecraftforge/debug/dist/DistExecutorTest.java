@@ -17,7 +17,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(DistExecutorTest.MOD_ID)
 @GameTestNamespace("forge")
-public class DistExecutorTest extends BaseTestMod {
+public final class DistExecutorTest extends BaseTestMod {
     static final String MOD_ID = "dist_executor";
 
     public DistExecutorTest(FMLJavaModLoadingContext context) {

@@ -14,7 +14,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(AutomaticModuleMod.MODID)
-public class AutomaticModuleMod extends BaseTestMod {
+public final class AutomaticModuleMod extends BaseTestMod {
     public static final String MODID = "automatic_module";
 
     public AutomaticModuleMod(FMLJavaModLoadingContext context) {

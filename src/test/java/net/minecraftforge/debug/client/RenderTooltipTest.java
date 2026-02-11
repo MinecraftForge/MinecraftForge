@@ -25,7 +25,7 @@ import java.util.Random;
 
 @GameTestNamespace("forge")
 @Mod(RenderTooltipTest.MODID)
-public class RenderTooltipTest extends BaseTestMod {
+public final class RenderTooltipTest extends BaseTestMod {
     public static final String MODID = "render_tooltip_test";
     private static boolean testMode = false;
     private static int shouldOpen = 0;

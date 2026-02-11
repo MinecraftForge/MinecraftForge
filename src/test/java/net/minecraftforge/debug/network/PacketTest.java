@@ -34,7 +34,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(PacketTest.MODID)
 @GameTestNamespace("forge")
-public class PacketTest extends BaseTestMod {
+public final class PacketTest extends BaseTestMod {
     static final String MODID = "packet";
 
     protected static final Logger LOGGER = LogUtils.getLogger();

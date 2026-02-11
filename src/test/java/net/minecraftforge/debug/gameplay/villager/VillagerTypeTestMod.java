@@ -30,7 +30,7 @@ import java.util.Map;
 
 @GameTestNamespace("forge")
 @Mod(VillagerTypeTestMod.MOD_ID)
-public class VillagerTypeTestMod extends BaseTestMod {
+public final class VillagerTypeTestMod extends BaseTestMod {
     public static final String MOD_ID = "villager_type_test";
 
     private static final DeferredRegister<VillagerType> VILLAGER_TYPES = DeferredRegister.create(Registries.VILLAGER_TYPE, MOD_ID);

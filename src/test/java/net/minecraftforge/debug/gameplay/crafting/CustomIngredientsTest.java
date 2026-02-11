@@ -49,7 +49,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(CustomIngredientsTest.MODID)
-public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
+public final class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     static final String MODID = "custom_ingredients";
     private static final String TAG_DAMAGE = "damage";
     private static final int TEST_DAMAGE = 3;

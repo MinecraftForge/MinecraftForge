@@ -24,7 +24,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(TrySleepTest.MOD_ID)
-public class TrySleepTest extends BaseTestMod {
+public final class TrySleepTest extends BaseTestMod {
     static final String MOD_ID = "try_sleep";
     static final long NIGHT = 13000;
     static final long DAY = 0;

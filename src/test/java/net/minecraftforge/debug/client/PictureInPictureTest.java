@@ -28,7 +28,7 @@ import java.util.Map;
 
 @GameTestNamespace("forge")
 @Mod(PictureInPictureTest.MODID)
-public class PictureInPictureTest extends BaseTestMod {
+public final class PictureInPictureTest extends BaseTestMod {
     public static final String MODID = "pip_test";
     private static int RENDER_FRAMES = 0;
 

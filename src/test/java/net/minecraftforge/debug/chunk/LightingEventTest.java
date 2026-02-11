@@ -23,7 +23,7 @@ import net.minecraftforge.test.BaseTestMod;
  */
 @GameTestNamespace("forge")
 @Mod(LightingEventTest.MODID)
-public class LightingEventTest extends BaseTestMod {
+public final class LightingEventTest extends BaseTestMod {
     public static final String MODID = "lighting_event_test";
 
     private static final int MAX_CHUNK_LOCATION_ATTEMPTS = 5;

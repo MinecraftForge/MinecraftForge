@@ -29,7 +29,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @GameTestNamespace("forge")
 @Mod(NetworkDatapackRegistryTest.MODID)
-public class NetworkDatapackRegistryTest extends BaseTestMod {
+public final class NetworkDatapackRegistryTest extends BaseTestMod {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "network_data_registry";
     private static final ResourceKey<Registry<DataObject>> REGISTRY_KEY = ResourceKey.createRegistryKey(rl("registry"));

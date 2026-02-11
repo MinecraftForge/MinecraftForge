@@ -52,7 +52,7 @@ import com.google.gson.JsonElement;
 
 @Mod(ModelRenderLayerTest.MODID)
 @GameTestNamespace("forge")
-public class ModelRenderLayerTest extends BaseTestMod {
+public final class ModelRenderLayerTest extends BaseTestMod {
     public static final String MODID = "model_render_type";
     private static final String BLOCK_NAME = "cutout_block";
 

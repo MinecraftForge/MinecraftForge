@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 @Mod(DatapackBuiltinEntriesProviderTest.MOD_ID)
-public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
+public final class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
 
     public static final String MOD_ID = "datapack_builtin_entries_provider_test";
     // Vanilla registry entries

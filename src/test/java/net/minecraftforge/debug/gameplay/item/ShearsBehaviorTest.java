@@ -30,7 +30,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(ShearsBehaviorTest.MOD_ID)
 @GameTestNamespace("forge")
-public class ShearsBehaviorTest extends BaseTestMod {
+public final class ShearsBehaviorTest extends BaseTestMod {
     public static final String MOD_ID = "shears_behavior";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);

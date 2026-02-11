@@ -33,7 +33,7 @@ import net.minecraftforge.test.BaseTestMod;
 
 @Mod(ShearsLootTests.MODID)
 @GameTestNamespace("forge")
-public class ShearsLootTests extends BaseTestMod {
+public final class ShearsLootTests extends BaseTestMod {
     public static final String MODID = "shears_loot";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);

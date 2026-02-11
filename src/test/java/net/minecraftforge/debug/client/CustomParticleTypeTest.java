@@ -23,7 +23,7 @@ import java.util.Map;
 
 @GameTestNamespace("forge")
 @Mod(CustomParticleTypeTest.MOD_ID)
-public class CustomParticleTypeTest extends BaseTestMod {
+public final class CustomParticleTypeTest extends BaseTestMod {
     public static final String MOD_ID = "custom_particle_type_test";
     private static final ParticleRenderType CUSTOM_TYPE = new ParticleRenderType("GRP_ONE");
     private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType("GRP_TWO");

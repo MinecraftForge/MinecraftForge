@@ -38,9 +38,9 @@ public abstract class ModContainer {
     protected ModLoadingStage modLoadingStage;
     protected Supplier<?> contextExtension;
     protected final Map<ModLoadingStage, Runnable> activityMap = new EnumMap<>(ModLoadingStage.class);
-    protected final Map<Class<? extends IExtensionPoint<?>>, Supplier<?>> extensionPoints = new IdentityHashMap<>();
+    protected final Map<Class<? extends IExtensionPoint<?>>, Supplier<?>> extensionPoints = new IdentityHashMap<>(8);
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
-    final Set<ModContainer> dependencies = new HashSet<>();
+    final Set<ModContainer> dependencies = new HashSet<>(8);
     /**
      * If you want to handle the event, override {@link #dispatchConfigEvent(IConfigEvent)}
      */

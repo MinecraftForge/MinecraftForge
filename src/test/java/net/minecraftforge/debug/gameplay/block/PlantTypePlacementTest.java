@@ -38,7 +38,7 @@ import static net.minecraft.world.level.block.Blocks.*;
 
 @GameTestNamespace("forge")
 @Mod(PlantTypePlacementTest.MOD_ID)
-public class PlantTypePlacementTest extends BaseTestMod {
+public final class PlantTypePlacementTest extends BaseTestMod {
     static final String MOD_ID = "plant_type_placement";
 
     private static final Map<TagKey<Block>, List<Block>> TAGS = Util.make(new HashMap<>(), map -> {

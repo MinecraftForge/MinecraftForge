@@ -8,10 +8,13 @@ package net.minecraftforge.fml.javafmlmod;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.config.IConfigEvent;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.unsafe.UnsafeHacks;
@@ -26,6 +29,7 @@ import cpw.mods.jarhandling.SecureJar;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Objects;
 import java.util.jar.Attributes;
 
@@ -129,6 +133,14 @@ public class FMLModContainer extends ModContainer {
     private void constructMod() {
         try {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
+
+            if (!Modifier.isFinal(modClass.getModifiers())) {
+                var errorMsg = "Mod class "  + modClass.getName() + " should be final. Instantiating non-final mod classes is deprecated and may fail in a future release.";
+                LOGGER.warn(LOADING, errorMsg);
+                if (!FMLEnvironment.production)
+                    ModLoader.get().addWarning(new ModLoadingWarning(modInfo, ModLoadingStage.CONSTRUCT, errorMsg, modClass.getName()));
+            }
+
             Constructor<?> constructor;
             try {
                 constructor = modClass.getDeclaredConstructor(context.getClass());

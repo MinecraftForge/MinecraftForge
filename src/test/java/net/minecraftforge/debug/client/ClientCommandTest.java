@@ -21,7 +21,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 
 @GameTestNamespace("forge")
 @Mod(ClientCommandTest.MODID)
-public class ClientCommandTest extends BaseTestMod {
+public final class ClientCommandTest extends BaseTestMod {
     public static final String MODID = "client_command";
     private static final String COMMAND = "testClientCommand";
     private static int LAST_COMMAND = -1;

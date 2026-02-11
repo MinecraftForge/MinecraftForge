@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Datagen.MOD_ID)
-public class Datagen {
+public final class Datagen {
     static final String MOD_ID = "mdk_datagen";
 
     public Datagen(FMLJavaModLoadingContext context) {

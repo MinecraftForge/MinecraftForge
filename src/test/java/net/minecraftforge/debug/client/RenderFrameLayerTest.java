@@ -26,7 +26,7 @@ import com.mojang.blaze3d.framegraph.FramePass;
 
 @GameTestNamespace("forge")
 @Mod(RenderFrameLayerTest.MODID)
-public class RenderFrameLayerTest extends BaseTestMod {
+public final class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";
     private static final IForgeGameTestHelper.BoolFlag passOne = new IForgeGameTestHelper.BoolFlag("pass_one_flag");
     private static final IForgeGameTestHelper.BoolFlag passTwo = new IForgeGameTestHelper.BoolFlag("pass_two_flag");

@@ -26,7 +26,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 @Mod(LateBoundIdMapperTest.MODID)
 @GameTestNamespace("forge")
-public class LateBoundIdMapperTest extends BaseTestMod {
+public final class LateBoundIdMapperTest extends BaseTestMod {
     public LateBoundIdMapperTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
     }

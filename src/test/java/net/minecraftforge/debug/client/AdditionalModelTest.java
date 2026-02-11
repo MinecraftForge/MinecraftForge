@@ -63,7 +63,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 @GameTestNamespace("forge")
 @Mod(AdditionalModelTest.MODID)
-public class AdditionalModelTest extends BaseTestMod {
+public final class AdditionalModelTest extends BaseTestMod {
     public static final String MODID = "additional_model";
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
