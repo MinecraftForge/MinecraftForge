@@ -127,7 +127,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Mod("forge")
-public class ForgeMod {
+public final class ForgeMod {
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");

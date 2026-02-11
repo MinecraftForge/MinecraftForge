@@ -135,6 +135,7 @@ public class FMLModContainer extends ModContainer {
             LOGGER.trace(LOADING, "Loading mod instance {} of type {}", getModId(), modClass.getName());
 
             if (!Modifier.isFinal(modClass.getModifiers())) {
+                // TODO: [Forge][26.1] Promote this deprecation warning to an error
                 var errorMsg = "Mod class "  + modClass.getName() + " should be final. Instantiating non-final mod classes is deprecated and may fail in a future release.";
                 LOGGER.warn(LOADING, errorMsg);
                 if (!FMLEnvironment.production)
