@@ -310,6 +310,10 @@ public class ModLoader
         return completedStates.contains(state);
     }
 
+    public boolean hasCompletedState(IModLoadingState state) {
+        return completedStates.contains(state);
+    }
+
     public <T extends Event & IModBusEvent> void runEventGenerator(Function<ModContainer, T> generator) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
