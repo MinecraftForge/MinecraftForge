@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:[6.0.16,6.2)'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[6.0.36,6.2)'
     }
 }
 
@@ -299,7 +299,10 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
                 mods {
-                    forge { source sourceSets.main }
+                    forge {
+                        source sourceSets.main
+                        source sourceSets.userdev
+                    }
                 }
             }
 
@@ -343,7 +346,10 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
                 mods {
-                    forge { source sourceSets.main }
+                    forge {
+                        source sourceSets.main
+                        source sourceSets.userdev
+                    }
                 }
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
@@ -351,12 +357,39 @@ project(':forge') {
             }
 
             forge_test_data {
-                parent runs.forge_data
                 taskName 'forge_test_data'
 
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                // Support Forge devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
+
+                environment 'target', 'fmldevdata'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
                 ideaModule "${rootProject.name}.${project.name}.userdev_test"
+
+                mods {
+                    forge {
+                        source sourceSets.main
+                        source sourceSets.userdev
+                    }
+                }
 
                 mods {
                     tests { sources  sourceSets.test }
