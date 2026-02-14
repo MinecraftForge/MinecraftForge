@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event.entity.living;
 
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
