@@ -22,6 +22,8 @@ package net.minecraftforge.fml.network.simple;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkInstance;
 import org.apache.logging.log4j.LogManager;
@@ -70,6 +72,7 @@ public class IndexedMessageCodec
         private final Class<MSG> messageType;
         private Optional<BiConsumer<MSG, Integer>> loginIndexSetter;
         private Optional<Function<MSG, Integer>> loginIndexGetter;
+        private NetworkDirection direction;
 
         public MessageHandler(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer)
         {
@@ -82,6 +85,12 @@ public class IndexedMessageCodec
             this.loginIndexSetter = Optional.empty();
             indicies.put((short)(index & 0xff), this);
             types.put(messageType, this);
+        }
+
+        void setDirection(NetworkDirection value) {
+        	if (this.direction != null)
+        		throw new IllegalStateException("Can not set direction to " + value + " it is already set to " + this.direction);
+        	this.direction = value;
         }
 
         void setLoginIndexSetter(BiConsumer<MSG, Integer> loginIndexSetter)
@@ -153,6 +162,10 @@ public class IndexedMessageCodec
         if (messageHandler == null) {
             LOGGER.error(SIMPLENET, "Received invalid discriminator byte {} on channel {}", discriminator, Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
             return;
+        }
+        if (messageHandler.direction != null && messageHandler.direction != context.get().getDirection()) {
+            context.get().getNetworkManager().closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            throw new IllegalStateException("Invalid packet received, aborting connection");
         }
         tryDecode(payload, context, payloadIndex, messageHandler);
     }
