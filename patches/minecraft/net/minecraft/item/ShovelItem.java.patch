@@ -9,12 +9,24 @@
     }
  
     public boolean func_150897_b(BlockState p_150897_1_) {
-@@ -32,7 +32,7 @@
+@@ -32,8 +32,8 @@
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();
 -      if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_180495_p(blockpos.func_177984_a()).func_196958_f()) {
-+      if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_180495_p(blockpos.func_177984_a()).isAir(world, blockpos.func_177984_a())) {
-          BlockState blockstate = field_195955_e.get(world.func_180495_p(blockpos).func_177230_c());
+-         BlockState blockstate = field_195955_e.get(world.func_180495_p(blockpos).func_177230_c());
++       if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_175623_d(blockpos.func_177984_a())) {
++          BlockState blockstate =  world.func_180495_p(blockpos).getToolModifiedState(world, blockpos, p_195939_1_.func_195999_j(), p_195939_1_.func_195996_i(), net.minecraftforge.common.ToolType.SHOVEL);
           if (blockstate != null) {
              PlayerEntity playerentity = p_195939_1_.func_195999_j();
+             world.func_184133_a(playerentity, blockpos, SoundEvents.field_187771_eN, SoundCategory.BLOCKS, 1.0F, 1.0F);
+@@ -52,4 +52,9 @@
+ 
+       return ActionResultType.PASS;
+    }
++
++   @javax.annotation.Nullable
++   public static BlockState getShovelPathingState(BlockState originalState) {
++      return field_195955_e.get(originalState.func_177230_c());
++   }
+ }
