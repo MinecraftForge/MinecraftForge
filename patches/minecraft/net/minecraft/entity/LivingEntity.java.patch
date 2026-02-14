@@ -302,6 +302,20 @@
        if (!this.swinging || this.swingTime >= this.getCurrentSwingDuration() / 2 || this.swingTime < 0) {
           this.swingTime = -1;
           this.swinging = true;
+@@ -1670,9 +_,10 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    private void swapHandItems() {
+-      ItemStack itemstack = this.getItemBySlot(EquipmentSlotType.OFFHAND);
+-      this.setItemSlot(EquipmentSlotType.OFFHAND, this.getItemBySlot(EquipmentSlotType.MAINHAND));
+-      this.setItemSlot(EquipmentSlotType.MAINHAND, itemstack);
++      net.minecraftforge.event.entity.living.LivingSwapItemsEvent.Hands event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
++      if (event.isCanceled()) return;
++      this.setItemSlot(EquipmentSlotType.OFFHAND, event.getItemSwappedToOffHand());
++      this.setItemSlot(EquipmentSlotType.MAINHAND, event.getItemSwappedToMainHand());
+    }
+ 
+    protected void outOfWorld() {
 @@ -1848,15 +_,16 @@
        }
  
