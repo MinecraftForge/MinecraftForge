@@ -454,7 +454,7 @@ public class BlockEvent extends Event
      * from changing the block's state.
      */
     @Cancelable
-    public static class BlockToolInteractEvent extends BlockEvent
+    public static final class BlockToolInteractEvent extends BlockEvent
     {
 
         private final PlayerEntity player;

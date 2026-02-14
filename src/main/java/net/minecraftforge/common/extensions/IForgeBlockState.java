@@ -915,7 +915,7 @@ public interface IForgeBlockState
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
-     * @param toolTypes The tool types to be considered when performing the action
+     * @param toolType The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
      */
     @Nullable
