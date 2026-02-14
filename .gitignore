@@ -15,8 +15,8 @@
 #gradle
 /build
 /.gradle
-/mdk/.gradle
-/mdk/build
+/**/.gradle
+/**/build
 
 #occupational hazards
 /projects/mcp/
