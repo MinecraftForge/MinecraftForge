@@ -150,6 +150,7 @@ public class SimpleChannel
         private Function<MSG, Integer> loginIndexGetter;
         private BiConsumer<MSG, Integer> loginIndexSetter;
         private Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators;
+        private NetworkDirection direction;
 
         private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
@@ -157,6 +158,11 @@ public class SimpleChannel
             builder.id = id;
             builder.type = type;
             return builder;
+        }
+
+        public MessageBuilder<MSG> direction(NetworkDirection expected) {
+        	this.direction = expected;
+        	return this;
         }
 
         public MessageBuilder<MSG> encoder(BiConsumer<MSG, PacketBuffer> encoder) {
@@ -216,6 +222,7 @@ public class SimpleChannel
 
         public void add() {
             final IndexedMessageCodec.MessageHandler<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
+            message.setDirection(direction);
             if (this.loginIndexSetter != null) {
                 message.setLoginIndexSetter(this.loginIndexSetter);
             }
