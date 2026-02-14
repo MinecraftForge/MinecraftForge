@@ -136,6 +136,29 @@
        if (this.isInvulnerableTo(p_70097_1_)) {
           return false;
        } else if (this.level.isClientSide) {
+@@ -931,7 +_,7 @@
+          boolean flag = false;
+          float f1 = 0.0F;
+          if (p_70097_2_ > 0.0F && this.isDamageSourceBlocked(p_70097_1_)) {
+-            this.hurtCurrentlyUsedShield(p_70097_2_);
+-            f1 = p_70097_2_;
+-            p_70097_2_ = 0.0F;
++            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_70097_1_, p_70097_2_);
++            if(!ev.isCanceled()) {
++            if(ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield(p_70097_2_);
++            f1 = ev.getBlockedDamage();
++            p_70097_2_ -= ev.getBlockedDamage();
+             if (!p_70097_1_.isProjectile()) {
+                Entity entity = p_70097_1_.getDirectEntity();
+                if (entity instanceof LivingEntity) {
+@@ -952,6 +_,7 @@
+ 
+             flag = true;
+          }
++         }
+ 
+          this.animationSpeed = 1.5F;
+          boolean flag1 = true;
 @@ -981,8 +_,8 @@
              if (entity1 instanceof PlayerEntity) {
                 this.lastHurtByPlayerTime = 100;

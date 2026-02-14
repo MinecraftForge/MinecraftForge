@@ -153,6 +153,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="audio_stream_test"
 [[mods]]
+    modId="shield_block_event"
+[[mods]]
     modId="living_swap_items_event_test"
 
 # ADD ABOVE THIS LINE

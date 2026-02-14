@@ -1416,6 +1416,13 @@ public class ForgeHooks
         });
     }
 
+    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked)
+    {
+        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e;
+    }
+
     public static LivingSwapItemsEvent.Hands onLivingSwapHandItems(LivingEntity livingEntity)
     {
         LivingSwapItemsEvent.Hands event = new LivingSwapItemsEvent.Hands(livingEntity);
