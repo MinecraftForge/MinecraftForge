@@ -5,9 +5,9 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-        classpath 'org.ow2.asm:asm:7.1'
-        classpath 'org.ow2.asm:asm-tree:7.1'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.197'
+        classpath 'org.ow2.asm:asm:7.2'
+        classpath 'org.ow2.asm:asm-tree:7.2'
     }
 }
 import groovy.json.JsonSlurper
@@ -41,21 +41,15 @@ import org.objectweb.asm.ClassReader
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
-    id 'org.ajoberstar.grgit' version '3.1.1'
+    id 'org.ajoberstar.grgit' version '4.1.1'
     id 'de.undercouch.download' version '3.3.0'
     id 'com.github.ben-manes.versions' version '0.22.0'
+    // Does not support this old of gradle
+    //id 'net.minecraftforge.gradlejarsigner' version '1.0.5'
 }
 apply plugin: 'eclipse'
 
 ext {
-    JAR_SIGNER = null
-    if (project.hasProperty('keystore')) {
-        JAR_SIGNER = [
-            storepass: project.properties.keystoreStorePass,
-            keypass: project.properties.keystoreKeyPass,
-            keystore: project.properties.keystore
-        ]
-    }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
     MC_VERSION = '1.14.4'
@@ -70,6 +64,7 @@ project(':mcp') {
     }
 }
 
+if (findProject(':clean') != null) {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'eclipse'
@@ -113,9 +108,10 @@ project(':clean') {
         }
     }
 }
+}
 
-project(':forge') {    
-    evaluationDependsOn(':clean')
+project(':forge') {
+    evaluationDependsOn(findProject(':clean') != null ? ':clean' : ':mcp')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
@@ -214,7 +210,9 @@ project(':forge') {
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
-        parent = project(':clean')
+        parent = project(':mcp')
+        mcVersion = MC_VERSION
+        mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
         srgPatches = true
@@ -415,8 +413,8 @@ project(':forge') {
         installer 'com.electronwill.night-config:toml:3.6.0'
         installer 'org.jline:jline:3.12.+'
         installer 'org.apache.maven:maven-artifact:3.6.0'
-        installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
+        installer 'net.jodah:typetools:0.8.3'
         installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
         installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
         installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
@@ -443,48 +441,21 @@ project(':forge') {
     if (changelog.exists())
         extraTxts += changelog
     
-    task downloadCrowdin() {
-        ext {
-            output = file('build/crowdin_raw.zip')
-            update = file('build/crowdin.json')
-            id = 'minecraft-forge'
-        }
-        onlyIf {
-            project.hasProperty('crowdinKey') && !project.gradle.startParameter.isOffline()
-        }
-        doLast {
-            download {
-                src "https://api.crowdin.com/api/project/${id}/export?key=${project.crowdinKey}&json"
-                dest update
-                overwrite true
-            }
-            if (!update.text.contains('success')) {
-                throw new RuntimeException("Crowdin export failed, see ${update} for more info")
-            }
-            download {
-                src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${project.crowdinKey}"
-                dest output
-                overwrite true
-            }
-        }
+
+    tasks.register('downloadCrowdin', Download) {
+        src 'https://files.minecraftforge.net/crowdin.zip'
+        dest file('build/crowdin.zip')
+        onlyIfModified true
+        quiet true
     }
     
     task crowdin(type: Zip) {
         dependsOn downloadCrowdin
-        onlyIf {
-            !downloadCrowdin.state.skipped
-        }
         baseName = project.name
         version = project.version
         classifier = 'crowdin'
         destinationDir = file('build/distributions')
-        from(zipTree(downloadCrowdin.output)){
-            eachFile { //Tired of waiting for crowdin API, rename things myself. Remove once crowdin stops being dumb
-                    if (it.name.equals('en_us.json') && !it.path.startsWith('assets/')) {
-                        it.name = it.path.split('/')[0] + '.json'
-                        it.path = 'assets/forge/lang/' + it.name
-                    }
-                }
+        from(zipTree(downloadCrowdin.dest)){
                 exclude { it.isDirectory() }
                 rename { it.toLowerCase() }//Minecraft needs it lowercase.
                 exclude '**/*.lang' //Pre-1.13 format
@@ -687,7 +658,7 @@ project(':forge') {
         }
     }
 
-    task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
+    task launcherJson(dependsOn: ['universalJar', 'launcherJar']) {
         inputs.file universalJar.archivePath
         inputs.file { launcherJar.archivePath }
         ext {
@@ -900,6 +871,11 @@ project(':forge') {
         }
     }
     
+    jar {
+        // this needs filtering because its a package that doesn't have any classes. Its a bug in FG but I dont care to fix it there.
+        exclude('net/minecraft/client/entity/package-info.class')
+    }
+    
     universalJar {
         from extraTxts
         
@@ -923,7 +899,7 @@ project(':forge') {
         */
         
         // add crowdin locales
-        from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
+        from zipTree(crowdin.archivePath)
         dependsOn crowdin
 
         doFirst {
@@ -970,11 +946,11 @@ project(':forge') {
     }
     
     task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
+        artifact = 'net.minecraftforge:installer:2.2.9:fatjar'
         changing = true
     }
     
-    task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
+    task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, universalJar, launcherJar]) {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
@@ -1003,24 +979,12 @@ project(':forge') {
         }
     }
     
-    [universalJar, launcherJar, installerJar].each { t -> 
-        task "sign${t.name.capitalize()}"(type: SignJar, dependsOn: t) {
-            onlyIf {
-                JAR_SIGNER != null && t.state.failure == null
-            }
-            def jarsigner = JAR_SIGNER == null ? [:] : JAR_SIGNER
-            alias = 'forge'
-            storePass = jarsigner.storepass
-            keyPass = jarsigner.keypass
-            keyStore = jarsigner.keystore
-            inputFile = t.archivePath
-            outputFile = t.archivePath
-            doFirst {
-                project.logger.lifecycle('Signing: ' + inputFile)
-            }
-        }
-        t.finalizedBy(tasks.getByName("sign${t.name.capitalize()}"))
-    }
+    /*
+    jarSigner.autoDetect()
+    jarSigner.sign(universalJar)
+    jarSigner.sign(launcherJar)
+    jarSigner.sign(installerJar)
+    */
     
     task makeMdk(type: Zip) {
         baseName = project.name
@@ -1316,6 +1280,7 @@ def getClasspath(project, libs, artifact) {
 
 //evaluationDependsOnChildren()
 task setup() {
+    if (findProject(':clean') != null)
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
