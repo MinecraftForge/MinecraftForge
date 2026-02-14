@@ -170,6 +170,15 @@
                 if (wolfentity.isTame()) {
                    this.lastHurtByPlayerTime = 100;
                    LivingEntity livingentity = wolfentity.getOwner();
+@@ -1084,7 +_,7 @@
+ 
+          for(Hand hand : Hand.values()) {
+             ItemStack itemstack1 = this.getItemInHand(hand);
+-            if (itemstack1.getItem() == Items.TOTEM_OF_UNDYING) {
++            if (itemstack1.getItem() == Items.TOTEM_OF_UNDYING && net.minecraftforge.common.ForgeHooks.onLivingUseTotem(this, p_190628_1_, itemstack1, hand)) {
+                itemstack = itemstack1.copy();
+                itemstack1.shrink(1);
+                break;
 @@ -1165,6 +_,7 @@
     }
  
