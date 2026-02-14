@@ -30,19 +30,14 @@ plugins {
     id 'de.undercouch.download' version '5.1.3'
     id 'net.minecraftforge.gradle.patcher' version '[6.0,6.2)' apply false
     id 'net.minecraftforge.gradle.mcp' version '[6.0,6.2)' apply false
+    id 'net.minecraftforge.gradlejarsigner' version '1.0.4'
 }
 
 Util.init() //Init all our extension methods!
 
+jarSigner.autoDetect('forge')
+
 ext {
-    JAR_SIGNER = null
-    if (project.hasProperty('keystore')) {
-        JAR_SIGNER = [
-            storepass: project.properties.keystoreStorePass,
-            keypass: project.properties.keystoreKeyPass,
-            keystore: project.properties.keystore
-        ]
-    }
     MAPPING_CHANNEL = 'official'
     MAPPING_VERSION = '1.18.2'
     MC_VERSION = '1.18.2'
@@ -343,27 +338,6 @@ def sharedFmlonlyForge = { Project prj ->
         changing = true
     }
 
-    prj.afterEvaluate {
-        [prj.tasks.universalJar, prj.tasks.installerJar].each { t ->
-            def signTask = prj.task([type: SignJar, dependsOn: t], "sign${t.name.capitalize()}") {
-                onlyIf {
-                    JAR_SIGNER != null && t.state.failure == null
-                }
-                def jarsigner = JAR_SIGNER == null ? [:] : JAR_SIGNER
-                alias = 'forge'
-                storePass = jarsigner.storepass
-                keyPass = jarsigner.keypass
-                keyStore = jarsigner.keystore
-                inputFile = t.archiveFile.get().asFile
-                outputFile = t.archiveFile.get().asFile
-                doFirst {
-                    prj.logger.lifecycle('Signing: ' + inputFile)
-                }
-            }
-            t.finalizedBy(signTask)
-        }
-    }
-
     prj.tasks.userdevConfig {
         def launchPrefix = prj.name == "forge" ? "forge" : "fml"
         getArtifacts(prj, prj.configurations.installer, true).each { key, lib -> libraries.add(lib.name) }
@@ -544,6 +518,7 @@ def sharedFmlonlyForge = { Project prj ->
                 //rename 'run.sh',  "run_forge_${VERSION.replace('-', '_').sh"
                 //rename 'run.bat', "run_forge_${VERSION.replace('-', '_').bat"
             }
+            jarSigner.sign(it)
         }
     }
 }
@@ -658,7 +633,7 @@ project(':fmlonly') {
         }
     }
 
-    task installerJson(type: InstallerJson, dependsOn: 'signUniversalJar') {
+    task installerJson(type: InstallerJson, dependsOn: universalJar) {
         icon = rootProject.file('icon.ico')
         packedDependencies = PACKED_DEPS
 
@@ -1310,7 +1285,7 @@ project(':forge') {
         }
     }
 
-    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, 'signUniversalJar']) {
+    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, universalJar]) {
         ext {
             // remove :fatjar
             BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
@@ -1546,9 +1521,10 @@ project(':forge') {
                 }
             }
         }
+        jarSigner.sign(it)
     }
 
-    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, 'signUniversalJar', launcherJson]) {
+    task installerJar(type: InstallerJar, dependsOn: [genClientBinPatches, genServerBinPatches, universalJar, launcherJson]) {
         packedDependencies = PACKED_DEPS
         from(extraTxts)
         from(rootProject.file('/forge_installer_logo.png')) {
@@ -1608,6 +1584,10 @@ project(':forge') {
                 files.from files("$rootDir/src/test/java")
             }
         }
+    }
+    
+    tasks.named('checkLicenseMain') {
+        mustRunAfter 'extractMapped'
     }
 
     reobfJar {
