@@ -44,9 +44,13 @@ public class ModDiscoverer {
         ServiceLoader<IModLocator> modLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IModLocator.class);
         ServiceLoader<IDependencyLocator> dependencyLocators = ServiceLoader.load(moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE).orElseThrow(), IDependencyLocator.class);
         modLocatorList = ServiceLoaderUtils.streamWithErrorHandling(modLocators, sce -> LOGGER.error("Failed to load mod locator list", sce)).collect(Collectors.toList());
-        for (IModLocator iModLocator : modLocatorList) iModLocator.initArguments(arguments);
+        for (IModLocator iModLocator : modLocatorList) {
+            iModLocator.initArguments(arguments);
+        }
         dependencyLocatorList = ServiceLoaderUtils.streamWithErrorHandling(dependencyLocators, sce -> LOGGER.error("Failed to load dependency locator list", sce)).collect(Collectors.toList());
-        for (IDependencyLocator l : dependencyLocatorList) l.initArguments(arguments);
+        for (IDependencyLocator l : dependencyLocatorList) {
+            l.initArguments(arguments);
+        }
         if (LOGGER.isDebugEnabled(LogMarkers.CORE))
         {
             LOGGER.debug(LogMarkers.CORE, "Found Mod Locators : {}", modLocatorList.stream()
