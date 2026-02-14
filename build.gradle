@@ -1617,6 +1617,10 @@ project(':forge') {
             }
         }
     }
+    
+    tasks.named('checkLicenseMain') {
+        mustRunAfter 'extractMapped'
+    }
 
     reobfJar {
         tool = FART
