@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.registries.ClearableRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +49,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.config.ConfigTracker;
 
 public class NetworkHooks
@@ -70,8 +72,14 @@ public class NetworkHooks
     }
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
-        return NetworkRegistry.findTarget(packet.getName()).
-                map(ni->ni.dispatch(packet.getDirection(), packet, manager)).orElse(Boolean.FALSE);
+    	if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
+    		 manager.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+             return false;
+    	}
+    	NetworkInstance target = NetworkRegistry.findTarget(packet.getName()).orElse(null);
+    	if (target == null)
+    		return false;
+    	return target.dispatch(packet.getDirection(), packet, manager);
     }
 
     public static void registerServerLoginChannel(NetworkManager manager, CHandshakePacket packet)
