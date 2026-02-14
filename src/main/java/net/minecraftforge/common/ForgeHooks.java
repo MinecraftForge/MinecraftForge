@@ -324,6 +324,11 @@ public class ForgeHooks
         return event;
     }
 
+    public static boolean onLivingUseTotem(LivingEntity entity, DamageSource damageSource, ItemStack totem, Hand hand)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingUseTotemEvent(entity, damageSource, totem, hand));
+    }
+
     public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount)
     {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);

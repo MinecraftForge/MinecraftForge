@@ -172,6 +172,15 @@
                 if (wolfentity.func_70909_n()) {
                    this.field_70718_bc = 100;
                    LivingEntity livingentity = wolfentity.func_70902_q();
+@@ -990,7 +1016,7 @@
+ 
+          for(Hand hand : Hand.values()) {
+             ItemStack itemstack1 = this.func_184586_b(hand);
+-            if (itemstack1.func_77973_b() == Items.field_190929_cY) {
++            if (itemstack1.func_77973_b() == Items.field_190929_cY && net.minecraftforge.common.ForgeHooks.onLivingUseTotem(this, p_190628_1_, itemstack1, hand)) {
+                itemstack = itemstack1.func_77946_l();
+                itemstack1.func_190918_g(1);
+                break;
 @@ -1070,6 +1096,7 @@
     }
  
