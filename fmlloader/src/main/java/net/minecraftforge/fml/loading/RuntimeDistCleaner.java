@@ -66,6 +66,10 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
 
         var annotations = unpack(classNode.visibleAnnotations);
         var isNonMinecraftClass = !isMinecraftClass(classNode.name);
+        final class LazyInit {
+            private LazyInit() {}
+            private static final boolean CAN_EXPLODE = !FMLEnvironment.production && "21.6".equals(FMLLoader.versionInfo().mcVersion());
+        }
 
         if (remove(annotations, DIST)) {
             LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
@@ -73,8 +77,12 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
         }
 
         if (!annotations.isEmpty()) {
-            if (isNonMinecraftClass)
-                LOGGER.warn(DISTXFORM, "Class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", classNode.name);
+            if (isNonMinecraftClass) {
+                if (LazyInit.CAN_EXPLODE)
+                    throw new UnsupportedOperationException("Mod class " + classNode.name + " is annotated with @OnlyIn, this is no longer supported as it slowed down startup times");
+                else
+                    LOGGER.warn(DISTXFORM, "Class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", classNode.name);
+            }
 
             if (!FMLEnvironment.production && hasModAnnotation(classNode.visibleAnnotations)) {
                 LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
@@ -113,8 +121,12 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
                 itr.remove();
                 changed = true;
 
-                if (isNonMinecraftClass)
-                    LOGGER.warn(DISTXFORM, "Field {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", field.name, classNode.name);
+                if (isNonMinecraftClass) {
+                    if (LazyInit.CAN_EXPLODE)
+                        throw new UnsupportedOperationException("Field " + field.name + " in mod class " + classNode.name + " is annotated with @OnlyIn, this is no longer supported as it slowed down startup times");
+                    else
+                        LOGGER.warn(DISTXFORM, "Field {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", field.name, classNode.name);
+                }
             }
         }
 
@@ -127,8 +139,12 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
                 lambdaGatherer.accept(method);
                 changed = true;
 
-                if (isNonMinecraftClass)
-                    LOGGER.warn(DISTXFORM, "Method {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", method.name, classNode.name);
+                if (isNonMinecraftClass) {
+                    if (LazyInit.CAN_EXPLODE)
+                        throw new UnsupportedOperationException("Method " + method.name + " in mod class " + classNode.name + " is annotated with @OnlyIn, this is no longer supported as it slowed down startup times");
+                    else
+                        LOGGER.warn(DISTXFORM, "Method {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", method.name, classNode.name);
+                }
             }
         }
 
