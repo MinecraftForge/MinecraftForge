@@ -45,6 +45,7 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
 
     @Override
     public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty) {
+        // TODO: [FML][RuntimeDistCleaner] In 26.1, only return YAY for MC classes on mod dev server
         if (isEmpty)
             return NAY;
 
@@ -53,7 +54,7 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
             return NAY;
 
         // No Vanilla classes use @OnlyIn(Dist.SERVER), so we can skip them entirely when we're running on a client
-        if (FMLEnvironment.dist.isClient() && (internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/")))
+        if (FMLEnvironment.dist.isClient() && isMinecraftClass(internalName))
             return NAY;
 
         return YAY;
@@ -64,15 +65,21 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
         var changed = false;
 
         var annotations = unpack(classNode.visibleAnnotations);
+        var isNonMinecraftClass = !isMinecraftClass(classNode.name);
 
         if (remove(annotations, DIST)) {
             LOGGER.error(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
-            throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
+            throw new RuntimeException("Attempted to load class " + classNode.name  + " for invalid dist " + DIST);
         }
 
-        if (!FMLEnvironment.production && !annotations.isEmpty() && hasModAnnotation(classNode.visibleAnnotations)) {
-            LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
-            throw new RuntimeException("Found @OnlyIn on @Mod class "+ classNode.name  + " - this is not allowed as it causes crashes. Remove the OnlyIn and consider setting clientSideOnly=true in the root of your mods.toml instead");
+        if (!annotations.isEmpty()) {
+            if (isNonMinecraftClass)
+                LOGGER.warn(DISTXFORM, "Class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", classNode.name);
+
+            if (!FMLEnvironment.production && hasModAnnotation(classNode.visibleAnnotations)) {
+                LOGGER.error(DISTXFORM, "Attempted to load class {} with @Mod and @OnlyIn/@OnlyIns annotations", classNode.name);
+                throw new RuntimeException("Found @OnlyIn on @Mod class " + classNode.name  + " - this is not allowed as it causes crashes. Remove the OnlyIn and consider setting clientSideOnly=true in the root of your mods.toml instead");
+            }
         }
 
         if (classNode.interfaces != null && !classNode.interfaces.isEmpty()) {
@@ -81,7 +88,7 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
                     continue;
 
                 if (classNode.interfaces.remove(ann.intf)) {
-                    LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, ann.intf);
+                    LOGGER.debug(DISTXFORM, "Removing Interface: {} implements {}", classNode.name, ann.intf);
                     changed = true;
                 }
             }
@@ -105,6 +112,9 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
                 LOGGER.debug(DISTXFORM, "Removing field: {}.{}", classNode.name, field.name);
                 itr.remove();
                 changed = true;
+
+                if (isNonMinecraftClass)
+                    LOGGER.warn(DISTXFORM, "Field {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", field.name, classNode.name);
             }
         }
 
@@ -116,6 +126,9 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
                 itr.remove();
                 lambdaGatherer.accept(method);
                 changed = true;
+
+                if (isNonMinecraftClass)
+                    LOGGER.warn(DISTXFORM, "Method {} in class {} is annotated with @OnlyIn, this is deprecated and won't work in a future MC release.", method.name, classNode.name);
             }
         }
 
@@ -142,7 +155,7 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
         return changed ? ComputeFlags.SIMPLE_REWRITE : ComputeFlags.NO_REWRITE;
     }
 
-    private static record Target(String side, String intf) {
+    private record Target(String side, String intf) {
         static Target from(final AnnotationNode node) {
             var idx = node.values.indexOf("value");
             var value = (String[])node.values.get(idx + 1); // Enums are stored as [Type, Value]
@@ -206,6 +219,10 @@ public final class RuntimeDistCleaner implements ILaunchPluginService {
         }
 
         return false;
+    }
+
+    private static boolean isMinecraftClass(final String internalName) {
+        return internalName.startsWith("net/minecraft/") || internalName.startsWith("com/mojang/");
     }
 
     @SuppressWarnings("unchecked")
