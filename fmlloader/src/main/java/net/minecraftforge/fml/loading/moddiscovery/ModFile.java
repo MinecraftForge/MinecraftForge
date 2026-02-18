@@ -186,7 +186,7 @@ public class ModFile implements IModFile {
             var service = services.findLanguage(this, spec.languageName(), spec.acceptedVersions());
             lst.add(service);
         }
-        this.loaders = Collections.unmodifiableList(lst);
+        this.loaders = List.copyOf(lst);
     }
 
     @Override

@@ -31,13 +31,18 @@ record Scanner(ModFile fileToScan, ModFileScanData result) {
 
     public ModFileScanData scan() {
         result.addModFileInfo(fileToScan.getModFileInfo());
-        fileToScan.scanFile(this::fileVisitor);
         final List<IModLanguageProvider> loaders = fileToScan.getLoaders();
         if (loaders != null) {
+            // Skip runtime annotation scanning for MC itself
+            if (!"minecraft".equals(loaders.getFirst().name()))
+                fileToScan.scanFile(this::fileVisitor);
+
             for (IModLanguageProvider loader : loaders) {
                 if (DEBUG) LOGGER.debug("Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
                 loader.getFileVisitor().accept(result);
             }
+        } else {
+            fileToScan.scanFile(this::fileVisitor);
         }
         return result;
     }
