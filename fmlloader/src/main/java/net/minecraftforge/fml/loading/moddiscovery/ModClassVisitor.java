@@ -22,7 +22,47 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
-class ModClassVisitor extends ClassVisitor {
+final class ModClassVisitor extends ClassVisitor {
+    private static final Set<String> ANNOTATION_BLACKLIST;
+
+    private static final Type OBJECT_TYPE = Type.getObjectType("java/lang/Object");
+    private static final Type RECORD_TYPE = Type.getObjectType("java/lang/Record");
+
+    static {
+        var customBlacklist = System.getProperty("forge.annotationScanningBlacklist");
+        if (customBlacklist != null) {
+            ANNOTATION_BLACKLIST = Set.of(customBlacklist.split(","));
+        } else {
+            ANNOTATION_BLACKLIST = Set.of(
+                    "Ljava/lang/Deprecated;",
+                    "Ljava/lang/FunctionalInterface;",
+                    "Ljava/lang/SafeVarargs;",
+
+                    "Ljava/lang/annotation/Retention;",
+                    "Ljava/lang/annotation/Target;",
+
+                    "Ljavax/annotation/Nullable;",
+
+                    "Lorg/jspecify/nullness/NonNull;",
+                    "Lorg/jspecify/nullness/Nullable;",
+                    "Lorg/jspecify/annotations/NullMarked;",
+                    "Lorg/jspecify/annotations/NullUnmarked;",
+
+                    "Lorg/jetbrains/annotations/ApiStatus$Internal;",
+                    "Lorg/jetbrains/annotations/Contract;",
+                    "Lorg/jetbrains/annotations/Nullable;",
+                    "Lorg/jetbrains/annotations/NotNull;",
+                    "Lorg/jetbrains/annotations/VisibleForTesting;",
+
+                    "Lcom/google/common/annotations/VisibleForTesting;",
+
+                    "Lnet/minecraftforge/api/distmarker/OnlyIn", // should not be used by mods
+                    // @Mod.EventBusSubscriber doesn't use scan data for finding @SubscribeEvent annotated methods
+                    "Lnet/minecraftforge/eventbus/api/listener/SubscribeEvent;"
+            );
+        }
+    }
+
     private Type asmType;
     private Type asmSuperType;
     private Set<Type> interfaces;
@@ -35,12 +75,17 @@ class ModClassVisitor extends ClassVisitor {
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         this.asmType = Type.getObjectType(name);
-        this.asmSuperType = superName != null && !superName.isEmpty() ? Type.getObjectType(superName) : null;
+        this.asmSuperType = superName != null && !superName.isEmpty() ? switch (superName) {
+            case "java/lang/Object" -> OBJECT_TYPE;
+            case "java/lang/Record" -> RECORD_TYPE;
+            default -> Type.getObjectType(superName);
+        } : null;
         this.interfaces = Stream.of(interfaces).map(Type::getObjectType).collect(Collectors.toSet());
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(final String annotationName, final boolean runtimeVisible) {
+        if (ANNOTATION_BLACKLIST.contains(annotationName)) return null;
         var ann = new ModAnnotation(ElementType.TYPE, Type.getType(annotationName), this.asmType.getClassName());
         annotations.addFirst(ann);
         return new ModAnnotationVisitor(ann);
@@ -51,6 +96,7 @@ class ModClassVisitor extends ClassVisitor {
         return new FieldVisitor(Opcodes.ASM9) {
             @Override
             public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible) {
+                if (ANNOTATION_BLACKLIST.contains(annotationName)) return null;
                 var ann = new ModAnnotation(ElementType.FIELD, Type.getType(annotationName), name);
                 annotations.addFirst(ann);
                 return new ModAnnotationVisitor(ann);
@@ -63,6 +109,7 @@ class ModClassVisitor extends ClassVisitor {
         return new MethodVisitor(Opcodes.ASM9) {
             @Override
             public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible) {
+                if (ANNOTATION_BLACKLIST.contains(annotationName)) return null;
                 ModAnnotation ann = new ModAnnotation(ElementType.METHOD, Type.getType(annotationName), name + desc);
                 annotations.addFirst(ann);
                 return new ModAnnotationVisitor(ann);
@@ -78,7 +125,7 @@ class ModClassVisitor extends ClassVisitor {
         }
     }
 
-    private class ModAnnotationVisitor extends AnnotationVisitor {
+    private final class ModAnnotationVisitor extends AnnotationVisitor {
         private final ModAnnotation annotation;
         private boolean array;
         private boolean isSubAnnotation;

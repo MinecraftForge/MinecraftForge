@@ -19,7 +19,7 @@ import org.objectweb.asm.Type;
 import com.google.common.base.MoreObjects;
 
 @ApiStatus.Internal
-class ModAnnotation {
+final class ModAnnotation {
     public static ModFileScanData.AnnotationData fromModAnnotation(Type clazz, ModAnnotation annotation) {
         return new ModFileScanData.AnnotationData(annotation.asmType, annotation.type, clazz, annotation.member, annotation.values);
     }
@@ -84,6 +84,7 @@ class ModAnnotation {
     }
 
     public void endArray() {
+        arrayList.trimToSize();
         values.put(arrayName, arrayList);
         arrayList = null;
     }
