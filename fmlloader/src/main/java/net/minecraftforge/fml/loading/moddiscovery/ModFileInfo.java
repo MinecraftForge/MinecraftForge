@@ -64,7 +64,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
         // as is modloader version
         var modLoaderVerStr = config.<String>getConfigElement("loaderVersion")
-                .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+                .orElse("*");
         var modLoaderVersion = MavenVersionAdapter.createFromVersionSpec(modLoaderVerStr);
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
 

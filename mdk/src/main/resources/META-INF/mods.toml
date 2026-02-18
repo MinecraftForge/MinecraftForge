@@ -3,7 +3,7 @@
 # References: https://github.com/MinecraftForge/MDKExamples
 
 modLoader="javafml"
-loaderVersion="[@FORGE_SPEC_VERSION@,)"
+#loaderVersion="[@FORGE_SPEC_VERSION@,)" #optional, default="*"
 license="All Rights Reserved"
 #issueTrackerURL="https://github.com/MyOrganization/MyMod/" #optional
 #clientSideOnly=true #optional, default=false
@@ -26,12 +26,10 @@ Newline characters can be used like this, and rendered on the mods screen proper
     modId="forge"
     mandatory=true
     versionRange="[@FORGE_SPEC_VERSION@,)"
-    ordering="NONE"
-    side="BOTH"
+    #ordering="NONE" #optional
+    #side="BOTH" #optional
 
 [[dependencies.examplemod]] #recommended
     modId="minecraft"
     mandatory=true
     versionRange="[@MC_VERSION@,@MC_NEXT_VERSION@,)"
-    ordering="NONE"
-    side="BOTH"
