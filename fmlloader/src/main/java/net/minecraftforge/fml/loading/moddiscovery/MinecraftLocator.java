@@ -14,6 +14,7 @@ import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -56,5 +57,10 @@ public final class MinecraftLocator extends AbstractModProvider implements IModL
     @Override
     public String name() {
         return "minecraft";
+    }
+
+    @Override
+    public void scanFile(IModFile file, Consumer<Path> pathConsumer) {
+        // skip annotation scanning for MC itself
     }
 }
