@@ -231,7 +231,7 @@ public record ServerStatusPing(
                     if (requiredOnClient != 0b0 && requiredOnClient != 0b1) {
                         // requiredOnClient not being 0 or 1 means that it's not a boolean; which means we are reading 1.18.1-1.20.1 data (forge 39.1.x -> forge 47.x).
                         // here we rewind to before channelVersion so we can reinterpret the same bytes as a String.
-                        buf.readerIndex(buf.readerIndex() - getVarIntSize(channelSize) - 1);
+                        buf.readerIndex(buf.readerIndex() - getVarIntSize(channelVersion) - 1);
                         var verUtf = Utf8String.read(buf, 32767);
                         requiredOnClient = buf.readByte();
                         try {
