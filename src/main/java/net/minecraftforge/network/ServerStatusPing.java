@@ -9,6 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.network.Utf8String;
 import net.minecraft.util.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -226,9 +227,21 @@ public record ServerStatusPing(
                 for (var i1 = 0; i1 < channelSize; i1++) {
                     var channelName = buf.readUtf();
                     var channelVersion = buf.readVarInt();
-                    var requiredOnClient = buf.readBoolean();
+                    var requiredOnClient = buf.readByte();
+                    if (requiredOnClient != 0b0 && requiredOnClient != 0b1) {
+                        // requiredOnClient not being 0 or 1 means that it's not a boolean; which means we are reading 1.18.1-1.20.1 data (forge 39.1.x -> forge 47.x).
+                        // here we rewind to before channelVersion so we can reinterpret the same bytes as a String.
+                        buf.readerIndex(buf.readerIndex() - getVarIntSize(channelSize) - 1);
+                        var verUtf = Utf8String.read(buf, 32767);
+                        requiredOnClient = buf.readByte();
+                        try {
+                            channelVersion = Integer.parseInt(verUtf);
+                        } catch (NumberFormatException ex) {
+                            channelVersion = -1; // fallback to -1, this is a 1.18.1-1.20.1 forge server, and you can't join anyway.
+                        }
+                    }
                     final Identifier id = Identifier.fromNamespaceAndPath(modId, channelName);
-                    channels.put(id, new ChannelData(id, channelVersion, requiredOnClient));
+                    channels.put(id, new ChannelData(id, channelVersion, requiredOnClient != 0));
                 }
 
                 mods.put(modId, modVersion);
@@ -246,6 +259,11 @@ public record ServerStatusPing(
         }
 
         return new ServerStatusPing(channels, mods, fmlNetworkVersion, truncated);
+    }
+
+    private static int getVarIntSize(int value) {
+        if (value < 0) return 5;
+        return Math.max(1, (32 - Integer.numberOfLeadingZeros(value) + 6) / 7);
     }
 
     /**
