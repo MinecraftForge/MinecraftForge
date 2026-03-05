@@ -220,7 +220,7 @@ public class ModSorter {
                 continue;
 
             var range = dep.getVersionRange();
-            if (existing != null && (range.containsVersion(existing) || "0.0NONE".equals(existing.toString())))
+            if (existing != null && range.containsVersion(existing))
                 continue;
 
             if (!VersionSupportMatrix.testVersionSupportMatrix(range, modId, "mod"))
