@@ -9,7 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.Utf8String;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -100,8 +100,11 @@ public record ServerStatusPing(
                     fmlVer, truncated.orElse(false)
             ))));
 
-
     public ServerStatusPing() {
+        this(NetworkContext.NET_VERSION);
+    }
+
+    public ServerStatusPing(int fmlNetworkVer) {
         this(
             NetworkRegistry.buildChannelVersionsForListPing(),
             Util.make(new HashMap<>(), map -> ModList.get().forEachModContainer((modid, mc) ->
@@ -109,7 +112,7 @@ public record ServerStatusPing(
                     .map(IExtensionPoint.DisplayTest::suppliedVersion)
                     .map(Supplier::get)
                     .orElse(IExtensionPoint.DisplayTest.IGNORESERVERONLY)))),
-            NetworkContext.NET_VERSION,
+            fmlNetworkVer,
             false
         );
     }
@@ -174,7 +177,8 @@ public record ServerStatusPing(
             // write the channels for this mod, if any
             for (var entry : channelsForMod) {
                 buf.writeUtf(entry.getKey().getPath());
-                buf.writeVarInt(entry.getValue().version());
+                if (fmlNetworkVer < 1 || fmlNetworkVer > 3) buf.writeVarInt(entry.getValue().version());
+                else buf.writeUtf(String.valueOf(entry.getValue().version())); // This is used by the ServerStatusPingTest to generate a buffer matching 1.18.1-1.20.1 servers.
                 buf.writeBoolean(entry.getValue().required());
             }
 
@@ -226,20 +230,8 @@ public record ServerStatusPing(
                 var modVersion = isIgnoreServerOnly ? IExtensionPoint.DisplayTest.IGNORESERVERONLY : buf.readUtf();
                 for (var i1 = 0; i1 < channelSize; i1++) {
                     var channelName = buf.readUtf();
-                    var channelVersion = buf.readVarInt();
+                    var channelVersion = fmlNetworkVersion < 1 || fmlNetworkVersion > 3 ? buf.readVarInt() : Mth.getInt(buf.readUtf(), -1);
                     var requiredOnClient = buf.readByte();
-                    if (requiredOnClient != 0b0 && requiredOnClient != 0b1) {
-                        // requiredOnClient not being 0 or 1 means that it's not a boolean; which means we are reading 1.18.1-1.20.1 data (forge 39.1.x -> forge 47.x).
-                        // here we rewind to before channelVersion so we can reinterpret the same bytes as a String.
-                        buf.readerIndex(buf.readerIndex() - getVarIntSize(channelVersion) - 1);
-                        var verUtf = Utf8String.read(buf, 32767);
-                        requiredOnClient = buf.readByte();
-                        try {
-                            channelVersion = Integer.parseInt(verUtf);
-                        } catch (NumberFormatException ex) {
-                            channelVersion = -1; // fallback to -1, this is a 1.18.1-1.20.1 forge server, and you can't join anyway.
-                        }
-                    }
                     final Identifier id = Identifier.fromNamespaceAndPath(modId, channelName);
                     channels.put(id, new ChannelData(id, channelVersion, requiredOnClient != 0));
                 }
@@ -259,11 +251,6 @@ public record ServerStatusPing(
         }
 
         return new ServerStatusPing(channels, mods, fmlNetworkVersion, truncated);
-    }
-
-    private static int getVarIntSize(int value) {
-        if (value < 0) return 5;
-        return Math.max(1, (32 - Integer.numberOfLeadingZeros(value) + 6) / 7);
     }
 
     /**
