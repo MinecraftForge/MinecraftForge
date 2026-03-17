@@ -32,13 +32,14 @@ dependencyResolutionManagement {
             library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.2')
             library('coremods', 'net.minecraftforge:coremods:5.2.6')
             library('nashorn', 'org.openjdk.nashorn:nashorn-core:15.4') // Needed by coremods, because the JRE no longer ships JS
-            library('eventbus', 'net.minecraftforge:eventbus:7.0-beta.12')
-            library('eventbus-validator', 'net.minecraftforge:eventbus-validator:7.0-beta.12')
+            version('eventbus', '7.0.1')
+            library('eventbus', 'net.minecraftforge', 'eventbus').versionRef('eventbus')
+            library('eventbus-validator', 'net.minecraftforge', 'eventbus-validator').versionRef('eventbus')
             library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
 
             library('roimfs', 'net.minecraftforge:roimfs:1.0.0') // ReadOnlyInMemoryFileSystem - Used for JarInJar extraction at runtime
             library('mixin', 'org.spongepowered:mixin:0.8.7')
-            version('mixinextras', '0.5.0')
+            version('mixinextras', '0.5.3')
             library('mixinextras-forge', 'io.github.llamalad7', 'mixinextras-forge').versionRef('mixinextras')
             library('mixinextras-common', 'io.github.llamalad7', 'mixinextras-common').versionRef('mixinextras')
             library('jetbrains-annotations', 'org.jetbrains:annotations:24.1.0') // for ApiStatus annotations
@@ -57,7 +58,7 @@ dependencyResolutionManagement {
             library('bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim').versionRef('bootstrap')
 
             // ASM it's used for so many of our hacks
-            version('asm', '9.8')
+            version('asm', '9.9.1')
             library('asm',          'org.ow2.asm', 'asm'         ).versionRef('asm')
             library('asm-tree',     'org.ow2.asm', 'asm-tree'    ).versionRef('asm')
             library('asm-util',     'org.ow2.asm', 'asm-util'    ).versionRef('asm')

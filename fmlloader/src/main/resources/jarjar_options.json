@@ -11,8 +11,8 @@
             "artifact": "MixinExtras"
           },
           "version": {
-            "range": "[0.5.0,)",
-            "artifactVersion": "0.5.0"
+            "range": "[0.5.3,)",
+            "artifactVersion": "0.5.3"
           },
           "path": "",
           "isObfuscated": false
@@ -24,7 +24,7 @@
           "artifact": "mixinextras-forge"
         },
         "version": {
-          "artifactVersion": "0.5.0"
+          "artifactVersion": "0.5.3"
         },
         "path": "",
         "isObfuscated": false

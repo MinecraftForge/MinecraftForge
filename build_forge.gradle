@@ -79,7 +79,6 @@ final String SPEC_VERSION = gitversion.info.tag
 final def MCP_ARTIFACT = project(':mcp').mcp.config.get()
 
 final List<File> EXTRA_TXTS = [
-        rootProject.file('CREDITS.txt'),
         rootProject.file('LICENSE.txt'),
         rootProject.tasks.createChangelog.outputFile
 ]
@@ -934,23 +933,31 @@ tasks.register('installerJar', InstallerJar) {
     jarSigner.sign(it)
 }
 
+final mdkGradleWrapper = tasks.register('mdkGradleWrapper', Wrapper) {
+    gradleVersion = '9.3.1'
+}
+
 tasks.register('mdkZip', Zip) {
+    dependsOn mdkGradleWrapper
+
     archiveBaseName = project.name
     archiveClassifier = 'mdk'
     archiveVersion = project.version
     destinationDirectory = file('build/libs')
 
-    from rootProject.file('gradlew')
-    from rootProject.file('gradlew.bat')
+    from mdkGradleWrapper.map(Wrapper.&getScriptFile)
+    from mdkGradleWrapper.map(Wrapper.&getBatchScript)
     from(EXTRA_TXTS)
-    from(rootProject.file('gradle/')){
-        into('gradle/')
+    into('gradle/wrapper/') {
+        from mdkGradleWrapper.map(Wrapper.&getJarFile)
+        from mdkGradleWrapper.map(Wrapper.&getPropertiesFile)
     }
     from(rootProject.file('mdk/')){
-        rootProject.file('mdk/gitignore.txt').eachLine{
+        rootProject.file('mdk/gitignore.txt').eachLine {
             if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
                 exclude it
         }
+
         filter(ReplaceTokens, tokens: [
             FORGE_VERSION: FORGE_VERSION,
             FORGE_GROUP: project.group,
@@ -959,7 +966,8 @@ tasks.register('mdkZip', Zip) {
             MAPPING_CHANNEL: MAPPING_CHANNEL,
             MAPPING_VERSION: MAPPING_VERSION,
             FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
-            MC_NEXT_VERSION: MC_NEXT_VERSION
+            MC_NEXT_VERSION: MC_NEXT_VERSION,
+            EVENTBUS_VERSION: libs.versions.eventbus.get()
         ])
         rename 'gitignore\\.txt', '.gitignore'
         rename 'gitattributes\\.txt', '.gitattributes'
