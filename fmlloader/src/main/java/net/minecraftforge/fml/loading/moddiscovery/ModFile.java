@@ -112,10 +112,15 @@ public class ModFile implements IModFile {
         for (var mi : this.coreMods)
             LOGGER.debug(LogMarkers.LOADING, "Found coremod {}", mi.getPath());
 
-        var cfg = this.modFileInfo.getConfig()
-                .<List<String>>getConfigElement("accessTransformers")
-                .orElse(null);
-
+        List<String> cfg;
+        // Note: Some mods may have invalid tomls copied from other projects.
+        // Unfortunately we must protect against those landmines.
+        try {
+            cfg = this.modFileInfo.getConfig().<List<String>>getConfigElement("accessTransformers").orElse(null);
+        } catch (Exception e) {
+            cfg = null;
+            LOGGER.warn("{} contains an invalid 'accessTransformers' TOML entry. Should be e.g. accessTransformers = [\"META-INF/accesstransformer.cfg\", \"META-INF/extra_at.cfg\"] or accessTransformers = [] for no ATs. Falling back to default.", this.getFileName());
+        }
         if (cfg == null) {
             var path = findResource("META-INF", "accesstransformer.cfg");
             if (Files.exists(path)) {
