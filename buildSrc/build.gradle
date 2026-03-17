@@ -6,7 +6,7 @@ repositories {
 dependencies {
     implementation 'org.ow2.asm:asm:9.8'
     implementation 'org.ow2.asm:asm-tree:9.8'
-    implementation 'net.minecraftforge:srgutils:0.5.10'
+    implementation 'net.minecraftforge:srgutils:0.6.2'
     implementation 'net.minecraftforge:JarJarMetadata:0.3.27'
     implementation 'commons-io:commons-io:2.13.0'
     implementation 'com.google.code.gson:gson:2.10.1'

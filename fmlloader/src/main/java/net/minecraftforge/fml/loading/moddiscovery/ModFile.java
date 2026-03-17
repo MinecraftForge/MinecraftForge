@@ -50,6 +50,7 @@ public class ModFile implements IModFile {
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
+    private List<Path> accessTransformers = Collections.emptyList();
 
     static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
@@ -92,8 +93,14 @@ public class ModFile implements IModFile {
         return modFileInfo.getMods();
     }
 
+    /** @deprecated Use {@link #getAccessTransformers()} instead */
+    @Deprecated(forRemoval = true, since = "1.21.11")
     public Optional<Path> getAccessTransformer() {
-        return Optional.ofNullable(Files.exists(accessTransformer) ? accessTransformer : null);
+        return Optional.ofNullable(accessTransformer);
+    }
+
+    public List<Path> getAccessTransformers() {
+        return this.accessTransformers;
     }
 
     public boolean identifyMods() {
@@ -104,7 +111,24 @@ public class ModFile implements IModFile {
             LOGGER.warn("Mod file {} contains javascript coremods! JS CoreMods are deprecated and will be removed in a future release. Consider using Mixin or ModLauncher transformers.", this.getFileName());
         for (var mi : this.coreMods)
             LOGGER.debug(LogMarkers.LOADING, "Found coremod {}", mi.getPath());
-        this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
+
+        var cfg = this.modFileInfo.getConfig()
+                .<List<String>>getConfigElement("accessTransformers")
+                .orElse(null);
+
+        if (cfg == null) {
+            var path = findResource("META-INF", "accesstransformer.cfg");
+            if (Files.exists(path)) {
+                this.accessTransformer = path;
+                this.accessTransformers = List.of(path);
+            }
+        } else if (!cfg.isEmpty()) {
+            var paths = new ArrayList<Path>(cfg.size());
+            for (var path : cfg)
+                paths.add(getSecureJar().getPath(path.replace('\\', '/')));
+            this.accessTransformers = List.copyOf(paths);
+        }
+
         return true;
     }
 
