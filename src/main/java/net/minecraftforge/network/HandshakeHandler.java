@@ -374,7 +374,7 @@ public class HandshakeHandler
         });
 
         // we're done when sentMessages is empty
-        if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1 && pendingFutures.isEmpty()) {
+        if (sentMessages.isEmpty() && packetPosition >= messageList.size() && pendingFutures.isEmpty()) {
             // clear ourselves - we're done!
             this.manager.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
             LOGGER.debug(FMLHSMARKER, "Handshake complete!");
