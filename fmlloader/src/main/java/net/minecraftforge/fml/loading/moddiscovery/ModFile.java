@@ -95,7 +95,9 @@ public class ModFile implements IModFile {
     public List<IModInfo> getModInfos() {
         return modFileInfo.getMods();
     }
-
+    
+    /** @deprecated Use {@link #getAccessTransformers()} instead*/
+    @Deprecated(forRemoval=true, since="1.21.11")
     public Optional<Path> getAccessTransformer() {
         return Optional.ofNullable(accessTransformer);
     }
