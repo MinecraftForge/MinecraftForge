@@ -23,13 +23,18 @@ import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.gui.widget.button.Button.IPressable;
+import net.minecraftforge.client.gui.widget.ForgeSlider;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
+ * @deprecated This class has a few issues,
+ * mainly <a href="https://github.com/MinecraftForge/MinecraftForge/issues/8485">MinecraftForge/MinecraftForge#8485</a>.
+ * Use {@link ForgeSlider} instead.
+ *
  * @author iChun
  */
+@Deprecated
 public class GuiSlider extends GuiButtonExt
 {
     /** The value of this slider control. */
