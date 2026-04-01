@@ -980,8 +980,8 @@ project(':forge') {
         // the clean project provides these. if we're not using it, we need to provide them ourselves
         if (System.env.TEAMCITY_VERSION) {
             mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
-            mcVersion = MC_VERSION
         }
+        mcVersion = MC_VERSION
 
         runs {
             forge_client {
