@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,8 +42,8 @@ public class NetworkRegistry {
     static final Logger LOGGER = LogManager.getLogger();
     static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
-    private static Map<Identifier, NetworkInstance> byName = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<Identifier, NetworkInstance> instances = new ConcurrentHashMap<>();
+    private static final Map<Identifier, NetworkInstance> byName = new ConcurrentHashMap<>();
 
     public static boolean acceptsVanillaClientConnections() {
         return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
@@ -196,20 +197,18 @@ public class NetworkRegistry {
 
     static void register(NetworkInstance instance, Identifier name) {
         checkLock(instance);
-        if (NetworkRegistry.byName.containsKey(name))
-            error("Payload name " + name + " already registered.");
 
-        byName.put(name, instance);
+        if (byName.putIfAbsent(name, instance) != null)
+            error("Payload name " + name + " already registered.");
     }
 
     static void register(NetworkInstance instance) {
         checkLock(instance);
 
         var name = instance.getChannelName();
-        if (NetworkRegistry.instances.containsKey(name))
-            error("Channel " + name + " already registered.");
 
-        instances.put(name, instance);
+        if (instances.putIfAbsent(name, instance) != null)
+            error("Channel " + name + " already registered.");
     }
 
     private static void checkLock(NetworkInstance instance) {
