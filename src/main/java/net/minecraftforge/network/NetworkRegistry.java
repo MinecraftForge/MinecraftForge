@@ -162,7 +162,7 @@ public class NetworkRegistry {
         return true;
     }
 
-    static boolean lock = false;
+    static volatile boolean lock = false;
     public static void lock() {
         lock = true;
     }
