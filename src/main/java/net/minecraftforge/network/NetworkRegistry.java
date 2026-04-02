@@ -59,7 +59,7 @@ public class NetworkRegistry {
     }
 
     static Map<Identifier, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
-        var ret = new HashMap<Identifier, ServerStatusPing.ChannelData>();
+        var ret = new HashMap<Identifier, ServerStatusPing.ChannelData>(instances.size(), 1.0f);
         for (var channel : instances.values()) {
             ret.put(channel.getChannelName(), channel.pingData);
         }
@@ -188,7 +188,7 @@ public class NetworkRegistry {
     }
 
     static List<Identifier> buildRegisterList() {
-        var ret = new ArrayList<Identifier>(byName.keySet().size());
+        var ret = new ArrayList<Identifier>(byName.size());
         for (var name : byName.keySet())
             if (!"minecraft".equals(name.getNamespace()))
                 ret.add(name);
