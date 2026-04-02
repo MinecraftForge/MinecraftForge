@@ -1,15 +1,13 @@
 --- a/com/mojang/blaze3d/platform/GLX.java
 +++ b/com/mojang/blaze3d/platform/GLX.java
-@@ -43,7 +_,11 @@
+@@ -43,6 +_,10 @@
  
      public static LongSupplier _initGlfw(final BackendOptions options) {
          Window.checkGlfwError((errorx, description) -> {
--            throw new IllegalStateException(String.format(Locale.ROOT, "GLFW error before init: [0x%X]%s", errorx, description));
 +            if(errorx == GLFW.GLFW_FEATURE_UNAVAILABLE && description.equals("Wayland: The platform does not provide the window position")) {
 +                LOGGER.warn(String.format(Locale.ROOT, "Ignoring GLFW error before init: [0x%X]%s", errorx, description));
-+            } else {
-+                throw new IllegalStateException(String.format(Locale.ROOT, "GLFW error before init: [0x%X]%s", errorx, description));
++                return;
 +            }
+             throw new IllegalStateException(String.format(Locale.ROOT, "GLFW error before init: [0x%X]%s", errorx, description));
          });
          GLFWErrorCapture collectedErrors = new GLFWErrorCapture();
- 
