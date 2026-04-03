@@ -180,7 +180,7 @@ public class NetworkRegistry {
     }
 
     public static Map<Identifier, Integer> buildChannelVersions() {
-        var ret = new Object2IntOpenHashMap<Identifier>(instances.size());
+        var ret = new Object2IntOpenHashMap<Identifier>(instances.size(), 1.0f);
         for (var net : instances.values()) {
             ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
         }
