@@ -238,7 +238,7 @@ public final class TagConventionMappings {
             legacyToCommon(Registries.ITEM, forgeRl("tools/bows"), Tags.Items.TOOLS_BOW),
             legacyToCommon(Registries.ITEM, forgeRl("tools/crossbows"), Tags.Items.TOOLS_CROSSBOW),
             legacyToCommon(Registries.ITEM, forgeRl("tools/fishing_rods"), Tags.Items.TOOLS_FISHING_ROD),
-            legacyToCommon(Registries.ITEM, forgeRl("tools/tridents"), Tags.Items.TOOLS_SPEAR),
+            legacyToCommon(Registries.ITEM, forgeRl("tools/tridents"), Tags.Items.TOOLS_TRIDENT),
             legacyToCommon(Registries.ITEM, forgeRl("tools/shears"), Tags.Items.TOOLS_SHEAR),
 
             legacyToCommon(Registries.ITEM, forgeRl("armors"), Tags.Items.ARMORS),
