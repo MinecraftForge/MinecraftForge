@@ -512,6 +512,20 @@ public class Tags {
         public static final TagKey<Item> FOODS_BERRY = cTag("foods/berry");
         public static final TagKey<Item> FOODS_BREAD = cTag("foods/bread");
         public static final TagKey<Item> FOODS_COOKIE = cTag("foods/cookie");
+        /**
+         * For all doughs regardless of type, specific types of dough should fall under their respective sub-tag.<br/>
+         * For example:<br/>
+         * - Wheat dough (which generally results in bread) would go in "#c:foods/dough/wheat"<br/>
+         * - Rye dough (which has rye as it's main ingredient) would go in "#c:foods/dough/rye"<br/>
+         * - Sub-tags should also be added to this tag, for example: "#c:foods/dough/wheat" should be added to "#c:foods/dough"<br/>
+         * <br/>
+         * There are some important assumptions that should be kept in mind.<br/>
+         * - It is assumed that "1 dough = result", which in the case of wheat dough would be "1 dough = 1 bread"<br/>
+         * - It is assumed that this dough can be baked into another item<br/>
+         * - It is *not* assumed that all doughs result in bread, there can be doughs in this tag that result in things like pizza, etc.
+         * This means that this tag should *not* be used for furnace recipes, mods should add their own dough to result recipes for their respective items.
+         */
+        public static final TagKey<Item> FOODS_DOUGH = cTag("foods/dough");
         public static final TagKey<Item> FOODS_RAW_MEAT = cTag("foods/raw_meat");
         public static final TagKey<Item> FOODS_COOKED_MEAT = cTag("foods/cooked_meat");
         public static final TagKey<Item> FOODS_RAW_FISH = cTag("foods/raw_fish");

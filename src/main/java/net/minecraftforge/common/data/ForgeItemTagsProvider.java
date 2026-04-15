@@ -131,6 +131,7 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         tag(Tags.Items.FOODS_BERRY).add(Items.SWEET_BERRIES, Items.GLOW_BERRIES);
         tag(Tags.Items.FOODS_BREAD).add(Items.BREAD);
         tag(Tags.Items.FOODS_COOKIE).add(Items.COOKIE);
+        tag(Tags.Items.FOODS_DOUGH);
         tag(Tags.Items.FOODS_RAW_MEAT).add(Items.BEEF, Items.PORKCHOP, Items.CHICKEN, Items.RABBIT, Items.MUTTON);
         tag(Tags.Items.FOODS_RAW_FISH).add(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
         tag(Tags.Items.FOODS_COOKED_MEAT).add(Items.COOKED_BEEF, Items.COOKED_PORKCHOP, Items.COOKED_CHICKEN, Items.COOKED_RABBIT, Items.COOKED_MUTTON);
