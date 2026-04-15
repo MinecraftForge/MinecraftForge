@@ -28,6 +28,12 @@ public abstract class ForgeBlockItemTagsProvider extends BlockItemTagsProvider {
             .addTag(Tags.Blocks.BARRELS_WOODEN);
         tag(Tags.Blocks.BARRELS_WOODEN, Tags.Items.BARRELS_WOODEN)
             .add(Blocks.BARREL);
+        tag(Tags.Blocks.BARS_COPPER, Tags.Items.BARS_COPPER)
+                .addAll(Blocks.COPPER_BARS.asList());
+        tag(Tags.Blocks.BARS_IRON, Tags.Items.BARS_IRON)
+                .add(Blocks.IRON_BARS);
+        tag(Tags.Blocks.BARS, Tags.Items.BARS)
+                .addTags(Tags.Blocks.BARS_COPPER, Tags.Blocks.BARS_IRON, BlockTags.BARS);
         tag(Tags.Blocks.BOOKSHELVES, Tags.Items.BOOKSHELVES)
             .add(Blocks.BOOKSHELF);
         tag(Tags.Blocks.BUDDING_BLOCKS, Tags.Items.BUDDING_BLOCKS)

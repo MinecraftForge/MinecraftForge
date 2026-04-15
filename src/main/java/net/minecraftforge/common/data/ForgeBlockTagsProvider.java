@@ -70,7 +70,7 @@ public final class ForgeBlockTagsProvider extends VanillaBlockTagsProvider {
     private void addColored(TagKey<Block> group, String pattern) {
         String prefix = group.location().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (var color : DyeColor.values()) {
-            var key = Identifier.fromNamespaceAndPath("minecraft", pattern.replace("{color}", color.getName()));
+            var key = Identifier.withDefaultNamespace(pattern.replace("{color}", color.getName()));
             TagKey<Block> tag = getTag(prefix + color.getName());
             var block = ForgeRegistries.BLOCKS.getValue(key);
             if (block == null || block == Blocks.AIR)
