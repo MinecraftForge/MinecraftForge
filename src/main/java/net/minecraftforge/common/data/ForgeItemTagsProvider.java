@@ -84,6 +84,10 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         tag(Tags.Items.CROPS_SUGAR_CANE).add(Items.SUGAR_CANE);
         tag(Tags.Items.CROPS_WHEAT)
                 .add(Items.WHEAT);
+        tag(Tags.Items.DRINK_CONTAINING_BOTTLE)
+                .add(Items.POTION, Items.HONEY_BOTTLE, Items.OMINOUS_BOTTLE);
+        tag(Tags.Items.DRINK_CONTAINING_BUCKET)
+                .add(Items.MILK_BUCKET);
         tag(Tags.Items.DRINKS)
                 .addTags(Tags.Items.DRINKS_HONEY, Tags.Items.DRINKS_JUICE, Tags.Items.DRINKS_MAGIC, Tags.Items.DRINKS_MILK,
                         Tags.Items.DRINKS_OMINOUS, Tags.Items.DRINKS_WATER, Tags.Items.DRINKS_WATERY);

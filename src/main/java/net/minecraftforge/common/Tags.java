@@ -12,11 +12,13 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -415,14 +417,48 @@ public class Tags {
         public static final TagKey<Item> DUSTS_REDSTONE = cTag("dusts/redstone");
         public static final TagKey<Item> DUSTS_GLOWSTONE = cTag("dusts/glowstone");
 
+        /**
+         * Drinks are defined as (1) consumable items that (2) use the
+         * {@linkplain ItemUseAnimation#DRINK drink item use animation}, (3) can be consumed regardless of the
+         * player's current hunger.
+         *
+         * <p>Drinks may provide nutrition and saturation, but are not required to do so.
+         *
+         * <p>More specific types of drinks, such as Water, Milk, or Juice should be placed in a sub-tag, such as
+         * {@code #c:drinks/water}, {@code #c:drinks/milk}, and {@code #c:drinks/juice}.
+         */
         public static final TagKey<Item> DRINKS = cTag("drinks");
         public static final TagKey<Item> DRINKS_HONEY = cTag("drinks/honey");
+        /**
+         * Plant based fruit and vegetable juices belong in this tag, for example apple juice and carrot juice.
+         *
+         * <p>If tags for specific types of juices are desired, they may go in a sub-tag, using their regular name such as
+         * {@code #c:drinks/apple_juice}.
+         */
         public static final TagKey<Item> DRINKS_JUICE = cTag("drinks/juice");
         public static final TagKey<Item> DRINKS_MAGIC = cTag("drinks/magic");
         public static final TagKey<Item> DRINKS_MILK = cTag("drinks/milk");
+        /**
+         * For drinks that always grant the {@linkplain MobEffects#BAD_OMEN Bad Omen} effect.
+         */
         public static final TagKey<Item> DRINKS_OMINOUS = cTag("drinks/ominous");
+        /**
+         * For consumable drinks that contain only water.
+         */
         public static final TagKey<Item> DRINKS_WATER = cTag("drinks/water");
+        /**
+         * For consumable drinks that are generally watery (such as potions).
+         */
         public static final TagKey<Item> DRINKS_WATERY = cTag("drinks/watery");
+
+        /**
+         * For non-empty bottles that are {@linkplain #DRINKS drinkable}.
+         */
+        public static final TagKey<Item> DRINK_CONTAINING_BOTTLE = cTag("drink_containing/bottle");
+        /**
+         * For non-empty buckets that are {@linkplain #DRINKS drinkable}.
+         */
+        public static final TagKey<Item> DRINK_CONTAINING_BUCKET = cTag("drink_containing/bucket");
 
         /**
          * Tag that holds all blocks and items that can be dyed a specific color.
