@@ -35,6 +35,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 /**
@@ -201,7 +202,7 @@ public class NetworkRegistry {
             ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
         }
 
-        return ret;
+        return unmodifiableMap(ret);
     }
 
     public static List<Identifier> getRegisterList() {
@@ -214,10 +215,7 @@ public class NetworkRegistry {
             if (!"minecraft".equals(name.getNamespace()))
                 ret.add(name);
 
-        ret.trimToSize();
-        registerList = ret;
-
-        return registerList;
+        return unmodifiableList(registerList);
     }
 
     static void register(NetworkInstance instance, Identifier name) {
