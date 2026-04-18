@@ -34,6 +34,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Collections.unmodifiableMap;
+
 /**
  * Tracks channels created by {@link ChannelBuilder}. This class is not intended for use by modders.
  */
@@ -42,8 +44,8 @@ public class NetworkRegistry {
     static final Logger LOGGER = LogManager.getLogger();
     static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    private static final Map<Identifier, NetworkInstance> instances = new ConcurrentHashMap<>();
-    private static final Map<Identifier, NetworkInstance> byName = new ConcurrentHashMap<>();
+    private static Map<Identifier, NetworkInstance> instances = new ConcurrentHashMap<>();
+    private static Map<Identifier, NetworkInstance> byName = new ConcurrentHashMap<>();
 
     public static boolean acceptsVanillaClientConnections() {
         return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
@@ -164,6 +166,8 @@ public class NetworkRegistry {
 
     static volatile boolean lock = false;
     public static void lock() {
+        byName = unmodifiableMap(byName);
+        instances = unmodifiableMap(instances);
         lock = true;
     }
 
