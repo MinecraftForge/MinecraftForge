@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -164,10 +165,14 @@ public class NetworkRegistry {
         return true;
     }
 
-    static volatile boolean lock = false;
-    public static void lock() {
+    static boolean lock = false;
+    public static synchronized void lock() {
         byName = unmodifiableMap(byName);
         instances = unmodifiableMap(instances);
+
+        buildChannelVersions();
+        buildRegisterList();
+
         lock = true;
     }
 
@@ -183,20 +188,35 @@ public class NetworkRegistry {
         }
     }
 
+    private static Object2IntOpenHashMap<Identifier> channelVersions = null;
     public static Map<Identifier, Integer> buildChannelVersions() {
-        var ret = new Object2IntOpenHashMap<Identifier>(instances.size(), 1.0f);
-        for (var net : instances.values()) {
-            ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
+        if (channelVersions != null) {
+            return channelVersions;
         }
-        return ret;
+
+        channelVersions = new Object2IntOpenHashMap<>(instances.size(), 1.0f);
+        for (var net : instances.values()) {
+            channelVersions.put(net.getChannelName(), net.getNetworkProtocolVersion());
+        }
+
+        return channelVersions;
     }
 
+    private static List<Identifier> registerList = null;
     static List<Identifier> buildRegisterList() {
+        if (registerList != null) {
+            return registerList;
+        }
+
         var ret = new ArrayList<Identifier>(byName.size());
         for (var name : byName.keySet())
             if (!"minecraft".equals(name.getNamespace()))
                 ret.add(name);
-        return ret;
+
+        ret.trimToSize();
+        registerList = ret;
+
+        return registerList;
     }
 
     static void register(NetworkInstance instance, Identifier name) {
