@@ -48,6 +48,9 @@ public class NetworkRegistry {
     private static Map<Identifier, NetworkInstance> instances = new ConcurrentHashMap<>();
     private static Map<Identifier, NetworkInstance> byName = new ConcurrentHashMap<>();
 
+    private static List<Identifier> registerList = null;
+    private static Map<Identifier, Integer> channelVersions = null;
+
     public static boolean acceptsVanillaClientConnections() {
         return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
     }
@@ -170,8 +173,8 @@ public class NetworkRegistry {
         byName = unmodifiableMap(byName);
         instances = unmodifiableMap(instances);
 
-        buildChannelVersions();
-        buildRegisterList();
+        channelVersions = buildChannelVersions();
+        registerList = buildRegisterList();
 
         lock = true;
     }
@@ -188,26 +191,24 @@ public class NetworkRegistry {
         }
     }
 
-    private static Object2IntOpenHashMap<Identifier> channelVersions = null;
-    public static Map<Identifier, Integer> buildChannelVersions() {
-        if (channelVersions != null) {
-            return channelVersions;
-        }
-
-        channelVersions = new Object2IntOpenHashMap<>(instances.size(), 1.0f);
-        for (var net : instances.values()) {
-            channelVersions.put(net.getChannelName(), net.getNetworkProtocolVersion());
-        }
-
+    public static Map<Identifier, Integer> getChannelVersions() {
         return channelVersions;
     }
 
-    private static List<Identifier> registerList = null;
-    static List<Identifier> buildRegisterList() {
-        if (registerList != null) {
-            return registerList;
+    private static Map<Identifier, Integer> buildChannelVersions() {
+        var ret = new Object2IntOpenHashMap<Identifier>(instances.size(), 1.0f);
+        for (var net : instances.values()) {
+            ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
         }
 
+        return ret;
+    }
+
+    public static List<Identifier> getRegisterList() {
+        return registerList;
+    }
+
+    public static List<Identifier> buildRegisterList() {
         var ret = new ArrayList<Identifier>(byName.size());
         for (var name : byName.keySet())
             if (!"minecraft".equals(name.getNamespace()))
