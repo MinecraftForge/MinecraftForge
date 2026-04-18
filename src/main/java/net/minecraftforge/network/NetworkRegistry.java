@@ -208,7 +208,7 @@ public class NetworkRegistry {
         return registerList;
     }
 
-    public static List<Identifier> buildRegisterList() {
+    private static List<Identifier> buildRegisterList() {
         var ret = new ArrayList<Identifier>(byName.size());
         for (var name : byName.keySet())
             if (!"minecraft".equals(name.getNamespace()))
