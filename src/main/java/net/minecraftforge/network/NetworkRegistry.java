@@ -34,7 +34,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
 /**
  * Tracks channels created by {@link ChannelBuilder}. This class is not intended for use by modders.
  */
@@ -62,12 +61,18 @@ public class NetworkRegistry {
         return byName.get(Identifier);
     }
 
-    static Map<Identifier, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
+    private static Map<Identifier, ServerStatusPing.ChannelData> channelVersionsForListPing = null;
+
+    public static Map<Identifier, ServerStatusPing.ChannelData> getChannelVersionsForListPing() {
+        return channelVersionsForListPing;
+    }
+
+    private static Map<Identifier, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
         var ret = new HashMap<Identifier, ServerStatusPing.ChannelData>(instances.size(), 1.0f);
         for (var channel : instances.values()) {
             ret.put(channel.getChannelName(), channel.pingData);
         }
-        return ret;
+        return Map.copyOf(ret);
     }
 
     static List<String> listRejectedVanillaMods(Function<NetworkInstance, VersionTest> testFunction) {
@@ -172,6 +177,7 @@ public class NetworkRegistry {
         instances = Map.copyOf(instances);
 
         channelVersions = buildChannelVersions();
+        channelVersionsForListPing = buildChannelVersionsForListPing();
         registerList = buildRegisterList();
 
         LOCK.setRelease(true);
