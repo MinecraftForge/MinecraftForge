@@ -20,7 +20,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import io.netty.util.Attribute;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,13 +29,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
 
 /**
  * Tracks channels created by {@link ChannelBuilder}. This class is not intended for use by modders.
@@ -169,15 +166,15 @@ public class NetworkRegistry {
         return true;
     }
 
-    static boolean lock = false;
+    static final AtomicBoolean LOCK = new AtomicBoolean(false);
     public static synchronized void lock() {
-        byName = unmodifiableMap(byName);
-        instances = unmodifiableMap(instances);
+        byName = Map.copyOf(byName);
+        instances = Map.copyOf(instances);
 
         channelVersions = buildChannelVersions();
         registerList = buildRegisterList();
 
-        lock = true;
+        LOCK.setRelease(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -197,12 +194,12 @@ public class NetworkRegistry {
     }
 
     private static Map<Identifier, Integer> buildChannelVersions() {
-        var ret = new Object2IntOpenHashMap<Identifier>(instances.size(), 1.0f);
+        var ret = new HashMap<Identifier, Integer>(instances.size(), 1.0f);
         for (var net : instances.values()) {
             ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
         }
 
-        return unmodifiableMap(ret);
+        return Map.copyOf(ret);
     }
 
     public static List<Identifier> getRegisterList() {
@@ -215,7 +212,7 @@ public class NetworkRegistry {
             if (!"minecraft".equals(name.getNamespace()))
                 ret.add(name);
 
-        return unmodifiableList(registerList);
+        return List.copyOf(ret);
     }
 
     static void register(NetworkInstance instance, Identifier name) {
@@ -235,7 +232,7 @@ public class NetworkRegistry {
     }
 
     private static void checkLock(NetworkInstance instance) {
-        if (NetworkRegistry.lock)
+        if (LOCK.getAcquire())
             error("Attempted to register channel " + instance.getChannelName() + " even though registry phase is over");
     }
 
