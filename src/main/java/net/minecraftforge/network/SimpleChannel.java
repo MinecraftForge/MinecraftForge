@@ -321,9 +321,8 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
          */
         public MessageBuilder<MSG, BUF> consumerMainThread(BiConsumer<MSG, CustomPayloadEvent.Context> consumer) {
             this.consumer = (msg, context) -> {
-                var ctx = context;
-                ctx.enqueueWork(() -> consumer.accept(msg, context));
-                ctx.setPacketHandled(true);
+                context.enqueueWork(() -> consumer.accept(msg, context));
+                context.setPacketHandled(true);
             };
             return this;
         }
