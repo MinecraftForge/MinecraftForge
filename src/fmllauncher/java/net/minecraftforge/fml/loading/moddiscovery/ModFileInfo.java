@@ -32,16 +32,19 @@ public class ModFileInfo implements IModFileInfo
     private final boolean showAsResourcePack;
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
+    private final String license;
 
     ModFileInfo(final ModFile modFile, final UnmodifiableConfig config)
     {
         this.modFile = modFile;
         this.config = config;
-        this.modLoader = config.<String>getOptional("modLoader").
-                orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
-        this.modLoaderVersion = config.<String>getOptional("loaderVersion").
-                map(MavenVersionAdapter::createFromVersionSpec).
-                orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+        this.modLoader = config.<String>getOptional("modLoader")
+                .orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
+        this.modLoaderVersion = config.<String>getOptional("loaderVersion")
+                .map(MavenVersionAdapter::createFromVersionSpec)
+                .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+        this.license = config.<String>getOptional("license")
+                .orElse("Unknown");
         this.showAsResourcePack = config.<Boolean>getOrElse("showAsResourcePack", false);
         this.properties = config.<UnmodifiableConfig>getOptional("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
@@ -102,5 +105,9 @@ public class ModFileInfo implements IModFileInfo
     @Override
     public boolean showAsResourcePack() {
         return this.showAsResourcePack;
+    }
+
+    public String getLicense() {
+        return license;
     }
 }
