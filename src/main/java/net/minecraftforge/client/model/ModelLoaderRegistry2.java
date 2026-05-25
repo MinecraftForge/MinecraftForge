@@ -47,6 +47,7 @@ public class ModelLoaderRegistry2
 
     public static final String WHITE_TEXTURE = "forge:white";
 
+    private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
     private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
     private static volatile boolean registryFrozen = false;
 
@@ -58,6 +59,7 @@ public class ModelLoaderRegistry2
         registerLoader(new ResourceLocation("forge","bucket"), ModelDynBucket.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","new-multi-layer"), NewMultiLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
 
         // Model adapters from the old loading system
         registerLoader(new ResourceLocation("forge","b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
@@ -268,7 +270,16 @@ public class ModelLoaderRegistry2
                     // TODO: Provide custom vanilla baking handler for special formats.
                     throw new IllegalArgumentException("can't bake vanilla models to the format that doesn't fit into the default one: " + format);
                 }
-                model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, sprite, format);
+                {
+                    // handle vanilla item models here, since vanilla has a shortcut for them
+                    if (blockModel.getRootModel() == ModelBakery.MODEL_GENERATED) {
+                        model = ITEM_MODEL_GENERATOR.makeItemModel(spriteGetter, blockModel).bake(modelBakery, blockModel, spriteGetter, sprite, format);
+                    }
+                    else
+                    {
+                        model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, sprite, format);
+                    }
+                }
             }
 
             if (customModelState != null && !model.doesHandlePerspectives())
