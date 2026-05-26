@@ -148,7 +148,6 @@ Mod ecosystems maintain their original licenses. Singularity does not modify or 
 
 - **Issues**: GitHub Issues
 - **Discussions**: GitHub Discussions
-- **Documentation**: Full docs at [singularity-mc.dev](https://singularity-mc.dev)
 
 ## Acknowledgments
 
