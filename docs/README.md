@@ -105,7 +105,7 @@ Singularity trades minimal performance for maximum flexibility.
 ### Building from Source
 
 ```bash
-git clone https://github.com/yourusername/singularity.git
+git clone https://github.com/6876h9/singularity.git
 cd singularity
 ./gradlew build
 ```
