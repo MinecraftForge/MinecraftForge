@@ -151,4 +151,4 @@ Mod ecosystems maintain their original licenses. Singularity does not modify or 
 
 ## Acknowledgments
 
-Built on the work of the Forge, Fabric, Quilt, and NeoForge communities. Singularity exists to serve, not replace, these ecosystems.
+Built on the work of the Forge, Fabric, Quilt, and NeoForge communities. Singularity exists to act as a layer, to naturally support these ecosystems.
