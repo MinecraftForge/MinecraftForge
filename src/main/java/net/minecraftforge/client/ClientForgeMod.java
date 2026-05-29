@@ -1,29 +1,29 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.geometry.UnbakedGeometry;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
-import net.minecraftforge.client.model.DynamicFluidContainerModel;
-import net.minecraftforge.client.model.obj.ObjLoader;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftsingularity.client.event.RegisterNamedRenderTypesEvent;
+import net.minecraftsingularity.client.model.DynamicFluidContainerModel;
+import net.minecraftsingularity.client.model.obj.ObjLoader;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "forge")
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "singularity")
 public class ClientForgeMod {
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(forgeRL("empty"), (json, ctx) -> UnbakedGeometry.EMPTY);
-        event.register(forgeRL("obj"), ObjLoader.INSTANCE);
-        event.register(forgeRL("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
+        event.register(singularityRL("empty"), (json, ctx) -> UnbakedGeometry.EMPTY);
+        event.register(singularityRL("obj"), ObjLoader.INSTANCE);
+        event.register(singularityRL("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
     }
 
     @SubscribeEvent
@@ -33,10 +33,10 @@ public class ClientForgeMod {
 
     @SubscribeEvent
     public static void onRegisterNamedRenderTypes(RegisterNamedRenderTypesEvent event) {
-        event.register(forgeRL("item_unlit"), ChunkSectionLayer.TRANSLUCENT, ForgeRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get());
+        event.register(singularityRL("item_unlit"), ChunkSectionLayer.TRANSLUCENT, singularityRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get());
     }
 
-    private static Identifier forgeRL(String path) {
-        return Identifier.fromNamespaceAndPath("forge", path);
+    private static Identifier singularityRL(String path) {
+        return Identifier.fromNamespaceAndPath("singularity", path);
     }
 }

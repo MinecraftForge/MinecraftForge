@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
@@ -23,8 +23,8 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.data.ExistingFileHelper.ResourceType;
 import org.slf4j.Logger;
 
 /**
@@ -94,7 +94,7 @@ public class JsonCodecProvider<T> implements DataProvider
             {
                 if(encoded instanceof JsonObject obj)
                 {
-                    obj.add("forge:conditions", CraftingHelper.serialize(conditions));
+                    obj.add("singularity:conditions", CraftingHelper.serialize(conditions));
                 }
                 else
                 {

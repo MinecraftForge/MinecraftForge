@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.block;
+package net.minecraftsingularity.debug.block;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -18,17 +18,17 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.client.model.generators.BlockStateProvider;
+import net.minecraftsingularity.client.model.generators.ConfiguredModel;
+import net.minecraftsingularity.client.model.generators.ModelFile;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
@@ -40,8 +40,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 public class ScaffoldingTest
 {
     static final String MODID = "scaffolding_test";
-    static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    static final TagKey<Block> SCAFFOLDING = BlockTags.create(new ResourceLocation("forge", "scaffolding"));
+    static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
+    static final TagKey<Block> SCAFFOLDING = BlockTags.create(new ResourceLocation("singularity", "scaffolding"));
 
     static final RegistryObject<Block> SCAFFOLDING_METHOD_TEST = BLOCKS.register("scaffolding_method_test", () -> new ScaffoldingMethodTestBlock(Properties.of().mapColor(MapColor.SAND).noCollission().sound(SoundType.SCAFFOLDING).dynamicShape()));
 

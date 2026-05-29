@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.BlockPos;
@@ -33,15 +33,15 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.SoundAction;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.common.SoundAction;
+import net.minecraftsingularity.common.SoundActions;
+import net.minecraftsingularity.common.util.Lazy;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -69,7 +69,7 @@ public class FluidType {
      * A lazy value which computes the number of fluid types within the
      * registry.
      */
-    public static final Lazy<Integer> SIZE = Lazy.of(() -> ForgeRegistries.FLUID_TYPES.get().getKeys().size());
+    public static final Lazy<Integer> SIZE = Lazy.of(() -> singularityRegistries.FLUID_TYPES.get().getKeys().size());
 
     private String descriptionId;
     private final double motionScale;
@@ -142,7 +142,7 @@ public class FluidType {
      */
     public String getDescriptionId() {
         if (this.descriptionId == null)
-            this.descriptionId = Util.makeDescriptionId("fluid_type", ForgeRegistries.FLUID_TYPES.get().getKey(this));
+            this.descriptionId = Util.makeDescriptionId("fluid_type", singularityRegistries.FLUID_TYPES.get().getKey(this));
         return this.descriptionId;
     }
 
@@ -359,7 +359,7 @@ public class FluidType {
      *         {@code false} otherwise
      */
     public boolean canRideVehicleUnder(Entity vehicle, Entity rider) {
-        if (this == ForgeMod.WATER_TYPE.get()) return !vehicle.dismountsUnderwater();
+        if (this == singularityMod.WATER_TYPE.get()) return !vehicle.dismountsUnderwater();
         return true;
     }
 
@@ -686,7 +686,7 @@ public class FluidType {
      * @return {@code true} if the type represents air, {@code false} otherwise
      */
     public final boolean isAir() {
-        return this == ForgeMod.EMPTY_TYPE.get();
+        return this == singularityMod.EMPTY_TYPE.get();
     }
 
     /**
@@ -695,7 +695,7 @@ public class FluidType {
      * @return {@code true} if the type is from vanilla, {@code false} otherwise
      */
     public final boolean isVanilla() {
-        return this == ForgeMod.LAVA_TYPE.get() || this == ForgeMod.WATER_TYPE.get();
+        return this == singularityMod.LAVA_TYPE.get() || this == singularityMod.WATER_TYPE.get();
     }
 
     /**
@@ -761,7 +761,7 @@ public class FluidType {
      * Returns whether a fluid is lighter than air. If the fluid's density
      * is lower than or equal {@code 0}, the fluid is considered lighter than air.
      *
-     * <p>Tip: {@code 0} is the "canonical" density of air within Forge.
+     * <p>Tip: {@code 0} is the "canonical" density of air within singularity.
      *
      * <p>Note: Fluids lighter than air will have their bucket model rotated
      * upside-down; fluid block models will have their vertices inverted.
@@ -787,7 +787,7 @@ public class FluidType {
      */
     public boolean isVaporizedOnPlacement(Level level, BlockPos pos, FluidStack stack) {
         if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
-            return this == ForgeMod.WATER_TYPE.get() || this.getStateForPlacement(level, pos, stack).is(FluidTags.WATER);
+            return this == singularityMod.WATER_TYPE.get() || this.getStateForPlacement(level, pos, stack).is(FluidTags.WATER);
         }
         return false;
     }
@@ -814,7 +814,7 @@ public class FluidType {
 
     @Override
     public String toString() {
-        @Nullable Identifier name = ForgeRegistries.FLUID_TYPES.get().getKey(this);
+        @Nullable Identifier name = singularityRegistries.FLUID_TYPES.get().getKey(this);
         return name != null ? name.toString() : "Unregistered FluidType";
     }
 

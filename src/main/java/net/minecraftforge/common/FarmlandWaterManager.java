@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
@@ -14,9 +14,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraftforge.common.ticket.AABBTicket;
-import net.minecraftforge.common.ticket.ChunkTicketManager;
-import net.minecraftforge.common.ticket.SimpleTicket;
+import net.minecraftsingularity.common.ticket.AABBTicket;
+import net.minecraftsingularity.common.ticket.ChunkTicketManager;
+import net.minecraftsingularity.common.ticket.SimpleTicket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 public class FarmlandWaterManager {
-    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("singularity.debugFarmlandWaterManager", "false"));
     private static final Map<LevelReader, Map<ChunkPos, ChunkTicketManager<Vec3>>> customWaterHandler = new WeakHashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
 

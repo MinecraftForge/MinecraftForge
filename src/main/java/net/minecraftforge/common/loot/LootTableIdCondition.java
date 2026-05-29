@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.loot;
+package net.minecraftsingularity.common.loot;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,11 +14,11 @@ import net.minecraft.resources.Identifier;
 
 public record LootTableIdCondition(Identifier id) implements LootItemCondition {
     public static final MapCodec<LootTableIdCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
-        Identifier.CODEC.fieldOf("loot_table_id").forGetter(LootTableIdCondition::id)
+        Identifier.CODEC.fieldOf("loot_table_id").singularitytter(LootTableIdCondition::id)
     ).apply(b, LootTableIdCondition::new));
 
 
-    public static final Identifier UNKNOWN_LOOT_TABLE = Identifier.fromNamespaceAndPath("forge", "unknown_loot_table");
+    public static final Identifier UNKNOWN_LOOT_TABLE = Identifier.fromNamespaceAndPath("singularity", "unknown_loot_table");
 
     @Override
     public MapCodec<LootTableIdCondition> codec() {

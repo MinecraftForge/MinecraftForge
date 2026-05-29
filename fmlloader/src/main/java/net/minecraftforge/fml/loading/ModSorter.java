@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.forgespi.language.IModInfo.ModVersion;
-import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.fml.loading.toposort.CyclePresentException;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
+import net.minecraftsingularity.singularityspi.language.IModInfo.ModVersion;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException.ExceptionData;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModInfo;
+import net.minecraftsingularity.fml.loading.toposort.CyclePresentException;
+import net.minecraftsingularity.fml.loading.toposort.TopologicalSort;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+import static net.minecraftsingularity.fml.loading.LogMarkers.LOADING;
 
 public final class ModSorter {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -160,8 +160,8 @@ public final class ModSorter {
     }
 
     private static State detectSystemMods(final List<ModFile> modFiles) {
-        // Capture system mods (ex. MC, Forge) here, so we can keep them for later
-        var systemMods = List.of("minecraft", "forge");
+        // Capture system mods (ex. MC, singularity) here, so we can keep them for later
+        var systemMods = List.of("minecraft", "singularity");
         LOGGER.debug("Configured system mods: {}", systemMods);
 
         var mods = new ArrayList<ModInfo>();

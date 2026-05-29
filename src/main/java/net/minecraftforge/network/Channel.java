@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import java.util.Objects;
 
@@ -19,8 +19,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.packets.LoginWrapper;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.network.packets.LoginWrapper;
 
 public abstract class Channel<MSG> {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -63,7 +63,7 @@ public abstract class Channel<MSG> {
             case LOGIN         -> NetworkProtocol.LOGIN;
             case CONFIGURATION -> NetworkProtocol.CONFIGURATION;
             case PLAY          -> NetworkProtocol.PLAY;
-            default -> throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in Forge Networking Channel");
+            default -> throw new IllegalStateException("Unsupported protocol " + protocol.name() + " in singularity Networking Channel");
         };
 
         // Login Protocol C->S packets do not contain the plugin channel name. As they are meant to be replies.

@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event;
+package net.minecraftsingularity.event;
 
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.SelfDestructing;
 import org.jspecify.annotations.NullMarked;
 
 /**
@@ -16,7 +16,7 @@ import org.jspecify.annotations.NullMarked;
  * Does not fire for the Integrated Server on a physical Client.
  * <br>
  * On the client, the GL Context is still valid when the event is fired.
- * Fired on the FORGE event bus.
+ * Fired on the singularity event bus.
  *
  * @author Curle
  */

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event;
+package net.minecraftsingularity.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandBuildContext;
@@ -11,8 +11,8 @@ import net.minecraft.server.ReloadableServerResources;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 
 /**
  * Commands are rebuilt whenever {@link ReloadableServerResources} is recreated.

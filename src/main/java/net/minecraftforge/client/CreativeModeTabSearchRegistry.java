@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
 import net.minecraft.client.multiplayer.SessionSearchTrees;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.common.CreativeModeTabRegistry;
+import net.minecraftsingularity.common.CreativeModeTabRegistry;
 import org.jetbrains.annotations.Nullable;
 
 public class CreativeModeTabSearchRegistry {

@@ -1,24 +1,24 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
-import net.minecraftforge.server.permission.nodes.PermissionTypes;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.RegisterCommandsEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.server.permission.PermissionAPI;
+import net.minecraftsingularity.server.permission.events.PermissionGatherEvent;
+import net.minecraftsingularity.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.server.permission.nodes.PermissionTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

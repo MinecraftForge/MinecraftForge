@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftsingularity.fml.config.IConfigSpec;
+import net.minecraftsingularity.fml.config.ModConfig;
 import org.slf4j.Logger;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ public class ModLoadingContext {
     }
 
     /**
-     * @deprecated Going to be moved to ForgeHooks for Internal use.
+     * @deprecated Going to be moved to singularityHooks for Internal use.
      */
     @Deprecated(forRemoval = true, since="1.21.1")
     public String getActiveNamespace() {

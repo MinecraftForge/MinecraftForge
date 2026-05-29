@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.item;
+package net.minecraftsingularity.debug.item;
 
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -18,16 +18,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.api.distmarker.OnlyIn;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import net.minecraft.world.item.Item.Properties;
 
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustomElytraTest
 {
     public static final String MOD_ID = "custom_elytra_test";
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MOD_ID);
     private static final RegistryObject<Item> TEST_ELYTRA = ITEMS.register("test_elytra",() -> new CustomElytra(new Properties().durability(100)));
 
     public CustomElytraTest()

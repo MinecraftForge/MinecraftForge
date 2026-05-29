@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -19,15 +19,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.capabilities.*;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.event.AttachCapabilitiesEvent;
+import net.minecraftsingularity.event.TickEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.util.thread.EffectiveSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +118,7 @@ public class CapabilitiesTest
         }
     }
 
-    @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = CapabilitiesTest.MODID, bus= Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(value= Dist.CLIENT, modid = CapabilitiesTest.MODID, bus= Mod.EventBusSubscriber.Bus.singularity)
     public static class ClientEvents
     {
         @SubscribeEvent

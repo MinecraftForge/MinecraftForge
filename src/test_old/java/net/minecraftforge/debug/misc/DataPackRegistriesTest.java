@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftsingularity.debug.misc;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,18 +28,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.registries.DataPackRegistryEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.event.TagsUpdatedEvent;
+import net.minecraftsingularity.event.server.ServerStartingEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.fml.util.thread.EffectiveSide;
+import net.minecraftsingularity.registries.DataPackRegistryEvent;
+import net.minecraftsingularity.registries.RegistryObject;
 import org.slf4j.Logger;
 
 /**
@@ -71,7 +71,7 @@ public class DataPackRegistriesTest
             return;
 
         final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-        final IEventBus forgeBus = MinecraftForge.EVENT_BUS;
+        final IEventBus singularityBus = MinecraftForge.EVENT_BUS;
 
         modBus.addListener((DataPackRegistryEvent.NewRegistry event) -> {
             event.dataPackRegistry(ResourceKey.createRegistryKey(new ResourceLocation(MODID, "unsyncable")), Unsyncable.DIRECT_CODEC);
@@ -79,7 +79,7 @@ public class DataPackRegistriesTest
         });
 
         modBus.addListener(this::onGatherData);
-        forgeBus.addListener(this::onServerStarting);
+        singularityBus.addListener(this::onServerStarting);
 
         if (FMLEnvironment.dist == Dist.CLIENT)
         {

@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.InteractionResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod(RenderLocalPlayerTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)

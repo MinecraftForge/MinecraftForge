@@ -1,6 +1,6 @@
 Source installation information for modders
 -------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
+This code follows the Minecraft singularity installation methodology. It will apply
 some small patches to the vanilla MCP source code, giving you and it access
 to some of the data and functions you need to build a successful mod.
 
@@ -32,5 +32,5 @@ Additional Resources:
 Community Documentation: https://docs.minecraftforge.net/en/latest/gettingstarted/
 Additional Examples: https://github.com/MinecraftForge/MDKExamples
 LexManos' Install Video: https://youtu.be/8VEdtQLuLO0
-Forge Forums: https://forums.minecraftforge.net/
-Forge Discord: https://discord.minecraftforge.net/
+singularity Forums: https://forums.minecraftforge.net/
+singularity Discord: https://discord.minecraftforge.net/

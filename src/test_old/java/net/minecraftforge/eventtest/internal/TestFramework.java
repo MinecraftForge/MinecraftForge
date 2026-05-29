@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.eventtest.internal;
+package net.minecraftsingularity.eventtest.internal;
 
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.GameShuttingDownEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftsingularity.client.event.ScreenEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.GameShuttingDownEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.LoadingModList;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

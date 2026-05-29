@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.core.dispenser.BlockSource;
@@ -14,8 +14,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftsingularity.fluids.capability.IFluidHandler;
+import net.minecraftsingularity.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.NotNull;
 
 /**

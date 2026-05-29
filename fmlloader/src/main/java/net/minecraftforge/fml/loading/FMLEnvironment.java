@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.TypesafeMap;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.forgespi.Environment;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.singularityspi.Environment;
 
 import java.util.function.Supplier;
 

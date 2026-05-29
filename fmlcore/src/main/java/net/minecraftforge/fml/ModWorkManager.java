@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
-import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftsingularity.fml.loading.FMLConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.*;
 import java.util.concurrent.locks.LockSupport;
 
-import static net.minecraftforge.fml.Logging.LOADING;
+import static net.minecraftsingularity.fml.Logging.LOADING;
 
 public final class ModWorkManager {
     private static final Logger LOGGER = LogManager.getLogger();

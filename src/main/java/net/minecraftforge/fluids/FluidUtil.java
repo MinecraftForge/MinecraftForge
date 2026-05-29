@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.item.BucketItem;
@@ -22,16 +22,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
-import net.minecraftforge.fluids.capability.wrappers.BucketPickupHandlerWrapper;
-import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftsingularity.common.SoundActions;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.fluids.capability.IFluidHandler;
+import net.minecraftsingularity.fluids.capability.IFluidHandlerItem;
+import net.minecraftsingularity.fluids.capability.wrappers.BlockWrapper;
+import net.minecraftsingularity.fluids.capability.wrappers.BucketPickupHandlerWrapper;
+import net.minecraftsingularity.fluids.capability.wrappers.FluidBlockWrapper;
+import net.minecraftsingularity.items.IItemHandler;
+import net.minecraftsingularity.items.ItemHandlerHelper;
 
 import java.util.Optional;
 
@@ -89,7 +89,7 @@ public class FluidUtil
         ItemStack heldItem = player.getItemInHand(hand);
         if (!heldItem.isEmpty())
         {
-            return player.getCapability(ForgeCapabilities.ITEM_HANDLER)
+            return player.getCapability(singularityCapabilities.ITEM_HANDLER)
                 .map(playerInventory -> {
 
                     FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
@@ -431,7 +431,7 @@ public class FluidUtil
     public static LazyOptional<IFluidHandlerItem> getFluidHandler(@NotNull ItemStack itemStack)
     {
         return LazyOptional.empty(); // TEMP FIX - MangoRage
-        // return itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
+        // return itemStack.getCapability(singularityCapabilities.FLUID_HANDLER_ITEM);
     }
 
     /**
@@ -463,7 +463,7 @@ public class FluidUtil
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity != null)
             {
-                return blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER, side);
+                return blockEntity.getCapability(singularityCapabilities.FLUID_HANDLER, side);
             }
         }
         return LazyOptional.empty();

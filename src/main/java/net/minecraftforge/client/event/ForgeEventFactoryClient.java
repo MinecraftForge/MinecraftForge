@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import java.util.Map;
 import java.util.function.Function;
 
-import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftsingularity.client.gui.overlay.singularityLayeredDraw;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.event.TickEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,12 +64,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock.Type;
-import net.minecraftforge.client.event.sound.PlaySoundSourceEvent;
-import net.minecraftforge.client.event.sound.PlayStreamingSourceEvent;
+import net.minecraftsingularity.client.event.sound.PlaySoundSourceEvent;
+import net.minecraftsingularity.client.event.sound.PlayStreamingSourceEvent;
 
 @ApiStatus.Internal
-public final class ForgeEventFactoryClient {
-    private ForgeEventFactoryClient() {}
+public final class singularityEventFactoryClient {
+    private singularityEventFactoryClient() {}
 
     public static void onGatherLayers(Map<EntityType<?>, EntityRenderer<?, ?>> renderers, Map<PlayerModelType, AvatarRenderer<AbstractClientPlayer>> playerRenderers, Map<PlayerModelType, AvatarRenderer<ClientMannequin>> mannequinRenderers, Context context) {
         EntityRenderersEvent.AddLayers.BUS.post(new EntityRenderersEvent.AddLayers(renderers, playerRenderers, mannequinRenderers, context));
@@ -268,7 +268,7 @@ public final class ForgeEventFactoryClient {
         AddFramePassEvent.BUS.post(new AddFramePassEvent());
     }
 
-    public static void onComputeLayerOrder(ForgeLayeredDraw layeredDraw) {
+    public static void onComputeLayerOrder(singularityLayeredDraw layeredDraw) {
         AddGuiOverlayLayersEvent.BUS.post(new AddGuiOverlayLayersEvent(layeredDraw));
     }
 }

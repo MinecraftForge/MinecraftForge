@@ -1,29 +1,29 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.client.event.AddGuiOverlayLayersEvent;
+import net.minecraftsingularity.client.event.RenderTooltipEvent;
+import net.minecraftsingularity.event.TickEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.util.Random;
 
 import org.jspecify.annotations.Nullable;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(RenderTooltipTest.MODID)
 public class RenderTooltipTest extends BaseTestMod {
     public static final String MODID = "render_tooltip_test";

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.geometry;
+package net.minecraftsingularity.client.model.geometry;
 
 import com.mojang.math.Transformation;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -17,7 +17,7 @@ import java.util.function.BiPredicate;
  * A {@linkplain IGeometryBakingContext geometry baking context} that is not bound to block/item model loading.
  */
 public class StandaloneGeometryBakingContext implements IGeometryBakingContext {
-    public static final Identifier LOCATION = Identifier.fromNamespaceAndPath("forge", "standalone");
+    public static final Identifier LOCATION = Identifier.fromNamespaceAndPath("singularity", "standalone");
 
     public static final StandaloneGeometryBakingContext INSTANCE = builder().build();
 

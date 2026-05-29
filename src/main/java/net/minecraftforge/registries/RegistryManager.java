@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.Registry;
-import net.minecraftforge.registries.ForgeRegistry.Snapshot;
+import net.minecraftsingularity.registries.singularityRegistry.Snapshot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -32,7 +32,7 @@ public class RegistryManager {
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
     private static Set<Identifier> vanillaRegistryKeys = Set.of();
 
-    BiMap<Identifier, ForgeRegistry<?>> registries = HashBiMap.create();
+    BiMap<Identifier, singularityRegistry<?>> registries = HashBiMap.create();
     private final Map<Identifier, ? extends IForgeRegistry<?>> registryView = Collections.unmodifiableMap(registries);
     private final Set<Identifier> persisted = new HashSet<>();
     private final Set<Identifier> synced = new HashSet<>();
@@ -56,11 +56,11 @@ public class RegistryManager {
     }
 
     @SuppressWarnings("unchecked")
-    public <V> ForgeRegistry<V> getRegistry(Identifier key) {
-        return (ForgeRegistry<V>)this.registries.get(key);
+    public <V> singularityRegistry<V> getRegistry(Identifier key) {
+        return (singularityRegistry<V>)this.registries.get(key);
     }
 
-    public <V> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key) {
+    public <V> singularityRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key) {
         return getRegistry(key.identifier());
     }
 
@@ -86,9 +86,9 @@ public class RegistryManager {
         return legacyName;
     }
 
-    public <V> ForgeRegistry<V> getRegistry(Identifier key, RegistryManager other) {
+    public <V> singularityRegistry<V> getRegistry(Identifier key, RegistryManager other) {
         if (!this.registries.containsKey(key)) {
-            ForgeRegistry<V> ot = other.getRegistry(key);
+            singularityRegistry<V> ot = other.getRegistry(key);
             if (ot == null)
                 return null;
             this.registries.put(key, ot.copy(this));
@@ -103,10 +103,10 @@ public class RegistryManager {
         return getRegistry(key);
     }
 
-    <V> ForgeRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
+    <V> singularityRegistry<V> createRegistry(Identifier name, RegistryBuilder<V> builder) {
         if (registries.containsKey(name))
             throw new IllegalArgumentException("Attempted to register a registry for " + name + " but it already exists");
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(this, name, builder);
+        singularityRegistry<V> reg = new singularityRegistry<V>(this, name, builder);
         registries.put(name, reg);
         if (builder.getSaveToDisc())
             this.persisted.add(name);
@@ -117,16 +117,16 @@ public class RegistryManager {
         return getRegistry(name);
     }
 
-    static <V> void registerToRootRegistry(ForgeRegistry<V> forgeReg) {
-        injectForgeRegistry(forgeReg, BuiltInRegistries.REGISTRY);
+    static <V> void registerToRootRegistry(singularityRegistry<V> singularityReg) {
+        injectForgeRegistry(singularityReg, BuiltInRegistries.REGISTRY);
     }
 
     @SuppressWarnings("unchecked")
-    private static <V> void injectForgeRegistry(ForgeRegistry<V> forgeReg, Registry<? extends Registry<?>> rootRegistry) {
+    private static <V> void injectForgeRegistry(singularityRegistry<V> singularityReg, Registry<? extends Registry<?>> rootRegistry) {
         WritableRegistry<Registry<V>> registry = (WritableRegistry<Registry<V>>) rootRegistry;
-        Registry<V> wrapper = forgeReg.getWrapper();
+        Registry<V> wrapper = singularityReg.getWrapper();
         if (wrapper != null)
-            registry.register(forgeReg.getRegistryKey(), wrapper, RegistrationInfo.BUILT_IN);
+            registry.register(singularityReg.getRegistryKey(), wrapper, RegistrationInfo.BUILT_IN);
     }
 
     public static void postNewRegistryEvent() {

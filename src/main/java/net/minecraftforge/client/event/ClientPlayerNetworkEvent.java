@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.Connection;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
@@ -20,7 +20,7 @@ import org.jspecify.annotations.NullMarked;
  * Fired for different client connectivity events.
  * See the various subclasses to listen for specific events.
  *
- * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see LoggingIn
@@ -48,7 +48,7 @@ public sealed interface ClientPlayerNetworkEvent extends InheritableEvent {
     /**
      * Fired when the client player logs in to the server. The player should be initialized.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @NullMarked
@@ -63,7 +63,7 @@ public sealed interface ClientPlayerNetworkEvent extends InheritableEvent {
     /**
      * Fired when the client player logs out. This event may also fire when a new integrated server is being created.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @SuppressWarnings("NullableProblems")
@@ -117,7 +117,7 @@ public sealed interface ClientPlayerNetworkEvent extends InheritableEvent {
     /**
      * Fired when the client player respawns, creating a new player instance to replace the old player instance.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @param getOldPlayer the previous player instance

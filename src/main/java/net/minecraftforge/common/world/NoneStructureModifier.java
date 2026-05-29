@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Builder;
+import net.minecraftsingularity.common.world.ModifiableStructureInfo.StructureInfo.Builder;
 
 /**
- * Noop structure modifier. Can be used in a structure modifier json with "type": "forge:none".
+ * Noop structure modifier. Can be used in a structure modifier json with "type": "singularity:none".
  * intended for datapack makers who want to disable a structure modifier
  */
 public class NoneStructureModifier implements StructureModifier {

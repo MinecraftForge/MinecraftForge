@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.gui;
+package net.minecraftsingularity.client.gui;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.gui.widget.ModListWidget;
-import net.minecraftforge.client.gui.widget.ScrollPanel;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.client.ConfigScreenHandler;
+import net.minecraftsingularity.client.gui.widget.ModListWidget;
+import net.minecraftsingularity.client.gui.widget.ScrollPanel;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import net.minecraft.client.Minecraft;
@@ -40,22 +40,22 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.Size2i;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.util.Size2i;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.common.util.MavenVersionStringHelper;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.VersionChecker;
+import net.minecraftsingularity.fml.loading.FMLPaths;
+import net.minecraftsingularity.fml.loading.StringUtils;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 
 public class ModListScreen extends Screen {
-    private static final Identifier LOGO = Identifier.fromNamespaceAndPath("forge", "mod_logo");
+    private static final Identifier LOGO = Identifier.fromNamespaceAndPath("singularity", "mod_logo");
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtil.stripColor(value); }
     private static final Logger LOGGER = LogUtils.getLogger();
     private enum SortType implements Comparator<IModInfo> {
@@ -136,7 +136,7 @@ public class ModListScreen extends Screen {
                     continue;
                 }
 
-                Component chat = ForgeHooks.newChatWithLinks(line, false);
+                Component chat = singularityHooks.newChatWithLinks(line, false);
                 int maxTextLength = this.width - 12;
                 if (maxTextLength >= 0)
                     ret.addAll(font.split(chat, maxTextLength));
@@ -422,40 +422,40 @@ public class ModListScreen extends Screen {
         }
 
         lines.add(selectedMod.getDisplayName());
-        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", MavenVersionStringHelper.artifactVersionToString(selectedMod.getVersion())));
-        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), ModList.getModContainerById(selectedMod.getModId()).
+        lines.add(singularityI18n.parseMessage("fml.menu.mods.info.version", MavenVersionStringHelper.artifactVersionToString(selectedMod.getVersion())));
+        lines.add(singularityI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), ModList.getModContainerById(selectedMod.getModId()).
                 map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE")));
 
         selectedMod.getConfig().getConfigElement("credits").ifPresent(credits->
-                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.credits", credits)));
+                lines.add(singularityI18n.parseMessage("fml.menu.mods.info.credits", credits)));
         selectedMod.getConfig().getConfigElement("authors").ifPresent(authors ->
-                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.authors", authors)));
+                lines.add(singularityI18n.parseMessage("fml.menu.mods.info.authors", authors)));
         selectedMod.getConfig().getConfigElement("displayURL").ifPresent(displayURL ->
-                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.displayurl", displayURL)));
+                lines.add(singularityI18n.parseMessage("fml.menu.mods.info.displayurl", displayURL)));
         if (selectedMod.getOwningFile() == null || selectedMod.getOwningFile().getMods().size() == 1)
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.nochildmods"));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.nochildmods"));
         else
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.childmods", selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(","))));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.childmods", selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(","))));
 
         if (vercheck.status().isOutdated())
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url() == null ? "" : vercheck.url()));
-        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", ((ModFileInfo) selectedMod.getOwningFile()).getLicense()));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url() == null ? "" : vercheck.url()));
+        lines.add(singularityI18n.parseMessage("fml.menu.mods.info.license", ((ModFileInfo) selectedMod.getOwningFile()).getLicense()));
         lines.add(null);
         lines.add(selectedMod.getDescription());
 
         /* Removed because people bitched that this information was misleading.
         lines.add(null);
         if (FMLEnvironment.secureJarsEnabled) {
-            lines.add(ForgeI18getOwningFile().getFile().n.parseMessage("fml.menu.mods.info.signature", selectedMod.getOwningFile().getCodeSigningFingerprint().orElse(ForgeI18n.parseMessage("fml.menu.mods.info.signature.unsigned"))));
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.trust", selectedMod.getOwningFile().getTrustData().orElse(ForgeI18n.parseMessage("fml.menu.mods.info.trust.noauthority"))));
+            lines.add(singularityI18getOwningFile().getFile().n.parseMessage("fml.menu.mods.info.signature", selectedMod.getOwningFile().getCodeSigningFingerprint().orElse(singularityI18n.parseMessage("fml.menu.mods.info.signature.unsigned"))));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.trust", selectedMod.getOwningFile().getTrustData().orElse(singularityI18n.parseMessage("fml.menu.mods.info.trust.noauthority"))));
         } else {
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.securejardisabled"));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.securejardisabled"));
         }
         */
 
         if ((vercheck.status().isOutdated()) && !vercheck.changes().isEmpty()) {
             lines.add(null);
-            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.changelogheader"));
+            lines.add(singularityI18n.parseMessage("fml.menu.mods.info.changelogheader"));
             for (Entry<ComparableVersion, String> entry : vercheck.changes().entrySet()) {
                 lines.add("  " + entry.getKey() + ":");
                 lines.add(entry.getValue());

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod;
 
 /**
  * To see the effects of this test mod you must create a new world then teleport to the custom

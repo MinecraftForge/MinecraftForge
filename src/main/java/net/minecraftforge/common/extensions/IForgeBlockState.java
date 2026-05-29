@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.IPlantable;
+import net.minecraftsingularity.common.IPlantable;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -38,8 +38,8 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.ToolActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -600,7 +600,7 @@ public interface IForgeBlockState {
      */
     @Nullable
     default BlockState getToolModifiedState(UseOnContext context, ToolAction toolAction, boolean simulate) {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), context, toolAction, simulate);
+        BlockState eventState = net.minecraftsingularity.event.singularityEventFactory.onToolUse(self(), context, toolAction, simulate);
         return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), context, toolAction, simulate);
     }
 

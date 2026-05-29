@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -12,7 +12,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.common.extensions.IForgeRegistrySetBuilder;
+import net.minecraftsingularity.common.extensions.IForgeRegistrySetBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.Lifecycle;
@@ -42,10 +42,10 @@ import java.util.function.Supplier;
  *        new PlacedFeature(CONFIGURED.getHolder().orElseThrow(), List.of())
  *    );
  *
- *    public static final DeferredRegisterData<BiomeModifier> BIOME_MODIFIERS = DeferredRegisterData.create(ForgeRegistries.Keys.BIOME_MODIFIERS, MOD_ID);
+ *    public static final DeferredRegisterData<BiomeModifier> BIOME_MODIFIERS = DeferredRegisterData.create(singularityRegistries.Keys.BIOME_MODIFIERS, MOD_ID);
  *    @SuppressWarnings("unused")
  *    private static final RegistryObject<BiomeModifier> MODIFIER = BIOME_MODIFIERS.register("modifier", ctx -> {
- *        return new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+ *        return new singularityBiomeModifiers.AddFeaturesBiomeModifier(
  *            ctx.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_OVERWORLD),
  *            HolderSet.direct(PLACED.getHolder().orElseThrow()),
  *            GenerationStep.Decoration.UNDERGROUND_ORES

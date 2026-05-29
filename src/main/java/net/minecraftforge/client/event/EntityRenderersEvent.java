@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -31,12 +31,12 @@ import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.SkullBlock.Type;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.client.singularityHooksClient;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.SelfDestructing;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
@@ -80,7 +80,7 @@ public sealed interface EntityRenderersEvent {
          *                      the entity model class
          */
         public void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier) {
-            ForgeHooksClient.registerLayerDefinition(layerLocation, supplier);
+            singularityHooksClient.registerLayerDefinition(layerLocation, supplier);
         }
     }
 

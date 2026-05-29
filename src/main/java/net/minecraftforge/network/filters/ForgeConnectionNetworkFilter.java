@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.filters;
+package net.minecraftsingularity.network.filters;
 
 /*
 import java.util.List;
@@ -24,12 +24,12 @@ import com.google.common.collect.ImmutableMap;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Network filter for forge-forge connections.
+ * Network filter for singularity-singularity connections.
  * /
 @ChannelHandler.Sharable
-public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
+public class singularityConnectionNetworkFilter extends VanillaPacketFilter
 {
-    public ForgeConnectionNetworkFilter(@Nullable Connection manager)
+    public singularityConnectionNetworkFilter(@Nullable Connection manager)
     {
         super(buildHandlers(manager));
     }
@@ -43,10 +43,10 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
             return ImmutableMap.of();
         }
         ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
-                .put(ClientboundUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(ClientboundUpdateTagsPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(ClientboundUpdateAdvancementsPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(ClientboundLoginPacket.class, ForgeConnectionNetworkFilter::splitPacket); // When there are many dynamic registry entries that packet is BIG
+                .put(ClientboundUpdateRecipesPacket.class, singularityConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateTagsPacket.class, singularityConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateAdvancementsPacket.class, singularityConnectionNetworkFilter::splitPacket)
+                .put(ClientboundLoginPacket.class, singularityConnectionNetworkFilter::splitPacket); // When there are many dynamic registry entries that packet is BIG
 
         return builder.build();
     }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftsingularity.fml.common;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,10 +11,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.function.Supplier;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.Bindings;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.Bindings;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -73,7 +73,7 @@ public @interface Mod {
             /**
              * The main BusGroup that most game events are fired on.
              */
-            FORGE(Bindings.getForgeBus()),
+            singularity(Bindings.getForgeBus()),
 
             /**
              * The mod-specific event BusGroup, usually for mod lifecycle events.
@@ -82,7 +82,7 @@ public @interface Mod {
             MOD(()-> FMLJavaModLoadingContext.get().getModBusGroup()),
 
             /**
-             * Both the {@link #FORGE} and {@link #MOD} buses. This is slower to register events in your class but
+             * Both the {@link #singularity} and {@link #MOD} buses. This is slower to register events in your class but
              * allows you to listen to events from different BusGroup types without needing separate classes annotated
              * with {@link EventBusSubscriber}.
              */

@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.items.wrapper;
+package net.minecraftsingularity.items.wrapper;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftsingularity.items.IItemHandlerModifiable;
 import org.jetbrains.annotations.NotNull;
 
 // combines multiple IItemHandlerModifiable into one interface

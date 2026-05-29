@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.item;
+package net.minecraftsingularity.debug.item;
 
 import java.util.Map;
 import net.minecraft.client.renderer.entity.PigRenderer;
@@ -15,37 +15,37 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeSpawnEggItem;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.EntityRenderersEvent;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.common.singularitySpawnEggItem;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.event.entity.EntityAttributeCreationEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.util.ObfuscationReflectionHelper;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
-@Mod(value = ForgeSpawnEggItemTest.MODID)
-public class ForgeSpawnEggItemTest
+@Mod(value = singularitySpawnEggItemTest.MODID)
+public class singularitySpawnEggItemTest
 {
-    static final String MODID = "forge_spawnegg_test";
+    static final String MODID = "singularity_spawnegg_test";
     static final boolean ENABLED = true;
 
-    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, MODID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(singularityRegistries.ENTITY_TYPES, MODID);
     private static final RegistryObject<EntityType<Pig>> ENTITY = ENTITIES.register("test_entity", () ->
             EntityType.Builder.of(Pig::new, MobCategory.CREATURE).sized(1, 1).build("test_entity")
     );
 
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final RegistryObject<ForgeSpawnEggItem> EGG = ITEMS.register("test_spawn_egg", () ->
-            new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties())
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
+    private static final RegistryObject<singularitySpawnEggItem> EGG = ITEMS.register("test_spawn_egg", () ->
+            new singularitySpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties())
     );
 
-    public ForgeSpawnEggItemTest()
+    public singularitySpawnEggItemTest()
     {
         if (ENABLED)
         {
@@ -70,7 +70,7 @@ public class ForgeSpawnEggItemTest
         //Remove step height attribute to validate that things are handled properly when an entity doesn't have it
         Map<Attribute, AttributeInstance> builder = ObfuscationReflectionHelper.getPrivateValue(AttributeSupplier.Builder.class, attributes, "f_2226" + "2_");
         if (builder != null) {
-            builder.remove(ForgeMod.STEP_HEIGHT_ADDITION.get());
+            builder.remove(singularityMod.STEP_HEIGHT_ADDITION.get());
         }
         event.put(ENTITY.get(), attributes.build());
     }

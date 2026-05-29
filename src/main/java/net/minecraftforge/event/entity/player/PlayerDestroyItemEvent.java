@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.player;
+package net.minecraftsingularity.event.entity.player;
 
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -33,7 +33,7 @@ import org.jspecify.annotations.Nullable;
  * {@link Player#attack(Entity)},
  * {@code Player#hurtCurrentlyUsedShield(float)},
  * {@link Player#interactOn(Entity, InteractionHand)},
- * {@link ForgeHooks#getCraftingRemainingItem(ItemStack)},
+ * {@link singularityHooks#getCraftingRemainingItem(ItemStack)},
  * {@link ServerPlayerGameMode#useItem(ServerPlayer, Level, ItemStack, InteractionHand)} ,
  * {@link ServerPlayerGameMode#useItemOn(ServerPlayer, Level, ItemStack, InteractionHand, BlockHitResult)}
  * and {@link ServerPlayerGameMode#destroyBlock(BlockPos)}.<br>
@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
  * (@link #hand) contains the hand that the current item was held in.<br>
  * <br>
- * This event is fired from {@link ForgeEventFactory#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
+ * This event is fired from {@link singularityEventFactory#onPlayerDestroyItem(Player, ItemStack, InteractionHand)}.<br>
  *
  * @param getSlot May be null if this player destroys the item by any use besides holding it.
  **/

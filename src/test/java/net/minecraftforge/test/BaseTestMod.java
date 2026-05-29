@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.test;
+package net.minecraftsingularity.test;
 
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Field;
@@ -32,17 +32,17 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab.TabVisibility;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.ForgeGameTestHooks;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.DeferredRegisterData;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.unsafe.UnsafeHacks;
+import net.minecraftsingularity.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.singularityGameTestHooks;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.DeferredRegisterData;
+import net.minecraftsingularity.registries.RegisterEvent;
+import net.minecraftsingularity.unsafe.UnsafeHacks;
 
 public abstract class BaseTestMod {
     private final List<Function<HolderLookup.Provider, ItemStack>> testItems = new ArrayList<>();
@@ -51,7 +51,7 @@ public abstract class BaseTestMod {
     protected final List<Map<ResourceKey<? extends Registry<?>>, DeferredRegisterData<?>>> dataRegistries = new ArrayList<>();
     protected final Set<DeferredRegisterData<?>> myDataRegistries = new HashSet<>();
 
-    protected final Map<Identifier, ForgeGameTestHooks.TestReference> tests;
+    protected final Map<Identifier, singularityGameTestHooks.TestReference> tests;
 
     public BaseTestMod(FMLJavaModLoadingContext context) {
         this(context, true, true);
@@ -65,7 +65,7 @@ public abstract class BaseTestMod {
             BuildCreativeModeTabContentsEvent.BUS.addListener(this::onCreativeModeTabBuildContents);
         }
 
-        tests = ForgeGameTestHooks.gatherTests(getClass(), this);
+        tests = singularityGameTestHooks.gatherTests(getClass(), this);
 
         if (registerDeferred) {
             Class<?> cls = getClass();

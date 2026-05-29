@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.eventtest.internal;
+package net.minecraftsingularity.eventtest.internal;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.RenderTypeGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.client.RenderTypeGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.SelfDestructing;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;

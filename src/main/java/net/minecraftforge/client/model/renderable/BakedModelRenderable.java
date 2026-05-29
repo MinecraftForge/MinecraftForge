@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.renderable;
+package net.minecraftsingularity.client.model.renderable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
@@ -17,7 +17,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftsingularity.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
@@ -37,7 +37,7 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
      * Constructs a {@link BakedModelRenderable} from the given model location.
      * The model is expected to have been baked ahead of time.
      *
-     * @see net.minecraftforge.client.event.ModelEvent.RegisterModelStateDefinitions
+     * @see net.minecraftsingularity.client.event.ModelEvent.RegisterModelStateDefinitions
      */
     public static BakedModelRenderable of(BlockState state) {
         return of(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state));

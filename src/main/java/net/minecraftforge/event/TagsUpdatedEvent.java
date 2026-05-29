@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event;
+package net.minecraftsingularity.event;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 
 /**
  * Fired when tags are updated on either server or client. This event can be used to refresh data that depends on tags.

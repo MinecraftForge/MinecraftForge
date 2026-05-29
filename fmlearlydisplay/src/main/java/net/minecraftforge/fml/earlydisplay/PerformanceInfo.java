@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.earlydisplay;
+package net.minecraftsingularity.fml.earlydisplay;
 
 import com.sun.management.OperatingSystemMXBean;
-import net.minecraftforge.fml.loading.FMLConfig;
+import net.minecraftsingularity.fml.loading.FMLConfig;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  *
  * @see SoundType
  */
-public class ForgeSoundType extends SoundType {
+public class singularitySoundType extends SoundType {
     private final Supplier<SoundEvent> breakSound;
     private final Supplier<SoundEvent> stepSound;
     private final Supplier<SoundEvent> placeSound;
@@ -41,7 +41,7 @@ public class ForgeSoundType extends SoundType {
     private final Supplier<SoundEvent> fallSound;
 
     @SuppressWarnings("deprecation")
-    public ForgeSoundType(float volumeIn, float pitchIn, Supplier<SoundEvent> breakSoundIn, Supplier<SoundEvent> stepSoundIn, Supplier<SoundEvent> placeSoundIn, Supplier<SoundEvent> hitSoundIn, Supplier<SoundEvent> fallSoundIn) {
+    public singularitySoundType(float volumeIn, float pitchIn, Supplier<SoundEvent> breakSoundIn, Supplier<SoundEvent> stepSoundIn, Supplier<SoundEvent> placeSoundIn, Supplier<SoundEvent> hitSoundIn, Supplier<SoundEvent> fallSoundIn) {
         super(volumeIn, pitchIn, null, null, null, null, null);
         this.breakSound = breakSoundIn;
         this.stepSound = stepSoundIn;

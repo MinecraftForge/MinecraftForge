@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import java.util.Optional;
 import java.util.OptionalInt;

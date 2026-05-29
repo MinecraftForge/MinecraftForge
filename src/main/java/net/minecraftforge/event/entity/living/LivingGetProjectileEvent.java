@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 
 /**
  * This event is fired when a living entity attempts to get a projectile with the
@@ -57,7 +57,7 @@ public final class LivingGetProjectileEvent extends MutableEvent implements Livi
      * <p>
      * If the entity is a player: whenever the projectile is fired/consumed the stack will be shrunk by
      * one. To disable this behaviour you can copy the stack before giving it to the event. For bows, you can use
-     * {@link net.minecraftforge.event.entity.player.ArrowLooseEvent} to remove the arrow yourself.
+     * {@link net.minecraftsingularity.event.entity.player.ArrowLooseEvent} to remove the arrow yourself.
      * <p>
      * Be aware that since this event fires every time a living entity gets a projectile, whether or not its
      * {@link LivingEntity#level} is client-side, you will want to make a conditional to always set the item stack to

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 /**
- * Extension interfaces for {@link net.minecraftforge.api.distmarker.Dist#CLIENT client}-only classes.
+ * Extension interfaces for {@link net.minecraftsingularity.api.distmarker.Dist#CLIENT client}-only classes.
  *
  * <p>Extension interfaces allow the convenient addition of methods to the target class, as the target class is patched
  * to implement the interface. Because of this, these interfaces must only be implemented by the target classes, and must
@@ -16,6 +16,6 @@
  * in the target class instead if it requires access to (patched-in or original) fields in the instance.</p>
  */
 @NullMarked
-package net.minecraftforge.client.extensions;
+package net.minecraftsingularity.client.extensions;
 
 import org.jspecify.annotations.NullMarked;

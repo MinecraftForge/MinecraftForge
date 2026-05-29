@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.player;
+package net.minecraftsingularity.event.entity.player;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.Entity;
@@ -23,14 +23,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftsingularity.common.MinecraftForge;
 
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;

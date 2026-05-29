@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftsingularity.network.NetworkRegistry;
 
 public record ChannelVersions(Map<Identifier, @NotNull Integer> channels) {
     public static StreamCodec<FriendlyByteBuf, ChannelVersions> STREAM_CODEC = StreamCodec.ofMember(ChannelVersions::encode, ChannelVersions::decode);

@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.forgespi.locating.ForgeFeature;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.singularityspi.locating.singularityFeature;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -26,7 +26,7 @@ public class MavenVersionStringHelper {
     public static String restrictionToString(final Restriction restriction) {
         if ( restriction.getLowerBound() == null && restriction.getUpperBound() == null )
         {
-            return ForgeI18n.parseMessage("fml.messages.version.restriction.any");
+            return singularityI18n.parseMessage("fml.messages.version.restriction.any");
         }
         else if ( restriction.getLowerBound() != null && restriction.getUpperBound() != null )
         {
@@ -38,19 +38,19 @@ public class MavenVersionStringHelper {
             {
                 if (restriction.isLowerBoundInclusive() && restriction.isUpperBoundInclusive())
                 {
-                    return ForgeI18n.parseMessage("fml.messages.version.restriction.bounded.inclusive", restriction.getLowerBound(), restriction.getUpperBound());
+                    return singularityI18n.parseMessage("fml.messages.version.restriction.bounded.inclusive", restriction.getLowerBound(), restriction.getUpperBound());
                 }
                 else if (restriction.isLowerBoundInclusive())
                 {
-                    return ForgeI18n.parseMessage("fml.messages.version.restriction.bounded.upperexclusive", restriction.getLowerBound(), restriction.getUpperBound());
+                    return singularityI18n.parseMessage("fml.messages.version.restriction.bounded.upperexclusive", restriction.getLowerBound(), restriction.getUpperBound());
                 }
                 else if (restriction.isUpperBoundInclusive())
                 {
-                    return ForgeI18n.parseMessage("fml.messages.version.restriction.bounded.lowerexclusive", restriction.getLowerBound(), restriction.getUpperBound());
+                    return singularityI18n.parseMessage("fml.messages.version.restriction.bounded.lowerexclusive", restriction.getLowerBound(), restriction.getUpperBound());
                 }
                 else
                 {
-                    return ForgeI18n.parseMessage("fml.messages.version.restriction.bounded.exclusive", restriction.getLowerBound(), restriction.getUpperBound());
+                    return singularityI18n.parseMessage("fml.messages.version.restriction.bounded.exclusive", restriction.getLowerBound(), restriction.getUpperBound());
                 }
             }
         }
@@ -58,22 +58,22 @@ public class MavenVersionStringHelper {
         {
             if ( restriction.isLowerBoundInclusive() )
             {
-                return ForgeI18n.parseMessage("fml.messages.version.restriction.lower.inclusive", restriction.getLowerBound());
+                return singularityI18n.parseMessage("fml.messages.version.restriction.lower.inclusive", restriction.getLowerBound());
             }
             else
             {
-                return ForgeI18n.parseMessage("fml.messages.version.restriction.lower.exclusive", restriction.getLowerBound());
+                return singularityI18n.parseMessage("fml.messages.version.restriction.lower.exclusive", restriction.getLowerBound());
             }
         }
         else
         {
             if ( restriction.isUpperBoundInclusive() )
             {
-                return ForgeI18n.parseMessage("fml.messages.version.restriction.upper.inclusive", restriction.getUpperBound());
+                return singularityI18n.parseMessage("fml.messages.version.restriction.upper.inclusive", restriction.getUpperBound());
             }
             else
             {
-                return ForgeI18n.parseMessage("fml.messages.version.restriction.upper.exclusive", restriction.getUpperBound());
+                return singularityI18n.parseMessage("fml.messages.version.restriction.upper.exclusive", restriction.getUpperBound());
             }
         }
     }
@@ -83,7 +83,7 @@ public class MavenVersionStringHelper {
     }
 
     public static void parseFeatureBoundValue(final StringBuffer stringBuffer, final Object range) {
-        if (range instanceof ForgeFeature.Bound bound) {
+        if (range instanceof singularityFeature.Bound bound) {
             stringBuffer.append(bound.featureName());
             if (bound.bound() instanceof Boolean b) {
                 stringBuffer.append("=").append(b);

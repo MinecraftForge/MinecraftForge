@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.data.loading;
+package net.minecraftsingularity.data.loading;
 
 import net.minecraft.util.Util;
 import net.minecraft.client.ClientBootstrap;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.Bootstrap;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.ModLoader;
+import net.minecraftsingularity.fml.ModWorkManager;
+import net.minecraftsingularity.data.event.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,7 +101,7 @@ public final class DatagenModLoader {
             var m = Pattern.compile('^' + pattern + '$');
             ModList.forEachModInOrder(mc -> {
                 var id = mc.getModId();
-                if (!"forge".equals(id) && !"minecraft".equals(id) && m.matcher(id).matches())
+                if (!"singularity".equals(id) && !"minecraft".equals(id) && m.matcher(id).matches())
                     mods.add(id);
             });
         }
@@ -110,9 +110,9 @@ public final class DatagenModLoader {
         var config = new GatherDataEvent.DataGeneratorConfig(mods, output, inputs, lookupProvider, genServer,
                 genClient, genDev, genReports, flat);
 
-        if (!mods.contains("forge")) {
-            // If we aren't generating data for forge, automatically add forge as an existing so mods can access forge's data
-            existingMods.add("forge");
+        if (!mods.contains("singularity")) {
+            // If we aren't generating data for singularity, automatically add singularity as an existing so mods can access singularity's data
+            existingMods.add("singularity");
         }
 
         existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, assetIndex, assetsDir);

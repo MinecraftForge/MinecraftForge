@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.chat;
+package net.minecraftsingularity.debug.chat;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -13,11 +13,11 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.command.EntitySelectorManager;
-import net.minecraftforge.common.command.IEntitySelectorType;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.common.command.EntitySelectorManager;
+import net.minecraftsingularity.common.command.IEntitySelectorType;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod("entity_selector_test")
 public class EntitySelectorTest

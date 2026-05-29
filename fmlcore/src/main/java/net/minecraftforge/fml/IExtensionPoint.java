@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
@@ -31,8 +31,8 @@ public interface IExtensionPoint<T extends Record>
     /**
      * Extension point for the compatibility display test used on the server selection screen.
      *
-     * <em>Note: "server" and "client" refers to the {@linkplain net.minecraftforge.api.distmarker.Dist#DEDICATED_SERVER dedicated server}
-     * and {@linkplain net.minecraftforge.api.distmarker.Dist#CLIENT game client} physical distributions, rather than the
+     * <em>Note: "server" and "client" refers to the {@linkplain net.minecraftsingularity.api.distmarker.Dist#DEDICATED_SERVER dedicated server}
+     * and {@linkplain net.minecraftsingularity.api.distmarker.Dist#CLIENT game client} physical distributions, rather than the
      * {@linkplain LogicalSide logical server and client}.</em>
      *
      * <p>The {@link Supplier} provides the local compatibility version, which is sent from the server to the client
@@ -90,10 +90,10 @@ public interface IExtensionPoint<T extends Record>
      * );
      * }</pre>
      *
-     * @see net.minecraftforge.network.ServerStatusPing
-     * @see net.minecraftforge.client.ForgeHooksClient#processForgeListPingData(net.minecraft.network.protocol.status.ServerStatus, net.minecraft.client.multiplayer.ServerData)
+     * @see net.minecraftsingularity.network.ServerStatusPing
+     * @see net.minecraftsingularity.client.singularityHooksClient#processForgeListPingData(net.minecraft.network.protocol.status.ServerStatus, net.minecraft.client.multiplayer.ServerData)
      */
-    @SuppressWarnings("JavadocReference") // reference to NetworkConstants, ForgeHooksClient
+    @SuppressWarnings("JavadocReference") // reference to NetworkConstants, singularityHooksClient
     record DisplayTest(Supplier<String> suppliedVersion, BiPredicate<String, Boolean> remoteVersionTest) implements IExtensionPoint<DisplayTest> {
         public static final String IGNORESERVERONLY = "SERVER_ONLY";
 

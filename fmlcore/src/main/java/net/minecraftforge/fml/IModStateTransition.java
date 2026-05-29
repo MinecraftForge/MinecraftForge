@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.event.IModBusEvent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
 import org.jetbrains.annotations.Nullable;
 
 public interface IModStateTransition {

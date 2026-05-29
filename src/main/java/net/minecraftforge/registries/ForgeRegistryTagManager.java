@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.google.common.collect.Iterators;
 import net.minecraft.core.HolderSet;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.registries.tags.IReverseTag;
-import net.minecraftforge.registries.tags.ITag;
-import net.minecraftforge.registries.tags.ITagManager;
+import net.minecraftsingularity.registries.tags.IReverseTag;
+import net.minecraftsingularity.registries.tags.ITag;
+import net.minecraftsingularity.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.IdentityHashMap;
@@ -23,11 +23,11 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-class ForgeRegistryTagManager<V> implements ITagManager<V> {
-    private final ForgeRegistry<V> owner;
+class singularityRegistryTagManager<V> implements ITagManager<V> {
+    private final singularityRegistry<V> owner;
     private volatile Map<TagKey<V>, ITag<V>> tags = new IdentityHashMap<>();
 
-    ForgeRegistryTagManager(ForgeRegistry<V> owner) {
+    singularityRegistryTagManager(singularityRegistry<V> owner) {
         this.owner = owner;
     }
 
@@ -35,11 +35,11 @@ class ForgeRegistryTagManager<V> implements ITagManager<V> {
         IdentityHashMap<TagKey<V>, ITag<V>> newTags = new IdentityHashMap<>(this.tags);
 
         // Forcefully unbind all pre-existing tags
-        newTags.values().forEach(tag -> ((ForgeRegistryTag<V>) tag).bind(null));
+        newTags.values().forEach(tag -> ((singularityRegistryTag<V>) tag).bind(null));
 
         // Bind all tags that were loaded
         holderTags.forEach((key, holderSet) ->
-                ((ForgeRegistryTag<V>) newTags.computeIfAbsent(key, ForgeRegistryTag::new)).bind(holderSet));
+                ((singularityRegistryTag<V>) newTags.computeIfAbsent(key, singularityRegistryTag::new)).bind(holderSet));
 
         this.tags = newTags;
     }
@@ -52,7 +52,7 @@ class ForgeRegistryTagManager<V> implements ITagManager<V> {
 
         if (tag == null) {
             // Create empty tag
-            tag = new ForgeRegistryTag<>(name);
+            tag = new singularityRegistryTag<>(name);
 
             // Mojang uses volatile and sets the tag map this way to not have the performance penalties of synced read access.
             // However, this can generate a lot of new maps. We should look into performance alternatives.

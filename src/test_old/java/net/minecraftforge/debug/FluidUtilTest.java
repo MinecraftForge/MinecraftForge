@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.FluidUtil;
+import net.minecraftsingularity.fluids.capability.templates.FluidTank;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.items.ItemStackHandler;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -132,7 +132,7 @@ public class FluidUtilTest
 	private static void checkItemStack(ItemStack stack, Item item, int count)
 	{
 		if (stack.getItem() != item)
-			throw new AssertionError("Expected item " + ForgeRegistries.ITEMS.getKey(item) + ", got: " + ForgeRegistries.ITEMS.getKey(stack.getItem()));
+			throw new AssertionError("Expected item " + singularityRegistries.ITEMS.getKey(item) + ", got: " + singularityRegistries.ITEMS.getKey(stack.getItem()));
 		if (stack.getCount() != count)
 			throw new AssertionError("Expected count " + count + ", got: " + stack.getCount());
 	}
@@ -140,7 +140,7 @@ public class FluidUtilTest
 	private static void checkFluidStack(FluidStack stack, Fluid fluid, int amount)
 	{
 		if (stack.getFluid() != fluid)
-			throw new AssertionError("Expected fluid " + ForgeRegistries.FLUIDS.getKey(fluid) + ", got: " + ForgeRegistries.FLUIDS.getKey(stack.getFluid()));
+			throw new AssertionError("Expected fluid " + singularityRegistries.FLUIDS.getKey(fluid) + ", got: " + singularityRegistries.FLUIDS.getKey(stack.getFluid()));
 		if (stack.getAmount() != amount)
 			throw new AssertionError("Expected amount " + amount + ", got: " + stack.getAmount());
 	}

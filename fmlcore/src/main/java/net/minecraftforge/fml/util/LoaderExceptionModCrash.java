@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.util;
+package net.minecraftsingularity.fml.util;
 
 /**
  * Prevent LoaderException from adding its own stack trace to the wrapped throwable's stack trace.

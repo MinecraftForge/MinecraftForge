@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Collection;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.resource.DelegatingPackResources;
+import net.minecraftsingularity.resource.DelegatingPackResources;
 
 public interface IForgePackResources {
     /**

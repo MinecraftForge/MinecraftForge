@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
@@ -12,9 +12,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.tags.ITagManager;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.javafmlmod.FMLModContainer;
+import net.minecraftsingularity.registries.tags.ITagManager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +35,8 @@ import java.util.function.Supplier;
  *
  *Example Usage:
  *<pre>{@code
- *   private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
- *   private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+ *   private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
+ *   private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
  *
  *   public static final RegistryObject<Block> ROCK_BLOCK = BLOCKS.register("rock", () -> new Block(Block.Properties.create(Material.ROCK)));
  *   public static final RegistryObject<Item> ROCK_ITEM = ITEMS.register("rock", () -> new BlockItem(ROCK_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
@@ -51,12 +51,12 @@ import java.util.function.Supplier;
  */
 public class DeferredRegister<T> {
     /**
-     * DeferredRegister factory for forge registries that exist <i>before</i> this DeferredRegister is created.
+     * DeferredRegister factory for singularity registries that exist <i>before</i> this DeferredRegister is created.
      * <p>
      * If you have a supplier, <u>do not use this method.</u>
      * Instead, use one of the other factories that takes in a registry key or registry name.
      *
-     * @param reg the forge registry to wrap
+     * @param reg the singularity registry to wrap
      * @param modid the namespace for all objects registered to this DeferredRegister
      * @see #create(ResourceKey, String)
      * @see #create(Identifier, String)
@@ -66,9 +66,9 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * DeferredRegister factory for forge registries that exist <i>after</i> this DeferredRegister is created.
+     * DeferredRegister factory for singularity registries that exist <i>after</i> this DeferredRegister is created.
      *
-     * @param reg the forge registry to wrap
+     * @param reg the singularity registry to wrap
      * @param modid the namespace for all objects registered to this DeferredRegister
      * @see #create(ResourceKey, String)
      * @see #create(Identifier, String)
@@ -80,7 +80,7 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * DeferredRegister factory for custom forge registries or {@link BuiltInRegistries vanilla registries}
+     * DeferredRegister factory for custom singularity registries or {@link BuiltInRegistries vanilla registries}
      * to lookup based on the provided registry key. Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
@@ -97,7 +97,7 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * DeferredRegister factory for the optional existence of custom forge registries
+     * DeferredRegister factory for the optional existence of custom singularity registries
      * or {@link BuiltInRegistries vanilla registries} to lookup based on the provided registry key.
      * Supports both registries that already exist or do not exist yet.
      * <p>
@@ -114,7 +114,7 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * DeferredRegister factory for custom forge registries or {@link BuiltInRegistries vanilla registries}
+     * DeferredRegister factory for custom singularity registries or {@link BuiltInRegistries vanilla registries}
      * to lookup based on the provided registry name. Supports both registries that already exist or do not exist yet.
      * <p>
      * If the registry is never created, any {@link RegistryObject}s made from this DeferredRegister will throw an exception.
@@ -131,7 +131,7 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * DeferredRegister factory for the optional existence of custom forge registries
+     * DeferredRegister factory for the optional existence of custom singularity registries
      * or {@link BuiltInRegistries vanilla registries} to lookup based on the provided registry name.
      * Supports both registries that already exist or do not exist yet.
      * <p>
@@ -199,7 +199,7 @@ public class DeferredRegister<T> {
     }
 
     /**
-     * Only used for custom registries to fill the forge registry held in this DeferredRegister.
+     * Only used for custom registries to fill the singularity registry held in this DeferredRegister.
      *
      * Calls {@link RegistryBuilder#setName} automatically.
      *
@@ -364,7 +364,7 @@ public class DeferredRegister<T> {
 
         ITagManager<T> tagManager = (ITagManager<T>) registry.tags();
         if (tagManager == null)
-            throw new IllegalStateException("The forge registry " + registry.getRegistryName() + " does not support tags, but optional tags were registered!");
+            throw new IllegalStateException("The singularity registry " + registry.getRegistryName() + " does not support tags, but optional tags were registered!");
 
         Multimaps.asMap(this.optionalTags).forEach(tagManager::addOptionalTagDefaults);
     }

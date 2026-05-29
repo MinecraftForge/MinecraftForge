@@ -1,10 +1,10 @@
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    id 'net.minecraftsingularity.licenser'
+    id 'net.minecraftsingularity.gradleutils'
 }
 
 apply from: rootProject.file('build_shared.gradle')
@@ -51,7 +51,7 @@ tasks.named('test', Test).configure {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.earlydisplay',
+            'Automatic-Module-Name': 'net.minecraftsingularity.earlydisplay',
             'Forge-Module-Layer':    'boot'
         ] as LinkedHashMap)
         attributes([

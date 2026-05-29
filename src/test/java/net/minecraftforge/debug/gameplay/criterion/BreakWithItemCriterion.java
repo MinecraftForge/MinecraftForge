@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.criterion;
+package net.minecraftsingularity.debug.gameplay.criterion;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,9 +28,9 @@ public final class BreakWithItemCriterion extends SimpleCriterionTrigger<BreakWi
 
     private static final Codec<Instance> CODEC = RecordCodecBuilder.create(it -> {
         return it.group(
-            BlockPredicate.CODEC.fieldOf("breakingBlock").forGetter(i -> i.breakingBlock),
-            ItemPredicate.CODEC.fieldOf("holdingItem").forGetter(i -> i.holdingItem),
-            Codec.BOOL.optionalFieldOf("allowOffhand", false).forGetter(i -> i.allowOffHand)
+            BlockPredicate.CODEC.fieldOf("breakingBlock").singularitytter(i -> i.breakingBlock),
+            ItemPredicate.CODEC.fieldOf("holdingItem").singularitytter(i -> i.holdingItem),
+            Codec.BOOL.optionalFieldOf("allowOffhand", false).singularitytter(i -> i.allowOffHand)
         ).apply(it, Instance::new);
     });
 

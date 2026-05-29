@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftsingularity.common.crafting.conditions;
 
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.Item;
 
 public record TagEmptyCondition(TagKey<Item> tag) implements ICondition {
     public static final MapCodec<TagEmptyCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
-        Identifier.CODEC.xmap(loc -> TagKey.create(Registries.ITEM, loc), TagKey::location).fieldOf("tag").forGetter(TagEmptyCondition::tag)
+        Identifier.CODEC.xmap(loc -> TagKey.create(Registries.ITEM, loc), TagKey::location).fieldOf("tag").singularitytter(TagEmptyCondition::tag)
     ).apply(b, TagEmptyCondition::new));
 
 

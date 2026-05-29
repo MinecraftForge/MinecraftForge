@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.event;
+package net.minecraftsingularity.fml.event;
 
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
 import org.jspecify.annotations.NonNull;
 
 /**
  * Marker interface for mod lifecycle events dispatched on the
- * {@linkplain net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext#getModBusGroup() mod BusGroup} instead
+ * {@linkplain net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext#getModBusGroup() mod BusGroup} instead
  * of the {@linkplain BusGroup#DEFAULT default BusGroup}.
  *
  * @apiNote Each mod gets its own unique mod BusGroup instance, obtained from the mod loading context. Most events
@@ -20,7 +20,7 @@ import org.jspecify.annotations.NonNull;
  */
 public interface IModBusEvent extends InheritableEvent {
     /**
-     * @param modEventBusGroup Obtained from {@link net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext#getModBusGroup()} or your language provider's equivalent.
+     * @param modEventBusGroup Obtained from {@link net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext#getModBusGroup()} or your language provider's equivalent.
      * @param eventClass The event type you want to get the associated bus for.
      */
     static <T extends IModBusEvent> @NonNull EventBus<@NonNull T> getBus(@NonNull BusGroup modEventBusGroup, @NonNull Class<T> eventClass) {

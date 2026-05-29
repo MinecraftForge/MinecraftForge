@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager.Layer;
-import net.minecraftforge.forgespi.language.IModLanguageProvider;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.singularityspi.language.IModLanguageProvider;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -24,8 +24,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+import static net.minecraftsingularity.fml.loading.LogMarkers.CORE;
+import static net.minecraftsingularity.fml.loading.LogMarkers.LOADING;
 
 public final class LanguageLoadingProvider {
     public static void forEach(Consumer<IModLanguageProvider> consumer) {

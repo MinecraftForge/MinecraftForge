@@ -1,21 +1,21 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.loading.*;
-import net.minecraftforge.fml.loading.moddiscovery.InvalidModIdentifier;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.IModLanguageProvider;
-import net.minecraftforge.forgespi.locating.ForgeFeature;
-import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.loading.*;
+import net.minecraftsingularity.fml.loading.moddiscovery.InvalidModIdentifier;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.fml.loading.progress.StartupNotificationManager;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.IModLanguageProvider;
+import net.minecraftsingularity.singularityspi.locating.singularityFeature;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,8 +27,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.LOADING;
+import static net.minecraftsingularity.fml.Logging.CORE;
+import static net.minecraftsingularity.fml.Logging.LOADING;
 
 /**
  * Loads mods.
@@ -41,28 +41,28 @@ import static net.minecraftforge.fml.Logging.LOADING;
  *     <dd>Constructs the mod instance. Mods can typically setup basic environment such as Event listeners
  *     and Configuration specifications here.</dd>
  *     <dt>Automated dispatches</dt>
- *     <dd>Dispatches automated elements : {@code net.minecraftforge.fml.common.Mod.EventBusSubscriber},
- *     {@code net.minecraftforge.event.RegistryEvent}, {@code net.minecraftforge.common.capabilities.CapabilityInject}
+ *     <dd>Dispatches automated elements : {@code net.minecraftsingularity.fml.common.Mod.EventBusSubscriber},
+ *     {@code net.minecraftsingularity.event.RegistryEvent}, {@code net.minecraftsingularity.common.capabilities.CapabilityInject}
  *     and others</dd>
  *     <dt>CONFIG_LOAD</dt>
  *     <dd>Dispatches ConfigLoadEvent to mods</dd>
  *     <dt>COMMON_SETUP</dt>
- *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} to mods</dd>
+ *     <dd>Dispatches {@code net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent} to mods</dd>
  *     <dt>SIDED_SETUP</dt>
- *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} or
- *     {@code net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent} to mods</dd>
+ *     <dd>Dispatches {@code net.minecraftsingularity.fml.event.lifecycle.FMLClientSetupEvent} or
+ *     {@code net.minecraftsingularity.fml.event.lifecycle.FMLDedicatedServerSetupEvent} to mods</dd>
  * </dl>
  *
  * Overall sequence for finishMods is:
  * <dl>
  *     <dt>ENQUEUE_IMC</dt>
- *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftsingularity.fml.event.lifecycle.InterModEnqueueEvent} to mods,
  *     for enqueuing {@link InterModComms} messages for other mods to receive subsequently</dd>
  *     <dt>PROCESS_IMC</dt>
- *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.InterModProcessEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftsingularity.fml.event.lifecycle.InterModProcessEvent} to mods,
  *     for processing {@link InterModComms} messages received from other mods prior to this event</dd>
  *     <dt>COMPLETE</dt>
- *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftsingularity.fml.event.lifecycle.FMLLoadCompleteEvent} to mods,
  *     and completes the mod loading sequence.</dd>
  * </dl>
  */
@@ -123,8 +123,8 @@ public final class ModLoader {
         CrashReportCallables.registerCrashCallable("ModLauncher services", ModLoader::computeModLauncherServiceList);
         CrashReportCallables.registerCrashCallable("FML Language Providers", ModLoader::computeLanguageList);
 
-        ForgeFeature.registerFeature("javaVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
-        ForgeFeature.registerFeature("openGLVersion", ForgeFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.CLIENT, ImmediateWindowHandler.getGLVersion()));
+        singularityFeature.registerFeature("javaVersion", singularityFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.BOTH, System.getProperty("java.version")));
+        singularityFeature.registerFeature("openGLVersion", singularityFeature.VersionFeatureTest.forVersionString(IModInfo.DependencySide.CLIENT, ImmediateWindowHandler.getGLVersion()));
         loadingStateValid = true;
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
         if (!LOADING_EXCEPTIONS.isEmpty()) {
@@ -134,10 +134,10 @@ public final class ModLoader {
             loadingStateValid = false;
             throw new LoadingFailedException(LOADING_EXCEPTIONS);
         }
-        var failedBounds = new ArrayList<ForgeFeature.Bound>();
+        var failedBounds = new ArrayList<singularityFeature.Bound>();
         for (var mod : LoadingModList.getMods()) {
             for (var feature : mod.getForgeFeatures()) {
-                if (!ForgeFeature.testFeature(FMLEnvironment.dist, feature))
+                if (!singularityFeature.testFeature(FMLEnvironment.dist, feature))
                     failedBounds.add(feature);
             }
         }
@@ -148,7 +148,7 @@ public final class ModLoader {
             ModList.clearLoadedMods();
             loadingStateValid = false;
             throw new LoadingFailedException(failedBounds.stream()
-                    .map(fb -> new ModLoadingException(fb.modInfo(), ModLoadingStage.CONSTRUCT, "fml.modloading.feature.missing", null, fb, ForgeFeature.featureValue(fb)))
+                    .map(fb -> new ModLoadingException(fb.modInfo(), ModLoadingStage.CONSTRUCT, "fml.modloading.feature.missing", null, fb, singularityFeature.featureValue(fb)))
                     .toList());
         }
 

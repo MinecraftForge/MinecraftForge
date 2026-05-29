@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -18,16 +18,16 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SuspiciousStewItem;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.level.block.SuspiciousEffectHolder;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.util.ObfuscationReflectionHelper;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegisterEvent;
+import net.minecraftsingularity.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +51,7 @@ public class ManyMobEffectsTest {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, MODID);
+    private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(singularityRegistries.MOB_EFFECTS, MODID);
     private static final RegistryObject<MobEffect> LAST_EFFECT;
 
     static {
@@ -109,7 +109,7 @@ public class ManyMobEffectsTest {
             } else if (heldItem.isEmpty()) {
                 var effect = ((MobEffect) ObfuscationReflectionHelper.getPrivateValue(MushroomCow.class, cow, "f_289" + "09_"));
                 if (effect != null) {
-                    event.getEntity().sendSystemMessage(Component.literal(String.valueOf(ForgeRegistries.MOB_EFFECTS.getKey(effect))));
+                    event.getEntity().sendSystemMessage(Component.literal(String.valueOf(singularityRegistries.MOB_EFFECTS.getKey(effect))));
                 }
             }
         }

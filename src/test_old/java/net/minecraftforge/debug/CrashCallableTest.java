@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
-import net.minecraftforge.fml.CrashReportCallables;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.fml.CrashReportCallables;
+import net.minecraftsingularity.fml.common.Mod;
 
 /**
  * Test features and guards of crash-callables.

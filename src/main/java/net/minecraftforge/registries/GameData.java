@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -51,23 +51,23 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.levelgen.DebugLevelSource;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.CreativeModeTabRegistry;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.StartupMessageManager;
-import net.minecraftforge.fml.util.EnhancedRuntimeException;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
-import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.SlaveKey;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+import net.minecraftsingularity.common.CreativeModeTabRegistry;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.loot.IGlobalLootModifier;
+import net.minecraftsingularity.common.util.LogMessageAdapter;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fml.ModLoader;
+import net.minecraftsingularity.fml.ModLoadingContext;
+import net.minecraftsingularity.fml.StartupMessageManager;
+import net.minecraftsingularity.fml.util.EnhancedRuntimeException;
+import net.minecraftsingularity.fml.util.thread.EffectiveSide;
+import net.minecraftsingularity.registries.singularityRegistries.Keys;
+import net.minecraftsingularity.registries.IForgeRegistry.AddCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.BakeCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.ClearCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.CreateCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.SlaveKey;
+import net.minecraftsingularity.registries.IForgeRegistry.ValidateCallback;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,17 +78,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
- * <p>Use the public {@link IForgeRegistry} and {@link ForgeRegistries} APIs to get the data</p>
+ * <p>Use the public {@link IForgeRegistry} and {@link singularityRegistries} APIs to get the data</p>
  */
 @ApiStatus.Internal
 public class GameData {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker REGISTRIES = ForgeRegistry.REGISTRIES;
+    private static final Marker REGISTRIES = singularityRegistry.REGISTRIES;
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static boolean hasInit = false;
-    private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
-    private static final BiConsumer<Identifier, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
+    private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("singularity.disableVanillaGameData", "false")); // Use for unit tests/debugging
+    private static final BiConsumer<Identifier, singularityRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
     private static Set<Identifier> vanillaRegistryOrder = null;
 
     static {
@@ -98,7 +98,7 @@ public class GameData {
     @SuppressWarnings("deprecation")
     public static void init() {
         if (DISABLE_VANILLA_REGISTRIES) {
-            LOGGER.warn(REGISTRIES, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
+            LOGGER.warn(REGISTRIES, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! singularity.disableVanillaGameData");
             return;
         }
 
@@ -206,18 +206,18 @@ public class GameData {
     }
 
     static <V> WrapperFactory<V> createWrapperFactory(boolean defaulted) {
-        BiFunction<ForgeRegistry<V>, RegistryManager, WritableRegistry<V>> factory = defaulted
+        BiFunction<singularityRegistry<V>, RegistryManager, WritableRegistry<V>> factory = defaulted
             ? (reg, stage) -> new NamespacedDefaultedWrapper<>(reg, reg.getBuilder().getIntrusiveHolderCallback(), stage)
             : (reg, stage) -> new NamespacedWrapper<V>(reg, reg.getBuilder().getIntrusiveHolderCallback(), stage);
         return new WrapperFactory<>(factory);
     }
 
 
-    static record WrapperFactory<V>(BiFunction<ForgeRegistry<V>, RegistryManager, WritableRegistry<V>> factory) implements CreateCallback<V>, AddCallback<V> {
-        static SlaveKey<WritableRegistry<?>> WRAPPER = SlaveKey.create("forge:vanilla_wrapper");
+    static record WrapperFactory<V>(BiFunction<singularityRegistry<V>, RegistryManager, WritableRegistry<V>> factory) implements CreateCallback<V>, AddCallback<V> {
+        static SlaveKey<WritableRegistry<?>> WRAPPER = SlaveKey.create("singularity:vanilla_wrapper");
         @Override
         public void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage) {
-            owner.setSlaveMap(WRAPPER, factory.apply((ForgeRegistry<V>)owner, stage));
+            owner.setSlaveMap(WRAPPER, factory.apply((singularityRegistry<V>)owner, stage));
         }
 
         @Override
@@ -337,18 +337,18 @@ public class GameData {
         for (Identifier rootRegistryName : ordered) {
             try {
                 ResourceKey<? extends Registry<?>> registryKey = ResourceKey.createRegistryKey(rootRegistryName);
-                ForgeRegistry<?> forgeRegistry = RegistryManager.ACTIVE.getRegistry(rootRegistryName);
+                singularityRegistry<?> singularityRegistry = RegistryManager.ACTIVE.getRegistry(rootRegistryName);
                 Registry<?> vanillaRegistry = BuiltInRegistries.REGISTRY.getValue(rootRegistryName);
-                RegisterEvent registerEvent = new RegisterEvent(registryKey, forgeRegistry, vanillaRegistry);
+                RegisterEvent registerEvent = new RegisterEvent(registryKey, singularityRegistry, vanillaRegistry);
 
                 StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + registryKey.identifier()));
-                if (forgeRegistry != null)
-                    forgeRegistry.unfreeze();
+                if (singularityRegistry != null)
+                    singularityRegistry.unfreeze();
 
                 ModLoader.postEventWrapContainerInModOrder(registerEvent);
 
-                if (forgeRegistry != null)
-                    forgeRegistry.freeze();
+                if (singularityRegistry != null)
+                    singularityRegistry.freeze();
                 LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryKey.identifier());
                 ObjectHolderRegistry.applyObjectHolders(registryKey.identifier()::equals);
                 LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryKey.identifier());
@@ -364,7 +364,7 @@ public class GameData {
             LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             throw aggregate;
         } else {
-            ForgeHooks.modifyAttributes();
+            singularityHooks.modifyAttributes();
             SpawnPlacements.fireSpawnPlacementEvent();
             CreativeModeTabRegistry.sortTabs();
         }
@@ -533,9 +533,9 @@ public class GameData {
     }
 
     private static <T> void loadRegistry(final Identifier registryName, final RegistryManager from, final RegistryManager to, boolean freeze) {
-        ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);
+        singularityRegistry<T> fromRegistry = from.getRegistry(registryName);
         if (fromRegistry == null) {
-            ForgeRegistry<T> toRegistry = to.getRegistry(registryName);
+            singularityRegistry<T> toRegistry = to.getRegistry(registryName);
             if (toRegistry == null) {
                 throw new EnhancedRuntimeException("Could not find registry to load: " + registryName){
                     private static final long serialVersionUID = 1L;
@@ -553,12 +553,12 @@ public class GameData {
             }
             // We found it in to, so lets trust to's state...
             // This happens when connecting to a server that doesn't have this registry.
-            // Such as a 1.8.0 Forge server with 1.8.8+ Forge.
+            // Such as a 1.8.0 singularity server with 1.8.8+ singularity.
             // We must however, re-fire the callbacks as some internal data may be corrupted {potions}
             //TODO: With my rework of how registries add callbacks are done.. I don't think this is necessary.
             //fire addCallback for each entry
         } else {
-            ForgeRegistry<T> toRegistry = to.getRegistry(registryName, from);
+            singularityRegistry<T> toRegistry = to.getRegistry(registryName, from);
             toRegistry.sync(registryName, fromRegistry);
             if (freeze)
                 toRegistry.isFrozen = true;
@@ -566,7 +566,7 @@ public class GameData {
     }
 
 
-    public static Multimap<Identifier, Identifier> injectSnapshot(Map<Identifier, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld) {
+    public static Multimap<Identifier, Identifier> injectSnapshot(Map<Identifier, singularityRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld) {
         LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
@@ -581,7 +581,7 @@ public class GameData {
             Identifier[] missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).toArray(Identifier[]::new);
             if (missingRegs.length > 0)
             {
-                String header = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                String header = "singularity Mod Loader detected missing/unknown registrie(s).\n\n" +
                         "There are " + missingRegs.length + " missing registries in this save.\n" +
                         "If you continue the missing registries will get removed.\n" +
                         "This may cause issues, it is advised that you create a world backup before continuing.\n\n";
@@ -615,7 +615,7 @@ public class GameData {
 
             missing.entrySet().stream().filter(e -> !e.getValue().isEmpty()).forEach(m -> {
                 Identifier name = m.getKey();
-                ForgeRegistry<?> reg = STAGING.getRegistry(name);
+                singularityRegistry<?> reg = STAGING.getRegistry(name);
                 Object2IntMap<Identifier> missingIds = m.getValue();
                 MissingMappingsEvent event = reg.getMissingEvent(name, missingIds);
                 MissingMappingsEvent.BUS.post(event);
@@ -641,7 +641,7 @@ public class GameData {
                 return defaulted;
 
             if (!defaulted.isEmpty()) {
-                String header = "Forge Mod Loader detected missing registry entries.\n\n" +
+                String header = "singularity Mod Loader detected missing registry entries.\n\n" +
                    "There are " + defaulted.size() + " missing entries in this save.\n" +
                    "If you continue the missing entries will get removed.\n" +
                    "A world backup will be automatically created in your saves directory.\n\n";
@@ -702,11 +702,11 @@ public class GameData {
     }
 
     //Has to be split because of generics, Yay!
-    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<Identifier, IdMappingEvent.IdRemapping> remaps, Object2IntMap<Identifier> missing, Identifier name, ForgeRegistry.Snapshot snap) {
-        ForgeRegistry<T> active  = pool.getRegistry(name);
+    private static <T> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<Identifier, IdMappingEvent.IdRemapping> remaps, Object2IntMap<Identifier> missing, Identifier name, singularityRegistry.Snapshot snap) {
+        singularityRegistry<T> active  = pool.getRegistry(name);
         if (active == null)
             return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
-        ForgeRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
+        singularityRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
         snap.aliases.forEach(_new::addAlias);
         snap.blocked.forEach(_new::block);
         _new.loadIds(snap.ids, snap.overrides, missing, remaps, active, name);
@@ -715,14 +715,14 @@ public class GameData {
     //Another bouncer for generic reasons
     private static <T> void processMissing(Identifier name, RegistryManager STAGING, MissingMappingsEvent e, Object2IntMap<Identifier> missing, Map<Identifier, IdMappingEvent.IdRemapping> remaps, Collection<Identifier> defaulted, Collection<Identifier> failed, boolean injectNetworkDummies) {
         List<MissingMappingsEvent.Mapping<T>> mappings = e.getAllMappings(ResourceKey.createRegistryKey(name));
-        ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
-        ForgeRegistry<T> staging = STAGING.getRegistry(name);
+        singularityRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
+        singularityRegistry<T> staging = STAGING.getRegistry(name);
         staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);
     }
 
     private static <T> void loadFrozenDataToStagingRegistry(RegistryManager STAGING, Identifier name, Map<Identifier, IdMappingEvent.IdRemapping> remaps) {
-        ForgeRegistry<T> frozen = RegistryManager.FROZEN.getRegistry(name);
-        ForgeRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);
+        singularityRegistry<T> frozen = RegistryManager.FROZEN.getRegistry(name);
+        singularityRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);
         Object2IntMap<Identifier> _new = new Object2IntLinkedOpenHashMap<>();
         frozen.getKeys().stream().filter(key -> !newRegistry.containsKey(key)).forEach(key -> _new.put(key, frozen.getID(key)));
         newRegistry.loadIds(_new, frozen.getOverrideOwners(), new Object2IntLinkedOpenHashMap<>(), remaps, frozen, name);

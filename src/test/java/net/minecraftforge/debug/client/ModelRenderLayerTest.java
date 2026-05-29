@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 /*
  This should no longer be necessary in 26.1 as Material's now define their layers.
 
@@ -32,15 +32,15 @@ import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -52,7 +52,7 @@ import java.util.stream.Stream;
 import com.google.gson.JsonElement;
 
 @Mod(ModelRenderLayerTest.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class ModelRenderLayerTest extends BaseTestMod {
     public static final String MODID = "model_render_type";
     private static final String BLOCK_NAME = "cutout_block";

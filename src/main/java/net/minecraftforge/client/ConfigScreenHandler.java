@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.IExtensionPoint;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 
 import java.util.Optional;
 import java.util.function.BiFunction;

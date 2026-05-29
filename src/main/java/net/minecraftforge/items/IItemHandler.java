@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.items;
+package net.minecraftsingularity.items;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftsingularity.common.capabilities.AutoRegisterCapability;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 @AutoRegisterCapability

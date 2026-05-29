@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import java.util.function.Consumer;
 
@@ -20,20 +20,20 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.client.event.ModelEvent.BakeFluidModels;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.SoundActions;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.client.event.ModelEvent.BakeFluidModels;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.common.SoundActions;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fluids.singularityFlowingFluid;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(FluidBucketModelTest.MODID)
 public class FluidBucketModelTest extends BaseTestMod {
     public static final String MODID = "fluid_bucket_model";
@@ -41,12 +41,12 @@ public class FluidBucketModelTest extends BaseTestMod {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, MODID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, MODID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.FLUID_TYPES, MODID);
+    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(singularityRegistries.FLUID_TYPES, MODID);
 
 
-    private static ForgeFlowingFluid.Properties FLUID_PROPERTIES;
-    private static final RegistryObject<ForgeFlowingFluid.Source>  GAS_STILL   = FLUIDS.register("gas",         () -> new ForgeFlowingFluid.Source(FLUID_PROPERTIES));
-    private static final RegistryObject<ForgeFlowingFluid.Flowing> GAS_FLOWING = FLUIDS.register("gas_flowing", () -> new ForgeFlowingFluid.Flowing(FLUID_PROPERTIES));
+    private static singularityFlowingFluid.Properties FLUID_PROPERTIES;
+    private static final RegistryObject<singularityFlowingFluid.Source>  GAS_STILL   = FLUIDS.register("gas",         () -> new singularityFlowingFluid.Source(FLUID_PROPERTIES));
+    private static final RegistryObject<singularityFlowingFluid.Flowing> GAS_FLOWING = FLUIDS.register("gas_flowing", () -> new singularityFlowingFluid.Flowing(FLUID_PROPERTIES));
 
     private static final FluidType.Properties GAS_PROPERTIES = FluidType.Properties.create()
         .lightLevel(10)
@@ -93,7 +93,7 @@ public class FluidBucketModelTest extends BaseTestMod {
     public static final RegistryObject<BucketItem> GAS_BUCKET = ITEMS.register("gas_bucket", () -> new BucketItem(GAS_STILL, new Item.Properties().setId(ITEMS.key("gas_bucket"))));
 
     static {
-        FLUID_PROPERTIES = new ForgeFlowingFluid.Properties(GAS_TYPE, GAS_STILL, GAS_FLOWING).block(GAS_BLOCK).bucket(GAS_BUCKET);
+        FLUID_PROPERTIES = new singularityFlowingFluid.Properties(GAS_TYPE, GAS_STILL, GAS_FLOWING).block(GAS_BLOCK).bucket(GAS_BUCKET);
     }
 
 

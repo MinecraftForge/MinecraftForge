@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.earlydisplay;
+package net.minecraftsingularity.fml.earlydisplay;
 
-import net.minecraftforge.fml.loading.progress.Message;
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
+import net.minecraftsingularity.fml.loading.progress.Message;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.fml.loading.progress.StartupNotificationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +115,7 @@ public class RenderElement {
         return new RenderElement(RenderElement.initializeText(font, RenderElement::startupLogMessages));
     }
 
-    public static RenderElement forgeVersionOverlay(SimpleFont font, String version) {
+    public static RenderElement singularityVersionOverlay(SimpleFont font, String version) {
         return new RenderElement(RenderElement.initializeText(font, (bb, fnt, ctx)->
                 font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version) - 10,
                         ctx.scaledHeight() - font.lineSpacing() + font.descent() - 10, bb,
@@ -136,7 +136,7 @@ public class RenderElement {
     }
 
     public static RenderElement anvil(SimpleFont font) {
-        return new RenderElement(RenderElement.initializeTexture("forge_anvil.png", 20000, 2, (bb, context, size, frame) -> {
+        return new RenderElement(RenderElement.initializeTexture("singularity_anvil.png", 20000, 2, (bb, context, size, frame) -> {
             var x0 = context.scaledWidth() - size[0] * context.scale();
             var x1 = context.scaledWidth();
             var y0 = context.scaledHeight() - size[0] * context.scale() - font.descent() - font.lineSpacing();

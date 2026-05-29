@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.modules.closed;
+package net.minecraftsingularity.debug.modules.closed;
 
 import java.lang.module.ModuleDescriptor;
 import java.util.Set;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.debug.modules.closed.api.PublicUtils;
-import net.minecraftforge.debug.modules.closed.internala.InternalA;
-import net.minecraftforge.debug.modules.closed.internalb.InternalB;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.test.BaseTestMod;
-import net.minecraftforge.test.ModuleProvider;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.debug.modules.closed.api.PublicUtils;
+import net.minecraftsingularity.debug.modules.closed.internala.InternalA;
+import net.minecraftsingularity.debug.modules.closed.internalb.InternalB;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.test.BaseTestMod;
+import net.minecraftsingularity.test.ModuleProvider;
 
 @Mod(ClosedMod.MODID)
 public class ClosedMod extends BaseTestMod {
@@ -35,18 +35,18 @@ public class ClosedMod extends BaseTestMod {
         var api = PublicUtils.class.getPackageName();
         var internalA = InternalA.class.getPackageName();
         var internalB = InternalB.class.getPackageName();
-        var forge = Set.of(
-            "net.minecraftforge.javafmlmod",
-            "net.minecraftforge.eventbus",
-            "net.minecraftforge.fmlcore",
-            "net.minecraftforge.forge"
+        var singularity = Set.of(
+            "net.minecraftsingularity.javafmlmod",
+            "net.minecraftsingularity.eventbus",
+            "net.minecraftsingularity.fmlcore",
+            "net.minecraftsingularity.singularity"
         );
         var bldr = ModuleDescriptor.newModule(self)
             .packages(Set.of(self, api, internalA, internalB))
             .opens(api)
             .exports(api)
-            .opens(self, forge);
-        forge.forEach(bldr::requires);
+            .opens(self, singularity);
+        singularity.forEach(bldr::requires);
         return bldr.build();
     }
 }

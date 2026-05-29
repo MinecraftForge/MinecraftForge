@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity;
+package net.minecraftsingularity.event.entity;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.util.HasResult;
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.common.util.HasResult;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 import org.jspecify.annotations.NullMarked;
 
 /**

@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event.sound;
+package net.minecraftsingularity.client.event.sound;
 
 import com.mojang.blaze3d.audio.Channel;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
-import net.minecraftforge.client.event.sound.SoundEvent.SoundSourceEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.client.event.sound.SoundEvent.SoundSourceEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.ApiStatus;
  * in a buffer before being played, and used for most sounds of short length such as sound effects for clicking
  * buttons.
  *
- * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see PlayStreamingSourceEvent

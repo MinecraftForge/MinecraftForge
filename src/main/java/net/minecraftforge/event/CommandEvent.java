@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event;
+package net.minecraftsingularity.event;
 
 import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 

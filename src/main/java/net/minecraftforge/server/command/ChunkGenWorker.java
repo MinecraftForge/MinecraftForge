@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -15,7 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraftforge.common.WorldWorkerManager.IWorker;
+import net.minecraftsingularity.common.WorldWorkerManager.IWorker;
 
 public class ChunkGenWorker implements IWorker {
     private final CommandSourceStack listener;
@@ -63,7 +63,7 @@ public class ChunkGenWorker implements IWorker {
     }
 
     public MutableComponent getStartMessage(CommandSourceStack sender) {
-        return Component.translatable("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
+        return Component.translatable("commands.singularity.gen.start", total, start.getX(), start.getZ(), dim);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ChunkGenWorker implements IWorker {
         AnvilChunkLoader loader = dim.getChunkProvider().chunkLoader instanceof AnvilChunkLoader ? (AnvilChunkLoader)world.getChunkProvider().chunkLoader : null;
         if (loader != null && loader.getPendingSaveCount() > 100) {
             if (lastNotifcationTime < System.currentTimeMillis() - 10*1000) {
-                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendFeedback(new TranslationTextComponent("commands.singularity.gen.progress", total - queue.size(), total), true);
                 lastNotifcationTime = System.currentTimeMillis();
             }
             return false;
@@ -88,7 +88,7 @@ public class ChunkGenWorker implements IWorker {
 
         if (next != null) {
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000) {
-                listener.sendSuccess(() -> Component.translatable("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendSuccess(() -> Component.translatable("commands.singularity.gen.progress", total - queue.size(), total), true);
                 lastNotification = 0;
                 lastNotifcationTime = System.currentTimeMillis();
             }
@@ -106,7 +106,7 @@ public class ChunkGenWorker implements IWorker {
         }
 
         if (queue.isEmpty()) {
-            listener.sendSuccess(() -> Component.translatable("commands.forge.gen.complete", genned, total, dim.dimension().identifier()), true);
+            listener.sendSuccess(() -> Component.translatable("commands.singularity.gen.complete", genned, total, dim.dimension().identifier()), true);
             return false;
         }
         return true;

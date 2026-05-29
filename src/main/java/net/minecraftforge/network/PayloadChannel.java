@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
@@ -14,14 +14,14 @@ import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-import net.minecraftforge.network.simple.handler.SimplePacket;
-import net.minecraftforge.network.payload.PayloadConnection;
-import net.minecraftforge.network.payload.PayloadFlow;
-import net.minecraftforge.network.payload.PayloadProtocol;
-import net.minecraftforge.network.payload.handler.PayloadHandlerFlow;
-import net.minecraftforge.network.payload.handler.PayloadHandlerProtocol;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent.Context;
+import net.minecraftsingularity.network.simple.handler.SimplePacket;
+import net.minecraftsingularity.network.payload.PayloadConnection;
+import net.minecraftsingularity.network.payload.PayloadFlow;
+import net.minecraftsingularity.network.payload.PayloadProtocol;
+import net.minecraftsingularity.network.payload.handler.PayloadHandlerFlow;
+import net.minecraftsingularity.network.payload.handler.PayloadHandlerProtocol;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;

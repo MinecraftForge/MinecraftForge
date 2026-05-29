@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LanguageLoadingProvider;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.IModLanguageProvider;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModProvider;
-import net.minecraftforge.forgespi.locating.ModFileFactory;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.LanguageLoadingProvider;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.IModLanguageProvider;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
+import net.minecraftsingularity.singularityspi.locating.IModProvider;
+import net.minecraftsingularity.singularityspi.locating.ModFileFactory;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.slf4j.Logger;

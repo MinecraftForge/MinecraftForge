@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -14,8 +14,8 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.world.ModifiableBiomeInfo.BiomeInfo;
+import net.minecraftsingularity.registries.singularityRegistries;
 import java.util.function.Function;
 
 /**
@@ -30,26 +30,26 @@ import java.util.function.Function;
  * }
  * </pre>
  * <p>
- * Datapacks can also disable a biome modifier by overriding the json and using {@code "type": "forge:none"}.</p>
+ * Datapacks can also disable a biome modifier by overriding the json and using {@code "type": "singularity:none"}.</p>
  */
 public interface BiomeModifier {
     /**
      * Codec for (de)serializing biome modifiers inline.
      * Mods can use this for data generation.
      */
-    Codec<BiomeModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.BIOME_MODIFIER_SERIALIZERS.get().getCodec().dispatch(BiomeModifier::codec, Function.identity()));
+    Codec<BiomeModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> singularityRegistries.BIOME_MODIFIER_SERIALIZERS.get().getCodec().dispatch(BiomeModifier::codec, Function.identity()));
 
     /**
      * Codec for referring to biome modifiers by id in other datapack registry files.
      * Can only be used with {@link RegistryOps}.
      */
-    Codec<Holder<BiomeModifier>> REFERENCE_CODEC = RegistryFileCodec.create(ForgeRegistries.Keys.BIOME_MODIFIERS, DIRECT_CODEC);
+    Codec<Holder<BiomeModifier>> REFERENCE_CODEC = RegistryFileCodec.create(singularityRegistries.Keys.BIOME_MODIFIERS, DIRECT_CODEC);
 
     /**
      * Codec for referring to biome modifiers by id, list of id, or tags.
      * Can only be used with {@link RegistryOps}.
      */
-    Codec<HolderSet<BiomeModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(ForgeRegistries.Keys.BIOME_MODIFIERS, DIRECT_CODEC);
+    Codec<HolderSet<BiomeModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(singularityRegistries.Keys.BIOME_MODIFIERS, DIRECT_CODEC);
 
     /**
      * Modifies the information via the provided biome builder.

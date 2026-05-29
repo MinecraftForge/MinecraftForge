@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
 
 import java.util.Map;
 
@@ -17,7 +17,7 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 public class StringSubstitutor {
     private static final Map<String, String> GLOBALS = Map.of(
         "mcVersion", FMLLoader.versionInfo().mcVersion(),
-        "forgeVersion", FMLLoader.versionInfo().forgeVersion()
+        "singularityVersion", FMLLoader.versionInfo().singularityVersion()
     );
 
     public static String replace(final String in, final ModFile file) {

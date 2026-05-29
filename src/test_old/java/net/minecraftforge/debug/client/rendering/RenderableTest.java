@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
 import java.util.Map;
 
@@ -23,23 +23,23 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.obj.ObjLoader;
-import net.minecraftforge.client.model.obj.ObjModel;
-import net.minecraftforge.client.model.renderable.BakedModelRenderable;
-import net.minecraftforge.client.model.renderable.CompositeRenderable;
-import net.minecraftforge.client.model.renderable.IRenderable;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.singularityRenderTypes;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftsingularity.client.event.RenderLevelStageEvent;
+import net.minecraftsingularity.client.event.RenderLevelStageEvent.Stage;
+import net.minecraftsingularity.client.model.geometry.StandaloneGeometryBakingContext;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.client.model.obj.ObjLoader;
+import net.minecraftsingularity.client.model.obj.ObjModel;
+import net.minecraftsingularity.client.model.renderable.BakedModelRenderable;
+import net.minecraftsingularity.client.model.renderable.CompositeRenderable;
+import net.minecraftsingularity.client.model.renderable.IRenderable;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
 import org.joml.Matrix4f;
 
 /**
@@ -51,7 +51,7 @@ import org.joml.Matrix4f;
  * {@link Stage#AFTER_TRANSLUCENT_BLOCKS}, {@link Stage#AFTER_TRIPWIRE_BLOCKS}, {@link Stage#AFTER_PARTICLES}, and {@link Stage#AFTER_WEATHER}.
  * Due to how weather modifies the projection matrix, it's sugar glider will be positioned weirdly. Below each sugar gliders is a render of
  * blue stained glass to test translucency with fabulous graphics. {@link Stage#AFTER_PARTICLES} will render the stained glass using
- * {@link ForgeRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET}.
+ * {@link singularityRenderTypes#TRANSLUCENT_ON_PARTICLES_TARGET}.
  */
 @Mod(RenderableTest.MODID)
 public class RenderableTest
@@ -81,11 +81,11 @@ public class RenderableTest
         public static void init()
         {
             var modBus = FMLJavaModLoadingContext.get().getModEventBus();
-            var forgeBus = MinecraftForge.EVENT_BUS;
+            var singularityBus = MinecraftForge.EVENT_BUS;
             modBus.addListener(Client::registerModels);
             modBus.addListener(Client::registerReloadListeners);
             modBus.addListener(Client::registerStage);
-            forgeBus.addListener(Client::renderStage);
+            singularityBus.addListener(Client::renderStage);
         }
 
         private static void registerModels(ModelEvent.RegisterAdditional event)
@@ -194,7 +194,7 @@ public class RenderableTest
         private static RenderType getRenderType(Stage stage, ResourceLocation texture)
         {
             if (stage == Stage.AFTER_PARTICLES)
-                return ForgeRenderTypes.TRANSLUCENT_ON_PARTICLES_TARGET.get();
+                return singularityRenderTypes.TRANSLUCENT_ON_PARTICLES_TARGET.get();
             return RenderType.entityTranslucent(texture);
         }
     }

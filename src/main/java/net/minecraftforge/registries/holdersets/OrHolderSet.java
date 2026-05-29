@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.holdersets;
+package net.minecraftsingularity.registries.holdersets;
 
 import java.util.List;
 import java.util.Set;
@@ -17,13 +17,13 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftsingularity.common.singularityMod;
 
 /**
  * <p>Holderset that represents a union of other holdersets. Json format:</p>
  * <pre>
  * {
- *   "type": "forge:or",
+ *   "type": "singularity:or",
  *   "values":
  *   [
  *      // list of sub-holdersets (strings, lists, or objects)
@@ -45,7 +45,7 @@ public class OrHolderSet<T> extends CompositeHolderSet<T> {
 
     @Override
     public HolderSetType type() {
-        return ForgeMod.OR_HOLDER_SET.get();
+        return singularityMod.OR_HOLDER_SET.get();
     }
 
     @Override

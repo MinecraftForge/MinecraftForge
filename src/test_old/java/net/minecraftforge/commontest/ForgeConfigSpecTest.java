@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.commontest;
+package net.minecraftsingularity.commontest;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftsingularity.common.singularityConfigSpec;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class ForgeConfigSpecTest
+public class singularityConfigSpecTest
 {
     private final String TEST_CONFIG_PATH_TEMPLATE = "./tests/config/%s.toml";
     private final int TEST_SIZE = 10000;
@@ -30,7 +30,7 @@ public class ForgeConfigSpecTest
 
     static {
         try {
-            useCachesField = ForgeConfigSpec.ConfigValue.class.getDeclaredField("USE_CACHES");
+            useCachesField = singularityConfigSpec.ConfigValue.class.getDeclaredField("USE_CACHES");
             useCachesField.setAccessible(true);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -66,24 +66,24 @@ public class ForgeConfigSpecTest
     @Test(expected = IllegalStateException.class)
     public void allEmptyCommentTest() throws IllegalStateException
     {
-        final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        final ForgeConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "").define("allEmptyCommentTest", "someDefaultValue");
-        final ForgeConfigSpec spec = builder.build();
+        final singularityConfigSpec.Builder builder = new singularityConfigSpec.Builder();
+        final singularityConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "").define("allEmptyCommentTest", "someDefaultValue");
+        final singularityConfigSpec spec = builder.build();
     }
 
     @Test
     public void topPaddedCommentTest()
     {
-        final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        final ForgeConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "Test").define("topPaddedCommentTest", "someDefaultValue");
-        final ForgeConfigSpec spec = builder.build();
+        final singularityConfigSpec.Builder builder = new singularityConfigSpec.Builder();
+        final singularityConfigSpec.ConfigValue<String> simpleValue = builder.comment("", "Test").define("topPaddedCommentTest", "someDefaultValue");
+        final singularityConfigSpec spec = builder.build();
     }
 
     private <T> void executeSpeedTest(final String configKey, final T defaultKeyValue, final String testName) throws IOException
     {
-        final ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        final ForgeConfigSpec.ConfigValue<T> simpleValue = builder.define(configKey, defaultKeyValue);
-        final ForgeConfigSpec spec = builder.build();
+        final singularityConfigSpec.Builder builder = new singularityConfigSpec.Builder();
+        final singularityConfigSpec.ConfigValue<T> simpleValue = builder.define(configKey, defaultKeyValue);
+        final singularityConfigSpec spec = builder.build();
 
         final String configPath = String.format(Locale.ROOT, TEST_CONFIG_PATH_TEMPLATE, testName);
         final File configFile = new File(configPath);
@@ -121,7 +121,7 @@ public class ForgeConfigSpecTest
         configFile.delete();
     }
 
-    private <T> List<TestResult> runTestHarness(final T defaultKeyValue, final String testName, final ForgeConfigSpec.ConfigValue<T> simpleValue, final ForgeConfigSpec spec, final int warmupRounds, final int testRounds)
+    private <T> List<TestResult> runTestHarness(final T defaultKeyValue, final String testName, final singularityConfigSpec.ConfigValue<T> simpleValue, final singularityConfigSpec spec, final int warmupRounds, final int testRounds)
     {
         final List<TestResult> results = new ArrayList<>();
 
@@ -139,7 +139,7 @@ public class ForgeConfigSpecTest
         return results;
     }
 
-    private <T> TestResult runTestOnce(final T defaultKeyValue, final String testName, final ForgeConfigSpec.ConfigValue<T> simpleValue, final ForgeConfigSpec spec)
+    private <T> TestResult runTestOnce(final T defaultKeyValue, final String testName, final singularityConfigSpec.ConfigValue<T> simpleValue, final singularityConfigSpec spec)
     {
         spec.afterReload();
         setUseCachesField(true);

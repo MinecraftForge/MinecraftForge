@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftsingularity.common.capabilities;
 
-import net.minecraftforge.fml.common.asm.CapabilityTokenSubclass;
+import net.minecraftsingularity.fml.common.asm.CapabilityTokenSubclass;
 
 /**
  * Inspired by {@link com.google.common.reflect.TypeToken TypeToken}, use a subclass to capture

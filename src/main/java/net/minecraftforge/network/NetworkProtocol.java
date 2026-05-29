@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -46,7 +46,7 @@ public class NetworkProtocol<B extends FriendlyByteBuf> {
 
     @SuppressWarnings("unchecked")
     public <T extends PacketListener> Packet<T> buildPacket(PacketFlow direction, Identifier name, Consumer<B> encoder) {
-        var payload = ForgePayload.create(name, (Consumer<FriendlyByteBuf>)encoder);
+        var payload = singularityPayload.create(name, (Consumer<FriendlyByteBuf>)encoder);
 
         switch (this.protocol) {
             case PLAY, CONFIGURATION:

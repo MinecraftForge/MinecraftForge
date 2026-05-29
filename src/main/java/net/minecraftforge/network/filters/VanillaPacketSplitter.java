@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.filters;
+package net.minecraftsingularity.network.filters;
 /*
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import net.minecraft.network.*;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.*;
-import net.minecraftforge.network.event.EventNetworkChannel;
+import net.minecraftsingularity.network.*;
+import net.minecraftsingularity.network.event.EventNetworkChannel;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,7 +29,7 @@ public class VanillaPacketSplitter {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Identifier CHANNEL = new Identifier("forge", "split");
+    private static final Identifier CHANNEL = new Identifier("singularity", "split");
     private static final String VERSION = "1.1";
 
     private static final int PROTOCOL_MAX = CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH;
@@ -109,7 +109,7 @@ public class VanillaPacketSplitter {
         byte state = buf.readByte();
         if (state == STATE_FIRST) {
             if (!receivedBuffers.isEmpty()) {
-                LOGGER.warn("forge:split received out of order - inbound buffer not empty when receiving first");
+                LOGGER.warn("singularity:split received out of order - inbound buffer not empty when receiving first");
                 receivedBuffers.clear();
             }
         }
@@ -120,7 +120,7 @@ public class VanillaPacketSplitter {
             int packetId = full.readVarInt();
             Packet<?> packet = protocol.createPacket(direction, packetId, full);
             if (packet == null) {
-                LOGGER.error("Received invalid packet ID {} in forge:split", packetId);
+                LOGGER.error("Received invalid packet ID {} in singularity:split", packetId);
             } else {
                 receivedBuffers.clear();
                 full.release();

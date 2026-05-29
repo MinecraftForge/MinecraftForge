@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.ticket;
+package net.minecraftsingularity.common.ticket;
 
 import net.minecraft.world.level.ChunkPos;
 

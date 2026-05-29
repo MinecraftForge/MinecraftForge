@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModInfo;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;

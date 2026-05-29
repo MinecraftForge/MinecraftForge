@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.player;
+package net.minecraftsingularity.event.entity.player;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 
 import javax.annotation.Nonnegative;
 import java.util.List;

@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.LerpingBossEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public sealed interface CustomizeGuiOverlayEvent {
      * <p>This event is {@linkplain Cancellable cancellable}.
      * Cancelling this event will prevent the given bar from rendering.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     final class BossEventProgress extends MutableEvent implements Cancellable, CustomizeGuiOverlayEvent {
@@ -121,7 +121,7 @@ public sealed interface CustomizeGuiOverlayEvent {
      * Fired <b>before</b> textual information is rendered to the debug screen.
      * This can be used to add or remove text information.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @param getText the modifiable list of text to render on the side
@@ -148,7 +148,7 @@ public sealed interface CustomizeGuiOverlayEvent {
     /**
      * Fired <b>before</b> the chat messages overlay is rendered to the screen.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     final class Chat extends MutableEvent implements CustomizeGuiOverlayEvent {

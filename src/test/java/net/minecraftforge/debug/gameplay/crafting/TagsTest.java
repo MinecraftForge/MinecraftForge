@@ -1,22 +1,22 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.crafting;
+package net.minecraftsingularity.debug.gameplay.crafting;
 
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
 @Mod(TagsTest.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public final class TagsTest extends BaseTestMod {
     public static final String MODID = "tags_test";
 

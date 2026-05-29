@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -22,19 +22,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.HasResult;
-import net.minecraftforge.common.util.Result;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.ToolActions;
+import net.minecraftsingularity.common.util.BlockSnapshot;
+import net.minecraftsingularity.common.util.HasResult;
+import net.minecraftsingularity.common.util.Result;
 
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +42,7 @@ public sealed interface BlockEvent
         permits BlockEvent.BlockToolModificationEvent, BlockEvent.BreakEvent, BlockEvent.CropGrowEvent,
         BlockEvent.EntityPlaceEvent, BlockEvent.FarmlandTrampleEvent, BlockEvent.FluidPlaceBlockEvent,
         BlockEvent.NeighborNotifyEvent, BlockEvent.PortalSpawnEvent, NoteBlockEvent, PistonEvent {
-    boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
+    boolean DEBUG = Boolean.parseBoolean(System.getProperty("singularity.debugBlockEvent", "false"));
 
     LevelAccessor getLevel();
 
@@ -73,7 +73,7 @@ public sealed interface BlockEvent
             this.player = player;
             this.result = result;
 
-            if (state == null || !ForgeHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
+            if (state == null || !singularityHooks.isCorrectToolForDrops(state, player)) { // Handle empty block or player unable to break block scenario
                 this.exp = 0;
             } else {
                 var lookup = level.registryAccess().lookup(Registries.ENCHANTMENT).get();

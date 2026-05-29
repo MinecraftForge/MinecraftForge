@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.settings;
+package net.minecraftsingularity.client.settings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

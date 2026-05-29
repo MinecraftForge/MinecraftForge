@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import java.util.List;
 import net.minecraft.core.Registry;
@@ -11,8 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftsingularity.registries.DataPackRegistriesHooks;
+import net.minecraftsingularity.registries.RegistryManager;
 
 public record RegistryList(
     int token,

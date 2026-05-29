@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.tasks;
+package net.minecraftsingularity.network.tasks;
 
 import java.util.function.Consumer;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.network.ConfigurationTask;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.config.ConfigurationTaskContext;
-import net.minecraftforge.network.packets.ChannelVersions;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.config.ConfigurationTaskContext;
+import net.minecraftsingularity.network.packets.ChannelVersions;
 
 /**
  * Sends the list of known channels to the client as well as their specific versions.
@@ -20,7 +20,7 @@ import net.minecraftforge.network.packets.ChannelVersions;
  */
 @ApiStatus.Internal
 public class ChannelVersionsTask implements ConfigurationTask {
-    public static final Type TYPE = new Type("forge:channel_list");
+    public static final Type TYPE = new Type("singularity:channel_list");
 
     @Override
     public void start(ConfigurationTaskContext ctx) {

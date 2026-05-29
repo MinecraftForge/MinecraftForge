@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.fml.loading.progress.StartupNotificationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -140,10 +140,10 @@ public class ImmediateWindowHandler {
 
         @Override
         public void updateModuleReads(final ModuleLayer layer) {
-            var fm = layer.findModule("net.minecraftforge.forge");
+            var fm = layer.findModule("net.minecraftsingularity.singularity");
             if (fm.isPresent()) {
                 getClass().getModule().addReads(fm.get());
-                var clz = fm.map(l -> Class.forName(l, "net.minecraftforge.client.loading.NoVizFallback")).orElseThrow();
+                var clz = fm.map(l -> Class.forName(l, "net.minecraftsingularity.client.loading.NoVizFallback")).orElseThrow();
                 var methods = Arrays.stream(clz.getMethods()).filter(m -> Modifier.isStatic(m.getModifiers())).collect(Collectors.toMap(Method::getName, Function.identity()));
                 NV_HANDOFF = methods.get("windowHandoff");
                 NV_OVERLAY = methods.get("loadingOverlay");

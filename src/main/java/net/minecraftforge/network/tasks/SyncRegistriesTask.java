@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.tasks;
+package net.minecraftsingularity.network.tasks;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -18,15 +18,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ConfigurationTask;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.ForgePacketHandler;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.config.ConfigurationTaskContext;
-import net.minecraftforge.network.packets.Acknowledge;
-import net.minecraftforge.network.packets.RegistryData;
-import net.minecraftforge.network.packets.RegistryList;
-import net.minecraftforge.registries.ForgeRegistry.Snapshot;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.network.singularityPacketHandler;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.config.ConfigurationTaskContext;
+import net.minecraftsingularity.network.packets.Acknowledge;
+import net.minecraftsingularity.network.packets.RegistryData;
+import net.minecraftsingularity.network.packets.RegistryList;
+import net.minecraftsingularity.registries.singularityRegistry.Snapshot;
+import net.minecraftsingularity.registries.RegistryManager;
 
 /**
  * Sends the list of known channels to the client as well as their specific versions.
@@ -36,11 +36,11 @@ import net.minecraftforge.registries.RegistryManager;
 public class SyncRegistriesTask implements ConfigurationTask {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker MARKER = MarkerManager.getMarker("SYNC_REGISTRIES_TASK");
-    public static final Type TYPE = new Type("forge:sync_registries");
+    public static final Type TYPE = new Type("singularity:sync_registries");
 
     private ConfigurationTaskContext taskCtx;
     private Map<Identifier, Snapshot> snapshot;
-    private ForgePacketHandler handler;
+    private singularityPacketHandler handler;
     private int expectedToken;
 
     @Override

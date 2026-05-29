@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.tasks;
+package net.minecraftsingularity.network.tasks;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkContext;
+import net.minecraftsingularity.event.network.GatherLoginConfigurationTasksEvent;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.NetworkContext;
 
 @ApiStatus.Internal
-public final class ForgeNetworkConfigurationHandler {
-    private ForgeNetworkConfigurationHandler() {}
+public final class singularityNetworkConfigurationHandler {
+    private singularityNetworkConfigurationHandler() {}
 
     public static void gatherInit(GatherLoginConfigurationTasksEvent event) {
         var ctx = NetworkContext.get(event.getConnection());

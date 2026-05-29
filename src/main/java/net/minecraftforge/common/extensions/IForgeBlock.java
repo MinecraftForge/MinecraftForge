@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -40,10 +40,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelDataManager;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.client.model.data.ModelDataManager;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.IPlantable;
 
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -51,8 +51,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.ToolActions;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
@@ -156,7 +156,7 @@ public interface IForgeBlock {
      * @return True to spawn the drops
      */
     default public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
-        return ForgeHooks.isCorrectToolForDrops(state, player);
+        return singularityHooks.isCorrectToolForDrops(state, player);
     }
 
     /**
@@ -196,7 +196,7 @@ public interface IForgeBlock {
      * @return True to treat this as a bed
      */
     default boolean isBed(BlockState state, BlockGetter level, BlockPos pos, @Nullable Entity player) {
-        return self() instanceof BedBlock; //TODO: Forge: Keep isBed function?
+        return self() instanceof BedBlock; //TODO: singularity: Keep isBed function?
     }
 
     /**

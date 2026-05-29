@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.items;
+package net.minecraftsingularity.items;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftsingularity.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class VanillaHopperItemHandler extends InvWrapper

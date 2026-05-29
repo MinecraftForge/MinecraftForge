@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -31,8 +31,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraftsingularity.fml.loading.toposort.TopologicalSort;
+import net.minecraftsingularity.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 public final class CreativeModeTabRegistry {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Identifier CREATIVE_MODE_TAB_ORDERING_JSON = Identifier.fromNamespaceAndPath("forge", "creative_mode_tab_ordering.json");
+    private static final Identifier CREATIVE_MODE_TAB_ORDERING_JSON = Identifier.fromNamespaceAndPath("singularity", "creative_mode_tab_ordering.json");
     private static final List<CreativeModeTab> SORTED_TABS = new ArrayList<>();
     private static final List<CreativeModeTab> SORTED_TABS_VIEW = Collections.unmodifiableList(SORTED_TABS);
     private static final List<CreativeModeTab> DEFAULT_TABS = new ArrayList<>();

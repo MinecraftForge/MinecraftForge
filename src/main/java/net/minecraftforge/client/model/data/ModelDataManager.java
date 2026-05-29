@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.data;
+package net.minecraftsingularity.client.model.data;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
@@ -11,11 +11,11 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.event.level.ChunkEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Users should not be instantiating or using this themselves unless they know what they're doing.
  */
 @ApiStatus.Internal
-@EventBusSubscriber(modid = "forge", bus = Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = "singularity", bus = Bus.singularity, value = Dist.CLIENT)
 public class ModelDataManager {
     private final Level level;
     private final Map<ChunkPos, Set<BlockPos>> needModelDataRefresh = new ConcurrentHashMap<>();

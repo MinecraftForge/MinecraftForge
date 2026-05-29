@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -33,9 +33,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.registries.tags.ITagManager;
+import net.minecraftsingularity.common.util.LogMessageAdapter;
+import net.minecraftsingularity.fml.ModLoadingContext;
+import net.minecraftsingularity.registries.tags.ITagManager;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.Preconditions;
@@ -51,7 +51,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.core.Registry;
-import net.minecraftforge.common.util.TablePrinter;
+import net.minecraftsingularity.common.util.TablePrinter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -61,10 +61,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Internal - use the public {@link IForgeRegistry} and {@link ForgeRegistries} APIs to get the data
+ * Internal - use the public {@link IForgeRegistry} and {@link singularityRegistries} APIs to get the data
  */
 @ApiStatus.Internal
-public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V> {
+public class singularityRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V> {
     public static final Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
     private static final Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
     private static final Logger LOGGER = LogManager.getLogger();
@@ -88,7 +88,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     private final Map<Identifier, Holder.Reference<V>> delegatesByName = new HashMap<>();
     private final Map<V, Holder.Reference<V>> delegatesByValue = new HashMap<>();
     private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
-    private final ForgeRegistryTagManager<V> tagManager;
+    private final singularityRegistryTagManager<V> tagManager;
     private final int min;
     private final int max;
     private final boolean allowOverrides;
@@ -104,7 +104,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     private final Codec<V> codec = new RegistryCodec();
 
-    ForgeRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
+    singularityRegistry(RegistryManager stage, Identifier name, RegistryBuilder<V> builder) {
         this.name = name;
         this.key = ResourceKey.createRegistryKey(name);
         this.builder = builder;
@@ -123,7 +123,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
         this.hasWrapper = builder.getHasWrapper();
-        this.tagManager = this.hasWrapper ? new ForgeRegistryTagManager<>(this) : null;
+        this.tagManager = this.hasWrapper ? new singularityRegistryTagManager<>(this) : null;
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -239,7 +239,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         NamespacedWrapper<V> wrapper = getWrapper();
 
         if (wrapper == null)
-            throw new IllegalStateException("Cannot query wrapper for non-wrapped forge registry!");
+            throw new IllegalStateException("Cannot query wrapper for non-wrapped singularity registry!");
 
         return wrapper;
     }
@@ -342,7 +342,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     void validateKey() {
         if (this.defaultKey != null)
-            Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Name: " + this.name);
+            Validate.notNull(this.defaultValue, "Missing default of singularityRegistry: " + this.defaultKey + " Name: " + this.name);
     }
 
     @Nullable
@@ -350,8 +350,8 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         return this.defaultKey;
     }
 
-    ForgeRegistry<V> copy(RegistryManager stage) {
-        return new ForgeRegistry<>(stage, name, builder);
+    singularityRegistry<V> copy(RegistryManager stage) {
+        return new singularityRegistry<>(stage, name, builder);
     }
 
     @Override
@@ -562,7 +562,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
             this.bake.onBake(this, this.stage);
     }
 
-    void sync(Identifier name, ForgeRegistry<V> from) {
+    void sync(Identifier name, singularityRegistry<V> from) {
         LOGGER.debug(REGISTRIES,"Registry {} Sync: {} -> {}", this.name, this.stage.getName(), from.stage.getName());
         if (this == from)
             throw new IllegalArgumentException("WTF We are the same!?!?!");
@@ -628,7 +628,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @Override
     public void clear() {
         if (!this.isModifiable)
-            throw new UnsupportedOperationException("Attempted to clear a non-modifiable Forge Registry");
+            throw new UnsupportedOperationException("Attempted to clear a non-modifiable singularity Registry");
 
         if (this.isLocked())
             throw new IllegalStateException("Attempted to clear the registry to late.");
@@ -648,7 +648,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @Override
     public V remove(Identifier key) {
         if (!this.isModifiable)
-            throw new UnsupportedOperationException("Attempted to remove from a non-modifiable Forge Registry");
+            throw new UnsupportedOperationException("Attempted to remove from a non-modifiable singularity Registry");
 
         if (this.isLocked())
             throw new IllegalStateException("Attempted to remove from the registry to late.");
@@ -720,7 +720,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
 
     private record DumpRow(String id, String key, String value) {}
 
-    public void loadIds(Object2IntMap<Identifier> ids, Map<Identifier, String> overrides, Object2IntMap<Identifier> missing, Map<Identifier, IdMappingEvent.IdRemapping> remapped, ForgeRegistry<V> old, Identifier name) {
+    public void loadIds(Object2IntMap<Identifier> ids, Map<Identifier, String> overrides, Object2IntMap<Identifier> missing, Map<Identifier, IdMappingEvent.IdRemapping> remapped, singularityRegistry<V> old, Identifier name) {
         Map<Identifier, String> ovs = new HashMap<>(overrides);
         for (Object2IntMap.Entry<Identifier> entry : ids.object2IntEntrySet()) {
             Identifier itemName = entry.getKey();
@@ -826,14 +826,14 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
                 return ops.getNumberValue(input).flatMap(n -> {
                     int id = n.intValue();
                     if (ids.get(id) == null)
-                        return DataResult.error(() -> "Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
-                    V val = ForgeRegistry.this.getValue(id);
+                        return DataResult.error(() -> "Unknown registry id in " + singularityRegistry.this.key + ": " + n);
+                    V val = singularityRegistry.this.getValue(id);
                     return DataResult.success(val);
                 }).map(v -> Pair.of(v, ops.empty()));
             } else {
-                return Identifier.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
-                        ? DataResult.error(() -> "Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
-                        : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
+                return Identifier.CODEC.decode(ops, input).flatMap(keyValuePair -> !singularityRegistry.this.containsKey(keyValuePair.getFirst())
+                        ? DataResult.error(() -> "Unknown registry key in " + singularityRegistry.this.key + ": " + keyValuePair.getFirst())
+                        : DataResult.success(keyValuePair.mapFirst(singularityRegistry.this::getValue)));
             }
         }
 
@@ -841,7 +841,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
         public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix) {
             Identifier key = getKey(input);
             if (key == null)
-                return DataResult.error(() -> "Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
+                return DataResult.error(() -> "Unknown registry element in " + singularityRegistry.this.key + ": " + input);
             T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
             return ops.mergeToPrimitive(prefix, toMerge);
         }
@@ -945,12 +945,12 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     @SuppressWarnings("unchecked")
     public MissingMappingsEvent getMissingEvent(Identifier name, Object2IntMap<Identifier> map) {
         List<MissingMappingsEvent.Mapping<V>> lst = new ArrayList<>();
-        ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
+        singularityRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
         map.object2IntEntrySet().forEach(entry -> lst.add(new MissingMappingsEvent.Mapping<>(this, pool, entry.getKey(), entry.getIntValue())));
         return new MissingMappingsEvent(ResourceKey.createRegistryKey(name), this, (Collection<MissingMappingsEvent.Mapping<?>>) (Collection<?>) lst);
     }
 
-    void processMissingEvent(Identifier name, ForgeRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Object2IntMap<Identifier> missing, Map<Identifier, IdMappingEvent.IdRemapping> remaps, Collection<Identifier> defaulted, Collection<Identifier> failed, boolean injectNetworkDummies) {
+    void processMissingEvent(Identifier name, singularityRegistry<V> pool, List<MissingMappingsEvent.Mapping<V>> mappings, Object2IntMap<Identifier> missing, Map<Identifier, IdMappingEvent.IdRemapping> remaps, Collection<Identifier> defaulted, Collection<Identifier> failed, boolean injectNetworkDummies) {
         LOGGER.debug(REGISTRIES,"Processing missing event for {}:", name);
         int ignored = 0;
 

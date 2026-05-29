@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
+import static net.minecraftsingularity.fml.loading.LogMarkers.LOADING;
 
 @ApiStatus.Internal
 @Deprecated(since = "1.21.3", forRemoval = true) // TODO: [FML][Loading] Convert to package private in 1.22

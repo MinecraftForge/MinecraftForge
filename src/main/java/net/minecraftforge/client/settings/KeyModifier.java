@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.settings;
+package net.minecraftsingularity.client.settings;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -33,7 +33,7 @@ public enum KeyModifier {
 
         @Override
         public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic) {
-            String localizationFormatKey = InputQuirks.REPLACE_CTRL_KEY_WITH_CMD_KEY ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
+            String localizationFormatKey = InputQuirks.REPLACE_CTRL_KEY_WITH_CMD_KEY ? "singularity.controlsgui.control.mac" : "singularity.controlsgui.control";
             return Component.translatable(localizationFormatKey, defaultLogic.get());
         }
     },
@@ -50,7 +50,7 @@ public enum KeyModifier {
 
         @Override
         public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic) {
-            return Component.translatable("forge.controlsgui.shift", defaultLogic.get());
+            return Component.translatable("singularity.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
@@ -66,7 +66,7 @@ public enum KeyModifier {
 
         @Override
         public Component getCombinedName(InputConstants.Key keyCode, Supplier<Component> defaultLogic) {
-            return Component.translatable("forge.controlsgui.alt", defaultLogic.get());
+            return Component.translatable("singularity.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {

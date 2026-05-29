@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
@@ -25,7 +25,7 @@ import org.jspecify.annotations.NullMarked;
  * is by first changing it from 31 to 46, and then queuing the update from 46 to 32. However, when going from 32 to 31,
  * vanilla is able to go directly.
  * <p>
- * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  *
  * @param getLevel the server level containing the chunk

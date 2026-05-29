@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftsingularity.common.singularityHooks;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
  * {@link LivingEntity#hurt(DamageSource, float)} and
  * {@link Player#hurt(DamageSource, float)}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingAttack(LivingEntity, DamageSource, float)}.<br>
+ * This event is fired via the {@link singularityHooks#onLivingAttack(LivingEntity, DamageSource, float)}.<br>
  * <br>
  * This event is {@linkplain Cancellable cancellable}.<br>
  * If this event is cancelled, the Entity does not take attack damage.

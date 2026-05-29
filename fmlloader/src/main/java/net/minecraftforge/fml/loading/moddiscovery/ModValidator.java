@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.ModSorter;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.ModFileLoadingException;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException;
+import net.minecraftsingularity.fml.loading.ImmediateWindowHandler;
+import net.minecraftsingularity.fml.loading.LoadingModList;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.fml.loading.ModSorter;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
+import net.minecraftsingularity.singularityspi.locating.ModFileLoadingException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -92,7 +92,7 @@ public class ModValidator {
         // Add any game libraries, this *may* be duplicates, depending on the state of the sorting. But until I get around to re-writing
         // that clusterfuck of a system, have this simple de-duplication. Order of resource is important, but i'm unsure if duplication is
         // so might as well waste a few cycles on checking. Still faster then converting from a set to a list.
-        // Ideally we would explicitly list out which mods to load {forge and MC being the only ones} but some coremods could require extra things.
+        // Ideally we would explicitly list out which mods to load {singularity and MC being the only ones} but some coremods could require extra things.
         // So try game libraries as well
         for (var lib : this.gameLibraries) {
             var jar = lib.getSecureJar();

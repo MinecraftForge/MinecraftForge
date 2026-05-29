@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.AnnotationVisitor;
@@ -29,7 +29,7 @@ final class ModClassVisitor extends ClassVisitor {
     private static final Type RECORD_TYPE = Type.getObjectType("java/lang/Record");
 
     static {
-        var customBlacklist = System.getProperty("forge.annotationScanningBlacklist");
+        var customBlacklist = System.getProperty("singularity.annotationScanningBlacklist");
         if (customBlacklist != null) {
             ANNOTATION_BLACKLIST = Set.of(customBlacklist.split(","));
         } else {

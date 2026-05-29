@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 import com.google.gson.Gson;
-import net.minecraftforge.fml.loading.FMLConfig;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.loading.FMLConfig;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-import static net.minecraftforge.fml.VersionChecker.Status.*;
+import static net.minecraftsingularity.fml.VersionChecker.Status.*;
 
 public class VersionChecker {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -81,7 +81,7 @@ public class VersionChecker {
     public record CheckResult(VersionChecker.Status status, ComparableVersion target, Map<ComparableVersion, String> changes, String url) {}
 
     public static void startVersionCheck() {
-        new Thread("Forge Version Check") {
+        new Thread("singularity Version Check") {
             private HttpClient client;
             private String mcVersion;
             private String agent;
@@ -89,16 +89,16 @@ public class VersionChecker {
             @Override
             public void run() {
                 if (!FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.VERSION_CHECK)) {
-                    LOGGER.info("Global Forge version check system disabled, no further processing.");
+                    LOGGER.info("Global singularity version check system disabled, no further processing.");
                     return;
                 }
 
                 var mc = ModList.getModContainerById("minecraft");
-                var forge = ModList.getModContainerById("forge");
+                var singularity = ModList.getModContainerById("singularity");
                 this.mcVersion = mc.get().getModInfo().getVersion().toString();
 
                 this.agent = "Java-http-client/" + System.getProperty("java.version")
-                    + " MinecraftForge/" + mcVersion + '-' + forge.get().getModInfo().getVersion();
+                    + " MinecraftForge/" + mcVersion + '-' + singularity.get().getModInfo().getVersion();
 
                 client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS)).build();
                 gatherMods().forEach(this::process);

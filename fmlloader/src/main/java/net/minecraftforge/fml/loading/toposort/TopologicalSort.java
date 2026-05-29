@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.toposort;
+package net.minecraftsingularity.fml.loading.toposort;
 
 import com.google.common.base.Preconditions;
 import com.google.common.graph.Graph;
@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * Provides a topological sort algorithm.
  *
- * <p>While this algorithm is used for mod loading in forge, it can be
+ * <p>While this algorithm is used for mod loading in singularity, it can be
  * utilized in other fashions, e.g. topology-based registry loading, prioritization
  * for renderers, and even mod module loading.
  */
@@ -50,7 +50,7 @@ public final class TopologicalSort {
      * complexity would be {@code O(E + TV log(V))}. As a result, the comparator should
      * be as efficient as possible.
      *
-     * <p>Examples of topological sort usage can be found in Forge test code.
+     * <p>Examples of topological sort usage can be found in singularity test code.
      *
      * @param graph      the graph to sort
      * @param comparator the secondary comparator, may be null

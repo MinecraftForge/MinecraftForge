@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.holdersets;
+package net.minecraftsingularity.registries.holdersets;
 
 import java.util.List;
 import java.util.Set;
@@ -17,13 +17,13 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftsingularity.common.singularityMod;
 
 /**
  * <p>Holderset that represents an intersection of other holdersets. Json format:</p>
  * <pre>
  * {
- *   "type": "forge:and",
+ *   "type": "singularity:and",
  *   "values":
  *   [
  *      // list of sub-holdersets (strings, lists, or objects)
@@ -45,7 +45,7 @@ public class AndHolderSet<T> extends CompositeHolderSet<T> {
 
     @Override
     public HolderSetType type() {
-        return ForgeMod.AND_HOLDER_SET.get();
+        return singularityMod.AND_HOLDER_SET.get();
     }
 
     @Override

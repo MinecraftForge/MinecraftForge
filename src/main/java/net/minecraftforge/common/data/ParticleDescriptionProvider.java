@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
@@ -17,8 +17,8 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  *
  * <p>To use this provider, extend this class and implement {@link #addDescriptions()}.
  * Then, register an instance using {@link net.minecraft.data.DataGenerator#addProvider(boolean, Factory)}
- * via the {@link net.minecraftforge.data.event.GatherDataEvent} on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod event bus}.
+ * via the {@link net.minecraftsingularity.data.event.GatherDataEvent} on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod event bus}.
  *
  * <p>A description can be added to a {@link ParticleType} which uses a {@linkplain #sprite(ParticleType, Identifier) sprite}
  * or {@linkplain #spriteSet(ParticleType, Iterable) sprite set}.
@@ -59,8 +59,8 @@ import java.util.stream.Stream;
  * the necessary texture during rendering.
  *
  * <p>Particles with a particle description must have their particle providers
- * attached to a {@link ParticleType} as a {@linkplain net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSprite(ParticleType, ParticleProvider.Sprite) sprite}
- * or {@linkplain net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration) sprite set}
+ * attached to a {@link ParticleType} as a {@linkplain net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSprite(ParticleType, ParticleProvider.Sprite) sprite}
+ * or {@linkplain net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration) sprite set}
  * consumer.
  *
  * @see DataProvider
@@ -97,7 +97,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
      * associated {@link ParticleType}.
      *
      * <p>Particle types with this description should be attached to a particle provider
-     * via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSprite(ParticleType, ParticleProvider.Sprite)}.
+     * via {@link net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSprite(ParticleType, ParticleProvider.Sprite)}.
      *
      * @param type                      the particle type the textures are applied
      *                                  for
@@ -124,7 +124,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
      * }</pre>
      *
      * <p>Particle types with this description should be attached to a particle provider
-     * via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
+     * via {@link net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
      *
      * @param type                      the particle type the textures are applied
      *                                  for
@@ -163,7 +163,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
      * at least one texture present.
      *
      * <p>Particle types with this description should be attached to a particle provider
-     * via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
+     * via {@link net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
      *
      * @param type                      the particle type the textures are applied
      *                                  for
@@ -184,7 +184,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
      * associated {@link ParticleType}. The textures are passed as an iterable.
      *
      * <p>Particle types with this description should be attached to a particle provider
-     * via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
+     * via {@link net.minecraftsingularity.client.event.RegisterParticleProvidersEvent#registerSpriteSet(ParticleType, ParticleEngine.SpriteParticleRegistration)}.
      *
      * @param type                      the particle type the textures are applied
      *                                  for
@@ -197,7 +197,7 @@ public abstract class ParticleDescriptionProvider implements DataProvider {
      */
     protected void spriteSet(ParticleType<?> type, Iterable<Identifier> textures) {
         // Make sure particle type is registered
-        var particle = Preconditions.checkNotNull(ForgeRegistries.PARTICLE_TYPES.getKey(type), "The particle type is not registered");
+        var particle = Preconditions.checkNotNull(singularityRegistries.PARTICLE_TYPES.getKey(type), "The particle type is not registered");
 
         // Validate textures
         List<String> desc = new ArrayList<>();

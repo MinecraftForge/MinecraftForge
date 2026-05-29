@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.fluid;
+package net.minecraftsingularity.debug.fluid;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.fluids.FluidUtil;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod(MilkFluidTest.MODID)
 public class MilkFluidTest
@@ -24,7 +24,7 @@ public class MilkFluidTest
   {
     if (ENABLE)
     {
-      ForgeMod.enableMilkFluid();
+      singularityMod.enableMilkFluid();
       MinecraftForge.EVENT_BUS.addListener(MilkFluidTest::useMilk);
     }
   }

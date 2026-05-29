@@ -1,22 +1,22 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.world.level.material.FogType;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector4f;
 import org.jspecify.annotations.NullMarked;
@@ -26,7 +26,7 @@ import org.jspecify.annotations.NullMarked;
  * These can be used for customizing the visual features visible to the player.
  * See the various subclasses for listening to different features.
  *
- * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see RenderFog
@@ -56,7 +56,7 @@ public sealed interface ViewportEvent {
      * <p>This event is {@linkplain Cancellable cancellable}.<br>
      * The event must be cancelled for any changes to the plane distances to take effect.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     record RenderFog(
@@ -141,7 +141,7 @@ public sealed interface ViewportEvent {
     /**
      * Fired for customizing the <b>color</b> of the fog visible to the player.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     final class ComputeFogColor extends MutableEvent implements ViewportEvent {
@@ -233,7 +233,7 @@ public sealed interface ViewportEvent {
      * Fired to allow altering the angles of the player's camera.
      * This can be used to alter the player's view for different effects, such as applying roll.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @NullMarked
@@ -325,7 +325,7 @@ public sealed interface ViewportEvent {
      * Fired for altering the raw field of view (FOV).
      * This is after the FOV settings are applied, and before modifiers such as the Nausea effect.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see ComputeFovModifierEvent

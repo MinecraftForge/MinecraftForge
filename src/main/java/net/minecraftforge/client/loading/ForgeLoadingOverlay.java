@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.loading;
+package net.minecraftsingularity.client.loading;
 
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -14,10 +14,10 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.fml.StartupMessageManager;
-import net.minecraftforge.fml.earlydisplay.DisplayWindow;
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.client.singularityRenderTypes;
+import net.minecraftsingularity.fml.StartupMessageManager;
+import net.minecraftsingularity.fml.earlydisplay.DisplayWindow;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
 
@@ -34,15 +34,15 @@ import java.util.function.Supplier;
  * It is somewhat a copy of the superclass render method.
  */
 @SuppressWarnings("unused")
-public class ForgeLoadingOverlay extends LoadingOverlay {
-    private static final boolean ENABLE = false; //Boolean.parseBoolean("forge.enableForgeLoadingOverlay");
+public class singularityLoadingOverlay extends LoadingOverlay {
+    private static final boolean ENABLE = false; //Boolean.parseBoolean("singularity.enableForgeLoadingOverlay");
     private final Minecraft minecraft;
     private final ReloadInstance reload;
     private final DisplayWindow displayWindow;
     private final ProgressMeter progress;
     private final RenderType earlyBuffer;
 
-    public ForgeLoadingOverlay(final Minecraft mc, final ReloadInstance reloader, final Consumer<Optional<Throwable>> errorConsumer, DisplayWindow displayWindow) {
+    public singularityLoadingOverlay(final Minecraft mc, final ReloadInstance reloader, final Consumer<Optional<Throwable>> errorConsumer, DisplayWindow displayWindow) {
         super(mc, reloader, errorConsumer, false);
         this.minecraft = mc;
         this.reload = reloader;
@@ -51,11 +51,11 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         var glTexture = (GlTexture)texture.getTexture();
         displayWindow.addMojangTexture(glTexture.glId());
         this.progress = StartupMessageManager.prependProgressBar("Minecraft Progress", 100);
-        this.earlyBuffer = ForgeRenderTypes.getLoadingOverlay(displayWindow);
+        this.earlyBuffer = singularityRenderTypes.getLoadingOverlay(displayWindow);
     }
 
     public static Supplier<LoadingOverlay> newInstance(Supplier<Minecraft> mc, Supplier<ReloadInstance> ri, Consumer<Optional<Throwable>> handler, DisplayWindow window) {
-        return ()->new ForgeLoadingOverlay(mc.get(), ri.get(), handler, window);
+        return ()->new singularityLoadingOverlay(mc.get(), ri.get(), handler, window);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
             return true;
         /* This should render the framebuffer but it doesnt work in 1.21.6's rendering changes.
          * The proper way to fix this is to just kill off the display window when Vanilla gets to this phase, and render our extra elements normally.
-         * TODO: [Forge][Rendering] Render only out elements from the loading screen
+         * TODO: [singularity][Rendering] Render only out elements from the loading screen
          *
         progress.setAbsolute(Mth.clamp((int)(this.reload.getActualProgress() * 100f), 0, 100));
 

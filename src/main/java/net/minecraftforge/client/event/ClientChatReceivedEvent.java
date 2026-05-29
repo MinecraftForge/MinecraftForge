@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
  * <p>This event is {@linkplain Cancellable cancellable}.
  * If the event is cancelled, the message is not displayed in the chat message window.</p>
  *
- * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see ChatType
@@ -80,7 +80,7 @@ public sealed class ClientChatReceivedEvent extends MutableEvent implements Canc
      * <p>This event is {@linkplain Cancellable cancellable}.
      * If the event is cancelled, the message is not displayed in the chat message window.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @see ChatType

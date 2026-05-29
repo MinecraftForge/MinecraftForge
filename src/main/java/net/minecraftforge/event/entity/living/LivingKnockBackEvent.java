@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingKnockBackEvent is fired when a living entity is about to be knocked back. <br>
@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
  * {@link Mob#doHurtTarget(Entity)} and
  * {@link Player#attack(Entity)} <br>
  * <br>
- * This event is fired via {@link ForgeHooks#onLivingKnockBack(LivingEntity, float, double, double)} .<br>
+ * This event is fired via {@link singularityHooks#onLivingKnockBack(LivingEntity, float, double, double)} .<br>
  * <br>
  * {@link #strength} contains the strength of the knock back. <br>
  * {@link #ratioX} contains the x ratio of the knock back. <br>

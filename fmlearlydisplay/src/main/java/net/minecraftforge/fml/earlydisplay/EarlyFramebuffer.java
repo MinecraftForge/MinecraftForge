@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.earlydisplay;
+package net.minecraftsingularity.fml.earlydisplay;
 
 import java.nio.IntBuffer;
 
-import static net.minecraftforge.fml.earlydisplay.RenderElement.clamp;
+import static net.minecraftsingularity.fml.earlydisplay.RenderElement.clamp;
 import static org.lwjgl.opengl.GL32C.*;
 
 public class EarlyFramebuffer {

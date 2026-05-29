@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.status.ChunkType;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.storage.SerializableChunkData;
-import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
 
 /**
  * ChunkDataEvent is fired when an event involving chunk data occurs.

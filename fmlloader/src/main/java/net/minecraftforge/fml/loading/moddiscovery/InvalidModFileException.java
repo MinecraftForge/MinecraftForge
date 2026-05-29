@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.ModFileLoadingException;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.locating.ModFileLoadingException;
 
 import java.util.Locale;
 import java.util.Optional;

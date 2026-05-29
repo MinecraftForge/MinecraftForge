@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.fml.ModLoadingContext;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * This event fires for each forge and vanilla registry when all registries are ready to have modded objects registered.
+ * This event fires for each singularity and vanilla registry when all registries are ready to have modded objects registered.
  * <p>
  * Fired on the {@linkplain FMLJavaModLoadingContext#getModBusGroup() mod BusGroup}.
  *
@@ -35,13 +35,13 @@ public class RegisterEvent implements IModBusEvent {
     @NotNull
     private final ResourceKey<? extends Registry<?>> registryKey;
     @Nullable
-    private final ForgeRegistry<?> forgeRegistry;
+    private final singularityRegistry<?> singularityRegistry;
     @Nullable
     private final Registry<?> vanillaRegistry;
 
-    RegisterEvent(@NotNull ResourceKey<? extends Registry<?>> registryKey, @Nullable ForgeRegistry<?> forgeRegistry, @Nullable Registry<?> vanillaRegistry) {
+    RegisterEvent(@NotNull ResourceKey<? extends Registry<?>> registryKey, @Nullable singularityRegistry<?> singularityRegistry, @Nullable Registry<?> vanillaRegistry) {
         this.registryKey = registryKey;
-        this.forgeRegistry = forgeRegistry;
+        this.singularityRegistry = singularityRegistry;
         this.vanillaRegistry = vanillaRegistry;
     }
 
@@ -57,8 +57,8 @@ public class RegisterEvent implements IModBusEvent {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T> void register(ResourceKey<? extends Registry<T>> registryKey, Identifier name, Supplier<T> valueSupplier) {
         if (this.registryKey.equals(registryKey)) {
-            if (this.forgeRegistry != null)
-                ((IForgeRegistry) this.forgeRegistry).register(name, valueSupplier.get());
+            if (this.singularityRegistry != null)
+                ((IForgeRegistry) this.singularityRegistry).register(name, valueSupplier.get());
             else if (this.vanillaRegistry != null)
                 Registry.register((Registry) this.vanillaRegistry, name, valueSupplier.get());
         }
@@ -85,12 +85,12 @@ public class RegisterEvent implements IModBusEvent {
     }
 
     /**
-     * @return The forge registry for the given registry key, or {@code null} if the registry is not a forge registry
+     * @return The singularity registry for the given registry key, or {@code null} if the registry is not a singularity registry
      */
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> IForgeRegistry<T> getForgeRegistry() {
-        return (IForgeRegistry<T>) forgeRegistry;
+        return (IForgeRegistry<T>) singularityRegistry;
     }
 
     /**

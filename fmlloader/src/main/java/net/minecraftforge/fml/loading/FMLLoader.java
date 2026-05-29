@@ -1,21 +1,21 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.*;
-import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
-import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModValidator;
-import net.minecraftforge.accesstransformer.service.AccessTransformerService;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
-import net.minecraftforge.forgespi.Environment;
+import net.minecraftsingularity.fml.loading.moddiscovery.BackgroundScanHandler;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModDiscoverer;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModValidator;
+import net.minecraftsingularity.accesstransformer.service.AccessTransformerService;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.fml.loading.targets.CommonLaunchHandler;
+import net.minecraftsingularity.singularityspi.Environment;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -27,8 +27,8 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.BiFunction;
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
+import static net.minecraftsingularity.fml.loading.LogMarkers.CORE;
+import static net.minecraftsingularity.fml.loading.LogMarkers.SCAN;
 
 public final class FMLLoader {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -53,7 +53,7 @@ public final class FMLLoader {
         checkPackage(ITransformationService.class, "4.0", "ModLauncher");
         accessTransformer  = getPlugin(env, "accesstransformer",  "1.0", "AccessTransformer");
         runtimeDistCleaner = getPlugin(env, "runtimedistcleaner", "1.0", "RuntimeDistCleaner");
-        checkPackage(Environment.class, "2.0", "ForgeSPI");
+        checkPackage(Environment.class, "2.0", "singularitySPI");
 
         try {
             Class.forName("com.electronwill.nightconfig.core.Config", false, env.getClass().getClassLoader());

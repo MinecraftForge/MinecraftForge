@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.event.lifecycle;
+package net.minecraftsingularity.fml.event.lifecycle;
 
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.characteristic.SelfDestructing;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.characteristic.SelfDestructing;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.event.IModBusEvent;
 
 /**
  * This is the second of four commonly called events during mod lifecycle startup.
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
  * Called before {@link InterModEnqueueEvent}
  * Called after {@link FMLCommonSetupEvent}
  *
- * Called on {@link net.minecraftforge.api.distmarker.Dist#CLIENT} - the game client.
+ * Called on {@link net.minecraftsingularity.api.distmarker.Dist#CLIENT} - the game client.
  *
  * Alternative to {@link FMLDedicatedServerSetupEvent}.
  *

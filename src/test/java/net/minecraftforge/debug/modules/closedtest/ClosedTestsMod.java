@@ -1,26 +1,26 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.modules.closedtest;
+package net.minecraftsingularity.debug.modules.closedtest;
 
 import java.lang.module.ModuleDescriptor;
 import java.util.jar.Manifest;
 
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.debug.modules.closed.api.PublicUtils;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
-import net.minecraftforge.test.ManifestProvider;
-import net.minecraftforge.test.ModuleProvider;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.debug.modules.closed.api.PublicUtils;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
+import net.minecraftsingularity.test.ManifestProvider;
+import net.minecraftsingularity.test.ModuleProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 @Mod(ClosedTestsMod.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class ClosedTestsMod extends BaseTestMod {
     public static final String MODID = "closed_module_test";
 
@@ -37,18 +37,18 @@ public class ClosedTestsMod extends BaseTestMod {
 
     private ModuleDescriptor module() {
         return ModuleDescriptor.newOpenModule(getClass().getPackageName())
-            .requires("net.minecraftforge.eventbus")
-            .requires("net.minecraftforge.fmlcore")
-            .requires("net.minecraftforge.forge")
-            .requires("net.minecraftforge.javafmlmod")
-            .requires("net.minecraftforge.debug.modules.closed")
+            .requires("net.minecraftsingularity.eventbus")
+            .requires("net.minecraftsingularity.fmlcore")
+            .requires("net.minecraftsingularity.singularity")
+            .requires("net.minecraftsingularity.javafmlmod")
+            .requires("net.minecraftsingularity.debug.modules.closed")
             .build();
     }
 
     private Manifest manifest() {
         var ret = new Manifest();
         // Add-Opens is respected by FMLModContainer, it should give us access to closed packages
-        ret.getMainAttributes().putValue("Add-Opens", "net.minecraftforge.debug.modules.closed/net.minecraftforge.debug.modules.closed.internala" );
+        ret.getMainAttributes().putValue("Add-Opens", "net.minecraftsingularity.debug.modules.closed/net.minecraftsingularity.debug.modules.closed.internala" );
         return ret;
     }
 
@@ -71,7 +71,7 @@ public class ClosedTestsMod extends BaseTestMod {
     @GameTest
     public static void can_reflect_opened_internal(GameTestHelper helper) throws ReflectiveOperationException {
         try {
-            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internala.InternalA");
+            var cls = Class.forName("net.minecraftsingularity.debug.modules.closed.internala.InternalA");
             var method = cls.getDeclaredMethod("internalMethod");
             method.invoke(null);
             helper.succeed();
@@ -87,7 +87,7 @@ public class ClosedTestsMod extends BaseTestMod {
     @GameTest
     public static void cant_reflect_internal(GameTestHelper helper) throws ReflectiveOperationException {
         try {
-            var cls = Class.forName("net.minecraftforge.debug.modules.closed.internalb.InternalB");
+            var cls = Class.forName("net.minecraftsingularity.debug.modules.closed.internalb.InternalB");
             var method = cls.getDeclaredMethod("internalMethod");
             method.invoke(null);
             helper.fail("Invoked internal method without error");

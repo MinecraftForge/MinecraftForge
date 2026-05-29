@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.recipe.recipebook;
+package net.minecraftsingularity.debug.recipe.recipebook;
 /*
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.debug.recipe.recipebook.RecipeBookExtensionTest.RecipeBookTestContainer;
+import net.minecraftsingularity.debug.recipe.recipebook.RecipeBookExtensionTest.RecipeBookTestContainer;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,21 +1,21 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids.capability.wrappers;
+package net.minecraftsingularity.fluids.capability.wrappers;
 
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.common.capabilities.Capability;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fluids.FluidUtil;
+import net.minecraftsingularity.fluids.capability.IFluidHandlerItem;
 
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Wrapper for vanilla and forge buckets.
+ * Wrapper for vanilla and singularity buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
 public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider {
@@ -55,8 +55,8 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         Item item = container.getItem();
         if (item instanceof BucketItem bucket)
             return new FluidStack(bucket.getFluid(), FluidType.BUCKET_VOLUME);
-        else if (container.is(Items.MILK_BUCKET) && ForgeMod.MILK.isPresent())
-            return new FluidStack(ForgeMod.MILK.get(), FluidType.BUCKET_VOLUME);
+        else if (container.is(Items.MILK_BUCKET) && singularityMod.MILK.isPresent())
+            return new FluidStack(singularityMod.MILK.get(), FluidType.BUCKET_VOLUME);
         else
             return FluidStack.EMPTY;
     }
@@ -135,6 +135,6 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     @Override
     @NotNull
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(capability, holder);
+        return singularityCapabilities.FLUID_HANDLER_ITEM.orEmpty(capability, holder);
     }
 }

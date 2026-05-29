@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.config;
+package net.minecraftsingularity.fml.config;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.loading.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
@@ -39,7 +39,7 @@ public class ModConfig
     }
 
     private static String defaultConfigName(Type type, String modId) {
-        // config file name would be "forge-client.toml" and "forge-server.toml"
+        // config file name would be "singularity-client.toml" and "singularity-server.toml"
         return modId + '-' + type.extension() + ".toml";
     }
 

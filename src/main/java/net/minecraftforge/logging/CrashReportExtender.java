@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.logging;
+package net.minecraftsingularity.logging;
 
 import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportType;
 import net.minecraft.SystemReport;
-import net.minecraftforge.fml.CrashReportCallables;
-import net.minecraftforge.fml.ISystemReportExtender;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.CrashReportCallables;
+import net.minecraftsingularity.fml.ISystemReportExtender;
+import net.minecraftsingularity.fml.LoadingFailedException;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;

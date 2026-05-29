@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftsingularity.common.singularityConfigSpec.BooleanValue;
+import net.minecraftsingularity.common.singularityConfigSpec.ConfigValue;
 import org.apache.logging.log4j.Logger;
 
-public class ForgeConfig {
+public class singularityConfig {
     static final Logger LOGGER = LogManager.getLogger();
 
     public static class Server {
@@ -28,36 +28,36 @@ public class ForgeConfig {
 
         public final BooleanValue advertiseDedicatedServerToLan;
 
-        Server(ForgeConfigSpec.Builder builder) {
+        Server(singularityConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
 
             removeErroringBlockEntities = builder
                     .comment("Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringBlockEntities")
+                    .translation("singularity.configgui.removeErroringBlockEntities")
                     .worldRestart()
                     .define("removeErroringBlockEntities", false);
 
             removeErroringEntities = builder
                     .comment("Set this to true to remove any Entity (Note: Does not include BlockEntities) that throws an error in its tick method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringEntities")
+                    .translation("singularity.configgui.removeErroringEntities")
                     .worldRestart()
                     .define("removeErroringEntities", false);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
-                    .translation("forge.configgui.fullBoundingBoxLadders")
+                    .translation("singularity.configgui.fullBoundingBoxLadders")
                     .worldRestart()
                     .define("fullBoundingBoxLadders", false);
 
             permissionHandler = builder
-                    .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
-                    .translation("forge.configgui.permissionHandler")
-                    .define("permissionHandler", "forge:default_handler");
+                    .comment("The permission handler used by the server. Defaults to singularity:default_handler if no such handler with that name is registered.")
+                    .translation("singularity.configgui.permissionHandler")
+                    .define("permissionHandler", "singularity:default_handler");
 
             advertiseDedicatedServerToLan = builder
                     .comment("Set this to true to enable advertising the dedicated server to local LAN clients so that it shows up in the Multiplayer screen automatically.")
-                    .translation("forge.configgui.advertiseDedicatedServerToLan")
+                    .translation("singularity.configgui.advertiseDedicatedServerToLan")
                     .define("advertiseDedicatedServerToLan", true);
 
             builder.pop();
@@ -74,15 +74,15 @@ public class ForgeConfig {
             ALWAYS
         }
 
-        public final ForgeConfigSpec.EnumValue<MigrationHelperMode> migrationHelperMode;
+        public final singularityConfigSpec.EnumValue<MigrationHelperMode> migrationHelperMode;
 
-        Common(ForgeConfigSpec.Builder builder) {
+        Common(singularityConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
                     .push("general");
 
             migrationHelperMode = builder
                     .comment("A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.")
-                    .translation("forge.configgui.migrationHelperMode")
+                    .translation("singularity.configgui.migrationHelperMode")
                     .defineEnum("logLegacyTagWarnings", MigrationHelperMode.OFF);
 
             builder.pop();
@@ -90,25 +90,25 @@ public class ForgeConfig {
     }
 
     /**
-     * Client specific configuration - only loaded clientside from forge-client.toml
+     * Client specific configuration - only loaded clientside from singularity-client.toml
      */
     public static class Client {
         public final BooleanValue showLoadWarnings;
 
         public final BooleanValue allowMipmapLowering;
 
-        Client(ForgeConfigSpec.Builder builder) {
+        Client(singularityConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
 
             showLoadWarnings = builder
-                .comment("When enabled, Forge will show any warnings that occurred during loading.")
-                .translation("forge.configgui.showLoadWarnings")
+                .comment("When enabled, singularity will show any warnings that occurred during loading.")
+                .translation("singularity.configgui.showLoadWarnings")
                 .define("showLoadWarnings", true);
 
             allowMipmapLowering = builder
-                .comment("When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.")
-                .translation("forge.configgui.allowMipmapLowering")
+                .comment("When enabled, singularity will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.")
+                .translation("singularity.configgui.allowMipmapLowering")
                 .define("allowMipmapLowering", false);
 
             builder.pop();
@@ -125,38 +125,38 @@ public class ForgeConfig {
         }
     }
 
-    static final ForgeConfigSpec clientSpec;
+    static final singularityConfigSpec clientSpec;
     public static final Client CLIENT;
     static {
-        final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
+        final Pair<Client, singularityConfigSpec> specPair = new singularityConfigSpec.Builder().configure(Client::new);
         clientSpec = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
 
-    static final ForgeConfigSpec commonSpec;
+    static final singularityConfigSpec commonSpec;
     public static final Common COMMON;
     static {
-        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        final Pair<Common, singularityConfigSpec> specPair = new singularityConfigSpec.Builder().configure(Common::new);
         commonSpec = specPair.getRight();
         COMMON = specPair.getLeft();
     }
 
 
-    static final ForgeConfigSpec serverSpec;
+    static final singularityConfigSpec serverSpec;
     public static final Server SERVER;
     static {
-        final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
+        final Pair<Server, singularityConfigSpec> specPair = new singularityConfigSpec.Builder().configure(Server::new);
         serverSpec = specPair.getRight();
         SERVER = specPair.getLeft();
     }
 
     static void onLoad(final ModConfigEvent.Loading configEvent) {
-        LOGGER.debug(Logging.FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LOGGER.debug(Logging.singularityMOD, "Loaded singularity config file {}", configEvent.getConfig().getFileName());
     }
 
     static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-        LOGGER.debug(Logging.FORGEMOD, "Forge config just got changed on the file system!");
+        LOGGER.debug(Logging.singularityMOD, "singularity config just got changed on the file system!");
     }
 
     //General

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,9 +53,9 @@ class ObjectHolderRegistry {
 
     static void applyObjectHolders() {
         try {
-            LOGGER.debug(ForgeRegistry.REGISTRIES, "Applying holder lookups");
+            LOGGER.debug(singularityRegistry.REGISTRIES, "Applying holder lookups");
             applyObjectHolders(key -> true);
-            LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
+            LOGGER.debug(singularityRegistry.REGISTRIES, "Holder lookups applied");
         } catch (RuntimeException e) {
             // It is more important that the calling contexts continue without exception to prevent further cascading errors
             LOGGER.error("", e);

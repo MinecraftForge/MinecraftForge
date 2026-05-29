@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.data.event;
+package net.minecraftsingularity.data.event;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.event.IModBusEvent;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -17,8 +17,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
@@ -26,18 +26,18 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @ApiStatus.Internal
-public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
-    public ForgeItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityItemTagsProvider extends VanillaItemTagsProvider {
+    public singularityItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @SuppressWarnings({ "unchecked", "removal" })
     @Override
     public void addTags(HolderLookup.Provider lookupProvider) {
-        (new ForgeBlockItemTagsProvider() {
+        (new singularityBlockItemTagsProvider() {
             @Override
             protected TagAppender<Block, Block> tag(TagKey<Block> p_409856_, TagKey<Item> p_406371_) {
-                return new VanillaItemTagsProvider.BlockToItemConverter(ForgeItemTagsProvider.this.tag(p_406371_));
+                return new VanillaItemTagsProvider.BlockToItemConverter(singularityItemTagsProvider.this.tag(p_406371_));
             }
         }).run();
         tag(Tags.Items.BONES).add(Items.BONE);
@@ -124,7 +124,7 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         addColored(Tags.Items.DYES, "{color}_dye");
         addColoredTags(tag(Tags.Items.DYES)::addTags, Tags.Items.DYES);
         tag(Tags.Items.EGGS).add(Items.EGG, Items.BLUE_EGG, Items.BROWN_EGG);
-        tag(Tags.Items.ENCHANTING_FUELS).addTag(Tags.Items.GEMS_LAPIS); // forge:enchanting_fuels
+        tag(Tags.Items.ENCHANTING_FUELS).addTag(Tags.Items.GEMS_LAPIS); // singularity:enchanting_fuels
         tag(Tags.Items.ENDER_PEARLS)
                 .add(Items.ENDER_PEARL);
         tag(Tags.Items.FEATHERS)
@@ -328,9 +328,9 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         tag(Tags.Items.SEEDS_TORCHFLOWER).add(Items.TORCHFLOWER_SEEDS);
 
         tag(Tags.Items.BONES).add(Items.BONE);
-        // Backwards compat definitions for pre-1.21 legacy `forge:` tags.
+        // Backwards compat definitions for pre-1.21 legacy `singularity:` tags.
         // TODO: Remove backwards compat tag entries in 1.22
-        addColored(tag(forgeItemTagKey("dyes"))::addTags, forgeItemTagKey("dyes"), "{color}_dye");
+        addColored(tag(singularityItemTagKey("dyes"))::addTags, singularityItemTagKey("dyes"), "{color}_dye");
     }
 
     private void addColored(TagKey<Item> group, String pattern) {
@@ -349,8 +349,8 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         String prefix = group.location().getPath() + '/';
         for (DyeColor color  : DyeColor.values()) {
             Identifier key = Identifier.withDefaultNamespace(pattern.replace("{color}",  color.getName()));
-            TagKey<Item> tag = forgeItemTagKey(prefix + color.getName());
-            Item item = ForgeRegistries.ITEMS.getValue(key);
+            TagKey<Item> tag = singularityItemTagKey(prefix + color.getName());
+            Item item = singularityRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key);
             tag(tag).add(item);
@@ -376,16 +376,16 @@ public final class ForgeItemTagsProvider extends VanillaItemTagsProvider {
         }
     }
 
-    private static Identifier forgeRl(String path) {
-        return Identifier.fromNamespaceAndPath("forge", path);
+    private static Identifier singularityRl(String path) {
+        return Identifier.fromNamespaceAndPath("singularity", path);
     }
 
-    private static TagKey<Item> forgeItemTagKey(String path) {
-        return ItemTags.create(forgeRl(path));
+    private static TagKey<Item> singularityItemTagKey(String path) {
+        return ItemTags.create(singularityRl(path));
     }
 
     @Override
     public String getName() {
-        return "Forge Item Tags";
+        return "singularity Item Tags";
     }
 }

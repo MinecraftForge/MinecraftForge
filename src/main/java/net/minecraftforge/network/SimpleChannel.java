@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import io.netty.util.AttributeKey;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
@@ -15,15 +15,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-import net.minecraftforge.network.simple.handler.SimpleHandlerFlow;
-import net.minecraftforge.network.simple.handler.SimpleHandlerProtocol;
-import net.minecraftforge.network.simple.handler.SimplePacket;
-import net.minecraftforge.network.simple.SimpleBuildable;
-import net.minecraftforge.network.simple.SimpleConnection;
-import net.minecraftforge.network.simple.SimpleFlow;
-import net.minecraftforge.network.simple.SimpleProtocol;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent.Context;
+import net.minecraftsingularity.network.simple.handler.SimpleHandlerFlow;
+import net.minecraftsingularity.network.simple.handler.SimpleHandlerProtocol;
+import net.minecraftsingularity.network.simple.handler.SimplePacket;
+import net.minecraftsingularity.network.simple.SimpleBuildable;
+import net.minecraftsingularity.network.simple.SimpleConnection;
+import net.minecraftsingularity.network.simple.SimpleFlow;
+import net.minecraftsingularity.network.simple.SimpleProtocol;
 import org.apache.commons.lang3.function.TriConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -147,7 +147,7 @@ public class SimpleChannel extends Channel<Object> implements SimpleConnection<O
     }
 
     /**
-     * @deprecated Use {@link SimpleConnection} which is much simpler. TODO: [Forge][Networking] Make private when we kill MessageBuilder functions.
+     * @deprecated Use {@link SimpleConnection} which is much simpler. TODO: [singularity][Networking] Make private when we kill MessageBuilder functions.
      */
     public static class MessageBuilder<MSG, BUF extends FriendlyByteBuf> {
         private final SimpleChannel channel;

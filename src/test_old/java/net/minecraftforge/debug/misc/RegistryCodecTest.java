@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftsingularity.debug.misc;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,12 +19,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.singularityRegistry;
+import net.minecraftsingularity.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,8 +54,8 @@ public class RegistryCodecTest
      * }</pre>
      */
     private static final Codec<Pair<Block, Item>> CODEC = RecordCodecBuilder.create(codecInstance -> codecInstance.group(
-            ForgeRegistries.BLOCKS.getCodec().fieldOf("block").forGetter(Pair::getFirst),
-            ForgeRegistries.ITEMS.getCodec().fieldOf("item").forGetter(Pair::getSecond)
+            singularityRegistries.BLOCKS.getCodec().fieldOf("block").singularitytter(Pair::getFirst),
+            singularityRegistries.ITEMS.getCodec().fieldOf("item").singularitytter(Pair::getSecond)
     ).apply(codecInstance, Pair::of));
 
     public RegistryCodecTest()
@@ -88,8 +88,8 @@ public class RegistryCodecTest
 
         //Create a json to decode using numerical IDs, to be decoded by JsonOps.COMPRESSED
         JsonArray jsonCompressed = new JsonArray();
-        jsonCompressed.add(((ForgeRegistry<Block>) ForgeRegistries.BLOCKS).getID(Blocks.DIAMOND_BLOCK));
-        jsonCompressed.add(((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(Items.DIAMOND_PICKAXE));
+        jsonCompressed.add(((singularityRegistry<Block>) singularityRegistries.BLOCKS).getID(Blocks.DIAMOND_BLOCK));
+        jsonCompressed.add(((singularityRegistry<Item>) singularityRegistries.ITEMS).getID(Items.DIAMOND_PICKAXE));
 
         //Decode a compressed json to the corresponding Pair<Block, Item>, this time using Codec#parse
         DataResult<Pair<Block, Item>> result4 = CODEC.parse(JsonOps.COMPRESSED, jsonCompressed);

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.earlydisplay;
+package net.minecraftsingularity.fml.earlydisplay;
 
 public enum ColourScheme {
     RED(new Colour(239, 50, 61), new Colour(255, 255, 255)),

@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.Channel.VersionTest;
-import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.network.Channel.VersionTest;
+import net.minecraftsingularity.network.NetworkContext.NetworkMismatchData;
+import net.minecraftsingularity.registries.DataPackRegistriesHooks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -168,7 +168,7 @@ public class NetworkRegistry {
 
     @SuppressWarnings("unchecked")
     public static void onConnectionStart(Connection connection) {
-        ForgeEventFactory.onConnectionStart(connection);
+        singularityEventFactory.onConnectionStart(connection);
         var channel = connection.channel();
         for (var inst : instances.values()) {
             if (inst.attributes != null)

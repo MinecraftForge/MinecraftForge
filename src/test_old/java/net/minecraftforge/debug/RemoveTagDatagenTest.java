@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -16,13 +16,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.data.BlockTagsProvider;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 @Mod(RemoveTagDatagenTest.MODID)
 public class RemoveTagDatagenTest {
@@ -70,10 +70,10 @@ public class RemoveTagDatagenTest {
     }
 
     private static ResourceLocation key(Block value) {
-         return ForgeRegistries.BLOCKS.getKey(value);
+         return singularityRegistries.BLOCKS.getKey(value);
     }
 
     private static ResourceLocation key(Item value) {
-         return ForgeRegistries.ITEMS.getKey(value);
+         return singularityRegistries.ITEMS.getKey(value);
     }
 }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.gui;
+package net.minecraftsingularity.client.gui;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.client.gui.widget.ScrollPanel;
+import net.minecraftsingularity.client.gui.widget.ScrollPanel;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.ChatFormatting;
@@ -34,13 +34,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
-import net.minecraftforge.network.packets.ModVersions;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.loading.FMLPaths;
+import net.minecraftsingularity.network.NetworkContext.NetworkMismatchData;
+import net.minecraftsingularity.network.packets.ModVersions;
 
-//TODO: [Forge][Rendering] Rewrite entire ModMismatch screen
+//TODO: [singularity][Rendering] Rewrite entire ModMismatch screen
 //Oh god... Whoever wrote this was on something very very strong.
 public class ModMismatchDisconnectedScreen extends Screen {
     private final Component reason;
@@ -86,10 +86,10 @@ public class ModMismatchDisconnectedScreen extends Screen {
             this.addRenderableWidget(new MismatchInfoPanel(minecraft, listWidth, listHeight, (this.height - this.listHeight) / 2, listLeft));
 
         int buttonWidth = Math.min(210, this.width / 2 - 20);
-        this.addRenderableWidget(Button.builder(Component.literal(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile()))
+        this.addRenderableWidget(Button.builder(Component.literal(singularityI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile()))
                 .bounds(Math.max(this.width / 4 - buttonWidth / 2, listLeft), upperButtonHeight, buttonWidth, 20)
                 .build());
-        this.addRenderableWidget(Button.builder(Component.literal(ForgeI18n.parseMessage("fml.button.open.mods.folder")), button -> Util.getPlatform().openFile(modsDir.toFile()))
+        this.addRenderableWidget(Button.builder(Component.literal(singularityI18n.parseMessage("fml.button.open.mods.folder")), button -> Util.getPlatform().openFile(modsDir.toFile()))
                 .bounds(Math.min(this.width * 3 / 4 - buttonWidth / 2, listLeft + listWidth - buttonWidth), upperButtonHeight, buttonWidth, 20)
                 .build());
         this.addRenderableWidget(Button.builder(Component.translatable("gui.toMenu"), button -> this.minecraft.setScreen(this.parent))
@@ -122,15 +122,15 @@ public class ModMismatchDisconnectedScreen extends Screen {
             if (!data.missing().isEmpty()) {
                 //The header of the section, colored in gray
                 rawTable.add(Pair.of(
-                    Component.literal(ForgeI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.missingmods.server" : "fml.modmismatchscreen.missingmods.client")).withStyle(ChatFormatting.GRAY),
+                    Component.literal(singularityI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.missingmods.server" : "fml.modmismatchscreen.missingmods.client")).withStyle(ChatFormatting.GRAY),
                     null
                 ));
                 //This table section contains the mod name and mod version of each mod that has a missing remote counterpart (if the mod is missing on the server, the client mod version is displayed, and vice versa)
                 rawTable.add(Pair.of(
-                    Component.literal(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE),
+                    Component.literal(singularityI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE),
                     Pair.of(
                         "",
-                        ForgeI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.youneed")
+                        singularityI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.youneed")
                     )
                 ));
                 int i = 0;
@@ -145,7 +145,7 @@ public class ModMismatchDisconnectedScreen extends Screen {
                     if (++i >= 10) {
                         //If too many missing mod entries are present, append a line referencing how to see the full list and stop rendering any more entries
                         rawTable.add(Pair.of(
-                            Component.literal(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", data.missing().size() - i)).withStyle(ChatFormatting.ITALIC),
+                            Component.literal(singularityI18n.parseMessage("fml.modmismatchscreen.additional", data.missing().size() - i)).withStyle(ChatFormatting.ITALIC),
                             Pair.of("", "")
                         ));
                         break;
@@ -156,13 +156,13 @@ public class ModMismatchDisconnectedScreen extends Screen {
 
             if (!data.mismatched().isEmpty()) {
                 //The header of the table section, colored in gray
-                rawTable.add(Pair.of(Component.literal(ForgeI18n.parseMessage("fml.modmismatchscreen.mismatchedmods")).withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(Component.literal(singularityI18n.parseMessage("fml.modmismatchscreen.mismatchedmods")).withStyle(ChatFormatting.GRAY), null));
                 //This table section contains the mod name and both mod versions of each mod that has a mismatching client and server version
                 rawTable.add(Pair.of(
-                    Component.literal(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE),
+                    Component.literal(singularityI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE),
                     Pair.of(
-                        ForgeI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.serverhas"),
-                        ForgeI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.serverhas" : "fml.modmismatchscreen.table.youhave")
+                        singularityI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.serverhas"),
+                        singularityI18n.parseMessage(data.fromServer() ? "fml.modmismatchscreen.table.serverhas" : "fml.modmismatchscreen.table.youhave")
                     )
                 ));
                 int i = 0;
@@ -176,7 +176,7 @@ public class ModMismatchDisconnectedScreen extends Screen {
                     ));
                     if (++i >= 10) {
                         //If too many mismatched mod entries are present, append a line referencing how to see the full list and stop rendering any more entries
-                        rawTable.add(Pair.of(Component.literal(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", data.mismatched().size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                        rawTable.add(Pair.of(Component.literal(singularityI18n.parseMessage("fml.modmismatchscreen.additional", data.mismatched().size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
@@ -227,7 +227,7 @@ public class ModMismatchDisconnectedScreen extends Screen {
             String modId = id.getNamespace();
             String tooltipId = id.getPath().isEmpty() ? id.getNamespace() : id.toString();
             return Component.literal(modName).withStyle(color % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW)
-                    .withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(tooltipId + (!presentModUrls.getOrDefault(modId, "").isEmpty() ? "\n" + ForgeI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
+                    .withStyle(s -> s.withHoverEvent(new HoverEvent.ShowText(Component.literal(tooltipId + (!presentModUrls.getOrDefault(modId, "").isEmpty() ? "\n" + singularityI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
                     .withStyle(s -> s.withClickEvent(openUrl(presentModUrls.getOrDefault(modId, ""))));
         }
 

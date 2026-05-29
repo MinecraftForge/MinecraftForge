@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.level;
+package net.minecraftsingularity.debug.gameplay.level;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -11,13 +11,13 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(ForcedChunkLoadingTest.MOD_ID)
 public class ForcedChunkLoadingTest extends BaseTestMod {
     static final String MOD_ID = "forced_chunk_loading";

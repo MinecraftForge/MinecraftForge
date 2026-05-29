@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.chunk;
+package net.minecraftsingularity.debug.chunk;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -11,17 +11,17 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.event.level.ChunkEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
 /**
  * This is a test for the ChunkEvent.LightingCalculated event.
  */
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(LightingEventTest.MODID)
 public class LightingEventTest extends BaseTestMod {
     public static final String MODID = "lighting_event_test";

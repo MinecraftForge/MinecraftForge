@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.gui.screens.worldselection.PresetEditor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
-import net.minecraftforge.client.event.RegisterPresetEditorsEvent;
-import net.minecraftforge.fml.ModLoader;
+import net.minecraftsingularity.client.event.RegisterPresetEditorsEvent;
+import net.minecraftsingularity.fml.ModLoader;
 
 public final class PresetEditorManager {
     private PresetEditorManager() {} // Utility class

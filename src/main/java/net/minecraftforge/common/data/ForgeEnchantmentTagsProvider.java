@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -12,12 +12,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraftforge.common.Tags.Enchantments.*;
+import static net.minecraftsingularity.common.Tags.Enchantments.*;
 
 @ApiStatus.Internal
-public final class ForgeEnchantmentTagsProvider extends net.minecraft.data.tags.EnchantmentTagsProvider {
-    public ForgeEnchantmentTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityEnchantmentTagsProvider extends net.minecraft.data.tags.EnchantmentTagsProvider {
+    public singularityEnchantmentTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
@@ -50,6 +50,6 @@ public final class ForgeEnchantmentTagsProvider extends net.minecraft.data.tags.
 
     @Override
     public String getName() {
-        return "Forge Enchantment Tags";
+        return "singularity Enchantment Tags";
     }
 }

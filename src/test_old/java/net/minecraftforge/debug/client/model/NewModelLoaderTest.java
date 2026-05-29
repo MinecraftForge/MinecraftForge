@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.model;
+package net.minecraftsingularity.debug.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -25,28 +25,28 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.IModelBuilder;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.loaders.ItemLayerModelBuilder;
-import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
-import net.minecraftforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
-import net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry;
-import net.minecraftforge.client.model.pipeline.QuadBakingVertexConsumer;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.model.IModelBuilder;
+import net.minecraftsingularity.client.model.geometry.IGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.IGeometryLoader;
+import net.minecraftsingularity.client.model.generators.BlockModelBuilder;
+import net.minecraftsingularity.client.model.generators.BlockStateProvider;
+import net.minecraftsingularity.client.model.generators.ConfiguredModel;
+import net.minecraftsingularity.client.model.generators.ItemModelProvider;
+import net.minecraftsingularity.client.model.generators.loaders.ItemLayerModelBuilder;
+import net.minecraftsingularity.client.model.generators.loaders.ObjModelBuilder;
+import net.minecraftsingularity.client.model.generators.loaders.SeparateTransformsModelBuilder;
+import net.minecraftsingularity.client.model.geometry.SimpleUnbakedGeometry;
+import net.minecraftsingularity.client.model.pipeline.QuadBakingVertexConsumer;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -59,8 +59,8 @@ import org.jetbrains.annotations.Nullable;
 public class NewModelLoaderTest
 {
     public static final String MODID = "new_model_loader_test";
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
             new Block(Block.Properties.of().mapColor(MapColor.WOOD).strength(10)) {
@@ -199,14 +199,14 @@ public class NewModelLoaderTest
         @Override
         protected void registerModels()
         {
-            withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+            withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "singularity:item/default")
                     .texture("particle", "minecraft:block/red_stained_glass")
                     .texture("layer0", "minecraft:item/coal")
                     .texture("layer1", "minecraft:item/stick")
                     .customLoader(ItemLayerModelBuilder::begin)
                         .emissive(15, 15, 1)
                     .end();
-            withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
+            withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "singularity:item/default")
                     .customLoader(SeparateTransformsModelBuilder::begin)
                         .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
                         .perspective(ItemDisplayContext.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftsingularity.common.crafting.conditions;
 
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -14,7 +14,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Decoder;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.resources.DelegatingOps;
-import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
+import net.minecraftsingularity.common.crafting.conditions.ICondition.IContext;
 
 public class ConditionCodec {
     public static <T> Codec<T> checkingDecode(Codec<T> normal, Supplier<T> _default) {

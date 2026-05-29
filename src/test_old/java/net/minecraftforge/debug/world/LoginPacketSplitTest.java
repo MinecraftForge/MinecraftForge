@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
 import com.google.common.base.Stopwatch;
 import com.google.gson.JsonElement;
@@ -32,15 +32,15 @@ import net.minecraft.server.packs.repository.Pack.Info;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
-import net.minecraftforge.registries.DataPackRegistryEvent;
+import net.minecraftsingularity.client.event.RegisterClientCommandsEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.AddPackFindersEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.util.ObfuscationReflectionHelper;
+import net.minecraftsingularity.registries.DataPackRegistryEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
  * registryaccess in the packet would be, and how much {@code %} of the packet limit is represents. <br>
  * Connect to the server from the client, and if you successfully connect and the {@code /big_data} command
  * reports 50000 entries then the packet has been successfully split. <br> <br>
- * To test if the packet is too large simply remove the login packet from the {@link net.minecraftforge.network.filters.ForgeConnectionNetworkFilter}
+ * To test if the packet is too large simply remove the login packet from the {@link net.minecraftsingularity.network.filters.singularityConnectionNetworkFilter}
  * and try connecting again. You should see the connection fail.
  */
 
@@ -147,7 +147,7 @@ public class LoginPacketSplitTest
         {
         }
         buf.writeJsonWithCodec(RecordCodecBuilder.create(in -> in.group(
-                RegistryCodecs.networkCodec(BIG_DATA, Lifecycle.stable(), BigData.CODEC).fieldOf("registry").forGetter(RegistryData::registry)
+                RegistryCodecs.networkCodec(BIG_DATA, Lifecycle.stable(), BigData.CODEC).fieldOf("registry").singularitytter(RegistryData::registry)
         ).apply(in, RegistryData::new)), new RegistryData(dummyRegistry)); // RegistryCodecs.networkCodec returns a list codec, and writeWithNbt doesn't like non-compounds
 
         final int size = buf.writerIndex();
@@ -168,8 +168,8 @@ public class LoginPacketSplitTest
     public record BigData(String text, int number)
     {
         public static final Codec<BigData> CODEC = RecordCodecBuilder.create(in -> in.group(
-                Codec.STRING.fieldOf("text").forGetter(BigData::text),
-                Codec.INT.fieldOf("number").forGetter(BigData::number)
+                Codec.STRING.fieldOf("text").singularitytter(BigData::text),
+                Codec.INT.fieldOf("number").singularitytter(BigData::number)
         ).apply(in, BigData::new));
     }
 

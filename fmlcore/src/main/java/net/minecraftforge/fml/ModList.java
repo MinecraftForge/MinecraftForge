@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftsingularity.fml.loading.LoadingModList;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
 
 import java.util.Comparator;
 import java.util.HashMap;

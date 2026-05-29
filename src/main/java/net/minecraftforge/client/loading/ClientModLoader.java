@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.loading;
+package net.minecraftsingularity.client.loading;
 
 import java.io.File;
 import java.util.Collections;
@@ -13,22 +13,22 @@ import net.minecraft.server.packs.resources.PreparableReloadListener.SharedState
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.internal.BrandingControl;
-import net.minecraftforge.logging.CrashReportExtender;
-import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.event.AddPackFindersEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.*;
+import net.minecraftsingularity.fml.loading.ImmediateWindowHandler;
+import net.minecraftsingularity.internal.BrandingControl;
+import net.minecraftsingularity.logging.CrashReportExtender;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.client.gui.LoadingErrorScreen;
-import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.server.LanguageHook;
+import net.minecraftsingularity.common.singularityConfig;
+import net.minecraftsingularity.client.gui.LoadingErrorScreen;
+import net.minecraftsingularity.resource.ResourcePackLoader;
+import net.minecraftsingularity.server.LanguageHook;
 
 public final class ClientModLoader {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -48,7 +48,7 @@ public final class ClientModLoader {
         createRunnableWithCatch(() -> ModLoader.gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ImmediateWindowHandler::renderTick)).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, true);
-            net.minecraftforge.event.AddPackFindersEvent.BUS.post(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
+            net.minecraftsingularity.event.AddPackFindersEvent.BUS.post(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.registerReloadListener(ClientModLoader::onResourceReload);
             mcResourceManager.registerReloadListener(BrandingControl.resourceManagerReloadListener());
@@ -94,7 +94,7 @@ public final class ClientModLoader {
 
     public static boolean completeModLoading() {
         var warnings = ModLoader.getWarnings();
-        boolean showWarnings = ForgeConfig.CLIENT.showLoadWarnings();
+        boolean showWarnings = singularityConfig.CLIENT.showLoadWarnings();
 
         if (!showWarnings) {
             //User disabled warning screen, as least log them
@@ -107,7 +107,7 @@ public final class ClientModLoader {
 
         File dumpedLocation = null;
         if (error != null) {
-            // Double check we have the langs loaded for forge
+            // Double check we have the langs loaded for singularity
             LanguageHook.loadForgeAndMCLangs();
             dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDirectory);
         }

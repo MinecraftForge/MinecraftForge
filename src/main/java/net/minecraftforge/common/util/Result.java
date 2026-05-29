@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.Objects;

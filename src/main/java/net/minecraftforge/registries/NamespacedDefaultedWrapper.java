@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -16,11 +16,11 @@ import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 class NamespacedDefaultedWrapper<T> extends NamespacedWrapper<T> implements DefaultedRegistry<T> {
-    private final ForgeRegistry<T> delegate;
+    private final singularityRegistry<T> delegate;
     private final Identifier defaultKey;
     private Holder.Reference<T> defaultHolder;
 
-    NamespacedDefaultedWrapper(ForgeRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage) {
+    NamespacedDefaultedWrapper(singularityRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage) {
         super(fowner, intrusiveHolderCallback, stage);
         this.delegate = fowner;
         this.defaultKey = fowner.getDefaultKey();

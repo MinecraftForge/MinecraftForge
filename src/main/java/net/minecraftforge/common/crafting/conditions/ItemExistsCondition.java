@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftsingularity.common.crafting.conditions;
 
 import java.util.Optional;
 
@@ -17,11 +17,11 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 public record ItemExistsCondition(Identifier item) implements ICondition {
     public static final MapCodec<ItemExistsCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
-        Identifier.CODEC.fieldOf("item").forGetter(ItemExistsCondition::item)
+        Identifier.CODEC.fieldOf("item").singularitytter(ItemExistsCondition::item)
     ).apply(b, ItemExistsCondition::new));
 
     @Override
@@ -35,7 +35,7 @@ public record ItemExistsCondition(Identifier item) implements ICondition {
             }
         }
         // Default to the active registry if its missing
-        return ForgeRegistries.ITEMS.containsKey(item);
+        return singularityRegistries.ITEMS.containsKey(item);
     }
 
     @Override

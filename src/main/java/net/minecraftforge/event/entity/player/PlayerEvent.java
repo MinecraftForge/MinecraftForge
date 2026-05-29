@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.player;
+package net.minecraftsingularity.event.entity.player;
 
 import java.io.File;
 import java.util.Optional;
@@ -15,18 +15,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftsingularity.event.singularityEventFactory;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.event.entity.living.LivingEvent;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
@@ -43,7 +43,7 @@ public interface PlayerEvent extends LivingEvent {
      * This event is fired whenever a player attempts to harvest a block in
      * {@link Player#hasCorrectToolForDrops(BlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(Player, BlockState, boolean)}.<br>
+     * This event is fired via the {@link singularityEventFactory#doPlayerHarvestCheck(Player, BlockState, boolean)}.<br>
      * <br>
      * {@link #state} contains the {@link BlockState} that is being checked for harvesting. <br>
      * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
@@ -76,7 +76,7 @@ public interface PlayerEvent extends LivingEvent {
      * This event is fired whenever a player attempts to harvest a block in
      * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(Player, BlockState, float, BlockPos)}.<br>
+     * This event is fired via the {@link singularityEventFactory#getBreakSpeed(Player, BlockState, float, BlockPos)}.<br>
      * <br>
      * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
@@ -119,7 +119,7 @@ public interface PlayerEvent extends LivingEvent {
      * This event is fired whenever a player's name is retrieved in
      * {@link Player#getDisplayName()} or {@link Player#refreshDisplayName()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(Player, Component)}.<br>
+     * This event is fired via the {@link singularityEventFactory#getPlayerDisplayName(Player, Component)}.<br>
      * <br>
      * {@link #username} contains the username of the player.
      * {@link #displayname} contains the display name of the player.
@@ -160,7 +160,7 @@ public interface PlayerEvent extends LivingEvent {
      * This event is fired whenever a player's display name for the tablist is retrieved in
      * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+     * This event is fired via the {@link singularityEventFactory#getPlayerTabListDisplayName(Player)}.<br>
      * <br>
      * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the display name itself.
      **/

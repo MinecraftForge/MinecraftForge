@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.energy;
+package net.minecraftsingularity.energy;
 
 /**
  * Implementation of {@link IEnergyStorage} that cannot store, receive, or provide energy.
  * Use the {@link #INSTANCE}, don't instantiate. Example:
  * <pre>{@code
  * ItemStack stack = ...;
- * IEnergyStorage storage = stack.getCapability(ForgeCapabilities.ENERGY).orElse(EmptyEnergyStorage.INSTANCE);
+ * IEnergyStorage storage = stack.getCapability(singularityCapabilities.ENERGY).orElse(EmptyEnergyStorage.INSTANCE);
  * // Use storage without checking whether it's present.
  * }</pre>
  */

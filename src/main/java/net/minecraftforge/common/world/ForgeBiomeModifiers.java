@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -24,17 +24,17 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
+import net.minecraftsingularity.registries.singularityRegistries;
 
-public final class ForgeBiomeModifiers {
-    private ForgeBiomeModifiers() {} // Utility class.
+public final class singularityBiomeModifiers {
+    private singularityBiomeModifiers() {} // Utility class.
 
     /**
      * <p>Stock biome modifier that adds features to biomes. Has the following json format:</p>
      * <pre>
      * {
-     *   "type": "forge:add_features", // required
+     *   "type": "singularity:add_features", // required
      *   "biomes": "#namespace:your_biome_tag" // accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "features": "namespace:your_feature", // accepts a placed feature id, [list of placed feature ids], or #namespace:feature_tag
      *   "step": "underground_ores" // accepts a Decoration enum name
@@ -48,9 +48,9 @@ public final class ForgeBiomeModifiers {
      */
     public static record AddFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features, Decoration step) implements BiomeModifier {
         public static final MapCodec<AddFeaturesBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-            Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddFeaturesBiomeModifier::biomes),
-            PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(AddFeaturesBiomeModifier::features),
-            Decoration.CODEC.fieldOf("step").forGetter(AddFeaturesBiomeModifier::step)
+            Biome.LIST_CODEC.fieldOf("biomes").singularitytter(AddFeaturesBiomeModifier::biomes),
+            PlacedFeature.LIST_CODEC.fieldOf("features").singularitytter(AddFeaturesBiomeModifier::features),
+            Decoration.CODEC.fieldOf("step").singularitytter(AddFeaturesBiomeModifier::step)
         ).apply(builder, AddFeaturesBiomeModifier::new));
 
         @Override
@@ -71,7 +71,7 @@ public final class ForgeBiomeModifiers {
      * <p>Stock biome modifier that removes features from biomes. Has the following json format:</p>
      * <pre>
      * {
-     *   "type": "forge:removefeatures", // required
+     *   "type": "singularity:removefeatures", // required
      *   "biomes": "#namespace:your_biome_tag", // accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "features": "namespace:your_feature", // accepts a placed feature id, [list of placed feature ids], or #namespace:feature_tag
      *   "steps": "underground_ores" OR ["underground_ores", "vegetal_decoration"] // one or more decoration steps; optional field, defaults to all steps if not specified
@@ -85,12 +85,12 @@ public final class ForgeBiomeModifiers {
     public static record RemoveFeaturesBiomeModifier(HolderSet<Biome> biomes, HolderSet<PlacedFeature> features, Set<Decoration> steps) implements BiomeModifier {
         public static final MapCodec<RemoveFeaturesBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveFeaturesBiomeModifier::biomes),
-                PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(RemoveFeaturesBiomeModifier::features),
+                Biome.LIST_CODEC.fieldOf("biomes").singularitytter(RemoveFeaturesBiomeModifier::biomes),
+                PlacedFeature.LIST_CODEC.fieldOf("features").singularitytter(RemoveFeaturesBiomeModifier::features),
                 Codec.either(Decoration.CODEC.listOf(), Decoration.CODEC).<Set<Decoration>>xmap(
                     either -> either.map(Set::copyOf, Set::of), // convert list/singleton to set when decoding
                     set -> set.size() == 1 ? Either.right(set.toArray(Decoration[]::new)[0]) : Either.left(List.copyOf(set))
-                ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).forGetter(RemoveFeaturesBiomeModifier::steps)
+                ).optionalFieldOf("steps", EnumSet.allOf(Decoration.class)).singularitytter(RemoveFeaturesBiomeModifier::steps)
             ).apply(builder, RemoveFeaturesBiomeModifier::new));
 
         /**
@@ -121,7 +121,7 @@ public final class ForgeBiomeModifiers {
      * <p>Stock biome modifier that adds a mob spawn to a biome. Has the following json format:</p>
      * <pre>
      * {
-     *   "type": "forge:add_spawns", // Required
+     *   "type": "singularity:add_spawns", // Required
      *   "biomes": "#namespace:biome_tag", // Accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "spawners":
      *   {
@@ -135,7 +135,7 @@ public final class ForgeBiomeModifiers {
      * <p>Optionally accepts a list of spawner objects instead of a single spawner:</p>
      * <pre>
      * {
-     *   "type": "forge:add_spawns", // Required
+     *   "type": "singularity:add_spawns", // Required
      *   "biomes": "#namespace:biome_tag", // Accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "spawners":
      *   [
@@ -158,9 +158,9 @@ public final class ForgeBiomeModifiers {
     public record AddSpawnsBiomeModifier(HolderSet<Biome> biomes, WeightedList<SpawnerData> spawners) implements BiomeModifier {
         public static final MapCodec<AddSpawnsBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(AddSpawnsBiomeModifier::biomes),
+                Biome.LIST_CODEC.fieldOf("biomes").singularitytter(AddSpawnsBiomeModifier::biomes),
                 // Allow either a list or single spawner, attempting to decode the list format first.
-                WeightedList.codec(SpawnerData.CODEC).fieldOf("spawners").forGetter(AddSpawnsBiomeModifier::spawners)
+                WeightedList.codec(SpawnerData.CODEC).fieldOf("spawners").singularitytter(AddSpawnsBiomeModifier::spawners)
             ).apply(builder, AddSpawnsBiomeModifier::new));
 
         /**
@@ -194,7 +194,7 @@ public final class ForgeBiomeModifiers {
      * <p>Stock biome modifier that removes mob spawns from a biome. Has the following json format:</p>
      * <pre>
      * {
-     *   "type": "forge:add_spawns", // Required
+     *   "type": "singularity:add_spawns", // Required
      *   "biomes": "#namespace:biome_tag", // Accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "entity_types": #namespace:entitytype_tag // Accepts an entity type, [list of entity types], or #namespace:entitytype_tag
      * }
@@ -206,8 +206,8 @@ public final class ForgeBiomeModifiers {
     public record RemoveSpawnsBiomeModifier(HolderSet<Biome> biomes, HolderSet<EntityType<?>> entityTypes) implements BiomeModifier {
         public static final MapCodec<RemoveSpawnsBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(builder ->
             builder.group(
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(RemoveSpawnsBiomeModifier::biomes),
-                RegistryCodecs.homogeneousList(ForgeRegistries.Keys.ENTITY_TYPES).fieldOf("entity_types").forGetter(RemoveSpawnsBiomeModifier::entityTypes)
+                Biome.LIST_CODEC.fieldOf("biomes").singularitytter(RemoveSpawnsBiomeModifier::biomes),
+                RegistryCodecs.homogeneousList(singularityRegistries.Keys.ENTITY_TYPES).fieldOf("entity_types").singularitytter(RemoveSpawnsBiomeModifier::entityTypes)
             ).apply(builder, RemoveSpawnsBiomeModifier::new));
 
         @Override
@@ -215,7 +215,7 @@ public final class ForgeBiomeModifiers {
             if (phase == Phase.REMOVE && this.biomes.contains(biome)) {
                 var spawns = builder.getMobSpawnSettings();
                 for (var category : MobCategory.values())
-                    spawns.getSpawner(category).removeIf(data -> this.entityTypes.contains(ForgeRegistries.ENTITY_TYPES.getHolder(data.type()).orElseThrow()));
+                    spawns.getSpawner(category).removeIf(data -> this.entityTypes.contains(singularityRegistries.ENTITY_TYPES.getHolder(data.type()).orElseThrow()));
             }
         }
 

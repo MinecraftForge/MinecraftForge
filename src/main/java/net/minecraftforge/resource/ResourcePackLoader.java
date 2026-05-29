@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.resource;
+package net.minecraftsingularity.resource;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,11 +26,11 @@ import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.PackSource;
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.ModLoader;
+import net.minecraftsingularity.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.ModLoadingWarning;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;

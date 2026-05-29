@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import java.util.Map;
 import java.util.Set;
@@ -36,14 +36,14 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterPresetEditorsEvent;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.RegisterPresetEditorsEvent;
+import net.minecraftsingularity.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
 
 @Mod(CustomPresetEditorTest.MODID)
 public class CustomPresetEditorTest

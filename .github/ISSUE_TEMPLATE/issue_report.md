@@ -10,12 +10,12 @@ assignees: ''
 <!-- Thank you for reporting! -->
 
 <!-- For support with crashes and issues, please create a post on the forum instead: -->
-<!-- https://www.minecraftforge.net/forum/forum/18-support-bug-reports/ -->
-<!-- You can also use the discord for support, https://discord.minecraftforge.net/ -->
+<!-- https://www.minecraftSingularity.net/forum/forum/18-support-bug-reports/ -->
+<!-- You can also use the discord for support, https://discord.minecraftSingularity.net/ -->
 
 **Minecraft Version:** {Minecraft version}
 
-**Forge Version:** {Forge version. *Version number, not latest/rb*}
+**singularity Version:** {singularity version. *Version number, not latest/rb*}
 
 **Logs:** {Link(s) to GitHub Gist with full latest.log and/or crash report}
 

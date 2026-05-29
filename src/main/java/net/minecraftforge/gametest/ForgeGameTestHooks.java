@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.gametest;
+package net.minecraftsingularity.gametest;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.gametest.framework.GameTestEnvironments;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestData;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.loading.FMLLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import java.lang.invoke.MethodHandle;
@@ -29,15 +29,15 @@ import java.util.function.Consumer;
  * Modders should use the supplied annotations and DeferredRegister
  */
 @ApiStatus.Internal
-public class ForgeGameTestHooks {
+public class singularityGameTestHooks {
     private static MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
 
     public static boolean isGametestEnabled() {
-        return !FMLLoader.isProduction() && (SharedConstants.IS_RUNNING_IN_IDE || isGametestServer() || Boolean.getBoolean("forge.enableGameTest"));
+        return !FMLLoader.isProduction() && (SharedConstants.IS_RUNNING_IN_IDE || isGametestServer() || Boolean.getBoolean("singularity.enableGameTest"));
     }
 
     public static boolean isGametestServer() {
-        return !FMLLoader.isProduction() && Boolean.getBoolean("forge.gameTestServer");
+        return !FMLLoader.isProduction() && Boolean.getBoolean("singularity.gameTestServer");
     }
 
 

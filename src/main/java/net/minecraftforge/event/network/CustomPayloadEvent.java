@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.network;
+package net.minecraftsingularity.event.network;
 
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -15,10 +15,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.network.ForgePayload;
-import net.minecraftforge.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.network.singularityPayload;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +37,7 @@ public record CustomPayloadEvent(
     public static final EventBus<CustomPayloadEvent> BUS = EventBus.create(CustomPayloadEvent.class);
 
     public CustomPayloadEvent(Identifier channel, Object payload, Context source, int loginIndex) {
-        this(channel, payload, payload instanceof ForgePayload forge ? forge.data() : null, source, loginIndex);
+        this(channel, payload, payload instanceof singularityPayload singularity ? singularity.data() : null, source, loginIndex);
     }
 
     /**

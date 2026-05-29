@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.IEnvironment;
@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftsingularity.fml.loading.LogMarkers.CORE;
 
 public enum FMLPaths
 {

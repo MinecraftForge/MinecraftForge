@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.recipe.recipebook;
+package net.minecraftsingularity.debug.recipe.recipebook;
 /*
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
+import net.minecraftsingularity.client.event.RegisterRecipeBookCategoriesEvent;
 
 import java.util.function.Supplier;
 

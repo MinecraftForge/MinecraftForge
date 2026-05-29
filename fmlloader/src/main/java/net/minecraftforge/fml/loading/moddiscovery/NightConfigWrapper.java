@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.common.collect.ImmutableMap;
 
-import net.minecraftforge.forgespi.language.IConfigurable;
-import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.language.IConfigurable;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.console;
+package net.minecraftsingularity.server.console;
 
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
@@ -27,7 +27,7 @@ public final class TerminalHandler
             return false;
 
         LineReader reader = LineReaderBuilder.builder()
-                .appName("Forge")
+                .appName("singularity")
                 .terminal(terminal)
                 .completer(new ConsoleCommandCompleter(server))
                 .build();

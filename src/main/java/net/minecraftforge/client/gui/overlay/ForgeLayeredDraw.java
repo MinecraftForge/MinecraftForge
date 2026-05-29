@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.gui.overlay;
+package net.minecraftsingularity.client.gui.overlay;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.DeltaTracker;
@@ -11,8 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.ForgeEventFactoryClient;
-import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
+import net.minecraftsingularity.client.event.singularityEventFactoryClient;
+import net.minecraftsingularity.client.event.AddGuiOverlayLayersEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
@@ -21,21 +21,21 @@ import java.util.*;
 import java.util.function.BooleanSupplier;
 
 /**
- * As vanilla has switched to a layered drawing system for overlays, this system replaces ForgeGui and its associated headaches.
+ * As vanilla has switched to a layered drawing system for overlays, this system replaces singularityGui and its associated headaches.
  * Vanilla will now have resource locations to represent its render layers which modders can order against.
  * This class is effectively a pseudo-registry for Layers. Add what you need during {@linkplain AddGuiOverlayLayersEvent}
- * Layers must be uniquely named per ForgeLayeredDraw, but may be duplicated across different instances.
+ * Layers must be uniquely named per singularityLayeredDraw, but may be duplicated across different instances.
  * Any change which would result in a duplicate will not be applied.
- * All methods which return a {@linkplain ForgeLayeredDraw} will return its caller's instance.
- * To select a specific instance, use {@linkplain ForgeLayeredDraw#locateStack(Identifier)} before adding
+ * All methods which return a {@linkplain singularityLayeredDraw} will return its caller's instance.
+ * To select a specific instance, use {@linkplain singularityLayeredDraw#locateStack(Identifier)} before adding
  * or use the methods that include a stack identifier.
  */
 @NullMarked
-public final class ForgeLayeredDraw implements ForgeLayer {
-    private final Map<Identifier, ForgeLayer> namedLayers = new HashMap<>();
-    private final Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
+public final class singularityLayeredDraw implements singularityLayer {
+    private final Map<Identifier, singularityLayer> namedLayers = new HashMap<>();
+    private final Map<Identifier, Map.Entry<singularityLayeredDraw, BooleanSupplier>> subLayerStacks = new HashMap<>();
     private final List<Identifier> order = new LinkedList<>();
-    private final List<ForgeLayer> bakedLayers = new ArrayList<>();
+    private final List<singularityLayer> bakedLayers = new ArrayList<>();
     private final Identifier name;
 
     public static final Identifier  PRE_SLEEP_STACK = Identifier.withDefaultNamespace("pre_sleep_phase");
@@ -59,25 +59,25 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     public static final Identifier     VANILLA_ROOT = Identifier.withDefaultNamespace("vanilla_root");
     public static final Identifier    SLEEP_OVERLAY = Identifier.withDefaultNamespace("sleep_overlay");
 
-    private static final ForgeLayeredDraw instance = new ForgeLayeredDraw(VANILLA_ROOT);
+    private static final singularityLayeredDraw instance = new singularityLayeredDraw(VANILLA_ROOT);
 
     /**
-     * Creates an empty draw list. Add entries with {@linkplain ForgeLayeredDraw#add(Identifier, ForgeLayer)}
+     * Creates an empty draw list. Add entries with {@linkplain singularityLayeredDraw#add(Identifier, singularityLayer)}
      * @param name marker for which phase this is.
      */
-    public ForgeLayeredDraw(Identifier name) {
+    public singularityLayeredDraw(Identifier name) {
         this.name = name;
     }
 
     /**
      * Adds a full draw stack with its provided condition.
-     * Use {@linkplain ForgeLayeredDraw#putAbove} and {@linkplain ForgeLayeredDraw#putBelow} for fine location adjustment.
+     * Use {@linkplain singularityLayeredDraw#putAbove} and {@linkplain singularityLayeredDraw#putBelow} for fine location adjustment.
      * @param name RL of the name to identify this stack with.
      * @param layeredDraw the draw stack
      * @param supplier condition for this stack to render
      * @return this
      */
-    public ForgeLayeredDraw add(Identifier name, ForgeLayeredDraw layeredDraw, BooleanSupplier supplier) {
+    public singularityLayeredDraw add(Identifier name, singularityLayeredDraw layeredDraw, BooleanSupplier supplier) {
         if (isNameAvailable(name)) {
             subLayerStacks.put(name, Map.entry(layeredDraw, supplier));
             order.add(name);
@@ -91,10 +91,10 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * Add a layer to the layer list. This layer will be at the end of the list, which means
      * it will be rendered last (on top) of already added layers.
      * @param name RL for other mods to order against.
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain singularityLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw add(Identifier targetStack, Identifier name, ForgeLayer layer) {
+    public singularityLayeredDraw add(Identifier targetStack, Identifier name, singularityLayer layer) {
         locateStack(targetStack).ifPresentOrElse((stack) -> stack.add(name, layer), () -> stackNotPresentWarning(targetStack));
         return this;
     }
@@ -102,12 +102,12 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     /**
      * Helper method, assumes the intended draw stack instance is the caller.
      * Use any of the non-deprecated add methods if you want a specific instance,
-     * or call {@linkplain ForgeLayeredDraw#locateStack(Identifier)} to get a reference to an instance.
+     * or call {@linkplain singularityLayeredDraw#locateStack(Identifier)} to get a reference to an instance.
      * @param name RL of layer to add
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain singularityLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw add(Identifier name, ForgeLayer layer) {
+    public singularityLayeredDraw add(Identifier name, singularityLayer layer) {
         if (isNameAvailable(name)) {
             namedLayers.put(name, layer);
             order.add(name);
@@ -120,12 +120,12 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     /**
      * Use to specify where your custom draw stack should go. Can also be used to re-order layers.
      * Both target and destination must be in the same draw stack.
-     * @param expectedStack Which ForgeLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain ForgeLayeredDraw#move(Identifier, Identifier, LayerOffset)}
+     * @param expectedStack Which singularityLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain singularityLayeredDraw#move(Identifier, Identifier, LayerOffset)}
      * @param target layer name to move
      * @param destination layer name to order against
      * @return this
      */
-    public ForgeLayeredDraw putAbove(Identifier expectedStack, Identifier target, Identifier destination) {
+    public singularityLayeredDraw putAbove(Identifier expectedStack, Identifier target, Identifier destination) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> stack.move(target, destination, LayerOffset.ABOVE), () -> stackNotPresentWarning(expectedStack));
         return this;
     }
@@ -133,12 +133,12 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     /**
      * Use to specify where your custom draw stack should go. Can also be used to re-order layers.
      * Both target and destination must be in the same draw stack.
-     * @param expectedStack Which ForgeLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain ForgeLayeredDraw#move(Identifier, Identifier, LayerOffset)}
+     * @param expectedStack Which singularityLayeredDraw the target is expected to be in. If you already have a reference to it, you can use {@linkplain singularityLayeredDraw#move(Identifier, Identifier, LayerOffset)}
      * @param target layer name to move
      * @param destination layer name to order against
      * @return this
      */
-    public ForgeLayeredDraw putBelow(Identifier expectedStack, Identifier target, Identifier destination) {
+    public singularityLayeredDraw putBelow(Identifier expectedStack, Identifier target, Identifier destination) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> stack.move(target, destination, LayerOffset.BELOW), () -> stackNotPresentWarning(expectedStack));
         return this;
     }
@@ -151,7 +151,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * @param offset Self-explanatory
      * @return this
      */
-    public ForgeLayeredDraw move(Identifier target, Identifier destination, LayerOffset offset) {
+    public singularityLayeredDraw move(Identifier target, Identifier destination, LayerOffset offset) {
         if (!order.contains(target)) {
             layerNotPresentWarning(target);
             return this;
@@ -172,10 +172,10 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain singularityLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addAbove(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
+    public singularityLayeredDraw addAbove(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, singularityLayer layer) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> {
             if (!stack.isNameAvailable(otherLayer)) {
                 stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.ABOVE);
@@ -189,7 +189,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     /**
      * Helper method, assumes intended draw stack is the caller
      */
-    public ForgeLayeredDraw addAbove(Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
+    public singularityLayeredDraw addAbove(Identifier newLayer, Identifier otherLayer, singularityLayer layer) {
         return addAbove(name, newLayer, otherLayer, layer);
     }
 
@@ -199,10 +199,10 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain singularityLayer} and example usages in {@linkplain Gui}
      * @return this
      */
-    public ForgeLayeredDraw addBelow(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
+    public singularityLayeredDraw addBelow(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, singularityLayer layer) {
         locateStack(expectedStack).ifPresentOrElse((stack) -> {
             if (!stack.isNameAvailable(otherLayer)) {
                 stack.add(newLayer, layer).move(newLayer, otherLayer, LayerOffset.BELOW);
@@ -216,7 +216,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     /**
      * Helper method, assumes intended draw stack is the caller
      */
-    public ForgeLayeredDraw addBelow(Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
+    public singularityLayeredDraw addBelow(Identifier newLayer, Identifier otherLayer, singularityLayer layer) {
         return addBelow(name, newLayer, otherLayer, layer);
     }
 
@@ -228,7 +228,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addWithCondition(Identifier targetStack, Identifier name, ForgeLayer layer, BooleanSupplier condition) {
+    public singularityLayeredDraw addWithCondition(Identifier targetStack, Identifier name, singularityLayer layer, BooleanSupplier condition) {
         locateStack(targetStack).ifPresentOrElse((stack) -> stack.addWithCondition(name, layer, condition), () -> stackNotPresentWarning(targetStack));
         return this;
     }
@@ -240,7 +240,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addWithCondition(Identifier name, ForgeLayer layer, BooleanSupplier condition) {
+    public singularityLayeredDraw addWithCondition(Identifier name, singularityLayer layer, BooleanSupplier condition) {
         add(name, layer).addConditionTo(name, condition);
         return this;
     }
@@ -253,20 +253,20 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addConditionTo(Identifier targetStack, Identifier targetLayer, BooleanSupplier condition) {
+    public singularityLayeredDraw addConditionTo(Identifier targetStack, Identifier targetLayer, BooleanSupplier condition) {
         locateStack(targetStack).ifPresentOrElse((stack) -> stack.addConditionTo(targetLayer, condition), () -> stackNotPresentWarning(targetStack));
         return this;
     }
 
     /**
      * Assumes the correct stack is the caller of this method.
-     * Use {@linkplain ForgeLayeredDraw#addConditionTo(Identifier, Identifier, BooleanSupplier)}
+     * Use {@linkplain singularityLayeredDraw#addConditionTo(Identifier, Identifier, BooleanSupplier)}
      * if you do not have a reference to the draw stack you want.
      * @param targetLayer name of layer to add condition to
      * @param condition supplier for the condition
      * @return this
      */
-    public ForgeLayeredDraw addConditionTo(Identifier targetLayer, BooleanSupplier condition) {
+    public singularityLayeredDraw addConditionTo(Identifier targetLayer, BooleanSupplier condition) {
         var result = namedLayers.computeIfPresent(targetLayer,
                 (name, layer) -> (guiGraphics, deltaTracker) -> {
                     if (condition.getAsBoolean()) {
@@ -285,9 +285,9 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * @return this
      */
     @ApiStatus.Internal
-    public ForgeLayeredDraw resolveLayers() {
+    public singularityLayeredDraw resolveLayers() {
         if (!order.isEmpty()) {
-            ForgeEventFactoryClient.onComputeLayerOrder(this);
+            singularityEventFactoryClient.onComputeLayerOrder(this);
         }
         resolveNested();
         order.clear();
@@ -296,7 +296,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
 
     /**
      * Resolve the layer order per stack, recursively as needed.
-     * Parent layer stack {@linkplain ForgeLayeredDraw#VANILLA_ROOT} holds the results.
+     * Parent layer stack {@linkplain singularityLayeredDraw#VANILLA_ROOT} holds the results.
      */
     private void resolveNested() {
         for (Identifier layerName : order) {
@@ -314,14 +314,14 @@ public final class ForgeLayeredDraw implements ForgeLayer {
 
     /**
      * Attempt to locate a particular draw stack. Search starts at caller's instance. For global search call on VANILLA_ROOT
-     * Entries which don't extend ForgeLayeredDraw may not have the proper fields to support internal list adjustment, so they are skipped.
-     * @param targetStack Name of ForgeLayeredDraw to find
+     * Entries which don't extend singularityLayeredDraw may not have the proper fields to support internal list adjustment, so they are skipped.
+     * @param targetStack Name of singularityLayeredDraw to find
      * @return Filled Optional if target exists, empty otherwise.
      */
-    public Optional<ForgeLayeredDraw> locateStack(Identifier targetStack) {
+    public Optional<singularityLayeredDraw> locateStack(Identifier targetStack) {
         if (!name.equals(targetStack)) {
-            for (Map.Entry<ForgeLayeredDraw, BooleanSupplier> value : subLayerStacks.values()) {
-                if (value.getKey() instanceof ForgeLayeredDraw searchable) {
+            for (Map.Entry<singularityLayeredDraw, BooleanSupplier> value : subLayerStacks.values()) {
+                if (value.getKey() instanceof singularityLayeredDraw searchable) {
                     var res = searchable.locateStack(targetStack);
                     if(res.isPresent()) return res;
                 }
@@ -333,12 +333,12 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     }
 
     @Nullable
-    public ForgeLayeredDraw getChild(Identifier childName) {
+    public singularityLayeredDraw getChild(Identifier childName) {
         return locateStack(childName).orElse(null);
     }
 
     @Nullable
-    public ForgeLayer getLayer(Identifier layerName) {
+    public singularityLayer getLayer(Identifier layerName) {
         return namedLayers.get(layerName);
     }
 
@@ -374,21 +374,21 @@ public final class ForgeLayeredDraw implements ForgeLayer {
 
     @ApiStatus.Internal
     public void extract(GuiGraphicsExtractor gg, DeltaTracker dt) {
-        for (ForgeLayer bakedLayer : bakedLayers) {
+        for (singularityLayer bakedLayer : bakedLayers) {
             bakedLayer.extract(gg, dt);
         }
     }
 
     @ApiStatus.Internal
     public static void init(Gui gui, Minecraft minecraft) {
-        var preSleepDraw = new ForgeLayeredDraw(PRE_SLEEP_STACK)
+        var preSleepDraw = new singularityLayeredDraw(PRE_SLEEP_STACK)
             .add(CAMERA_OVERLAY, gui::extractCameraOverlays)
             .add(CROSSHAIR, gui::extractCrosshair)
             .add(CHANGE_STRATUM, (gg, dt) -> gg.nextStratum())
             .add(HOTBAR_AND_DECOS, gui::extractHotbarAndDecorations)
             .add(POTION_EFFECTS, gui::extractEffects)
             .add(BOSS_OVERLAY, gui::extractBossOverlay);
-        var postSleepDraw = new ForgeLayeredDraw(POST_SLEEP_STACK)
+        var postSleepDraw = new singularityLayeredDraw(POST_SLEEP_STACK)
             .add(DEMO_OVERLAY, gui::extractDemoOverlay)
             .add(SCOREBOARD, gui::extractScoreboardSidebar)
             .add(HOTBAR_MESSAGE, gui::extractOverlayMessage)

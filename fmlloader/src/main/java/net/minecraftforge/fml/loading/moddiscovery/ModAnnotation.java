@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.forgespi.language.ModFileScanData.EnumData;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData.EnumData;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;

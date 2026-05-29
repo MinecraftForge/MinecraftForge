@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.holdersets;
+package net.minecraftsingularity.registries.holdersets;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,15 +28,15 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftsingularity.common.singularityMod;
 
 /**
  * <p>Holderset that represents all elements of a registry not present in another holderset.
- * forge:exclusion is preferable when the number of allowed elements is small relative to the size of the registry.
+ * singularity:exclusion is preferable when the number of allowed elements is small relative to the size of the registry.
  * Json format:</p>
  * <pre>
  * {
- *   "type": "forge:not",
+ *   "type": "singularity:not",
  *   "value": "not_this_holderset" // string, list, or object
  * }
  * </pre>
@@ -45,8 +45,8 @@ import net.minecraftforge.common.ForgeMod;
 public class NotHolderSet<T> implements ICustomHolderSet<T> {
     public static <T> MapCodec<? extends ICustomHolderSet<T>> codec(ResourceKey<? extends Registry<T>> registryKey, Codec<Holder<T>> holderCodec, boolean forceList) {
         return RecordCodecBuilder.<NotHolderSet<T>>mapCodec(builder -> builder.group(
-                RegistryOps.retrieveRegistryLookup(registryKey).forGetter(NotHolderSet::registryLookup),
-                HolderSetCodec.create(registryKey, holderCodec, forceList).fieldOf("value").forGetter(NotHolderSet::value)
+                RegistryOps.retrieveRegistryLookup(registryKey).singularitytter(NotHolderSet::registryLookup),
+                HolderSetCodec.create(registryKey, holderCodec, forceList).fieldOf("value").singularitytter(NotHolderSet::value)
             ).apply(builder, NotHolderSet::new));
     }
 
@@ -72,7 +72,7 @@ public class NotHolderSet<T> implements ICustomHolderSet<T> {
 
     @Override
     public HolderSetType type() {
-        return ForgeMod.NOT_HOLDER_SET.get();
+        return singularityMod.NOT_HOLDER_SET.get();
     }
 
     @Override

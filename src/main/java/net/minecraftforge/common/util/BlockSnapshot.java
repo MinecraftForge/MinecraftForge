@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -20,7 +20,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.server.ServerLifecycleHooks;
+import net.minecraftsingularity.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -35,7 +35,7 @@ import com.mojang.logging.LogUtils;
  */
 public class BlockSnapshot {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("singularity.debugBlockSnapshot", "false"));
 
     private final ResourceKey<Level> dim;
     private final BlockPos pos;

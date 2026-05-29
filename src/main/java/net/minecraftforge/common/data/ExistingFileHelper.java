@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,16 +36,16 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources.PathResourcesSupplier;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * Enables data providers to check if other data files currently exist. The
  * instance provided in the {@link GatherDataEvent} utilizes the standard
- * resources (via {@link VanillaPackResources}), forge's resources, as well as any
+ * resources (via {@link VanillaPackResources}), singularity's resources, as well as any
  * extra resource packs passed in via the {@code --existing} argument,
  * or mod resources via the {@code --existing-mod} argument.
  */
@@ -85,7 +85,7 @@ public class ExistingFileHelper {
 
     /**
      * Create a new helper. This should probably <em>NOT</em> be used by mods, as
-     * the instance provided by forge is designed to be a central instance that
+     * the instance provided by singularity is designed to be a central instance that
      * tracks existence of generated data.
      * <p>
      * Only create a new helper if you intentionally want to ignore the existence of

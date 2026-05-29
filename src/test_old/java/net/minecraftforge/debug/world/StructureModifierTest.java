@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -25,17 +25,17 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.data.JsonCodecProvider;
-import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo.Builder;
-import net.minecraftforge.common.world.StructureModifier;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.common.data.JsonCodecProvider;
+import net.minecraftsingularity.common.world.ModifiableStructureInfo.StructureInfo.Builder;
+import net.minecraftsingularity.common.world.StructureModifier;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.singularityRegistries.Keys;
+import net.minecraftsingularity.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -92,7 +92,7 @@ public class StructureModifierTest
         );
 
          DataProvider structureModifierProvider =
-              JsonCodecProvider.forDatapackRegistry(generator, event.getExistingFileHelper(), MODID, ops, ForgeRegistries.Keys.STRUCTURE_MODIFIERS,
+              JsonCodecProvider.forDatapackRegistry(generator, event.getExistingFileHelper(), MODID, ops, singularityRegistries.Keys.STRUCTURE_MODIFIERS,
                     Map.of(MODIFY_STRONGHOLD_RL, structureModifier));
         generator.addProvider(event.includeServer(), structureModifierProvider);*/
     }
@@ -100,7 +100,7 @@ public class StructureModifierTest
     public record TestModifier(HolderSet<Structure> structures, MobCategory category, MobSpawnSettings.SpawnerData spawn)
             implements StructureModifier
     {
-        private static final RegistryObject<Codec<? extends StructureModifier>> SERIALIZER = RegistryObject.create(ADD_SPAWNS_TO_STRUCTURE_RL, ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, MODID);
+        private static final RegistryObject<Codec<? extends StructureModifier>> SERIALIZER = RegistryObject.create(ADD_SPAWNS_TO_STRUCTURE_RL, singularityRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS, MODID);
 
         @Override
         public void modify(Holder<Structure> structure, Phase phase, Builder builder)
@@ -122,9 +122,9 @@ public class StructureModifierTest
         private static Codec<TestModifier> makeCodec()
         {
             return RecordCodecBuilder.create(builder -> builder.group(
-                  STRUCTURE_LIST_CODEC.fieldOf("structures").forGetter(TestModifier::structures),
-                  MobCategory.CODEC.fieldOf("category").forGetter(TestModifier::category),
-                  MobSpawnSettings.SpawnerData.CODEC.fieldOf("spawn").forGetter(TestModifier::spawn)
+                  STRUCTURE_LIST_CODEC.fieldOf("structures").singularitytter(TestModifier::structures),
+                  MobCategory.CODEC.fieldOf("category").singularitytter(TestModifier::category),
+                  MobSpawnSettings.SpawnerData.CODEC.fieldOf("spawn").singularitytter(TestModifier::spawn)
             ).apply(builder, TestModifier::new));
         }
     }

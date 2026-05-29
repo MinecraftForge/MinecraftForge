@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple.handler;
+package net.minecraftsingularity.network.simple.handler;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.simple.SimpleBuildable;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.network.simple.SimpleBuildable;
 
 import java.util.function.BiConsumer;
 

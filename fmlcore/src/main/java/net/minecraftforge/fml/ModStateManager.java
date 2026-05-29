@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 import com.google.common.graph.GraphBuilder;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.toposort.TopologicalSort;
 
 import java.util.*;
 import java.util.function.Function;

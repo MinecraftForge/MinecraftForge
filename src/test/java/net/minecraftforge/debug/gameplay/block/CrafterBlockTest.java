@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.block;
+package net.minecraftsingularity.debug.gameplay.block;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,20 +24,20 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.CrafterBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.capabilities.Capability;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.items.IItemHandler;
+import net.minecraftsingularity.items.ItemStackHandler;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(CrafterBlockTest.MOD_ID)
 public class CrafterBlockTest extends BaseTestMod {
     static final String MOD_ID = "crafter_block";
@@ -110,7 +110,7 @@ public class CrafterBlockTest extends BaseTestMod {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap, final @Nullable Direction side) {
-            if (cap == ForgeCapabilities.ITEM_HANDLER)
+            if (cap == singularityCapabilities.ITEM_HANDLER)
                 return itemHandler.cast();
             return super.getCapability(cap, side);
         }

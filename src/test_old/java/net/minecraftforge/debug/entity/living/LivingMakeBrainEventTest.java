@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.entity.living;
+package net.minecraftsingularity.debug.entity.living;
 
 import net.minecraft.world.entity.ai.behavior.Swim;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.schedule.Activity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BrainBuilder;
-import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
-import net.minecraftforge.eventtest.internal.EventTest;
-import net.minecraftforge.eventtest.internal.TestHolder;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.util.BrainBuilder;
+import net.minecraftsingularity.event.entity.living.LivingMakeBrainEvent;
+import net.minecraftsingularity.eventtest.internal.EventTest;
+import net.minecraftsingularity.eventtest.internal.TestHolder;
 
 @TestHolder("LivingMakeBrain")
 public class LivingMakeBrainEventTest extends EventTest

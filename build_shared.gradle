@@ -1,10 +1,10 @@
-import net.minecraftforge.forge.tasks.CleanProperties
+import net.minecraftsingularity.forge.tasks.CleanProperties
 
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'net.minecraftforge.gradleutils'
+apply plugin: 'net.minecraftsingularity.gradleutils'
 
-group = 'net.minecraftforge'
+group = 'net.minecraftsingularity'
 version = VERSION
 println("Version: $version")
 
@@ -27,7 +27,7 @@ tasks.withType(Javadoc).configureEach {
 // We need to write the manifest to the binary file so we have properly versioned packaged at dev time.
 tasks.register('writeManifest') {
     doLast {
-        if (plugins.findPlugin('net.minecraftforge.gradle.patcher')) // Forge project
+        if (plugins.findPlugin('net.minecraftsingularity.gradle.patcher')) // Forge project
             universalJar.manifest.writeTo(rootProject.file('src/main/resources/META-INF/MANIFEST.MF'))
         else
             jar.manifest.writeTo(project.file('src/main/resources/META-INF/MANIFEST.MF'))

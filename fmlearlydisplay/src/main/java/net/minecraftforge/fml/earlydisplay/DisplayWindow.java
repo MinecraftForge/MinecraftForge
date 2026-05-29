@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.earlydisplay;
+package net.minecraftsingularity.fml.earlydisplay;
 
 import joptsimple.OptionParser;
-import net.minecraftforge.fml.loading.FMLConfig;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.fml.loading.ImmediateWindowProvider;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
+import net.minecraftsingularity.fml.loading.FMLConfig;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.FMLPaths;
+import net.minecraftsingularity.fml.loading.ImmediateWindowHandler;
+import net.minecraftsingularity.fml.loading.ImmediateWindowProvider;
+import net.minecraftsingularity.fml.loading.progress.StartupNotificationManager;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -55,11 +55,11 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.opengl.GL32C.*;
 
 /**
- * The Loading Window that is opened Immediately after Forge starts.
- * It is called from the ModDirTransformerDiscoverer, the soonest method that ModLauncher calls into Forge code.
+ * The Loading Window that is opened Immediately after singularity starts.
+ * It is called from the ModDirTransformerDiscoverer, the soonest method that ModLauncher calls into singularity code.
  * In this way, we can be sure that this will not run before any transformer or injection.
  *
- * The window itself is spun off into a secondary thread, and is handed off to the main game by Forge.
+ * The window itself is spun off into a secondary thread, and is handed off to the main game by singularity.
  *
  * Because it is created so early, this thread will "absorb" the context from OpenGL.
  * Therefore, it is of utmost importance that the Context is made Current for the main thread before handoff,
@@ -87,7 +87,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     private ScheduledFuture<?> performanceTick;
     // The GL ID of the window. Used for all operations
     private long window;
-    // The thread that contains and ticks the window while Forge is loading mods
+    // The thread that contains and ticks the window while singularity is loading mods
     private static final ScheduledExecutorService renderScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
         final var thread = Executors.defaultThreadFactory().newThread(r);
         thread.setName("EarlyDisplay");
@@ -116,7 +116,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
     @Override
     public Runnable initialize(String[] arguments) {
         String mcVersion = FMLLoader.versionInfo().mcVersion();
-        String forgeVersion = FMLLoader.versionInfo().forgeVersion();
+        String singularityVersion = FMLLoader.versionInfo().singularityVersion();
 
         final OptionParser parser = new OptionParser();
         var widthopt = parser.accepts("width")
@@ -152,9 +152,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         }
         this.maximized = parsed.has(maximizedopt) || FMLConfig.getBoolConfigValue(FMLConfig.ConfigValue.EARLY_WINDOW_MAXIMIZED);
 
-        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("Forge loading " + FMLLoader.versionInfo().forgeVersion()));
+        StartupNotificationManager.modLoaderConsumer().ifPresent(c->c.accept("singularity loading " + FMLLoader.versionInfo().singularityVersion()));
         performanceInfo = new PerformanceInfo();
-        return start(mcVersion, forgeVersion);
+        return start(mcVersion, singularityVersion);
     }
 
     private static final long MINFRAMETIME = TimeUnit.MILLISECONDS.toNanos(10); // This is the FPS cap on the window - note animation is capped at 20FPS via the tickTimer
@@ -203,7 +203,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
      *
      * Nothing fancy, we just want to draw and render text.
      */
-    private void initRender(final @Nullable String mcVersion, final String forgeVersion) {
+    private void initRender(final @Nullable String mcVersion, final String singularityVersion) {
         // This thread owns the GL render context now. We should make a note of that.
         glfwMakeContextCurrent(window);
         // Wait for one frame to be complete before swapping; enable vsync in other words.
@@ -234,7 +234,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.elements = new ArrayList<>(List.of(
             RenderElement.anvil(font),
             RenderElement.logMessageOverlay(font),
-            RenderElement.forgeVersionOverlay(font, mcVersion + "-" + forgeVersion),
+            RenderElement.singularityVersionOverlay(font, mcVersion + "-" + singularityVersion),
             RenderElement.performanceBar(font),
             RenderElement.progressBars(font)
         ));
@@ -289,9 +289,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
     /**
      * Start the window and Render Thread; we're ready to go.
      */
-    public Runnable start(@Nullable String mcVersion, final String forgeVersion) {
+    public Runnable start(@Nullable String mcVersion, final String singularityVersion) {
         initWindow(mcVersion);
-        this.initializationFuture = renderScheduler.schedule(() -> initRender(mcVersion, forgeVersion), 1, TimeUnit.MILLISECONDS);
+        this.initializationFuture = renderScheduler.schedule(() -> initRender(mcVersion, singularityVersion), 1, TimeUnit.MILLISECONDS);
         return this::periodicTick;
     }
 
@@ -312,12 +312,12 @@ public class DisplayWindow implements ImmediateWindowProvider {
         LOGGER.error("ERROR DISPLAY\n"+msgBuilder);
         // we show the display on a new dedicated thread
         Executors.newSingleThreadExecutor().submit(()-> {
-            var res = TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge", msgBuilder.toString(), "yesno", "error", 0);
+            var res = TinyFileDialogs.tinyfd_messageBox("Minecraft: singularity", msgBuilder.toString(), "yesno", "error", 0);
             if (res != 0) {
                 try {
                     Desktop.getDesktop().browse(URI.create(ERROR_URL));
                 } catch (IOException ioe) {
-                    TinyFileDialogs.tinyfd_messageBox("Minecraft: Forge", "Sadly, we couldn't open your browser.\nVisit " + ERROR_URL, "ok", "error", 0);
+                    TinyFileDialogs.tinyfd_messageBox("Minecraft: singularity", "Sadly, we couldn't open your browser.\nVisit " + ERROR_URL, "ok", "error", 0);
                 }
             }
             System.exit(1);
@@ -406,7 +406,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
                 A) Make sure Minecraft is set to prefer high performance graphics in the OS and/or driver control panel
                 B) Check for driver updates on the graphics brand's website
                 C) Try reinstalling your graphics drivers
-                D) If still not working after trying all of the above, ask for further help on the Forge forums or Discord
+                D) If still not working after trying all of the above, ask for further help on the singularity forums or Discord
 
                 You can safely ignore this message if the game starts up successfully.""");
             }
@@ -466,13 +466,13 @@ public class DisplayWindow implements ImmediateWindowProvider {
 //        try (var glfwImgBuffer = GLFWImage.create(MemoryUtil.getAllocator().malloc(GLFWImage.SIZEOF), 1)) {
 //            final ByteBuffer imgBuffer;
 //            try (GLFWImage glfwImages = GLFWImage.malloc()) {
-//                imgBuffer = STBHelper.loadImageFromClasspath("forge_logo.png", 20000, x, y, channels);
+//                imgBuffer = STBHelper.loadImageFromClasspath("singularity_logo.png", 20000, x, y, channels);
 //                glfwImgBuffer.put(glfwImages.set(x[0], y[0], imgBuffer));
 //                glfwSetWindowIcon(window, glfwImgBuffer);
 //                STBImage.stbi_image_free(imgBuffer);
 //            }
 //        } catch (NullPointerException e) {
-//            System.err.println("Failed to load forge logo");
+//            System.err.println("Failed to load singularity logo");
 //        }
 //        handleLastGLFWError((error, description) -> LOGGER.debug(String.format("Suppressing GLFW icon error: [0x%X]%s", error, description)));
 
@@ -602,15 +602,15 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
     @Override
     public void updateModuleReads(final ModuleLayer layer) {
-        final var FORGE_MODULE = "net.minecraftforge.forge";
-        var forge_module = layer.findModule(FORGE_MODULE).orElse(null);
-        if (forge_module == null)
-            throw new IllegalStateException("Could not find " + FORGE_MODULE + " in " + layer);
+        final var singularity_MODULE = "net.minecraftsingularity.singularity";
+        var singularity_module = layer.findModule(singularity_MODULE).orElse(null);
+        if (singularity_module == null)
+            throw new IllegalStateException("Could not find " + singularity_MODULE + " in " + layer);
 
-        getClass().getModule().addReads(forge_module);
+        getClass().getModule().addReads(singularity_module);
 
 
-        var clz = Class.forName(forge_module, "net.minecraftforge.client.loading.ForgeLoadingOverlay");
+        var clz = Class.forName(singularity_module, "net.minecraftsingularity.client.loading.singularityLoadingOverlay");
 
         for (var mtd : clz.getDeclaredMethods()) {
             if (Modifier.isStatic(mtd.getModifiers()) && "newInstance".equals(mtd.getName())) {

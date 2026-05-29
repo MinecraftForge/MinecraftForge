@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -11,9 +11,9 @@ import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ObjectiveArgument;
 import net.minecraft.commands.arguments.IdentifierArgument;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
@@ -33,7 +33,7 @@ import org.jspecify.annotations.NullMarked;
  * @param getDispatcher the command dispatcher for registering commands to be executed on the client
  * @param getBuildContext the context to build the commands for
  *
- * @see net.minecraftforge.event.RegisterCommandsEvent
+ * @see net.minecraftsingularity.event.RegisterCommandsEvent
  */
 @NullMarked
 public record RegisterClientCommandsEvent(

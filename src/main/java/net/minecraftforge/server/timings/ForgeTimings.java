@@ -1,26 +1,26 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.timings;
+package net.minecraftsingularity.server.timings;
 
 import java.lang.ref.WeakReference;
 
 /**
- * ForgeTimings aggregates timings data collected by {@link TimeTracker} for an Object
+ * singularityTimings aggregates timings data collected by {@link TimeTracker} for an Object
  * and performs operations for interpretation of the data.
  *
  * @param <T>
  */
-public class ForgeTimings<T>
+public class singularityTimings<T>
 {
 
     private WeakReference<T> object;
 
     private int[] rawTimingData;
 
-    public ForgeTimings(T object, int[] rawTimingData)
+    public singularityTimings(T object, int[] rawTimingData)
     {
         this.object = new WeakReference<T>(object);
         this.rawTimingData = rawTimingData;

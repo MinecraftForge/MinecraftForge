@@ -1,27 +1,27 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.UniqueModListBuilder;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
-import net.minecraftforge.forgespi.Environment;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IDependencyLocator;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.ImmediateWindowHandler;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.fml.loading.UniqueModListBuilder;
+import net.minecraftsingularity.fml.loading.progress.StartupNotificationManager;
+import net.minecraftsingularity.singularityspi.Environment;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.locating.IDependencyLocator;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
+import net.minecraftsingularity.singularityspi.locating.IModLocator;
 
-import net.minecraftforge.forgespi.locating.ModFileLoadingException;
+import net.minecraftsingularity.singularityspi.locating.ModFileLoadingException;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 

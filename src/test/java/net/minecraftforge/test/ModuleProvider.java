@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.test;
+package net.minecraftsingularity.test;
 
 import java.io.IOException;
 import java.lang.module.ModuleDescriptor;

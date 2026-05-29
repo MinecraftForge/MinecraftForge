@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import java.util.UUID;
 
@@ -20,9 +20,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.entity.IEntityAdditionalSpawnData;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
 
 /**
  * Used to spawn a custom entity without the same restrictions as

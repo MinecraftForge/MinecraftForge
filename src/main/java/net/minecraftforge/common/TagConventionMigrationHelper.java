@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftsingularity.event.server.ServerStartingEvent;
+import net.minecraftsingularity.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Internal implementation for optionally logging warnings about legacy tags along with suggestions for direct
  * replacements, in order to help modders migrate to the new tags.
- * @see ForgeConfig.Common#migrationHelperMode
+ * @see singularityConfig.Common#migrationHelperMode
  */
 @ApiStatus.Internal
 public final class TagConventionMigrationHelper {
@@ -33,7 +33,7 @@ public final class TagConventionMigrationHelper {
 
     public static void onServerStarting(ServerStartingEvent event) {
         // note: this check has to be done here because the config is not loaded until the server is starting
-        var mode = ForgeConfig.COMMON.migrationHelperMode.get();
+        var mode = singularityConfig.COMMON.migrationHelperMode.get();
         boolean shouldRun = switch (mode) {
             case OFF -> false;
             case ONLY_IN_DEV_ENV -> !FMLLoader.isProduction();
@@ -62,8 +62,8 @@ public final class TagConventionMigrationHelper {
         var stringBuilder = new StringBuilder("""
             ~~~~~~~~ Tag migration helper ~~~~~~~~
             Warning for mod devs: Found known legacy tags that have direct common convention equivalents - consider migrating these to improve compatibility with other mods.
-            Note: This feature isn't fully comprehensive - see Forge's net.minecraftforge.common.Tags class for a full list of tags.
-            You can disable this message by setting "migrationHelperMode" to "OFF" in Forge's common config.
+            Note: This feature isn't fully comprehensive - see singularity's net.minecraftsingularity.common.Tags class for a full list of tags.
+            You can disable this message by setting "migrationHelperMode" to "OFF" in singularity's common config.
 
             Here are some suggestions for replacements:""".stripIndent());
 

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -31,11 +31,11 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.ToolActions;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.registries.IForgeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -395,7 +395,7 @@ public interface IForgeItem {
      * Called to get the Mod ID of the mod that *created* the ItemStack, instead of
      * the real Mod ID that *registered* it.
      *
-     * For example the Forge Universal Bucket creates a subitem for each modded
+     * For example the singularity Universal Bucket creates a subitem for each modded
      * fluid, and it returns the modded fluid's Mod ID here.
      *
      * Mods that register subitems for other mods can override this. Informational
@@ -407,7 +407,7 @@ public interface IForgeItem {
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack) {
-        return ForgeHooks.getDefaultCreatorModId(itemStack);
+        return singularityHooks.getDefaultCreatorModId(itemStack);
     }
 
     /**
@@ -425,7 +425,7 @@ public interface IForgeItem {
      *         capabilities for the life of this item.
      *
      *
-     * Forge: TODO: Forge ItemStack capabilities - Lex 042724
+     * singularity: TODO: singularity ItemStack capabilities - Lex 042724
      * /
     @Nullable
     default ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {

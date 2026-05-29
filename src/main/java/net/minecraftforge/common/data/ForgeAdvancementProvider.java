@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  * experience to generate modded advancements.
  */
 @SuppressWarnings("deprecation")
-public class ForgeAdvancementProvider extends AdvancementProvider {
+public class singularityAdvancementProvider extends AdvancementProvider {
     /**
      * Constructs an advancement provider using the generators to write the
      * advancements to a file.
@@ -31,7 +31,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider {
      * @param existingFileHelper a helper used to find whether a file exists
      * @param subProviders the generators used to create the advancements
      */
-    public ForgeAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
+    public singularityAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, ExistingFileHelper existingFileHelper, List<AdvancementGenerator> subProviders) {
         super(output, registries, subProviders.stream().map(generator -> generator.toSubProvider(existingFileHelper)).toList());
     }
 
@@ -44,7 +44,7 @@ public class ForgeAdvancementProvider extends AdvancementProvider {
     public interface AdvancementGenerator {
         /**
          * A method used to generate advancements for a mod. Advancements should be
-         * built via {@link net.minecraftforge.common.extensions.IForgeAdvancementBuilder#save(Consumer, Identifier, ExistingFileHelper)}.
+         * built via {@link net.minecraftsingularity.common.extensions.IForgeAdvancementBuilder#save(Consumer, Identifier, ExistingFileHelper)}.
          *
          * @param registries a lookup for registries and their objects
          * @param saver a consumer used to write advancements to a file

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission.exceptions;
+package net.minecraftsingularity.server.permission.exceptions;
 
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
 
 import java.util.Locale;
 

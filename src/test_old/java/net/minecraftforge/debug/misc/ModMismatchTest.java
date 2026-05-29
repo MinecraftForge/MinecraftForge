@@ -1,22 +1,22 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftsingularity.debug.misc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.gui.ModMismatchDisconnectedScreen;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.SimpleChannel;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.gui.ModMismatchDisconnectedScreen;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.network.ChannelBuilder;
+import net.minecraftsingularity.network.SimpleChannel;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 /**
  * This test mod provides a way to register a {@link SimpleChannel} with a different protocol version on the client and the server to cause a mod channel mismatch.
@@ -40,7 +40,7 @@ public class ModMismatchTest {
     // Enabling this field (and disabling the two above to not cause a channel mismatch) will cause a registry mismatch due to a server registry entry not being present on the client. Since this test mod is loaded on both dists, a mod mismatch will be displayed as the cause.
     private static final boolean REGISTER_REGISTRY_ENTRY = false;
 
-    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MOD_ID);
+    private static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(singularityRegistries.SOUND_EVENTS, MOD_ID);
     private static final int CHANNEL_PROTOCOL_VERSION = FMLEnvironment.dist == Dist.CLIENT ? 1 : 2;
 
     public ModMismatchTest() {

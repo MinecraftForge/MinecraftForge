@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -14,17 +14,17 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.Tags;
+import net.minecraftsingularity.common.Tags;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraftforge.common.Tags.Biomes.*;
+import static net.minecraftsingularity.common.Tags.Biomes.*;
 
 @ApiStatus.Internal
-public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
-    public ForgeBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityBiomeTagsProvider extends BiomeTagsProvider {
+    public singularityBiomeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
@@ -294,13 +294,13 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         }
     }
 
-    private static TagKey<Biome> forgeTagKey(String path) {
-        return BiomeTags.create(Identifier.fromNamespaceAndPath("forge", path));
+    private static TagKey<Biome> singularityTagKey(String path) {
+        return BiomeTags.create(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     @Override
     public String getName() {
-        return "Forge Biome Tags";
+        return "singularity Biome Tags";
     }
 
 }

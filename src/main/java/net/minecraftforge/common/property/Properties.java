@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.property;
+package net.minecraftsingularity.common.property;
 
 import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftsingularity.client.model.data.ModelProperty;
 
 public class Properties {
     /**

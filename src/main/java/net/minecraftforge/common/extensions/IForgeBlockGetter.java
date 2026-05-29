@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -11,7 +11,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.*;
-import net.minecraftforge.client.model.data.ModelDataManager;
+import net.minecraftsingularity.client.model.data.ModelDataManager;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockGetter

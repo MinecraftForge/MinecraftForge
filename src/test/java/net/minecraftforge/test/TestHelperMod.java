@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.test;
+package net.minecraftsingularity.test;
 
 import net.minecraft.DetectedVersion;
 import net.minecraft.core.registries.Registries;
@@ -16,11 +16,11 @@ import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.RegisterEvent;
 
 /* A place where I can put common utility stuff for now. Until I re-write the test codebase. */
 @Mod(TestHelperMod.MOD_ID)
@@ -50,7 +50,7 @@ public class TestHelperMod extends BaseTestMod {
 
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.SERVER_TYPE, new PackMetadataSection(
-                Component.literal("Forge tests resource pack"),
+                Component.literal("singularity tests resource pack"),
                 DetectedVersion.BUILT_IN.packVersion(PackType.SERVER_DATA).minorRange()
             ))
         );

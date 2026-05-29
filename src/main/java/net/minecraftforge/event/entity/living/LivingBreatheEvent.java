@@ -1,21 +1,21 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftsingularity.common.singularityHooks;
 
 /**
  * LivingBreatheEvent is fired whenever a living entity ticks.<br>
  * <br>
- * This event is fired via {@link ForgeHooks#onLivingBreathe(LivingEntity, int, int)}.<br>
+ * This event is fired via {@link singularityHooks#onLivingBreathe(LivingEntity, int, int)}.<br>
  */
 public final class LivingBreatheEvent extends MutableEvent implements LivingEvent {
     public static final EventBus<LivingBreatheEvent> BUS = EventBus.create(LivingBreatheEvent.class);

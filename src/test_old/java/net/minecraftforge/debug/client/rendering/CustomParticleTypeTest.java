@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -13,10 +13,10 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.event.TickEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod(CustomParticleTypeTest.MOD_ID)
 public class CustomParticleTypeTest
@@ -26,7 +26,7 @@ public class CustomParticleTypeTest
 
     public CustomParticleTypeTest() { }
 
-    @Mod.EventBusSubscriber(modid = CustomParticleTypeTest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = CustomParticleTypeTest.MOD_ID, bus = Mod.EventBusSubscriber.Bus.singularity, value = Dist.CLIENT)
     public static class ClientEvents
     {
         private static final ParticleRenderType CUSTOM_TYPE = new ParticleRenderType()

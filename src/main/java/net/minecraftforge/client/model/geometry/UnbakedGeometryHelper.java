@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.geometry;
+package net.minecraftsingularity.client.model.geometry;
 
 import com.mojang.math.Quadrant;
 import com.mojang.math.Transformation;
@@ -20,7 +20,7 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.model.SimpleModelState;
+import net.minecraftsingularity.client.model.SimpleModelState;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;

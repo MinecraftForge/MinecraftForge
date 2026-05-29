@@ -1,10 +1,10 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-/** Forge 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
-package net.minecraftforge.client.gui.overlay;
+/** singularity 1.20.5 - Removed, Mojang created a layered rendering system that should make this all obsolete finally.. - Lex 042724
+package net.minecraftsingularity.client.gui.overlay;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -34,12 +34,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftsingularity.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftsingularity.client.event.RenderGuiEvent;
+import net.minecraftsingularity.client.event.RenderGuiOverlayEvent;
+import net.minecraftsingularity.client.extensions.common.IClientItemExtensions;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,9 +47,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Forge wrapper around {@link Gui} to be able to render {@link IGuiOverlay HUD overlays}.
+ * singularity wrapper around {@link Gui} to be able to render {@link IGuiOverlay HUD overlays}.
  * /
-public class ForgeGui extends Gui {
+public class singularityGui extends Gui {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final int WHITE = 0xFFFFFF;
@@ -62,7 +62,7 @@ public class ForgeGui extends Gui {
     public int leftHeight = 39;
     public int rightHeight = 39;
 
-    public ForgeGui(Minecraft mc) {
+    public singularityGui(Minecraft mc) {
         super(mc);
         this.debugOverlay = new OverlayAccess(mc);
     }
@@ -196,7 +196,7 @@ public class ForgeGui extends Gui {
         int top = height - rightHeight;
 
         int air = player.getAirSupply();
-        if (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || air < 300) {
+        if (player.isEyeInFluidType(singularityMod.WATER_TYPE.get()) || air < 300) {
             int full = Mth.ceil((double) (air - 2) * 10.0D / 300.0D);
             int partial = Mth.ceil((double) air * 10.0D / 300.0D) - full;
 
@@ -342,7 +342,7 @@ public class ForgeGui extends Gui {
     }
 
     protected void renderHUDText(int width, int height, GuiGraphics guiGraphics) {
-        minecraft.getProfiler().push("forgeHudText");
+        minecraft.getProfiler().push("singularityHudText");
         RenderSystem.defaultBlendFunc();
 
         var listL = new ArrayList<String>();
@@ -356,18 +356,18 @@ public class ForgeGui extends Gui {
                 listR.add(I18n.get("demo.remainingTime", StringUtil.formatTickDuration((int)(120500L - this.minecraft.level.getGameTime()), this.minecraft.level.tickRateManager().tickrate())));
         }
 
-        var forgeOverlay = (OverlayAccess)debugOverlay;
-        if (forgeOverlay.showDebugScreen()) {
-            forgeOverlay.update();
-            listL.addAll(forgeOverlay.getGameInformation());
-            listL.addAll(forgeOverlay.getOverlayHelp());
-            listR.addAll(forgeOverlay.getSystemInformation());
+        var singularityOverlay = (OverlayAccess)debugOverlay;
+        if (singularityOverlay.showDebugScreen()) {
+            singularityOverlay.update();
+            listL.addAll(singularityOverlay.getGameInformation());
+            listL.addAll(singularityOverlay.getOverlayHelp());
+            listR.addAll(singularityOverlay.getSystemInformation());
         }
 
         var event = new CustomizeGuiOverlayEvent.DebugText(minecraft.getWindow(), guiGraphics, minecraft.getFrameTime(), listL, listR);
         MinecraftForge.EVENT_BUS.post(event);
-        forgeOverlay.renderLines(guiGraphics, listL, true);
-        forgeOverlay.renderLines(guiGraphics, listR, false);
+        singularityOverlay.renderLines(guiGraphics, listL, true);
+        singularityOverlay.renderLines(guiGraphics, listR, false);
         minecraft.getProfiler().pop();
     }
 

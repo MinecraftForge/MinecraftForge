@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.core;
+package net.minecraftsingularity.fml.core;
 
-import net.minecraftforge.fml.IModStateTransition;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ThreadSelector;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftsingularity.fml.IModStateTransition;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.ThreadSelector;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.event.lifecycle.ParallelDispatchEvent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;

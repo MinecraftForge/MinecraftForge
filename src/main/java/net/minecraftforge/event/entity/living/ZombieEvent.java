@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.HasResult;
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.util.HasResult;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.event.entity.EntityEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
 
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
@@ -40,7 +40,7 @@ public sealed abstract class ZombieEvent implements EntityEvent, InheritableEven
      * This event is fired whenever a Zombie Entity is summoned in
      * {@code Zombie#actuallyHurt(DamageSource, float)}.
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(Zombie, Level, int, int, int, LivingEntity, double)}.
+     * This event is fired via the {@link singularityEventFactory#fireZombieSummonAid(Zombie, Level, int, int, int, LivingEntity, double)}.
      * <br>
      * {@link #getCustomSummonedAid()} remains null, but can be populated with a custom EntityZombie which will be spawned.<br>
      * {@link #getLevel()} contains the world that this summoning is occurring in.<br>

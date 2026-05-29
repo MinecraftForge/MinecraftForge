@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.redstone;
+package net.minecraftsingularity.debug.gameplay.redstone;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -13,11 +13,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.test.BaseTestMod;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
 
 /**
  * Redstone update orders are important in many contraptions as there are pistons and other things that could conflict with each other.
@@ -26,7 +26,7 @@ import net.minecraftforge.gametest.GameTestNamespace;
  * Partial verification/fix for https://github.com/MinecraftForge/MinecraftForge/issues/9973
  */
 @Mod(UpdateOrder.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class UpdateOrder extends BaseTestMod {
     public static final String MODID = "update_order";
     private static final int PISTON_DELAY = 4;

@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.javafmlmod;
+package net.minecraftsingularity.fml.javafmlmod;
 
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingException;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.config.IConfigEvent;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.unsafe.UnsafeHacks;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModLoadingException;
+import net.minecraftsingularity.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.config.IConfigEvent;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
+import net.minecraftsingularity.unsafe.UnsafeHacks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

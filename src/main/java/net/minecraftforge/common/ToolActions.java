@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import com.google.common.collect.Sets;
-import net.minecraftforge.common.extensions.IForgeBlock;
-import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftsingularity.common.extensions.IForgeBlock;
+import net.minecraftsingularity.common.extensions.IForgeItem;
 
 import java.util.Set;
 import java.util.stream.Collectors;

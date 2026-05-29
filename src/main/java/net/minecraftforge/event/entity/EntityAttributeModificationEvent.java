@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity;
+package net.minecraftsingularity.event.entity;
 
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
@@ -11,9 +11,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,7 @@ public final class EntityAttributeModificationEvent extends MutableEvent {
     public EntityAttributeModificationEvent(Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> mapIn) {
         this.entityAttributes = mapIn;
         this.entityTypes = List.copyOf(
-            ForgeRegistries.ENTITY_TYPES.getValues().stream()
+            singularityRegistries.ENTITY_TYPES.getValues().stream()
                 .filter(DefaultAttributes::hasSupplier)
                 .map(entityType -> (EntityType<? extends LivingEntity>) entityType)
                 .toList()

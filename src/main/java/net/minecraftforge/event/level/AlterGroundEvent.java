@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelSimulatedReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -22,8 +22,8 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>
  * This event is not {@linkplain Cancellable cancellable}.
  * <p>
- * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
- * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
+ * only on the {@linkplain net.minecraftsingularity.fml.LogicalSide#SERVER logical server}.
  */
 public final class AlterGroundEvent extends MutableEvent {
     public static final EventBus<AlterGroundEvent> BUS = EventBus.create(AlterGroundEvent.class);

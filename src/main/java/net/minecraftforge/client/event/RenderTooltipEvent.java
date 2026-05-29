@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
@@ -14,14 +14,14 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.player.ItemTooltipEvent;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -111,7 +111,7 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      * If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
      * the corresponding {@link RenderTooltipEvent.Pre} to not be fired.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static final class GatherComponents extends MutableEvent implements Cancellable {
@@ -192,7 +192,7 @@ public abstract sealed class RenderTooltipEvent extends MutableEvent implements 
      * <p>This event is {@linkplain Cancellable cancellable}.
      * If this event is cancelled, then the tooltip will not be rendered
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     public static final class Pre extends RenderTooltipEvent implements Cancellable {

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.internal;
+package net.minecraftsingularity.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,11 +12,11 @@ import java.util.function.ObjIntConsumer;
 
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.versions.mcp.MCPVersion;
+import net.minecraftsingularity.client.singularityHooksClient;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.versions.singularity.singularityVersion;
+import net.minecraftsingularity.versions.mcp.MCPVersion;
 
 /**
  * Controls the title screen brandings for the game.
@@ -31,21 +31,21 @@ public final class BrandingControl {
         if (brandings == null) {
             var list = new ArrayList<String>();
 
-            // Forge
-            var forge = ForgeVersion.getVersion().split("-", 2);
+            // singularity
+            var singularity = singularityVersion.getVersion().split("-", 2);
 
             // I don't want to use VersionChecker to check for this, so I'm just going to use the version string.
-            // We only have Forge Betas on the "XX.0.XX" versions anyways.
-            boolean beta = "0".equals(forge[0].split("\\.")[1]);
-            var name = beta ? "§eForge Beta§f " : "Forge ";
-            list.add(name + forge[0] + " (" + ForgeI18n.parseMessage("fml.menu.loadingmods", ModList.size()) + ")");
+            // We only have singularity Betas on the "XX.0.XX" versions anyways.
+            boolean beta = "0".equals(singularity[0].split("\\.")[1]);
+            var name = beta ? "§eForge Beta§f " : "singularity ";
+            list.add(name + singularity[0] + " (" + singularityI18n.parseMessage("fml.menu.loadingmods", ModList.size()) + ")");
 
-            // Extra forge version info (like branch)
-            if (forge.length > 1) list.add("Branch " + forge[1]);
+            // Extra singularity version info (like branch)
+            if (singularity.length > 1) list.add("Branch " + singularity[1]);
 
-            // TODO [Forge][FML] When FML is rewritten, add its version here behind a config value to show it (debugBrandingVersions)
-            // this is how to check if we are in ForgeDev:
-            // FMLLoader.launcherHandlerName().startsWith("forge_dev")
+            // TODO [singularity][FML] When FML is rewritten, add its version here behind a config value to show it (debugBrandingVersions)
+            // this is how to check if we are in singularityDev:
+            // FMLLoader.launcherHandlerName().startsWith("singularity_dev")
 
             // Minecraft
             list.add("Minecraft " + MCPVersion.getMCVersion());
@@ -64,15 +64,15 @@ public final class BrandingControl {
     }
 
     /**
-     * Gets the branding lines to display over the copyright line. This is usually a message when Forge has an update.
+     * Gets the branding lines to display over the copyright line. This is usually a message when singularity has an update.
      *
      * @return The branding lines to display
      */
     public static List<String> getOverCopyrightBrandings() {
         final class LazyInit {
-            private static final List<String> INSTANCE = ForgeHooksClient.forgeStatusLine == null
+            private static final List<String> INSTANCE = singularityHooksClient.singularityStatusLine == null
                     ? Collections.emptyList()
-                    : List.of(ForgeHooksClient.forgeStatusLine);
+                    : List.of(singularityHooksClient.singularityStatusLine);
 
             private LazyInit() {}
         }
@@ -111,7 +111,7 @@ public final class BrandingControl {
      * @return The branding to use
      */
     public static String getBranding() {
-        return "forge";
+        return "singularity";
     }
 
     /**

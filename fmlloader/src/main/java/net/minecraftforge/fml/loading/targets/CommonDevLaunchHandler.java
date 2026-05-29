@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.targets;
+package net.minecraftsingularity.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.ServiceRunner;
@@ -120,12 +120,12 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         return Paths.get(ret);
     }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
-    protected static Path getMinecraftOnly(Path extra, Path forge) {
+    // TODO: [singularity][UFS][DEV] Make singularity and MC seperate sources at dev time so we don't have to filter
+    protected static Path getMinecraftOnly(Path extra, Path singularity) {
         var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         var extraPath = extra.toString().replace('\\', '/');
 
-        // We serve everything, except for things in the forge packages.
+        // We serve everything, except for things in the singularity packages.
         BiPredicate<String, String> mcFilter = (path, base) -> {
             if (base.equals(extraPath) ||
                     path.endsWith("/")) return true;
@@ -133,12 +133,12 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
                 if (path.startsWith(pkg)) return false;
             return true;
         };
-        var fs = UnionHelper.newFileSystem(mcFilter, new Path[] { forge, extra });
+        var fs = UnionHelper.newFileSystem(mcFilter, new Path[] { singularity, extra });
         return fs.getRootDirectories().iterator().next();
     }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
-    protected static Path getForgeOnly(Path forge) {
+    // TODO: [singularity][UFS][DEV] Make singularity and MC seperate sources at dev time so we don't have to filter
+    protected static Path getForgeOnly(Path singularity) {
         var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         // We need to separate out our resources/code so that we can show up as a different data pack.
         var modJar = SecureJar.from((path, base) -> {
@@ -146,7 +146,7 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
             for (var pkg : packages)
                 if (path.startsWith(pkg)) return true;
             return false;
-        }, new Path[] { forge });
+        }, new Path[] { singularity });
 
         //modJar.getPackages().stream().sorted().forEach(System.out::println);
         return modJar.getRootPath();

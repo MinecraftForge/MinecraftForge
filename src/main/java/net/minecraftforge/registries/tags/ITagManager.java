@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.tags;
+package net.minecraftsingularity.registries.tags;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftsingularity.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * A tag manager holds information about all tags currently bound to a forge registry.
+ * A tag manager holds information about all tags currently bound to a singularity registry.
  * This should be preferred to any {@link Holder}-related methods.
  */
 public interface ITagManager<V> extends Iterable<ITag<V>> {
@@ -31,10 +31,10 @@ public interface ITagManager<V> extends Iterable<ITag<V>> {
     @NotNull ITag<V> getTag(@NotNull TagKey<V> name);
 
     /**
-     * Queries a reverse tag for a given value from the forge registry linked to this tag manager.
+     * Queries a reverse tag for a given value from the singularity registry linked to this tag manager.
      * A reverse tag stores all tags that the given {@code value} is contained in.
      *
-     * @param value A value currently registered to the forge registry linked to this tag manager
+     * @param value A value currently registered to the singularity registry linked to this tag manager
      * @return A reverse tag for the given value, or an empty optional if the value is not registered
      */
     @NotNull Optional<IReverseTag<V>> getReverseTag(@NotNull V value);
@@ -58,7 +58,7 @@ public interface ITagManager<V> extends Iterable<ITag<V>> {
     @NotNull Stream<TagKey<V>> getTagNames();
 
     /**
-     * Creates a tag key based on the location and the forge registry linked to this tag manager.
+     * Creates a tag key based on the location and the singularity registry linked to this tag manager.
      * Custom registries can use {@link DeferredRegister#createTagKey(Identifier)} to create tag keys before the tag manager is created.
      *
      * @see #createOptionalTagKey(Identifier, Set)

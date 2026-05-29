@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 
 /**
  * Prefixes S2CModList by sending additional data about the mods installed on the server to the client

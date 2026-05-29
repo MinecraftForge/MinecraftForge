@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.config.IConfigEvent;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.config.IConfigEvent;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 
 import java.util.EnumMap;
 import java.util.HashSet;

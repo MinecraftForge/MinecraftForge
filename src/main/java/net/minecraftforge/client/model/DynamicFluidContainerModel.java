@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model;
+package net.minecraftsingularity.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -22,14 +22,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.RenderTypeGroup;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.client.singularityRenderTypes;
+import net.minecraftsingularity.client.RenderTypeGroup;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.client.model.geometry.IGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.IGeometryLoader;
+import net.minecraftsingularity.client.model.geometry.StandaloneGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.UnbakedGeometryHelper;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -62,7 +62,7 @@ public class DynamicFluidContainerModel implements UnbakedGeometry {
     }
 
     public static RenderTypeGroup getLayerRenderTypes(boolean unlit) {
-        return new RenderTypeGroup(ChunkSectionLayer.TRANSLUCENT, unlit ? ForgeRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get() : ForgeRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
+        return new RenderTypeGroup(ChunkSectionLayer.TRANSLUCENT, unlit ? singularityRenderTypes.ITEM_UNSORTED_UNLIT_TRANSLUCENT.get() : singularityRenderTypes.ITEM_UNSORTED_TRANSLUCENT.get());
     }
 
     /**
@@ -111,7 +111,7 @@ public class DynamicFluidContainerModel implements UnbakedGeometry {
 
         var transformation = state.transformation();
 
-        // TODO: [Forge][Rendering] See if we can get rid of SimpleModelState and wrap transforms completely
+        // TODO: [singularity][Rendering] See if we can get rid of SimpleModelState and wrap transforms completely
         // If the fluid is lighter than air, rotate 180deg to turn it upside down
         if (flipGas && fluid != Fluids.EMPTY && fluid.getFluidType().isLighterThanAir()) {
             transformation = transformation.compose(new Transformation(null, new Quaternionf(0, 0, 1, 0), null, null));
@@ -160,7 +160,7 @@ public class DynamicFluidContainerModel implements UnbakedGeometry {
         public UnbakedGeometry read(JsonObject jsonObject, JsonDeserializationContext deserializationContext) {
             var fluidName = Identifier.parse(GsonHelper.getAsString(jsonObject, "fluid"));
 
-            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+            Fluid fluid = singularityRegistries.FLUIDS.getValue(fluidName);
 
             boolean flip = GsonHelper.getAsBoolean(jsonObject, "flip_gas", false);
             boolean coverIsMask = GsonHelper.getAsBoolean(jsonObject, "cover_is_mask", true);

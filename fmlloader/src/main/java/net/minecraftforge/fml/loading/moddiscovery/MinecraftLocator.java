@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.Config;
 import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
-import net.minecraftforge.forgespi.locating.ModFileFactory;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
+import net.minecraftsingularity.singularityspi.locating.IModLocator;
+import net.minecraftsingularity.singularityspi.locating.ModFileFactory;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
@@ -47,7 +47,7 @@ public final class MinecraftLocator extends AbstractModProvider implements IModL
         //mods.set("logoFile", "mcplogo.png");
         //mods.set("credits", "Mojang, deobfuscated by MCP");
         //mods.set("authors", "MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs");
-        mods.set("description", "The base Minecraft game, published by Mojang decompiled and deobfuscated by Forge");
+        mods.set("description", "The base Minecraft game, published by Mojang decompiled and deobfuscated by singularity");
         conf.set("mods", List.of(mods));
 
         var configWrapper = new NightConfigWrapper(conf);

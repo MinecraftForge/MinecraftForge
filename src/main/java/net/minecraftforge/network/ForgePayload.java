@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import java.util.function.Consumer;
 
@@ -17,18 +17,18 @@ import net.minecraft.network.protocol.login.custom.CustomQueryPayload;
 import net.minecraft.resources.Identifier;
 
 @ApiStatus.Internal
-public record ForgePayload (
+public record singularityPayload (
     Identifier id,
     @Nullable
     FriendlyByteBuf data,
     Consumer<FriendlyByteBuf> encoder
 ) implements CustomPacketPayload, CustomQueryPayload, CustomQueryAnswerPayload {
-    public static ForgePayload create(Identifier id, FriendlyByteBuf data) {
-        return new ForgePayload(id, data, buf -> buf.writeBytes(data.slice()));
+    public static singularityPayload create(Identifier id, FriendlyByteBuf data) {
+        return new singularityPayload(id, data, buf -> buf.writeBytes(data.slice()));
     }
 
-    public static ForgePayload create(Identifier id, Consumer<FriendlyByteBuf> encoder) {
-        return new ForgePayload(id, null, encoder);
+    public static singularityPayload create(Identifier id, Consumer<FriendlyByteBuf> encoder) {
+        return new singularityPayload(id, null, encoder);
     }
 
     @Override

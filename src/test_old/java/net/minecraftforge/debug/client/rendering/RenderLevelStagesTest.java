@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.client.event.RenderLevelStageEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod("render_level_stages_test")
 public class RenderLevelStagesTest

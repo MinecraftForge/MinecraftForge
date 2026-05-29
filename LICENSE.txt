@@ -1,4 +1,4 @@
-Unless noted below, Minecraft Forge, Forge Mod Loader, and all 
+Unless noted below, Minecraft singularity, singularity Mod Loader, and all 
 parts herein are licensed under the terms of the LGPL 2.1 found
 here http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt and 
 copied below.
@@ -11,21 +11,21 @@ A note on authorship:
 All source artifacts are property of their original author, with
 the exclusion of the contents of the patches directory and others
 copied from it from time to time. Authorship of the contents of
-the patches directory is retained by the Minecraft Forge project.
+the patches directory is retained by the Minecraft singularity project.
 This is because the patches are partially machine generated
-artifacts, and are changed heavily due to the way forge works.
+artifacts, and are changed heavily due to the way singularity works.
 Individual attribution within them is impossible.
 
 Consent:
-All contributions to Forge must consent to the release of any
-patch content to the Forge project.
+All contributions to singularity must consent to the release of any
+patch content to the singularity project.
 
 A note on infectivity:
-The LGPL is chosen specifically so that projects may depend on Forge
+The LGPL is chosen specifically so that projects may depend on singularity
 features without being infected with its license. That is the 
 purpose of the LGPL. Mods and others using this code via ordinary
 Java mechanics for referencing libraries are specifically not bound
-by Forge's license for the Mod code.
+by singularity's license for the Mod code.
 
 
 === MCP Data ===

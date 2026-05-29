@@ -1,24 +1,24 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.DualStackUtils;
-import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.ClientCommandHandler;
+import net.minecraftsingularity.client.ConfigScreenHandler;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fml.ModLoadingContext;
+import net.minecraftsingularity.fml.config.IConfigSpec;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.network.DualStackUtils;
+import net.minecraftsingularity.versions.singularity.singularityVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -43,13 +43,13 @@ public class MinecraftForge {
     public static final EventBusMigrationHelper EVENT_BUS = EventBusMigrationHelper.INSTANCE;
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker FORGE = MarkerManager.getMarker("FORGE");
+    private static final Marker singularity = MarkerManager.getMarker("singularity");
 
    /**
     * Method invoked by FML before any other mods are loaded.
     */
    public static void initialize() {
-       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
+       LOGGER.info(singularity,"MinecraftForge v{} Initialized", singularityVersion.getVersion());
 
        UsernameCache.load();
        if (FMLEnvironment.dist == Dist.CLIENT) ClientCommandHandler.init();

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.fluid;
+package net.minecraftsingularity.debug.fluid;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -14,25 +14,25 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.fluids.DispenseFluidContainer;
-import net.minecraftforge.fluids.FluidType;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.fluids.DispenseFluidContainer;
+import net.minecraftsingularity.fluids.FluidType;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.singularityFlowingFluid;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
@@ -55,13 +55,13 @@ public class NewFluidTest {
     public static final ResourceLocation FLUID_FLOWING = new ResourceLocation("minecraft:block/mushroom_stem");
     public static final ResourceLocation FLUID_OVERLAY = new ResourceLocation("minecraft:block/obsidian");
 
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, MODID);
-    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MODID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
+    public static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(singularityRegistries.Keys.FLUID_TYPES, MODID);
+    public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(singularityRegistries.FLUIDS, MODID);
 
-    private static ForgeFlowingFluid.Properties makeProperties() {
-        return new ForgeFlowingFluid.Properties(test_fluid_type, test_fluid, test_fluid_flowing)
+    private static singularityFlowingFluid.Properties makeProperties() {
+        return new singularityFlowingFluid.Properties(test_fluid_type, test_fluid, test_fluid_flowing)
                 .bucket(TEST_FLUID_BUCKET).block(test_fluid_block);
     }
 
@@ -94,10 +94,10 @@ public class NewFluidTest {
     });
 
     public static RegistryObject<FlowingFluid> test_fluid = FLUIDS.register("test_fluid", () ->
-            new ForgeFlowingFluid.Source(makeProperties())
+            new singularityFlowingFluid.Source(makeProperties())
     );
     public static RegistryObject<FlowingFluid> test_fluid_flowing = FLUIDS.register("test_fluid_flowing", () ->
-            new ForgeFlowingFluid.Flowing(makeProperties())
+            new singularityFlowingFluid.Flowing(makeProperties())
     );
 
     public static RegistryObject<LiquidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->

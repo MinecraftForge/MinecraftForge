@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraftsingularity.client.event.RegisterItemDecorationsEvent;
 
 @ApiStatus.Internal
 public final class ItemDecoratorHandler {

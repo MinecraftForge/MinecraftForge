@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -25,7 +25,7 @@ public class VersionSupportMatrix {
                     // 1.21.1 is compatible with 1.21
                     entry("languageloader.javafml", "51"),
                     entry("mod.minecraft",          "1.21"),
-                    entry("mod.forge",              "51.0.33")
+                    entry("mod.singularity",              "51.0.33")
             );
         } else {
             OVERRIDE_VERSIONS = Collections.emptyMap();

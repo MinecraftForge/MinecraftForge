@@ -1,10 +1,10 @@
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    id 'net.minecraftsingularity.licenser'
+    id 'net.minecraftsingularity.gradleutils'
     alias(libs.plugins.apt)
 }
 
@@ -32,7 +32,7 @@ java {
 tasks.named('jar', Jar) {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.forge.transformers',
+            'Automatic-Module-Name': 'net.minecraftsingularity.forge.transformers',
             'Forge-Module-Layer':    'boot'
         ] as LinkedHashMap)
         attributes([
@@ -41,7 +41,7 @@ tasks.named('jar', Jar) {
             'Specification-Version': '1',
             'Implementation-Title':  'Forge Transformers',
             'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
+            'Implementation-Version': singularity_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/forge/transformers/')
     }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.registries;
+package net.minecraftsingularity.debug.registries;
 
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -18,16 +18,16 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DataPackRegistryEvent;
-import net.minecraftforge.registries.DeferredRegisterData;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DataPackRegistryEvent;
+import net.minecraftsingularity.registries.DeferredRegisterData;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(NetworkDatapackRegistryTest.MODID)
 public class NetworkDatapackRegistryTest extends BaseTestMod {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -71,7 +71,7 @@ public class NetworkDatapackRegistryTest extends BaseTestMod {
 
     public static record DataObject(Identifier value) {
         public static final Codec<DataObject> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Identifier.CODEC.fieldOf("value").forGetter(DataObject::value)
+                Identifier.CODEC.fieldOf("value").singularitytter(DataObject::value)
             ).apply(instance, DataObject::new));
     }
 }

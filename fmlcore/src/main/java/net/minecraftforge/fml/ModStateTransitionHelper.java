@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,9 +19,9 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraftforge.fml.IModStateTransition.EventGenerator;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.fml.loading.progress.ProgressMeter;
+import net.minecraftsingularity.fml.IModStateTransition.EventGenerator;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.loading.progress.ProgressMeter;
 
 @ApiStatus.Internal
 final class ModStateTransitionHelper {

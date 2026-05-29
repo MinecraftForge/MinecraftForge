@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -39,7 +39,7 @@ public class LenientUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec
         return elementCodec;
     }
 
-    @Override // FORGE: Modified from decode() in BaseMapCodec
+    @Override // singularity: Modified from decode() in BaseMapCodec
     public <T> DataResult<Map<K, V>> decode(DynamicOps<T> ops, MapLike<T> input)
     {
         final ImmutableMap.Builder<K, V> read = ImmutableMap.builder();
@@ -53,7 +53,7 @@ public class LenientUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec
 
                     final DataResult<Pair<K, V>> entry = k.apply2stable(Pair::of, v);
                     entry.error().ifPresent(e -> failed.add(pair));
-                    entry.result().ifPresent(e -> read.put(e.getFirst(), e.getSecond())); // FORGE: This line moved outside the below apply2stable condition
+                    entry.result().ifPresent(e -> read.put(e.getFirst(), e.getSecond())); // singularity: This line moved outside the below apply2stable condition
                     return r.apply2stable((u, p) -> u, entry);
                 },
                 (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2)

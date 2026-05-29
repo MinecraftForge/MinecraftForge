@@ -1,22 +1,22 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import java.util.List;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.IModLoadingState;
-import net.minecraftforge.fml.IModStateProvider;
-import net.minecraftforge.fml.ModLoadingPhase;
-import net.minecraftforge.fml.ModLoadingState;
-import net.minecraftforge.fml.core.ModStateProvider;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftsingularity.common.capabilities.CapabilityManager;
+import net.minecraftsingularity.fml.IModLoadingState;
+import net.minecraftsingularity.fml.IModStateProvider;
+import net.minecraftsingularity.fml.ModLoadingPhase;
+import net.minecraftsingularity.fml.ModLoadingState;
+import net.minecraftsingularity.fml.core.ModStateProvider;
+import net.minecraftsingularity.network.NetworkRegistry;
+import net.minecraftsingularity.registries.GameData;
+import net.minecraftsingularity.registries.RegistryManager;
 
-public class ForgeStatesProvider implements IModStateProvider {
+public class singularityStatesProvider implements IModStateProvider {
     public static final ModLoadingState CREATE_REGISTRIES = gather("CREATE_REGISTRIES", ModStateProvider.CONSTRUCT, RegistryManager::postNewRegistryEvent);
     public static final ModLoadingState INJECT_CAPABILITIES = gather("INJECT_CAPABILITIES", CREATE_REGISTRIES).withInline(CapabilityManager::injectCapabilities);
     public static final ModLoadingState UNFREEZE_DATA = gather("UNFREEZE_DATA", INJECT_CAPABILITIES, GameData::unfreezeData);

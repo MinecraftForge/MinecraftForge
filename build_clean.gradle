@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'net.minecraftforge.gradle.patcher'
+    id 'net.minecraftsingularity.gradle.patcher'
 }
 
 evaluationDependsOn(':mcp')
@@ -69,5 +69,5 @@ tasks.named('genPatches').configure {
 
 tasks.named('extractRangeMap').configure {
     onlyIf { false }
-    tool = 'net.minecraftforge:Srg2Source:8.1.0:fatjar'
+    tool = 'net.minecraftsingularity:Srg2Source:8.1.0:fatjar'
 }

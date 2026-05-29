@@ -1,10 +1,10 @@
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    id 'net.minecraftsingularity.licenser'
+    id 'net.minecraftsingularity.gradleutils'
 }
 
 apply from: rootProject.file('build_shared.gradle')
@@ -24,7 +24,7 @@ dependencies {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.lowcodemod',
+            'Automatic-Module-Name': 'net.minecraftsingularity.lowcodemod',
             'FMLModType': 'LANGPROVIDER'
         ] as LinkedHashMap)
         attributes([
@@ -33,7 +33,7 @@ tasks.named('jar', Jar).configure {
             'Specification-Version': '1.0',
             'Implementation-Title':   project.name,
             'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION.split('\\.')[0]
+            'Implementation-Version': singularity_VERSION.split('\\.')[0]
         ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
     }
 }

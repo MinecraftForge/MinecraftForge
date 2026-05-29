@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.textures;
+package net.minecraftsingularity.client.textures;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
@@ -16,13 +16,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 /**
- * The "forge" section of texture metadata files (.mcmeta). Currently used only to specify custom
+ * The "singularity" section of texture metadata files (.mcmeta). Currently used only to specify custom
  * TextureAtlasSprite loaders.
  *
  * @see ITextureAtlasSpriteLoader
  */
-public record ForgeTextureMetadata(@Nullable ITextureAtlasSpriteLoader loader) {
-    public static final ForgeTextureMetadata EMPTY = new ForgeTextureMetadata(null);
+public record singularityTextureMetadata(@Nullable ITextureAtlasSpriteLoader loader) {
+    public static final singularityTextureMetadata EMPTY = new singularityTextureMetadata(null);
 
     private static final Codec<ITextureAtlasSpriteLoader> LOADER_CODEC = Codec.<ITextureAtlasSpriteLoader>stringResolver(
         loader -> {
@@ -32,16 +32,16 @@ public record ForgeTextureMetadata(@Nullable ITextureAtlasSpriteLoader loader) {
         name -> TextureAtlasSpriteLoaderManager.get(Identifier.parse(name))
     );
 
-    private static final Codec<ForgeTextureMetadata> CODEC = RecordCodecBuilder.create(i ->
+    private static final Codec<singularityTextureMetadata> CODEC = RecordCodecBuilder.create(i ->
         i.group(
-            LOADER_CODEC.fieldOf("loader").forGetter(ForgeTextureMetadata::loader)
-        ).apply(i, ForgeTextureMetadata::new)
+            LOADER_CODEC.fieldOf("loader").singularitytter(singularityTextureMetadata::loader)
+        ).apply(i, singularityTextureMetadata::new)
     );
 
 
-    public static final MetadataSectionType<ForgeTextureMetadata> TYPE = new MetadataSectionType<>("forge", CODEC);
+    public static final MetadataSectionType<singularityTextureMetadata> TYPE = new MetadataSectionType<>("singularity", CODEC);
 
-    public static ForgeTextureMetadata forResource(Resource resource) throws IOException {
+    public static singularityTextureMetadata forResource(Resource resource) throws IOException {
         return resource.metadata().getSection(TYPE).orElse(EMPTY);
     }
 }

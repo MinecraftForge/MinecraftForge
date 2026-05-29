@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.criterion;
+package net.minecraftsingularity.debug.gameplay.criterion;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -26,22 +26,22 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ForgeAdvancementProvider;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.common.data.singularityAdvancementProvider;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.event.level.BlockEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.util.List;
 
 @Mod(CriterionTest.MOD_ID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public final class CriterionTest extends BaseTestMod {
     public static final String MOD_ID = "criterion_test";
     private static final DeferredRegister<CriterionTrigger<?>> TRIGGERS = DeferredRegister.create(BuiltInRegistries.TRIGGER_TYPES.key(), MOD_ID);
@@ -120,7 +120,7 @@ public final class CriterionTest extends BaseTestMod {
         var STORY_ROOT = new AdvancementHolder(Identifier.fromNamespaceAndPath("minecraft", "story/root"), null);
 
         event.getGenerator().addProvider(true,
-            new ForgeAdvancementProvider(
+            new singularityAdvancementProvider(
                 event.getGenerator().getPackOutput(),
                 event.getLookupProvider(),
                 event.getExistingFileHelper(),

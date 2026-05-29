@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod;
 
 /**
  * Simple test to ensure custom game rules can be registered correctly and used in game.

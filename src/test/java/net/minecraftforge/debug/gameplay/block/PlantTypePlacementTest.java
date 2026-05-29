@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.block;
+package net.minecraftsingularity.debug.gameplay.block;
 
 import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
@@ -15,12 +15,12 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.IPlantable;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import static net.minecraft.world.level.block.Blocks.*;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(PlantTypePlacementTest.MOD_ID)
 public class PlantTypePlacementTest extends BaseTestMod {
     static final String MOD_ID = "plant_type_placement";
@@ -116,7 +116,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
     }
 
     private void todo(GameTestHelper helper) {
-        // TODO: [Forge][Plant][Test] Implement the final tests for some vanilla blocks
+        // TODO: [singularity][Plant][Test] Implement the final tests for some vanilla blocks
         //     DoublePlantBlock = UPPER == self LOWER == VEGITATION
         //         SmallDripleafBlock = UPPER = self LOWER == SMALL_DRIPLEAF_PLACEABLE || water_source || VEGITATION
         //         TallFlowerBlock
@@ -153,7 +153,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty5x4x4") // SUPPORTS_BAMBOO = sand(3) + substrate() + extra(4) = 17
+    @GameTest(structure = "singularity:empty5x4x4") // SUPPORTS_BAMBOO = sand(3) + substrate() + extra(4) = 17
     public void bamboo(GameTestHelper helper) {
         var plants = plants(BambooStalkBlock.class);
         var soils = join(sand(helper), substrate(helper), List.of(BAMBOO, BAMBOO_SAPLING, GRAVEL, SUSPICIOUS_GRAVEL));
@@ -182,7 +182,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty4x4x5") // sand(3) + cactus * 2 for spacing + we need a 1 block border because BARRIOR is solid
+    @GameTest(structure = "singularity:empty4x4x5") // sand(3) + cactus * 2 for spacing + we need a 1 block border because BARRIOR is solid
     public void cactus(GameTestHelper helper) {
         // CactusBlock = (Horizontal != solid && !Fluid.LAVA) && (Tag.SAND, CACTUS) && !above().liquid()
         var plants = plants(CactusBlock.class);
@@ -206,12 +206,12 @@ public class PlantTypePlacementTest extends BaseTestMod {
             canSurvive(helper, pos.above(3), plant);
         }
 
-        // TODO: [Forge][Plants][Test] Test solid/lava next to cactus
+        // TODO: [singularity][Plants][Test] Test solid/lava next to cactus
 
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty3x4x3") // Need 4 high for CACTUS soil
+    @GameTest(structure = "singularity:empty3x4x3") // Need 4 high for CACTUS soil
     public void cactus_flower(GameTestHelper helper) {
         helper.makeFloor(STONE, 0);
         helper.makeFloor(SAND, 1);
@@ -226,14 +226,14 @@ public class PlantTypePlacementTest extends BaseTestMod {
             helper.setAndAssertBlock(cactus, CACTUS);
             canSurvive(helper, cactus.above(), plant);
 
-            //TODO: [Forge][Plants][Test] Center Support for Cactus Flower
+            //TODO: [singularity][Plants][Test] Center Support for Cactus Flower
 
             pos.east(3);
         }
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty13x3x9") // SUPPORTS_SUGAR_CANE(substrate() + sand(3)) * (water(2) + FROSTED_ICE)
+    @GameTest(structure = "singularity:empty13x3x9") // SUPPORTS_SUGAR_CANE(substrate() + sand(3)) * (water(2) + FROSTED_ICE)
     public void sugarcane(GameTestHelper helper) {
         // SugarCaneBlock = DIRT || SAND && Horizontal (Fluid == WATER || FROSTED_ICE)
         var plants = plants(SugarCaneBlock.class);
@@ -268,7 +268,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty11x3x33") // vegetation(11) * 32 plants
+    @GameTest(structure = "singularity:empty11x3x33") // vegetation(11) * 32 plants
     public void vegetation(GameTestHelper helper) {
         var plants = plants(
             BushBlock.class,           // 1
@@ -287,7 +287,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty16x3x8")
+    @GameTest(structure = "singularity:empty16x3x8")
     public void simple(GameTestHelper helper) {
         var pos = iterate(helper, BlockPos.ZERO, plants(AzaleaBlock.class), supportsAzalea(helper)); // 12
         pos = iterate(helper, pos, plants(WitherRoseBlock.class), supportsWitherRose(helper)); // 14
@@ -300,7 +300,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty3x3x4") // 4 stems + 6 crops
+    @GameTest(structure = "singularity:empty3x3x4") // 4 stems + 6 crops
     public void farmland(GameTestHelper helper) {
         var plants = plants(
             AttachedStemBlock.class, // 2
@@ -316,14 +316,14 @@ public class PlantTypePlacementTest extends BaseTestMod {
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty32x3x3") // 32 * plants(3)
+    @GameTest(structure = "singularity:empty32x3x3") // 32 * plants(3)
     public void dry_vegitation(GameTestHelper helper) {
         var plants = plants(DryVegetationBlock.class, ShortDryGrassBlock.class, TallDryGrassBlock.class);
         iterate(helper, plants, supportsDryVegetation(helper));
         helper.succeed();
     }
 
-    @GameTest(structure = "forge:empty11x3x3") // (10 dirt + 2 nylium + 3 extra) * 2 plants
+    @GameTest(structure = "singularity:empty11x3x3") // (10 dirt + 2 nylium + 3 extra) * 2 plants
     public void fungus(GameTestHelper helper) {
         // FUNGUS PlantType self explanatory
         var plants = List.of(WARPED_FUNGUS, CRIMSON_FUNGUS);
@@ -343,7 +343,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
     // 6 on X to allow Dark area, and 2 extra rows to test the Tag
     // 4 on Y to allow 2 spaces in the dark for the bad test (FLOOR GLASS PLANT CEILING)
     // 4 on Z to allow 2 spaces in the dark area to test good and bad (WALL GOOD BAD WALL)
-    @GameTest(structure = "forge:empty16x4x16")
+    @GameTest(structure = "singularity:empty16x4x16")
     public void mushroom(GameTestHelper helper) {
         // MushroomBlock = (SOLID && Light < 13) || Tag.MUSHROOM_GROW_BLOCK
         var plants = plants(MushroomBlock.class);

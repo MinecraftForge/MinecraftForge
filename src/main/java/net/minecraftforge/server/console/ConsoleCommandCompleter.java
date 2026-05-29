@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.console;
+package net.minecraftsingularity.server.console;
 
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.ParseResults;

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 /*
-package net.minecraftforge.items.wrapper;
+package net.minecraftsingularity.items.wrapper;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -18,13 +18,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftsingularity.common.capabilities.Capability;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.items.IItemHandler;
+import net.minecraftsingularity.items.IItemHandlerModifiable;
+import net.minecraftsingularity.items.ItemHandlerHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -208,7 +208,7 @@ public class ShulkerItemStackInvWrapper implements IItemHandlerModifiable, ICapa
     @Override
     @NotNull
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return ForgeCapabilities.ITEM_HANDLER.orEmpty(cap, this.holder);
+        return singularityCapabilities.ITEM_HANDLER.orEmpty(cap, this.holder);
     }
 }
 */

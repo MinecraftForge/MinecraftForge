@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.event.lifecycle;
+package net.minecraftsingularity.fml.event.lifecycle;
 
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.DeferredWorkQueue;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModLoadingStage;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

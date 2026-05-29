@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.loot;
+package net.minecraftsingularity.common.loot;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -35,10 +35,10 @@ public abstract class LootModifier implements IGlobalLootModifier {
      * }
      * </p>
      * Otherwise can follow this with #and() to add more fields.
-     * Examples: Forge Test Subclasses or {@link BendingTrunkPlacer#CODEC}
+     * Examples: singularity Test Subclasses or {@link BendingTrunkPlacer#CODEC}
      */
     protected static <T extends LootModifier> Products.P1<RecordCodecBuilder.Mu<T>, LootItemCondition[]> codecStart(RecordCodecBuilder.Instance<T> instance) {
-        return instance.group(LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(lm -> lm.conditions));
+        return instance.group(LOOT_CONDITIONS_CODEC.fieldOf("conditions").singularitytter(lm -> lm.conditions));
     }
 
     /**

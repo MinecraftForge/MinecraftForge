@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.tasks;
+package net.minecraftsingularity.network.tasks;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,18 +14,18 @@ import org.apache.logging.log4j.MarkerManager;
 import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.config.ConfigurationTaskContext;
-import net.minecraftforge.network.config.SimpleConfigurationTask;
-import net.minecraftforge.network.packets.ConfigData;
+import net.minecraftsingularity.fml.config.ConfigTracker;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.config.ConfigurationTaskContext;
+import net.minecraftsingularity.network.config.SimpleConfigurationTask;
+import net.minecraftsingularity.network.packets.ConfigData;
 
 @ApiStatus.Internal
 class SyncConfigTask extends SimpleConfigurationTask {
-    static final Type TYPE = new Type("forge:sync_configs");
+    static final Type TYPE = new Type("singularity:sync_configs");
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker MARKER = MarkerManager.getMarker("FORGE_SYNC_CONFIG");
+    private static final Marker MARKER = MarkerManager.getMarker("singularity_SYNC_CONFIG");
 
     SyncConfigTask() {
         super(TYPE, SyncConfigTask::run);

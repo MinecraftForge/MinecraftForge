@@ -1,13 +1,13 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.raid.Raid;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod("raid_enum_test")
 public class RaidEnumTest 

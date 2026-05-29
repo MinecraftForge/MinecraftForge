@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.lowcodemod;
+package net.minecraftsingularity.fml.lowcodemod;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftsingularity.fml.IExtensionPoint;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
 import org.slf4j.Logger;
 
 public class LowCodeModContainer extends ModContainer {

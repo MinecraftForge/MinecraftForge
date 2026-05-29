@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server;
+package net.minecraftsingularity.server;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -15,7 +15,7 @@ import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.IoSupplier;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.common.ForgeI18n;
+import net.minecraftsingularity.common.singularityI18n;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,17 +100,17 @@ public class LanguageHook {
     public static void loadForgeAndMCLangs() {
         modTable = new HashMap<>(5000);
         final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
-        final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
+        final InputStream singularity = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/singularity/lang/en_us.json");
         loadLocaleData(mc);
-        loadLocaleData(forge);
+        loadLocaleData(singularity);
         CAPTURED_TABLES.forEach(t -> t.putAll(modTable));
-        ForgeI18n.loadLanguageData(modTable);
+        singularityI18n.loadLanguageData(modTable);
     }
 
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         loadLanguage("en_us", server);
         CAPTURED_TABLES.forEach(t->t.putAll(modTable));
-        ForgeI18n.loadLanguageData(modTable);
+        singularityI18n.loadLanguageData(modTable);
     }
 }

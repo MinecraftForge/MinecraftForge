@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.test;
+package net.minecraftsingularity.test;
 
 import com.mojang.datafixers.util.Unit;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftsingularity.common.util.LazyOptional;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

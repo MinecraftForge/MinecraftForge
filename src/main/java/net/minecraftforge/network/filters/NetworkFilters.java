@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.filters;
+package net.minecraftsingularity.network.filters;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -20,8 +20,8 @@ public class NetworkFilters {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Map<String, Function<Connection, VanillaPacketFilter>> instances = ImmutableMap.of(
-        "forge:vanilla_filter", manager -> new VanillaConnectionNetworkFilter()/*,
-        "forge:forge_fixes", ForgeConnectionNetworkFilter::new*/
+        "singularity:vanilla_filter", manager -> new VanillaConnectionNetworkFilter()/*,
+        "singularity:singularity_fixes", singularityConnectionNetworkFilter::new*/
     );
 
     public static void injectIfNecessary(Connection manager) {

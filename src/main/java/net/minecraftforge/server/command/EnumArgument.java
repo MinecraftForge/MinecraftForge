@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     private static final Dynamic2CommandExceptionType INVALID_ENUM = new Dynamic2CommandExceptionType(
-            (found, constants) -> Component.translatable("commands.forge.arguments.enum.invalid", constants, found));
+            (found, constants) -> Component.translatable("commands.singularity.arguments.enum.invalid", constants, found));
     private final Class<T> enumClass;
 
     public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {

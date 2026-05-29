@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity;
+package net.minecraftsingularity.event.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,10 @@ import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.listener.Priority;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.listener.Priority;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -70,17 +70,17 @@ public final class SpawnPlacementRegisterEvent extends MutableEvent {
     public <T extends Entity> void register(EntityType<T> entityType, @Nullable SpawnPlacementType placementType, @Nullable Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<T> predicate, Operation operation) {
         if (!map.containsKey(entityType)) {
             if (placementType == null) {
-                throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull placement type! Entity Type: " + ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+                throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull placement type! Entity Type: " + singularityRegistries.ENTITY_TYPES.getKey(entityType));
             }
 
             if (heightmap == null) {
-                throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull heightmap type! Entity Type: "+ ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+                throw new NullPointerException("Registering a new Spawn Predicate requires a nonnull heightmap type! Entity Type: "+ singularityRegistries.ENTITY_TYPES.getKey(entityType));
             }
 
             map.put(entityType, new MergedSpawnPredicate<>(predicate, placementType, heightmap));
         } else {
             if (operation != Operation.REPLACE && (heightmap != null || placementType != null)) {
-                throw new IllegalStateException("Nonnull heightmap types or spawn placement types may only be used with the REPLACE operation. Entity Type: "+ ForgeRegistries.ENTITY_TYPES.getKey(entityType));
+                throw new IllegalStateException("Nonnull heightmap types or spawn placement types may only be used with the REPLACE operation. Entity Type: "+ singularityRegistries.ENTITY_TYPES.getKey(entityType));
             }
 
             ((MergedSpawnPredicate<T>) map.get(entityType)).merge(operation, predicate, placementType, heightmap);

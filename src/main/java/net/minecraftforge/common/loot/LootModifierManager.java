@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.loot;
+package net.minecraftsingularity.common.loot;
 
 import java.io.IOException;
 import java.util.*;
@@ -43,10 +43,10 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener<JsonEl
 
     @Override
     protected Map<Identifier, JsonElement> prepare(ResourceManager resources, ProfilerFiller profilerFiller) {
-        var path = Identifier.fromNamespaceAndPath("forge", FOLDER + "/global_loot_modifiers.json");
+        var path = Identifier.fromNamespaceAndPath("singularity", FOLDER + "/global_loot_modifiers.json");
 
         List<Identifier> toLoad = new ArrayList<>();
-        //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
+        //read in all data files from singularity:loot_modifiers/global_loot_modifiers in order to do layering
         for (var resource : resources.getResourceStack(path)) {
             try (var reader = resource.openAsReader()) {
                 var json = GsonHelper.fromJson(GSON, reader, JsonObject.class);

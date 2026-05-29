@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.data;
+package net.minecraftsingularity.debug.gameplay.data;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistrySetBuilder;
@@ -21,14 +21,14 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.placement.*;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -40,8 +40,8 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     // Vanilla registry entries
     public static final ResourceKey<ConfiguredFeature<?, ?>> MOSSY_STONE_FEATURE = ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.fromNamespaceAndPath(MOD_ID, "mossy_stone"));
     public static final ResourceKey<PlacedFeature> MOSSY_STONE_PLACEMENT = ResourceKey.create(Registries.PLACED_FEATURE, Identifier.fromNamespaceAndPath(MOD_ID, "mossy_stone"));
-    // Forge registry entries
-    public static final ResourceKey<BiomeModifier> MOSSY_STONE_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(MOD_ID, "mossy_stone_modifier"));
+    // singularity registry entries
+    public static final ResourceKey<BiomeModifier> MOSSY_STONE_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, Identifier.fromNamespaceAndPath(MOD_ID, "mossy_stone_modifier"));
     // The ore targets
     public static final Supplier<List<OreConfiguration.TargetBlockState>> MOSSY_STONE_TARGETS = () -> {
         return List.of(
@@ -61,17 +61,17 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
         /* Adds the DataPackBuiltinEntriesProvider to the data generator
          * If the registry is not correctly patched (it does only include the vanilla registries), the provider will fail with an exception
          * Reason: The RegistrySetBuilder creates a full patched registry including a lookup for all registries
-         *         For the lookup a cloner is needed, which is not available for forge registries
+         *         For the lookup a cloner is needed, which is not available for singularity registries
          */
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, event.getLookupProvider(), this.createProvider(), Set.of(MOD_ID)));
     }
 
-    // Creates the registry builder for 2 vanilla and 1 forge registry
+    // Creates the registry builder for 2 vanilla and 1 singularity registry
     private RegistrySetBuilder createProvider() {
         var builder = new RegistrySetBuilder();
         builder.add(Registries.CONFIGURED_FEATURE, c -> this.createFeature(c));
         builder.add(Registries.PLACED_FEATURE, this::createPlacement);
-        builder.add(ForgeRegistries.Keys.BIOME_MODIFIERS, this::createModifier);
+        builder.add(singularityRegistries.Keys.BIOME_MODIFIERS, this::createModifier);
         return builder;
     }
 
@@ -96,7 +96,7 @@ public class DatapackBuiltinEntriesProviderTest extends BaseTestMod {
     private void createModifier(BootstrapContext<BiomeModifier> context) {
         var biomeRegistry = context.lookup(Registries.BIOME);
         var placementRegistry = context.lookup(Registries.PLACED_FEATURE);
-        context.register(MOSSY_STONE_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+        context.register(MOSSY_STONE_MODIFIER, new singularityBiomeModifiers.AddFeaturesBiomeModifier(
             biomeRegistry.getOrThrow(BiomeTags.IS_OVERWORLD),
             HolderSet.direct(placementRegistry.getOrThrow(MOSSY_STONE_PLACEMENT)),
             GenerationStep.Decoration.UNDERGROUND_ORES

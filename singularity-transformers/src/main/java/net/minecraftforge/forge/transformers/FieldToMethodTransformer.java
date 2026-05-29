@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.transformers;
+package net.minecraftsingularity.singularity.transformers;
 
 import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.ITransformerVotingContext;
@@ -29,7 +29,7 @@ import java.util.Set;
 record FieldToMethodTransformer(String className, Map<String, String> fields) implements ITransformer<ClassNode> {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    // TODO [Forge][Transformer] Make this properly data driven or configurable.
+    // TODO [singularity][Transformer] Make this properly data driven or configurable.
     //      It was hard-coded like this before when using JS CoreMods, though.
     static final Map<String, Map<String, String>> TARGETS = Map.of(
         "net.minecraft.world.level.biome.Biome",
@@ -117,7 +117,7 @@ record FieldToMethodTransformer(String className, Map<String, String> fields) im
      * @param classNode  the class to rewrite the accesses in
      * @param fieldName  the field accesses should be redirected to
      * @param methodName the name of the method to redirect accesses through
-     * @apiNote This method was written as a special use case for Forge. It is not recommended to use this method
+     * @apiNote This method was written as a special use case for singularity. It is not recommended to use this method
      *     unless you know what you are doing.
      */
     private static void redirectFieldToMethod(final ClassNode classNode, final String fieldName, final String methodName) {

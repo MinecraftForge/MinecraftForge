@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.ingredients;
+package net.minecraftsingularity.common.crafting.ingredients;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -76,8 +76,8 @@ public class DifferenceIngredient extends AbstractIngredient {
 
     public static final MapCodec<DifferenceIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
-            Ingredient.CODEC.fieldOf("base").forGetter(i -> i.base),
-            Ingredient.CODEC.fieldOf("subtracted").forGetter(i -> i.subtracted)
+            Ingredient.CODEC.fieldOf("base").singularitytter(i -> i.base),
+            Ingredient.CODEC.fieldOf("subtracted").singularitytter(i -> i.subtracted)
         ).apply(builder, DifferenceIngredient::new)
     );
 

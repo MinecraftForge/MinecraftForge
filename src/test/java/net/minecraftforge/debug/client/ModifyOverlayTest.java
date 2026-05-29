@@ -1,42 +1,42 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
-import net.minecraftforge.client.gui.overlay.ForgeLayer;
-import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
-import net.minecraftforge.common.extensions.IForgeGameTestHelper;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.client.event.AddGuiOverlayLayersEvent;
+import net.minecraftsingularity.client.gui.overlay.singularityLayer;
+import net.minecraftsingularity.client.gui.overlay.singularityLayeredDraw;
+import net.minecraftsingularity.common.extensions.IForgeGameTestHelper;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 
-import static net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.*;
+import static net.minecraftsingularity.client.gui.overlay.singularityLayeredDraw.*;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(ModifyOverlayTest.MODID)
 public class ModifyOverlayTest extends BaseTestMod {
     public static final String MODID = "modify_overlay_test";
 
     private static final Identifier myStackName = name("my_stack_name");
-    private static final ForgeLayeredDraw myLayerStack = new ForgeLayeredDraw(myStackName);
+    private static final singularityLayeredDraw myLayerStack = new singularityLayeredDraw(myStackName);
 
-    private static final ForgeLayer notAddedLayer = (gg, tr) -> {};
-    private static final ForgeLayer layerA = (gg,tr) -> {};
+    private static final singularityLayer notAddedLayer = (gg, tr) -> {};
+    private static final singularityLayer layerA = (gg,tr) -> {};
     private static final Identifier layerAName = name("layer_a");
-    private static final ForgeLayer layerB = (gg,tr) -> {};
+    private static final singularityLayer layerB = (gg,tr) -> {};
     private static final Identifier layerBName = name("layer_b");
-    private static final ForgeLayer layerC = (gg,tr) -> {};
+    private static final singularityLayer layerC = (gg,tr) -> {};
     private static final Identifier layerCName = name("layer_c");
 
 
@@ -45,7 +45,7 @@ public class ModifyOverlayTest extends BaseTestMod {
     private static final IForgeGameTestHelper.BoolFlag enableConditionFlag = new IForgeGameTestHelper.BoolFlag("en_cond_flag");
     private static final IForgeGameTestHelper.BoolFlag enableConditionStackFlag = new IForgeGameTestHelper.BoolFlag("en_cond_stack_flag");
 
-    private static ForgeLayeredDraw drawStack;
+    private static singularityLayeredDraw drawStack;
 
     public ModifyOverlayTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
@@ -55,7 +55,7 @@ public class ModifyOverlayTest extends BaseTestMod {
     @GameTest
     public static void not_present_in_stack(GameTestHelper helper) {
         // Test that we can't order against non-existent layers.
-        List<ForgeLayer> internalLayersList = null;
+        List<singularityLayer> internalLayersList = null;
         try {
             internalLayersList = getInternalLayersList(drawStack);
         } catch (Exception e) {
@@ -81,17 +81,17 @@ public class ModifyOverlayTest extends BaseTestMod {
     @GameTest
     public static void ordered_layers(GameTestHelper helper) {
         // Test that layers are in the correct order.
-        List<ForgeLayer> internalLayersList = null;
-        Map<Identifier, ForgeLayer> check = null;
+        List<singularityLayer> internalLayersList = null;
+        Map<Identifier, singularityLayer> check = null;
         try {
             Class<?> cls = drawStack.getClass();
             var field = cls.getDeclaredField("subLayerStacks");
             var field1 = cls.getDeclaredField("namedLayers");
             field.setAccessible(true);
             field1.setAccessible(true);
-            Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>> VROOT = ((Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>>) field.get(drawStack));
-            var PSS = ((ForgeLayeredDraw) VROOT.get(PRE_SLEEP_STACK).getKey());
-            check = ((Map<Identifier, ForgeLayer>) field1.get(PSS));
+            Map<Identifier, Map.Entry<singularityLayeredDraw, BooleanSupplier>> VROOT = ((Map<Identifier, Map.Entry<singularityLayeredDraw, BooleanSupplier>>) field.get(drawStack));
+            var PSS = ((singularityLayeredDraw) VROOT.get(PRE_SLEEP_STACK).getKey());
+            check = ((Map<Identifier, singularityLayer>) field1.get(PSS));
             internalLayersList = getInternalLayersList(PSS);
         } catch (Exception e) {
             helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
@@ -160,10 +160,10 @@ public class ModifyOverlayTest extends BaseTestMod {
     }
 
     @SuppressWarnings("unchecked")
-    private static List<ForgeLayer> getInternalLayersList(ForgeLayeredDraw stack) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
+    private static List<singularityLayer> getInternalLayersList(singularityLayeredDraw stack) throws ClassCastException, NoSuchFieldException, IllegalAccessException {
         Class<?> cls = stack.getClass();
         var layersField = cls.getDeclaredField("bakedLayers");
         layersField.setAccessible(true);
-        return (List<ForgeLayer>) layersField.get(stack);
+        return (List<singularityLayer>) layersField.get(stack);
     }
 }

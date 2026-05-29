@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.crafting;
+package net.minecraftsingularity.debug.gameplay.crafting;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.HolderLookup;
@@ -35,19 +35,19 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.crafting.SimpleCraftingContainer;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.common.crafting.ingredients.IIngredientBuilder;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.util.INBTBuilder;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.crafting.SimpleCraftingContainer;
+import net.minecraftsingularity.common.crafting.conditions.IConditionBuilder;
+import net.minecraftsingularity.common.crafting.ingredients.IIngredientBuilder;
+import net.minecraftsingularity.common.data.BlockTagsProvider;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.common.util.INBTBuilder;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(CustomIngredientsTest.MODID)
 public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
     static final String MODID = "custom_ingredients";

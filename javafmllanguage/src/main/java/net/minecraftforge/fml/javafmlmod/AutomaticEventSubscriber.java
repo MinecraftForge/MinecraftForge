@@ -1,31 +1,31 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.javafmlmod;
+package net.minecraftsingularity.fml.javafmlmod;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.eventbus.api.listener.EventListener;
-import net.minecraftforge.eventbus.api.listener.ObjBooleanBiConsumer;
-import net.minecraftforge.eventbus.api.listener.Priority;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.eventbus.internal.Event;
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.IModBusEvent;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
-import net.minecraftforge.forgespi.language.ModFileScanData.EnumData;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.unsafe.UnsafeHacks;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.eventbus.api.listener.EventListener;
+import net.minecraftsingularity.eventbus.api.listener.ObjBooleanBiConsumer;
+import net.minecraftsingularity.eventbus.api.listener.Priority;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.eventbus.internal.Event;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.fml.event.IModBusEvent;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData.AnnotationData;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData.EnumData;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.unsafe.UnsafeHacks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -273,9 +273,9 @@ public final class AutomaticEventSubscriber {
                 String solution = "To fix this, remove the bus param from your @EventBusSubscriber annotation or move this event listener to another class.";
                 var isDefaultBusGroup = busGroup == BusGroup.DEFAULT;
                 var isModBusEvent = IModBusEvent.class.isAssignableFrom(eventType);
-                if (isDefaultBusGroup && isModBusEvent) { // requested forge bus and has IModBusEvent
+                if (isDefaultBusGroup && isModBusEvent) { // requested singularity bus and has IModBusEvent
                     throw fail(method, "Event type " + eventType.getName()
-                            + " is on the mod BusGroup but you are asking to register it on the default BusGroup (BusGroup.DEFAULT/EventBusSubscriber.Bus.FORGE). "
+                            + " is on the mod BusGroup but you are asking to register it on the default BusGroup (BusGroup.DEFAULT/EventBusSubscriber.Bus.singularity). "
                             + solution);
                 } else if (!isDefaultBusGroup && !isModBusEvent) { // requested mod bus and does not have IModBusEvent
                     throw fail(method, "Event type " + eventType.getName()

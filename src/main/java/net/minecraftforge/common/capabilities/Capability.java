@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftsingularity.common.capabilities;
 
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftsingularity.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

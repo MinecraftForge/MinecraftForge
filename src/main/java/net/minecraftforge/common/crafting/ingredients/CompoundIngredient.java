@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.ingredients;
+package net.minecraftsingularity.common.crafting.ingredients;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public class CompoundIngredient extends AbstractIngredient {
 
     public static final MapCodec<CompoundIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
-            Ingredient.CODEC.listOf().fieldOf("children").forGetter(i -> i.children)
+            Ingredient.CODEC.listOf().fieldOf("children").singularitytter(i -> i.children)
         ).apply(builder, CompoundIngredient::new)
     );
 

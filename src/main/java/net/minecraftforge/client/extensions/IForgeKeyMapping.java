@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.extensions;
+package net.minecraftsingularity.client.extensions;
 
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraftforge.client.settings.IKeyConflictContext;
-import net.minecraftforge.client.settings.KeyModifier;
+import net.minecraftsingularity.client.settings.IKeyConflictContext;
+import net.minecraftsingularity.client.settings.KeyModifier;
 import org.jetbrains.annotations.NotNull;
 
 /**

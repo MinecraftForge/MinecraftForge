@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids.capability;
+package net.minecraftsingularity.fluids.capability;
 
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
-import net.minecraftforge.fluids.*;
+import net.minecraftsingularity.common.capabilities.AutoRegisterCapability;
+import net.minecraftsingularity.fluids.*;
 import org.jetbrains.annotations.NotNull;
 
 /**

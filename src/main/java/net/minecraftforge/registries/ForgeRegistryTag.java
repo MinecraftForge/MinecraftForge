@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.util.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.registries.tags.ITag;
+import net.minecraftsingularity.registries.tags.ITag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 
-class ForgeRegistryTag<V> implements ITag<V>
+class singularityRegistryTag<V> implements ITag<V>
 {
     private final TagKey<V> key;
     @Nullable
@@ -28,7 +28,7 @@ class ForgeRegistryTag<V> implements ITag<V>
     @Nullable
     private List<V> contents;
 
-    ForgeRegistryTag(TagKey<V> key)
+    singularityRegistryTag(TagKey<V> key)
     {
         this.key = key;
     }

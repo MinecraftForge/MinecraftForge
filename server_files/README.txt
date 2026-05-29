@@ -1,4 +1,4 @@
-If you need help with your Forge server, join our Discord or forums:
+If you need help with your singularity server, join our Discord or forums:
 - https://discord.minecraftforge.net
 - https://forums.minecraftforge.net
 
@@ -19,10 +19,10 @@ Hosting providers
 -----------------
 The steps will vary depending on your hosting provider and what panel they use.
 
-Some providers require you to install Forge through an option in their panel, others require you to upload the files
-yourself and select a jar file. It's recommended to install Forge through the panel if possible, as it'll be easier.
+Some providers require you to install singularity through an option in their panel, others require you to upload the files
+yourself and select a jar file. It's recommended to install singularity through the panel if possible, as it'll be easier.
 
-If you need to select a jar file, upload your Forge server install (all files in the folder this readme is in) and
+If you need to select a jar file, upload your singularity server install (all files in the folder this readme is in) and
 select the shim jar file.
 
 If you're unsure, contact your hosting provider's or server panel's support.
@@ -31,7 +31,7 @@ Performance tuning
 ==================
 Here are some tips and advice to improve server performance:
 
-- Use the latest version of MC, Forge and mods when possible. Newer versions usually have performance improvements.
+- Use the latest version of MC, singularity and mods when possible. Newer versions usually have performance improvements.
 
 - Turn down the view distance and simulation distance in the server.properties file. Simulation distance should be the
   same as or marginally lower than view distance.

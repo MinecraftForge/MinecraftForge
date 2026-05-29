@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple.handler;
+package net.minecraftsingularity.network.simple.handler;
 
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
 
 /**
  * Interface that all packets must implement if using the
- * {@link net.minecraftforge.network.SimpleChannel#protocol(io.netty.util.AttributeKey,net.minecraftforge.network.NetworkProtocol) SimpleChannel.protocol(AttributeKey, NetworkProtocol)}
+ * {@link net.minecraftsingularity.network.SimpleChannel#protocol(io.netty.util.AttributeKey,net.minecraftsingularity.network.NetworkProtocol) SimpleChannel.protocol(AttributeKey, NetworkProtocol)}
  *  function.
  *
  * @param <C> The type of the context object

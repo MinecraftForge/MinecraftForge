@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import java.util.Random;
 
@@ -14,15 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
-import net.minecraftforge.client.textures.ForgeTextureMetadata;
-import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.client.event.RegisterTextureAtlasSpriteLoadersEvent;
+import net.minecraftsingularity.client.textures.singularityTextureMetadata;
+import net.minecraftsingularity.client.textures.ITextureAtlasSpriteLoader;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 public class CustomTASTest {
     private static final boolean ENABLED = true;
     static final String MOD_ID = "custom_tas_test";
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MOD_ID);
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test_item", () -> new Item(new Item.Properties()));
 
     public CustomTASTest() {
@@ -47,11 +47,11 @@ public class CustomTASTest {
 
     private static class TasLoader implements ITextureAtlasSpriteLoader {
         @Override
-        public SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, ResourceMetadata meta, ForgeTextureMetadata forgeMeta) {
+        public SpriteContents loadContents(ResourceLocation name, Resource resource, FrameSize frameSize, NativeImage image, ResourceMetadata meta, singularityTextureMetadata singularityMeta) {
             final class TASSpriteContents extends SpriteContents {
 
-                public TASSpriteContents(ResourceLocation name, FrameSize size, NativeImage image, ResourceMetadata meta, @Nullable ForgeTextureMetadata forgeMeta) {
-                    super(name, size, image, meta, forgeMeta);
+                public TASSpriteContents(ResourceLocation name, FrameSize size, NativeImage image, ResourceMetadata meta, @Nullable singularityTextureMetadata singularityMeta) {
+                    super(name, size, image, meta, singularityMeta);
                 }
 
                 @Override
@@ -75,7 +75,7 @@ public class CustomTASTest {
                 }
             }
 
-            return new TASSpriteContents(name, frameSize, image, meta, forgeMeta);
+            return new TASSpriteContents(name, frameSize, image, meta, singularityMeta);
         }
 
         @Override

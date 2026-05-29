@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import java.io.IOException;
 import java.net.URI;
@@ -119,57 +119,57 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraftforge.common.crafting.conditions.ConditionCodec;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
-import net.minecraftforge.common.util.*;
-import net.minecraftforge.entity.IEntityAdditionalSpawnData;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.GrindstoneEvent;
-import net.minecraftforge.event.ModMismatchEvent;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.RegisterStructureConversionsEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.MonsterDisguiseEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingBreatheEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDrownEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingMakeBrainEvent;
-import net.minecraftforge.event.entity.living.LivingUseTotemEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.ForgePayload;
-import net.minecraftforge.network.NetworkContext;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.packets.SpawnEntity;
-import net.minecraftforge.resource.ResourcePackLoader;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftsingularity.common.crafting.conditions.ConditionCodec;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftsingularity.common.util.*;
+import net.minecraftsingularity.entity.IEntityAdditionalSpawnData;
+import net.minecraftsingularity.event.AnvilUpdateEvent;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.event.GrindstoneEvent;
+import net.minecraftsingularity.event.ModMismatchEvent;
+import net.minecraftsingularity.event.ServerChatEvent;
+import net.minecraftsingularity.event.RegisterStructureConversionsEvent;
+import net.minecraftsingularity.event.entity.EntityAttributeCreationEvent;
+import net.minecraftsingularity.event.entity.EntityAttributeModificationEvent;
+import net.minecraftsingularity.event.entity.item.ItemTossEvent;
+import net.minecraftsingularity.event.entity.living.MonsterDisguiseEvent;
+import net.minecraftsingularity.event.entity.living.LivingAttackEvent;
+import net.minecraftsingularity.event.entity.living.LivingBreatheEvent;
+import net.minecraftsingularity.event.entity.living.LivingDamageEvent;
+import net.minecraftsingularity.event.entity.living.LivingDrownEvent;
+import net.minecraftsingularity.event.entity.living.LivingEvent;
+import net.minecraftsingularity.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftsingularity.event.entity.living.LivingHurtEvent;
+import net.minecraftsingularity.event.entity.living.LivingMakeBrainEvent;
+import net.minecraftsingularity.event.entity.living.LivingUseTotemEvent;
+import net.minecraftsingularity.event.entity.player.AttackEntityEvent;
+import net.minecraftsingularity.event.entity.player.CriticalHitEvent;
+import net.minecraftsingularity.event.entity.player.PlayerEvent;
+import net.minecraftsingularity.event.entity.living.LivingGetProjectileEvent;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.event.level.BlockEvent;
+import net.minecraftsingularity.event.level.NoteBlockEvent;
+import net.minecraftsingularity.event.level.ChunkEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.ModLoader;
+import net.minecraftsingularity.fml.config.ConfigTracker;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.singularityPayload;
+import net.minecraftsingularity.network.NetworkContext;
+import net.minecraftsingularity.network.NetworkDirection;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.NetworkRegistry;
+import net.minecraftsingularity.network.packets.SpawnEntity;
+import net.minecraftsingularity.resource.ResourcePackLoader;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.singularityRegistry;
+import net.minecraftsingularity.registries.GameData;
+import net.minecraftsingularity.registries.RegistryManager;
+import net.minecraftsingularity.server.permission.PermissionAPI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -196,13 +196,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
 @ApiStatus.Internal
-public final class ForgeHooks {
+public final class singularityHooks {
     private static final Logger LOGGER = LogManager.getLogger();
     @SuppressWarnings("unused")
-    private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
+    private static final Marker singularityHOOKS = MarkerManager.getMarker("singularityHOOKS");
     private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
 
-    private ForgeHooks() {}
+    private singularityHooks() {}
 
     public static void fireLightingCalculatedEvent(ChunkAccess chunk) {
         ChunkEvent.LightingCalculated.BUS.post(new ChunkEvent.LightingCalculated(chunk));
@@ -217,7 +217,7 @@ public final class ForgeHooks {
 
     public static boolean isCorrectToolForDrops(@NotNull BlockState state, @NotNull Player player) {
         if (!state.requiresCorrectToolForDrops())
-            return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
+            return singularityEventFactory.doPlayerHarvestCheck(player, state, true);
 
         return player.hasCorrectToolForDrops(state);
     }
@@ -260,7 +260,7 @@ public final class ForgeHooks {
             looting = EnchantmentHelper.getEnchantmentLevel(living.level().holderLookup(Registries.ENCHANTMENT).getOrThrow(Enchantments.LOOTING), living);
 
         if (target instanceof LivingEntity living)
-            looting = ForgeEventFactory.fireLootingLevel(living, cause, looting).getLootingLevel();
+            looting = singularityEventFactory.fireLootingLevel(living, cause, looting).getLootingLevel();
 
         return looting;
     }
@@ -276,7 +276,7 @@ public final class ForgeHooks {
         if (isSpectator) return Optional.empty();
         if (entity.isFallFlying() && state.is(BlockTags.CAN_GLIDE_THROUGH))
             return Optional.empty();
-        if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
+        if (!singularityConfig.SERVER.fullBoundingBoxLadders.get())
             return state.isLadder(level, pos, entity) ? Optional.of(pos) : Optional.empty();
         else {
             AABB bb = entity.getBoundingBox();
@@ -462,7 +462,7 @@ public final class ForgeHooks {
         ItemStack preUse = itemstack.copy();
         InteractionResult ret = itemstack.getItem().useOn(context);
         if (itemstack.isEmpty())
-            ForgeEventFactory.onPlayerDestroyItem(player, preUse, context.getHand());
+            singularityEventFactory.onPlayerDestroyItem(player, preUse, context.getHand());
 
         level.captureBlockSnapshots = false;
 
@@ -479,9 +479,9 @@ public final class ForgeHooks {
 
             boolean eventResult = false;
             if (blockSnapshots.size() > 1)
-                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
+                eventResult = singularityEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
             else if (blockSnapshots.size() == 1)
-                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.getFirst(), side);
+                eventResult = singularityEventFactory.onBlockPlace(player, blockSnapshots.getFirst(), side);
 
             if (eventResult) {
                 ret = InteractionResult.FAIL; // cancel placement
@@ -556,7 +556,7 @@ public final class ForgeHooks {
         if (remainder != null) {
             stack = remainder.create();
             if (!stack.isEmpty() && stack.isDamageableItem() && stack.getDamageValue() > stack.getMaxDamage()) {
-                ForgeEventFactory.onPlayerDestroyItem(CRAFTING_PLAYER.get(), stack, (EquipmentSlot)null);
+                singularityEventFactory.onPlayerDestroyItem(CRAFTING_PLAYER.get(), stack, (EquipmentSlot)null);
                 return ItemStack.EMPTY;
             }
             return stack;
@@ -612,13 +612,13 @@ public final class ForgeHooks {
      */
     public static FluidType getVanillaFluidType(Fluid fluid) {
         if (fluid == Fluids.EMPTY)
-            return ForgeMod.EMPTY_TYPE.get();
+            return singularityMod.EMPTY_TYPE.get();
         if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER)
-            return ForgeMod.WATER_TYPE.get();
+            return singularityMod.WATER_TYPE.get();
         if (fluid == Fluids.LAVA || fluid == Fluids.FLOWING_LAVA)
-            return ForgeMod.LAVA_TYPE.get();
-        if (ForgeMod.MILK.filter(milk -> milk == fluid).isPresent() || ForgeMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
-            return ForgeMod.MILK_TYPE.get();
+            return singularityMod.LAVA_TYPE.get();
+        if (singularityMod.MILK.filter(milk -> milk == fluid).isPresent() || singularityMod.FLOWING_MILK.filter(milk -> milk == fluid).isPresent())
+            return singularityMod.MILK_TYPE.get();
         throw new RuntimeException("Mod fluids must override getFluidType.");
     }
 
@@ -672,7 +672,7 @@ public final class ForgeHooks {
     @Nullable
     public static String getDefaultCreatorModId(@NotNull ItemStack itemStack) {
         Item item = itemStack.getItem();
-        Identifier registryName = ForgeRegistries.ITEMS.getKey(item);
+        Identifier registryName = singularityRegistries.ITEMS.getKey(item);
         String modId = registryName == null ? null : registryName.getNamespace();
         if ("minecraft".equals(modId)) {
             if (itemStack.is(Items.ENCHANTED_BOOK)) {
@@ -701,7 +701,7 @@ public final class ForgeHooks {
 
     public static boolean onFarmlandTrample(ServerLevel level, BlockPos pos, BlockState state, double fallDistance, Entity entity) {
         if (entity.canTrample(level, state, pos, fallDistance))
-            return !ForgeEventFactory.fireFarmlandTrampleEvent(level, pos, state, fallDistance, entity);
+            return !singularityEventFactory.fireFarmlandTrampleEvent(level, pos, state, fallDistance, entity);
         return false;
     }
 
@@ -716,8 +716,8 @@ public final class ForgeHooks {
     public static EntityDataSerializer<?> getSerializer(int id, CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> vanilla) {
         EntityDataSerializer<?> serializer = vanilla.byId(id);
         if (serializer == null) {
-            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            var registry = (ForgeRegistry<EntityDataSerializer<?>>)ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
+            // singularityRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
+            var registry = (singularityRegistry<EntityDataSerializer<?>>)singularityRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 serializer = registry.getValue(id);
         }
@@ -727,8 +727,8 @@ public final class ForgeHooks {
     public static int getSerializerId(EntityDataSerializer<?> serializer, CrudeIncrementalIntIdentityHashBiMap<EntityDataSerializer<?>> vanilla) {
         int id = vanilla.getId(serializer);
         if (id < 0) {
-            // ForgeRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
-            var registry = (ForgeRegistry<EntityDataSerializer<?>>)ForgeRegistries.ENTITY_DATA_SERIALIZERS.get();
+            // singularityRegistries.DATA_SERIALIZERS is a deferred register now, so if this method is called too early, the registry will be null
+            var registry = (singularityRegistry<EntityDataSerializer<?>>)singularityRegistries.ENTITY_DATA_SERIALIZERS.get();
             if (registry != null)
                 id = registry.getID(serializer);
         }
@@ -739,7 +739,7 @@ public final class ForgeHooks {
         if (!level.isLoaded(pos))
             return false;
         BlockState state = level.getBlockState(pos);
-        return ForgeEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
+        return singularityEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && singularityEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 
     /**
@@ -758,7 +758,7 @@ public final class ForgeHooks {
      */
     public static ObjectArrayList<ItemStack> modifyLoot(LootTable table, ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         context.setQueriedLootTableId(table.getLootTableId()); // In case the ID was set via copy constructor, this will be ignored: intended
-        for (var mod : ForgeInternalHandler.getLootModifierManager().getAllLootMods())
+        for (var mod : singularityInternalHandler.getLootModifierManager().getAllLootMods())
             generatedLoot = mod.apply(table, generatedLoot, context);
         return generatedLoot;
     }
@@ -776,15 +776,15 @@ public final class ForgeHooks {
         return modpacks;
     }
 
-    private static final Map<EntityType<? extends LivingEntity>, AttributeSupplier> FORGE_ATTRIBUTES = new HashMap<>();
+    private static final Map<EntityType<? extends LivingEntity>, AttributeSupplier> singularity_ATTRIBUTES = new HashMap<>();
     @Deprecated
     public static Map<EntityType<? extends LivingEntity>, AttributeSupplier> getAttributesView() {
-        return Collections.unmodifiableMap(FORGE_ATTRIBUTES);
+        return Collections.unmodifiableMap(singularity_ATTRIBUTES);
     }
 
     @Deprecated
     public static void modifyAttributes() {
-        EntityAttributeCreationEvent.BUS.post(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
+        EntityAttributeCreationEvent.BUS.post(new EntityAttributeCreationEvent(singularity_ATTRIBUTES));
         Map<EntityType<? extends LivingEntity>, AttributeSupplier.Builder> finalMap = new HashMap<>();
         EntityAttributeModificationEvent.BUS.post(new EntityAttributeModificationEvent(finalMap));
 
@@ -792,7 +792,7 @@ public final class ForgeHooks {
             AttributeSupplier supplier = DefaultAttributes.getSupplier(k);
             AttributeSupplier.Builder newBuilder = supplier != null ? new AttributeSupplier.Builder(supplier) : new AttributeSupplier.Builder();
             newBuilder.combine(v);
-            FORGE_ATTRIBUTES.put(k, newBuilder.build());
+            singularity_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
 
@@ -811,7 +811,7 @@ public final class ForgeHooks {
         fmlData.put("Registries", registries);
         LOGGER.debug(WORLDPERSISTENCE, "Gathering id map for writing to world save {}", worldData.getLevelName());
 
-        for (Map.Entry<Identifier, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
+        for (Map.Entry<Identifier, singularityRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
             registries.put(e.getKey().toString(), e.getValue().write());
         LOGGER.debug(WORLDPERSISTENCE, "ID Map collection complete {}", worldData.getLevelName());
         levelTag.put("fml", fmlData);
@@ -904,16 +904,16 @@ public final class ForgeHooks {
         Multimap<Identifier, Identifier> failedElements = null;
 
         if (tag.contains("Registries")) {
-            Map<Identifier, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
+            Map<Identifier, singularityRegistry.Snapshot> snapshot = new HashMap<>();
             CompoundTag regs = tag.getCompoundOrEmpty("Registries");
             for (String key : regs.keySet())
-                snapshot.put(Identifier.parse(key), ForgeRegistry.Snapshot.read(regs.getCompoundOrEmpty(key)));
+                snapshot.put(Identifier.parse(key), singularityRegistry.Snapshot.read(regs.getCompoundOrEmpty(key)));
             failedElements = GameData.injectSnapshot(snapshot, true, true);
         }
 
         if (failedElements != null && !failedElements.isEmpty()) {
             StringBuilder buf = new StringBuilder();
-            buf.append("Forge Mod Loader could not load this save.\n\n")
+            buf.append("singularity Mod Loader could not load this save.\n\n")
                 .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
                 .append("You will not be able to load until they are present again.\n\n");
 
@@ -955,7 +955,7 @@ public final class ForgeHooks {
         };
     }
 
-    private static final Lazy<Map<String, StructuresBecomeConfiguredFix.Conversion>> FORGE_CONVERSION_MAP = Lazy.concurrentOf(() -> {
+    private static final Lazy<Map<String, StructuresBecomeConfiguredFix.Conversion>> singularity_CONVERSION_MAP = Lazy.concurrentOf(() -> {
         Map<String, StructuresBecomeConfiguredFix.Conversion> map = new HashMap<>();
         RegisterStructureConversionsEvent.BUS.post(new RegisterStructureConversionsEvent(map));
         return Map.copyOf(map);
@@ -967,7 +967,7 @@ public final class ForgeHooks {
      */
     @Nullable
     public static StructuresBecomeConfiguredFix.Conversion getStructureConversion(String originalBiome) {
-        return FORGE_CONVERSION_MAP.get().get(originalBiome);
+        return singularity_CONVERSION_MAP.get().get(originalBiome);
     }
 
     /**
@@ -982,7 +982,7 @@ public final class ForgeHooks {
         if (provider.permissions().hasPermission(Permissions.COMMANDS_ENTITY_SELECTORS))
             return true;
         else if (provider instanceof CommandSourceStack source && source.source instanceof ServerPlayer player)
-            return PermissionAPI.getPermission(player, ForgeMod.USE_SELECTORS_PERMISSION);
+            return PermissionAPI.getPermission(player, singularityMod.USE_SELECTORS_PERMISSION);
         return false;
     }
 
@@ -999,7 +999,7 @@ public final class ForgeHooks {
     /**
      * Handles living entities being under water. This fires the {@link LivingBreatheEvent} and if the entity's air supply
      * is less than or equal to zero also the {@link LivingDrownEvent}. Additionally when the entity is under water it will
-     * dismount if {@link net.minecraftforge.common.extensions.IForgeEntity#canBeRiddenUnderFluidType(FluidType, Entity)} returns false.
+     * dismount if {@link net.minecraftsingularity.common.extensions.IForgeEntity#canBeRiddenUnderFluidType(FluidType, Entity)} returns false.
      *
      * @param entity           The living entity which is currently updated
      * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
@@ -1015,7 +1015,7 @@ public final class ForgeHooks {
         boolean isAir = eyeFluid.isAir() || level.getBlockState(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN);
         // The following effects cause the entity to not drown, but do not cause the air supply to be increased.
         boolean canBreathe = !entity.canDrownInFluidType(eyeFluid) || MobEffectUtil.hasWaterBreathing(entity) || (entity instanceof Player player && player.getAbilities().invulnerable);
-        var breatheEvent = ForgeEventFactory.onLivingBreathe(entity, isAir || canBreathe, consumeAirAmount, refillAirAmount, isAir || MobEffectUtil.shouldEffectsRefillAirsupply(entity));
+        var breatheEvent = singularityEventFactory.onLivingBreathe(entity, isAir || canBreathe, consumeAirAmount, refillAirAmount, isAir || MobEffectUtil.shouldEffectsRefillAirsupply(entity));
         if (breatheEvent.canBreathe()) {
             if (breatheEvent.canRefillAir()) {
                 entity.setAirSupply(Math.min(entity.getAirSupply() + breatheEvent.getRefillAirAmount(), entity.getMaxAirSupply()));
@@ -1076,7 +1076,7 @@ public final class ForgeHooks {
         if (channel == null)
             return DiscardedPayload.codec(id, max);
 
-        return StreamCodec.<B, ForgePayload>ofMember(
+        return StreamCodec.<B, singularityPayload>ofMember(
             (value, buf) -> {
                 value.encoder().accept(buf);
             },
@@ -1084,7 +1084,7 @@ public final class ForgeHooks {
                 int len = buf.readableBytes();
                 if (len < 0 || len > max)
                     throw new IllegalArgumentException("Payload may not be larger then " + max + " bytes");
-                return ForgePayload.create(id, buf.wrap(buf.readBytes(len)));
+                return singularityPayload.create(id, buf.wrap(buf.readBytes(len)));
             }
         );
     }
@@ -1164,14 +1164,14 @@ public final class ForgeHooks {
         if (!json.isJsonObject())
             return json;
 
-        var entries = GsonHelper.getAsJsonArray(json.getAsJsonObject(), "forge:conditional", null);
+        var entries = GsonHelper.getAsJsonArray(json.getAsJsonObject(), "singularity:conditional", null);
         if (entries == null)
             return readAndTestCondition(context, json.getAsJsonObject()) ? json : null;
 
         int idx = 0;
         for (var ele : entries) {
             if (!ele.isJsonObject())
-                throw new JsonSyntaxException("Invalid forge:conditonal entry at index " + idx + " Must be JsonObject");
+                throw new JsonSyntaxException("Invalid singularity:conditonal entry at index " + idx + " Must be JsonObject");
 
             if (readAndTestCondition(context, ele.getAsJsonObject()))
                 return ele.getAsJsonObject();
@@ -1186,7 +1186,7 @@ public final class ForgeHooks {
     public static Codec<Ingredient> ingredientBaseCodec(Codec<Ingredient> vanilla) {
         return Codec.lazyInitialized(() ->
             Codec.<Ingredient, Ingredient>either(
-                ForgeRegistries.INGREDIENT_SERIALIZERS.get().getCodec().dispatch(Ingredient::serializer, IIngredientSerializer::codec),
+                singularityRegistries.INGREDIENT_SERIALIZERS.get().getCodec().dispatch(Ingredient::serializer, IIngredientSerializer::codec),
                 vanilla
             )
             .flatComapMap(
@@ -1202,7 +1202,7 @@ public final class ForgeHooks {
                 @SuppressWarnings("unchecked")
                 var serializer = (IIngredientSerializer<Ingredient>)value.serializer();
                 if (!value.isVanilla()) {
-                    var key = ForgeRegistries.INGREDIENT_SERIALIZERS.get().getKey(serializer);
+                    var key = singularityRegistries.INGREDIENT_SERIALIZERS.get().getKey(serializer);
                     if (key == null)
                         throw new IllegalArgumentException("Tried to write unregistered Ingredient to network: " + value);
 
@@ -1219,7 +1219,7 @@ public final class ForgeHooks {
                     buf.resetReaderIndex();
                 } else {
                     var key = buf.readIdentifier();
-                    serializer = ForgeRegistries.INGREDIENT_SERIALIZERS.get().getValue(key);
+                    serializer = singularityRegistries.INGREDIENT_SERIALIZERS.get().getValue(key);
                     if (serializer == null)
                         throw new DecoderException("Could not read ingredient of type: " + key);
                 }
@@ -1245,7 +1245,7 @@ public final class ForgeHooks {
     }
 
     public static DataComponentMap gatherItemComponents(Item item, DataComponentMap dataComponents) {
-        return DataComponentMap.composite(dataComponents, ForgeEventFactory.gatherItemComponentsEvent(item, dataComponents).getDataComponentMap());
+        return DataComponentMap.composite(dataComponents, singularityEventFactory.gatherItemComponentsEvent(item, dataComponents).getDataComponentMap());
     }
 
     @SuppressWarnings("unchecked")
@@ -1253,7 +1253,7 @@ public final class ForgeHooks {
         if (codec == LootDataType.TABLE.codec()) {
             var table = (LootTable)value;
             table.setLootTableId(key);
-            value = (T)net.minecraftforge.event.ForgeEventFactory.onLoadLootTable(key, table);
+            value = (T)net.minecraftsingularity.event.singularityEventFactory.onLoadLootTable(key, table);
         }
 
         return value;
@@ -1262,7 +1262,7 @@ public final class ForgeHooks {
     private static final Pattern EMPTY_SIZE_PATTERN = Pattern.compile("^empty(\\d+)x(\\d+)x(\\d+)$");
 
     /*
-     *  Creates a empty structure of any size requested using the pattern `forge:empty(x)x(y)x(z)`
+     *  Creates a empty structure of any size requested using the pattern `singularity:empty(x)x(y)x(z)`
      *
      *  This is useful for game tests that need a structure, but want to create the contents in code.
      */
@@ -1281,7 +1281,7 @@ public final class ForgeHooks {
     }
 
     private static Optional<StructureTemplate> createEmptyStructure(Identifier name) {
-        if (name == null || !"forge".equals(name.getNamespace()))
+        if (name == null || !"singularity".equals(name.getNamespace()))
             return Optional.empty();
 
         var match = EMPTY_SIZE_PATTERN.matcher(name.getPath());

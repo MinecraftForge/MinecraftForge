@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.textures;
+package net.minecraftsingularity.client.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -17,7 +17,7 @@ import net.minecraft.resources.Identifier;
  * Useful for baking quads that won't be used with an atlas.
  */
 public class UnitTextureAtlasSprite extends TextureAtlasSprite {
-    public static final Identifier LOCATION = Identifier.fromNamespaceAndPath("forge", "unit");
+    public static final Identifier LOCATION = Identifier.fromNamespaceAndPath("singularity", "unit");
     public static final UnitTextureAtlasSprite INSTANCE = new UnitTextureAtlasSprite();
 
     private UnitTextureAtlasSprite() {

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftsingularity.common.capabilities;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
@@ -15,9 +15,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.event.AttachCapabilitiesEvent;
+import net.minecraftsingularity.event.singularityEventFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -158,7 +158,7 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
     protected abstract boolean shouldFireAttachCapabilitiesEvent();
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(fireAttachCapabilitiesEvent(getProvider()), parent);
+        this.capabilities = singularityEventFactory.gatherCapabilities(fireAttachCapabilitiesEvent(getProvider()), parent);
         this.initialized = true;
     }
 

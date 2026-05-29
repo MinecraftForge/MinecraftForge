@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.event.ScreenEvent.Render;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftsingularity.client.singularityRenderTypes;
+import net.minecraftsingularity.client.event.ScreenEvent.Render;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.api.distmarker.Dist;
 
 @Mod(LinearTextTextureFilteringTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
@@ -24,7 +24,7 @@ public class LinearTextTextureFilteringTest
     {
         if (ENABLED && event.getScreen() instanceof TitleScreen)
         {
-            ForgeRenderTypes.enableTextTextureLinearFiltering = true;
+            singularityRenderTypes.enableTextTextureLinearFiltering = true;
         }
     }
 
@@ -33,7 +33,7 @@ public class LinearTextTextureFilteringTest
     {
         if (ENABLED && event.getScreen() instanceof TitleScreen)
         {
-            ForgeRenderTypes.enableTextTextureLinearFiltering = false;
+            singularityRenderTypes.enableTextTextureLinearFiltering = false;
         }
     }
 }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -16,12 +16,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
 
-import static net.minecraftforge.common.Tags.EntityTypes.*;
+import static net.minecraftsingularity.common.Tags.EntityTypes.*;
 
 @ApiStatus.Internal
-public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
-    public ForgeEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityEntityTypeTagsProvider extends EntityTypeTagsProvider {
+    public singularityEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
@@ -64,12 +64,12 @@ public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
         tag(TELEPORTING_NOT_SUPPORTED);
     }
 
-    private static TagKey<EntityType<?>> forgeTagKey(String path) {
-        return EntityTypeTags.create(Identifier.fromNamespaceAndPath("forge", path));
+    private static TagKey<EntityType<?>> singularityTagKey(String path) {
+        return EntityTypeTags.create(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     @Override
     public String getName() {
-        return "Forge EntityType Tags";
+        return "singularity EntityType Tags";
     }
 }

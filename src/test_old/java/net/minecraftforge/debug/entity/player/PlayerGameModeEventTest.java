@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.entity.player;
+package net.minecraftsingularity.debug.entity.player;
 
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.ClientPlayerChangeGameTypeEvent;
+import net.minecraftsingularity.event.entity.player.PlayerEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +34,7 @@ public final class PlayerGameModeEventTest {
         return false;
     }
 
-    @Mod.EventBusSubscriber(modid="player_game_mode_event_test", value=Dist.CLIENT, bus=Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid="player_game_mode_event_test", value=Dist.CLIENT, bus=Mod.EventBusSubscriber.Bus.singularity)
     public static class PlayerGameModeEventTestClientForgeEvents {
         @SubscribeEvent
         public static void onClientPlayerChangeGameModeEvent(ClientPlayerChangeGameTypeEvent event) {

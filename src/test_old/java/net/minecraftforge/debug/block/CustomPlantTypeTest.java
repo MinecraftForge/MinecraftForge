@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.block;
+package net.minecraftsingularity.debug.block;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,14 +17,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.PlantType;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftsingularity.common.IPlantable;
+import net.minecraftsingularity.common.PlantType;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.ObjectHolder;
+import net.minecraftsingularity.registries.RegisterEvent;
 
 @Mod(CustomPlantTypeTest.MODID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -42,7 +42,7 @@ public class CustomPlantTypeTest
     @SubscribeEvent
     public static void registerBlocks(RegisterEvent event)
     {
-        event.register(ForgeRegistries.Keys.BLOCKS, helper ->
+        event.register(singularityRegistries.Keys.BLOCKS, helper ->
         {
             helper.register(CUSTOM_SOIL_BLOCK, new CustomBlock());
             helper.register(CUSTOM_PLANT_BLOCK, new CustomPlantBlock());
@@ -52,7 +52,7 @@ public class CustomPlantTypeTest
     @SubscribeEvent
     public static void registerItems(RegisterEvent event)
     {
-        event.register(ForgeRegistries.Keys.ITEMS, helper ->
+        event.register(singularityRegistries.Keys.ITEMS, helper ->
         {
             helper.register(CUSTOM_SOIL_BLOCK, new BlockItem(CUSTOM_SOIL, new Item.Properties()));
             helper.register(CUSTOM_PLANT_BLOCK, new BlockItem(CUSTOM_PLANT, new Item.Properties()));

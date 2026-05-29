@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
-import net.minecraftforge.client.FramePassManager;
-import net.minecraftforge.client.event.AddFramePassEvent;
-import net.minecraftforge.common.extensions.IForgeGameTestHelper;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.client.FramePassManager;
+import net.minecraftsingularity.client.event.AddFramePassEvent;
+import net.minecraftsingularity.common.extensions.IForgeGameTestHelper;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gizmos.GizmoStyle;
 import net.minecraft.gizmos.Gizmos;
@@ -24,7 +24,7 @@ import net.minecraft.world.phys.AABB;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.framegraph.FramePass;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(RenderFrameLayerTest.MODID)
 public class RenderFrameLayerTest extends BaseTestMod {
     public static final String MODID = "render_frame_layer_test";

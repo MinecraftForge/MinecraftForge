@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.extensions.common;
+package net.minecraftsingularity.client.extensions.common;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.Consumer;
@@ -22,9 +22,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.FogType;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;

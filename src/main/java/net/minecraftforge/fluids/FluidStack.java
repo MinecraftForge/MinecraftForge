@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,9 +41,9 @@ public class FluidStack {
 
     public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
-                    BuiltInRegistries.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
-                    Codec.INT.fieldOf("Amount").forGetter(FluidStack::getAmount),
-                    CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
+                    BuiltInRegistries.FLUID.byNameCodec().fieldOf("FluidName").singularitytter(FluidStack::getFluid),
+                    Codec.INT.fieldOf("Amount").singularitytter(FluidStack::getAmount),
+                    CompoundTag.CODEC.optionalFieldOf("Tag").singularitytter(stack -> Optional.ofNullable(stack.getTag()))
             ).apply(instance, (fluid, amount, tag) -> {
                 FluidStack stack = new FluidStack(fluid, amount);
                 tag.ifPresent(stack::setTag);
@@ -60,11 +60,11 @@ public class FluidStack {
         if (fluid == null) {
             LOGGER.fatal("Null fluid supplied to fluidstack. Did you try and create a stack for an unregistered fluid?");
             throw new IllegalArgumentException("Cannot create a fluidstack from a null fluid");
-        } else if (ForgeRegistries.FLUIDS.getKey(fluid) == null) {
-            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", ForgeRegistries.FLUIDS.getKey(fluid), fluid.getClass().getName());
+        } else if (singularityRegistries.FLUIDS.getKey(fluid) == null) {
+            LOGGER.fatal("Failed attempt to create a FluidStack for an unregistered Fluid {} (type {})", singularityRegistries.FLUIDS.getKey(fluid), fluid.getClass().getName());
             throw new IllegalArgumentException("Cannot create a fluidstack from an unregistered fluid");
         }
-        this.fluidDelegate = ForgeRegistries.FLUIDS.getDelegateOrThrow(fluid);
+        this.fluidDelegate = singularityRegistries.FLUIDS.getDelegateOrThrow(fluid);
         this.amount = amount;
 
         updateEmpty();
@@ -94,7 +94,7 @@ public class FluidStack {
             return EMPTY;
 
         Identifier fluidName = Identifier.parse(fluidNameString.get());
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+        Fluid fluid = singularityRegistries.FLUIDS.getValue(fluidName);
         if (fluid == null)
             return EMPTY;
 
@@ -113,7 +113,7 @@ public class FluidStack {
             return EMPTY;
 
         Identifier fluidName = Identifier.parse(fluidNameString.get());
-        Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+        Fluid fluid = singularityRegistries.FLUIDS.getValue(fluidName);
         if (fluid == null)
             return EMPTY;
 
@@ -124,7 +124,7 @@ public class FluidStack {
     }
 
     public CompoundTag writeToNBT(CompoundTag nbt) {
-        nbt.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
+        nbt.putString("FluidName", singularityRegistries.FLUIDS.getKey(getFluid()).toString());
         nbt.putInt("Amount", amount);
 
         if (tag != null)
@@ -133,7 +133,7 @@ public class FluidStack {
     }
 
     public void writeTo(ValueOutput output) {
-        output.putString("FluidName", ForgeRegistries.FLUIDS.getKey(getFluid()).toString());
+        output.putString("FluidName", singularityRegistries.FLUIDS.getKey(getFluid()).toString());
         output.putInt("Amount", amount);
 
         if (tag != null)

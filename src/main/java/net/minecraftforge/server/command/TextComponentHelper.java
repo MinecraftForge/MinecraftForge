@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import net.minecraft.commands.CommandSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.locale.Language;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkContext;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.NetworkContext;
 import java.util.Locale;
 
 public class TextComponentHelper {

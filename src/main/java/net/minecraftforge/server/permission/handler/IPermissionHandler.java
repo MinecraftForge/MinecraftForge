@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission.handler;
+package net.minecraftsingularity.server.permission.handler;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
-import net.minecraftforge.server.permission.PermissionAPI;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.server.permission.PermissionAPI;
+import net.minecraftsingularity.server.permission.events.PermissionGatherEvent;
+import net.minecraftsingularity.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
 
 import java.util.Set;
 import java.util.UUID;

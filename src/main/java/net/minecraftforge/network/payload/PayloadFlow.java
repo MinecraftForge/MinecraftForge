@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.payload;
+package net.minecraftsingularity.network.payload;
 
 import java.util.function.BiConsumer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent.Context;
-import net.minecraftforge.network.ChannelBuildable;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent.Context;
+import net.minecraftsingularity.network.ChannelBuildable;
 
 public interface PayloadFlow<BUF extends FriendlyByteBuf, BASE extends CustomPacketPayload> extends PayloadProtocol<BUF, BASE>, ChannelBuildable<CustomPacketPayload> {
     /**

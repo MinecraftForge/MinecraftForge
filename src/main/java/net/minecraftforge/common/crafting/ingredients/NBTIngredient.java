@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.ingredients;
+package net.minecraftsingularity.common.crafting.ingredients;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -98,9 +98,9 @@ public class NBTIngredient extends AbstractIngredient {
 
     public static final MapCodec<NBTIngredient> CODEC = RecordCodecBuilder.mapCodec(builder ->
         builder.group(
-            Ingredient.NON_AIR_HOLDER_SET_CODEC.fieldOf("items").forGetter(i -> i.values),
-            TagParser.FLATTENED_CODEC.fieldOf("nbt").forGetter(i -> i.nbt),
-            Codec.BOOL.fieldOf("strict").forGetter(i -> i.strict)
+            Ingredient.NON_AIR_HOLDER_SET_CODEC.fieldOf("items").singularitytter(i -> i.values),
+            TagParser.FLATTENED_CODEC.fieldOf("nbt").singularitytter(i -> i.nbt),
+            Codec.BOOL.fieldOf("strict").singularitytter(i -> i.strict)
         ).apply(builder, NBTIngredient::new)
     );
 

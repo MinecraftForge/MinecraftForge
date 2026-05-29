@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
@@ -48,8 +48,8 @@ import java.util.stream.Stream;
 
 class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistry {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker MARKER = ForgeRegistry.REGISTRIES;
-    private final ForgeRegistry<T> delegate;
+    private static final Marker MARKER = singularityRegistry.REGISTRIES;
+    private final singularityRegistry<T> delegate;
     @Nullable
     private final Function<T, Holder.Reference<T>> intrusiveHolderCallback;
     private final Multimap<TagKey<T>, Supplier<T>> optionalTags = Multimaps.newSetMultimap(new IdentityHashMap<>(), HashSet::new);
@@ -66,7 +66,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     private final Map<ResourceKey<T>, RegistrationInfo> registrationInfos = new IdentityHashMap<>();
     private MappedRegistry.TagSet<T> frozenTags = MappedRegistry.TagSet.unbound();
 
-    NamespacedWrapper(ForgeRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage) {
+    NamespacedWrapper(singularityRegistry<T> fowner, Function<T, Holder.Reference<T>> intrusiveHolderCallback, RegistryManager stage) {
         super(fowner.getRegistryKey(), Lifecycle.stable(), intrusiveHolderCallback != null);
         this.delegate = fowner;
         this.intrusiveHolderCallback = intrusiveHolderCallback;
@@ -76,7 +76,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     @Override
     public Holder.Reference<T> register(ResourceKey<T> key, T value, RegistrationInfo info) {
         if (locked)
-            throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
+            throw new IllegalStateException("Can not register to a locked registry. Modder should use singularity Register methods.");
 
         Objects.requireNonNull(value);
         markKnown();
@@ -175,7 +175,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     /**
-     * @deprecated Forge: For internal use only. Use the Register events when registering values.
+     * @deprecated singularity: For internal use only. Use the Register events when registering values.
      */
     @Deprecated
     @Override

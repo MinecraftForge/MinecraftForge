@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.jarhandling.SecureJar;
@@ -29,8 +29,8 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Set<String> SERVICES = Set.of(
         "cpw.mods.modlauncher.api.ITransformationService",
-        "net.minecraftforge.forgespi.locating.IModLocator",
-        "net.minecraftforge.forgespi.locating.IDependencyLocator"
+        "net.minecraftsingularity.singularityspi.locating.IModLocator",
+        "net.minecraftsingularity.singularityspi.locating.IDependencyLocator"
     );
 
     @Override

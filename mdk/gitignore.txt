@@ -21,6 +21,6 @@ build
 eclipse
 run
 
-# Files from Forge MDK
+# Files from singularity MDK
 forge_README.txt
-forge*changelog.txt
+singularity*changelog.txt

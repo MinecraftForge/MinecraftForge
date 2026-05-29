@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.versions.mcp;
+package net.minecraftsingularity.versions.mcp;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.loading.JarVersionLookupHandler;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.loading.JarVersionLookupHandler;
 
 public class MCPVersion {
     private static final Logger LOGGER = LogManager.getLogger();

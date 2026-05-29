@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) Forge Development LLC and contributors
+    Copyright (c) singularity Development LLC and contributors
     SPDX-License-Identifier: LGPL-2.1-only
 -->
 
 <Configuration status="warn" shutdownHook="disable">
     <filters>
         <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:forge.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="CLASSLOADING" onMatch="${sys:forge.logging.marker.classloading:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="LAUNCHPLUGIN" onMatch="${sys:forge.logging.marker.launchplugin:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="CLASSDUMP" onMatch="${sys:forge.logging.marker.classdump:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="AXFORM" onMatch="${sys:forge.logging.marker.axform:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="EVENTBUS" onMatch="${sys:forge.logging.marker.eventbus:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="DISTXFORM" onMatch="${sys:forge.logging.marker.distxform:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SCAN" onMatch="${sys:forge.logging.marker.scan:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="REGISTRIES" onMatch="${sys:forge.logging.marker.registries:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="REGISTRYDUMP" onMatch="${sys:forge.logging.marker.registrydump:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SPLASH" onMatch="${sys:forge.logging.marker.splash:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="RESOURCE-CACHE" onMatch="${sys:forge.logging.marker.resource.cache:-DENY}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="FORGEMOD" onMatch="${sys:forge.logging.marker.forgemod:-ACCEPT}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="LOADING" onMatch="${sys:forge.logging.marker.loading:-ACCEPT}" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="CORE" onMatch="${sys:forge.logging.marker.core:-ACCEPT}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:singularity.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="CLASSLOADING" onMatch="${sys:singularity.logging.marker.classloading:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="LAUNCHPLUGIN" onMatch="${sys:singularity.logging.marker.launchplugin:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="CLASSDUMP" onMatch="${sys:singularity.logging.marker.classdump:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="AXFORM" onMatch="${sys:singularity.logging.marker.axform:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="EVENTBUS" onMatch="${sys:singularity.logging.marker.eventbus:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="DISTXFORM" onMatch="${sys:singularity.logging.marker.distxform:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SCAN" onMatch="${sys:singularity.logging.marker.scan:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="REGISTRIES" onMatch="${sys:singularity.logging.marker.registries:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="REGISTRYDUMP" onMatch="${sys:singularity.logging.marker.registrydump:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SPLASH" onMatch="${sys:singularity.logging.marker.splash:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="RESOURCE-CACHE" onMatch="${sys:singularity.logging.marker.resource.cache:-DENY}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="FORGEMOD" onMatch="${sys:singularity.logging.marker.forgemod:-ACCEPT}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="LOADING" onMatch="${sys:singularity.logging.marker.loading:-ACCEPT}" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="CORE" onMatch="${sys:singularity.logging.marker.core:-ACCEPT}" onMismatch="NEUTRAL"/>
     </filters>
     <Appenders>
         <TerminalConsole name="Console">
@@ -61,14 +61,14 @@
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
-        <Logger level="${sys:forge.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>
+        <Logger level="${sys:singularity.logging.mojang.level:-info}" name="com.mojang"/>
+        <Logger level="${sys:singularity.logging.mojang.level:-info}" name="net.minecraft"/>
+        <Logger level="${sys:singularity.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>
         <Root level="all">
-            <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
-            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-debug}"/>
+            <AppenderRef ref="Console" level="${sys:singularity.logging.console.level:-info}"/>
+            <AppenderRef ref="ServerGuiConsole" level="${sys:singularity.logging.console.level:-info}"/>
+            <AppenderRef ref="File" level="${sys:singularity.logging.file.level:-info}"/>
+            <AppenderRef ref="DebugFile" level="${sys:singularity.logging.debugFile.level:-debug}"/>
         </Root>
     </Loggers>
 </Configuration>

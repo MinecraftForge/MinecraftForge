@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * The {@code /forge tags} command for listing a registry's tags, getting the elements of tags, and querying the tags of a
+ * The {@code /singularity tags} command for listing a registry's tags, getting the elements of tags, and querying the tags of a
  * registry object.
  *
  * <p>Each command is paginated, showing {@value PAGE_SIZE} entries at a time. When there are more than 0 entries,
@@ -48,9 +48,9 @@ import java.util.stream.Stream;
  *
  * <p>The command has three subcommands:</p>
  * <ul>
- *     <li>{@code /forge tags &lt;registry> list [page]} - Lists all available tags in the given registry.</li>
- *     <li>{@code /forge tags &lt;registry> get &lt;tag> [page]} - Gets all elements of the given tag in the given registry.</li>
- *     <li>{@code /forge tags &lt;registry> query &lt;element> [page]} - Queries for all tags in the given registry which
+ *     <li>{@code /singularity tags &lt;registry> list [page]} - Lists all available tags in the given registry.</li>
+ *     <li>{@code /singularity tags &lt;registry> get &lt;tag> [page]} - Gets all elements of the given tag in the given registry.</li>
+ *     <li>{@code /singularity tags &lt;registry> query &lt;element> [page]} - Queries for all tags in the given registry which
  *     contain the given registry object.</li>
  * </ul>
  */
@@ -60,17 +60,17 @@ class TagsCommand {
             ResourceKey.createRegistryKey(Identifier.parse("root"));
 
     private static final DynamicCommandExceptionType UNKNOWN_REGISTRY = new DynamicCommandExceptionType(key ->
-            Component.translatable("commands.forge.tags.error.unknown_registry", key));
+            Component.translatable("commands.singularity.tags.error.unknown_registry", key));
     private static final Dynamic2CommandExceptionType UNKNOWN_TAG = new Dynamic2CommandExceptionType((tag, registry) ->
-            Component.translatable("commands.forge.tags.error.unknown_tag", tag, registry));
+            Component.translatable("commands.singularity.tags.error.unknown_tag", tag, registry));
     private static final Dynamic2CommandExceptionType UNKNOWN_ELEMENT = new Dynamic2CommandExceptionType((tag, registry) ->
-            Component.translatable("commands.forge.tags.error.unknown_element", tag, registry));
+            Component.translatable("commands.singularity.tags.error.unknown_element", tag, registry));
 
     public static ArgumentBuilder<CommandSourceStack, ?> register() {
         /*
-         * /forge tags <registry> list [page]
-         * /forge tags <registry> get <tag> [page]
-         * /forge tags <registry> query <element> [page]
+         * /singularity tags <registry> list [page]
+         * /singularity tags <registry> get <tag> [page]
+         * /singularity tags <registry> query <element> [page]
          */
         return Commands.literal("tags")
                 .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -112,9 +112,9 @@ class TagsCommand {
         final long tagCount = registry.getTags().count();
 
         ctx.getSource().sendSuccess(() -> createMessage(
-                Component.translatable("commands.forge.tags.registry_key", Component.literal(registryKey.identifier().toString()).withStyle(ChatFormatting.GOLD)),
-                "commands.forge.tags.tag_count",
-                "commands.forge.tags.copy_tag_names",
+                Component.translatable("commands.singularity.tags.registry_key", Component.literal(registryKey.identifier().toString()).withStyle(ChatFormatting.GOLD)),
+                "commands.singularity.tags.tag_count",
+                "commands.singularity.tags.copy_tag_names",
                 tagCount,
                 page,
                 ChatFormatting.DARK_GREEN,
@@ -139,11 +139,11 @@ class TagsCommand {
                 .orElseThrow(() -> UNKNOWN_TAG.create(tagKey.location(), registryKey.identifier()));
 
         ctx.getSource().sendSuccess(() -> createMessage(
-                Component.translatable("commands.forge.tags.tag_key",
+                Component.translatable("commands.singularity.tags.tag_key",
                         Component.literal(tagKey.registry().identifier().toString()).withStyle(ChatFormatting.GOLD),
                         Component.literal(tagKey.location().toString()).withStyle(ChatFormatting.DARK_GREEN)),
-                "commands.forge.tags.element_count",
-                "commands.forge.tags.copy_element_names",
+                "commands.singularity.tags.element_count",
+                "commands.singularity.tags.copy_element_names",
                 tag.size(),
                 page,
                 ChatFormatting.YELLOW,
@@ -168,11 +168,11 @@ class TagsCommand {
         final long containingTagsCount = elementHolder.tags().count();
 
         ctx.getSource().sendSuccess(() -> createMessage(
-                Component.translatable("commands.forge.tags.element",
+                Component.translatable("commands.singularity.tags.element",
                         Component.literal(registryKey.identifier().toString()).withStyle(ChatFormatting.GOLD),
                         Component.literal(elementLocation.toString()).withStyle(ChatFormatting.YELLOW)),
-                "commands.forge.tags.containing_tag_count",
-                "commands.forge.tags.copy_tag_names",
+                "commands.singularity.tags.containing_tag_count",
+                "commands.singularity.tags.copy_tag_names",
                 containingTagsCount,
                 page,
                 ChatFormatting.DARK_GREEN,
@@ -200,7 +200,7 @@ class TagsCommand {
                     .withColor(ChatFormatting.GREEN)
                     .withClickEvent(new ClickEvent.CopyToClipboard(allElementNames))
                     .withHoverEvent(new HoverEvent.ShowText(Component.translatable(copyHoverText)))));
-            containsComponent = Component.translatable("commands.forge.tags.page_info",
+            containsComponent = Component.translatable("commands.singularity.tags.page_info",
                     containsComponent, actualPage, totalPages);
         }
 

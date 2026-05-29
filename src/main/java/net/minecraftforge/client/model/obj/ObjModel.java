@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.obj;
+package net.minecraftsingularity.client.model.obj;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,11 +23,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
-import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
-import net.minecraftforge.client.model.renderable.CompositeRenderable;
-import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
+import net.minecraftsingularity.client.model.geometry.IGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.UnbakedGeometryHelper;
+import net.minecraftsingularity.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftsingularity.client.model.renderable.CompositeRenderable;
+import net.minecraftsingularity.client.textures.UnitTextureAtlasSprite;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -528,7 +528,7 @@ public class ObjModel {
             int tintIndex = mat.diffuseTintIndex;
             Vector4f colorTint = mat.diffuseColor;
 
-            // TODO: [Forge][Rendering] Models contains the transforms so we shouldn't care about them here.
+            // TODO: [singularity][Rendering] Models contains the transforms so we shouldn't care about them here.
             //var rootTransform = context.getRootTransform();
             //var transform = rootTransform.isIdentity() ? modelTransform.transformation() : modelTransform.transformation().compose(rootTransform);
             var transform = Transformation.IDENTITY;

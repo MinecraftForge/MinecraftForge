@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftsingularity.debug.misc;
 
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.AnvilUpdateEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 /**
  * This class provides a way to test the AnvilUpdateEvent. <br>

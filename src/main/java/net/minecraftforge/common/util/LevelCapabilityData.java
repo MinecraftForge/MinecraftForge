@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -19,11 +19,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 public class LevelCapabilityData extends SavedData {
     public static SavedDataType<LevelCapabilityData> type(ServerLevel level) {
         return new SavedDataType<LevelCapabilityData>(
-            Identifier.fromNamespaceAndPath("forge", "capabilities"),
+            Identifier.fromNamespaceAndPath("singularity", "capabilities"),
             () -> new LevelCapabilityData(level),
             RecordCodecBuilder.create(b ->
                 b.group(
-                    CompoundTag.CODEC.fieldOf("data").forGetter(i -> {
+                    CompoundTag.CODEC.fieldOf("data").singularitytter(i -> {
                         if (i.serializable == null)
                             return new CompoundTag();
                         return i.serializable.serializeNBT(level.registryAccess());

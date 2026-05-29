@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.energy;
+package net.minecraftsingularity.energy;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftsingularity.common.util.INBTSerializable;
 
 /**
  * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
  *
  * Derived from the Redstone Flux power system designed by King Lemming and originally utilized in Thermal Expansion and related mods.
- * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
+ * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with singularity.
  */
 public class EnergyStorage implements IEnergyStorage, INBTSerializable<Tag> {
     protected int energy;

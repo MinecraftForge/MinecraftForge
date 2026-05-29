@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.gametest;
+package net.minecraftsingularity.gametest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,7 +22,7 @@ public @interface GameTestNamespace {
      * It it recommended that this is your modid, but if you have multiple test mods that
      * you want to group together you can use this to do so.
      * <p>
-     * This will default to your modid if it is on the same class that is annotated with {@link net.minecraftforge.fml.common.Mod @Mod}
+     * This will default to your modid if it is on the same class that is annotated with {@link net.minecraftsingularity.fml.common.Mod @Mod}
      */
     String value() default "";
 }

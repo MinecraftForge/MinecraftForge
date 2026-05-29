@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.tags;
+package net.minecraftsingularity.registries.tags;
 
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 /**
  * A tag is a collection of elements with an identifying {@link TagKey tag key}.
- * For Forge, these are bound on world load.
+ * For singularity, these are bound on world load.
  * Tags will always be empty until they are bound.
  * A tag instance provided for a given {@link TagKey} from a given {@link ITagManager} will always return the same instance on future invocations.
  * This means that the same tag instance will be rebound across reloads assuming the same registry instance is in use.

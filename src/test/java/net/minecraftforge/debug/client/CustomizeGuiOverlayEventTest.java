@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod(CustomizeGuiOverlayEventTest.MODID)
 public class CustomizeGuiOverlayEventTest

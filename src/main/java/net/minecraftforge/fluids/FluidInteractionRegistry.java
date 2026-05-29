@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.event.singularityEventFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,13 +79,13 @@ public final class FluidInteractionRegistry
     static
     {
         // Lava + Water = Obsidian (Source Lava) / Cobblestone (Flowing Lava)
-        addInteraction(ForgeMod.LAVA_TYPE.get(), new InteractionInformation(
-                ForgeMod.WATER_TYPE.get(),
+        addInteraction(singularityMod.LAVA_TYPE.get(), new InteractionInformation(
+                singularityMod.WATER_TYPE.get(),
                 fluidState -> fluidState.isSource() ? Blocks.OBSIDIAN.defaultBlockState() : Blocks.COBBLESTONE.defaultBlockState()
         ));
 
         // Lava + Soul Soil (Below) + Blue Ice = Basalt
-        addInteraction(ForgeMod.LAVA_TYPE.get(), new InteractionInformation(
+        addInteraction(singularityMod.LAVA_TYPE.get(), new InteractionInformation(
                 (level, currentPos, relativePos, currentState) -> level.getBlockState(currentPos.below()).is(Blocks.SOUL_SOIL) && level.getBlockState(relativePos).is(Blocks.BLUE_ICE),
                 Blocks.BASALT.defaultBlockState()
         ));
@@ -145,7 +145,7 @@ public final class FluidInteractionRegistry
         {
             this(predicate, (level, currentPos, relativePos, currentState) ->
             {
-                level.setBlockAndUpdate(currentPos, ForgeEventFactory.fireFluidPlaceBlockEvent(level, currentPos, currentPos, getState.apply(currentState)));
+                level.setBlockAndUpdate(currentPos, singularityEventFactory.fireFluidPlaceBlockEvent(level, currentPos, currentPos, getState.apply(currentState)));
                 level.levelEvent(1501, currentPos, 0);
             });
         }

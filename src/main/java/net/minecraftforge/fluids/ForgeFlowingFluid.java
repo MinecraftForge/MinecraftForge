@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids;
+package net.minecraftsingularity.fluids;
 
 import java.util.Optional;
 import net.minecraft.sounds.SoundEvent;
@@ -24,13 +24,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.common.SoundActions;
+import net.minecraftsingularity.common.SoundActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public abstract class ForgeFlowingFluid extends FlowingFluid {
+public abstract class singularityFlowingFluid extends FlowingFluid {
     private final Supplier<? extends FluidType> fluidType;
     private final Supplier<? extends Fluid> flowing;
     private final Supplier<? extends Fluid> still;
@@ -43,7 +43,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid {
     private final float explosionResistance;
     private final int tickRate;
 
-    protected ForgeFlowingFluid(Properties properties) {
+    protected singularityFlowingFluid(Properties properties) {
         this.fluidType = properties.fluidType;
         this.flowing = properties.flowing;
         this.still = properties.still;
@@ -135,7 +135,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid {
         return Optional.ofNullable(getFluidType().getSound(SoundActions.BUCKET_FILL));
     }
 
-    public static class Flowing extends ForgeFlowingFluid {
+    public static class Flowing extends singularityFlowingFluid {
         public Flowing(Properties properties) {
             super(properties);
             registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
@@ -155,7 +155,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid {
         }
     }
 
-    public static class Source extends ForgeFlowingFluid {
+    public static class Source extends singularityFlowingFluid {
         public Source(Properties properties) {
             super(properties);
         }

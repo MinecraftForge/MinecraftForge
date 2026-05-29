@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
@@ -13,8 +13,8 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModList;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ModIdArgument implements ArgumentType<String> {
-    private static final List<String> EXAMPLES = Arrays.asList("forge", "inventorysorter");
+    private static final List<String> EXAMPLES = Arrays.asList("singularity", "inventorysorter");
 
     public static ModIdArgument modIdArgument() {
         return new ModIdArgument();

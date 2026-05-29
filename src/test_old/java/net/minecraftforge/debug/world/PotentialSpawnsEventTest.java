@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.level.LevelEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 /**
- * <p>This tests net.minecraftforge.event.world.World.LevelEvent.PotentialSpawns. If ENABLED is set to true,
+ * <p>This tests net.minecraftsingularity.event.world.World.LevelEvent.PotentialSpawns. If ENABLED is set to true,
  * this test mod uses the PotentialSpawns event to prevent mobs in the MONSTER mob category from spawning if the
  * game difficulty is set to anything other than hard.</p>
  */

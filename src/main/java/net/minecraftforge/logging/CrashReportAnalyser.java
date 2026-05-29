@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.logging;
+package net.minecraftsingularity.logging;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.mixin.transformer.ClassInfo;
@@ -125,8 +125,8 @@ public final class CrashReportAnalyser {
         ModuleLayer gameLayer = FMLLoader.getGameLayer();
 
         ModList.getMods().forEach(iModInfo -> {
-            //Don't cache minecraft or forge as they will always be included in the stacktrace
-            if (!iModInfo.getModId().equals("forge") && !iModInfo.getModId().equals("minecraft")) {
+            //Don't cache minecraft or singularity as they will always be included in the stacktrace
+            if (!iModInfo.getModId().equals("singularity") && !iModInfo.getModId().equals("minecraft")) {
                 Set<String> packages = new HashSet<>();
 
                 gameLayer.findModule(iModInfo.getModId()).ifPresent(module -> packages.addAll(module.getPackages()));

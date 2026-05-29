@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.rendering;
+package net.minecraftsingularity.debug.client.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -23,14 +23,14 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.EntityRenderersEvent;
+import net.minecraftsingularity.event.entity.EntityAttributeCreationEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.ObjectHolder;
+import net.minecraftsingularity.registries.RegisterEvent;
 
 import java.util.Collections;
 
@@ -46,9 +46,9 @@ public class EntityRendererEventsTest
     @SubscribeEvent
     public static void entityRegistry(RegisterEvent event)
     {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES))
+        if (event.getRegistryKey().equals(singularityRegistries.Keys.ENTITY_TYPES))
         {
-            event.register(ForgeRegistries.Keys.ENTITY_TYPES, MY_ENTITY, () -> EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
+            event.register(singularityRegistries.Keys.ENTITY_TYPES, MY_ENTITY, () -> EntityType.Builder.of(MyEntity::new, MobCategory.MONSTER).build("test_entity"));
         }
     }
     

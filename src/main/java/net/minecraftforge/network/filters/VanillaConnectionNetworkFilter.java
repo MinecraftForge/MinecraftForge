@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.filters;
+package net.minecraftsingularity.network.filters;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,16 +13,16 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkContext;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.NetworkContext;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import org.jetbrains.annotations.NotNull;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * A filter for impl packets, used to filter/modify parts of vanilla impl messages that
- * will cause errors or warnings on vanilla clients, for example entity attributes that are added by Forge or mods.
+ * will cause errors or warnings on vanilla clients, for example entity attributes that are added by singularity or mods.
  */
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter {
@@ -50,7 +50,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter {
         ClientboundUpdateAttributesPacket newPacket = new ClientboundUpdateAttributesPacket(msg.getEntityId(), Collections.emptyList());
         msg.getValues().stream()
                 .filter(snapshot -> {
-                    Identifier key = ForgeRegistries.ATTRIBUTES.getKey(snapshot.attribute().get());
+                    Identifier key = singularityRegistries.ATTRIBUTES.getKey(snapshot.attribute().get());
                     return key != null && key.getNamespace().equals("minecraft");
                 })
                 .forEach(snapshot -> newPacket.getValues().add(snapshot));

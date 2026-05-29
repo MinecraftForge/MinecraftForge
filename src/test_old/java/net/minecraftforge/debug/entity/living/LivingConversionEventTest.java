@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.entity.living;
+package net.minecraftsingularity.debug.entity.living;
 
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingConversionEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.living.LivingConversionEvent;
+import net.minecraftsingularity.fml.common.Mod;
 
 @Mod("living_conversion_event_test")
 public class LivingConversionEventTest {

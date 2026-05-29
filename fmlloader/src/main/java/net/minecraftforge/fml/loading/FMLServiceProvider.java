@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.*;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.forgespi.Environment;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.singularityspi.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -18,16 +18,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftsingularity.fml.loading.LogMarkers.CORE;
 
 public class FMLServiceProvider implements ITransformationService {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final Map<String, Object> arguments = new HashMap<>();
 
     public FMLServiceProvider() {
-        var markers = System.getProperty("forge.logging.markers", "").split(",");
+        var markers = System.getProperty("singularity.logging.markers", "").split(",");
         for (var marker : markers)
-            System.setProperty("forge.logging.marker." + marker.toLowerCase(Locale.ROOT), "ACCEPT");
+            System.setProperty("singularity.logging.marker." + marker.toLowerCase(Locale.ROOT), "ACCEPT");
     }
 
     @Override

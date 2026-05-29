@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server;
+package net.minecraftsingularity.server;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,30 +20,30 @@ import net.minecraft.network.protocol.handshake.ClientIntent;
 import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 import net.minecraft.world.level.storage.LevelResource;
-import net.minecraftforge.common.world.StructureModifier;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkContext;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.registries.ForgeRegistries.Keys;
-import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftsingularity.common.world.StructureModifier;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.NetworkContext;
+import net.minecraftsingularity.network.NetworkRegistry;
+import net.minecraftsingularity.registries.singularityRegistries.Keys;
+import net.minecraftsingularity.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
+import net.minecraftsingularity.fml.config.ConfigTracker;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.event.server.ServerAboutToStartEvent;
+import net.minecraftsingularity.event.server.ServerStartedEvent;
+import net.minecraftsingularity.event.server.ServerStartingEvent;
+import net.minecraftsingularity.event.server.ServerStoppedEvent;
+import net.minecraftsingularity.event.server.ServerStoppingEvent;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.GameData;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -109,7 +109,7 @@ public class ServerLifecycleHooks {
         final RegistryAccess registries = server.registryAccess();
 
         // The order of holders() is the order modifiers were loaded in.
-        final List<BiomeModifier> biomeModifiers = registries.lookupOrThrow(ForgeRegistries.Keys.BIOME_MODIFIERS)
+        final List<BiomeModifier> biomeModifiers = registries.lookupOrThrow(singularityRegistries.Keys.BIOME_MODIFIERS)
             .listElements()
             .map(Holder::value)
             .toList();
@@ -160,10 +160,10 @@ public class ServerLifecycleHooks {
             return true;
 
         if (ctx.getType() == ConnectionType.MODDED && ctx.getNetVersion() != NetworkContext.NET_VERSION)
-            return rejectConnection(connection, ctx.getType(), "This modded server is not impl compatible with your modded client. Please verify your Forge version closely matches the server. Got net version " + ctx.getNetVersion() + " this server is net version " + NetworkContext.NET_VERSION);
+            return rejectConnection(connection, ctx.getType(), "This modded server is not impl compatible with your modded client. Please verify your singularity version closely matches the server. Got net version " + ctx.getNetVersion() + " this server is net version " + NetworkContext.NET_VERSION);
 
         if (ctx.getType() == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections())
-            return rejectConnection(connection, ctx.getType(), "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+            return rejectConnection(connection, ctx.getType(), "This server has mods that require singularity to be installed on the client. Contact your server admin for more details.");
 
         NetworkRegistry.onConnectionStart(connection);
         return true;

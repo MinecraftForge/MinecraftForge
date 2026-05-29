@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.pipeline;
+package net.minecraftsingularity.client.model.pipeline;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -13,7 +13,7 @@ import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
+import net.minecraftsingularity.client.textures.UnitTextureAtlasSprite;
 
 import java.util.function.Consumer;
 

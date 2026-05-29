@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.mojang.serialization.MapCodec;
 
@@ -41,26 +41,26 @@ import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.registries.DeferredRegister.RegistryHolder;
-import net.minecraftforge.registries.holdersets.HolderSetType;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftsingularity.common.loot.IGlobalLootModifier;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.registries.DeferredRegister.RegistryHolder;
+import net.minecraftsingularity.registries.holdersets.HolderSetType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import net.minecraftforge.common.world.StructureModifier;
+import net.minecraftsingularity.common.world.StructureModifier;
 
 /**
- * A class that exposes static references to all vanilla and Forge registries.
+ * A class that exposes static references to all vanilla and singularity registries.
  * Created to have a central place to access the registries directly if modders need.
  * It is still advised that if you are registering things to use {@link RegisterEvent} or {@link DeferredRegister}, but queries and iterations can use this.
  */
-public class ForgeRegistries {
+public class singularityRegistries {
     static { init(); } // This must be above the fields so we guarantee it's run before getRegistry is called. Yay static initializers
     private static <T> IForgeRegistry<T> active(ResourceKey<Registry<T>> key) {
         return RegistryManager.ACTIVE.getRegistry(key);
@@ -108,7 +108,7 @@ public class ForgeRegistries {
     // Dynamic/Data driven.
     public static final IForgeRegistry<Biome> BIOMES = active(Keys.BIOMES);
 
-    // Custom forge registries
+    // Custom singularity registries
     public static final RegistryHolder<EntityDataSerializer<?>> ENTITY_DATA_SERIALIZERS = registry(Keys.ENTITY_DATA_SERIALIZERS, GameData::getDataSerializersRegistryBuilder);
     public static final RegistryHolder<MapCodec<? extends IGlobalLootModifier>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = registry(Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, GameData::getGLMSerializersRegistryBuilder);
     public static final RegistryHolder<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = registry(Keys.BIOME_MODIFIER_SERIALIZERS, GameData::makeUnsavedAndUnsynced);
@@ -152,20 +152,20 @@ public class ForgeRegistries {
         // Vanilla Dynamic
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
 
-        // Forge
-        public static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = key("forge:entity_data_serializers");
-        public static final ResourceKey<Registry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("forge:global_loot_modifier_serializers");
-        public static final ResourceKey<Registry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("forge:biome_modifier_serializers");
-        public static final ResourceKey<Registry<MapCodec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
-        public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("forge:fluid_type");
-        public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("forge:holder_set_type");
-        public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("forge:display_contexts");
-        public static final ResourceKey<Registry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = key("forge:condition_codecs");
-        public static final ResourceKey<Registry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = key("forge:ingredient_serializers");
+        // singularity
+        public static final ResourceKey<Registry<EntityDataSerializer<?>>> ENTITY_DATA_SERIALIZERS = key("singularity:entity_data_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends IGlobalLootModifier>>> GLOBAL_LOOT_MODIFIER_SERIALIZERS = key("singularity:global_loot_modifier_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends BiomeModifier>>> BIOME_MODIFIER_SERIALIZERS = key("singularity:biome_modifier_serializers");
+        public static final ResourceKey<Registry<MapCodec<? extends StructureModifier>>> STRUCTURE_MODIFIER_SERIALIZERS = key("singularity:structure_modifier_serializers");
+        public static final ResourceKey<Registry<FluidType>> FLUID_TYPES = key("singularity:fluid_type");
+        public static final ResourceKey<Registry<HolderSetType>> HOLDER_SET_TYPES = key("singularity:holder_set_type");
+        public static final ResourceKey<Registry<ItemDisplayContext>> DISPLAY_CONTEXTS = key("singularity:display_contexts");
+        public static final ResourceKey<Registry<MapCodec<? extends ICondition>>> CONDITION_SERIALIZERS = key("singularity:condition_codecs");
+        public static final ResourceKey<Registry<IIngredientSerializer<?>>> INGREDIENT_SERIALIZERS = key("singularity:ingredient_serializers");
 
-        // Forge Dynamic
-        public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("forge:biome_modifier");
-        public static final ResourceKey<Registry<StructureModifier>> STRUCTURE_MODIFIERS = key("forge:structure_modifier");
+        // singularity Dynamic
+        public static final ResourceKey<Registry<BiomeModifier>> BIOME_MODIFIERS = key("singularity:biome_modifier");
+        public static final ResourceKey<Registry<StructureModifier>> STRUCTURE_MODIFIERS = key("singularity:structure_modifier");
 
         private static <T> ResourceKey<Registry<T>> key(String name) {
             return ResourceKey.createRegistryKey(Identifier.parse(name));

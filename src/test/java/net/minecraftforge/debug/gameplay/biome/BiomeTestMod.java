@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.biome;
+package net.minecraftsingularity.debug.gameplay.biome;
 
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -13,14 +13,14 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegisterData;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegisterData;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 import java.util.List;
 
 @Mod(BiomeTestMod.MOD_ID)
@@ -37,10 +37,10 @@ public class BiomeTestMod extends BaseTestMod {
         new PlacedFeature(CONFIGURED.getHolder().orElseThrow(), List.of())
     );
 
-    public static final DeferredRegisterData<BiomeModifier> BIOME_MODIFIERS = DeferredRegisterData.create(ForgeRegistries.Keys.BIOME_MODIFIERS, MOD_ID);
+    public static final DeferredRegisterData<BiomeModifier> BIOME_MODIFIERS = DeferredRegisterData.create(singularityRegistries.Keys.BIOME_MODIFIERS, MOD_ID);
     @SuppressWarnings("unused")
     private static final RegistryObject<BiomeModifier> MODIFIER = BIOME_MODIFIERS.register("modifier", ctx -> {
-        return new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+        return new singularityBiomeModifiers.AddFeaturesBiomeModifier(
             ctx.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_OVERWORLD),
             HolderSet.direct(PLACED.getHolder().orElseThrow()),
             GenerationStep.Decoration.UNDERGROUND_ORES

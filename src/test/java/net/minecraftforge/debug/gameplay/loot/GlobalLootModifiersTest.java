@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.loot;
+package net.minecraftsingularity.debug.gameplay.loot;
 
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
@@ -55,23 +55,23 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.data.GlobalLootModifierProvider;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.common.loot.LootTableIdCondition;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.common.crafting.conditions.IConditionBuilder;
+import net.minecraftsingularity.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftsingularity.common.data.GlobalLootModifierProvider;
+import net.minecraftsingularity.common.loot.IGlobalLootModifier;
+import net.minecraftsingularity.common.loot.LootModifier;
+import net.minecraftsingularity.common.loot.LootTableIdCondition;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.items.ItemHandlerHelper;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -79,12 +79,12 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest extends BaseTestMod {
     public static final String MODID = "global_loot_test";
 
-    private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(singularityRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     static {
         GLM.register("multiply_loot", MultiplyDropsModifier.CODEC);
         GLM.register("smelting", SmeltingEnchantmentModifier.CODEC);
@@ -103,9 +103,9 @@ public class GlobalLootModifiersTest extends BaseTestMod {
             ).build(SMELT.identifier()));
         });
 
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(name(MODID, "test", BlockBehaviour.Properties.of())));
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
     private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), name(MODID, "test", new Item.Properties())));
 
     public GlobalLootModifiersTest(FMLJavaModLoadingContext context) {
@@ -369,9 +369,9 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     private static class WheatSeedsConverterModifier extends LootModifier {
         public static final Supplier<MapCodec<WheatSeedsConverterModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).and(
             inst.group(
-                Codec.INT.fieldOf("numSeeds").forGetter(m -> m.numSeedsToConvert),
-                ForgeRegistries.ITEMS.getCodec().fieldOf("seedItem").forGetter(m -> m.itemToCheck),
-                ForgeRegistries.ITEMS.getCodec().fieldOf("replacement").forGetter(m -> m.itemReward)
+                Codec.INT.fieldOf("numSeeds").singularitytter(m -> m.numSeedsToConvert),
+                singularityRegistries.ITEMS.getCodec().fieldOf("seedItem").singularitytter(m -> m.itemToCheck),
+                singularityRegistries.ITEMS.getCodec().fieldOf("replacement").singularitytter(m -> m.itemReward)
             )).apply(inst, WheatSeedsConverterModifier::new)
         ));
 
@@ -415,7 +415,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
 
     private static class MultiplyDropsModifier extends LootModifier {
         public static final Supplier<MapCodec<MultiplyDropsModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst)
-            .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).forGetter(m -> m.multiplicationFactor))
+            .and(ExtraCodecs.POSITIVE_INT.optionalFieldOf("multiplication_factor", 2).singularitytter(m -> m.multiplicationFactor))
             .apply(inst, MultiplyDropsModifier::new)
         ));
 

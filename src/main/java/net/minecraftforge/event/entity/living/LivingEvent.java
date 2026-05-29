@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.event.singularityEventFactory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.event.entity.EntityEvent;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,7 +27,7 @@ public interface LivingEvent extends EntityEvent {
     /**
      * LivingUpdateEvent is fired when a LivingEntity is ticked in {@link LivingEntity#tick()}. <br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#onLivingTick(LivingEntity)}.<br>
+     * This event is fired via the {@link singularityEventFactory#onLivingTick(LivingEntity)}.<br>
      * <br>
      * This event is {@linkplain Cancellable cancellable}. If this event is cancelled, the Entity does not update.
      */
@@ -41,7 +41,7 @@ public interface LivingEvent extends EntityEvent {
      * {@code LivingEntity#jumpFromGround()}, {@code MagmaCube#jumpFromGround()},
      * and {@code Horse#jumpFromGround()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeHooks#onLivingJump(LivingEntity)}.
+     * This event is fired via the {@link singularityHooks#onLivingJump(LivingEntity)}.
      **/
     record LivingJumpEvent(LivingEntity getEntity) implements LivingEvent, RecordEvent {
         public static final EventBus<LivingJumpEvent> BUS = EventBus.create(LivingJumpEvent.class);

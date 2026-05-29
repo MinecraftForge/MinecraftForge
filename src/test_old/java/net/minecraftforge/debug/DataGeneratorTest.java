@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -57,8 +57,8 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraftforge.common.data.*;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.data.*;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,18 +91,18 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile;
-import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftsingularity.client.model.generators.BlockStateProvider;
+import net.minecraftsingularity.client.model.generators.ConfiguredModel;
+import net.minecraftsingularity.client.model.generators.ItemModelProvider;
+import net.minecraftsingularity.client.model.generators.ModelBuilder;
+import net.minecraftsingularity.client.model.generators.ModelFile;
+import net.minecraftsingularity.client.model.generators.ModelFile.UncheckedModelFile;
+import net.minecraftsingularity.client.model.generators.MultiPartBlockStateBuilder;
+import net.minecraftsingularity.client.model.generators.VariantBlockStateBuilder;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.data.event.GatherDataEvent;
 
 import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
@@ -144,7 +144,7 @@ public class DataGeneratorTest {
 
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.TYPE, new PackMetadataSection(
-                Component.literal("Forge tests resource pack"),
+                Component.literal("singularity tests resource pack"),
                 DetectedVersion.BUILT_IN.getPackVersion(PackType.CLIENT_RESOURCES),
                 Optional.empty()
                 //Arrays.stream(PackType.values()).collect(Collectors.toMap(Function.identity(), DetectedVersion.BUILT_IN::getPackVersion))
@@ -159,7 +159,7 @@ public class DataGeneratorTest {
         gen.addProvider(event.includeClient(), new ParticleDescriptions(packOutput, event.getExistingFileHelper()));
 
         gen.addProvider(event.includeServer(), new Tags(packOutput, lookupProvider, event.getExistingFileHelper()));
-        gen.addProvider(event.includeServer(), new ForgeAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
+        gen.addProvider(event.includeServer(), new singularityAdvancementProvider(packOutput, lookupProvider, event.getExistingFileHelper(), List.of(new Advancements())));
         gen.addProvider(event.includeServer(), new DatapackBuiltinEntriesProvider(packOutput, lookupProvider, BUILDER, Set.of(MODID)));
     }
 
@@ -269,7 +269,7 @@ public class DataGeneratorTest {
             try {
                 List<Resource> resourceStack = this.helper.getResourceStack(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES);
                 // Get the first resource in the stack
-                // This guarantees vanilla even when a forge sounds.json is present because getResourceStack reverses the list
+                // This guarantees vanilla even when a singularity sounds.json is present because getResourceStack reverses the list
                 // so that the lower priority resources are first (to allow overwriting data in later entries)
                 Resource vanillaSoundResource = resourceStack.get(0);
                 actual = GSON.fromJson(
@@ -417,9 +417,9 @@ public class DataGeneratorTest {
             tag(BlockTags.create(new ResourceLocation(MODID, "test")))
                 .add(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
-                .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
+                .addTag(net.minecraftsingularity.common.Tags.Blocks.COBBLESTONE)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
-                .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
+                .addOptionalTag(new ResourceLocation("singularity", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
             tag(BlockTags.create(new ResourceLocation(MODID, "thing/one")))
@@ -522,7 +522,7 @@ public class DataGeneratorTest {
         @Override
         public String getName()
         {
-            return "Forge Test Item Models";
+            return "singularity Test Item Models";
         }
     }
 
@@ -647,7 +647,7 @@ public class DataGeneratorTest {
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
-            slabBlock((SlabBlock) Blocks.ACACIA_SLAB, ForgeRegistries.BLOCKS.getKey(Blocks.ACACIA_PLANKS), mcLoc("block/acacia_planks"));
+            slabBlock((SlabBlock) Blocks.ACACIA_SLAB, singularityRegistries.BLOCKS.getKey(Blocks.ACACIA_PLANKS), mcLoc("block/acacia_planks"));
 
             // TODO 1.19: fix fenceBlock, wallBlock, and co -SS
             // fenceBlock((FenceBlock) Blocks.ACACIA_FENCE, "acacia", mcLoc("block/acacia_planks"));
@@ -694,7 +694,7 @@ public class DataGeneratorTest {
                     if (IGNORED_BLOCKS.contains(block)) return;
                     JsonObject generated = state.toJson();
                     try {
-                        Resource vanillaResource = models().existingFileHelper.getResource(ForgeRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
+                        Resource vanillaResource = models().existingFileHelper.getResource(singularityRegistries.BLOCKS.getKey(block), PackType.CLIENT_RESOURCES, ".json", "blockstates");
                         JsonObject existing = GSON.fromJson(vanillaResource.openAsReader(), JsonObject.class);
                         if (state instanceof VariantBlockStateBuilder) {
                             compareVariantBlockstates(block, generated, existing);
@@ -861,11 +861,11 @@ public class DataGeneratorTest {
 
         @Override
         public String getName() {
-            return "Forge Test Blockstates";
+            return "singularity Test Blockstates";
         }
     }
 
-    private static class Advancements implements ForgeAdvancementProvider.AdvancementGenerator {
+    private static class Advancements implements singularityAdvancementProvider.AdvancementGenerator {
         @Override
         public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> saver, ExistingFileHelper existingFileHelper) {
             Advancement.Builder.advancement().display(Items.DIRT,
@@ -925,7 +925,7 @@ public class DataGeneratorTest {
                             false,
                             false)
                     .addCriterion("get_cobbleStone", InventoryChangeTrigger.TriggerInstance.hasItems(Items.COBBLESTONE))
-                    .parent(new ResourceLocation("forge", "dummy_parent"))
+                    .parent(new ResourceLocation("singularity", "dummy_parent"))
                     .save(saver, new ResourceLocation("good_parent"));
         }
     }
@@ -973,7 +973,7 @@ public class DataGeneratorTest {
 
         private void validateResults() {
             var errors = Stream.of(ParticleTypes.DRIPPING_LAVA, ParticleTypes.CLOUD, ParticleTypes.FISHING, ParticleTypes.ENCHANT)
-                    .map(ForgeRegistries.PARTICLE_TYPES::getKey).map(particle -> {
+                    .map(singularityRegistries.PARTICLE_TYPES::getKey).map(particle -> {
                         try (var resource = this.fileHelper.getResource(particle, PackType.CLIENT_RESOURCES, ".json", "particles").openAsReader()) {
                             var existingTextures = GSON.fromJson(resource, JsonObject.class).get("textures").getAsJsonArray();
                             var generatedTextures = this.descriptions.get(particle);

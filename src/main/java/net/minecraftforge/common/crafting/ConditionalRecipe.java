@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting;
+package net.minecraftsingularity.common.crafting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +42,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.crafting.conditions.ConditionCodec;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.ICondition.IContext;
+import net.minecraftsingularity.common.crafting.conditions.ConditionCodec;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.crafting.conditions.ICondition.IContext;
 import org.jetbrains.annotations.Nullable;
 
 /**

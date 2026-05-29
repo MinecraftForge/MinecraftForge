@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
+import net.minecraftsingularity.fluids.capability.wrappers.FluidBucketWrapper;
 
 public class Tags {
     public static void init() {
@@ -43,23 +43,23 @@ public class Tags {
     public static class Blocks {
         private static void init() {}
 
-        //region `forge` tags for Forge-specific tags
+        //region `singularity` tags for singularity-specific tags
         /**
          * Controls what blocks Endermen cannot place blocks onto.
          * <p></p>
          * This is patched into the following method: {@link EnderMan.EndermanLeaveBlockGoal#canPlaceBlock(Level, BlockPos, BlockState, BlockState, BlockState, BlockPos)}
          */
-        public static final TagKey<Block> ENDERMAN_PLACE_ON_BLACKLIST = forgeTag("enderman_place_on_blacklist");
-        public static final TagKey<Block> NEEDS_WOOD_TOOL = forgeTag("needs_wood_tool");
-        public static final TagKey<Block> NEEDS_GOLD_TOOL = forgeTag("needs_gold_tool");
-        public static final TagKey<Block> NEEDS_NETHERITE_TOOL = forgeTag("needs_netherite_tool");
-        public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
-        public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
+        public static final TagKey<Block> ENDERMAN_PLACE_ON_BLACKLIST = singularityTag("enderman_place_on_blacklist");
+        public static final TagKey<Block> NEEDS_WOOD_TOOL = singularityTag("needs_wood_tool");
+        public static final TagKey<Block> NEEDS_GOLD_TOOL = singularityTag("needs_gold_tool");
+        public static final TagKey<Block> NEEDS_NETHERITE_TOOL = singularityTag("needs_netherite_tool");
+        public static final TagKey<Block> STORAGE_BLOCKS_AMETHYST = singularityTag("storage_blocks/amethyst");
+        public static final TagKey<Block> STORAGE_BLOCKS_QUARTZ = singularityTag("storage_blocks/quartz");
         //endregion
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         public static final TagKey<Block> BARRELS = cTag("barrels");
         public static final TagKey<Block> BARRELS_WOODEN = cTag("barrels/wooden");
         /**
@@ -297,8 +297,8 @@ public class Tags {
             return BlockTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
 
-        private static TagKey<Block> forgeTag(String name) {
-            return BlockTags.create(Identifier.fromNamespaceAndPath("forge", name));
+        private static TagKey<Block> singularityTag(String name) {
+            return BlockTags.create(Identifier.fromNamespaceAndPath("singularity", name));
         }
     }
 
@@ -307,7 +307,7 @@ public class Tags {
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         public static final TagKey<EntityType<?>> BOSSES = cTag("bosses");
         public static final TagKey<EntityType<?>> MINECARTS = cTag("minecarts");
         public static final TagKey<EntityType<?>> BOATS = cTag("boats");
@@ -339,20 +339,20 @@ public class Tags {
     public static class Items {
         private static void init() {}
 
-        //region `forge` tags for Forge-specific tags
+        //region `singularity` tags for singularity-specific tags
         /**
          * Controls what items can be consumed for enchanting such as Enchanting Tables.
-         * This tag defaults to {@link net.minecraft.world.item.Items#LAPIS_LAZULI} when not present in any datapacks, including forge client on vanilla server
+         * This tag defaults to {@link net.minecraft.world.item.Items#LAPIS_LAZULI} when not present in any datapacks, including singularity client on vanilla server
          */
-        public static final TagKey<Item> ENCHANTING_FUELS = forgeTag("enchanting_fuels");
+        public static final TagKey<Item> ENCHANTING_FUELS = singularityTag("enchanting_fuels");
 
-        public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = forgeTag("storage_blocks/amethyst");
-        public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = forgeTag("storage_blocks/quartz");
+        public static final TagKey<Item> STORAGE_BLOCKS_AMETHYST = singularityTag("storage_blocks/amethyst");
+        public static final TagKey<Item> STORAGE_BLOCKS_QUARTZ = singularityTag("storage_blocks/quartz");
         //endregion
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         public static final TagKey<Item> BARRELS = cTag("barrels");
         public static final TagKey<Item> BARRELS_WOODEN = cTag("barrels/wooden");
         /**
@@ -932,8 +932,8 @@ public class Tags {
             return ItemTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
 
-        private static TagKey<Item> forgeTag(String name) {
-            return ItemTags.create(Identifier.fromNamespaceAndPath("forge", name));
+        private static TagKey<Item> singularityTag(String name) {
+            return ItemTags.create(Identifier.fromNamespaceAndPath("singularity", name));
         }
     }
 
@@ -942,7 +942,7 @@ public class Tags {
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         /**
          * Holds all fluids related to Beetroot Soup.<br></br>
          * (Standard unit for beetroot soup is 250mb per bowl)
@@ -979,12 +979,12 @@ public class Tags {
         public static final TagKey<Fluid> SUSPICIOUS_STEW = cTag("suspicious_stew");
         /**
          * Holds all fluids related to water.
-         * This tag is done to help out multi-loader mods/datapacks where the vanilla water tag has attached behaviors outside Forge.
+         * This tag is done to help out multi-loader mods/datapacks where the vanilla water tag has attached behaviors outside singularity.
          */
         public static final TagKey<Fluid> WATER = cTag("water");
         /**
          * Holds all fluids related to lava.
-         * This tag is done to help out multi-loader mods/datapacks where the vanilla lava tag has attached behaviors outside Forge.
+         * This tag is done to help out multi-loader mods/datapacks where the vanilla lava tag has attached behaviors outside singularity.
          */
         public static final TagKey<Fluid> LAVA = cTag("lava");
         /**
@@ -1006,8 +1006,8 @@ public class Tags {
             return FluidTags.create(Identifier.fromNamespaceAndPath("c", name));
         }
 
-        private static TagKey<Fluid> forgeTag(String name) {
-            return FluidTags.create(Identifier.fromNamespaceAndPath("forge", name));
+        private static TagKey<Fluid> singularityTag(String name) {
+            return FluidTags.create(Identifier.fromNamespaceAndPath("singularity", name));
         }
     }
 
@@ -1016,7 +1016,7 @@ public class Tags {
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         /**
          * A tag containing enchantments that increase the amount or
          * quality of drops from blocks, such as {@link net.minecraft.world.item.enchantment.Enchantments#FORTUNE}.
@@ -1056,7 +1056,7 @@ public class Tags {
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         /**
          * For biomes that should not spawn monsters over time the normal way.
          * In other words, their Spawners and Spawn Cost entries have the monster category empty.
@@ -1295,8 +1295,8 @@ public class Tags {
             return TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("c", name));
         }
 
-        private static TagKey<Biome> forgeTag(String name) {
-            return TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("forge", name));
+        private static TagKey<Biome> singularityTag(String name) {
+            return TagKey.create(Registries.BIOME, Identifier.fromNamespaceAndPath("singularity", name));
         }
     }
 
@@ -1305,7 +1305,7 @@ public class Tags {
 
         //region `c` tags for common conventions
         // Note: Other loaders have additional `c` tags that are exclusive to their loader.
-        //       Forge only adopts `c` tags that are common across all loaders.
+        //       singularity only adopts `c` tags that are common across all loaders.
         /**
          * Structures that should not show up on minimaps or world map views from mods/sites.
          * No effect on vanilla map items.

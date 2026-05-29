@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.IdentifierException;
@@ -12,9 +12,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.event.network.ChannelRegistrationChangeEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.List;
 public class ChannelListManager {
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final Identifier NAME = Identifier.fromNamespaceAndPath("forge", "channel_registration");
+    public static final Identifier NAME = Identifier.fromNamespaceAndPath("singularity", "channel_registration");
 
     static final Channel<CustomPacketPayload> CHANNEL = ChannelBuilder
         .named(NAME)
@@ -160,7 +160,7 @@ public class ChannelListManager {
             }
         }
 
-        ForgeEventFactory.onChannelRegistrationChange(source.getConnection(), changeType, changed);
+        singularityEventFactory.onChannelRegistrationChange(source.getConnection(), changeType, changed);
 
         var list = NetworkContext.get(source.getConnection());
         for (var channel : changed) {

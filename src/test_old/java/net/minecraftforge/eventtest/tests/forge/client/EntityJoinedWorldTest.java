@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.eventtest.tests.forge.client;
+package net.minecraftsingularity.eventtest.tests.singularity.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventtest.internal.EventTest;
-import net.minecraftforge.eventtest.internal.TestHolder;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.EntityJoinLevelEvent;
+import net.minecraftsingularity.eventtest.internal.EventTest;
+import net.minecraftsingularity.eventtest.internal.TestHolder;
 
 /**
  * Test case for the EntityJoinWorldEvent.

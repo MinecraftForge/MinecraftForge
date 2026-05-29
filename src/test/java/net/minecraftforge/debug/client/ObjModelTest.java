@@ -1,10 +1,10 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
 /*
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -16,14 +16,14 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelIdentifier;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
- * Tests loading and rendering an obj-model using the using Forge's {@link net.minecraftforge.client.model.obj.ObjLoader}.
+ * Tests loading and rendering an obj-model using the using singularity's {@link net.minecraftsingularity.client.model.obj.ObjLoader}.
  * When enabled, this will render a pyramid loaded from an obj model at coordinates 0,0,0.
  */
 /*

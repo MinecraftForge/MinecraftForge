@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.misc;
+package net.minecraftsingularity.debug.misc;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.Blocks;
@@ -22,15 +22,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.extensions.IForgeMenuType;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.extensions.IForgeMenuType;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.ObjectHolder;
+import net.minecraftsingularity.registries.RegisterEvent;
 
 @Mod("containertypetest")
 public class ContainerTypeTest {
@@ -79,7 +79,7 @@ public class ContainerTypeTest {
     }
 
     private void registerContainers(final RegisterEvent event) {
-        event.register(ForgeRegistries.Keys.MENU_TYPES, helper -> helper.register("container", IForgeMenuType.create(TestContainer::new)));
+        event.register(singularityRegistries.Keys.MENU_TYPES, helper -> helper.register("container", IForgeMenuType.create(TestContainer::new)));
     }
 
     private void setup(FMLClientSetupEvent event) {

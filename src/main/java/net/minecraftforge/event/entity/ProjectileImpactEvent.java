@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity;
+package net.minecraftsingularity.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -19,8 +19,8 @@ import java.util.Objects;
 /**
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  * This event is fired when a projectile entity impacts something.<br>
- * This event is fired via {@link ForgeEventFactory#onProjectileImpact(Projectile, HitResult)}
- * This event is fired for all vanilla projectiles by Forge,
+ * This event is fired via {@link singularityEventFactory#onProjectileImpact(Projectile, HitResult)}
+ * This event is fired for all vanilla projectiles by singularity,
  * custom projectiles should fire this event and check the result in a similar fashion.
  * You can also directly set the {@link ImpactResult} to change the impact behaviour.
  * @see #setImpactResult(ImpactResult)

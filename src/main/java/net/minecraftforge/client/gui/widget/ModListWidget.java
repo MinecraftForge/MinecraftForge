@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.gui.widget;
+package net.minecraftsingularity.client.gui.widget;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -14,15 +14,15 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.locale.Language;
-import net.minecraftforge.client.gui.ModListScreen;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftsingularity.client.gui.ModListScreen;
+import net.minecraftsingularity.versions.singularity.singularityVersion;
+import net.minecraftsingularity.common.util.MavenVersionStringHelper;
+import net.minecraftsingularity.fml.VersionChecker;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
 
 public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry> {
     private static String stripControlCodes(String value) { return net.minecraft.util.StringUtil.stripColor(value); }
-    private static final Identifier VERSION_CHECK_ICONS = Identifier.fromNamespaceAndPath(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
+    private static final Identifier VERSION_CHECK_ICONS = Identifier.fromNamespaceAndPath(singularityVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
     private final ModListScreen parent;
@@ -88,7 +88,7 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry> {
             guiGraphics.text(font, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(name,    listWidth - 6 - barOffset))), left + 3, top + 2, 0xFFFFFFFF, false);
             guiGraphics.text(font, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(version, listWidth - 6 - barOffset))), left + 3, top + 2 + font.lineHeight, 0xFFCCCCCC, false);
             if (vercheck.status().shouldDraw()) {
-                //TODO: [Forge][ModList] Consider adding more icons for visualization
+                //TODO: [singularity][ModList] Consider adding more icons for visualization
                 guiGraphics.pose().pushMatrix();
                 guiGraphics.blit(RenderPipelines.GUI_TEXTURED, VERSION_CHECK_ICONS, getX() + width - 12 - barOffset, top + entryHeight / 4, vercheck.status().getSheetOffset() * 8, (vercheck.status().isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 guiGraphics.pose().popMatrix();

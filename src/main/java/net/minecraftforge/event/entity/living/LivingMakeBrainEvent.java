@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import com.mojang.serialization.Dynamic;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.BrainBuilder;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.util.BrainBuilder;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 
 /**
  * LivingMakeBrainEvent is fired whenever a new {@link net.minecraft.world.entity.ai.Brain} instance is created using {@link LivingEntity#makeBrain(Dynamic)}.<br>
@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.event.MutableEvent;
  * After this event is posted, a fresh Brain instance will be created using the encapsulated state found in the BrainBuilder
  * and replace the previously created Brain instance for the entity.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingMakeBrain(LivingEntity, Brain, Dynamic)}.<br>
+ * This event is fired via the {@link singularityHooks#onLivingMakeBrain(LivingEntity, Brain, Dynamic)}.<br>
  **/
 public final class LivingMakeBrainEvent extends MutableEvent implements LivingEvent {
     public static final EventBus<LivingMakeBrainEvent> BUS = EventBus.create(LivingMakeBrainEvent.class);

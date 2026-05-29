@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.geometry;
+package net.minecraftsingularity.client.model.geometry;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -11,8 +11,8 @@ import com.google.gson.JsonParseException;
 
 import net.minecraft.client.resources.model.geometry.UnbakedGeometry;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraftforge.client.event.ModelEvent.RegisterGeometryLoaders;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftsingularity.client.event.ModelEvent.RegisterGeometryLoaders;
+import net.minecraftsingularity.client.event.RegisterClientReloadListenersEvent;
 
 /**
  * A loader for custom {@linkplain UnbakedGeometry model geometries}.

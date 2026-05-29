@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting;
+package net.minecraftsingularity.common.crafting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +16,8 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
 
 /**
  * A `ConditionalAdvancement` is a single advancment file that contains multiple advancements, each having a condition.
@@ -82,7 +82,7 @@ public class ConditionalAdvancement {
         public JsonObject build(HolderLookup.Provider lookup) {
             var json = new JsonObject();
             var array = new JsonArray();
-            json.add("forge:conditional", array);
+            json.add("singularity:conditional", array);
 
             var ops = lookup.createSerializationContext(JsonOps.INSTANCE);
 
@@ -95,7 +95,7 @@ public class ConditionalAdvancement {
 
                 if (holder.has(ICondition.DEFAULT_FIELD))
                     throw new IllegalStateException("Recipe already serialized conditions!");
-                ForgeHooks.writeCondition(pair.condition(), holder);
+                singularityHooks.writeCondition(pair.condition(), holder);
 
                 array.add(holder);
             }

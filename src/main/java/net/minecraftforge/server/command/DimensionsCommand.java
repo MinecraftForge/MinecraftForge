@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,7 +27,7 @@ class DimensionsCommand {
         return Commands.literal("dimensions")
             .requires(Commands.hasPermission(Commands.LEVEL_ALL)) //permission
             .executes(ctx -> {
-                ctx.getSource().sendSuccess(() -> Component.translatable("commands.forge.dimensions.list"), true);
+                ctx.getSource().sendSuccess(() -> Component.translatable("commands.singularity.dimensions.list"), true);
                 final Registry<DimensionType> reg = ctx.getSource().registryAccess().lookupOrThrow(Registries.DIMENSION_TYPE);
 
                 Map<Identifier, List<Identifier>> types = new HashMap<>();

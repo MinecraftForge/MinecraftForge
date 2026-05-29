@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event;
+package net.minecraftsingularity.event;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.chunk.storage.SerializableChunkData;
-import net.minecraftforge.common.util.Result;
+import net.minecraftsingularity.common.util.Result;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -108,99 +108,99 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.brewing.BrewingRecipeRegisterEvent;
-import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
-import net.minecraftforge.event.brewing.PotionBrewEvent;
-import net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.entity.EntityMobGriefingEvent;
-import net.minecraftforge.event.entity.EntityMountEvent;
-import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
-import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.item.ItemExpireEvent;
-import net.minecraftforge.event.entity.living.AnimalTameEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingBreatheEvent;
-import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
-import net.minecraftforge.event.entity.living.LivingConversionEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingDrownEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
-import net.minecraftforge.event.entity.living.LivingSwapItemsEvent;
-import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent.AllowDespawn;
-import net.minecraftforge.event.entity.living.MobSpawnEvent.PositionCheck;
-import net.minecraftforge.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
-import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.ArrowLooseEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
-import net.minecraftforge.event.entity.player.BonemealEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerSpawnPhantomsEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.event.entity.player.PlayerXpEvent;
-import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
-import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.entity.player.TradeWithVillagerEvent;
-import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.level.AlterGroundEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.event.level.BlockEvent.BlockToolModificationEvent;
-import net.minecraftforge.event.level.BlockEvent.CreateFluidSourceEvent;
-import net.minecraftforge.event.level.BlockEvent.EntityMultiPlaceEvent;
-import net.minecraftforge.event.level.BlockEvent.NeighborNotifyEvent;
-import net.minecraftforge.event.level.ChunkDataEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.level.ChunkTicketLevelUpdatedEvent;
-import net.minecraftforge.event.level.ChunkWatchEvent;
-import net.minecraftforge.event.level.ExplosionEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.event.level.NoteBlockEvent;
-import net.minecraftforge.event.level.PistonEvent;
-import net.minecraftforge.event.level.BlockFeatureGrowEvent;
-import net.minecraftforge.event.level.SleepFinishedTimeEvent;
-import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
-import net.minecraftforge.event.network.ConnectionStartEvent;
-import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.capabilities.CapabilityDispatcher;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.common.util.BlockSnapshot;
+import net.minecraftsingularity.event.brewing.BrewingRecipeRegisterEvent;
+import net.minecraftsingularity.event.brewing.PlayerBrewedPotionEvent;
+import net.minecraftsingularity.event.brewing.PotionBrewEvent;
+import net.minecraftsingularity.event.enchanting.EnchantmentLevelSetEvent;
+import net.minecraftsingularity.event.entity.EntityEvent;
+import net.minecraftsingularity.event.entity.EntityJoinLevelEvent;
+import net.minecraftsingularity.event.entity.EntityLeaveLevelEvent;
+import net.minecraftsingularity.event.entity.EntityMobGriefingEvent;
+import net.minecraftsingularity.event.entity.EntityMountEvent;
+import net.minecraftsingularity.event.entity.EntityStruckByLightningEvent;
+import net.minecraftsingularity.event.entity.EntityTeleportEvent;
+import net.minecraftsingularity.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftsingularity.event.entity.ProjectileImpactEvent;
+import net.minecraftsingularity.event.entity.item.ItemExpireEvent;
+import net.minecraftsingularity.event.entity.living.AnimalTameEvent;
+import net.minecraftsingularity.event.entity.living.LivingAttackEvent;
+import net.minecraftsingularity.event.entity.living.LivingBreatheEvent;
+import net.minecraftsingularity.event.entity.living.LivingChangeTargetEvent;
+import net.minecraftsingularity.event.entity.living.LivingConversionEvent;
+import net.minecraftsingularity.event.entity.living.LivingDeathEvent;
+import net.minecraftsingularity.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftsingularity.event.entity.living.LivingDropsEvent;
+import net.minecraftsingularity.event.entity.living.LivingDrownEvent;
+import net.minecraftsingularity.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftsingularity.event.entity.living.LivingEquipmentChangeEvent;
+import net.minecraftsingularity.event.entity.living.LivingEvent;
+import net.minecraftsingularity.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftsingularity.event.entity.living.LivingFallEvent;
+import net.minecraftsingularity.event.entity.living.LivingHealEvent;
+import net.minecraftsingularity.event.entity.living.LivingKnockBackEvent;
+import net.minecraftsingularity.event.entity.living.LivingPackSizeEvent;
+import net.minecraftsingularity.event.entity.living.LivingSwapItemsEvent;
+import net.minecraftsingularity.event.entity.living.LootingLevelEvent;
+import net.minecraftsingularity.event.entity.living.MobEffectEvent;
+import net.minecraftsingularity.event.entity.living.MobSpawnEvent;
+import net.minecraftsingularity.event.entity.living.MobSpawnEvent.AllowDespawn;
+import net.minecraftsingularity.event.entity.living.MobSpawnEvent.PositionCheck;
+import net.minecraftsingularity.event.entity.living.MobSpawnEvent.SpawnPlacementCheck;
+import net.minecraftsingularity.event.entity.living.ShieldBlockEvent;
+import net.minecraftsingularity.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
+import net.minecraftsingularity.event.entity.player.AnvilRepairEvent;
+import net.minecraftsingularity.event.entity.player.ArrowLooseEvent;
+import net.minecraftsingularity.event.entity.player.ArrowNockEvent;
+import net.minecraftsingularity.event.entity.player.BonemealEvent;
+import net.minecraftsingularity.event.entity.player.EntityItemPickupEvent;
+import net.minecraftsingularity.event.entity.player.FillBucketEvent;
+import net.minecraftsingularity.event.entity.player.ItemTooltipEvent;
+import net.minecraftsingularity.event.entity.player.PermissionsChangedEvent;
+import net.minecraftsingularity.event.entity.player.PlayerContainerEvent;
+import net.minecraftsingularity.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftsingularity.event.entity.player.PlayerEvent;
+import net.minecraftsingularity.event.entity.player.PlayerFlyableFallEvent;
+import net.minecraftsingularity.event.entity.player.PlayerInteractEvent;
+import net.minecraftsingularity.event.entity.player.PlayerSetSpawnEvent;
+import net.minecraftsingularity.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftsingularity.event.entity.player.PlayerSpawnPhantomsEvent;
+import net.minecraftsingularity.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftsingularity.event.entity.player.PlayerXpEvent;
+import net.minecraftsingularity.event.entity.player.SleepingLocationCheckEvent;
+import net.minecraftsingularity.event.entity.player.SleepingTimeCheckEvent;
+import net.minecraftsingularity.event.entity.player.TradeWithVillagerEvent;
+import net.minecraftsingularity.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftsingularity.event.level.AlterGroundEvent;
+import net.minecraftsingularity.event.level.BlockEvent;
+import net.minecraftsingularity.event.level.BlockEvent.BlockToolModificationEvent;
+import net.minecraftsingularity.event.level.BlockEvent.CreateFluidSourceEvent;
+import net.minecraftsingularity.event.level.BlockEvent.EntityMultiPlaceEvent;
+import net.minecraftsingularity.event.level.BlockEvent.NeighborNotifyEvent;
+import net.minecraftsingularity.event.level.ChunkDataEvent;
+import net.minecraftsingularity.event.level.ChunkEvent;
+import net.minecraftsingularity.event.level.ChunkTicketLevelUpdatedEvent;
+import net.minecraftsingularity.event.level.ChunkWatchEvent;
+import net.minecraftsingularity.event.level.ExplosionEvent;
+import net.minecraftsingularity.event.level.LevelEvent;
+import net.minecraftsingularity.event.level.NoteBlockEvent;
+import net.minecraftsingularity.event.level.PistonEvent;
+import net.minecraftsingularity.event.level.BlockFeatureGrowEvent;
+import net.minecraftsingularity.event.level.SleepFinishedTimeEvent;
+import net.minecraftsingularity.event.network.ChannelRegistrationChangeEvent;
+import net.minecraftsingularity.event.network.ConnectionStartEvent;
+import net.minecraftsingularity.event.network.GatherLoginConfigurationTasksEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 
 @ApiStatus.Internal
-public final class ForgeEventFactory {
-    private ForgeEventFactory() {}
+public final class singularityEventFactory {
+    private singularityEventFactory() {}
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction) {
         var snap = blockSnapshots.getFirst();
@@ -286,7 +286,7 @@ public final class ForgeEventFactory {
      * Would become:
      * <code><pre>
      * var zombie = new Zombie(level);
-     * ForgeEventFactory.onFinalizeSpawn(zombie, level, difficulty, spawnType, spawnData, spawnTag);
+     * singularityEventFactory.onFinalizeSpawn(zombie, level, difficulty, spawnType, spawnData, spawnTag);
      * level.tryAddFreshEntityWithPassengers(zombie);
      * if (zombie.isAddedToWorld()) {
      *     // Do stuff with your new zombie
@@ -296,7 +296,7 @@ public final class ForgeEventFactory {
      * @return The SpawnGroupData from this event, or null if it was canceled. The return value of this method has no bearing on if the entity will be spawned.
      * @see MobSpawnEvent.FinalizeSpawn
      * @see Mob#finalizeSpawn(ServerLevelAccessor, DifficultyInstance, EntitySpawnReason, SpawnGroupData)
-     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
+     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by singularity.
      * @implNote Changes to the signature of this method must be reflected in the method redirector coremod.
      */
     @Nullable
@@ -941,7 +941,7 @@ public final class ForgeEventFactory {
     }
 
     public static void addPackFindersServer(Consumer<RepositorySource> consumer) {
-        net.minecraftforge.event.AddPackFindersEvent.BUS.post(new AddPackFindersEvent(PackType.SERVER_DATA, consumer));
+        net.minecraftsingularity.event.AddPackFindersEvent.BUS.post(new AddPackFindersEvent(PackType.SERVER_DATA, consumer));
     }
 
     public static boolean onEntityJoinLevel(Entity entity, Level level) {

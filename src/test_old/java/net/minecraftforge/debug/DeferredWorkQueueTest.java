@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.slf4j.Logger;
 
 /**
- * Tests that the {@link net.minecraftforge.fml.DeferredWorkQueue} properly executes enqueued tasks and
+ * Tests that the {@link net.minecraftsingularity.fml.DeferredWorkQueue} properly executes enqueued tasks and
  * forwards any exceptions thrown by those tasks
  */
 @Mod(DeferredWorkQueueTest.MOD_ID)

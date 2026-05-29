@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -11,31 +11,31 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.TickTask;
-import net.minecraftforge.common.loot.LootModifierManager;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.ChunkEvent;
-import net.minecraftforge.event.network.ConnectionStartEvent;
-import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.eventbus.api.listener.Priority;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.filters.NetworkFilters;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.server.command.ForgeCommand;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.command.ConfigCommand;
+import net.minecraftsingularity.common.loot.LootModifierManager;
+import net.minecraftsingularity.event.AddReloadListenerEvent;
+import net.minecraftsingularity.event.RegisterCommandsEvent;
+import net.minecraftsingularity.event.entity.EntityJoinLevelEvent;
+import net.minecraftsingularity.event.entity.player.PlayerEvent;
+import net.minecraftsingularity.event.level.ChunkEvent;
+import net.minecraftsingularity.event.network.ConnectionStartEvent;
+import net.minecraftsingularity.event.server.ServerStoppingEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.eventbus.api.listener.Priority;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.LogicalSide;
+import net.minecraftsingularity.network.filters.NetworkFilters;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.server.command.singularityCommand;
+import net.minecraftsingularity.server.permission.events.PermissionGatherEvent;
+import net.minecraftsingularity.server.command.ConfigCommand;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.invoke.MethodHandles;
 
 @ApiStatus.Internal
-public final class ForgeInternalHandler {
+public final class singularityInternalHandler {
     static void register() {
-        BusGroup.DEFAULT.register(MethodHandles.lookup(), ForgeInternalHandler.class);
+        BusGroup.DEFAULT.register(MethodHandles.lookup(), singularityInternalHandler.class);
     }
 
     @SubscribeEvent(priority = Priority.HIGH)
@@ -85,7 +85,7 @@ public final class ForgeInternalHandler {
 
     @SubscribeEvent
     static void onCommandsRegister(RegisterCommandsEvent event) {
-        new ForgeCommand(event.getDispatcher());
+        new singularityCommand(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
     }
 
@@ -125,6 +125,6 @@ public final class ForgeInternalHandler {
 
     @SubscribeEvent
     static void registerPermissionNodes(PermissionGatherEvent.Nodes event) {
-        event.addNodes(ForgeMod.USE_SELECTORS_PERMISSION);
+        event.addNodes(singularityMod.USE_SELECTORS_PERMISSION);
     }
 }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.loot;
+package net.minecraftsingularity.common.loot;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.MapCodec;
@@ -15,17 +15,17 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.common.ToolAction;
+import net.minecraftsingularity.common.ToolAction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 /**
- * This LootItemCondition "forge:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
+ * This LootItemCondition "singularity:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
  */
 public record CanToolPerformAction(ToolAction action) implements LootItemCondition {
     public static final MapCodec<CanToolPerformAction> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
-        ToolAction.CODEC.fieldOf("action").forGetter(CanToolPerformAction::action)
+        ToolAction.CODEC.fieldOf("action").singularitytter(CanToolPerformAction::action)
     ).apply(b, CanToolPerformAction::new));
 
     @Override

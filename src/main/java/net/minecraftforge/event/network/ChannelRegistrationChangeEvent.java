@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.network;
+package net.minecraftsingularity.event.network;
 
 import java.util.Collections;
 import java.util.Set;
 
 import net.minecraft.network.Connection;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 
 /**
  * Fired when the channel registration (see minecraft custom channel documentation) changes.

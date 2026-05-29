@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.item;
+package net.minecraftsingularity.event.entity.item;
 
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftsingularity.event.entity.EntityEvent;
 import org.jspecify.annotations.NullMarked;
 
 /**

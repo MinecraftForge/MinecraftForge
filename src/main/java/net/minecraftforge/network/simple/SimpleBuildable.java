@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple;
+package net.minecraftsingularity.network.simple;
 
-import net.minecraftforge.network.ChannelBuildable;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftsingularity.network.ChannelBuildable;
+import net.minecraftsingularity.network.SimpleChannel;
 
 public interface SimpleBuildable extends ChannelBuildable<Object> {
     /*

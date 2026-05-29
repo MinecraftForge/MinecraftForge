@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import net.minecraft.client.color.block.BlockTintCache;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.ColorResolver;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftsingularity.client.event.RegisterColorHandlersEvent;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.world;
+package net.minecraftsingularity.debug.world;
 
 import java.util.List;
 import java.util.Locale;
@@ -34,20 +34,20 @@ import net.minecraft.world.level.levelgen.GenerationStep.Decoration;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
 import net.minecraft.world.level.levelgen.placement.CountOnEveryLayerPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
-import net.minecraftforge.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.common.data.DatapackBuiltinEntriesProvider;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.RemoveSpawnsBiomeModifier;
+import net.minecraftsingularity.common.world.ModifiableBiomeInfo.BiomeInfo.Builder;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
 
 /**
  * <p>This tests the following features and requirements of biome modifier jsons::</p>
@@ -70,12 +70,12 @@ public class BiomeModifierTest
     /* Static registry objects */
 
     // Biome Modifier Serializers
-    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<Codec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = DeferredRegister.create(singularityRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, MODID);
     private static final RegistryObject<Codec<TestModifier>> MODIFY_BIOMES = BIOME_MODIFIER_SERIALIZERS.register("modify_biomes", () ->
             RecordCodecBuilder.create(builder -> builder.group(
-                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(TestModifier::biomes),
-                    Codec.STRING.xmap(s -> Precipitation.valueOf(s.toUpperCase(Locale.ROOT)), e -> e.name().toLowerCase(Locale.ROOT)).fieldOf("precipitation").forGetter(TestModifier::precipitation),
-                    Codec.INT.fieldOf("water_color").forGetter(TestModifier::waterColor)
+                    Biome.LIST_CODEC.fieldOf("biomes").singularitytter(TestModifier::biomes),
+                    Codec.STRING.xmap(s -> Precipitation.valueOf(s.toUpperCase(Locale.ROOT)), e -> e.name().toLowerCase(Locale.ROOT)).fieldOf("precipitation").singularitytter(TestModifier::precipitation),
+                    Codec.INT.fieldOf("water_color").singularitytter(TestModifier::waterColor)
             ).apply(builder, TestModifier::new))
     );
 
@@ -83,11 +83,11 @@ public class BiomeModifierTest
 
     private static final ResourceKey<PlacedFeature> LARGE_BASALT_COLUMNS = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(MODID, "large_basalt_columns"));
 
-    private static final ResourceKey<BiomeModifier> ADD_BASALT_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_basalt"));
-    private static final ResourceKey<BiomeModifier> ADD_MAGMA_CUBES_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_magma_cubes"));
-    private static final ResourceKey<BiomeModifier> MODIFY_BADLANDS_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "modify_badlands"));
-    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_TREES_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_trees"));
-    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_SKELETONS_MODIFIER = ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_skeletons"));
+    private static final ResourceKey<BiomeModifier> ADD_BASALT_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_basalt"));
+    private static final ResourceKey<BiomeModifier> ADD_MAGMA_CUBES_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "add_magma_cubes"));
+    private static final ResourceKey<BiomeModifier> MODIFY_BADLANDS_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "modify_badlands"));
+    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_TREES_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_trees"));
+    private static final ResourceKey<BiomeModifier> REMOVE_FOREST_SKELETONS_MODIFIER = ResourceKey.create(singularityRegistries.Keys.BIOME_MODIFIERS, new ResourceLocation(MODID, "remove_forest_skeletons"));
 
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.PLACED_FEATURE, context -> context.register(LARGE_BASALT_COLUMNS,
@@ -96,7 +96,7 @@ public class BiomeModifierTest
                             List.of(CountOnEveryLayerPlacement.of(1), BiomeFilter.biome())
                     )
             ))
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+            .add(singularityRegistries.Keys.BIOME_MODIFIERS, context -> {
                 var badlandsTag = context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_BADLANDS);
                 var forestTag = context.lookup(Registries.BIOME).getOrThrow(BiomeTags.IS_FOREST);
 

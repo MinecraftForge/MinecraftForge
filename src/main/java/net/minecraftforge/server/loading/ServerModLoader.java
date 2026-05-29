@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.loading;
+package net.minecraftsingularity.server.loading;
 
-import net.minecraftforge.fml.*;
-import net.minecraftforge.logging.CrashReportExtender;
-import net.minecraftforge.common.util.LogicalSidedProvider;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.server.LanguageHook;
+import net.minecraftsingularity.fml.*;
+import net.minecraftsingularity.logging.CrashReportExtender;
+import net.minecraftsingularity.common.util.LogicalSidedProvider;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.server.LanguageHook;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

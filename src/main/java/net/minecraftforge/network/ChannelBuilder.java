@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,8 +16,8 @@ import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.Channel.VersionTest;
-import net.minecraftforge.network.payload.PayloadConnection;
+import net.minecraftsingularity.network.Channel.VersionTest;
+import net.minecraftsingularity.network.payload.PayloadConnection;
 
 /**
  * Builder for constructing impl channels using a builder style API.
@@ -162,7 +162,7 @@ public class ChannelBuilder {
     /**
      * Registers a function that will be called when a new connection is established.
      * This is meant to allow you to do basic configuration and add context objects.
-     * This is equivalent to the {@link net.minecraftforge.event.network.ConnectionStartEvent ConnectionStartEvent}
+     * This is equivalent to the {@link net.minecraftsingularity.event.network.ConnectionStartEvent ConnectionStartEvent}
      */
     public ChannelBuilder connectionHandler(Consumer<Connection> handler) {
         this.connectionHandler = handler;

@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission;
+package net.minecraftsingularity.server.permission;
 
 import net.minecraft.IdentifierException;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.exceptions.UnregisteredPermissionException;
-import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
-import net.minecraftforge.server.permission.handler.IPermissionHandler;
-import net.minecraftforge.server.permission.handler.IPermissionHandlerFactory;
-import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.common.singularityConfig;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.server.ServerLifecycleHooks;
+import net.minecraftsingularity.server.permission.events.PermissionGatherEvent;
+import net.minecraftsingularity.server.permission.exceptions.UnregisteredPermissionException;
+import net.minecraftsingularity.server.permission.handler.DefaultPermissionHandler;
+import net.minecraftsingularity.server.permission.handler.IPermissionHandler;
+import net.minecraftsingularity.server.permission.handler.IPermissionHandlerFactory;
+import net.minecraftsingularity.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ public final class PermissionAPI
 
         try
         {
-            Identifier selectedPermissionHandler = Identifier.parse(ForgeConfig.SERVER.permissionHandler.get());
+            Identifier selectedPermissionHandler = Identifier.parse(singularityConfig.SERVER.permissionHandler.get());
             if (!availableHandlers.containsKey(selectedPermissionHandler))
             {
                 LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);

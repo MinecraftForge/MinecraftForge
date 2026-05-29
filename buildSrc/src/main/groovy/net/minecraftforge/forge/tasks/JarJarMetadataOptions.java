@@ -1,24 +1,24 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.tasks;
+package net.minecraftsingularity.singularity.tasks;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraftforge.jarjar.metadata.ContainedJarIdentifier;
-import net.minecraftforge.jarjar.metadata.ContainedJarMetadata;
-import net.minecraftforge.jarjar.metadata.ContainedVersion;
-import net.minecraftforge.jarjar.metadata.Metadata;
-import net.minecraftforge.jarjar.metadata.MetadataIOHandler;
-import net.minecraftforge.jarjar.metadata.json.ArtifactVersionSerializer;
-import net.minecraftforge.jarjar.metadata.json.ContainedJarIdentifierSerializer;
-import net.minecraftforge.jarjar.metadata.json.ContainedJarMetadataSerializer;
-import net.minecraftforge.jarjar.metadata.json.ContainedVersionSerializer;
-import net.minecraftforge.jarjar.metadata.json.MetadataSerializer;
-import net.minecraftforge.jarjar.metadata.json.VersionRangeSerializer;
+import net.minecraftsingularity.jarjar.metadata.ContainedJarIdentifier;
+import net.minecraftsingularity.jarjar.metadata.ContainedJarMetadata;
+import net.minecraftsingularity.jarjar.metadata.ContainedVersion;
+import net.minecraftsingularity.jarjar.metadata.Metadata;
+import net.minecraftsingularity.jarjar.metadata.MetadataIOHandler;
+import net.minecraftsingularity.jarjar.metadata.json.ArtifactVersionSerializer;
+import net.minecraftsingularity.jarjar.metadata.json.ContainedJarIdentifierSerializer;
+import net.minecraftsingularity.jarjar.metadata.json.ContainedJarMetadataSerializer;
+import net.minecraftsingularity.jarjar.metadata.json.ContainedVersionSerializer;
+import net.minecraftsingularity.jarjar.metadata.json.MetadataSerializer;
+import net.minecraftsingularity.jarjar.metadata.json.VersionRangeSerializer;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -56,8 +56,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
-// TODO SUPER SUPER SUPER UGLY, CLEAN UP IN FORGEDEV 7
-@Deprecated(forRemoval = true) // Will be moved to JarJar plugin in ForgeDev 7
+// TODO SUPER SUPER SUPER UGLY, CLEAN UP IN singularityDEV 7
+@Deprecated(forRemoval = true) // Will be moved to JarJar plugin in singularityDev 7
 public abstract class JarJarMetadataOptions extends DefaultTask {
     private static final Gson GSON = new GsonBuilder()
         .registerTypeAdapter(VersionRange.class, new VersionRangeSerializer())
@@ -92,10 +92,10 @@ public abstract class JarJarMetadataOptions extends DefaultTask {
 
     @TaskAction
     protected void exec() {
-        record ForgeLocaterOptions(String resource, String layer, String id, List<ContainedJarMetadata> deps, ContainedJarMetadata meta, boolean nested) { }
+        record singularityLocaterOptions(String resource, String layer, String id, List<ContainedJarMetadata> deps, ContainedJarMetadata meta, boolean nested) { }
 
         var resolved = this.getResolvedDependencies().get();
-        var jars = new ArrayList<ForgeLocaterOptions>(resolved.size());
+        var jars = new ArrayList<singularityLocaterOptions>(resolved.size());
         for (var dependency : resolved) {
             var deps = new ArrayList<ContainedJarMetadata>();
             try (var zip = new ZipFile(dependency.artifact)) {
@@ -112,7 +112,7 @@ public abstract class JarJarMetadataOptions extends DefaultTask {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            jars.add(new ForgeLocaterOptions(
+            jars.add(new singularityLocaterOptions(
                 dependency.resource,
                 dependency.layer,
                 dependency.identifier,
@@ -128,7 +128,7 @@ public abstract class JarJarMetadataOptions extends DefaultTask {
         }
 
         try {
-            record Meta(List<ForgeLocaterOptions> options){}
+            record Meta(List<singularityLocaterOptions> options){}
 
             Files.writeString(
                 this.getMetadataFile().getAsFile().get().toPath(),

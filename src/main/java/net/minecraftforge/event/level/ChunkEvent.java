@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
 import org.jetbrains.annotations.ApiStatus;
 
 /**
@@ -44,7 +44,7 @@ public sealed interface ChunkEvent extends LevelEvent
         /**
          * Check whether the Chunk is newly generated, and being loaded for the first time.
          *
-         * <p>Will only ever return {@code true} on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.</p>
+         * <p>Will only ever return {@code true} on the {@linkplain net.minecraftsingularity.fml.LogicalSide#SERVER logical server}.</p>
          *
          * @return whether the Chunk is newly generated
          */
@@ -67,7 +67,7 @@ public sealed interface ChunkEvent extends LevelEvent
      * This event is fired during light propagation in ThreadedLevelLightEngine.CompletableFuture(), specifically upon setting
      * the ChunkAccess isLightCorrect to true.<br>
      * <br>
-     * The game test for this event is lighting_event_test in net.minecraftforge.debug.chunk<br>
+     * The game test for this event is lighting_event_test in net.minecraftsingularity.debug.chunk<br>
      */
     record LightingCalculated(ChunkAccess getChunk) implements ChunkEvent {
         public static final EventBus<ChunkEvent.LightingCalculated> BUS = EventBus.create(ChunkEvent.LightingCalculated.class);

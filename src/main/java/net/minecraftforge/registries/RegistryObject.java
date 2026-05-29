@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
@@ -34,11 +34,11 @@ public final class RegistryObject<T> implements Supplier<T> {
     private Supplier<Holder<T>> holder;
 
     /**
-     * Factory for a {@link RegistryObject} that stores the value of an object from the provided forge registry once it is ready.
+     * Factory for a {@link RegistryObject} that stores the value of an object from the provided singularity registry once it is ready.
      *
-     * @param name the name of the object to look up in the forge registry
-     * @param registry the forge registry
-     * @return a {@link RegistryObject} that stores the value of an object from the provided forge registry once it is ready
+     * @param name the name of the object to look up in the singularity registry
+     * @param registry the singularity registry
+     * @return a {@link RegistryObject} that stores the value of an object from the provided singularity registry once it is ready
      */
     public static <T, U extends T> RegistryObject<U> create(final Identifier name, IForgeRegistry<T> registry) {
         return new RegistryObject<U>(name, registry);
@@ -208,7 +208,7 @@ public final class RegistryObject<T> implements Supplier<T> {
         if (this.name == null || this.key == null)
             return;
 
-        var wrapper = registry instanceof ForgeRegistry forge ? forge.getWrapper() : null;
+        var wrapper = registry instanceof singularityRegistry singularity ? singularity.getWrapper() : null;
         if (registry.containsKey(this.name)) {
             this.value = registry.getValue(this.name);
             this.holder = () -> (Holder<T>)registry.getHolder(this.name).orElse(null);
@@ -244,9 +244,9 @@ public final class RegistryObject<T> implements Supplier<T> {
         if (this.name == null)
             return;
 
-        IForgeRegistry<? extends T> forgeRegistry = RegistryManager.ACTIVE.getRegistry(registryName);
-        if (forgeRegistry != null) {
-            updateReference(forgeRegistry);
+        IForgeRegistry<? extends T> singularityRegistry = RegistryManager.ACTIVE.getRegistry(registryName);
+        if (singularityRegistry != null) {
+            updateReference(singularityRegistry);
             return;
         }
 
@@ -261,9 +261,9 @@ public final class RegistryObject<T> implements Supplier<T> {
     }
 
     void updateReference(RegisterEvent event) {
-        IForgeRegistry<? extends T> forgeRegistry = event.getForgeRegistry();
-        if (forgeRegistry != null) {
-            updateReference(forgeRegistry);
+        IForgeRegistry<? extends T> singularityRegistry = event.getForgeRegistry();
+        if (singularityRegistry != null) {
+            updateReference(singularityRegistry);
             return;
         }
 

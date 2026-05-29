@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -12,11 +12,11 @@ import java.util.Set;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
-import net.minecraftforge.network.NetworkContext.NetworkMismatchData.Version;
+import net.minecraftsingularity.network.NetworkContext.NetworkMismatchData;
+import net.minecraftsingularity.network.NetworkContext.NetworkMismatchData.Version;
 
 /**
- * Notifies the client of a channel mismatch on the server, so a {@link net.minecraftforge.client.gui.ModMismatchDisconnectedScreen} is used to notify the user of the disconnection.
+ * Notifies the client of a channel mismatch on the server, so a {@link net.minecraftsingularity.client.gui.ModMismatchDisconnectedScreen} is used to notify the user of the disconnection.
  * This packet also sends the data of a channel mismatch (currently, the ids and versions of the mismatched channels) to the client for it to display the correct information in said screen.
  */
 public record MismatchData(

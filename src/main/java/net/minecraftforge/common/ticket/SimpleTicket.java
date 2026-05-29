@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.ticket;
+package net.minecraftsingularity.common.ticket;
 
 import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public abstract class SimpleTicket<T>
     /**
      * Internal method that sets the collection from the managing system.
      * <br>
-     * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftforge.common.FarmlandWaterManager}
+     * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftsingularity.common.FarmlandWaterManager}
      */
     @SafeVarargs
     public final void setManager(@NotNull ITicketManager<T> masterManager, @NotNull ITicketManager<T>... dummyManagers)

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -12,16 +12,16 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftsingularity.common.singularityMod;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
-import static net.minecraftforge.common.Tags.Fluids.*;
+import static net.minecraftsingularity.common.Tags.Fluids.*;
 
 @ApiStatus.Internal
-public final class ForgeFluidTagsProvider extends FluidTagsProvider {
-    public ForgeFluidTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityFluidTagsProvider extends FluidTagsProvider {
+    public singularityFluidTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
@@ -29,8 +29,8 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(WATER).add(net.minecraft.world.level.material.Fluids.WATER).add(net.minecraft.world.level.material.Fluids.FLOWING_WATER);
         tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
         tag(MILK)
-            .addOptional(ForgeMod.MILK.getKey().identifier())
-            .addOptional(ForgeMod.FLOWING_MILK.getKey().identifier());
+            .addOptional(singularityMod.MILK.getKey().identifier())
+            .addOptional(singularityMod.FLOWING_MILK.getKey().identifier());
         tag(GASEOUS);
         tag(HONEY);
         tag(POTION);
@@ -42,12 +42,12 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(EXPERIENCE);
     }
 
-    private static TagKey<Fluid> forgeTagKey(String path) {
-        return FluidTags.create(Identifier.fromNamespaceAndPath("forge", path));
+    private static TagKey<Fluid> singularityTagKey(String path) {
+        return FluidTags.create(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     @Override
     public String getName() {
-        return "Forge Fluid Tags";
+        return "singularity Fluid Tags";
     }
 }

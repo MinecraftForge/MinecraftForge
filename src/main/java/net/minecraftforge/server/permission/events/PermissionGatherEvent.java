@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission.events;
+package net.minecraftsingularity.server.permission.events;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
-import net.minecraftforge.server.permission.handler.IPermissionHandler;
-import net.minecraftforge.server.permission.handler.IPermissionHandlerFactory;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.server.permission.handler.DefaultPermissionHandler;
+import net.minecraftsingularity.server.permission.handler.IPermissionHandler;
+import net.minecraftsingularity.server.permission.handler.IPermissionHandlerFactory;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
 
 import java.util.*;
 

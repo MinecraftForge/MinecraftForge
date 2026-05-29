@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids.capability.wrappers;
+package net.minecraftsingularity.fluids.capability.wrappers;
 
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
@@ -11,10 +11,10 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fluids.capability.IFluidHandler;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -93,7 +93,7 @@ public class BucketPickupHandlerWrapper implements IFluidHandler
                         {
                             //Be loud if something went wrong
                             LOGGER.error("Fluid removed without successfully being picked up. Fluid {} at {} in {} matched requested type, but after performing pickup was {}.",
-                                    ForgeRegistries.FLUIDS.getKey(fluidState.getType()), blockPos, world.dimension().identifier(), ForgeRegistries.FLUIDS.getKey(bucket.getFluid()));
+                                    singularityRegistries.FLUIDS.getKey(fluidState.getType()), blockPos, world.dimension().identifier(), singularityRegistries.FLUIDS.getKey(bucket.getFluid()));
                             return FluidStack.EMPTY;
                         }
                         return extracted;

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftsingularity.fml.loading.FMLPaths;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.fml.loading.ModDirTransformerDiscoverer;
+import net.minecraftsingularity.singularityspi.locating.IModLocator;
 
 import org.slf4j.Logger;
 

@@ -1,21 +1,21 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftsingularity.common.capabilities;
 
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraftsingularity.energy.IEnergyStorage;
+import net.minecraftsingularity.fluids.capability.IFluidHandler;
+import net.minecraftsingularity.fluids.capability.IFluidHandlerItem;
+import net.minecraftsingularity.items.IItemHandler;
 
 /*
- * References to Forge's built in capabilities.
+ * References to singularity's built in capabilities.
  * Modders are recommended to use their own CapabilityTokens for 3rd party caps to maintain soft dependencies.
- * However, since nobody has a soft dependency on Forge, we expose this as API.
+ * However, since nobody has a soft dependency on singularity, we expose this as API.
  */
-public class ForgeCapabilities {
+public class singularityCapabilities {
     public static final Capability<IEnergyStorage> ENERGY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final Capability<IFluidHandler> FLUID_HANDLER = CapabilityManager.get(new CapabilityToken<>(){});
     public static final Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM = CapabilityManager.get(new CapabilityToken<>(){});

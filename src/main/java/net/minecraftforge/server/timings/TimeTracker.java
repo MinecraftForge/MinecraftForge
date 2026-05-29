@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.timings;
+package net.minecraftsingularity.server.timings;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -45,13 +45,13 @@ public class TimeTracker<T>
      *
      * @return An immutable list of timings data collected by this tracker
      */
-    public ImmutableList<ForgeTimings<T>> getTimingData()
+    public ImmutableList<singularityTimings<T>> getTimingData()
     {
-        ImmutableList.Builder<ForgeTimings<T>> builder = ImmutableList.builder();
+        ImmutableList.Builder<singularityTimings<T>> builder = ImmutableList.builder();
 
         for (Map.Entry<T, int[]> entry : timings.entrySet())
         {
-            builder.add(new ForgeTimings<>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
+            builder.add(new singularityTimings<>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
         }
         return builder.build();
     }

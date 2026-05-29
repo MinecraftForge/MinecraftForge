@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
 import net.minecraft.DetectedVersion;
 import net.minecraft.client.Minecraft;
@@ -37,58 +37,58 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeAtlasProvider;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBiomeTagsProvider;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
-import net.minecraftforge.common.data.ForgeEnchantmentTagsProvider;
-import net.minecraftforge.common.data.ForgeEntityTypeTagsProvider;
-import net.minecraftforge.common.data.ForgeFluidTagsProvider;
-import net.minecraftforge.common.data.ForgeItemTagsProvider;
-import net.minecraftforge.common.data.ForgeLootTableProvider;
-import net.minecraftforge.common.data.ForgeRecipeProvider;
-import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
-import net.minecraftforge.common.data.ForgeStructureTagsProvider;
-import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
-import net.minecraftforge.common.loot.CanToolPerformAction;
-import net.minecraftforge.common.loot.LootTableIdCondition;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.AddSpawnsBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveFeaturesBiomeModifier;
-import net.minecraftforge.common.world.ForgeBiomeModifiers.RemoveSpawnsBiomeModifier;
-import net.minecraftforge.common.world.NoneBiomeModifier;
-import net.minecraftforge.common.world.NoneStructureModifier;
-import net.minecraftforge.common.world.StructureModifier;
-import net.minecraftforge.event.network.GatherLoginConfigurationTasksEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
-import net.minecraftforge.fml.*;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.registries.*;
-import net.minecraftforge.registries.holdersets.AndHolderSet;
-import net.minecraftforge.registries.holdersets.AnyHolderSet;
-import net.minecraftforge.registries.holdersets.HolderSetType;
-import net.minecraftforge.registries.holdersets.NotHolderSet;
-import net.minecraftforge.registries.holdersets.OrHolderSet;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.tasks.ForgeNetworkConfigurationHandler;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.server.command.EnumArgument;
-import net.minecraftforge.server.command.ModIdArgument;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
-import net.minecraftforge.server.permission.nodes.PermissionTypes;
-import net.minecraftforge.unsafe.UnsafeHacks;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.versions.mcp.MCPVersion;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.singularityAtlasProvider;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.common.data.singularityBiomeTagsProvider;
+import net.minecraftsingularity.common.data.singularityBlockTagsProvider;
+import net.minecraftsingularity.common.data.singularityEnchantmentTagsProvider;
+import net.minecraftsingularity.common.data.singularityEntityTypeTagsProvider;
+import net.minecraftsingularity.common.data.singularityFluidTagsProvider;
+import net.minecraftsingularity.common.data.singularityItemTagsProvider;
+import net.minecraftsingularity.common.data.singularityLootTableProvider;
+import net.minecraftsingularity.common.data.singularityRecipeProvider;
+import net.minecraftsingularity.common.data.singularitySpriteSourceProvider;
+import net.minecraftsingularity.common.data.singularityStructureTagsProvider;
+import net.minecraftsingularity.common.data.VanillaSoundDefinitionsProvider;
+import net.minecraftsingularity.common.loot.CanToolPerformAction;
+import net.minecraftsingularity.common.loot.LootTableIdCondition;
+import net.minecraftsingularity.common.world.BiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.AddFeaturesBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.AddSpawnsBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.RemoveFeaturesBiomeModifier;
+import net.minecraftsingularity.common.world.singularityBiomeModifiers.RemoveSpawnsBiomeModifier;
+import net.minecraftsingularity.common.world.NoneBiomeModifier;
+import net.minecraftsingularity.common.world.NoneStructureModifier;
+import net.minecraftsingularity.common.world.StructureModifier;
+import net.minecraftsingularity.event.network.GatherLoginConfigurationTasksEvent;
+import net.minecraftsingularity.eventbus.api.bus.BusGroup;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fluids.singularityFlowingFluid;
+import net.minecraftsingularity.fml.*;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.fml.event.config.ModConfigEvent;
+import net.minecraftsingularity.fml.event.lifecycle.*;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.registries.*;
+import net.minecraftsingularity.registries.holdersets.AndHolderSet;
+import net.minecraftsingularity.registries.holdersets.AnyHolderSet;
+import net.minecraftsingularity.registries.holdersets.HolderSetType;
+import net.minecraftsingularity.registries.holdersets.NotHolderSet;
+import net.minecraftsingularity.registries.holdersets.OrHolderSet;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.tasks.singularityNetworkConfigurationHandler;
+import net.minecraftsingularity.event.entity.EntityAttributeModificationEvent;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.server.command.EnumArgument;
+import net.minecraftsingularity.server.command.ModIdArgument;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.server.permission.nodes.PermissionTypes;
+import net.minecraftsingularity.unsafe.UnsafeHacks;
+import net.minecraftsingularity.versions.singularity.singularityVersion;
+import net.minecraftsingularity.versions.mcp.MCPVersion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,22 +96,22 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.conditions.AndCondition;
-import net.minecraftforge.common.crafting.conditions.FalseCondition;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.ItemExistsCondition;
-import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
-import net.minecraftforge.common.crafting.conditions.NotCondition;
-import net.minecraftforge.common.crafting.conditions.OrCondition;
-import net.minecraftforge.common.crafting.conditions.TagEmptyCondition;
-import net.minecraftforge.common.crafting.conditions.TrueCondition;
-import net.minecraftforge.common.crafting.ingredients.CompoundIngredient;
-import net.minecraftforge.common.crafting.ingredients.DifferenceIngredient;
-import net.minecraftforge.common.crafting.ingredients.IIngredientSerializer;
-import net.minecraftforge.common.crafting.ingredients.IntersectionIngredient;
-import net.minecraftforge.common.crafting.ingredients.NBTIngredient;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.crafting.ConditionalRecipe;
+import net.minecraftsingularity.common.crafting.conditions.AndCondition;
+import net.minecraftsingularity.common.crafting.conditions.FalseCondition;
+import net.minecraftsingularity.common.crafting.conditions.ICondition;
+import net.minecraftsingularity.common.crafting.conditions.ItemExistsCondition;
+import net.minecraftsingularity.common.crafting.conditions.ModLoadedCondition;
+import net.minecraftsingularity.common.crafting.conditions.NotCondition;
+import net.minecraftsingularity.common.crafting.conditions.OrCondition;
+import net.minecraftsingularity.common.crafting.conditions.TagEmptyCondition;
+import net.minecraftsingularity.common.crafting.conditions.TrueCondition;
+import net.minecraftsingularity.common.crafting.ingredients.CompoundIngredient;
+import net.minecraftsingularity.common.crafting.ingredients.DifferenceIngredient;
+import net.minecraftsingularity.common.crafting.ingredients.IIngredientSerializer;
+import net.minecraftsingularity.common.crafting.ingredients.IntersectionIngredient;
+import net.minecraftsingularity.common.crafting.ingredients.NBTIngredient;
+import net.minecraftsingularity.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import com.mojang.serialization.MapCodec;
@@ -122,15 +122,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@Mod("forge")
-public class ForgeMod {
+@Mod("singularity")
+public class singularityMod {
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
+    private static final Marker singularityMOD = MarkerManager.getMarker("singularityMOD");
 
     private static final List<DeferredRegister<?>> registries = new ArrayList<>();
     private static <T> DeferredRegister<T> deferred(ResourceKey<Registry<T>> key) {
-        return deferred(key, "forge");
+        return deferred(key, "singularity");
     }
     private static <T> DeferredRegister<T> deferred(ResourceKey<Registry<T>> key, String modid) {
         var ret = DeferredRegister.create(key, modid);
@@ -145,11 +145,11 @@ public class ForgeMod {
         COMMAND_ARGUMENT_TYPES.register("modid", () -> ArgumentTypeInfos.registerByClass(ModIdArgument.class, SingletonArgumentInfo.contextFree(ModIdArgument::modIdArgument)));
     }
 
-    private static final DeferredRegister<Attribute> ATTRIBUTES = deferred(ForgeRegistries.Keys.ATTRIBUTES);
-    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
-    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.name_tag_distance", 64.0D, 0.0D, 64.0).setSyncable(true));
+    private static final DeferredRegister<Attribute> ATTRIBUTES = deferred(singularityRegistries.Keys.ATTRIBUTES);
+    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("singularity.swim_speed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("singularity.name_tag_distance", 64.0D, 0.0D, 64.0).setSyncable(true));
 
-    private static final DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends BiomeModifier>> BIOME_MODIFIER_SERIALIZERS = deferred(singularityRegistries.Keys.BIOME_MODIFIER_SERIALIZERS);
     static {
         BIOME_MODIFIER_SERIALIZERS.register("none", () -> NoneBiomeModifier.CODEC);
         BIOME_MODIFIER_SERIALIZERS.register("add_features", () -> AddFeaturesBiomeModifier.CODEC);
@@ -158,35 +158,35 @@ public class ForgeMod {
         BIOME_MODIFIER_SERIALIZERS.register("remove_spawns", () -> RemoveSpawnsBiomeModifier.CODEC);
     }
 
-    private static final DeferredRegister<MapCodec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = deferred(ForgeRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends StructureModifier>> STRUCTURE_MODIFIER_SERIALIZERS = deferred(singularityRegistries.Keys.STRUCTURE_MODIFIER_SERIALIZERS);
     static {
         STRUCTURE_MODIFIER_SERIALIZERS.register("none", () -> NoneStructureModifier.CODEC);
     }
 
-    private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = deferred(ForgeRegistries.Keys.HOLDER_SET_TYPES);
+    private static final DeferredRegister<HolderSetType> HOLDER_SET_TYPES = deferred(singularityRegistries.Keys.HOLDER_SET_TYPES);
 
     /**
-     * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with {@code { "type": "forge:any" }}
+     * Stock holder set type that represents any/all values in a registry. Can be used in a holderset object with {@code { "type": "singularity:any" }}
      */
     public static final RegistryObject<HolderSetType> ANY_HOLDER_SET = HOLDER_SET_TYPES.register("any", () -> AnyHolderSet::codec);
 
     /**
-     * Stock holder set type that represents an intersection of other holdersets. Can be used in a holderset object with {@code { "type": "forge:and", "values": [list of holdersets] }}
+     * Stock holder set type that represents an intersection of other holdersets. Can be used in a holderset object with {@code { "type": "singularity:and", "values": [list of holdersets] }}
      */
     public static final RegistryObject<HolderSetType> AND_HOLDER_SET = HOLDER_SET_TYPES.register("and", () -> AndHolderSet::codec);
 
     /**
-     * Stock holder set type that represents a union of other holdersets. Can be used in a holderset object with {@code { "type": "forge:or", "values": [list of holdersets] }}
+     * Stock holder set type that represents a union of other holdersets. Can be used in a holderset object with {@code { "type": "singularity:or", "values": [list of holdersets] }}
      */
     public static final RegistryObject<HolderSetType> OR_HOLDER_SET = HOLDER_SET_TYPES.register("or", () -> OrHolderSet::codec);
 
     /**
      * <p>Stock holder set type that represents all values in a registry except those in another given set.
-     * Can be used in a holderset object with {@code { "type": "forge:not", "value": holderset }}</p>
+     * Can be used in a holderset object with {@code { "type": "singularity:not", "value": holderset }}</p>
      */
     public static final RegistryObject<HolderSetType> NOT_HOLDER_SET = HOLDER_SET_TYPES.register("not", () -> NotHolderSet::codec);
 
-    private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = deferred(ForgeRegistries.Keys.FLUID_TYPES, "minecraft");
+    private static final DeferredRegister<FluidType> VANILLA_FLUID_TYPES = deferred(singularityRegistries.Keys.FLUID_TYPES, "minecraft");
 
     public static final RegistryObject<FluidType> EMPTY_TYPE = VANILLA_FLUID_TYPES.register("empty", () ->
             new FluidType(FluidType.Properties.create()
@@ -312,7 +312,7 @@ public class ForgeMod {
         LOOT_CONDITION_TYPES.register("can_tool_perform_action", () -> CanToolPerformAction.CODEC);
     }
 
-    private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_SERIALIZERS = deferred(ForgeRegistries.Keys.CONDITION_SERIALIZERS);
+    private static final DeferredRegister<MapCodec<? extends ICondition>> CONDITION_SERIALIZERS = deferred(singularityRegistries.Keys.CONDITION_SERIALIZERS);
     static {
         CONDITION_SERIALIZERS.register("and", () -> AndCondition.CODEC);
         CONDITION_SERIALIZERS.register("false", () -> FalseCondition.CODEC);
@@ -324,12 +324,12 @@ public class ForgeMod {
         CONDITION_SERIALIZERS.register("tag_empty", () -> TagEmptyCondition.CODEC);
     }
 
-    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = deferred(ForgeRegistries.Keys.RECIPE_SERIALIZERS);
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = deferred(singularityRegistries.Keys.RECIPE_SERIALIZERS);
     static {
         RECIPE_SERIALIZERS.register("conditional", () -> ConditionalRecipe.SERIALZIER);
     }
 
-    private static final DeferredRegister<IIngredientSerializer<?>> INGREDIENT_SERIALIZERS = deferred(ForgeRegistries.Keys.INGREDIENT_SERIALIZERS);
+    private static final DeferredRegister<IIngredientSerializer<?>> INGREDIENT_SERIALIZERS = deferred(singularityRegistries.Keys.INGREDIENT_SERIALIZERS);
     static {
         INGREDIENT_SERIALIZERS.register("compound", () -> CompoundIngredient.SERIALIZER);
         INGREDIENT_SERIALIZERS.register("nbt", () -> NBTIngredient.SERIALIZER);
@@ -339,14 +339,14 @@ public class ForgeMod {
 
 
     private static boolean enableMilkFluid = false;
-    public static final RegistryObject<SoundEvent> BUCKET_EMPTY_MILK = RegistryObject.create(Identifier.withDefaultNamespace("item.bucket.empty_milk"), ForgeRegistries.SOUND_EVENTS);
-    public static final RegistryObject<SoundEvent> BUCKET_FILL_MILK = RegistryObject.create(Identifier.withDefaultNamespace("item.bucket.fill_milk"), ForgeRegistries.SOUND_EVENTS);
-    public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(Identifier.withDefaultNamespace("milk"), ForgeRegistries.Keys.FLUID_TYPES.identifier(), "minecraft");
-    public static final RegistryObject<Fluid> MILK = RegistryObject.create(Identifier.withDefaultNamespace("milk"), ForgeRegistries.FLUIDS);
-    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(Identifier.withDefaultNamespace("flowing_milk"), ForgeRegistries.FLUIDS);
+    public static final RegistryObject<SoundEvent> BUCKET_EMPTY_MILK = RegistryObject.create(Identifier.withDefaultNamespace("item.bucket.empty_milk"), singularityRegistries.SOUND_EVENTS);
+    public static final RegistryObject<SoundEvent> BUCKET_FILL_MILK = RegistryObject.create(Identifier.withDefaultNamespace("item.bucket.fill_milk"), singularityRegistries.SOUND_EVENTS);
+    public static final RegistryObject<FluidType> MILK_TYPE = RegistryObject.createOptional(Identifier.withDefaultNamespace("milk"), singularityRegistries.Keys.FLUID_TYPES.identifier(), "minecraft");
+    public static final RegistryObject<Fluid> MILK = RegistryObject.create(Identifier.withDefaultNamespace("milk"), singularityRegistries.FLUIDS);
+    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.create(Identifier.withDefaultNamespace("flowing_milk"), singularityRegistries.FLUIDS);
 
-    private static ForgeMod INSTANCE;
-    public static ForgeMod getInstance() {
+    private static singularityMod INSTANCE;
+    public static singularityMod getInstance() {
         return INSTANCE;
     }
 
@@ -357,8 +357,8 @@ public class ForgeMod {
         enableMilkFluid = true;
     }
 
-    public ForgeMod(FMLJavaModLoadingContext context) {
-        LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
+    public singularityMod(FMLJavaModLoadingContext context) {
+        LOGGER.info(singularityMOD,"singularity mod loading, version {}, for MC {} with MCP {}", singularityVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
         MinecraftForge.initialize();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
@@ -371,45 +371,45 @@ public class ForgeMod {
 
         NetworkInitialization.init();
 
-        CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
-        CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
+        CrashReportCallables.registerCrashCallable("FML", singularityVersion::getSpec);
+        CrashReportCallables.registerCrashCallable("singularity", ()->singularityVersion.getGroup()+":"+singularityVersion.getVersion());
 
         BusGroup modBusGroup = context.getModBusGroup();
-        // Forge-provided datapack registries
+        // singularity-provided datapack registries
         DataPackRegistryEvent.NewRegistry.BUS.addListener(event -> {
-            event.dataPackRegistry(ForgeRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
-            event.dataPackRegistry(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
+            event.dataPackRegistry(singularityRegistries.Keys.BIOME_MODIFIERS, BiomeModifier.DIRECT_CODEC);
+            event.dataPackRegistry(singularityRegistries.Keys.STRUCTURE_MODIFIERS, StructureModifier.DIRECT_CODEC);
         });
-        FMLCommonSetupEvent.getBus(modBusGroup).addListener(ForgeMod::preInit);
-        GatherDataEvent.getBus(modBusGroup).addListener(ForgeMod::gatherData);
+        FMLCommonSetupEvent.getBus(modBusGroup).addListener(singularityMod::preInit);
+        GatherDataEvent.getBus(modBusGroup).addListener(singularityMod::gatherData);
         var registerEventBus = RegisterEvent.getBus(modBusGroup);
-        registerEventBus.addListener(ForgeMod::registerFluids);
-        registerEventBus.addListener(ForgeMod::registerVanillaDisplayContexts);
-        EntityAttributeModificationEvent.BUS.addListener(ForgeMod::onRegisterAttributes);
-        ForgeDeferredRegistriesSetup.setup(modBusGroup);
+        registerEventBus.addListener(singularityMod::registerFluids);
+        registerEventBus.addListener(singularityMod::registerVanillaDisplayContexts);
+        EntityAttributeModificationEvent.BUS.addListener(singularityMod::onRegisterAttributes);
+        singularityDeferredRegistriesSetup.setup(modBusGroup);
         for (var reg : registries)
             reg.register(modBusGroup);
 
-        context.registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
-        context.registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
-        context.registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
-        if (ForgeConfig.LOGGER.isDebugEnabled()) {
-            ModConfigEvent.Loading.getBus(modBusGroup).addListener(ForgeConfig::onLoad);
-            ModConfigEvent.Reloading.getBus(modBusGroup).addListener(ForgeConfig::onFileChange);
+        context.registerConfig(ModConfig.Type.CLIENT, singularityConfig.clientSpec);
+        context.registerConfig(ModConfig.Type.SERVER, singularityConfig.serverSpec);
+        context.registerConfig(ModConfig.Type.COMMON, singularityConfig.commonSpec);
+        if (singularityConfig.LOGGER.isDebugEnabled()) {
+            ModConfigEvent.Loading.getBus(modBusGroup).addListener(singularityConfig::onLoad);
+            ModConfigEvent.Reloading.getBus(modBusGroup).addListener(singularityConfig::onFileChange);
         }
 
-        // Forge does not display problems when the remote is not matching.
+        // singularity does not display problems when the remote is not matching.
         context.registerDisplayTest(IExtensionPoint.DisplayTest.IGNORE_ALL_VERSION);
-        StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
+        StartupMessageManager.addModMessage("singularity version "+singularityVersion.getVersion());
 
-        ForgeInternalHandler.register();
-        GatherLoginConfigurationTasksEvent.BUS.addListener(ForgeNetworkConfigurationHandler::gatherInit);
+        singularityInternalHandler.register();
+        GatherLoginConfigurationTasksEvent.BUS.addListener(singularityNetworkConfigurationHandler::gatherInit);
 
-        ForgeRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(ForgeRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
+        singularityRegistries.ITEMS.tags().addOptionalTagDefaults(Tags.Items.ENCHANTING_FUELS, Set.of(singularityRegistries.ITEMS.getDelegateOrThrow(Items.LAPIS_LAZULI)));
 
         // TODO: Remove when addAlias becomes proper API, as this should be done in the DR's above.
-        addAlias(ForgeRegistries.ATTRIBUTES, Identifier.fromNamespaceAndPath("forge", "reach_distance"), Identifier.fromNamespaceAndPath("forge", "block_reach"));
-        addAlias(ForgeRegistries.ATTRIBUTES, Identifier.fromNamespaceAndPath("forge", "attack_range"), Identifier.fromNamespaceAndPath("forge", "entity_reach"));
+        addAlias(singularityRegistries.ATTRIBUTES, Identifier.fromNamespaceAndPath("singularity", "reach_distance"), Identifier.fromNamespaceAndPath("singularity", "block_reach"));
+        addAlias(singularityRegistries.ATTRIBUTES, Identifier.fromNamespaceAndPath("singularity", "attack_range"), Identifier.fromNamespaceAndPath("singularity", "entity_reach"));
     }
 
     private static void preInit(FMLCommonSetupEvent evt) {
@@ -419,8 +419,8 @@ public class ForgeMod {
 
     private static void onRegisterAttributes(EntityAttributeModificationEvent event) {
         for (var type : event.getTypes()) {
-            event.add(type, ForgeMod.SWIM_SPEED.getHolder().get());
-            event.add(type, ForgeMod.NAMETAG_DISTANCE.getHolder().get());
+            event.add(type, singularityMod.SWIM_SPEED.getHolder().get());
+            event.add(type, singularityMod.NAMETAG_DISTANCE.getHolder().get());
         }
     }
 
@@ -432,25 +432,25 @@ public class ForgeMod {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         gen.addProvider(true, new PackMetadataGenerator(packOutput)
             .add(PackMetadataSection.SERVER_TYPE, new PackMetadataSection(
-                Component.translatable("pack.forge.description"),
+                Component.translatable("pack.singularity.description"),
                 DetectedVersion.BUILT_IN.packVersion(PackType.SERVER_DATA).minorRange()
             ))
         );
-        ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(packOutput, lookupProvider, existingFileHelper);
+        singularityBlockTagsProvider blockTags = new singularityBlockTagsProvider(packOutput, lookupProvider, existingFileHelper);
         gen.addProvider(event.includeServer(), blockTags);
-        gen.addProvider(event.includeServer(), new ForgeItemTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeEnchantmentTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeRecipeProvider.Runner(packOutput, lookupProvider));
-        gen.addProvider(event.includeServer(), new ForgeLootTableProvider(packOutput, lookupProvider));
-        gen.addProvider(event.includeServer(), new ForgeBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
-        gen.addProvider(event.includeServer(), new ForgeStructureTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityItemTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityFluidTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityEnchantmentTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityRecipeProvider.Runner(packOutput, lookupProvider));
+        gen.addProvider(event.includeServer(), new singularityLootTableProvider(packOutput, lookupProvider));
+        gen.addProvider(event.includeServer(), new singularityBiomeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new singularityStructureTagsProvider(packOutput, lookupProvider, existingFileHelper));
 
         gen.addProvider(event.includeClient(), new VanillaSoundDefinitionsProvider(packOutput, existingFileHelper));
         // The provider uses Client only classes, so put a side guard on it.
         if (FMLLoader.getDist() == Dist.CLIENT) {
-            gen.addProvider(event.includeClient(), new ForgeAtlasProvider(packOutput));
+            gen.addProvider(event.includeClient(), new singularityAtlasProvider(packOutput));
         }
     }
 
@@ -458,13 +458,13 @@ public class ForgeMod {
     private static void registerFluids(RegisterEvent event) {
         if (enableMilkFluid) {
             // register milk fill, empty sounds (delegates to water fill, empty sounds)
-            event.register(ForgeRegistries.Keys.SOUND_EVENTS, helper -> {
+            event.register(singularityRegistries.Keys.SOUND_EVENTS, helper -> {
                 helper.register(BUCKET_EMPTY_MILK.getId(), SoundEvent.createVariableRangeEvent(BUCKET_EMPTY_MILK.getId()));
                 helper.register(BUCKET_FILL_MILK.getId(), SoundEvent.createVariableRangeEvent(BUCKET_FILL_MILK.getId()));
             });
 
             // register fluid type
-            event.register(ForgeRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(
+            event.register(singularityRegistries.Keys.FLUID_TYPES, helper -> helper.register(MILK_TYPE.getId(), new FluidType(
                 FluidType.Properties.create().density(1024).viscosity(1024)
                     .sound(SoundActions.BUCKET_FILL, BUCKET_FILL_MILK.get())
                     .sound(SoundActions.BUCKET_EMPTY, BUCKET_EMPTY_MILK.get())
@@ -472,8 +472,8 @@ public class ForgeMod {
                 @Override
                 public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
                     consumer.accept(new IClientFluidTypeExtensions() {
-                        private static final Identifier MILK_STILL = Identifier.fromNamespaceAndPath("forge", "block/milk_still");
-                        private static final Identifier MILK_FLOW = Identifier.fromNamespaceAndPath("forge", "block/milk_flowing");
+                        private static final Identifier MILK_STILL = Identifier.fromNamespaceAndPath("singularity", "block/milk_still");
+                        private static final Identifier MILK_FLOW = Identifier.fromNamespaceAndPath("singularity", "block/milk_flowing");
 
                         @Override
                         public Identifier getStillTexture() {
@@ -489,37 +489,37 @@ public class ForgeMod {
             }));
 
             // register fluids
-            event.register(ForgeRegistries.Keys.FLUIDS, helper -> {
+            event.register(singularityRegistries.Keys.FLUIDS, helper -> {
                 // set up properties
-                ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK_TYPE, MILK, FLOWING_MILK).bucket(() -> Items.MILK_BUCKET);
+                singularityFlowingFluid.Properties properties = new singularityFlowingFluid.Properties(MILK_TYPE, MILK, FLOWING_MILK).bucket(() -> Items.MILK_BUCKET);
 
-                helper.register(MILK.getId(), new ForgeFlowingFluid.Source(properties));
-                helper.register(FLOWING_MILK.getId(), new ForgeFlowingFluid.Flowing(properties));
+                helper.register(MILK.getId(), new singularityFlowingFluid.Source(properties));
+                helper.register(FLOWING_MILK.getId(), new singularityFlowingFluid.Flowing(properties));
             });
         }
     }
 
     private static void registerVanillaDisplayContexts(RegisterEvent event) {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.DISPLAY_CONTEXTS)) {
-            IForgeRegistryInternal<ItemDisplayContext> forgeRegistry = (IForgeRegistryInternal<ItemDisplayContext>) event.<ItemDisplayContext>getForgeRegistry();
-            if (forgeRegistry == null)
-                throw new IllegalStateException("Item display context was not a forge registry, wtf???");
+        if (event.getRegistryKey().equals(singularityRegistries.Keys.DISPLAY_CONTEXTS)) {
+            IForgeRegistryInternal<ItemDisplayContext> singularityRegistry = (IForgeRegistryInternal<ItemDisplayContext>) event.<ItemDisplayContext>getForgeRegistry();
+            if (singularityRegistry == null)
+                throw new IllegalStateException("Item display context was not a singularity registry, wtf???");
 
             Arrays.stream(ItemDisplayContext.values())
                 .filter(Predicate.not(ItemDisplayContext::isModded))
-                .forEach(ctx -> forgeRegistry.register(ctx.getId(), Identifier.fromNamespaceAndPath("minecraft", ctx.getSerializedName()), ctx));
+                .forEach(ctx -> singularityRegistry.register(ctx.getId(), Identifier.fromNamespaceAndPath("minecraft", ctx.getSerializedName()), ctx));
         }
     }
 
-    public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("forge", "use_entity_selectors",
+    public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("singularity", "use_entity_selectors",
             PermissionTypes.BOOLEAN, (player, uuid, contexts) -> player != null && Commands.LEVEL_GAMEMASTERS.check(player.permissions()));
 
     /**
-     * TODO: Remove when {@link ForgeRegistry#addAlias(Identifier, Identifier)} is elevated to {@link IForgeRegistry}.
+     * TODO: Remove when {@link singularityRegistry#addAlias(Identifier, Identifier)} is elevated to {@link IForgeRegistry}.
      */
     //@Deprecated(forRemoval = true, since = "1.20")
     private static <T> void addAlias(IForgeRegistry<T> registry, Identifier from, Identifier to) {
-        ForgeRegistry<T> fReg = (ForgeRegistry<T>) registry;
+        singularityRegistry<T> fReg = (singularityRegistry<T>) registry;
         fReg.addAlias(from, to);
     }
 
@@ -532,7 +532,7 @@ public class ForgeMod {
             var reader = Class.forName("javax.naming.spi.NamingManager");
             addOpen(target, reader);
         } catch (Exception e) {
-            LOGGER.error(FORGEMOD, "Failed to hack DnsContextFactory, some servers might not work", e);
+            LOGGER.error(singularityMOD, "Failed to hack DnsContextFactory, some servers might not work", e);
         }
     }
 
@@ -542,7 +542,7 @@ public class ForgeMod {
             implAddExportsOrOpens = Module.class.getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class);
             UnsafeHacks.setAccessible(implAddExportsOrOpens);
         }
-        LOGGER.info(FORGEMOD, "Opening {}/{} to {}", target.getModule().getName(), target.getPackageName(), reader.getModule().getName());
+        LOGGER.info(singularityMOD, "Opening {}/{} to {}", target.getModule().getName(), target.getPackageName(), reader.getModule().getName());
         implAddExportsOrOpens.invoke(target.getModule(), target.getPackageName(), reader.getModule(), /*open*/true, /*syncVM*/true);
     }
 }

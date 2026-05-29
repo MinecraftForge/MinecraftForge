@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.crafting.conditions;
+package net.minecraftsingularity.common.crafting.conditions;
 
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
@@ -11,7 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record NotCondition(ICondition child) implements ICondition {
     public static final MapCodec<NotCondition> CODEC = RecordCodecBuilder.mapCodec(b -> b.group(
-        ICondition.CODEC.fieldOf("value").forGetter(NotCondition::child)
+        ICondition.CODEC.fieldOf("value").singularitytter(NotCondition::child)
     ).apply(b, NotCondition::new));
 
     @Override

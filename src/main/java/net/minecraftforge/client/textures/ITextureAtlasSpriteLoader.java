@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.textures;
+package net.minecraftsingularity.client.textures;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;
@@ -12,7 +12,7 @@ import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent;
+import net.minecraftsingularity.client.event.RegisterTextureAtlasSpriteLoadersEvent;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  * The loader can be specified in the corresponding .mcmeta file for a texture as follows:
  * <pre>
  * {
- *   "forge": {
+ *   "singularity": {
  *     "loader": "examplemod:example_tas_loader"
  *   }
  * }

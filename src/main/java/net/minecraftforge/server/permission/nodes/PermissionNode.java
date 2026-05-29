@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission.nodes;
+package net.minecraftsingularity.server.permission.nodes;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.server.permission.events.PermissionGatherEvent;
-import net.minecraftforge.server.permission.handler.IPermissionHandler;
+import net.minecraftsingularity.server.permission.events.PermissionGatherEvent;
+import net.minecraftsingularity.server.permission.handler.IPermissionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ import java.util.UUID;
  * See the above link for more information.</p>
  *
  * <p>Each node should be registered via the {@link PermissionGatherEvent.Nodes} and stored statically in a field.
- * That instance should then be reused every-time a permission check needs to be performed via {@link net.minecraftforge.server.permission.PermissionAPI#getPermission(ServerPlayer, PermissionNode, PermissionDynamicContext[])}.</p>
+ * That instance should then be reused every-time a permission check needs to be performed via {@link net.minecraftsingularity.server.permission.PermissionAPI#getPermission(ServerPlayer, PermissionNode, PermissionDynamicContext[])}.</p>
  */
 public final class PermissionNode<T> {
     private final String nodeName;

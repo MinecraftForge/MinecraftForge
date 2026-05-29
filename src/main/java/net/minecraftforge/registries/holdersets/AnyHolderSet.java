@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.holdersets;
+package net.minecraftsingularity.registries.holdersets;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,13 +25,13 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraftforge.common.ForgeMod;
+import net.minecraftsingularity.common.singularityMod;
 
 /**
  * <p>Holderset that represents all elements of a registry. Json format:</p>
  * <pre>
  * {
- *   "type": "forge:any"
+ *   "type": "singularity:any"
  * }
  * </pre>
  */
@@ -43,7 +43,7 @@ public record AnyHolderSet<T>(HolderLookup.RegistryLookup<T> registryLookup) imp
 
     @Override
     public HolderSetType type() {
-        return ForgeMod.ANY_HOLDER_SET.get();
+        return singularityMod.ANY_HOLDER_SET.get();
     }
 
     @Override

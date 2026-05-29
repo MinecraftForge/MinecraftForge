@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.loot;
+package net.minecraftsingularity.debug.gameplay.loot;
 
 import java.util.List;
 import java.util.Set;
@@ -29,32 +29,32 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.crafting.conditions.IConditionBuilder;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.event.LootTableLoadEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 
 @Mod(LootEventsTest.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class LootEventsTest extends BaseTestMod {
     public static final String MODID = "loot_events";
     @SuppressWarnings("unused")
     private static Logger LOGGER = LogManager.getLogger();
 
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MODID);
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(name(MODID, "test", BlockBehaviour.Properties.of())));
 
     public LootEventsTest(FMLJavaModLoadingContext context) {
         super(context, false, true);
         GatherDataEvent.getBus(modBus).addListener(this::gatherData);
-        LootTableLoadEvent.BUS.addListener(ForgeEvents::onLootTableLoad);
+        LootTableLoadEvent.BUS.addListener(singularityEvents::onLootTableLoad);
     }
 
     public void gatherData(GatherDataEvent event) {
@@ -78,7 +78,7 @@ public class LootEventsTest extends BaseTestMod {
         helper.succeed();
     }
 
-    private class ForgeEvents {
+    private class singularityEvents {
         public static void onLootTableLoad(LootTableLoadEvent event) {
             if (event.getName().equals(TEST_BLOCK.get().getLootTable().orElse(null).identifier())) {
                 event.getTable().removePool(0);

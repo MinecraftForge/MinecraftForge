@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import com.google.gson.JsonElement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -31,9 +31,9 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.unsafe.UnsafeFieldAccess;
-import net.minecraftforge.unsafe.UnsafeHacks;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.unsafe.UnsafeFieldAccess;
+import net.minecraftsingularity.unsafe.UnsafeHacks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public final class ForgeRecipeProvider extends VanillaRecipeProvider {
+public final class singularityRecipeProvider extends VanillaRecipeProvider {
     private static final Logger LOGGER = LogManager.getLogger();
     private final RegistryLookup<Item> items;
     private final Map<Item, TagKey<Item>> replacements = HashMap.newHashMap(12);
@@ -56,7 +56,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
     private final UnsafeFieldAccess<ShapedRecipe, ShapedRecipePattern> PATTERN = UnsafeHacks.findField(ShapedRecipe.class, "pattern");
     private final UnsafeFieldAccess<Ingredient, HolderSet<Item>> VALUES = UnsafeHacks.findField(Ingredient.class, "values");
 
-    private ForgeRecipeProvider(HolderLookup.Provider lookup, RecipeOutput output) {
+    private singularityRecipeProvider(HolderLookup.Provider lookup, RecipeOutput output) {
         super(lookup, new Wrapped(output));
         ((Wrapped)this.output).setSelf(this);
         this.items = lookup.lookupOrThrow(Registries.ITEM);
@@ -191,24 +191,24 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
 
         @Override
         public String getName() {
-            return ForgeRecipeProvider.class.getSimpleName();
+            return singularityRecipeProvider.class.getSimpleName();
         }
 
         @Override
         protected RecipeProvider createRecipeProvider(Provider registries, RecipeOutput output) {
-            return new ForgeRecipeProvider(registries, output);
+            return new singularityRecipeProvider(registries, output);
         }
     }
 
     private static class Wrapped implements RecipeOutput {
         private final RecipeOutput wrapped;
-        private ForgeRecipeProvider self;
+        private singularityRecipeProvider self;
 
         private Wrapped(RecipeOutput wrapped) {
             this.wrapped = wrapped;
         }
 
-        private void setSelf(ForgeRecipeProvider self) {
+        private void setSelf(singularityRecipeProvider self) {
             this.self = self;
         }
 

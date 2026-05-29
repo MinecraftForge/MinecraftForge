@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Collection;
 import java.util.function.BiPredicate;
@@ -27,10 +27,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
-import net.minecraftforge.common.SoundAction;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.entity.PartEntity;
-import net.minecraftforge.fluids.FluidType;
+import net.minecraftsingularity.common.SoundAction;
+import net.minecraftsingularity.common.capabilities.ICapabilitySerializable;
+import net.minecraftsingularity.entity.PartEntity;
+import net.minecraftsingularity.fluids.FluidType;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {

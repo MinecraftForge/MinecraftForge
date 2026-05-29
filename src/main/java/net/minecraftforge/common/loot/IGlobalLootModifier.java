@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.loot;
+package net.minecraftsingularity.common.loot;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,11 +25,11 @@ import java.util.function.Function;
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.
  * {@link LootModifier} Supplies base functionality; most modders should only need to extend that.<br/>
- * Requires a {@link Codec} to be registered: {@link ForgeRegistries#GLOBAL_LOOT_MODIFIER_SERIALIZERS}, and returned in {@link #codec()}
- * Individual instances of modifiers must be registered via json, see forge:loot_modifiers/global_loot_modifiers
+ * Requires a {@link Codec} to be registered: {@link singularityRegistries#GLOBAL_LOOT_MODIFIER_SERIALIZERS}, and returned in {@link #codec()}
+ * Individual instances of modifiers must be registered via json, see singularity:loot_modifiers/global_loot_modifiers
  */
 public interface IGlobalLootModifier {
-    Codec<IGlobalLootModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getCodec().dispatch(IGlobalLootModifier::codec, Function.identity()));
+    Codec<IGlobalLootModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> singularityRegistries.GLOBAL_LOOT_MODIFIER_SERIALIZERS.get().getCodec().dispatch(IGlobalLootModifier::codec, Function.identity()));
 
     Codec<LootItemCondition[]> LOOT_CONDITIONS_CODEC = LootItemCondition.DIRECT_CODEC.listOf().xmap(list -> list.toArray(LootItemCondition[]::new), List::of);
 

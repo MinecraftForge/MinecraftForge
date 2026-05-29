@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.obj;
+package net.minecraftsingularity.client.model.obj;
 
 import com.google.common.collect.Maps;
 import com.google.gson.JsonDeserializationContext;
@@ -20,9 +20,9 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.geometry.StandaloneGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.IGeometryBakingContext;
+import net.minecraftsingularity.client.model.geometry.IGeometryLoader;
+import net.minecraftsingularity.client.model.geometry.StandaloneGeometryBakingContext;
 
 import java.util.Map;
 

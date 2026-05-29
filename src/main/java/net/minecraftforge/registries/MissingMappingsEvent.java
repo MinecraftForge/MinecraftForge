@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Collection;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS forge bus}.
+ * Fired on the {@link net.minecraftsingularity.common.MinecraftForge#EVENT_BUS singularity bus}.
  */
 public final class MissingMappingsEvent extends MutableEvent {
     public static final EventBus<MissingMappingsEvent> BUS = EventBus.create(MissingMappingsEvent.class);

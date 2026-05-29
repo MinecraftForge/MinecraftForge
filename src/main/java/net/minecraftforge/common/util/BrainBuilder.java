@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftsingularity.common.util;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -30,13 +30,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * This object is used to encapsulate state found inside a {@link Brain} instance,
- * to make it easily accessible for modders to manipulate during {@link net.minecraftforge.event.entity.living.LivingMakeBrainEvent}.<br>
+ * to make it easily accessible for modders to manipulate during {@link net.minecraftsingularity.event.entity.living.LivingMakeBrainEvent}.<br>
  * <br>
  * Provided are a variety of getter/setter methods to access and manipulate the encapsulated state.<br>
  * <br>
  * Methods marked with "INTENDED FOR INTERNAL USE" are only meant to be used inside:
  * <ul>
- * <li>{@link net.minecraftforge.common.ForgeHooks#onLivingMakeBrain(LivingEntity, Brain, Dynamic)}
+ * <li>{@link net.minecraftsingularity.common.singularityHooks#onLivingMakeBrain(LivingEntity, Brain, Dynamic)}
  * <li>{@link Brain#createBuilder()}
  * <li>{@link Brain#copyFromBuilder(BrainBuilder)}
  * </ul>

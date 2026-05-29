@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.targets;
+package net.minecraftsingularity.fml.loading.targets;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,24 +30,24 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.electronwill.nightconfig.toml.TomlWriter;
 import com.google.common.jimfs.Jimfs;
 
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.moddiscovery.AbstractModProvider;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.fml.loading.moddiscovery.AbstractModProvider;
+import net.minecraftsingularity.singularityspi.locating.IModLocator;
 
 @ApiStatus.Internal
-public final class ForgeDevLocator extends AbstractModProvider implements IModLocator {
+public final class singularityDevLocator extends AbstractModProvider implements IModLocator {
     private static final String PACK_META = "pack.mcmeta";
 
     @Override
     public String name() {
-        return "forge_dev_locator";
+        return "singularity_dev_locator";
     }
 
     @Override
     public List<ModFileOrException> scanMods() {
         var handler = FMLLoader.getLaunchHandler();
 
-        if (!(handler instanceof ForgeDevLaunchHandler))
+        if (!(handler instanceof singularityDevLaunchHandler))
             return List.of();
 
         var mods = getMods();
@@ -61,22 +61,22 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
     }
 
     private static List<Path> getMods() {
-        // Forge is an exploded directory as well
-        var minecraft = ForgeDevLaunchHandler.getPathFromResource("net/minecraft/client/Minecraft.class");
-        var forge = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
-        if (minecraft.equals(forge)) {
-            // If both Forge and MC are in the same folder, then we are in intellij or gradle
+        // singularity is an exploded directory as well
+        var minecraft = singularityDevLaunchHandler.getPathFromResource("net/minecraft/client/Minecraft.class");
+        var singularity = singularityDevLaunchHandler.getPathFromResource("net/minecraftforge/common/MinecraftForge.class");
+        if (minecraft.equals(singularity)) {
+            // If both singularity and MC are in the same folder, then we are in intellij or gradle
             // So we have to create a filtered jar
-            forge = CommonDevLaunchHandler.getForgeOnly(forge);
+            singularity = CommonDevLaunchHandler.getForgeOnly(singularity);
         }
         var ret = new ArrayList<Path>();
-        ret.add(forge);
+        ret.add(singularity);
 
-        var isTest = Boolean.getBoolean("forgedev.enableTestMods");
+        var isTest = Boolean.getBoolean("singularitydev.enableTestMods");
         if (!isTest)
             return ret;
 
-        var test = ForgeDevLaunchHandler.getPathFromResource("net/minecraftforge/test/BaseTestMod.class", ClassLoader.getSystemClassLoader());
+        var test = singularityDevLaunchHandler.getPathFromResource("net/minecraftforge/test/BaseTestMod.class", ClassLoader.getSystemClassLoader());
         // Explode our test mods into a framework that treats them all as separate jars.
         var tests = explodeTestMods(test);
         ret.addAll(tests);
@@ -171,7 +171,7 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
                                             pkg = pkg.substring(0, idx);
                                             idx = pkg.lastIndexOf('/');
                                             if (mods.containsKey(pkg))
-                                                throw new IllegalStateException("Invalid ForgeDev test mod layout, conflicting packages: " + pkg + " for " + clsName);
+                                                throw new IllegalStateException("Invalid singularityDev test mod layout, conflicting packages: " + pkg + " for " + clsName);
                                         }
                                     }
                                 }

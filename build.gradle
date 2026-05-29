@@ -1,15 +1,15 @@
-import net.minecraftforge.forge.tasks.*
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.singularity.tasks.*
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
-    id 'net.minecraftforge.licenser' version '1.0.1'
+    id 'net.minecraftsingularity.licenser' version '1.0.1'
     id 'com.github.ben-manes.versions' version '0.46.0'
-    id 'net.minecraftforge.gradleutils' version '[2.6.4,2.7)'
+    id 'net.minecraftsingularity.gradleutils' version '[2.6.4,2.7)'
     id 'eclipse'
     id 'de.undercouch.download' version '5.4.0'
-    id 'net.minecraftforge.gradle.patcher' version '[6.0.51,6.2)' apply false
-    id 'net.minecraftforge.gradle.mcp' version '[6.0.51,6.2)' apply false
-    id 'net.minecraftforge.gradlejarsigner' version '1.0.4'
+    id 'net.minecraftsingularity.gradle.patcher' version '[6.0.51,6.2)' apply false
+    id 'net.minecraftsingularity.gradle.mcp' version '[6.0.51,6.2)' apply false
+    id 'net.minecraftsingularity.gradlejarsigner' version '1.0.4'
     //id 'org.barfuin.gradle.taskinfo' version '3.0.1'
 }
 
@@ -17,7 +17,7 @@ Util.init() //Init all our extension methods!
 
 ext {
     VERSION = gitversion.getMCTagOffsetBranch(MC_VERSION)
-    FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
+    SINGULARITY_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 }
 
 changelog {
@@ -25,18 +25,18 @@ changelog {
 }
 
 tasks.register('setup') {
-    dependsOn ':forge:extractMapped'
+    dependsOn ':singularity:extractMapped'
     if (findProject(':clean'))
         dependsOn ':clean:extractMapped'
 }
 
 tasks.register('doChecks') {
-    dependsOn ':forge:checkJarCompatibility'
-    dependsOn ':forge:publish'
+    dependsOn ':singularity:checkJarCompatibility'
+    dependsOn ':singularity:publish'
 }
 
 project(':mcp') {
-    apply plugin: 'net.minecraftforge.gradle.mcp'
+    apply plugin: 'net.minecraftsingularity.gradle.mcp'
     mcp {
         config MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.recipe.recipebook;
+package net.minecraftsingularity.debug.recipe.recipebook;
 
 /*
 import com.google.common.collect.ImmutableList;
@@ -26,8 +26,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.debug.recipe.recipebook.RecipeBookTestRecipe.Ingredients;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.debug.recipe.recipebook.RecipeBookTestRecipe.Ingredients;
 
 import java.util.*;
 import java.util.function.Function;
@@ -128,7 +128,7 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
         return this.getIngredients().isEmpty() ||
                 this.getIngredients().stream()
                         .filter((ingredient) -> !ingredient.isEmpty())
-                        .anyMatch(ForgeHooks::hasNoElements);
+                        .anyMatch(singularityHooks::hasNoElements);
     }
 
     @Override
@@ -163,10 +163,10 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
 
         public static final Codec<Ingredients> CODEC = RecordCodecBuilder.create(inst ->
                 inst.group(
-                        Codec.STRING.fieldOf("group").forGetter(Ingredients::group),
-                        Codec.STRING.flatXmap(VERIFY_LENGTH_2, VERIFY_LENGTH_2).listOf().flatXmap(VERIFY_SIZE, VERIFY_SIZE).fieldOf("pattern").forGetter(Ingredients::pattern),
-                        Codec.unboundedMap(Codec.STRING.flatXmap(VERIFY_LENGTH_1, VERIFY_LENGTH_1), INGREDIENT_CODEC).fieldOf("key").forGetter(Ingredients::recipe),
-                        ItemStack.CODEC.fieldOf("result").forGetter(Ingredients::result)
+                        Codec.STRING.fieldOf("group").singularitytter(Ingredients::group),
+                        Codec.STRING.flatXmap(VERIFY_LENGTH_2, VERIFY_LENGTH_2).listOf().flatXmap(VERIFY_SIZE, VERIFY_SIZE).fieldOf("pattern").singularitytter(Ingredients::pattern),
+                        Codec.unboundedMap(Codec.STRING.flatXmap(VERIFY_LENGTH_1, VERIFY_LENGTH_1), INGREDIENT_CODEC).fieldOf("key").singularitytter(Ingredients::recipe),
+                        ItemStack.CODEC.fieldOf("result").singularitytter(Ingredients::result)
                 ).apply(inst, Ingredients::new)
         );
     }

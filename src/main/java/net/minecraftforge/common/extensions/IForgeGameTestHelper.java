@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -46,13 +46,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
 
 public interface IForgeGameTestHelper {
     private GameTestHelper self() {
@@ -86,7 +86,7 @@ public interface IForgeGameTestHelper {
     }
 
     private MutableComponent getMessage(String message) {
-        return ForgeI18n.getPattern(message) != null ? Component.translatable(message) : Component.literal(message);
+        return singularityI18n.getPattern(message) != null ? Component.translatable(message) : Component.literal(message);
     }
 
     default void assertTrue(boolean value, String message) {
@@ -306,7 +306,7 @@ public interface IForgeGameTestHelper {
 
     private static int countItemHandler(GameTestHelper self, BlockPos pos, @Nullable Direction side, Item item) {
         var blockEntity = self.getBlockEntity(pos, BlockEntity.class);
-        var handler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElseThrow(
+        var handler = blockEntity.getCapability(singularityCapabilities.ITEM_HANDLER, side).orElseThrow(
                 () -> self.throwing("Block at %s has no item handler capability on side %s".formatted(pos, side)));
 
         int actual = 0;

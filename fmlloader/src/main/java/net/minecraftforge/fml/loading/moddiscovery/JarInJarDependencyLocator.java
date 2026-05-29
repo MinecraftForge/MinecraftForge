@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.FileConfig;
@@ -11,18 +11,18 @@ import com.mojang.logging.LogUtils;
 
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.TypesafeMap;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.locating.IDependencyLocator;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModFile.Type;
-import net.minecraftforge.jarjar.metadata.ContainedJarIdentifier;
-import net.minecraftforge.jarjar.metadata.ContainedJarMetadata;
-import net.minecraftforge.jarjar.metadata.ContainedVersion;
-import net.minecraftforge.jarjar.metadata.MetadataIOHandler;
-import net.minecraftforge.jarjar.selection.JarSelector;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException.ExceptionData;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.locating.IDependencyLocator;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
+import net.minecraftsingularity.singularityspi.locating.IModFile.Type;
+import net.minecraftsingularity.jarjar.metadata.ContainedJarIdentifier;
+import net.minecraftsingularity.jarjar.metadata.ContainedJarMetadata;
+import net.minecraftsingularity.jarjar.metadata.ContainedVersion;
+import net.minecraftsingularity.jarjar.metadata.MetadataIOHandler;
+import net.minecraftsingularity.jarjar.selection.JarSelector;
 
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -80,11 +80,11 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
         try {
             range = VersionRange.createFromVersionSpec("[0,)");
         } catch (InvalidVersionSpecificationException e) {
-            throw new RuntimeException("Failed to create version range for mixinextras-forge dependency", e);
+            throw new RuntimeException("Failed to create version range for mixinextras-singularity dependency", e);
         }
 
         return new ContainedJarMetadata(
-            new ContainedJarIdentifier("io.github.llamalad7", "mixinextras-forge"),
+            new ContainedJarIdentifier("io.github.llamalad7", "mixinextras-singularity"),
             new ContainedVersion(range, null),
             null, false
         );

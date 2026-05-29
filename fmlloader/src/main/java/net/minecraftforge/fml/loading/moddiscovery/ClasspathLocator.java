@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.fml.loading.ModDirTransformerDiscoverer;
+import net.minecraftsingularity.singularityspi.locating.IModLocator;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public final class ClasspathLocator extends AbstractModProvider implements IModL
         //var cl = ClassLoader.getSystemClassLoader();
         var cl = getClass().getClassLoader();
 
-        // Find 'minecraft' during dev time this is also Forge. So skip it.
+        // Find 'minecraft' during dev time this is also singularity. So skip it.
         // Can return null for dedicated server as Minecraft isn't on the classpath
         // On the client it doesn't matter as it's the vanilla jar so wouldnt have mods.toml in it.
         var minecraft = getPathFromResource(cl, "net/minecraft/world/item/Item.class");

@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.*;
-import net.minecraftforge.common.util.HasResult;
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.common.util.HasResult;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,12 +22,12 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.ValueInput;
-import net.minecraftforge.common.ForgeInternalHandler;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.singularityInternalHandler;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.event.entity.EntityEvent;
+import net.minecraftsingularity.event.entity.SpawnPlacementRegisterEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 
 /**
  * This class holds all events relating to the entire flow of mob spawns.<br>
@@ -101,7 +101,7 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
      * <li>Default - The value of the vanilla check will be used to determine success.</li>
      * <li>Deny - The check will fail, and the spawn process will abort.</li>
      * </ul>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      * <p>
      * This event is not fired for mob spawners which utilize {@link CustomSpawnRules}, as they do not check spawn placements.
@@ -210,7 +210,7 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
      * <li>Default - The position will be accepted if {@link Mob#checkSpawnRules} and {@link Mob#checkSpawnObstruction} are both true.</li>
      * <li>Deny - The position will not be accepted. The spawn process will abort, and further events will not be called.</li>
      * </ul>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      *
      * @apiNote This event fires after Spawn Placement checks, which are the primary set of spawn checks.
@@ -267,11 +267,11 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
      * In vanilla code, this event is injected by a transformer and not via patch, so calls cannot be traced via call hierarchy (it is not source-visible).
      * <p>
      * Canceling this event will result in {@link Mob#finalizeSpawn} not being called, and the returned value always being null, instead of propagating the SpawnGroupData.<br>
-     * The entity will still be spawned. If you want to prevent the spawn, use {@link FinalizeSpawn#setSpawnCancelled}, which will cause Forge to prevent the spawn.
+     * The entity will still be spawned. If you want to prevent the spawn, use {@link FinalizeSpawn#setSpawnCancelled}, which will cause singularity to prevent the spawn.
      * <p>
      * This event is fired on {@link MinecraftForge#EVENT_BUS}, and is only fired on the logical server.
-     * @see ForgeEventFactory#onFinalizeSpawn
-     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by Forge.
+     * @see singularityEventFactory#onFinalizeSpawn
+     * @apiNote Callers do not need to check if the entity's spawn was cancelled, as the spawn will be blocked by singularity.
      */
     public static final class FinalizeSpawn extends MobSpawnEvent implements Cancellable {
         public static final CancellableEventBus<FinalizeSpawn> BUS = CancellableEventBus.create(FinalizeSpawn.class);
@@ -287,7 +287,7 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
         private ValueInput spawnTag;
 
         /**
-         * @apiNote Do not construct directly. Access via {@link ForgeEventFactory#onFinalizeSpawn} / {@link ForgeEventFactory#onFinalizeSpawnSpawner}.
+         * @apiNote Do not construct directly. Access via {@link singularityEventFactory#onFinalizeSpawn} / {@link singularityEventFactory#onFinalizeSpawnSpawner}.
          */
         @ApiStatus.Internal
         public FinalizeSpawn(Mob entity, ServerLevelAccessor level, double x, double y, double z, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData spawnData, @Nullable ValueInput spawnTag, @Nullable BaseSpawner spawner) {
@@ -387,7 +387,7 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
         /**
          * Returns the current spawn cancellation status, which can be changed via {@link FinalizeSpawn#setSpawnCancelled(boolean)}.
          * @return If this mob's spawn is cancelled or not.
-         * @implNote This is enforced in {@link ForgeInternalHandler#builtinMobSpawnBlocker} and a patch in {@link WorldGenRegion#addEntity}
+         * @implNote This is enforced in {@link singularityInternalHandler#builtinMobSpawnBlocker} and a patch in {@link WorldGenRegion#addEntity}
          */
         public boolean isSpawnCancelled() {
             return this.getEntity().isSpawnCancelled();
@@ -404,7 +404,7 @@ public abstract sealed class MobSpawnEvent extends MutableEvent implements Entit
      * {@link Result#ALLOW} indicates that the mob should forcefully despawn.
      * {@link Result#DENY} indicates that the mob should forcefully stay spawned.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      *
      * @see LivingEntity#checkDespawn()

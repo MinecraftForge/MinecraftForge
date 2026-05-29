@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client;
+package net.minecraftsingularity.debug.client;
 
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.color.item.ItemTintSources;
@@ -11,11 +11,11 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 import javax.annotation.Nullable;
 
 import com.mojang.datafixers.util.Pair;
@@ -25,7 +25,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 @Mod(LateBoundIdMapperTest.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class LateBoundIdMapperTest extends BaseTestMod {
     public LateBoundIdMapperTest(FMLJavaModLoadingContext context) {
         super(context, false, false);
@@ -57,7 +57,7 @@ public class LateBoundIdMapperTest extends BaseTestMod {
 
     private record Test(int value) implements ItemTintSource {
         public static final MapCodec<Test> CODEC = RecordCodecBuilder.mapCodec(
-            b -> b.group(Codec.INT.fieldOf("value").forGetter(Test::value)).apply(b, Test::new)
+            b -> b.group(Codec.INT.fieldOf("value").singularitytter(Test::value)).apply(b, Test::new)
         );
 
         @Override

@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftsingularity.common.capabilities;
 
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;

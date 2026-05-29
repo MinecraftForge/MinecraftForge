@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +25,12 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.NullMarked;
 
@@ -53,7 +53,7 @@ public sealed interface LevelEvent extends InheritableEvent
      * This event is fired whenever a level loads in ClientLevel's constructor and
      * {@literal MinecraftServer#createLevels(ChunkProgressListener)}.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * on both logical sides.
      **/
     record Load(LevelAccessor getLevel) implements LevelEvent {
@@ -67,7 +67,7 @@ public sealed interface LevelEvent extends InheritableEvent
      * {@link MinecraftServer#stopServer()},
      * {@link Minecraft#clearClientLevel(Screen)}.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * on both logical sides.
      **/
     record Unload(LevelAccessor getLevel) implements LevelEvent {
@@ -79,7 +79,7 @@ public sealed interface LevelEvent extends InheritableEvent
      * This event is fired when a level is saved in
      * {@link ServerLevel#save(ProgressListener, boolean, boolean)}.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     record Save(LevelAccessor getLevel) implements LevelEvent {
@@ -93,7 +93,7 @@ public sealed interface LevelEvent extends InheritableEvent
      * This event is {@linkplain Cancellable cancellable}.
      * If the event is cancelled, the vanilla logic to choose a spawn position will be skipped.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      *
      * @see ServerLevelData#isInitialized()

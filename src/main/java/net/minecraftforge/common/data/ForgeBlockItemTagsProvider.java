@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -17,10 +17,10 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.registries.singularityRegistries;
 
-public abstract class ForgeBlockItemTagsProvider extends BlockItemTagsProvider {
+public abstract class singularityBlockItemTagsProvider extends BlockItemTagsProvider {
     @Override
     @SuppressWarnings({ "unchecked", "removal" })
     protected void run() {
@@ -544,8 +544,8 @@ public abstract class ForgeBlockItemTagsProvider extends BlockItemTagsProvider {
             );
     }
 
-    private static TagKey<Block> forgeTagKey(String path) {
-        return BlockTags.create(Identifier.fromNamespaceAndPath("forge", path));
+    private static TagKey<Block> singularityTagKey(String path) {
+        return BlockTags.create(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     private static TagKey<Block> tagKey(String name) {
@@ -558,7 +558,7 @@ public abstract class ForgeBlockItemTagsProvider extends BlockItemTagsProvider {
             Identifier key = Identifier.fromNamespaceAndPath("minecraft", pattern.replace("{color}",  color.getName()));
             TagKey<Block> blockTag = getForgeTag(Tags.Blocks.class, prefix + color.getName());
             TagKey<Item> itemTag = getForgeTag(Tags.Items.class, prefix + color.getName());
-            Block block = ForgeRegistries.BLOCKS.getValue(key);
+            Block block = singularityRegistries.BLOCKS.getValue(key);
             if (block == null || block  == Blocks.AIR)
                 throw new IllegalStateException("Unknown vanilla block: " + key.toString());
             tag(blockTag, itemTag).add(block);
@@ -576,8 +576,8 @@ public abstract class ForgeBlockItemTagsProvider extends BlockItemTagsProvider {
         }
     }
 
-    private static Identifier forgeRl(String path) {
-        return Identifier.fromNamespaceAndPath("forge", path);
+    private static Identifier singularityRl(String path) {
+        return Identifier.fromNamespaceAndPath("singularity", path);
     }
 
     private TagAppender<Block, Block> tag(TagKey<Block> block, TagKey<Item> item, TagKey<Block> oldBlock, TagKey<Item> oldItem) {

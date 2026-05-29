@@ -1,22 +1,22 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.StructureTagsProvider;
-import net.minecraftforge.common.Tags;
+import net.minecraftsingularity.common.Tags;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
 
 @ApiStatus.Internal
-public final class ForgeStructureTagsProvider extends StructureTagsProvider {
-    public ForgeStructureTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityStructureTagsProvider extends StructureTagsProvider {
+    public singularityStructureTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
@@ -27,6 +27,6 @@ public final class ForgeStructureTagsProvider extends StructureTagsProvider {
 
     @Override
     public String getName() {
-        return "Forge Structure Tags";
+        return "singularity Structure Tags";
     }
 }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.log4j;
+package net.minecraftsingularity.fml.loading.log4j;
 
 import net.minecrell.terminalconsole.HighlightErrorConverter;
 import net.minecrell.terminalconsole.TerminalConsoleAppender;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 @Plugin(name = "highlightForge", category = PatternConverter.CATEGORY)
 @ConverterKeys("highlightForge")
 @PerformanceSensitive("allocation")
-public class ForgeHighlight {
+public class singularityHighlight {
     protected static final Logger LOGGER = StatusLogger.getLogger();
 
     /**

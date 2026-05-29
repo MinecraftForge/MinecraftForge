@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model;
+package net.minecraftsingularity.client.model;
 
 import java.util.Map;
 import java.util.Optional;
@@ -12,17 +12,17 @@ import com.mojang.math.Transformation;
 
 import net.minecraft.resources.Identifier;
 
-public record ForgeBlockModelData(
+public record singularityBlockModelData(
     Optional<Transformation> transform,
     Optional<Identifier> renderType,
     Optional<Identifier> renderTypeFast,
     Optional<Map<String, Boolean>> visibility
 ) {
-    public ForgeBlockModelData() {
+    public singularityBlockModelData() {
         this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
     }
 
-    public ForgeBlockModelData merge(ForgeBlockModelData other) {
+    public singularityBlockModelData merge(singularityBlockModelData other) {
         if (other == null)
             return this;
 
@@ -33,7 +33,7 @@ public record ForgeBlockModelData(
             vis = Optional.of(map);
         }
 
-        return new ForgeBlockModelData(
+        return new singularityBlockModelData(
             this.transform().isPresent()      ? this.transform()      : other.transform(),
             this.renderType().isPresent()     ? this.renderType()     : other.renderType(),
             this.renderTypeFast().isPresent() ? this.renderTypeFast() : other.renderTypeFast(),

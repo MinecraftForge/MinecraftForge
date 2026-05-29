@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import com.google.gson.JsonObject;
 import java.nio.file.Path;
@@ -18,7 +18,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -217,7 +217,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider {
     }
 
     private boolean validateEvent(final String soundName, final Identifier name) {
-        final boolean valid = this.sounds.containsKey(soundName) || ForgeRegistries.SOUND_EVENTS.containsKey(name);
+        final boolean valid = this.sounds.containsKey(soundName) || singularityRegistries.SOUND_EVENTS.containsKey(name);
         if (!valid)
             LOGGER.warn("Unable to find event '{}' referenced from '{}'", name, soundName);
         return valid;

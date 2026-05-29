@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.crafting;
+package net.minecraftsingularity.debug.gameplay.crafting;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -29,20 +29,20 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.common.crafting.SimpleCraftingContainer;
-import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.common.crafting.ConditionalRecipe;
+import net.minecraftsingularity.common.crafting.SimpleCraftingContainer;
+import net.minecraftsingularity.common.crafting.conditions.IConditionBuilder;
+import net.minecraftsingularity.common.data.BlockTagsProvider;
+import net.minecraftsingularity.common.data.ExistingFileHelper;
+import net.minecraftsingularity.data.event.GatherDataEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(ConditionalRecipeTest.MODID)
 public class ConditionalRecipeTest extends BaseTestMod {
     static final String MODID = "conditional_recipe";
@@ -189,7 +189,7 @@ public class ConditionalRecipeTest extends BaseTestMod {
 
         @Override
         protected void addTags(HolderLookup.Provider registries) {
-            // Empty out the Forge eggs tag for purposes of testing the tag-empty recipe condition
+            // Empty out the singularity eggs tag for purposes of testing the tag-empty recipe condition
             this.tag(Tags.Items.EGGS).remove(Items.EGG);
         }
     }

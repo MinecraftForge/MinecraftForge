@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.transformers;
+package net.minecraftsingularity.singularity.transformers;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Set;
 
-public record ForgeModTransformers(String name) implements ITransformationService {
-    public ForgeModTransformers() {
-        this("forge");
+public record singularityModTransformers(String name) implements ITransformationService {
+    public singularityModTransformers() {
+        this("singularity");
     }
 
     @Override

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.extensions.common;
+package net.minecraftsingularity.client.extensions.common;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
@@ -19,8 +19,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.IArmPoseTransformer;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.client.IArmPoseTransformer;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +118,7 @@ public interface IClientItemExtensions {
     default Model getGenericArmorModel(HumanoidRenderState state, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
         HumanoidModel<?> replacement = getHumanoidArmorModel(state, itemStack, equipmentSlot, original);
         if (replacement != original) {
-            //ForgeHooksClient.copyModelProperties(original, replacement);
+            //singularityHooksClient.copyModelProperties(original, replacement);
             return replacement;
         }
         return original;

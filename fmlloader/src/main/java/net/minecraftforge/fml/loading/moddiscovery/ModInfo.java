@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.StringSubstitutor;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.forgespi.language.IConfigurable;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
-import net.minecraftforge.forgespi.locating.ForgeFeature;
+import net.minecraftsingularity.fml.loading.StringSubstitutor;
+import net.minecraftsingularity.fml.loading.StringUtils;
+import net.minecraftsingularity.singularityspi.language.IConfigurable;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.MavenVersionAdapter;
+import net.minecraftsingularity.singularityspi.locating.singularityFeature;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -43,7 +43,7 @@ public record ModInfo(
         Optional<URL> getModURL,
 
         Holder<List<? extends ModVersion>> dependencies,
-        Holder<List<ForgeFeature.Bound>> forgeFeatures,
+        Holder<List<singularityFeature.Bound>> singularityFeatures,
         Map<String, Object> getModProperties
 ) implements IModInfo, IConfigurable {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -107,7 +107,7 @@ public record ModInfo(
 
         // dependencies and features are done after the constructor as they need to reference the ModInfo we are creating
         List<? extends ModVersion> dependencies = Collections.emptyList();
-        List<ForgeFeature.Bound> forgeFeatures = Collections.emptyList();
+        List<singularityFeature.Bound> singularityFeatures = Collections.emptyList();
 
         Map<String, Object> modProperties = owningFile.<Map<String, Object>>getConfigElement("modproperties", modId)
                 .map(Collections::unmodifiableMap)
@@ -117,7 +117,7 @@ public record ModInfo(
                 owningFile, config,
                 modId, namespace, version,
                 displayName, description, logoFile, logoBlur, updateJSONURL, modUrl,
-                new Holder<>(dependencies), new Holder<>(forgeFeatures), modProperties
+                new Holder<>(dependencies), new Holder<>(singularityFeatures), modProperties
         ).setupDependencies().setupForgeFeatures();
     }
 
@@ -139,17 +139,17 @@ public record ModInfo(
     private ModInfo setupForgeFeatures() {
         var feats = getOwningFile.<Map<String, Object>>getConfigElement("features", getModId).orElse(null);
         if (feats == null) {
-            forgeFeatures.value = Collections.emptyList();
+            singularityFeatures.value = Collections.emptyList();
             return this;
         }
 
-        var tmp = new ArrayList<ForgeFeature.Bound>();
+        var tmp = new ArrayList<singularityFeature.Bound>();
         for (var entry : feats.entrySet()) {
             if (!(entry.getValue() instanceof String val))
                 throw new InvalidModFileException("Invalid feature bound {" + entry.getValue() + "} for key {" + entry.getKey() + "} only strings are accepted", getOwningFile);
-            tmp.add(new ForgeFeature.Bound(entry.getKey(), val, this));
+            tmp.add(new singularityFeature.Bound(entry.getKey(), val, this));
         }
-        forgeFeatures.value = List.copyOf(tmp);
+        singularityFeatures.value = List.copyOf(tmp);
         return this;
     }
 
@@ -174,8 +174,8 @@ public record ModInfo(
     }
 
     @Override
-    public List<? extends ForgeFeature.Bound> getForgeFeatures() {
-        return forgeFeatures.value;
+    public List<? extends singularityFeature.Bound> getForgeFeatures() {
+        return singularityFeatures.value;
     }
 
     private static final class Holder<T> {
@@ -201,11 +201,11 @@ public record ModInfo(
             if (modId == null)
                 throw new InvalidModFileException("Missing required field modid in dependency", owner.getOwningFile());
 
-            if (modId.equals("forge")) {
+            if (modId.equals("singularity")) {
                 var fileProps = owner.getOwningFile().getFileProperties();
                 // Checking containsKey to avoid a possible exception if the property is not present (due to Collections.emptyMap())
                 if (!fileProps.isEmpty() && fileProps.containsKey(ModFileInfo.NOT_A_FORGE_MOD_PROP)) {
-                    // if the mod has a dependency on Forge, but we thought it wasn't a Forge mod earlier, we were wrong
+                    // if the mod has a dependency on singularity, but we thought it wasn't a singularity mod earlier, we were wrong
                     // so remove the flag.
                     fileProps.remove(ModFileInfo.NOT_A_FORGE_MOD_PROP);
                 }

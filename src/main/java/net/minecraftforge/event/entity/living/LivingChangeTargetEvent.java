@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.behavior.StartAttacking;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event allows you to change the target an entity has. <br>
  * This event is fired before {@link LivingSetAttackTargetEvent}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingChangeTarget(LivingEntity, LivingEntity, ILivingTargetType)}<br>
+ * This event is fired via the {@link singularityHooks#onLivingChangeTarget(LivingEntity, LivingEntity, ILivingTargetType)}<br>
  * <br>
  * {@link #getOriginalTarget()} returns the target that should originally be set.
  * The return value cannot be affected by calling {@link #setNewTarget(LivingEntity)}.<br>

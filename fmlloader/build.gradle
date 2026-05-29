@@ -1,10 +1,10 @@
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    id 'net.minecraftsingularity.licenser'
+    id 'net.minecraftsingularity.gradleutils'
     alias(libs.plugins.apt)
 }
 
@@ -53,7 +53,7 @@ java {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
+            'Automatic-Module-Name': 'net.minecraftsingularity.fmlloader',
             'Forge-Module-Layer':    'boot'
         ] as LinkedHashMap)
         attributes([
@@ -62,7 +62,7 @@ tasks.named('jar', Jar).configure {
             'Specification-Version': '1',
             'Implementation-Title':  'FMLLoader',
             'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
+            'Implementation-Version': singularity_VERSION
         ] as LinkedHashMap, 'net/minecraftforge/fml/loading/')
     }
 }
@@ -95,15 +95,15 @@ publishing {
 
 tasks.register('writeForgeVersionJson') {
     doLast {
-        file('src/main/resources/forge_version.json').json = [
-            forge: FORGE_VERSION,
+        file('src/main/resources/singularity_version.json').json = [
+            forge: singularity_VERSION,
             mc: MC_VERSION,
             mcp: MCP_VERSION
         ]
     }
 }
 
-tasks.register('jarJarOptionsJson', net.minecraftforge.forge.tasks.JarJarMetadataOptions) {
+tasks.register('jarJarOptionsJson', net.minecraftsingularity.forge.tasks.JarJarMetadataOptions) {
     metadataFile = project.file('src/main/resources/jarjar_options.json')
     // This is resolved too early by cpw.mods.modlauncher.TransformationServicesHandler.discoverServices(DiscoveryData) But eventually...
     //add(libs.mixin, 'org/spongepowered/asm/mixin/Mixin.class')

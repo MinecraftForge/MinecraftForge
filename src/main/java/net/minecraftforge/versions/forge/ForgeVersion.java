@@ -1,44 +1,44 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.versions.forge;
+package net.minecraftsingularity.versions.singularity;
 
-import net.minecraftforge.fml.Logging;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.loading.JarVersionLookupHandler;
+import net.minecraftsingularity.fml.Logging;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.VersionChecker;
+import net.minecraftsingularity.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-public final class ForgeVersion {
+public final class singularityVersion {
     private static final Logger LOGGER = LogManager.getLogger();
-    // This is Forge's Mod Id, used for the ForgeMod and resource locations
-    public static final String MOD_ID = "forge";
+    // This is singularity's Mod Id, used for the singularityMod and resource locations
+    public static final String MOD_ID = "singularity";
 
-    private static final String forgeVersion;
-    private static final String forgeSpec;
-    private static final String forgeGroup;
+    private static final String singularityVersion;
+    private static final String singularitySpec;
+    private static final String singularityGroup;
 
     static {
-        LOGGER.debug(Logging.CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
-        var info = JarVersionLookupHandler.getInfo(ForgeVersion.class);
+        LOGGER.debug(Logging.CORE, "singularity Version package {} from {}", singularityVersion.class.getPackage(), singularityVersion.class.getClassLoader());
+        var info = JarVersionLookupHandler.getInfo(singularityVersion.class);
 
         if (info.impl().version().isEmpty() || info.spec().version().isEmpty())
-            throw new IllegalStateException("Failed to find version for package " + ForgeVersion.class.getPackageName() + " This is an invalid environment");
+            throw new IllegalStateException("Failed to find version for package " + singularityVersion.class.getPackageName() + " This is an invalid environment");
 
-        forgeSpec = info.spec().version().get();
-        forgeVersion = info.impl().version().get();
-        forgeGroup = "net.minecraftforge";
-        LOGGER.debug(Logging.CORE, "Found Forge version {}", forgeVersion);
-        LOGGER.debug(Logging.CORE, "Found Forge spec {}", forgeSpec);
-        LOGGER.debug(Logging.CORE, "Found Forge group {}", forgeGroup);
+        singularitySpec = info.spec().version().get();
+        singularityVersion = info.impl().version().get();
+        singularityGroup = "net.minecraftsingularity";
+        LOGGER.debug(Logging.CORE, "Found singularity version {}", singularityVersion);
+        LOGGER.debug(Logging.CORE, "Found singularity spec {}", singularitySpec);
+        LOGGER.debug(Logging.CORE, "Found singularity group {}", singularityGroup);
     }
 
     public static String getVersion() {
-        return forgeVersion;
+        return singularityVersion;
     }
 
     public static VersionChecker.Status getStatus() {
@@ -52,11 +52,11 @@ public final class ForgeVersion {
     }
 
     public static String getSpec() {
-        return forgeSpec;
+        return singularitySpec;
     }
 
     public static String getGroup() {
-        return forgeGroup;
+        return singularityGroup;
     }
 }
 

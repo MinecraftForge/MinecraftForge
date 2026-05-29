@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common;
+package net.minecraftsingularity.common;
 
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.listener.EventListener;
+import net.minecraftsingularity.event.TickEvent;
+import net.minecraftsingularity.eventbus.api.listener.EventListener;
 
 import java.util.ArrayList;
 

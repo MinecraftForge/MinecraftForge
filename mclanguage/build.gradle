@@ -1,10 +1,10 @@
-import net.minecraftforge.gradleutils.PomUtils
+import net.minecraftsingularity.gradleutils.PomUtils
 
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    id 'net.minecraftsingularity.licenser'
+    id 'net.minecraftsingularity.gradleutils'
 }
 
 apply from: rootProject.file('build_shared.gradle')
@@ -23,7 +23,7 @@ java {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.mclanguageprovider',
+            'Automatic-Module-Name': 'net.minecraftsingularity.mclanguageprovider',
             'FMLModType': 'LANGPROVIDER'
         ] as LinkedHashMap)
         attributes([

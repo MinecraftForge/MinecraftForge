@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
-import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftsingularity.fml.loading.EarlyLoadingException.ExceptionData;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFile;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftsingularity.fml.loading.moddiscovery.ModInfo;
+import net.minecraftsingularity.singularityspi.locating.IModFile;
 
 import java.nio.file.Files;
 import java.util.ArrayList;

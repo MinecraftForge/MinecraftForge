@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.HolderLookup;
@@ -19,10 +19,10 @@ import net.minecraft.world.level.storage.loot.predicates.CompositeLootItemCondit
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.common.loot.CanToolPerformAction;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftsingularity.common.ToolAction;
+import net.minecraftsingularity.common.ToolActions;
+import net.minecraftsingularity.common.loot.CanToolPerformAction;
+import net.minecraftsingularity.fml.util.ObfuscationReflectionHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 /**
  * Currently used only for replacing shears item to shears_dig tool action
  */
-public final class ForgeLootTableProvider extends LootTableProvider {
+public final class singularityLootTableProvider extends LootTableProvider {
     private static final String POOLS = "pools"; // LootTable.Builder.pools
     private static final String ENTRIES = "entries"; // LootPool.entries
     private static final String CONDITIONS = "conditions"; // LootPool.conditions
@@ -49,7 +49,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
     private static final String ENTRY_CONDITION = "conditions"; // LootPoolEntryContainer.conditions
     private static final String TERMS = "terms"; // CompositeLootItemCondition.terms
 
-    public ForgeLootTableProvider(PackOutput pack, CompletableFuture<HolderLookup.Provider> lookup) {
+    public singularityLootTableProvider(PackOutput pack, CompletableFuture<HolderLookup.Provider> lookup) {
         super(pack, Set.of(), VanillaLootTableProvider.create(pack, lookup).getTables(), lookup);
     }
 

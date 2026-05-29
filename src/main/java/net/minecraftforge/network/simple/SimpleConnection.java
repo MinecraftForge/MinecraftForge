@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.simple;
+package net.minecraftsingularity.network.simple;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraftforge.network.NetworkProtocol;
-import net.minecraftforge.network.simple.handler.SimpleHandlerProtocol;
-import net.minecraftforge.network.simple.handler.SimplePacket;
+import net.minecraftsingularity.network.NetworkProtocol;
+import net.minecraftsingularity.network.simple.handler.SimpleHandlerProtocol;
+import net.minecraftsingularity.network.simple.handler.SimplePacket;
 
 import java.util.function.Consumer;
 

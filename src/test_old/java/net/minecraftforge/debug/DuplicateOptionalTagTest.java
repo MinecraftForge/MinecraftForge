@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug;
+package net.minecraftsingularity.debug;
 
 import com.google.common.collect.Sets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.server.ServerStartedEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,14 +39,14 @@ public class DuplicateOptionalTagTest
     private static final ResourceLocation TAG_NAME = new ResourceLocation(MODID, "test_optional_tag");
 
     private static final Set<Supplier<Block>> TAG_A_DEFAULTS = Stream.of(Blocks.BEDROCK)
-            .map(ForgeRegistries.BLOCKS::getDelegateOrThrow)
+            .map(singularityRegistries.BLOCKS::getDelegateOrThrow)
             .collect(Collectors.toUnmodifiableSet());
     private static final Set<Supplier<Block>> TAG_B_DEFAULTS = Stream.of(Blocks.WHITE_WOOL)
-            .map(ForgeRegistries.BLOCKS::getDelegateOrThrow)
+            .map(singularityRegistries.BLOCKS::getDelegateOrThrow)
             .collect(Collectors.toUnmodifiableSet());
 
-    private static final TagKey<Block> TAG_A = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
-    private static final TagKey<Block> TAG_B = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
+    private static final TagKey<Block> TAG_A = singularityRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_A_DEFAULTS);
+    private static final TagKey<Block> TAG_B = singularityRegistries.BLOCKS.tags().createOptionalTagKey(TAG_NAME, TAG_B_DEFAULTS);
 
     public DuplicateOptionalTagTest()
     {
@@ -55,8 +55,8 @@ public class DuplicateOptionalTagTest
 
     private void onServerStarted(ServerStartedEvent event)
     {
-        Set<Block> tagAValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_A).stream().collect(Collectors.toUnmodifiableSet());
-        Set<Block> tagBValues = ForgeRegistries.BLOCKS.tags().getTag(TAG_B).stream().collect(Collectors.toUnmodifiableSet());
+        Set<Block> tagAValues = singularityRegistries.BLOCKS.tags().getTag(TAG_A).stream().collect(Collectors.toUnmodifiableSet());
+        Set<Block> tagBValues = singularityRegistries.BLOCKS.tags().getTag(TAG_B).stream().collect(Collectors.toUnmodifiableSet());
 
         if (!tagAValues.equals(tagBValues))
         {

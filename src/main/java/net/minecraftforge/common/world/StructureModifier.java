@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -15,8 +15,8 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.common.world.ModifiableStructureInfo.StructureInfo;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.world.ModifiableStructureInfo.StructureInfo;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 /**
  * JSON-serializable structure modifier.
@@ -30,26 +30,26 @@ import net.minecraftforge.registries.ForgeRegistries;
  * }
  * </pre>
  * <p>
- * Datapacks can also disable a structure modifier by overriding the json and using {@code "type": "forge:none"}.</p>
+ * Datapacks can also disable a structure modifier by overriding the json and using {@code "type": "singularity:none"}.</p>
  */
 public interface StructureModifier {
     /**
      * Codec for (de)serializing structure modifiers inline.
      * Mods can use this for data generation.
      */
-    Codec<StructureModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> ForgeRegistries.STRUCTURE_MODIFIER_SERIALIZERS.get().getCodec().dispatch(StructureModifier::codec, Function.identity()));
+    Codec<StructureModifier> DIRECT_CODEC = Codec.lazyInitialized(() -> singularityRegistries.STRUCTURE_MODIFIER_SERIALIZERS.get().getCodec().dispatch(StructureModifier::codec, Function.identity()));
 
     /**
      * Codec for referring to structure modifiers by id in other datapack registry files.
      * Can only be used with {@link RegistryOps}.
      */
-    Codec<Holder<StructureModifier>> REFERENCE_CODEC = RegistryFileCodec.create(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, DIRECT_CODEC);
+    Codec<Holder<StructureModifier>> REFERENCE_CODEC = RegistryFileCodec.create(singularityRegistries.Keys.STRUCTURE_MODIFIERS, DIRECT_CODEC);
 
     /**
      * Codec for referring to structure modifiers by id, list of id, or tags.
      * Can only be used with {@link RegistryOps}.
      */
-    Codec<HolderSet<StructureModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(ForgeRegistries.Keys.STRUCTURE_MODIFIERS, DIRECT_CODEC);
+    Codec<HolderSet<StructureModifier>> LIST_CODEC = RegistryCodecs.homogeneousList(singularityRegistries.Keys.STRUCTURE_MODIFIERS, DIRECT_CODEC);
 
     /**
      * Modifies the information via the provided structure builder.

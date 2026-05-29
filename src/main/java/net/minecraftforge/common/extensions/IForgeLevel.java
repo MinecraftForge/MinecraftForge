@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.Collection;
 import java.util.Collections;
 
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.entity.PartEntity;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.entity.PartEntity;
 
 public interface IForgeLevel extends ICapabilityProvider
 {

@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.geometry;
+package net.minecraftsingularity.client.model.geometry;
 
 import com.mojang.math.Transformation;
 
 import net.minecraft.client.resources.model.cuboid.ItemTransforms;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.NamedRenderTypeManager;
-import net.minecraftforge.client.RenderTypeGroup;
+import net.minecraftsingularity.client.NamedRenderTypeManager;
+import net.minecraftsingularity.client.RenderTypeGroup;
 import org.jetbrains.annotations.Nullable;
 
 /**

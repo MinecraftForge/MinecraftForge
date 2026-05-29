@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraftsingularity.client.event.RegisterItemDecorationsEvent;
 
 /**
  * An ItemDecorator that is used to render something on specific items, when the DurabilityBar and StackCount is rendered.

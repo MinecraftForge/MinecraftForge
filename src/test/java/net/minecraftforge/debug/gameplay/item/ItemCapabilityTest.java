@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.gameplay.item;
+package net.minecraftsingularity.debug.gameplay.item;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.Direction;
@@ -18,26 +18,26 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.EnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.common.capabilities.Capability;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.common.util.LazyOptional;
+import net.minecraftsingularity.energy.EnergyStorage;
+import net.minecraftsingularity.energy.IEnergyStorage;
+import net.minecraftsingularity.event.AttachCapabilitiesEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.RegistryObject;
+import net.minecraftsingularity.test.BaseTestMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(ItemCapabilityTest.MOD_ID)
 public class ItemCapabilityTest extends BaseTestMod {
     public static final String MOD_ID = "item_caps";
@@ -57,7 +57,7 @@ public class ItemCapabilityTest extends BaseTestMod {
     private static void onEvent(AttachCapabilitiesEvent.ItemStacks event) {
         if (event.getObject().getItem() == Items.COPPER_INGOT) {
             event.addCapability(
-                    Identifier.fromNamespaceAndPath("forge", "test"),
+                    Identifier.fromNamespaceAndPath("singularity", "test"),
                     new MyProvider(event.getObject())
             );
         }
@@ -70,14 +70,14 @@ public class ItemCapabilityTest extends BaseTestMod {
         ItemStack stack = new ItemStack(Items.COPPER_INGOT);
         AtomicReference<IEnergyStorage> storageAtomicReference = new AtomicReference<>();
 
-        stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(storage -> {
+        stack.getCapability(singularityCapabilities.ENERGY).ifPresent(storage -> {
             storage.receiveEnergy(1, false);
             storageAtomicReference.set(storage);
         });
 
         helper.assertTrue(
                 storageAtomicReference.get() != null,
-                "Unable to find ForgeCapabilities.ENERGY Capability"
+                "Unable to find singularityCapabilities.ENERGY Capability"
         );
 
         var registry = RegistryFriendlyByteBuf.decorator(helper.getLevel().registryAccess()).apply(new FriendlyByteBuf(Unpooled.buffer()));
@@ -86,7 +86,7 @@ public class ItemCapabilityTest extends BaseTestMod {
         var stackOverWire = ItemStack.STREAM_CODEC.decode(registry);
 
         AtomicReference<IEnergyStorage> storage = new AtomicReference<>();
-        stackOverWire.getCapability(ForgeCapabilities.ENERGY).ifPresent(storage::set);
+        stackOverWire.getCapability(singularityCapabilities.ENERGY).ifPresent(storage::set);
 
         helper.assertValueEqual(
                 storage.get() == null ? -1 : storage.get().getEnergyStored(),
@@ -150,7 +150,7 @@ public class ItemCapabilityTest extends BaseTestMod {
 
         @Override
         public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-            if (cap == ForgeCapabilities.ENERGY) {
+            if (cap == singularityCapabilities.ENERGY) {
                 return storageLazyOptional.cast();
             }
             return LazyOptional.empty();

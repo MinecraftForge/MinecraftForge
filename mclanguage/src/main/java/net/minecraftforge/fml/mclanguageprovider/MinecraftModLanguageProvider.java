@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.mclanguageprovider;
+package net.minecraftsingularity.fml.mclanguageprovider;
 
-import net.minecraftforge.forgespi.language.ILifecycleEvent;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.IModLanguageProvider;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftsingularity.singularityspi.language.ILifecycleEvent;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.IModLanguageProvider;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static net.minecraftforge.fml.Logging.LOADING;
+import static net.minecraftsingularity.fml.Logging.LOADING;
 
 public class MinecraftModLanguageProvider implements IModLanguageProvider {
 
@@ -41,7 +41,7 @@ public class MinecraftModLanguageProvider implements IModLanguageProvider {
         public <T> T loadMod(final IModInfo info, final ModFileScanData modFileScanResults, final ModuleLayer gameLayer) {
             try {
                 var module = gameLayer.findModule("minecraft").orElseThrow();
-                final Class<?> mcModClass = Class.forName(getClass().getModule(), "net.minecraftforge.fml.mclanguageprovider.MinecraftModContainer");
+                final Class<?> mcModClass = Class.forName(getClass().getModule(), "net.minecraftsingularity.fml.mclanguageprovider.MinecraftModContainer");
                 return (T)mcModClass.getConstructor(IModInfo.class).newInstance(info);
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 LogManager.getLogger().fatal(LOADING, "Unable to load MinecraftModContainer, wut?", e);

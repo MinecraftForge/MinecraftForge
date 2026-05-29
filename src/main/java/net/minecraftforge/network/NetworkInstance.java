@@ -1,14 +1,14 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.network.Channel.VersionTest;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.network.Channel.VersionTest;
 
 import java.util.ArrayList;
 import java.util.Collection;

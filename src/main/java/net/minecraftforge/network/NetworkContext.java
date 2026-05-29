@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,12 +19,12 @@ import net.minecraft.network.Connection;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.ConfigurationTask;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
-import net.minecraftforge.network.packets.ModVersions;
+import net.minecraftsingularity.network.packets.ModVersions;
 
 public class NetworkContext {
-    private static final String MARKER = "FORGE";
+    private static final String MARKER = "singularity";
     public static final int NET_VERSION = 0;
-    private static final AttributeKey<NetworkContext> CHANNEL_KEY = AttributeKey.valueOf("forge:netcontext");
+    private static final AttributeKey<NetworkContext> CHANNEL_KEY = AttributeKey.valueOf("singularity:netcontext");
 
     /**
      * Gets the associated NetworkContext from the connection, creating a new instance if necessary.
@@ -81,8 +81,8 @@ public class NetworkContext {
      * This is a hint that we are a modded client, This is sent in the first packet the client sends to the server.
      * Unfortunately we do not have a modder facing value in this packet, so we have a long standing tradition of
      * encoding it on the hostName field, which is a UTF string.
-     * Forge treats this string a null terminated list. With our value being anywhere in the list.
-     * Our identifier is currently FORGE, Optionally followed by a number indicating the network version.
+     * singularity treats this string a null terminated list. With our value being anywhere in the list.
+     * Our identifier is currently singularity, Optionally followed by a number indicating the network version.
      * If the version is missing, we assume 0.
      *
      * TODO: Move out of the Intention packet and into a immediately sent Login custom payload? Which should arrive before we get to config stage?

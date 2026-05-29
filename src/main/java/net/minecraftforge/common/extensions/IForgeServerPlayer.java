@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import java.util.function.Consumer;
 
@@ -12,10 +12,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.packets.OpenContainer;
+import net.minecraftsingularity.client.ConfigScreenHandler;
+import net.minecraftsingularity.event.singularityEventFactory;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.packets.OpenContainer;
 
 public interface IForgeServerPlayer {
     private ServerPlayer self() {
@@ -73,7 +73,7 @@ public interface IForgeServerPlayer {
 
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
-        ForgeEventFactory.onPlayerOpenContainer(player, c);
+        singularityEventFactory.onPlayerOpenContainer(player, c);
     }
 
 }

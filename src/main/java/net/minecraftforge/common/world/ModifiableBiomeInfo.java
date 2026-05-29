@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.world;
+package net.minecraftsingularity.common.world;
 
 import java.util.List;
 import java.util.Locale;
@@ -64,7 +64,7 @@ public class ModifiableBiomeInfo {
     }
 
     /**
-     * Internal forge method; the game will crash if mods invoke this.
+     * Internal singularity method; the game will crash if mods invoke this.
      * Creates and caches the modified biome info.
      * @param biome named biome with original data.
      * @param biomeModifiers biome modifiers to apply.

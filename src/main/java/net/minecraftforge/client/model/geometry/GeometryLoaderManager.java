@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.geometry;
+package net.minecraftsingularity.client.model.geometry;
 
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftsingularity.client.event.ModelEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 

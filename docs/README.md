@@ -1,16 +1,16 @@
 # Singularity
 
-A unified mod loader for Minecraft that bridges Forge, NeoForge, Fabric, and Quilt ecosystems into a single, lightweight runtime.
+A unified mod loader for Minecraft that bridges singularity, NeoSingularity, Fabric, and Quilt ecosystems into a single, lightweight runtime.
 
 ## Overview
 
-Singularity eliminates the fragmentation of the Minecraft modding landscape. Instead of choosing between Forge, Fabric, Quilt, or NeoForge—or maintaining separate installations for each—Singularity runs all of them natively within a single, optimized environment.
+Singularity eliminates the fragmentation of the Minecraft modding landscape. Instead of choosing between singularity, Fabric, Quilt, or NeoSingularity—or maintaining separate installations for each—Singularity runs all of them natively within a single, optimized environment.
 
-The loader prioritizes performance and compatibility, delivering the speed of Fabric with the feature parity of Forge, without sacrificing either.
+The loader prioritizes performance and compatibility, delivering the speed of Fabric with the feature parity of singularity, without sacrificing either.
 
 ## Features
 
-- **Cross-Ecosystem Compatibility**: Run Forge, NeoForge, Fabric, and Quilt mods simultaneously without conflicts or workarounds.
+- **Cross-Ecosystem Compatibility**: Run singularity, NeoSingularity, Fabric, and Quilt mods simultaneously without conflicts or workarounds.
 - **Lightweight Runtime**: Minimal overhead. Only what's necessary; nothing more.
 - **Native Support**: Mods load with their original APIs intact. No translation layers. No compromises.
 - **Performance First**: Optimized for speed. Faster boot times than traditional loaders.
@@ -38,8 +38,8 @@ Additional versions available on request.
 
 ### Supported Mod Ecosystems
 
-- Forge
-- NeoForge
+- singularity
+- NeoSingularity
 - Fabric
 - Quilt
 
@@ -92,7 +92,7 @@ When mod conflicts occur, Singularity provides:
 
 Benchmark results on a baseline system (i7-9700K, 16GB RAM):
 
-| Metric | Singularity | Forge | Fabric | Quilt |
+| Metric | Singularity | singularity | Fabric | Quilt |
 |--------|-------------|-------|--------|-------|
 | Boot Time | 45s | 52s | 38s | 40s |
 | Memory Usage | 2.1GB | 2.3GB | 1.9GB | 2.0GB |
@@ -151,4 +151,4 @@ Mod ecosystems maintain their original licenses. Singularity does not modify or 
 
 ## Acknowledgments
 
-Built on the work of the Forge, Fabric, Quilt, and NeoForge communities. Singularity exists to act as a layer, to naturally support these ecosystems.
+Built on the work of the singularity, Fabric, Quilt, and NeoSingularity communities. Singularity exists to act as a layer, to naturally support these ecosystems.

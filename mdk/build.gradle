@@ -6,7 +6,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'eclipse'
-    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+    id 'net.minecraftsingularity.gradle' version '[7.0.17,8)'
 }
 
 version = '1.0.0'
@@ -51,8 +51,8 @@ repositories {
 }
 
 dependencies {
-    implementation minecraft.dependency('net.minecraftforge:forge:@MC_VERSION@-@FORGE_VERSION@')
-    annotationProcessor 'net.minecraftforge:eventbus-validator:@EVENTBUS_VERSION@'
+    implementation minecraft.dependency('net.minecraftsingularity:forge:@MC_VERSION@-@singularity_VERSION@')
+    annotationProcessor 'net.minecraftsingularity:eventbus-validator:@EVENTBUS_VERSION@'
 }
 
 tasks.withType(JavaCompile).configureEach {

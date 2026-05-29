@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fluids.FluidType;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.fluids.FluidType;
 
 public interface IForgeLivingEntity extends IForgeEntity {
     default LivingEntity self() {
@@ -18,7 +18,7 @@ public interface IForgeLivingEntity extends IForgeEntity {
 
     @Override
     default boolean canSwimInFluidType(FluidType type) {
-        if (type == ForgeMod.WATER_TYPE.get())
+        if (type == singularityMod.WATER_TYPE.get())
             return !self().isSensitiveToWater();
         else
             return IForgeEntity.super.canSwimInFluidType(type);
@@ -30,7 +30,7 @@ public interface IForgeLivingEntity extends IForgeEntity {
      * @param type the type of the fluid
      */
     default void jumpInFluid(FluidType type) {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.getHolder().get()), 0.0D));
+        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.04F * self().getAttributeValue(singularityMod.SWIM_SPEED.getHolder().get()), 0.0D));
     }
 
     /**
@@ -39,7 +39,7 @@ public interface IForgeLivingEntity extends IForgeEntity {
      * @param type the type of the fluid
      */
     default void sinkInFluid(FluidType type) {
-        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttributeValue(ForgeMod.SWIM_SPEED.getHolder().get()), 0.0D));
+        self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)-0.04F * self().getAttributeValue(singularityMod.SWIM_SPEED.getHolder().get()), 0.0D));
     }
 
     /**
@@ -50,7 +50,7 @@ public interface IForgeLivingEntity extends IForgeEntity {
      */
     @SuppressWarnings("deprecation")
     default boolean canDrownInFluidType(FluidType type) {
-        if (type == ForgeMod.WATER_TYPE.get())
+        if (type == singularityMod.WATER_TYPE.get())
             return !self().canBreatheUnderwater();
         return
             type.canDrownIn(self());

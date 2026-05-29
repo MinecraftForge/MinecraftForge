@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.targets;
+package net.minecraftsingularity.fml.loading.targets;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ServiceRunner;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftsingularity.fml.loading.FMLLoader;
+import net.minecraftsingularity.api.distmarker.Dist;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
@@ -57,7 +57,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
 
     protected String[] preLaunch(String[] arguments, ModuleLayer layer) {
         URI uri;
-        try (var reader = layer.configuration().findModule("net.minecraftforge.fmlloader").orElseThrow().reference().open()) {
+        try (var reader = layer.configuration().findModule("net.minecraftsingularity.fmlloader").orElseThrow().reference().open()) {
             uri = reader.find("log4j2.xml").orElseThrow();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -97,7 +97,7 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
     }
 
     protected static Path getPathFromResource(String resource) {
-        return getPathFromResource(resource, ForgeDevLaunchHandler.class.getClassLoader());
+        return getPathFromResource(resource, singularityDevLaunchHandler.class.getClassLoader());
     }
 
     protected static Path getPathFromResource(String resource, ClassLoader cl) {

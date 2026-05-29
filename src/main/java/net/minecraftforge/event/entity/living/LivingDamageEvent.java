@@ -1,16 +1,16 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.entity.living;
+package net.minecraftsingularity.event.entity.living;
 
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftsingularity.common.singularityHooks;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * LivingDamageEvent is fired just before damage is applied to entity.<br>
@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
  * {@code LivingEntity#actuallyHurt(DamageSource, float)} and
  * {@code Player#actuallyHurt(DamageSource, float)}.<br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingDamage(LivingEntity, DamageSource, float)}.<br>
+ * This event is fired via the {@link singularityHooks#onLivingDamage(LivingEntity, DamageSource, float)}.<br>
  * <br>
  * {@link #source} contains the DamageSource that caused this Entity to be hurt. <br>
  * {@link #amount} contains the final amount of damage that will be dealt to entity. <br>

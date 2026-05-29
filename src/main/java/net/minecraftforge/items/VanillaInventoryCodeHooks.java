@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.items;
+package net.minecraftsingularity.items;
 
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.HopperBlock;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftsingularity.common.capabilities.singularityCapabilities;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-//TODO: [Forge][1.21.9][Cleanup] Mark as @ApiStatus.Internal
+//TODO: [singularity][1.21.9][Cleanup] Mark as @ApiStatus.Internal
 public class VanillaInventoryCodeHooks {
     /**
      * Copied from HopperBlockEntity#suckInItems and added capability support
@@ -202,14 +202,14 @@ public class VanillaInventoryCodeHooks {
     }
 
     public static Optional<IItemHandler> getItemHandlerEntity(Level level, BlockPos pos, @Nullable Direction side) {
-        var entities = level.getEntities((Entity)null, new AABB(pos), e -> e.getCapability(ForgeCapabilities.ITEM_HANDLER, side).isPresent());
+        var entities = level.getEntities((Entity)null, new AABB(pos), e -> e.getCapability(singularityCapabilities.ITEM_HANDLER, side).isPresent());
 
         if (entities.isEmpty())
             return Optional.empty();
 
         var rand = level.getRandom().nextInt(entities.size());
         var entity = entities.get(rand);
-        return entity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).resolve();
+        return entity.getCapability(singularityCapabilities.ITEM_HANDLER, side).resolve();
     }
 
     public static Optional<IItemHandler> getItemHandlerBlock(Level level, BlockPos pos, @Nullable Direction side) {
@@ -220,7 +220,7 @@ public class VanillaInventoryCodeHooks {
         if (entity == null)
             return Optional.empty();
 
-        return entity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).resolve();
+        return entity.getCapability(singularityCapabilities.ITEM_HANDLER, side).resolve();
     }
 
     private static Optional<Pair<IItemHandler, Object>> getItemHandlerPair(Level level, BlockPos pos, Direction side) {
@@ -229,7 +229,7 @@ public class VanillaInventoryCodeHooks {
         if (state.hasBlockEntity()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null) {
-                return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side)
+                return blockEntity.getCapability(singularityCapabilities.ITEM_HANDLER, side)
                     .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, blockEntity));
             }
         }

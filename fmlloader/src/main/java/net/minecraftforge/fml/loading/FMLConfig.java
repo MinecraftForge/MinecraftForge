@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftsingularity.fml.loading;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.ConfigSpec;
@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftsingularity.fml.loading.LogMarkers.CORE;
 
 public class FMLConfig
 {
     public enum ConfigValue {
         EARLY_WINDOW_CONTROL("earlyWindowControl", Boolean.TRUE, "Should we control the window. Disabling this disables new GL features and can be bad for mods that rely on them."),
         MAX_THREADS("maxThreads", -1, "Max threads for early initialization parallelism,  -1 is based on processor count", FMLConfig::maxThreads),
-        VERSION_CHECK("versionCheck", Boolean.TRUE, "Enable forge global version checking"),
+        VERSION_CHECK("versionCheck", Boolean.TRUE, "Enable singularity global version checking"),
         DEFAULT_CONFIG_PATH("defaultConfigPath", "defaultconfigs", "Default config path for servers"),
         DISABLE_OPTIMIZED_DFU("disableOptimizedDFU", Boolean.TRUE, "Disables Optimized DFU client-side - already disabled on servers"),
         EARLY_WINDOW_PROVIDER("earlyWindowProvider", "fmlearlywindow", "Early window provider"),

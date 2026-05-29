@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries.holdersets;
+package net.minecraftsingularity.registries.holdersets;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

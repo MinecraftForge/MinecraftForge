@@ -1,23 +1,23 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fluids.capability.wrappers;
+package net.minecraftsingularity.fluids.capability.wrappers;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
+import net.minecraftsingularity.fluids.FluidStack;
+import net.minecraftsingularity.fluids.FluidType;
+import net.minecraftsingularity.fluids.FluidUtil;
+import net.minecraftsingularity.fluids.capability.templates.VoidFluidHandler;
 
 /**
  * Wrapper around any block, only accounts for fluid placement, otherwise the block acts a void.
- * If the block in question inherits from the Forge implementations,
+ * If the block in question inherits from the singularity implementations,
  * consider using {@link FluidBlockWrapper}.
  */
 public class BlockWrapper extends VoidFluidHandler {

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,8 +17,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 
-public class ForgeAtlasProvider extends AtlasProvider {
-    public ForgeAtlasProvider(PackOutput output) {
+public class singularityAtlasProvider extends AtlasProvider {
+    public singularityAtlasProvider(PackOutput output) {
         super(output);
     }
 
@@ -36,7 +36,7 @@ public class ForgeAtlasProvider extends AtlasProvider {
     }
 
     private static SpriteSource single(String path) {
-        return new SingleFile(Identifier.fromNamespaceAndPath("forge", path));
+        return new SingleFile(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     private static SpriteSource fromBlock(String name) {

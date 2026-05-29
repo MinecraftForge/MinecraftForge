@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.modules.automatic;
+package net.minecraftsingularity.debug.modules.automatic;
 
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.test.BaseTestMod;
 
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 @Mod(AutomaticModuleMod.MODID)
 public class AutomaticModuleMod extends BaseTestMod {
     public static final String MODID = "automatic_module";
@@ -24,7 +24,7 @@ public class AutomaticModuleMod extends BaseTestMod {
     @GameTest
     public static void correct_name(GameTestHelper helper) throws ReflectiveOperationException {
         var mod = AutomaticModuleMod.class.getModule();
-        if ("net.minecraftforge.debug.modules.automatic".equals(mod.getName()))
+        if ("net.minecraftsingularity.debug.modules.automatic".equals(mod.getName()))
             helper.succeed();
         else
             helper.fail("Invalid module name: " + mod.getName());

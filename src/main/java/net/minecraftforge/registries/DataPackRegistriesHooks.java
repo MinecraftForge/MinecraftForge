@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySynchronization;
@@ -33,7 +33,7 @@ public final class DataPackRegistriesHooks {
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCHRONIZED_REGISTRIES_CUSTOM = new HashSet<>();
     private static final Set<ResourceKey<? extends Registry<?>>> SYNCHRONIZED_REGISTRIESD_CUSTOM_VIEW = Collections.unmodifiableSet(SYNCHRONIZED_REGISTRIES_CUSTOM);
 
-    /* Internal forge hook for retaining mutable access to RegistryAccess's codec registry when it bootstraps. */
+    /* Internal singularity hook for retaining mutable access to RegistryAccess's codec registry when it bootstraps. */
     public static List<RegistryDataLoader.RegistryData<?>> grabSynchronizedRegistries(RegistryDataLoader.RegistryData<?>... vanilla) {
         if (!StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass().equals(RegistryDataLoader.class))
             throw new IllegalCallerException("Attempted to call DataPackRegistriesHooks#grabSynchronizedRegistries!");
@@ -42,7 +42,7 @@ public final class DataPackRegistriesHooks {
         return Collections.unmodifiableList(SYNCHRONIZED_REGISTRIES);
     }
 
-    /* Internal forge method, registers a datapack registry codec and folder. */
+    /* Internal singularity method, registers a datapack registry codec and folder. */
     static <T> void addRegistryCodec(DataPackRegistryEvent.DataPackRegistryData<T> data) {
         RegistryDataLoader.RegistryData<T> loaderData = data.loaderData();
         WORLDGEN_REGISTRIES.add(loaderData);

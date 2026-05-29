@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.entity.player;
+package net.minecraftsingularity.debug.entity.player;
 
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
+import net.minecraftsingularity.event.entity.player.AdvancementEvent.AdvancementProgressEvent.ProgressType;
+import net.minecraftsingularity.fml.common.Mod;
 
 import org.slf4j.Logger;
 

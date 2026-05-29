@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.fml.loading.LoadingModList;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftsingularity.fml.loading.ImmediateWindowHandler;
+import net.minecraftsingularity.fml.loading.LoadingModList;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.singularityspi.language.ModFileScanData;
 import org.slf4j.Logger;
 
 import java.time.Duration;

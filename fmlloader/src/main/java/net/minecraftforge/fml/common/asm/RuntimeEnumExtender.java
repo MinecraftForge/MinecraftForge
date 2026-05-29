@@ -1,15 +1,15 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.common.asm;
+package net.minecraftsingularity.fml.common.asm;
 
 import java.util.EnumSet;
 import java.util.List;
 
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftsingularity.fml.loading.LoadingModList;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -49,7 +49,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
     private static final class LazyInit {
         private LazyInit() {}
-        private static final boolean ANY_MODS = LoadingModList.getMods().size() > 2; // 2: forge, minecraft
+        private static final boolean ANY_MODS = LoadingModList.getMods().size() > 2; // 2: singularity, minecraft
     }
 
     @Override

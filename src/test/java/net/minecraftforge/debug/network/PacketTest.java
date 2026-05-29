@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.network;
+package net.minecraftsingularity.debug.network;
 
 import org.slf4j.Logger;
 
@@ -19,21 +19,21 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.gametest.GameTest;
-import net.minecraftforge.gametest.GameTestNamespace;
-import net.minecraftforge.network.Channel.VersionTest;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.ForgePayload;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
-import net.minecraftforge.test.BaseTestMod;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.gametest.GameTest;
+import net.minecraftsingularity.gametest.GameTestNamespace;
+import net.minecraftsingularity.network.Channel.VersionTest;
+import net.minecraftsingularity.network.ChannelBuilder;
+import net.minecraftsingularity.network.singularityPayload;
+import net.minecraftsingularity.network.PacketDistributor;
+import net.minecraftsingularity.network.SimpleChannel;
+import net.minecraftsingularity.test.BaseTestMod;
 
 @Mod(PacketTest.MODID)
-@GameTestNamespace("forge")
+@GameTestNamespace("singularity")
 public class PacketTest extends BaseTestMod {
     static final String MODID = "packet";
 
@@ -126,7 +126,7 @@ public class PacketTest extends BaseTestMod {
         Object msg;
         while ((msg = ec.readOutbound()) != null) {
             if (msg instanceof ClientboundCustomPayloadPacket pkt &&
-                pkt.payload() instanceof ForgePayload pay &&
+                pkt.payload() instanceof singularityPayload pay &&
                 pay.id().equals(TestChannel.CHANNEL_NAME)
             )
                 count++;

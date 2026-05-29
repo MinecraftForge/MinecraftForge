@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.client.model;
+package net.minecraftsingularity.debug.client.model;
 
 import com.mojang.math.Transformation;
 import net.minecraft.client.renderer.RenderType;
@@ -28,21 +28,21 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.model.BakedModelWrapper;
-import net.minecraftforge.client.model.IQuadTransformer;
-import net.minecraftforge.client.model.QuadTransformers;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.model.BakedModelWrapper;
+import net.minecraftsingularity.client.model.IQuadTransformer;
+import net.minecraftsingularity.client.model.QuadTransformers;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.client.model.data.ModelProperty;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
@@ -52,14 +52,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Test mod that demos most Forge-provided model loaders in a single block + item, as well as in-JSON render states
+ * Test mod that demos most singularity-provided model loaders in a single block + item, as well as in-JSON render states
  * and the refactored immutable ModelData managed by the client level. The block can be found in the decoration tab.
  * <p>
  * Additionally, some fields in the JSON have deprecated names, so those MUST be updated in 1.20, or the model will
  * break. They have all been annotated accordingly.
  * <ul>
  *     <li>As a block: Composite loader, using 3 child element models, each with a different render type,
- *     some using vanilla's elements loader, and some Forge's</li>
+ *     some using vanilla's elements loader, and some singularity's</li>
  *     <li>In the right hand: Fluid container with lava (emissive)</li>
  *     <li>In the left hand: Multi-layer item with chainmail chestplate + emissive bow</li>
  * </ul>
@@ -71,9 +71,9 @@ import java.util.Set;
 public class MegaModelTest
 {
     public static final String MOD_ID = "mega_model_test";
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, MOD_ID);
+    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(singularityRegistries.BLOCKS, MOD_ID);
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MOD_ID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(singularityRegistries.BLOCK_ENTITY_TYPES, MOD_ID);
 
     private static final String REG_NAME = "test_block";
     public static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register(REG_NAME, TestBlock::new);

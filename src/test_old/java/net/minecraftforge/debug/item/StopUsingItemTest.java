@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.item;
+package net.minecraftsingularity.debug.item;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -15,23 +15,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.event.VanillaGameEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.client.event.ComputeFovModifierEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftsingularity.event.VanillaGameEvent;
+import net.minecraftsingularity.eventbus.api.IEventBus;
+import net.minecraftsingularity.eventbus.api.listener.SubscribeEvent;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber;
+import net.minecraftsingularity.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftsingularity.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftsingularity.registries.DeferredRegister;
+import net.minecraftsingularity.registries.singularityRegistries;
+import net.minecraftsingularity.registries.RegistryObject;
 
 /**
- * This test mod provides two items for testing the Forge onStopUsing hook. Both items attempt to create an item that increases FOV and allows creative flight when used
+ * This test mod provides two items for testing the singularity onStopUsing hook. Both items attempt to create an item that increases FOV and allows creative flight when used
  * <ul>
  *   <li>{@code stop_using_item:bad_scope}: Implements the item without the onStopUsing to demonstrate the problem.
  *       Should see that when selecting another hotbar slot or dropping the item, the FOV is not properly reverted and you remain flying.
@@ -45,7 +45,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class StopUsingItemTest
 {
 	protected static final String MODID = "stop_using_item";
-	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(singularityRegistries.ITEMS, MODID);
 
 	/** Current FOV change, consumed by the event.
 	 * Good enough for a test mod as we only need one copy for the client player, in a real mod you probably want to reset this on world exit. */
@@ -59,7 +59,7 @@ public class StopUsingItemTest
 		MinecraftForge.EVENT_BUS.addListener(this::onVanillaEvent);
 	}
 
-	/** Attempt at a "reverse scope" that also makes you fly without using the Forge method. Will not remove the speed if you scroll away or swap items */
+	/** Attempt at a "reverse scope" that also makes you fly without using the singularity method. Will not remove the speed if you scroll away or swap items */
 	public static RegistryObject<Item> BAD = ITEMS.register("bad_scope", () -> new InvertedTelescope(new Item.Properties())
 	{
 		@Override
@@ -76,7 +76,7 @@ public class StopUsingItemTest
 		}
 	});
 
-	/** Successful "scope item" using the Forge method, all cases of stopping using the item will stop the FOV change */
+	/** Successful "scope item" using the singularity method, all cases of stopping using the item will stop the FOV change */
 	public static RegistryObject<Item> GOOD = ITEMS.register("good_scope", () -> new InvertedTelescope(new Item.Properties())
 	{
 		@Override
@@ -143,7 +143,7 @@ public class StopUsingItemTest
 		}
 	}
 
-	@EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Bus.FORGE)
+	@EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Bus.singularity)
 	public static class ClientEvents
 	{
 		@SubscribeEvent

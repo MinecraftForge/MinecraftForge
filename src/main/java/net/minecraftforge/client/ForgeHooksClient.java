@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -110,52 +110,52 @@ import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.ClientPauseChangeEvent;
-import net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent;
-import net.minecraftforge.client.event.RegisterPictureInPictureRendererEvent;
-import net.minecraftforge.client.event.SystemMessageReceivedEvent;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ForgeEventFactoryClient;
-import net.minecraftforge.client.event.GatherAtlasMetadataSectionsEvent;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.MovementInputUpdateEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderHighlightEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
-import net.minecraftforge.client.gui.ClientTooltipComponentManager;
-import net.minecraftforge.client.gui.ModMismatchDisconnectedScreen;
-import net.minecraftforge.client.model.ForgeBlockModelData;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.geometry.GeometryLoaderManager;
-import net.minecraftforge.client.textures.ForgeTextureMetadata;
-import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
-import net.minecraftforge.common.ForgeI18n;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.network.NetworkContext;
-import net.minecraftforge.network.NetworkInitialization;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.ServerStatusPing;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftsingularity.client.event.ClientChatEvent;
+import net.minecraftsingularity.client.event.ClientChatReceivedEvent;
+import net.minecraftsingularity.client.event.ClientPauseChangeEvent;
+import net.minecraftsingularity.client.event.ClientPlayerChangeGameTypeEvent;
+import net.minecraftsingularity.client.event.RegisterPictureInPictureRendererEvent;
+import net.minecraftsingularity.client.event.SystemMessageReceivedEvent;
+import net.minecraftsingularity.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftsingularity.client.event.EntityRenderersEvent;
+import net.minecraftsingularity.client.event.singularityEventFactoryClient;
+import net.minecraftsingularity.client.event.GatherAtlasMetadataSectionsEvent;
+import net.minecraftsingularity.client.event.InputEvent;
+import net.minecraftsingularity.client.event.ModelEvent;
+import net.minecraftsingularity.client.event.MovementInputUpdateEvent;
+import net.minecraftsingularity.client.event.RegisterClientReloadListenersEvent;
+import net.minecraftsingularity.client.event.RegisterColorHandlersEvent;
+import net.minecraftsingularity.client.event.RegisterKeyMappingsEvent;
+import net.minecraftsingularity.client.event.RegisterParticleProvidersEvent;
+import net.minecraftsingularity.client.event.RenderBlockScreenEffectEvent;
+import net.minecraftsingularity.client.event.RenderHandEvent;
+import net.minecraftsingularity.client.event.RenderHighlightEvent;
+import net.minecraftsingularity.client.event.RenderTooltipEvent;
+import net.minecraftsingularity.client.event.ScreenEvent;
+import net.minecraftsingularity.client.event.TextureStitchEvent;
+import net.minecraftsingularity.client.event.ViewportEvent;
+import net.minecraftsingularity.client.event.sound.PlaySoundEvent;
+import net.minecraftsingularity.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftsingularity.client.extensions.common.IClientItemExtensions;
+import net.minecraftsingularity.client.extensions.common.IClientMobEffectExtensions;
+import net.minecraftsingularity.client.gui.ClientTooltipComponentManager;
+import net.minecraftsingularity.client.gui.ModMismatchDisconnectedScreen;
+import net.minecraftsingularity.client.model.singularityBlockModelData;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.client.model.geometry.GeometryLoaderManager;
+import net.minecraftsingularity.client.textures.singularityTextureMetadata;
+import net.minecraftsingularity.client.textures.TextureAtlasSpriteLoaderManager;
+import net.minecraftsingularity.common.singularityI18n;
+import net.minecraftsingularity.common.singularityMod;
+import net.minecraftsingularity.fml.IExtensionPoint;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.ModLoader;
+import net.minecraftsingularity.network.NetworkContext;
+import net.minecraftsingularity.network.NetworkInitialization;
+import net.minecraftsingularity.network.NetworkRegistry;
+import net.minecraftsingularity.network.ServerStatusPing;
+import net.minecraftsingularity.registries.GameData;
+import net.minecraftsingularity.versions.singularity.singularityVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -187,7 +187,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ApiStatus.Internal
-public class ForgeHooksClient {
+public class singularityHooksClient {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
 
@@ -320,7 +320,7 @@ public class ForgeHooksClient {
         }
     }
 
-    public static String forgeStatusLine;
+    public static String singularityStatusLine;
 
     @Nullable
     public static SoundInstance playSound(SoundEngine manager, SoundInstance sound) {
@@ -435,21 +435,21 @@ public class ForgeHooksClient {
     }
 
     public static boolean onScreenKeyPressed(Screen screen, KeyEvent info) {
-        return ForgeEventFactoryClient.onScreenKeyPressedPre(screen, info)
+        return singularityEventFactoryClient.onScreenKeyPressedPre(screen, info)
             || screen.keyPressed(info)
-            || ForgeEventFactoryClient.onScreenKeyPressedPost(screen, info);
+            || singularityEventFactoryClient.onScreenKeyPressedPost(screen, info);
     }
 
     public static boolean onScreenKeyReleased(Screen screen, KeyEvent info) {
-        return ForgeEventFactoryClient.onScreenKeyReleasedPre(screen, info)
+        return singularityEventFactoryClient.onScreenKeyReleasedPre(screen, info)
             || screen.keyReleased(info)
-            || ForgeEventFactoryClient.onScreenKeyReleasedPost(screen, info);
+            || singularityEventFactoryClient.onScreenKeyReleasedPost(screen, info);
     }
 
     public static boolean onScreenCharTyped(Screen screen, CharacterEvent info) {
-        return ForgeEventFactoryClient.onScreenCharTypedPre(screen, info)
+        return singularityEventFactoryClient.onScreenCharTypedPre(screen, info)
             || screen.charTyped(info)
-            || ForgeEventFactoryClient.onScreenCharTypedPost(screen, info);
+            || singularityEventFactoryClient.onScreenCharTypedPost(screen, info);
     }
 
     public static void onKeyInput(KeyEvent info, int action) {
@@ -458,7 +458,7 @@ public class ForgeHooksClient {
 
     public static boolean isNameplateInRenderDistance(Entity entity, double squareDistance) {
         if (entity instanceof LivingEntity living) {
-            var attribute = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
+            var attribute = living.getAttribute(singularityMod.NAMETAG_DISTANCE.getHolder().get());
             if (attribute != null) {
                 return !(squareDistance > (attribute.getValue() * attribute.getValue()));
             }
@@ -472,7 +472,7 @@ public class ForgeHooksClient {
 
     public static Set<MetadataSectionType<?>> getAtlastMetadataSections(Identifier atlasId, Set<MetadataSectionType<?>> vanilla) {
         var ret = new HashSet<>(vanilla);
-        ret.add(ForgeTextureMetadata.TYPE);
+        ret.add(singularityTextureMetadata.TYPE);
 
         var event = new GatherAtlasMetadataSectionsEvent(ret);
         GatherAtlasMetadataSectionsEvent.BUS.post(event);
@@ -482,18 +482,18 @@ public class ForgeHooksClient {
     @Nullable
     public static SpriteContents loadSpriteContents(Identifier name, Resource resource, FrameSize frameSize, NativeImage image, List<MetadataSectionType.WithValue<?>> metadata) {
         for (var meta : metadata) {
-            var forgeMeta = meta.unwrapToType(ForgeTextureMetadata.TYPE).orElse(null);
-            if (forgeMeta != null && forgeMeta.loader() != null)
-                return forgeMeta.loader().loadContents(name, resource, frameSize, image, metadata);
+            var singularityMeta = meta.unwrapToType(singularityTextureMetadata.TYPE).orElse(null);
+            if (singularityMeta != null && singularityMeta.loader() != null)
+                return singularityMeta.loader().loadContents(name, resource, frameSize, image, metadata);
         }
         return null;
     }
 
     public static TextureAtlasSprite loadTextureAtlasSprite(Identifier atlasName, SpriteContents contents, int atlasWidth, int atlasHeight, int x, int y, int padding) {
         TextureAtlasSprite ret = null;
-        var forgeMeta = contents.getAdditionalMetadata(ForgeTextureMetadata.TYPE).orElse(null);
-        if (forgeMeta != null && forgeMeta.loader() != null)
-            ret = forgeMeta.loader().makeSprite(atlasName, contents, atlasWidth, atlasHeight, x, y, padding, contents.getMipLevel());
+        var singularityMeta = contents.getAdditionalMetadata(singularityTextureMetadata.TYPE).orElse(null);
+        if (singularityMeta != null && singularityMeta.loader() != null)
+            ret = singularityMeta.loader().makeSprite(atlasName, contents, atlasWidth, atlasHeight, x, y, padding, contents.getMipLevel());
         return ret != null ? ret : new TextureAtlasSprite(atlasName, contents, atlasWidth, atlasHeight, x, y, padding);
     }
 
@@ -510,10 +510,10 @@ public class ForgeHooksClient {
     }
 
     public static void processForgeListPingData(ServerStatus packet, ServerData target) {
-        packet.forgeData().ifPresentOrElse(forgeData -> {
-            final Map<String, String> mods = forgeData.getRemoteModData();
-            final Map<Identifier, ServerStatusPing.ChannelData> remoteChannels = forgeData.getRemoteChannels();
-            final int fmlver = forgeData.getFMLNetworkVersion();
+        packet.singularityData().ifPresentOrElse(singularityData -> {
+            final Map<String, String> mods = singularityData.getRemoteModData();
+            final Map<Identifier, ServerStatusPing.ChannelData> remoteChannels = singularityData.getRemoteChannels();
+            final int fmlver = singularityData.getFMLNetworkVersion();
 
             int wantedVer = NetworkInitialization.getVersion();
             boolean fmlNetMatches = fmlver == wantedVer;
@@ -541,7 +541,7 @@ public class ForgeHooksClient {
 
             if (!extraServerMods.isEmpty()) {
                 extraReason = "fml.menu.multiplayer.extraservermods";
-                LOGGER.info(CLIENTHOOKS, ForgeI18n.parseMessage(extraReason) + ": {}", extraServerMods.entrySet().stream()
+                LOGGER.info(CLIENTHOOKS, singularityI18n.parseMessage(extraReason) + ": {}", extraServerMods.entrySet().stream()
                         .map(e -> e.getKey() + "@" + e.getValue())
                         .collect(Collectors.joining(", ")));
             }
@@ -558,45 +558,45 @@ public class ForgeHooksClient {
             if (fmlver > wantedVer)
                 extraReason = "fml.menu.multiplayer.clientoutdated";
 
-            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, forgeData.isTruncated());
-        }, () -> target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null));
+            target.singularityData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, singularityData.isTruncated());
+        }, () -> target.singularityData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null));
     }
 
-    private static final Identifier ICON_SHEET = Identifier.fromNamespaceAndPath(ForgeVersion.MOD_ID, "textures/gui/icons.png");
+    private static final Identifier ICON_SHEET = Identifier.fromNamespaceAndPath(singularityVersion.MOD_ID, "textures/gui/icons.png");
     public static void drawForgePingInfo(JoinMultiplayerScreen gui, ServerData target, GuiGraphicsExtractor guiGraphics, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
         int idx;
         String tooltip;
-        if (target.forgeData == null)
+        if (target.singularityData == null)
             return;
-        switch (target.forgeData.type()) {
+        switch (target.singularityData.type()) {
             case "FML":
-                if (target.forgeData.isCompatible()) {
+                if (target.singularityData.isCompatible()) {
                     idx = 0;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.compatible", target.forgeData.numberOfMods());
+                    tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.compatible", target.singularityData.numberOfMods());
                 } else {
                     idx = 16;
-                    if(target.forgeData.extraReason() != null) {
-                        String extraReason = ForgeI18n.parseMessage(target.forgeData.extraReason());
-                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible.extra", extraReason);
+                    if(target.singularityData.extraReason() != null) {
+                        String extraReason = singularityI18n.parseMessage(target.singularityData.extraReason());
+                        tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.incompatible.extra", extraReason);
                     } else {
-                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
+                        tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.incompatible");
                     }
                 }
-                if (target.forgeData.truncated())
-                    tooltip += "\n" + ForgeI18n.parseMessage("fml.menu.multiplayer.truncated");
+                if (target.singularityData.truncated())
+                    tooltip += "\n" + singularityI18n.parseMessage("fml.menu.multiplayer.truncated");
                 break;
             case "VANILLA":
-                if (target.forgeData.isCompatible()) {
+                if (target.singularityData.isCompatible()) {
                     idx = 48;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla");
+                    tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.vanilla");
                 } else {
                     idx = 80;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla.incompatible");
+                    tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.vanilla.incompatible");
                 }
                 break;
             default:
                 idx = 64;
-                tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type());
+                tooltip = singularityI18n.parseMessage("fml.menu.multiplayer.unknown", target.singularityData.type());
         }
 
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, ICON_SHEET, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
@@ -761,7 +761,7 @@ public class ForgeHooksClient {
         return loc.withPath(normalised);
     }
 
-    // Make sure the below method is only ever called once (by forge).
+    // Make sure the below method is only ever called once (by singularity).
     private static boolean initializedClientHooks = false;
     // Runs during Minecraft construction, before initial resource loading.
     @ApiStatus.Internal
@@ -776,7 +776,7 @@ public class ForgeHooksClient {
         TextureAtlasSpriteLoaderManager.init();
         ClientTooltipComponentManager.init();
         EntitySpectatorShaderManager.init();
-        ForgeHooksClient.onRegisterKeyMappings(mc.options);
+        singularityHooksClient.onRegisterKeyMappings(mc.options);
         //GuiOverlayManager.init();
         //DimensionSpecialEffectsManager.init();
         NamedRenderTypeManager.init();
@@ -794,9 +794,9 @@ public class ForgeHooksClient {
     }
 
     public static boolean onScreenMouseDrag(Screen screen, MouseButtonEvent info, double dragX, double dragY) {
-        return ForgeEventFactoryClient.onScreenMouseDragPre(screen, info.x(), info.y(), info.button(), dragX, dragY)
+        return singularityEventFactoryClient.onScreenMouseDragPre(screen, info.x(), info.y(), info.button(), dragX, dragY)
             || screen.mouseDragged(info, dragX, dragY)
-            || ForgeEventFactoryClient.onScreenMouseDragPost(screen, info.x(), info.y(), info.button(), dragX, dragY);
+            || singularityEventFactoryClient.onScreenMouseDragPost(screen, info.x(), info.y(), info.button(), dragX, dragY);
     }
 
     public static @Nullable UnbakedGeometry deserializeBlockModelGeometry(JsonObject json, JsonDeserializationContext context) {
@@ -813,7 +813,7 @@ public class ForgeHooksClient {
 
 
     @Nullable
-    public static ForgeBlockModelData deserializeBlockModel(JsonObject json, JsonDeserializationContext context) {
+    public static singularityBlockModelData deserializeBlockModel(JsonObject json, JsonDeserializationContext context) {
         Optional<Identifier> renderType = Optional.empty();
         Optional<Identifier> renderTypeFast = Optional.empty();
         Optional<Map<String, Boolean>> visibility = Optional.empty();
@@ -836,7 +836,7 @@ public class ForgeHooksClient {
             visibility = Optional.of(map.build());
         }
 
-        return new ForgeBlockModelData(transform, renderType, renderTypeFast, visibility);
+        return new singularityBlockModelData(transform, renderType, renderTypeFast, visibility);
     }
 
     public static void addFramePass(Identifier rl, FramePassManager.PassDefinition definition) {

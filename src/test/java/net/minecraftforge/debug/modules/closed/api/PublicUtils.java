@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.modules.closed.api;
+package net.minecraftsingularity.debug.modules.closed.api;
 
 public class PublicUtils {
     public static void publicMethod() {

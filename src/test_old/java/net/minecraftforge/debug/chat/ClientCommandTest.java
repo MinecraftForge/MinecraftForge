@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.debug.chat;
+package net.minecraftsingularity.debug.chat;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -16,11 +16,11 @@ import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.debug.client.TestScreen;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.debug.client.TestScreen;
+import net.minecraftsingularity.client.event.RegisterClientCommandsEvent;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.fml.common.Mod;
+import net.minecraftsingularity.registries.singularityRegistries;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class ClientCommandTest
                         // Used for checking suggestion providers that aren't registered
                         .then(Commands.literal("rawsuggest")
                                 .then(Commands.argument("block", ResourceLocationArgument.id())
-                                        .suggests((c, b) -> SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b))
+                                        .suggests((c, b) -> SharedSuggestionProvider.suggestResource(singularityRegistries.BLOCKS.getKeys(), b))
                                         .executes(this::testCommand)))
                         // Used for checking suggestion providers that are registered
                         .then(Commands.literal("registeredsuggest").then(

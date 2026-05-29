@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -76,7 +76,7 @@ public final class NewRegistryEvent extends MutableEvent {
             rootRegistry.freeze();
 
         if (aggregate.getSuppressed().length > 0)
-            LOGGER.error(LogUtils.FATAL_MARKER, "Failed to create some forge registries, see suppressed exceptions for details", aggregate);
+            LOGGER.error(LogUtils.FATAL_MARKER, "Failed to create some singularity registries, see suppressed exceptions for details", aggregate);
     }
 
     private <T> void buildRegistry(Map<RegistryBuilder<?>, IForgeRegistry<?>> builtRegistries, RegistryData<T> data) {
@@ -86,7 +86,7 @@ public final class NewRegistryEvent extends MutableEvent {
         builtRegistries.put(builder, registry);
 
         if (builder.getHasWrapper() && !BuiltInRegistries.REGISTRY.containsKey(registry.getRegistryName()))
-            RegistryManager.registerToRootRegistry((ForgeRegistry<?>) registry);
+            RegistryManager.registerToRootRegistry((singularityRegistry<?>) registry);
 
         data.registryHolder.registry = registry;
         if (data.onFill != null)

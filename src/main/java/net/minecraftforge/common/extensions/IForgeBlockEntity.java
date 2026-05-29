@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftsingularity.common.extensions;
 
 import net.minecraft.network.Connection;
 import net.minecraft.world.entity.player.Player;
@@ -20,8 +20,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftsingularity.client.model.data.ModelData;
+import net.minecraftsingularity.common.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
 public interface IForgeBlockEntity extends ICapabilityProvider {

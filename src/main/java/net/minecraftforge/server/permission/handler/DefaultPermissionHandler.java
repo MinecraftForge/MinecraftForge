@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.permission.handler;
+package net.minecraftsingularity.server.permission.handler;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
-import net.minecraftforge.server.permission.nodes.PermissionNode;
+import net.minecraftsingularity.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftsingularity.server.permission.nodes.PermissionNode;
 
 import java.util.*;
 
 public final class DefaultPermissionHandler implements IPermissionHandler
 {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("forge", "default_handler");;
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("singularity", "default_handler");;
     private final Set<PermissionNode<?>> registeredNodes = new HashSet<>();
     private Set<PermissionNode<?>> immutableRegisteredNodes = Collections.unmodifiableSet(this.registeredNodes);
 

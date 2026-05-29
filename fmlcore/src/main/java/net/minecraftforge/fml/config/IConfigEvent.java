@@ -1,12 +1,12 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.config;
+package net.minecraftsingularity.fml.config;
 
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.fml.Bindings;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.fml.Bindings;
 
 import java.util.function.Function;
 

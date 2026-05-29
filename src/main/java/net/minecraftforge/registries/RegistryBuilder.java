@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.registries;
+package net.minecraftsingularity.registries;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.AddCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.BakeCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.ClearCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.CreateCallback;
+import net.minecraftsingularity.registries.IForgeRegistry.MissingFactory;
+import net.minecraftsingularity.registries.IForgeRegistry.ValidateCallback;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -190,7 +190,7 @@ public class RegistryBuilder<T> {
 
     /**
      * Enables tags for this registry if not already.
-     * All forge registries with wrappers inherently support tags.
+     * All singularity registries with wrappers inherently support tags.
      *
      * @return this builder
      * @see RegistryBuilder#hasWrapper()

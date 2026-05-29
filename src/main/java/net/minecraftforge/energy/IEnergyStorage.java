@@ -1,11 +1,11 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.energy;
+package net.minecraftsingularity.energy;
 
-import net.minecraftforge.common.capabilities.AutoRegisterCapability;
+import net.minecraftsingularity.common.capabilities.AutoRegisterCapability;
 
 /**
  * An energy storage is the unit of interaction with Energy inventories.
@@ -13,7 +13,7 @@ import net.minecraftforge.common.capabilities.AutoRegisterCapability;
  * A reference implementation can be found at {@link EnergyStorage}.
  *
  * Derived from the Redstone Flux power system designed by King Lemming and originally utilized in Thermal Expansion and related mods.
- * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
+ * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with singularity.
  *
  */
 @AutoRegisterCapability

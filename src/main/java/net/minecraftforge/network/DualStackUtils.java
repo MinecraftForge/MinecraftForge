@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import com.mojang.logging.LogUtils;
 import com.google.common.net.InetAddresses;
@@ -29,7 +29,7 @@ public class DualStackUtils {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     /**
-     * Called by {@link net.minecraftforge.common.MinecraftForge} to load this class so that the initial network
+     * Called by {@link net.minecraftsingularity.common.MinecraftForge} to load this class so that the initial network
      * property constants are set before any of the other methods in this class are called. This is so we can
      * distinguish what Java's read once on JVM start vs what we've set for Netty.
      */

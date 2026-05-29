@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.gui.widget;
+package net.minecraftsingularity.client.gui.widget;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -19,7 +19,7 @@ import java.text.DecimalFormat;
 /**
  * Slider widget implementation which allows inputting values in a certain range with optional step size.
  */
-public class ForgeSlider extends AbstractSliderButton {
+public class singularitySlider extends AbstractSliderButton {
     protected Component prefix;
     protected Component suffix;
 
@@ -47,7 +47,7 @@ public class ForgeSlider extends AbstractSliderButton {
      * @param precision Only used when {@code stepSize} is 0. Limited to a maximum of 4 (inclusive).
      * @param drawString Should text be displayed on the widget
      */
-    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString) {
+    public singularitySlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, double stepSize, int precision, boolean drawString) {
         super(x, y, width, height, Component.empty(), 0D);
         this.prefix = prefix;
         this.suffix = suffix;
@@ -81,7 +81,7 @@ public class ForgeSlider extends AbstractSliderButton {
     /**
      * Overload with {@code stepSize} set to 1, useful for sliders with whole number values.
      */
-    public ForgeSlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString) {
+    public singularitySlider(int x, int y, int width, int height, Component prefix, Component suffix, double minValue, double maxValue, double currentValue, boolean drawString) {
         this(x, y, width, height, prefix, suffix, minValue, maxValue, currentValue, 1D, 0, drawString);
     }
 

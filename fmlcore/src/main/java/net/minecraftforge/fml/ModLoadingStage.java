@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml;
+package net.minecraftsingularity.fml;
 
 /**
  * Mod loading stage of mod containers during the mod loading process. These will have a corresponding {@link ModLoadingState}
@@ -34,15 +34,15 @@ public enum ModLoadingStage
     /**
      * Side-specific setup and initialization.
      *
-     * @see net.minecraftforge.api.distmarker.Dist
+     * @see net.minecraftsingularity.api.distmarker.Dist
      */
     SIDED_SETUP,
     /**
-     * Stage for enqueuing {@link net.minecraftforge.fml.InterModComms} messages for later processing.
+     * Stage for enqueuing {@link net.minecraftsingularity.fml.InterModComms} messages for later processing.
      */
     ENQUEUE_IMC,
     /**
-     * Stage for processing received messages though {@link net.minecraftforge.fml.InterModComms}.
+     * Stage for processing received messages though {@link net.minecraftsingularity.fml.InterModComms}.
      */
     PROCESS_IMC,
     /**

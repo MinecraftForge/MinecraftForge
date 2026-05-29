@@ -1,19 +1,19 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.event.lifecycle;
+package net.minecraftsingularity.fml.event.lifecycle;
 
-import net.minecraftforge.fml.InterModComms;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftsingularity.fml.InterModComms;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.event.IModBusEvent;
 
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * Parent type to all ModLifecycle events. This is based on Forge EventBus. They fire through the
+ * Parent type to all ModLifecycle events. This is based on singularity EventBus. They fire through the
  * ModContainer's eventbus instance.
  */
 public abstract class ModLifecycleEvent implements IModBusEvent {

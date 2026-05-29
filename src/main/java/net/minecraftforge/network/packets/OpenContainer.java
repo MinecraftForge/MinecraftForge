@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network.packets;
+package net.minecraftsingularity.network.packets;
 
 import org.jetbrains.annotations.ApiStatus;
 
@@ -18,7 +18,7 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
 
 // TODO: Reevaluate if this is needed This is the same as ClientboundOpenScreenPacket packet but allows for additional data
 public class OpenContainer {

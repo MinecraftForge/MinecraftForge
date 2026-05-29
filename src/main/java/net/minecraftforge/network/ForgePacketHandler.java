@@ -1,32 +1,32 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.event.network.CustomPayloadEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.network.NetworkContext.NetworkMismatchData;
-import net.minecraftforge.network.packets.Acknowledge;
-import net.minecraftforge.network.packets.ChannelVersions;
-import net.minecraftforge.network.packets.LoginWrapper;
-import net.minecraftforge.network.packets.ModVersions;
-import net.minecraftforge.network.packets.RegistryList;
-import net.minecraftforge.network.packets.RegistryData;
-import net.minecraftforge.network.packets.ConfigData;
-import net.minecraftforge.network.packets.MismatchData;
-import net.minecraftforge.network.tasks.ChannelVersionsTask;
-import net.minecraftforge.network.tasks.ModVersionsTask;
-import net.minecraftforge.registries.DataPackRegistriesHooks;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
+import net.minecraftsingularity.common.singularityHooks;
+import net.minecraftsingularity.common.util.LogMessageAdapter;
+import net.minecraftsingularity.event.network.CustomPayloadEvent;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.config.ConfigTracker;
+import net.minecraftsingularity.network.NetworkContext.NetworkMismatchData;
+import net.minecraftsingularity.network.packets.Acknowledge;
+import net.minecraftsingularity.network.packets.ChannelVersions;
+import net.minecraftsingularity.network.packets.LoginWrapper;
+import net.minecraftsingularity.network.packets.ModVersions;
+import net.minecraftsingularity.network.packets.RegistryList;
+import net.minecraftsingularity.network.packets.RegistryData;
+import net.minecraftsingularity.network.packets.ConfigData;
+import net.minecraftsingularity.network.packets.MismatchData;
+import net.minecraftsingularity.network.tasks.ChannelVersionsTask;
+import net.minecraftsingularity.network.tasks.ModVersionsTask;
+import net.minecraftsingularity.registries.DataPackRegistriesHooks;
+import net.minecraftsingularity.registries.singularityRegistry;
+import net.minecraftsingularity.registries.GameData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,16 +54,16 @@ import java.util.stream.Stream;
  * which solicits all registered channels at the {@link NetworkRegistry} for any
  * {@link NetworkRegistry.LoginPayload} they wish to supply.
  */
-public class ForgePacketHandler {
+public class singularityPacketHandler {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker MARKER = MarkerManager.getMarker("FORGE_PACKET_HANDLER");
+    private static final Marker MARKER = MarkerManager.getMarker("singularity_PACKET_HANDLER");
 
     private Set<Identifier> registriesToReceive;
-    private Map<Identifier, ForgeRegistry.Snapshot> registrySnapshots = new HashMap<>();
+    private Map<Identifier, singularityRegistry.Snapshot> registrySnapshots = new HashMap<>();
     private int nextAckId = 0;
     private Int2ObjectMap<BiConsumer<Acknowledge, CustomPayloadEvent.Context>> pendingAcknowledgments = new Int2ObjectOpenHashMap<>();
 
-    ForgePacketHandler(Connection connection) {
+    singularityPacketHandler(Connection connection) {
     }
 
     public int expectAck(BiConsumer<Acknowledge, CustomPayloadEvent.Context> consumer) {
@@ -73,7 +73,7 @@ public class ForgePacketHandler {
     }
 
     void handleLoginWrapper(LoginWrapper msg, CustomPayloadEvent.Context ctx) {
-        ForgeHooks.onCustomPayload(new CustomPayloadEvent(msg.name(), ForgePayload.create(msg.name(), msg.data()), ctx, -1));
+        singularityHooks.onCustomPayload(new CustomPayloadEvent(msg.name(), singularityPayload.create(msg.name(), msg.data()), ctx, -1));
     }
 
     void handleClientAck(Acknowledge msg, CustomPayloadEvent.Context ctx) {

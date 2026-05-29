@@ -1,20 +1,20 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 
-public class ForgeCommand
+public class singularityCommand
 {
-    public ForgeCommand(CommandDispatcher<CommandSourceStack> dispatcher)
+    public singularityCommand(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(
-            LiteralArgumentBuilder.<CommandSourceStack>literal("forge")
+            LiteralArgumentBuilder.<CommandSourceStack>literal("singularity")
             .then(TPSCommand.register())
             .then(TrackCommand.register())
             .then(EntityCommand.register())

@@ -1,30 +1,30 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.core;
+package net.minecraftsingularity.fml.core;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.IModLoadingState;
-import net.minecraftforge.fml.IModStateProvider;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingPhase;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingState;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftsingularity.api.distmarker.Dist;
+import net.minecraftsingularity.fml.IModLoadingState;
+import net.minecraftsingularity.fml.IModStateProvider;
+import net.minecraftsingularity.fml.ModContainer;
+import net.minecraftsingularity.fml.ModList;
+import net.minecraftsingularity.fml.ModLoadingPhase;
+import net.minecraftsingularity.fml.ModLoadingStage;
+import net.minecraftsingularity.fml.ModLoadingState;
+import net.minecraftsingularity.fml.config.ConfigTracker;
+import net.minecraftsingularity.fml.config.ModConfig;
+import net.minecraftsingularity.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftsingularity.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftsingularity.fml.event.lifecycle.FMLConstructModEvent;
+import net.minecraftsingularity.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftsingularity.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftsingularity.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftsingularity.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftsingularity.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftsingularity.fml.loading.FMLEnvironment;
+import net.minecraftsingularity.fml.loading.FMLPaths;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -99,7 +99,7 @@ public class ModStateProvider implements IModStateProvider {
     }
 
     /**
-     * First {@linkplain ModLoadingPhase#COMPLETE completion state}, for enqueuing {@link net.minecraftforge.fml.InterModComms}
+     * First {@linkplain ModLoadingPhase#COMPLETE completion state}, for enqueuing {@link net.minecraftsingularity.fml.InterModComms}
      * messages.
      *
      * @see InterModEnqueueEvent
@@ -110,7 +110,7 @@ public class ModStateProvider implements IModStateProvider {
 
     /**
      * {@linkplain ModLoadingPhase#COMPLETE Completion state} after {@linkplain #ENQUEUE_IMC}, for processing of messages
-     * received through {@link net.minecraftforge.fml.InterModComms}.
+     * received through {@link net.minecraftsingularity.fml.InterModComms}.
      *
      * @see InterModProcessEvent
      * @see ModLoadingStage#PROCESS_IMC

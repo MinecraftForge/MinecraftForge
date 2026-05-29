@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.server.command;
+package net.minecraftsingularity.server.command;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -21,8 +21,8 @@ import net.minecraft.commands.synchronization.ArgumentTypeInfos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.Connection;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.ConnectionType;
-import net.minecraftforge.network.NetworkContext;
+import net.minecraftsingularity.network.ConnectionType;
+import net.minecraftsingularity.network.NetworkContext;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -30,7 +30,7 @@ import java.util.function.Function;
 /**
  * Internal utility class for various command-related operations.
  *
- * <strong>For internal Forge use only.</strong>
+ * <strong>For internal singularity use only.</strong>
  *
  * @hidden
  */

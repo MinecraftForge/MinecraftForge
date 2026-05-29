@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftsingularity.client.event;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -12,15 +12,15 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.HasResult;
-import net.minecraftforge.common.util.Result;
-import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.MutableEvent;
-import net.minecraftforge.eventbus.api.event.RecordEvent;
-import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.common.util.HasResult;
+import net.minecraftsingularity.common.util.Result;
+import net.minecraftsingularity.eventbus.api.bus.CancellableEventBus;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.MutableEvent;
+import net.minecraftsingularity.eventbus.api.event.RecordEvent;
+import net.minecraftsingularity.eventbus.api.event.characteristic.Cancellable;
+import net.minecraftsingularity.fml.LogicalSide;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  * Fired on different events/actions when a {@link Screen} is active and visible.
  * See the various subclasses for listening to different events.
  *
- * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  *
  * @see Init
@@ -115,7 +115,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the initialization method will not be called, and the widgets and children lists
          * will not be cleared.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         public static final class Pre extends Init implements Cancellable {
@@ -130,7 +130,7 @@ public sealed interface ScreenEvent {
         /**
          * Fired <b>after</b> the screen's overridable initialization method is called.
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         public static final class Post extends Init {
@@ -177,7 +177,7 @@ public sealed interface ScreenEvent {
          * <p>This event is {@linkplain Cancellable cancellable}.
          * If the event is cancelled, the screen will not be drawn.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, GuiGraphicsExtractor getGuiGraphics, int getMouseX, int getMouseY, float getPartialTick)
@@ -191,7 +191,7 @@ public sealed interface ScreenEvent {
         /**
          * Fired <b>after</b> the screen is drawn.
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(Screen getScreen, GuiGraphicsExtractor getGuiGraphics, int getMouseX, int getMouseY, float getPartialTick)
@@ -207,7 +207,7 @@ public sealed interface ScreenEvent {
      * Fired directly after the background of the screen is drawn.
      * Can be used for drawing above the background but below the tooltips.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      *
      * @param getGuiGraphics the gui graphics used for rendering
@@ -226,7 +226,7 @@ public sealed interface ScreenEvent {
      *
      * <p>This event is {@linkplain Cancellable cancellable}. Cancelling this event will prevent vanilla rendering.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     final class RenderInventoryMobEffects extends MutableEvent implements Cancellable, ScreenEvent {
@@ -344,7 +344,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's mouse click handler will be bypassed
          * and the corresponding {@link MouseButtonPressed.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, double getMouseX, double getMouseY, MouseButtonEvent getInfo)
@@ -367,7 +367,7 @@ public sealed interface ScreenEvent {
          *   <li>{@link Result#DENY} - forcibly sets the mouse click as not handled.</li>
          * </ul>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(
@@ -416,7 +416,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's mouse release handler will be bypassed
          * and the corresponding {@link MouseButtonReleased.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, double getMouseX, double getMouseY, int getButton)
@@ -439,7 +439,7 @@ public sealed interface ScreenEvent {
          *   <li>{@link Result#DENY} - forcibly sets the mouse release as not handled.</li>
          * </ul>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(
@@ -500,7 +500,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's mouse drag handler will be bypassed
          * and the corresponding {@link MouseDragged.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(
@@ -524,7 +524,7 @@ public sealed interface ScreenEvent {
          * <p>This event is not {@linkplain Cancellable cancellable}, and does not {@linkplain HasResult have a result}.
          * If the event is cancelled, the mouse drag will be set as handled.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(
@@ -568,7 +568,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's mouse scroll handler will be bypassed
          * and the corresponding {@link MouseScrolled.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, double getMouseX, double getMouseY, double getDeltaX, double getDeltaY)
@@ -586,7 +586,7 @@ public sealed interface ScreenEvent {
          * <p>This event is not {@linkplain Cancellable cancellable}, and does not {@linkplain HasResult have a result}.
          * If the event is cancelled, the mouse scroll will be set as handled.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(Screen getScreen, double getMouseX, double getMouseY, double getDeltaX, double getDeltaY)
@@ -669,7 +669,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's key press handler will be bypassed
          * and the corresponding {@link KeyPressed.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, KeyEvent getInfo) implements Cancellable, KeyPressed, RecordEvent {
@@ -686,7 +686,7 @@ public sealed interface ScreenEvent {
          * <p>This event is {@linkplain Cancellable cancellable}.
          * If the event is cancelled, the key press will be set as handled.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(Screen getScreen, KeyEvent getInfo) implements Cancellable, KeyPressed, RecordEvent {
@@ -712,7 +712,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's key release handler will be bypassed
          * and the corresponding {@link KeyReleased.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, KeyEvent getInfo) implements Cancellable, KeyReleased, RecordEvent {
@@ -729,7 +729,7 @@ public sealed interface ScreenEvent {
          * <p>This event is {@linkplain Cancellable cancellable}.
          * If the event is cancelled, the key release will be set as handled.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(Screen getScreen, KeyEvent getInfo) implements Cancellable, KeyReleased, RecordEvent {
@@ -769,7 +769,7 @@ public sealed interface ScreenEvent {
          * If the event is cancelled, the screen's character input handler will be bypassed
          * and the corresponding {@link CharacterTyped.Post} will not be fired.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Pre(Screen getScreen, CharacterEvent getInfo) implements Cancellable, CharacterTyped, RecordEvent {
@@ -786,7 +786,7 @@ public sealed interface ScreenEvent {
          * <p>This event is {@linkplain Cancellable cancellable}.
          * If the event is cancelled, the character input will be set as handled.</p>
          *
-         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+         * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
          * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
          */
         record Post(Screen getScreen, CharacterEvent getInfo) implements CharacterTyped, RecordEvent {
@@ -806,7 +806,7 @@ public sealed interface ScreenEvent {
      * will remain open. However, cancelling this event will not prevent the closing of screen layers which happened before
      * this event fired.</p>
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     final class Opening extends MutableEvent implements Cancellable, ScreenEvent {
@@ -858,7 +858,7 @@ public sealed interface ScreenEvent {
      * Fired before a {@link Screen} is closed.
      * All screen layers on the screen are closed before this event is fired.
      *
-     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     record Closing(Screen getScreen) implements ScreenEvent, RecordEvent {

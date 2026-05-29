@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.forge.transformers;
+package net.minecraftsingularity.singularity.transformers;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -36,14 +36,14 @@ record MethodRedirector() implements ITransformer<ClassNode> {
 
     private static final Replacement[] REPLACEMENTS = {
         new Replacement(
-            // finalizeSpawn redirection to ForgeEventFactory.onFinalizeSpawn
+            // finalizeSpawn redirection to singularityEventFactory.onFinalizeSpawn
             Opcodes.INVOKEVIRTUAL,
             "finalizeSpawn",
             "(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;",
             GSON.fromJson(new InputStreamReader(sneak(() -> MethodRedirector.class.getModule().getResourceAsStream("coremods/finalize_spawn_targets.json"))), Target[].class),
             insn -> new MethodInsnNode(
                 Opcodes.INVOKESTATIC,
-                "net/minecraftforge/event/ForgeEventFactory",
+                "net/minecraftforge/event/singularityEventFactory",
                 "onFinalizeSpawn",
                 "(Lnet/minecraft/world/entity/Mob;Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;",
                 false
@@ -99,7 +99,7 @@ record MethodRedirector() implements ITransformer<ClassNode> {
                 var method = findMethodNode(clazz, methodName, methodDesc);
 
                 if (method == null) {
-                    LOGGER.error("Failed to redirect method call for {}! Method {} not found in class {}! This is a Forge bug, and is likely due to a Minecraft update changing something.", replacement.name, methodString, clazz.name);
+                    LOGGER.error("Failed to redirect method call for {}! Method {} not found in class {}! This is a singularity bug, and is likely due to a Minecraft update changing something.", replacement.name, methodString, clazz.name);
                     continue;
                 }
 

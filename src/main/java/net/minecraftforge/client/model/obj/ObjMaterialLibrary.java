@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client.model.obj;
+package net.minecraftsingularity.client.model.obj;
 
 import com.google.common.collect.Maps;
 import net.minecraft.client.resources.model.ModelDebugName;
@@ -57,7 +57,7 @@ public class ObjMaterialLibrary
                     currentMaterial.diffuseColor = ObjModel.parseVector4(line);
                     break;
 
-                case "forge_TintIndex":
+                case "singularity_TintIndex":
                     currentMaterial.diffuseTintIndex = Integer.parseInt(line[1]);
                     break;
 

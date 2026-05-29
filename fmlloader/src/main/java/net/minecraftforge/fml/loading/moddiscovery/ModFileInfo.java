@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftsingularity.fml.loading.moddiscovery;
 
 import com.google.common.base.Strings;
 import com.mojang.logging.LogUtils;
-import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.forgespi.language.IConfigurable;
-import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import net.minecraftsingularity.fml.loading.LogMarkers;
+import net.minecraftsingularity.fml.loading.StringUtils;
+import net.minecraftsingularity.singularityspi.language.IConfigurable;
+import net.minecraftsingularity.singularityspi.language.IModFileInfo;
+import net.minecraftsingularity.singularityspi.language.IModInfo;
+import net.minecraftsingularity.singularityspi.language.MavenVersionAdapter;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import javax.security.auth.x500.X500Principal;
@@ -68,7 +68,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
         var modLoaderVersion = MavenVersionAdapter.createFromVersionSpec(modLoaderVerStr);
         this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
 
-        // if true, this might not be a Forge mod
+        // if true, this might not be a singularity mod
         boolean maybeNotAForgeMod = modLoader.equals(JAVAFML)
                 && modLoaderVersion.hasRestrictions() // if loaderVersion is not "*"
                 && modLoaderVerStr.equals(MAYBE_NOT_JAVAFML_VER); // if loaderVersion is exactly "[2,)"
@@ -88,12 +88,12 @@ public class ModFileInfo implements IModFileInfo, IConfigurable {
                 .map(StringUtils::toURL)
                 .orElse(null);
 
-        // if clientSideOnly, then this is definitely a Forge mod
+        // if clientSideOnly, then this is definitely a singularity mod
         if (this.clientSideOnly)
             maybeNotAForgeMod = false;
 
         if (maybeNotAForgeMod) {
-            // mark this file as not a Forge mod. Note: this marker may be removed later based on the mod dependencies
+            // mark this file as not a singularity mod. Note: this marker may be removed later based on the mod dependencies
             this.properties = config.<Map<String, Object>>getConfigElement("properties")
                     .orElse(new LinkedHashMap<>());
             this.properties.put(NOT_A_FORGE_MOD_PROP, true);

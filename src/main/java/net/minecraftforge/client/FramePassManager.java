@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.client;
+package net.minecraftsingularity.client;
 
 import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
 import com.mojang.blaze3d.framegraph.FramePass;
@@ -30,9 +30,9 @@ public class FramePassManager {
     public static void insertForgePasses(FrameGraphBuilder graphBuilder, LevelTargetBundle bundle, LevelRenderState state) {
         for (PassInfo info : addedPasses) {
             FramePass pass = graphBuilder.addPass(info.name);
-            PassDefinition forgePass = info.pass;
-            forgePass.extracts(bundle, pass);
-            pass.executes(() -> forgePass.executes(state));
+            PassDefinition singularityPass = info.pass;
+            singularityPass.extracts(bundle, pass);
+            pass.executes(() -> singularityPass.executes(state));
         }
     }
 

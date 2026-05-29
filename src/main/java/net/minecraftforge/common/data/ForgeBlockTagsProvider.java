@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -16,8 +16,8 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftsingularity.common.Tags;
+import net.minecraftsingularity.registries.singularityRegistries;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,20 +26,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 // We typically don't do static imports as S2S can't remap them {as they are not qualified}, however this conflicts with vanilla and our tag class names, and our tags don't get obfed so its one line of warning.
-import static net.minecraftforge.common.Tags.Blocks.*;
+import static net.minecraftsingularity.common.Tags.Blocks.*;
 
 @ApiStatus.Internal
-public final class ForgeBlockTagsProvider extends VanillaBlockTagsProvider {
-    public ForgeBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, "forge", existingFileHelper);
+public final class singularityBlockTagsProvider extends VanillaBlockTagsProvider {
+    public singularityBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, "singularity", existingFileHelper);
     }
 
     @Override
     public void addTags(HolderLookup.Provider p_256380_) {
-        (new ForgeBlockItemTagsProvider() {
+        (new singularityBlockItemTagsProvider() {
             @Override
             protected TagAppender<Block, Block> tag(TagKey<Block> p_406922_, TagKey<Item> p_408417_) {
-                return ForgeBlockTagsProvider.this.tag(p_406922_);
+                return singularityBlockTagsProvider.this.tag(p_406922_);
             }
         }).run();
         addColored(DYED, "{color}_banner");
@@ -56,7 +56,7 @@ public final class ForgeBlockTagsProvider extends VanillaBlockTagsProvider {
         addColored(DYED, "{color}_wall_banner");
         addColored(DYED, "{color}_wool");
         addColoredTags(tag(DYED)::addTag, DYED);
-        tag(ENDERMAN_PLACE_ON_BLACKLIST); // forge:enderman_place_on_blacklist
+        tag(ENDERMAN_PLACE_ON_BLACKLIST); // singularity:enderman_place_on_blacklist
         tag(SKULLS).add(Blocks.SKELETON_SKULL, Blocks.SKELETON_WALL_SKULL, Blocks.WITHER_SKELETON_SKULL, Blocks.WITHER_SKELETON_WALL_SKULL, Blocks.PLAYER_HEAD, Blocks.PLAYER_WALL_HEAD, Blocks.ZOMBIE_HEAD, Blocks.ZOMBIE_WALL_HEAD, Blocks.CREEPER_HEAD, Blocks.CREEPER_WALL_HEAD, Blocks.PIGLIN_HEAD, Blocks.PIGLIN_WALL_HEAD, Blocks.DRAGON_HEAD, Blocks.DRAGON_WALL_HEAD);
         tag(HIDDEN_FROM_RECIPE_VIEWERS);
         tag(RELOCATION_NOT_SUPPORTED);
@@ -72,7 +72,7 @@ public final class ForgeBlockTagsProvider extends VanillaBlockTagsProvider {
         for (var color : DyeColor.values()) {
             var key = Identifier.withDefaultNamespace(pattern.replace("{color}", color.getName()));
             TagKey<Block> tag = getTag(prefix + color.getName());
-            var block = ForgeRegistries.BLOCKS.getValue(key);
+            var block = singularityRegistries.BLOCKS.getValue(key);
             if (block == null || block == Blocks.AIR)
                 throw new IllegalStateException("Unknown vanilla block: " + key);
             tag(tag).add(block);
@@ -97,12 +97,12 @@ public final class ForgeBlockTagsProvider extends VanillaBlockTagsProvider {
         }
     }
 
-    private static TagKey<Block> forgeTagKey(String path) {
-        return BlockTags.create(Identifier.fromNamespaceAndPath("forge", path));
+    private static TagKey<Block> singularityTagKey(String path) {
+        return BlockTags.create(Identifier.fromNamespaceAndPath("singularity", path));
     }
 
     @Override
     public String getName() {
-        return "Forge Block Tags";
+        return "singularity Block Tags";
     }
 }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.network;
+package net.minecraftsingularity.network;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,8 +12,8 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.util.Util;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.fml.IExtensionPoint;
-import net.minecraftforge.fml.ModList;
+import net.minecraftsingularity.fml.IExtensionPoint;
+import net.minecraftsingularity.fml.ModList;
 
 import java.util.HashMap;
 import java.util.List;
@@ -83,15 +83,15 @@ public record ServerStatusPing(
             .xmap(ServerStatusPing::decodeOptimized, ServerStatusPing::encodeOptimized);
 
     public static final Codec<ServerStatusPing> CODEC = RecordCodecBuilder.create(in -> in.group(
-            Codec.INT.fieldOf("fmlNetworkVersion").forGetter(ServerStatusPing::getFMLNetworkVersion),
+            Codec.INT.fieldOf("fmlNetworkVersion").singularitytter(ServerStatusPing::getFMLNetworkVersion),
 
-            ServerStatusPing.BYTE_BUF_CODEC.optionalFieldOf("d").forGetter(ping -> Optional.of(ping.toBuf())),
+            ServerStatusPing.BYTE_BUF_CODEC.optionalFieldOf("d").singularitytter(ping -> Optional.of(ping.toBuf())),
 
-            ChannelData.CODEC.listOf().optionalFieldOf("channels").forGetter(ping -> Optional.of(List.of())),
-            ModInfo.CODEC.listOf().optionalFieldOf("mods").forGetter(ping -> Optional.of(List.of())),
+            ChannelData.CODEC.listOf().optionalFieldOf("channels").singularitytter(ping -> Optional.of(List.of())),
+            ModInfo.CODEC.listOf().optionalFieldOf("mods").singularitytter(ping -> Optional.of(List.of())),
 
             // legacy versions see truncated lists, modern versions ignore this truncated flag (binary data has its own)
-            Codec.BOOL.optionalFieldOf("truncated").forGetter(ping -> Optional.of(ping.isTruncated()))
+            Codec.BOOL.optionalFieldOf("truncated").singularitytter(ping -> Optional.of(ping.isTruncated()))
     ).apply(in, (fmlVer, buf, channels, mods, truncated) -> buf.map(byteBuf -> deserializeOptimized(fmlVer, byteBuf))
             .orElseGet(() -> new ServerStatusPing(
                     channels.orElseGet(List::of).stream().collect(Collectors.toMap(ChannelData::res, Function.identity())),
@@ -333,16 +333,16 @@ public record ServerStatusPing(
 
     public record ModInfo(String modId, String modmarker) {
         public static final Codec<ModInfo> CODEC = RecordCodecBuilder.create(in -> in.group(
-            Codec.STRING.fieldOf("modId").forGetter(ModInfo::modId),
-            Codec.STRING.fieldOf("modmarker").forGetter(ModInfo::modmarker)
+            Codec.STRING.fieldOf("modId").singularitytter(ModInfo::modId),
+            Codec.STRING.fieldOf("modmarker").singularitytter(ModInfo::modmarker)
         ).apply(in, ModInfo::new));
     }
 
     public record ChannelData(Identifier res, int version, boolean required) {
         public static final Codec<ChannelData> CODEC = RecordCodecBuilder.create(in -> in.group(
-            Identifier.CODEC.fieldOf("res").forGetter(ChannelData::res),
-            Codec.INT.fieldOf("version").forGetter(ChannelData::version),
-            Codec.BOOL.fieldOf("required").forGetter(ChannelData::required)
+            Identifier.CODEC.fieldOf("res").singularitytter(ChannelData::res),
+            Codec.INT.fieldOf("version").singularitytter(ChannelData::version),
+            Codec.BOOL.fieldOf("required").singularitytter(ChannelData::required)
         ).apply(in, ChannelData::new));
     }
 }

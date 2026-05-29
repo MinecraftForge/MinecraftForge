@@ -1,17 +1,17 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.test;
+package net.minecraftsingularity.test;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.util.TextTable;
-import net.minecraftforge.common.util.TextTable.Column;
+import net.minecraftsingularity.common.util.TextTable;
+import net.minecraftsingularity.common.util.TextTable.Column;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import static net.minecraftforge.common.util.TextTable.column;
+import static net.minecraftsingularity.common.util.TextTable.column;
 
 public class TextTableTest
 {

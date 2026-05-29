@@ -1,9 +1,9 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftsingularity.common.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -16,8 +16,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftsingularity.common.loot.IGlobalLootModifier;
+import net.minecraftsingularity.common.loot.LootModifier;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
- * Provider for forge's GlobalLootModifier system. See {@link LootModifier}
+ * Provider for singularity's GlobalLootModifier system. See {@link LootModifier}
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
@@ -66,7 +66,7 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
     private CompletableFuture<?> run(CachedOutput cache, HolderLookup.Provider registries) {
         start(registries);
 
-        Path forgePath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("forge/loot_modifiers/global_loot_modifiers.json");
+        Path singularityPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("singularity/loot_modifiers/global_loot_modifiers.json");
         Path modifierFolderPath = this.output.getOutputFolder(PackOutput.Target.DATA_PACK).resolve(this.modid).resolve("loot_modifiers");
         List<Identifier> entries = new ArrayList<>();
 
@@ -83,11 +83,11 @@ public abstract class GlobalLootModifierProvider implements DataProvider {
             futuresBuilder.add(DataProvider.saveStable(cache, json, modifierPath));
         }));
 
-        JsonObject forgeJson = new JsonObject();
-        forgeJson.addProperty("replace", this.replace);
-        forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(Identifier::toString).collect(Collectors.toList())));
+        JsonObject singularityJson = new JsonObject();
+        singularityJson.addProperty("replace", this.replace);
+        singularityJson.add("entries", GSON.toJsonTree(entries.stream().map(Identifier::toString).collect(Collectors.toList())));
 
-        futuresBuilder.add(DataProvider.saveStable(cache, forgeJson, forgePath));
+        futuresBuilder.add(DataProvider.saveStable(cache, singularityJson, singularityPath));
 
         return CompletableFuture.allOf(futuresBuilder.build().toArray(CompletableFuture[]::new));
     }

@@ -1,18 +1,18 @@
 /*
- * Copyright (c) Forge Development LLC and contributors
+ * Copyright (c) singularity Development LLC and contributors
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
-package net.minecraftforge.event.level;
+package net.minecraftsingularity.event.level;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.bus.EventBus;
-import net.minecraftforge.eventbus.api.event.InheritableEvent;
-import net.minecraftforge.fml.LogicalSide;
+import net.minecraftsingularity.common.MinecraftForge;
+import net.minecraftsingularity.eventbus.api.bus.EventBus;
+import net.minecraftsingularity.eventbus.api.event.InheritableEvent;
+import net.minecraftsingularity.fml.LogicalSide;
 
 /**
  * This event is fired whenever a chunk has a watch-related action.
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.LogicalSide;
  * The {@linkplain #getPlayer() player}'s level may not be the same as the {@linkplain #getLevel() level of the chunk}
  * when the player is teleporting to another dimension.
  * <p>
- * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+ * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
  * only on the {@linkplain LogicalSide#SERVER logical server}.
  **/
 public sealed interface ChunkWatchEvent extends InheritableEvent {
@@ -46,7 +46,7 @@ public sealed interface ChunkWatchEvent extends InheritableEvent {
      * <p>
      * This event may be used to send additional chunk-related data to the client.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     record Watch(ServerPlayer getPlayer, ChunkPos getPos, LevelChunk getChunk, ServerLevel getLevel)
@@ -59,9 +59,9 @@ public sealed interface ChunkWatchEvent extends InheritableEvent {
     }
 
     /**
-     * This event is fired when server sends "forget chunk" packet to the {@link ServerPlayer}.
+     * This event is fired when server sends "singularityt chunk" packet to the {@link ServerPlayer}.
      * <p>
-     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
+     * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main singularity event bus}
      * only on the {@linkplain LogicalSide#SERVER logical server}.
      **/
     record UnWatch(ServerPlayer getPlayer, ChunkPos getPos, ServerLevel getLevel) implements ChunkWatchEvent {
