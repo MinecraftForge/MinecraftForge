@@ -1,64 +1,77 @@
-import net.minecraftforge.gradleutils.PomUtils
-
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
-
-dependencies {
-    compileOnly(libs.jetbrains.annotations)
-    implementation(project(':fmlloader'))
-    implementation(project(':fmlcore'))
-}
+gradleutils.displayName = 'MCLanguage'
+final vendor = 'Forge Development LLC'
+description = 'Language provider for Minecraft Forge that provides Minecraft Itself.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
-}
-
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.mclanguageprovider',
-            'FMLModType': 'LANGPROVIDER'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':    'MCLanguage',
-            'Specification-Vendor':   'Forge Development LLC',
-            'Specification-Version':  '1',
-            'Implementation-Title':   'MCLanguage',
-            'Implementation-Vendor':  'Forge Development LLC',
-            'Implementation-Version': '1.0'
-        ] as LinkedHashMap, 'net/minecraftforge/fml/mclanguageprovider/')
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs << '-Xlint:unchecked'
 }
 
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing {
-    publications.register('mavenJava', MavenPublication).configure {
-        from components.java
-        artifactId = 'mclanguage'
-        pom {
-            name = project.name
-            description = 'Language provider for Minecraft Forge that provides Minecraft Itself'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
+changelog {
+    from changelogBase
+}
+
+dependencies {
+    compileOnly libs.jetbrains.annotations
+
+    implementation projects.fmlloader
+    implementation projects.fmlcore
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.mclanguageprovider',
+                'FMLModType'           : 'LANGPROVIDER'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : gradleutils.displayName.get(),
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': '1.0'
+        ], 'net/minecraftforge/fml/mclanguageprovider/')
     }
-    
+}
+
+publishing {
     repositories {
         maven gradleutils.publishingForgeMaven
+    }
+
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom {
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }

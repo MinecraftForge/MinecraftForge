@@ -1,67 +1,74 @@
-import net.minecraftforge.gradleutils.PomUtils
+import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id 'java-library'
+    id 'jvm-test-suite'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
-
-import org.gradle.internal.os.OperatingSystem
 switch (OperatingSystem.current()) {
-	case OperatingSystem.LINUX:
-		project.ext.lwjglNatives = "natives-linux"
-		break
-	case OperatingSystem.MAC_OS:
-		project.ext.lwjglNatives = "natives-macos"
-		break
-	case OperatingSystem.WINDOWS:
-		project.ext.lwjglNatives = "natives-windows"
-		break
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
 }
+
+gradleutils.displayName = 'FML Early Display'
+final vendor = 'Forge Development LLC'
+description = 'A pretty looking, but prone to erroring screen displayed during Forge loading.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
 }
 
+license {
+    header = rootProject.file('LICENSE-header.txt')
+}
+
+changelog {
+    from changelogBase
+}
+
 dependencies {
-    compileOnly(libs.jetbrains.annotations)
-    implementation(project(':fmlloader'))
-    implementation(project(':fmlcore'))
-    implementation(libs.bundles.lwjgl)
-    implementation('org.slf4j:slf4j-api:1.8.0-beta4')
-    implementation(libs.jopt.simple)
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
-    testImplementation('org.powermock:powermock-core:2.0.9')
-    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.8.2')
-    testRuntimeOnly('org.slf4j:slf4j-jdk14:1.8.0-beta4')
-    testRuntimeOnly("org.lwjgl:lwjgl::$lwjglNatives")
-    testRuntimeOnly("org.lwjgl:lwjgl-glfw::$lwjglNatives")
-    testRuntimeOnly("org.lwjgl:lwjgl-opengl::$lwjglNatives")
-    testRuntimeOnly("org.lwjgl:lwjgl-stb::$lwjglNatives")
+    compileOnly libs.jetbrains.annotations
+
+    implementation projects.fmlloader
+    implementation projects.fmlcore
+    implementation libs.bundles.lwjgl
+    implementation earlyDisplayLibs.slf4j.api
+    implementation libs.jopt.simple
 }
 
-tasks.named('test', Test).configure {
-    useJUnitPlatform()
+// See gradle/gradle#35070 (https://github.com/gradle/gradle/issues/35070)
+// We are making the list of providers first BEFORE mapping them to a provider of the resolved objects so that they can be finalized after configuration.
+var lwjglTestLibs = [
+        dependencies.variantOf(earlyDisplayTestLibs.lwjgl) { classifier lwjglNatives },
+        dependencies.variantOf(earlyDisplayTestLibs.lwjgl.glfw) { classifier lwjglNatives },
+        dependencies.variantOf(earlyDisplayTestLibs.lwjgl.opengl) { classifier lwjglNatives },
+        dependencies.variantOf(earlyDisplayTestLibs.lwjgl.stb) { classifier lwjglNatives }
+].with { list ->
+    provider { list.collect { it.get() } }
 }
 
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.earlydisplay',
-            'Forge-Module-Layer':    'boot'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':      'FML Early Display',
-            'Specification-Vendor':     'Forge Development LLC',
-            'Specification-Version':    '1',
-            'Implementation-Title':     'FML Early Display',
-            'Implementation-Vendor':    'Forge Development LLC',
-            'Implementation-Version':   '1.0'
-        ] as LinkedHashMap, 'net/minecraftforge/fml/earlydisplay/')
+testing.suites.named('test', JvmTestSuite) {
+    useJUnitJupiter('5.8.2')
+
+    dependencies {
+        implementation earlyDisplayTestLibs.powermock.core
+        runtimeOnly earlyDisplayLibs.slf4j.jdk14
+        runtimeOnly.bundle lwjglTestLibs
     }
 }
 
@@ -69,24 +76,42 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-Xlint:unchecked'
 }
 
-license {
-    header = rootProject.file('LICENSE-header.txt')
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.earlydisplay',
+                'Forge-Module-Layer'   : 'boot'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : gradleutils.displayName.get(),
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': '1.0'
+        ], 'net/minecraftforge/fml/earlydisplay/')
+    }
 }
 
 publishing {
-    publications.register('mavenJava', MavenPublication).configure {
-        from components.java
-        artifactId = 'fmlearlydisplay'
-        pom {
-            name = project.name
-            description = 'A pretty looking, but prone to erroring screen displayed during Forge loading.'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
-    }
-    
     repositories {
         maven gradleutils.publishingForgeMaven
+    }
+
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom {
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }

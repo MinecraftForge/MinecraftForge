@@ -1,0 +1,8 @@
+[versions]
+java = "25"
+minecraft = "26.1.2"
+minecraft-next = "26.2"
+mcp = "20260409.101008"
+mappings-channel = "official"
+mappings-version = "26.1.2"
+changelog-base = "64.0"

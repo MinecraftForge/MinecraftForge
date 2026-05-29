@@ -1,65 +1,77 @@
-import net.minecraftforge.gradleutils.PomUtils
-
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
+gradleutils.displayName = 'LowCodeMod'
+final vendor = 'Forge Development LLC'
+description = 'Language provider for Minecraft Forge that loads mods without a Java entrypoint.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
-}
-
-dependencies {
-    compileOnly(libs.jetbrains.annotations)
-
-    implementation(project(':fmlloader'))
-    implementation(project(':fmlcore'))
-}
-
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.lowcodemod',
-            'FMLModType': 'LANGPROVIDER'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':   'LowCodeMod',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version': '1.0',
-            'Implementation-Title':   project.name,
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION.split('\\.')[0]
-        ] as java.util.LinkedHashMap, 'net/minecraftforge/fml/lowcodemod/')
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs << '-Xlint:unchecked'
 }
 
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing {
-    publications.register('mavenJava', MavenPublication).configure {
-        from components.java
-        artifactId = 'lowcodelanguage'
-        pom {
-            name = project.name
-            description = 'Language provider for Minecraft Forge that loads resource packs as mods'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
+changelog {
+    from changelogBase
+}
+
+dependencies {
+    compileOnly libs.jetbrains.annotations
+
+    implementation projects.fmlloader
+    implementation projects.fmlcore
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.lowcodemod',
+                'FMLModType'           : 'LANGPROVIDER'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1.0',
+                'Implementation-Title'  : project.name,
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': forgeVersion.split('\\.')[0]
+        ], 'net/minecraftforge/fml/lowcodemod/')
     }
-    
+}
+
+publishing {
     repositories {
         maven gradleutils.publishingForgeMaven
+    }
+
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom {
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }
