@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -39,6 +40,12 @@ public class ModifyOverlayTest extends BaseTestMod {
     private static final ForgeLayer layerC = (gg,tr) -> {};
     private static final ResourceLocation layerCName = name("layer_c");
 
+    private static final IForgeGameTestHelper.BoolFlag detectReplaceFlag = new IForgeGameTestHelper.BoolFlag("det_replace_flag");
+    // Wrapper renderer since we just need to change the callee location to test
+    private static final ForgeLayer replacementRenderer = (gg, tracker) -> {
+        Minecraft.getInstance().gui.renderEffects(gg, tracker);
+        detectReplaceFlag.set(true);
+    };
 
     private static final IForgeGameTestHelper.BoolFlag detectConditionFlag = new IForgeGameTestHelper.BoolFlag("det_cond_flag");
     private static final IForgeGameTestHelper.BoolFlag detectConditionStackFlag = new IForgeGameTestHelper.BoolFlag("det_cond_stack_flag");
@@ -119,6 +126,13 @@ public class ModifyOverlayTest extends BaseTestMod {
         });
     }
 
+    @GameTest
+    public static void replace_renderer(GameTestHelper helper) {
+        helper.assertTrue(detectReplaceFlag.getBool(), "Replace flag was not set.");
+        detectReplaceFlag.set(false);
+        helper.succeed();
+    }
+
     private void overlayTestListener(AddGuiOverlayLayersEvent event) {
         drawStack = event.getLayeredDraw();
         var layeredDraw = event.getLayeredDraw();
@@ -128,6 +142,7 @@ public class ModifyOverlayTest extends BaseTestMod {
         // Layers have to be present to be ordered against, of course, but we tested for that already above.
         pEffects.addAbove(layerBName, POTION_EFFECTS, layerB);
         pEffects.addAbove(layerCName, layerBName, layerC);
+        layeredDraw.replace(PRE_SLEEP_STACK, POTION_EFFECTS, replacementRenderer);
         layeredDraw.addBelow(PRE_SLEEP_STACK, layerAName, layerBName, layerA);
         layeredDraw.addConditionTo(PRE_SLEEP_STACK, BOSS_OVERLAY, () -> {
             if (enableConditionFlag.getBool()) {
