@@ -60,7 +60,7 @@ public class MutableHashedLinkedMap<K, V> implements Iterable<Map.Entry<K, V>>
      */
     public MutableHashedLinkedMap(Strategy<? super K> strategy)
     {
-        this(strategy, (k, v1, v2) -> v2);
+        this(strategy, (_, _, v2) -> v2);
     }
 
     /**

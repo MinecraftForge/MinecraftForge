@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/state/BlockBehaviour.java
 +++ b/net/minecraft/world/level/block/state/BlockBehaviour.java
-@@ -180,7 +_,7 @@
+@@ -178,7 +_,7 @@
          if (!state.isAir() && explosion.getBlockInteraction() != Explosion.BlockInteraction.TRIGGER_BLOCK) {
              Block block = state.getBlock();
              boolean doDropExperienceHack = explosion.getIndirectSourceEntity() instanceof Player;
@@ -9,7 +9,7 @@
                  BlockEntity blockEntity = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
                  LootParams.Builder params = new LootParams.Builder(level)
                      .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
-@@ -195,8 +_,7 @@
+@@ -193,8 +_,7 @@
                  state.getDrops(params).forEach(stack -> onHit.accept(stack, pos));
              }
  
@@ -19,15 +19,14 @@
          }
      }
  
-@@ -357,12 +_,15 @@
-         if (destroySpeed == -1.0F) {
+@@ -352,11 +_,14 @@
              return 0.0F;
-         } else {
--            int modifier = player.hasCorrectToolForDrops(state) ? 30 : 100;
--            return player.getDestroySpeed(state) / destroySpeed / modifier;
-+            int modifier = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
-+            return player.getDestroySpeed(state, pos) / destroySpeed / (float)modifier;
          }
+ 
+-        int modifier = player.hasCorrectToolForDrops(state) ? 30 : 100;
+-        return player.getDestroySpeed(state) / destroySpeed / modifier;
++        int modifier = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(state, player) ? 30 : 100;
++        return player.getDestroySpeed(state, pos) / destroySpeed / (float)modifier;
      }
  
      protected void spawnAfterBreak(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
@@ -37,7 +36,7 @@
      }
  
      protected void attack(final BlockState state, final Level level, final BlockPos pos, final Player player) {
-@@ -405,6 +_,8 @@
+@@ -407,6 +_,8 @@
          return this.isRandomlyTicking;
      }
  
@@ -46,7 +45,7 @@
      protected SoundType getSoundType(final BlockState state) {
          return this.soundType;
      }
-@@ -425,6 +_,10 @@
+@@ -427,6 +_,10 @@
          return this.properties.destroyTime;
      }
  
@@ -57,7 +56,7 @@
      public abstract static class BlockStateBase extends StateHolder<Block, BlockState> implements TypedInstance<Block> {
          private static final Direction[] DIRECTIONS = Direction.values();
          private static final VoxelShape[] EMPTY_OCCLUSION_SHAPES = Util.make(new VoxelShape[DIRECTIONS.length], s -> Arrays.fill(s, Shapes.empty()));
-@@ -576,12 +_,14 @@
+@@ -582,12 +_,14 @@
              return this.useShapeForLightOcclusion;
          }
  
@@ -73,7 +72,7 @@
          }
  
          public boolean ignitedByLava() {
-@@ -594,9 +_,11 @@
+@@ -600,9 +_,11 @@
          }
  
          public MapColor getMapColor(final BlockGetter level, final BlockPos pos) {
@@ -86,7 +85,7 @@
          public BlockState rotate(final Rotation rotation) {
              return this.getBlock().rotate(this.asState(), rotation);
          }
-@@ -650,6 +_,8 @@
+@@ -660,6 +_,8 @@
          }
  
          public PushReaction getPistonPushReaction() {
@@ -95,7 +94,7 @@
              return this.pushReaction;
          }
  
-@@ -1004,7 +_,7 @@
+@@ -1013,7 +_,7 @@
          private BlockBehaviour.StateArgumentPredicate<EntityType<?>> isValidSpawn = (state, level, pos, entityType) -> state.isFaceSturdy(
                  level, pos, Direction.UP
              )

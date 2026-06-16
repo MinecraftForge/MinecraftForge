@@ -106,7 +106,7 @@ public class ExistingFileHelper {
         candidateServerResources.add(ServerPacksSource.createVanillaPackSource());
 
         var symlinks = new ArrayList<ForbiddenSymlinkInfo>();
-        var folder = new FolderRepositorySource.FolderPackDetector(new DirectoryValidator(p  -> true));
+        var folder = new FolderRepositorySource.FolderPackDetector(new DirectoryValidator(_  -> true));
 
         for (Path existing : existingPacks) {
             try {

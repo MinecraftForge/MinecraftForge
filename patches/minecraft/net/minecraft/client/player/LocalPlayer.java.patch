@@ -58,7 +58,7 @@
          this.handsBusy = false;
          if (this.getControlledVehicle() instanceof AbstractBoat boat) {
              boat.setInput(this.input.keyPresses.left(), this.input.keyPresses.right(), this.input.keyPresses.forward(), this.input.keyPresses.backward());
-@@ -1146,7 +_,7 @@
+@@ -1147,7 +_,7 @@
              && this.isSprintingPossible(this.getAbilities().flying)
              && !this.isSlowDueToUsingItem()
              && (!this.isFallFlying() || this.isUnderWater())

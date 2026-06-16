@@ -9,7 +9,7 @@
              if (level instanceof ServerLevel serverLevel) {
                  this.shear(serverLevel, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -427,6 +_,18 @@
+@@ -435,6 +_,18 @@
          ItemStack itemStack = this.getItemBySlot(EQUIPMENT_SLOT_ANTENNA);
          this.setItemSlot(EQUIPMENT_SLOT_ANTENNA, ItemStack.EMPTY);
          this.spawnAtLocation(level, itemStack, 1.5F);

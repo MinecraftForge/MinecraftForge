@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/item/Items.java
 +++ b/net/minecraft/world/item/Items.java
-@@ -2358,7 +_,25 @@
+@@ -2099,7 +_,25 @@
      }
  
-     private static Item registerBlock(final Block block, final Block... alternatives) {
--        Item item = registerBlock(block);
-+        Item item = registerBlock(block, (block_, prop_) -> {
+     private static Item registerBlock(final BlockItemId id, final Block block, final Block... alternatives) {
+-        Item item = registerBlock(id, block);
++        Item item = registerBlock(id, block, (block_, prop_) -> {
 +            return new BlockItem(block_, prop_) {
 +                @Override
 +                public void registerBlocks(java.util.Map<Block, Item> map, Item self) {
@@ -27,14 +27,14 @@
  
          for (Block alternative : alternatives) {
              Item.BY_BLOCK.put(alternative, item);
-@@ -2401,10 +_,6 @@
+@@ -2140,10 +_,6 @@
  
-     private static Item registerItem(final ResourceKey<Item> key, final Function<Item.Properties, Item> itemFactory, final Item.Properties properties) {
-         Item item = itemFactory.apply(properties.setId(key));
+     private static Item registerItem(final ResourceKey<Item> id, final Function<Item.Properties, Item> itemFactory, final Item.Properties properties) {
+         Item item = itemFactory.apply(properties.setId(id));
 -        if (item instanceof BlockItem blockItem) {
 -            blockItem.registerBlocks(Item.BY_BLOCK, item);
 -        }
 -
-         return Registry.register(BuiltInRegistries.ITEM, key, item);
+         return Registry.register(BuiltInRegistries.ITEM, id, item);
      }
  }

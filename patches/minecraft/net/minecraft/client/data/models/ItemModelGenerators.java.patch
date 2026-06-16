@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/data/models/ItemModelGenerators.java
 +++ b/net/minecraft/client/data/models/ItemModelGenerators.java
-@@ -909,6 +_,9 @@
+@@ -868,6 +_,9 @@
          this.declareCustomModelItem(Items.COD);
          this.declareCustomModelItem(Items.FEATHER);
          this.declareCustomModelItem(Items.LEAD);

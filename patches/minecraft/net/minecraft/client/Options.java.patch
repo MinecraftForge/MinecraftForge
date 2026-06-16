@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -929,6 +_,7 @@
+@@ -986,6 +_,7 @@
      );
      public boolean syncWrites;
      public boolean startedCleanly = true;
@@ -8,7 +8,7 @@
  
      public static boolean isSoundDeviceDefault(final String deviceName) {
          return deviceName.equals("");
-@@ -1404,6 +_,7 @@
+@@ -1474,6 +_,7 @@
      }
  
      public Options(final Minecraft minecraft, final File workingDirectory) {
@@ -16,7 +16,7 @@
          this.minecraft = minecraft;
          this.optionsFile = new File(workingDirectory, "options.txt");
          boolean largeDistances = Runtime.getRuntime().maxMemory() >= 1000000000L;
-@@ -1556,15 +_,28 @@
+@@ -1624,15 +_,28 @@
          this.startedCleanly = access.process("startedCleanly", this.startedCleanly);
          access.process("musicToast", this.musicToast);
          access.process("musicFrequency", this.musicFrequency);
@@ -46,7 +46,7 @@
          for (SoundSource source : SoundSource.values()) {
              access.process("soundCategory_" + source.getName(), this.soundSourceVolumes.get(source));
          }
-@@ -1579,6 +_,10 @@
+@@ -1647,6 +_,10 @@
      }
  
      public void load() {
@@ -57,7 +57,7 @@
          try {
              if (!this.optionsFile.exists()) {
                  return;
-@@ -1598,7 +_,8 @@
+@@ -1666,7 +_,8 @@
              }
  
              final CompoundTag options = this.dataFix(rawOptions);
@@ -65,9 +65,9 @@
 +            java.util.function.Consumer<FieldAccess> processor = limited ? this::processOptionsKeysOnly : this::processOptions;
 +            processor.accept(
                  new Options.FieldAccess() {
-                     {
-                         Objects.requireNonNull(Options.this);
-@@ -1680,6 +_,17 @@
+                     private @Nullable String getValue(final String name) {
+                         Tag tag = options.get(name);
+@@ -1748,6 +_,17 @@
              );
              options.getString("fullscreenResolution").ifPresent(fullscreenResolution -> this.fullscreenVideoModeString = fullscreenResolution);
              KeyMapping.resetMapping();
@@ -82,26 +82,22 @@
 +                }
 +            }
 +
-         } catch (Exception var7) {
-             LOGGER.error("Failed to load options", (Throwable)var7);
+         } catch (Exception e) {
+             LOGGER.error("Failed to load options", e);
          }
-@@ -1707,6 +_,7 @@
+@@ -1778,9 +_,11 @@
      public void save() {
          try (final PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.optionsFile), StandardCharsets.UTF_8))) {
              writer.println("version:" + SharedConstants.getCurrentVersion().dataVersion().version());
 +            var seen = new java.util.HashSet<String>();
              this.processOptions(
                  new Options.FieldAccess() {
-                     {
-@@ -1714,6 +_,7 @@
-                     }
- 
                      public void writePrefix(final String name) {
 +                        seen.add(name);
                          writer.print(name);
                          writer.print(':');
                      }
-@@ -1769,6 +_,12 @@
+@@ -1836,6 +_,12 @@
              if (fullscreenVideoModeString != null) {
                  writer.println("fullscreenResolution:" + fullscreenVideoModeString);
              }
@@ -111,10 +107,10 @@
 +                    writer.println(entry.getKey() + ":" + entry.getValue());
 +            }
 +
-         } catch (Exception var6) {
-             LOGGER.error("Failed to save options", (Throwable)var6);
+         } catch (Exception e) {
+             LOGGER.error("Failed to save options", e);
          }
-@@ -1806,6 +_,7 @@
+@@ -1873,6 +_,7 @@
      }
  
      public void broadcastOptions() {
@@ -122,7 +118,7 @@
          if (this.minecraft.player != null) {
              this.minecraft.player.connection.broadcastClientInformation(this.buildPlayerInformation());
          }
-@@ -1923,6 +_,23 @@
+@@ -1986,6 +_,23 @@
  
      public static Component genericValueLabel(final Component caption, final int value) {
          return genericValueLabel(caption, Component.literal(Integer.toString(value)));

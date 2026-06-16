@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -31,9 +30,9 @@ public class CompositeRenderable implements IRenderable<CompositeRenderable.Tran
     private CompositeRenderable() { }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Transforms context) {
+    public void render(PoseStack poseStack, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Transforms context) {
         for (var component : components)
-            component.render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, context);
+            component.render(poseStack, textureRenderTypeLookup, lightmap, overlay, context);
     }
 
     public static Builder builder() {
@@ -49,7 +48,7 @@ public class CompositeRenderable implements IRenderable<CompositeRenderable.Tran
             this.name = name;
         }
 
-        public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, Transforms context) {
+        public void render(PoseStack poseStack, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, Transforms context) {
             Matrix4f matrix = context.getTransform(name);
             if (matrix != null) {
                 poseStack.pushPose();
@@ -57,10 +56,10 @@ public class CompositeRenderable implements IRenderable<CompositeRenderable.Tran
             }
 
             for (var part : children)
-                part.render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, context);
+                part.render(poseStack, textureRenderTypeLookup, lightmap, overlay, context);
 
             for (var mesh : meshes)
-                mesh.render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay);
+                mesh.render(poseStack, textureRenderTypeLookup, lightmap, overlay);
 
             if (matrix != null)
                 poseStack.popPose();
@@ -76,13 +75,13 @@ public class CompositeRenderable implements IRenderable<CompositeRenderable.Tran
             this.texture = texture;
         }
 
-        public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay) {
-            var consumer = bufferSource.getBuffer(textureRenderTypeLookup.get(texture));
+        public void render(PoseStack poseStack, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay) {
+            //var consumer = bufferSource.getBuffer(textureRenderTypeLookup.get(texture));
             quadInstance.setLightCoords(lightmap);
             quadInstance.setOverlayCoords(overlay);
 
-            for (var quad : quads)
-                consumer.putBakedQuad(poseStack.last(), quad, quadInstance);
+            //for (var quad : quads)
+            //    consumer.putBakedQuad(poseStack.last(), quad, quadInstance);
         }
     }
 

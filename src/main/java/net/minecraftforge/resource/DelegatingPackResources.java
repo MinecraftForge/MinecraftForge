@@ -49,9 +49,9 @@ public class DelegatingPackResources extends AbstractPackResources {
         Map<String, List<PackResources>> map = new HashMap<>();
         for (PackResources pack : packList) {
             for (String namespace : pack.getNamespaces(type))
-                map.computeIfAbsent(namespace, k -> new ArrayList<>()).add(pack);
+                map.computeIfAbsent(namespace, _ -> new ArrayList<>()).add(pack);
         }
-        map.replaceAll((k, list) -> ImmutableList.copyOf(list));
+        map.replaceAll((_, list) -> ImmutableList.copyOf(list));
         return ImmutableMap.copyOf(map);
     }
 

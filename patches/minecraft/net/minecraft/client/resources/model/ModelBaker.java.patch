@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/resources/model/ModelBaker.java
 +++ b/net/minecraft/client/resources/model/ModelBaker.java
 @@ -32,4 +_,16 @@
-     public interface SharedOperationKey<T> {
+     interface SharedOperationKey<T> {
          T compute(ModelBaker modelBakery);
      }
 +

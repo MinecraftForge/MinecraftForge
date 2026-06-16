@@ -13,7 +13,6 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiPredicate;
 
 @ApiStatus.Internal // since 1.21.1, will be made non-public in a later MC version
 public class VersionSupportMatrix {

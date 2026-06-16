@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "I": "minecraft:iron_block",
     "i": "#c:ingots/iron"

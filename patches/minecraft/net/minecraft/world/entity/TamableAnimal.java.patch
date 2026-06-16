@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -135,9 +_,9 @@
+@@ -134,9 +_,9 @@
  
      protected void feed(final Player player, final InteractionHand hand, final ItemStack itemStack, final float healingFactor, final float defaultHeal) {
          FoodProperties foodProperties = itemStack.get(DataComponents.FOOD);
@@ -11,7 +11,7 @@
      }
  
      public boolean isInSittingPose() {
-@@ -222,13 +_,16 @@
+@@ -221,13 +_,16 @@
  
      @Override
      public void die(final DamageSource source) {

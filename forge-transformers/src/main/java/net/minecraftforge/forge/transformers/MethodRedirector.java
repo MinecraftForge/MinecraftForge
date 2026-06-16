@@ -41,7 +41,7 @@ record MethodRedirector() implements ITransformer<ClassNode> {
             "finalizeSpawn",
             "(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;",
             GSON.fromJson(new InputStreamReader(sneak(() -> MethodRedirector.class.getModule().getResourceAsStream("coremods/finalize_spawn_targets.json"))), Target[].class),
-            insn -> new MethodInsnNode(
+            _ -> new MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 "net/minecraftforge/event/ForgeEventFactory",
                 "onFinalizeSpawn",

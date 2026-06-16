@@ -32,7 +32,7 @@ class DimensionsCommand {
 
                 Map<Identifier, List<Identifier>> types = new HashMap<>();
                 for (ServerLevel dim : ctx.getSource().getServer().getAllLevels()) {
-                    types.computeIfAbsent(reg.getKey(dim.dimensionType()), k -> new ArrayList<>()).add(dim.dimension().identifier());
+                    types.computeIfAbsent(reg.getKey(dim.dimensionType()), _ -> new ArrayList<>()).add(dim.dimension().identifier());
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {

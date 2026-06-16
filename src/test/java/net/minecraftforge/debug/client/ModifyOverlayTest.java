@@ -5,10 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -35,18 +32,18 @@ public class ModifyOverlayTest extends BaseTestMod {
     private static final Identifier myStackName = name("my_stack_name");
     private static final ForgeLayeredDraw myLayerStack = new ForgeLayeredDraw(myStackName);
 
-    private static final ForgeLayer notAddedLayer = (gg, tr) -> {};
-    private static final ForgeLayer layerA = (gg,tr) -> {};
+    private static final ForgeLayer notAddedLayer = (_, _) -> {};
+    private static final ForgeLayer layerA = (_,_) -> {};
     private static final Identifier layerAName = name("layer_a");
-    private static final ForgeLayer layerB = (gg,tr) -> {};
+    private static final ForgeLayer layerB = (_,_) -> {};
     private static final Identifier layerBName = name("layer_b");
-    private static final ForgeLayer layerC = (gg,tr) -> {};
+    private static final ForgeLayer layerC = (_,_) -> {};
     private static final Identifier layerCName = name("layer_c");
 
     private static final IForgeGameTestHelper.BoolFlag detectReplaceFlag = new IForgeGameTestHelper.BoolFlag("det_replace_flag");
     // Wrapper renderer since we just need to change the callee location to test
     private static final ForgeLayer replacementRenderer = (gg, tracker) -> {
-        Minecraft.getInstance().gui.extractEffects(gg, tracker);
+        Minecraft.getInstance().gui.hud.extractEffects(gg, tracker);
         detectReplaceFlag.set(true);
     };
 
@@ -88,6 +85,7 @@ public class ModifyOverlayTest extends BaseTestMod {
         });
     }
 
+    @SuppressWarnings("unchecked")
     @GameTest
     public static void ordered_layers(GameTestHelper helper) {
         // Test that layers are in the correct order.
@@ -99,9 +97,9 @@ public class ModifyOverlayTest extends BaseTestMod {
             var field1 = cls.getDeclaredField("namedLayers");
             field.setAccessible(true);
             field1.setAccessible(true);
-            Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>> VROOT = ((Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>>) field.get(drawStack));
-            var PSS = ((ForgeLayeredDraw) VROOT.get(PRE_SLEEP_STACK).getKey());
-            check = ((Map<Identifier, ForgeLayer>) field1.get(PSS));
+            var VROOT = ((Map<Identifier, Map.Entry<ForgeLayeredDraw, BooleanSupplier>>) field.get(drawStack));
+            var PSS = ((ForgeLayeredDraw)VROOT.get(PRE_SLEEP_STACK).getKey());
+            check = ((Map<Identifier, ForgeLayer>)field1.get(PSS));
             internalLayersList = getInternalLayersList(PSS);
         } catch (Exception e) {
             helper.fail("Threw a " + e.getMessage() + " when trying to get the inner layer list.");
@@ -157,7 +155,7 @@ public class ModifyOverlayTest extends BaseTestMod {
             }
         });
 
-        myLayerStack.add(name("my_inner_layer_name"), (gg, tr) -> {
+        myLayerStack.add(name("my_inner_layer_name"), (_, _) -> {
             detectConditionStackFlag.set(true);
         });
         // Demonstrates that entire stacks can have conditions attached

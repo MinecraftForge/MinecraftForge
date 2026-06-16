@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/skeleton/AbstractSkeleton.java
 +++ b/net/minecraft/world/entity/monster/skeleton/AbstractSkeleton.java
-@@ -138,7 +_,7 @@
+@@ -133,7 +_,7 @@
          if (this.level() != null && !this.level().isClientSide()) {
              this.goalSelector.removeGoal(this.meleeGoal);
              this.goalSelector.removeGoal(this.bowGoal);
@@ -9,7 +9,7 @@
              if (usedWeapon.is(Items.BOW)) {
                  int minAttackInterval = this.getHardAttackInterval();
                  if (this.level().getDifficulty() != Difficulty.HARD) {
-@@ -163,9 +_,12 @@
+@@ -158,9 +_,12 @@
  
      @Override
      public void performRangedAttack(final LivingEntity target, final float power) {

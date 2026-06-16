@@ -8,10 +8,7 @@ package net.minecraftforge.common.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
-import net.minecraft.resources.Identifier;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidIds;
 import net.minecraftforge.common.ForgeMod;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -24,10 +21,19 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         super(output, lookupProvider, "forge", existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addTags(HolderLookup.Provider lookupProvider) {
-        tag(WATER).add(net.minecraft.world.level.material.Fluids.WATER).add(net.minecraft.world.level.material.Fluids.FLOWING_WATER);
-        tag(LAVA).add(net.minecraft.world.level.material.Fluids.LAVA).add(net.minecraft.world.level.material.Fluids.FLOWING_LAVA);
+        tag(WATER)
+            .add(
+                FluidIds.WATER,
+                FluidIds.FLOWING_WATER
+            );
+        tag(LAVA)
+            .add(
+                FluidIds.LAVA,
+                FluidIds.FLOWING_LAVA
+            );
         tag(MILK)
             .addOptional(ForgeMod.MILK.getKey().identifier())
             .addOptional(ForgeMod.FLOWING_MILK.getKey().identifier());
@@ -40,10 +46,6 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider {
         tag(BEETROOT_SOUP);
         tag(HIDDEN_FROM_RECIPE_VIEWERS);
         tag(EXPERIENCE);
-    }
-
-    private static TagKey<Fluid> forgeTagKey(String path) {
-        return FluidTags.create(Identifier.fromNamespaceAndPath("forge", path));
     }
 
     @Override

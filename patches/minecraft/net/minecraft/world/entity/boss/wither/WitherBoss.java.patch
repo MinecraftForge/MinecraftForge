@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
 +++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
-@@ -320,7 +_,7 @@
+@@ -319,7 +_,7 @@
  
              if (this.destroyBlocksTick > 0) {
                  this.destroyBlocksTick--;
@@ -9,7 +9,7 @@
                      boolean destroyed = false;
                      int width = Mth.floor(this.getBbWidth() / 2.0F + 1.0F);
                      int height = Mth.floor(this.getBbHeight());
-@@ -334,7 +_,7 @@
+@@ -333,7 +_,7 @@
                          this.getBlockZ() + width
                      )) {
                          BlockState state = level.getBlockState(blockPos);
@@ -18,7 +18,7 @@
                              destroyed = level.destroyBlock(blockPos, true, this) || destroyed;
                          }
                      }
-@@ -353,6 +_,10 @@
+@@ -352,6 +_,10 @@
          }
      }
  

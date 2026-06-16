@@ -40,7 +40,7 @@ public final class RegisterItemDecorationsEvent extends MutableEvent implements 
      * Register an ItemDecorator to an Item
      */
     public void register(ItemLike itemLike, IItemDecorator decorator) {
-        List<IItemDecorator> itemDecoratorList = decorators.computeIfAbsent(itemLike.asItem(), item -> new ArrayList<>());
+        List<IItemDecorator> itemDecoratorList = decorators.computeIfAbsent(itemLike.asItem(), _ -> new ArrayList<>());
         itemDecoratorList.add(decorator);
     }
 }

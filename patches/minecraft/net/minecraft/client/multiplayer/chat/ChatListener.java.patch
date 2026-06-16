@@ -1,44 +1,46 @@
 --- a/net/minecraft/client/multiplayer/chat/ChatListener.java
 +++ b/net/minecraft/client/multiplayer/chat/ChatListener.java
-@@ -140,6 +_,8 @@
+@@ -142,6 +_,8 @@
              LocalPlayer receiver = this.minecraft.player;
              if (receiver != null && receiver.chatAbilities().canReceivePlayerMessages()) {
                  Component decoratedMessage = boundChatType.decorate(message);
 +                decoratedMessage = net.minecraftforge.client.ForgeHooksClient.onClientChat(boundChatType, decoratedMessage, Util.NIL_UUID);
 +                if (decoratedMessage == null) return false;
-                 this.minecraft.gui.getChat().addPlayerMessage(decoratedMessage, null, GuiMessageTag.system());
+                 this.minecraft.gui.hud.getChat().addPlayerMessage(decoratedMessage, null, GuiMessageTag.system());
                  this.narrateChatMessage(boundChatType, message);
                  this.logSystemMessage(decoratedMessage, received);
-@@ -169,12 +_,16 @@
+@@ -177,12 +_,16 @@
                  MessageSignature signature = message.signature();
                  FilterMask filterMask = message.filterMask();
                  if (filterMask.isEmpty()) {
--                    this.minecraft.gui.getChat().addPlayerMessage(decoratedMessage, signature, tag);
+-                    this.minecraft.gui.hud.getChat().addPlayerMessage(decoratedMessage, signature, tag);
 +                    Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(boundChatType, decoratedMessage, message, message.sender());
 +                    if (forgeComponent == null) return false;
-+                    this.minecraft.gui.getChat().addPlayerMessage(forgeComponent, signature, tag);
++                    this.minecraft.gui.hud.getChat().addPlayerMessage(forgeComponent, signature, tag);
                      this.narrateChatMessage(boundChatType, message.decoratedContent());
                  } else {
                      Component filteredContent = filterMask.applyWithFormatting(message.signedContent());
                      if (filteredContent != null) {
--                        this.minecraft.gui.getChat().addPlayerMessage(boundChatType.decorate(filteredContent), signature, tag);
+-                        this.minecraft.gui.hud.getChat().addPlayerMessage(boundChatType.decorate(filteredContent), signature, tag);
 +                        Component forgeComponent = net.minecraftforge.client.ForgeHooksClient.onClientPlayerChat(boundChatType, boundChatType.decorate(filteredContent), message, message.sender());
 +                        if (forgeComponent == null) return false;
-+                        this.minecraft.gui.getChat().addPlayerMessage(forgeComponent, signature, tag);
++                        this.minecraft.gui.hud.getChat().addPlayerMessage(forgeComponent, signature, tag);
                          this.narrateChatMessage(boundChatType, filteredContent);
                      }
                  }
-@@ -208,10 +_,12 @@
+@@ -216,12 +_,14 @@
          chatLog.push(LoggedChatMessage.system(message, timeStamp));
      }
  
 -    public void handleSystemMessage(final Component message, final boolean remote) {
 +    public void handleSystemMessage(Component message, final boolean remote) {
-         if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(this.guessChatUUID(message))) {
-             LocalPlayer receiver = this.minecraft.player;
-             if (receiver != null && receiver.chatAbilities().canReceiveSystemMessages()) {
-+                message = net.minecraftforge.client.ForgeHooksClient.onClientSystemMessage(message, remote);
-+                if (message == null) return;
-                 if (remote) {
-                     this.minecraft.gui.getChat().addServerSystemMessage(message);
-                     this.logSystemMessage(message, Instant.now());
+         UUID guessedUUID = this.guessChatUUID(message);
+         if (!this.minecraft.options.hideMatchedNames().get() || !this.minecraft.isBlocked(guessedUUID)) {
+             if (guessedUUID == Util.NIL_UUID || !this.minecraft.isFriendOnlyRestricted(guessedUUID)) {
+                 LocalPlayer receiver = this.minecraft.player;
+                 if (receiver != null && receiver.chatAbilities().canReceiveSystemMessages()) {
++                    message = net.minecraftforge.client.ForgeHooksClient.onClientSystemMessage(message, remote);
++                    if (message == null) return;
+                     if (remote) {
+                         this.minecraft.gui.hud.getChat().addServerSystemMessage(message);
+                         this.logSystemMessage(message, Instant.now());

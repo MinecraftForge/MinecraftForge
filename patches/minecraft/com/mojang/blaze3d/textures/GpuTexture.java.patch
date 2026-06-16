@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/textures/GpuTexture.java
 +++ b/com/mojang/blaze3d/textures/GpuTexture.java
-@@ -8,7 +_,7 @@
+@@ -9,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)

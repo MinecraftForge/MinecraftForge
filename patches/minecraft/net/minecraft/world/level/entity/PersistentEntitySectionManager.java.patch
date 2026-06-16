@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -72,7 +_,18 @@
+@@ -71,7 +_,18 @@
          return this.addEntity(entity, false);
      }
  
@@ -18,19 +18,19 @@
 +    private boolean addEntityWithoutEvent(final T entity, final boolean loaded) {
          if (!this.addEntityUuid(entity)) {
              return false;
-         } else {
+         }
 @@ -93,6 +_,10 @@
-                 this.startTicking(entity);
-             }
+             this.startTicking(entity);
+         }
  
 +            if (entity instanceof Entity) {
 +                ((Entity)entity).onAddedToLevel();
 +            }
 +
-             return true;
-         }
+         return true;
      }
-@@ -370,6 +_,7 @@
+ 
+@@ -369,11 +_,13 @@
  
      private class Callback implements EntityInLevelCallback {
          private final T entity;
@@ -38,15 +38,13 @@
          private long currentSectionKey;
          private EntitySection<T> currentSection;
  
-@@ -377,6 +_,7 @@
-             Objects.requireNonNull(PersistentEntitySectionManager.this);
-             super();
+         private Callback(final T entity, final long currentSectionKey, final EntitySection<T> currentSection) {
              this.entity = entity;
 +            this.realEntity = entity instanceof Entity e ? e : null;
              this.currentSectionKey = currentSectionKey;
              this.currentSection = currentSection;
          }
-@@ -395,9 +_,13 @@
+@@ -392,9 +_,13 @@
                  PersistentEntitySectionManager.this.removeSectionIfEmpty(this.currentSectionKey, this.currentSection);
                  EntitySection<T> newSection = PersistentEntitySectionManager.this.sectionStorage.getOrCreateSection(newSectionPos);
                  newSection.add(this.entity);

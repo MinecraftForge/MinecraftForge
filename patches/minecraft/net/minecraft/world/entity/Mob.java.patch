@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Mob.java
 +++ b/net/minecraft/world/entity/Mob.java
-@@ -139,6 +_,9 @@
+@@ -144,6 +_,9 @@
      private Leashable.@Nullable LeashData leashData;
      private BlockPos homePosition = BlockPos.ZERO;
      private int homeRadius = -1;
@@ -10,7 +10,7 @@
  
      protected Mob(final EntityType<? extends Mob> type, final Level level) {
          super(type, level);
-@@ -244,7 +_,10 @@
+@@ -249,7 +_,10 @@
      }
  
      public void setTarget(final @Nullable LivingEntity target) {
@@ -22,7 +22,7 @@
      }
  
      @Override
-@@ -383,6 +_,10 @@
+@@ -388,6 +_,10 @@
          if (this.isNoAi()) {
              output.putBoolean("NoAI", this.isNoAi());
          }
@@ -33,7 +33,7 @@
      }
  
      @Override
-@@ -401,6 +_,13 @@
+@@ -406,6 +_,13 @@
          this.lootTable = input.read("DeathLootTable", LootTable.KEY_CODEC);
          this.lootTableSeed = input.getLongOr("DeathLootTableSeed", 0L);
          this.setNoAi(input.getBooleanOr("NoAI", false));
@@ -47,7 +47,7 @@
      }
  
      @Override
-@@ -459,7 +_,7 @@
+@@ -464,7 +_,7 @@
              && this.canPickUpLoot()
              && this.isAlive()
              && !this.dead
@@ -56,7 +56,7 @@
              Vec3i pickupReach = this.getPickupReach();
  
              for (ItemEntity entity : this.level()
-@@ -657,6 +_,14 @@
+@@ -691,6 +_,14 @@
              this.discard();
          } else if (!this.isPersistenceRequired() && !this.requiresCustomPersistence()) {
              Entity player = this.level().getNearestPlayer(this, -1.0);
@@ -71,7 +71,7 @@
              if (player != null) {
                  double distSqr = player.distanceToSqr(this);
                  int instantDespawnDistance = this.getType().getCategory().getDespawnDistance();
-@@ -1058,6 +_,16 @@
+@@ -1084,6 +_,16 @@
          }
      }
  
@@ -88,7 +88,7 @@
      public @Nullable SpawnGroupData finalizeSpawn(
          final ServerLevelAccessor level, final DifficultyInstance difficulty, final EntitySpawnReason spawnReason, final @Nullable SpawnGroupData groupData
      ) {
-@@ -1070,6 +_,7 @@
+@@ -1096,6 +_,7 @@
          }
  
          this.setLeftHanded(random.nextFloat() < 0.05F);
@@ -96,7 +96,7 @@
          return groupData;
      }
  
-@@ -1383,15 +_,25 @@
+@@ -1409,15 +_,25 @@
          return wasHurt;
      }
  
@@ -123,7 +123,7 @@
      @VisibleForTesting
      public void removeFreeWill() {
          this.removeAllGoals(goal -> true);
-@@ -1417,6 +_,41 @@
+@@ -1449,6 +_,41 @@
      @Override
      public @Nullable ItemStack getPickResult() {
          return SpawnEggItem.byId(this.getType()).map(ItemStack::new).orElse(null);

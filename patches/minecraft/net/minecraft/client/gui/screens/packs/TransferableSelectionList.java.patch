@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/packs/TransferableSelectionList.java
 +++ b/net/minecraft/client/gui/screens/packs/TransferableSelectionList.java
-@@ -66,7 +_,7 @@
+@@ -65,7 +_,7 @@
          Component header = Component.empty().append(this.title).withStyle(ChatFormatting.UNDERLINE, ChatFormatting.BOLD);
          this.addEntry(new TransferableSelectionList.HeaderEntry(this.minecraft.font, header), (int)(9.0F * 1.5F));
          this.setSelected(null);

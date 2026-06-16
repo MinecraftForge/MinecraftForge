@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -180,9 +_,10 @@
+@@ -177,9 +_,10 @@
          for (int dest = 0; dest < 3; dest++) {
              items.set(dest, potionBrewing.mix(ingredient, items.get(dest)));
          }
@@ -12,7 +12,7 @@
          if (remainder != null) {
              if (ingredient.isEmpty()) {
                  ingredient = remainder.create();
-@@ -221,6 +_,9 @@
+@@ -218,6 +_,9 @@
          if (slot == 3) {
              PotionBrewing potionBrewing = this.level != null ? this.level.potionBrewing() : PotionBrewing.EMPTY;
              return potionBrewing.isIngredient(itemStack);
@@ -22,7 +22,7 @@
          } else {
              return slot == 4
                  ? itemStack.is(ItemTags.BREWING_FUEL)
-@@ -251,5 +_,34 @@
+@@ -248,5 +_,34 @@
      @Override
      protected AbstractContainerMenu createMenu(final int containerId, final Inventory inventory) {
          return new BrewingStandMenu(containerId, inventory, this, this.dataAccess);

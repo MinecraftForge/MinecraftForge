@@ -51,12 +51,12 @@
          this.addOptionalTasks();
          this.returnToWorld();
      }
-@@ -211,7 +_,7 @@
+@@ -213,7 +_,7 @@
                  this.currentTask = task;
  
                  try {
 -                    task.start(this::send);
 +                    task.start(this.taskContext);
-                 } catch (Exception var3) {
-                     LOGGER.error("Failed to start configuration task {}", task.type(), var3);
+                 } catch (Exception e) {
+                     LOGGER.error("Failed to start configuration task {}", task.type(), e);
                      this.disconnect(DISCONNECT_REASON_CONFIGURATION_ERROR);

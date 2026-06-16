@@ -1,26 +1,13 @@
 --- a/net/minecraft/data/tags/VanillaItemTagsProvider.java
 +++ b/net/minecraft/data/tags/VanillaItemTagsProvider.java
-@@ -16,6 +_,10 @@
-         super(output, Registries.ITEM, lookupProvider, e -> e.builtInRegistryHolder().key());
+@@ -28,6 +_,10 @@
+         };
      }
  
 +    public VanillaItemTagsProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+        super(output, Registries.ITEM, lookupProvider, e -> e.builtInRegistryHolder().key(), modId, existingFileHelper);
++        super(output, Registries.ITEM, lookupProvider, modId, existingFileHelper);
 +    }
 +
      @Override
      protected void addTags(final HolderLookup.Provider registries) {
-         (new BlockItemTagsProvider() {
-@@ -578,6 +_,12 @@
-         @Override
-         public TagAppender<Block, Block> addOptionalTag(final TagKey<Block> tag) {
-             this.itemAppender.addOptionalTag(blockTagToItemTag(tag));
-+            return this;
-+        }
-+
-+        @Override
-+        public TagAppender<Block, Block> remove(final Block value) {
-+            this.itemAppender.remove(Objects.requireNonNull(value.asItem()));
-             return this;
-         }
-     }
+         new VanillaBlockItemTagsProvider(tagId -> BlockItemTagsProvider.wrapForItems(this.tag(tagId.item()))).run();

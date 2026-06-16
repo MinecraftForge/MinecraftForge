@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/spider/Spider.java
 +++ b/net/minecraft/world/entity/monster/spider/Spider.java
-@@ -123,7 +_,10 @@
+@@ -124,7 +_,10 @@
  
      @Override
      public boolean canBeAffected(final MobEffectInstance newEffect) {

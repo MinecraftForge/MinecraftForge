@@ -81,20 +81,20 @@
                                      if (!unresolvedEntries.isEmpty()) {
                                          throw new IllegalArgumentException(
                                              String.format(
-@@ -93,8 +_,11 @@
-                                             )
+@@ -94,8 +_,11 @@
                                          );
-                                     } else {
--                                        Path path = this.pathProvider.json(id);
--                                        return DataProvider.saveStable(cache, c.contents, TagFile.CODEC, new TagFile(entries, builder.shouldReplace()), path);
-+                                        Path path = this.getPath(id);
-+                                        if (path == null) {
-+                                            return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
-+                                        }
-+                                        return DataProvider.saveStable(cache, c.contents, TagFile.CODEC, new TagFile(entries, builder.shouldReplace(), builder.getRemoveEntries().toList()), path);
                                      }
+ 
+-                                    Path path = this.pathProvider.json(id);
+-                                    return DataProvider.saveStable(cache, c.contents, TagFile.CODEC, new TagFile(entries, builder.shouldReplace()), path);
++                                    Path path = this.getPath(id);
++                                    if (path == null) {
++                                        return CompletableFuture.completedFuture(null); // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
++                                    }
++                                    return DataProvider.saveStable(cache, c.contents, TagFile.CODEC, new TagFile(entries, builder.shouldReplace(), builder.getRemoveEntries().toList()), path);
                                  }
                              )
+                             .toArray(CompletableFuture[]::new)
 @@ -105,7 +_,12 @@
      }
  
@@ -109,12 +109,10 @@
      }
  
      public CompletableFuture<TagsProvider.TagLookup<T>> contentsGetter() {
-@@ -118,6 +_,15 @@
-             this.addTags(registries);
-             return (HolderLookup.Provider)registries;
+@@ -120,15 +_,24 @@
          });
-+    }
-+
+     }
+ 
 +
 +    private boolean missing(TagEntry reference) {
 +        // Optional tags should not be validated
@@ -122,6 +120,19 @@
 +           return existingFileHelper == null || !existingFileHelper.exists(reference.getId(), reference.isTag() ? resourceType : elementResourceType);
 +        }
 +        return false;
++    }
++
+     protected TagAppender<T> tag(final TagKey<T> tag) {
+         TagBuilder builder = this.getOrCreateRawBuilder(tag);
+-        return TagAppender.forBuilder(builder);
++        return TagAppender.forBuilder(builder, this.modId);
+     }
+ 
+     protected TagAppender<T> tag(final TagKey<T> tag, final boolean replace) {
+         TagBuilder builder = this.getOrCreateRawBuilder(tag);
+         builder.setReplace(replace);
+-        return TagAppender.forBuilder(builder);
++        return TagAppender.forBuilder(builder, this.modId);
      }
  
      @FunctionalInterface

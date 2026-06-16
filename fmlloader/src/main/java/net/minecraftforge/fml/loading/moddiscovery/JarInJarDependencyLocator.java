@@ -145,7 +145,7 @@ public class JarInJarDependencyLocator extends AbstractModProvider implements ID
             var ids = new TreeMap<String, List<Entry>>();
             for (var entry : selector.entries.values()) {
                 if (entry != FAILED && entry.coord != null)
-                    ids.computeIfAbsent(entry.coord, id -> new ArrayList<>()).add(entry);
+                    ids.computeIfAbsent(entry.coord, _ -> new ArrayList<>()).add(entry);
             }
 
             for (var entry : ids.entrySet()) {

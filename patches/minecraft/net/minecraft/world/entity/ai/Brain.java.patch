@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/Brain.java
 +++ b/net/minecraft/world/entity/ai/Brain.java
-@@ -256,6 +_,10 @@
+@@ -252,6 +_,10 @@
          this.schedule = schedule;
      }
  
@@ -11,7 +11,7 @@
      public void setCoreActivities(final Set<Activity> activities) {
          this.coreActivities = activities;
      }
-@@ -457,6 +_,31 @@
+@@ -453,6 +_,31 @@
  
      public boolean isBrainDead() {
          return this.memories.isEmpty() && this.sensors.isEmpty() && this.availableBehaviorsByPriority.isEmpty();

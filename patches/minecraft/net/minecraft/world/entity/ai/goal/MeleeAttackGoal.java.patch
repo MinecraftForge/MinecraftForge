@@ -9,23 +9,24 @@
  
      public MeleeAttackGoal(final PathfinderMob mob, final double speedModifier, final boolean followingTargetEvenIfNotSeen) {
          this.mob = mob;
-@@ -42,6 +_,15 @@
-             } else if (!target.isAlive()) {
-                 return false;
-             } else {
-+                if (canPenalize) {
-+                    if (--this.ticksUntilNextPathRecalculation <= 0) {
-+                        this.path = this.mob.getNavigation().createPath(target, 0);
-+                        this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
-+                        return this.path != null;
-+                    } else {
-+                        return true;
-+                    }
-+                }
-                 this.path = this.mob.getNavigation().createPath(target, 0);
-                 return this.path != null ? true : this.mob.isWithinMeleeAttackRange(target);
-             }
-@@ -104,6 +_,18 @@
+@@ -46,6 +_,16 @@
+             return false;
+         }
+ 
++        if (canPenalize) {
++            if (--this.ticksUntilNextPathRecalculation <= 0) {
++                this.path = this.mob.getNavigation().createPath(target, 0);
++                this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
++                return this.path != null? true : this.mob.isWithinMeleeAttackRange(target);
++            } else {
++                return true;
++            }
++        }
++
+         this.path = this.mob.getNavigation().createPath(target, 0);
+         return this.path != null ? true : this.mob.isWithinMeleeAttackRange(target);
+     }
+@@ -106,6 +_,18 @@
                  this.pathedTargetZ = target.getZ();
                  this.ticksUntilNextPathRecalculation = 4 + this.mob.getRandom().nextInt(7);
                  double targetDistanceSqr = this.mob.distanceToSqr(target);

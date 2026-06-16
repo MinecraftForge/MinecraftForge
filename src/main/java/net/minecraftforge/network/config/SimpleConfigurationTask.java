@@ -23,7 +23,7 @@ public class SimpleConfigurationTask implements ConfigurationTask {
     }
 
     public SimpleConfigurationTask(Type type, Runnable task) {
-        this(type, c -> task.run());
+        this(type, _ -> task.run());
     }
 
     @Override

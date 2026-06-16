@@ -36,7 +36,7 @@
      }
  
      @Override
-@@ -367,16 +_,24 @@
+@@ -367,22 +_,31 @@
      }
  
      protected void comeOffTrack(final ServerLevel level) {
@@ -58,12 +58,19 @@
 +
          this.move(MoverType.SELF, this.getDeltaMovement());
          if (!this.onGround()) {
--            this.setDeltaMovement(this.getDeltaMovement().scale(0.95));
-+            this.setDeltaMovement(this.getDeltaMovement().scale(getDragAir()));
+             this.setDeltaMovement(this.getDeltaMovement().scale(this.getAirDrag()));
          }
      }
  
-@@ -433,7 +_,7 @@
++    private float airDrag = DEFAULT_AIR_DRAG;
+     @Override
+     protected float getAirDrag() {
+-        return 0.95F;
++        return airDrag;
+     }
+ 
+     protected double makeStepAlongTrack(final BlockPos pos, final RailShape shape, final double movementLeft) {
+@@ -438,7 +_,7 @@
      public Vec3 getRedstoneDirection(final BlockPos pos) {
          BlockState state = this.level().getBlockState(pos);
          if (state.is(Blocks.POWERED_RAIL) && state.getValue(PoweredRailBlock.POWERED)) {
@@ -72,7 +79,7 @@
              if (shape == RailShape.EAST_WEST) {
                  if (this.isRedstoneConductor(pos.west())) {
                      return new Vec3(1.0, 0.0, 0.0);
-@@ -604,5 +_,42 @@
+@@ -609,5 +_,40 @@
  
      public boolean isFurnace() {
          return false;
@@ -96,9 +103,7 @@
 +              private float    maxSpeedAirVertical = DEFAULT_MAX_SPEED_AIR_VERTICAL;
 +    @Override public  float getMaxSpeedAirVertical() { return maxSpeedAirVertical; }
 +    @Override public  void  setMaxSpeedAirVertical(float value) { maxSpeedAirVertical = value; }
-+              private double    dragAir = DEFAULT_AIR_DRAG;
-+    @Override public  double getDragAir() { return dragAir; }
-+    @Override public  void   setDragAir(double value) { dragAir = value; }
++    @Override public  void  setAirDrag(float value) { airDrag = value; }
 +    @Override
 +    public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
 +        if (!canUseRail()) {

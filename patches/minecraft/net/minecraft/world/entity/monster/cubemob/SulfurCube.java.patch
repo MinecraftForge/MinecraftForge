@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
++++ b/net/minecraft/world/entity/monster/cubemob/SulfurCube.java
+@@ -181,8 +_,8 @@
+     }
+ 
+     @Override
+-    protected void travelInFluid(final Vec3 input) {
+-        super.travelInFluid(input);
++    protected void travelInFluid(final Vec3 input, final net.minecraft.world.level.material.FluidState fluid) {
++        super.travelInFluid(input, fluid);
+         if (this.hasBodyItem() && this.floatsInLiquids) {
+             float vibeAmount = 0.2F * Mth.sin(this.tickCount * 0.4F);
+             double immersion = this.getFluidHeight(this.isInWater() ? FluidTags.WATER : FluidTags.LAVA) - this.getFluidJumpThreshold() + vibeAmount;

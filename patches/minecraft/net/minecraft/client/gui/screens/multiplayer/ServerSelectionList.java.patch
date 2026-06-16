@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
-@@ -372,6 +_,8 @@
+@@ -369,6 +_,8 @@
                  graphics.setTooltipForNextFrame(Lists.transform(this.onlinePlayersTooltip, Component::getVisualOrderText), mouseX, mouseY);
              }
  
 +            net.minecraftforge.client.ForgeHooksClient.drawForgePingInfo(this.screen, serverData, graphics, this.getContentX(), this.getContentY(), this.getContentWidth(), mouseX - this.getContentX(), mouseY - this.getContentY());
 +
-             if (this.minecraft.options.touchscreen().get() || hovered) {
+             if (hovered) {
                  graphics.fill(this.getContentX(), this.getContentY(), this.getContentX() + 32, this.getContentY() + 32, -1601138544);
                  int relX = mouseX - this.getContentX();

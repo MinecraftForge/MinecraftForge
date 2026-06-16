@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/ResourceKey.java
 +++ b/net/minecraft/resources/ResourceKey.java
-@@ -9,7 +_,7 @@
+@@ -10,7 +_,7 @@
  import net.minecraft.core.registries.Registries;
  import net.minecraft.network.codec.StreamCodec;
  
@@ -9,7 +9,7 @@
      private static final ConcurrentMap<ResourceKey.InternKey, ResourceKey<?>> VALUES = new MapMaker().weakValues().makeMap();
      private final Identifier registryName;
      private final Identifier identifier;
-@@ -65,5 +_,18 @@
+@@ -74,5 +_,18 @@
      }
  
      private record InternKey(Identifier registry, Identifier identifier) {

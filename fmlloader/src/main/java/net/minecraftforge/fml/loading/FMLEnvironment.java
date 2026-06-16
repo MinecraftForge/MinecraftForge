@@ -20,8 +20,8 @@ public class FMLEnvironment
     public static final boolean secureJarsEnabled = FMLLoader.isSecureJarEnabled();
 
     static void setupInteropEnvironment(IEnvironment environment) {
-        environment.computePropertyIfAbsent(IEnvironment.Keys.NAMING.get(), v->naming);
-        environment.computePropertyIfAbsent(Environment.Keys.DIST.get(), v->dist);
+        environment.computePropertyIfAbsent(IEnvironment.Keys.NAMING.get(), _->naming);
+        environment.computePropertyIfAbsent(Environment.Keys.DIST.get(), _->dist);
     }
 
     public static class Keys {

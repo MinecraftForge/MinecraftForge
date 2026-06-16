@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading;
 
 import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.api.INameMappingService;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;

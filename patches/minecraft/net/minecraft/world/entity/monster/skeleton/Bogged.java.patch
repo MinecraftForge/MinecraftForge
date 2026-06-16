@@ -12,7 +12,7 @@
 @@ -137,5 +_,17 @@
      @Override
      public boolean readyForShearing() {
-         return !this.isSheared() && this.isAlive();
+         return !this.isSheared();
 +    }
 +
 +    @Override

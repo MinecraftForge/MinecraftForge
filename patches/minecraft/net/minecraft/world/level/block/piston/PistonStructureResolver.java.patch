@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/piston/PistonStructureResolver.java
 +++ b/net/minecraft/world/level/block/piston/PistonStructureResolver.java
-@@ -50,7 +_,7 @@
-         } else {
+@@ -52,7 +_,7 @@
+ 
              for (int i = 0; i < this.toPush.size(); i++) {
                  BlockPos pos = this.toPush.get(i);
 -                if (isSticky(this.level.getBlockState(pos)) && !this.addBranchingBlocks(pos)) {
@@ -9,7 +9,7 @@
                      return false;
                  }
              }
-@@ -59,21 +_,9 @@
+@@ -61,21 +_,9 @@
          }
      }
  
@@ -30,33 +30,33 @@
 -        if (nextState.isAir()) {
 +        if (level.isEmptyBlock(start)) {
              return true;
-         } else if (!PistonBaseBlock.isPushable(nextState, this.level, start, this.pushDirection, false, direction)) {
-             return true;
-@@ -86,12 +_,12 @@
-             if (blockCount + this.toPush.size() > 12) {
-                 return false;
-             } else {
--                while (isSticky(nextState)) {
-+                while (nextState.isStickyBlock()) {
-                     BlockPos pos = start.relative(this.pushDirection.getOpposite(), blockCount);
-                     BlockState previousState = nextState;
-                     nextState = this.level.getBlockState(pos);
-                     if (nextState.isAir()
--                        || !canStickToEachOther(previousState, nextState)
-+                        || !(previousState.canStickTo(nextState) && nextState.canStickTo(previousState))
-                         || !PistonBaseBlock.isPushable(nextState, this.level, pos, this.pushDirection, false, this.pushDirection.getOpposite())
-                         || pos.equals(this.pistonPos)) {
-                         break;
-@@ -119,7 +_,7 @@
+         }
  
-                         for (int j = 0; j <= collisionPos + blocksAdded; j++) {
-                             BlockPos blockPos = this.toPush.get(j);
--                            if (isSticky(this.level.getBlockState(blockPos)) && !this.addBranchingBlocks(blockPos)) {
-+                            if (this.level.getBlockState(blockPos).isStickyBlock() && !this.addBranchingBlocks(blockPos)) {
-                                 return false;
-                             }
-                         }
-@@ -173,7 +_,7 @@
+@@ -96,12 +_,12 @@
+             return false;
+         }
+ 
+-        while (isSticky(nextState)) {
++        while (nextState.isStickyBlock()) {
+             BlockPos pos = start.relative(this.pushDirection.getOpposite(), blockCount);
+             BlockState previousState = nextState;
+             nextState = this.level.getBlockState(pos);
+             if (nextState.isAir()
+-                || !canStickToEachOther(previousState, nextState)
++                || !(previousState.canStickTo(nextState) && nextState.canStickTo(previousState))
+                 || !PistonBaseBlock.isPushable(nextState, this.level, pos, this.pushDirection, false, this.pushDirection.getOpposite())
+                 || pos.equals(this.pistonPos)) {
+                 break;
+@@ -129,7 +_,7 @@
+ 
+                 for (int j = 0; j <= collisionPos + blocksAdded; j++) {
+                     BlockPos blockPos = this.toPush.get(j);
+-                    if (isSticky(this.level.getBlockState(blockPos)) && !this.addBranchingBlocks(blockPos)) {
++                    if (this.level.getBlockState(blockPos).isStickyBlock() && !this.addBranchingBlocks(blockPos)) {
+                         return false;
+                     }
+                 }
+@@ -181,7 +_,7 @@
              if (direction.getAxis() != this.pushDirection.getAxis()) {
                  BlockPos neighbourPos = fromPos.relative(direction);
                  BlockState neighbourState = this.level.getBlockState(neighbourPos);

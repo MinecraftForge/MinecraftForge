@@ -99,7 +99,7 @@ final class ModStateTransitionHelper {
             results[i] = raw.whenComplete((result, exception) -> list.set(i, new FutureResult<>(result, exception)));
         }
 
-        return CompletableFuture.allOf(results).handle((r, th)->null).thenApply(res -> list);
+        return CompletableFuture.allOf(results).handle((_, _)->null).thenApply(_ -> list);
     }
 
     private static <T extends IModBusEvent> CompletableFuture<Void> addCompletableFutureTaskForModDispatch(
@@ -135,7 +135,7 @@ final class ModStateTransitionHelper {
                         handler.run();
                     mod.acceptEvent(eventGenerator.apply(mod));
                 }, executor)
-                .whenComplete((mc, exception) -> {
+                .whenComplete((_, exception) -> {
                     mod.modLoadingStage = nextState.apply(mod.modLoadingStage, exception);
                     progressBar.increment();
                     ModLoadingContext.get().setActiveContainer(null);

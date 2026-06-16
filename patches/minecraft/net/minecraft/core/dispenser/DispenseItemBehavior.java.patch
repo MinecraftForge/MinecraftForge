@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
 +++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
-@@ -147,7 +_,7 @@
+@@ -141,7 +_,7 @@
                  DispensibleContainerItem bucket = (DispensibleContainerItem)dispensed.getItem();
                  BlockPos target = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
                  Level level = source.level();
@@ -9,15 +9,3 @@
                      bucket.checkExtraContent(null, level, dispensed, target);
                      return this.consumeWithRemainder(source, dispensed, new ItemStack(Items.BUCKET));
                  } else {
-@@ -198,8 +_,9 @@
-                 } else if (CampfireBlock.canLight(target) || CandleBlock.canLight(target) || CandleCakeBlock.canLight(target)) {
-                     level.setBlockAndUpdate(targetPos, target.setValue(BlockStateProperties.LIT, true));
-                     level.gameEvent(null, GameEvent.BLOCK_CHANGE, targetPos);
--                } else if (target.getBlock() instanceof TntBlock) {
--                    if (TntBlock.prime(level, targetPos)) {
-+                } else if (target.isFlammable(level, targetPos, source.state().getValue(DispenserBlock.FACING).getOpposite())) {
-+                    if (target.onCaughtFire(level, targetPos, source.state().getValue(DispenserBlock.FACING).getOpposite(), null)) {
-+                        if (target.getBlock() instanceof TntBlock)
-                         level.removeBlock(targetPos, false);
-                     } else {
-                         this.setSuccess(false);

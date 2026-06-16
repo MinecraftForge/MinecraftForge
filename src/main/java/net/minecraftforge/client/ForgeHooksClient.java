@@ -27,7 +27,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
@@ -42,41 +41,27 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.ParticleResources;
 import net.minecraft.client.player.ClientInput;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.extract.LevelExtractor;
 import net.minecraft.client.renderer.fog.FogData;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.texture.SpriteContents;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
-import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.UnbakedGeometry;
 import net.minecraft.client.resources.model.sprite.MaterialBaker;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.data.AtlasIds;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.ChatType;
@@ -89,10 +74,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -131,7 +114,6 @@ import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -141,7 +123,6 @@ import net.minecraftforge.client.extensions.common.IClientMobEffectExtensions;
 import net.minecraftforge.client.gui.ClientTooltipComponentManager;
 import net.minecraftforge.client.gui.ModMismatchDisconnectedScreen;
 import net.minecraftforge.client.model.ForgeBlockModelData;
-import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.geometry.GeometryLoaderManager;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.client.textures.TextureAtlasSpriteLoaderManager;
@@ -149,7 +130,6 @@ import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.network.NetworkContext;
 import net.minecraftforge.network.NetworkInitialization;
 import net.minecraftforge.network.NetworkRegistry;
@@ -166,19 +146,15 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Stack;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -192,53 +168,6 @@ public class ForgeHooksClient {
     private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
 
     //private static final Identifier ITEM_GLINT = new Identifier("textures/misc/enchanted_item_glint.png");
-
-    /**
-     * Contains the *extra* GUI layers.
-     * The current top layer stays in Minecraft#currentScreen, and the rest serve as a background for it.
-     */
-    private static final Stack<Screen> guiLayers = new Stack<>();
-
-    public static void resizeGuiLayers(Minecraft minecraft, int width, int height) {
-        guiLayers.forEach(screen -> screen.resize(width, height));
-    }
-
-    public static void clearGuiLayers(Minecraft minecraft) {
-        while (!guiLayers.isEmpty())
-            popGuiLayerInternal(minecraft);
-    }
-
-    private static void popGuiLayerInternal(Minecraft minecraft) {
-        if (minecraft.screen != null)
-            minecraft.screen.removed();
-        minecraft.screen = guiLayers.pop();
-    }
-
-    public static void pushGuiLayer(Minecraft minecraft, Screen screen) {
-        if (minecraft.screen != null)
-            guiLayers.push(minecraft.screen);
-        minecraft.screen = Objects.requireNonNull(screen);
-        screen.init(minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        minecraft.getNarrator().saySystemNow(screen.getNarrationMessage());
-    }
-
-    public static void popGuiLayer(Minecraft minecraft) {
-        if (guiLayers.isEmpty()) {
-            minecraft.setScreen(null);
-            return;
-        }
-
-        popGuiLayerInternal(minecraft);
-        if (minecraft.screen != null)
-            minecraft.getNarrator().saySystemNow(minecraft.screen.getNarrationMessage());
-    }
-
-    public static float getGuiFarPlane() {
-        // 11000 units for the overlay background,
-        // and 10000 units for each layered Screen,
-
-        return 11000.0F + 10000.0F * (1 + guiLayers.size());
-    }
 
     public static boolean onClientPauseChangePre(boolean pause) {
         return ClientPauseChangeEvent.Pre.BUS.post(new ClientPauseChangeEvent.Pre(pause));
@@ -255,9 +184,9 @@ public class ForgeHooksClient {
     }
     */
 
-    private static final RenderHighlightEvent.Callback NOOP_HIGHLIGHTER = (source, stack, translucent, state) -> { };
+    private static final RenderHighlightEvent.Callback NOOP_HIGHLIGHTER = (_, _, _) -> { };
 
-    public static RenderHighlightEvent.Callback onExtractBlockOutline(LevelRenderer context, Camera camera, LevelRenderState state, HitResult target) {
+    public static RenderHighlightEvent.Callback onExtractBlockOutline(LevelExtractor context, Camera camera, LevelRenderState state, HitResult target) {
         if (target instanceof BlockHitResult blockTarget) {
             var event = new RenderHighlightEvent.Block(context, camera, state, blockTarget);
             if (RenderHighlightEvent.Block.BUS.post(event))
@@ -325,23 +254,6 @@ public class ForgeHooksClient {
     @Nullable
     public static SoundInstance playSound(SoundEngine manager, SoundInstance sound) {
         return PlaySoundEvent.BUS.fire(new PlaySoundEvent(manager, sound)).getSound();
-    }
-
-    public static void drawScreen(Screen screen, GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        guiGraphics.pose().pushMatrix();
-        for (Screen layer : guiLayers) {
-            // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
-            drawScreenInternal(layer, guiGraphics, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTick);
-            //guiGraphics.pose().translate(0, 0, 10000);
-        }
-        drawScreenInternal(screen, guiGraphics, mouseX, mouseY, partialTick);
-        guiGraphics.pose().popMatrix();
-    }
-
-    private static void drawScreenInternal(Screen screen, GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (!ScreenEvent.Render.Pre.BUS.post(new ScreenEvent.Render.Pre(screen, guiGraphics, mouseX, mouseY, partialTick)))
-            screen.extractRenderStateWithTooltipAndSubtitles(guiGraphics, mouseX, mouseY, partialTick);
-        ScreenEvent.Render.Post.BUS.post(new ScreenEvent.Render.Post(screen, guiGraphics, mouseX, mouseY, partialTick));
     }
 
     public static Vector3f getFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, float fogRed, float fogGreen, float fogBlue) {
@@ -456,14 +368,14 @@ public class ForgeHooksClient {
         InputEvent.Key.BUS.post(new InputEvent.Key(info, action));
     }
 
-    public static boolean isNameplateInRenderDistance(Entity entity, double squareDistance) {
+    public static boolean isNameplateInRenderDistance(Entity entity, double squareDistance, double nameTagDistance) {
         if (entity instanceof LivingEntity living) {
             var attribute = living.getAttribute(ForgeMod.NAMETAG_DISTANCE.getHolder().get());
             if (attribute != null) {
                 return !(squareDistance > (attribute.getValue() * attribute.getValue()));
             }
         }
-        return !(squareDistance > 4096.0f);
+        return !(squareDistance > Mth.square(nameTagDistance));
     }
 
     public static boolean shouldRenderEffect(MobEffectInstance effectInstance) {
@@ -629,9 +541,8 @@ public class ForgeHooksClient {
     }
 
     public static void onRegisterPictureInPictureRenderers(List<PictureInPictureRenderer<?>> renderers,
-                                                           MultiBufferSource.BufferSource bufferSource,
                                                            ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
-        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(renderers, bufferSource, builder));
+        RegisterPictureInPictureRendererEvent.BUS.post(new RegisterPictureInPictureRendererEvent(renderers, builder));
     }
 
     @Nullable
@@ -689,7 +600,7 @@ public class ForgeHooksClient {
 
         // text wrapping
         int tooltipTextWidth = event.getTooltipElements().stream()
-                .mapToInt(either -> either.map(font::width, component -> 0))
+                .mapToInt(either -> either.map(font::width, _ -> 0))
                 .max()
                 .orElse(0);
 
@@ -789,7 +700,7 @@ public class ForgeHooksClient {
         var mismatch = NetworkContext.get(connection).getMismatchs();
         if (mismatch == null)
             return false;
-        mc.setScreen(new ModMismatchDisconnectedScreen(parent, CommonComponents.CONNECT_FAILED, message, mismatch));
+        mc.gui.setScreen(new ModMismatchDisconnectedScreen(parent, CommonComponents.CONNECT_FAILED, message, mismatch));
         return true;
     }
 

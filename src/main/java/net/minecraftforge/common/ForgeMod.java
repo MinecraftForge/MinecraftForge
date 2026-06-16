@@ -49,7 +49,6 @@ import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
-import net.minecraftforge.common.data.ForgeSpriteSourceProvider;
 import net.minecraftforge.common.data.ForgeStructureTagsProvider;
 import net.minecraftforge.common.data.VanillaSoundDefinitionsProvider;
 import net.minecraftforge.common.loot.CanToolPerformAction;
@@ -512,7 +511,7 @@ public class ForgeMod {
     }
 
     public static final PermissionNode<Boolean> USE_SELECTORS_PERMISSION = new PermissionNode<>("forge", "use_entity_selectors",
-            PermissionTypes.BOOLEAN, (player, uuid, contexts) -> player != null && Commands.LEVEL_GAMEMASTERS.check(player.permissions()));
+            PermissionTypes.BOOLEAN, (player, _, _) -> player != null && Commands.LEVEL_GAMEMASTERS.check(player.permissions()));
 
     /**
      * TODO: Remove when {@link ForgeRegistry#addAlias(Identifier, Identifier)} is elevated to {@link IForgeRegistry}.

@@ -1,10 +1,11 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -127,6 +_,7 @@
+@@ -126,6 +_,8 @@
      private int simulationDistance;
      private boolean allowCommandsForAllPlayers;
      private int sendAllPlayerInfoIn;
 +    private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(players);
++    private final Map<UUID, ServerPlayer> playersByUUIDView = java.util.Collections.unmodifiableMap(this.playersByUUID);
  
      public PlayerList(
          final MinecraftServer server,
@@ -24,7 +25,7 @@
      }
  
      protected void updateEntireScoreboard(final ServerScoreboard scoreboard, final ServerPlayer player) {
-@@ -295,6 +_,7 @@
+@@ -291,6 +_,7 @@
      }
  
      protected void save(final ServerPlayer player) {
@@ -32,7 +33,7 @@
          this.playerIo.save(player);
          ServerStatsCounter stats = this.stats.get(player.getUUID());
          if (stats != null) {
-@@ -308,6 +_,7 @@
+@@ -304,6 +_,7 @@
      }
  
      public void remove(final ServerPlayer player) {
@@ -64,7 +65,7 @@
          if (this.ops.remove(nameAndId)) {
              ServerPlayer player = this.getPlayer(nameAndId.id());
              if (player != null) {
-@@ -824,7 +_,7 @@
+@@ -826,11 +_,11 @@
      }
  
      public List<ServerPlayer> getPlayers() {
@@ -72,8 +73,13 @@
 +        return this.playersView; //Unmodifiable view, we don't want people removing things without us knowing.
      }
  
+     public Map<UUID, ServerPlayer> getPlayersByUUID() {
+-        return this.playersByUUID;
++        return this.playersByUUIDView; //Unmodifiable view, we don't want people removing things without us knowing.
+     }
+ 
      public @Nullable ServerPlayer getPlayer(final UUID uuid) {
-@@ -850,6 +_,7 @@
+@@ -856,6 +_,7 @@
              advancements.reload(this.server.getAdvancements());
          }
  
@@ -81,7 +87,7 @@
          this.broadcastAll(new ClientboundUpdateTagsPacket(TagNetworkSerialization.serializeTagsToNetwork(this.registries)));
          RecipeManager recipeManager = this.server.getRecipeManager();
          ClientboundUpdateRecipesPacket recipes = new ClientboundUpdateRecipesPacket(
-@@ -864,5 +_,9 @@
+@@ -870,5 +_,9 @@
  
      public boolean isAllowCommandsForAllPlayers() {
          return this.allowCommandsForAllPlayers;

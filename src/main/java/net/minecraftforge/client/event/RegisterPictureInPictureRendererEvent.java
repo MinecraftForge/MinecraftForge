@@ -7,7 +7,6 @@ package net.minecraftforge.client.event;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
@@ -29,18 +28,12 @@ public final class RegisterPictureInPictureRendererEvent extends MutableEvent im
     public static final EventBus<RegisterPictureInPictureRendererEvent> BUS = EventBus.create(RegisterPictureInPictureRendererEvent.class);
 
     private final List<PictureInPictureRenderer<?>> renderers;
-    private final MultiBufferSource.BufferSource bufferSource;
     private final ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder;
 
     @ApiStatus.Internal
-    public RegisterPictureInPictureRendererEvent(List<PictureInPictureRenderer<?>> renderers, MultiBufferSource.BufferSource bufferSource, ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
+    public RegisterPictureInPictureRendererEvent(List<PictureInPictureRenderer<?>> renderers, ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) {
         this.renderers = renderers;
-        this.bufferSource = bufferSource;
         this.builder = builder;
-    }
-
-    public MultiBufferSource.BufferSource getBufferSource() {
-        return bufferSource;
     }
 
     public void register(PictureInPictureRenderer<?> renderer) {

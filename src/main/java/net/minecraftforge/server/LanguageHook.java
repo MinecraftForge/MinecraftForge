@@ -73,7 +73,7 @@ public class LanguageHook {
             }
 
             for (var namespace : pack.getNamespaces(PackType.CLIENT_RESOURCES)) {
-                byNamespace.computeIfAbsent(namespace, k -> new ArrayList<>()).add(pack);
+                byNamespace.computeIfAbsent(namespace, _ -> new ArrayList<>()).add(pack);
             }
         }
 

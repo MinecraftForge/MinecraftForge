@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/item/AxeItem.java
 +++ b/net/minecraft/world/item/AxeItem.java
-@@ -64,7 +_,7 @@
-         if (playerHasBlockingItemUseIntent(context)) {
+@@ -65,7 +_,7 @@
              return InteractionResult.PASS;
-         } else {
--            Optional<BlockState> newBlock = this.evaluateNewBlockState(level, pos, player, level.getBlockState(pos));
-+            Optional<BlockState> newBlock = this.evaluateNewBlockState(level, pos, player, level.getBlockState(pos), context);
-             if (newBlock.isEmpty()) {
-                 return InteractionResult.PASS;
-             } else {
+         }
+ 
+-        Optional<BlockState> newBlock = this.evaluateNewBlockState(level, pos, player, level.getBlockState(pos));
++        Optional<BlockState> newBlock = this.evaluateNewBlockState(level, pos, player, level.getBlockState(pos), context);
+         if (newBlock.isEmpty()) {
+             return InteractionResult.PASS;
+         }
 @@ -92,17 +_,24 @@
      }
  

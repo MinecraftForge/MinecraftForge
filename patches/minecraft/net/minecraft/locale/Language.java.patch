@@ -1,6 +1,6 @@
 --- a/net/minecraft/locale/Language.java
 +++ b/net/minecraft/locale/Language.java
-@@ -37,7 +_,8 @@
+@@ -38,7 +_,8 @@
          BiConsumer<String, String> output = loadedData::put;
          parseTranslations(output, "/assets/minecraft/lang/en_us.json");
          deprecatedInfo.applyToMap(loadedData);
@@ -10,7 +10,7 @@
          return new Language() {
              @Override
              public String getOrDefault(final String elementId, final String defaultValue) {
-@@ -62,6 +_,11 @@
+@@ -63,6 +_,11 @@
                      )
                      .isPresent();
              }
@@ -22,9 +22,11 @@
          };
      }
  
-@@ -89,6 +_,8 @@
+@@ -89,7 +_,10 @@
+ 
      public static void inject(final Language language) {
          instance = language;
++        net.minecraftforge.common.ForgeI18n.loadLanguageData(language.getLanguageData());
      }
 +
 +    public Map<String, String> getLanguageData() { return Map.of(); }

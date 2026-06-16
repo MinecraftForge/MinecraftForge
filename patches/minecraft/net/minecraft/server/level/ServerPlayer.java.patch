@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -202,7 +_,8 @@
+@@ -205,7 +_,8 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -10,7 +10,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_XZ = 32;
      private static final int NEUTRAL_MOB_DEATH_NOTIFICATION_RADII_Y = 10;
-@@ -880,6 +_,7 @@
+@@ -881,6 +_,7 @@
  
      @Override
      public void die(final DamageSource source) {
@@ -18,32 +18,32 @@
          this.gameEvent(GameEvent.ENTITY_DIE);
          boolean showDeathMessage = this.level().getGameRules().get(GameRules.SHOW_DEATH_MESSAGES);
          if (showDeathMessage) {
-@@ -1088,6 +_,7 @@
+@@ -1093,6 +_,7 @@
      }
  
      public @Nullable ServerPlayer teleport(final TeleportTransition transition) {
 +        if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, transition.newLevel().dimension())) return null;
          if (this.isRemoved()) {
              return null;
-         } else {
-@@ -1115,7 +_,7 @@
-                 PlayerList playerList = this.server.getPlayerList();
-                 playerList.sendPlayerPermissionLevel(this);
-                 oldLevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
--                this.unsetRemoved();
-+                this.revive();
-                 ProfilerFiller profiler = Profiler.get();
-                 profiler.push("moving");
-                 if (lastDimension == Level.OVERWORLD && newLevel.dimension() == Level.NETHER) {
-@@ -1140,6 +_,7 @@
-                 this.lastSentHealth = -1.0F;
-                 this.lastSentFood = -1;
-                 this.teleportSpectators(transition, oldLevel);
-+                net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, lastDimension, transition.newLevel().dimension());
-                 return this;
-             }
          }
-@@ -1181,10 +_,13 @@
+@@ -1122,7 +_,7 @@
+         PlayerList playerList = this.server.getPlayerList();
+         playerList.sendPlayerPermissionLevel(this);
+         oldLevel.removePlayerImmediately(this, Entity.RemovalReason.CHANGED_DIMENSION);
+-        this.unsetRemoved();
++        this.revive();
+         ProfilerFiller profiler = Profiler.get();
+         profiler.push("moving");
+         if (lastDimension == Level.OVERWORLD && newLevel.dimension() == Level.NETHER) {
+@@ -1147,6 +_,7 @@
+         this.lastSentHealth = -1.0F;
+         this.lastSentFood = -1;
+         this.teleportSpectators(transition, oldLevel);
++        net.minecraftforge.event.ForgeEventFactory.onPlayerChangedDimension(this, lastDimension, transition.newLevel().dimension());
+         return this;
+     }
+ 
+@@ -1186,10 +_,13 @@
  
      @Override
      public Either<Player.BedSleepingProblem, Unit> startSleepInBed(final BlockPos pos) {
@@ -58,7 +58,7 @@
              boolean canSetSpawn = rule.canSetSpawn(this.level());
              if (!canSetSpawn && !canSleep) {
                  return Either.left(rule.asProblem());
-@@ -1248,6 +_,7 @@
+@@ -1250,6 +_,7 @@
      }
  
      private boolean bedInRange(final BlockPos pos, final Direction direction) {
@@ -66,15 +66,15 @@
          return this.isReachableBedBlock(pos) || this.isReachableBedBlock(pos.relative(direction.getOpposite()));
      }
  
-@@ -1350,6 +_,7 @@
-                 this.connection.send(new ClientboundOpenScreenPacket(menu.containerId, menu.getType(), provider.getDisplayName()));
-                 this.initMenu(menu);
-                 this.containerMenu = menu;
-+                net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
-                 return OptionalInt.of(this.containerCounter);
-             }
+@@ -1354,6 +_,7 @@
+             this.connection.send(new ClientboundOpenScreenPacket(menu.containerId, menu.getType(), provider.getDisplayName()));
+             this.initMenu(menu);
+             this.containerMenu = menu;
++            net.minecraftforge.event.ForgeEventFactory.onPlayerOpenContainer(this, this.containerMenu);
+             return OptionalInt.of(this.containerCounter);
          }
-@@ -1419,6 +_,7 @@
+     }
+@@ -1422,6 +_,7 @@
      public void doCloseContainer() {
          this.containerMenu.removed(this);
          this.inventoryMenu.transferState(this.containerMenu);
@@ -82,7 +82,7 @@
          this.containerMenu = this.inventoryMenu;
      }
  
-@@ -1636,6 +_,15 @@
+@@ -1641,6 +_,15 @@
          this.setShoulderEntityRight(oldPlayer.getShoulderEntityRight());
          this.setLastDeathLocation(oldPlayer.getLastDeathLocation());
          this.waypointIcon().copyFrom(oldPlayer.waypointIcon());
@@ -98,7 +98,7 @@
      }
  
      private void transferInventoryXpAndScore(final Player oldPlayer) {
-@@ -1745,8 +_,9 @@
+@@ -1750,8 +_,9 @@
          return (ServerLevel)super.level();
      }
  
@@ -108,18 +108,18 @@
 +        mode = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.gameMode.getGameModeForPlayer(), mode);
          if (!this.gameMode.changeGameModeForPlayer(mode)) {
              return false;
-         } else {
-@@ -1930,6 +_,9 @@
+         }
+@@ -1935,6 +_,9 @@
      public void setCamera(final @Nullable Entity newCamera) {
          Entity oldCamera = this.getCamera();
-         this.camera = (Entity)(newCamera == null ? this : newCamera);
+         this.camera = newCamera == null ? this : newCamera;
 +        while (this.camera instanceof net.minecraftforge.entity.PartEntity<?> partEntity) {
 +            this.camera = partEntity.getParent(); // FORGE: fix MC-46486
 +        }
          if (oldCamera != this.camera) {
              if (this.camera.level() instanceof ServerLevel level) {
                  this.teleportTo(level, this.camera.getX(), this.camera.getY(), this.camera.getZ(), Set.of(), this.getYRot(), this.getXRot(), false);
-@@ -1956,7 +_,11 @@
+@@ -1961,7 +_,11 @@
      }
  
      public @Nullable Component getTabListDisplayName() {
@@ -132,7 +132,7 @@
      }
  
      public int getTabListOrder() {
-@@ -1990,6 +_,7 @@
+@@ -1995,6 +_,7 @@
      }
  
      public void setRespawnPosition(final ServerPlayer.@Nullable RespawnConfig respawnConfig, final boolean showMessage) {
@@ -140,7 +140,7 @@
          if (showMessage && respawnConfig != null && !respawnConfig.isSamePosition(this.respawnConfig)) {
              this.sendSystemMessage(SPAWN_SET_MESSAGE);
          }
-@@ -2077,6 +_,9 @@
+@@ -2082,6 +_,9 @@
  
      public void drop(final boolean all) {
          Inventory inventory = this.getInventory();
@@ -150,7 +150,7 @@
          ItemStack removed = inventory.removeFromSelected(all);
          this.containerMenu
              .findSlot(inventory, inventory.getSelectedSlot())
-@@ -2085,7 +_,7 @@
+@@ -2090,7 +_,7 @@
              this.stopUsingItem();
          }
  
@@ -159,7 +159,7 @@
      }
  
      @Override
-@@ -2187,6 +_,75 @@
+@@ -2192,6 +_,75 @@
  
      public @Nullable BlockPos getRaidOmenPosition() {
          return this.raidOmenPosition;

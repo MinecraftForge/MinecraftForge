@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/loot/EntityLootSubProvider.java
 +++ b/net/minecraft/data/loot/EntityLootSubProvider.java
-@@ -120,12 +_,16 @@
+@@ -117,12 +_,16 @@
  
      public abstract void generate();
  

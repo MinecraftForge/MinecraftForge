@@ -7,4 +7,4 @@
 +        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(packet, this.connection)) return;
          if (packet.intention() != ClientIntent.LOGIN) {
              throw new UnsupportedOperationException("Invalid intention " + packet.intention());
-         } else {
+         }

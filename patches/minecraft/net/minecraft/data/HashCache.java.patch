@@ -25,7 +25,7 @@
                  cache.save(this.rootDir, cachePath, DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(ZonedDateTime.now()) + "\t" + providerId);
              }
  
-@@ -224,10 +_,11 @@
+@@ -217,10 +_,11 @@
                  output.write(extraHeaderInfo);
                  output.newLine();
  
@@ -38,4 +38,4 @@
 +                    output.write(rootDir.relativize(e.getKey()).toString().replace("\\", "/")); // Forge: Standardize file paths.
                      output.newLine();
                  }
-             } catch (IOException var9) {
+             } catch (IOException e) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/TrapDoorBlock.java
 +++ b/net/minecraft/world/level/block/TrapDoorBlock.java
-@@ -196,4 +_,14 @@
+@@ -192,4 +_,14 @@
      protected BlockSetType getType() {
          return this.type;
      }

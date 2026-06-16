@@ -100,8 +100,8 @@
                  ClientItem donorInfo = this.itemInfos.get(donor);
                  if (donorInfo == null) {
 @@ -131,8 +_,8 @@
-                     this.register(acceptor, donorInfo);
-                 }
+ 
+                 this.register(acceptor, donorInfo);
              });
 -            List<Identifier> missingDefinitions = BuiltInRegistries.ITEM
 -                .listElements()

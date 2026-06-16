@@ -1,26 +1,26 @@
 --- a/net/minecraft/client/renderer/entity/player/AvatarRenderer.java
 +++ b/net/minecraft/client/renderer/entity/player/AvatarRenderer.java
-@@ -96,7 +_,7 @@
-     private static HumanoidModel.ArmPose getArmPose(final Avatar avatar, final ItemStack itemInHand, final InteractionHand hand) {
-         if (itemInHand.isEmpty()) {
+@@ -98,7 +_,7 @@
              return HumanoidModel.ArmPose.EMPTY;
--        } else if (!avatar.swinging && itemInHand.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
-+        } else if (!avatar.swinging && itemInHand.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemInHand)) {
+         }
+ 
+-        if (!avatar.swinging && itemInHand.is(Items.CROSSBOW) && CrossbowItem.isCharged(itemInHand)) {
++        if (!avatar.swinging && itemInHand.getItem() instanceof CrossbowItem && CrossbowItem.isCharged(itemInHand)) {
              return HumanoidModel.ArmPose.CROSSBOW_HOLD;
+         }
+ 
+@@ -141,7 +_,9 @@
+         if (attack != null && attack.type() == SwingAnimationType.STAB && avatar.swinging) {
+             return HumanoidModel.ArmPose.SPEAR;
          } else {
-             if (avatar.getUsedItemHand() == hand && avatar.getUseItemRemainingTicks() > 0) {
-@@ -138,7 +_,9 @@
-             if (attack != null && attack.type() == SwingAnimationType.STAB && avatar.swinging) {
-                 return HumanoidModel.ArmPose.SPEAR;
-             } else {
--                return itemInHand.is(ItemTags.SPEARS) ? HumanoidModel.ArmPose.SPEAR : HumanoidModel.ArmPose.ITEM;
-+                if (itemInHand.is(ItemTags.SPEARS)) return  HumanoidModel.ArmPose.SPEAR;
-+                var pose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemInHand).getArmPose(avatar, hand, itemInHand);
-+                return pose == null ?  HumanoidModel.ArmPose.ITEM : pose;
-             }
+-            return itemInHand.is(ItemTags.SPEARS) ? HumanoidModel.ArmPose.SPEAR : HumanoidModel.ArmPose.ITEM;
++            if (itemInHand.is(ItemTags.SPEARS)) return HumanoidModel.ArmPose.SPEAR;
++            var pose = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(itemInHand).getArmPose(avatar, hand, itemInHand);
++            return pose == null ?  HumanoidModel.ArmPose.ITEM : pose;
          }
      }
-@@ -239,12 +_,14 @@
+ 
+@@ -241,12 +_,14 @@
      public void renderRightHand(
          final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final int lightCoords, final Identifier skinTexture, final boolean hasSleeve
      ) {
@@ -35,7 +35,7 @@
          this.renderHand(poseStack, submitNodeCollector, lightCoords, skinTexture, this.model.leftArm, hasSleeve);
      }
  
-@@ -302,5 +_,12 @@
+@@ -304,5 +_,12 @@
  
      public static boolean isPlayerUpsideDown(final Player player) {
          return isUpsideDownName(player.getGameProfile().name());

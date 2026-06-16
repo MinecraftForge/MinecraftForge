@@ -22,13 +22,13 @@
      }
  
      @OnlyIn(Dist.CLIENT)
--    public static enum ArmPose {
-+    public static enum ArmPose implements net.minecraftforge.common.IExtensibleEnum {
+-    public enum ArmPose {
++    public enum ArmPose implements net.minecraftforge.common.IExtensibleEnum {
          EMPTY(false, false),
          ITEM(false, false),
          BLOCK(false, false),
 @@ -523,10 +_,29 @@
-         private ArmPose(final boolean twoHanded, final boolean affectsOffhandPose) {
+         ArmPose(final boolean twoHanded, final boolean affectsOffhandPose) {
              this.twoHanded = twoHanded;
              this.affectsOffhandPose = affectsOffhandPose;
 +            this.forgeArmPose = null;

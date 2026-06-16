@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -39,7 +_,7 @@
+@@ -38,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -9,7 +9,7 @@
      private static final Codec<BlockEntityType<?>> TYPE_CODEC = BuiltInRegistries.BLOCK_ENTITY_TYPE.byNameCodec();
      private static final Logger LOGGER = LogUtils.getLogger();
      private final BlockEntityType<?> type;
-@@ -54,6 +_,7 @@
+@@ -53,6 +_,7 @@
          this.worldPosition = worldPosition.immutable();
          this.validateBlockState(blockState);
          this.blockState = blockState;
@@ -17,7 +17,7 @@
      }
  
      private void validateBlockState(final BlockState blockState) {
-@@ -63,7 +_,7 @@
+@@ -62,7 +_,7 @@
      }
  
      public boolean isValidBlockState(final BlockState blockState) {
@@ -26,7 +26,7 @@
      }
  
      public static BlockPos getPosFromTag(final ChunkPos base, final CompoundTag entityTag) {
-@@ -94,6 +_,7 @@
+@@ -93,6 +_,7 @@
      }
  
      protected void loadAdditional(final ValueInput input) {
@@ -34,7 +34,7 @@
      }
  
      public final void loadWithComponents(final ValueInput input) {
-@@ -106,6 +_,7 @@
+@@ -105,6 +_,7 @@
      }
  
      protected void saveAdditional(final ValueOutput output) {
@@ -42,7 +42,7 @@
      }
  
      public final CompoundTag saveWithFullMetadata(final HolderLookup.Provider registries) {
-@@ -239,6 +_,13 @@
+@@ -224,6 +_,13 @@
  
      public void setRemoved() {
          this.remove = true;

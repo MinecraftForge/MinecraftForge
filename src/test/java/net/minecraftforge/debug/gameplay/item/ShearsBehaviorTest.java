@@ -8,7 +8,7 @@ package net.minecraftforge.debug.gameplay.item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.CopperGolem;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.item.Item;
@@ -44,8 +44,8 @@ public class ShearsBehaviorTest extends BaseTestMod {
 
     public ShearsBehaviorTest(FMLJavaModLoadingContext context) {
         super(context, false, true);
-        this.testItem(lookup -> CUSTOM_SHEARS_ITEM.get().getDefaultInstance());
-        this.testItem(lookup -> CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance());
+        this.testItem(_ -> CUSTOM_SHEARS_ITEM.get().getDefaultInstance());
+        this.testItem(_ -> CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance());
     }
 
     @GameTest
@@ -56,7 +56,7 @@ public class ShearsBehaviorTest extends BaseTestMod {
         var fencePos = new BlockPos(1, 1, 1);
         var cowPos = new BlockPos(0, 1, 1);
         helper.setBlock(fencePos, Blocks.OAK_FENCE);
-        var cow = helper.spawnWithNoFreeWill(EntityType.COW, cowPos);
+        var cow = helper.spawnWithNoFreeWill(EntityTypes.COW, cowPos);
         var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), helper.absolutePos(fencePos));
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
@@ -84,7 +84,7 @@ public class ShearsBehaviorTest extends BaseTestMod {
         var fencePos = new BlockPos(1, 1, 1);
         var cowPos = new BlockPos(0, 1, 1);
         helper.setBlock(fencePos, Blocks.OAK_FENCE);
-        var cow = helper.spawnWithNoFreeWill(EntityType.COW, cowPos);
+        var cow = helper.spawnWithNoFreeWill(EntityTypes.COW, cowPos);
         var knot = LeashFenceKnotEntity.getOrCreateKnot(helper.getLevel(), helper.absolutePos(fencePos));
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
@@ -109,7 +109,7 @@ public class ShearsBehaviorTest extends BaseTestMod {
 
         // setup: copper golem with poppy
         var golemPos = new BlockPos(1, 1, 1);
-        var golem = helper.spawnWithNoFreeWill(EntityType.COPPER_GOLEM, golemPos);
+        var golem = helper.spawnWithNoFreeWill(EntityTypes.COPPER_GOLEM, golemPos);
         golem.setItemSlot(CopperGolem.EQUIPMENT_SLOT_ANTENNA, new ItemStack(Items.POPPY));
         helper.assertTrue(golem.readyForShearing(), "Golem should start shearable (has poppy)");
 

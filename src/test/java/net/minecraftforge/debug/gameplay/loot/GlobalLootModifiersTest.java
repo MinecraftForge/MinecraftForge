@@ -10,10 +10,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.advancements.criterion.DataComponentMatchers;
-import net.minecraft.advancements.criterion.EnchantmentPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.advancements.predicates.DataComponentMatchers;
+import net.minecraft.advancements.predicates.EnchantmentPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
+import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -138,7 +138,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     // Tests the Enchantment condition, as well as the ability to completely override the returned values.
     @GameTest
     public static void smellting(GameTestHelper helper) {
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL);
         var center = new BlockPos(1, 1, 1);
         var enchants = helper.getLevel().holderLookup(Registries.ENCHANTMENT);
         var smelt = getSmelterAxe(enchants, true);
@@ -166,7 +166,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     @GameTest
     public static void condition_table_name(GameTestHelper helper) {
         var center = new BlockPos(1, 1, 1);
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL);
 
         // Should be doubled
         helper.setBlock(center, TEST_BLOCK.get());
@@ -185,7 +185,7 @@ public class GlobalLootModifiersTest extends BaseTestMod {
     @GameTest
     public static void silk_reentrant(GameTestHelper helper) {
         var center = new BlockPos(1, 1, 1);
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL);
         var bamboo = new ItemStack(Items.BAMBOO);
         var normal = new ItemStack(Items.IRON_AXE);
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiTypes.java
-@@ -80,7 +_,7 @@
+@@ -56,7 +_,7 @@
          .stream()
          .flatMap(block -> block.getStateDefinition().getPossibleStates().stream())
          .collect(ImmutableSet.toImmutableSet());
@@ -9,7 +9,7 @@
  
      private static Set<BlockState> getBlockStates(final Block block) {
          return ImmutableSet.copyOf(block.getStateDefinition().getPossibleStates());
-@@ -95,7 +_,6 @@
+@@ -71,7 +_,6 @@
      ) {
          PoiType value = new PoiType(matchingStates, maxTickets, validRange);
          Registry.register(registry, id, value);

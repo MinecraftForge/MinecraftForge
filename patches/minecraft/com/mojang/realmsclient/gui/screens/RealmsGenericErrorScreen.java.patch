@@ -6,7 +6,7 @@
      @Override
 +    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
 +       if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
-+          minecraft.setScreen(this.nextScreen);
++          minecraft.gui.setScreen(this.nextScreen);
 +          return true;
 +       }
 +       return super.keyPressed(event);

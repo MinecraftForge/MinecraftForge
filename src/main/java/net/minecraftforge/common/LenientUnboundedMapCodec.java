@@ -52,17 +52,17 @@ public class LenientUnboundedMapCodec<K, V> implements BaseMapCodec<K, V>, Codec
                     final DataResult<V> v = elementCodec().parse(ops, pair.getSecond());
 
                     final DataResult<Pair<K, V>> entry = k.apply2stable(Pair::of, v);
-                    entry.error().ifPresent(e -> failed.add(pair));
+                    entry.error().ifPresent(_ -> failed.add(pair));
                     entry.result().ifPresent(e -> read.put(e.getFirst(), e.getSecond())); // FORGE: This line moved outside the below apply2stable condition
-                    return r.apply2stable((u, p) -> u, entry);
+                    return r.apply2stable((u, _) -> u, entry);
                 },
-                (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2)
+                (r1, r2) -> r1.apply2stable((u1, _) -> u1, r2)
         );
 
         final Map<K, V> elements = read.build();
         final T errors = ops.createMap(failed.build().stream());
 
-        return result.map(unit -> elements).setPartial(elements).mapError(e -> e + " missed input: " + errors);
+        return result.map(_ -> elements).setPartial(elements).mapError(e -> e + " missed input: " + errors);
     }
 
     @Override

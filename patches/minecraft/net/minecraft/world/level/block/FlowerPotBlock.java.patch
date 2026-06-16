@@ -43,16 +43,16 @@
                  : Blocks.AIR)
              .defaultBlockState();
          if (newContents.isAir()) {
-@@ -92,7 +_,7 @@
-                 player.drop(plant, false);
-             }
- 
--            level.setBlock(pos, Blocks.FLOWER_POT.defaultBlockState(), 3);
-+            level.setBlock(pos, getEmptyPot().defaultBlockState(), 3);
-             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-             return InteractionResult.SUCCESS;
+@@ -95,7 +_,7 @@
+             player.drop(plant, false);
          }
-@@ -124,7 +_,7 @@
+ 
+-        level.setBlock(pos, Blocks.FLOWER_POT.defaultBlockState(), 3);
++        level.setBlock(pos, getEmptyPot().defaultBlockState(), 3);
+         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+         return InteractionResult.SUCCESS;
+     }
+@@ -126,7 +_,7 @@
      }
  
      public Block getPotted() {
@@ -61,7 +61,7 @@
      }
  
      @Override
-@@ -159,5 +_,24 @@
+@@ -161,5 +_,24 @@
          } else {
              return state.is(Blocks.POTTED_CLOSED_EYEBLOSSOM) ? Blocks.POTTED_OPEN_EYEBLOSSOM.defaultBlockState() : state;
          }

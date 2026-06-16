@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
-@@ -58,6 +_,7 @@
+@@ -57,6 +_,7 @@
      private static final short DEFAULT_COOKING_TOTAL_TIME = 0;
      private static final short DEFAULT_LIT_TIME_REMAINING = 0;
      private static final short DEFAULT_LIT_TOTAL_TIME = 0;
@@ -8,7 +8,7 @@
      protected NonNullList<ItemStack> items = NonNullList.withSize(3, ItemStack.EMPTY);
      private int litTimeRemaining;
      private int litTotalTime;
-@@ -114,6 +_,7 @@
+@@ -109,6 +_,7 @@
      ) {
          super(type, worldPosition, blockState);
          this.quickCheck = RecipeManager.createCheck(recipeType);
@@ -16,7 +16,7 @@
      }
  
      @Override
-@@ -121,10 +_,10 @@
+@@ -116,10 +_,10 @@
          super.loadAdditional(input);
          this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
          ContainerHelper.loadAllItems(input, this.items);
@@ -31,7 +31,7 @@
          this.recipesUsed.clear();
          this.recipesUsed.putAll(input.read("RecipesUsed", RECIPES_USED_CODEC).orElse(Map.of()));
      }
-@@ -132,10 +_,10 @@
+@@ -127,10 +_,10 @@
      @Override
      protected void saveAdditional(final ValueOutput output) {
          super.saveAdditional(output);
@@ -46,7 +46,7 @@
          ContainerHelper.saveAllItems(output, this.items);
          output.store("RecipesUsed", RECIPES_USED_CODEC, this.recipesUsed);
      }
-@@ -164,13 +_,13 @@
+@@ -159,13 +_,13 @@
                  if (recipe != null) {
                      int maxStackSize = entity.getMaxStackSize();
                      ItemStack burnResult = recipe.value().assemble(input);
@@ -62,7 +62,7 @@
                                  isLit = true;
                                  changed = true;
                              }
-@@ -181,7 +_,7 @@
+@@ -176,7 +_,7 @@
                              if (entity.cookingTimer == entity.cookingTotalTime) {
                                  entity.cookingTimer = 0;
                                  entity.cookingTotalTime = recipe.value().cookingTime();
@@ -71,7 +71,7 @@
                                  entity.setRecipeUsed(recipe);
                                  changed = true;
                              }
-@@ -210,16 +_,16 @@
+@@ -205,16 +_,16 @@
          }
      }
  
@@ -93,8 +93,8 @@
          ItemStack resultItemStack = items.get(2);
          if (resultItemStack.isEmpty()) {
              return true;
-@@ -232,7 +_,7 @@
-         }
+@@ -229,7 +_,7 @@
+         return resultCount <= maxResultCount;
      }
  
 -    private static void burn(final NonNullList<ItemStack> items, final ItemStack inputItemStack, final ItemStack result) {
@@ -102,7 +102,7 @@
          ItemStack resultItemStack = items.get(2);
          if (resultItemStack.isEmpty()) {
              items.set(2, result.copy());
-@@ -371,6 +_,35 @@
+@@ -370,6 +_,35 @@
          for (ItemStack itemStack : this.items) {
              contents.accountStack(itemStack);
          }

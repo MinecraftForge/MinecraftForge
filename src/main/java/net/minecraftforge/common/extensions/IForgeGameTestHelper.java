@@ -18,7 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
@@ -151,17 +151,17 @@ public interface IForgeGameTestHelper {
      * Create a mock server player in creative mode
      */
     default ServerPlayer makeMockServerPlayer() {
-        return makeMockServerPlayer(GameType.CREATIVE);
+        return makeMockServerPlayerFull(GameType.CREATIVE);
     }
 
     /**
      * Create a mock server player in creative mode
      */
     default ServerPlayer makeMockServerPlayer(boolean creative) {
-        return makeMockServerPlayer(creative ? GameType.CREATIVE : GameType.SURVIVAL);
+        return makeMockServerPlayerFull(creative ? GameType.CREATIVE : GameType.SURVIVAL);
     }
 
-    default ServerPlayer makeMockServerPlayer(GameType type) {
+    default ServerPlayer makeMockServerPlayerFull(GameType type) {
         var level = self().getLevel();
         var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-mock-player"), false);
         var player = new ServerPlayer(level.getServer(), level, cookie.gameProfile(), cookie.clientInformation());
@@ -182,7 +182,7 @@ public interface IForgeGameTestHelper {
      */
     default <E extends InheritableEvent> void addEventListener(EventBus<E> bus, Consumer<E> consumer) {
         var key = bus.addListener(consumer);
-        self().addCleanup(success -> bus.removeListener(key));
+        self().addCleanup(_ -> bus.removeListener(key));
     }
 
     /**
@@ -190,7 +190,7 @@ public interface IForgeGameTestHelper {
      */
     default <E extends MutableEvent> void addMutableListener(EventBus<E> bus, Consumer<E> consumer) {
         var key = bus.addListener(consumer);
-        self().addCleanup(success -> bus.removeListener(key));
+        self().addCleanup(_ -> bus.removeListener(key));
     }
 
     /**
@@ -198,7 +198,7 @@ public interface IForgeGameTestHelper {
      */
     default <E extends RecordEvent> void addRecordListener(EventBus<E> bus, Consumer<E> consumer) {
         var key = bus.addListener(consumer);
-        self().addCleanup(success -> bus.removeListener(key));
+        self().addCleanup(_ -> bus.removeListener(key));
     }
 
     /**
@@ -206,7 +206,7 @@ public interface IForgeGameTestHelper {
      */
     default void registerEventListener(Object handler) {
         var keys = MinecraftForge.EVENT_BUS.register(handler);
-        self().addCleanup(success -> MinecraftForge.EVENT_BUS.unregister(keys));
+        self().addCleanup(_ -> MinecraftForge.EVENT_BUS.unregister(keys));
     }
 
     /**
@@ -276,7 +276,7 @@ public interface IForgeGameTestHelper {
 
     default void removeAllItemEntitiesInRange(BlockPos pos, double range) {
         BlockPos blockpos = this.self().absolutePos(pos);
-        for (ItemEntity itemEntity : this.self().getLevel().getEntities(EntityType.ITEM, new AABB(blockpos).inflate(range), Entity::isAlive)) {
+        for (ItemEntity itemEntity : this.self().getLevel().getEntities(EntityTypes.ITEM, new AABB(blockpos).inflate(range), Entity::isAlive)) {
             itemEntity.remove(Entity.RemovalReason.DISCARDED);
         }
     }

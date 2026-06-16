@@ -21,7 +21,7 @@ ext {
 }
 
 changelog {
-    from '64.0'
+    from '65.0'
 }
 
 tasks.register('setup') {

@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlas.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlas.java
-@@ -123,6 +_,7 @@
-             this.sprites = sprites;
-             this.animatedTexturesStates = List.copyOf(animationStates);
-             this.uploadInitialContents();
-+            net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
-             if (SharedConstants.DEBUG_DUMP_TEXTURE_ATLAS) {
-                 Path dumpDir = TextureUtil.getDebugTexturePath();
+@@ -135,6 +_,7 @@
+         }
  
-@@ -302,5 +_,10 @@
+         this.uploadInitialContents();
++        net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
+         if (SharedConstants.DEBUG_DUMP_TEXTURE_ATLAS) {
+             Path dumpDir = TextureUtil.getDebugTexturePath();
+ 
+@@ -324,5 +_,10 @@
  
      int getHeight() {
          return this.height;

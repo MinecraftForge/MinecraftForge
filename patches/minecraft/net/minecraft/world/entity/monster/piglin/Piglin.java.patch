@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/piglin/Piglin.java
 +++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
-@@ -322,7 +_,7 @@
+@@ -323,7 +_,7 @@
          } else if (this.isChargingCrossbow()) {
              return PiglinArmPose.CROSSBOW_CHARGE;
          } else {
@@ -9,16 +9,15 @@
          }
      }
  
-@@ -359,7 +_,7 @@
-     }
+@@ -362,14 +_,14 @@
  
      protected void holdInOffHand(final ItemStack itemStack) {
--        if (itemStack.is(PiglinAi.BARTERING_ITEM)) {
-+        if (itemStack.isPiglinCurrency()) {
-             this.setItemSlot(EquipmentSlot.OFFHAND, itemStack);
-             this.setGuaranteedDrop(EquipmentSlot.OFFHAND);
-         } else {
-@@ -369,7 +_,7 @@
+         this.setItemSlotAndDropWhenKilled(EquipmentSlot.OFFHAND, itemStack);
+-        if (!itemStack.is(PiglinAi.BARTERING_ITEM)) {
++        if (!itemStack.isPiglinCurrency()) {
+             this.setPersistenceRequired();
+         }
+     }
  
      @Override
      public boolean wantsToPickUp(final ServerLevel level, final ItemStack itemStack) {

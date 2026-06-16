@@ -120,7 +120,7 @@ public class StandaloneGeometryBakingContext implements IGeometryBakingContext {
         private Identifier renderTypeHint;
         @Nullable
         private Identifier renderTypeFastHint;
-        private BiPredicate<String, Boolean> visibilityTest = (c, def) -> def;
+        private BiPredicate<String, Boolean> visibilityTest = (_, def) -> def;
 
         private Builder() { }
 

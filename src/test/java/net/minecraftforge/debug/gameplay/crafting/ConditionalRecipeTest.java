@@ -18,10 +18,10 @@ import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.references.ItemIds;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -33,7 +33,6 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.SimpleCraftingContainer;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
-import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,8 +54,6 @@ public class ConditionalRecipeTest extends BaseTestMod {
     public void gatherData(GatherDataEvent event) {
         var gen = event.getGenerator();
         gen.addProvider(event.includeServer(), new Recipes.Runner(gen.getPackOutput(), event.getLookupProvider()));
-        var testBlockTags = new TestBlockTags(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper());
-        gen.addProvider(event.includeServer(), testBlockTags);
         gen.addProvider(event.includeServer(), new TestItemTags(gen.getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
     }
 
@@ -171,17 +168,6 @@ public class ConditionalRecipeTest extends BaseTestMod {
         );
     }
 
-    public static class TestBlockTags extends BlockTagsProvider {
-        public TestBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-            super(output, lookupProvider, MODID, existingFileHelper);
-        }
-
-        @Override
-        protected void addTags(HolderLookup.Provider registries) {
-            // No block tags needed; just need a block provider content-getter to supply to the item tags generator
-        }
-    }
-
     public static class TestItemTags extends VanillaItemTagsProvider {
         public TestItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
             super(output, lookupProvider, MODID, existingFileHelper);
@@ -190,7 +176,7 @@ public class ConditionalRecipeTest extends BaseTestMod {
         @Override
         protected void addTags(HolderLookup.Provider registries) {
             // Empty out the Forge eggs tag for purposes of testing the tag-empty recipe condition
-            this.tag(Tags.Items.EGGS).remove(Items.EGG);
+            this.tag(Tags.Items.EGGS).remove(ItemIds.EGG);
         }
     }
 

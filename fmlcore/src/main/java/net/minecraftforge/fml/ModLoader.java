@@ -379,8 +379,8 @@ public final class ModLoader {
     @SuppressWarnings("removal")
     public static <T extends IModBusEvent> void postEventWrapContainerInModOrder(T event) {
         postEventWithWrapInModOrder(event,
-            (mc, e) -> ModLoadingContext.get().setActiveContainer(mc),
-            (mc, e) -> ModLoadingContext.get().setActiveContainer(null)
+            (mc, _) -> ModLoadingContext.get().setActiveContainer(mc),
+            (_, _) -> ModLoadingContext.get().setActiveContainer(null)
         );
     }
 

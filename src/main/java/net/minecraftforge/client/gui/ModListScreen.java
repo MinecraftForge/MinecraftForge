@@ -227,16 +227,16 @@ public class ModListScreen extends Screen {
         final int doneButtonWidth = Math.min(modInfoWidth, 200);
 
         int y = this.height - BUTTON_HEIGHT - PADDING;
-        doneButton = Button.builder(Component.translatable("gui.done"), b -> ModListScreen.this.onClose())
+        doneButton = Button.builder(Component.translatable("gui.done"), _ -> ModListScreen.this.onClose())
                 .bounds(((listWidth + PADDING + this.width - doneButtonWidth) / 2), y, doneButtonWidth, BUTTON_HEIGHT)
                 .build();
 
-        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), b -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()))
+        openModsFolderButton = Button.builder(Component.translatable("fml.menu.mods.openmodsfolder"), _ -> Util.getPlatform().openFile(FMLPaths.MODSDIR.get().toFile()))
                 .bounds(6, y, this.listWidth, BUTTON_HEIGHT)
                 .build();
 
         y -= BUTTON_HEIGHT + PADDING;
-        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), b -> ModListScreen.this.displayModConfig())
+        configButton = Button.builder(Component.translatable("fml.menu.mods.config"), _ -> ModListScreen.this.displayModConfig())
                 .bounds(6, y, this.listWidth, BUTTON_HEIGHT)
                 .build();
 
@@ -266,17 +266,17 @@ public class ModListScreen extends Screen {
 
         width = listWidth / NUM_BUTTONS;
         int x = PADDING;
-        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL))
+        addRenderableWidget(SortType.NORMAL.button = Button.builder(SortType.NORMAL.getButtonText(), _ -> resortMods(SortType.NORMAL))
                 .bounds(x, PADDING, width - BUTTON_MARGIN, BUTTON_HEIGHT)
                 .build());
 
         x += width + BUTTON_MARGIN;
-        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z))
+        addRenderableWidget(SortType.A_TO_Z.button = Button.builder(SortType.A_TO_Z.getButtonText(), _ -> resortMods(SortType.A_TO_Z))
                 .bounds(x, PADDING, width - BUTTON_MARGIN, BUTTON_HEIGHT)
                 .build());
 
         x += width + BUTTON_MARGIN;
-        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A))
+        addRenderableWidget(SortType.Z_TO_A.button = Button.builder(SortType.Z_TO_A.getButtonText(), _ -> resortMods(SortType.Z_TO_A))
                 .bounds(x, PADDING, width - BUTTON_MARGIN, BUTTON_HEIGHT)
                 .build());
 
@@ -291,7 +291,7 @@ public class ModListScreen extends Screen {
         try {
             ConfigScreenHandler.getScreenFactoryFor(selected.getInfo())
                     .map(f -> f.apply(this.minecraft, this))
-                    .ifPresent(newScreen -> this.minecraft.setScreen(newScreen));
+                    .ifPresent(newScreen -> this.minecraft.gui.setScreen(newScreen));
         } catch (final Exception e) {
             LOGGER.error("There was a critical issue trying to build the config GUI for {}", selected.getInfo().getModId(), e);
         }
@@ -486,6 +486,6 @@ public class ModListScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(this.parentScreen);
+        this.minecraft.gui.setScreen(this.parentScreen);
     }
 }

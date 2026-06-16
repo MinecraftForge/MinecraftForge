@@ -41,7 +41,7 @@ public class ClientCommandSourceStack extends CommandSourceStack {
     @SuppressWarnings("resource")
     @Override
     public void sendSuccess(Supplier<Component> message, boolean sendToAdmins) {
-        Minecraft.getInstance().gui.getChat().addClientSystemMessage(message.get());
+        Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(message.get());
     }
 
     /**

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/GameRenderer.java
 +++ b/net/minecraft/client/renderer/GameRenderer.java
-@@ -233,6 +_,9 @@
+@@ -220,6 +_,9 @@
              case null:
              default:
                  this.clearPostEffect();
@@ -10,41 +10,18 @@
          }
      }
  
-@@ -244,7 +_,13 @@
-     public void processBlurEffect() {
-         PostChain postChain = this.minecraft.getShaderManager().getPostChain(BLUR_POST_CHAIN_ID, LevelTargetBundle.MAIN_TARGETS);
-         if (postChain != null) {
-+            // TODO: [Forge][Rendering] Check if this blend management is needed anymnore with the new render pipeline changes
-+            boolean wasBlendEnabled = com.mojang.blaze3d.opengl.GlStateManager._isBlendEnabled();
-+            if (wasBlendEnabled)
-+                com.mojang.blaze3d.opengl.GlStateManager._disableBlend();
-             postChain.process(this.minecraft.getMainRenderTarget(), this.resourcePool);
-+            if (wasBlendEnabled)
-+                com.mojang.blaze3d.opengl.GlStateManager._enableBlend();
-         }
-     }
- 
-@@ -509,7 +_,7 @@
-             profiler.push("screen");
- 
-             try {
--                this.minecraft.screen.extractRenderStateWithTooltipAndSubtitles(graphics, xMouse, yMouse, deltaTracker.getGameTimeDeltaTicks());
-+                net.minecraftforge.client.ForgeHooksClient.drawScreen(this.minecraft.screen, graphics, xMouse, yMouse, deltaTracker.getRealtimeDeltaTicks());
-             } catch (Throwable var12) {
-                 CrashReport report = CrashReport.forThrowable(var12, "Rendering screen");
-                 CrashReportCategory category = report.addCategory("Screen render details");
-@@ -674,6 +_,10 @@
-                         Registry<Block> blockRegistry = this.minecraft.level.registryAccess().lookupOrThrow(Registries.BLOCK);
-                         renderOutline = !itemStack.isEmpty()
-                             && (itemStack.canBreakBlockInAdventureMode(blockInWorld) || itemStack.canPlaceOnBlockInAdventureMode(blockInWorld));
-+                        if (!renderOutline && blockState.hasBlockEntity()) {
-+                            var blockEntity = this.minecraft.level.getBlockEntity(pos);
-+                            renderOutline = blockEntity != null && blockEntity.hasCustomOutlineRendering();
-+                        }
-                     }
+@@ -515,6 +_,10 @@
+                     Registry<Block> blockRegistry = this.minecraft.level.registryAccess().lookupOrThrow(Registries.BLOCK);
+                     renderOutline = !itemStack.isEmpty()
+                         && (itemStack.canBreakBlockInAdventureMode(blockInWorld) || itemStack.canPlaceOnBlockInAdventureMode(blockInWorld));
++                    if (!renderOutline && blockState.hasBlockEntity()) {
++                        var blockEntity = this.minecraft.level.getBlockEntity(pos);
++                        renderOutline = blockEntity != null && blockEntity.hasCustomOutlineRendering();
++                    }
                  }
              }
-@@ -698,6 +_,9 @@
+         }
+@@ -538,6 +_,9 @@
          if (optionsState.bobView) {
              this.bobView(cameraState, bobStack);
          }

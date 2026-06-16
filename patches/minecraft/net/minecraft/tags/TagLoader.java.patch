@@ -5,8 +5,8 @@
                      String sourceId = resource.sourcePackId();
                      parsedContents.entries().forEach(ex -> tagContents.add(new TagLoader.EntryWithSource(ex, sourceId)));
 +                    parsedContents.remove().forEach(e -> tagContents.add(new TagLoader.EntryWithSource(e, sourceId, true)));
-                 } catch (Exception var17) {
-                     LOGGER.error("Couldn't read tag list {} from {} in data pack {}", id, location, resource.sourcePackId(), var17);
+                 } catch (Exception e) {
+                     LOGGER.error("Couldn't read tag list {} from {} in data pack {}", id, location, resource.sourcePackId(), e);
                  }
 @@ -74,16 +_,17 @@
      }
@@ -29,7 +29,7 @@
      }
  
      public Map<Identifier, List<T>> build(final Map<Identifier, List<TagLoader.EntryWithSource>> builders) {
-@@ -111,7 +_,7 @@
+@@ -107,7 +_,7 @@
                      missing -> LOGGER.error(
                          "Couldn't load tag {} as it is missing following references: {}",
                          id,
@@ -38,7 +38,7 @@
                      )
                  )
                  .ifRight(tag -> newTags.put(id, (List<T>)tag))
-@@ -192,7 +_,11 @@
+@@ -188,7 +_,11 @@
          }
      }
  

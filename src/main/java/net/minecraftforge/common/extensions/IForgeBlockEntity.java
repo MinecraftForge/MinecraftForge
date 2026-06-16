@@ -6,7 +6,6 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.network.Connection;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;

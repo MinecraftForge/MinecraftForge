@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/item/DyeColor.java
 +++ b/net/minecraft/world/item/DyeColor.java
-@@ -59,6 +_,8 @@
+@@ -60,6 +_,8 @@
      private final int textureDiffuseColor;
      private final int fireworkColor;
      private final int textColor;
 +    private final net.minecraft.tags.TagKey<Item> dyesTag;
 +    private final net.minecraft.tags.TagKey<Item> dyedTag;
  
-     private DyeColor(final int id, final String name, final int textureDiffuseColor, final MapColor mapColor, final int fireworkColor, final int textColor) {
-         this.id = id;
-@@ -67,6 +_,8 @@
+     DyeColor(
+         final int id,
+@@ -77,6 +_,8 @@
          this.textColor = ARGB.opaque(textColor);
          this.textureDiffuseColor = ARGB.opaque(textureDiffuseColor);
          this.fireworkColor = fireworkColor;
@@ -18,7 +18,7 @@
      }
  
      public int getId() {
-@@ -115,6 +_,27 @@
+@@ -129,6 +_,27 @@
      @Override
      public String getSerializedName() {
          return this.name;

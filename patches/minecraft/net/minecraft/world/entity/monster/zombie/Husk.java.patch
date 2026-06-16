@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/entity/monster/zombie/Husk.java
 +++ b/net/minecraft/world/entity/monster/zombie/Husk.java
-@@ -79,6 +_,7 @@
+@@ -80,6 +_,7 @@
  
      @Override
      protected void doUnderWaterConversion(final ServerLevel level) {
-+        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.ZOMBIE, (timer) -> this.conversionTime = timer)) return;
-         this.convertToZombieType(level, EntityType.ZOMBIE);
++        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityTypes.ZOMBIE, (timer) -> this.conversionTime = timer)) return;
+         this.convertToZombieType(level, EntityTypes.ZOMBIE);
          if (!this.isSilent()) {
              level.levelEvent(null, 1041, this.blockPosition(), 0);

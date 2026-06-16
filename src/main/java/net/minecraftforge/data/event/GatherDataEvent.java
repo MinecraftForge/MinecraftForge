@@ -107,7 +107,7 @@ public final class GatherDataEvent implements IModBusEvent {
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {
                 DataGenerator parent = lst.get(0);
                 for (int x = 1; x < lst.size(); x++)
-                    lst.get(x).getProvidersView().forEach((name, provider) -> parent.addProvider(true, provider));
+                    lst.get(x).getProvidersView().forEach((_, provider) -> parent.addProvider(true, provider));
                 parent.run();
             }));
         }

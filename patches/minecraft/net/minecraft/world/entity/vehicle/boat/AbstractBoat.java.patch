@@ -34,7 +34,7 @@
 -                    if (fluidState.is(FluidTags.WATER)) {
 +                    if (this.canBoatInFluid(fluidState)) {
                          float height = y + fluidState.getHeight(this.level(), pos);
-                         this.waterLevel = Math.max((double)height, this.waterLevel);
+                         this.waterLevel = Math.max(height, this.waterLevel);
                          inWater |= bb.minY < height;
 @@ -516,7 +_,7 @@
                  for (int z = z0; z < z1; z++) {
@@ -45,7 +45,7 @@
                          if (!fluidState.isSource()) {
                              return AbstractBoat.Status.UNDER_FLOWING_WATER;
                          }
-@@ -722,7 +_,7 @@
+@@ -725,7 +_,7 @@
          if (!this.isPassenger()) {
              if (onGround) {
                  this.resetFallDistance();
@@ -54,7 +54,7 @@
                  this.fallDistance -= (float)ya;
              }
          }
-@@ -746,7 +_,7 @@
+@@ -749,7 +_,7 @@
  
      @Override
      protected boolean canAddPassenger(final Entity passenger) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagKey.java
 +++ b/net/minecraft/tags/TagKey.java
-@@ -40,6 +_,10 @@
+@@ -38,6 +_,10 @@
          return (TagKey<T>)VALUES.intern(new TagKey<>(registry, location));
      }
  

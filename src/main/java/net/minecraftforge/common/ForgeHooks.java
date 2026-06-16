@@ -1046,7 +1046,7 @@ public final class ForgeHooks {
         }
 
         final var entries = new MutableHashedLinkedMap<ItemStack, CreativeModeTab.TabVisibility>(ItemStackLinkedSet.TYPE_AND_TAG,
-            (key, left, right) -> {
+            (_, _, _) -> {
                 //throw new IllegalStateException("Accidentally adding the same item stack twice " + key.getDisplayName().getString() + " to a Creative Mode Tab: " + tab.getDisplayName().getString());
                 // Vanilla adds enchanting books twice in both visibilities.
                 // This is just code cleanliness for them. For us lets just increase the visibility and merge the entries.

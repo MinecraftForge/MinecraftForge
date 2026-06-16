@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/LlamaSpit.java
 +++ b/net/minecraft/world/entity/projectile/LlamaSpit.java
-@@ -43,7 +_,8 @@
+@@ -44,7 +_,8 @@
          super.tick();
          Vec3 movement = this.getDeltaMovement();
          HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);

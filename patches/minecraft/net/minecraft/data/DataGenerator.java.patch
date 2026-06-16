@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
-@@ -19,6 +_,7 @@
+@@ -18,6 +_,7 @@
      protected final PackOutput vanillaPackOutput;
      protected final Set<String> allProviderIds = new HashSet<>();
      protected final Map<String, DataProvider> providersToRun = new LinkedHashMap<>();
@@ -8,7 +8,7 @@
  
      public DataGenerator(final Path output) {
          this.vanillaPackOutput = new PackOutput(output);
-@@ -34,6 +_,35 @@
+@@ -33,6 +_,35 @@
          Path packOutputDir = this.vanillaPackOutput.getOutputFolder(PackOutput.Target.DATA_PACK).resolve("minecraft").resolve("datapacks").resolve(packId);
          return new DataGenerator.PackGenerator(toRun, packId, new PackOutput(packOutputDir));
      }
@@ -44,7 +44,7 @@
  
      static {
          Bootstrap.bootStrap();
-@@ -61,6 +_,7 @@
+@@ -60,6 +_,7 @@
                      DataGenerator.LOGGER.debug("Generator {} already run for version {}", providerId, this.version.name());
                  } else {
                      DataGenerator.LOGGER.info("Starting provider: {}", providerId);
@@ -52,7 +52,7 @@
                      stopwatch.start();
                      cache.applyUpdate(cache.generateUpdate(providerId, provider::run).join());
                      stopwatch.stop();
-@@ -112,6 +_,7 @@
+@@ -109,6 +_,7 @@
              Stopwatch stopwatch = Stopwatch.createUnstarted();
              this.providersToRun.forEach((providerId, provider) -> {
                  DataGenerator.LOGGER.info("Starting uncached provider: {}", providerId);

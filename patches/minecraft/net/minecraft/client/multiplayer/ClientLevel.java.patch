@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientLevel.java
 +++ b/net/minecraft/client/multiplayer/ClientLevel.java
-@@ -150,6 +_,7 @@
+@@ -165,6 +_,7 @@
          cache.put(BiomeColors.FOLIAGE_COLOR_RESOLVER, new BlockTintCache(pos -> this.calculateBlockTint(pos, BiomeColors.FOLIAGE_COLOR_RESOLVER)));
          cache.put(BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER, new BlockTintCache(pos -> this.calculateBlockTint(pos, BiomeColors.DRY_FOLIAGE_COLOR_RESOLVER)));
          cache.put(BiomeColors.WATER_COLOR_RESOLVER, new BlockTintCache(pos -> this.calculateBlockTint(pos, BiomeColors.WATER_COLOR_RESOLVER)));
@@ -8,8 +8,8 @@
      });
      private final ClientChunkCache chunkSource;
      private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
-@@ -161,6 +_,8 @@
-     private final EnvironmentAttributeSystem environmentAttributes;
+@@ -178,6 +_,8 @@
+     private final Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress = new Long2ObjectOpenHashMap<>();
      private final int seaLevel;
      private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
 +    private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
@@ -17,7 +17,7 @@
  
      public void handleBlockChangedAck(final int sequence) {
          if (SharedConstants.DEBUG_BLOCK_BREAK) {
-@@ -243,6 +_,8 @@
+@@ -260,6 +_,8 @@
          this.serverSimulationDistance = serverSimulationDistance;
          this.environmentAttributes = this.addEnvironmentAttributeLayers(EnvironmentAttributeSystem.builder()).build();
          this.updateSkyBrightness();
@@ -26,7 +26,7 @@
      }
  
      private EnvironmentAttributeSystem.Builder addEnvironmentAttributeLayers(final EnvironmentAttributeSystem.Builder environmentAttributes) {
-@@ -352,6 +_,7 @@
+@@ -471,6 +_,7 @@
          entity.setOldPosAndRot();
          entity.tickCount++;
          Profiler.get().push(entity.typeHolder()::getRegisteredName);
@@ -34,7 +34,7 @@
          entity.tick();
          Profiler.get().pop();
  
-@@ -412,8 +_,10 @@
+@@ -527,8 +_,10 @@
      }
  
      public void addEntity(final Entity entity) {
@@ -45,7 +45,7 @@
      }
  
      public void removeEntity(final int id, final Entity.RemovalReason reason) {
-@@ -576,8 +_,10 @@
+@@ -692,8 +_,10 @@
          final float pitch,
          final long seed
      ) {
@@ -57,7 +57,7 @@
          }
      }
  
-@@ -591,8 +_,10 @@
+@@ -707,8 +_,10 @@
          final float pitch,
          final long seed
      ) {
@@ -69,7 +69,7 @@
          }
      }
  
-@@ -946,7 +_,7 @@
+@@ -1081,7 +_,7 @@
  
      @Override
      public void addDestroyBlockEffect(final BlockPos pos, final BlockState blockState) {
@@ -78,7 +78,7 @@
              VoxelShape shape = blockState.getShape(this, pos);
              double density = 0.25;
              shape.forAllBoxes(
-@@ -973,6 +_,7 @@
+@@ -1108,6 +_,7 @@
                                          new TerrainParticle(
                                              this, pos.getX() + x, pos.getY() + y, pos.getZ() + z, relX - 0.5, relY - 0.5, relZ - 0.5, blockState, pos
                                          )
@@ -86,7 +86,7 @@
                                      );
                              }
                          }
-@@ -982,6 +_,13 @@
+@@ -1117,6 +_,13 @@
          }
      }
  
@@ -100,7 +100,7 @@
      public void addBreakingBlockEffect(final BlockPos pos, final Direction direction) {
          BlockState blockState = this.getBlockState(pos);
          if (blockState.getRenderShape() != RenderShape.INVISIBLE && blockState.shouldSpawnTerrainParticles()) {
-@@ -1017,7 +_,7 @@
+@@ -1152,7 +_,7 @@
                  xp = x + shape.maxX + 0.1F;
              }
  
@@ -109,7 +109,7 @@
          }
      }
  
-@@ -1083,6 +_,16 @@
+@@ -1218,6 +_,16 @@
          this.explosionTracker.track(center, radius, blockCount, blockParticles);
      }
  
@@ -126,7 +126,7 @@
      @OnlyIn(Dist.CLIENT)
      public static class ClientLevelData implements WritableLevelData {
          private final boolean hardcore;
-@@ -1138,6 +_,7 @@
+@@ -1273,6 +_,7 @@
          }
  
          public void setDifficulty(final Difficulty difficulty) {
@@ -134,7 +134,7 @@
              this.difficulty = difficulty;
          }
  
-@@ -1185,6 +_,12 @@
+@@ -1315,6 +_,12 @@
                      break;
                  default:
              }
@@ -147,7 +147,7 @@
          }
  
          public void onTrackingEnd(final Entity entity) {
-@@ -1197,6 +_,15 @@
+@@ -1327,6 +_,15 @@
                      ClientLevel.this.dragonParts.removeAll(Arrays.asList(dragon.getSubEntities()));
                      break;
                  default:

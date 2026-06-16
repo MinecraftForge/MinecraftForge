@@ -7,12 +7,10 @@ package net.minecraftforge.fml;
 
 import java.util.function.Supplier;
 
-public interface ISystemReportExtender extends Supplier<String>
-{
+public interface ISystemReportExtender extends Supplier<String> {
     String getLabel();
 
-    default boolean isActive()
-    {
+    default boolean isActive() {
         return true;
     }
 }

@@ -41,7 +41,7 @@ public final class EntityAttributeModificationEvent extends MutableEvent {
     }
 
     public void add(EntityType<? extends LivingEntity> entityType, Holder<Attribute> attribute, double value) {
-        var attributes = entityAttributes.computeIfAbsent(entityType, (type) -> new AttributeSupplier.Builder());
+        var attributes = entityAttributes.computeIfAbsent(entityType, (_) -> new AttributeSupplier.Builder());
         attributes.add(attribute, value);
     }
 

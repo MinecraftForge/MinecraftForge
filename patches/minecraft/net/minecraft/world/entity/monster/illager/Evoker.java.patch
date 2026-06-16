@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/entity/monster/illager/Evoker.java
 +++ b/net/minecraft/world/entity/monster/illager/Evoker.java
-@@ -311,7 +_,7 @@
+@@ -305,7 +_,7 @@
+             }
+ 
+             ServerLevel level = getServerLevel(Evoker.this.level());
+-            if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, Evoker.this)) {
                  return false;
-             } else {
-                 ServerLevel level = getServerLevel(Evoker.this.level());
--                if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
-+                if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, Evoker.this)) {
-                     return false;
-                 } else {
-                     List<Sheep> entities = level.getNearbyEntities(
+             }
+ 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/Biome.java
 +++ b/net/minecraft/world/level/biome/Biome.java
-@@ -36,9 +_,9 @@
+@@ -35,9 +_,9 @@
  public final class Biome {
      public static final Codec<Biome> DIRECT_CODEC = RecordCodecBuilder.create(
          i -> i.group(
@@ -12,7 +12,7 @@
                  BiomeGenerationSettings.CODEC.forGetter(b -> b.generationSettings),
                  MobSpawnSettings.CODEC.forGetter(b -> b.mobSettings)
              )
-@@ -66,8 +_,10 @@
+@@ -65,8 +_,10 @@
      @Deprecated(forRemoval = true)
      public static final PerlinSimplexNoise BIOME_INFO_NOISE = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(2345L)), ImmutableList.of(0));
      private static final int TEMPERATURE_CACHE_SIZE = 1024;
@@ -23,7 +23,7 @@
      private final MobSpawnSettings mobSettings;
      private final EnvironmentAttributeMap attributes;
      private final BiomeSpecialEffects specialEffects;
-@@ -84,6 +_,7 @@
+@@ -79,6 +_,7 @@
          map.defaultReturnValue(Float.NaN);
          return map;
      });
@@ -31,7 +31,7 @@
  
      private Biome(
          final Biome.ClimateSettings climateSettings,
-@@ -97,10 +_,11 @@
+@@ -92,10 +_,11 @@
          this.mobSettings = mobSettings;
          this.attributes = attributes;
          this.specialEffects = specialEffects;
@@ -44,7 +44,7 @@
      }
  
      public boolean hasPrecipitation() {
-@@ -202,7 +_,7 @@
+@@ -197,7 +_,7 @@
      }
  
      public BiomeGenerationSettings getGenerationSettings() {
@@ -53,7 +53,7 @@
      }
  
      public int getGrassColor(final double x, final double z) {
-@@ -255,6 +_,31 @@
+@@ -250,6 +_,31 @@
  
      public int getWaterColor() {
          return this.specialEffects.waterColor();

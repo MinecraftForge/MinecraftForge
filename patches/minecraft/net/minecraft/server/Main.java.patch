@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -82,6 +_,17 @@
+@@ -85,6 +_,17 @@
          OptionSpec<Void> jfrProfilingOption = parser.accepts("jfrProfile");
          OptionSpec<Path> pidFile = parser.accepts("pidFile").withRequiredArg().withValuesConvertedBy(new PathConverter());
          OptionSpec<String> nonOptions = parser.nonOptions();
@@ -18,7 +18,7 @@
  
          try {
              OptionSet options = parser.parse(args);
-@@ -90,6 +_,14 @@
+@@ -93,6 +_,14 @@
                  return;
              }
  
@@ -33,7 +33,7 @@
              Path pidFilePath = options.valueOf(pidFile);
              if (pidFilePath != null) {
                  writePidFile(pidFilePath);
-@@ -104,24 +_,28 @@
+@@ -107,26 +_,30 @@
              Bootstrap.validate();
              Util.startTimerHackThread();
              Path settingsFile = Paths.get("server.properties");
@@ -58,6 +58,8 @@
 -
              File universePath = new File(options.valueOf(universe));
              Services services = Services.create(new YggdrasilAuthenticationService(Proxy.NO_PROXY), universePath);
+             NotificationManager notificationManager = new NotificationManager();
+             ManagementServer jsonRpcServer = JsonRpc.create(settings, notificationManager);
              String levelName = Optional.ofNullable(options.valueOf(worldName)).orElse(settings.getProperties().levelName);
 +            // Forge: make each gametest use a timestamped world name
 +            if (uniqueWorld != null && options.has(uniqueWorld))
@@ -69,7 +71,7 @@
              LevelStorageSource levelStorageSource = LevelStorageSource.createDefault(universePath.toPath());
              LevelStorageSource.LevelStorageAccess access = levelStorageSource.validateAndCreateAccess(levelName);
              Dynamic<?> levelDataTag;
-@@ -157,6 +_,10 @@
+@@ -162,6 +_,10 @@
  
              PackRepository packRepository = ServerPacksSource.createPackRepository(access);
  
@@ -80,7 +82,7 @@
              WorldStem worldStem;
              try {
                  WorldLoader.InitConfig worldLoadConfig = loadOrCreateConfig(settings.getProperties(), levelDataTag, safeModeEnabled, packRepository);
-@@ -219,6 +_,7 @@
+@@ -233,6 +_,7 @@
                  @Override
                  public void run() {
                      dedicatedServer.halt(true);
@@ -88,7 +90,7 @@
                  }
              };
              shutdownThread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
-@@ -254,6 +_,16 @@
+@@ -268,6 +_,16 @@
              worldOptions = bonusChest ? properties.worldOptions.withBonusChest(true) : properties.worldOptions;
              dimensions = properties.createDimensions(context.datapackWorldgen());
          }

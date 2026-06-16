@@ -108,7 +108,7 @@ public class TimeTracker<T>
             currentlyTracking = null;
             return;
         }
-        int[] timings = this.timings.computeIfAbsent(object, k -> new int[101]);
+        int[] timings = this.timings.computeIfAbsent(object, _ -> new int[101]);
         int idx = timings[100] = (timings[100] + 1) % 100;
         timings[idx] = (int) (nanoTime - timing);
     }

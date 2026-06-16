@@ -53,7 +53,7 @@ public class CreativeModeTabSearchRegistry {
         if (!tab.hasSearchBar())
             return null;
 
-        return NAME_SEARCH_KEYS.computeIfAbsent(tab, k -> new SessionSearchTrees.Key());
+        return NAME_SEARCH_KEYS.computeIfAbsent(tab, _ -> new SessionSearchTrees.Key());
     }
 
     @Nullable
@@ -64,6 +64,6 @@ public class CreativeModeTabSearchRegistry {
         if (!tab.hasSearchBar())
             return null;
 
-        return TAG_SEARCH_KEYS.computeIfAbsent(tab, k -> new SessionSearchTrees.Key());
+        return TAG_SEARCH_KEYS.computeIfAbsent(tab, _ -> new SessionSearchTrees.Key());
     }
 }

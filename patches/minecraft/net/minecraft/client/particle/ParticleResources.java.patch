@@ -8,8 +8,8 @@
      private @Nullable Runnable onReload;
  
      public ParticleResources() {
-@@ -175,14 +_,17 @@
-         this.register(ParticleTypes.FIREFLY, FireflyParticle.FireflyProvider::new);
+@@ -183,14 +_,17 @@
+         this.register(ParticleTypes.SULFUR_CUBE_GOO, BreakingItemParticle.SulfurCubeProvider::new);
      }
  
 +    /** @deprecated Register via {@link net.minecraftforge.client.event.RegisterParticleProvidersEvent} */
@@ -27,7 +27,7 @@
      }
  
      @Override
-@@ -278,8 +_,13 @@
+@@ -281,8 +_,13 @@
          }
      }
  

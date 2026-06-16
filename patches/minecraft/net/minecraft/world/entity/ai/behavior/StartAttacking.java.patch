@@ -1,15 +1,14 @@
 --- a/net/minecraft/world/entity/ai/behavior/StartAttacking.java
 +++ b/net/minecraft/world/entity/ai/behavior/StartAttacking.java
-@@ -29,7 +_,11 @@
-                             if (!body.canAttack(targetEntity)) {
-                                 return false;
-                             } else {
--                                attackTarget.set(targetEntity);
-+                                var changeTargetEvent = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetBehavior(body, targetEntity);
-+                                if (changeTargetEvent == null)
-+                                    return false;
+@@ -32,6 +_,11 @@
+                         return false;
+                     }
+ 
++                    var changeTargetEvent = net.minecraftforge.event.ForgeEventFactory.onLivingChangeTargetBehavior(body, targetEntity);
++                    if (changeTargetEvent == null)
++                        return false;
++                    targetEntity = changeTargetEvent.getNewTarget();
 +
-+                                attackTarget.set(changeTargetEvent.getNewTarget());
-                                 cantReachSince.erase();
-                                 return true;
-                             }
+                     attackTarget.set(targetEntity);
+                     cantReachSince.erase();
+                     return true;

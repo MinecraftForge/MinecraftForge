@@ -8,9 +8,9 @@ package net.minecraftforge.client.gui.overlay;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
+import net.minecraft.client.gui.Hud;
+import net.minecraft.client.gui.contextualbar.ContextualBar;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -117,7 +117,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * Add a layer to the layer list. This layer will be at the end of the list, which means
      * it will be rendered last (on top) of already added layers.
      * @param name RL for other mods to order against.
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Hud}
      * @return this
      */
     public ForgeLayeredDraw add(Identifier targetStack, Identifier name, ForgeLayer layer) {
@@ -130,7 +130,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * Use any of the non-deprecated add methods if you want a specific instance,
      * or call {@linkplain ForgeLayeredDraw#locateStack(Identifier)} to get a reference to an instance.
      * @param name RL of layer to add
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Hud}
      * @return this
      */
     public ForgeLayeredDraw add(Identifier name, ForgeLayer layer) {
@@ -198,7 +198,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Hud}
      * @return this
      */
     public ForgeLayeredDraw addAbove(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
@@ -225,7 +225,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      * If the current stack does not contain otherLayer, no changes will be made.
      * @param newLayer name of the layer to be added
      * @param otherLayer name of the layer being ordered against
-     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Gui}
+     * @param layer layer render code, see {@linkplain ForgeLayer} and example usages in {@linkplain Hud}
      * @return this
      */
     public ForgeLayeredDraw addBelow(Identifier expectedStack, Identifier newLayer, Identifier otherLayer, ForgeLayer layer) {
@@ -294,7 +294,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
      */
     public ForgeLayeredDraw addConditionTo(Identifier targetLayer, BooleanSupplier condition) {
         var result = namedLayers.computeIfPresent(targetLayer,
-                (name, layer) -> (guiGraphics, deltaTracker) -> {
+                (_, layer) -> (guiGraphics, deltaTracker) -> {
                     if (condition.getAsBoolean()) {
                         layer.extract(guiGraphics, deltaTracker);
                     }
@@ -428,22 +428,22 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     }
 
     @ApiStatus.Internal
-    public static void init(Gui gui, Minecraft minecraft) {
+    public static void init(Hud gui, Minecraft minecraft) {
         BooleanSupplier spectator = () -> minecraft.gameMode.isSpectator();
         var hotbarCluster = new ForgeLayeredDraw(HOTBAR_AND_DECOS)
-                .addWithCondition(SPECTATOR_HOTBAR,  (gg, dt) -> gui.getSpectatorGui().extractHotbar(gg), spectator)
+                .addWithCondition(SPECTATOR_HOTBAR,  (gg, _) -> gui.getSpectatorGui().extractHotbar(gg), spectator)
                 .addWithCondition(ITEM_HOTBAR, gui::extractItemHotbar, () -> !spectator.getAsBoolean())
-                .addWithCondition(HEALTH_BAR, (gg, dt) -> gui.extractPlayerHealth(gg), () -> minecraft.gameMode.canHurtPlayer())
-                .add(VEHICLE_HEALTH, (gg, dt) -> gui.extractVehicleHealth(gg))
+                .addWithCondition(HEALTH_BAR, (gg, _) -> gui.extractPlayerHealth(gg), () -> minecraft.gameMode.canHurtPlayer())
+                .add(VEHICLE_HEALTH, (gg, _) -> gui.extractVehicleHealth(gg))
                 .add(BACKGROUND, gui::updateContextualInfo)
-                .addWithCondition(EXPERIENCE_LEVEL, (gg, dt) -> ContextualBarRenderer.extractExperienceLevel(gg, minecraft.font, minecraft.player.experienceLevel), () -> minecraft.gameMode.hasExperience() && minecraft.player.experienceLevel > 0)
+                .addWithCondition(EXPERIENCE_LEVEL, (gg, _) -> ContextualBar.extractExperienceLevel(gg, minecraft.font, minecraft.player.experienceLevel), () -> minecraft.gameMode.hasExperience() && minecraft.player.experienceLevel > 0)
                 .add(CONTEXTUAL_INFO, gui::extractContextualInfoState)
-                .addWithCondition(SELECTED_ITEM_NAME, (gg, dt) -> gui.extractSelectedItemName(gg), () -> !spectator.getAsBoolean())
-                .addWithCondition(SPECTATOR_ACTION, (gg, dt) -> gui.getSpectatorGui().extractAction(gg), spectator);
+                .addWithCondition(SELECTED_ITEM_NAME, (gg, _) -> gui.extractSelectedItemName(gg), () -> !spectator.getAsBoolean())
+                .addWithCondition(SPECTATOR_ACTION, (gg, _) -> gui.getSpectatorGui().extractAction(gg), spectator);
         var preSleepDraw = new ForgeLayeredDraw(PRE_SLEEP_STACK)
             .add(CAMERA_OVERLAY, gui::extractCameraOverlays)
             .add(CROSSHAIR, gui::extractCrosshair)
-            .add(CHANGE_STRATUM, (gg, dt) -> gg.nextStratum())
+            .add(CHANGE_STRATUM, (gg, _) -> gg.nextStratum())
             .add(HOTBAR_AND_DECOS, hotbarCluster)
             .add(POTION_EFFECTS, gui::extractEffects)
             .add(BOSS_OVERLAY, gui::extractBossOverlay);
@@ -454,13 +454,13 @@ public final class ForgeLayeredDraw implements ForgeLayer {
             .add(TITLE_OVERLAY, gui::extractTitle)
             .add(CHAT_OVERLAY, gui::extractChat)
             .add(TAB_LIST, gui::extractTabList)
-            .add(SUBTITLE_OVERLAY, (gfx, delta) -> gui.extractSubtitleOverlay(gfx, minecraft.screen != null && minecraft.screen.isInGameUi()));
+            .add(SUBTITLE_OVERLAY, (gfx, _) -> gui.extractSubtitleOverlay(gfx, minecraft.gui.screen() != null && minecraft.gui.screen().isInGameUi()));
         instance
-            .add(PRE_SLEEP_STACK, preSleepDraw, () -> !minecraft.options.hideGui)
+            .add(PRE_SLEEP_STACK, preSleepDraw, () -> !gui.isHidden())
             .add(SLEEP_OVERLAY, gui::extractSleepOverlay)
-            .add(POST_SLEEP_STACK, postSleepDraw, () -> !minecraft.options.hideGui)
-            .add(SUBTITLE_OVERLAY, (gfx, delta) -> {
-                if (minecraft.options.hideGui && minecraft.screen != null && minecraft.screen.isInGameUi())
+            .add(POST_SLEEP_STACK, postSleepDraw, () -> !gui.isHidden())
+            .add(SUBTITLE_OVERLAY, (gfx, _) -> {
+                if (!gui.isHidden() && minecraft.gui.screen() != null && minecraft.gui.screen().isInGameUi())
                     gui.extractSubtitleOverlay(gfx,  true);
             });
         instance.resolveLayers();

@@ -108,13 +108,13 @@ public class IntersectionIngredient extends AbstractIngredient {
 
         @Override
         public IntersectionIngredient read(RegistryFriendlyByteBuf buffer) {
-            var children = buffer.readCollection(ArrayList::new, buf -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
+            var children = buffer.readCollection(ArrayList::new, _ -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
             return new IntersectionIngredient(children);
         }
 
         @Override
         public void write(RegistryFriendlyByteBuf buffer, IntersectionIngredient value) {
-            buffer.writeCollection(value.children, (b, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
+            buffer.writeCollection(value.children, (_, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
         }
     };
 }

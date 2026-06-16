@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/config/PrepareSpawnTask.java
 +++ b/net/minecraft/server/network/config/PrepareSpawnTask.java
-@@ -187,6 +_,7 @@
+@@ -180,6 +_,7 @@
                      .loadPlayerData(PrepareSpawnTask.this.nameAndId)
                      .map(tag -> TagValueInput.create(reporter, PrepareSpawnTask.this.server.registryAccess(), tag));
                  input.ifPresent(player::load);

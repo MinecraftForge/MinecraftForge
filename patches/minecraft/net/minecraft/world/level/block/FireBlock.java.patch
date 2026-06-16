@@ -101,16 +101,15 @@
                  return true;
              }
          }
-@@ -274,13 +_,14 @@
+@@ -275,12 +_,13 @@
  
-             for (Direction direction : Direction.values()) {
-                 BlockState blockState = level.getBlockState(pos.relative(direction));
--                odds = Math.max(this.getIgniteOdds(blockState), odds);
-+                odds = Math.max(blockState.getFireSpreadSpeed(level, pos.relative(direction), direction.getOpposite()), odds);
-             }
- 
-             return odds;
+         for (Direction direction : Direction.values()) {
+             BlockState blockState = level.getBlockState(pos.relative(direction));
+-            odds = Math.max(this.getIgniteOdds(blockState), odds);
++            odds = Math.max(blockState.getFireSpreadSpeed(level, pos.relative(direction), direction.getOpposite()), odds);
          }
+ 
+         return odds;
      }
  
 +    @Deprecated //Forge: Use canCatchFire with more context

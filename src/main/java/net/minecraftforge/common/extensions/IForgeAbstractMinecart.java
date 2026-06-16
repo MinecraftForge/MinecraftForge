@@ -13,7 +13,7 @@ import net.minecraft.util.Mth;
 public interface IForgeAbstractMinecart {
     public static float DEFAULT_MAX_SPEED_AIR_LATERAL = 0.4f;
     public static float DEFAULT_MAX_SPEED_AIR_VERTICAL = -1.0f;
-    public static double DEFAULT_AIR_DRAG = 0.95f;
+    public static float DEFAULT_AIR_DRAG = 0.95f;
 
     private AbstractMinecart self() {
         return (AbstractMinecart)this;
@@ -72,8 +72,7 @@ public interface IForgeAbstractMinecart {
     void setMaxSpeedAirLateral(float value);
     float getMaxSpeedAirVertical();
     void setMaxSpeedAirVertical(float value);
-    double getDragAir();
-    void setDragAir(double value);
+    void setAirDrag(float value);
 
     /**
      * Called from Detector Rails to retrieve a redstone power level for comparators.

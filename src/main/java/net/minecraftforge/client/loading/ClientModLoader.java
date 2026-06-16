@@ -114,7 +114,7 @@ public final class ClientModLoader {
 
         if (error != null || !warnings.isEmpty()) {
             BusGroup.DEFAULT.shutdown();
-            mc.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
+            mc.gui.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         }
 

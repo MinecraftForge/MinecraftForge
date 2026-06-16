@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -250,6 +_,10 @@
+@@ -249,6 +_,10 @@
          return transform(pos, settings.getMirror(), settings.getRotation(), settings.getRotationPivot());
      }
  
@@ -12,28 +12,28 @@
          final ServerLevelAccessor level,
          final BlockPos position,
 @@ -276,7 +_,7 @@
-                 int maxX = Integer.MIN_VALUE;
-                 int maxY = Integer.MIN_VALUE;
-                 int maxZ = Integer.MIN_VALUE;
--                List<StructureTemplate.StructureBlockInfo> processedBlockInfoList = processBlockInfos(level, position, referencePos, settings, blockInfoList);
-+                List<StructureTemplate.StructureBlockInfo> processedBlockInfoList = processBlockInfos(level, position, referencePos, settings, blockInfoList, this);
+             int maxX = Integer.MIN_VALUE;
+             int maxY = Integer.MIN_VALUE;
+             int maxZ = Integer.MIN_VALUE;
+-            List<StructureTemplate.StructureBlockInfo> processedBlockInfoList = processBlockInfos(level, position, referencePos, settings, blockInfoList);
++            List<StructureTemplate.StructureBlockInfo> processedBlockInfoList = processBlockInfos(level, position, referencePos, settings, blockInfoList, this);
  
-                 try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LOGGER)) {
-                     for (StructureTemplate.StructureBlockInfo blockInfo : processedBlockInfoList) {
-@@ -396,10 +_,10 @@
-                             position,
-                             settings.getMirror(),
-                             settings.getRotation(),
--                            settings.getRotationPivot(),
-                             boundingBox,
-                             settings.shouldFinalizeEntities(),
--                            reporter
-+                            reporter,
-+                            settings
-                         );
-                     }
+             try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LOGGER)) {
+                 for (StructureTemplate.StructureBlockInfo blockInfo : processedBlockInfoList) {
+@@ -395,10 +_,10 @@
+                         position,
+                         settings.getMirror(),
+                         settings.getRotation(),
+-                        settings.getRotationPivot(),
+                         boundingBox,
+                         settings.shouldFinalizeEntities(),
+-                        reporter
++                        reporter,
++                        settings
+                     );
                  }
-@@ -442,12 +_,21 @@
+             }
+@@ -440,12 +_,21 @@
          });
      }
  
@@ -56,16 +56,16 @@
      ) {
          List<StructureTemplate.StructureBlockInfo> originalBlockInfoList = new ArrayList<>();
          List<StructureTemplate.StructureBlockInfo> processedBlockInfoList = new ArrayList<>();
-@@ -460,7 +_,7 @@
-             Iterator<StructureProcessor> iterator = settings.getProcessors().iterator();
+@@ -469,7 +_,7 @@
+                 Iterator<StructureProcessor> iterator = settings.getProcessors().iterator();
  
-             while (processedBlockInfo != null && iterator.hasNext()) {
--                processedBlockInfo = iterator.next().processBlock(level, position, referencePos, blockInfo, processedBlockInfo, settings);
-+                processedBlockInfo = iterator.next().processBlock(level, position, referencePos, blockInfo, processedBlockInfo, settings, template);
-             }
+                 while (processedBlockInfo != null && iterator.hasNext()) {
+-                    processedBlockInfo = iterator.next().processBlock(level, position, referencePos, blockInfo.pos, processedBlockInfo, settings);
++                    processedBlockInfo = iterator.next().processBlock(level, position, referencePos, blockInfo.pos, processedBlockInfo, settings, template);
+                 }
  
-             if (processedBlockInfo != null) {
-@@ -481,17 +_,17 @@
+                 if (processedBlockInfo != null) {
+@@ -491,17 +_,17 @@
          final BlockPos position,
          final Mirror mirror,
          final Rotation rotation,
@@ -89,7 +89,7 @@
                  ListTag posTag = new ListTag();
                  posTag.add(DoubleTag.valueOf(pos.x));
                  posTag.add(DoubleTag.valueOf(pos.y));
-@@ -513,6 +_,30 @@
+@@ -523,6 +_,30 @@
              }
          }
      }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/TitleScreen.java
 +++ b/net/minecraft/client/gui/screens/TitleScreen.java
-@@ -53,6 +_,7 @@
+@@ -57,6 +_,7 @@
      private boolean fading;
      private long fadeInStart;
      private final LogoRenderer logoRenderer;
@@ -8,7 +8,7 @@
  
      public TitleScreen() {
          this(false);
-@@ -105,11 +_,15 @@
+@@ -114,11 +_,15 @@
          int copyrightX = this.width - copyrightWidth - 2;
          int spacing = 24;
          int topPos = this.height / 4 + 48;
@@ -17,23 +17,23 @@
              topPos = this.createDemoMenuOptions(topPos, 24);
          } else {
              topPos = this.createNormalMenuOptions(topPos, 24);
-+            modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
-+                    .pos(this.width / 2 - 100, topPos).size(98, 20).build());
++            modButton = this.addRenderableWidget(Button.builder(Component.translatable("fml.menu.mods"), button -> this.minecraft.gui.setScreen(new net.minecraftforge.client.gui.ModListScreen(this)))
++                .pos(this.width / 2 - 100, topPos).size(98, 20).build());
          }
 +        modUpdateNotification = net.minecraftforge.client.gui.TitleScreenModUpdateIndicator.init(this, modButton);
  
-         topPos = this.createTestWorldButton(topPos, 24);
-         SpriteIconButton language = this.addRenderableWidget(
-@@ -182,7 +_,7 @@
-         }).bounds(this.width / 2 - 100, var6 = topPos + spacing, 200, 20).tooltip(tooltip).build()).active = multiplayerAllowed;
+         int numberOfButtons = 3;
+         int currentButton = 0;
+@@ -199,7 +_,7 @@
+         }).bounds(this.width / 2 - 100, var7 = topPos + spacing, 200, 20).tooltip(tooltip).build()).active = multiplayerAllowed;
          this.addRenderableWidget(
-                 Button.builder(Component.translatable("menu.online"), button -> this.minecraft.setScreen(new RealmsMainScreen(this)))
--                    .bounds(this.width / 2 - 100, topPos = var6 + spacing, 200, 20)
-+                    .bounds(this.width / 2 + 2, topPos = var6 + spacing, 98, 20)
+                 Button.builder(Component.translatable("menu.online"), var1 -> this.minecraft.gui.setScreen(new RealmsMainScreen(this)))
+-                    .bounds(this.width / 2 - 100, topPos = var7 + spacing, 200, 20)
++                    .bounds(this.width / 2 + 2, topPos = var7 + spacing, 98, 20)
                      .tooltip(tooltip)
                      .build()
              )
-@@ -310,9 +_,18 @@
+@@ -323,9 +_,18 @@
              versionString = versionString + I18n.get("menu.modded");
          }
  

@@ -51,14 +51,14 @@ public final class CapabilityManager {
         Capability<T> cap;
 
         synchronized (providers) {
-            final var parent = (Capability<T>)providers.computeIfAbsent(new Key(type, null), k -> new Capability<>(type.intern()));
+            final var parent = (Capability<T>)providers.computeIfAbsent(new Key(type, null), _ -> new Capability<>(type.intern()));
 
             if (name == null) {
                 cap = parent;
             } else  { // A Named child
-                cap = (Capability<T>)providers.computeIfAbsent(new Key(type, name), k -> {
+                cap = (Capability<T>)providers.computeIfAbsent(new Key(type, name), _ -> {
                     var ret = new Capability<>((parent.getName() + '#' + name.toString()).intern());
-                    parent.addListener(p -> ret.onRegister());
+                    parent.addListener(_ -> ret.onRegister());
                     return ret;
                 });
             }

@@ -1,20 +1,18 @@
 --- a/com/mojang/blaze3d/systems/GpuDeviceBackend.java
 +++ b/com/mojang/blaze3d/systems/GpuDeviceBackend.java
-@@ -30,9 +_,19 @@
-         @Nullable Supplier<String> label, @GpuTexture.Usage final int usage, TextureFormat format, int width, int height, int depthOrLayers, int mipLevels
+@@ -32,7 +_,17 @@
+         @Nullable Supplier<String> label, @GpuTexture.Usage int usage, GpuFormat format, int width, int height, int depthOrLayers, int mipLevels
      );
  
-+    /** Forge: same as {@link #createTexture(Supplier<String>, int, TextureFormat, int, int, int)} but with stencil support */
-+    default GpuTexture createTexture(@Nullable Supplier<String> label, @GpuTexture.Usage final int usage, TextureFormat format, int width, int height, int depthOrLayers, int mipLevels, boolean stencil) {
++    /** Forge: same as {@link #createTexture(Supplier<String>, int, GpuFormat, int, int, int)} but with stencil support */
++    default GpuTexture createTexture(@Nullable Supplier<String> label, @GpuTexture.Usage final int usage, GpuFormat format, int width, int height, int depthOrLayers, int mipLevels, boolean stencil) {
 +        return createTexture(label, usage, format, width, height, depthOrLayers, mipLevels);
 +    }
 +
-     GpuTexture createTexture(
-         @Nullable String label, @GpuTexture.Usage final int usage, TextureFormat format, int width, int height, int depthOrLayers, int mipLevels
-     );
+     GpuTexture createTexture(@Nullable String label, @GpuTexture.Usage int usage, GpuFormat format, int width, int height, int depthOrLayers, int mipLevels);
 +
-+    /** Forge: same as {@link #createTexture(String, int, TextureFormat, int, int, int)} but with stencil support */
-+    default GpuTexture createTexture(@Nullable String label, @GpuTexture.Usage final int usage, TextureFormat format, int width, int height, int depthOrLayers, int mipLevels, boolean stencil) {
++    /** Forge: same as {@link #createTexture(String, int, GpuFormat, int, int, int)} but with stencil support */
++    default GpuTexture createTexture(@Nullable String label, @GpuTexture.Usage final int usage, GpuFormat format, int width, int height, int depthOrLayers, int mipLevels, boolean stencil) {
 +        return createTexture(label, usage, format, width, height, depthOrLayers, mipLevels);
 +    }
  

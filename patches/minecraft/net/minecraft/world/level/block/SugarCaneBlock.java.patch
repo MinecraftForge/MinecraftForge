@@ -34,15 +34,15 @@
          BlockState stateBelow = level.getBlockState(pos.below());
          if (stateBelow.is(this)) {
              return true;
-@@ -97,7 +_,7 @@
-                 for (Direction direction : Direction.Plane.HORIZONTAL) {
-                     BlockState blockState = level.getBlockState(below.relative(direction));
-                     FluidState fluidState = level.getFluidState(below.relative(direction));
--                    if (fluidState.is(FluidTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || blockState.is(BlockTags.SUPPORTS_SUGAR_CANE_ADJACENTLY)) {
-+                    if (fluidState.is(FluidTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || blockState.is(BlockTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || state.canBeHydrated(level, pos, fluidState, below.relative(direction))) {
-                         return true;
-                     }
+@@ -98,7 +_,7 @@
+             for (Direction direction : Direction.Plane.HORIZONTAL) {
+                 BlockState blockState = level.getBlockState(below.relative(direction));
+                 FluidState fluidState = level.getFluidState(below.relative(direction));
+-                if (fluidState.is(FluidTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || blockState.is(BlockTags.SUPPORTS_SUGAR_CANE_ADJACENTLY)) {
++                if (fluidState.is(FluidTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || blockState.is(BlockTags.SUPPORTS_SUGAR_CANE_ADJACENTLY) || state.canBeHydrated(level, pos, fluidState, below.relative(direction))) {
+                     return true;
                  }
+             }
 @@ -110,5 +_,15 @@
      @Override
      protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {

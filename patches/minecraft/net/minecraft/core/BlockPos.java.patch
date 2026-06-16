@@ -1,7 +1,7 @@
 --- a/net/minecraft/core/BlockPos.java
 +++ b/net/minecraft/core/BlockPos.java
-@@ -30,7 +_,7 @@
- import org.apache.commons.lang3.tuple.Pair;
+@@ -29,7 +_,7 @@
+ import org.apache.commons.lang3.Validate;
  
  @Immutable
 -public class BlockPos extends Vec3i {

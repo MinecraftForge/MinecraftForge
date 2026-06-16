@@ -45,7 +45,9 @@ public class PlantTypePlacementTest extends BaseTestMod {
         map.put(BlockTags.MOSS_BLOCKS,  List.of(MOSS_BLOCK, PALE_MOSS_BLOCK));
         map.put(BlockTags.GRASS_BLOCKS, List.of(GRASS_BLOCK, PODZOL, MYCELIUM));
         map.put(BlockTags.SAND,       List.of(SAND, RED_SAND, SUSPICIOUS_SAND));
-        map.put(BlockTags.TERRACOTTA, List.of(TERRACOTTA, WHITE_TERRACOTTA, ORANGE_TERRACOTTA, MAGENTA_TERRACOTTA, LIGHT_BLUE_TERRACOTTA, YELLOW_TERRACOTTA, LIME_TERRACOTTA, PINK_TERRACOTTA, GRAY_TERRACOTTA, LIGHT_GRAY_TERRACOTTA, CYAN_TERRACOTTA, PURPLE_TERRACOTTA, BLUE_TERRACOTTA, BROWN_TERRACOTTA, GREEN_TERRACOTTA, RED_TERRACOTTA, BLACK_TERRACOTTA));
+        var terracotta = new ArrayList<Block>(Blocks.DYED_TERRACOTTA.asList());
+        terracotta.add(TERRACOTTA);
+        map.put(BlockTags.TERRACOTTA, terracotta);
         map.put(BlockTags.NYLIUM,     List.of(CRIMSON_NYLIUM, WARPED_NYLIUM));
         map.put(BlockTags.OVERRIDES_MUSHROOM_LIGHT_REQUIREMENT, List.of(MYCELIUM, PODZOL, CRIMSON_NYLIUM, WARPED_NYLIUM));
     });
@@ -411,7 +413,7 @@ public class PlantTypePlacementTest extends BaseTestMod {
     }
 
     @SafeVarargs
-    private static Collection<Block> join(GameTestHelper helper, @SuppressWarnings("unchecked") TagKey<Block>... tags) {
+    private static Collection<Block> join(GameTestHelper helper, TagKey<Block>... tags) {
         var ret = new HashSet<Block>();
         for (var tag : tags)
             ret.addAll(known(helper, tag));

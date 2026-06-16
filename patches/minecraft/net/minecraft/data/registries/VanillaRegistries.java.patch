@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/registries/VanillaRegistries.java
 +++ b/net/minecraft/data/registries/VanillaRegistries.java
-@@ -108,6 +_,7 @@
+@@ -110,6 +_,7 @@
          .add(Registries.TIMELINE, Timelines::bootstrap)
          .add(Registries.VILLAGER_TRADE, VillagerTrades::bootstrap)
          .add(Registries.TRADE_SET, TradeSets::bootstrap);
@@ -8,7 +8,7 @@
  
      private static void validateThatAllBiomeFeaturesHaveBiomeFilter(final HolderLookup.Provider provider) {
          validateThatAllBiomeFeaturesHaveBiomeFilter(provider.lookupOrThrow(Registries.PLACED_FEATURE), provider.lookupOrThrow(Registries.BIOME));
-@@ -139,5 +_,9 @@
+@@ -141,5 +_,9 @@
          HolderLookup.Provider newRegistries = BUILDER.build(staticRegistries);
          validateThatAllBiomeFeaturesHaveBiomeFilter(newRegistries);
          return newRegistries;

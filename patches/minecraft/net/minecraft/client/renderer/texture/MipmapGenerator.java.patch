@@ -1,28 +1,28 @@
 --- a/net/minecraft/client/renderer/texture/MipmapGenerator.java
 +++ b/net/minecraft/client/renderer/texture/MipmapGenerator.java
-@@ -122,12 +_,16 @@
-             float cutoutRef = mipmapStrategy == MipmapStrategy.STRICT_CUTOUT ? 0.3F : 0.5F;
-             float originalCoverage = isCutoutMip ? alphaTestCoverage(currentMips[0], cutoutRef, 1.0F) : 0.0F;
+@@ -123,12 +_,16 @@
+         float cutoutRef = mipmapStrategy == MipmapStrategy.STRICT_CUTOUT ? 0.3F : 0.5F;
+         float originalCoverage = isCutoutMip ? alphaTestCoverage(currentMips[0], cutoutRef, 1.0F) : 0.0F;
  
-+            int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(result[0].getWidth(), result[0].getHeight());
-             for (int level = 1; level <= newMipLevel; level++) {
-                 if (level < currentMips.length) {
-                     result[level] = currentMips[level];
-                 } else {
-                     NativeImage lastData = result[level - 1];
--                    NativeImage data = new NativeImage(lastData.getWidth() >> 1, lastData.getHeight() >> 1, false);
-+                    // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
-+                    NativeImage data = new NativeImage(Math.max(1, lastData.getWidth() >> 1), Math.max(1, lastData.getHeight() >> 1), false);
-+                    if (level <= maxMipmapLevel) {
++        int maxMipmapLevel = net.minecraftforge.client.ForgeHooksClient.getMaxMipmapLevel(result[0].getWidth(), result[0].getHeight());
+         for (int level = 1; level <= newMipLevel; level++) {
+             if (level < currentMips.length) {
+                 result[level] = currentMips[level];
+             } else {
+                 NativeImage lastData = result[level - 1];
+-                NativeImage data = new NativeImage(lastData.getWidth() >> 1, lastData.getHeight() >> 1, false);
++                // Forge: Guard against invalid texture size, because we allow generating mipmaps regardless of texture sizes
++                NativeImage data = new NativeImage(Math.max(1, lastData.getWidth() >> 1), Math.max(1, lastData.getHeight() >> 1), false);
++                if (level <= maxMipmapLevel) {
 +
-                     int width = data.getWidth();
-                     int height = data.getHeight();
+                 int width = data.getWidth();
+                 int height = data.getHeight();
  
-@@ -146,6 +_,7 @@
+@@ -147,6 +_,7 @@
  
-                             data.setPixel(x, y, color);
-                         }
-+                    }
+                         data.setPixel(x, y, color);
                      }
++                }
+                 }
  
-                     result[level] = data;
+                 result[level] = data;

@@ -70,7 +70,7 @@
          return this.key.equals(that.key);
      }
  
-@@ -175,11 +_,13 @@
+@@ -179,11 +_,13 @@
      }
  
      public Component getTranslatedKeyMessage() {
@@ -85,7 +85,7 @@
      }
  
      public String saveString() {
-@@ -191,11 +_,94 @@
+@@ -195,11 +_,94 @@
      }
  
      private void registerMapping(final InputConstants.Key key) {

@@ -15,7 +15,7 @@
      private static final LoadingCache<VoxelShape, Boolean> SHAPE_FULL_BLOCK_CACHE = CacheBuilder.newBuilder()
          .maximumSize(512L)
          .weakKeys()
-@@ -251,6 +_,7 @@
+@@ -247,6 +_,7 @@
                  LOGGER.error("Block classes should end with Block and {} doesn't.", className);
              }
          }
@@ -23,7 +23,7 @@
      }
  
      public static boolean isExceptionForConnection(final BlockState state) {
-@@ -301,7 +_,12 @@
+@@ -297,7 +_,12 @@
          }
      }
  
@@ -95,7 +95,7 @@
  
      public void setPlacedBy(final Level level, final BlockPos pos, final BlockState state, final @Nullable LivingEntity by, final ItemStack itemStack) {
 @@ -495,6 +_,7 @@
-         entity.setDeltaMovement(entity.getDeltaMovement().multiply(1.0, 0.0, 1.0));
+         return this.bounceRestitution;
      }
  
 +    /** @deprecated Forge: use {@link net.minecraftforge.common.extensions.IForgeBlockState#getFriction(LevelReader, BlockPos, Entity)}*/

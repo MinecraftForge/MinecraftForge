@@ -9,8 +9,8 @@ import java.util.concurrent.Executor;
 import java.util.function.BinaryOperator;
 
 public enum ThreadSelector implements BinaryOperator<Executor> {
-    SYNC((sync, parallel) -> sync),
-    PARALLEL((sync, parallel) -> parallel);
+    SYNC((sync, _) -> sync),
+    PARALLEL((_, parallel) -> parallel);
 
     private final BinaryOperator<Executor> selector;
 

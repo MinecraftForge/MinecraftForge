@@ -13,8 +13,6 @@ import net.minecraftforge.fml.loading.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.Path;
-import java.util.Locale;
-import java.util.concurrent.Callable;
 
 public class ModConfig
 {

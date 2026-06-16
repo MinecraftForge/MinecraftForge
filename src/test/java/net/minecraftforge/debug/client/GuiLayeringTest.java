@@ -35,11 +35,11 @@ public class GuiLayeringTest {
         public static void guiOpen(ScreenEvent.Init.Post event) {
             if (event.getScreen() instanceof AbstractContainerScreen && ENABLED) {
                 event.addListener(Button.builder(Component.literal("Test Gui Layering"), btn -> {
-                    Minecraft.getInstance().pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
+                    Minecraft.getInstance().gui.pushLayer(new TestLayer(Component.literal("LayerScreen")));
                 }).pos(2,2).size(150, 20).build());
 
                 event.addListener(Button.builder(Component.literal("Test Gui Normal"), btn -> {
-                    Minecraft.getInstance().setScreen(new TestLayer(Component.literal("LayerScreen")));
+                    Minecraft.getInstance().gui.setScreen(new TestLayer(Component.literal("LayerScreen")));
                 }).pos(2, 25).size(150, 20).build());
             }
         }
@@ -78,15 +78,15 @@ public class GuiLayeringTest {
             }
 
             private void closeStack(Button button) {
-                this.minecraft.setScreen(null);
+                this.minecraft.gui.setScreen(null);
             }
 
             private void popLayerButton(Button button) {
-                this.minecraft.popGuiLayer();
+                this.minecraft.gui.popLayer();
             }
 
             private void pushLayerButton(Button button) {
-                this.minecraft.pushGuiLayer(new TestLayer(Component.literal("LayerScreen")));
+                this.minecraft.gui.pushLayer(new TestLayer(Component.literal("LayerScreen")));
             }
         }
     }

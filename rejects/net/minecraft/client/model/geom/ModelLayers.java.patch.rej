@@ -1,6 +1,5 @@
---- a/net/minecraft/client/model/geom/ModelLayers.java
-+++ b/net/minecraft/client/model/geom/ModelLayers.java
-@@ -324,15 +_,18 @@
+++++ REJECTED HUNK: 1
+@@ -324,15 +324,18 @@
      }
  
      public static ModelLayerLocation createStandingSignModelName(final WoodType type) {
@@ -22,3 +21,4 @@
      }
  
      public static Stream<ModelLayerLocation> getKnownLocations() {
+++++ END HUNK

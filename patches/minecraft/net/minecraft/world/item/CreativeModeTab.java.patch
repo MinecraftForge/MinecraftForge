@@ -108,7 +108,7 @@
              return this;
          }
  
-@@ -175,11 +_,80 @@
+@@ -175,12 +_,81 @@
              return this;
          }
  
@@ -184,9 +184,10 @@
          public CreativeModeTab build() {
              if ((this.type == CreativeModeTab.Type.HOTBAR || this.type == CreativeModeTab.Type.INVENTORY) && this.displayItemsGenerator != EMPTY_GENERATOR) {
                  throw new IllegalStateException("Special tabs can't have display items");
-             } else {
--                CreativeModeTab tab = new CreativeModeTab(this.row, this.column, this.type, this.displayName, this.iconGenerator, this.displayItemsGenerator);
-+                CreativeModeTab tab = this.tabFactory.apply(this);
-                 tab.alignedRight = this.alignedRight;
-                 tab.showTitle = this.showTitle;
-                 tab.canScroll = this.canScroll;
+             }
+ 
+-            CreativeModeTab tab = new CreativeModeTab(this.row, this.column, this.type, this.displayName, this.iconGenerator, this.displayItemsGenerator);
++            CreativeModeTab tab = this.tabFactory.apply(this);
+             tab.alignedRight = this.alignedRight;
+             tab.showTitle = this.showTitle;
+             tab.canScroll = this.canScroll;

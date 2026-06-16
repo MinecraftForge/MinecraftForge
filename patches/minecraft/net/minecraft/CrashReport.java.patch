@@ -1,7 +1,7 @@
 --- a/net/minecraft/CrashReport.java
 +++ b/net/minecraft/CrashReport.java
 @@ -58,14 +_,9 @@
-         if (this.uncategorizedStackTrace != null && this.uncategorizedStackTrace.length > 0) {
+         if (this.uncategorizedStackTrace.length > 0) {
              builder.append("-- Head --\n");
              builder.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
 -            builder.append("Stacktrace:\n");
@@ -26,23 +26,20 @@
          this.systemReport.appendToCrashReportString(builder);
      }
  
-@@ -92,18 +_,7 @@
-             exception.setStackTrace(this.exception.getStackTrace());
+@@ -84,15 +_,7 @@
+             exception = replaceMessage(exception, this.title);
          }
  
--        String var4;
 -        try {
 -            writer = new StringWriter();
 -            printWriter = new PrintWriter(writer);
 -            exception.printStackTrace(printWriter);
--            var4 = writer.toString();
+-            return writer.toString();
 -        } finally {
--            IOUtils.closeQuietly((Writer)writer);
--            IOUtils.closeQuietly((Writer)printWriter);
+-            IOUtils.closeQuietly(writer);
+-            IOUtils.closeQuietly(printWriter);
 -        }
--
--        return var4;
 +        return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(exception);
      }
  
-     public String getFriendlyReport(final ReportType reportType, final List<String> extraComments) {
+     private static Throwable copyProperties(final Throwable original, final Throwable copy) {

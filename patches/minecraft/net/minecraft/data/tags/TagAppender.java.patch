@@ -1,29 +1,30 @@
 --- a/net/minecraft/data/tags/TagAppender.java
 +++ b/net/minecraft/data/tags/TagAppender.java
-@@ -9,7 +_,7 @@
+@@ -7,7 +_,7 @@
  import net.minecraft.tags.TagBuilder;
  import net.minecraft.tags.TagKey;
  
--public interface TagAppender<E, T> {
-+public interface TagAppender<E, T> extends net.minecraftforge.common.extensions.IForgeTagAppender<E, T> {
-     TagAppender<E, T> add(E element);
+-public interface TagAppender<T> {
++public interface TagAppender<T> extends net.minecraftforge.common.extensions.IForgeTagAppender<T> {
+     TagAppender<T> add(ResourceKey<T> element);
  
-     default TagAppender<E, T> add(final E... elements) {
-@@ -33,6 +_,10 @@
-     TagAppender<E, T> addOptionalTag(TagKey<T> tag);
+     default TagAppender<T> add(final ResourceKey<T>... elements) {
+@@ -31,6 +_,10 @@
+     TagAppender<T> addOptionalTag(TagKey<T> tag);
  
-     static <T> TagAppender<ResourceKey<T>, T> forBuilder(final TagBuilder builder) {
+     static <T> TagAppender<T> forBuilder(final TagBuilder builder) {
 +        return forBuilder(builder, "unknown");
 +    }
 +
-+    static <T> TagAppender<ResourceKey<T>, T> forBuilder(final TagBuilder builder, String source) {
-         return new TagAppender<ResourceKey<T>, T>() {
-             public TagAppender<ResourceKey<T>, T> add(final ResourceKey<T> element) {
-                 builder.addElement(element.identifier());
-@@ -55,6 +_,21 @@
++    static <T> TagAppender<T> forBuilder(final TagBuilder builder, String source) {
+         return new TagAppender<T>() {
+             @Override
+             public TagAppender<T> add(final ResourceKey<T> element) {
+@@ -54,6 +_,16 @@
+             public TagAppender<T> addOptionalTag(final TagKey<T> tag) {
                  builder.addOptionalTag(tag.location());
                  return this;
-             }
++            }
 +
 +            @Override
 +            public TagBuilder getInternalBuilder() {
@@ -33,35 +34,6 @@
 +            @Override
 +            public String getSourceName() {
 +                return source;
-+            }
-+
-+            @Override
-+            public TagAppender<ResourceKey<T>, T> remove(ResourceKey<T> value) {
-+                return this.remove(value.identifier());
-+            }
-         };
-     }
- 
-@@ -86,6 +_,22 @@
-             @Override
-             public TagAppender<U, T> addOptionalTag(final TagKey<T> tag) {
-                 original.addOptionalTag(tag);
-+                return this;
-+            }
-+
-+            @Override
-+            public TagBuilder getInternalBuilder() {
-+                return original.getInternalBuilder();
-+            }
-+
-+            @Override
-+            public String getSourceName() {
-+                return original.getSourceName();
-+            }
-+
-+            @Override
-+            public TagAppender<U, T> remove(U value) {
-+                original.remove(converter.apply(value));
-                 return this;
              }
          };
+     }

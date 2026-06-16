@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/SpriteLoader.java
 +++ b/net/minecraft/client/renderer/texture/SpriteLoader.java
-@@ -72,7 +_,7 @@
+@@ -71,7 +_,7 @@
              int minSize = Math.min(minTexelSize, lowestOneBit);
              int minPowerOfTwo = Mth.log2(minSize);
              int mipLevel;
@@ -9,7 +9,7 @@
                  LOGGER.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.location, maxMipmapLevels, minPowerOfTwo, minSize);
                  mipLevel = minPowerOfTwo;
              } else {
-@@ -132,7 +_,8 @@
+@@ -129,7 +_,8 @@
          final Executor taskExecutor,
          final Set<MetadataSectionType<?>> additionalMetadata
      ) {
@@ -19,7 +19,7 @@
          return CompletableFuture.<List<SpriteSource.Loader>>supplyAsync(() -> SpriteSourceList.load(manager, atlasInfoLocation).list(manager), taskExecutor)
              .thenCompose(sprites -> runSpriteSuppliers(spriteResourceLoader, (List<SpriteSource.Loader>)sprites, taskExecutor))
              .thenApply(resources -> this.stitch((List<SpriteContents>)resources, maxMipmapLevels, taskExecutor));
-@@ -141,7 +_,7 @@
+@@ -138,7 +_,7 @@
      private Map<Identifier, TextureAtlasSprite> getStitchedSprites(final Stitcher<SpriteContents> stitcher, final int atlasWidth, final int atlasHeight) {
          Map<Identifier, TextureAtlasSprite> result = new HashMap<>();
          stitcher.gatherSprites(

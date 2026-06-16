@@ -25,7 +25,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
     protected int capacity;
 
     public FluidTank(int capacity) {
-        this(capacity, e -> true);
+        this(capacity, _ -> true);
     }
 
     public FluidTank(int capacity, Predicate<FluidStack> validator) {

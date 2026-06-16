@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/ComparatorBlock.java
 +++ b/net/minecraft/world/level/block/ComparatorBlock.java
-@@ -197,4 +_,16 @@
+@@ -198,4 +_,16 @@
      protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
          builder.add(FACING, MODE, POWERED);
      }

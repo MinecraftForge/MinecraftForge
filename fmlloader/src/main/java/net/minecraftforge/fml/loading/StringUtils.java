@@ -26,6 +26,7 @@ public class StringUtils {
         return java.util.stream.Stream.of(endings).anyMatch(lowerSearch::endsWith);
     }
 
+    @SuppressWarnings("deprecation")
     public static URL toURL(final String string) {
         if (string == null || string.trim().isEmpty() || string.contains("myurl.me") || string.contains("example.invalid"))
             return null;

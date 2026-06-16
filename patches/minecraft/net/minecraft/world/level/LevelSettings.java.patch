@@ -29,8 +29,8 @@
 +        return new LevelSettings(this.levelName, gameType, this.difficultySettings, this.allowCommands, this.dataConfiguration, this.lifecycle);
      }
  
-     public LevelSettings withDifficulty(final Difficulty difficulty) {
-@@ -29,7 +_,8 @@
+     public LevelSettings withAllowCommands(final boolean allowCommands) {
+@@ -33,7 +_,8 @@
              this.gameType,
              new LevelSettings.DifficultySettings(difficulty, this.difficultySettings.hardcore(), this.difficultySettings.locked()),
              this.allowCommands,
@@ -40,7 +40,7 @@
          );
      }
  
-@@ -39,16 +_,21 @@
+@@ -43,16 +_,21 @@
              this.gameType,
              new LevelSettings.DifficultySettings(this.difficultySettings.difficulty(), this.difficultySettings.hardcore(), locked),
              this.allowCommands,

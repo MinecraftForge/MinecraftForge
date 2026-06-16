@@ -160,7 +160,7 @@ public final class CreativeModeTabRegistry {
     }
 
     private static void setCreativeModeTabOrder(List<CreativeModeTab> tierList) {
-        runInServerThreadIfPossible(hasServer -> {
+        runInServerThreadIfPossible(_ -> {
             SORTED_TABS.clear();
             SORTED_TABS.addAll(tierList);
         });

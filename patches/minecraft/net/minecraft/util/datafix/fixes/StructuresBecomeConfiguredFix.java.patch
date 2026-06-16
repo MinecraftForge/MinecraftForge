@@ -15,6 +15,6 @@
 +            }
 +            // Forge: Pass-through with "unknown." prefix, so deserializer logs and ignores rather than fixer throwing an exception and dropping chunk data
 +            return chunk.createString("unknown." + key);
-         } else {
-             String resultingId = conversion.fallback;
-             if (!conversion.biomeMapping().isEmpty()) {
+         }
+ 
+         String resultingId = conversion.fallback;

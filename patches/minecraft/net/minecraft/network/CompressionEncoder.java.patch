@@ -9,16 +9,16 @@
      private final byte[] encodeBuf = new byte[8192];
      private final Deflater deflater;
      private int threshold;
-@@ -24,6 +_,12 @@
-                 VarInt.write(out, 0);
-                 out.writeBytes(uncompressed);
-             } else {
-+                if (!DISABLE_PACKET_DEBUG && uncompressedLength > net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH) {
-+                    uncompressed.markReaderIndex();
-+                     LOGGER.error("Attempted to send packet over maximum protocol size: {} > {}\nData:\n{}", uncompressedLength, net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH,
-+                            net.minecraftforge.common.util.HexDumper.dump(uncompressed));
-+                     uncompressed.resetReaderIndex();
-+                }
-                 byte[] input = new byte[uncompressedLength];
-                 uncompressed.readBytes(input);
-                 VarInt.write(out, input.length);
+@@ -25,6 +_,12 @@
+             VarInt.write(out, 0);
+             out.writeBytes(uncompressed);
+         } else {
++            if (!DISABLE_PACKET_DEBUG && uncompressedLength > net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH) {
++                uncompressed.markReaderIndex();
++                 LOGGER.error("Attempted to send packet over maximum protocol size: {} > {}\nData:\n{}", uncompressedLength, net.minecraft.network.CompressionDecoder.MAXIMUM_UNCOMPRESSED_LENGTH,
++                        net.minecraftforge.common.util.HexDumper.dump(uncompressed));
++                 uncompressed.resetReaderIndex();
++            }
+             byte[] input = new byte[uncompressedLength];
+             uncompressed.readBytes(input);
+             VarInt.write(out, input.length);

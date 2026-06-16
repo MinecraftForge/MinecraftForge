@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/Registry.java
 +++ b/net/minecraft/core/Registry.java
-@@ -180,5 +_,7 @@
+@@ -175,5 +_,7 @@
          void apply();
  
          int size();

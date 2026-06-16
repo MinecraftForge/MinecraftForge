@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -202,4 +_,43 @@
+@@ -192,4 +_,43 @@
          Block block = blockState.getBlock();
          level.blockEvent(pos, block, 1, current);
      }

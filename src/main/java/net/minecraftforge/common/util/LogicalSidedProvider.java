@@ -20,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public class LogicalSidedProvider<T> {
     public static final LogicalSidedProvider<BlockableEventLoop<? super TickTask>> WORKQUEUE = new LogicalSidedProvider<>(Supplier::get, Supplier::get);
-    public static final LogicalSidedProvider<Optional<Level>> CLIENTWORLD = new LogicalSidedProvider<>((c)-> Optional.of(c.get().level), (s)->Optional.empty());
+    public static final LogicalSidedProvider<Optional<Level>> CLIENTWORLD = new LogicalSidedProvider<>((c)-> Optional.of(c.get().level), (_)->Optional.empty());
 
     public T get(LogicalSide side) {
         return side == LogicalSide.CLIENT ? clientSide.apply(client) : serverSide.apply(server);

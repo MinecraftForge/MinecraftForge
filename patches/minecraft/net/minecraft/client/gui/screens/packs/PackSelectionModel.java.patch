@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
 +++ b/net/minecraft/client/gui/screens/packs/PackSelectionModel.java
-@@ -112,6 +_,10 @@
+@@ -111,6 +_,10 @@
          boolean canMoveUp();
  
          boolean canMoveDown();
@@ -11,7 +11,7 @@
      }
  
      @OnlyIn(Dist.CLIENT)
-@@ -213,6 +_,11 @@
+@@ -210,6 +_,11 @@
          @Override
          public void moveDown() {
              this.move(1);

@@ -70,7 +70,7 @@ public class OpenContainer {
 
                 var s = ((MenuScreens.ScreenConstructor<AbstractContainerMenu, ?>)f).create(c, inv, msg.getName());
                 mc.player.containerMenu = s.getMenu();
-                mc.setScreen(s);
+                mc.gui.setScreen(s);
             });
         } finally {
             msg.getAdditionalData().release();

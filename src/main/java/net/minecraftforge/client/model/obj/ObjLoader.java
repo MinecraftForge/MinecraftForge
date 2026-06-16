@@ -64,7 +64,7 @@ public class ObjLoader implements IGeometryLoader, ResourceManagerReloadListener
     }
 
     public ObjModel loadModel(ObjModel.ModelSettings settings) {
-        return modelCache.computeIfAbsent(settings, (data) -> {
+        return modelCache.computeIfAbsent(settings, (_) -> {
             Resource resource = manager.getResource(settings.modelLocation()).orElseThrow();
             try (ObjTokenizer tokenizer = new ObjTokenizer(resource.open())) {
                 return ObjModel.parse(tokenizer, settings);

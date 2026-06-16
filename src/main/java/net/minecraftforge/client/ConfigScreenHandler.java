@@ -33,7 +33,7 @@ public class ConfigScreenHandler
          *                       instance.</p>
          */
         public ConfigScreenFactory(Function<Screen, Screen> screenFunction) {
-            this((mcClient, modsScreen) -> screenFunction.apply(modsScreen));
+            this((_, modsScreen) -> screenFunction.apply(modsScreen));
         }
     }
 

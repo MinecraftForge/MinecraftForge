@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/server/IntegratedServer.java
 +++ b/net/minecraft/client/server/IntegratedServer.java
-@@ -98,12 +_,13 @@
+@@ -103,12 +_,13 @@
          LOGGER.info("Starting integrated minecraft server version {}", SharedConstants.getCurrentVersion().name());
          this.setUsesAuthentication(true);
          this.initializeKeyPair();
@@ -15,7 +15,7 @@
      }
  
      @Override
-@@ -259,6 +_,7 @@
+@@ -371,6 +_,7 @@
  
      @Override
      public void halt(final boolean wait) {

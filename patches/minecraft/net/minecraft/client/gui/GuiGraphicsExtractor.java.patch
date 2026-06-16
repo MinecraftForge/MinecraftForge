@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/GuiGraphicsExtractor.java
 +++ b/net/minecraft/client/gui/GuiGraphicsExtractor.java
-@@ -88,7 +_,7 @@
+@@ -85,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,15 +9,15 @@
      private static final int EXTRA_SPACE_AFTER_FIRST_TOOLTIP_LINE = 2;
      private final Minecraft minecraft;
      private final Matrix3x2fStack pose;
-@@ -914,6 +_,7 @@
-                 CrashReport report = CrashReport.forThrowable(var11, "Rendering item");
+@@ -912,6 +_,7 @@
+                 CrashReport report = CrashReport.forThrowable(t, "Rendering item");
                  CrashReportCategory category = report.addCategory("Item being rendered");
                  category.setDetail("Item Type", () -> String.valueOf(itemStack.getItem()));
 +                category.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(itemStack.getItem())));
                  category.setDetail("Item Components", () -> String.valueOf(itemStack.getComponents()));
                  category.setDetail("Item Foil", () -> String.valueOf(itemStack.hasFoil()));
                  throw new ReportedException(report);
-@@ -940,6 +_,7 @@
+@@ -938,6 +_,7 @@
              this.itemCooldown(itemStack, x, y);
              this.itemCount(font, itemStack, x, y, countText);
              this.pose.popMatrix();
@@ -25,7 +25,7 @@
          }
      }
  
-@@ -1112,16 +_,25 @@
+@@ -1106,16 +_,25 @@
          this.setTooltipForNextFrame(this.minecraft.font, formattedCharSequences, DefaultTooltipPositioner.INSTANCE, x, y, false);
      }
  
@@ -51,7 +51,7 @@
      public void setTooltipForNextFrame(
          final Font font,
          final List<Component> texts,
-@@ -1130,11 +_,7 @@
+@@ -1124,11 +_,7 @@
          final int yo,
          final @Nullable Identifier style
      ) {
@@ -64,7 +64,7 @@
          this.setTooltipForNextFrameInternal(font, components, xo, yo, DefaultTooltipPositioner.INSTANCE, style, false);
      }
  
-@@ -1162,7 +_,22 @@
+@@ -1156,7 +_,22 @@
      }
  
      public void setComponentTooltipForNextFrame(final Font font, final List<Component> lines, final int xo, final int yo) {
@@ -88,7 +88,7 @@
      }
  
      public void setComponentTooltipForNextFrame(final Font font, final List<Component> lines, final int xo, final int yo, final @Nullable Identifier style) {
-@@ -1213,10 +_,16 @@
+@@ -1207,10 +_,16 @@
      ) {
          if (!lines.isEmpty()) {
              if (this.deferredTooltip == null || replaceExisting) {
@@ -106,7 +106,7 @@
  
      public void tooltip(
          final Font font,
-@@ -1224,13 +_,16 @@
+@@ -1218,13 +_,16 @@
          final int xo,
          final int yo,
          final ClientTooltipPositioner positioner,
@@ -125,17 +125,17 @@
              if (lineWidth > textWidth) {
                  textWidth = lineWidth;
              }
-@@ -1240,25 +_,25 @@
+@@ -1234,25 +_,25 @@
  
          int w = textWidth;
          int h = tempHeight;
--        Vector2ic positionedTooltip = positioner.positionTooltip(this.guiWidth(), this.guiHeight(), xo, yo, textWidth, tempHeight);
-+        Vector2ic positionedTooltip = positioner.positionTooltip(this.guiWidth(), this.guiHeight(), preEvent.getX(), preEvent.getY(), textWidth, tempHeight);
+-        Vector2ic positionedTooltip = positioner.positionTooltip(this.guiWidth(), this.guiHeight(), xo, yo, w, h);
++        Vector2ic positionedTooltip = positioner.positionTooltip(this.guiWidth(), this.guiHeight(), preEvent.getX(), preEvent.getY(), w, h);
          int x = positionedTooltip.x();
          int y = positionedTooltip.y();
          this.pose.pushMatrix();
--        TooltipRenderUtil.extractTooltipBackground(this, x, y, textWidth, tempHeight, style);
-+        TooltipRenderUtil.extractTooltipBackground(this, x, y, textWidth, tempHeight, preEvent.getBackground());
+-        TooltipRenderUtil.extractTooltipBackground(this, x, y, w, h, style);
++        TooltipRenderUtil.extractTooltipBackground(this, x, y, w, h, preEvent.getBackground());
          int localY = y;
  
          for (int i = 0; i < lines.size(); i++) {
@@ -157,7 +157,7 @@
          }
  
          this.pose.popMatrix();
-@@ -1333,6 +_,14 @@
+@@ -1326,6 +_,14 @@
  
      private ActiveTextCollector.Parameters createDefaultTextParameters(final float opacity) {
          return new ActiveTextCollector.Parameters(new Matrix3x2f(this.pose), opacity, this.scissorStack.peek());

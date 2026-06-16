@@ -6,7 +6,6 @@
 package net.minecraftforge.client.model.renderable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Unit;
 
 /**
@@ -27,7 +26,7 @@ public interface IRenderable<T> {
      * @param partialTick             The current time expressed in the fraction of a tick elapsed since the last client tick
      * @param context                 The context used for rendering
      */
-    void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, T context);
+    void render(PoseStack poseStack, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, T context);
 
     /**
      * Wraps the current renderable along with a context.
@@ -37,7 +36,7 @@ public interface IRenderable<T> {
      * @return A renderable that accepts {@link Unit#INSTANCE} as context, but uses the provided {@code context} instead
      */
     default IRenderable<Unit> withContext(T context) {
-        return (poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, unused) ->
-                this.render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, context);
+        return (poseStack, textureRenderTypeLookup, lightmap, overlay, partialTick, _) ->
+                this.render(poseStack, textureRenderTypeLookup, lightmap, overlay, partialTick, context);
     }
 }

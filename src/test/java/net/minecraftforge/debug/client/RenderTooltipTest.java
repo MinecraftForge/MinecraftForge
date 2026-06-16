@@ -61,10 +61,10 @@ public class RenderTooltipTest extends BaseTestMod {
 
         helper.addRecordListener(TickEvent.RenderTickEvent.Pre.BUS, (event) -> {
             if (shouldOpen == 1) {
-                Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+                Minecraft.getInstance().gui.setScreen(new InventoryScreen(Minecraft.getInstance().player));
                 shouldOpen = 2;
             } else if (shouldOpen == 2) {
-                Minecraft.getInstance().setScreen(null);
+                Minecraft.getInstance().gui.setScreen(null);
                 shouldOpen = 0;
             }
         });

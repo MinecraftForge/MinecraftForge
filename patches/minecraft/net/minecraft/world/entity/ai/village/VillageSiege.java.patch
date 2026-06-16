@@ -17,7 +17,7 @@
              Zombie zombie;
              try {
 -                zombie = new Zombie(level);
-+                zombie = EntityType.ZOMBIE.create(level, EntitySpawnReason.EVENT); //Forge: Direct Initialization is deprecated, use EntityType.
++                zombie = EntityTypes.ZOMBIE.create(level, EntitySpawnReason.EVENT); //Forge: Direct Initialization is deprecated, use EntityType.
                  zombie.finalizeSpawn(level, level.getCurrentDifficultyAt(zombie.blockPosition()), EntitySpawnReason.EVENT, null);
-             } catch (Exception var5) {
-                 LOGGER.warn("Failed to create zombie for village siege at {}", spawnPos, var5);
+             } catch (Exception e) {
+                 LOGGER.warn("Failed to create zombie for village siege at {}", spawnPos, e);

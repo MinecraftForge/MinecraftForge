@@ -45,7 +45,7 @@ public class ConditionCodec {
         public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input) {
             var ret = normal.decode(ops, input);
             if (!ret.result().isPresent() || !ret.result().get().getFirst().isPresent())
-                return ret.map(p -> p.mapFirst(e -> _default.get()));
+                return ret.map(p -> p.mapFirst(_ -> _default.get()));
             return ret.map(p -> p.mapFirst(Optional::get));
         }
     }

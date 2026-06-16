@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.Mod;
 public class ClientForgeMod {
     @SubscribeEvent
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(forgeRL("empty"), (json, ctx) -> UnbakedGeometry.EMPTY);
+        event.register(forgeRL("empty"), (_, _) -> UnbakedGeometry.EMPTY);
         event.register(forgeRL("obj"), ObjLoader.INSTANCE);
         event.register(forgeRL("fluid_container"), DynamicFluidContainerModel.Loader.INSTANCE);
     }

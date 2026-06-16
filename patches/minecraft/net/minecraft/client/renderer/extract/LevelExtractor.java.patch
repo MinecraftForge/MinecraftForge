@@ -1,0 +1,58 @@
+--- a/net/minecraft/client/renderer/extract/LevelExtractor.java
++++ b/net/minecraft/client/renderer/extract/LevelExtractor.java
+@@ -172,7 +_,7 @@
+         profiler.popPush("entities");
+         this.extractVisibleEntities(camera, cullFrustum, deltaTracker, this.levelRenderState);
+         profiler.popPush("blockEntities");
+-        this.extractVisibleBlockEntities(camera, deltaPartialTick, this.levelRenderState);
++        this.extractVisibleBlockEntities(camera, deltaPartialTick, this.levelRenderState, cullFrustum);
+         profiler.popPush("blockOutline");
+         this.extractBlockOutline(camera, this.levelRenderState);
+         profiler.popPush("blockBreaking");
+@@ -264,7 +_,7 @@
+         return this.levelRenderer.entityRenderDispatcher().extractEntity(entity, partialTickTime);
+     }
+ 
+-    private void extractVisibleBlockEntities(final Camera camera, final float deltaPartialTick, final LevelRenderState levelRenderState) {
++    private void extractVisibleBlockEntities(final Camera camera, final float deltaPartialTick, final LevelRenderState levelRenderState, final Frustum frustum) {
+         Vec3 cameraPos = camera.position();
+         double camX = cameraPos.x();
+         double camY = cameraPos.y();
+@@ -275,6 +_,7 @@
+             List<BlockEntity> renderableBlockEntities = section.getSectionMesh().getRenderableBlockEntities();
+             if (!renderableBlockEntities.isEmpty() && !(section.getVisibility(Util.getMillis()) < 0.3F)) {
+                 for (BlockEntity blockEntity : renderableBlockEntities) {
++                    if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) continue;
+                     BlockPos blockPos = blockEntity.getBlockPos();
+                     SortedSet<BlockDestructionProgress> progresses = this.level.destructionProgress().get(blockPos.asLong());
+                     ModelFeatureRenderer.CrumblingOverlay breakProgress;
+@@ -304,6 +_,7 @@
+             if (blockEntity.isRemoved()) {
+                 iterator.remove();
+             } else {
++                if (!frustum.isVisible(blockEntity.getRenderBoundingBox())) continue;
+                 BlockEntityRenderState state = this.levelRenderer
+                     .blockEntityRenderDispatcher()
+                     .tryExtractRenderState(blockEntity, deltaPartialTick, null, true);
+@@ -327,7 +_,7 @@
+                 SortedSet<BlockDestructionProgress> progresses = entry.getValue();
+                 if (progresses != null && !progresses.isEmpty()) {
+                     int progress = progresses.last().getProgress();
+-                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, this.level.getBlockState(pos), progress));
++                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, this.level.getBlockState(pos), progress, this.level.getModelDataManager().getAtOrEmpty(pos)));
+                 }
+             }
+         }
+@@ -335,6 +_,12 @@
+ 
+     private void extractBlockOutline(final Camera camera, final LevelRenderState levelRenderState) {
+         levelRenderState.blockOutlineRenderState = null;
++        var custom = net.minecraftforge.client.ForgeHooksClient.onExtractBlockOutline(this, camera, levelRenderState, this.minecraft.hitResult);
++        if (custom != null) {
++            levelRenderState.blockOutlineRenderState = new BlockOutlineRenderState(BlockPos.ZERO, false, false, net.minecraft.world.phys.shapes.Shapes.empty(), null, null, null, custom);
++            return;
++        }
++
+         if (this.minecraft.hitResult instanceof BlockHitResult blockHitResult) {
+             if (blockHitResult.getType() != HitResult.Type.MISS) {
+                 BlockPos pos = blockHitResult.getBlockPos();

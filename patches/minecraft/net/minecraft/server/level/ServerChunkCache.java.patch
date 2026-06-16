@@ -1,13 +1,14 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -193,6 +_,10 @@
-             if (chunkHolder == null) {
-                 return null;
-             } else {
-+                // Forge: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
-+                if (chunkHolder.currentlyLoading != null) {
-+                    return chunkHolder.currentlyLoading;
-+                }
-                 ChunkAccess chunk = chunkHolder.getChunkIfPresent(ChunkStatus.FULL);
-                 if (chunk != null) {
-                     this.storeInCache(pos, chunk, ChunkStatus.FULL);
+@@ -194,6 +_,11 @@
+             return null;
+         }
+ 
++        // Forge: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
++        if (chunkHolder.currentlyLoading != null) {
++            return chunkHolder.currentlyLoading;
++        }
++
+         ChunkAccess chunk = chunkHolder.getChunkIfPresent(ChunkStatus.FULL);
+         if (chunk != null) {
+             this.storeInCache(pos, chunk, ChunkStatus.FULL);

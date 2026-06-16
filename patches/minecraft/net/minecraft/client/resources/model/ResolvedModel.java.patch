@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/ResolvedModel.java
 +++ b/net/minecraft/client/resources/model/ResolvedModel.java
-@@ -88,7 +_,7 @@
+@@ -89,7 +_,7 @@
      }
  
      default QuadCollection bakeTopGeometry(final TextureSlots textureSlots, final ModelBaker baker, final ModelState state) {
@@ -9,7 +9,7 @@
      }
  
      static Material.Baked resolveParticleMaterial(final TextureSlots textureSlots, final ModelBaker baker, final ModelDebugName resolvedModel) {
-@@ -132,5 +_,9 @@
+@@ -133,5 +_,9 @@
  
      default ItemTransforms getTopTransforms() {
          return findTopTransforms(this);

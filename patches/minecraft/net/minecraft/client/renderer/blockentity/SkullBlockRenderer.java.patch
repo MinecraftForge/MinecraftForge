@@ -10,7 +10,7 @@
          map.put(SkullBlock.Types.SKELETON, Identifier.withDefaultNamespace("textures/entity/skeleton/skeleton.png"));
 @@ -67,7 +_,9 @@
                  case PIGLIN -> new PiglinHeadModel(modelSet.bakeLayer(ModelLayers.PIGLIN_HEAD));
-             });
+             };
          } else {
 -            return null;
 +            if (customModels == null)

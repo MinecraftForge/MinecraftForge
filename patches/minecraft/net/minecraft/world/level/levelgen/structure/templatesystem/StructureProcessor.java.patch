@@ -1,33 +1,33 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
-@@ -7,6 +_,7 @@
+@@ -8,6 +_,7 @@
  import org.jspecify.annotations.Nullable;
  
- public abstract class StructureProcessor {
+ public interface StructureProcessor {
 +    /** @deprecated Use variant with StructureTemplate argument */
-     public StructureTemplate.@Nullable StructureBlockInfo processBlock(
+     default StructureTemplate.@Nullable StructureBlockInfo processBlock(
          final LevelReader level,
          final BlockPos targetPosition,
-@@ -18,6 +_,18 @@
+@@ -19,6 +_,18 @@
          return processedBlockInfo;
      }
  
-+    public StructureTemplate.@Nullable StructureBlockInfo processBlock(
++    default StructureTemplate.@Nullable StructureBlockInfo processBlock(
 +        final LevelReader level,
 +        final BlockPos targetPosition,
 +        final BlockPos referencePos,
-+        final StructureTemplate.StructureBlockInfo originalBlockInfo,
++        final BlockPos templateRelativePos,
 +        final StructureTemplate.StructureBlockInfo processedBlockInfo,
 +        final StructurePlaceSettings settings,
 +        final @Nullable StructureTemplate template
 +    ) {
-+       return processBlock(level, targetPosition, referencePos, originalBlockInfo, processedBlockInfo, settings);
++       return processBlock(level, targetPosition, referencePos, templateRelativePos, processedBlockInfo, settings);
 +    }
 +
-     protected abstract StructureProcessorType<?> getType();
+     MapCodec<? extends StructureProcessor> codec();
  
-     public List<StructureTemplate.StructureBlockInfo> finalizeProcessing(
-@@ -29,5 +_,20 @@
+     default List<StructureTemplate.StructureBlockInfo> finalizeProcessing(
+@@ -30,6 +_,21 @@
          final StructurePlaceSettings settings
      ) {
          return processedBlockInfoList;
@@ -37,7 +37,7 @@
 +     * Use this method to process entities from a structure in much the same way as
 +     * blocks, parameters are analogous.
 +     */
-+    public StructureTemplate.@Nullable StructureEntityInfo processEntity(
++    default StructureTemplate.@Nullable StructureEntityInfo processEntity(
 +        final LevelReader level,
 +        final BlockPos targetPosition,
 +        final StructureTemplate.StructureEntityInfo originalEntityInfo,
@@ -47,4 +47,5 @@
 +    ) {
 +       return processedEntityInfo;
      }
- }
+ 
+     default boolean evaluatesEntirePieceState() {

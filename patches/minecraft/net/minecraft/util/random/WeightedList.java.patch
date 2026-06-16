@@ -9,7 +9,7 @@
      private static final int FLAT_THRESHOLD = 64;
      private final int totalWeight;
      private final List<Weighted<E>> items;
-@@ -143,7 +_,7 @@
+@@ -153,7 +_,7 @@
          return 31 * result + this.items.hashCode();
      }
  

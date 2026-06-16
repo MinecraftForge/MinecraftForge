@@ -5,7 +5,7 @@
              Path oldFile = playerDirPath.resolve(player.getStringUUID() + ".dat_old");
              Util.safeReplaceFile(realFile, tmpFile, oldFile);
 +            net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(player, playerDir, player.getStringUUID());
-         } catch (Exception var11) {
+         } catch (Exception ignored) {
              LOGGER.warn("Failed to save player data for {}", player.getPlainTextName());
          }
 @@ -83,5 +_,9 @@

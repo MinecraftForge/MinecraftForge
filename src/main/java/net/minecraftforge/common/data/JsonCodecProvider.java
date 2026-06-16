@@ -7,7 +7,6 @@ package net.minecraftforge.common.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
@@ -25,7 +24,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
-import org.slf4j.Logger;
 
 /**
  * <p>Dataprovider for using a Codec to generate jsons.
@@ -36,9 +34,7 @@ import org.slf4j.Logger;
  *
  * @param <T> the type of thing being generated.
  */
-public class JsonCodecProvider<T> implements DataProvider
-{
-    private static final Logger LOGGER = LogUtils.getLogger();
+public class JsonCodecProvider<T> implements DataProvider {
     protected final PackOutput output;
     protected final ExistingFileHelper existingFileHelper;
     protected final String modid;
@@ -58,14 +54,11 @@ public class JsonCodecProvider<T> implements DataProvider
      * @param entries Map of named entries to serialize to jsons. Paths for values are derived from the Identifier's entryid:entrypath as specified above.
      */
     public JsonCodecProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modid, DynamicOps<JsonElement> dynamicOps, PackType packType,
-          String directory, Codec<T> codec, Map<Identifier, T> entries)
-    {
+          String directory, Codec<T> codec, Map<Identifier, T> entries) {
         // Track generated data so other dataproviders can validate if needed.
         final ResourceType resourceType = new ResourceType(packType, ".json", directory);
         for (Identifier id : entries.keySet())
-        {
             existingFileHelper.trackGenerated(id, resourceType);
-        }
         this.output = output;
         this.existingFileHelper = existingFileHelper;
         this.modid = modid;
@@ -77,8 +70,7 @@ public class JsonCodecProvider<T> implements DataProvider
     }
 
     @Override
-    public CompletableFuture<?> run(final CachedOutput cache)
-    {
+    public CompletableFuture<?> run(final CachedOutput cache) {
         final Path outputFolder = this.output.getOutputFolder(this.packType == PackType.CLIENT_RESOURCES
                 ? PackOutput.Target.RESOURCE_PACK
                 : PackOutput.Target.DATA_PACK);
@@ -108,14 +100,12 @@ public class JsonCodecProvider<T> implements DataProvider
         return CompletableFuture.allOf(futuresBuilder.build().toArray(CompletableFuture[]::new));
     }
 
-    protected void gather(BiConsumer<Identifier, T> consumer)
-    {
+    protected void gather(BiConsumer<Identifier, T> consumer) {
         this.entries.forEach(consumer);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return String.format("%s generator for %s", this.directory, this.modid);
     }
 
@@ -125,8 +115,7 @@ public class JsonCodecProvider<T> implements DataProvider
      * Null or empty arrays will not be written, and if the top-level json type is not JsonObject, attempting to add conditions will error.
      * @param conditions The name->condition map to apply.
      */
-    public JsonCodecProvider<T> setConditions(Map<Identifier, ICondition[]> conditions)
-    {
+    public JsonCodecProvider<T> setConditions(Map<Identifier, ICondition[]> conditions) {
         this.conditions = conditions;
         return this;
     }

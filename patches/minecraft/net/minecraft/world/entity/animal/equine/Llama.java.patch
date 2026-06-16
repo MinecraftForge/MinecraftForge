@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/equine/Llama.java
 +++ b/net/minecraft/world/entity/animal/equine/Llama.java
-@@ -369,13 +_,15 @@
+@@ -370,14 +_,16 @@
  
      @Override
      public boolean causeFallDamage(final double fallDistance, final float damageModifier, final DamageSource damageSource) {
@@ -10,12 +10,13 @@
 +        int dmg = this.calculateFallDamage(event.getDistance(), event.getDamageMultiplier());
          if (dmg <= 0) {
              return false;
-         } else {
--            if (fallDistance >= 6.0) {
-+            if (event.getDistance() >= 6.0) {
-                 this.hurt(damageSource, dmg);
--                this.propagateFallToPassengers(fallDistance, damageModifier, damageSource);
-+                this.propagateFallToPassengers(event.getDistance(), event.getDamageMultiplier(), damageSource);
-             }
+         }
  
-             this.playBlockFallSound();
+-        if (fallDistance >= 6.0) {
++        if (event.getDistance() >= 6.0) {
+             this.hurt(damageSource, dmg);
+-            this.propagateFallToPassengers(fallDistance, damageModifier, damageSource);
++            this.propagateFallToPassengers(event.getDistance(), event.getDamageMultiplier(), damageSource);
+         }
+ 
+         this.playBlockFallSound();

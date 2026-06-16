@@ -5,38 +5,34 @@
 
 package net.minecraftforge.client.model.obj;
 
-import com.google.common.base.Charsets;
-import joptsimple.internal.Strings;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A tokenizer for OBJ and MTL files.
  * <p>
  * Joins split lines and ignores comments.
  */
-public class ObjTokenizer implements AutoCloseable
-{
+public class ObjTokenizer implements AutoCloseable {
+    private static final Pattern TABS = Pattern.compile("[\t ]+");
     private final BufferedReader lineReader;
 
-    public ObjTokenizer(InputStream inputStream)
-    {
-        this.lineReader = new BufferedReader(new InputStreamReader(inputStream, Charsets.UTF_8));
+    public ObjTokenizer(InputStream inputStream) {
+        this.lineReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
     }
 
     @Nullable
-    public String[] readAndSplitLine(boolean ignoreEmptyLines) throws IOException
-    {
+    public String[] readAndSplitLine(boolean ignoreEmptyLines) throws IOException {
         //noinspection LoopConditionNotUpdatedInsideLoop
-        do
-        {
+        do {
             String currentLine = lineReader.readLine();
             if (currentLine == null)
                 return null;
@@ -46,19 +42,19 @@ public class ObjTokenizer implements AutoCloseable
             if (currentLine.startsWith("#"))
                 currentLine = "";
 
-            if (!currentLine.isEmpty())
-            {
+            if (!currentLine.isEmpty()) {
 
                 boolean hasContinuation;
-                do
-                {
+                do {
                     hasContinuation = currentLine.endsWith("\\");
                     String tmp = hasContinuation ? currentLine.substring(0, currentLine.length() - 1) : currentLine;
 
-                    Arrays.stream(tmp.split("[\t ]+")).filter(s -> !Strings.isNullOrEmpty(s)).forEach(lineParts::add);
+                    for (var part : TABS.split(tmp)) {
+                        if (part != null && !part.isEmpty())
+                            lineParts.add(part);
+                    }
 
-                    if (hasContinuation)
-                    {
+                    if (hasContinuation) {
                         currentLine = lineReader.readLine();
                         if (currentLine == null)
                             break;
@@ -78,8 +74,7 @@ public class ObjTokenizer implements AutoCloseable
     }
 
     @Override
-    public void close() throws IOException
-    {
+    public void close() throws IOException {
         lineReader.close();
     }
 }

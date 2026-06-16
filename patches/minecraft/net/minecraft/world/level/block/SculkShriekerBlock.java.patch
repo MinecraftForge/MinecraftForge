@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SculkShriekerBlock.java
 +++ b/net/minecraft/world/level/block/SculkShriekerBlock.java
-@@ -126,7 +_,7 @@
+@@ -127,7 +_,7 @@
      @Override
      protected void spawnAfterBreak(final BlockState state, final ServerLevel level, final BlockPos pos, final ItemStack tool, final boolean dropExperience) {
          super.spawnAfterBreak(state, level, pos, tool, dropExperience);
@@ -9,7 +9,7 @@
              this.tryDropExperience(level, pos, tool, ConstantInt.of(5));
          }
      }
-@@ -140,5 +_,10 @@
+@@ -141,5 +_,10 @@
                  (innerLevel, pos, state, entity) -> VibrationSystem.Ticker.tick(innerLevel, entity.getVibrationData(), entity.getVibrationUser())
              )
              : null;

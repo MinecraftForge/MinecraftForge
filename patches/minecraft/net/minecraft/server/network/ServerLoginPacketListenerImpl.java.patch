@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
-@@ -186,7 +_,7 @@
-             throw new IllegalStateException("Protocol error", var7);
+@@ -188,7 +_,7 @@
+             throw new IllegalStateException("Protocol error", e);
          }
  
 -        Thread thread = new Thread("User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
 +        Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + UNIQUE_THREAD_ID.incrementAndGet()) {
-             {
-                 Objects.requireNonNull(ServerLoginPacketListenerImpl.this);
-             }
-@@ -236,6 +_,7 @@
+             @Override
+             public void run() {
+                 String name = Objects.requireNonNull(ServerLoginPacketListenerImpl.this.requestedUsername, "Player name not initialized");
+@@ -234,6 +_,7 @@
  
      @Override
      public void handleCustomQueryPacket(final ServerboundCustomQueryAnswerPacket packet) {
@@ -17,7 +17,7 @@
          this.disconnect(ServerCommonPacketListenerImpl.DISCONNECT_UNEXPECTED_QUERY);
      }
  
-@@ -258,6 +_,11 @@
+@@ -256,6 +_,11 @@
      @Override
      public void handleCookieResponse(final ServerboundCookieResponsePacket packet) {
          this.disconnect(ServerCommonPacketListenerImpl.DISCONNECT_UNEXPECTED_QUERY);
@@ -28,4 +28,4 @@
 +        return this.authenticatedProfile;
      }
  
-     private static enum State {
+     private enum State {

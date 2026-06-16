@@ -1,8 +1,8 @@
 [
     {
-        "class": "net/minecraft/gametest/framework/GameTestHelper",
+        "class": "net/minecraft/gametest/framework/GameTestEntityBuilder",
         "methods": [
-            "spawn(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/entity/EntitySpawnReason;)Lnet/minecraft/world/entity/Entity;"
+            "spawn()Lnet/minecraft/world/entity/Entity;"
         ]
     },
     {
@@ -20,7 +20,7 @@
     {
         "class": "net/minecraft/world/entity/EntityType",
         "methods": [
-            "create(Lnet/minecraft/server/level/ServerLevel;Ljava/util/function/Consumer;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntitySpawnReason;ZZ)Lnet/minecraft/world/entity/Entity;"
+            "create(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/PostSpawnProcessor;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/EntitySpawnReason;ZZ)Lnet/minecraft/world/entity/Entity;"
         ]
     },
     {

@@ -1,6 +1,7 @@
+++++ Target missing
 --- a/net/minecraft/client/renderer/feature/BlockFeatureRenderer.java
 +++ b/net/minecraft/client/renderer/feature/BlockFeatureRenderer.java
-@@ -153,7 +_,7 @@
+@@ -153,7 +153,7 @@
              this.random.setSeed(submit.seed());
  
              try {

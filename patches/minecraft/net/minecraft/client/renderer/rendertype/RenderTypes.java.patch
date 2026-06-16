@@ -12,9 +12,9 @@
 @@ -582,19 +_,19 @@
      }
  
-     public static RenderType textIntensity(final Identifier texture) {
--        return TEXT_INTENSITY.apply(texture);
-+        return net.minecraftforge.client.ForgeRenderTypes.getTextIntensity(texture);
+     public static RenderType textGrayscale(final Identifier texture) {
+-        return TEXT_GRAYSCALE.apply(texture);
++        return net.minecraftforge.client.ForgeRenderTypes.getTextGrayscale(texture);
      }
  
      public static RenderType textPolygonOffset(final Identifier texture) {
@@ -22,9 +22,9 @@
 +        return net.minecraftforge.client.ForgeRenderTypes.getTextPolygonOffset(texture);
      }
  
-     public static RenderType textIntensityPolygonOffset(final Identifier texture) {
--        return TEXT_INTENSITY_POLYGON_OFFSET.apply(texture);
-+        return net.minecraftforge.client.ForgeRenderTypes.getTextIntensityPolygonOffset(texture);
+     public static RenderType textGrayscalePolygonOffset(final Identifier texture) {
+-        return TEXT_GRAYSCALE_POLYGON_OFFSET.apply(texture);
++        return net.minecraftforge.client.ForgeRenderTypes.getTextGrayscalePolygonOffset(texture);
      }
  
      public static RenderType textSeeThrough(final Identifier texture) {
@@ -36,9 +36,9 @@
 @@ -602,7 +_,7 @@
      }
  
-     public static RenderType textIntensitySeeThrough(final Identifier texture) {
--        return TEXT_INTENSITY_SEE_THROUGH.apply(texture);
-+        return net.minecraftforge.client.ForgeRenderTypes.getTextIntensitySeeThrough(texture);
+     public static RenderType textGrayscaleSeeThrough(final Identifier texture) {
+-        return TEXT_GRAYSCALE_SEE_THROUGH.apply(texture);
++        return net.minecraftforge.client.ForgeRenderTypes.getTextGrayscaleSeeThrough(texture);
      }
  
      public static RenderType lightning() {

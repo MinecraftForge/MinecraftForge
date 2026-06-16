@@ -116,8 +116,8 @@ public abstract class Channel<MSG> {
 
     @FunctionalInterface
     public static interface VersionTest {
-        public static final VersionTest ACCEPT_MISSING = (status, version) -> status == Status.MISSING;
-        public static final VersionTest ACCEPT_VANILLA = (status, version) -> status == Status.VANILLA;
+        public static final VersionTest ACCEPT_MISSING = (status, _) -> status == Status.MISSING;
+        public static final VersionTest ACCEPT_VANILLA = (status, _) -> status == Status.VANILLA;
         public static VersionTest exact(int version) {
             return (status, remoteVersion) -> status == Status.PRESENT && version == remoteVersion;
         }

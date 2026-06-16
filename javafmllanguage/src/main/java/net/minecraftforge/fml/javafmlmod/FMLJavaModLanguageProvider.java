@@ -81,7 +81,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
                     .filter(ad -> ad.annotationType().equals(MODANNOTATION))
                     .peek(ad -> LOGGER.debug(SCAN, "Found @Mod class {} with id {}", ad.clazz().getClassName(), ad.annotationData().get("value")))
                     .map(ad -> new FMLModTarget(ad.clazz().getClassName(), (String)ad.annotationData().get("value")))
-                    .collect(Collectors.toMap(FMLModTarget::modId, Function.identity(), (a,b)->a));
+                    .collect(Collectors.toMap(FMLModTarget::modId, Function.identity(), (a, _) -> a));
             scanResult.addLanguageLoader(modTargetMap);
         };
     }

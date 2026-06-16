@@ -44,7 +44,7 @@ public class ShearsLootTests extends BaseTestMod {
 
     public ShearsLootTests(FMLJavaModLoadingContext context) {
         super(context, false, true);
-        this.testItem(lookup -> MODDED_SHEARS.get().getDefaultInstance());
+        this.testItem(_ -> MODDED_SHEARS.get().getDefaultInstance());
     }
 
     @GameTest
@@ -86,7 +86,7 @@ public class ShearsLootTests extends BaseTestMod {
         };
 
         helper.makeFloor(); // Seagrass makes water
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL); // Plants prevent loot for creative players
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL); // Plants prevent loot for creative players
         var center = new BlockPos(1, 1, 1);
 
         player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(MODDED_SHEARS.get()));

@@ -5,8 +5,8 @@
 
 package net.minecraftforge.client.extensions.common;
 
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -51,12 +51,6 @@ public interface IClientMobEffectExtensions {
     /**
      * Renders the text and icon of the specified effect in the player's inventory.
      *
-     * @param instance     The effect instance
-     * @param effects      The effect-rendering screen
-     * @param graphics     The gui graphics
-     * @param x            The x coordinate
-     * @param y            The y coordinate
-     * @param blitOffset   The blit offset
      * @return true to prevent default rendering, false otherwise
      */
     default boolean extractInventory(MobEffectInstance instance, EffectsInInventory effects, GuiGraphicsExtractor graphics, int x, int y, int blitOffset) {
@@ -67,16 +61,10 @@ public interface IClientMobEffectExtensions {
      * Renders the icon of the specified effect on the player's HUD.
      * This can be used to render icons from your own texture sheet.
      *
-     * @param instance    The effect instance
-     * @param gui         The gui
-     * @param graphics    The gui graphics
-     * @param x           The x coordinate
-     * @param y           The y coordinate
-     * @param z           The z depth
      * @param alpha       The alpha value. Blinks when the effect is about to run out
      * @return true to prevent default rendering, false otherwise
      */
-    default boolean extractGuiIcon(MobEffectInstance instance, Gui gui, GuiGraphicsExtractor graphics, int x, int y, float z, float alpha) {
+    default boolean extractGuiIcon(MobEffectInstance instance, Hud hud, GuiGraphicsExtractor graphics, int x, int y, float z, float alpha) {
         return false;
     }
 }

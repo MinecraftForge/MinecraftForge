@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
-@@ -146,15 +_,16 @@
+@@ -152,15 +_,16 @@
  
                              entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), random.nextFloat() * 360.0F, 0.0F);
                              if (entity instanceof Mob mob) {
@@ -21,7 +21,7 @@
                                  }
  
                                  nextSpawnData.getEquipment().ifPresent(mob::equip);
-@@ -271,5 +_,14 @@
+@@ -279,5 +_,14 @@
  
      public double getOSpin() {
          return this.oSpin;

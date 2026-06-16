@@ -45,7 +45,7 @@
 +        return this.queriedLootTableId == null ? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
 +    }
 +
-     public static enum BlockEntityTarget implements StringRepresentable, LootContextArg.SimpleGetter<BlockEntity> {
+     public enum BlockEntityTarget implements StringRepresentable, LootContextArg.SimpleGetter<BlockEntity> {
          BLOCK_ENTITY("block_entity", LootContextParams.BLOCK_ENTITY);
  
 @@ -113,11 +_,18 @@

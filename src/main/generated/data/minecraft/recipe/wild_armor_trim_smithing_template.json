@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "#": "#c:gems/diamond",
     "C": "minecraft:mossy_cobblestone",

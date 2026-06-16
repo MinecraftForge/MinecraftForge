@@ -44,7 +44,7 @@ public class UpdateOrder extends BaseTestMod {
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
             var expectedPos = new BlockPos(2, 1, 3);
-            helper.assertBlockPresent(Blocks.WHITE_WOOL, expectedPos);
+            helper.assertBlockPresent(Blocks.WOOL.white(), expectedPos);
             helper.succeed();
         });
     }
@@ -58,7 +58,7 @@ public class UpdateOrder extends BaseTestMod {
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
             var expectedPos = new BlockPos(2, 1, 3);
-            helper.assertBlockPresent(Blocks.WHITE_WOOL, expectedPos);
+            helper.assertBlockPresent(Blocks.WOOL.white(), expectedPos);
             helper.succeed();
         });
     }
@@ -72,7 +72,7 @@ public class UpdateOrder extends BaseTestMod {
 
         helper.runAfterDelay(4, () -> {
             var expectedPos = new BlockPos(3, 1, 2);
-            helper.assertBlockPresent(Blocks.WHITE_WOOL, expectedPos);
+            helper.assertBlockPresent(Blocks.WOOL.white(), expectedPos);
             helper.succeed();
         });
     }
@@ -86,7 +86,7 @@ public class UpdateOrder extends BaseTestMod {
 
         helper.runAfterDelay(PISTON_DELAY, () -> {
             var expectedPos = new BlockPos(2, 1, 3);
-            helper.assertBlockPresent(Blocks.WHITE_WOOL, expectedPos);
+            helper.assertBlockPresent(Blocks.WOOL.white(), expectedPos);
             helper.succeed();
         });
     }
@@ -103,8 +103,8 @@ public class UpdateOrder extends BaseTestMod {
         barrel.setItem(0, new ItemStack(Items.DIRT));
 
         helper.runAfterDelay(10, () -> { // There are a lot of things happening, give it a few ticks
-            helper.assertBlockNotPresent(Blocks.WHITE_WOOL, unexpectedPos);
-            helper.assertBlockPresent(Blocks.WHITE_WOOL, expectedPos);
+            helper.assertBlockNotPresent(Blocks.WOOL.white(), unexpectedPos);
+            helper.assertBlockPresent(Blocks.WOOL.white(), expectedPos);
             helper.succeed();
         });
     }

@@ -141,7 +141,7 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
     protected static Path getForgeOnly(Path forge) {
         var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         // We need to separate out our resources/code so that we can show up as a different data pack.
-        var modJar = SecureJar.from((path, base) -> {
+        var modJar = SecureJar.from((path, _) -> {
             if (!path.endsWith(".class")) return true;
             for (var pkg : packages)
                 if (path.startsWith(pkg)) return true;

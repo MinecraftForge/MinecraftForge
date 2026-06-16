@@ -1,33 +1,30 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
-@@ -128,16 +_,17 @@
+@@ -128,13 +_,14 @@
          final S state, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState camera, final int offset
      ) {
          poseStack.pushPose();
 -        if (state.scoreText != null) {
+-            submitNodeCollector.submitNameTag(poseStack, state.nameTagAttachment, offset, state.scoreText, !state.isDiscrete, state.lightCoords, camera);
 +        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.fireRenderNameTagEvent(state, this, poseStack, submitNodeCollector, camera);
 +        if (event.getScoreContent() != null) {
-             submitNodeCollector.submitNameTag(
--                poseStack, state.nameTagAttachment, offset, state.scoreText, !state.isDiscrete, state.lightCoords, state.distanceToCameraSq, camera
-+                poseStack, state.nameTagAttachment, offset, event.getScoreContent(), !state.isDiscrete, state.lightCoords, state.distanceToCameraSq, camera
-             );
++            submitNodeCollector.submitNameTag(poseStack, state.nameTagAttachment, offset, event.getScoreContent(), !state.isDiscrete, state.lightCoords, camera);
              poseStack.translate(0.0F, 9.0F * 1.15F * 0.025F, 0.0F);
          }
  
 -        if (state.nameTag != null) {
+-            submitNodeCollector.submitNameTag(poseStack, state.nameTagAttachment, offset, state.nameTag, !state.isDiscrete, state.lightCoords, camera);
 +        if (event.getContent() != null) {
-             submitNodeCollector.submitNameTag(
--                poseStack, state.nameTagAttachment, offset, state.nameTag, !state.isDiscrete, state.lightCoords, state.distanceToCameraSq, camera
-+                poseStack, state.nameTagAttachment, offset, event.getContent(), !state.isDiscrete, state.lightCoords, state.distanceToCameraSq, camera
-             );
++            submitNodeCollector.submitNameTag(poseStack, state.nameTagAttachment, offset, event.getContent(), !state.isDiscrete, state.lightCoords, camera);
          }
  
-@@ -189,7 +_,7 @@
- 
+         poseStack.popPose();
+@@ -252,7 +_,7 @@
+     protected final void extractNameTags(final T entity, final S state, final float partialTicks, final double nameTagDistance, final double belowNameDistance) {
          if (this.entityRenderDispatcher.camera != null) {
              state.distanceToCameraSq = this.entityRenderDispatcher.distanceToSqr(entity);
--            boolean shouldShowName = state.distanceToCameraSq < 4096.0 && this.shouldShowName(entity, state.distanceToCameraSq);
-+            boolean shouldShowName = net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(entity, state.distanceToCameraSq) && this.shouldShowName(entity, state.distanceToCameraSq);
+-            boolean shouldShowName = state.distanceToCameraSq < Mth.square(nameTagDistance) && this.shouldShowName(entity, state.distanceToCameraSq);
++            boolean shouldShowName = net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(entity, state.distanceToCameraSq, nameTagDistance) && this.shouldShowName(entity, state.distanceToCameraSq);
              if (shouldShowName) {
                  state.nameTag = this.getNameTag(entity);
                  state.nameTagAttachment = entity.getAttachments().getNullable(EntityAttachment.NAME_TAG, 0, entity.getYRot(partialTicks));

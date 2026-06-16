@@ -22,7 +22,7 @@
 +        Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> logicPair = toolModifiedState == null ? null : Pair.of(ctx -> true, changeIntoState(toolModifiedState));
          if (logicPair == null) {
              return InteractionResult.PASS;
-         } else {
+         }
 @@ -84,5 +_,10 @@
  
      public static boolean onlyIfAirAbove(final UseOnContext context) {

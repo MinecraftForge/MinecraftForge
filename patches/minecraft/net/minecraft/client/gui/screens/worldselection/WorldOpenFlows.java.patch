@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
 +++ b/net/minecraft/client/gui/screens/worldselection/WorldOpenFlows.java
-@@ -489,6 +_,8 @@
+@@ -495,6 +_,8 @@
          this.minecraft.setScreenAndShow(new GenericMessageScreen(Component.translatable("selectWorld.resource_load")));
          PackRepository packRepository = ServerPacksSource.createPackRepository(worldAccess);
  
@@ -9,7 +9,7 @@
          WorldStem worldStem;
          try {
              worldStem = this.loadWorldStem(worldAccess, levelDataTag, safeMode, packRepository);
-@@ -530,6 +_,8 @@
+@@ -537,6 +_,8 @@
          WorldData data = worldDataAndGenSettings.data();
          boolean oldCustomized = worldDataAndGenSettings.genSettings().options().isOldCustomizedWorld();
          boolean unstable = data.worldGenSettingsLifecycle() != Lifecycle.stable();
@@ -18,7 +18,7 @@
          if (!oldCustomized && !unstable) {
              this.openWorldLoadBundledResourcePack(worldAccess, worldStem, packRepository, onCancel);
          } else {
-@@ -546,6 +_,8 @@
+@@ -553,6 +_,8 @@
      private void openWorldLoadBundledResourcePack(
          final LevelStorageSource.LevelStorageAccess worldAccess, final WorldStem worldStem, final PackRepository packRepository, final Runnable onCancel
      ) {

@@ -1,116 +1,75 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -150,7 +_,7 @@
-     public float vignetteBrightness = 1.0F;
-     private int toolHighlightTimer;
-     private ItemStack lastToolHighlight = ItemStack.EMPTY;
--    private final DebugScreenOverlay debugOverlay;
-+    protected DebugScreenOverlay debugOverlay;
-     private final SubtitleOverlay subtitleOverlay;
-     private final SpectatorGui spectatorGui;
-     private final PlayerTabOverlay tabList;
-@@ -192,6 +_,7 @@
-             () -> new JumpableVehicleBarRenderer(minecraft)
-         );
-         this.resetTitleTimes();
-+        net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.init(this, minecraft);
-     }
+@@ -64,7 +_,7 @@
+ import org.slf4j.Logger;
  
-     public void resetTitleTimes() {
-@@ -202,6 +_,10 @@
+ @OnlyIn(Dist.CLIENT)
+-public class Gui {
++public class Gui extends net.minecraftforge.client.gui.overlay.ForgeLayerInstance {
+     private static final Logger LOGGER = LogUtils.getLogger();
+     private static final Component SOCIAL_INTERACTIONS_NOT_AVAILABLE = Component.translatable("multiplayer.socialInteractions.not_available");
+     public static final Component SAVING_LEVEL = Component.translatable("menu.savingLevel");
+@@ -80,6 +_,7 @@
+     private @Nullable TutorialToast socialInteractionsToast;
  
-     public void extractRenderState(final GuiGraphicsExtractor graphics, final DeltaTracker deltaTracker) {
-         if (!(this.minecraft.screen instanceof LevelLoadingScreen)) {
-+            if (Boolean.valueOf(true)) {
-+                net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.extractRenderState(graphics, deltaTracker);
-+                return;
-+            }
-             if (!this.minecraft.options.hideGui) {
-                 this.extractCameraOverlays(graphics, deltaTracker);
-                 this.extractCrosshair(graphics, deltaTracker);
-@@ -385,7 +_,7 @@
-             int mouseX = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
-             int mouseY = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
-             graphics.nextStratum();
--            this.chat.extractRenderState(graphics, this.getFont(), this.tickCount, mouseX, mouseY, ChatComponent.DisplayMode.BACKGROUND, false);
-+            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(graphics, this.chat, window, mouseX, mouseY, this.tickCount, this.getFont());
+     public Gui(final Minecraft minecraft, final Hud hud, final GuiRenderState guiRenderState) {
++        super(minecraft);
+         this.minecraft = minecraft;
+         this.hud = hud;
+         this.splashManager = new SplashManager(minecraft.getUser());
+@@ -175,7 +_,7 @@
+             profiler.push("screen");
+ 
+             try {
+-                this.screen.extractRenderStateWithTooltipAndSubtitles(graphics, xMouse, yMouse, deltaTracker.getGameTimeDeltaTicks());
++                drawScreen(graphics, xMouse, yMouse, deltaTracker.getRealtimeDeltaTicks());
+             } catch (Throwable t) {
+                 CrashReport report = CrashReport.forThrowable(t, "Rendering screen");
+                 CrashReportCategory category = report.addCategory("Screen render details");
+@@ -224,12 +_,6 @@
+             LOGGER.error("setScreen called from non-game thread");
          }
-     }
  
-@@ -478,6 +_,8 @@
- 
-             for (MobEffectInstance instance : Ordering.natural().reverse().sortedCopy(activeEffects)) {
-                 Holder<MobEffect> effect = instance.getEffect();
-+                var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(instance);
-+                if (!renderer.isVisibleInGui(instance)) continue;
-                 if (instance.showIcon()) {
-                     int x = graphics.guiWidth();
-                     int y = 1;
-@@ -508,6 +_,7 @@
-                         }
-                     }
- 
-+                    if (renderer.extractGuiIcon(instance, this, graphics, x, y, 0, alpha)) continue;
-                     graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getMobEffectSprite(effect), x + 3, y + 3, 18, 18, ARGB.white(alpha));
-                 }
+-        if (this.screen != null) {
+-            this.screen.removed();
+-        } else {
+-            this.minecraft.setLastInputType(InputType.NONE);
+-        }
+-
+         if (screen == null) {
+             if (this.clientLevelTeardownInProgress) {
+                 throw new IllegalStateException("Trying to return to in-game GUI during disconnection");
+@@ -248,6 +_,22 @@
              }
-@@ -610,15 +_,37 @@
-     }
+         }
  
-     public void extractSelectedItemName(final GuiGraphicsExtractor graphics) {
-+        renderSelectedItemName(graphics, 0);
-+    }
-+
-+    // Forge: Maintain vanilla parity during FLD#BACKGROUND
-+    public final void updateContextualInfo(final GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-+        Gui.ContextualInfo nextContextualInfo = this.nextContextualInfoState();
-+        if (nextContextualInfo != this.contextualInfoBar.getKey()) {
-+            this.contextualInfoBar = Pair.of(nextContextualInfo, this.contextualInfoBarRenderers.get(nextContextualInfo).get());
++        clearLayers();
++        Screen old = this.screen;
++        if (screen != null) {
++           var event = net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenOpening(old, screen);
++           if (event == null) return;
++           screen = event;
 +        }
 +
-+        this.contextualInfoBar.getValue().extractBackground(graphics, deltaTracker);
-+    }
-+    // Forge: Same as above but for FLD#CONTEXTUAL_INFO
-+    public final void extractContextualInfoState(final GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-+        this.contextualInfoBar.getValue().extractRenderState(graphics, deltaTracker);
++        if (screen != old) {
++            if (old != null) {
++                net.minecraftforge.client.event.ForgeEventFactoryClient.onScreenClose(old);
++                old.removed();
++            } else {
++                this.minecraft.setLastInputType(InputType.NONE);
++            }
++        }
+         this.screen = screen;
+         if (this.screen != null) {
+             this.screen.added();
+@@ -465,5 +_,10 @@
+                         }
+                     )
+             );
 +    }
 +
-+    public void renderSelectedItemName(final GuiGraphicsExtractor graphics, int yShift) {
-         if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
-             MutableComponent str = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
-             if (this.lastToolHighlight.has(DataComponents.CUSTOM_NAME)) {
-                 str.withStyle(ChatFormatting.ITALIC);
-             }
- 
--            int strWidth = this.getFont().width(str);
-+            Component highlightTip = this.lastToolHighlight.getHighlightTip(str);
-+            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
-+            if (font == null)
-+                font = this.getFont();
-+            int strWidth = font.width(highlightTip);
-             int x = (graphics.guiWidth() - strWidth) / 2;
--            int y = graphics.guiHeight() - 59;
-+            int y = graphics.guiHeight() - Math.max(yShift, 59);
-             if (!this.minecraft.gameMode.canHurtPlayer()) {
-                 y += 14;
-             }
-@@ -629,7 +_,7 @@
-             }
- 
-             if (alpha > 0) {
--                graphics.textWithBackdrop(this.getFont(), str, x, y, strWidth, ARGB.white(alpha));
-+                graphics.textWithBackdrop(font, highlightTip, x, y, strWidth, ARGB.white(alpha));
-             }
-         }
++    @Override
++    protected void setScreenInternal(Screen value) {
++        this.screen = value;
      }
-@@ -1195,7 +_,9 @@
-                 this.toolHighlightTimer = 0;
-             } else if (this.lastToolHighlight.isEmpty()
-                 || !selected.is(this.lastToolHighlight.getItem())
--                || !selected.getHoverName().equals(this.lastToolHighlight.getHoverName())) {
-+                || !selected.getHoverName().equals(this.lastToolHighlight.getHoverName())
-+                || !selected.getHighlightTip(selected.getHoverName()).equals(lastToolHighlight.getHighlightTip(lastToolHighlight.getHoverName()))
-+            ) {
-                 this.toolHighlightTimer = (int)(40.0 * this.minecraft.options.notificationDisplayTime().get());
-             } else if (this.toolHighlightTimer > 0) {
-                 this.toolHighlightTimer--;
+ }

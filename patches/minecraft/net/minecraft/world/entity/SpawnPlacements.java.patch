@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/SpawnPlacements.java
 +++ b/net/minecraft/world/entity/SpawnPlacements.java
-@@ -48,6 +_,7 @@
+@@ -50,6 +_,7 @@
  public class SpawnPlacements {
      private static final Map<EntityType<?>, SpawnPlacements.Data> DATA_BY_TYPE = Maps.newHashMap();
  
@@ -8,9 +8,9 @@
      private static <T extends Mob> void register(
          final EntityType<T> type,
          final SpawnPlacementType placementType,
-@@ -78,7 +_,8 @@
-         final EntityType<T> type, final ServerLevelAccessor level, final EntitySpawnReason spawnReason, final BlockPos pos, final RandomSource random
-     ) {
+@@ -84,7 +_,8 @@
+         }
+ 
          SpawnPlacements.Data data = DATA_BY_TYPE.get(type);
 -        return data == null || data.predicate.test((EntityType)type, level, spawnReason, pos, random);
 +        boolean vanillaResult = data == null || data.predicate.test((EntityType)type, level, spawnReason, pos, random);
@@ -18,7 +18,7 @@
      }
  
      static {
-@@ -191,5 +_,13 @@
+@@ -200,5 +_,13 @@
      @FunctionalInterface
      public interface SpawnPredicate<T extends Entity> {
          boolean test(EntityType<T> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random);

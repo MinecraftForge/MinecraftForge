@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/registries/BuiltInRegistries.java
 +++ b/net/minecraft/core/registries/BuiltInRegistries.java
-@@ -385,11 +_,13 @@
+@@ -389,11 +_,13 @@
      }
  
      private static <T, R extends WritableRegistry<T>> R internalRegister(
@@ -16,7 +16,7 @@
          WRITABLE_REGISTRY.register((ResourceKey)name, registry, RegistrationInfo.BUILT_IN);
          return registry;
      }
-@@ -425,7 +_,7 @@
+@@ -429,7 +_,7 @@
  
              if (r instanceof DefaultedRegistry) {
                  Identifier key = ((DefaultedRegistry)r).getDefaultKey();

@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/opengl/GlDevice.java
 +++ b/com/mojang/blaze3d/opengl/GlDevice.java
-@@ -129,7 +_,12 @@
+@@ -150,7 +_,12 @@
          final int depthOrLayers,
          final int mipLevels
      ) {
@@ -9,12 +9,12 @@
 +    }
 +
 +    @Override
-+    public GpuTexture createTexture(final @Nullable Supplier<String> label, @GpuTexture.Usage final int usage, final TextureFormat format, final int width, final int height, final int depthOrLayers, final int mipLevels, final boolean stencil ) {
++    public GpuTexture createTexture(final @Nullable Supplier<String> label, @GpuTexture.Usage final int usage, final GpuFormat format, final int width, final int height, final int depthOrLayers, final int mipLevels, final boolean stencil) {
 +        return this.createTexture(this.debugLabels.exists() && label != null ? label.get() : null, usage, format, width, height, depthOrLayers, mipLevels, stencil);
      }
  
      @Override
-@@ -142,6 +_,11 @@
+@@ -163,6 +_,11 @@
          final int depthOrLayers,
          final int mipLevels
      ) {
@@ -22,41 +22,29 @@
 +    }
 +
 +    @Override
-+    public GpuTexture createTexture(@Nullable String label, @GpuTexture.Usage final int usage, final TextureFormat format, final int width, final int height, final int depthOrLayers, final int mipLevels, boolean stencil) {
++    public GpuTexture createTexture(@Nullable String label, @GpuTexture.Usage final int usage, final GpuFormat format, final int width, final int height, final int depthOrLayers, final int mipLevels, boolean stencil) {
          GlStateManager.clearGlErrors();
          int id = GlStateManager._genTexture();
          if (label == null) {
-@@ -171,12 +_,12 @@
-                     GlStateManager._texImage2D(
-                         cubeTarget,
-                         i,
--                        GlConst.toGlInternalId(format),
-+                        GlConst.toGlInternalId(format, stencil),
-                         width >> i,
-                         height >> i,
-                         0,
--                        GlConst.toGlExternalId(format),
--                        GlConst.toGlType(format),
-+                        GlConst.toGlExternalId(format, stencil),
-+                        GlConst.toGlType(format, stencil),
-                         null
-                     );
-                 }
-@@ -184,7 +_,7 @@
-         } else {
-             for (int i = 0; i < mipLevels; i++) {
-                 GlStateManager._texImage2D(
--                    target, i, GlConst.toGlInternalId(format), width >> i, height >> i, 0, GlConst.toGlExternalId(format), GlConst.toGlType(format), null
-+                    target, i, GlConst.toGlInternalId(format, stencil), width >> i, height >> i, 0, GlConst.toGlExternalId(format, stencil), GlConst.toGlType(format, stencil), null
-                 );
-             }
+@@ -186,9 +_,9 @@
+             GlStateManager._texParameter(target, 34892, 0);
          }
-@@ -195,7 +_,7 @@
-         } else if (error != 0) {
-             throw new IllegalStateException("OpenGL error " + error);
-         } else {
--            GlTexture texture = new GlTexture(usage, label, format, width, height, depthOrLayers, mipLevels, id);
-+            GlTexture texture = new GlTexture(usage, label, format, width, height, depthOrLayers, mipLevels, id, stencil);
+ 
+-        int glInternalID = GlConst.toGlInternalId(format);
+-        int glExternalID = GlConst.toGlExternalId(format);
+-        int glType = GlConst.toGlType(format);
++        int glInternalID = GlConst.toGlInternalId(format, stencil);
++        int glExternalID = GlConst.toGlExternalId(format, stencil);
++        int glType = GlConst.toGlType(format, stencil);
+         if (glInternalID != 0 && glExternalID != 0 && glType != 0) {
+             if (isCubemap) {
+                 for (int cubeTarget : GlConst.CUBEMAP_TARGETS) {
+@@ -211,7 +_,7 @@
+                 throw new IllegalStateException("OpenGL error " + error);
+             }
+ 
+-            GlTexture texture = new GlTexture(usage, label, format, width, height, depthOrLayers, mipLevels, id, this.frameBufferCache);
++            GlTexture texture = new GlTexture(usage, label, format, width, height, depthOrLayers, mipLevels, id, this.frameBufferCache, stencil);
              this.debugLabels.applyLabel(texture);
              return texture;
-         }
+         } else {

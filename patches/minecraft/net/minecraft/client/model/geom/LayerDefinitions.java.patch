@@ -1,9 +1,9 @@
 --- a/net/minecraft/client/model/geom/LayerDefinitions.java
 +++ b/net/minecraft/client/model/geom/LayerDefinitions.java
-@@ -569,6 +_,7 @@
-                 result.put(ModelLayers.createHangingSignModelName(woodType, attachmentType), hangingSignModel);
-             }
-         });
+@@ -557,6 +_,7 @@
+         result.put(ModelLayers.PALE_OAK_CHEST_BOAT, chestBoatModel);
+         result.put(ModelLayers.MANGROVE_BOAT, boatModel);
+         result.put(ModelLayers.MANGROVE_CHEST_BOAT, chestBoatModel);
 +        net.minecraftforge.client.ForgeHooksClient.loadLayerDefinitions(result);
          ImmutableMap<ModelLayerLocation, LayerDefinition> definitions = result.build();
          List<ModelLayerLocation> missingDefinitions = ModelLayers.getKnownLocations().filter(l -> !definitions.containsKey(l)).toList();

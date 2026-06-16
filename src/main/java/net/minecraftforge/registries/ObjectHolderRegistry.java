@@ -54,7 +54,7 @@ class ObjectHolderRegistry {
     static void applyObjectHolders() {
         try {
             LOGGER.debug(ForgeRegistry.REGISTRIES, "Applying holder lookups");
-            applyObjectHolders(key -> true);
+            applyObjectHolders(_ -> true);
             LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
         } catch (RuntimeException e) {
             // It is more important that the calling contexts continue without exception to prevent further cascading errors

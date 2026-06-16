@@ -17,7 +17,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +50,7 @@ public class PreventItemDamageTest extends BaseTestMod {
 
     public PreventItemDamageTest(FMLJavaModLoadingContext context) {
         super(context, false, true);
-        this.testItem(lookup -> FAKE_SHIELD.get().getDefaultInstance());
+        this.testItem(_ -> FAKE_SHIELD.get().getDefaultInstance());
     }
 
     @GameTest
@@ -90,7 +90,7 @@ public class PreventItemDamageTest extends BaseTestMod {
         int initialDamage = shield.getDamageValue();
 
         // setup enemy
-        var enemy = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(2, 0, 2));
+        var enemy = helper.spawnWithNoFreeWill(EntityTypes.HUSK, new BlockPos(2, 0, 2));
         player.lookAt(EntityAnchorArgument.Anchor.EYES, enemy.position());
 
         // hit the player
@@ -117,7 +117,7 @@ public class PreventItemDamageTest extends BaseTestMod {
         helper.makeFloor();
 
         // setup player
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL);
 
         // setup shield
         var shield = FAKE_SHIELD.get().getDefaultInstance();

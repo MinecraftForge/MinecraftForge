@@ -17,4 +17,4 @@
 +                InetAddress group = InetAddress.getByName(MULTICAST_GROUP);
                  DatagramPacket packet = new DatagramPacket(ping, ping.length, group, 4445);
                  this.socket.send(packet);
-             } catch (IOException var6) {
+             } catch (IOException e) {

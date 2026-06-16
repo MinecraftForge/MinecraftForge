@@ -20,7 +20,7 @@ public class NetworkFilters {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final Map<String, Function<Connection, VanillaPacketFilter>> instances = ImmutableMap.of(
-        "forge:vanilla_filter", manager -> new VanillaConnectionNetworkFilter()/*,
+        "forge:vanilla_filter", _ -> new VanillaConnectionNetworkFilter()/*,
         "forge:forge_fixes", ForgeConnectionNetworkFilter::new*/
     );
 

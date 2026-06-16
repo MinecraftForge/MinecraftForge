@@ -9,15 +9,15 @@
              RaidCommand.register(this.dispatcher, context);
              DebugPathCommand.register(this.dispatcher);
              DebugMobSpawningCommand.register(this.dispatcher);
-@@ -298,6 +_,7 @@
-         if (commandSelection.includeIntegrated) {
+@@ -299,6 +_,7 @@
              PublishCommand.register(this.dispatcher);
+             UnpublishCommand.register(this.dispatcher);
          }
 +        net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.dispatcher, commandSelection, context);
  
          this.dispatcher.setConsumer(ExecutionCommandSource.resultConsumer());
      }
-@@ -320,9 +_,18 @@
+@@ -321,9 +_,18 @@
      public void performCommand(final ParseResults<CommandSourceStack> command, final String commandString) {
          CommandSourceStack sender = command.getContext().getSource();
          Profiler.get().push(() -> "/" + commandString);
@@ -37,7 +37,7 @@
              if (commandChain != null) {
                  executeCommandInContext(
                      sender,
-@@ -413,7 +_,10 @@
+@@ -414,7 +_,10 @@
          Map<CommandNode<CommandSourceStack>, CommandNode<CommandSourceStack>> playerCommands = new HashMap<>();
          RootCommandNode<CommandSourceStack> root = new RootCommandNode<>();
          playerCommands.put(this.dispatcher.getRoot(), root);

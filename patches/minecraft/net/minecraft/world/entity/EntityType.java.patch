@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -1225,6 +_,11 @@
+@@ -73,6 +_,11 @@
      private final FeatureFlagSet requiredFeatures;
      private final boolean allowedInPeaceful;
  
@@ -9,10 +9,10 @@
 +    private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
 +    private final java.util.function.BiFunction<net.minecraftforge.network.packets.SpawnEntity, Level, T> customClientFactory;
 +
-     private static <T extends Entity> EntityType<T> register(final ResourceKey<EntityType<?>> id, final EntityType.Builder<T> builder) {
-         return Registry.register(BuiltInRegistries.ENTITY_TYPE, id, builder.build(id));
+     public static Identifier getKey(final EntityType<?> type) {
+         return BuiltInRegistries.ENTITY_TYPE.getKey(type);
      }
-@@ -1260,7 +_,8 @@
+@@ -92,7 +_,8 @@
          final String descriptionId,
          final Optional<ResourceKey<LootTable>> lootTable,
          final FeatureFlagSet requiredFeatures,
@@ -22,7 +22,7 @@
      ) {
          this.factory = factory;
          this.category = category;
-@@ -1277,6 +_,10 @@
+@@ -109,6 +_,10 @@
          this.lootTable = lootTable;
          this.requiredFeatures = requiredFeatures;
          this.allowedInPeaceful = allowedInPeaceful;
@@ -33,7 +33,7 @@
      }
  
      public @Nullable T spawn(
-@@ -1580,14 +_,26 @@
+@@ -424,14 +_,26 @@
      }
  
      public int clientTrackingRange() {
@@ -57,11 +57,11 @@
 +    }
 +
 +    private boolean defaultVelocitySupplier() {
-         return this != PLAYER
-             && this != LLAMA_SPIT
-             && this != WITHER
-@@ -1638,6 +_,15 @@
-         return OP_ONLY_CUSTOM_DATA.contains(this);
+         return this != EntityTypes.PLAYER
+             && this != EntityTypes.LLAMA_SPIT
+             && this != EntityTypes.WITHER
+@@ -466,6 +_,15 @@
+         return EntityTypes.OP_ONLY_CUSTOM_DATA.contains(this);
      }
  
 +    public T customClientSpawn(net.minecraftforge.network.packets.SpawnEntity packet, Level world) {
@@ -76,7 +76,7 @@
      public static class Builder<T extends Entity> {
          private final EntityType.EntityFactory<T> factory;
          private final MobCategory category;
-@@ -1657,6 +_,10 @@
+@@ -485,6 +_,10 @@
          );
          private final DependantName<EntityType<?>, String> descriptionId = id -> Util.makeDescriptionId("entity", id.identifier());
          private boolean allowedInPeaceful = true;
@@ -87,7 +87,7 @@
  
          private Builder(final EntityType.EntityFactory<T> factory, final MobCategory category) {
              this.factory = factory;
-@@ -1775,6 +_,30 @@
+@@ -603,6 +_,30 @@
              return this;
          }
  
@@ -118,7 +118,7 @@
          public EntityType<T> build(final ResourceKey<EntityType<?>> name) {
              if (this.serialize) {
                  Util.fetchChoiceType(References.ENTITY_TREE, name.identifier().toString());
-@@ -1795,7 +_,8 @@
+@@ -623,7 +_,8 @@
                  this.descriptionId.get(name),
                  this.lootTable.get(name),
                  this.requiredFeatures,

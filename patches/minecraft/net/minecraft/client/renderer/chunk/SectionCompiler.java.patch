@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/SectionCompiler.java
 +++ b/net/minecraft/client/renderer/chunk/SectionCompiler.java
-@@ -61,6 +_,7 @@
+@@ -56,6 +_,7 @@
      public SectionCompiler.Results compile(
          final SectionPos sectionPos, final RenderSectionRegion region, final VertexSorting vertexSorting, final SectionBufferBuilderPack builders
      ) {
@@ -8,7 +8,7 @@
          SectionCompiler.Results results = new SectionCompiler.Results();
          BlockPos minPos = sectionPos.origin();
          BlockPos maxPos = minPos.offset(15, 15, 15);
-@@ -100,6 +_,9 @@
+@@ -95,6 +_,9 @@
                      }
  
                      if (blockState.getRenderShape() == RenderShape.MODEL) {
@@ -18,7 +18,7 @@
                          blockRenderer.tesselateBlock(
                              ModelBlockRenderer.forceOpaque(this.cutoutLeaves, blockState) ? opaqueQuadOutput : quadOutput,
                              SectionPos.sectionRelative(pos.getX()),
-@@ -108,8 +_,9 @@
+@@ -103,8 +_,9 @@
                              region,
                              pos,
                              blockState,
@@ -29,4 +29,4 @@
 +                            modelData
                          );
                      }
-                 } catch (Throwable var21) {
+                 } catch (Throwable t) {

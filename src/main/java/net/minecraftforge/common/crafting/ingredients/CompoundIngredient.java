@@ -93,12 +93,12 @@ public class CompoundIngredient extends AbstractIngredient {
 
         @Override
         public void write(RegistryFriendlyByteBuf buffer, CompoundIngredient value) {
-            buffer.writeCollection(value.children, (buf, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
+            buffer.writeCollection(value.children, (_, child) -> Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, child));
         }
 
         @Override
         public CompoundIngredient read(RegistryFriendlyByteBuf buffer) {
-            var children = buffer.readCollection(ArrayList::new, buf -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
+            var children = buffer.readCollection(ArrayList::new, _ -> Ingredient.CONTENTS_STREAM_CODEC.decode(buffer));
             return new CompoundIngredient(children);
         }
     };

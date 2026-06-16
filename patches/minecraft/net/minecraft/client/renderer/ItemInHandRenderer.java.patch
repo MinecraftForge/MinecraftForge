@@ -5,7 +5,7 @@
              float mainhandInverseArmHeight = this.itemModelResolver.swapAnimationScale(this.mainHandItem)
                  * (1.0F - Mth.lerp(frameInterp, this.oMainHandHeight, this.mainHandHeight));
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, poseStack, submitNodeCollector, lightCoords, frameInterp, xRot, mainHandAttack, mainhandInverseArmHeight, this.mainHandItem))
-             this.renderArmWithItem(
+             this.submitArmWithItem(
                  player,
                  frameInterp,
 @@ -380,6 +_,8 @@
@@ -14,10 +14,10 @@
                  * (1.0F - Mth.lerp(frameInterp, this.oOffHandHeight, this.offHandHeight));
 +
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.OFF_HAND, poseStack, submitNodeCollector, lightCoords, frameInterp, xRot, offHandAttack, offhandInverseArmHeight, this.offHandItem))
-             this.renderArmWithItem(
+             this.submitArmWithItem(
                  player,
                  frameInterp,
-@@ -457,7 +_,7 @@
+@@ -454,7 +_,7 @@
                  } else {
                      this.renderOneHandedMap(poseStack, submitNodeCollector, lightCoords, inverseArmHeight, arm, attack, itemStack);
                  }
@@ -26,7 +26,7 @@
                  this.applyItemArmTransform(poseStack, arm, inverseArmHeight);
                  boolean charged = CrossbowItem.isCharged(itemStack);
                  boolean isRightArm = arm == HumanoidArm.RIGHT;
-@@ -502,6 +_,7 @@
+@@ -499,6 +_,7 @@
              } else {
                  boolean isRightArm = arm == HumanoidArm.RIGHT;
                  int invert = isRightArm ? 1 : -1;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -1286,9 +_,10 @@
+@@ -1297,9 +_,10 @@
                      }
                  case SWAP_ITEM_WITH_OFFHAND:
                      if (!this.player.isSpectator()) {
@@ -14,7 +14,7 @@
                          this.player.stopUsingItem();
                      }
  
-@@ -1504,8 +_,9 @@
+@@ -1515,8 +_,9 @@
                  }
  
                  CompletableFuture<FilteredText> filteredFuture = this.filterTextPacket(signedMessage.signedContent());
@@ -25,7 +25,7 @@
                      PlayerChatMessage filteredMessage = signedMessage.withUnsignedContent(decorated).filter(filtered.mask());
                      this.broadcastChatMessage(filteredMessage);
                  });
-@@ -2175,6 +_,7 @@
+@@ -2195,6 +_,7 @@
  
      @Override
      public void handleCustomPayload(final ServerboundCustomPayloadPacket packet) {

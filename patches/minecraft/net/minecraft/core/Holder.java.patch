@@ -4,8 +4,8 @@
  import net.minecraft.tags.TagKey;
  import org.jspecify.annotations.Nullable;
  
--public interface Holder<T> {
-+public interface Holder<T> extends java.util.function.Supplier<T>, net.minecraftforge.registries.tags.IReverseTag<T> {
+-public sealed interface Holder<T> permits Holder.Direct, Holder.Reference {
++public sealed interface Holder<T> extends java.util.function.Supplier<T>, net.minecraftforge.registries.tags.IReverseTag<T>  permits Holder.Direct, Holder.Reference {
 +    @Override
 +    default boolean containsTag(TagKey<T> key) {
 +        return this.is(key);

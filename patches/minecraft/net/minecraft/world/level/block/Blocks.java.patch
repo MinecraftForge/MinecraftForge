@@ -1,17 +1,17 @@
 --- a/net/minecraft/world/level/block/Blocks.java
 +++ b/net/minecraft/world/level/block/Blocks.java
-@@ -686,7 +_,7 @@
-     public static final Block RED_BED = registerBed("red_bed", DyeColor.RED);
-     public static final Block BLACK_BED = registerBed("black_bed", DyeColor.BLACK);
+@@ -705,7 +_,7 @@
+             .pushReaction(PushReaction.DESTROY)
+     );
      public static final Block POWERED_RAIL = register(
--        "powered_rail", PoweredRailBlock::new, BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
-+        "powered_rail", prop -> new PoweredRailBlock(prop, true), BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
+-        BlockItemIds.POWERED_RAIL, PoweredRailBlock::new, BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
++        BlockItemIds.POWERED_RAIL, prop -> new PoweredRailBlock(prop, true), BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
      );
      public static final Block DETECTOR_RAIL = register(
-         "detector_rail", DetectorRailBlock::new, BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
-@@ -7218,14 +_,5 @@
+         BlockItemIds.DETECTOR_RAIL, DetectorRailBlock::new, BlockBehaviour.Properties.of().noCollision().strength(0.7F).sound(SoundType.METAL)
+@@ -5992,14 +_,5 @@
  
-     private static Block register(final String id, final BlockBehaviour.Properties properties) {
+     private static Block register(final ResourceKey<Block> id, final BlockBehaviour.Properties properties) {
          return register(id, Block::new, properties);
 -    }
 -

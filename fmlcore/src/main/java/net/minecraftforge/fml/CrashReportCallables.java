@@ -14,16 +14,14 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-public class CrashReportCallables
-{
+public class CrashReportCallables {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final List<ISystemReportExtender> crashCallables = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * Register a custom {@link ISystemReportExtender}
      */
-    public static void registerCrashCallable(ISystemReportExtender callable)
-    {
+    public static void registerCrashCallable(ISystemReportExtender callable) {
         crashCallables.add(callable);
     }
 
@@ -33,19 +31,15 @@ public class CrashReportCallables
      * @param headerName The name of the system report entry
      * @param reportGenerator The report generator to be called when a crash report is built
      */
-    public static void registerCrashCallable(String headerName, Supplier<String> reportGenerator)
-    {
-        registerCrashCallable(new ISystemReportExtender()
-        {
+    public static void registerCrashCallable(String headerName, Supplier<String> reportGenerator) {
+        registerCrashCallable(new ISystemReportExtender() {
             @Override
-            public String getLabel()
-            {
+            public String getLabel() {
                 return headerName;
             }
 
             @Override
-            public String get()
-            {
+            public String get() {
                 return reportGenerator.get();
             }
         });
@@ -58,31 +52,23 @@ public class CrashReportCallables
      * @param reportGenerator The report generator to be called when a crash report is built
      * @param active The supplier of the flag to be checked when a crash report is built
      */
-    public static void registerCrashCallable(String headerName, Supplier<String> reportGenerator, BooleanSupplier active)
-    {
-        registerCrashCallable(new ISystemReportExtender()
-        {
+    public static void registerCrashCallable(String headerName, Supplier<String> reportGenerator, BooleanSupplier active) {
+        registerCrashCallable(new ISystemReportExtender() {
             @Override
-            public String getLabel()
-            {
+            public String getLabel() {
                 return headerName;
             }
 
             @Override
-            public String get()
-            {
+            public String get() {
                 return reportGenerator.get();
             }
 
             @Override
-            public boolean isActive()
-            {
-                try
-                {
+            public boolean isActive() {
+                try {
                     return active.getAsBoolean();
-                }
-                catch (Throwable t)
-                {
+                } catch (Throwable t) {
                     LOGGER.warn("CrashCallable '{}' threw an exception while checking the active flag, disabling", headerName, t);
                     return false;
                 }
@@ -90,8 +76,7 @@ public class CrashReportCallables
         });
     }
 
-    public static List<ISystemReportExtender> allCrashCallables()
-    {
+    public static List<ISystemReportExtender> allCrashCallables() {
         return List.copyOf(crashCallables);
     }
 }

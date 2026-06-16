@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -194,7 +_,7 @@
+@@ -196,7 +_,7 @@
      }
  
      public void onClose() {
--        this.minecraft.setScreen(null);
-+        this.minecraft.popGuiLayer();
+-        this.minecraft.gui.setScreen(null);
++        this.minecraft.gui.popLayer();
      }
  
      protected <T extends GuiEventListener & Renderable & NarratableEntry> T addRenderableWidget(final T widget) {
-@@ -326,8 +_,10 @@
+@@ -327,8 +_,10 @@
          this.width = width;
          this.height = height;
          if (!this.initialized) {
@@ -20,7 +20,7 @@
          } else {
              this.repositionElements();
          }
-@@ -344,8 +_,10 @@
+@@ -345,8 +_,10 @@
      protected void rebuildWidgets() {
          this.clearWidgets();
          this.clearFocus();
@@ -31,16 +31,16 @@
      }
  
      protected void fadeWidgets(final float widgetFade) {
-@@ -385,6 +_,8 @@
+@@ -386,6 +_,8 @@
              this.extractMenuBackground(graphics);
          }
  
 +        net.minecraftforge.client.event.ForgeEventFactoryClient.onRenderScreenBackground(this, graphics);
 +
-         this.minecraft.gui.extractDeferredSubtitles();
+         this.minecraft.gui.hud.extractDeferredSubtitles();
      }
  
-@@ -474,6 +_,19 @@
+@@ -471,6 +_,19 @@
      }
  
      public void onFilesDrop(final List<Path> files) {

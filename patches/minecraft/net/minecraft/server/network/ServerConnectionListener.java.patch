@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
-@@ -38,6 +_,7 @@
+@@ -40,6 +_,7 @@
  import org.slf4j.Logger;
  
  public class ServerConnectionListener {
@@ -8,7 +8,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private final MinecraftServer server;
      public volatile boolean running;
-@@ -50,6 +_,8 @@
+@@ -53,6 +_,8 @@
      }
  
      public void startTcpServerListener(final @Nullable InetAddress address, final int port) throws IOException {
@@ -17,7 +17,7 @@
          synchronized (this.channels) {
              EventLoopGroupHolder eventLoopGroupHolder = EventLoopGroupHolder.remote(this.server.useNativeTransport());
              this.channels
-@@ -69,7 +_,7 @@
+@@ -68,7 +_,7 @@
                                      } catch (ChannelException var5) {
                                      }
  
@@ -26,7 +26,7 @@
                                      if (ServerConnectionListener.this.server.repliesToStatus()) {
                                          pipeline.addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this.getServer()));
                                      }
-@@ -88,7 +_,7 @@
+@@ -87,7 +_,7 @@
                              }
                          )
                          .group(eventLoopGroupHolder.eventLoopGroup())

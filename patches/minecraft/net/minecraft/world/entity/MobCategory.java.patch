@@ -6,12 +6,12 @@
  
 -public enum MobCategory implements StringRepresentable {
 +public enum MobCategory implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
-     MONSTER("monster", 70, false, false, 128),
-     CREATURE("creature", 10, true, true, 128),
-     AMBIENT("ambient", 15, true, false, 128),
+     MONSTER("monster", "MO", 70, false, false, 128),
+     CREATURE("creature", "C", 10, true, true, 128),
+     AMBIENT("ambient", "AM", 15, true, false, 128),
 @@ -13,7 +_,8 @@
-     WATER_AMBIENT("water_ambient", 20, true, false, 64),
-     MISC("misc", -1, true, true, 128);
+     WATER_AMBIENT("water_ambient", "WA", 20, true, false, 64),
+     MISC("misc", "MI", -1, true, true, 128);
  
 -    public static final Codec<MobCategory> CODEC = StringRepresentable.fromEnum(MobCategory::values);
 +    public static final Codec<MobCategory> CODEC =  net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::byName);
@@ -19,13 +19,13 @@
      private final int max;
      private final boolean isFriendly;
      private final boolean isPersistent;
-@@ -56,5 +_,20 @@
+@@ -64,5 +_,20 @@
  
      public int getNoDespawnDistance() {
          return 32;
 +    }
 +
-+    public static MobCategory create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
++    public static MobCategory create(String name, String id, String debugAbbreviation, int max, boolean isFriendly, boolean isPersistent, int despawnDistance) {
 +        throw new IllegalStateException("Enum not extended");
 +    }
 +

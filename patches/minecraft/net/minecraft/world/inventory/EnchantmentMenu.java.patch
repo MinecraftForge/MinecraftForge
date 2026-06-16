@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/inventory/EnchantmentMenu.java
 +++ b/net/minecraft/world/inventory/EnchantmentMenu.java
-@@ -74,7 +_,7 @@
- 
+@@ -61,7 +_,7 @@
+         this.addSlot(new Slot(this.enchantSlots, 1, 35, 47) {
              @Override
              public boolean mayPlace(final ItemStack itemStack) {
 -                return itemStack.is(Items.LAPIS_LAZULI);
@@ -9,7 +9,7 @@
              }
  
              @Override
-@@ -102,23 +_,24 @@
+@@ -89,23 +_,24 @@
              if (!itemStack.isEmpty() && itemStack.isEnchantable()) {
                  this.access.execute((level, pos) -> {
                      IdMap<Holder<Enchantment>> holders = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).asHolderIdMap();
@@ -37,7 +37,7 @@
                      }
  
                      for (int ix = 0; ix < 3; ix++) {
-@@ -245,7 +_,7 @@
+@@ -234,7 +_,7 @@
                  if (!this.moveItemStackTo(stack, 2, 38, true)) {
                      return ItemStack.EMPTY;
                  }

@@ -109,7 +109,7 @@ public class FMLConfig
         }
         if (!configSpec.isCorrect(configData)) {
             LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
-            configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
+            configSpec.correct(configData, (_, path, incorrectValue, correctedValue) ->
                     LOGGER.info(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
         }
         configData.putAllComments(configComments);

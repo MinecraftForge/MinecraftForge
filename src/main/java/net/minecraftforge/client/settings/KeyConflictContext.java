@@ -29,10 +29,9 @@ public enum KeyConflictContext implements IKeyConflictContext {
      * Gui key bindings are only used when a {@link Screen} is open.
      */
     GUI {
-        @SuppressWarnings("resource")
         @Override
         public boolean isActive() {
-            return Minecraft.getInstance().screen != null;
+            return Minecraft.getInstance().gui.screen() != null;
         }
 
         @Override

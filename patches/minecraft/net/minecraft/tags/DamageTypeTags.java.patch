@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/DamageTypeTags.java
 +++ b/net/minecraft/tags/DamageTypeTags.java
-@@ -43,4 +_,12 @@
+@@ -44,4 +_,12 @@
      private static TagKey<DamageType> create(final String name) {
          return TagKey.create(Registries.DAMAGE_TYPE, Identifier.withDefaultNamespace(name));
      }

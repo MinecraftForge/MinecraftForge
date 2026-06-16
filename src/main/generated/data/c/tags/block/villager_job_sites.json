@@ -5,9 +5,6 @@
     "minecraft:brewing_stand",
     "minecraft:cartography_table",
     "minecraft:cauldron",
-    "minecraft:water_cauldron",
-    "minecraft:lava_cauldron",
-    "minecraft:powder_snow_cauldron",
     "minecraft:composter",
     "minecraft:fletching_table",
     "minecraft:grindstone",
@@ -15,6 +12,9 @@
     "minecraft:loom",
     "minecraft:smithing_table",
     "minecraft:smoker",
-    "minecraft:stonecutter"
+    "minecraft:stonecutter",
+    "minecraft:water_cauldron",
+    "minecraft:lava_cauldron",
+    "minecraft:powder_snow_cauldron"
   ]
 }

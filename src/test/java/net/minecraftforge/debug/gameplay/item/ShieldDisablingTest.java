@@ -13,7 +13,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,14 +39,14 @@ public final class ShieldDisablingTest extends BaseTestMod {
     @GameTest
     public static void player_shield_disabled_by_axe(GameTestHelper helper) {
         player_shield_disabled_common(helper, h -> Util.make(
-            h.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(2, 0, 2)),
+            h.spawnWithNoFreeWill(EntityTypes.HUSK, new BlockPos(2, 0, 2)),
             enemy -> enemy.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_AXE))
         ));
     }
 
     @GameTest
     public static void player_shield_disabled_by_warden(GameTestHelper helper) {
-        player_shield_disabled_common(helper, h -> h.spawnWithNoFreeWill(EntityType.WARDEN, new BlockPos(2, 0, 2)));
+        player_shield_disabled_common(helper, h -> h.spawnWithNoFreeWill(EntityTypes.WARDEN, new BlockPos(2, 0, 2)));
     }
 
     private static void player_shield_disabled_common(GameTestHelper helper, Function<GameTestHelper, LivingEntity> enemyGetter) {

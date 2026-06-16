@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 
 public class DungeonHooks {
     private static WeightedList<EntityType<?>> dungeonMobs = WeightedList.<EntityType<?>>builder()
-        .add(EntityType.SKELETON, 100)
-        .add(EntityType.ZOMBIE, 200)
-        .add(EntityType.SPIDER, 100)
+        .add(EntityTypes.SKELETON, 100)
+        .add(EntityTypes.ZOMBIE, 200)
+        .add(EntityTypes.SPIDER, 100)
         .build();
 
     /**

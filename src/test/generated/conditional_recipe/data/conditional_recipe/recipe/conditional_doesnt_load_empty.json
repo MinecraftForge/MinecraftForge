@@ -7,7 +7,6 @@
     {
       "recipe": {
         "type": "minecraft:crafting_shapeless",
-        "category": "misc",
         "ingredients": [
           "minecraft:dirt"
         ],

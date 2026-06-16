@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/cow/MushroomCow.java
 +++ b/net/minecraft/world/entity/animal/cow/MushroomCow.java
-@@ -114,7 +_,7 @@
+@@ -122,7 +_,7 @@
  
              this.playSound(milkSound, 1.0F, 1.0F);
              return InteractionResult.SUCCESS;
@@ -9,7 +9,7 @@
              if (this.level() instanceof ServerLevel level) {
                  this.shear(level, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -170,15 +_,26 @@
+@@ -178,15 +_,26 @@
  
      @Override
      public void shear(final ServerLevel level, final SoundSource soundSource, final ItemStack tool) {
@@ -22,10 +22,10 @@
 +
 +    private java.util.List<ItemStack> shearInternal(ServerLevel level, SoundSource soundSource, ItemStack tool) {
 +        var ret = new java.util.ArrayList<ItemStack>();
-+        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.COW, time -> {}))
++        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityTypes.COW, time -> {}))
 +            return ret;
          level.playSound(null, this, SoundEvents.MOOSHROOM_SHEAR, soundSource, 1.0F, 1.0F);
-         this.convertTo(EntityType.COW, ConversionParams.single(this, false, false), cow -> {
+         this.convertTo(EntityTypes.COW, ConversionParams.single(this, false, false), cow -> {
              level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5), this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
              this.dropFromShearingLootTable(level, BuiltInLootTables.SHEAR_MOOSHROOM, tool, (l, drop) -> {
 -                for (int i = 0; i < drop.getCount(); i++) {
@@ -39,7 +39,7 @@
      }
  
      @Override
-@@ -254,6 +_,15 @@
+@@ -267,6 +_,15 @@
          }
  
          return babyVariant;
@@ -54,4 +54,4 @@
 +        return java.util.Collections.emptyList();
      }
  
-     public static enum Variant implements StringRepresentable {
+     public enum Variant implements StringRepresentable {

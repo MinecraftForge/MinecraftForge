@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/SignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SignBlockEntity.java
-@@ -274,6 +_,11 @@
+@@ -275,6 +_,11 @@
          }
      }
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
-@@ -140,8 +_,8 @@
+@@ -138,8 +_,8 @@
  
          for (int i = 0; i < 10 && checkPos.getY() <= lastSetBlock; i++) {
              BlockState state = level.getBlockState(checkPos);

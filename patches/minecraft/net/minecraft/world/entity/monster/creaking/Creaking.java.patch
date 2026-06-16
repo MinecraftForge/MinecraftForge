@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/creaking/Creaking.java
 +++ b/net/minecraft/world/entity/monster/creaking/Creaking.java
-@@ -466,7 +_,7 @@
+@@ -468,7 +_,7 @@
              for (Player player : players) {
                  if (this.canAttack(player) && !this.isAlliedTo(player)) {
                      hasPotentialTarget = true;

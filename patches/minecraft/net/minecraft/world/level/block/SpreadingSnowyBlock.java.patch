@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyBlock.java
-@@ -50,8 +_,10 @@
+@@ -52,8 +_,10 @@
          Optional<Block> baseBlock = blocks.getOptional(this.baseBlock);
          if (!baseBlock.isEmpty()) {
              if (!canStayAlive(state, level, pos)) {

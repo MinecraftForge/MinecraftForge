@@ -56,7 +56,7 @@ public class StartupNotificationManager {
     private synchronized static void addMessage(Message.MessageType type, String message, int maxSize)
     {
         EnumMap<Message.MessageType, List<Message>> newMessages = new EnumMap<>(messages);
-        newMessages.compute(type, (key, existingList) -> {
+        newMessages.compute(type, (_, existingList) -> {
             List<Message> newList = new ArrayList<>();
             if (existingList != null)
             {

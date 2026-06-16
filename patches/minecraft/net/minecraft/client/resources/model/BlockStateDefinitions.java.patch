@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/resources/model/BlockStateDefinitions.java
 @@ -33,6 +_,8 @@
  
-     static Function<Identifier, StateDefinition<Block, BlockState>> definitionLocationToBlockStateMapper() {
+     public static Function<Identifier, StateDefinition<Block, BlockState>> definitionLocationToBlockStateMapper() {
          Map<Identifier, StateDefinition<Block, BlockState>> result = new HashMap<>(STATIC_DEFINITIONS);
 +        var event = net.minecraftforge.client.event.ForgeEventFactoryClient.onRegisterModeStateDefinitions();
 +        result.putAll(event.getStates());

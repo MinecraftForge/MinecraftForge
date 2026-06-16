@@ -7,7 +7,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.fml.loading.ImmediateWindowHandler;
-import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public final class BackgroundScanHandler {
         ImmediateWindowHandler.updateProgress("Scanning mod candidates");
         CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
                 .whenComplete(file::setScanResult);
-        if (DEBUG) future = future.whenComplete((r, t) -> addCompletedFile(file, t));
+        if (DEBUG) future = future.whenComplete((_, t) -> addCompletedFile(file, t));
         file.setFutureScanResult(future);
     }
 

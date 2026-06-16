@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/screens/ConnectScreen.java
 +++ b/net/minecraft/client/gui/screens/ConnectScreen.java
-@@ -114,6 +_,8 @@
+@@ -109,6 +_,8 @@
                      }
  
                      if (resolvedAddress.isEmpty()) {
 +                        ConnectScreen.LOGGER.error("Couldn't connect to server: Unknown host \"{}\"", hostAndPort.getHost());
 +                        net.minecraftforge.network.DualStackUtils.logInitialPreferences();
                          minecraft.execute(
-                             () -> minecraft.setScreen(
-                                 new DisconnectedScreen(ConnectScreen.this.parent, ConnectScreen.this.connectFailedTitle, ConnectScreen.UNKNOWN_HOST_MESSAGE)
+                             () -> minecraft.gui
+                                 .setScreen(

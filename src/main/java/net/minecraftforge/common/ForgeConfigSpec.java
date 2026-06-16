@@ -82,9 +82,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LOGGER.warn(Logging.CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config,
-                    (action, path, incorrectValue, correctedValue) ->
+                    (_, path, incorrectValue, correctedValue) ->
                             LOGGER.warn(Logging.CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
-                    (action, path, incorrectValue, correctedValue) ->
+                    (_, path, _, _) ->
                             LOGGER.debug(Logging.CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
 
             if (config instanceof FileConfig fileConfig) {
@@ -140,12 +140,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
     @Override
     public synchronized boolean isCorrect(CommentedConfig config) {
         LinkedList<String> parentPath = new LinkedList<>();
-        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (a, b, c, d) -> {}, null, true) == 0;
+        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (_, _, _, _) -> {}, null, true) == 0;
     }
 
     @Override
     public int correct(CommentedConfig config) {
-        return correct(config, (action, path, incorrectValue, correctedValue) -> {}, null);
+        return correct(config, (_, _, _, _) -> {}, null);
     }
 
     public synchronized int correct(CommentedConfig config, CorrectionListener listener) {

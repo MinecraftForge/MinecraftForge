@@ -10,7 +10,7 @@
      }
  
      private static Map<String, LanguageInfo> extractLanguages(final Stream<PackResources> resourcePacks) {
-@@ -68,8 +_,12 @@
+@@ -67,8 +_,12 @@
          this.reloadCallback.accept(locale);
      }
  

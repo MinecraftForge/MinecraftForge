@@ -27,7 +27,7 @@ public final class MinecraftLocator extends AbstractModProvider implements IModL
 
         // Minecraft itself.
         var meta = new ModJarMetadata();
-        var mcjar = SecureJar.from(jar -> meta, paths);
+        var mcjar = SecureJar.from(_ -> meta, paths);
         var mc = ModFileFactory.FACTORY.build(mcjar, this, MinecraftLocator::buildMinecraftTOML);
         meta.setModFile(mc);
 

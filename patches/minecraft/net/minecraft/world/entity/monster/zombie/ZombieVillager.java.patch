@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
 +++ b/net/minecraft/world/entity/monster/zombie/ZombieVillager.java
-@@ -156,7 +_,7 @@
+@@ -152,7 +_,7 @@
          if (!this.level().isClientSide() && this.isAlive() && this.isConverting()) {
              int amount = this.getConversionProgress();
              this.villagerConversionTime -= amount;
 -            if (this.villagerConversionTime <= 0) {
-+            if (this.villagerConversionTime <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.VILLAGER, (timer) -> this.villagerConversionTime = timer)) {
++            if (this.villagerConversionTime <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityTypes.VILLAGER, (timer) -> this.villagerConversionTime = timer)) {
                  this.finishConversion((ServerLevel)this.level());
              }
          }
-@@ -270,6 +_,7 @@
+@@ -267,6 +_,7 @@
                  if (!this.isSilent()) {
                      level.levelEvent(null, 1027, this.blockPosition(), 0);
                  }

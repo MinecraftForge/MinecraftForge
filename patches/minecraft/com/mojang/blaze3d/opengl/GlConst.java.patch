@@ -1,35 +1,35 @@
 --- a/com/mojang/blaze3d/opengl/GlConst.java
 +++ b/com/mojang/blaze3d/opengl/GlConst.java
-@@ -249,6 +_,10 @@
+@@ -239,6 +_,10 @@
      }
  
-     public static int toGlInternalId(final TextureFormat textureFormat) {
-+        return toGlInternalId(textureFormat, false);
+     public static int toGlInternalId(final GpuFormat gpuFormat) {
++        return toGlInternalId(gpuFormat, false);
 +    }
-+    public static int toGlInternalId(final TextureFormat textureFormat, final boolean stencil) {
-+        if (stencil && textureFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8;
-         return switch (textureFormat) {
-             case RGBA8 -> 32856;
-             case RED8 -> 33321;
-@@ -258,6 +_,10 @@
++    public static int toGlInternalId(final GpuFormat gpuFormat, final boolean stencil) {
++        if (stencil && gpuFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8;
+         return switch (gpuFormat) {
+             case R8_UNORM -> 33321;
+             case R8_SNORM -> 36756;
+@@ -291,6 +_,10 @@
      }
  
-     public static int toGlExternalId(final TextureFormat textureFormat) {
-+        return toGlExternalId(textureFormat, false);
+     public static int toGlExternalId(final GpuFormat gpuFormat) {
++        return toGlExternalId(gpuFormat, false);
 +    }
-+    public static int toGlExternalId(final TextureFormat textureFormat, final boolean stencil) {
-+        if (stencil && textureFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
-         return switch (textureFormat) {
-             case RGBA8 -> 6408;
-             case RED8 -> 6403;
-@@ -267,6 +_,10 @@
++    public static int toGlExternalId(final GpuFormat gpuFormat, final boolean stencil) {
++        if (stencil && gpuFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL;
+         return switch (gpuFormat) {
+             case R8_UNORM, R8_SNORM, R16_UNORM, R16_SNORM, R16_FLOAT, R32_FLOAT -> 6403;
+             case RG8_UNORM, RG8_SNORM, RG16_UNORM, RG16_SNORM, RG16_FLOAT, RG32_FLOAT -> 33319;
+@@ -308,6 +_,10 @@
      }
  
-     public static int toGlType(final TextureFormat textureFormat) {
-+        return toGlType(textureFormat, false);
+     public static int toGlType(final GpuFormat gpuFormat) {
++        return toGlType(gpuFormat, false);
 +    }
-+    public static int toGlType(final TextureFormat textureFormat, boolean stencil) {
-+        if (stencil && textureFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
-         return switch (textureFormat) {
-             case RGBA8 -> 5121;
-             case RED8 -> 5121;
++    public static int toGlType(final GpuFormat gpuFormat, boolean stencil) {
++        if (stencil && gpuFormat.hasDepthAspect()) return org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
+         return switch (gpuFormat) {
+             case R8_UNORM, RG8_UNORM, RGB8_UNORM, RGBA8_UNORM, R8_UINT, RG8_UINT, RGBA8_UINT, S8_UINT, RGB8_UINT -> 5121;
+             case R8_SNORM, RG8_SNORM, RGB8_SNORM, RGBA8_SNORM, R8_SINT, RG8_SINT, RGBA8_SINT, RGB8_SINT -> 5120;

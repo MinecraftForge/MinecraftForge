@@ -2,13 +2,13 @@
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
 @@ -531,6 +_,7 @@
          this.debugSubscriber.clear();
-         this.minecraft.levelRenderer.debugRenderer.refreshRendererList();
+         this.minecraft.levelExtractor.debugRenderer.refreshRendererList();
          this.minecraft.player.resetPos();
 +        net.minecraftforge.client.event.ForgeEventFactoryClient.firePlayerLogin(this.minecraft.gameMode, this.minecraft.player, this.minecraft.getConnection().connection);
          this.minecraft.player.setId(packet.playerId());
          this.level.addEntity(this.minecraft.player);
          this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
-@@ -1325,6 +_,8 @@
+@@ -1323,6 +_,8 @@
              newPlayer.getAttributes().assignBaseValues(oldPlayer.getAttributes());
          }
  
@@ -17,16 +17,16 @@
          this.level.addEntity(newPlayer);
          newPlayer.input = new KeyboardInput(this.minecraft.options);
          this.minecraft.gameMode.adjustPlayer(newPlayer);
-@@ -1480,7 +_,7 @@
+@@ -1478,7 +_,7 @@
              ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(blockEntity.problemPath(), LOGGER);
  
              try {
 -                blockEntity.loadWithComponents(TagValueInput.create(reporter, this.registryAccess, packet.getTag()));
 +                blockEntity.onDataPacket(connection, TagValueInput.create(reporter, this.registryAccess, packet.getTag()), this.registryAccess);
-             } catch (Throwable var7) {
+             } catch (Throwable t$) {
                  try {
                      reporter.close();
-@@ -1687,7 +_,9 @@
+@@ -1686,7 +_,9 @@
      @Override
      public void handleCommands(final ClientboundCommandsPacket packet) {
          PacketUtils.ensureRunningOnSameThread(packet, this, this.minecraft.packetProcessor());
@@ -37,15 +37,15 @@
      }
  
      @Override
-@@ -1788,6 +_,7 @@
-         if (this.minecraft.screen instanceof RecipeUpdateListener updateListener) {
+@@ -1787,6 +_,7 @@
+         if (this.minecraft.gui.screen() instanceof RecipeUpdateListener updateListener) {
              updateListener.recipesUpdated();
          }
 +        net.minecraftforge.client.event.ForgeEventFactoryClient.onRecipesUpdated(recipeBook);
      }
  
      @Override
-@@ -1832,6 +_,8 @@
+@@ -1830,6 +_,8 @@
          this.fuelValues = FuelValues.vanillaBurnTimes(this.registryAccess, this.enabledFeatures);
          List<ItemStack> searchItems = List.copyOf(CreativeModeTabs.searchTab().getDisplayItems());
          this.searchTrees.updateCreativeTags(searchItems);
@@ -54,7 +54,7 @@
      }
  
      @Override
-@@ -2650,7 +_,9 @@
+@@ -2652,7 +_,9 @@
          }
      }
  
@@ -65,7 +65,7 @@
          Instant timeStamp = Instant.now();
          long salt = Crypt.SaltSupplier.getLong();
          LastSeenMessagesTracker.Update lastSeenUpdate = this.lastSeenMessages.generateAndApplyUpdate();
-@@ -2659,6 +_,7 @@
+@@ -2661,6 +_,7 @@
      }
  
      public void sendCommand(final String command) {
@@ -73,7 +73,7 @@
          SignableCommand<ClientSuggestionProvider> signableCommand = SignableCommand.of(this.commands.parse(command, this.suggestionsProvider));
          if (signableCommand.arguments().isEmpty()) {
              this.send(new ServerboundChatCommandPacket(command));
-@@ -2675,6 +_,7 @@
+@@ -2677,6 +_,7 @@
      }
  
      public void sendUnattendedCommand(final String command, final @Nullable Screen screenAfterCommand) {

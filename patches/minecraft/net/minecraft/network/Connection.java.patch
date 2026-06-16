@@ -1,9 +1,9 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
 @@ -81,9 +_,17 @@
-     private boolean handlingFault;
      private volatile @Nullable DisconnectionDetails delayedDisconnect;
      private @Nullable BandwidthDebugMonitor bandwidthDebugMonitor;
+     private @Nullable UUID intendedProfileId;
 +    private java.util.function.Consumer<Connection> activationHandler;
 +    private final net.minecraftforge.common.util.PacketLogger packetLogger = new net.minecraftforge.common.util.PacketLogger(this);
 +    private ProtocolInfo<?> outboundProtocol = null;
@@ -26,41 +26,41 @@
          if (this.delayedDisconnect != null) {
              this.disconnect(this.delayedDisconnect);
          }
-@@ -151,6 +_,7 @@
-             } else {
-                 if (packetListener.shouldHandleMessage(packet)) {
-                     try {
-+                        packetLogger.recv(packet);
-                         genericsFtw(packet, packetListener);
-                     } catch (RunningOnDifferentThreadException var5) {
-                     } catch (RejectedExecutionException var6) {
-@@ -200,6 +_,7 @@
-         if (protocol.flow() != this.getReceiving()) {
+@@ -152,6 +_,7 @@
+ 
+             if (packetListener.shouldHandleMessage(packet)) {
+                 try {
++                    packetLogger.recv(packet);
+                     genericsFtw(packet, packetListener);
+                 } catch (RunningOnDifferentThreadException var5) {
+                 } catch (RejectedExecutionException ignored) {
+@@ -201,6 +_,7 @@
              throw new IllegalStateException("Invalid inbound protocol: " + protocol.id());
-         } else {
-+            this.inboundProtocol = protocol;
-             this.packetListener = packetListener;
-             this.disconnectListener = null;
-             UnconfiguredPipelineHandler.InboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupInboundProtocol(protocol);
-@@ -217,7 +_,7 @@
-         if (protocol.flow() != this.getSending()) {
-             throw new IllegalStateException("Invalid outbound protocol: " + protocol.id());
-         } else {
--            UnconfiguredPipelineHandler.OutboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupOutboundProtocol(protocol);
-+            UnconfiguredPipelineHandler.OutboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupOutboundProtocol(protocol).andThen(_ -> this.outboundProtocol = protocol);
-             BundlerInfo bundlerInfo = protocol.bundlerInfo();
-             if (bundlerInfo != null) {
-                 PacketBundleUnpacker newUnbundler = new PacketBundleUnpacker(bundlerInfo);
-@@ -264,7 +_,8 @@
-             this.disconnectListener = listener;
-             this.runOnceConnected(connection -> {
-                 this.setupInboundProtocol(inbound, listener);
--                connection.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), hostName, port, intent), null, true);
-+                // TODO: Change this to be a immediately sent login custom payload packet?
-+                connection.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(hostName), port, intent), null, true);
-                 this.setupOutboundProtocol(outbound);
-             });
          }
+ 
++        this.inboundProtocol = protocol;
+         this.packetListener = packetListener;
+         this.disconnectListener = null;
+         UnconfiguredPipelineHandler.InboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupInboundProtocol(protocol);
+@@ -218,7 +_,7 @@
+             throw new IllegalStateException("Invalid outbound protocol: " + protocol.id());
+         }
+ 
+-        UnconfiguredPipelineHandler.OutboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupOutboundProtocol(protocol);
++        UnconfiguredPipelineHandler.OutboundConfigurationTask configMessage = UnconfiguredPipelineHandler.setupOutboundProtocol(protocol).andThen(_ -> this.outboundProtocol = protocol);
+         BundlerInfo bundlerInfo = protocol.bundlerInfo();
+         if (bundlerInfo != null) {
+             PacketBundleUnpacker newUnbundler = new PacketBundleUnpacker(bundlerInfo);
+@@ -265,7 +_,8 @@
+         this.disconnectListener = listener;
+         this.runOnceConnected(connection -> {
+             this.setupInboundProtocol(inbound, listener);
+-            connection.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), hostName, port, intent), null, true);
++            // TODO: Change this to be a immediately sent login custom payload packet?
++            connection.sendPacket(new ClientIntentionPacket(SharedConstants.getCurrentVersion().protocolVersion(), net.minecraftforge.network.NetworkContext.enhanceHostName(hostName), port, intent), null, true);
+             this.setupOutboundProtocol(outbound);
+         });
+     }
 @@ -309,10 +_,13 @@
          if (listener != null) {
              ChannelFuture future = flush ? this.channel.writeAndFlush(packet) : this.channel.write(packet);
@@ -95,7 +95,7 @@
              @Override
              protected void initChannel(final Channel channel) {
                  try {
-@@ -499,7 +_,8 @@
+@@ -491,7 +_,8 @@
  
      public static Connection connectToLocalServer(final SocketAddress address) {
          final Connection connection = new Connection(PacketFlow.CLIENTBOUND);

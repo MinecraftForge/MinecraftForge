@@ -7,9 +7,9 @@
 -        if (!level.getGameRules().get(GameRules.MOB_GRIEFING)) {
 +        if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, body)) {
              return false;
-         } else if (!body.getVillagerData().profession().is(VillagerProfession.FARMER)) {
-             return false;
-@@ -118,6 +_,11 @@
+         }
+ 
+@@ -120,6 +_,11 @@
                              level.setBlockAndUpdate(this.aboveFarmlandPos, place);
                              level.gameEvent(GameEvent.BLOCK_PLACE, this.aboveFarmlandPos, GameEvent.Context.of(body, place));
                              ok = true;

@@ -74,7 +74,7 @@ public class LowCodeModLanguageProvider implements IModLanguageProvider
                     .flatMap(fi->fi.getMods().stream())
                     .map(IModInfo::getModId)
                     .map(LowCodeModTarget::new)
-                    .collect(Collectors.toMap(LowCodeModTarget::modId, Function.identity(), (a, b)->a));
+                    .collect(Collectors.toMap(LowCodeModTarget::modId, Function.identity(), (a, _)->a));
             scanResult.addLanguageLoader(modTargetMap);
         };
     }

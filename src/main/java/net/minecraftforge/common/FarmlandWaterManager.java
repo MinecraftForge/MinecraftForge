@@ -45,7 +45,7 @@ public class FarmlandWaterManager {
     @SuppressWarnings("unchecked")
     public static<T extends SimpleTicket<Vec3>> T addCustomTicket(Level level, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks) {
         Preconditions.checkArgument(!level.isClientSide(), "Water region is only determined server-side");
-        Map<ChunkPos, ChunkTicketManager<Vec3>> ticketMap =  customWaterHandler.computeIfAbsent(level, id -> new MapMaker().weakValues().makeMap());
+        Map<ChunkPos, ChunkTicketManager<Vec3>> ticketMap =  customWaterHandler.computeIfAbsent(level, _ -> new MapMaker().weakValues().makeMap());
         ChunkTicketManager<Vec3>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
         for (int i = 0; i < additionalChunks.length; i++)
             additionalTickets[i] = ticketMap.computeIfAbsent(additionalChunks[i], ChunkTicketManager::new);

@@ -250,7 +250,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
     }
 
     protected Holder.Reference<T> getOrCreateHolderOrThrow(ResourceKey<T> key) {
-        return this.holdersByName.computeIfAbsent(key.identifier(), k -> {
+        return this.holdersByName.computeIfAbsent(key.identifier(), _ -> {
             if (this.isIntrusive()) {
                 throw new IllegalStateException("This registry can't create new holders without value");
             } else {
@@ -526,7 +526,7 @@ class NamespacedWrapper<T> extends MappedRegistry<T> implements ILockableRegistr
         if (this.isIntrusive())
             return this.intrusiveHolderCallback.apply(value);
 
-        return this.holdersByName.computeIfAbsent(key.identifier(), k -> Holder.Reference.createStandAlone(this, key));
+        return this.holdersByName.computeIfAbsent(key.identifier(), _ -> Holder.Reference.createStandAlone(this, key));
     }
 
     private List<Holder.Reference<T>> getSortedHolders() {

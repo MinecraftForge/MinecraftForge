@@ -23,10 +23,10 @@
                                                  .south(-10 + random.nextInt(21));
 @@ -47,7 +_,7 @@
                                              FluidState fluidState = level.getFluidState(spawnPos);
-                                             if (NaturalSpawner.isValidEmptySpawnBlock(level, spawnPos, blockState, fluidState, EntityType.PHANTOM)) {
+                                             if (NaturalSpawner.isValidEmptySpawnBlock(level, spawnPos, blockState, fluidState, EntityTypes.PHANTOM)) {
                                                  SpawnGroupData groupData = null;
 -                                                int groupSize = 1 + random.nextInt(difficulty.getDifficulty().getId() + 1);
 +                                                int groupSize = event.getPhantomsToSpawn();
  
                                                  for (int i = 0; i < groupSize; i++) {
-                                                     Phantom phantom = EntityType.PHANTOM.create(level, EntitySpawnReason.NATURAL);
+                                                     Phantom phantom = EntityTypes.PHANTOM.create(level, EntitySpawnReason.NATURAL);

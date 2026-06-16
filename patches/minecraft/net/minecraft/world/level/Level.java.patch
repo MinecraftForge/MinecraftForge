@@ -9,7 +9,7 @@
      public static final Codec<ResourceKey<Level>> RESOURCE_KEY_CODEC = ResourceKey.codec(Registries.DIMENSION);
      public static final ResourceKey<Level> OVERWORLD = ResourceKey.create(Registries.DIMENSION, Identifier.withDefaultNamespace("overworld"));
      public static final ResourceKey<Level> NETHER = ResourceKey.create(Registries.DIMENSION, Identifier.withDefaultNamespace("the_nether"));
-@@ -130,6 +_,11 @@
+@@ -131,6 +_,11 @@
      private final DamageSources damageSources;
      private final PalettedContainerFactory palettedContainerFactory;
      private long subTickCount;
@@ -21,63 +21,60 @@
  
      protected Level(
          final WritableLevelData levelData,
-@@ -214,7 +_,7 @@
+@@ -219,7 +_,7 @@
      }
  
      @Override
--    public boolean setBlock(final BlockPos pos, final BlockState blockState, @Block.UpdateFlags final int updateFlags, final int updateLimit) {
+-    public boolean setBlock(final BlockPos pos, final BlockState blockState, final @Block.UpdateFlags int updateFlags, final int updateLimit) {
 +    public boolean setBlock(BlockPos pos, final BlockState blockState, @Block.UpdateFlags final int updateFlags, final int updateLimit) {
          if (!this.isInValidBounds(pos)) {
              return false;
-         } else if (!this.isClientSide() && this.isDebug()) {
-@@ -222,11 +_,35 @@
-         } else {
-             LevelChunk chunk = this.getChunkAt(pos);
-             Block block = blockState.getBlock();
+         }
+@@ -230,12 +_,31 @@
+ 
+         LevelChunk chunk = this.getChunkAt(pos);
+         Block block = blockState.getBlock();
 +
-+            pos = pos.immutable(); // Forge - prevent mutable BlockPos leaks
-+            net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
-+            if (this.captureBlockSnapshots && !this.isClientSide) {
-+                blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, pos, updateFlags);
-+                this.capturedBlockSnapshots.add(blockSnapshot);
-+            }
-+
-             BlockState oldState = chunk.setBlockState(pos, blockState, updateFlags);
-             if (oldState == null) {
-+                if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
-                 return false;
-             } else {
-                 BlockState newState = this.getBlockState(pos);
-+                if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
-+                    this.markAndNotifyBlock(pos, chunk, oldState, blockState, updateFlags, updateLimit);
-+                }
-+
-+                return true;
-+            }
++        pos = pos.immutable(); // Forge - prevent mutable BlockPos leaks
++        net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
++        if (this.captureBlockSnapshots && !this.isClientSide) {
++            blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.dimension, this, pos, updateFlags);
++            this.capturedBlockSnapshots.add(blockSnapshot);
 +        }
++
+         BlockState oldState = chunk.setBlockState(pos, blockState, updateFlags);
+         if (oldState == null) {
++            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
+             return false;
+         }
+ 
+-        BlockState newState = this.getBlockState(pos);
++        if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
++            this.markAndNotifyBlock(pos, chunk, oldState, blockState, updateFlags, updateLimit);
++        }
++
++        return true;
 +    }
 +
 +    // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +    public void markAndNotifyBlock(final BlockPos pos, final @Nullable LevelChunk chunk, final BlockState oldState, final BlockState blockState, @Block.UpdateFlags final int updateFlags, final int updateLimit) {
 +        Block block = blockState.getBlock();
 +        BlockState newState = getBlockState(pos);
-+        {
-+            {
-                 if (newState == blockState) {
-                     if (oldState != newState) {
-                         this.setBlocksDirty(pos, oldState, newState);
-@@ -253,9 +_,8 @@
-                     }
- 
-                     this.updatePOIOnBlockStateChange(pos, oldState, newState);
-+                    blockState.onBlockStateChange(this, pos, oldState);
-                 }
--
--                return true;
+         if (newState == blockState) {
+             if (oldState != newState) {
+                 this.setBlocksDirty(pos, oldState, newState);
+@@ -262,9 +_,8 @@
              }
+ 
+             this.updatePOIOnBlockStateChange(pos, oldState, newState);
++            blockState.onBlockStateChange(this, pos, oldState);
          }
+-
+-        return true;
      }
-@@ -524,8 +_,27 @@
+ 
+     public void updatePOIOnBlockStateChange(final BlockPos pos, final BlockState oldState, final BlockState newState) {
+@@ -531,8 +_,27 @@
          (this.tickingBlockEntities ? this.pendingBlockEntityTickers : this.blockEntityTickers).add(ticker);
      }
  
@@ -105,14 +102,14 @@
          if (!this.pendingBlockEntityTickers.isEmpty()) {
              this.blockEntityTickers.addAll(this.pendingBlockEntityTickers);
              this.pendingBlockEntityTickers.clear();
-@@ -548,12 +_,19 @@
+@@ -555,12 +_,19 @@
  
      public <T extends Entity> void guardEntityTick(final Consumer<T> tick, final T entity) {
          try {
 +            net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(entity);
              tick.accept(entity);
-         } catch (Throwable var6) {
-             CrashReport report = CrashReport.forThrowable(var6, "Ticking entity");
+         } catch (Throwable t) {
+             CrashReport report = CrashReport.forThrowable(t, "Ticking entity");
              CrashReportCategory category = report.addCategory("Entity being ticked");
              entity.fillCrashReportCategory(category);
 +            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
@@ -125,7 +122,7 @@
          }
      }
  
-@@ -709,6 +_,7 @@
+@@ -716,6 +_,7 @@
          if (this.isInValidBounds(pos)) {
              this.getChunkAt(pos).removeBlockEntity(pos);
          }
@@ -133,7 +130,7 @@
      }
  
      public boolean isLoaded(final BlockPos pos) {
-@@ -774,8 +_,8 @@
+@@ -781,8 +_,8 @@
              }
          });
  
@@ -144,7 +141,7 @@
                  output.add(dragonPart);
              }
          }
-@@ -808,8 +_,8 @@
+@@ -815,8 +_,8 @@
                  }
              }
  
@@ -155,7 +152,7 @@
                      T castSubPart = type.tryCast(subEntity);
                      if (castSubPart != null && selector.test(castSubPart)) {
                          output.add(castSubPart);
-@@ -993,17 +_,16 @@
+@@ -1004,17 +_,16 @@
      public abstract Scoreboard getScoreboard();
  
      public void updateNeighbourForOutputSignal(final BlockPos pos, final Block changedBlock) {
@@ -178,7 +175,7 @@
                      }
                  }
              }
-@@ -1088,6 +_,20 @@
+@@ -1099,6 +_,20 @@
      }
  
      public abstract ClockManager clockManager();

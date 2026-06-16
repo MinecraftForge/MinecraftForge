@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/chunk/storage/EntityStorage.java
 +++ b/net/minecraft/world/level/chunk/storage/EntityStorage.java
-@@ -97,9 +_,13 @@
+@@ -94,9 +_,13 @@
                  ListTag entities = new ListTag();
                  chunk.getEntities().forEach(e -> {
                      TagValueOutput output = TagValueOutput.createWithContext(reporter.forChild(e.problemPath()), e.registryAccess());

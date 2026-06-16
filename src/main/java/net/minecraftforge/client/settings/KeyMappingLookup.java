@@ -7,8 +7,6 @@ package net.minecraftforge.client.settings;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -60,7 +58,7 @@ public class KeyMappingLookup {
 
     public void put(InputConstants.Key keyCode, KeyMapping keyBinding) {
         var bindingsMap = map.get(keyBinding.getKeyModifier());
-        var bindingsForKey = bindingsMap.computeIfAbsent(keyCode, k -> new ArrayList<KeyMapping>());
+        var bindingsForKey = bindingsMap.computeIfAbsent(keyCode, _ -> new ArrayList<KeyMapping>());
         bindingsForKey.add(keyBinding);
     }
 

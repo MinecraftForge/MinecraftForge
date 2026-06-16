@@ -18,7 +18,7 @@
              if (shouldBeRemoved(pos, level, shape)) {
                  dropResources(state, level, pos);
                  level.removeBlock(pos, movedByPiston);
-@@ -125,7 +_,7 @@
+@@ -120,7 +_,7 @@
      @Override
      protected void affectNeighborsAfterRemoval(final BlockState state, final ServerLevel level, final BlockPos pos, final boolean movedByPiston) {
          if (!movedByPiston) {
@@ -27,7 +27,7 @@
                  level.updateNeighborsAt(pos.above(), this);
              }
  
-@@ -146,6 +_,11 @@
+@@ -141,6 +_,11 @@
          return state.setValue(this.getShapeProperty(), isEastWest ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH).setValue(WATERLOGGED, isWaterSource);
      }
  
@@ -39,7 +39,7 @@
      public abstract Property<RailShape> getShapeProperty();
  
      protected RailShape rotate(final RailShape shape, final Rotation rotation) {
-@@ -301,5 +_,15 @@
+@@ -296,5 +_,15 @@
      @Override
      protected FluidState getFluidState(final BlockState state) {
          return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);

@@ -9,7 +9,7 @@
      }
  
      public ItemStack remove(final int amount) {
-@@ -160,5 +_,36 @@
+@@ -167,5 +_,36 @@
  
      public boolean isFake() {
          return false;

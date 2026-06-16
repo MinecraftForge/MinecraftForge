@@ -1,20 +1,21 @@
 --- a/com/mojang/blaze3d/opengl/GlTexture.java
 +++ b/com/mojang/blaze3d/opengl/GlTexture.java
-@@ -28,8 +_,13 @@
-         final int mipLevels,
-         final int id
+@@ -27,9 +_,14 @@
+         final int id,
+         final FrameBufferCache frameBufferCache
      ) {
-+        this(usage, label, format, width, height, depthOrLayers, mipLevels, id, false);
++        this(usage, label, format, width, height, depthOrLayers, mipLevels, id, frameBufferCache, false);
 +    }
 +
-+    protected GlTexture(int usage, String label, TextureFormat format, int width, int height, int depthOrLayers, int mipLevels, int id, boolean stencil) {
++    protected GlTexture(@GpuTexture.Usage int usage, String label, GpuFormat format, int width, int height, int depthOrLayers, int mipLevels, int id, FrameBufferCache frameBufferCache, boolean stencil) {
          super(usage, label, format, width, height, depthOrLayers, mipLevels);
          this.id = id;
+         this.frameBufferCache = frameBufferCache;
 +        this.stencilEnabled = stencil;
      }
  
      @Override
-@@ -96,5 +_,12 @@
+@@ -84,5 +_,12 @@
          if (this.closed && this.views == 0) {
              this.destroyImmediately();
          }

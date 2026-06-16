@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/geometry/QuadCollection.java
 +++ b/net/minecraft/client/resources/model/geometry/QuadCollection.java
-@@ -71,6 +_,12 @@
+@@ -70,6 +_,12 @@
          return this.all;
      }
  
@@ -10,6 +10,6 @@
 +            transformer.process(this.west), transformer.process(this.up), transformer.process(this.down));
 +    }
 +
-     @BakedQuad.MaterialFlags
-     public int materialFlags() {
+     public @BakedQuad.MaterialFlags int materialFlags() {
          if (this.materialFlags == -1) {
+             this.materialFlags = computeMaterialFlags(this.all);

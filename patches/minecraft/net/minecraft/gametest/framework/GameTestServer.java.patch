@@ -9,11 +9,11 @@
          enabledPacks.remove("vanilla");
          enabledPacks.addFirst("vanilla");
          WorldDataConfiguration defaultTestConfig = new WorldDataConfiguration(new DataPackConfig(enabledPacks, List.of()), ENABLED_FEATURES);
-@@ -173,6 +_,7 @@
+@@ -174,6 +_,7 @@
  
      @Override
      protected boolean initServer() {
 +        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-         this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, new EmptyNotificationService()) {
-             {
-                 Objects.requireNonNull(GameTestServer.this);
+         this.setPlayerList(new PlayerList(this, this.registries(), this.playerDataStorage, new EmptyNotificationService()) {});
+         Gizmos.withCollector(GizmoCollector.NOOP);
+         this.loadLevel();

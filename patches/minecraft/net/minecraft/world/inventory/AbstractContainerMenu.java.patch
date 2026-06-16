@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -436,6 +_,7 @@
+@@ -435,6 +_,7 @@
                  ItemStack carried = this.getCarried();
-                 player.updateTutorialInventoryAction(carried, slotx.getItem(), clickAction);
-                 if (!this.tryItemClickBehaviourOverride(player, clickAction, slotx, clicked, carried)) {
-+                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(carried, clicked, slotx, clickAction, player, createCarriedSlotAccess()))
+                 player.updateTutorialInventoryAction(carried, slot.getItem(), clickAction);
+                 if (!this.tryItemClickBehaviourOverride(player, clickAction, slot, clicked, carried)) {
++                    if (!net.minecraftforge.event.ForgeEventFactory.onItemStackedOn(carried, clicked, slot, clickAction, player, createCarriedSlotAccess()))
                      if (clicked.isEmpty()) {
                          if (!carried.isEmpty()) {
                              int amount = clickAction == ClickAction.PRIMARY ? carried.getCount() : 1;
-@@ -654,7 +_,7 @@
+@@ -648,7 +_,7 @@
                  ItemStack target = slot.getItem();
                  if (!target.isEmpty() && ItemStack.isSameItemSameComponents(itemStack, target)) {
                      int totalStack = target.getCount() + itemStack.getCount();

@@ -42,4 +42,4 @@
 +                return geo;
              if (!object.has("elements")) {
                  return null;
-             } else {
+             }

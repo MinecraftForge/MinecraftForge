@@ -1,6 +1,6 @@
---- a/net/minecraft/world/entity/monster/Slime.java
-+++ b/net/minecraft/world/entity/monster/Slime.java
-@@ -139,6 +_,8 @@
+--- a/net/minecraft/world/entity/monster/cubemob/AbstractCubeMob.java
++++ b/net/minecraft/world/entity/monster/cubemob/AbstractCubeMob.java
+@@ -125,6 +_,8 @@
              float size = this.getDimensions(this.getPose()).width() * 2.0F;
              float radius = size / 2.0F;
  
@@ -9,7 +9,7 @@
              for (int i = 0; i < size * 16.0F; i++) {
                  float dir = this.random.nextFloat() * (float) (Math.PI * 2);
                  float d = this.random.nextFloat() * 0.5F + 0.5F;
-@@ -156,6 +_,12 @@
+@@ -145,6 +_,12 @@
          this.wasOnGround = this.onGround();
          this.decreaseSquish();
      }

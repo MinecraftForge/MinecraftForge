@@ -12,7 +12,6 @@ import net.minecraftforge.forgespi.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +41,7 @@ public class FMLServiceProvider implements ITransformationService {
         LOGGER.debug(CORE, "Loading configuration");
         FMLConfig.load();
         LOGGER.debug(CORE, "Preparing ModFile");
-        environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile::new);
+        environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), _->ModFile::new);
         LOGGER.debug(CORE, "Preparing launch handler");
         FMLLoader.setupLaunchHandler(environment, arguments);
         FMLEnvironment.setupInteropEnvironment(environment);

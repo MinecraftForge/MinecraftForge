@@ -53,7 +53,7 @@ public class CreativeModeTabTest {
             helper.register(LOGS, CreativeModeTab.builder().icon(() -> new ItemStack(Blocks.ACACIA_LOG))
                 .title(Component.literal("Logs"))
                 .withLabelColor(0x00FF00)
-                .displayItems((params, output) -> {
+                .displayItems((_, output) -> {
                     output.accept(new ItemStack(Blocks.ACACIA_LOG));
                     output.accept(new ItemStack(Blocks.BIRCH_LOG));
                     output.accept(new ItemStack(Blocks.DARK_OAK_LOG));
@@ -67,7 +67,7 @@ public class CreativeModeTabTest {
                 .icon(() -> new ItemStack(Blocks.STONE))
                 .title(Component.literal("Stone"))
                 .withLabelColor(0x0000FF)
-                .displayItems((params, output) -> {
+                .displayItems((_, output) -> {
                     output.accept(new ItemStack(Blocks.STONE));
                     output.accept(new ItemStack(Blocks.GRANITE));
                     output.accept(new ItemStack(Blocks.DIORITE));
@@ -78,7 +78,7 @@ public class CreativeModeTabTest {
 
             helper.register(COLORS, CreativeModeTab.builder()
                 .title(Component.literal("Colors"))
-                .displayItems((params, output) -> output.acceptAll(getDyes()))
+                .displayItems((_, output) -> output.acceptAll(getDyes()))
                 .withTabFactory(CreativeModeColorTab::new)
                 .withTabsBefore(STONE)
                 .build()
@@ -87,7 +87,7 @@ public class CreativeModeTabTest {
             helper.register(SEARCH, CreativeModeTab.builder()
                 .title(Component.literal("Search"))
                 .icon(() -> new ItemStack(Items.BOOKSHELF))
-                .displayItems((params, output) -> output.acceptAll(getDyes()))
+                .displayItems((_, output) -> output.acceptAll(getDyes()))
                 .withTabsBefore(COLORS)
                 .withSearchBar()
                 .build()
@@ -99,7 +99,7 @@ public class CreativeModeTabTest {
                 helper.register(Identifier.fromNamespaceAndPath(MOD_ID, "dummy" + i), CreativeModeTab.builder()
                       .title(Component.literal("Dummy " + i))
                       .icon(() -> new ItemStack(block))
-                      .displayItems((params, output) -> output.accept(block))
+                      .displayItems((_, output) -> output.accept(block))
                       .build()
                 );
             }
@@ -108,7 +108,7 @@ public class CreativeModeTabTest {
             helper.register(Identifier.fromNamespaceAndPath(MOD_ID, "with_tabs_image"), CreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.with_tabs_image"))
                 .icon(() -> new ItemStack(Blocks.BRICKS))
-                .displayItems((params, output) -> output.accept(Blocks.BRICKS))
+                .displayItems((_, output) -> output.accept(Blocks.BRICKS))
                 //.withTabsImage(custom_tabs_image)
                 .build());
         });

@@ -1,14 +1,14 @@
 --- a/com/mojang/blaze3d/systems/GpuDevice.java
 +++ b/com/mojang/blaze3d/systems/GpuDevice.java
-@@ -61,6 +_,21 @@
+@@ -73,6 +_,21 @@
          return this.backend.createTexture(label, usage, format, width, height, depthOrLayers, mipLevels);
      }
  
-+    /** Forge: same as {@link #createTexture(Supplier, int, TextureFormat, int, int, int)} but with stencil support */
++    /** Forge: same as {@link #createTexture(Supplier, int, GpuFormat, int, int, int)} but with stencil support */
 +    public GpuTexture createTexture(
 +        final @Nullable Supplier<String> label,
 +        @GpuTexture.Usage final int usage,
-+        final TextureFormat format,
++        final GpuFormat format,
 +        final int width,
 +        final int height,
 +        final int depthOrLayers,
@@ -21,18 +21,18 @@
 +
      public GpuTexture createTexture(
          final @Nullable String label,
-         @GpuTexture.Usage final int usage,
-@@ -72,6 +_,21 @@
+         final @GpuTexture.Usage int usage,
+@@ -84,6 +_,21 @@
      ) {
          this.verifyTextureCreationArgs(usage, width, height, depthOrLayers, mipLevels);
          return this.backend.createTexture(label, usage, format, width, height, depthOrLayers, mipLevels);
 +    }
 +
-+    /** Forge: same as {@link #createTexture(Supplier, int, TextureFormat, int, int, int)} but with stencil support */
++    /** Forge: same as {@link #createTexture(Supplier, int, GpuFormat, int, int, int)} but with stencil support */
 +    public GpuTexture createTexture(
 +        final @Nullable String label,
 +        @GpuTexture.Usage final int usage,
-+        final TextureFormat format,
++        final GpuFormat format,
 +        final int width,
 +        final int height,
 +        final int depthOrLayers,
@@ -43,4 +43,4 @@
 +        return this.backend.createTexture(label, usage, format, width, height, depthOrLayers, mipLevels, stencil);
      }
  
-     private void verifyTextureCreationArgs(@GpuTexture.Usage final int usage, final int width, final int height, final int depthOrLayers, final int mipLevels) {
+     private void verifyTextureCreationArgs(final @GpuTexture.Usage int usage, final int width, final int height, final int depthOrLayers, final int mipLevels) {

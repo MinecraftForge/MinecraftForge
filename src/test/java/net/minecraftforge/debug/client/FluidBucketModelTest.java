@@ -101,7 +101,7 @@ public class FluidBucketModelTest extends BaseTestMod {
 
     public FluidBucketModelTest(FMLJavaModLoadingContext context) {
         super(context, false, true);
-        this.testItem(lookup -> BUCKET.get().getDefaultInstance());
+        this.testItem(_ -> BUCKET.get().getDefaultInstance());
         BakeFluidModels.BUS.addListener(this::registerFluidModels);
     }
 

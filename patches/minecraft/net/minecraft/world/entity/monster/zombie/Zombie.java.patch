@@ -20,12 +20,12 @@
  
      @VisibleForTesting
      public boolean convertVillagerToZombieVillager(final ServerLevel level, final Villager villager) {
-+        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(villager, EntityType.ZOMBIE_VILLAGER, (timer) -> {}))
++        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(villager, EntityTypes.ZOMBIE_VILLAGER, (timer) -> {}))
 +            return false;
          ZombieVillager zombieVillager = villager.convertTo(
-             EntityType.ZOMBIE_VILLAGER,
+             EntityTypes.ZOMBIE_VILLAGER,
              ConversionParams.single(villager, true, true),
-@@ -267,6 +_,7 @@
+@@ -268,6 +_,7 @@
                  zombie.setGossips(villager.getGossips().copy());
                  zombie.setTradeOffers(villager.getOffers().copy());
                  zombie.setVillagerXp(villager.getVillagerXp());
@@ -33,25 +33,22 @@
                  if (!this.isSilent()) {
                      level.levelEvent(null, 1026, this.blockPosition(), 0);
                  }
-@@ -289,19 +_,26 @@
-                 target = (LivingEntity)source.getEntity();
-             }
+@@ -291,15 +_,26 @@
+             target = (LivingEntity)source.getEntity();
+         }
  
--            if (target != null
-+            var vanilla = (target != null
-                 && level.getDifficulty() == Difficulty.HARD
-                 && this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
--                && level.isSpawningMonsters()) {
-+                && level.isSpawningMonsters());
-                 int x = Mth.floor(this.getX());
-                 int y = Mth.floor(this.getY());
-                 int z = Mth.floor(this.getZ());
-                 EntityType<? extends Zombie> type = this.getType();
--                Zombie reinforcement = type.create(level, EntitySpawnReason.REINFORCEMENT);
--                if (reinforcement == null) {
--                    return true;
--                }
--
+-        if (target != null
++        var vanilla = (target != null
+             && level.getDifficulty() == Difficulty.HARD
+             && this.random.nextFloat() < this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE)
+-            && level.isSpawningMonsters()) {
++            && level.isSpawningMonsters());
++        {
+             int x = Mth.floor(this.getX());
+             int y = Mth.floor(this.getY());
+             int z = Mth.floor(this.getZ());
+             EntityType<? extends Zombie> type = this.getType();
+-            Zombie reinforcement = type.create(level, EntitySpawnReason.REINFORCEMENT);
 +
 +            var event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, level(), x, y, z, target, this.getAttributeValue(Attributes.SPAWN_REINFORCEMENTS_CHANCE));
 +
@@ -63,7 +60,6 @@
 +                    reinforcement = type.create(this.level(), EntitySpawnReason.REINFORCEMENT);
 +            }
 +
-+            if (reinforcement != null) {
-                 for (int i = 0; i < 50; i++) {
-                     int xt = x + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
-                     int yt = y + Mth.nextInt(this.random, 7, 40) * Mth.nextInt(this.random, -1, 1);
+             if (reinforcement == null) {
+                 return true;
+             }

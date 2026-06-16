@@ -1,17 +1,17 @@
 --- a/com/mojang/blaze3d/platform/Window.java
 +++ b/com/mojang/blaze3d/platform/Window.java
-@@ -97,8 +_,9 @@
-         Monitor initialMonitor = this.screenManager.getMonitor(GLFW.glfwGetPrimaryMonitor());
+@@ -101,8 +_,9 @@
+         Monitor initialMonitor = monitorManager.getMonitor(GLFW.glfwGetPrimaryMonitor());
          this.windowedWidth = this.width = allowedWindowMinSize(displayData.width());
          this.windowedHeight = this.height = allowedWindowMinSize(displayData.height());
--        this.handle = this.createWindow(backend, this.width, this.height, title, this.fullscreen && initialMonitor != null ? initialMonitor.getMonitor() : 0L);
-+        this.handle = net.minecraftforge.fml.loading.ImmediateWindowHandler.setupMinecraftWindow(this.width, this.height, title, this.fullscreen && initialMonitor != null ? initialMonitor.getMonitor() : 0L, () -> backend);
+-        this.handle = this.createWindow(backend, this.width, this.height, title, this.fullscreen && initialMonitor != null ? initialMonitor.monitor() : 0L);
++        this.handle = net.minecraftforge.fml.loading.ImmediateWindowHandler.setupMinecraftWindow(this.width, this.height, title, this.fullscreen && initialMonitor != null ? initialMonitor.monitor() : 0L, () -> backend);
          this.backend = backend;
 +        if (!net.minecraftforge.fml.loading.ImmediateWindowHandler.positionWindow(Optional.ofNullable(initialMonitor), w->this.width = this.windowedWidth = w, h->this.height = this.windowedHeight = h, x->this.x = this.windowedX = x, y->this.y = this.windowedY = y)) {
          if (initialMonitor != null) {
              VideoMode mode = initialMonitor.getPreferredVidMode(this.fullscreen ? this.preferredFullscreenVideoMode : Optional.empty());
-             this.windowedX = this.x = initialMonitor.getX() + mode.getWidth() / 2 - this.width / 2;
-@@ -110,6 +_,7 @@
+             this.windowedX = this.x = initialMonitor.x() + mode.getWidth() / 2 - this.width / 2;
+@@ -114,6 +_,7 @@
              this.windowedX = this.x = actualX[0];
              this.windowedY = this.y = actualY[0];
          }
@@ -19,8 +19,8 @@
  
          this.setMode();
          this.refreshFramebufferSize();
-@@ -300,6 +_,9 @@
-         GLFW.glfwGetFramebufferSize(this.handle, outWidth, outHeight);
+@@ -306,6 +_,9 @@
+         outHeight[0] = this.isSoftScreen() ? outHeight[0] - 1 : outHeight[0];
          this.framebufferWidth = outWidth[0] > 0 ? outWidth[0] : 1;
          this.framebufferHeight = outHeight[0] > 0 ? outHeight[0] : 1;
 +        if (this.framebufferHeight == 0 || this.framebufferWidth == 0) {

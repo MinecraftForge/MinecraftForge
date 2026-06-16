@@ -14,10 +14,10 @@
      public void apply(final boolean applyLeftHandFix, final PoseStack.Pose pose) {
 @@ -63,7 +_,7 @@
              translation.set(Mth.clamp(translation.x, -5.0F, 5.0F), Mth.clamp(translation.y, -5.0F, 5.0F), Mth.clamp(translation.z, -5.0F, 5.0F));
-             Vector3f scale = this.getVector3f(object, "scale", DEFAULT_SCALE);
+             Vector3f scale = getVector3f(object, "scale", DEFAULT_SCALE);
              scale.set(Mth.clamp(scale.x, -4.0F, 4.0F), Mth.clamp(scale.y, -4.0F, 4.0F), Mth.clamp(scale.z, -4.0F, 4.0F));
 -            return new ItemTransform(rotation, translation, scale);
 +            return new ItemTransform(rotation, translation, scale, this.getVector3f(object, "right_rotation", DEFAULT_ROTATION));
          }
  
-         private Vector3f getVector3f(final JsonObject object, final String key, final Vector3f def) {
+         private static Vector3f getVector3f(final JsonObject object, final String key, final Vector3fc def) {

@@ -1,13 +1,12 @@
 --- a/net/minecraft/client/Camera.java
 +++ b/net/minecraft/client/Camera.java
-@@ -217,12 +_,14 @@
-             return 90.0F;
-         } else {
-             float fov = this.minecraft.options.fov().get().intValue() * Mth.lerp(partialTicks, this.oldFovModifier, this.fovModifier);
--            return this.modifyFovBasedOnDeathOrFluid(partialTicks, fov);
-+            var ret = this.modifyFovBasedOnDeathOrFluid(partialTicks, fov);
-+            return net.minecraftforge.client.event.ForgeEventFactoryClient.fireComputeFov(this.minecraft.gameRenderer, this, partialTicks, ret, true).getFOV();
+@@ -224,11 +_,13 @@
          }
+ 
+         float fov = this.minecraft.options.fov().get().intValue() * Mth.lerp(partialTicks, this.oldFovModifier, this.fovModifier);
+-        return this.modifyFovBasedOnDeathOrFluid(partialTicks, fov);
++        var ret = this.modifyFovBasedOnDeathOrFluid(partialTicks, fov);
++        return net.minecraftforge.client.event.ForgeEventFactoryClient.fireComputeFov(this.minecraft.gameRenderer, this, partialTicks, ret, true).getFOV();
      }
  
      private float calculateHudFov(final float partialTicks) {
@@ -17,7 +16,7 @@
      }
  
      private float modifyFovBasedOnDeathOrFluid(final float partialTicks, float fov) {
-@@ -331,9 +_,13 @@
+@@ -337,9 +_,13 @@
      }
  
      protected void setRotation(final float yRot, final float xRot) {
@@ -32,7 +31,7 @@
          FORWARDS.rotate(this.rotation, this.forwards);
          UP.rotate(this.rotation, this.up);
          LEFT.rotate(this.rotation, this.left);
-@@ -364,6 +_,13 @@
+@@ -370,6 +_,13 @@
  
      public float yRot() {
          return this.yRot;

@@ -32,13 +32,13 @@ public interface IForgeHolderSet<T> {
         return this instanceof ListBacked<T> listBacked
             ? listBacked.unwrap().map(
                 // serializes as tag name if this holderset is named
-                tag -> SerializationType.STRING,
+                _ -> SerializationType.STRING,
                 list -> list.size() == 1
                     // if list has exactly one element then we have to check what kind, otherwise it's a list
                     ? list.get(0).unwrap().map(
                         // if holder has a key bound then it's serialized as that string, otherwise it's inlined as an object
                         key -> key == null ? SerializationType.OBJECT : SerializationType.STRING,
-                        value -> SerializationType.OBJECT)
+                        _ -> SerializationType.OBJECT)
                     : SerializationType.LIST)
             : SerializationType.UNKNOWN; // unsupported holderset impl, could be anything
     }

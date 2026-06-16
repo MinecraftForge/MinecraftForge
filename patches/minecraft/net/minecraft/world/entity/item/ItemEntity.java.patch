@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -51,6 +_,10 @@
+@@ -52,6 +_,10 @@
      private @Nullable EntityReference<Entity> thrower;
      private @Nullable UUID target;
      public final float bobOffs = this.random.nextFloat() * (float) Math.PI * 2.0F;
@@ -11,7 +11,7 @@
  
      public ItemEntity(final EntityType<? extends ItemEntity> type, final Level level) {
          super(type, level);
-@@ -78,6 +_,7 @@
+@@ -79,6 +_,7 @@
          this.setPos(x, y, z);
          this.setItem(itemStack);
          this.setDeltaMovement(deltaX, deltaY, deltaZ);
@@ -19,7 +19,7 @@
      }
  
      @Override
-@@ -115,6 +_,7 @@
+@@ -116,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -27,7 +27,7 @@
          if (this.getItem().isEmpty()) {
              this.discard();
          } else {
-@@ -127,6 +_,10 @@
+@@ -128,6 +_,10 @@
              this.yo = this.getY();
              this.zo = this.getZ();
              Vec3 oldMovement = this.getDeltaMovement();
@@ -38,17 +38,17 @@
              if (this.isInWater() && this.getFluidHeight(FluidTags.WATER) > 0.1F) {
                  this.setUnderwaterMovement();
              } else if (this.isInLava() && this.getFluidHeight(FluidTags.LAVA) > 0.1F) {
-@@ -151,7 +_,8 @@
-                 this.applyEffectsFromBlocks();
-                 float friction = 0.98F;
+@@ -153,7 +_,8 @@
+                 float airDrag = this.getAirDrag();
+                 float groundFriction = airDrag;
                  if (this.onGround()) {
--                    friction = this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction() * 0.98F;
+-                    groundFriction *= this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).getBlock().getFriction();
 +                    BlockPos groundPos = getBlockPosBelowThatAffectsMyMovement();
-+                    friction = this.level().getBlockState(groundPos).getFriction(level(), groundPos, this) * 0.98F;
++                    groundFriction *= this.level().getBlockState(groundPos).getFriction(level(), groundPos, this) * 0.98F;
                  }
  
-                 this.setDeltaMovement(this.getDeltaMovement().multiply(friction, 0.98, friction));
-@@ -183,7 +_,16 @@
+                 this.setDeltaMovement(this.getDeltaMovement().multiply(groundFriction, airDrag, groundFriction));
+@@ -185,7 +_,16 @@
                  }
              }
  
@@ -66,16 +66,16 @@
                  this.discard();
              }
          }
-@@ -293,7 +_,7 @@
-             this.health = (int)(this.health - damage);
-             this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
-             if (this.health <= 0) {
--                this.getItem().onDestroyed(this);
-+                this.getItem().onDestroyed(this, source);
-                 this.discard();
-             }
+@@ -300,7 +_,7 @@
+         this.health = (int)(this.health - damage);
+         this.gameEvent(GameEvent.ENTITY_DAMAGE, source.getEntity());
+         if (this.health <= 0) {
+-            this.getItem().onDestroyed(this);
++            this.getItem().onDestroyed(this, source);
+             this.discard();
+         }
  
-@@ -311,6 +_,7 @@
+@@ -317,6 +_,7 @@
          output.putShort("Health", (short)this.health);
          output.putShort("Age", (short)this.age);
          output.putShort("PickupDelay", (short)this.pickupDelay);
@@ -83,7 +83,7 @@
          EntityReference.store(this.thrower, output, "Thrower");
          output.storeNullable("Owner", UUIDUtil.CODEC, this.target);
          if (!this.getItem().isEmpty()) {
-@@ -323,6 +_,7 @@
+@@ -329,6 +_,7 @@
          this.health = input.getShortOr("Health", (short)5);
          this.age = input.getShortOr("Age", (short)0);
          this.pickupDelay = input.getShortOr("PickupDelay", (short)0);
@@ -91,7 +91,7 @@
          this.target = input.read("Owner", UUIDUtil.CODEC).orElse(null);
          this.thrower = EntityReference.read(input, "Thrower");
          this.setItem(input.read("Item", ItemStack.CODEC).orElse(ItemStack.EMPTY));
-@@ -334,10 +_,17 @@
+@@ -340,10 +_,17 @@
      @Override
      public void playerTouch(final Player player) {
          if (!this.level().isClientSide()) {
@@ -110,7 +110,7 @@
                  player.take(this, orgCount);
                  if (itemStack.isEmpty()) {
                      this.discard();
-@@ -421,7 +_,7 @@
+@@ -427,7 +_,7 @@
  
      public void makeFakeItem() {
          this.setNeverPickUp();

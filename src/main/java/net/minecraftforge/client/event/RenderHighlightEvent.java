@@ -7,8 +7,8 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.extract.LevelExtractor;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -33,13 +33,13 @@ import org.jetbrains.annotations.Nullable;
 public sealed abstract class RenderHighlightEvent extends MutableEvent implements Cancellable, InheritableEvent permits RenderHighlightEvent.Block, RenderHighlightEvent.Entity {
     CancellableEventBus<RenderHighlightEvent> BUS = CancellableEventBus.create(RenderHighlightEvent.class);
 
-    private final LevelRenderer levelRenderer;
+    private final LevelExtractor levelExtractor;
     private final Camera camera;
     private final LevelRenderState levelRenderState;
     private Callback customRenderer;
 
-    private RenderHighlightEvent(LevelRenderer levelRenderer, Camera camera, LevelRenderState levelRenderState) {
-        this.levelRenderer = levelRenderer;
+    private RenderHighlightEvent(LevelExtractor levelExtractor, Camera camera, LevelRenderState levelRenderState) {
+        this.levelExtractor = levelExtractor;
         this.camera = camera;
         this.levelRenderState = levelRenderState;
     }
@@ -47,8 +47,8 @@ public sealed abstract class RenderHighlightEvent extends MutableEvent implement
     /**
      * {@return the level renderer}
      */
-    public LevelRenderer getLevelRenderer() {
-        return this.levelRenderer;
+    public LevelExtractor getLevelExtractor() {
+        return this.levelExtractor;
     }
 
     /**
@@ -101,8 +101,8 @@ public sealed abstract class RenderHighlightEvent extends MutableEvent implement
         private final BlockHitResult target;
 
         @ApiStatus.Internal
-        public Block(LevelRenderer levelRenderer, Camera camera, LevelRenderState levelRenderState, BlockHitResult target) {
-            super(levelRenderer, camera, levelRenderState);
+        public Block(LevelExtractor levelExtrctor, Camera camera, LevelRenderState levelRenderState, BlockHitResult target) {
+            super(levelExtrctor, camera, levelRenderState);
             this.target = target;
         }
 
@@ -127,8 +127,8 @@ public sealed abstract class RenderHighlightEvent extends MutableEvent implement
         private final EntityHitResult target;
 
         @ApiStatus.Internal
-        public Entity(LevelRenderer levelRenderer, Camera camera, LevelRenderState levelRenderState, EntityHitResult target) {
-            super(levelRenderer, camera, levelRenderState);
+        public Entity(LevelExtractor levelExtractor, Camera camera, LevelRenderState levelRenderState, EntityHitResult target) {
+            super(levelExtractor, camera, levelRenderState);
             this.target = target;
         }
 
@@ -142,6 +142,6 @@ public sealed abstract class RenderHighlightEvent extends MutableEvent implement
     }
 
     public interface Callback {
-        void render(BufferSource source, PoseStack stack, boolean translucent, LevelRenderState state);
+        void render(SubmitNodeCollector submitNodeCollector, PoseStack stack, LevelRenderState state);
     }
 }

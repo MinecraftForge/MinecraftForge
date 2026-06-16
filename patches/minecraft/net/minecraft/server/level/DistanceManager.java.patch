@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/DistanceManager.java
 +++ b/net/minecraft/server/level/DistanceManager.java
-@@ -190,6 +_,10 @@
+@@ -189,6 +_,10 @@
          return this.ticketDispatcher.getDebugStatus();
      }
  

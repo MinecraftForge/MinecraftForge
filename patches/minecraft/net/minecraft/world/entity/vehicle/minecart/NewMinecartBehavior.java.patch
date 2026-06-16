@@ -9,7 +9,7 @@
              Pair<Vec3i, Vec3i> exits = AbstractMinecart.exits(shape);
              Vec3 exit0 = new Vec3(exits.getFirst()).scale(0.5);
              Vec3 exit1 = new Vec3(exits.getSecond()).scale(0.5);
-@@ -244,12 +_,12 @@
+@@ -246,12 +_,12 @@
              if (onRails) {
                  this.minecart.resetFallDistance();
                  this.minecart.setOldPosAndRot();
@@ -24,7 +24,7 @@
                  Vec3 newDeltaMovement = this.calculateTrackSpeed(level, initialStepDeltaMovement.horizontal(), trackIteration, currentPos, currentState, shape);
                  if (trackIteration.firstIteration) {
                      trackIteration.movementLeft = newDeltaMovement.horizontalDistance();
-@@ -384,7 +_,7 @@
+@@ -386,7 +_,7 @@
      }
  
      private Vec3 calculateHaltTrackSpeed(final Vec3 deltaMovement, final BlockState state) {
@@ -33,7 +33,7 @@
              return deltaMovement.length() < 0.03 ? Vec3.ZERO : deltaMovement.scale(0.5);
          } else {
              return deltaMovement;
-@@ -392,7 +_,7 @@
+@@ -394,7 +_,7 @@
      }
  
      private Vec3 calculateBoostTrackSpeed(final Vec3 deltaMovement, final BlockPos pos, final BlockState state) {
@@ -41,13 +41,13 @@
 +        if (state.getBlock() instanceof PoweredRailBlock powered && !powered.isActivatorRail() && state.getValue(PoweredRailBlock.POWERED)) {
              if (deltaMovement.length() > 0.01) {
                  return deltaMovement.normalize().scale(deltaMovement.length() + 0.06);
-             } else {
-@@ -444,7 +_,7 @@
-                 BlockState newBlockState = this.level().getBlockState(BlockPos.containing(newPosition));
-                 if (inHill) {
-                     if (BaseRailBlock.isRail(newBlockState)) {
--                        RailShape newRailShape = newBlockState.getValue(((BaseRailBlock)newBlockState.getBlock()).getShapeProperty());
-+                        RailShape newRailShape = ((BaseRailBlock)newBlockState.getBlock()).getRailDirection(newBlockState, this.level(), BlockPos.containing(newPosition), this.minecart);
-                         if (this.restAtVShape(shape, newRailShape)) {
-                             return 0.0;
-                         }
+             }
+@@ -448,7 +_,7 @@
+         BlockState newBlockState = this.level().getBlockState(BlockPos.containing(newPosition));
+         if (inHill) {
+             if (BaseRailBlock.isRail(newBlockState)) {
+-                RailShape newRailShape = newBlockState.getValue(((BaseRailBlock)newBlockState.getBlock()).getShapeProperty());
++                RailShape newRailShape = ((BaseRailBlock)newBlockState.getBlock()).getRailDirection(newBlockState, this.level(), BlockPos.containing(newPosition), this.minecart);
+                 if (this.restAtVShape(shape, newRailShape)) {
+                     return 0.0;
+                 }

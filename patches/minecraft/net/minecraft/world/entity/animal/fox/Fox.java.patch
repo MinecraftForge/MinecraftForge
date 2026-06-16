@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/fox/Fox.java
 +++ b/net/minecraft/world/entity/animal/fox/Fox.java
-@@ -878,6 +_,17 @@
+@@ -872,6 +_,17 @@
          @Override
          protected void breed() {
              Fox offspring = (Fox)this.animal.getBreedOffspring(this.level, this.partner);
@@ -18,7 +18,7 @@
              if (offspring != null) {
                  ServerPlayer animalLoveCause = this.animal.getLoveCause();
                  ServerPlayer partnerLoveCause = this.partner.getLoveCause();
-@@ -956,7 +_,7 @@
+@@ -949,7 +_,7 @@
          }
  
          protected void onReachedTarget() {
@@ -27,7 +27,7 @@
                  BlockState state = Fox.this.level().getBlockState(this.blockPos);
                  if (state.is(Blocks.SWEET_BERRY_BUSH)) {
                      this.pickSweetBerries(state);
-@@ -1016,7 +_,7 @@
+@@ -1008,7 +_,7 @@
  
          @Override
          public boolean canUse() {

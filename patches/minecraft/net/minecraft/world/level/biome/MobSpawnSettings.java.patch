@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/MobSpawnSettings.java
 +++ b/net/minecraft/world/level/biome/MobSpawnSettings.java
-@@ -43,6 +_,8 @@
+@@ -44,6 +_,8 @@
      private final float creatureGenerationProbability;
      private final Map<MobCategory, WeightedList<MobSpawnSettings.SpawnerData>> spawners;
      private final Map<EntityType<?>, MobSpawnSettings.MobSpawnCost> mobSpawnCosts;
@@ -9,7 +9,7 @@
  
      private MobSpawnSettings(
          final float creatureGenerationProbability,
-@@ -52,6 +_,8 @@
+@@ -53,6 +_,8 @@
          this.creatureGenerationProbability = creatureGenerationProbability;
          this.spawners = ImmutableMap.copyOf(spawners);
          this.mobSpawnCosts = ImmutableMap.copyOf(mobSpawnCosts);
@@ -18,7 +18,7 @@
      }
  
      public WeightedList<MobSpawnSettings.SpawnerData> getMobs(final MobCategory category) {
-@@ -64,6 +_,14 @@
+@@ -65,6 +_,14 @@
  
      public float getCreatureProbability() {
          return this.creatureGenerationProbability;

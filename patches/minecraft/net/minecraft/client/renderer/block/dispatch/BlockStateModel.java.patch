@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/dispatch/BlockStateModel.java
 +++ b/net/minecraft/client/renderer/block/dispatch/BlockStateModel.java
-@@ -21,9 +_,11 @@
+@@ -20,9 +_,11 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -12,4 +12,4 @@
 +    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBlockStateModel#particleMaterial(net.minecraftforge.client.model.data.ModelData)}*/
      Material.Baked particleMaterial();
  
-     @BakedQuad.MaterialFlags
+     @BakedQuad.MaterialFlags int materialFlags();

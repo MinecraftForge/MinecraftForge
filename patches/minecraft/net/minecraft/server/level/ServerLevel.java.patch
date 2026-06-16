@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -216,10 +_,12 @@
+@@ -217,10 +_,12 @@
      private final List<CustomSpawner> customSpawners;
      private @Nullable EnderDragonFight dragonFight;
      private final Int2ObjectMap<EnderDragonPart> dragonParts = new Int2ObjectOpenHashMap<>();
@@ -13,7 +13,7 @@
  
      public ServerLevel(
          final MinecraftServer server,
-@@ -303,6 +_,18 @@
+@@ -304,6 +_,18 @@
          this.waypointManager = new ServerWaypointManager();
          this.environmentAttributes = EnvironmentAttributeSystem.builder().addDefaultLayers(this).build();
          this.updateSkyBrightness();
@@ -31,8 +31,8 @@
 +        return getCapabilities();
      }
  
-     @Deprecated
-@@ -354,7 +_,9 @@
+     @Override
+@@ -367,7 +_,9 @@
          if (this.sleepStatus.areEnoughSleeping(percentage) && this.sleepStatus.areEnoughDeepSleeping(percentage, this.players)) {
              Optional<Holder<WorldClock>> defaultClock = this.dimensionType().defaultClock();
              if (this.getGameRules().get(GameRules.ADVANCE_TIME) && defaultClock.isPresent()) {
@@ -43,7 +43,7 @@
              }
  
              this.wakeUpAllPlayers();
-@@ -428,6 +_,7 @@
+@@ -441,6 +_,7 @@
                                          entity.stopRiding();
                                      }
  
@@ -51,7 +51,7 @@
                                      profiler.push("tick");
                                      this.guardEntityTick(this::tickNonPassenger, entity);
                                      profiler.pop();
-@@ -569,6 +_,7 @@
+@@ -581,6 +_,7 @@
          BlockPos topPos = this.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos);
          BlockPos belowPos = topPos.below();
          Biome biome = this.getBiome(topPos).value();
@@ -59,7 +59,7 @@
          if (biome.shouldFreeze(this, belowPos)) {
              this.setBlockAndUpdate(belowPos, Blocks.ICE.defaultBlockState());
          }
-@@ -778,8 +_,8 @@
+@@ -790,8 +_,8 @@
                  this.server.getPlayerList().broadcastAll(new ClientboundGameEventPacket(ClientboundGameEventPacket.START_RAINING, 0.0F));
              }
  
@@ -70,7 +70,7 @@
          }
      }
  
-@@ -817,6 +_,7 @@
+@@ -829,6 +_,7 @@
          entity.tickCount++;
          profiler.push(entity.typeHolder()::getRegisteredName);
          profiler.incrementCounter("tickNonPassenger");
@@ -78,7 +78,7 @@
          entity.tick();
          profiler.pop();
  
-@@ -834,6 +_,7 @@
+@@ -846,6 +_,7 @@
              ProfilerFiller profiler = Profiler.get();
              profiler.push(entity.typeHolder()::getRegisteredName);
              profiler.incrementCounter("tickPassenger");
@@ -86,7 +86,7 @@
              entity.rideTick();
              profiler.pop();
  
-@@ -880,6 +_,7 @@
+@@ -892,6 +_,7 @@
              } else {
                  this.entityManager.autoSave();
              }
@@ -94,7 +94,7 @@
          }
      }
  
-@@ -971,6 +_,7 @@
+@@ -983,6 +_,7 @@
      }
  
      private void addPlayer(final ServerPlayer player) {
@@ -102,7 +102,7 @@
          Entity existing = this.getEntity(player.getUUID());
          if (existing != null) {
              LOGGER.warn("Force-added player with duplicate UUID {}", player.getUUID());
-@@ -978,7 +_,8 @@
+@@ -990,7 +_,8 @@
              this.removePlayerImmediately((ServerPlayer)existing, Entity.RemovalReason.DISCARDED);
          }
  
@@ -112,7 +112,7 @@
      }
  
      private boolean addEntity(final Entity entity) {
-@@ -986,7 +_,12 @@
+@@ -998,7 +_,12 @@
              LOGGER.warn("Tried to add entity {} but it was marked as removed already", entity.typeHolder().getRegisteredName());
              return false;
          } else {
@@ -126,7 +126,7 @@
          }
      }
  
-@@ -1035,6 +_,8 @@
+@@ -1047,6 +_,8 @@
          final float pitch,
          final long seed
      ) {
@@ -135,7 +135,7 @@
          this.server
              .getPlayerList()
              .broadcast(
-@@ -1042,9 +_,9 @@
+@@ -1054,9 +_,9 @@
                  x,
                  y,
                  z,
@@ -147,7 +147,7 @@
              );
      }
  
-@@ -1058,6 +_,8 @@
+@@ -1070,6 +_,8 @@
          final float pitch,
          final long seed
      ) {
@@ -156,7 +156,7 @@
          this.server
              .getPlayerList()
              .broadcast(
-@@ -1067,7 +_,7 @@
+@@ -1079,7 +_,7 @@
                  sourceEntity.getZ(),
                  sound.value().getRange(volume),
                  this.dimension(),
@@ -165,7 +165,7 @@
              );
      }
  
-@@ -1116,6 +_,7 @@
+@@ -1128,6 +_,7 @@
  
      @Override
      public void gameEvent(final Holder<GameEvent> gameEvent, final Vec3 position, final GameEvent.Context context) {
@@ -173,7 +173,7 @@
          this.gameEventDispatcher.post(gameEvent, position, context);
      }
  
-@@ -1154,11 +_,15 @@
+@@ -1166,11 +_,15 @@
  
      @Override
      public void updateNeighborsAt(final BlockPos pos, final Block sourceBlock) {
@@ -189,7 +189,7 @@
          this.neighborUpdater.updateNeighborsAtExceptFromFacing(pos, sourceBlock, null, orientation);
      }
  
-@@ -1166,6 +_,10 @@
+@@ -1178,6 +_,10 @@
      public void updateNeighborsAtExceptFromFacing(
          final BlockPos pos, final Block blockObject, final Direction skipDirection, final @Nullable Orientation orientation
      ) {
@@ -200,7 +200,7 @@
          this.neighborUpdater.updateNeighborsAtExceptFromFacing(pos, blockObject, skipDirection, orientation);
      }
  
-@@ -1214,7 +_,7 @@
+@@ -1226,7 +_,7 @@
          Explosion.BlockInteraction blockInteraction = switch (interactionType) {
              case NONE -> Explosion.BlockInteraction.KEEP;
              case BLOCK -> this.getDestroyType(GameRules.BLOCK_EXPLOSION_DROP_DECAY);
@@ -209,7 +209,7 @@
                  ? this.getDestroyType(GameRules.MOB_EXPLOSION_DROP_DECAY)
                  : Explosion.BlockInteraction.KEEP;
              case TNT -> this.getDestroyType(GameRules.TNT_EXPLOSION_DROP_DECAY);
-@@ -1222,6 +_,8 @@
+@@ -1234,6 +_,8 @@
          };
          Vec3 center = new Vec3(x, y, z);
          ServerExplosion explosion = new ServerExplosion(this, source, damageSource, damageCalculator, center, r, fire, blockInteraction);
@@ -218,7 +218,7 @@
          int blockCount = explosion.explode();
          ParticleOptions explosionParticle = explosion.isSmall() ? smallExplosionParticles : largeExplosionParticles;
  
-@@ -1888,6 +_,11 @@
+@@ -1894,6 +_,11 @@
          return this.getGameRules().get(GameRules.SPAWNER_BLOCKS_WORK);
      }
  
@@ -228,9 +228,9 @@
 +    }
 +
      private final class EntityCallbacks implements LevelCallback<Entity> {
-         private EntityCallbacks() {
-             Objects.requireNonNull(ServerLevel.this);
-@@ -1948,6 +_,12 @@
+         public void onCreated(final Entity entity) {
+             if (entity instanceof WaypointTransmitter waypoint && waypoint.isTransmittingWaypoint()) {
+@@ -1949,6 +_,12 @@
                  }
              }
  
@@ -243,7 +243,7 @@
              entity.updateDynamicGameEventListener(DynamicGameEventListener::add);
          }
  
-@@ -1976,8 +_,17 @@
+@@ -1977,8 +_,17 @@
                  }
              }
  

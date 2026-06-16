@@ -20,4 +20,4 @@
 +       return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
      }
  
-     public static enum AnimationStatus {
+     public enum AnimationStatus {

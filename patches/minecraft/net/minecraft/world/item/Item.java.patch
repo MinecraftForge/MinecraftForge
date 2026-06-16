@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/Item.java
 +++ b/net/minecraft/world/item/Item.java
-@@ -95,7 +_,7 @@
+@@ -96,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  import org.slf4j.Logger;
  
@@ -9,7 +9,7 @@
      public static final Codec<Holder<Item>> CODEC = BuiltInRegistries.ITEM
          .holderByNameCodec()
          .validate(item -> item.is(Items.AIR.builtInRegistryHolder()) ? DataResult.error(() -> "Item must not be minecraft:air") : DataResult.success(item));
-@@ -106,7 +_,7 @@
+@@ -107,7 +_,7 @@
              : DataResult.success(item)
      );
      private static final Logger LOGGER = LogUtils.getLogger();
@@ -18,7 +18,7 @@
      public static final Identifier BASE_ATTACK_DAMAGE_ID = Identifier.withDefaultNamespace("base_attack_damage");
      public static final Identifier BASE_ATTACK_SPEED_ID = Identifier.withDefaultNamespace("base_attack_speed");
      public static final int DEFAULT_MAX_STACK_SIZE = 64;
-@@ -145,6 +_,7 @@
+@@ -146,6 +_,7 @@
                  LOGGER.error("Item classes should end with Item and {} doesn't.", className);
              }
          }
@@ -26,7 +26,7 @@
      }
  
      @Deprecated
-@@ -152,8 +_,15 @@
+@@ -153,8 +_,15 @@
          return this.builtInRegistryHolder;
      }
  
@@ -43,7 +43,7 @@
      }
  
      public int getDefaultMaxStackSize() {
-@@ -163,6 +_,7 @@
+@@ -164,6 +_,7 @@
      public void onUseTick(final Level level, final LivingEntity livingEntity, final ItemStack itemStack, final int ticksRemaining) {
      }
  
@@ -51,7 +51,7 @@
      public void onDestroyed(final ItemEntity itemEntity) {
      }
  
-@@ -281,6 +_,8 @@
+@@ -282,6 +_,8 @@
          return BuiltInRegistries.ITEM.wrapAsHolder(this).getRegisteredName();
      }
  
@@ -60,7 +60,7 @@
      public final @Nullable ItemStackTemplate getCraftingRemainder() {
          return this.craftingRemainingItem;
      }
-@@ -373,6 +_,30 @@
+@@ -374,6 +_,30 @@
          return false;
      }
  
@@ -91,7 +91,7 @@
      public static class Properties {
          private static final DependantName<Item, String> BLOCK_DESCRIPTION_ID = id -> Util.makeDescriptionId("block", id.identifier());
          private static final DependantName<Item, String> ITEM_DESCRIPTION_ID = id -> Util.makeDescriptionId("item", id.identifier());
-@@ -721,6 +_,11 @@
+@@ -722,6 +_,11 @@
  
          boolean isPeaceful();
  
@@ -103,7 +103,7 @@
          static Item.TooltipContext of(final @Nullable Level level) {
              return level == null ? EMPTY : new Item.TooltipContext() {
                  @Override
-@@ -741,6 +_,11 @@
+@@ -742,6 +_,11 @@
                  @Override
                  public boolean isPeaceful() {
                      return level.getDifficulty() == Difficulty.PEACEFUL;

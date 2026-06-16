@@ -27,7 +27,7 @@
          }
  
          return super.playerWillDestroy(level, pos, state, player);
-@@ -81,10 +_,12 @@
+@@ -80,10 +_,12 @@
          }
      }
  
@@ -41,24 +41,24 @@
          if (level instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.TNT_EXPLODES)) {
              PrimedTnt tnt = new PrimedTnt(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, source);
 @@ -110,7 +_,7 @@
-         if (!itemStack.is(Items.FLINT_AND_STEEL) && !itemStack.is(Items.FIRE_CHARGE)) {
              return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
-         } else {
--            if (prime(level, pos, player)) {
-+            if (onCaughtFire(state, level, pos, hitResult.getDirection(), player)) {
-                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
-                 Item item = itemStack.getItem();
-                 if (itemStack.is(Items.FLINT_AND_STEEL)) {
-@@ -136,7 +_,7 @@
+         }
+ 
+-        if (prime(level, pos, player)) {
++        if (onCaughtFire(state, level, pos, hitResult.getDirection(), player)) {
+             level.setBlock(pos, Blocks.AIR.defaultBlockState(), 11);
+             Item item = itemStack.getItem();
+             if (itemStack.is(Items.FLINT_AND_STEEL)) {
+@@ -135,7 +_,7 @@
              Entity owner = projectile.getOwner();
              if (projectile.isOnFire()
                  && projectile.mayInteract(serverLevel, pos)
--                && prime(level, pos, owner instanceof LivingEntity ? (LivingEntity)owner : null)) {
-+                && onCaughtFire(state, level, pos, null, owner instanceof LivingEntity livingOwner ? livingOwner : null)) {
+-                && prime(level, pos, owner instanceof LivingEntity livingEntity ? livingEntity : null)) {
++                && onCaughtFire(state, level, pos, null, owner instanceof LivingEntity livingEntity ? livingEntity : null)) {
                  level.removeBlock(pos, false);
              }
          }
-@@ -150,5 +_,9 @@
+@@ -149,5 +_,9 @@
      @Override
      protected void createBlockStateDefinition(final StateDefinition.Builder<Block, BlockState> builder) {
          builder.add(UNSTABLE);

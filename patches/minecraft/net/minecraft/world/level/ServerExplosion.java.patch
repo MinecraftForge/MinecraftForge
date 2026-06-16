@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/ServerExplosion.java
 +++ b/net/minecraft/world/level/ServerExplosion.java
-@@ -167,7 +_,7 @@
+@@ -169,7 +_,7 @@
          return new ObjectArrayList<>(toBlowSet);
      }
  
@@ -9,7 +9,7 @@
          if (!(this.radius < 1.0E-5F)) {
              float doubleRadius = this.radius * 2.0F;
              int x0 = Mth.floor(this.center.x - doubleRadius - 1.0);
-@@ -177,7 +_,9 @@
+@@ -179,7 +_,9 @@
              int z0 = Mth.floor(this.center.z - doubleRadius - 1.0);
              int z1 = Mth.floor(this.center.z + doubleRadius + 1.0);
  
@@ -20,7 +20,7 @@
                  if (!entity.ignoreExplosion(this)) {
                      double dist = Math.sqrt(entity.distanceToSqr(this.center)) / doubleRadius;
                      if (!(dist > 1.0)) {
-@@ -233,7 +_,7 @@
+@@ -235,7 +_,7 @@
      public int explode() {
          this.level.gameEvent(this.source, GameEvent.EXPLODE, this.center);
          List<BlockPos> toBlow = this.calculateExplodedPositions();

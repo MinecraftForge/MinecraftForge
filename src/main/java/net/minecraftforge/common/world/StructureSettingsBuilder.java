@@ -76,7 +76,7 @@ public class StructureSettingsBuilder {
      * @param category Mob category
      */
     public StructureSpawnOverrideBuilder getOrAddSpawnOverrides(MobCategory category) {
-        return spawnOverrides.computeIfAbsent(category, c -> new StructureSpawnOverrideBuilder(StructureSpawnOverride.BoundingBoxType.PIECE, Collections.emptyList()));
+        return spawnOverrides.computeIfAbsent(category, _ -> new StructureSpawnOverrideBuilder(StructureSpawnOverride.BoundingBoxType.PIECE, Collections.emptyList()));
     }
 
     /**

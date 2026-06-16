@@ -35,57 +35,58 @@
 +        int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(level, gameModeForPlayer, player, pos);
 +        if (exp == -1) {
              return false;
-         } else {
-             BlockEntity blockEntity = this.level.getBlockEntity(pos);
-@@ -269,34 +_,50 @@
-             if (block instanceof GameMasterBlock && !this.player.canUseGameMasterBlocks()) {
-                 this.level.sendBlockUpdated(pos, state, state, 3);
-                 return false;
-+            } else if (player.getMainHandItem().onBlockStartBreak(pos, player)) {
-+               return false;
-             } else if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
-                 return false;
-             } else {
--                BlockState adjustedState = block.playerWillDestroy(this.level, pos, state, this.player);
--                boolean changed = this.level.removeBlock(pos, false);
--                if (SharedConstants.DEBUG_BLOCK_BREAK) {
--                    LOGGER.info("server broke {} {} -> {}", pos, adjustedState, this.level.getBlockState(pos));
--                }
--
--                if (changed) {
--                    block.destroy(this.level, pos, adjustedState);
--                }
--
-+                BlockState adjustedState = state;
-                 if (this.player.preventsBlockDrops()) {
-+                    removeBlock(pos, false);
-                     return true;
-                 } else {
-                     ItemStack itemStack = this.player.getMainHandItem();
-                     ItemStack destroyedWith = itemStack.copy();
--                    boolean canDestroy = this.player.hasCorrectToolForDrops(adjustedState);
-+                    boolean canDestroy = adjustedState.canHarvestBlock(this.level, pos, this.player); // previously player.hasCorrectToolForDrops(blockstate)
-                     itemStack.mineBlock(this.level, adjustedState, pos, this.player);
-+
-+                    if (itemStack.isEmpty() && !destroyedWith.isEmpty()) {
-+                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, destroyedWith, InteractionHand.MAIN_HAND);
-+                    }
-+                    boolean changed = removeBlock(pos, canDestroy);
-+
-                     if (changed && canDestroy) {
-                         block.playerDestroy(this.level, this.player, pos, adjustedState, blockEntity, destroyedWith);
-                     }
- 
-+                    if (canDestroy && exp > 0) {
-+                        state.getBlock().popExperience(level, pos, exp);
-+                    }
-+
-                     return true;
-                 }
-             }
          }
-+    }
+ 
+@@ -272,35 +_,53 @@
+             return false;
+         }
+ 
++        if (player.getMainHandItem().onBlockStartBreak(pos, player)) {
++           return false;
++        }
 +
+         if (this.player.blockActionRestricted(this.level, pos, this.gameModeForPlayer)) {
+             return false;
+         }
+ 
+-        BlockState adjustedState = block.playerWillDestroy(this.level, pos, state, this.player);
+-        boolean changed = this.level.removeBlock(pos, false);
+-        if (SharedConstants.DEBUG_BLOCK_BREAK) {
+-            LOGGER.info("server broke {} {} -> {}", pos, adjustedState, this.level.getBlockState(pos));
+-        }
+-
+-        if (changed) {
+-            block.destroy(this.level, pos, adjustedState);
+-        }
+-
++        BlockState adjustedState = state;
+         if (this.player.preventsBlockDrops()) {
++            removeBlock(pos, false);
+             return true;
+         }
+ 
+         ItemStack itemStack = this.player.getMainHandItem();
+         ItemStack destroyedWith = itemStack.copy();
+-        boolean canDestroy = this.player.hasCorrectToolForDrops(adjustedState);
++        boolean canDestroy = adjustedState.canHarvestBlock(this.level, pos, this.player); // previously player.hasCorrectToolForDrops(blockstate)
+         itemStack.mineBlock(this.level, adjustedState, pos, this.player);
++
++        if (itemStack.isEmpty() && !destroyedWith.isEmpty()) {
++            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.player, destroyedWith, InteractionHand.MAIN_HAND);
++        }
++        boolean changed = removeBlock(pos, canDestroy);
++
+         if (changed && canDestroy) {
+             block.playerDestroy(this.level, this.player, pos, adjustedState, blockEntity, destroyedWith);
+         }
+ 
++        if (canDestroy && exp > 0) {
++            state.getBlock().popExperience(level, pos, exp);
++        }
++
+         return true;
+     }
+ 
 +    private boolean removeBlock(BlockPos pos, boolean canHarvest) {
 +        BlockState state = this.level.getBlockState(pos);
 +        boolean removed = state.onDestroyedByPlayer(this.level, pos, this.player, canHarvest, this.level.getFluidState(pos));
@@ -96,31 +97,30 @@
 +            state.getBlock().destroy(this.level, pos, state);
 +        }
 +        return removed;
-     }
- 
-     public InteractionResult useItem(final ServerPlayer player, final Level level, final ItemStack itemStack, final InteractionHand hand) {
-@@ -305,6 +_,8 @@
-         } else if (player.getCooldowns().isOnCooldown(itemStack)) {
-             return InteractionResult.PASS;
-         } else {
-+            InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(player, hand);
-+            if (cancelResult != null) return cancelResult;
-             int oldCount = itemStack.getCount();
-             int oldDamage = itemStack.getDamageValue();
-             InteractionResult result = itemStack.use(level, player, hand);
-@@ -348,6 +_,11 @@
-         if (!state.getBlock().isEnabled(level.enabledFeatures())) {
-             return InteractionResult.FAIL;
-         } else if (this.gameModeForPlayer == GameType.SPECTATOR) {
-+        }
++    }
 +
+     public InteractionResult useItem(final ServerPlayer player, final Level level, final ItemStack itemStack, final InteractionHand hand) {
+         if (this.gameModeForPlayer == GameType.SPECTATOR) {
+             return InteractionResult.PASS;
+@@ -310,6 +_,8 @@
+             return InteractionResult.PASS;
+         }
+ 
++        InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(player, hand);
++        if (cancelResult != null) return cancelResult;
+         int oldCount = itemStack.getCount();
+         int oldDamage = itemStack.getDamageValue();
+         InteractionResult result = itemStack.use(level, player, hand);
+@@ -355,6 +_,8 @@
+             return InteractionResult.FAIL;
+         }
+ 
 +        var event = new net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock(player, hand, pos, hitResult);
 +        if (net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock.BUS.post(event)) return event.getCancellationResult();
-+        if (this.gameModeForPlayer == GameType.SPECTATOR) {
+         if (this.gameModeForPlayer == GameType.SPECTATOR) {
              MenuProvider menuProvider = state.getMenuProvider(level, pos);
              if (menuProvider != null) {
-                 player.openMenu(menuProvider);
-@@ -356,10 +_,16 @@
+@@ -364,10 +_,16 @@
                  return InteractionResult.PASS;
              }
          } else {
@@ -138,7 +138,7 @@
                  InteractionResult itemUse = state.useItemOn(player.getItemInHand(hand), level, player, hand, hitResult);
                  if (itemUse.consumesAction()) {
                      CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger(player, pos, usedItemStack);
-@@ -375,8 +_,8 @@
+@@ -383,8 +_,8 @@
                  }
              }
  

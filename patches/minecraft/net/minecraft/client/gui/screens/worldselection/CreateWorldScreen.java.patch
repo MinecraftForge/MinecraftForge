@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
-@@ -174,6 +_,7 @@
+@@ -172,6 +_,7 @@
          WorldDataConfiguration dataConfig = SharedConstants.IS_RUNNING_IN_IDE
              ? new WorldDataConfiguration(new DataPackConfig(List.of("vanilla", "tests"), List.of()), FeatureFlags.DEFAULT_FLAGS)
              : WorldDataConfiguration.DEFAULT;
@@ -8,7 +8,7 @@
          WorldLoader.InitConfig loadConfig = createDefaultLoadConfig(vanillaOnlyPackRepository, dataConfig);
          CompletableFuture<WorldCreationContext> loadResult = WorldLoader.load(
              loadConfig,
-@@ -509,7 +_,7 @@
+@@ -512,7 +_,7 @@
                                          if (retry) {
                                              onAbort.accept(this.uiState.getSettings().dataConfiguration());
                                          } else {
@@ -17,7 +17,7 @@
                                          }
                                      },
                                      Component.translatable("dataPack.validation.failed"),
-@@ -623,6 +_,7 @@
+@@ -621,6 +_,7 @@
          if (dataPackDir != null) {
              if (this.tempDataPackRepository == null) {
                  this.tempDataPackRepository = ServerPacksSource.createPackRepository(dataPackDir, this.packValidator);

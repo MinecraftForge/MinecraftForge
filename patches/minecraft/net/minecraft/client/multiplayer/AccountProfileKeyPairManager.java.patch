@@ -3,9 +3,9 @@
 @@ -75,6 +_,8 @@
                      this.writeProfileKeyPair(fetchedKeyPair);
                      return Optional.ofNullable(fetchedKeyPair);
-                 } catch (CryptException | MinecraftClientException | IOException var3) {
+                 } catch (IOException | CryptException | MinecraftClientException e) {
 +                    // Forge: The offline user api service always returns a null profile key pair, so let's hide this useless exception if in dev
 +                    if (net.minecraftforge.fml.loading.FMLLoader.isProduction() || this.userApiService != UserApiService.OFFLINE)
-                     LOGGER.error("Failed to retrieve profile key pair", (Throwable)var3);
+                     LOGGER.error("Failed to retrieve profile key pair", e);
                      this.writeProfileKeyPair(null);
                      return cachedKeyPair;

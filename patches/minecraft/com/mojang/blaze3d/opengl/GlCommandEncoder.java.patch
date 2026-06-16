@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/opengl/GlCommandEncoder.java
 +++ b/com/mojang/blaze3d/opengl/GlCommandEncoder.java
-@@ -111,6 +_,9 @@
+@@ -201,6 +_,9 @@
          GlStateManager._colorMask(15);
          GlStateManager._clear(16384);
          GlStateManager._glFramebufferTexture2D(36160, 36064, 3553, 0, 0);

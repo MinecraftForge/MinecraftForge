@@ -6,7 +6,6 @@
 package net.minecraftforge.fml.loading;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Convert a maven coordinate into a Path.

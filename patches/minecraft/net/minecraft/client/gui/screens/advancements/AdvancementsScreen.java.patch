@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
-@@ -50,6 +_,7 @@
+@@ -52,6 +_,7 @@
      private final Map<AdvancementHolder, AdvancementTab> tabs = Maps.newLinkedHashMap();
      private @Nullable AdvancementTab selectedTab;
      private boolean isScrolling;
@@ -8,7 +8,7 @@
  
      public AdvancementsScreen(final ClientAdvancements advancements) {
          this(advancements, null);
-@@ -63,6 +_,19 @@
+@@ -65,6 +_,19 @@
  
      @Override
      protected void init() {
@@ -28,7 +28,7 @@
          this.layout.addTitleHeader(TITLE, this.font);
          this.tabs.clear();
          this.selectedTab = null;
-@@ -105,7 +_,7 @@
+@@ -119,7 +_,7 @@
              int yo = (this.height - 140) / 2;
  
              for (AdvancementTab tab : this.tabs.values()) {
@@ -37,24 +37,24 @@
                      this.advancements.setSelectedTab(tab.getRootNode().holder(), true);
                      break;
                  }
-@@ -196,10 +_,12 @@
-         graphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_LOCATION, xo, yo, 0.0F, 0.0F, 252, 140, 256, 256);
+@@ -208,10 +_,12 @@
+         graphics.blit(RenderPipelines.GUI_TEXTURED, WINDOW_LOCATION, this.leftPos, this.topPos, 0.0F, 0.0F, 252, 140, 256, 256);
          if (this.tabs.size() > 1) {
              for (AdvancementTab tab : this.tabs.values()) {
 +                if (tab.getPage() == tabPage)
-                 tab.extractTab(graphics, xo, yo, mouseX, mouseY, tab == this.selectedTab);
+                 tab.extractTab(graphics, this.leftPos, this.topPos, mouseX, mouseY, tab == this.selectedTab);
              }
  
              for (AdvancementTab tab : this.tabs.values()) {
 +                if (tab.getPage() == tabPage)
-                 tab.extractIcon(graphics, xo, yo);
+                 tab.extractIcon(graphics, this.leftPos, this.topPos);
              }
          }
-@@ -218,6 +_,7 @@
+@@ -230,6 +_,7 @@
  
          if (this.tabs.size() > 1) {
              for (AdvancementTab tab : this.tabs.values()) {
 +                if (tab.getPage() == tabPage)
-                 if (tab.isMouseOver(xo, yo, mouseX, mouseY)) {
+                 if (tab.isMouseOver(this.leftPos, this.topPos, mouseX, mouseY)) {
                      graphics.setTooltipForNextFrame(this.font, tab.getTitle(), mouseX, mouseY);
                  }

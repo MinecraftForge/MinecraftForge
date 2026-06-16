@@ -18,7 +18,7 @@
 +    @Nullable private Pose forcedPose;
  
      public Player(final Level level, final GameProfile gameProfile) {
-         super(EntityType.PLAYER, level);
+         super(EntityTypes.PLAYER, level);
 @@ -179,6 +_,17 @@
          this.inventory = new Inventory(this, this.equipment);
          this.inventoryMenu = new InventoryMenu(this.inventory, !level.isClientSide(), this);
@@ -37,7 +37,7 @@
      }
  
      @Override
-@@ -212,7 +_,8 @@
+@@ -216,7 +_,8 @@
              .add(Attributes.MINING_EFFICIENCY)
              .add(Attributes.SWEEPING_DAMAGE_RATIO)
              .add(Attributes.WAYPOINT_TRANSMIT_RANGE, 6.0E7)
@@ -47,7 +47,7 @@
      }
  
      @Override
-@@ -226,6 +_,7 @@
+@@ -230,6 +_,7 @@
  
      @Override
      public void tick() {
@@ -55,7 +55,7 @@
          this.noPhysics = this.isSpectator();
          if (this.isSpectator() || this.isPassenger()) {
              this.setOnGround(false);
-@@ -242,7 +_,7 @@
+@@ -246,7 +_,7 @@
              }
  
              if (!this.level().isClientSide()
@@ -64,7 +64,7 @@
                  this.stopSleepInBed(false, true);
              }
          } else if (this.sleepCounter > 0) {
-@@ -278,6 +_,7 @@
+@@ -282,6 +_,7 @@
  
          this.cooldowns.tick();
          this.updatePlayerPose();
@@ -72,7 +72,7 @@
      }
  
      @Override
-@@ -337,6 +_,10 @@
+@@ -341,6 +_,10 @@
      }
  
      protected void updatePlayerPose() {
@@ -83,7 +83,7 @@
          if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
              Pose desiredPose = this.getDesiredPose();
              Pose actualPose;
-@@ -521,6 +_,7 @@
+@@ -524,6 +_,7 @@
  
      @Override
      public void die(final DamageSource source) {
@@ -91,7 +91,7 @@
          super.die(source);
          this.reapplyPosition();
          if (!this.isSpectator() && this.level() instanceof ServerLevel level) {
-@@ -577,10 +_,15 @@
+@@ -580,10 +_,15 @@
      }
  
      public @Nullable ItemEntity drop(final ItemStack itemStack, final boolean thrownFromHand) {
@@ -108,7 +108,7 @@
          float speed = this.inventory.getSelectedItem().getDestroySpeed(state);
          if (speed > 1.0F) {
              speed += (float)this.getAttributeValue(Attributes.MINING_EFFICIENCY);
-@@ -609,11 +_,14 @@
+@@ -612,11 +_,14 @@
              speed /= 5.0F;
          }
  
@@ -124,15 +124,15 @@
      }
  
      @Override
-@@ -674,6 +_,7 @@
+@@ -677,6 +_,7 @@
  
      @Override
      public boolean hurtServer(final ServerLevel level, final DamageSource source, float damage) {
 +        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, source, damage)) return false;
          if (this.isInvulnerableTo(level, source)) {
              return false;
-         } else if (this.abilities.invulnerable && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-@@ -742,10 +_,13 @@
+         }
+@@ -747,11 +_,14 @@
      @Override
      protected void actuallyHurt(final ServerLevel level, final DamageSource source, float dmg) {
          if (!this.isInvulnerableTo(level, source)) {
@@ -140,13 +140,14 @@
 +            if (dmg <= 0) return;
              dmg = this.getDamageAfterArmorAbsorb(source, dmg);
              dmg = this.getDamageAfterMagicAbsorb(source, dmg);
-             float var8 = Math.max(dmg - this.getAbsorptionAmount(), 0.0F);
-             this.setAbsorptionAmount(this.getAbsorptionAmount() - (dmg - var8));
-+            var8 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, source, var8);
-             float absorbedDamage = dmg - var8;
+             float originalDamage = dmg;
+             dmg = Math.max(dmg - this.getAbsorptionAmount(), 0.0F);
+             this.setAbsorptionAmount(this.getAbsorptionAmount() - (originalDamage - dmg));
++            dmg = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, source, dmg);
+             float absorbedDamage = originalDamage - dmg;
              if (absorbedDamage > 0.0F && absorbedDamage < 3.4028235E37F) {
                  this.awardStat(Stats.DAMAGE_ABSORBED, Math.round(absorbedDamage * 10.0F));
-@@ -823,6 +_,10 @@
+@@ -829,6 +_,10 @@
  
              return InteractionResult.PASS;
          } else {
@@ -157,7 +158,7 @@
              ItemStack itemStack = this.getItemInHand(hand);
              ItemStack itemStackClone = itemStack.copy();
              InteractionResult interact = entity.interact(this, hand, location);
-@@ -831,6 +_,10 @@
+@@ -837,6 +_,10 @@
                      itemStack.setCount(itemStackClone.getCount());
                  }
  
@@ -167,8 +168,8 @@
 +
                  return interact;
              } else {
-                 if (!itemStack.isEmpty() && entity instanceof LivingEntity) {
-@@ -842,6 +_,7 @@
+                 if (!itemStack.isEmpty() && entity instanceof LivingEntity livingEntity) {
+@@ -848,6 +_,7 @@
                      if (interactionResult.consumesAction()) {
                          this.level().gameEvent(GameEvent.ENTITY_INTERACT, entity.position(), GameEvent.Context.of(this));
                          if (itemStack.isEmpty() && !this.hasInfiniteMaterials()) {
@@ -176,7 +177,7 @@
                              this.setItemInHand(hand, ItemStack.EMPTY);
                          }
  
-@@ -941,6 +_,7 @@
+@@ -949,6 +_,7 @@
      }
  
      public void attack(final Entity entity) {
@@ -184,7 +185,7 @@
          if (!this.cannotAttack(entity)) {
              float baseDamage = this.isAutoSpinAttack() ? this.autoSpinAttackDmg : (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
              ItemStack attackingItemStack = this.getWeaponItem();
-@@ -962,8 +_,10 @@
+@@ -970,8 +_,10 @@
  
                      baseDamage += attackingItemStack.getItem().getAttackDamageBonus(entity, baseDamage, damageSource);
                      boolean criticalAttack = fullStrengthAttack && this.canCriticalAttack(entity);
@@ -196,7 +197,7 @@
                      }
  
                      float totalDamage = baseDamage + magicBoost;
-@@ -1035,7 +_,7 @@
+@@ -1045,7 +_,7 @@
              double approximateSpeedSq = this.getKnownMovement().horizontalDistanceSqr();
              double maxSpeedForSweepAttack = this.getSpeed() * 2.5;
              if (approximateSpeedSq < Mth.square(maxSpeedForSweepAttack)) {
@@ -205,18 +206,18 @@
              }
          }
  
-@@ -1078,8 +_,8 @@
+@@ -1088,8 +_,8 @@
  
      private void itemAttackInteraction(final Entity entity, final ItemStack attackingItemStack, final DamageSource damageSource, final boolean applyToTarget) {
          Entity hurtTarget = entity;
--        if (entity instanceof EnderDragonPart) {
--            hurtTarget = ((EnderDragonPart)entity).parentMob;
+-        if (entity instanceof EnderDragonPart enderDragonPart) {
+-            hurtTarget = enderDragonPart.parentMob;
 +        if (entity instanceof net.minecraftforge.entity.PartEntity<?> pe) {
 +            hurtTarget = pe.getParent();
          }
  
          boolean itemHurtEnemy = false;
-@@ -1104,6 +_,7 @@
+@@ -1114,6 +_,7 @@
                  } else {
                      this.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
                  }
@@ -224,7 +225,7 @@
              }
          }
      }
-@@ -1144,7 +_,7 @@
+@@ -1166,7 +_,7 @@
          if (this.level() instanceof ServerLevel serverLevel) {
              float var12 = 1.0F + (float)this.getAttributeValue(Attributes.SWEEPING_DAMAGE_RATIO) * baseDamage;
  
@@ -233,7 +234,7 @@
                  if (nearby != this
                      && nearby != entity
                      && !this.isAlliedTo(nearby)
-@@ -1310,6 +_,7 @@
+@@ -1339,6 +_,7 @@
      }
  
      public void stopSleepInBed(final boolean forcefulWakeUp, final boolean updateLevelList) {
@@ -241,15 +242,15 @@
          super.stopSleeping();
          if (this.level() instanceof ServerLevel && updateLevelList) {
              ((ServerLevel)this.level()).updateSleepingPlayerList();
-@@ -1421,6 +_,7 @@
+@@ -1450,6 +_,7 @@
      @Override
      public boolean causeFallDamage(final double fallDistance, final float damageModifier, final DamageSource damageSource) {
          if (this.abilities.mayfly) {
 +            net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, fallDistance, damageModifier);
              return false;
-         } else {
-             if (fallDistance >= 2.0) {
-@@ -1455,13 +_,13 @@
+         }
+ 
+@@ -1484,13 +_,13 @@
      protected void playStepSound(final BlockPos onPos, final BlockState onState) {
          if (this.isInWater()) {
              this.waterSwimSound();
@@ -265,7 +266,7 @@
                  } else {
                      super.playStepSound(primaryStepSoundPos, primaryStepState);
                  }
-@@ -1491,7 +_,13 @@
+@@ -1520,7 +_,13 @@
          this.tryResetCurrentImpulseContext();
      }
  
@@ -280,7 +281,7 @@
          this.increaseScore(i);
          this.experienceProgress = this.experienceProgress + (float)i / this.getXpNeededForNextLevel();
          this.totalExperience = Mth.clamp(this.totalExperience + i, 0, Integer.MAX_VALUE);
-@@ -1519,7 +_,7 @@
+@@ -1548,7 +_,7 @@
      }
  
      public void onEnchantmentPerformed(final ItemStack itemStack, final int enchantmentCost) {
@@ -289,7 +290,7 @@
          if (this.experienceLevel < 0) {
              this.experienceLevel = 0;
              this.experienceProgress = 0.0F;
-@@ -1529,7 +_,13 @@
+@@ -1558,7 +_,13 @@
          this.enchantmentSeed = this.random.nextInt();
      }
  
@@ -304,7 +305,7 @@
          this.experienceLevel = IntMath.saturatedAdd(this.experienceLevel, amount);
          if (this.experienceLevel < 0) {
              this.experienceLevel = 0;
-@@ -1668,7 +_,13 @@
+@@ -1697,7 +_,13 @@
  
      @Override
      public Component getDisplayName() {
@@ -319,30 +320,31 @@
          return this.decorateDisplayNameComponent(result);
      }
  
-@@ -1860,18 +_,19 @@
-             Predicate<ItemStack> supportedProjectiles = ((ProjectileWeaponItem)heldWeapon.getItem()).getSupportedHeldProjectiles();
-             ItemStack heldProjectile = ProjectileWeaponItem.getHeldProjectile(this, supportedProjectiles);
-             if (!heldProjectile.isEmpty()) {
--                return heldProjectile;
-+                return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, heldProjectile);
-             } else {
-                 supportedProjectiles = ((ProjectileWeaponItem)heldWeapon.getItem()).getAllSupportedProjectiles();
+@@ -1882,7 +_,7 @@
+         Predicate<ItemStack> supportedProjectiles = ((ProjectileWeaponItem)heldWeapon.getItem()).getSupportedHeldProjectiles();
+         ItemStack heldProjectile = ProjectileWeaponItem.getHeldProjectile(this, supportedProjectiles);
+         if (!heldProjectile.isEmpty()) {
+-            return heldProjectile;
++            return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, heldProjectile);
+         }
  
-                 for (int i = 0; i < this.inventory.getContainerSize(); i++) {
-                     ItemStack itemStack = this.inventory.getItem(i);
-                     if (supportedProjectiles.test(itemStack)) {
--                        return itemStack;
-+                        return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, itemStack);
-                     }
-                 }
- 
--                return this.hasInfiniteMaterials() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
-+                var vanilla = this.abilities.instabuild ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
-+                return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, vanilla);
+         supportedProjectiles = ((ProjectileWeaponItem)heldWeapon.getItem()).getAllSupportedProjectiles();
+@@ -1890,11 +_,12 @@
+         for (int i = 0; i < this.inventory.getContainerSize(); i++) {
+             ItemStack itemStack = this.inventory.getItem(i);
+             if (supportedProjectiles.test(itemStack)) {
+-                return itemStack;
++                return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, itemStack);
              }
          }
+ 
+-        return this.hasInfiniteMaterials() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
++        var vanilla = this.abilities.instabuild ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
++        return net.minecraftforge.common.ForgeHooks.getProjectile(this, heldWeapon, vanilla);
      }
-@@ -1992,6 +_,54 @@
+ 
+     @Override
+@@ -2015,6 +_,54 @@
          double maxRange = this.blockInteractionRange() + buffer;
          return new AABB(pos).distanceToSqr(this.getEyePosition()) < maxRange * maxRange;
      }

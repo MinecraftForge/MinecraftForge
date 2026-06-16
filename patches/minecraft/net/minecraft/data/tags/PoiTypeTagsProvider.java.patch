@@ -3,7 +3,7 @@
 @@ -9,8 +_,13 @@
  import net.minecraft.world.entity.ai.village.poi.PoiTypes;
  
- public class PoiTypeTagsProvider extends KeyTagProvider<PoiType> {
+ public class PoiTypeTagsProvider extends TagsProvider<PoiType> {
 +    /** @deprecated Forge: Use the {@linkplain #PoiTypeTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
      public PoiTypeTagsProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
          super(output, Registries.POINT_OF_INTEREST_TYPE, lookupProvider);

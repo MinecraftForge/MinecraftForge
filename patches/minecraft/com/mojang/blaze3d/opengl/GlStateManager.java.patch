@@ -1,18 +1,18 @@
 --- a/com/mojang/blaze3d/opengl/GlStateManager.java
 +++ b/com/mojang/blaze3d/opengl/GlStateManager.java
-@@ -86,6 +_,11 @@
+@@ -80,6 +_,11 @@
          }
      }
  
-+    public static boolean _isBlendEnabled() {
++    public static boolean _isBlendEnabled(int index) {
 +        RenderSystem.assertOnRenderThread();
-+        return BLEND.mode.enabled;
++        return BLEND[index].mode.enabled;
 +    }
 +
-     public static void _disableBlend() {
+     public static void _disableBlend(int index) {
          RenderSystem.assertOnRenderThread();
-         BLEND.mode.disable();
-@@ -380,9 +_,17 @@
+         BLEND[index].mode.disable();
+@@ -390,9 +_,17 @@
          }
      }
  
@@ -22,8 +22,8 @@
 +
      public static void _texParameter(final int target, final int name, final int value) {
          RenderSystem.assertOnRenderThread();
-         GL11.glTexParameteri(target, name, value);
-+        if (target == GL13.GL_TEXTURE1) {
+         GL33C.glTexParameteri(target, name, value);
++        if (target == GL33C.GL_TEXTURE1) {
 +            lastBrightnessX = name;
 +            lastBrightnessY = value;
 +        }

@@ -28,7 +28,7 @@ public record RegistryList(
     public static RegistryList decode(FriendlyByteBuf buf) {
         var token = buf.readVarInt();
         var normal = buf.readList(FriendlyByteBuf::readIdentifier);
-        List<ResourceKey<? extends Registry<?>>> datapacks = buf.readList(b -> ResourceKey.createRegistryKey(buf.readIdentifier()));
+        List<ResourceKey<? extends Registry<?>>> datapacks = buf.readList(_ -> ResourceKey.createRegistryKey(buf.readIdentifier()));
         return new RegistryList(token, normal, datapacks);
     }
 

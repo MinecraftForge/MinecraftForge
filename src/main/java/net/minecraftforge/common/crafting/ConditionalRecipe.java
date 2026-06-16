@@ -286,8 +286,8 @@ public class ConditionalRecipe {
 
     public static final RecipeSerializer<Recipe<?>> SERIALZIER = new RecipeSerializer<Recipe<?>>(CODEC,
         StreamCodec.of(
-            (o, v) -> new UnsupportedOperationException("ConditionaRecipe.SERIALIZER does not support encoding to network"),
-            i -> { throw new UnsupportedOperationException("ConditionaRecipe.SERIALIZER does not support encoding to network"); }
+            (_, _) -> new UnsupportedOperationException("ConditionaRecipe.SERIALIZER does not support encoding to network"),
+            _ -> { throw new UnsupportedOperationException("ConditionaRecipe.SERIALIZER does not support encoding to network"); }
         )
     );
 

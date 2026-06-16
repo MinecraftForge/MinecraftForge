@@ -11,9 +11,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 
-public interface IForgeTagAppender<E, T> {
-    private TagAppender<E, T> self() {
-        return (TagAppender<E, T>)this;
+public interface IForgeTagAppender<T> {
+    private TagAppender<T> self() {
+        return (TagAppender<T>)this;
     }
 
     /**
@@ -28,33 +28,8 @@ public interface IForgeTagAppender<E, T> {
         return "unknown";
     }
 
-    /**
-     * Adds a registry entry to the tag json's remove list. Callable during datageneration.
-     *
-     * @param entry The entry to remove
-     * @return The builder for chaining
-     */
-    default TagAppender<E, T> remove(final E entry) {
-        throw new UnsupportedOperationException("TagAppender.remove is not implemented in class: " + this.getClass());
-    }
-
-    /**
-     * Adds multiple registry entries to the tag json's remove list. Callable during datageneration.
-     *
-     * @param entries The entries to remove
-     * @return The builder for chaining
-     */
     @SuppressWarnings("unchecked")
-    default TagAppender<E, T> remove(final E first, final E...entries) {
-        this.remove(first);
-        for (E entry : entries)
-            this.remove(entry);
-        return self();
-    }
-
-
-    @SuppressWarnings("unchecked")
-    default TagAppender<E, T> addTags(TagKey<T>... values) {
+    default TagAppender<T> addTags(TagKey<T>... values) {
         var builder = self();
         for (TagKey<T> value : values) {
             builder.addTag(value);
@@ -62,24 +37,24 @@ public interface IForgeTagAppender<E, T> {
         return builder;
     }
 
-    default TagAppender<E, T> addOptional(Identifier location) {
+    default TagAppender<T> addOptional(Identifier location) {
         self().getInternalBuilder().addOptionalElement(location);
         return self();
     }
 
     @SuppressWarnings("unchecked")
-    default TagAppender<E, T>addOptionalTags(TagKey<T>... values) {
+    default TagAppender<T> addOptionalTags(TagKey<T>... values) {
         var builder = self();
         for (var value : values)
             builder.addOptionalTag(value);
         return builder;
     }
 
-    default TagAppender<E, T> replace() {
+    default TagAppender<T> replace() {
         return replace(true);
     }
 
-    default TagAppender<E, T> replace(boolean value) {
+    default TagAppender<T> replace(boolean value) {
         self().getInternalBuilder().setReplace(value);
         return self();
     }
@@ -89,7 +64,7 @@ public interface IForgeTagAppender<E, T> {
      * @param location The ID of the element to remove
      * @return The builder for chaining
      */
-    default TagAppender<E, T> remove(final Identifier location) {
+    default TagAppender<T> remove(final Identifier location) {
         var builder = self();
         builder.getInternalBuilder().removeElement(location, builder.getSourceName());
         return builder;
@@ -100,7 +75,7 @@ public interface IForgeTagAppender<E, T> {
      * @param locations The IDs of the elements to remove
      * @return The builder for chaining
      */
-    default TagAppender<E, T> remove(final Identifier first, final Identifier... locations) {
+    default TagAppender<T> remove(final Identifier first, final Identifier... locations) {
         this.remove(first);
         for (var location : locations)
             this.remove(location);
@@ -113,7 +88,7 @@ public interface IForgeTagAppender<E, T> {
      * @param resourceKey The resource key of the element to remove
      * @return The appender for chaining
      */
-    default TagAppender<E, T> remove(final ResourceKey<T> resourceKey) {
+    default TagAppender<T> remove(final ResourceKey<T> resourceKey) {
         this.remove(resourceKey.identifier());
         return self();
     }
@@ -123,7 +98,7 @@ public interface IForgeTagAppender<E, T> {
      * @param tag The ID of the tag to remove
      * @return The builder for chaining
      */
-    default TagAppender<E, T> remove(TagKey<T> tag) {
+    default TagAppender<T> remove(TagKey<T> tag) {
         var builder = self();
         builder.getInternalBuilder().removeTag(tag.location(), builder.getSourceName());
         return builder;
@@ -135,7 +110,7 @@ public interface IForgeTagAppender<E, T> {
      * @return The builder for chaining
      */
     @SuppressWarnings("unchecked")
-    default TagAppender<E, T> remove(TagKey<T> first, TagKey<T>...tags) {
+    default TagAppender<T> remove(TagKey<T> first, TagKey<T>...tags) {
         this.remove(first);
         for (var tag : tags)
             this.remove(tag);

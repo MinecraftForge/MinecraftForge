@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/EntityTypeTags.java
 +++ b/net/minecraft/tags/EntityTypeTags.java
-@@ -56,4 +_,12 @@
+@@ -57,4 +_,12 @@
      private static TagKey<EntityType<?>> create(final String name) {
          return TagKey.create(Registries.ENTITY_TYPE, Identifier.withDefaultNamespace(name));
      }

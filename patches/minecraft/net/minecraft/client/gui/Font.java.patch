@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/Font.java
 +++ b/net/minecraft/client/gui/Font.java
-@@ -33,7 +_,7 @@
+@@ -28,7 +_,7 @@
  import org.jspecify.annotations.Nullable;
  
  @OnlyIn(Dist.CLIENT)

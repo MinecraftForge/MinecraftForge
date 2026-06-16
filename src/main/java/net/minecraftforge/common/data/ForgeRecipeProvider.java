@@ -22,6 +22,7 @@ import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -89,7 +90,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONES_DEEPSLATE);
 
         replace(Items.STRING, Tags.Items.STRINGS);
-        exclude(getConversionRecipeName(Blocks.WHITE_WOOL, Items.STRING));
+        exclude(getConversionRecipeName(Blocks.WOOL.pick(DyeColor.WHITE), Items.STRING));
 
         exclude(Blocks.GOLD_BLOCK);
         exclude(Items.GOLD_NUGGET);
@@ -98,7 +99,7 @@ public final class ForgeRecipeProvider extends VanillaRecipeProvider {
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
         exclude(Blocks.NETHERITE_BLOCK);
-        exclude(Blocks.COPPER_BLOCK);
+        Blocks.COPPER_BLOCK.forEach(this::exclude);
         exclude(Blocks.AMETHYST_BLOCK);
 
         exclude(Blocks.COBBLESTONE_STAIRS);

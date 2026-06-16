@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/level/block/DoublePlantBlock.java
 +++ b/net/minecraft/world/level/block/DoublePlantBlock.java
-@@ -79,6 +_,7 @@
-             return super.canSurvive(state, level, pos);
-         } else {
-             BlockState belowState = level.getBlockState(pos.below());
-+            if (state.getBlock() != this) return super.canSurvive(state, level, pos); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
-             return belowState.is(this) && belowState.getValue(HALF) == DoubleBlockHalf.LOWER;
+@@ -80,6 +_,7 @@
          }
+ 
+         BlockState belowState = level.getBlockState(pos.below());
++        if (state.getBlock() != this) return super.canSurvive(state, level, pos); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+         return belowState.is(this) && belowState.getValue(HALF) == DoubleBlockHalf.LOWER;
      }
+ 

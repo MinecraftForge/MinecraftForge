@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/block/entity/HangingSignBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HangingSignBlockEntity.java
 @@ -13,6 +_,10 @@
-         super(BlockEntityType.HANGING_SIGN, worldPosition, blockState);
+         super(BlockEntityTypes.HANGING_SIGN, worldPosition, blockState);
      }
  
 +    public HangingSignBlockEntity(BlockEntityType<? extends SignBlockEntity> type, BlockPos pos, BlockState state) {

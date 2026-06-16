@@ -44,7 +44,7 @@ public final class FluidInteractionRegistry
      */
     public static synchronized void addInteraction(FluidType source, InteractionInformation interaction)
     {
-        INTERACTIONS.computeIfAbsent(source, s -> new ArrayList<>()).add(interaction);
+        INTERACTIONS.computeIfAbsent(source, _ -> new ArrayList<>()).add(interaction);
     }
 
     /**
@@ -86,7 +86,7 @@ public final class FluidInteractionRegistry
 
         // Lava + Soul Soil (Below) + Blue Ice = Basalt
         addInteraction(ForgeMod.LAVA_TYPE.get(), new InteractionInformation(
-                (level, currentPos, relativePos, currentState) -> level.getBlockState(currentPos.below()).is(Blocks.SOUL_SOIL) && level.getBlockState(relativePos).is(Blocks.BLUE_ICE),
+                (level, currentPos, relativePos, _) -> level.getBlockState(currentPos.below()).is(Blocks.SOUL_SOIL) && level.getBlockState(relativePos).is(Blocks.BLUE_ICE),
                 Blocks.BASALT.defaultBlockState()
         ));
     }
@@ -109,7 +109,7 @@ public final class FluidInteractionRegistry
          */
         public InteractionInformation(FluidType type, BlockState state)
         {
-            this(type, fluidState -> state);
+            this(type, _ -> state);
         }
 
         /**
@@ -120,7 +120,7 @@ public final class FluidInteractionRegistry
          */
         public InteractionInformation(HasFluidInteraction predicate, BlockState state)
         {
-            this(predicate, fluidState -> state);
+            this(predicate, _ -> state);
         }
 
         /**
@@ -132,7 +132,7 @@ public final class FluidInteractionRegistry
          */
         public InteractionInformation(FluidType type, Function<FluidState, BlockState> getState)
         {
-            this((level, currentPos, relativePos, currentState) -> level.getFluidState(relativePos).getFluidType() == type, getState);
+            this((level, _, relativePos, _) -> level.getFluidState(relativePos).getFluidType() == type, getState);
         }
 
         /**
@@ -143,7 +143,7 @@ public final class FluidInteractionRegistry
          */
         public InteractionInformation(HasFluidInteraction predicate, Function<FluidState, BlockState> getState)
         {
-            this(predicate, (level, currentPos, relativePos, currentState) ->
+            this(predicate, (level, currentPos, _, currentState) ->
             {
                 level.setBlockAndUpdate(currentPos, ForgeEventFactory.fireFluidPlaceBlockEvent(level, currentPos, currentPos, getState.apply(currentState)));
                 level.levelEvent(1501, currentPos, 0);

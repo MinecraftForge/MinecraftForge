@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/crafting/ShapedRecipePattern.java
 +++ b/net/minecraft/world/item/crafting/ShapedRecipePattern.java
-@@ -203,18 +_,22 @@
+@@ -203,10 +_,14 @@
          return this.ingredients;
      }
  
@@ -14,16 +14,17 @@
 -                return DataResult.error(() -> "Invalid pattern: too many rows, 3 is maximum");
 +            if (strings.size() > ShapedRecipe.MAX_HEIGHT) {
 +                return DataResult.error(() -> "Invalid pattern: too many rows, " + ShapedRecipe.MAX_HEIGHT + " is maximum");
-             } else if (strings.isEmpty()) {
-                 return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
-             } else {
-                 int firstLength = strings.getFirst().length();
+             }
  
-                 for (String line : strings) {
--                    if (line.length() > 3) {
--                        return DataResult.error(() -> "Invalid pattern: too many columns, 3 is maximum");
-+                    if (line.length() > ShapedRecipe.MAX_HEIGHT) {
-+                        return DataResult.error(() -> "Invalid pattern: too many columns, " + ShapedRecipe.MAX_HEIGHT + " is maximum");
-                     }
+             if (strings.isEmpty()) {
+@@ -216,8 +_,8 @@
+             int firstLength = strings.getFirst().length();
  
-                     if (firstLength != line.length()) {
+             for (String line : strings) {
+-                if (line.length() > 3) {
+-                    return DataResult.error(() -> "Invalid pattern: too many columns, 3 is maximum");
++                if (line.length() > ShapedRecipe.MAX_HEIGHT) {
++                    return DataResult.error(() -> "Invalid pattern: too many columns, " + ShapedRecipe.MAX_HEIGHT + " is maximum");
+                 }
+ 
+                 if (firstLength != line.length()) {

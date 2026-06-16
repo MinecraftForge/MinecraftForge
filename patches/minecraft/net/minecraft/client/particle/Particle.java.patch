@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
-@@ -205,6 +_,10 @@
+@@ -208,6 +_,10 @@
          return Optional.empty();
      }
  

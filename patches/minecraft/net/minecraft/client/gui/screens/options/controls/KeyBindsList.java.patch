@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/options/controls/KeyBindsList.java
 +++ b/net/minecraft/client/gui/screens/options/controls/KeyBindsList.java
-@@ -122,9 +_,10 @@
+@@ -116,9 +_,10 @@
              this.name = name;
              this.changeButton = Button.builder(name, button -> {
                      KeyBindsList.this.keyBindsScreen.selectedKey = key;
@@ -12,7 +12,7 @@
                  .createNarration(
                      defaultNarrationSupplier -> key.isUnbound()
                          ? Component.translatable("narrator.controls.unbound", name)
-@@ -132,7 +_,7 @@
+@@ -126,7 +_,7 @@
                  )
                  .build();
              this.resetButton = Button.builder(RESET_BUTTON_TITLE, button -> {
@@ -21,7 +21,7 @@
                  KeyBindsList.this.resetMappingAndUpdateButtons();
              }).bounds(0, 0, 50, 20).createNarration(defaultNarrationSupplier -> Component.translatable("narrator.controls.reset", name)).build();
              this.refreshEntry();
-@@ -173,7 +_,8 @@
+@@ -167,7 +_,8 @@
              MutableComponent tooltip = Component.empty();
              if (!this.key.isUnbound()) {
                  for (KeyMapping otherKey : KeyBindsList.this.minecraft.options.keyMappings) {

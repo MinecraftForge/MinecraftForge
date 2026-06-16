@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/camel/Camel.java
 +++ b/net/minecraft/world/entity/animal/camel/Camel.java
-@@ -359,7 +_,7 @@
+@@ -365,7 +_,7 @@
  
      @Override
      protected void playStepSound(final BlockPos pos, final BlockState blockState) {

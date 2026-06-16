@@ -1,8 +1,8 @@
 --- a/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
 +++ b/net/minecraft/client/multiplayer/ClientConfigurationPacketListenerImpl.java
-@@ -148,6 +_,7 @@
-                 }));
-             }
+@@ -144,6 +_,7 @@
+                 }
+             }));
          }
 +        net.minecraftforge.common.ForgeHooks.handleClientConfigurationComplete(this.connection);
      }

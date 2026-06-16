@@ -143,7 +143,7 @@ public class ChannelBuilder {
      * @param factory A factory that creates a new instance of the context data
      */
     public <T> ChannelBuilder attribute(AttributeKey<T> key, Supplier<T> factory) {
-        return this.attribute(key, con -> factory.get());
+        return this.attribute(key, _ -> factory.get());
     }
 
     /**

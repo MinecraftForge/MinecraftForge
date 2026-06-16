@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/projectile/throwableitemprojectile/ThrownEnderpearl.java
 +++ b/net/minecraft/world/entity/projectile/throwableitemprojectile/ThrownEnderpearl.java
-@@ -102,6 +_,13 @@
+@@ -104,6 +_,13 @@
                  Vec3 teleportPos = this.oldPosition();
                  if (owner instanceof ServerPlayer player) {
                      if (player.connection.isAcceptingMessages()) {
@@ -11,10 +11,10 @@
 +                        }
 +                        teleportPos = event.getTarget();
 +
-                         if (this.random.nextFloat() < 0.05F && level.isSpawningMonsters()) {
-                             Endermite endermite = EntityType.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
+                         if (this.random.nextFloat() < 0.05F && level.isSpawningMonsters() && level.getLevelData().getDifficulty() != Difficulty.PEACEFUL) {
+                             Endermite endermite = EntityTypes.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
                              if (endermite != null) {
-@@ -122,7 +_,7 @@
+@@ -124,7 +_,7 @@
                          if (newOwner != null) {
                              newOwner.resetFallDistance();
                              newOwner.resetCurrentImpulseContext();

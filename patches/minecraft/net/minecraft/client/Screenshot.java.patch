@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Screenshot.java
 +++ b/net/minecraft/client/Screenshot.java
-@@ -44,6 +_,13 @@
+@@ -53,14 +_,24 @@
                      file = new File(picDir, forceName);
                  }
  
@@ -14,19 +14,17 @@
                  Util.ioPool()
                      .execute(
                          () -> {
-@@ -51,10 +_,13 @@
-                                 NativeImage twrVar0$ = image;
- 
-                                 try {
--                                    image.writeToFile(file);
--                                    Component component = Component.literal(file.getName())
-+                                    image.writeToFile(outputFile);
-+                                    Component component = Component.literal(outputFile.getName())
-                                         .withStyle(ChatFormatting.UNDERLINE)
-                                         .withStyle(s -> s.withClickEvent(new ClickEvent.OpenFile(file.getAbsoluteFile())));
-+                                    if (event.getResultMessage() != null)
-+                                        callback.accept(event.getResultMessage());
-+                                    else
-                                     callback.accept(Component.translatable("screenshot.success", component));
-                                 } catch (Throwable var7) {
-                                     if (image != null) {
+                             try (image) {
+-                                image.writeToFile(file);
+-                                Component component = Component.literal(file.getName())
++                                image.writeToFile(outputFile);
++                                Component component = Component.literal(outputFile.getName())
+                                     .withStyle(ChatFormatting.UNDERLINE)
+-                                    .withStyle(s -> s.withClickEvent(new ClickEvent.OpenFile(file.getAbsoluteFile())));
++                                    .withStyle(s -> s.withClickEvent(new ClickEvent.OpenFile(outputFile.getAbsoluteFile())));
++                                if (event.getResultMessage() != null)
++                                    callback.accept(event.getResultMessage());
++                                else
+                                 callback.accept(Component.translatable("screenshot.success", component));
+                             } catch (Exception e) {
+                                 LOGGER.warn("Couldn't save screenshot", e);

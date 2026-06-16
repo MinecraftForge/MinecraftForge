@@ -8,4 +8,4 @@
 +        return state.shouldCheckWeakPower(this, pos, direction) ? Math.max(signal, this.getDirectSignalTo(pos)) : signal;
      }
  
-     default boolean hasNeighborSignal(final BlockPos blockPos) {
+     default int getBestOwnOrNeighbourSignal(final BlockPos pos) {

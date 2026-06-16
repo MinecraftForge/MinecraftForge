@@ -1,11 +1,11 @@
 --- a/net/minecraft/data/tags/EntityTypeTagsProvider.java
 +++ b/net/minecraft/data/tags/EntityTypeTagsProvider.java
-@@ -12,6 +_,10 @@
-         super(output, Registries.ENTITY_TYPE, lookupProvider, e -> e.builtInRegistryHolder().key());
+@@ -13,6 +_,10 @@
+         super(output, Registries.ENTITY_TYPE, lookupProvider);
      }
  
 +    public EntityTypeTagsProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @org.jetbrains.annotations.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
-+        super(output, Registries.ENTITY_TYPE, lookupProvider, e -> e.builtInRegistryHolder().key(), modId, existingFileHelper);
++        super(output, Registries.ENTITY_TYPE, lookupProvider, modId, existingFileHelper);
 +    }
 +
      @Override

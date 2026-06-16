@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-only
  */
 
+/*
 package net.minecraftforge.client.model.renderable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -31,21 +31,21 @@ import java.util.Arrays;
  * a {@link ModelData} instance, and a {@link Vector4f tint}.
  *
  * @see Context
- */
+ * /
 public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Context> {
     /**
      * Constructs a {@link BakedModelRenderable} from the given model location.
      * The model is expected to have been baked ahead of time.
      *
      * @see net.minecraftforge.client.event.ModelEvent.RegisterModelStateDefinitions
-     */
+     * /
     public static BakedModelRenderable of(BlockState state) {
         return of(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state));
     }
 
     /**
      * Constructs a {@link BakedModelRenderable} from the given baked model.
-     */
+     * /
     public static BakedModelRenderable of(BlockStateModel model) {
         return new BakedModelRenderable(model);
     }
@@ -57,7 +57,7 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Context context) {
+    public void render(PoseStack poseStack, ITextureRenderTypeLookup textureRenderTypeLookup, int lightmap, int overlay, float partialTick, Context context) {
         @SuppressWarnings("deprecation")
         var buffer = bufferSource.getBuffer(textureRenderTypeLookup.get(TextureAtlas.LOCATION_BLOCKS));
         var tint = context.tint();
@@ -87,8 +87,8 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
     }
 
     public IRenderable<ModelData> withModelDataContext() {
-        return (poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, context) ->
-                render(poseStack, bufferSource, textureRenderTypeLookup, lightmap, overlay, partialTick, new Context(context));
+        return (poseStack, textureRenderTypeLookup, lightmap, overlay, partialTick, context) ->
+                render(poseStack, textureRenderTypeLookup, lightmap, overlay, partialTick, new Context(context));
     }
 
     public record Context(@Nullable BlockState state, Direction[] faces, RandomSource randomSource, long seed, ModelData data, Vector4f tint) {
@@ -100,3 +100,4 @@ public class BakedModelRenderable implements IRenderable<BakedModelRenderable.Co
         }
     }
 }
+*/

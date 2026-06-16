@@ -1,0 +1,116 @@
+--- a/net/minecraft/client/gui/Hud.java
++++ b/net/minecraft/client/gui/Hud.java
+@@ -156,7 +_,7 @@
+     public float vignetteBrightness = 1.0F;
+     private int toolHighlightTimer;
+     private ItemStack lastToolHighlight = ItemStack.EMPTY;
+-    private final DebugScreenOverlay debugOverlay;
++    protected DebugScreenOverlay debugOverlay;
+     private final SubtitleOverlay subtitleOverlay;
+     private final SpectatorGui spectatorGui;
+     private final PlayerTabOverlay tabList;
+@@ -198,6 +_,7 @@
+             () -> new JumpableVehicleBar(minecraft)
+         );
+         this.resetTitleTimes();
++        net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.init(this, minecraft);
+     }
+ 
+     public void registerReloadListeners(final ReloadableResourceManager resourceManager) {
+@@ -221,6 +_,10 @@
+     public void extractRenderState(final GuiGraphicsExtractor graphics, final DeltaTracker deltaTracker) {
+         this.minecraft.gameRenderer.gameRenderState().guiRenderState.isHudHidden = this.isHidden;
+         if (!(this.minecraft.gui.screen() instanceof LevelLoadingScreen)) {
++            if (Boolean.valueOf(true)) {
++                net.minecraftforge.client.gui.overlay.ForgeLayeredDraw.extractRenderState(graphics, deltaTracker);
++                return;
++            }
+             if (!this.isHidden) {
+                 this.extractCameraOverlays(graphics, deltaTracker);
+                 this.extractCrosshair(graphics, deltaTracker);
+@@ -404,7 +_,7 @@
+             int mouseX = Mth.floor(this.minecraft.mouseHandler.getScaledXPos(window));
+             int mouseY = Mth.floor(this.minecraft.mouseHandler.getScaledYPos(window));
+             graphics.nextStratum();
+-            this.chat.extractRenderState(graphics, this.getFont(), this.tickCount, mouseX, mouseY, ChatComponent.DisplayMode.BACKGROUND, false);
++            net.minecraftforge.client.ForgeHooksClient.onCustomizeChatEvent(graphics, this.chat, window, mouseX, mouseY, this.tickCount, this.getFont());
+         }
+     }
+ 
+@@ -497,6 +_,8 @@
+ 
+             for (MobEffectInstance instance : Ordering.natural().reverse().sortedCopy(activeEffects)) {
+                 Holder<MobEffect> effect = instance.getEffect();
++                var renderer = net.minecraftforge.client.extensions.common.IClientMobEffectExtensions.of(instance);
++                if (!renderer.isVisibleInGui(instance)) continue;
+                 if (instance.showIcon()) {
+                     int x = graphics.guiWidth();
+                     int y = 1;
+@@ -527,6 +_,7 @@
+                         }
+                     }
+ 
++                    if (renderer.extractGuiIcon(instance, this, graphics, x, y, 0, alpha)) continue;
+                     graphics.blitSprite(RenderPipelines.GUI_TEXTURED, getMobEffectSprite(effect), x + 3, y + 3, 18, 18, ARGB.white(alpha));
+                 }
+             }
+@@ -629,15 +_,37 @@
+     }
+ 
+     public void extractSelectedItemName(final GuiGraphicsExtractor graphics) {
++        renderSelectedItemName(graphics, 0);
++    }
++
++    // Forge: Maintain vanilla parity during FLD#BACKGROUND
++    public final void updateContextualInfo(final GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
++        var nextContextualInfo = this.nextContextualInfoState();
++        if (nextContextualInfo != this.contextualInfoBar.getFirst()) {
++            this.contextualInfoBar = Pair.of(nextContextualInfo, this.contextualInfoBars.get(nextContextualInfo).get());
++        }
++
++        this.contextualInfoBar.getSecond().extractBackground(graphics, deltaTracker);
++    }
++    // Forge: Same as above but for FLD#CONTEXTUAL_INFO
++    public final void extractContextualInfoState(final GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
++        this.contextualInfoBar.getSecond().extractRenderState(graphics, deltaTracker);
++    }
++
++    public void renderSelectedItemName(final GuiGraphicsExtractor graphics, int yShift) {
+         if (this.toolHighlightTimer > 0 && !this.lastToolHighlight.isEmpty()) {
+             MutableComponent str = Component.empty().append(this.lastToolHighlight.getHoverName()).withStyle(this.lastToolHighlight.getRarity().color());
+             if (this.lastToolHighlight.has(DataComponents.CUSTOM_NAME)) {
+                 str.withStyle(ChatFormatting.ITALIC);
+             }
+ 
+-            int strWidth = this.getFont().width(str);
++            Component highlightTip = this.lastToolHighlight.getHighlightTip(str);
++            Font font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(lastToolHighlight).getFont(lastToolHighlight, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.SELECTED_ITEM_NAME);
++            if (font == null)
++                font = this.getFont();
++            int strWidth = font.width(highlightTip);
+             int x = (graphics.guiWidth() - strWidth) / 2;
+-            int y = graphics.guiHeight() - 59;
++            int y = graphics.guiHeight() - Math.max(yShift, 59);
+             if (!this.minecraft.gameMode.canHurtPlayer()) {
+                 y += 14;
+             }
+@@ -648,7 +_,7 @@
+             }
+ 
+             if (alpha > 0) {
+-                graphics.textWithBackdrop(this.getFont(), str, x, y, strWidth, ARGB.white(alpha));
++                graphics.textWithBackdrop(font, highlightTip, x, y, strWidth, ARGB.white(alpha));
+             }
+         }
+     }
+@@ -1216,7 +_,9 @@
+                 this.toolHighlightTimer = 0;
+             } else if (this.lastToolHighlight.isEmpty()
+                 || !selected.is(this.lastToolHighlight.getItem())
+-                || !selected.getHoverName().equals(this.lastToolHighlight.getHoverName())) {
++                || !selected.getHoverName().equals(this.lastToolHighlight.getHoverName())
++                || !selected.getHighlightTip(selected.getHoverName()).equals(lastToolHighlight.getHighlightTip(lastToolHighlight.getHoverName()))
++            ) {
+                 this.toolHighlightTimer = (int)(40.0 * this.minecraft.options.notificationDisplayTime().get());
+             } else if (this.toolHighlightTimer > 0) {
+                 this.toolHighlightTimer--;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/RegistrySetBuilder.java
 +++ b/net/minecraft/core/RegistrySetBuilder.java
-@@ -23,7 +_,8 @@
+@@ -22,7 +_,8 @@
  import org.apache.commons.lang3.mutable.MutableObject;
  import org.jspecify.annotations.Nullable;
  
@@ -10,7 +10,7 @@
      private final List<RegistrySetBuilder.RegistryStub<?>> entries = new ArrayList<>();
  
      private static <T> HolderGetter<T> wrapContextLookup(final HolderLookup.RegistryLookup<T> original) {
-@@ -67,14 +_,43 @@
+@@ -66,14 +_,43 @@
      public <T> RegistrySetBuilder add(
          final ResourceKey<? extends Registry<T>> key, final Lifecycle lifecycle, final RegistrySetBuilder.RegistryBootstrap<T> bootstrap
      ) {
@@ -56,35 +56,35 @@
          RegistrySetBuilder.BuildState state = RegistrySetBuilder.BuildState.create(context, this.entries.stream().map(RegistrySetBuilder.RegistryStub::key));
          this.entries.forEach(e -> e.apply(state));
 @@ -181,14 +_,16 @@
-             throw new NullPointerException("No cloner for " + registryKey.identifier());
-         } else {
-             Map<ResourceKey<T>, Holder.Reference<T>> entries = new HashMap<>();
--            HolderLookup.RegistryLookup<T> patchContents = patchProvider.lookupOrThrow(registryKey);
-+            HolderLookup.RegistryLookup<T> patchContents = patchProvider.lookup(registryKey).orElse(null);
-             patchContents.listElements().forEach(elementHolder -> {
-                 ResourceKey<T> elementKey = elementHolder.key();
-                 RegistrySetBuilder.LazyHolder<T> holder = new RegistrySetBuilder.LazyHolder<>(owner, elementKey);
-                 holder.supplier = () -> cloner.clone((T)elementHolder.value(), patchProvider, targetProvider.get());
-                 entries.put(elementKey, holder);
-             });
--            HolderLookup.RegistryLookup<T> fallbackContents = fallbackProvider.lookupOrThrow(registryKey);
-+            HolderLookup.RegistryLookup<T> fallbackContents = fallbackProvider.lookup(registryKey).orElse(null);
-+            Lifecycle lifecycle = patchContents.registryLifecycle();
-+            if (fallbackContents != null) {
-             fallbackContents.listElements().forEach(elementHolder -> {
-                 ResourceKey<T> elementKey = elementHolder.key();
-                 entries.computeIfAbsent(elementKey, key -> {
-@@ -197,7 +_,8 @@
-                     return holder;
-                 });
-             });
--            Lifecycle lifecycle = patchContents.registryLifecycle().add(fallbackContents.registryLifecycle());
-+            lifecycle = patchContents.registryLifecycle().add(fallbackContents.registryLifecycle());
-+            }
-             return lookupFromMap(registryKey, lifecycle, owner, entries);
          }
+ 
+         Map<ResourceKey<T>, Holder.Reference<T>> entries = new HashMap<>();
+-        HolderLookup.RegistryLookup<T> patchContents = patchProvider.lookupOrThrow(registryKey);
++        HolderLookup.RegistryLookup<T> patchContents = patchProvider.lookup(registryKey).orElse(null);
+         patchContents.listElements().forEach(elementHolder -> {
+             ResourceKey<T> elementKey = elementHolder.key();
+             RegistrySetBuilder.LazyHolder<T> holder = new RegistrySetBuilder.LazyHolder<>(owner, elementKey);
+             holder.supplier = () -> cloner.clone((T)elementHolder.value(), patchProvider, targetProvider.get());
+             entries.put(elementKey, holder);
+         });
+-        HolderLookup.RegistryLookup<T> fallbackContents = fallbackProvider.lookupOrThrow(registryKey);
++        HolderLookup.RegistryLookup<T> fallbackContents = fallbackProvider.lookup(registryKey).orElse(null);
++        Lifecycle lifecycle = patchContents.registryLifecycle();
++        if (fallbackContents != null) {
+         fallbackContents.listElements().forEach(elementHolder -> {
+             ResourceKey<T> elementKey = elementHolder.key();
+             entries.computeIfAbsent(elementKey, key -> {
+@@ -197,7 +_,8 @@
+                 return holder;
+             });
+         });
+-        Lifecycle lifecycle = patchContents.registryLifecycle().add(fallbackContents.registryLifecycle());
++        lifecycle = patchContents.registryLifecycle().add(fallbackContents.registryLifecycle());
++        }
+         return lookupFromMap(registryKey, lifecycle, owner, entries);
      }
-@@ -271,6 +_,11 @@
+ 
+@@ -266,6 +_,11 @@
                  @Override
                  public <S> HolderGetter<S> lookup(final ResourceKey<? extends Registry<? extends S>> key) {
                      return (HolderGetter<S>)BuildState.this.registries.getOrDefault(key.identifier(), BuildState.this.lookup);

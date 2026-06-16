@@ -9,15 +9,15 @@
      }
  
      public boolean growMushroom(final ServerLevel level, final BlockPos pos, final BlockState state, final RandomSource random) {
-@@ -91,8 +_,10 @@
-         if (feature.isEmpty()) {
+@@ -92,8 +_,10 @@
              return false;
-         } else {
-+            var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, feature.get());
-+            if (event.getResult().isDenied()) return false;
-             level.removeBlock(pos, false);
--            if (feature.get().value().place(level, level.getChunkSource().getGenerator(), random, pos)) {
-+            if (event.getFeature().value().place(level, level.getChunkSource().getGenerator(), random, pos)) {
-                 return true;
-             } else {
-                 level.setBlock(pos, state, 3);
+         }
+ 
++        var event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, feature.get());
++        if (event.getResult().isDenied()) return false;
+         level.removeBlock(pos, false);
+-        if (feature.get().value().place(level, level.getChunkSource().getGenerator(), random, pos)) {
++        if (event.getFeature().value().place(level, level.getChunkSource().getGenerator(), random, pos)) {
+             return true;
+         }
+ 

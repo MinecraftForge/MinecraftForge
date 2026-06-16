@@ -44,7 +44,7 @@ public class ModelDataManager {
 
     public void requestRefresh(@NotNull BlockEntity blockEntity) {
         Preconditions.checkNotNull(blockEntity, "Block entity must not be null");
-        needModelDataRefresh.computeIfAbsent(ChunkPos.containing(blockEntity.getBlockPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
+        needModelDataRefresh.computeIfAbsent(ChunkPos.containing(blockEntity.getBlockPos()), _ -> Collections.synchronizedSet(new HashSet<>()))
                             .add(blockEntity.getBlockPos());
     }
 
@@ -52,7 +52,7 @@ public class ModelDataManager {
         Set<BlockPos> needUpdate = needModelDataRefresh.remove(chunk);
 
         if (needUpdate != null) {
-            Map<BlockPos, ModelData> data = modelDataCache.computeIfAbsent(chunk, $ -> new ConcurrentHashMap<>());
+            Map<BlockPos, ModelData> data = modelDataCache.computeIfAbsent(chunk, _ -> new ConcurrentHashMap<>());
             for (BlockPos pos : needUpdate) {
                 BlockEntity toUpdate = level.getBlockEntity(pos);
                 if (toUpdate != null && !toUpdate.isRemoved())

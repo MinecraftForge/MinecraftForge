@@ -8,13 +8,8 @@ package net.minecraftforge.common.data;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.BiomeTagsProvider;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BiomeTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,6 +22,7 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
         super(output, lookupProvider, "forge", existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void addTags(HolderLookup.Provider lookupProvider) {
         tag(NO_DEFAULT_MONSTERS).add(Biomes.MUSHROOM_FIELDS).add(Biomes.DEEP_DARK);
@@ -285,17 +281,6 @@ public final class ForgeBiomeTagsProvider extends BiomeTagsProvider {
 
         tag(IS_NETHER_FOREST).add(Biomes.CRIMSON_FOREST).add(Biomes.WARPED_FOREST);
         tag(IS_OUTER_END_ISLAND).add(Biomes.END_HIGHLANDS).add(Biomes.END_MIDLANDS).add(Biomes.END_BARRENS);
-    }
-
-    @SafeVarargs
-    private void tag(ResourceKey<Biome> biome, TagKey<Biome>... tags) {
-        for (TagKey<Biome> key : tags) {
-            tag(key).add(biome);
-        }
-    }
-
-    private static TagKey<Biome> forgeTagKey(String path) {
-        return BiomeTags.create(Identifier.fromNamespaceAndPath("forge", path));
     }
 
     @Override

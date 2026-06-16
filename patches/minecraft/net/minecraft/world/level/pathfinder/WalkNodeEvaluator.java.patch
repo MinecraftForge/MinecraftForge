@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
-@@ -484,6 +_,16 @@
+@@ -494,6 +_,16 @@
                  for (int dz = -1; dz <= 1; dz++) {
                      if (dx != 0 || dz != 0) {
                          PathType pathType = context.getPathTypeFromState(x + dx, y + dy, z + dz);
@@ -17,7 +17,7 @@
                          if (pathType == PathType.DAMAGING) {
                              return PathType.DAMAGING_IN_NEIGHBOR;
                          }
-@@ -510,6 +_,10 @@
+@@ -520,6 +_,10 @@
      protected static PathType getPathTypeFromState(final BlockGetter level, final BlockPos pos) {
          BlockState blockState = level.getBlockState(pos);
          Block block = blockState.getBlock();
@@ -27,22 +27,22 @@
 +
          if (blockState.isAir()) {
              return PathType.OPEN;
-         } else if (blockState.is(BlockTags.TRAPDOORS) || blockState.is(Blocks.LILY_PAD) || blockState.is(Blocks.BIG_DRIPLEAF)) {
-@@ -524,6 +_,8 @@
-             return PathType.COCOA;
-         } else if (!blockState.is(Blocks.WITHER_ROSE) && !blockState.is(Blocks.POINTED_DRIPSTONE)) {
+         }
+@@ -546,6 +_,8 @@
+ 
+         if (!blockState.is(Blocks.WITHER_ROSE) && !blockState.is(BlockTags.SPELEOTHEMS)) {
              FluidState fluidState = blockState.getFluidState();
 +            var nonLoggableFluidPathType = fluidState.getBlockPathType(level, pos, null, false);
 +            if (nonLoggableFluidPathType != null) return nonLoggableFluidPathType;
              if (fluidState.is(FluidTags.LAVA)) {
                  return PathType.LAVA;
-             } else if (isBurningBlock(blockState)) {
-@@ -544,6 +_,8 @@
-                 if (!blockState.isPathfindable(PathComputationType.LAND)) {
-                     return PathType.BLOCKED;
+             }
+@@ -558,6 +_,8 @@
+                 if (blockState.getValue(DoorBlock.OPEN)) {
+                     return PathType.DOOR_OPEN;
                  } else {
 +                    var loggableFluidPathType = fluidState.getBlockPathType(level, pos, null, true);
 +                    if (loggableFluidPathType != null) return loggableFluidPathType;
-                     return fluidState.is(FluidTags.WATER) ? PathType.WATER : PathType.OPEN;
+                     return door.type().canOpenByHand() ? PathType.DOOR_WOOD_CLOSED : PathType.DOOR_IRON_CLOSED;
                  }
              } else {

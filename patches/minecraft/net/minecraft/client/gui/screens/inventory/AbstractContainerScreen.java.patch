@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
 +++ b/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
-@@ -111,6 +_,7 @@
+@@ -98,6 +_,7 @@
          int xo = this.leftPos;
          int yo = this.topPos;
          super.extractRenderState(graphics, mouseX, mouseY, a);
@@ -8,7 +8,7 @@
          graphics.pose().pushMatrix();
          graphics.pose().translate(xo, yo);
          this.extractLabels(graphics, mouseX, mouseY);
-@@ -122,6 +_,7 @@
+@@ -109,6 +_,7 @@
          if (previouslyHoveredSlot != null && previouslyHoveredSlot != this.hoveredSlot) {
              this.onStopHovering(previouslyHoveredSlot);
          }
@@ -16,7 +16,7 @@
  
          graphics.pose().popMatrix();
      }
-@@ -200,7 +_,7 @@
+@@ -170,7 +_,7 @@
              ItemStack item = this.hoveredSlot.getItem();
              if (this.menu.getCarried().isEmpty() || this.showTooltipWithItemInHand(item)) {
                  graphics.setTooltipForNextFrame(
@@ -25,53 +25,53 @@
                  );
              }
          }
-@@ -216,7 +_,8 @@
+@@ -186,7 +_,8 @@
  
      private void extractFloatingItem(final GuiGraphicsExtractor graphics, final ItemStack carried, final int x, final int y, final @Nullable String itemCount) {
          graphics.item(carried, x, y);
--        graphics.itemDecorations(this.font, carried, x, y - (this.draggingItem.isEmpty() ? 0 : 8), itemCount);
+-        graphics.itemDecorations(this.font, carried, x, y, itemCount);
 +        var font = net.minecraftforge.client.extensions.common.IClientItemExtensions.of(carried).getFont(carried, net.minecraftforge.client.extensions.common.IClientItemExtensions.FontContext.ITEM_COUNT);
-+        graphics.itemDecorations(font == null ? this.font : font, carried, x, y - (this.draggingItem.isEmpty() ? 0 : 8), itemCount);
++        graphics.itemDecorations(font == null ? this.font : font, carried, x, y, itemCount);
      }
  
      protected void extractLabels(final GuiGraphicsExtractor graphics, final int xm, final int ym) {
-@@ -316,7 +_,8 @@
-         if (super.mouseClicked(event, doubleClick)) {
+@@ -285,7 +_,8 @@
              return true;
-         } else {
--            boolean cloning = this.minecraft.options.keyPickItem.matchesMouse(event) && this.minecraft.player.hasInfiniteMaterials();
-+            var mouseKey = com.mojang.blaze3d.platform.InputConstants.Type.MOUSE.getOrCreate(event.button());
-+            boolean cloning = this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey) && this.minecraft.player.hasInfiniteMaterials();
-             Slot slot = this.getHoveredSlot(event.x(), event.y());
-             this.doubleclick = this.lastClickSlot == slot && doubleClick;
-             this.skipNextRelease = false;
-@@ -326,6 +_,7 @@
-                 int xo = this.leftPos;
-                 int yo = this.topPos;
-                 boolean clickedOutside = this.hasClickedOutside(event.x(), event.y(), xo, yo);
-+                if (slot != null) clickedOutside = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
-                 int slotId = -1;
-                 if (slot != null) {
-                     slotId = slot.index;
-@@ -351,7 +_,7 @@
-                         }
-                     } else if (!this.isQuickCrafting) {
-                         if (this.menu.getCarried().isEmpty()) {
--                            if (cloning) {
-+                            if (this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey)) {
-                                 this.slotClicked(slot, slotId, event.button(), ContainerInput.CLONE);
-                             } else {
-                                 boolean quickKey = slotId != -999 && event.hasShiftDown();
-@@ -375,7 +_,7 @@
-                                 this.quickCraftingType = 0;
-                             } else if (event.button() == 1) {
-                                 this.quickCraftingType = 1;
--                            } else if (cloning) {
-+                            } else if (this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey)) {
-                                 this.quickCraftingType = 2;
-                             }
-                         }
-@@ -445,10 +_,13 @@
+         }
+ 
+-        boolean cloning = this.minecraft.options.keyPickItem.matchesMouse(event) && this.minecraft.player.hasInfiniteMaterials();
++        var mouseKey = com.mojang.blaze3d.platform.InputConstants.Type.MOUSE.getOrCreate(event.button());
++        boolean cloning = this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey) && this.minecraft.player.hasInfiniteMaterials();
+         Slot slot = this.getHoveredSlot(event.x(), event.y());
+         this.doubleclick = this.lastClickSlot == slot && doubleClick;
+         this.skipNextRelease = false;
+@@ -295,6 +_,7 @@
+             int xo = this.leftPos;
+             int yo = this.topPos;
+             boolean clickedOutside = this.hasClickedOutside(event.x(), event.y(), xo, yo);
++            if (slot != null) clickedOutside = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+             int slotId = -1;
+             if (slot != null) {
+                 slotId = slot.index;
+@@ -306,7 +_,7 @@
+ 
+             if (slotId != -1 && !this.isQuickCrafting) {
+                 if (this.menu.getCarried().isEmpty()) {
+-                    if (cloning) {
++                    if (this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey)) {
+                         this.slotClicked(slot, slotId, event.button(), ContainerInput.CLONE);
+                     } else {
+                         boolean quickKey = slotId != -999 && event.hasShiftDown();
+@@ -330,7 +_,7 @@
+                         this.quickCraftingType = 0;
+                     } else if (event.button() == 1) {
+                         this.quickCraftingType = 1;
+-                    } else if (cloning) {
++                    } else if (this.minecraft.options.keyPickItem.isActiveAndMatches(mouseKey)) {
+                         this.quickCraftingType = 2;
+                     }
+                 }
+@@ -374,10 +_,13 @@
  
      @Override
      public boolean mouseReleased(final MouseButtonEvent event) {
@@ -85,7 +85,7 @@
          int slotId = -1;
          if (slot != null) {
              slotId = slot.index;
-@@ -465,7 +_,7 @@
+@@ -394,7 +_,7 @@
                          if (target != null
                              && target.mayPickup(this.minecraft.player)
                              && target.hasItem()
@@ -94,8 +94,8 @@
                              && AbstractContainerMenu.canItemQuickReplace(target, this.lastQuickMoved, true)) {
                              this.slotClicked(target, target.index, event.button(), ContainerInput.QUICK_MOVE);
                          }
-@@ -524,7 +_,7 @@
-             } else if (this.isQuickCrafting && !this.quickCraftSlots.isEmpty()) {
+@@ -421,7 +_,7 @@
+             if (this.isQuickCrafting && !this.quickCraftSlots.isEmpty()) {
                  this.quickCraftToSlots();
              } else if (!this.menu.getCarried().isEmpty()) {
 -                if (this.minecraft.options.keyPickItem.matchesMouse(event)) {
@@ -103,16 +103,16 @@
                      this.slotClicked(slot, slotId, event.button(), ContainerInput.CLONE);
                  } else {
                      boolean quickKey = slotId != -999 && event.hasShiftDown();
-@@ -595,7 +_,7 @@
-     public boolean keyPressed(final KeyEvent event) {
-         if (super.keyPressed(event)) {
+@@ -489,7 +_,7 @@
              return true;
--        } else if (this.minecraft.options.keyInventory.matches(event)) {
-+        } else if (this.minecraft.options.keyInventory.isActiveAndMatches(com.mojang.blaze3d.platform.InputConstants.getKey(event))) {
+         }
+ 
+-        if (this.minecraft.options.keyInventory.matches(event)) {
++        if (this.minecraft.options.keyInventory.isActiveAndMatches(com.mojang.blaze3d.platform.InputConstants.getKey(event))) {
              this.onClose();
              return true;
-         } else {
-@@ -693,6 +_,13 @@
+         }
+@@ -587,4 +_,11 @@
  
          super.onClose();
      }
@@ -123,6 +123,4 @@
 +    public int getGuiTop() { return topPos; }
 +    public int getXSize() { return imageWidth; }
 +    public int getYSize() { return imageHeight; }
- 
-     @OnlyIn(Dist.CLIENT)
-     private record SnapbackData(ItemStack item, Vector2i start, Vector2i end, long time) {
+ }

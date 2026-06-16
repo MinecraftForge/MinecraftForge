@@ -26,7 +26,7 @@ public class CrashReportExtender {
     public static void extendSystemReport(final SystemReport systemReport) {
         for (final ISystemReportExtender call : CrashReportCallables.allCrashCallables()) {
             if (call.isActive())
-                systemReport.setDetail(call.getLabel(), call);
+                systemReport.setDetail(call.getLabel(), call::get);
         }
     }
 

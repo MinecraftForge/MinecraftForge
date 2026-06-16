@@ -13,10 +13,10 @@
              level.gameEvent(GameEvent.BLOCK_ACTIVATE, pos, GameEvent.Context.of(extendedState));
          } else if (b0 == 1 || b0 == 2) {
 +            if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(level, pos, direction, false)) return false;
-             BlockEntity prevBlockEntity = level.getBlockEntity(pos.relative(direction));
-             if (prevBlockEntity instanceof PistonMovingBlockEntity) {
-                 ((PistonMovingBlockEntity)prevBlockEntity).finalTick();
-@@ -221,6 +_,7 @@
+             if (level.getBlockEntity(pos.relative(direction)) instanceof PistonMovingBlockEntity pistonMovingBlockEntity) {
+                 pistonMovingBlockEntity.finalTick();
+             }
+@@ -220,6 +_,7 @@
              level.gameEvent(GameEvent.BLOCK_DEACTIVATE, pos, GameEvent.Context.of(movingPistonState));
          }
  
@@ -24,7 +24,7 @@
          return true;
      }
  
-@@ -369,6 +_,11 @@
+@@ -376,6 +_,11 @@
      @Override
      protected BlockState rotate(final BlockState state, final Rotation rotation) {
          return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));

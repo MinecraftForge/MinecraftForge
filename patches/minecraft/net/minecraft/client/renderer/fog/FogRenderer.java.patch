@@ -1,19 +1,19 @@
 --- a/net/minecraft/client/renderer/fog/FogRenderer.java
 +++ b/net/minecraft/client/renderer/fog/FogRenderer.java
-@@ -153,6 +_,12 @@
-                 fogBlue = Mth.lerp(brightenFactor, fogBlue, fogBlue * targetScale);
-             }
- 
-+            var fogColor = net.minecraftforge.client.ForgeHooksClient.getFogColor(camera, partialTicks, level, renderDistance, darkenWorldAmount, fogRed, fogGreen, fogBlue);
-+
-+            fogRed = fogColor.x();
-+            fogGreen = fogColor.y();
-+            fogBlue = fogColor.z();
-+
-             dest.set(fogRed, fogGreen, fogBlue, 1.0F);
+@@ -159,6 +_,12 @@
+             fogBlue = Mth.lerp(brightenFactor, fogBlue, fogBlue * scale);
          }
+ 
++        var fogColor = net.minecraftforge.client.ForgeHooksClient.getFogColor(camera, partialTicks, level, renderDistance, darkenWorldAmount, fogRed, fogGreen, fogBlue);
++
++        fogRed = fogColor.x();
++        fogGreen = fogColor.y();
++        fogBlue = fogColor.z();
++
+         dest.set(fogRed, fogGreen, fogBlue, 1.0F);
      }
-@@ -181,6 +_,7 @@
+ 
+@@ -186,6 +_,7 @@
          float renderDistanceFogSpan = Mth.clamp(renderDistanceInBlocks / 10.0F, 4.0F, 64.0F);
          fog.renderDistanceStart = renderDistanceInBlocks - renderDistanceFogSpan;
          fog.renderDistanceEnd = renderDistanceInBlocks;

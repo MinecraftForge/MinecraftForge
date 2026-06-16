@@ -78,9 +78,9 @@
 +    private ItemStack mixVanilla(final ItemStack ingredient, final ItemStack source) {
          if (source.isEmpty()) {
              return source;
-         } else {
-@@ -126,9 +_,29 @@
          }
+@@ -126,9 +_,29 @@
+         return source;
      }
  
 +    /**

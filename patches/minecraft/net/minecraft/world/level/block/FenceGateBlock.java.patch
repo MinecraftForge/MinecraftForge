@@ -25,7 +25,7 @@
          this.registerDefaultState(this.stateDefinition.any().setValue(OPEN, false).setValue(POWERED, false).setValue(IN_WALL, false));
      }
  
-@@ -160,7 +_,7 @@
+@@ -156,7 +_,7 @@
  
          boolean opens = state.getValue(OPEN);
          level.playSound(
@@ -34,7 +34,7 @@
          );
          level.gameEvent(player, opens ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
          return InteractionResult.SUCCESS;
-@@ -174,7 +_,7 @@
+@@ -170,7 +_,7 @@
              boolean open = state.getValue(OPEN);
              level.setBlockAndUpdate(pos, state.setValue(OPEN, !open));
              level.playSound(
@@ -43,7 +43,7 @@
              );
              level.gameEvent(open ? GameEvent.BLOCK_CLOSE : GameEvent.BLOCK_OPEN, pos, GameEvent.Context.of(state));
          }
-@@ -194,7 +_,7 @@
+@@ -190,7 +_,7 @@
                      level.playSound(
                          null,
                          pos,

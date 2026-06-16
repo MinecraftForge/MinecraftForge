@@ -8,12 +8,12 @@
                  if (optionalShape.isPresent()) {
                      optionalShape.get().createPortalBlocks(level);
                      return;
-@@ -203,7 +_,7 @@
-             boolean hasObsidian = false;
+@@ -204,7 +_,7 @@
+         boolean hasObsidian = false;
  
-             for (Direction face : Direction.values()) {
--                if (level.getBlockState(testPos.set(pos).move(face)).is(Blocks.OBSIDIAN)) {
-+                if (level.getBlockState(testPos.set(pos).move(face)).isPortalFrame(level, testPos)) {
-                     hasObsidian = true;
-                     break;
-                 }
+         for (Direction face : Direction.values()) {
+-            if (level.getBlockState(testPos.set(pos).move(face)).is(Blocks.OBSIDIAN)) {
++            if (level.getBlockState(testPos.set(pos).move(face)).isPortalFrame(level, testPos)) {
+                 hasObsidian = true;
+                 break;
+             }

@@ -7,11 +7,11 @@ package net.minecraftforge.debug.gameplay.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.tags.VanillaBlockTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -51,14 +51,14 @@ public class ChorusBlockPlacementTest extends BaseTestMod {
         event.getGenerator().addProvider(event.includeServer(), new BlockTagProvider(event));
     }
 
-    private static final class BlockTagProvider extends BlockTagsProvider {
+    private static final class BlockTagProvider extends VanillaBlockTagsProvider {
         public BlockTagProvider(GatherDataEvent event) {
             super(event.getGenerator().getPackOutput(), event.getLookupProvider(), MOD_ID, event.getExistingFileHelper());
         }
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            this.tag(BlockTags.SUPPORTS_CHORUS_PLANT).add(BLOCK.get());
+            this.tag(BlockTags.SUPPORTS_CHORUS_PLANT).add(BLOCK.getKey());
         }
     }
 }

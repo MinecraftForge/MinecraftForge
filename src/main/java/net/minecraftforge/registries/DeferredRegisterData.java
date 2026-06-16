@@ -155,7 +155,7 @@ public class DeferredRegisterData<T> implements RegistryBootstrap<T> {
      * @see #register(String, Supplier)
      */
     public <I extends T> RegistryObject<I> register(final String name, final Supplier<? extends I> factory) {
-        return register(name, ctx -> factory.get());
+        return register(name, _ -> factory.get());
     }
 
     /**

@@ -23,12 +23,12 @@
                  throw new StitcherException(holder.entry, holders.stream().map(h -> h.entry).collect(ImmutableList.toImmutableList()));
              }
          }
-@@ -93,7 +_,7 @@
-             boolean yWillGrow = yCanGrow && yCurrentSize != yNewSize;
-             boolean growOnX;
-             if (xWillGrow ^ yWillGrow) {
--                growOnX = xWillGrow;
-+                growOnX = !xWillGrow && xCanGrow; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
-             } else {
-                 growOnX = xCanGrow && xCurrentSize <= yCurrentSize;
-             }
+@@ -94,7 +_,7 @@
+         boolean yWillGrow = yCanGrow && yCurrentSize != yNewSize;
+         boolean growOnX;
+         if (xWillGrow ^ yWillGrow) {
+-            growOnX = xWillGrow;
++            growOnX = !xWillGrow && xCanGrow; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
+         } else {
+             growOnX = xCanGrow && xCurrentSize <= yCurrentSize;
+         }

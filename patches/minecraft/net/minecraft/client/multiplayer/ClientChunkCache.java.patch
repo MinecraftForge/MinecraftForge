@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkCache.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkCache.java
-@@ -65,6 +_,7 @@
+@@ -64,6 +_,7 @@
              int index = this.storage.getIndex(pos.x(), pos.z());
              LevelChunk currentChunk = this.storage.getChunk(index);
              if (isValidChunk(currentChunk, pos.x(), pos.z())) {
@@ -9,10 +9,10 @@
              }
          }
 @@ -124,6 +_,7 @@
-             }
- 
-             this.level.onChunkLoaded(pos);
-+            net.minecraftforge.event.level.ChunkEvent.Load.BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(chunk, false));
-             return chunk;
          }
+ 
+         this.level.onChunkLoaded(pos);
++        net.minecraftforge.event.level.ChunkEvent.Load.BUS.post(new net.minecraftforge.event.level.ChunkEvent.Load(chunk, false));
+         return chunk;
      }
+ 

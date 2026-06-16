@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.block.FluidRenderer;
@@ -138,7 +138,7 @@ public interface IClientFluidTypeExtensions {
      * @param mc        the client instance
      * @param poseStack the transformations representing the current rendering position
      */
-    default void renderOverlay(Minecraft mc, PoseStack poseStack, MultiBufferSource buffer) {
+    default void renderOverlay(Minecraft mc, PoseStack poseStack, SubmitNodeCollector buffer) {
         Identifier texture = this.getRenderOverlayTexture(mc);
         if (texture != null)
             ScreenEffectRenderer.renderFluid(mc, poseStack, buffer, texture);

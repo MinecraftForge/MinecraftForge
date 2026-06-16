@@ -33,7 +33,7 @@
          values.unwrap().ifRight(directValues -> {
              if (directValues.isEmpty()) {
                  throw new UnsupportedOperationException("Ingredients can't be empty");
-@@ -106,5 +_,50 @@
+@@ -113,5 +_,50 @@
          } else {
              return inputDisplay;
          }

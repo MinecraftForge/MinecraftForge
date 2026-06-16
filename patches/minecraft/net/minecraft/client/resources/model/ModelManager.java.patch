@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/resources/model/ModelManager.java
 +++ b/net/minecraft/client/resources/model/ModelManager.java
-@@ -67,6 +_,7 @@
+@@ -61,6 +_,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final FileToIdConverter MODEL_LISTER = FileToIdConverter.json("models");
      private Map<Identifier, ItemModel> bakedItemStackModels = Map.of();
@@ -8,7 +8,7 @@
      private Map<Identifier, ClientItem.Properties> itemProperties = Map.of();
      private final AtlasManager atlasManager;
      private final PlayerSkinRenderCache playerSkinRenderCache;
-@@ -77,6 +_,7 @@
+@@ -71,6 +_,7 @@
      private @Nullable BlockModelSet blockModelSet;
      private @Nullable FluidStateModelSet fluidStateModelSet;
      private Object2IntMap<BlockState> modelGroups = Object2IntMaps.emptyMap();
@@ -16,7 +16,7 @@
  
      public ModelManager(final BlockColors blockColors, final AtlasManager atlasManager, final PlayerSkinRenderCache playerSkinRenderCache) {
          this.blockColors = blockColors;
-@@ -88,6 +_,18 @@
+@@ -82,6 +_,18 @@
          return this.bakedItemStackModels.getOrDefault(id, this.missingModels.item());
      }
  
@@ -35,7 +35,7 @@
      public ClientItem.Properties getItemProperties(final Identifier id) {
          return this.itemProperties.getOrDefault(id, ClientItem.Properties.DEFAULT);
      }
-@@ -111,6 +_,7 @@
+@@ -105,6 +_,7 @@
          final PreparableReloadListener.PreparationBarrier preparationBarrier,
          final Executor reloadExecutor
      ) {
@@ -43,16 +43,14 @@
          ResourceManager manager = currentReload.resourceManager();
          CompletableFuture<EntityModelSet> entityModelSet = CompletableFuture.supplyAsync(EntityModelSet::vanilla, taskExecutor);
          CompletableFuture<Map<Identifier, UnbakedModel>> modelCache = loadBlockModels(manager, taskExecutor);
-@@ -269,6 +_,8 @@
-             bakedModelsFuture,
+@@ -224,12 +_,14 @@
              (bakingResult, bakedModels) -> {
-                 Map<Fluid, FluidModel> fluidModels = FluidStateModelSet.bake(materialBaker);
-+                fluidModels = net.minecraftforge.client.ForgeHooksClient.onFluidModelBake(bakery, materialBaker, fluidModels);
+                 blockItemMaterialBaker.logMissingTextures();
+                 Map<Fluid, FluidModel> fluidModels = FluidStateModelSet.bake(blockOnlyMaterialBaker);
++                fluidModels = net.minecraftforge.client.ForgeHooksClient.onFluidModelBake(bakery, blockOnlyMaterialBaker, fluidModels);
 +                net.minecraftforge.client.ForgeHooksClient.onModifyBakingResult(bakery, bakingResult);
-                 missingSprites.asMap()
-                     .forEach(
-                         (location, sprites) -> LOGGER.warn(
-@@ -289,7 +_,7 @@
+                 blockOnlyMaterialBaker.logMissingTextures();
+                 Map<BlockState, BlockStateModel> modelByStateCache = createBlockStateToModelDispatch(
                      bakingResult.blockStateModels(), bakingResult.missingModels().block()
                  );
                  return new ModelManager.ReloadState(
@@ -61,7 +59,7 @@
                  );
              }
          );
-@@ -327,10 +_,15 @@
+@@ -261,10 +_,15 @@
  
      private void apply(final ModelManager.ReloadState preparations) {
          ModelBakery.BakingResult bakedModels = preparations.bakedModels;
@@ -77,7 +75,7 @@
          this.blockStateModelSet = new BlockStateModelSet(preparations.blockStateModels, this.missingModels.block());
          this.blockModelSet = new BlockModelSet(this.blockStateModelSet, preparations.blockModels, this.blockColors);
          this.fluidStateModelSet = new FluidStateModelSet(preparations.fluidModels, this.missingModels.fluid());
-@@ -366,7 +_,8 @@
+@@ -333,7 +_,8 @@
          Map<BlockState, BlockStateModel> blockStateModels,
          Map<BlockState, BlockModel> blockModels,
          Map<Fluid, FluidModel> fluidModels,

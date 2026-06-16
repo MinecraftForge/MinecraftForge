@@ -8,7 +8,6 @@
     {
       "recipe": {
         "type": "minecraft:crafting_shapeless",
-        "category": "misc",
         "ingredients": [
           "minecraft:iron_ore",
           "minecraft:iron_ore",

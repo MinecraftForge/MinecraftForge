@@ -15,7 +15,7 @@
      private static final Logger LOGGER = LogUtils.getLogger();
      private static final int CIRCULAR_LOG_SIZE = 10;
      private final Queue<GlDebug.LogEntry> MESSAGE_BUFFER = EvictingQueue.create(10);
-@@ -103,6 +_,8 @@
+@@ -83,6 +_,8 @@
          }
  
          LOGGER.info("OpenGL debug message: {}", entry);
@@ -24,21 +24,21 @@
      }
  
      public List<String> getLastOpenGlDebugMessages() {
-@@ -126,7 +_,7 @@
-                 GlDebug debug = new GlDebug();
-                 enabledExtensions.add("GL_KHR_debug");
-                 GL11.glEnable(37600);
--                if (debugSynchronousGlLogs) {
-+                if (debugSynchronousGlLogs | PRINT_STACKTRACE_ON_ERROR) {
-                     GL11.glEnable(33346);
-                 }
+@@ -107,7 +_,7 @@
+             GlDebug debug = new GlDebug();
+             enabledExtensions.add("GL_KHR_debug");
+             GL33C.glEnable(37600);
+-            if (debugSynchronousGlLogs) {
++            if (debugSynchronousGlLogs | PRINT_STACKTRACE_ON_ERROR) {
+                 GL33C.glEnable(33346);
+             }
  
-@@ -140,7 +_,7 @@
-             } else if (caps.GL_ARB_debug_output && GlDevice.USE_GL_ARB_debug_output) {
-                 GlDebug debug = new GlDebug();
-                 enabledExtensions.add("GL_ARB_debug_output");
--                if (debugSynchronousGlLogs) {
-+                if (debugSynchronousGlLogs | PRINT_STACKTRACE_ON_ERROR) {
-                     GL11.glEnable(33346);
-                 }
+@@ -121,7 +_,7 @@
+         } else if (caps.GL_ARB_debug_output && GlDevice.USE_GL_ARB_debug_output) {
+             GlDebug debug = new GlDebug();
+             enabledExtensions.add("GL_ARB_debug_output");
+-            if (debugSynchronousGlLogs) {
++            if (debugSynchronousGlLogs | PRINT_STACKTRACE_ON_ERROR) {
+                 GL33C.glEnable(33346);
+             }
  

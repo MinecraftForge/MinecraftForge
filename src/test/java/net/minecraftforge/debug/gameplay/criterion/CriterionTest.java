@@ -9,9 +9,9 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.BlockPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
+import net.minecraft.advancements.triggers.CriterionTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,6 +19,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.references.ItemIds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
@@ -107,12 +108,12 @@ public final class CriterionTest extends BaseTestMod {
             @Override
             protected void addTags(HolderLookup.Provider lookup) {
                 this.tag(tag)
-                    .add(Items.COD)
-                    .add(Items.SALMON)
-                    .add(Items.TROPICAL_FISH)
-                    .add(Items.PUFFERFISH)
-                    .add(Items.COOKED_COD)
-                    .add(Items.COOKED_SALMON)
+                    .add(ItemIds.COD)
+                    .add(ItemIds.SALMON)
+                    .add(ItemIds.TROPICAL_FISH)
+                    .add(ItemIds.PUFFERFISH)
+                    .add(ItemIds.COOKED_COD)
+                    .add(ItemIds.COOKED_SALMON)
                 ;
             }
         });
@@ -124,7 +125,7 @@ public final class CriterionTest extends BaseTestMod {
                 event.getGenerator().getPackOutput(),
                 event.getLookupProvider(),
                 event.getExistingFileHelper(),
-                List.of(((registries, saver, existingFileHelper) -> {
+                List.of(((registries, saver, _) -> {
                     var blocks = registries.lookup(Registries.BLOCK).get();
                     var items = registries.lookup(Registries.ITEM).get();
                     saver.accept(new Advancement.Builder()

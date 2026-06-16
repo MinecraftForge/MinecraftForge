@@ -31,7 +31,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntRBTreeMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.nbt.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -498,7 +497,7 @@ public class ForgeRegistry<V> implements IForgeRegistryInternal<V>, IForgeRegist
     }
 
     private Holder.Reference<V> bindDelegate(ResourceKey<V> rkey, V value) {
-        Holder.Reference<V> delegate = delegatesByName.computeIfAbsent(rkey.identifier(), k -> Holder.Reference.createStandAlone(this.getWrapperOrThrow(), rkey));
+        Holder.Reference<V> delegate = delegatesByName.computeIfAbsent(rkey.identifier(), _ -> Holder.Reference.createStandAlone(this.getWrapperOrThrow(), rkey));
         delegate.bindKey(rkey);
         delegate.bindValue(value);
         delegatesByValue.put(value, delegate);

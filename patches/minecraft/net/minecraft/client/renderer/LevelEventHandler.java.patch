@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LevelEventHandler.java
 +++ b/net/minecraft/client/renderer/LevelEventHandler.java
-@@ -302,7 +_,7 @@
+@@ -305,7 +_,7 @@
              case 2001:
                  BlockState blockState = Block.stateById(data);
                  if (!blockState.isAir()) {

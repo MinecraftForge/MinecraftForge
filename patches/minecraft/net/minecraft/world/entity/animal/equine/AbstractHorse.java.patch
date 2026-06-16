@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/equine/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/equine/AbstractHorse.java
-@@ -143,6 +_,7 @@
+@@ -142,6 +_,7 @@
          }
  
          this.addBehaviourGoals();
@@ -8,7 +8,7 @@
      }
  
      protected void addBehaviourGoals() {
-@@ -278,16 +_,19 @@
+@@ -277,17 +_,20 @@
  
      @Override
      public boolean causeFallDamage(final double fallDistance, final float damageModifier, final DamageSource damageSource) {
@@ -24,14 +24,15 @@
 +        int dmg = this.calculateFallDamage(event.getDistance(), event.getDamageMultiplier());
          if (dmg <= 0) {
              return false;
-         } else {
-             this.hurt(damageSource, dmg);
--            this.propagateFallToPassengers(fallDistance, damageModifier, damageSource);
-+            this.propagateFallToPassengers(event.getDistance(), event.getDamageMultiplier(), damageSource);
-             this.playBlockFallSound();
-             return true;
          }
-@@ -343,9 +_,9 @@
+ 
+         this.hurt(damageSource, dmg);
+-        this.propagateFallToPassengers(fallDistance, damageModifier, damageSource);
++        this.propagateFallToPassengers(event.getDistance(), event.getDamageMultiplier(), damageSource);
+         this.playBlockFallSound();
+         return true;
+     }
+@@ -342,9 +_,9 @@
      protected void playStepSound(final BlockPos pos, final BlockState blockState) {
          if (!blockState.liquid()) {
              BlockState aboveState = this.level().getBlockState(pos.above());
@@ -43,7 +44,7 @@
              }
  
              if (this.isVehicle() && this.canGallop) {
-@@ -777,6 +_,7 @@
+@@ -778,6 +_,7 @@
              float cos = Mth.cos(this.getYRot() * (float) (Math.PI / 180.0));
              this.setDeltaMovement(this.getDeltaMovement().add(-0.4F * sin * amount, 0.0, 0.4F * cos * amount));
          }
@@ -51,7 +52,7 @@
      }
  
      protected void playJumpSound() {
-@@ -1027,6 +_,26 @@
+@@ -1028,6 +_,26 @@
  
      public boolean hasInventoryChanged(final Container oldInventory) {
          return this.inventory != oldInventory;

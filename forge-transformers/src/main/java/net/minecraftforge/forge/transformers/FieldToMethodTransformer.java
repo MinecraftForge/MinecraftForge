@@ -126,7 +126,7 @@ record FieldToMethodTransformer(String className, Map<String, String> fields) im
             throw new IllegalStateException("No field with name " + fieldName + " found");
 
         if (!Modifier.isPrivate(foundField.access) || Modifier.isStatic(foundField.access))
-            throw new IllegalStateException("Field " + fieldName + " is not private and an instance field");
+            throw new IllegalStateException("Field " + classNode.name + '.' +  fieldName + " is not private and an instance field");
 
         var methodSignature = "()" + foundField.desc;
         var foundMethod = findMethod(classNode, methodName, methodSignature);

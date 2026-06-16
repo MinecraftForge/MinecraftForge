@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/tags/BlockItemTagsProvider.java
++++ b/net/minecraft/data/tags/BlockItemTagsProvider.java
+@@ -64,6 +_,12 @@
+             return this;
+         }
+ 
++        default BlockItemTagsProvider.CombinedAppender add(final BlockItemTagId... ids) {
++            for (var id : ids)
++                addTag(id);
++            return this;
++        }
++
+         default BlockItemTagsProvider.CombinedAppender addAll(final Collection<BlockItemId> ids) {
+             this.addAll(ids.stream());
+             return this;

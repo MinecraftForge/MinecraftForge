@@ -1,16 +1,16 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -829,7 +_,7 @@
+@@ -830,7 +_,7 @@
          }
      }
  
--    public static enum RaiderType {
-+    public static enum RaiderType implements net.minecraftforge.common.IExtensibleEnum {
-         VINDICATOR(EntityType.VINDICATOR, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
-         EVOKER(EntityType.EVOKER, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
-         PILLAGER(EntityType.PILLAGER, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -843,6 +_,20 @@
-         private RaiderType(final EntityType<? extends Raider> entityType, final int[] spawnsPerWaveBeforeBonus) {
+-    public enum RaiderType {
++    public enum RaiderType implements net.minecraftforge.common.IExtensibleEnum {
+         VINDICATOR(EntityTypes.VINDICATOR, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
+         EVOKER(EntityTypes.EVOKER, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
+         PILLAGER(EntityTypes.PILLAGER, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
+@@ -844,6 +_,20 @@
+         RaiderType(final EntityType<? extends Raider> entityType, final int[] spawnsPerWaveBeforeBonus) {
              this.entityType = entityType;
              this.spawnsPerWaveBeforeBonus = spawnsPerWaveBeforeBonus;
 +        }

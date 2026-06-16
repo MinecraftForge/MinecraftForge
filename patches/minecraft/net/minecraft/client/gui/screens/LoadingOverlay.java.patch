@@ -16,7 +16,7 @@
 +        if (extractContentRenderState(graphics, logoAlpha)) {
          int contentX = (int)(graphics.guiWidth() * 0.5);
          int logoY = (int)(graphics.guiHeight() * 0.5);
-         double logoHeight = Math.min(graphics.guiWidth() * 0.75, (double)graphics.guiHeight()) * 0.25;
+         double logoHeight = Math.min(graphics.guiWidth() * 0.75, graphics.guiHeight()) * 0.25;
 @@ -148,6 +_,7 @@
                  graphics, width / 2 - logoWidthHalf, barY - 5, width / 2 + logoWidthHalf, barY + 5, 1.0F - Mth.clamp(fadeOutAnim, 0.0F, 1.0F)
              );
@@ -24,7 +24,7 @@
 +        }
  
          if (fadeOutAnim >= 2.0F) {
-             this.minecraft.setOverlay(null);
+             this.minecraft.gui.setOverlay(null);
 @@ -157,6 +_,7 @@
      @Override
      public void tick() {
@@ -34,10 +34,10 @@
                  this.reload.checkExceptions();
                  this.onFinish.accept(Optional.empty());
 @@ -164,7 +_,6 @@
-                 this.onFinish.accept(Optional.of(var2));
+                 this.onFinish.accept(Optional.of(t));
              }
  
 -            this.fadeOutStart = Util.getMillis();
-             if (this.minecraft.screen != null) {
+             if (this.minecraft.gui.screen() != null) {
                  Window window = this.minecraft.getWindow();
-                 this.minecraft.screen.init(window.getGuiScaledWidth(), window.getGuiScaledHeight());
+                 this.minecraft.gui.screen().init(window.getGuiScaledWidth(), window.getGuiScaledHeight());

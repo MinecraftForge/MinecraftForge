@@ -53,7 +53,7 @@ public abstract class ModContainer {
         Supplier<IExtensionPoint.DisplayTest> displayTestSupplier = switch (displayTestString) {
             case "MATCH_VERSION" -> // default displaytest checks for version string match
                     () -> new IExtensionPoint.DisplayTest(() -> this.modInfo.getVersion().toString(),
-                        (incoming, isNetwork) -> Objects.equals(incoming, this.modInfo.getVersion().toString()));
+                        (incoming, _) -> Objects.equals(incoming, this.modInfo.getVersion().toString()));
             case "IGNORE_SERVER_VERSION" -> // Ignores any version information coming from the server - use for server only mods
                     IExtensionPoint.DisplayTest.IGNORE_SERVER_VERSION;
             case "IGNORE_ALL_VERSION" -> // Ignores all information and provides no information

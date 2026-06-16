@@ -3,7 +3,7 @@
 @@ -9,8 +_,13 @@
  import net.minecraft.world.level.levelgen.structure.Structure;
  
- public class StructureTagsProvider extends KeyTagProvider<Structure> {
+ public class StructureTagsProvider extends TagsProvider<Structure> {
 +    /** @deprecated Forge: Use the {@linkplain #StructureTagsProvider(PackOutput, CompletableFuture, String, net.minecraftforge.common.data.ExistingFileHelper) mod id variant} */
      public StructureTagsProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider) {
          super(output, Registries.STRUCTURE, lookupProvider);

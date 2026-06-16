@@ -25,9 +25,9 @@ import java.util.Map;
 @Mod(CustomParticleTypeTest.MOD_ID)
 public class CustomParticleTypeTest extends BaseTestMod {
     public static final String MOD_ID = "custom_particle_type_test";
-    private static final ParticleRenderType CUSTOM_TYPE = new ParticleRenderType("GRP_ONE");
-    private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType("GRP_TWO");
-    private static final ParticleRenderType CUSTOM_TYPE_DUP = new ParticleRenderType("GRP_DUP");
+    private static final ParticleRenderType CUSTOM_TYPE = new ParticleRenderType("GRP_ONE", "G1");
+    private static final ParticleRenderType CUSTOM_TYPE_TWO = new ParticleRenderType("GRP_TWO", "G2");
+    private static final ParticleRenderType CUSTOM_TYPE_DUP = new ParticleRenderType("GRP_DUP", "GD");
 
     public CustomParticleTypeTest(FMLJavaModLoadingContext context) {
         super(context, false, false);

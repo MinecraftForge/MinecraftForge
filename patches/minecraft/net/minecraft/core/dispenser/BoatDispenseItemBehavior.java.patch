@@ -25,4 +25,4 @@
 -        AbstractBoat boat = this.type.create(level, EntitySpawnReason.DISPENSER);
          if (boat != null) {
              boat.setInitialPos(spawnX, spawnY + yOffset, spawnZ);
-             EntityType.<AbstractBoat>createDefaultStackConfig(level, dispensed, null).accept(boat);
+             EntityType.<AbstractBoat>createDefaultStackConfig(level, dispensed, null).apply(boat);

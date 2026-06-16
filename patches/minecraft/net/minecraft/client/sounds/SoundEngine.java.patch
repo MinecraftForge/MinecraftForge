@@ -16,7 +16,7 @@
      }
  
      private synchronized void loadLibrary() {
-@@ -340,12 +_,15 @@
+@@ -340,7 +_,7 @@
          }
      }
  
@@ -24,31 +24,33 @@
 +    public SoundEngine.PlayResult play(SoundInstance instance) {
          if (!this.loaded) {
              return SoundEngine.PlayResult.NOT_STARTED;
-         } else if (!instance.canPlaySound()) {
+         }
+@@ -349,6 +_,9 @@
              return SoundEngine.PlayResult.NOT_STARTED;
-         } else {
-+            instance = net.minecraftforge.client.ForgeHooksClient.playSound(this, instance);
-+            if (instance == null || !instance.canPlaySound())
-+                return SoundEngine.PlayResult.NOT_STARTED;
-             WeighedSoundEvents soundEvent = instance.resolve(this.soundManager);
-             Identifier eventLocation = instance.getIdentifier();
-             if (soundEvent == null) {
-@@ -425,15 +_,18 @@
-                         channel.setSelfPosition(position);
-                         channel.setRelative(isRelative);
-                     });
-+                    SoundInstance soundinstance = instance;
-                     if (!isStreaming) {
-                         this.soundBuffers.getCompleteBuffer(sound.getPath()).thenAccept(soundBuffer -> handle.execute(channel -> {
-                             channel.attachStaticBuffer(soundBuffer);
-                             channel.play();
-+                            net.minecraftforge.client.event.ForgeEventFactoryClient.onPlaySoundSource(this, soundinstance, channel);
-                         }));
-                     } else {
-                         this.soundBuffers.getStream(sound.getPath(), isLooping).thenAccept(stream -> handle.execute(channel -> {
-                             channel.attachBufferStream(stream);
-                             channel.play();
-+                            net.minecraftforge.client.event.ForgeEventFactoryClient.onPlayStreamingSource(this, soundinstance, channel);
-                         }));
-                     }
+         }
+ 
++        instance = net.minecraftforge.client.ForgeHooksClient.playSound(this, instance);
++        if (instance == null || !instance.canPlaySound())
++            return SoundEngine.PlayResult.NOT_STARTED;
+         WeighedSoundEvents soundEvent = instance.resolve(this.soundManager);
+         Identifier eventLocation = instance.getIdentifier();
+         if (soundEvent == null) {
+@@ -430,15 +_,18 @@
+                     channel.setSelfPosition(position);
+                     channel.setRelative(isRelative);
+                 });
++                SoundInstance soundinstance = instance;
+                 if (!isStreaming) {
+                     this.soundBuffers.getCompleteBuffer(sound.getPath()).thenAccept(soundBuffer -> handle.execute(channel -> {
+                         channel.attachStaticBuffer(soundBuffer);
+                         channel.play();
++                        net.minecraftforge.client.event.ForgeEventFactoryClient.onPlaySoundSource(this, soundinstance, channel);
+                     }));
+                 } else {
+                     this.soundBuffers.getStream(sound.getPath(), isLooping).thenAccept(stream -> handle.execute(channel -> {
+                         channel.attachBufferStream(stream);
+                         channel.play();
++                        net.minecraftforge.client.event.ForgeEventFactoryClient.onPlayStreamingSource(this, soundinstance, channel);
+                     }));
+                 }
  

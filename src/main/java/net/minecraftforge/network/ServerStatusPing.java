@@ -87,8 +87,8 @@ public record ServerStatusPing(
 
             ServerStatusPing.BYTE_BUF_CODEC.optionalFieldOf("d").forGetter(ping -> Optional.of(ping.toBuf())),
 
-            ChannelData.CODEC.listOf().optionalFieldOf("channels").forGetter(ping -> Optional.of(List.of())),
-            ModInfo.CODEC.listOf().optionalFieldOf("mods").forGetter(ping -> Optional.of(List.of())),
+            ChannelData.CODEC.listOf().optionalFieldOf("channels").forGetter(_ -> Optional.of(List.of())),
+            ModInfo.CODEC.listOf().optionalFieldOf("mods").forGetter(_ -> Optional.of(List.of())),
 
             // legacy versions see truncated lists, modern versions ignore this truncated flag (binary data has its own)
             Codec.BOOL.optionalFieldOf("truncated").forGetter(ping -> Optional.of(ping.isTruncated()))

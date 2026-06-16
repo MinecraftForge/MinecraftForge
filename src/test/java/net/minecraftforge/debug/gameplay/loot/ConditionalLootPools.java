@@ -60,7 +60,7 @@ public class ConditionalLootPools extends BaseTestMod {
         helper.setBlock(center, TEST_BLOCK.get());
         helper.assertBlock(center, block -> block == TEST_BLOCK.get(), block -> Component.literal("Failed to set block, was " + block.getDescriptionId()));
 
-        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var player = helper.makeMockServerPlayerFull(GameType.SURVIVAL);
         player.gameMode.destroyBlock(helper.absolutePos(center));
 
         helper.assertItemEntityPresent(Items.GOLDEN_APPLE, center, 1.0);

@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/item/ShovelItem.java
 +++ b/net/minecraft/world/item/ShovelItem.java
-@@ -42,9 +_,9 @@
-             return InteractionResult.PASS;
-         } else {
-             Player player = context.getPlayer();
--            BlockState newState = FLATTENABLES.get(blockState.getBlock());
-+            BlockState newState = blockState.getToolModifiedState(context, net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN, false);
-             BlockState updatedState = null;
--            if (newState != null && level.getBlockState(pos.above()).isAir()) {
-+            if (newState != null && level.isEmptyBlock(pos.above())) {
-                 level.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
-                 updatedState = newState;
-             } else if (blockState.getBlock() instanceof CampfireBlock && blockState.getValue(CampfireBlock.LIT)) {
+@@ -43,9 +_,9 @@
+         }
+ 
+         Player player = context.getPlayer();
+-        BlockState newState = FLATTENABLES.get(blockState.getBlock());
++        BlockState newState = blockState.getToolModifiedState(context, net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN, false);
+         BlockState updatedState = null;
+-        if (newState != null && level.getBlockState(pos.above()).isAir()) {
++        if (newState != null && level.isEmptyBlock(pos.above())) {
+             level.playSound(player, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
+             updatedState = newState;
+         } else if (blockState.getBlock() instanceof CampfireBlock && blockState.getValue(CampfireBlock.LIT)) {
 @@ -70,5 +_,15 @@
-                 return InteractionResult.PASS;
-             }
+         } else {
+             return InteractionResult.PASS;
          }
 +    }
 +

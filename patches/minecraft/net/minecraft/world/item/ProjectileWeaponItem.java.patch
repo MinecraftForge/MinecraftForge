@@ -3,27 +3,27 @@
 @@ -95,6 +_,7 @@
      ) {
          ArrowItem arrowItem = projectile.getItem() instanceof ArrowItem arrow ? arrow : (ArrowItem)Items.ARROW;
-         AbstractArrow arrowx = arrowItem.createArrow(level, projectile, shooter, weapon);
-+        arrowx = customArrow(arrowx);
+         AbstractArrow arrow = arrowItem.createArrow(level, projectile, shooter, weapon);
++        arrow = customArrow(arrow);
          if (isCrit) {
-             arrowx.setCritArrow(true);
+             arrow.setCritArrow(true);
          }
-@@ -111,9 +_,10 @@
-                 : 1;
-             List<ItemStack> drawn = new ArrayList<>(numProjectiles);
-             ItemStack projectileCopy = projectile.copy();
-+            boolean infinite = projectile.getItem() instanceof ArrowItem arrow && arrow.isInfinite(projectile, weapon, shooter);
+@@ -110,9 +_,10 @@
+         int numProjectiles = shooter.level() instanceof ServerLevel serverLevel ? EnchantmentHelper.processProjectileCount(serverLevel, weapon, shooter, 1) : 1;
+         List<ItemStack> drawn = new ArrayList<>(numProjectiles);
+         ItemStack projectileCopy = projectile.copy();
++        boolean infinite = projectile.getItem() instanceof ArrowItem arrow && arrow.isInfinite(projectile, weapon, shooter);
  
-             for (int i = 0; i < numProjectiles; i++) {
--                ItemStack drawnStack = useAmmo(weapon, i == 0 ? projectile : projectileCopy, shooter, i > 0);
-+                ItemStack drawnStack = useAmmo(weapon, i == 0 ? projectile : projectileCopy, shooter, i > 0 || infinite);
-                 if (!drawnStack.isEmpty()) {
-                     drawn.add(drawnStack);
-                 }
+         for (int i = 0; i < numProjectiles; i++) {
+-            ItemStack drawnStack = useAmmo(weapon, i == 0 ? projectile : projectileCopy, shooter, i > 0);
++            ItemStack drawnStack = useAmmo(weapon, i == 0 ? projectile : projectileCopy, shooter, i > 0 || infinite);
+             if (!drawnStack.isEmpty()) {
+                 drawn.add(drawnStack);
+             }
 @@ -141,5 +_,9 @@
- 
-             return used;
          }
+ 
+         return used;
 +    }
 +
 +    public AbstractArrow customArrow(AbstractArrow arrow) {

@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
     "I": "#c:ingots/copper",
     "N": "minecraft:copper_nugget"

@@ -116,7 +116,7 @@ public class RenderElement {
     }
 
     public static RenderElement forgeVersionOverlay(SimpleFont font, String version) {
-        return new RenderElement(RenderElement.initializeText(font, (bb, fnt, ctx)->
+        return new RenderElement(RenderElement.initializeText(font, (bb, _, ctx)->
                 font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version) - 10,
                         ctx.scaledHeight() - font.lineSpacing() + font.descent() - 10, bb,
                         new SimpleFont.DisplayText(version, ctx.colourScheme.foreground().packedint(RenderElement.globalAlpha)))));
@@ -178,11 +178,11 @@ public class RenderElement {
         var colour = (alpha << 24) | 0xFFFFFF;
         Renderer bar;
         if (pm.steps() == 0) {
-            bar = progressBar(ctx->new int[] {(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, f->colour, frame -> indeterminateBar(frame, cnt == 0));
+            bar = progressBar(ctx->new int[] {(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, _->colour, frame -> indeterminateBar(frame, cnt == 0));
         } else {
-            bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, f -> colour, f -> new float[]{0f, pm.progress()});
+            bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y + font.lineSpacing() - font.descent(), BAR_WIDTH * ctx.scale()}, _ -> colour, _ -> new float[]{0f, pm.progress()});
         }
-        Renderer label = (bb, ctx, frame) -> renderText(font, text((ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, pm.label().getText(), colour), bb, ctx);
+        Renderer label = (bb, ctx, _) -> renderText(font, text((ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, pm.label().getText(), colour), bb, ctx);
         return bar.then(label);
     }
     private static float[] indeterminateBar(int frame, boolean isActive) {
@@ -198,9 +198,9 @@ public class RenderElement {
         var y = 10 * context.scale();
         PerformanceInfo pi = context.performance();
         final int colour = hsvToRGB((1.0f - (float)Math.pow(pi.memory(), 1.5f)) / 3f, 1.0f, 0.5f);
-        var bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, BAR_WIDTH * ctx.scale()}, f -> colour, f -> new float[]{0f, pi.memory()});
+        var bar = progressBar(ctx -> new int[]{(ctx.scaledWidth() - BAR_WIDTH * ctx.scale()) / 2, y, BAR_WIDTH * ctx.scale()}, _ -> colour, _ -> new float[]{0f, pi.memory()});
         var width = font.stringWidth(pi.text());
-        Renderer label = (bb, ctx, frame) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.foreground().packedint(globalAlpha)), bb, ctx);
+        Renderer label = (bb, ctx, _) -> renderText(font, text(ctx.scaledWidth() / 2 - width / 2, y + 18, pi.text(), context.colourScheme.foreground().packedint(globalAlpha)), bb, ctx);
         bar.then(label).accept(buffer, context, frameNumber);
     }
 
@@ -250,7 +250,7 @@ public class RenderElement {
     }
 
     private static Renderer initializeText(SimpleFont font, TextGenerator textGenerator) {
-        return (bb, context, frame) -> renderText(font, textGenerator, bb, context);
+        return (bb, context, _) -> renderText(font, textGenerator, bb, context);
     }
 
     private static void renderText(final SimpleFont font, final TextGenerator textGenerator, final SimpleBufferBuilder bb, final DisplayContext context) {
@@ -262,7 +262,7 @@ public class RenderElement {
     }
 
     private static TextGenerator text(int x, int y, String text, int colour) {
-        return (bb, font, context) -> font.generateVerticesForTexts(x, y, bb, new SimpleFont.DisplayText(text, colour));
+        return (bb, font, _) -> font.generateVerticesForTexts(x, y, bb, new SimpleFont.DisplayText(text, colour));
     }
 
     private static Renderer initializeTexture(final String textureFileName, int size, int textureNumber, TextureRenderer positionAndColour) {

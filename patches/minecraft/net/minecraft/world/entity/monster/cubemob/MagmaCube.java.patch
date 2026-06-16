@@ -1,6 +1,6 @@
---- a/net/minecraft/world/entity/monster/MagmaCube.java
-+++ b/net/minecraft/world/entity/monster/MagmaCube.java
-@@ -71,17 +_,28 @@
+--- a/net/minecraft/world/entity/monster/cubemob/MagmaCube.java
++++ b/net/minecraft/world/entity/monster/cubemob/MagmaCube.java
+@@ -96,17 +_,28 @@
          float sizeJumpBoostPower = this.getSize() * 0.1F;
          this.setDeltaMovement(movement.x, this.getJumpPower() + sizeJumpBoostPower, movement.z);
          this.needsSync = true;

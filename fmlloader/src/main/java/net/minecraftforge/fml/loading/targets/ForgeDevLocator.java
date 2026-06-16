@@ -112,7 +112,7 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
 
             // We want just the class files from the root of the input paths. So make a new union with a filter.
             var classes = UnionHelper.newFileSystem(
-                (name, base) -> {
+                (name, _) -> {
                     if (name.endsWith("/")) {
                         if (name.startsWith("/"))
                             name = name.substring(1);
@@ -164,7 +164,7 @@ public final class ForgeDevLocator extends AbstractModProvider implements IModLo
                                     if ("value".equals(key)) {
                                         int idx = clsName.lastIndexOf('/');
                                         var pkg = clsName.substring(0, idx);
-                                        mods.computeIfAbsent(pkg, k -> new HashSet<>()).add((String)value);
+                                        mods.computeIfAbsent(pkg, _ -> new HashSet<>()).add((String)value);
 
                                         idx = pkg.lastIndexOf('/');
                                         while (idx != -1) {

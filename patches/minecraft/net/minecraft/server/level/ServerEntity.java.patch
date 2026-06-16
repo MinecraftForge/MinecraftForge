@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -257,6 +_,7 @@
+@@ -262,6 +_,7 @@
      public void removePairing(final ServerPlayer player) {
          this.entity.stopSeenByPlayer(player);
          player.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
@@ -8,7 +8,7 @@
      }
  
      public void addPairing(final ServerPlayer player) {
-@@ -264,6 +_,7 @@
+@@ -269,6 +_,7 @@
          this.sendPairingData(player, packets::add);
          player.connection.send(new ClientboundBundlePacket(packets));
          this.entity.startSeenByPlayer(player);

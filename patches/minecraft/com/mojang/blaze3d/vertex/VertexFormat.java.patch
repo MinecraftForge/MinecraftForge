@@ -1,32 +1,31 @@
 --- a/com/mojang/blaze3d/vertex/VertexFormat.java
 +++ b/com/mojang/blaze3d/vertex/VertexFormat.java
-@@ -29,6 +_,7 @@
-     private final int[] offsetsByElement = new int[32];
-     private @Nullable GpuBuffer immediateDrawVertexBuffer;
-     private @Nullable GpuBuffer immediateDrawIndexBuffer;
+@@ -19,6 +_,7 @@
+     private final int vertexSize;
+     private final int stepRate;
+     private final List<VertexFormatElement> elementValues;
 +    private final com.google.common.collect.ImmutableMap<String, VertexFormatElement> elementMapping;
  
-     private VertexFormat(final List<VertexFormatElement> elements, final List<String> names, final IntList offsets, final int vertexSize) {
-         this.elements = elements;
-@@ -41,6 +_,11 @@
-             int index = element != null ? elements.indexOf(element) : -1;
-             this.offsetsByElement[id] = index != -1 ? offsets.getInt(index) : -1;
+     private VertexFormat(final List<VertexFormatElement> elements, final int vertexSize, final int stepRate) {
+         this.vertexSize = vertexSize;
+@@ -29,6 +_,11 @@
          }
+ 
+         this.elementValues = elements;
 +
-+        ImmutableMap.Builder<String, VertexFormatElement> elementMapping = ImmutableMap.builder();
-+        for (int i = 0; i < elements.size(); i++)
-+            elementMapping.put(names.get(i), elements.get(i));
++        var elementMapping = com.google.common.collect.ImmutableMap.<String, VertexFormatElement>builder();
++        for (var element : elements)
++            elementMapping.put(element.name(), element);
 +        this.elementMapping = elementMapping.buildOrThrow();
      }
  
-     public static VertexFormat.Builder builder() {
-@@ -139,6 +_,9 @@
-         this.immediateDrawIndexBuffer = uploadToBuffer(this.immediateDrawIndexBuffer, buffer, 72, () -> "Immediate index buffer for " + this);
-         return this.immediateDrawIndexBuffer;
+     public static VertexFormat.Builder builder(final int stepRate) {
+@@ -69,6 +_,8 @@
+     public int hashCode() {
+         return this.elementValues.hashCode();
      }
 +
-+    public ImmutableMap<String, VertexFormatElement> getElementMapping() { return elementMapping; }
-+    public int getOffset(int index) { return offsetsByElement[index]; }
++    public com.google.common.collect.ImmutableMap<String, VertexFormatElement> getElementMapping() { return elementMapping; }
  
      @OnlyIn(Dist.CLIENT)
      public static class Builder {

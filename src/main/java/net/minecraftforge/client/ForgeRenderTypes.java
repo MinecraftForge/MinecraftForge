@@ -5,16 +5,15 @@
 
 package net.minecraftforge.client;
 
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.platform.DestFactor;
-import com.mojang.blaze3d.platform.SourceFactor;
+import com.mojang.blaze3d.platform.BlendFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.TextureFormat;
 
 import net.minecraft.util.Util;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -105,8 +104,8 @@ public enum ForgeRenderTypes {
      *
      * @return Replacement of {@link RenderType#textIntensity(Identifier)}, but with optional linear texture filtering.
      */
-    public static RenderType getTextIntensity(Identifier locationIn) {
-        return Internal.TEXT_INTENSITY.apply(locationIn);
+    public static RenderType getTextGrayscale(Identifier locationIn) {
+        return Internal.TEXT_GRAYSCALE.apply(locationIn);
     }
 
     /**
@@ -123,8 +122,8 @@ public enum ForgeRenderTypes {
      *
      * @return Replacement of {@link RenderType#textIntensityPolygonOffset(Identifier)}, but with optional linear texture filtering.
      */
-    public static RenderType getTextIntensityPolygonOffset(Identifier locationIn) {
-        return Internal.TEXT_INTENSITY_POLYGON_OFFSET.apply(locationIn);
+    public static RenderType getTextGrayscalePolygonOffset(Identifier locationIn) {
+        return Internal.TEXT_GRAYSCALE_POLYGON_OFFSET.apply(locationIn);
     }
 
     /**
@@ -141,8 +140,8 @@ public enum ForgeRenderTypes {
      *
      * @return Replacement of {@link RenderType#textIntensitySeeThrough(Identifier)}, but with optional linear texture filtering.
      */
-    public static RenderType getTextIntensitySeeThrough(Identifier locationIn) {
-        return Internal.TEXT_INTENSITY_SEE_THROUGH.apply(locationIn);
+    public static RenderType getTextGrayscaleSeeThrough(Identifier locationIn) {
+        return Internal.TEXT_GRAYSCALE_SEE_THROUGH.apply(locationIn);
     }
 
     /**
@@ -179,9 +178,7 @@ public enum ForgeRenderTypes {
         private static RenderType unsortedTranslucent(Identifier texture) {
             return RenderType.create("forge_unsorted_translucent",
                 RenderSetup.builder(RenderPipelines.ENTITY_TRANSLUCENT)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .withTexture("Sampler0", texture)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .affectsCrumbling()
                     .useLightmap()
                     .useOverlay()
@@ -194,7 +191,6 @@ public enum ForgeRenderTypes {
         private static RenderType unlitTranslucentSorted(Identifier texture) {
             return RenderType.create("forge_unlit_translucent_sorted",
                 RenderSetup.builder(RenderPipelines.ENTITY_TRANSLUCENT)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .affectsCrumbling()
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
@@ -208,7 +204,6 @@ public enum ForgeRenderTypes {
         private static RenderType unlitTranslucentUnsorted(Identifier texture) {
             return RenderType.create("forge_unlit_translucent_sorted",
                 RenderSetup.builder(RenderPipelines.ENTITY_TRANSLUCENT)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .affectsCrumbling()
                     .withTexture("Sampler0", texture)
                     .useOverlay()
@@ -221,7 +216,6 @@ public enum ForgeRenderTypes {
         private static RenderType layeredItemSolid(Identifier texture) {
             return RenderType.create("forge_layered_item_soild",
                 RenderSetup.builder(RenderPipelines.ENTITY_SOLID)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .affectsCrumbling()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -235,7 +229,6 @@ public enum ForgeRenderTypes {
         private static RenderType layeredItemCutout(Identifier texture) {
             return RenderType.create("forge_layered_item_cutout",
                 RenderSetup.builder(RenderPipelines.ENTITY_CUTOUT)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .affectsCrumbling()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -252,17 +245,15 @@ public enum ForgeRenderTypes {
                 RenderSetup.builder(RenderPipelines.TEXT)
                     .withTexture("Sampler0", texture)
                     .useLightmap()
-                    .bufferSize(RenderType.SMALL_BUFFER_SIZE)
                     .sortOnUpload() // This is what is different from RenderTypes.TEXT
                     .createRenderSetup()
             );
         }
 
-        public static Function<Identifier, RenderType> TEXT_INTENSITY = Util.memoize(Internal::getTextIntensity);
-        private static RenderType getTextIntensity(Identifier texture) {
-            return RenderType.create("forge_text_intensity",
-                RenderSetup.builder(RenderPipelines.TEXT_INTENSITY)
-                    .bufferSize(RenderType.SMALL_BUFFER_SIZE)
+        public static Function<Identifier, RenderType> TEXT_GRAYSCALE = Util.memoize(Internal::getTextGrayscale);
+        private static RenderType getTextGrayscale(Identifier texture) {
+            return RenderType.create("forge_text_grayscale",
+                RenderSetup.builder(RenderPipelines.TEXT_GRAYSCALE)
                     .withTexture("Sampler0", texture)
                     .useLightmap()
                     .useOverlay()
@@ -274,7 +265,6 @@ public enum ForgeRenderTypes {
         private static RenderType getTextPolygonOffset(Identifier texture) {
             return RenderType.create("forge_text_polygon_offset",
                 RenderSetup.builder(RenderPipelines.TEXT_POLYGON_OFFSET)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -282,11 +272,10 @@ public enum ForgeRenderTypes {
             );
         }
 
-        public static Function<Identifier, RenderType> TEXT_INTENSITY_POLYGON_OFFSET = Util.memoize(Internal::getTextIntensityPolygonOffset);
-        private static RenderType getTextIntensityPolygonOffset(Identifier texture) {
-            return RenderType.create("forge_text_intensity_polygon_offset",
-                RenderSetup.builder(RenderPipelines.TEXT_INTENSITY)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+        public static Function<Identifier, RenderType> TEXT_GRAYSCALE_POLYGON_OFFSET = Util.memoize(Internal::getTextGrayscalePolygonOffset);
+        private static RenderType getTextGrayscalePolygonOffset(Identifier texture) {
+            return RenderType.create("forge_text_grayscale_polygon_offset",
+                RenderSetup.builder(RenderPipelines.TEXT_GRAYSCALE)
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -298,18 +287,16 @@ public enum ForgeRenderTypes {
         private static RenderType getTextSeeThrough(Identifier texture) {
             return RenderType.create("forge_text_see_through",
                 RenderSetup.builder(RenderPipelines.TEXT_SEE_THROUGH)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
                     .withTexture("Sampler0", texture)
                     .useLightmap()
                     .createRenderSetup()
             );
         }
 
-        public static Function<Identifier, RenderType> TEXT_INTENSITY_SEE_THROUGH = Util.memoize(Internal::getTextIntensitySeeThrough);
+        public static Function<Identifier, RenderType> TEXT_GRAYSCALE_SEE_THROUGH = Util.memoize(Internal::getTextIntensitySeeThrough);
         private static RenderType getTextIntensitySeeThrough(Identifier texture) {
-            return RenderType.create("forge_text_intensity_see_through",
-                RenderSetup.builder(RenderPipelines.TEXT_INTENSITY_SEE_THROUGH)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
+            return RenderType.create("forge_text_grayscale_see_through",
+                RenderSetup.builder(RenderPipelines.TEXT_GRAYSCALE_SEE_THROUGH)
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -319,7 +306,7 @@ public enum ForgeRenderTypes {
 
         private static final RenderPipeline LOADING_PIPELINE = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
                 .withLocation("pipeline/forge/loading_overlay")
-                .withColorTargetState(new ColorTargetState(new BlendFunction(SourceFactor.SRC_ALPHA, DestFactor.ONE)))
+                .withColorTargetState(new ColorTargetState(new BlendFunction(BlendFactor.SRC_ALPHA, BlendFactor.ONE)))
                 .build();
 
         private static final GpuSampler LOADING_SAMPLER = RenderSystem.getSamplerCache().getSampler(AddressMode.REPEAT, AddressMode.REPEAT, FilterMode.NEAREST, FilterMode.NEAREST, false);
@@ -327,15 +314,14 @@ public enum ForgeRenderTypes {
 
         public static RenderType getLoadingOverlay(DisplayWindow window) {
             var gpu = RenderSystem.getDevice();
-            var texture = gpu.createTexture(LOADING_TEXTURE.toString(), 5, TextureFormat.RGBA8,
+            var texture = gpu.createTexture(LOADING_TEXTURE.toString(), 5, GpuFormat.RGBA8_UNORM,
                     window.context().width(), window.context().height(),
                     1, window.getFramebufferTextureId());
             var textureView = gpu.createTextureView(texture);
 
             return RenderType.create("forge_loading_overlay",
                 RenderSetup.builder(LOADING_PIPELINE)
-                    .bufferSize(RenderType.TRANSIENT_BUFFER_SIZE)
-                    .withTexture("Sampler0", textureView, LOADING_SAMPLER)
+                    .withTexture("Sampler0", LOADING_TEXTURE, () -> LOADING_SAMPLER)
                     .createRenderSetup()
             );
         }

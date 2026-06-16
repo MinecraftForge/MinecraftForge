@@ -55,11 +55,11 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (inv instanceof BrewingStandBlockEntity)
             this.slotLimit = wrapperSlot -> getSlot(inv, wrapperSlot, side) < 3 ? 1 : inv.getMaxStackSize();
         else
-            this.slotLimit = wrapperSlot -> inv.getMaxStackSize();
+            this.slotLimit = _ -> inv.getMaxStackSize();
         if (inv instanceof AbstractFurnaceBlockEntity)
             this.newStackInsertLimit = (wrapperSlot, invSlot, stack) -> invSlot == 1 && stack.is(Items.BUCKET) ? 1 : Math.min(stack.getMaxStackSize(), getSlotLimit(wrapperSlot));
         else
-            this.newStackInsertLimit = (wrapperSlot, invSlot, stack) -> Math.min(stack.getMaxStackSize(), getSlotLimit(wrapperSlot));
+            this.newStackInsertLimit = (wrapperSlot, _, stack) -> Math.min(stack.getMaxStackSize(), getSlotLimit(wrapperSlot));
     }
 
     public static int getSlot(WorldlyContainer inv, int slot, @Nullable Direction side)

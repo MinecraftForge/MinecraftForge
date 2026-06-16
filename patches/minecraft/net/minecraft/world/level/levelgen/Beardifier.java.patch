@@ -1,14 +1,14 @@
 --- a/net/minecraft/world/level/levelgen/Beardifier.java
 +++ b/net/minecraft/world/level/levelgen/Beardifier.java
-@@ -51,6 +_,11 @@
+@@ -52,6 +_,11 @@
  
-                 for (StructurePiece piece : start.getPieces()) {
-                     if (piece.isCloseToChunk(chunkPos, 12)) {
-+                        if (piece instanceof net.minecraftforge.common.world.PieceBeardifierModifier pieceBeardifierModifier) {
-+                            if (pieceBeardifierModifier.getTerrainAdjustment() != TerrainAdjustment.NONE) {
-+                                rigids.add(new Beardifier.Rigid(pieceBeardifierModifier.getBeardifierBox(), pieceBeardifierModifier.getTerrainAdjustment(), pieceBeardifierModifier.getGroundLevelDelta()));
-+                            }
-+                        } else
-                         if (piece instanceof PoolElementStructurePiece poolPiece) {
-                             StructureTemplatePool.Projection projection = poolPiece.getElement().getProjection();
-                             if (projection == StructureTemplatePool.Projection.RIGID) {
+             for (StructurePiece piece : start.getPieces()) {
+                 if (piece.isCloseToChunk(chunkPos, 12)) {
++                    if (piece instanceof net.minecraftforge.common.world.PieceBeardifierModifier pieceBeardifierModifier) {
++                        if (pieceBeardifierModifier.getTerrainAdjustment() != TerrainAdjustment.NONE) {
++                            rigids.add(new Beardifier.Rigid(pieceBeardifierModifier.getBeardifierBox(), pieceBeardifierModifier.getTerrainAdjustment(), pieceBeardifierModifier.getGroundLevelDelta()));
++                        }
++                    } else
+                     if (piece instanceof PoolElementStructurePiece poolPiece) {
+                         StructureTemplatePool.Projection projection = poolPiece.getElement().getProjection();
+                         if (projection == StructureTemplatePool.Projection.RIGID) {

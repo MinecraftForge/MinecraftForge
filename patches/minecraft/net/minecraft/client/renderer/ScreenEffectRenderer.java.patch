@@ -1,36 +1,37 @@
 --- a/net/minecraft/client/renderer/ScreenEffectRenderer.java
 +++ b/net/minecraft/client/renderer/ScreenEffectRenderer.java
-@@ -62,19 +_,25 @@
+@@ -61,8 +_,9 @@
+         PoseStack poseStack = new PoseStack();
          Player player = this.minecraft.player;
          if (isFirstPerson && !isSleeping) {
-             if (!player.noPhysics) {
--                BlockState blockState = getViewBlockingState(player);
-+                var overlay = getOverlayBlock(player);
-+                BlockState blockState = overlay == null ? null : overlay.getLeft();
-                 if (blockState != null) {
-+                    if (!net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, poseStack, net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
-                     renderTex(this.minecraft.getModelManager().getBlockStateModelSet().getParticleMaterial(blockState).sprite(), poseStack, this.bufferSource);
-                 }
-             }
+-            BlockState blockState = getViewBlockingState(player);
+-            if (blockState != null) {
++            var overlay = getOverlayBlock(player);
++            BlockState blockState = overlay == null ? null : overlay.getLeft();
++            if (blockState != null && net.minecraftforge.client.ForgeHooksClient.renderBlockOverlay(player, poseStack, net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight())) {
+                 BlockStateModelSet blockStateModelSet = this.minecraft.getModelManager().getBlockStateModelSet();
+                 TextureAtlasSprite sprite = blockStateModelSet.getParticleMaterial(blockState).sprite();
+                 submitBlockSprite(sprite, poseStack, submitNodeCollector, -15132391);
+@@ -70,11 +_,15 @@
  
              if (!this.minecraft.player.isSpectator()) {
                  if (this.minecraft.player.isEyeInFluid(FluidTags.WATER)) {
 +                    if (!net.minecraftforge.client.ForgeHooksClient.renderWaterOverlay(player, poseStack))
-                     renderWater(this.minecraft, poseStack, this.bufferSource);
+                     submitWater(this.minecraft, poseStack, submitNodeCollector);
 +                } else if (!player.getEyeInFluidType().isAir()) {
-+                    net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(player.getEyeInFluidType()).renderOverlay(this.minecraft, poseStack, this.bufferSource);
++                    net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(player.getEyeInFluidType()).renderOverlay(this.minecraft, poseStack, submitNodeCollector);
                  }
  
                  if (this.minecraft.player.isOnFire()) {
                      TextureAtlasSprite fireSprite = this.sprites.get(ModelBakery.FIRE_1);
 +                    if (!net.minecraftforge.client.ForgeHooksClient.renderFireOverlay(player, poseStack))
-                     renderFire(poseStack, this.bufferSource, fireSprite);
+                     submitFire(poseStack, submitNodeCollector, fireSprite);
                  }
              }
-@@ -124,6 +_,11 @@
-     }
+@@ -128,6 +_,11 @@
+             return null;
+         }
  
-     private static @Nullable BlockState getViewBlockingState(final Player player) {
 +        var ret = getOverlayBlock(player);
 +        return ret == null ? null : ret.getLeft();
 +    }
@@ -39,8 +40,8 @@
          BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
  
          for (int i = 0; i < 8; i++) {
-@@ -133,7 +_,7 @@
-             testPos.set(xo, yo, zo);
+@@ -138,7 +_,7 @@
+             );
              BlockState blockState = player.level().getBlockState(testPos);
              if (blockState.getRenderShape() != RenderShape.INVISIBLE && blockState.isViewBlocking(player.level(), testPos)) {
 -                return blockState;
@@ -48,23 +49,22 @@
              }
          }
  
-@@ -161,6 +_,10 @@
+@@ -156,13 +_,17 @@
      }
  
-     private static void renderWater(final Minecraft minecraft, final PoseStack poseStack, final MultiBufferSource bufferSource) {
-+        renderFluid(minecraft, poseStack, bufferSource, UNDERWATER_LOCATION);
+     private static void submitWater(final Minecraft minecraft, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector) {
++        renderFluid(minecraft, poseStack, submitNodeCollector, UNDERWATER_LOCATION);
 +    }
 +
-+    public static void renderFluid(Minecraft minecraft, PoseStack poseStack, MultiBufferSource bufferSource, Identifier texture) {
-         BlockPos pos = BlockPos.containing(minecraft.player.getX(), minecraft.player.getEyeY(), minecraft.player.getZ());
-         float br = Lightmap.getBrightness(minecraft.player.level().dimensionType(), minecraft.player.level().getMaxLocalRawBrightness(pos));
-         int color = ARGB.colorFromFloat(0.1F, br, br, br);
-@@ -173,7 +_,7 @@
-         float uo = -minecraft.player.getYRot() / 64.0F;
-         float vo = minecraft.player.getXRot() / 64.0F;
-         Matrix4f pose = poseStack.last().pose();
--        VertexConsumer builder = bufferSource.getBuffer(RenderTypes.blockScreenEffect(UNDERWATER_LOCATION));
-+        VertexConsumer builder = bufferSource.getBuffer(RenderTypes.blockScreenEffect(texture));
-         builder.addVertex(pose, -1.0F, -1.0F, -0.5F).setUv(4.0F + uo, 4.0F + vo).setColor(color);
-         builder.addVertex(pose, 1.0F, -1.0F, -0.5F).setUv(0.0F + uo, 4.0F + vo).setColor(color);
-         builder.addVertex(pose, 1.0F, 1.0F, -0.5F).setUv(0.0F + uo, 0.0F + vo).setColor(color);
++    public static void renderFluid(Minecraft minecraft, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, Identifier texture) {
+         LocalPlayer player = minecraft.player;
+         BlockPos pos = BlockPos.containing(player.getEyePosition());
+         float brightness = Lightmap.getBrightness(player.level().dimensionType(), player.level().getMaxLocalRawBrightness(pos));
+         int color = ARGB.colorFromFloat(0.1F, brightness, brightness, brightness);
+         float u0 = -player.getYRot() / 64.0F;
+         float v0 = player.getXRot() / 64.0F;
+-        submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.blockScreenEffect(UNDERWATER_LOCATION), (pose, builder) -> {
++        submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.blockScreenEffect(texture), (pose, builder) -> {
+             float uvSize = 4.0F;
+             buildQuad(builder, pose.pose(), -1.0F, -1.0F, 1.0F, 1.0F, -0.5F, u0 + 4.0F, v0 + 4.0F, u0, v0, color);
+         });

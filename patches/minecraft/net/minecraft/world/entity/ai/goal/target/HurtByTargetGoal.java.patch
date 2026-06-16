@@ -10,4 +10,4 @@
 +
                  if (this.mob != other
                      && other.getTarget() == null
-                     && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal)this.mob).getOwner() == ((TamableAnimal)other).getOwner())
+                     && (!(this.mob instanceof TamableAnimal tamableAnimal) || tamableAnimal.getOwner() == ((TamableAnimal)other).getOwner())

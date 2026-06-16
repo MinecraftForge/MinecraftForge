@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/blockentity/BlockEntityRenderers.java
 +++ b/net/minecraft/client/renderer/blockentity/BlockEntityRenderers.java
-@@ -13,7 +_,7 @@
+@@ -14,7 +_,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class BlockEntityRenderers {

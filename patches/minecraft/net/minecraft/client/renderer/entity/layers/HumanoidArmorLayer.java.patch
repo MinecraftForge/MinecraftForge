@@ -5,7 +5,7 @@
          if (equippable != null && shouldRender(equippable, slot)) {
              A model = this.getArmorModel(state, slot);
 +            var newModel = this.getArmorModel(state, slot, itemStack, model);
-             EquipmentClientInfo.LayerType layerType = state.isBaby && state.entityType != EntityType.ARMOR_STAND
+             EquipmentClientInfo.LayerType layerType = state.isBaby && state.entityType != EntityTypes.ARMOR_STAND
                  ? EquipmentClientInfo.LayerType.HUMANOID_BABY
                  : (this.usesInnerModel(slot) ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID);
              this.equipmentRenderer

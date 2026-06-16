@@ -1,0 +1,14 @@
+--- a/net/minecraft/core/dispenser/FlintAndSteelDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/FlintAndSteelDispenseItemBehavior.java
+@@ -32,8 +_,9 @@
+             } else if (CampfireBlock.canLight(target) || CandleBlock.canLight(target) || CandleCakeBlock.canLight(target)) {
+                 level.setBlockAndUpdate(targetPos, target.setValue(BlockStateProperties.LIT, true));
+                 level.gameEvent(null, GameEvent.BLOCK_CHANGE, targetPos);
+-            } else if (target.getBlock() instanceof TntBlock) {
+-                if (TntBlock.prime(level, targetPos)) {
++            } else if (target.isFlammable(level, targetPos, source.state().getValue(DispenserBlock.FACING).getOpposite())) {
++                if (target.onCaughtFire(level, targetPos, source.state().getValue(DispenserBlock.FACING).getOpposite(), null)) {
++                    if (target.getBlock() instanceof TntBlock)
+                     level.removeBlock(targetPos, false);
+                 } else {
+                     this.setSuccess(false);

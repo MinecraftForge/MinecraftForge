@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementTab.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementTab.java
-@@ -40,6 +_,7 @@
-     private int maxY = Integer.MIN_VALUE;
+@@ -41,6 +_,7 @@
      private float fade;
      private boolean centered;
+     private @Nullable AdvancementWidget hovered;
 +    private int page;
  
      public AdvancementTab(
          final Minecraft minecraft,
-@@ -61,6 +_,15 @@
+@@ -62,6 +_,15 @@
          this.addWidget(this.root, rootNode.holder());
      }
  
@@ -24,14 +24,14 @@
      public AdvancementTabType getType() {
          return this.type;
      }
-@@ -155,8 +_,8 @@
-             return null;
-         } else {
-             for (AdvancementTabType type : AdvancementTabType.values()) {
--                if (index < type.getMax()) {
--                    return new AdvancementTab(minecraft, screen, type, index, root, display.get());
-+                if ((index % AdvancementTabType.MAX_TABS) < type.getMax()) {
-+                    return new AdvancementTab(minecraft, screen, type, index % AdvancementTabType.MAX_TABS, index / AdvancementTabType.MAX_TABS, root, display.get());
-                 }
+@@ -169,8 +_,8 @@
+         }
  
-                 index -= type.getMax();
+         for (AdvancementTabType type : AdvancementTabType.values()) {
+-            if (index < type.getMax()) {
+-                return new AdvancementTab(minecraft, screen, type, index, root, display.get());
++            if ((index % AdvancementTabType.MAX_TABS) < type.getMax()) {
++                return new AdvancementTab(minecraft, screen, type, index % AdvancementTabType.MAX_TABS, index / AdvancementTabType.MAX_TABS, root, display.get());
+             }
+ 
+             index -= type.getMax();

@@ -24,7 +24,7 @@ public enum InvalidModIdentifier {
     LITELOADER(filePresent("litemod.json")),
     OPTIFINE(filePresent("optifine/Installer.class")),
     BUKKIT(filePresent("plugin.yml")),
-    INVALIDZIP((f,zf) -> zf.isEmpty()); // note: only this one INVALIDZIP check is ran until the todo on this class is fixed
+    INVALIDZIP((_,zf) -> zf.isEmpty()); // note: only this one INVALIDZIP check is ran until the todo on this class is fixed
 
     private final BiPredicate<Path, Optional<ZipFile>> ident;
 
@@ -51,7 +51,7 @@ public enum InvalidModIdentifier {
 
     private static BiPredicate<Path, Optional<ZipFile>> filePresent(String filename)
     {
-        return (f, zfo) -> zfo.map(zf -> zf.getEntry(filename) != null).orElse(false);
+        return (_, zfo) -> zfo.map(zf -> zf.getEntry(filename) != null).orElse(false);
     }
 
     private static <T> Optional<T> optionalFromException(Supplier_WithExceptions<T, ? extends Exception> supp)

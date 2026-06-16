@@ -88,7 +88,7 @@ public class GameData {
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
-    private static final BiConsumer<Identifier, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
+    private static final BiConsumer<Identifier, ForgeRegistry<?>> LOCK_VANILLA = (_, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
     private static Set<Identifier> vanillaRegistryOrder = null;
 
     static {
@@ -301,13 +301,13 @@ public class GameData {
             LOGGER.warn(REGISTRIES, "Can't revert to {} GameData state without a valid snapshot.", target.getName());
             return;
         }
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
+        RegistryManager.ACTIVE.registries.forEach((_, reg) -> reg.resetDelegates());
 
         LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
         for (var r : RegistryManager.ACTIVE.registries.entrySet())
             loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, true);
 
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
+        RegistryManager.ACTIVE.registries.forEach((_, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
         if (fireEvents) {
             fireRemapEvent(ImmutableMap.of(), true);
@@ -570,12 +570,12 @@ public class GameData {
         LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
+        RegistryManager.ACTIVE.registries.forEach((_, reg) -> reg.resetDelegates());
 
         // Update legacy names
         snapshot = snapshot.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey()) // FIXME Registries need dependency ordering, this makes sure blocks are done before items (for ItemCallbacks) but it's lazy as hell
-                .collect(Collectors.toMap(e -> RegistryManager.ACTIVE.updateLegacyName(e.getKey()), Map.Entry::getValue, (k1, k2) -> k1, LinkedHashMap::new));
+                .collect(Collectors.toMap(e -> RegistryManager.ACTIVE.updateLegacyName(e.getKey()), Map.Entry::getValue, (k1, _) -> k1, LinkedHashMap::new));
 
         if (isLocalWorld) {
             Identifier[] missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).toArray(Identifier[]::new);
@@ -667,7 +667,7 @@ public class GameData {
         if (injectFrozenData) {
             // If we're loading up the world from disk, we want to add in the new data that might have been provisioned by mods
             // So we load it from the frozen persistent registry
-            RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            RegistryManager.ACTIVE.registries.forEach((name, _) -> {
                 loadFrozenDataToStagingRegistry(STAGING, name, remaps.get(name));
             });
         }
@@ -677,7 +677,7 @@ public class GameData {
 
         // Load the STAGING registry into the ACTIVE registry
         //for (Map.Entry<Identifier, IForgeRegistry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
-        RegistryManager.ACTIVE.registries.forEach((key, value) -> {
+        RegistryManager.ACTIVE.registries.forEach((key, _) -> {
             loadRegistry(key, STAGING, RegistryManager.ACTIVE, true);
         });
 

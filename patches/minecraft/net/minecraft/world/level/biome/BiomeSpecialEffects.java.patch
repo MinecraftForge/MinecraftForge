@@ -26,7 +26,7 @@
          }
      }
  
--    public static enum GrassColorModifier implements StringRepresentable {
+-    public enum GrassColorModifier implements StringRepresentable {
 +    public static enum GrassColorModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
          NONE("none") {
              @Override
@@ -48,7 +48,7 @@
 +            return delegate.modifyGrassColor(x, z, baseColor);
 +        }
  
-         private GrassColorModifier(final String name) {
+         GrassColorModifier(final String name) {
              this.name = name;
 @@ -108,6 +_,30 @@
          @Override

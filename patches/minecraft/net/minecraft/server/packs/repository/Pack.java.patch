@@ -16,16 +16,16 @@
      }
  
      public static Pack.@Nullable Metadata readPackMetadata(
-@@ -66,7 +_,7 @@
+@@ -63,7 +_,7 @@
                  PackCompatibility packCompatibility = PackCompatibility.forVersion(meta.supportedFormats(), currentPackVersion);
                  OverlayMetadataSection overlays = pack.getMetadataSection(OverlayMetadataSection.forPackType(type));
                  List<String> overlaySet = overlays != null ? overlays.overlaysForVersion(currentPackVersion) : List.of();
--                var11 = new Pack.Metadata(meta.description(), packCompatibility, requiredFlags, overlaySet);
-+                var11 = new Pack.Metadata(meta.description(), packCompatibility, requiredFlags, overlaySet, pack.isHidden());
+-                return new Pack.Metadata(meta.description(), packCompatibility, requiredFlags, overlaySet);
++                return new Pack.Metadata(meta.description(), packCompatibility, requiredFlags, overlaySet, pack.isHidden());
              }
- 
-             return var11;
-@@ -128,6 +_,10 @@
+         } catch (Exception e) {
+             LOGGER.warn("Failed to read pack {} metadata", location.id(), e);
+@@ -123,6 +_,10 @@
          return this.location.source();
      }
  
@@ -36,7 +36,7 @@
      @Override
      public boolean equals(final Object o) {
          if (this == o) {
-@@ -142,7 +_,10 @@
+@@ -137,7 +_,10 @@
          return this.location.hashCode();
      }
  
@@ -47,4 +47,4 @@
 +        }
      }
  
-     public static enum Position {
+     public enum Position {

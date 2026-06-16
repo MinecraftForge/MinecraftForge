@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypeIds;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -24,46 +25,48 @@ public final class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
         super(output, lookupProvider, "forge", existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addTags(HolderLookup.Provider lookupProvider) {
         tag(BOSSES)
-            .add(EntityType.ENDER_DRAGON, EntityType.WITHER);
+            .add(EntityTypeIds.ENDER_DRAGON, EntityTypeIds.WITHER);
         tag(MINECARTS).add(
-            EntityType.MINECART,
-            EntityType.CHEST_MINECART,
-            EntityType.FURNACE_MINECART,
-            EntityType.HOPPER_MINECART,
-            EntityType.SPAWNER_MINECART,
-            EntityType.TNT_MINECART,
-            EntityType.COMMAND_BLOCK_MINECART
+            EntityTypeIds.MINECART,
+            EntityTypeIds.CHEST_MINECART,
+            EntityTypeIds.FURNACE_MINECART,
+            EntityTypeIds.HOPPER_MINECART,
+            EntityTypeIds.SPAWNER_MINECART,
+            EntityTypeIds.TNT_MINECART,
+            EntityTypeIds.COMMAND_BLOCK_MINECART
         );
         tag(BOATS).add(
-            EntityType.ACACIA_BOAT,
-            EntityType.ACACIA_CHEST_BOAT,
-            EntityType.BAMBOO_CHEST_RAFT,
-            EntityType.BAMBOO_RAFT,
-            EntityType.BIRCH_BOAT,
-            EntityType.BIRCH_CHEST_BOAT,
-            EntityType.CHERRY_BOAT,
-            EntityType.CHERRY_CHEST_BOAT,
-            EntityType.DARK_OAK_BOAT,
-            EntityType.DARK_OAK_CHEST_BOAT,
-            EntityType.JUNGLE_BOAT,
-            EntityType.JUNGLE_CHEST_BOAT,
-            EntityType.MANGROVE_BOAT,
-            EntityType.MANGROVE_CHEST_BOAT,
-            EntityType.OAK_BOAT,
-            EntityType.OAK_CHEST_BOAT,
-            EntityType.PALE_OAK_BOAT,
-            EntityType.PALE_OAK_CHEST_BOAT,
-            EntityType.SPRUCE_BOAT,
-            EntityType.SPRUCE_CHEST_BOAT
+            EntityTypeIds.ACACIA_BOAT,
+            EntityTypeIds.ACACIA_CHEST_BOAT,
+            EntityTypeIds.BAMBOO_CHEST_RAFT,
+            EntityTypeIds.BAMBOO_RAFT,
+            EntityTypeIds.BIRCH_BOAT,
+            EntityTypeIds.BIRCH_CHEST_BOAT,
+            EntityTypeIds.CHERRY_BOAT,
+            EntityTypeIds.CHERRY_CHEST_BOAT,
+            EntityTypeIds.DARK_OAK_BOAT,
+            EntityTypeIds.DARK_OAK_CHEST_BOAT,
+            EntityTypeIds.JUNGLE_BOAT,
+            EntityTypeIds.JUNGLE_CHEST_BOAT,
+            EntityTypeIds.MANGROVE_BOAT,
+            EntityTypeIds.MANGROVE_CHEST_BOAT,
+            EntityTypeIds.OAK_BOAT,
+            EntityTypeIds.OAK_CHEST_BOAT,
+            EntityTypeIds.PALE_OAK_BOAT,
+            EntityTypeIds.PALE_OAK_CHEST_BOAT,
+            EntityTypeIds.SPRUCE_BOAT,
+            EntityTypeIds.SPRUCE_CHEST_BOAT
         );
-        tag(ITEM_FRAMES).add(EntityType.ITEM_FRAME, EntityType.GLOW_ITEM_FRAME);
+        tag(ITEM_FRAMES).add(EntityTypeIds.ITEM_FRAME, EntityTypeIds.GLOW_ITEM_FRAME);
         tag(CAPTURING_NOT_SUPPORTED);
         tag(TELEPORTING_NOT_SUPPORTED);
     }
 
+    @SuppressWarnings("unused")
     private static TagKey<EntityType<?>> forgeTagKey(String path) {
         return EntityTypeTags.create(Identifier.fromNamespaceAndPath("forge", path));
     }

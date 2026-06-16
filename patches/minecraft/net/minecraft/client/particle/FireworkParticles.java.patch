@@ -4,10 +4,10 @@
                      colors = IntList.of(DyeColor.BLACK.getFireworkColor());
                  }
  
-+                var factory = net.minecraftforge.client.FireworkShapeFactoryRegistry.get(explosionx.shape());
++                var factory = net.minecraftforge.client.FireworkShapeFactoryRegistry.get(explosion.shape());
 +                if (factory != null)
 +                    factory.build(this, trail, twinkle, colors.toIntArray(), colors.toIntArray());
 +                else
-                 switch (explosionx.shape()) {
+                 switch (explosion.shape()) {
                      case SMALL_BALL:
                          this.createParticleBall(0.25, 2, colors, fadeColors, trail, twinkle);

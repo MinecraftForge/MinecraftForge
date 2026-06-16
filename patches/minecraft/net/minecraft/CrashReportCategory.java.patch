@@ -1,21 +1,21 @@
 --- a/net/minecraft/CrashReportCategory.java
 +++ b/net/minecraft/CrashReportCategory.java
-@@ -140,8 +_,10 @@
-         if (full.length <= 0) {
+@@ -138,8 +_,10 @@
              return 0;
-         } else {
--            this.stackTrace = new StackTraceElement[full.length - 3 - nestedOffset];
--            System.arraycopy(full, 3 + nestedOffset, this.stackTrace, 0, this.stackTrace.length);
-+            int len = full.length - 3 - nestedOffset;
-+            if (len <= 0) len = full.length;
-+            this.stackTrace = new StackTraceElement[len];
-+            System.arraycopy(full, full.length - len, this.stackTrace, 0, this.stackTrace.length);
-             return this.stackTrace.length;
          }
-     }
-@@ -188,16 +_,16 @@
  
-         if (this.stackTrace != null && this.stackTrace.length > 0) {
+-        this.stackTrace = new StackTraceElement[full.length - 3 - nestedOffset];
+-        System.arraycopy(full, 3 + nestedOffset, this.stackTrace, 0, this.stackTrace.length);
++        int len = full.length - 3 - nestedOffset;
++        if (len <= 0) len = full.length;
++        this.stackTrace = new StackTraceElement[len];
++        System.arraycopy(full, full.length - len, this.stackTrace, 0, this.stackTrace.length);
+         return this.stackTrace.length;
+     }
+ 
+@@ -181,16 +_,16 @@
+ 
+         if (this.stackTrace.length > 0) {
              builder.append("\nStacktrace:");
 -
 -            for (StackTraceElement element : this.stackTrace) {

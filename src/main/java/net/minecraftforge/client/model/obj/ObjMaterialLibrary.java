@@ -6,7 +6,6 @@
 package net.minecraftforge.client.model.obj;
 
 import com.google.common.collect.Maps;
-import net.minecraft.client.resources.model.ModelDebugName;
 import org.joml.Vector4f;
 
 import java.io.IOException;

@@ -13,14 +13,14 @@
              && ItemStack.isSameItemSameComponents(slotItemStack, newItemStack)
 @@ -169,7 +_,7 @@
  
-         for (int slotx = 0; slotx < 9; slotx++) {
-             int index = (this.selected + slotx) % 9;
+         for (int slot = 0; slot < 9; slot++) {
+             int index = (this.selected + slot) % 9;
 -            if (!this.items.get(index).isEnchanted()) {
 +            if (!this.items.get(index).isNotReplaceableByPickAction(this.player, index)) {
                  return index;
              }
          }
-@@ -240,7 +_,7 @@
+@@ -242,7 +_,7 @@
          for (int i = 0; i < this.items.size(); i++) {
              ItemStack itemStack = this.getItem(i);
              if (!itemStack.isEmpty()) {
@@ -29,12 +29,12 @@
              }
          }
      }
-@@ -290,6 +_,8 @@
-             } catch (Throwable var6) {
-                 CrashReport report = CrashReport.forThrowable(var6, "Adding item to inventory");
-                 CrashReportCategory category = report.addCategory("Item being added");
-+                category.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(itemStack.getItem())));
-+                category.setDetail("Item Class", () -> itemStack.getItem().getClass().getName());
-                 category.setDetail("Item ID", Item.getId(itemStack.getItem()));
-                 category.setDetail("Item data", itemStack.getDamageValue());
-                 category.setDetail("Item name", () -> itemStack.getHoverName().getString());
+@@ -293,6 +_,8 @@
+         } catch (Throwable t) {
+             CrashReport report = CrashReport.forThrowable(t, "Adding item to inventory");
+             CrashReportCategory category = report.addCategory("Item being added");
++            category.setDetail("Registry Name", () -> String.valueOf(net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(itemStack.getItem())));
++            category.setDetail("Item Class", () -> itemStack.getItem().getClass().getName());
+             category.setDetail("Item ID", Item.getId(itemStack.getItem()));
+             category.setDetail("Item data", itemStack.getDamageValue());
+             category.setDetail("Item name", () -> itemStack.getHoverName().getString());

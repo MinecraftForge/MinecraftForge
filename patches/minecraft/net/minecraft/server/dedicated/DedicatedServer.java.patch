@@ -1,51 +1,51 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -97,6 +_,7 @@
+@@ -88,6 +_,7 @@
+     private final ServerLinks serverLinks;
      private final Map<String, String> codeOfConductTexts;
-     private @Nullable ManagementServer jsonRpcServer;
-     private long lastHeartbeat;
+     private final @Nullable ManagementServer jsonRpcServer;
 +    private net.minecraft.client.server.@Nullable LanServerPinger dediLanPinger;
  
      public DedicatedServer(
          final Thread serverThread,
-@@ -211,6 +_,7 @@
- 
+@@ -167,6 +_,7 @@
+         Thread consoleThread = new Thread("Server console handler") {
              @Override
              public void run() {
 +                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
                  BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
                  String line;
-@@ -284,11 +_,13 @@
-             this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSubscribers(), RemoteDebugSampleType.TICK_TIME);
-             long levelNanoTime = Util.getNanos();
-             this.services.nameToIdCache().resolveOfflineUsers(!this.usesAuthentication());
-+            if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-             LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
-             this.loadLevel();
-             long elapsed = Util.getNanos() - levelNanoTime;
-             String time = String.format(Locale.ROOT, "%.3fs", elapsed / 1.0E9);
-             LOGGER.info("Done ({})! For help, type \"help\"", time);
-+            this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
-             if (properties.announcePlayerAchievements != null) {
-                 this.getGameRules().set(GameRules.SHOW_ADVANCEMENT_MESSAGES, properties.announcePlayerAchievements, this);
-             }
-@@ -318,7 +_,12 @@
- 
-             this.saveEverything(false, true, true);
-             this.notificationManager().serverStarted();
--            return true;
-+            if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
-+                this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
-+                this.dediLanPinger.start();
-+            }
-+
-+            return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
+@@ -241,11 +_,13 @@
+         this.tickTimeLogger = new RemoteSampleLogger(TpsDebugDimensions.values().length, this.debugSubscribers(), RemoteDebugSampleType.TICK_TIME);
+         long levelNanoTime = Util.getNanos();
+         this.services.nameToIdCache().resolveOfflineUsers(!this.usesAuthentication());
++        if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+         LOGGER.info("Preparing level \"{}\"", this.getLevelIdName());
+         this.loadLevel();
+         long elapsed = Util.getNanos() - levelNanoTime;
+         String time = String.format(Locale.ROOT, "%.3fs", elapsed / 1.0E9);
+         LOGGER.info("Done ({})! For help, type \"help\"", time);
++        this.nextTickTimeNanos = Util.getNanos(); //Forge: Update server time to prevent watchdog/spaming during long load.
+         if (properties.announcePlayerAchievements != null) {
+             this.getGameRules().set(GameRules.SHOW_ADVANCEMENT_MESSAGES, properties.announcePlayerAchievements, this);
          }
+@@ -274,7 +_,12 @@
+ 
+         this.saveEverything(false, true, true);
+         this.notificationManager().serverStarted();
+-        return true;
++        if (net.minecraftforge.common.ForgeConfig.SERVER.advertiseDedicatedServerToLan.get()) {
++            this.dediLanPinger = new net.minecraft.client.server.LanServerPinger(this.getMotd(), String.valueOf(this.getServerPort()));
++            this.dediLanPinger.start();
++        }
++
++        return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
      }
  
-@@ -470,6 +_,13 @@
-                 LOGGER.error("Interrupted while stopping the management server", (Throwable)var2);
+     @Override
+@@ -417,6 +_,13 @@
+                 LOGGER.error("Interrupted while stopping the management server", e);
              }
          }
 +
@@ -58,7 +58,7 @@
      }
  
      @Override
-@@ -751,8 +_,13 @@
+@@ -719,8 +_,13 @@
  
      @Override
      protected void stopServer() {

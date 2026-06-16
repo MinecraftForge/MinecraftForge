@@ -7,7 +7,6 @@
     {
       "recipe": {
         "type": "minecraft:crafting_shapeless",
-        "category": "misc",
         "ingredients": [
           "minecraft:redstone_ore",
           "minecraft:redstone_ore",

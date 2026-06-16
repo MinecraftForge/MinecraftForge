@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/PlayerAdvancements.java
 +++ b/net/minecraft/server/PlayerAdvancements.java
-@@ -172,6 +_,7 @@
+@@ -171,6 +_,7 @@
              this.unregisterListeners(holder);
              this.progressChanged.add(holder);
              result = true;
@@ -8,7 +8,7 @@
              if (!wasDone && progress.isDone()) {
                  holder.value().rewards().grant(this.player);
                  holder.value().display().ifPresent(display -> {
-@@ -179,6 +_,7 @@
+@@ -178,6 +_,7 @@
                          this.playerList.broadcastSystemMessage(display.getType().createAnnouncement(holder, this.player), false);
                      }
                  });
@@ -16,7 +16,7 @@
              }
          }
  
-@@ -197,6 +_,7 @@
+@@ -196,6 +_,7 @@
              this.registerListeners(advancement);
              this.progressChanged.add(advancement);
              result = true;

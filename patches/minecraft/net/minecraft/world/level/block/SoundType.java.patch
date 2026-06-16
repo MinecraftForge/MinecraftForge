@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/SoundType.java
 +++ b/net/minecraft/world/level/block/SoundType.java
-@@ -831,6 +_,7 @@
+@@ -855,6 +_,7 @@
      private final SoundEvent hitSound;
      private final SoundEvent fallSound;
  

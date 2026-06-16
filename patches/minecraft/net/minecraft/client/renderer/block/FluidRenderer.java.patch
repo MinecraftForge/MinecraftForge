@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/FluidRenderer.java
 +++ b/net/minecraft/client/renderer/block/FluidRenderer.java
-@@ -87,8 +_,10 @@
+@@ -86,8 +_,10 @@
          boolean renderEast = shouldRenderFace(fluidState, blockState, Direction.EAST, fluidStateEast);
          if (renderUp || renderDown || renderEast || renderWest || renderNorth || renderSouth) {
              FluidModel model = this.fluidModels.get(fluidState);
@@ -12,7 +12,7 @@
              CardinalLighting cardinalLighting = level.cardinalLighting();
              Fluid type = fluidState.getType();
              float heightSelf = this.getHeight(level, type, pos, blockState, fluidState);
-@@ -295,7 +_,7 @@
+@@ -294,7 +_,7 @@
                      boolean isOverlay = false;
                      if (model.overlayMaterial() != null) {
                          Block relativeBlock = faceState.getBlock();

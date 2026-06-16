@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -72,6 +_,7 @@
+@@ -73,6 +_,7 @@
      }
  
      public void submit(final S state, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState camera) {
@@ -8,7 +8,7 @@
          poseStack.pushPose();
          if (state.hasPose(Pose.SLEEPING)) {
              Direction bedOrientation = state.bedOrientation;
-@@ -109,6 +_,7 @@
+@@ -110,6 +_,7 @@
  
          poseStack.popPose();
          super.submit(state, poseStack, submitNodeCollector, camera);
@@ -16,7 +16,7 @@
      }
  
      protected boolean shouldRenderLayers(final S state) {
-@@ -285,7 +_,7 @@
+@@ -278,7 +_,7 @@
  
          state.isFullyFrozen = entity.isFullyFrozen();
          state.isBaby = entity.isBaby();

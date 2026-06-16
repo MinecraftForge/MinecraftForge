@@ -9,7 +9,7 @@
                  if (category != MobCategory.MISC) {
                      BlockPos pos = entity.blockPosition();
                      chunkGetter.query(ChunkPos.pack(pos), chunk -> {
-@@ -214,7 +_,7 @@
+@@ -211,7 +_,7 @@
                                      groupSize++;
                                      level.addFreshEntityWithPassengers(mob);
                                      spawnCallback.run(mob, chunk);
@@ -18,7 +18,7 @@
                                          return;
                                      }
  
-@@ -291,7 +_,7 @@
+@@ -288,7 +_,7 @@
          return nearestPlayerDistanceSqr > mob.getType().getCategory().getDespawnDistance() * mob.getType().getCategory().getDespawnDistance()
                  && mob.removeWhenFarAway(nearestPlayerDistanceSqr)
              ? false
@@ -27,7 +27,7 @@
      }
  
      private static Optional<MobSpawnSettings.SpawnerData> getRandomSpawnMobAt(
-@@ -327,9 +_,11 @@
+@@ -324,9 +_,11 @@
          final BlockPos pos,
          final @Nullable Holder<Biome> biome
      ) {
@@ -42,7 +42,7 @@
      }
  
      public static boolean isInNetherFortressBounds(
-@@ -420,8 +_,7 @@
+@@ -417,8 +_,7 @@
  
                                  entity.snapTo(fx, pos.getY(), fz, random.nextFloat() * 360.0F, 0.0F);
                                  if (entity instanceof Mob mob
@@ -52,7 +52,7 @@
                                      groupSpawnData = mob.finalizeSpawn(
                                          level, level.getCurrentDifficultyAt(mob.blockPosition()), EntitySpawnReason.CHUNK_GENERATION, groupSpawnData
                                      );
-@@ -530,7 +_,7 @@
+@@ -527,7 +_,7 @@
              }
  
              this.spawnPotential.addCharge(pos, charge);

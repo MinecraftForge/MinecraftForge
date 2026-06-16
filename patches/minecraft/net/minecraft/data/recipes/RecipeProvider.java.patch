@@ -1,23 +1,24 @@
 --- a/net/minecraft/data/recipes/RecipeProvider.java
 +++ b/net/minecraft/data/recipes/RecipeProvider.java
-@@ -891,13 +_,13 @@
-                             }
- 
+@@ -908,14 +_,14 @@
+                         final List<CompletableFuture<?>> tasks = new ArrayList<>();
+                         RecipeOutput recipeOutput = new RecipeOutput() {
                              @Override
 -                            public void accept(final ResourceKey<Recipe<?>> id, final Recipe<?> recipe, final @Nullable AdvancementHolder advancementHolder) {
 +                            public void accept(final ResourceKey<Recipe<?>> id, final Recipe<?> recipe, net.minecraft.resources.@Nullable Identifier advancementId, com.google.gson.@Nullable JsonElement advancement) {
                                  if (!allRecipes.add(id)) {
                                      throw new IllegalStateException("Duplicate recipe " + id.identifier());
-                                 } else {
-                                     this.saveRecipe(id, recipe);
--                                    if (advancementHolder != null) {
--                                        this.saveAdvancement(advancementHolder);
-+                                    if (advancement != null && advancementId != null) {
-+                                        this.saveAdvancement(advancementId, advancement);
-                                     }
+                                 }
+ 
+                                 this.saveRecipe(id, recipe);
+-                                if (advancementHolder != null) {
+-                                    this.saveAdvancement(advancementHolder);
++                                if (advancement != null && advancementId != null) {
++                                    this.saveAdvancement(advancementId, advancement);
                                  }
                              }
-@@ -912,19 +_,26 @@
+ 
+@@ -929,19 +_,26 @@
                                  AdvancementHolder root = Advancement.Builder.recipeAdvancement()
                                      .addCriterion("impossible", CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()))
                                      .build(RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);

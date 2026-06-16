@@ -9,8 +9,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.component.DataComponents;
@@ -23,6 +21,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.tags.VanillaItemTagsProvider;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.references.BlockItemIds;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -38,7 +37,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.SimpleCraftingContainer;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 import net.minecraftforge.common.crafting.ingredients.IIngredientBuilder;
-import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.util.INBTBuilder;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -69,9 +67,7 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
         var look = event.getLookupProvider();
         var exist = event.getExistingFileHelper();
 
-        var blockTags = new BlockTagsGen(out, look, exist);
-        gen.addProvider(event.includeServer(), blockTags);
-        gen.addProvider(event.includeServer(), new ItemTagsGen(out, look, blockTags, exist));
+        gen.addProvider(event.includeServer(), new ItemTagsGen(out, look, exist));
         gen.addProvider(event.includeServer(), new Recipes.Runner(out, event.getLookupProvider()));
     }
 
@@ -226,25 +222,15 @@ public class CustomIngredientsTest extends BaseTestMod implements INBTBuilder {
         assertRecipeMatch(helper, RecipeType.CRAFTING, container.apply(stack(Items.DIRT)), "difference_ingredient");
         assertRecipeMiss(helper, RecipeType.CRAFTING, container.apply(stack(Items.STONE)));
     }
-
-    private static class BlockTagsGen extends BlockTagsProvider {
-        public BlockTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> look, @Nullable ExistingFileHelper exist) {
-            super(out, look, MODID, exist);
-        }
-
-        @Override
-        public void addTags(HolderLookup.Provider lookup) { }
-    }
-
     private static class ItemTagsGen extends VanillaItemTagsProvider {
-        public ItemTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, BlockTagsProvider blocks, ExistingFileHelper existing) {
-            super(out, lookup, /*blocks.contentsGetter(),*/ MODID, existing);
+        public ItemTagsGen(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup, ExistingFileHelper existing) {
+            super(out, lookup, MODID, existing);
         }
 
         @Override
         public void addTags(HolderLookup.Provider lookup) {
-            tag(LEFT).add(Items.DIRT, Items.STONE);
-            tag(RIGHT).add(Items.STONE, Items.GRAVEL);
+            tag(LEFT).add(BlockItemIds.DIRT.item(), BlockItemIds.STONE.item());
+            tag(RIGHT).add(BlockItemIds.STONE.item(), BlockItemIds.GRAVEL.item());
         }
     }
 

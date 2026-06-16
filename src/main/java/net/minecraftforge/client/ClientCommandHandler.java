@@ -16,7 +16,6 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSource;
@@ -26,7 +25,6 @@ import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.*;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.server.command.CommandHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,12 +69,12 @@ public class ClientCommandHandler {
         copy(serverCommandsRoot, newServerCommands.getRoot());
 
         // Copies the client side commands into the server side commands to be used for suggestions
-        CommandHelper.mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (context) -> 0, (suggestions) -> {
+        CommandHelper.mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (_) -> 0, (suggestions) -> {
             @SuppressWarnings("unchecked")
             var shared = (SuggestionProvider<T>)(SuggestionProvider<?>)suggestions;
             var suggestionProvider = shared; //SuggestionProviders.safelySwap(shared);
             if (suggestionProvider == SuggestionProviders.ASK_SERVER) {
-                suggestionProvider = (context, builder) -> {
+                suggestionProvider = (context, _) -> {
                     ClientCommandSourceStack source = getSource();
                     StringReader reader = new StringReader(context.getInput());
                     if (reader.canRead() && reader.peek() == '/')
@@ -109,7 +107,7 @@ public class ClientCommandHandler {
             new CommandSource() {
                 @Override
                 public void sendSystemMessage(Component message) {
-                    mc.gui.getChat().addClientSystemMessage(message);
+                    mc.gui.hud.getChat().addClientSystemMessage(message);
                 }
 
                 @Override
@@ -188,7 +186,7 @@ public class ClientCommandHandler {
                 // in case of unknown command, let the server try and handle it
                 return false;
             }
-            mc.gui.getChat().addClientSystemMessage(
+            mc.gui.hud.getChat().addClientSystemMessage(
                 Component.literal("").append(ComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(ChatFormatting.RED)
             );
             if (syntax.getInput() != null && syntax.getCursor() >= 0) {
@@ -205,11 +203,11 @@ public class ClientCommandHandler {
                     details.append(Component.literal(syntax.getInput().substring(position)).withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE));
 
                 details.append(Component.translatable("command.context.here").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
-                mc.gui.getChat().addClientSystemMessage(Component.literal("").append(details).withStyle(ChatFormatting.RED));
+                mc.gui.hud.getChat().addClientSystemMessage(Component.literal("").append(details).withStyle(ChatFormatting.RED));
             }
         } catch (Exception generic) { // Probably thrown by the command{
             MutableComponent message = Component.literal(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
-            mc.gui.getChat().addClientSystemMessage(
+            mc.gui.hud.getChat().addClientSystemMessage(
                 Component.translatable("command.failed")
                     .withStyle(ChatFormatting.RED)
                     .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(message)))
