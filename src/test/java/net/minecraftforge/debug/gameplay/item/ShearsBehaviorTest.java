@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.golem.CopperGolem;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
 import net.minecraft.world.item.Item;
@@ -123,6 +124,30 @@ public class ShearsBehaviorTest extends BaseTestMod {
         helper.assertTrue(result.consumesAction(), "Using custom shears on copper golem should result in consume action");
         helper.assertTrue(golem.getItemBySlot(CopperGolem.EQUIPMENT_SLOT_ANTENNA).isEmpty(), "Copper golem poppy should be sheared off with custom shears");
         helper.assertItemEntityPresent(Items.POPPY);
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_sulfur_cube_block(GameTestHelper helper) {
+        helper.makeFloor();
+
+        // setup: sulfur cube with block
+        var pos = new BlockPos(1, 1, 1);
+        var sulfurCube = helper.spawnWithNoFreeWill(EntityTypes.SULFUR_CUBE, pos);
+        sulfurCube.setItemSlot(EquipmentSlot.BODY, new ItemStack(Items.DIRT));
+        helper.assertTrue(sulfurCube.readyForShearing(), "Sulfur cube should start shearable (has dirt block)");
+
+        // act: interact with sulfur cube using custom shears
+        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var shears = CUSTOM_SHEARS_ITEM.get().getDefaultInstance();
+        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        var result = player.interactOn(sulfurCube, InteractionHand.MAIN_HAND, Vec3.ZERO);
+
+        // assert
+        helper.assertTrue(result.consumesAction(), "Using custom shears on sulfur cube should result in consume action");
+        helper.assertTrue(sulfurCube.getItemBySlot(EquipmentSlot.BODY).isEmpty(), "Sulfur cube block should be sheared off with custom shears");
+        helper.assertItemEntityPresent(Items.DIRT);
 
         helper.succeed();
     }
