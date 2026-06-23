@@ -573,7 +573,7 @@ forgedev.installer {
                             '--output', '{PATCHED}',
                             '--apply', '{BINPATCH}',
                             '--data', '--unpatched',
-                            '--marker', '.forge_patched_minecraft'
+                            '--store'
                     ]
                     cache '{PATCHED}', '{PATCHED_SHA}'
                 },
@@ -584,6 +584,7 @@ forgedev.installer {
                             '--output', '{PATCHED}',
                             '--apply', '{BINPATCH}',
                             '--data', '--unpatched',
+                            '--store',
                             '--marker', '.forge_patched_minecraft'
                     ]
                     cache '{PATCHED}', '{PATCHED_SHA}'
