@@ -1,7 +1,7 @@
 import groovy.transform.Field
 
 pluginManagement {
-    private static final @Field String FORGEDEV_VERSION = '7.0.0-beta.49'
+    private static final @Field String FORGEDEV_VERSION = '7.0.0-beta.50'
 
     if (new File('forgedev/settings.gradle').exists()) {
         includeBuild 'forgedev'
@@ -51,8 +51,6 @@ gradle.beforeProject { Project project ->
         project.ext.forgeVersion         = project.version.substring(project.ext.minecraftVersion.length() + 1)
         project.ext.minecraftNextVersion = project.gradleutils.unpack(project.bootLibs.versions.minecraft.next)
         project.ext.mcpVersion           = project.gradleutils.unpack(project.bootLibs.versions.mcp)
-        project.ext.mappingsChannel      = project.gradleutils.unpack(project.bootLibs.versions.mappings.channel)
-        project.ext.mappingsVersion      = project.gradleutils.unpack(project.bootLibs.versions.mappings.version)
         project.ext.changelogBase        = project.gradleutils.unpack(project.bootLibs.versions.changelog.base)
         //@formatter:on
     }
@@ -195,6 +193,22 @@ dependencyResolutionManagement.versionCatalogs {
         library 'lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'    versionRef 'lwjgl'
         library 'lwjgl-tinyfd', 'org.lwjgl', 'lwjgl-tinyfd' versionRef 'lwjgl'
         bundle  'lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb', 'lwjgl-tinyfd']
+    }
+
+    register('earlyDisplayLibs') {
+        version 'slf4j', '1.8.0-beta4'
+        library 'slf4j-api',   'org.slf4j', 'slf4j-api'   versionRef 'slf4j'
+        library 'slf4j-jdk14', 'org.slf4j', 'slf4j-jdk14' versionRef 'slf4j'
+    }
+
+    register('earlyDisplayTestLibs') {
+        library 'powermock-core', 'org.powermock', 'powermock-core' version '2.0.9'
+
+        library 'lwjgl',        'org.lwjgl', 'lwjgl'        withoutVersion()
+        library 'lwjgl-glfw',   'org.lwjgl', 'lwjgl-glfw'   withoutVersion()
+        library 'lwjgl-opengl', 'org.lwjgl', 'lwjgl-opengl' withoutVersion()
+        library 'lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'    withoutVersion()
+        bundle  'lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb']
     }
     //@formatter:on
 }
