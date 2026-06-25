@@ -5,26 +5,7 @@
  
          Level level = this.level();
 -        if (itemStack.is(Items.SHEARS) && this.readyForShearing()) {
-+        if (false && itemStack.is(Items.SHEARS) && this.readyForShearing()) { // Forge: Moved to onSheared
++        if (itemStack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST) && this.readyForShearing()) {
              if (level instanceof ServerLevel serverLevel) {
                  this.shear(serverLevel, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -435,6 +_,18 @@
-         ItemStack itemStack = this.getItemBySlot(EQUIPMENT_SLOT_ANTENNA);
-         this.setItemSlot(EQUIPMENT_SLOT_ANTENNA, ItemStack.EMPTY);
-         this.spawnAtLocation(level, itemStack, 1.5F);
-+    }
-+
-+    @Override
-+    public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
-+        if (world instanceof ServerLevel server) {
-+            server.playSound(null, this, SoundEvents.COPPER_GOLEM_SHEAR, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
-+            var ret = new java.util.ArrayList<ItemStack>();
-+            ret.add(this.getItemBySlot(EQUIPMENT_SLOT_ANTENNA));
-+            this.setItemSlot(EQUIPMENT_SLOT_ANTENNA, ItemStack.EMPTY);
-+            return ret;
-+        }
-+        return java.util.Collections.emptyList();
-     }
- 
-     @Override

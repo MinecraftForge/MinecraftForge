@@ -1,18 +1,20 @@
 --- a/net/minecraft/world/entity/Shearable.java
 +++ b/net/minecraft/world/entity/Shearable.java
-@@ -4,8 +_,14 @@
- import net.minecraft.sounds.SoundSource;
- import net.minecraft.world.item.ItemStack;
- 
--public interface Shearable {
-+public interface Shearable extends net.minecraftforge.common.IForgeShearable {
-+    /** @deprecated Use {@link net.minecraftforge.common.IForgeShearable#onSheared} */
+@@ -8,4 +_,17 @@
      void shear(ServerLevel level, SoundSource soundSource, ItemStack tool);
  
-+    /** @deprecated Use {@link net.minecraftforge.common.IForgeShearable#isShearable} */
      boolean readyForShearing();
 +
-+    default boolean isShearable(net.minecraft.world.item.ItemStack item, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
-+        return readyForShearing();
++    /** Equivalent to {@link shear} but returns a list of ItemStacks without actually spawning the entity into the world */
++    default java.util.List<ItemStack> shearItems(ServerLevel level, SoundSource soundSource, ItemStack tool) {
++        var self = (Entity)this;
++        var entities = new java.util.ArrayList<net.minecraft.world.entity.item.ItemEntity>();
++        self.captureDrops(entities);
++        shear(level, soundSource, tool);
++        self.captureDrops(null);
++        var items = new java.util.ArrayList<ItemStack>(entities.size());
++        for (var entity : entities)
++            items.add(entity.getItem());
++        return items;
 +    }
  }

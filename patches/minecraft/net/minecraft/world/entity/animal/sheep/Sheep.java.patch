@@ -5,52 +5,7 @@
      public InteractionResult mobInteract(final Player player, final InteractionHand hand) {
          ItemStack itemStack = player.getItemInHand(hand);
 -        if (itemStack.is(Items.SHEARS)) {
-+        if (false && itemStack.is(Items.SHEARS)) { // Forge: Moved to onSheared
++        if (itemStack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST)) {
              if (this.level() instanceof ServerLevel level && this.readyForShearing()) {
                  this.shear(level, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -161,12 +_,27 @@
- 
-     @Override
-     public void shear(final ServerLevel level, final SoundSource soundSource, final ItemStack tool) {
-+        dropItems(level, shearInternal(level, soundSource, tool));
-+    }
-+
-+    private java.util.List<ItemStack> shearInternal(ServerLevel level, SoundSource soundSource, ItemStack tool) {
-+        var ret = new java.util.ArrayList<ItemStack>();
-         level.playSound(null, this, SoundEvents.SHEEP_SHEAR, soundSource, 1.0F, 1.0F);
-         this.dropFromShearingLootTable(
-             level,
-             BuiltInLootTables.SHEAR_SHEEP,
-             tool,
-             (l, drop) -> {
-+                ret.add(drop);
-+            }
-+        );
-+        this.setSheared(true);
-+        return ret;
-+    }
-+
-+    private void dropItems(ServerLevel l, java.util.Collection<ItemStack> items) {
-+            // double indented to make the patch look nicer
-+            for (var drop : items) {
-                 for (int i = 0; i < drop.getCount(); i++) {
-                     ItemEntity entity = this.spawnAtLocation(l, drop.copyWithCount(1), 1.0F);
-                     if (entity != null) {
-@@ -181,8 +_,14 @@
-                     }
-                 }
-             }
--        );
--        this.setSheared(true);
-+    }
-+
-+    @Override
-+    public java.util.List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos, int fortune) {
-+        if (level instanceof ServerLevel server) {
-+            return shearInternal(server, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, item);
-+        }
-+        return java.util.Collections.emptyList();
-     }
- 
-     @Override

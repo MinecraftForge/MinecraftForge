@@ -5,53 +5,24 @@
              this.playSound(milkSound, 1.0F, 1.0F);
              return InteractionResult.SUCCESS;
 -        } else if (itemStack.is(Items.SHEARS) && this.readyForShearing()) {
-+        } else if (false && itemStack.is(Items.SHEARS) && this.readyForShearing()) {
++        } else if (itemStack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST) && this.readyForShearing()) {
              if (this.level() instanceof ServerLevel level) {
                  this.shear(level, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -178,15 +_,26 @@
+@@ -178,6 +_,8 @@
  
      @Override
      public void shear(final ServerLevel level, final SoundSource soundSource, final ItemStack tool) {
-+        for (var stack : shearInternal(level, soundSource, tool)) {
-+            for (int i = 0; i < stack.getCount(); i++) {
-+                this.level().addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0D), this.getZ(), stack.copyWithCount(1)));
-+            }
-+        }
-+    }
-+
-+    private java.util.List<ItemStack> shearInternal(ServerLevel level, SoundSource soundSource, ItemStack tool) {
-+        var ret = new java.util.ArrayList<ItemStack>();
 +        if (!net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityTypes.COW, time -> {}))
-+            return ret;
++            return;
          level.playSound(null, this, SoundEvents.MOOSHROOM_SHEAR, soundSource, 1.0F, 1.0F);
          this.convertTo(EntityTypes.COW, ConversionParams.single(this, false, false), cow -> {
              level.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(0.5), this.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
-             this.dropFromShearingLootTable(level, BuiltInLootTables.SHEAR_MOOSHROOM, tool, (l, drop) -> {
--                for (int i = 0; i < drop.getCount(); i++) {
--                    l.addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0), this.getZ(), drop.copyWithCount(1)));
--                }
-+                ret.add(tool);
+@@ -186,6 +_,7 @@
+                     l.addFreshEntity(new ItemEntity(this.level(), this.getX(), this.getY(1.0), this.getZ(), drop.copyWithCount(1)));
+                 }
              });
 +            net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, cow);
          });
-+        return ret;
      }
  
-     @Override
-@@ -267,6 +_,15 @@
-         }
- 
-         return babyVariant;
-+    }
-+
-+    @Override
-+    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
-+        if (world instanceof ServerLevel server) {
-+            this.gameEvent(GameEvent.SHEAR, player);
-+            return shearInternal(server, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, item);
-+        }
-+        return java.util.Collections.emptyList();
-     }
- 
-     public enum Variant implements StringRepresentable {

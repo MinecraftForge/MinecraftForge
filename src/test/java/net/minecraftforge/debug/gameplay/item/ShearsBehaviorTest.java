@@ -6,11 +6,16 @@
 package net.minecraftforge.debug.gameplay.item;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.cow.MushroomCow;
 import net.minecraft.world.entity.animal.golem.CopperGolem;
 import net.minecraft.world.entity.decoration.LeashFenceKnotEntity;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -48,6 +53,14 @@ public class ShearsBehaviorTest extends BaseTestMod {
         this.testItem(_ -> CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance());
     }
 
+    private static void shear(GameTestHelper helper, Entity entity) {
+        var player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        var shears = CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance();
+        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+        var result = player.interactOn(entity, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        helper.assertTrue(result.consumesAction(), "Using entity should result in consume action");
+    }
+
     @GameTest
     public static void custom_shears_unleash_entity(GameTestHelper helper) {
         helper.makeFloor();
@@ -61,14 +74,9 @@ public class ShearsBehaviorTest extends BaseTestMod {
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
 
-        // act: interact with cow using custom shears
-        var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        var shears = CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance();
-        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        var result = player.interactOn(cow, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        shear(helper, cow);
 
         // assert
-        helper.assertTrue(result.consumesAction(), "Using custom shears on leashed cow should result in consume action");
         helper.assertTrue(!cow.isLeashed(), "Cow should be unleashed by custom shears");
         helper.assertItemEntityPresent(Items.LEAD);
 
@@ -89,14 +97,9 @@ public class ShearsBehaviorTest extends BaseTestMod {
         cow.setLeashedTo(knot, true);
         helper.assertTrue(cow.isLeashed(), "Cow should start leashed");
 
-        // act: interact with knot using custom shears
-        var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        var shears = CUSTOM_SHEARS_HARVEST_ITEM.get().getDefaultInstance();
-        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        var result = player.interactOn(knot, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        shear(helper, knot);
 
         // assert
-        helper.assertTrue(result.consumesAction(), "Using custom shears on leash knot should result in consume action");
         helper.assertTrue(!cow.isLeashed(), "Cow should be unleashed by sheared knot");
         helper.assertItemEntityPresent(Items.LEAD);
 
@@ -113,16 +116,106 @@ public class ShearsBehaviorTest extends BaseTestMod {
         golem.setItemSlot(CopperGolem.EQUIPMENT_SLOT_ANTENNA, new ItemStack(Items.POPPY));
         helper.assertTrue(golem.readyForShearing(), "Golem should start shearable (has poppy)");
 
-        // act: interact with copper golem using custom shears
-        var player = helper.makeMockPlayer(GameType.SURVIVAL);
-        var shears = CUSTOM_SHEARS_ITEM.get().getDefaultInstance();
-        player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-        var result = player.interactOn(golem, InteractionHand.MAIN_HAND, Vec3.ZERO);
+        shear(helper, golem);
 
         // assert
-        helper.assertTrue(result.consumesAction(), "Using custom shears on copper golem should result in consume action");
         helper.assertTrue(golem.getItemBySlot(CopperGolem.EQUIPMENT_SLOT_ANTENNA).isEmpty(), "Copper golem poppy should be sheared off with custom shears");
         helper.assertItemEntityPresent(Items.POPPY);
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_sulfur_cube_block(GameTestHelper helper) {
+        helper.makeFloor();
+
+        // setup: sulfur cube with block
+        var pos = new BlockPos(1, 1, 1);
+        var sulfurCube = helper.spawnWithNoFreeWill(EntityTypes.SULFUR_CUBE, pos);
+        sulfurCube.setItemSlot(EquipmentSlot.BODY, new ItemStack(Items.DIRT));
+        helper.assertTrue(sulfurCube.readyForShearing(), "Sulfur cube should start shearable (has dirt block)");
+
+        shear(helper, sulfurCube);
+
+        // assert
+        helper.assertTrue(sulfurCube.getItemBySlot(EquipmentSlot.BODY).isEmpty(), "Sulfur cube block should be sheared off with custom shears");
+        helper.assertItemEntityPresent(Items.DIRT);
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_bogged(GameTestHelper helper) {
+        helper.makeFloor();
+
+        var pos = new BlockPos(1, 1, 1);
+        var entity = helper.spawnWithNoFreeWill(EntityTypes.BOGGED, pos);
+        helper.assertTrue(entity.readyForShearing(), "Bogged start shearable");
+
+        shear(helper, entity);
+
+        // assert
+        helper.assertTrue(!entity.readyForShearing(), "Bogged should no longer be shearable");
+        int found = 0;
+        for (var item : helper.getEntities(EntityTypes.ITEM, BlockPos.ZERO, 3)) {
+            if (item.isAlive() && (item.getItem().is(Items.BROWN_MUSHROOM) || item.getItem().is(Items.RED_MUSHROOM)))
+                found += item.getItem().count();
+        }
+        helper.assertValueEqual(found, 2, "Mushroom loot not found");
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_mooshroom(GameTestHelper helper) {
+        helper.makeFloor();
+
+        var pos = new BlockPos(1, 1, 1);
+        var entity = helper.spawnWithNoFreeWill(EntityTypes.MOOSHROOM, pos);
+        entity.setComponent(DataComponents.MOOSHROOM_VARIANT, MushroomCow.Variant.RED);
+        helper.assertTrue(entity.readyForShearing(), "Mooshroom start shearable");
+
+        shear(helper, entity);
+
+        // assert
+        helper.assertTrue(!entity.isAlive(), "Mooshroom should no longer be alive");
+        helper.assertEntityPresent(EntityTypes.COW);
+        helper.assertItemEntityPresent(Items.RED_MUSHROOM);
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_sheep(GameTestHelper helper) {
+        helper.makeFloor();
+
+        var pos = new BlockPos(1, 1, 1);
+        var entity = helper.spawnWithNoFreeWill(EntityTypes.SHEEP, pos);
+        entity.setColor(DyeColor.WHITE);
+        helper.assertTrue(entity.readyForShearing(), "Sheep should start shearable");
+
+        shear(helper, entity);
+
+        // assert
+        helper.assertTrue(!entity.readyForShearing(), "Sheep should no longer be shearable");
+        helper.assertItemEntityPresent(Items.WOOL.white());
+
+        helper.succeed();
+    }
+
+    @GameTest
+    public static void custom_shears_shear_snowgolem(GameTestHelper helper) {
+        helper.makeFloor();
+
+        var pos = new BlockPos(1, 1, 1);
+        var entity = helper.spawnWithNoFreeWill(EntityTypes.SNOW_GOLEM, pos);
+        helper.assertTrue(entity.readyForShearing(), "Snow golem should start shearable");
+
+        shear(helper, entity);
+
+        // assert
+        helper.assertTrue(!entity.readyForShearing(), "Snow golem should no longer be shearable");
+        helper.assertItemEntityPresent(Items.CARVED_PUMPKIN);
 
         helper.succeed();
     }

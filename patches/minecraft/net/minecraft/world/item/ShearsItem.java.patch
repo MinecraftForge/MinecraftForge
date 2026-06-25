@@ -1,31 +1,20 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -83,4 +_,34 @@
+@@ -83,4 +_,23 @@
              return super.useOn(context);
          }
      }
 +
 +    @Override
 +    public InteractionResult interactLivingEntity(ItemStack stack, Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
-+        if (entity instanceof net.minecraftforge.common.IForgeShearable target) {
-+            if (entity.level().isClientSide()) {
-+                return InteractionResult.SUCCESS;
-+            }
++        if (entity instanceof net.minecraft.world.entity.Shearable target) {
++            if (entity.level().isClientSide() || !target.readyForShearing())
++                return InteractionResult.CONSUME;
 +            var serverLevel = (net.minecraft.server.level.ServerLevel)entity.level();
-+
-+            BlockPos pos = BlockPos.containing(entity.position());
-+            if (target.isShearable(stack, entity.level(), pos)) {
-+                var key = net.minecraft.world.item.enchantment.Enchantments.FORTUNE;
-+                var drops = target.onSheared(playerIn, stack, entity.level(), pos, net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(entity.level().holderLookup(key.registryKey()).getOrThrow(key), stack));
-+                var rand = new java.util.Random();
-+                for (var drop : drops) {
-+                    var ent = entity.spawnAtLocation(serverLevel, drop, 1.0F);
-+                    ent.setDeltaMovement(ent.getDeltaMovement().add((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
-+                }
-+                if (!drops.isEmpty())
-+                    stack.hurtAndBreak(1, playerIn, hand.asEquipmentSlot());
-+            }
-+            return InteractionResult.SUCCESS;
++            target.shear(serverLevel, SoundSource.PLAYERS, stack);
++            serverLevel.gameEvent(playerIn, GameEvent.SHEAR, entity.position());
++            stack.hurtAndBreak(1, playerIn, hand.asEquipmentSlot());
++            return InteractionResult.SUCCESS_SERVER;
 +        }
 +        return InteractionResult.PASS;
 +     }

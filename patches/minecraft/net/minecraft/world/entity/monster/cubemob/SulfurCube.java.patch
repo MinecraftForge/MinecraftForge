@@ -11,3 +11,12 @@
          if (this.hasBodyItem() && this.floatsInLiquids) {
              float vibeAmount = 0.2F * Mth.sin(this.tickCount * 0.4F);
              double immersion = this.getFluidHeight(this.isInWater() ? FluidTags.WATER : FluidTags.LAVA) - this.getFluidJumpThreshold() + vibeAmount;
+@@ -452,7 +_,7 @@
+             }
+ 
+             if (!this.canExplode() || !heldItem.is(Items.FLINT_AND_STEEL) && !heldItem.is(Items.FIRE_CHARGE)) {
+-                if (heldItem.is(Items.SHEARS) && this.readyForShearing()) {
++                if (heldItem.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST) && this.readyForShearing()) {
+                     if (this.level() instanceof ServerLevel level) {
+                         ItemStack itemStackToShear = this.getItemBySlot(EquipmentSlot.BODY);
+                         this.shear(level, SoundSource.PLAYERS, heldItem);

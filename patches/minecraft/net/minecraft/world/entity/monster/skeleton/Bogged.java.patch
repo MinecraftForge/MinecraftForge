@@ -5,25 +5,7 @@
      protected InteractionResult mobInteract(final Player player, final InteractionHand hand) {
          ItemStack itemStack = player.getItemInHand(hand);
 -        if (itemStack.is(Items.SHEARS) && this.readyForShearing()) {
-+        if (false && itemStack.is(Items.SHEARS) && this.readyForShearing()) { // Forge: move to onSheared
++        if (itemStack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_HARVEST) && this.readyForShearing()) {
              if (this.level() instanceof ServerLevel level) {
                  this.shear(level, SoundSource.PLAYERS, itemStack);
                  this.gameEvent(GameEvent.SHEAR, player);
-@@ -137,5 +_,17 @@
-     @Override
-     public boolean readyForShearing() {
-         return !this.isSheared();
-+    }
-+
-+    @Override
-+    public java.util.List<ItemStack> onSheared(@org.jetbrains.annotations.Nullable Player player, @org.jetbrains.annotations.NotNull ItemStack item, Level world, net.minecraft.core.BlockPos pos, int fortune) {
-+        if (world instanceof ServerLevel server) {
-+            server.playSound(null, this, SoundEvents.BOGGED_SHEAR, SoundSource.PLAYERS, 1.0F, 1.0F);
-+            this.setSheared(true);
-+            var ret = new java.util.ArrayList<ItemStack>();
-+            this.dropFromShearingLootTable(server, BuiltInLootTables.BOGGED_SHEAR, item, (slevel, stack) -> ret.add(stack));
-+            return ret;
-+        }
-+        return java.util.Collections.emptyList();
-     }
- }
