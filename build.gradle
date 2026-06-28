@@ -463,9 +463,15 @@ forgedev.userdevCompatibility(minecraftVersion) {
 // region Installer tasks, Not needed when we simplify the installer/remove obf
 final clientBinPatches = forgedev.binaryPatches('client') {
     clean = minecraftFiles.client
+    // Workaround for 3rd party launcher issues, marker needed to locate MC, store needed to fix zlib-ng issues
+    apply { 
+        store = true 
+        marker = '.forge_patched_minecraft'
+    }
 }
 final serverBinPatches = forgedev.binaryPatches('server') {
     clean = minecraftFiles.serverExtracted
+    apply { store = true }
 }
 // endregion
 
@@ -541,7 +547,7 @@ forgedev.installer {
 
         data 'BINPATCH', '/data/client.lzma', '/data/server.lzma'
         data 'PATCHED', "[$projectArtifact:client]", "[$projectArtifact:server]"
-        data 'PATCHED_SHA', clientBinPatches.apply.flatMap {  it.output }, serverBinPatches.apply.flatMap { it.output }
+        data 'PATCHED_SHA', clientBinPatches.apply.flatMap { it.output }, serverBinPatches.apply.flatMap { it.output }
 
         steps = [
                 extract(installertools) {
