@@ -86,7 +86,7 @@ dependencyResolutionManagement.versionCatalogs {
     register('buildLibs') {
         description = 'Libraries used solely during the build and publish process.'
 
-        library 'binarypatcher',  'net.minecraftforge', 'binarypatcher'         version '1.3.0'
+        library 'binarypatcher',  'net.minecraftforge', 'binarypatcher'         version '1.3.4'
         library 'installer',      'net.minecraftforge', 'installer'             version '2.2.+'
         library 'installertools', 'net.minecraftforge', 'installertools'        version '1.4.5'
         library 'renamer',        'net.minecraftforge', 'ForgeAutoRenamingTool' version '1.0.6'
