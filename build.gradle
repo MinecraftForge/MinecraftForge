@@ -300,7 +300,7 @@ final serverShim = forgedev.shim {
 }
 
 final finalizeSpawn = forgedev.methodCallFinder('findFinalizeSpawnTargets') {
-    jar = tasks.named('renameClientOfficial').flatMap{ it.output } //.fileProvider(mcpBase.classes)
+    jar.fileProvider(mcpBase.classes)
     output = rootProject.file('forge-transformers/src/main/resources/coremods/finalize_spawn_targets.json')
     blacklist 'net/minecraft/world/level/BaseSpawner' // Ignore this class as we special case it.
     invokeVirtual('finalizeSpawn', '(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/EntitySpawnReason;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;')
@@ -312,11 +312,9 @@ forgedev.validateDeprecations(tasks.named('jar', Jar)) {
 
 forgedev.checks() {
     base = mcpBase
-    ats {
-        mappings.fileProvider(mcpBase.map2Srg)
-    }
+    ats {}
     sas {}
-    execs { }
+    execs {}
 
     patches {
         dependsOn forgedev.patches.make
