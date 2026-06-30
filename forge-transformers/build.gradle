@@ -1,73 +1,78 @@
-import net.minecraftforge.gradleutils.PomUtils
-
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
-    alias(libs.plugins.apt)
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
-
-configurations.forEach{ it.transitive = false }
-
-dependencies {
-    compileOnly(libs.jetbrains.annotations)
-
-    implementation(libs.bundles.asm) // Needed by all the black magic
-    implementation(libs.log4j.api)
-    implementation(libs.gson)
-    implementation(libs.modlauncher)
-    implementation(libs.coremods.api)
-
-    testCompileOnly(libs.jetbrains.annotations)
-}
+gradleutils.displayName = 'Forge Transformers'
+final vendor = 'Forge Development LLC'
+description = 'Forge-specific transformers unrelated to the FML project.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
-}
-
-tasks.named('jar', Jar) {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.forge.transformers',
-            'Forge-Module-Layer':    'boot'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':   'Forge Transformers',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version': '1',
-            'Implementation-Title':  'Forge Transformers',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
-        ] as LinkedHashMap, 'net/minecraftforge/forge/transformers/')
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs << '-Xlint:unchecked'
 }
 
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing {
-    publications.register('mavenJava', MavenPublication) {
-        from components.java
-        artifactId = 'forge-transformers'
-        pom {
-            name = project.name
-            description = 'Forge-specific transformers unrelated to the FML project.'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
-    }
+changelog {
+    from changelogBase
+}
 
+dependencies {
+    compileOnly(libs.jetbrains.annotations)
+
+    implementation(libs.bundles.asm ){ transitive = false } // Needed by all the black magic
+    implementation(libs.log4j.api   ){ transitive = false }
+    implementation(libs.gson        ){ transitive = false }
+    implementation(libs.modlauncher ){ transitive = false }
+    implementation(libs.coremods.api){ transitive = false }
+
+    testCompileOnly(libs.jetbrains.annotations)
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.forge.transformers',
+                'Forge-Module-Layer'   : 'boot'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : gradleutils.displayName.get(),
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': forgeVersion
+        ], 'net/minecraftforge/forge/transformers/')
+    }
+}
+
+publishing {
     repositories {
         maven gradleutils.publishingForgeMaven
+    }
+
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom { pom ->
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }

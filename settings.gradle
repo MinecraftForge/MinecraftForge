@@ -1,18 +1,26 @@
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        //mavenLocal()
-        maven { url = 'https://maven.minecraftforge.net/' }
-    }
-}
+import groovy.transform.Field
 
-buildscript {
-    dependencies {
-        classpath('com.google.code.gson:gson') {
-            version {
-                strictly '2.11.0'
+pluginManagement {
+    private static final @Field String FORGEDEV_VERSION = '7.0.0-beta.51'
+
+    if (new File('forgedev/settings.gradle').exists()) {
+        includeBuild 'forgedev'
+    } else {
+        resolutionStrategy.eachPlugin {
+            // TODO [ForgeDev] Consolidate these entry-points
+            switch (requested.id.id) {
+                case 'net.minecraftforge.forgedev':
+                case 'net.minecraftforge.forge.build.convention':
+                    useVersion(FORGEDEV_VERSION)
+                    break
             }
         }
+    }
+
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+        //mavenLocal()
     }
 }
 
@@ -20,100 +28,7 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
 }
 
-dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            plugin('apt', 'com.diffplug.eclipse.apt').version('4.2.0')
-
-            library('forgespi', 'net.minecraftforge:forgespi:8.0.0') // Needs modlauncher
-            library('modlauncher', 'net.minecraftforge:modlauncher:10.2.4') // Needs securemodules
-            library('securemodules', 'net.minecraftforge:securemodules:2.2.24') // Needs unsafe
-            library('unsafe', 'net.minecraftforge:unsafe:0.9.2')
-            library('accesstransformers', 'net.minecraftforge:accesstransformers:8.2.2')
-            library('coremods-api', 'net.minecraftforge:coremods-api:5.3.0')
-            version('eventbus', '7.0.1')
-            library('eventbus', 'net.minecraftforge', 'eventbus').versionRef('eventbus')
-            library('eventbus-validator', 'net.minecraftforge', 'eventbus-validator').versionRef('eventbus')
-            library('mergetool-api', 'net.minecraftforge:mergetool-api:1.0')
-
-            library('roimfs', 'net.minecraftforge:roimfs:1.0.0') // ReadOnlyInMemoryFileSystem - Used for JarInJar extraction at runtime
-            library('mixin', 'org.spongepowered:mixin:0.8.7')
-            version('mixinextras', '0.5.3')
-            library('mixinextras-forge', 'io.github.llamalad7', 'mixinextras-forge').versionRef('mixinextras')
-            library('mixinextras-common', 'io.github.llamalad7', 'mixinextras-common').versionRef('mixinextras')
-            library('jetbrains-annotations', 'org.jetbrains:annotations:24.1.0') // for ApiStatus annotations
-            library('jspecify', 'org.jspecify:jspecify:1.0.0') // for nullability annotations
-            library('slf4j-api', 'org.slf4j:slf4j-api:2.0.7')
-            library('maven-artifact', 'org.apache.maven:maven-artifact:3.8.8')
-
-            // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
-            library('jimfs', 'com.google.jimfs:jimfs:1.3.0')
-            bundle('jimfs', ['guava', 'failureaccess'])
-
-            version('bootstrap', '2.1.8')
-            library('bootstrap',      'net.minecraftforge', 'bootstrap'     ).versionRef('bootstrap') // Needs modlauncher
-            library('bootstrap-api',  'net.minecraftforge', 'bootstrap-api' ).versionRef('bootstrap')
-            library('bootstrap-dev',  'net.minecraftforge', 'bootstrap-dev' ).versionRef('bootstrap')
-            library('bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim').versionRef('bootstrap')
-
-            // ASM it's used for so many of our hacks
-            version('asm', '9.9.1')
-            library('asm',          'org.ow2.asm', 'asm'         ).versionRef('asm')
-            library('asm-tree',     'org.ow2.asm', 'asm-tree'    ).versionRef('asm')
-            library('asm-util',     'org.ow2.asm', 'asm-util'    ).versionRef('asm')
-            library('asm-commons',  'org.ow2.asm', 'asm-commons' ).versionRef('asm')
-            library('asm-analysis', 'org.ow2.asm', 'asm-analysis').versionRef('asm')
-            bundle('asm', ['asm', 'asm-tree', 'asm-util', 'asm-commons', 'asm-analysis'])
-
-            // Terminal Console Appender.. essentually make pretty colors in the console, but it's been a PITA
-            library('terminalconsoleappender', 'net.minecrell:terminalconsoleappender:1.2.0')
-            version('jline', '3.25.1')
-            library('jline-reader',       'org.jline', 'jline-reader'      ).versionRef('jline')
-            library('jline-terminal',     'org.jline', 'jline-terminal'    ).versionRef('jline')
-            library('jline-terminal-jna', 'org.jline', 'jline-terminal-jna').versionRef('jline') // Colors and tab completeion
-            bundle('terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jna'])
-
-            // The core of our configuration system, it has many flaws, but it works for the most part
-            version('night-config', '3.7.4')
-            library('night-config-toml', 'com.electronwill.night-config', 'toml').versionRef('night-config')
-            library('night-config-core', 'com.electronwill.night-config', 'core').versionRef('night-config')
-            bundle('night-config', ['night-config-toml', 'night-config-core'])
-
-            // Jar in Jar FileSystem
-            version('jarjar', '0.4.2')
-            library('jarjar-fs',       'net.minecraftforge', 'JarJarFileSystems').versionRef('jarjar')
-            library('jarjar-meta',     'net.minecraftforge', 'JarJarMetadata'   ).versionRef('jarjar')
-            library('jarjar-selector', 'net.minecraftforge', 'JarJarSelector'   ).versionRef('jarjar')
-            bundle('jarjar', ['jarjar-fs', 'jarjar-selector', 'jarjar-meta'])
-
-            // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
-            // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
-            library('gson', 'com.google.code.gson:gson:2.11.0')
-            library('guava', 'com.google.guava:guava:33.5.0-jre')
-            library('failureaccess', 'com.google.guava:failureaccess:1.0.3')
-
-            version('log4j', '2.24.3')
-            library('log4j-api',  'org.apache.logging.log4j', 'log4j-api' ).versionRef('log4j')
-            library('log4j-core', 'org.apache.logging.log4j', 'log4j-core').versionRef('log4j')
-            bundle('log4j', ['log4j-api', 'log4j-core'])
-
-            library('apache-commons', 'org.apache.commons:commons-lang3:3.17.0')
-            library('mojang-logging', 'com.mojang:logging:1.5.10')
-            library('jopt-simple', 'net.sf.jopt-simple:jopt-simple:5.0.4')
-            library('commons-io', 'commons-io:commons-io:2.17.0')
-
-            version('lwjgl', '3.4.1')
-            library('lwjgl',        'org.lwjgl', 'lwjgl'       ).versionRef('lwjgl')
-            library('lwjgl-glfw',   'org.lwjgl', 'lwjgl-glfw'  ).versionRef('lwjgl')
-            library('lwjgl-opengl', 'org.lwjgl', 'lwjgl-opengl').versionRef('lwjgl')
-            library('lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'   ).versionRef('lwjgl')
-            library('lwjgl-tinyfd', 'org.lwjgl', 'lwjgl-tinyfd').versionRef('lwjgl')
-            bundle('lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb', 'lwjgl-tinyfd'])
-        }
-    }
-}
-
-rootProject.name = 'ForgeRoot'
+rootProject.name = 'forge'
 
 include 'fmlloader'
 include 'fmlcore'
@@ -123,15 +38,177 @@ include 'lowcodelanguage'
 include 'fmlearlydisplay'
 include 'forge-transformers'
 
-include ':mcp'
-project(":mcp").projectDir = file("projects/mcp")
+enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
 
-include ':forge'
-project(":forge").projectDir = file("projects/forge")
-project(':forge').buildFileName = '../../build_forge.gradle'
+gradle.beforeProject { Project project ->
+    project.pluginManager.withPlugin('net.minecraftforge.forge.build.convention') {
+        // NOTE: We are defining these variables in here so that the projects can stay isolated, increasing build time.
+        // See minecraft.versions.toml for the versions where you can change these values.
+        //@formatter:off
+        project.ext.javaVersion          = project.gradleutils.unpack(project.bootLibs.versions.java)
+        project.ext.minecraftVersion     = project.gradleutils.unpack(project.bootLibs.versions.minecraft)
+        project.version                  = project.gitversion.getMCTagOffsetBranch(project.ext.minecraftVersion)
+        project.ext.forgeVersion         = project.version.substring(project.ext.minecraftVersion.length() + 1)
+        project.ext.minecraftNextVersion = project.gradleutils.unpack(project.bootLibs.versions.minecraft.next)
+        project.ext.mcpVersion           = project.gradleutils.unpack(project.bootLibs.versions.mcp)
+        project.ext.changelogBase        = project.gradleutils.unpack(project.bootLibs.versions.changelog.base)
+        //@formatter:on
+    }
 
-if (false && !System.env.TEAMCITY_VERSION) {
-    include ':clean'
-    project(':clean').projectDir = file('projects/clean')
-    project(':clean').buildFileName = '../../build_clean.gradle'
+    // NOTE: We are adding dependencies to projects instead of through settings, so we don't have to apply forgedev in settings.
+    // Applying forgedev in settings will break IDE linting support, which makes it very hard to work with.
+    // We can reconsider this if/when switching to Kotlin DSL, or if JetBrains gets their shit together.
+    project.repositories {
+        // Libraries has to be before maven central because Mojang hosts a classifer that central doesn't (org.lwjgl:lwjgl-freetype:3.3.3:natives-macos-patch)
+        maven { url = 'https://libraries.minecraft.net/' }
+        mavenCentral()
+
+        project.pluginManager.withPlugin('net.minecraftforge.gradleutils') {
+            maven project.gradleutils.forgeMaven
+        }
+
+        project.pluginManager.withPlugin('net.minecraftforge.forgedev') {
+            maven project.forgedev.mavenizer
+        }
+
+        mavenLocal()
+    }
+}
+
+dependencyResolutionManagement.versionCatalogs {
+    register('bootLibs') {
+        description = 'Important version numbers that are externally declared for easy modification.'
+
+        // Contains Java, Minecraft, and MCP versions
+        from(files('minecraft.versions.toml'))
+    }
+
+    register('buildLibs') {
+        description = 'Libraries used solely during the build and publish process.'
+
+        library 'binarypatcher',  'net.minecraftforge', 'binarypatcher'         version '1.3.4'
+        library 'installer',      'net.minecraftforge', 'installer'             version '2.2.+'
+        library 'installertools', 'net.minecraftforge', 'installertools'        version '1.4.5'
+        library 'renamer',        'net.minecraftforge', 'ForgeAutoRenamingTool' version '1.0.6'
+        library 'srg2source',     'net.minecraftforge', 'Srg2Source'            version '8.2.0'
+    }
+
+    //@formatter:off
+    register('libs') {
+        description = 'Libraries used by Forge and its subprojects.'
+
+        plugin 'licenser',    'net.minecraftforge.licenser'        version '1.2.0'
+        plugin 'versions',    'com.github.ben-manes.versions'      version '0.53.0'
+        plugin 'gradleutils', 'net.minecraftforge.gradleutils'     version '3.3.35'
+        plugin 'gitversion',  'net.minecraftforge.gitversion'      version '3.1.7'
+        plugin 'changelog',   'net.minecraftforge.changelog'       version '3.2.2'
+        plugin 'renamer',     'net.minecraftforge.renamer'         version '1.0.16'
+        plugin 'download',    'de.undercouch.download'             version '5.6.0'
+        plugin 'jarsigner',   'net.minecraftforge.gradlejarsigner' version '1.2.1'
+        plugin 'apt',         'com.diffplug.eclipse.apt'           version '4.4.1'
+
+        // TODO [Forge][Buildscript We should not be needing to manually add transitive dependencies
+        //      If we need to make strict versions for dependencies, we should do so using dependency constraints
+        library 'forgespi',           'net.minecraftforge',  'forgespi' version '8.0.0'       // Needs modlauncher
+        library 'modlauncher',        'net.minecraftforge',  'modlauncher' version '10.2.4'   // Needs securemodules
+        library 'securemodules',      'net.minecraftforge',  'securemodules' version '2.2.24' // Needs unsafe
+        library 'unsafe',             'net.minecraftforge',  'unsafe' version '0.9.2'
+        library 'accesstransformers', 'net.minecraftforge',  'accesstransformers' version '8.2.2'
+        library 'coremods-api',       'net.minecraftforge',  'coremods-api' version '5.3.0'
+        version 'eventbus', '7.0.1'
+        library 'eventbus',           'net.minecraftforge',  'eventbus' versionRef 'eventbus'
+        library 'eventbus-validator', 'net.minecraftforge',  'eventbus-validator' versionRef 'eventbus'
+        library 'mergetool-api',      'net.minecraftforge',  'mergetool-api' version '1.0'
+
+        library 'roimfs',                'net.minecraftforge',  'roimfs'             version '1.0.0' // ReadOnlyInMemoryFileSystem - Used for JarInJar extraction at runtime
+        library 'mixin',                 'org.spongepowered',   'mixin'              version '0.8.7'
+        version 'mixinextras', '0.5.3'
+        library 'mixinextras-forge',     'io.github.llamalad7', 'mixinextras-forge'  versionRef 'mixinextras'
+        library 'mixinextras-common',    'io.github.llamalad7', 'mixinextras-common' versionRef 'mixinextras'
+        library 'jetbrains-annotations', 'org.jetbrains',       'annotations'        version '24.1.0' // for ApiStatus annotations
+        library 'jspecify',              'org.jspecify',        'jspecify'           version '1.0.0' // for nullability annotations
+        library 'slf4j-api',             'org.slf4j',           'slf4j-api'          version '2.0.7'
+        library 'maven-artifact',        'org.apache.maven',    'maven-artifact'     version '3.8.8'
+
+        // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
+        library 'jimfs', 'com.google.jimfs:jimfs:1.3.0'
+        bundle  'jimfs', ['guava', 'failureaccess']
+
+        version 'bootstrap', '2.1.8'
+        library 'bootstrap',      'net.minecraftforge', 'bootstrap'      versionRef 'bootstrap' // Needs modlauncher
+        library 'bootstrap-api',  'net.minecraftforge', 'bootstrap-api'  versionRef 'bootstrap'
+        library 'bootstrap-dev',  'net.minecraftforge', 'bootstrap-dev'  versionRef 'bootstrap'
+        library 'bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim' versionRef 'bootstrap'
+
+        // ASM it's used for so many of our hacks
+        version 'asm', '9.9.1'
+        library 'asm',          'org.ow2.asm', 'asm'          versionRef 'asm'
+        library 'asm-tree',     'org.ow2.asm', 'asm-tree'     versionRef 'asm'
+        library 'asm-util',     'org.ow2.asm', 'asm-util'     versionRef 'asm'
+        library 'asm-commons',  'org.ow2.asm', 'asm-commons'  versionRef 'asm'
+        library 'asm-analysis', 'org.ow2.asm', 'asm-analysis' versionRef 'asm'
+        bundle 'asm', ['asm', 'asm-tree', 'asm-util', 'asm-commons', 'asm-analysis']
+
+        // Terminal Console Appender. essentially make pretty colors in the console, but it's been a PITA
+        library 'terminalconsoleappender', 'net.minecrell', 'terminalconsoleappender' version '1.2.0'
+        version 'jline', '3.25.1'
+        library 'jline-reader',       'org.jline', 'jline-reader'       versionRef 'jline'
+        library 'jline-terminal',     'org.jline', 'jline-terminal'     versionRef 'jline'
+        library 'jline-terminal-jna', 'org.jline', 'jline-terminal-jna' versionRef 'jline' // Colors and tab completeion
+        bundle 'terminalconsoleappender', ['terminalconsoleappender', 'jline-reader', 'jline-terminal', 'jline-terminal-jna']
+
+        // The core of our configuration system, it has many flaws, but it works for the most part
+        version 'night-config', '3.7.4'
+        library 'night-config-toml', 'com.electronwill.night-config', 'toml' versionRef 'night-config'
+        library 'night-config-core', 'com.electronwill.night-config', 'core' versionRef 'night-config'
+        bundle 'night-config', ['night-config-toml', 'night-config-core']
+
+        // Jar in Jar FileSystem
+        version 'jarjar', '0.4.2'
+        library 'jarjar-fs',       'net.minecraftforge', 'JarJarFileSystems' versionRef 'jarjar'
+        library 'jarjar-meta',     'net.minecraftforge', 'JarJarMetadata'    versionRef 'jarjar'
+        library 'jarjar-selector', 'net.minecraftforge', 'JarJarSelector'    versionRef 'jarjar'
+        bundle 'jarjar', ['jarjar-fs', 'jarjar-selector', 'jarjar-meta']
+
+        // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
+        // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
+        library 'gson',          'com.google.code.gson', 'gson'          version '2.11.0'
+        library 'guava',         'com.google.guava',     'guava'         version '33.5.0-jre'
+        library 'failureaccess', 'com.google.guava',     'failureaccess' version '1.0.3'
+
+        version 'log4j', '2.24.3'
+        library 'log4j-api',  'org.apache.logging.log4j', 'log4j-api'  versionRef 'log4j'
+        library 'log4j-core', 'org.apache.logging.log4j', 'log4j-core' versionRef 'log4j'
+        bundle 'log4j', ['log4j-api', 'log4j-core']
+
+        library 'apache-commons', 'org.apache.commons', 'commons-lang3' version '3.17.0'
+        library 'mojang-logging', 'com.mojang',         'logging'       version '1.5.10'
+        library 'jopt-simple',    'net.sf.jopt-simple', 'jopt-simple'   version '5.0.4'
+        library 'commons-io',     'commons-io',         'commons-io'    version '2.17.0'
+
+        version 'lwjgl', '3.4.1'
+        library 'lwjgl',        'org.lwjgl', 'lwjgl'        versionRef 'lwjgl'
+        library 'lwjgl-glfw',   'org.lwjgl', 'lwjgl-glfw'   versionRef 'lwjgl'
+        library 'lwjgl-opengl', 'org.lwjgl', 'lwjgl-opengl' versionRef 'lwjgl'
+        library 'lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'    versionRef 'lwjgl'
+        library 'lwjgl-tinyfd', 'org.lwjgl', 'lwjgl-tinyfd' versionRef 'lwjgl'
+        bundle  'lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb', 'lwjgl-tinyfd']
+    }
+
+    register('earlyDisplayLibs') {
+        version 'slf4j', '1.8.0-beta4'
+        library 'slf4j-api',   'org.slf4j', 'slf4j-api'   versionRef 'slf4j'
+        library 'slf4j-jdk14', 'org.slf4j', 'slf4j-jdk14' versionRef 'slf4j'
+    }
+
+    register('earlyDisplayTestLibs') {
+        library 'powermock-core', 'org.powermock', 'powermock-core' version '2.0.9'
+
+        library 'lwjgl',        'org.lwjgl', 'lwjgl'        withoutVersion()
+        library 'lwjgl-glfw',   'org.lwjgl', 'lwjgl-glfw'   withoutVersion()
+        library 'lwjgl-opengl', 'org.lwjgl', 'lwjgl-opengl' withoutVersion()
+        library 'lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'    withoutVersion()
+        bundle  'lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb']
+    }
+    //@formatter:on
 }

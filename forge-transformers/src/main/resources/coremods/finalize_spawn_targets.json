@@ -43,12 +43,6 @@
         ]
     },
     {
-        "class": "net/minecraft/world/entity/animal/frog/Tadpole",
-        "methods": [
-            
-        ]
-    },
-    {
         "class": "net/minecraft/world/entity/monster/Strider",
         "methods": [
             "spawnJockey(Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/world/DifficultyInstance;Lnet/minecraft/world/entity/Mob;Lnet/minecraft/world/entity/SpawnGroupData;)Lnet/minecraft/world/entity/SpawnGroupData;"
@@ -86,21 +80,9 @@
         ]
     },
     {
-        "class": "net/minecraft/world/entity/monster/zombie/ZombieVillager",
-        "methods": [
-            
-        ]
-    },
-    {
         "class": "net/minecraft/world/entity/npc/CatSpawner",
         "methods": [
             "spawnCat(Lnet/minecraft/core/BlockPos;Lnet/minecraft/server/level/ServerLevel;Z)V"
-        ]
-    },
-    {
-        "class": "net/minecraft/world/entity/npc/villager/Villager",
-        "methods": [
-            
         ]
     },
     {
@@ -157,12 +139,6 @@
         "class": "net/minecraft/world/level/levelgen/structure/structures/WoodlandMansionPieces$WoodlandMansionPiece",
         "methods": [
             "handleDataMarker(Ljava/lang/String;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/ServerLevelAccessor;Lnet/minecraft/util/RandomSource;Lnet/minecraft/world/level/levelgen/structure/BoundingBox;)V"
-        ]
-    },
-    {
-        "class": "net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate",
-        "methods": [
-            
         ]
     }
 ]

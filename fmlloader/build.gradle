@@ -1,69 +1,75 @@
-import net.minecraftforge.gradleutils.PomUtils
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
+import net.minecraftforge.forgedev.legacy.tasks.JarJarMetadataOptions
+import org.gradle.api.plugins.jvm.JvmTestSuite
+
+import javax.inject.Inject
 
 plugins {
     id 'java-library'
+    id 'jvm-test-suite'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
-    alias(libs.plugins.apt)
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    alias libs.plugins.apt
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
-
-configurations.forEach{ it.transitive = false }
-
-dependencies {
-    compileOnly(libs.jetbrains.annotations)
-
-    api(libs.bundles.asm) // Needed by all the black magic
-    api(libs.forgespi)
-    api(libs.mergetool.api)
-    api(libs.log4j.api)
-    api(libs.slf4j.api)
-    api(libs.guava)
-    api(libs.gson)
-    api(libs.maven.artifact)
-    api(libs.apache.commons)
-    api(libs.bundles.night.config)
-    api(libs.modlauncher)
-    api(libs.mojang.logging)
-    api(libs.jarjar.selector)
-    api(libs.jarjar.meta)
-
-    implementation(libs.jopt.simple)
-    implementation(libs.securemodules)
-    implementation(libs.accesstransformers)
-    implementation(libs.terminalconsoleappender)
-    implementation(libs.jimfs)
-    implementation(libs.roimfs)
-
-    // Needed because we have a custom log4j plugin, and they removed package scanning and require a data file to be generated
-    implementation(libs.log4j.core)
-    annotationProcessor(libs.bundles.log4j)
-
-    testCompileOnly(libs.jetbrains.annotations)
-    testRuntimeOnly(libs.bootstrap)
-}
+gradleutils.displayName = 'FMLLoader'
+final vendor = 'Forge Development LLC'
+description = 'Modifications to Minecraft to enable mod developers.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
 }
 
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
-            'Forge-Module-Layer':    'boot'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':   'FMLLoader',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version': '1',
-            'Implementation-Title':  'FMLLoader',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
-        ] as LinkedHashMap, 'net/minecraftforge/fml/loading/')
+license {
+    header = rootProject.file('LICENSE-header.txt')
+}
+
+changelog {
+    from changelogBase
+}
+
+dependencies {
+    compileOnly libs.jetbrains.annotations
+
+    // TODO [FMLLoader] Figure out a better way to lock transitive dependencies to the explicit versions shipped by the isntaller
+    api(libs.bundles.asm         ){ transitive = false } // Needed by all the black magic
+    api(libs.forgespi            ){ transitive = false }
+    api(libs.mergetool.api       ){ transitive = false }
+    api(libs.log4j.api           ){ transitive = false }
+    api(libs.slf4j.api           ){ transitive = false }
+    api(libs.guava               ){ transitive = false }
+    api(libs.gson                ){ transitive = false }
+    api(libs.maven.artifact      ){ transitive = false }
+    api(libs.apache.commons      ){ transitive = false }
+    api(libs.bundles.night.config){ transitive = false }
+    api(libs.modlauncher         ){ transitive = false }
+    api(libs.mojang.logging      ){ transitive = false }
+    api(libs.jarjar.selector     ){ transitive = false }
+    api(libs.jarjar.meta         ){ transitive = false }
+
+    implementation(libs.jopt.simple            ){ transitive = false }
+    implementation(libs.securemodules          ){ transitive = false }
+    implementation(libs.accesstransformers     ){ transitive = false }
+    implementation(libs.terminalconsoleappender){ transitive = false }
+    implementation(libs.jimfs                  ){ transitive = false }
+    implementation(libs.roimfs                 ){ transitive = false }
+
+    // Needed because we have a custom log4j plugin, and they removed package scanning and require a data file to be generated
+    implementation(libs.log4j.core        ){ transitive = false }
+    annotationProcessor(libs.bundles.log4j){ transitive = false }
+}
+
+testing.suites.named('test', JvmTestSuite) {
+    dependencies {
+        compileOnly libs.jetbrains.annotations
+        runtimeOnly libs.bootstrap
     }
 }
 
@@ -71,39 +77,81 @@ tasks.withType(JavaCompile).configureEach {
     options.compilerArgs << '-Xlint:unchecked'
 }
 
-license {
-    header = rootProject.file('LICENSE-header.txt')
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.fmlloader',
+                'Forge-Module-Layer'   : 'boot'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : gradleutils.displayName.get(),
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': forgeVersion
+        ], 'net/minecraftforge/fml/loading/')
+    }
 }
 
 publishing {
-    publications.register('mavenJava', MavenPublication).configure {
-        from components.java
-        artifactId = 'fmlloader'
-        pom {
-            name = project.name
-            description = 'Modifactions to Minecraft to enable mod developers.'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
-    }
-
     repositories {
         maven gradleutils.publishingForgeMaven
     }
-}
 
-tasks.register('writeForgeVersionJson') {
-    doLast {
-        file('src/main/resources/forge_version.json').json = [
-            forge: FORGE_VERSION,
-            mc: MC_VERSION,
-            mcp: MCP_VERSION
-        ]
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom {
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }
 
-tasks.register('jarJarOptionsJson', net.minecraftforge.forge.tasks.JarJarMetadataOptions) {
+// A simple task to write JSON to a file. Using Task#doLast to output files is no longer supported.
+// This code may seem verbose, but it's better this way.  If more projects need this, we can move it to buildSrc.
+@CompileStatic
+@PackageScope abstract class WriteForgeVersionJson extends DefaultTask {
+    abstract @Input Property<String> getForgeVersion()
+    abstract @Input Property<String> getMinecraftVersion()
+    abstract @Input Property<String> getMcpVersion()
+
+    abstract @OutputFile RegularFileProperty getOutputFile()
+
+    @Inject
+    WriteForgeVersionJson() {}
+
+    @TaskAction
+    @CompileDynamic
+    void exec() {
+        var json = new groovy.json.JsonBuilder()
+        json {
+            forge this.forgeVersion.get()
+            mc    this.minecraftVersion.get()
+            mcp   this.mcpVersion.get()
+        }
+        this.outputFile.asFile.get().text = json.toPrettyString()
+    }
+}
+
+tasks.register('writeForgeVersionJson', WriteForgeVersionJson) {
+    forgeVersion = project.forgeVersion
+    minecraftVersion = project.minecraftVersion
+    mcpVersion = project.mcpVersion
+
+    outputFile = file('src/main/resources/forge_version.json')
+}
+
+tasks.register('jarJarOptionsJson', JarJarMetadataOptions) {
     metadataFile = project.file('src/main/resources/jarjar_options.json')
     // This is resolved too early by cpw.mods.modlauncher.TransformationServicesHandler.discoverServices(DiscoveryData) But eventually...
     //add(libs.mixin, 'org/spongepowered/asm/mixin/Mixin.class')
@@ -118,29 +166,25 @@ tasks.register('jarJarOptionsJson', net.minecraftforge.forge.tasks.JarJarMetadat
     }
 }
 
-tasks.named('generateResources').configure {
-    dependsOn('eclipseJdt')
-    dependsOn('eclipseJdtApt')
-    dependsOn('eclipseFactorypath')
-    dependsOn('writeForgeVersionJson')
-    dependsOn('jarJarOptionsJson')
+tasks.named('generateResources') {
+    dependsOn(
+            tasks.named('eclipseJdt'),
+            tasks.named('eclipseJdtApt'),
+            tasks.named('eclipseFactorypath'),
+            tasks.named('writeForgeVersionJson', WriteForgeVersionJson),
+            tasks.named('jarJarOptionsJson')
+    )
 }
 
-tasks.named('sourcesJar') {
-    dependsOn('jarJarOptionsJson')
-}
-
-eclipse {
-    classpath {
-       // We need to set the default output directory for the log4j annotation processor
-       // Ideally we'd just set the value, but the eclipse plugin deduplicates the output directories
-       // So we have to do a hacky whenMerged
-       //defaultOutputDir = file('bin/main')
-       file.whenMerged {
-           entries.each { entry ->
-               if (entry.kind == 'output' && entry.hasProperty('path'))
-                   entry.path = 'bin/main'
-           }
-       }
+eclipse.classpath {
+    // We need to set the default output directory for the log4j annotation processor
+    // Ideally we'd just set the value, but the eclipse plugin deduplicates the output directories
+    // So we have to do a hacky whenMerged
+    //defaultOutputDir = file('bin/main')
+    file.whenMerged {
+        entries.each { entry ->
+            if (entry.kind == 'output' && entry.hasProperty('path'))
+                entry.path = 'bin/main'
+        }
     }
 }

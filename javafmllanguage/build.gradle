@@ -1,66 +1,79 @@
-import net.minecraftforge.gradleutils.PomUtils
-
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.licenser'
-    id 'net.minecraftforge.gradleutils'
+    alias libs.plugins.licenser
+    alias libs.plugins.gradleutils
+    alias libs.plugins.gitversion
+    alias libs.plugins.changelog
+    id 'net.minecraftforge.forge.build.convention'
 }
 
-apply from: rootProject.file('build_shared.gradle')
-
-dependencies {
-    compileOnly(libs.jetbrains.annotations)
-    implementation(project(':fmlloader'))
-    implementation(project(':fmlcore'))
-    implementation(libs.unsafe)
-    implementation(libs.securemodules)
-}
+gradleutils.displayName = 'JavaFMLMod'
+final vendor = 'Forge Development LLC'
+description = 'Language provider for Minecraft Forge that provides basic Java mod functionality.'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JAVA_VERSION)
+    toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
     withSourcesJar()
-}
-
-tasks.named('jar', Jar).configure {
-    manifest {
-        attributes([
-            'Automatic-Module-Name': 'net.minecraftforge.javafmlmod',
-            'FMLModType': 'LANGPROVIDER'
-        ] as LinkedHashMap)
-        attributes([
-            'Specification-Title':   'JavaFMLMod',
-            'Specification-Vendor':  'Forge Development LLC',
-            'Specification-Version': '1',
-            'Implementation-Title':  'JavaFMLMod',
-            'Implementation-Vendor': 'Forge Development LLC',
-            'Implementation-Version': FORGE_VERSION
-        ] as LinkedHashMap, 'net/minecraftforge/fml/javafmlmod/')
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.compilerArgs << '-Xlint:unchecked'
 }
 
 license {
     header = rootProject.file('LICENSE-header.txt')
 }
 
-publishing {
-    publications.register('mavenJava', MavenPublication).configure {
-        from components.java
-        artifactId = 'javafmllanguage'
-        pom {
-            name = project.name
-            description = 'Language provider for Minecraft Forge that provides basic java mod functionality'
-            url = 'https://github.com/MinecraftForge/MinecraftForge'
-            PomUtils.setGitHubDetails(pom, 'MinecraftForge')
-            license PomUtils.Licenses.LGPLv2_1
-        }
-    }
+changelog {
+    from changelogBase
+}
 
+dependencies {
+    compileOnly libs.jetbrains.annotations
+
+    implementation projects.fmlloader
+    implementation projects.fmlcore
+    implementation libs.unsafe
+    implementation libs.securemodules
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes([
+                'Automatic-Module-Name': 'net.minecraftforge.javafmlmod',
+                'FMLModType'           : 'LANGPROVIDER'
+        ])
+        attributes([
+                'Specification-Title'   : gradleutils.displayName.get(),
+                'Specification-Vendor'  : vendor,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : gradleutils.displayName.get(),
+                'Implementation-Vendor' : vendor,
+                'Implementation-Version': forgeVersion
+        ], 'net/minecraftforge/fml/javafmlmod/')
+    }
+}
+
+publishing {
     repositories {
         maven gradleutils.publishingForgeMaven
+    }
+
+    publications.register('mavenJava', MavenPublication) {
+        changelog.publish(it)
+        gradleutils.promote(it)
+
+        from components.java
+
+        pom {
+            description = project.description
+
+            gradleutils.pom.addRemoteDetails(pom)
+
+            licenses {
+                license gradleutils.pom.licenses.LGPLv2_1
+            }
+        }
     }
 }
