@@ -114,6 +114,14 @@ public class DisplayWindow implements ImmediateWindowProvider {
     }
 
     @Override
+    public ImmediateWindowProvider selectBackend(String backend) {
+        // We only support opengl
+        if ("default".equals(backend) || "opengl".equals(backend))
+            return this;
+        return ImmediateWindowProvider.getFallbackHandler();
+    }
+
+    @Override
     public Runnable initialize(String[] arguments) {
         String mcVersion = FMLLoader.versionInfo().mcVersion();
         String forgeVersion = FMLLoader.versionInfo().forgeVersion();
@@ -137,7 +145,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             this.colourScheme = ColourScheme.BLACK;
         } else {
             try {
-                // check the options file for the colour scheme
+                // check the options file for the color scheme
                 var optionLines = Files.readAllLines(FMLPaths.GAMEDIR.get().resolve(Path.of("options.txt")));
                 var keyName = "darkMojangStudiosBackground:";
                 for (String line : optionLines) {

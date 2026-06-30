@@ -10,8 +10,13 @@ import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import joptsimple.OptionParser;
+
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -41,14 +46,60 @@ public class ImmediateWindowHandler {
             if (provider == null) {
                 LOGGER.info("Failed to find ImmediateWindowProvider {}, disabling", providername);
                 provider = new DummyProvider();
+            } else {
+                var backend = findBackend(arguments);
+                var newProvider = provider.selectBackend(backend);
+                if (provider != newProvider) {
+                    if (newProvider == null)
+                        newProvider = new DummyProvider();
+
+                    LOGGER.info("ImmediateWindowProvider {} does not support {}, switching to {}", provider.name(), backend, newProvider.name());
+                    provider = newProvider;
+                }
             }
         }
+
         // Only update config if the provider isn't the dummy provider
         if (!Objects.equals(provider.name(), "dummyprovider"))
             FMLConfig.updateConfig(FMLConfig.ConfigValue.EARLY_WINDOW_PROVIDER, provider.name());
+
         FMLLoader.progressWindowTick = provider.initialize(arguments);
         earlyProgress = StartupNotificationManager.addProgressBar("EARLY", 0);
         earlyProgress.label("Bootstrapping Minecraft");
+    }
+
+    private static String findBackend(String[] arguments) {
+        // Try and parse from the command line arguments
+        var parser = new OptionParser();
+        var backendOption = parser.accepts("graphicsBackend").withRequiredArg();
+        parser.allowsUnrecognizedOptions();
+        var parsed = parser.parse(arguments);
+
+        if (parsed.has(backendOption))
+            return parsed.valueOf(backendOption).toLowerCase(Locale.ENGLISH);
+
+
+        // Read the options.txt if it exists.
+        var optionsFile = FMLPaths.GAMEDIR.get().resolve(Path.of("options.txt"));
+        if (!Files.exists(optionsFile)) // Default is OpenGL first
+            return "default";
+
+        List<String> lines = null;
+        try {
+            lines = Files.readAllLines(optionsFile);
+        } catch (IOException e) {
+            return "default"; // We failed to read for some reason, assume we're using the default.
+        }
+
+        final String key = "preferredGraphicsBackend:";
+        for (var line : lines) {
+            if (line.startsWith(key)) {
+                var backend = line.substring(key.length() + 1, line.length() - 1);
+                return backend.toLowerCase(Locale.ENGLISH);
+            }
+        }
+
+        return "default";
     }
 
     public static long setupMinecraftWindow(final int width, final int height, final String title, final long monitor, final Supplier<Object> backend) {
@@ -83,7 +134,7 @@ public class ImmediateWindowHandler {
         earlyProgress.label(message);
     }
 
-    private record DummyProvider() implements ImmediateWindowProvider {
+    record DummyProvider() implements ImmediateWindowProvider {
         private static Method NV_HANDOFF;
         private static Method NV_POSITION;
         private static Method NV_OVERLAY;

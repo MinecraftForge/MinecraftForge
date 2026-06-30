@@ -25,9 +25,34 @@ import java.util.function.Supplier;
  */
 public interface ImmediateWindowProvider {
     /**
+     * Returns a new instance of ImmediateWindowProvider which just bounces to the vanilla code.
+     * This can be useful when you want to disable your provider and defer to vanilla behavior for some reason.
+     */
+    public static ImmediateWindowProvider getFallbackHandler() {
+        return new ImmediateWindowHandler.DummyProvider();
+    }
+
+    /**
      * @return The name of this window provider. Do NOT use fmlearlywindow.
      */
     String name();
+
+    /**
+     * This is called before initialize, but after reading the preferred graphics backend config value from the user's
+     * options.txt or command line.
+     *
+     * If you do not support the requested backend, you can return a new ImmediateWindowProvider that does.
+     * {@link #getFallbackHandler()} can be used to get an instance that falls back to Vanilla's code effectively
+     * disabling the early loading screen.
+     *
+     * @param backend - The backend the user has selected, known values: "default", "opengl", and "vulkan". However this
+     * 	                is read from the config file, or command line arguments so could be anything.
+     *                  Default and OpenGL are treated the same, attempting to load OpenGL first, then Vulkan.
+     *                  Vulkan attempts to load Vulkan first then OpenGL
+     */
+    default ImmediateWindowProvider selectBackend(String backend) {
+        return this;
+    }
 
     /**
      * This is called very early on to initialize ourselves. Use this to initialize the window and other GL core resources.
