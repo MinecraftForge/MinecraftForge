@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraftforge.client.FramePassManager;
@@ -51,7 +52,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
     public static void renderTest(AddFramePassEvent event) {
         FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
-            public void extracts(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
@@ -72,7 +73,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         event.addPass(rl(MODID), def);
         FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
-            public void extracts(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
