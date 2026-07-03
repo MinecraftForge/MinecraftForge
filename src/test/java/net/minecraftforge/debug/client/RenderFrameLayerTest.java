@@ -24,6 +24,8 @@ import net.minecraft.world.phys.AABB;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.framegraph.FramePass;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 @GameTestNamespace("forge")
 @Mod(RenderFrameLayerTest.MODID)
@@ -49,6 +51,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
     /**
      * If this is working, two white line box cubes will be rendered at ground level in a superflat world around (0,0)
      */
+    @NullMarked
     public static void renderTest(AddFramePassEvent event) {
         FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
@@ -73,7 +76,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         event.addPass(rl(MODID), def);
         FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
-            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
+            public void extracts(@NotNull LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 

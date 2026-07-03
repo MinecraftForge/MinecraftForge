@@ -12,6 +12,9 @@ import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,12 +77,11 @@ public class FramePassManager {
      * Satisfying #3 is also simple, this is the actual rendering that will consume the state created
      * during the extracts phase.
      */
+    @NullMarked
     public interface PassDefinition {
 
-        @Deprecated(since="26.2")
-        default void extracts(LevelTargetBundle bundle, FramePass pass) {
-            extracts(bundle, pass, null);
-        };
+        @Deprecated(forRemoval = true, since="26.2")
+        default void extracts(LevelTargetBundle bundle, FramePass pass) {};
 
         /**
          * This method exists to do render state extraction. Your instance of a PassDefinition should have
@@ -87,7 +89,10 @@ public class FramePassManager {
          * The resulting render state should be consumed by {@linkplain PassDefinition#executes(LevelRenderState)}
          * You must also use this to define which targets your pass will bind against. See class javadocs for details.
          */
-        default void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker deltaTracker) {};
+
+        default void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker deltaTracker) {
+            extracts(bundle, pass);
+        };
 
         /**
          * Use to define what your pass does during the render stage. This should consume the render state created
