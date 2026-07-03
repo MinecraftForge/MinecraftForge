@@ -6,6 +6,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.file.FileConfig;
+import com.electronwill.nightconfig.core.io.ParsingException;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.logging.LogUtils;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
+import net.minecraftforge.forgespi.locating.ModFileLoadingException;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -31,6 +33,7 @@ public class ModFileParser {
         return parser.build(modFile);
     }
 
+    // Note: Although @Nullable, several other places in FML assume ModFileInfo is not null. Keep this in mind
     public static @Nullable IModFileInfo modsTomlParser(final IModFile imodFile) {
         ModFile modFile = (ModFile) imodFile;
         LOGGER.debug(LogMarkers.LOADING,"Considering mod file candidate {}", modFile.getFilePath());
@@ -41,10 +44,15 @@ public class ModFileParser {
         }
 
         final FileConfig fileConfig = FileConfig.builder(modsjson).build();
-        fileConfig.load();
-        fileConfig.close();
-        final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
-        return new ModFileInfo(modFile, configWrapper, configWrapper::setFile);
+        try {
+            fileConfig.load();
+            fileConfig.close();
+            final NightConfigWrapper configWrapper = new NightConfigWrapper(fileConfig);
+            return new ModFileInfo(modFile, configWrapper, configWrapper::setFile);
+        } catch (ParsingException e) {
+            LOGGER.error("Mod candidate {} contains a corrupt or misconfigured toml.", modFile.getFileName());
+            throw new ModFileLoadingException("Mod candidate " + modFile.getFileName() + " contains a corrupt or misconfigured toml.");
+        }
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {
