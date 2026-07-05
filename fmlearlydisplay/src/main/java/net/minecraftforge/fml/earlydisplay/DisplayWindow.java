@@ -484,8 +484,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.fbHeight = y[0];
         glfwPollEvents();
         handleLastGLFWError((error, description) -> {
-            if (error == 0x1000C) {
-                LOGGER.debug(String.format("Suppressing Wayland error: [0x%X]%s", error, description));
+            if (error == GLFW_FEATURE_UNAVAILABLE) {
+                LOGGER.debug(String.format("Suppressing GLFW_FEATURE_UNAVAILABLE error: [0x%X]%s", error, description));
             }
             else
             {
