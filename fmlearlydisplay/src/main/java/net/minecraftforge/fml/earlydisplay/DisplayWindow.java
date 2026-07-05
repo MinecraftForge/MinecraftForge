@@ -489,7 +489,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             }
             else
             {
-                throw new IllegalStateException(String.format("GLFW Error during Display Window: [0x%X]%s", error, description));
+                throw new IllegalStateException("GLFW Error during Display Window: [0x%X]%s".formatted(error, description));
             }
         });
     }
