@@ -28,13 +28,7 @@ import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -489,6 +483,15 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.fbWidth = x[0];
         this.fbHeight = y[0];
         glfwPollEvents();
+        handleLastGLFWError((error, description) -> {
+            if (error == 0x1000C) {
+                LOGGER.debug(String.format("Suppressing Wayland error: [0x%X]%s", error, description));
+            }
+            else
+            {
+                throw new IllegalStateException(String.format("GLFW Error during Display Window: [0x%X]%s", error, description));
+            }
+        });
     }
 
     private void winResize(long window, int width, int height) {
