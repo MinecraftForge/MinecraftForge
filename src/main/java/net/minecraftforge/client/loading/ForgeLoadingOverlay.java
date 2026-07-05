@@ -48,8 +48,14 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         this.reload = reloader;
         this.displayWindow = displayWindow;
         var texture = mc.getTextureManager().getTexture(MOJANG_STUDIOS_LOGO_LOCATION);
-        var glTexture = (GlTexture)texture.getTexture();
-        displayWindow.addMojangTexture(glTexture.glId());
+        var gpuTexture = texture.getTexture();
+        long handle;
+        if (gpuTexture instanceof GlTexture glTexture) {
+            handle = glTexture.glId();
+        } else {
+            throw new IllegalStateException("Unsupported texture type: " + gpuTexture.getClass().getName());
+        }
+        displayWindow.addMojangTexture(handle);
         this.progress = StartupMessageManager.prependProgressBar("Minecraft Progress", 100);
         this.earlyBuffer = ForgeRenderTypes.getLoadingOverlay(displayWindow);
     }

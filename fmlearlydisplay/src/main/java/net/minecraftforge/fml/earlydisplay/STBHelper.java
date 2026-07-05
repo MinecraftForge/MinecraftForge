@@ -15,8 +15,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.util.Objects;
 
-import static org.lwjgl.opengl.GL32C.*;
-
+/**
+ * Shared IO and STB image decoding utilities.
+ * Backend-specific texture upload is handled by {@link BaseRenderBackend}.
+ */
 public class STBHelper {
     public static ByteBuffer readFromClasspath(final String name, int initialCapacity) {
         ByteBuffer buf;
@@ -26,7 +28,7 @@ public class STBHelper {
             while (true) {
                 var readbytes = channel.read(buf);
                 if (readbytes == -1) break;
-                if (buf.remaining() == 0) { // extend the buffer by 50%
+                if (buf.remaining() == 0) {
                     var newBuf = BufferUtils.createByteBuffer(buf.capacity() * 3 / 2);
                     buf.flip();
                     newBuf.put(buf);
@@ -37,25 +39,7 @@ public class STBHelper {
             throw new UncheckedIOException(e);
         }
         buf.flip();
-        return MemoryUtil.memSlice(buf); // we trim the final buffer to the size of the content
-    }
-
-    public static int[] loadTextureFromClasspath(String file, int size, int textureNumber) {
-        int[] lw = new int[1];
-        int[] lh = new int[1];
-        int[] lc = new int[1];
-        var img = loadImageFromClasspath(file, size, lw, lh, lc);
-        var texid = glGenTextures();
-        glActiveTexture(textureNumber);
-        glBindTexture(GL_TEXTURE_2D, texid);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, lw[0], lh[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, img);
-        glActiveTexture(GL_TEXTURE0);
-        MemoryUtil.memFree(img);
-        return new int[] {lw[0], lh[0]};
+        return MemoryUtil.memSlice(buf);
     }
 
     public static ByteBuffer loadImageFromClasspath(String file, int size, int[] width, int[] height, int[] channels) {

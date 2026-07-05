@@ -316,7 +316,7 @@ public enum ForgeRenderTypes {
             var gpu = RenderSystem.getDevice();
             var texture = gpu.createTexture(LOADING_TEXTURE.toString(), 5, GpuFormat.RGBA8_UNORM,
                     window.context().width(), window.context().height(),
-                    1, window.getFramebufferTextureId());
+                    1, (int) window.getFramebufferTextureHandle());
             var textureView = gpu.createTextureView(texture);
 
             return RenderType.create("forge_loading_overlay",

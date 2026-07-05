@@ -8,23 +8,22 @@ package net.minecraftforge.fml.earlydisplay;
 import net.minecraftforge.fml.loading.progress.Message;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.lwjgl.opengl.GL32C.*;
-
 public class RenderElement {
     static final int INDEX_TEXTURE_OFFSET = 5;
-    private final SimpleBufferBuilder bb;
+    private VertexDataBuilder bb;
     private final Renderer renderer;
     static int globalAlpha = 255;
     private int retireCount;
 
     @FunctionalInterface
     interface Renderer {
-        void accept(SimpleBufferBuilder bb, DisplayContext context, int frame);
+        void accept(VertexDataBuilder bb, DisplayContext context, int frame);
 
         default Renderer then(Renderer r) {
             if (r == null) return this;
@@ -36,7 +35,7 @@ public class RenderElement {
     }
     @FunctionalInterface
     interface TextureRenderer {
-        void accept(SimpleBufferBuilder bb, DisplayContext context, int[] size, int frame);
+        void accept(VertexDataBuilder bb, DisplayContext context, int[] size, int frame);
     }
 
     /** @deprecated Use {@link Renderer} directly. This was always eagerly resolved, making it an unnecessary wrapper. */
@@ -46,10 +45,10 @@ public class RenderElement {
 
     @FunctionalInterface
     interface TextGenerator {
-        void accept(SimpleBufferBuilder bb, SimpleFont fh, DisplayContext ctx);
+        void accept(VertexDataBuilder bb, FontRasterizer fh, DisplayContext ctx);
     }
 
-    public record DisplayContext(int width, int height, int scale, ElementShader elementShader, ColourScheme colourScheme, PerformanceInfo performance) {
+    public record DisplayContext(int width, int height, int scale, BaseShader elementShader, ColourScheme colourScheme, PerformanceInfo performance, BaseRenderBackend backend, Supplier<VertexDataBuilder> bufferFactory) {
         public int scaledWidth() {
             return scale() * width();
         }
@@ -62,16 +61,17 @@ public class RenderElement {
     /** @deprecated Use {@link RenderElement#RenderElement(Renderer)} instead */
     @Deprecated(since = "1.21.5", forRemoval = true)
     public RenderElement(final Initializer rendererInitializer) {
-        this.bb = new SimpleBufferBuilder(1);
         this.renderer = rendererInitializer.get();
     }
 
     public RenderElement(Renderer renderer) {
-        this.bb = new SimpleBufferBuilder(1);
         this.renderer = renderer;
     }
 
     public boolean render(DisplayContext ctx, int count) {
+        if (this.bb == null) {
+            this.bb = ctx.bufferFactory().get();
+        }
         this.renderer.accept(bb, ctx, count);
         return this.retireCount == 0 || this.retireCount < count;
     }
@@ -80,63 +80,62 @@ public class RenderElement {
         this.retireCount = frame;
     }
 
-    private static void startupLogMessages(SimpleBufferBuilder bb, SimpleFont font, DisplayContext context) {
+    private static void startupLogMessages(VertexDataBuilder bb, FontRasterizer font, DisplayContext context) {
         List<StartupNotificationManager.AgeMessage> messages = StartupNotificationManager.getMessages();
-        List<SimpleFont.DisplayText> texts = new ArrayList<>();
+        List<FontRasterizer.DisplayText> texts = new ArrayList<>();
         for (int i = messages.size() - 1; i >= 0; i--) {
             final StartupNotificationManager.AgeMessage pair = messages.get(i);
             final float fade = Math.clamp((4000.0f - (float) pair.age() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
             if (fade <0.01f) continue;
             Message msg = pair.message();
             int colour = Math.min((int)(fade * 255f), globalAlpha) << 24 | 0xFFFFFF;
-            texts.add(new SimpleFont.DisplayText(msg.getText()+"\n", colour));
+            texts.add(new FontRasterizer.DisplayText(msg.getText()+"\n", colour));
         }
 
-        font.generateVerticesForTexts(10, context.scaledHeight() -  texts.size() * font.lineSpacing() + font.descent() - 10, bb, texts.toArray(SimpleFont.DisplayText[]::new));
+        font.generateVerticesForTexts(10, context.scaledHeight() -  texts.size() * font.lineSpacing() + font.descent() - 10, bb, texts.toArray(FontRasterizer.DisplayText[]::new));
     }
 
-    public static RenderElement mojang(final int textureId, final int frameStart) {
+    public static RenderElement mojang(final long textureHandle, final int frameStart) {
         return new RenderElement((bb, ctx, frame) -> {
             var size = 256 * ctx.scale();
             var x0 = (ctx.scaledWidth() - 2 * size) / 2;
             var y0 = 64 * ctx.scale() + 32;
             ctx.elementShader().updateTextureUniform(0);
-            ctx.elementShader().updateRenderTypeUniform(ElementShader.RenderType.TEXTURE);
+            ctx.elementShader().updateRenderTypeUniform(BaseShader.RenderType.TEXTURE);
             var fade = Math.min((frame - frameStart) * 10, 255);
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            bb.begin(SimpleBufferBuilder.Format.POS_TEX_COLOR, SimpleBufferBuilder.Mode.QUADS);
+            ctx.backend().bindTexture(textureHandle);
+            bb.begin(VertexDataBuilder.Format.POS_TEX_COLOR, VertexDataBuilder.Mode.QUADS);
             QuadHelper.loadQuad(bb, x0, x0+size, y0, y0+size/2f, 0f, 1f, 0f, 0.5f, (fade << 24) | 0xFFFFFF);
             QuadHelper.loadQuad(bb, x0+size, x0+2*size, y0, y0+size/2f, 0f, 1f, 0.5f, 1f, (fade << 24) | 0xFFFFFF);
             bb.draw();
-            glBindTexture(GL_TEXTURE_2D, 0);
+            ctx.backend().unbindTexture();
         });
     }
-    public static RenderElement logMessageOverlay(SimpleFont font) {
+    public static RenderElement logMessageOverlay(FontRasterizer font) {
         return new RenderElement(RenderElement.initializeText(font, RenderElement::startupLogMessages));
     }
 
-    public static RenderElement forgeVersionOverlay(SimpleFont font, String version) {
+    public static RenderElement forgeVersionOverlay(FontRasterizer font, String version) {
         return new RenderElement(RenderElement.initializeText(font, (bb, _, ctx)->
                 font.generateVerticesForTexts(ctx.scaledWidth() - font.stringWidth(version) - 10,
                         ctx.scaledHeight() - font.lineSpacing() + font.descent() - 10, bb,
-                        new SimpleFont.DisplayText(version, ctx.colourScheme.foreground().packedint(RenderElement.globalAlpha)))));
+                        new FontRasterizer.DisplayText(version, ctx.colourScheme.foreground().packedint(RenderElement.globalAlpha)))));
     }
-    public static RenderElement squir() {
-        return new RenderElement(RenderElement.initializeTexture("squirrel.png", 45000, 3, (bb, context, size, frame) -> {
+    public static RenderElement squir(BaseRenderBackend backend) {
+        return new RenderElement(RenderElement.initializeTexture("squirrel.png", 45000, 3, backend, (bb, context, size, frame) -> {
             var inset = 5f;
             var x0 = inset;
             var x1 = inset + size[0] * context.scale();
             var y0 = inset;
             var y1 = inset + size[1] * context.scale();
             int fade = (int) (Math.cos(frame * Math.PI / 16) * 16) + 16;
-//            int fade = 0xff;
             var colour = (Math.min(fade, globalAlpha) & 0xff) << 24 | 0xffffff;
             QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 1f, 0f, 1f, colour);
         }));
     }
 
-    public static RenderElement anvil(SimpleFont font) {
-        return new RenderElement(RenderElement.initializeTexture("forge_anvil.png", 20000, 2, (bb, context, size, frame) -> {
+    public static RenderElement anvil(FontRasterizer font, BaseRenderBackend backend) {
+        return new RenderElement(RenderElement.initializeTexture("forge_anvil.png", 20000, 2, backend, (bb, context, size, frame) -> {
             var x0 = context.scaledWidth() - size[0] * context.scale();
             var x1 = context.scaledWidth();
             var y0 = context.scaledHeight() - size[0] * context.scale() - font.descent() - font.lineSpacing();
@@ -147,15 +146,15 @@ public class RenderElement {
             QuadHelper.loadQuad(bb, x0, x1, y0, y1, 0f, 1f, framepos, framepos+framesize, globalAlpha << 24 | 0xFFFFFF);
         }));
     }
-    public static RenderElement progressBars(SimpleFont font) {
+    public static RenderElement progressBars(FontRasterizer font) {
         return new RenderElement((bb, ctx, frame) -> RenderElement.startupProgressBars(font, bb, ctx, frame));
     }
 
-    public static RenderElement performanceBar(SimpleFont font) {
+    public static RenderElement performanceBar(FontRasterizer font) {
         return new RenderElement((bb, ctx, frame) -> RenderElement.memoryInfo(font, bb, ctx, frame));
     }
 
-    public static void startupProgressBars(SimpleFont font, final SimpleBufferBuilder buffer, final DisplayContext context, final int frameNumber) {
+    public static void startupProgressBars(FontRasterizer font, final VertexDataBuilder buffer, final DisplayContext context, final int frameNumber) {
         Renderer acc = null;
         var barCount = 2;
         List<ProgressMeter> currentProgress = StartupNotificationManager.getCurrentProgress();
@@ -172,7 +171,7 @@ public class RenderElement {
     }
     private static final int BAR_HEIGHT = 20;
     private static final int BAR_WIDTH = 400;
-    private static Renderer barRenderer(int cnt, int alpha, SimpleFont font, ProgressMeter pm, DisplayContext context) {
+    private static Renderer barRenderer(int cnt, int alpha, FontRasterizer font, ProgressMeter pm, DisplayContext context) {
         var barSpacing = font.lineSpacing() - font.descent() + BAR_HEIGHT;
         var y = 250 * context.scale() + cnt * barSpacing;
         var colour = (alpha << 24) | 0xFFFFFF;
@@ -194,7 +193,7 @@ public class RenderElement {
         }
     }
 
-    private static void memoryInfo(SimpleFont font, final SimpleBufferBuilder buffer, final DisplayContext context, final int frameNumber) {
+    private static void memoryInfo(FontRasterizer font, final VertexDataBuilder buffer, final DisplayContext context, final int frameNumber) {
         var y = 10 * context.scale();
         PerformanceInfo pi = context.performance();
         final int colour = hsvToRGB((1.0f - (float)Math.pow(pi.memory(), 1.5f)) / 3f, 1.0f, 0.5f);
@@ -223,9 +222,9 @@ public class RenderElement {
             var colour = colourFunction.colour(frame);
             var alpha = (colour & 0xFF000000) >> 24;
             context.elementShader().updateTextureUniform(0);
-            context.elementShader().updateRenderTypeUniform(ElementShader.RenderType.BAR);
+            context.elementShader().updateRenderTypeUniform(BaseShader.RenderType.BAR);
             var progress = progressDisplay.progress(frame);
-            bb.begin(SimpleBufferBuilder.Format.POS_TEX_COLOR, SimpleBufferBuilder.Mode.QUADS);
+            bb.begin(VertexDataBuilder.Format.POS_TEX_COLOR, VertexDataBuilder.Mode.QUADS);
             var inset = 2;
             var pos = position.location(context);
             var x0 = pos[0];
@@ -249,33 +248,39 @@ public class RenderElement {
         };
     }
 
-    private static Renderer initializeText(SimpleFont font, TextGenerator textGenerator) {
+    private static Renderer initializeText(FontRasterizer font, TextGenerator textGenerator) {
         return (bb, context, _) -> renderText(font, textGenerator, bb, context);
     }
 
-    private static void renderText(final SimpleFont font, final TextGenerator textGenerator, final SimpleBufferBuilder bb, final DisplayContext context) {
+    private static void renderText(final FontRasterizer font, final TextGenerator textGenerator, final VertexDataBuilder bb, final DisplayContext context) {
         context.elementShader().updateTextureUniform(font.textureNumber());
-        context.elementShader().updateRenderTypeUniform(ElementShader.RenderType.FONT);
-        bb.begin(SimpleBufferBuilder.Format.POS_TEX_COLOR, SimpleBufferBuilder.Mode.QUADS);
+        context.elementShader().updateRenderTypeUniform(BaseShader.RenderType.FONT);
+        bb.begin(VertexDataBuilder.Format.POS_TEX_COLOR, VertexDataBuilder.Mode.QUADS);
         textGenerator.accept(bb, font, context);
         bb.draw();
     }
 
     private static TextGenerator text(int x, int y, String text, int colour) {
-        return (bb, font, _) -> font.generateVerticesForTexts(x, y, bb, new SimpleFont.DisplayText(text, colour));
+        return (bb, font, _) -> font.generateVerticesForTexts(x, y, bb, new FontRasterizer.DisplayText(text, colour));
     }
 
-    private static Renderer initializeTexture(final String textureFileName, int size, int textureNumber, TextureRenderer positionAndColour) {
-        int[] imgSize = STBHelper.loadTextureFromClasspath(textureFileName, size, GL_TEXTURE0 + textureNumber + INDEX_TEXTURE_OFFSET);
+    private static Renderer initializeTexture(final String textureFileName, int size, int textureNumber, BaseRenderBackend backend, TextureRenderer positionAndColour) {
+        int[] lw = new int[1];
+        int[] lh = new int[1];
+        int[] lc = new int[1];
+        var pixels = STBHelper.loadImageFromClasspath(textureFileName, size, lw, lh, lc);
+        backend.uploadTexture(pixels, lw[0], lh[0], textureNumber + INDEX_TEXTURE_OFFSET);
+        MemoryUtil.memFree(pixels);
+        int[] imgSize = new int[]{lw[0], lh[0]};
         return (bb, ctx, frame) -> {
             ctx.elementShader().updateTextureUniform(textureNumber + INDEX_TEXTURE_OFFSET);
-            ctx.elementShader().updateRenderTypeUniform(ElementShader.RenderType.TEXTURE);
+            ctx.elementShader().updateRenderTypeUniform(BaseShader.RenderType.TEXTURE);
             renderTexture(bb, ctx, frame, imgSize, positionAndColour);
         };
     }
 
-    private static void renderTexture(SimpleBufferBuilder bb, DisplayContext context, int frame, int[] size, TextureRenderer positionAndColour) {
-        bb.begin(SimpleBufferBuilder.Format.POS_TEX_COLOR, SimpleBufferBuilder.Mode.QUADS);
+    private static void renderTexture(VertexDataBuilder bb, DisplayContext context, int frame, int[] size, TextureRenderer positionAndColour) {
+        bb.begin(VertexDataBuilder.Format.POS_TEX_COLOR, VertexDataBuilder.Mode.QUADS);
         positionAndColour.accept(bb, context, size, frame);
         bb.draw();
     }

@@ -8,17 +8,17 @@ package net.minecraftforge.fml.earlydisplay;
 
 import static org.lwjgl.opengl.GL32C.*;
 
-public class ElementShader {
+public class ElementShader extends BaseShader {
     private int program;
     private int textureUniform;
     private int screenSizeUniform;
     private int renderTypeUniform;
 
+    @Override
     public void init() {
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-        // Bind the source of our shaders to the ones created above
         glShaderSource(fragmentShader, """
                  #version 150 core
                  uniform sampler2D tex;
@@ -51,7 +51,6 @@ public class ElementShader {
                  }
         """);
 
-        // Compile the vertex and fragment elementShader so that we can use them
         glCompileShader(vertexShader);
         if (glGetShaderi(vertexShader, GL_COMPILE_STATUS) == GL_FALSE) {
             throw new IllegalStateException("VertexShader linkage failure. \n" + glGetShaderInfoLog(vertexShader));
@@ -84,31 +83,33 @@ public class ElementShader {
         activate();
     }
 
+    @Override
     public void activate() {
         glUseProgram(program);
     }
+    @Override
     public void updateTextureUniform(int textureNumber) {
         glUniform1i(textureUniform, textureNumber);
     }
 
+    @Override
     public void updateScreenSizeUniform(int width, int height) {
         glUniform2f(screenSizeUniform, width, height);
     }
 
+    @Override
     public void updateRenderTypeUniform(RenderType type) {
         glUniform1i(renderTypeUniform, type.ordinal());
     }
 
+    @Override
     public void clear() {
         glUseProgram(0);
     }
 
+    @Override
     public void close() {
         glDeleteProgram(program);
-    }
-
-    public enum RenderType {
-        FONT, TEXTURE, BAR;
     }
 
     public int program() {
