@@ -1,0 +1,15 @@
+--- a/com/mojang/blaze3d/platform/NativeLibrariesBootstrap.java
++++ b/com/mojang/blaze3d/platform/NativeLibrariesBootstrap.java
+@@ -293,6 +_,12 @@
+         }
+ 
+         try {
++            VK.getFunctionProvider();
++            return true;
++        } catch (IllegalStateException ignored) {
++        }
++
++        try {
+             VK.create();
+             return true;
+         } catch (Throwable t) {

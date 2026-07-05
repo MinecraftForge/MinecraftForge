@@ -291,7 +291,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         earlyWindow.setTitle(title);
         this.backend.setVsync(false);
         earlyWindow.freeCallbacks();
-        this.repaintTick = this::renderFrame;
+        this.repaintTick = "vulkan".equals(this.selectedBackend) ? () -> {} : this::renderFrame;
         this.windowTick = null;
         return earlyWindow.handle();
     }
@@ -355,8 +355,8 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
     @Override
     public void periodicTick() {
-        earlyWindow.pollEvents();
         repaintTick.run();
+        earlyWindow.pollEvents();
     }
 
     public void addMojangTexture(final long textureHandle) {

@@ -25,6 +25,7 @@ public class ImmediateWindowHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static ImmediateWindowProvider provider;
+    private static String selectedBackend = "default";
 
     private static ProgressMeter earlyProgress;
     public static void load(final String launchTarget, final String[] arguments) {
@@ -48,6 +49,7 @@ public class ImmediateWindowHandler {
                 provider = new DummyProvider();
             } else {
                 var backend = findBackend(arguments);
+                selectedBackend = backend;
                 var newProvider = provider.selectBackend(backend);
                 if (provider != newProvider) {
                     if (newProvider == null)
@@ -130,6 +132,11 @@ public class ImmediateWindowHandler {
     public static String getGLVersion() {
         return provider.getGLVersion();
     }
+
+    public static String selectedBackend() {
+        return selectedBackend;
+    }
+
     public static void updateProgress(final String message) {
         earlyProgress.label(message);
     }

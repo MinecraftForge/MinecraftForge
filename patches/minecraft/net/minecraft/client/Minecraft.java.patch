@@ -17,6 +17,30 @@
          this.demo = gameConfig.game.demo;
          this.allowsMultiplayer = !gameConfig.game.disableMultiplayer;
          this.allowsChat = !gameConfig.game.disableChat;
+@@ -450,17 +_,21 @@
+                 forcedGraphicsApi.getSerializedName()
+             );
+         } else if (!lastStartWasClean) {
+-            if (this.options.preferredGraphicsBackend().get() == PreferredGraphicsApi.VULKAN) {
++            boolean requestedVulkanEarly = net.minecraftforge.fml.loading.ImmediateWindowHandler.selectedBackend().equals("vulkan");
++            if (this.options.preferredGraphicsBackend().get() == PreferredGraphicsApi.VULKAN && !requestedVulkanEarly) {
+                 LOGGER.warn("Detected unexpected shutdown during last game startup: resetting preferred graphics API to Default");
+                 this.options.preferredGraphicsBackend().set(PreferredGraphicsApi.DEFAULT);
+                 this.options.save();
+-            } else if (this.options.preferredGraphicsBackend().get() == PreferredGraphicsApi.DEFAULT) {
++            } else if (this.options.preferredGraphicsBackend().get() == PreferredGraphicsApi.DEFAULT && !requestedVulkanEarly) {
+                 LOGGER.warn("Detected unexpected shutdown during last game startup: forcing preferred graphics API to OpenGL");
+                 this.options.preferredGraphicsBackend().set(PreferredGraphicsApi.OPENGL);
+             }
+         }
+ 
+         PreferredGraphicsApi preferredGraphicsBackend = forcedGraphicsApi == null ? this.options.preferredGraphicsBackend().get() : forcedGraphicsApi;
++        if (forcedGraphicsApi == null && net.minecraftforge.fml.loading.ImmediateWindowHandler.selectedBackend().equals("vulkan")) {
++            preferredGraphicsBackend = PreferredGraphicsApi.VULKAN;
++        }
+         if (preferredGraphicsBackend == PreferredGraphicsApi.DEFAULT) {
+             this.backendCreationException = VulkanBackend.checkBackendAvailable();
+         }
 @@ -547,12 +_,12 @@
              LOGGER.error("Couldn't set icon", e);
          }

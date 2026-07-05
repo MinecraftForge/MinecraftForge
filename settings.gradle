@@ -192,6 +192,7 @@ dependencyResolutionManagement.versionCatalogs {
         library 'lwjgl-opengl', 'org.lwjgl', 'lwjgl-opengl' versionRef 'lwjgl'
         library 'lwjgl-stb',    'org.lwjgl', 'lwjgl-stb'    versionRef 'lwjgl'
         library 'lwjgl-tinyfd', 'org.lwjgl', 'lwjgl-tinyfd' versionRef 'lwjgl'
+        library 'lwjgl-vulkan', 'org.lwjgl', 'lwjgl-vulkan' versionRef 'lwjgl'
         bundle  'lwjgl', ['lwjgl', 'lwjgl-glfw', 'lwjgl-opengl', 'lwjgl-stb', 'lwjgl-tinyfd']
     }
 

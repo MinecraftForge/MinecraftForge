@@ -1,5 +1,17 @@
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
+import groovy.transform.PackageScope
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.os.OperatingSystem
+
+import javax.inject.Inject
 
 plugins {
     id 'java-library'
@@ -47,6 +59,7 @@ dependencies {
     implementation projects.fmlloader
     implementation projects.fmlcore
     implementation libs.bundles.lwjgl
+    implementation libs.lwjgl.vulkan
     implementation earlyDisplayLibs.slf4j.api
     implementation libs.jopt.simple
 }
@@ -91,6 +104,71 @@ tasks.named('jar', Jar) {
                 'Implementation-Version': '1.0'
         ], 'net/minecraftforge/fml/earlydisplay/')
     }
+}
+
+@CompileStatic
+@PackageScope abstract class CompileSpirvShaders extends DefaultTask {
+    @InputDirectory
+    @PathSensitive(PathSensitivity.ABSOLUTE)
+    abstract DirectoryProperty getShaderLocation()
+
+    @Input
+    abstract Property<String> getGlslcPath()
+
+    @Input
+    abstract Property<String> getTargetEnv()
+
+    @Input
+    abstract Property<String> getResourcesPackage()
+
+    @OutputDirectory
+    abstract DirectoryProperty getOutputDir()
+
+    @Inject
+    CompileSpirvShaders() {}
+
+    @TaskAction
+    @CompileDynamic
+    void compile() {
+        def outBase = outputDir.asFile.get()
+        def packagePath = resourcesPackage.get().replace('.', '/')
+        def outDir = new File(outBase, packagePath)
+        outDir.mkdirs()
+
+        def allowedEndings = ['.vert', '.frag', '.comp', '.geom', '.tesc', '.tese'] as Set
+        boolean error = false
+
+        shaderLocation.asFile.get().eachFile { file ->
+            if (!allowedEndings.any { file.name.endsWith(it) }) return
+            def outFile = new File(outDir, file.name + '.spv')
+            def cmd = [glslcPath.get(), "--target-env=${targetEnv.get()}", '-o', outFile.absolutePath, file.absolutePath]
+            def proc = Runtime.getRuntime().exec(cmd as String[])
+            proc.inputStream.text
+            def stderr = proc.errorStream.text
+            if (proc.waitFor() != 0) {
+                logger.error(stderr)
+                error = true
+            } else {
+                logger.lifecycle("Compiled SPIR-V shader: ${outFile.name}")
+            }
+        }
+
+        if (error) throw new GradleException('SPIR-V shader compilation failed')
+    }
+}
+
+tasks.register('compileSpirvShaders', CompileSpirvShaders) {
+    shaderLocation = file('src/main/glsl/shaders')
+    glslcPath = 'glslc'
+    targetEnv = 'vulkan1.0'
+    resourcesPackage = 'shaders'
+    outputDir = layout.buildDirectory.dir('generated/sources/glslc/resources')
+}
+
+sourceSets.main.resources.srcDir tasks.named('compileSpirvShaders')
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 publishing {

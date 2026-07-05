@@ -7,6 +7,7 @@ package net.minecraftforge.client.loading;
 
 import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vulkan.VulkanGpuTexture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.LoadingOverlay;
@@ -20,6 +21,8 @@ import net.minecraftforge.fml.earlydisplay.DisplayWindow;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30C;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -36,6 +39,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class ForgeLoadingOverlay extends LoadingOverlay {
     private static final boolean ENABLE = false; //Boolean.parseBoolean("forge.enableForgeLoadingOverlay");
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForgeLoadingOverlay.class);
     private final Minecraft minecraft;
     private final ReloadInstance reload;
     private final DisplayWindow displayWindow;
@@ -49,15 +53,19 @@ public class ForgeLoadingOverlay extends LoadingOverlay {
         this.displayWindow = displayWindow;
         var texture = mc.getTextureManager().getTexture(MOJANG_STUDIOS_LOGO_LOCATION);
         var gpuTexture = texture.getTexture();
-        long handle;
         if (gpuTexture instanceof GlTexture glTexture) {
-            handle = glTexture.glId();
+            displayWindow.addMojangTexture(glTexture.glId());
+        } else if (gpuTexture instanceof VulkanGpuTexture vkTexture) {
+            displayWindow.addMojangTexture(vkTexture.vkImage());
         } else {
-            throw new IllegalStateException("Unsupported texture type: " + gpuTexture.getClass().getName());
+            LOGGER.debug("Skipping early Mojang logo handoff texture for unsupported GPU texture type {}", gpuTexture.getClass().getName());
         }
-        displayWindow.addMojangTexture(handle);
         this.progress = StartupMessageManager.prependProgressBar("Minecraft Progress", 100);
-        this.earlyBuffer = ForgeRenderTypes.getLoadingOverlay(displayWindow);
+        if (ENABLE) {
+            this.earlyBuffer = ForgeRenderTypes.getLoadingOverlay(displayWindow);
+        } else {
+            this.earlyBuffer = null;
+        }
     }
 
     public static Supplier<LoadingOverlay> newInstance(Supplier<Minecraft> mc, Supplier<ReloadInstance> ri, Consumer<Optional<Throwable>> handler, DisplayWindow window) {
