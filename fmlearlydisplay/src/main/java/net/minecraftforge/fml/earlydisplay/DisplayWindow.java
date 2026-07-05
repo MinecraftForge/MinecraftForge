@@ -486,9 +486,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         handleLastGLFWError((error, description) -> {
             if (error == GLFW_FEATURE_UNAVAILABLE) {
                 LOGGER.debug("Suppressing GLFW_FEATURE_UNAVAILABLE error: [0x%X]%s".formatted(error, description));
-            }
-            else
-            {
+            } else {
                 throw new IllegalStateException("GLFW Error during Display Window: [0x%X]%s".formatted(error, description));
             }
         });
