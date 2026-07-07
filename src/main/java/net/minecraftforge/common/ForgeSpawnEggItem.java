@@ -66,7 +66,8 @@ public class ForgeSpawnEggItem extends SpawnEggItem
 
     private static final DefaultDispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior()
     {
-        protected ItemStack execute(IBlockSource source, ItemStack stack)
+        @Override
+        protected ItemStack dispenseStack(IBlockSource source, ItemStack stack)
         {
             Direction face = source.getBlockState().get(DispenserBlock.FACING);
             EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
