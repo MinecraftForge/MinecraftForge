@@ -38,7 +38,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod(value = ForgeSpawnEggItemTest.MODID)
-public class ForgeSpawnEggItemTest {
+public class ForgeSpawnEggItemTest
+{
     static final String MODID = "forge_spawnegg_test";
     static final boolean ENABLED = true;
 
@@ -52,8 +53,10 @@ public class ForgeSpawnEggItemTest {
             new ForgeSpawnEggItem(ENTITY, 0x0000FF, 0xFF0000, new Item.Properties().group(ItemGroup.MISC))
     );
 
-    public ForgeSpawnEggItemTest() {
-        if (ENABLED) {
+    public ForgeSpawnEggItemTest()
+    {
+        if (ENABLED)
+        {
             ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
             ENTITIES.register(FMLJavaModLoadingContext.get().getModEventBus());
 
@@ -62,17 +65,15 @@ public class ForgeSpawnEggItemTest {
     }
 
     @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-    private static class ClientEvents {
+    private static class ClientEvents
+    {
         @SubscribeEvent
-        public static void onClientSetup(final FMLClientSetupEvent event) {
-            if (!ENABLED) {
-                return;
-            }
+        public static void onClientSetup(final FMLClientSetupEvent event)
+        {
+            if (!ENABLED) { return; }
 
-            {
-                EntityRendererManager manager = Minecraft.getInstance().getRenderManager();
-                manager.register(ENTITY.get(), new PigRenderer(manager));
-            }
+            EntityRendererManager manager = Minecraft.getInstance().getRenderManager();
+            manager.register(ENTITY.get(), new PigRenderer(manager));
         }
     }
 }
