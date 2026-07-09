@@ -56,6 +56,7 @@ public class ModelLoaderRegistry
 {
     public static final String WHITE_TEXTURE = "forge:white";
 
+    private static final ItemModelGenerator ITEM_MODEL_GENERATOR = new ItemModelGenerator();
     private static final Map<ResourceLocation, IModelLoader<?>> loaders = Maps.newHashMap();
     private static volatile boolean registryFrozen = false;
 
@@ -68,6 +69,7 @@ public class ModelLoaderRegistry
         registerLoader(new ResourceLocation("forge","composite"), CompositeModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","multi-layer"), MultiLayerModel.Loader.INSTANCE);
         registerLoader(new ResourceLocation("forge","item-layers"), ItemLayerModel.Loader.INSTANCE);
+        registerLoader(new ResourceLocation("forge", "separate-perspective"), SeparatePerspectiveModel.Loader.INSTANCE);
 
         // TODO: Implement as new model loaders
         //registerLoader(new ResourceLocation("forge:b3d"), new ModelLoaderAdapter(B3DLoader.INSTANCE));
@@ -255,7 +257,16 @@ public class ModelLoaderRegistry
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
         else
-            model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+        {
+            // handle vanilla item models here, since vanilla has a shortcut for them
+            if (blockModel.getRootModel() == ModelBakery.MODEL_GENERATED) {
+                model = ITEM_MODEL_GENERATOR.makeItemModel(spriteGetter, blockModel).bakeModel(modelBakery, blockModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+            else
+            {
+                model = blockModel.bakeVanilla(modelBakery, otherModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            }
+        }
 
         if (customModelState != null && !model.doesHandlePerspectives())
             model = new PerspectiveMapWrapper(model, customModelState);
