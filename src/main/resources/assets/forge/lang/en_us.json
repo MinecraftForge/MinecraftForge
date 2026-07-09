@@ -13,6 +13,7 @@
   "fml.menu.mods.info.credits":"Credits: {0}",
   "fml.menu.mods.info.authors":"Authors: {0}",
   "fml.menu.mods.info.displayurl":"Homepage: {0}",
+  "fml.menu.mods.info.license":"License: {0}",
   "fml.menu.mods.info.nochildmods":"No child mods found",
   "fml.menu.mods.info.childmods":"Child mods: {0}",
   "fml.menu.mods.info.updateavailable":"Update available: {0}",

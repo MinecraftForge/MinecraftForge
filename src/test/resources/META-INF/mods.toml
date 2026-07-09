@@ -1,5 +1,6 @@
 modLoader="javafml"
 loaderVersion="[28,)"
+license="LGPL v2.1"
 
 [[mods]]
     modId="mark_dimension_for_deletion_test"
