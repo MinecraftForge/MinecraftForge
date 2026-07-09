@@ -80,6 +80,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem
 
     private static final DefaultDispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = new DefaultDispenseItemBehavior()
     {
+        @Override
         protected ItemStack dispenseStack(IBlockSource source, ItemStack stack)
         {
             Direction face = source.getBlockState().get(DispenserBlock.FACING);
