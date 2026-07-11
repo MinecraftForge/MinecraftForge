@@ -5,11 +5,14 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.mojang.logging.LogUtils;
+import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
+import org.slf4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
  * loading package</em>
  */
 public class LoadingModList {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static LoadingModList INSTANCE;
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;
@@ -65,13 +69,22 @@ public class LoadingModList {
     }
 
     public void addAccessTransformers() {
+        var errors = new ArrayList<ExceptionData>();
+
         for (ModFileInfo modFile : modFiles) {
             ModFile mod = modFile.getFile();
-            var at = mod.getAccessTransformer().orElse(null);
-            if (at != null) {
-                FMLLoader.addAccessTransformer(at, mod);
+            for (var at : mod.getAccessTransformers()) {
+                if (!Files.exists(at)) {
+                    var message = "Invalid mod file: " + modFile.getFile().getFileName() + ". Missing Access Transformer: " + at;
+                    errors.add(new ExceptionData(message));
+                    LOGGER.error(message);
+                } else
+                    FMLLoader.addAccessTransformer(at, mod);
             }
         }
+
+        if (!errors.isEmpty())
+            preLoadErrors.add(new EarlyLoadingException("Invalid Access Transformers", null, errors));
     }
 
     public void addForScanning(BackgroundScanHandler backgroundScanHandler) {
