@@ -4,7 +4,7 @@
          }
  
          this.addAlwaysOnTopPass(frame, featureFrame, terrainFog);
-+        net.minecraftforge.client.FramePassManager.insertForgePasses(frame, targets, this.levelRenderState); // Forge: Modded passes are inserted here.
++        net.minecraftforge.client.FramePassManager.insertForgePasses(frame, targets, this.levelRenderState, deltaTracker); // Forge: Modded passes are inserted here.
          profiler.popPush("executeFrameGraph");
          frame.execute(resourceAllocator, new FrameGraphBuilder.Inspector() {
              @Override
