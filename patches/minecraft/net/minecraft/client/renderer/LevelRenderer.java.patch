@@ -30,7 +30,7 @@
          }
  
          this.addLateDebugPass(framegraphbuilder, vec3, p_407881_);
-+        net.minecraftforge.client.FramePassManager.insertForgePasses(framegraphbuilder, targets); // Forge: Modded passes are inserted here.
++        net.minecraftforge.client.FramePassManager.insertForgePasses(framegraphbuilder, targets, p_342180_); // Forge: Modded passes are inserted here.
          profilerfiller.popPush("framegraph");
          framegraphbuilder.execute(p_367325_, new FrameGraphBuilder.Inspector() {
              @Override
