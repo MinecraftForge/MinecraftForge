@@ -5,11 +5,11 @@
 
 package net.minecraftforge.debug.client;
  
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraftforge.client.FramePassManager;
 import net.minecraftforge.client.event.AddFramePassEvent;
 import net.minecraftforge.common.extensions.IForgeGameTestHelper;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.gametest.GameTest;
@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.gametest.framework.GameTestHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.framegraph.FramePass;
+import org.jspecify.annotations.NullMarked;
 
 
 @GameTestNamespace("forge")
@@ -47,11 +48,12 @@ public class RenderFrameLayerTest extends BaseTestMod {
     /**
      * If this is working, two white line box cubes will be rendered at ground level in a superflat world around (0,0)
      */
+    @NullMarked
     public static void renderTest(AddFramePassEvent event) {
         var mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
         FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
-            public void targets(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker deltaTracker) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
@@ -72,7 +74,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         event.addPass(rl(MODID), def);
         FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
-            public void targets(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker deltaTracker) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
