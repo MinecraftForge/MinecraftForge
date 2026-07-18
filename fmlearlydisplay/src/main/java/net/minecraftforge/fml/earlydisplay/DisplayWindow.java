@@ -467,6 +467,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.winWidth = x[0];
         this.winHeight = y[0];
 
+        // Setting the window position isn't supported on wayland, so check the error here
         glfwSetWindowPos(window, (vidmode.width() - this.winWidth) / 2 + monitorX, (vidmode.height() - this.winHeight) / 2 + monitorY);
         handleLastGLFWError();
 
@@ -491,8 +492,10 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
         // Show the window
         glfwShowWindow(window);
+        // Getting the window position isn't supported on wayland, so check the error here
         glfwGetWindowPos(window, x, y);
         handleLastGLFWError();
+        
         this.winX = x[0];
         this.winY = y[0];
         glfwGetFramebufferSize(window, x, y);
