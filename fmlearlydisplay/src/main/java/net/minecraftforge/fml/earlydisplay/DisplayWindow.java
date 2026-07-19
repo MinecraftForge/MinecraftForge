@@ -467,7 +467,9 @@ public class DisplayWindow implements ImmediateWindowProvider {
         this.winWidth = x[0];
         this.winHeight = y[0];
 
+        // Setting the window position isn't supported on wayland, so check the error here
         glfwSetWindowPos(window, (vidmode.width() - this.winWidth) / 2 + monitorX, (vidmode.height() - this.winHeight) / 2 + monitorY);
+        handleLastGLFWError();
 
         // Attempt setting the icon
 //        int[] channels = new int[1];
@@ -490,13 +492,28 @@ public class DisplayWindow implements ImmediateWindowProvider {
 
         // Show the window
         glfwShowWindow(window);
+        // Getting the window position isn't supported on wayland, so check the error here
         glfwGetWindowPos(window, x, y);
+        handleLastGLFWError();
+        
         this.winX = x[0];
         this.winY = y[0];
         glfwGetFramebufferSize(window, x, y);
         this.fbWidth = x[0];
         this.fbHeight = y[0];
         glfwPollEvents();
+    }
+
+    private static void handleLastGLFWError() {
+        handleLastGLFWError((error, description) -> {
+            if (error == GLFW_FEATURE_UNAVAILABLE) {
+                // suppress window pos errors for unsupported platforms (wayland)
+                LOGGER.debug(String.format("Suppressing GLFW error: [0x%X]%s", error, description));
+                return;
+            }
+
+            throw new IllegalStateException(String.format("GLFW error: [0x%X]%s", error, description));
+        });
     }
 
     private void winResize(long window, int width, int height) {
