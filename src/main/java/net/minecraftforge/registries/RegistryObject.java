@@ -486,7 +486,7 @@ public final class RegistryObject<T> implements Supplier<T>
     {
         if (this == obj) return true;
         if (obj instanceof RegistryObject) {
-            return Objects.equals(((RegistryObject<?>)obj).name, name);
+            return Objects.equals(((RegistryObject<?>)obj).key, key) && Objects.equals(((RegistryObject<?>)obj).name, name);
         }
         return false;
     }
