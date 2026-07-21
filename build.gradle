@@ -10,7 +10,6 @@ plugins {
     alias libs.plugins.gradleutils
     alias libs.plugins.gitversion
     alias libs.plugins.changelog
-    alias libs.plugins.renamer
     alias libs.plugins.jarsigner
     id 'net.minecraftforge.forgedev'
     id 'net.minecraftforge.forge.build.convention'
@@ -37,15 +36,6 @@ fdtools {
         version = buildLibs.installertools.get().version
     }
     configure('jarcompatibilitychecker') {
-        javaLauncher = javaToolchains.launcherFor(java.toolchain)
-    }
-}
-renamerTools {
-    configure('classes') {
-        artifact = buildLibs.renamer.get().toString() + ':all'
-    }
-    configure('srg2source') {
-        version = buildLibs.srg2source.get().version
         javaLauncher = javaToolchains.launcherFor(java.toolchain)
     }
 }
@@ -496,7 +486,6 @@ forgedev.installer {
     final launcherId = "${minecraftVersion}-${project.name}-${forgeVersion}"
     final installertools = tool(buildLibs.installertools)
     final binarypatcher = tool(buildLibs.binarypatcher)
-    final renamer = tool(buildLibs.renamer)
 
     jar {
         from(EXTRA_TXTS)
@@ -795,4 +784,12 @@ tasks.withType(AbstractTestTask).configureEach {
 forgedev.runs.configureEach {
     run.configure { dependsOn finalizeSpawn}
     runTest.configure { dependsOn finalizeSpawn}
+}
+// run gradlew dependencyUpdates --no-parallel
+//noinspection UnnecessaryQualifiedReference
+tasks.named('dependencyUpdates', com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {
+    resolutionStrategy {
+        mcpBase.dependencies.get().forEach {dep -> force(dep) } // Force all vanilla dependencies to their correct versions
+        force(earlyDisplayLibs.slf4j.jdk14) // Force slf4j implementation, its tied to the api from the manifest
+    }
 }
