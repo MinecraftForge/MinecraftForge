@@ -5,6 +5,7 @@
 
 package net.minecraftforge.debug.client;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraftforge.client.FramePassManager;
@@ -22,6 +23,8 @@ import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.gametest.framework.GameTestHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.framegraph.FramePass;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
 
 @GameTestNamespace("forge")
@@ -48,10 +51,11 @@ public class RenderFrameLayerTest extends BaseTestMod {
     /**
      * If this is working, two white line box cubes will be rendered at ground level in a superflat world around (0,0)
      */
+    @NullMarked
     public static void renderTest(AddFramePassEvent event) {
         FramePassManager.PassDefinition def = new FramePassManager.PassDefinition() {
             @Override
-            public void extracts(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
@@ -72,7 +76,7 @@ public class RenderFrameLayerTest extends BaseTestMod {
         event.addPass(rl(MODID), def);
         FramePassManager.PassDefinition def2 = new FramePassManager.PassDefinition() {
             @Override
-            public void extracts(LevelTargetBundle bundle, FramePass pass) {
+            public void extracts(@NotNull LevelTargetBundle bundle, FramePass pass, DeltaTracker dt) {
                 bundle.main = pass.readsAndWrites(bundle.main);
             }
 
