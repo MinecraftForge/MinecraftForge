@@ -5,6 +5,8 @@
 
 package net.minecraftforge.client.gui.widget;
 
+import org.jspecify.annotations.Nullable;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -60,6 +62,12 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry> {
         parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
 
+    @Override
+    public void setSelected(final @Nullable ModEntry selected) {
+        parent.setSelected(selected);
+        super.setSelected(selected);
+    }
+
     public class ModEntry extends ObjectSelectionList.Entry<ModEntry> {
         private final IModInfo modInfo;
         private final ModListScreen parent;
@@ -92,14 +100,15 @@ public class ModListWidget extends ObjectSelectionList<ModListWidget.ModEntry> {
                 guiGraphics.pose().pushMatrix();
                 guiGraphics.blit(RenderPipelines.GUI_TEXTURED, VERSION_CHECK_ICONS, getX() + width - 12 - barOffset, top + entryHeight / 4, vercheck.status().getSheetOffset() * 8, (vercheck.status().isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 guiGraphics.pose().popMatrix();
-
             }
         }
 
         @Override
         public boolean mouseClicked(MouseButtonEvent info, boolean recent) {
-            parent.setSelected(this);
-            ModListWidget.this.setSelected(this);
+            if (this.parent.getSelected() == this)
+                ModListWidget.this.setSelected(null);
+            else
+                ModListWidget.this.setSelected(this);
             return false;
         }
 
