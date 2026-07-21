@@ -23,6 +23,7 @@ import net.minecraftforge.client.gui.widget.ModListWidget;
 import net.minecraftforge.client.gui.widget.ScrollPanel;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import org.apache.maven.artifact.versioning.ComparableVersion;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ActiveTextCollector;
@@ -299,8 +300,6 @@ public class ModListScreen extends Screen {
 
     @Override
     public void tick() {
-        modList.setSelected(selected);
-
         if (!search.getValue().equals(lastFilterText)) {
             reloadMods();
             sorted = false;
@@ -311,11 +310,11 @@ public class ModListScreen extends Screen {
             mods.sort(sortType);
             modList.refreshList();
             if (selected != null) {
-                selected = modList.children().stream()
+                final var newSelected = modList.children().stream()
                         .filter(e -> e.getInfo() == selected.getInfo())
                         .findFirst()
                         .orElse(null);
-                updateCache();
+                this.modList.setSelected(newSelected);
             }
             sorted = true;
         }
@@ -365,8 +364,14 @@ public class ModListScreen extends Screen {
     }
 
     public void setSelected(ModListWidget.ModEntry entry) {
-        this.selected = entry == this.selected ? null : entry;
-        updateCache();
+        if (this.selected != entry) {
+            this.selected = entry;
+            updateCache();
+        }
+    }
+
+    public ModListWidget.@Nullable ModEntry getSelected() {
+        return this.selected;
     }
 
     record Logo(Identifier texture, Size2i size) {}
@@ -473,7 +478,6 @@ public class ModListScreen extends Screen {
         ModListWidget.ModEntry selected = this.selected;
         this.init(width, height);
         this.search.setValue(s);
-        this.selected = selected;
 
         if (!this.search.getValue().isEmpty())
             reloadMods();
@@ -481,7 +485,7 @@ public class ModListScreen extends Screen {
         if (sort != SortType.NORMAL)
             resortMods(sort);
 
-        updateCache();
+        this.modList.setSelected(selected);
     }
 
     @Override
