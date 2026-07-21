@@ -25,7 +25,7 @@
          }
  
          this.addLateDebugPass(framegraphbuilder, this.levelRenderState.cameraRenderState, p_407881_, p_254120_);
-+        net.minecraftforge.client.FramePassManager.insertForgePasses(framegraphbuilder, targets, this.levelRenderState); // Forge: Modded passes are inserted here.
++        net.minecraftforge.client.FramePassManager.insertForgePasses(framegraphbuilder, targets, this.levelRenderState, p_342180_); // Forge: Modded passes are inserted here.
          profilerfiller.popPush("executeFrameGraph");
          framegraphbuilder.execute(p_367325_, new FrameGraphBuilder.Inspector() {
              @Override
