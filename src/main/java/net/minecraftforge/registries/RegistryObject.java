@@ -481,8 +481,8 @@ public final class RegistryObject<T> implements Supplier<T> {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj instanceof RegistryObject o) {
-            return Objects.equals(o.name, name);
+        if (obj instanceof RegistryObject<?> o) {
+            return o.key == key && Objects.equals(o.name, name);
         }
         return false;
     }
