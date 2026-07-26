@@ -10,6 +10,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -38,14 +39,27 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     private final List<ForgeLayer> bakedLayers = new ArrayList<>();
     private final Identifier name;
 
+    // Begin pre-sleep overlay
     public static final Identifier  PRE_SLEEP_STACK = Identifier.withDefaultNamespace("pre_sleep_phase");
     public static final Identifier   CAMERA_OVERLAY = Identifier.withDefaultNamespace("camera_overlay");
     public static final Identifier        CROSSHAIR = Identifier.withDefaultNamespace("crosshair");
     public static final Identifier   CHANGE_STRATUM = Identifier.withDefaultNamespace("stratum_change");
+    // Begin hotbar
     public static final Identifier HOTBAR_AND_DECOS = Identifier.withDefaultNamespace("hotbar");
+    public static final Identifier      ITEM_HOTBAR = Identifier.withDefaultNamespace("item_hotbar");
+    public static final Identifier SPECTATOR_HOTBAR = Identifier.withDefaultNamespace("spectator_hotbar");
+    public static final Identifier       HEALTH_BAR = Identifier.withDefaultNamespace("health_bar");
+    public static final Identifier   VEHICLE_HEALTH = Identifier.withDefaultNamespace("vehicle_health");
+    public static final Identifier       BACKGROUND = Identifier.withDefaultNamespace("background"); // Any layer needing contextual info should order at some point after this layer.
+    public static final Identifier EXPERIENCE_LEVEL = Identifier.withDefaultNamespace("experience_level");
+    public static final Identifier CONTEXTUAL_INFO = Identifier.withDefaultNamespace("contextual_info");
+    public static final Identifier SELECTED_ITEM_NAME = Identifier.withDefaultNamespace("selected_item_name");
+    public static final Identifier SPECTATOR_ACTION = Identifier.withDefaultNamespace("spectator_action");
+    // End hotbar
     public static final Identifier   POTION_EFFECTS = Identifier.withDefaultNamespace("potion_effects");
     public static final Identifier     BOSS_OVERLAY = Identifier.withDefaultNamespace("boss_overlay");
-
+    // End pre-sleep overlay
+    // Begin post-sleep overlay
     public static final Identifier POST_SLEEP_STACK = Identifier.withDefaultNamespace("post_sleep_phase");
     public static final Identifier     DEMO_OVERLAY = Identifier.withDefaultNamespace("demo");
     public static final Identifier    DEBUG_OVERLAY = Identifier.withDefaultNamespace("debug");
@@ -55,6 +69,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     public static final Identifier     CHAT_OVERLAY = Identifier.withDefaultNamespace("chat_overlay");
     public static final Identifier         TAB_LIST = Identifier.withDefaultNamespace("tab_list");
     public static final Identifier SUBTITLE_OVERLAY = Identifier.withDefaultNamespace("subtitle");
+    // End post-sleep overlay
 
     public static final Identifier     VANILLA_ROOT = Identifier.withDefaultNamespace("vanilla_root");
     public static final Identifier    SLEEP_OVERLAY = Identifier.withDefaultNamespace("sleep_overlay");
@@ -85,6 +100,17 @@ public final class ForgeLayeredDraw implements ForgeLayer {
             nameTakenWarning(name);
         }
         return this;
+    }
+
+    /**
+     * Adds a full draw stack and assumes condition is always true.
+     * Use {@linkplain ForgeLayeredDraw#putAbove} and {@linkplain ForgeLayeredDraw#putBelow} for fine location adjustment.
+     * @param name RL of the name to identify this stack with.
+     * @param layeredDraw the draw stack
+     * @return this
+     */
+    public ForgeLayeredDraw add(Identifier name, ForgeLayeredDraw layeredDraw) {
+        return add(name, layeredDraw, () -> true);
     }
 
     /**
@@ -280,6 +306,28 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     }
 
     /**
+     * Replaces the renderer of a single layer and logs whodunnit, this is not recommended for obvious reasons.
+     * Will not work if target is a ForgeLayeredDraw
+     * Prefer {@linkplain ForgeLayeredDraw#addConditionTo}
+     * @param expectedLocation Layer stack where the target should be.
+     * @param targetLayer Target whose renderer should be replaced.
+     * @param replacementRenderer Renderer to use instead.
+     * @return this
+     */
+    public ForgeLayeredDraw replace(Identifier expectedLocation, Identifier targetLayer, ForgeLayer replacementRenderer) {
+        locateStack(expectedLocation).ifPresentOrElse((stack) -> {
+            if (stack.namedLayers.get(targetLayer) != null) {
+                stack.namedLayers.put(targetLayer, replacementRenderer);
+                LogUtils.getLogger().debug("ForgeLayer {} in {} was replaced by {}.", targetLayer, expectedLocation, replacementRenderer);
+            } else {
+                LogUtils.getLogger().debug("ForgeLayer {} in {} was attempted to be replaced by {}, but it did not exist.", targetLayer, expectedLocation, replacementRenderer);
+            }
+        }, () -> stackNotPresentWarning(expectedLocation));
+
+        return this;
+    }
+
+    /**
      * Propagate the layer order down to the inner render list after providing modders an opportunity to alter the list as they wish.
      * @apiNote Modders should <emph>NEVER</emph> be calling this method.
      * @return this
@@ -381,11 +429,22 @@ public final class ForgeLayeredDraw implements ForgeLayer {
 
     @ApiStatus.Internal
     public static void init(Gui gui, Minecraft minecraft) {
+        BooleanSupplier spectator = () -> minecraft.gameMode.isSpectator();
+        var hotbarCluster = new ForgeLayeredDraw(HOTBAR_AND_DECOS)
+                .addWithCondition(SPECTATOR_HOTBAR,  (gg, dt) -> gui.getSpectatorGui().renderHotbar(gg), spectator)
+                .addWithCondition(ITEM_HOTBAR, gui::renderItemHotbar, () -> !spectator.getAsBoolean())
+                .addWithCondition(HEALTH_BAR, (gg, dt) -> gui.renderPlayerHealth(gg), () -> minecraft.gameMode.canHurtPlayer())
+                .add(VEHICLE_HEALTH, (gg, dt) -> gui.renderVehicleHealth(gg))
+                .add(BACKGROUND, gui::updateContextualInfo)
+                .addWithCondition(EXPERIENCE_LEVEL, (gg, dt) -> ContextualBarRenderer.renderExperienceLevel(gg, minecraft.font, minecraft.player.experienceLevel), () -> minecraft.gameMode.hasExperience() && minecraft.player.experienceLevel > 0)
+                .add(CONTEXTUAL_INFO, gui::extractContextualInfoState)
+                .addWithCondition(SELECTED_ITEM_NAME, (gg, dt) -> gui.renderSelectedItemName(gg), () -> !spectator.getAsBoolean())
+                .addWithCondition(SPECTATOR_ACTION, (gg, dt) -> gui.getSpectatorGui().renderAction(gg), spectator);
         var preSleepDraw = new ForgeLayeredDraw(PRE_SLEEP_STACK)
             .add(CAMERA_OVERLAY, gui::renderCameraOverlays)
             .add(CROSSHAIR, gui::renderCrosshair)
             .add(CHANGE_STRATUM, (gg, dt) -> gg.nextStratum())
-            .add(HOTBAR_AND_DECOS, gui::renderHotbarAndDecorations)
+            .add(HOTBAR_AND_DECOS, hotbarCluster)
             .add(POTION_EFFECTS, gui::renderEffects)
             .add(BOSS_OVERLAY, gui::renderBossOverlay);
         var postSleepDraw = new ForgeLayeredDraw(POST_SLEEP_STACK)
