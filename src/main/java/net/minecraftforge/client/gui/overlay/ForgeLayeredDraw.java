@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.contextualbar.ContextualBarRenderer;
 import net.minecraftforge.client.event.ForgeEventFactoryClient;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import org.jetbrains.annotations.ApiStatus;
@@ -42,14 +43,29 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     private final List<ForgeLayer> bakedLayers = new ArrayList<>();
     private final ResourceLocation name;
 
+    // Begin pre-sleep overlay
     public static final ResourceLocation  PRE_SLEEP_STACK = ResourceLocation.withDefaultNamespace("pre_sleep_phase");
     public static final ResourceLocation   CAMERA_OVERLAY = ResourceLocation.withDefaultNamespace("camera_overlay");
     public static final ResourceLocation        CROSSHAIR = ResourceLocation.withDefaultNamespace("crosshair");
     public static final ResourceLocation   CHANGE_STRATUM = ResourceLocation.withDefaultNamespace("stratum_change");
+
+    // Begin hotbar
     public static final ResourceLocation HOTBAR_AND_DECOS = ResourceLocation.withDefaultNamespace("hotbar");
+    public static final ResourceLocation      ITEM_HOTBAR = ResourceLocation.withDefaultNamespace("item_hotbar");
+    public static final ResourceLocation SPECTATOR_HOTBAR = ResourceLocation.withDefaultNamespace("spectator_hotbar");
+    public static final ResourceLocation       HEALTH_BAR = ResourceLocation.withDefaultNamespace("health_bar");
+    public static final ResourceLocation   VEHICLE_HEALTH = ResourceLocation.withDefaultNamespace("vehicle_health");
+    public static final ResourceLocation       BACKGROUND = ResourceLocation.withDefaultNamespace("background"); // Any layer needing contextual info should order at some point after this layer.
+    public static final ResourceLocation EXPERIENCE_LEVEL = ResourceLocation.withDefaultNamespace("experience_level");
+    public static final ResourceLocation CONTEXTUAL_INFO = ResourceLocation.withDefaultNamespace("contextual_info");
+    public static final ResourceLocation SELECTED_ITEM_NAME = ResourceLocation.withDefaultNamespace("selected_item_name");
+    public static final ResourceLocation SPECTATOR_ACTION = ResourceLocation.withDefaultNamespace("spectator_action");
+
+    // End hotbar
     public static final ResourceLocation   POTION_EFFECTS = ResourceLocation.withDefaultNamespace("potion_effects");
     public static final ResourceLocation     BOSS_OVERLAY = ResourceLocation.withDefaultNamespace("boss_overlay");
-
+    // End pre-sleep overlay
+    // Begin post-sleep overlay
     public static final ResourceLocation POST_SLEEP_STACK = ResourceLocation.withDefaultNamespace("post_sleep_phase");
     public static final ResourceLocation     DEMO_OVERLAY = ResourceLocation.withDefaultNamespace("demo");
     public static final ResourceLocation    DEBUG_OVERLAY = ResourceLocation.withDefaultNamespace("debug");
@@ -59,6 +75,7 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     public static final ResourceLocation     CHAT_OVERLAY = ResourceLocation.withDefaultNamespace("chat_overlay");
     public static final ResourceLocation         TAB_LIST = ResourceLocation.withDefaultNamespace("tab_list");
     public static final ResourceLocation SUBTITLE_OVERLAY = ResourceLocation.withDefaultNamespace("subtitle");
+    // End post-sleep overlay
 
     public static final ResourceLocation     VANILLA_ROOT = ResourceLocation.withDefaultNamespace("vanilla_root");
     public static final ResourceLocation    SLEEP_OVERLAY = ResourceLocation.withDefaultNamespace("sleep_overlay");
@@ -89,6 +106,17 @@ public final class ForgeLayeredDraw implements ForgeLayer {
             nameTakenWarning(name);
         }
         return this;
+    }
+
+    /**
+     * Adds a full draw stack and assumes condition is always true.
+     * Use {@linkplain ForgeLayeredDraw#putAbove} and {@linkplain ForgeLayeredDraw#putBelow} for fine location adjustment.
+     * @param name RL of the name to identify this stack with.
+     * @param layeredDraw the draw stack
+     * @return this
+     */
+    public ForgeLayeredDraw add(ResourceLocation name, ForgeLayeredDraw layeredDraw) {
+        return add(name, layeredDraw, () -> true);
     }
 
     /**
@@ -284,6 +312,28 @@ public final class ForgeLayeredDraw implements ForgeLayer {
     }
 
     /**
+     * Replaces the renderer of a single layer and logs whodunnit, this is not recommended for obvious reasons.
+     * Will not work if target is a ForgeLayeredDraw
+     * Prefer {@linkplain ForgeLayeredDraw#addConditionTo}
+     * @param expectedLocation Layer stack where the target should be.
+     * @param targetLayer Target whose renderer should be replaced.
+     * @param replacementRenderer Renderer to use instead.
+     * @return this
+     */
+    public ForgeLayeredDraw replace(ResourceLocation expectedLocation, ResourceLocation targetLayer, ForgeLayer replacementRenderer) {
+        locateStack(expectedLocation).ifPresentOrElse((stack) -> {
+            if (stack.namedLayers.get(targetLayer) != null) {
+                stack.namedLayers.put(targetLayer, replacementRenderer);
+                LogUtils.getLogger().debug("ForgeLayer {} in {} was replaced by {}.", targetLayer, expectedLocation, replacementRenderer);
+            } else {
+                LogUtils.getLogger().debug("ForgeLayer {} in {} was attempted to be replaced by {}, but it did not exist.", targetLayer, expectedLocation, replacementRenderer);
+            }
+        }, () -> stackNotPresentWarning(expectedLocation));
+
+        return this;
+    }
+
+    /**
      * Propagate the layer order down to the inner render list after providing modders an opportunity to alter the list as they wish.
      * @apiNote Modders should <emph>NEVER</emph> be calling this method.
      * @return this
@@ -385,11 +435,22 @@ public final class ForgeLayeredDraw implements ForgeLayer {
 
     @ApiStatus.Internal
     public static void init(Gui gui, Minecraft minecraft) {
+        BooleanSupplier spectator = () -> minecraft.gameMode.isAlwaysFlying();
+        var hotbarCluster = new ForgeLayeredDraw(HOTBAR_AND_DECOS)
+                .addWithCondition(SPECTATOR_HOTBAR,  (gg, dt) -> gui.getSpectatorGui().renderHotbar(gg), spectator)
+                .addWithCondition(ITEM_HOTBAR, gui::renderItemHotbar, () -> !spectator.getAsBoolean())
+                .addWithCondition(HEALTH_BAR, (gg, dt) -> gui.renderPlayerHealth(gg), () -> minecraft.gameMode.canHurtPlayer())
+                .add(VEHICLE_HEALTH, (gg, dt) -> gui.renderVehicleHealth(gg))
+                .add(BACKGROUND, gui::updateContextualInfo)
+                .addWithCondition(EXPERIENCE_LEVEL, (gg, dt) -> ContextualBarRenderer.renderExperienceLevel(gg, minecraft.font, minecraft.player.experienceLevel), () -> minecraft.gameMode.hasExperience() && minecraft.player.experienceLevel > 0)
+                .add(CONTEXTUAL_INFO, gui::extractContextualInfoState)
+                .addWithCondition(SELECTED_ITEM_NAME, (gg, dt) -> gui.renderSelectedItemName(gg), () -> !spectator.getAsBoolean())
+                .addWithCondition(SPECTATOR_ACTION, (gg, dt) -> gui.getSpectatorGui().renderAction(gg), spectator);
         var preSleepDraw = new ForgeLayeredDraw(PRE_SLEEP_STACK)
             .add(CAMERA_OVERLAY, gui::renderCameraOverlays)
             .add(CROSSHAIR, gui::renderCrosshair)
             .add(CHANGE_STRATUM, (gg, dt) -> gg.nextStratum())
-            .add(HOTBAR_AND_DECOS, gui::renderHotbarAndDecorations)
+            .add(HOTBAR_AND_DECOS, hotbarCluster)
             .add(POTION_EFFECTS, gui::renderEffects)
             .add(BOSS_OVERLAY, gui::renderBossOverlay);
         var postSleepDraw = new ForgeLayeredDraw(POST_SLEEP_STACK)
