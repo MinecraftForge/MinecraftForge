@@ -865,3 +865,12 @@ forgedev.runs.configureEach {
     run.configure { dependsOn finalizeSpawn}
     runTest.configure { dependsOn finalizeSpawn}
 }
+// run gradlew dependencyUpdates --no-parallel
+//noinspection UnnecessaryQualifiedReference
+tasks.named('dependencyUpdates', com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask) {
+    resolutionStrategy {
+        mcpBase.dependencies.get().forEach {dep -> force(dep) } // Force all vanilla dependencies to their correct versions
+        force(earlyDisplayLibs.slf4j.jdk14) // Force slf4j implementation, its tied to the api from the manifest
+        force('de.oceanlabs.mcp:mcp_config:' + bootLibs.versions.mcp) // Don't warn abou MCPConfig updates
+    }
+}

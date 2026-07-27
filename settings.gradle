@@ -1,7 +1,7 @@
 import groovy.transform.Field
 
 pluginManagement {
-    private static final @Field FORGEDEV_VERSION = '7.0.0-beta.48'
+    private static final @Field FORGEDEV_VERSION = '7.0.0-beta.51'
 
     if (new File('forgedev/settings.gradle').exists()) {
         includeBuild 'forgedev'
@@ -100,11 +100,11 @@ dependencyResolutionManagement.versionCatalogs {
         description = 'Libraries used by Forge and its subprojects.'
 
         plugin 'licenser',    'net.minecraftforge.licenser'        version '1.2.0'
-        plugin 'versions',    'com.github.ben-manes.versions'      version '0.53.0'
-        plugin 'gradleutils', 'net.minecraftforge.gradleutils'     version '3.3.35'
+        plugin 'versions',    'io.github.ben-manes.versions'       version '0.56.0'
+        plugin 'gradleutils', 'net.minecraftforge.gradleutils'     version '3.4.5'
         plugin 'gitversion',  'net.minecraftforge.gitversion'      version '3.1.7'
         plugin 'changelog',   'net.minecraftforge.changelog'       version '3.2.2'
-        plugin 'renamer',     'net.minecraftforge.renamer'         version '1.0.16'
+        plugin 'renamer',     'net.minecraftforge.renamer'         version '1.1.5'
         plugin 'download',    'de.undercouch.download'             version '5.6.0'
         plugin 'jarsigner',   'net.minecraftforge.gradlejarsigner' version '1.2.1'
         plugin 'apt',         'com.diffplug.eclipse.apt'           version '4.4.1'
@@ -112,24 +112,26 @@ dependencyResolutionManagement.versionCatalogs {
         // TODO [Forge][Buildscript We should not be needing to manually add transitive dependencies
         //      If we need to make strict versions for dependencies, we should do so using dependency constraints
         library 'forgespi',           'net.minecraftforge',  'forgespi' version '8.0.0'       // Needs modlauncher
-        library 'modlauncher',        'net.minecraftforge',  'modlauncher' version '10.2.4'   // Needs securemodules
+        library 'modlauncher',        'net.minecraftforge',  'modlauncher' version '10.2.6'   // Needs securemodules
         library 'securemodules',      'net.minecraftforge',  'securemodules' version '2.2.24' // Needs unsafe
         library 'unsafe',             'net.minecraftforge',  'unsafe' version '0.9.2'
-        library 'accesstransformers', 'net.minecraftforge',  'accesstransformers' version '8.2.2'
-        library 'coremods-api',       'net.minecraftforge',  'coremods-api' version '5.3.0'
-        version 'eventbus', '7.0.1'
+        library 'accesstransformers', 'net.minecraftforge',  'accesstransformers' version '8.2.17'
+        library 'coremods-api',       'net.minecraftforge',  'coremods-api' version '5.3.1'
+        
+        version 'eventbus', '7.0.5'
         library 'eventbus',           'net.minecraftforge',  'eventbus' versionRef 'eventbus'
         library 'eventbus-validator', 'net.minecraftforge',  'eventbus-validator' versionRef 'eventbus'
         library 'mergetool-api',      'net.minecraftforge',  'mergetool-api' version '1.0'
 
         library 'roimfs',                'net.minecraftforge',  'roimfs'             version '1.0.0' // ReadOnlyInMemoryFileSystem - Used for JarInJar extraction at runtime
         library 'mixin',                 'org.spongepowered',   'mixin'              version '0.8.7'
-        version 'mixinextras', '0.5.3'
+        
+        version 'mixinextras', '0.5.4'
         library 'mixinextras-forge',     'io.github.llamalad7', 'mixinextras-forge'  versionRef 'mixinextras'
         library 'mixinextras-common',    'io.github.llamalad7', 'mixinextras-common' versionRef 'mixinextras'
-        library 'jetbrains-annotations', 'org.jetbrains',       'annotations'        version '24.1.0' // for ApiStatus annotations
+        library 'jetbrains-annotations', 'org.jetbrains',       'annotations'        version '24.0.1' // for ApiStatus annotations
         library 'jspecify',              'org.jspecify',        'jspecify'           version '1.0.0' // for nullability annotations
-        library 'slf4j-api',             'org.slf4j',           'slf4j-api'          version '2.0.7'
+        library 'slf4j-api',             'org.slf4j',           'slf4j-api'          version '2.0.17'
         library 'maven-artifact',        'org.apache.maven',    'maven-artifact'     version '3.8.8'
 
         // Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
@@ -143,7 +145,7 @@ dependencyResolutionManagement.versionCatalogs {
         library 'bootstrap-shim', 'net.minecraftforge', 'bootstrap-shim' versionRef 'bootstrap'
 
         // ASM it's used for so many of our hacks
-        version 'asm', '9.9.1'
+        version 'asm', '9.10.1'
         library 'asm',          'org.ow2.asm', 'asm'          versionRef 'asm'
         library 'asm-tree',     'org.ow2.asm', 'asm-tree'     versionRef 'asm'
         library 'asm-util',     'org.ow2.asm', 'asm-util'     versionRef 'asm'
@@ -174,19 +176,19 @@ dependencyResolutionManagement.versionCatalogs {
 
         // These are libraries shipped by the MC launcher, try and keep them in sync with the manifest
         // but honestly if we don't it just means we ship them as normal libraries by adding them to the installer config in the forge project
-        library 'gson',          'com.google.code.gson', 'gson'          version '2.11.0'
+        library 'gson',          'com.google.code.gson', 'gson'          version '2.13.2'
         library 'guava',         'com.google.guava',     'guava'         version '33.5.0-jre'
         library 'failureaccess', 'com.google.guava',     'failureaccess' version '1.0.3'
 
-        version 'log4j', '2.24.3'
+        version 'log4j', '2.25.2'
         library 'log4j-api',  'org.apache.logging.log4j', 'log4j-api'  versionRef 'log4j'
         library 'log4j-core', 'org.apache.logging.log4j', 'log4j-core' versionRef 'log4j'
         bundle 'log4j', ['log4j-api', 'log4j-core']
 
-        library 'apache-commons', 'org.apache.commons', 'commons-lang3' version '3.17.0'
-        library 'mojang-logging', 'com.mojang',         'logging'       version '1.5.10'
+        library 'apache-commons', 'org.apache.commons', 'commons-lang3' version '3.19.0'
+        library 'mojang-logging', 'com.mojang',         'logging'       version '1.6.11'
         library 'jopt-simple',    'net.sf.jopt-simple', 'jopt-simple'   version '5.0.4'
-        library 'commons-io',     'commons-io',         'commons-io'    version '2.17.0'
+        library 'commons-io',     'commons-io',         'commons-io'    version '2.20.0'
 
         version 'lwjgl', '3.3.3'
         library 'lwjgl',        'org.lwjgl', 'lwjgl'        versionRef 'lwjgl'
@@ -198,7 +200,7 @@ dependencyResolutionManagement.versionCatalogs {
     }
 
     register('earlyDisplayLibs') {
-        version 'slf4j', '1.8.0-beta4'
+        version 'slf4j', '2.0.17'
         library 'slf4j-api',   'org.slf4j', 'slf4j-api'   versionRef 'slf4j'
         library 'slf4j-jdk14', 'org.slf4j', 'slf4j-jdk14' versionRef 'slf4j'
     }
