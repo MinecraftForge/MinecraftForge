@@ -87,7 +87,7 @@
                      liquidblockcontainer1.placeLiquid(p_150717_, p_150718_, blockstate, flowingfluid.getSource(false));
                      this.playEmptySound(p_150716_, p_150717_, p_150718_);
                      return true;
-@@ -166,7 +_,32 @@
+@@ -166,7 +_,30 @@
  
      protected void playEmptySound(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
          SoundEvent soundevent = this.content.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
@@ -99,16 +99,14 @@
          p_40697_.gameEvent(p_40696_, GameEvent.FLUID_PLACE, p_40698_);
 +    }
 +
-+    /** Forge: TODO: Forge ItemStack capabilities - Lex 042724
 +    @Override
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundTag nbt) {
++    public @org.jetbrains.annotations.Nullable net.minecraftforge.common.capabilities.ICapabilityProvider getCapabilityProvider(ItemStack stack) {
 +        if (this.getClass() == BucketItem.class) {
 +            return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
 +        } else {
-+            return super.initCapabilities(stack, nbt);
++            return super.getCapabilityProvider(stack);
 +        }
 +    }
-+    */
 +
 +    private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
 +
