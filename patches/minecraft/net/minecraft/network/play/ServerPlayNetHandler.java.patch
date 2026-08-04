@@ -34,6 +34,15 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
+@@ -1026,7 +1032,7 @@
+       case START_FALL_FLYING:
+          if (!this.field_147369_b.field_70122_E && this.field_147369_b.func_213322_ci().field_72448_b < 0.0D && !this.field_147369_b.func_184613_cA() && !this.field_147369_b.func_70090_H()) {
+             ItemStack itemstack = this.field_147369_b.func_184582_a(EquipmentSlotType.CHEST);
+-            if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
++            if (itemstack.canElytraFly(this.field_147369_b)) {
+                this.field_147369_b.func_184847_M();
+             }
+          } else {
 @@ -1057,6 +1063,7 @@
                 this.field_147369_b.func_190775_a(entity, hand);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
