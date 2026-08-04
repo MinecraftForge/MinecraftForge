@@ -74,3 +74,5 @@ loaderVersion="[28,)"
     modId="custom_elytra_test"
 [[mods]]
     modId="forge_spawnegg_test"
+[[mods]]
+    modId="raid_enum_test"
