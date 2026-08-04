@@ -72,4 +72,6 @@ loaderVersion="[28,)"
 [[mods]]
     modId="stencil_backport_test"
 [[mods]]
+    modId="forge_spawnegg_test"
+[[mods]]
     modId="deferred_registry_test"

@@ -34,6 +34,7 @@ net/minecraft/block/SoundType func_185846_f()Lnet/minecraft/util/SoundEvent; # g
 net/minecraft/item/DyeColor func_196057_c()I # getSwappedColorValue
 net/minecraft/item/DyeColor func_218388_g()I # getTextColor
 net/minecraft/item/DyeColor func_196058_b(I)Lnet/minecraft/item/DyeColor; # byFireworkColor
+net/minecraft/item/SpawnEggItem func_200889_b(Lnet/minecraft/entity/EntityType;)Lnet/minecraft/item/SpawnEggItem; # byId
 net/minecraft/item/crafting/Ingredient func_193365_a()[Lnet/minecraft/item/ItemStack; # getMatchingStacks
 net/minecraft/item/crafting/Ingredient func_193369_a([Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/crafting/Ingredient; # fromStacks
 net/minecraft/item/crafting/IRecipe func_222128_h()Lnet/minecraft/item/ItemStack; # getIcon
