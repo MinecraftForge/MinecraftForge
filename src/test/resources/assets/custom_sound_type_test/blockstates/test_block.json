@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "custom_sound_type_test:block/test_block"
+    }
+  }
+}
