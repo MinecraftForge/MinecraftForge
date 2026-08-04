@@ -10,6 +10,8 @@ net/minecraft/client/renderer/BlockModelRenderer.renderModel(Lnet/minecraft/worl
 net/minecraft/client/renderer/BlockModelRenderer.renderModelSmooth(Lnet/minecraft/world/IEnviromentReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_217634_1_,p_217634_2_,p_217634_3_,p_217634_4_,p_217634_5_,p_217634_6_,p_217634_7_,p_217634_8_,modelData
 net/minecraft/client/renderer/BlockModelRenderer.renderModelFlat(Lnet/minecraft/world/IEnviromentReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_217635_1_,p_217635_2_,p_217635_3_,p_217635_4_,p_217635_5_,p_217635_6_,p_217635_7_,p_217635_8_,modelData
 
+net/minecraft/client/renderer/WorldRenderer.playRecord(Lnet/minecraft/util/SoundEvent;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/MusicDiscItem;)V=|p_184377_1_,p_184377_2_,musicDiscItem
+
 net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
 
 net/minecraft/client/renderer/model/ModelBakery.getBakedModel(Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/client/renderer/texture/ISprite;Ljava/util/function/Function;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217845_1_,p_217845_2_,textureGetter,format
