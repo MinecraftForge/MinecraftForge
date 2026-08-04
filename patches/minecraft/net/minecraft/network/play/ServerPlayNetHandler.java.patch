@@ -21,6 +21,20 @@
     }
  
     public void handleAcceptTeleportPacket(CConfirmTeleportPacket p_184339_1_) {
+@@ -899,9 +_,10 @@
+       switch(cplayerdiggingpacket$action) {
+       case SWAP_ITEM_WITH_OFFHAND:
+          if (!this.player.isSpectator()) {
+-            ItemStack itemstack = this.player.getItemInHand(Hand.OFF_HAND);
+-            this.player.setItemInHand(Hand.OFF_HAND, this.player.getItemInHand(Hand.MAIN_HAND));
+-            this.player.setItemInHand(Hand.MAIN_HAND, itemstack);
++            net.minecraftforge.event.entity.living.LivingSwapItemsEvent.Hands event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this.player);
++            if (event.isCanceled()) return;
++            this.player.setItemInHand(Hand.OFF_HAND, event.getItemSwappedToOffHand());
++            this.player.setItemInHand(Hand.MAIN_HAND, event.getItemSwappedToMainHand());
+             this.player.stopUsingItem();
+          }
+ 
 @@ -950,7 +_,9 @@
        Direction direction = blockraytraceresult.getDirection();
        this.player.resetLastActionTime();

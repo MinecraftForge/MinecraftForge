@@ -136,6 +136,29 @@
        if (this.isInvulnerableTo(p_70097_1_)) {
           return false;
        } else if (this.level.isClientSide) {
+@@ -931,7 +_,7 @@
+          boolean flag = false;
+          float f1 = 0.0F;
+          if (p_70097_2_ > 0.0F && this.isDamageSourceBlocked(p_70097_1_)) {
+-            this.hurtCurrentlyUsedShield(p_70097_2_);
+-            f1 = p_70097_2_;
+-            p_70097_2_ = 0.0F;
++            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_70097_1_, p_70097_2_);
++            if(!ev.isCanceled()) {
++            if(ev.shieldTakesDamage()) this.hurtCurrentlyUsedShield(p_70097_2_);
++            f1 = ev.getBlockedDamage();
++            p_70097_2_ -= ev.getBlockedDamage();
+             if (!p_70097_1_.isProjectile()) {
+                Entity entity = p_70097_1_.getDirectEntity();
+                if (entity instanceof LivingEntity) {
+@@ -952,6 +_,7 @@
+ 
+             flag = true;
+          }
++         }
+ 
+          this.animationSpeed = 1.5F;
+          boolean flag1 = true;
 @@ -981,8 +_,8 @@
              if (entity1 instanceof PlayerEntity) {
                 this.lastHurtByPlayerTime = 100;
@@ -147,6 +170,15 @@
                 if (wolfentity.isTame()) {
                    this.lastHurtByPlayerTime = 100;
                    LivingEntity livingentity = wolfentity.getOwner();
+@@ -1084,7 +_,7 @@
+ 
+          for(Hand hand : Hand.values()) {
+             ItemStack itemstack1 = this.getItemInHand(hand);
+-            if (itemstack1.getItem() == Items.TOTEM_OF_UNDYING) {
++            if (itemstack1.getItem() == Items.TOTEM_OF_UNDYING && net.minecraftforge.common.ForgeHooks.onLivingUseTotem(this, p_190628_1_, itemstack1, hand)) {
+                itemstack = itemstack1.copy();
+                itemstack1.shrink(1);
+                break;
 @@ -1165,6 +_,7 @@
     }
  
@@ -302,6 +334,20 @@
        if (!this.swinging || this.swingTime >= this.getCurrentSwingDuration() / 2 || this.swingTime < 0) {
           this.swingTime = -1;
           this.swinging = true;
+@@ -1670,9 +_,10 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    private void swapHandItems() {
+-      ItemStack itemstack = this.getItemBySlot(EquipmentSlotType.OFFHAND);
+-      this.setItemSlot(EquipmentSlotType.OFFHAND, this.getItemBySlot(EquipmentSlotType.MAINHAND));
+-      this.setItemSlot(EquipmentSlotType.MAINHAND, itemstack);
++      net.minecraftforge.event.entity.living.LivingSwapItemsEvent.Hands event = net.minecraftforge.common.ForgeHooks.onLivingSwapHandItems(this);
++      if (event.isCanceled()) return;
++      this.setItemSlot(EquipmentSlotType.OFFHAND, event.getItemSwappedToOffHand());
++      this.setItemSlot(EquipmentSlotType.MAINHAND, event.getItemSwappedToMainHand());
+    }
+ 
+    protected void outOfWorld() {
 @@ -1848,15 +_,16 @@
        }
  
